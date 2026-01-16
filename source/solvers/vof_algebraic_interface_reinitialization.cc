@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/solutions_output.h>
@@ -205,16 +205,13 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
   // Reinitialize system matrix
   this->system_matrix = 0;
 
-  // Get projected VOF phase gradient and curvature DoFHandler
+  // Get projected VOF phase gradient DoFHandler
   const DoFHandler<dim> &dof_handler_vof_phase_fraction_gradient =
     this->subequations_interface.get_dof_handler(
       VOFSubequationsID::phase_gradient_projection);
-  const DoFHandler<dim> &dof_handler_curvature =
-    this->subequations_interface.get_dof_handler(
-      VOFSubequationsID::curvature_projection);
 
-  // Initialize FEValues for algebraic interface reinitialization, VOF
-  // phase fraction gradient and curvature projections
+  // Initialize FEValues for algebraic interface reinitialization and VOF
+  // phase fraction gradient projection
   FEValues<dim> fe_values_algebraic_reinitialization(*this->mapping,
                                                      *this->fe,
                                                      *this->cell_quadrature,
@@ -226,10 +223,6 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
     dof_handler_vof_phase_fraction_gradient.get_fe(),
     *this->cell_quadrature,
     update_values);
-  FEValues<dim> fe_values_curvature_projection(*this->mapping,
-                                               dof_handler_curvature.get_fe(),
-                                               *this->cell_quadrature,
-                                               update_values);
 
   // Initialize size of arrays
   const unsigned int n_q_points =
@@ -246,12 +239,10 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
   // Extractor for phase fraction gradient vector
   FEValuesExtractors::Vector phase_fraction_gradients(0);
 
-  // Initialize phase fraction, projected phase gradient and projected curvature
-  // solution arrays
+  // Initialize phase fraction and projected phase gradient solution arrays
   std::vector<double>         present_phase_fraction_values(n_q_points);
   std::vector<Tensor<1, dim>> present_phase_gradient_projection_values(
     n_q_points);
-  std::vector<double>         present_curvature_values(n_q_points);
   std::vector<Tensor<1, dim>> present_reinitialized_phase_gradient_values(
     n_q_points);
 
@@ -274,6 +265,11 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
   const Vector<double> bdf_coefficient_vector =
     calculate_bdf_coefficients(method, this->time_step_vector);
 
+  // Get present phase gradient projection solution
+  auto &present_phase_gradient_projection_solution =
+    this->subequations_interface.get_solution(
+      VOFSubequationsID::phase_gradient_projection);
+
   // Assemble system matrix
   for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
@@ -282,45 +278,29 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
           // Reinitialize local matrix
           local_matrix = 0;
 
-          // Get phase gradient projection and curvature cell iterators
+          // Get phase gradient projection cell iterator
           typename DoFHandler<dim>::active_cell_iterator
             vof_phase_gradient_projection_cell(
               &(*this->triangulation),
               cell->level(),
               cell->index(),
               &dof_handler_vof_phase_fraction_gradient);
-          typename DoFHandler<dim>::active_cell_iterator
-            curvature_projection_cell(&(*this->triangulation),
-                                      cell->level(),
-                                      cell->index(),
-                                      &dof_handler_curvature);
 
           // Reinitialize FEValues with corresponding cell
           fe_values_algebraic_reinitialization.reinit(cell);
           fe_values_phase_gradient_projection.reinit(
             vof_phase_gradient_projection_cell);
-          fe_values_curvature_projection.reinit(curvature_projection_cell);
 
           // Get vector of JxW
           std::vector<double> JxW_vec =
             fe_values_algebraic_reinitialization.get_JxW_values();
 
-          // Get get present phase fraction, projected VOF phase gradient and
-          // curvature values
+          // Get present phase fraction and projected VOF phase gradient
           fe_values_algebraic_reinitialization.get_function_values(
             this->evaluation_point, present_phase_fraction_values);
           fe_values_phase_gradient_projection[phase_fraction_gradients]
-            .get_function_values(
-              this->subequations_interface.get_solution(
-                VOFSubequationsID::phase_gradient_projection),
-              present_phase_gradient_projection_values);
-          fe_values_curvature_projection.get_function_values(
-            this->subequations_interface.get_solution(
-              VOFSubequationsID::curvature_projection),
-            present_curvature_values);
-          fe_values_algebraic_reinitialization.get_function_gradients(
-            this->evaluation_point,
-            present_reinitialized_phase_gradient_values);
+            .get_function_values(present_phase_gradient_projection_solution,
+                                 present_phase_gradient_projection_values);
 
           // Set tolerance to avoid division by zero
           const double tolerance = 1e-12;
@@ -337,14 +317,11 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
                     fe_values_algebraic_reinitialization.shape_grad(k, q);
                 }
 
-              // Extract phase fraction value, projected phase fraction gradient
-              // and curvature
+              // Extract phase fraction value and projected phase fraction
+              // gradient
               const double phase_fraction = present_phase_fraction_values[q];
               const Tensor<1, dim> projected_vof_phase_gradient =
                 present_phase_gradient_projection_values[q];
-              const double         curvature = present_curvature_values[q];
-              const Tensor<1, dim> reinitialized_phase_gradient =
-                present_reinitialized_phase_gradient_values[q];
 
               // Compute normal vector with projected phase gradient
               const double projected_vof_phase_gradient_norm =
@@ -361,23 +338,18 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
                       local_matrix(i, j) +=
                         (
                           // Time-stepping term
-                          phi[i] * phi[j] * bdf_coefficient_vector[0] +
+                          phi[i] * phi[j] * bdf_coefficient_vector[0] -
                           // Compressive term
-                          phi[i] *
-                            (scalar_product(grad_phi[j], interface_normal) -
-                             2 * phase_fraction *
-                               scalar_product(grad_phi[j], interface_normal) -
-                             2 * phi[j] *
-                               scalar_product(reinitialized_phase_gradient,
-                                              interface_normal) -
-                             (phi[j] - 2 * phase_fraction * phi[j]) *
-                               curvature) +
+                          scalar_product(grad_phi[i],
+                                         (phi[j] -
+                                          2 * phase_fraction * phi[j]) *
+                                           interface_normal) +
                           // Diffusive term
                           scalar_product(grad_phi[i],
-                                         (diffusivity_coefficient *
-                                          scalar_product(grad_phi[j],
-                                                         interface_normal) *
-                                          interface_normal))) *
+                                         diffusivity_coefficient *
+                                           scalar_product(grad_phi[j],
+                                                          interface_normal) *
+                                           interface_normal)) *
                         JxW_vec[q];
                     }
                 }
@@ -399,32 +371,24 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
   // Reinitialize system right-hand side (rhs)
   this->system_rhs = 0;
 
-  // Get projected phase gradient, curvature and reinitialized phase gradient
-  // DoFHandler
+  // Get projected phase gradient DoFHandler
   const DoFHandler<dim> &dof_handler_vof_phase_fraction_gradient =
     this->subequations_interface.get_dof_handler(
       VOFSubequationsID::phase_gradient_projection);
-  const DoFHandler<dim> &dof_handler_curvature =
-    this->subequations_interface.get_dof_handler(
-      VOFSubequationsID::curvature_projection);
 
-  // Initialize FEValues for algebraic interface reinitialization, VOF phase
-  // fraction gradient and curvature projections
+  // Initialize FEValues for algebraic interface reinitialization and VOF phase
+  // fraction gradient projection
   FEValues<dim> fe_values_algebraic_reinitialization(*this->mapping,
                                                      *this->fe,
                                                      *this->cell_quadrature,
                                                      update_values |
                                                        update_gradients |
                                                        update_JxW_values);
-  FEValues<dim> fe_values_vof_phase_gradient_projection(
+  FEValues<dim> fe_values_phase_gradient_projection(
     *this->mapping,
     dof_handler_vof_phase_fraction_gradient.get_fe(),
     *this->cell_quadrature,
     update_values);
-  FEValues<dim> fe_values_curvature_projection(*this->mapping,
-                                               dof_handler_curvature.get_fe(),
-                                               *this->cell_quadrature,
-                                               update_values);
 
   // Initialize size of arrays
   const unsigned int n_q_points =
@@ -441,13 +405,12 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
   // Extractor for phase fraction gradient vector
   FEValuesExtractors::Vector phase_fraction_gradients(0);
 
-  // Initialize phase fraction and projected phase fraction gradient and
-  // curvature solution arrays
+  // Initialize phase fraction and projected phase fraction gradient solution
+  // arrays
   std::vector<double>         present_phase_fraction_values(n_q_points);
   std::vector<double>         previous_phase_fraction_values(n_q_points);
   std::vector<Tensor<1, dim>> present_vof_phase_gradient_projection_values(
     n_q_points);
-  std::vector<double>         present_curvature_values(n_q_points);
   std::vector<Tensor<1, dim>> present_reinitialized_phase_gradient_values(
     n_q_points);
 
@@ -470,6 +433,9 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
   const Vector<double> bdf_coefficient_vector =
     calculate_bdf_coefficients(method, this->time_step_vector);
 
+  // Set tolerance to avoid division by zero
+  constexpr double tolerance = 1e-12;
+
   for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
       if (cell->is_locally_owned())
@@ -484,17 +450,11 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
               cell->level(),
               cell->index(),
               &dof_handler_vof_phase_fraction_gradient);
-          typename DoFHandler<dim>::active_cell_iterator
-            curvature_projection_cell(&(*this->triangulation),
-                                      cell->level(),
-                                      cell->index(),
-                                      &dof_handler_curvature);
 
           // Reinitialize FEValues with corresponding cells
           fe_values_algebraic_reinitialization.reinit(cell);
-          fe_values_vof_phase_gradient_projection.reinit(
+          fe_values_phase_gradient_projection.reinit(
             vof_phase_gradient_projection_cell);
-          fe_values_curvature_projection.reinit(curvature_projection_cell);
 
           // Get vector of Jacobi determinant times the quadrature weights
           std::vector<double> JxW_vec =
@@ -505,21 +465,14 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
             this->evaluation_point, present_phase_fraction_values);
           fe_values_algebraic_reinitialization.get_function_values(
             this->previous_solution, previous_phase_fraction_values);
-          fe_values_vof_phase_gradient_projection[phase_fraction_gradients]
+          fe_values_phase_gradient_projection[phase_fraction_gradients]
             .get_function_values(
               this->subequations_interface.get_solution(
                 VOFSubequationsID::phase_gradient_projection),
               present_vof_phase_gradient_projection_values);
-          fe_values_curvature_projection.get_function_values(
-            this->subequations_interface.get_solution(
-              VOFSubequationsID::curvature_projection),
-            present_curvature_values);
           fe_values_algebraic_reinitialization.get_function_gradients(
             this->evaluation_point,
             present_reinitialized_phase_gradient_values);
-
-          // Set tolerance to avoid division by zero
-          const double tolerance = 1e-12;
 
           // Loop over quadrature points
           for (unsigned int q = 0; q < n_q_points; ++q)
@@ -541,7 +494,6 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
               phase_fraction_values[1]    = previous_phase_fraction_values[q];
               const Tensor<1, dim> projected_vof_phase_gradient =
                 present_vof_phase_gradient_projection_values[q];
-              const double         curvature = present_curvature_values[q];
               const Tensor<1, dim> reinitialized_phase_gradient =
                 present_reinitialized_phase_gradient_values[q];
 
@@ -562,24 +514,21 @@ VOFAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
                                       (phase_fraction_values[p] * phi[i]) *
                                       JxW_vec[q];
                     }
-
                   local_rhs(i) -=
                     (
                       // Compressive term
-                      phi[i] *
-                        (scalar_product(reinitialized_phase_gradient,
-                                        interface_normal) -
-                         2 * phase_fraction *
-                           scalar_product(reinitialized_phase_gradient,
-                                          interface_normal) -
-                         phase_fraction * (1 - phase_fraction) * curvature) +
+                      -scalar_product(grad_phi[i],
+                                      (phase_fraction -
+                                       Utilities::fixed_power<2>(
+                                         phase_fraction)) *
+                                        interface_normal) +
                       // Diffusive term
-                      (scalar_product(
+                      scalar_product(
                         grad_phi[i],
-                        (diffusivity_coefficient *
-                         scalar_product(reinitialized_phase_gradient,
-                                        interface_normal) *
-                         interface_normal)))) *
+                        diffusivity_coefficient *
+                          scalar_product(reinitialized_phase_gradient,
+                                         interface_normal) *
+                          interface_normal)) *
                     JxW_vec[q];
                 }
             }
@@ -695,11 +644,9 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve()
   // Check if all required solutions are valid
   check_dependencies_validity();
 
-  // Compute time-step
-  this->current_time_step = compute_time_step();
-
-  double current_time_step_inv = 1. / this->current_time_step;
-  this->time_step_vector[0]    = this->current_time_step;
+  // Compute current time-step
+  this->current_time_step   = compute_time_step();
+  this->time_step_vector[0] = this->current_time_step;
 
   // Set initial conditions from the VOF solution (step 0)
   set_initial_conditions();
@@ -731,7 +678,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve()
     write_output_results(step);
 
   // Iterate until a stop criterion is met
-  while (continue_iterating(current_time_step_inv, step))
+  while (continue_iterating(step))
     {
       if (verbose)
         {
@@ -807,25 +754,20 @@ VOFAlgebraicInterfaceReinitialization<dim>::write_output_results(
                              VOFSubequationsID::phase_gradient_projection),
                            vof_gradient_solution_names,
                            vector_data_component_interpretation);
-  data_out.add_data_vector(this->subequations_interface.get_dof_handler(
-                             VOFSubequationsID::curvature_projection),
-                           this->subequations_interface.get_solution(
-                             VOFSubequationsID::curvature_projection),
-                           "vof_curvature",
-                           data_component_interpretation);
 
   data_out.build_patches(*this->mapping,
                          1, // subdivision
                          DataOut<dim>::curved_inner_cells);
 
-  write_vtu_and_pvd<dim>(this->pvdhandler,
-                         data_out,
-                         folder,
-                         file_name,
-                         step, // time,
-                         step,
-                         1, // group_files,
-                         mpi_communicator);
+  write_vtu_and_pvd<dim>(
+    this->pvdhandler,
+    data_out,
+    folder,
+    file_name,
+    step,
+    step,
+    this->simulation_parameters.simulation_control.group_files,
+    mpi_communicator);
 }
 
 
@@ -838,13 +780,6 @@ VOFAlgebraicInterfaceReinitialization<dim>::check_dependencies_validity()
               PhaseGradientProjectionIsInvalid(
                 this->subequations_interface.get_subequation_string(
                   VOFSubequationsID::phase_gradient_projection),
-                this->subequations_interface.get_subequation_string(
-                  this->subequation_id)));
-  AssertThrow(this->subequations_interface.get_solution_validity(
-                VOFSubequationsID::curvature_projection),
-              CurvatureProjectionIsInvalid(
-                this->subequations_interface.get_subequation_string(
-                  VOFSubequationsID::curvature_projection),
                 this->subequations_interface.get_subequation_string(
                   this->subequation_id)));
 }

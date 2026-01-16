@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/parameters_multiphysics.h>
@@ -515,19 +515,22 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
       "Power value applied to the mesh-size in the mesh-dependant diffusion "
       "coefficient of the algebraic interface reinitialization.");
     prm.declare_entry("steady-state criterion",
-                      "1e-2",
+                      "1e-4",
                       Patterns::Double(),
-                      "Tolerance for the pseudo-time-stepping scheme.");
+                      "Tolerance for the artificial time-stepping scheme.");
     prm.declare_entry("max steps number",
-                      "5",
+                      "10000",
                       Patterns::Integer(),
                       "Maximum number of reinitialization steps.");
     prm.declare_entry(
-      "reinitialization CFL",
-      "1.",
+      "artificial time-step factor",
+      "0.25",
       Patterns::Double(),
-      "CFL value for pseudo-time-step calculation purposes in the algebraic "
+      "Factor multiplying the artificial time-step in the algebraic "
       "interface reinitialization.");
+    prm.declare_alias("artificial time-step factor",
+                      "reinitialization CFL",
+                      true);
   }
   prm.leave_subsection();
 }
@@ -542,7 +545,7 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters(
       prm.get_bool("output reinitialization steps");
     this->diffusivity_multiplier = prm.get_double("diffusivity multiplier");
     this->diffusivity_power      = prm.get_double("diffusivity power");
-    this->reinitialization_cfl   = prm.get_double("reinitialization CFL");
+    this->dtau_factor = prm.get_double("artificial time-step factor");
     this->steady_state_criterion = prm.get_double("steady-state criterion");
     this->max_steps_number       = prm.get_integer("max steps number");
   }

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_vof_algebraic_interface_reinitialization_h
@@ -98,14 +98,12 @@ public:
    */
   ~VOFAlgebraicInterfaceReinitialization() = default;
 
-
   /**
    * @brief Set up the DofHandler and the degree of freedom associated with
    * the subequation.
    */
   void
   setup_dofs() override;
-
 
   /**
    * @brief Solve interface algebraic reinitialization process until one of the
@@ -266,11 +264,10 @@ private:
   inline double
   compute_time_step()
   {
-    // Get CFL value
-    const double cfl =
+    // Get artificial time-step factor
+    const double dtau_factor =
       this->simulation_parameters.multiphysics.vof_parameters
-        .regularization_method.algebraic_interface_reinitialization
-        .reinitialization_cfl;
+        .regularization_method.algebraic_interface_reinitialization.dtau_factor;
 
     // Get the minimum cell size
     const double h_min =
@@ -279,7 +276,15 @@ private:
                                  *this->cell_quadrature,
                                  this->triangulation->get_mpi_communicator());
 
-    return h_min * cfl;
+    // Compute diffusivity
+    const double diffusivity_inv = 1.0 / compute_diffusivity(h_min);
+
+    // Compute artificial time-step
+    const double dtau = h_min * h_min * diffusivity_inv * dtau_factor;
+
+    // Use the smallest of the computed artificial time-step and the simulation
+    // time-step for the reinitialization scheme
+    return std::min(dtau, this->simulation_control->get_time_step());
   }
 
   /**
@@ -323,17 +328,15 @@ private:
    * checking if at least one of the two stop criteria (steady-state criterion
    * or maximum number of reinitialization steps) is met.
    *
-   * @param[in] time_step_inv Inverse of the current reinitialization time-step.
-   *
    * @param[in] step_number Algebraic interface reinitialization step number.
    *
    * @return Boolean indicating if the algebraic reinitialization should
    * continue
    */
   inline bool
-  continue_iterating(const double time_step_inv, const unsigned int step_number)
+  continue_iterating(const unsigned int step_number)
   {
-    if (step_number == 1)
+    if (step_number == 1) // Initial condition
       {
         return (step_number <
                 this->simulation_parameters.multiphysics.vof_parameters
@@ -343,7 +346,7 @@ private:
       }
     else
       {
-        // Get the stop criterion of the pseudo-time-stepping scheme
+        // Get the stop criterion of the artificial time-stepping scheme
         double steady_state_criterion =
           this->simulation_parameters.multiphysics.vof_parameters
             .regularization_method.algebraic_interface_reinitialization
@@ -354,7 +357,9 @@ private:
         solution_diff -= previous_local_evaluation_point;
 
         // Evaluate the current steady-state criterion value
-        double stop_criterion = time_step_inv * solution_diff.l2_norm();
+        double stop_criterion =
+          solution_diff.l2_norm() /
+          (previous_local_evaluation_point.l2_norm() + 1e-14);
 
         if (this->subequation_verbosity == Parameters::Verbosity::extra_verbose)
           {

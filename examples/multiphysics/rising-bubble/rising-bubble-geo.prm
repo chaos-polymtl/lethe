@@ -17,7 +17,7 @@ subsection simulation control
   set adapt                             = true
   set max cfl                           = 0.80
   set output name                       = rising-bubble
-  set output frequency                  = 20
+  set output frequency                  = 10
   set output path                       = ./rising-bubble-geo/
   set time step independent of end time = false
 end
@@ -40,8 +40,9 @@ subsection VOF
     set frequency = 20
     set verbosity = verbose
     subsection geometric interface reinitialization
-      set max reinitialization distance = 0.032
-      set transformation type           = piecewise polynomial
+      set max reinitialization distance = 0.0264
+      set tanh thickness                = 0.0066
+      set transformation type           = tanh
     end
   end
   subsection phase filtration
@@ -71,9 +72,8 @@ subsection initial conditions
     set Function expression = 0; 0; 0
   end
   subsection VOF
-    set Function expression = if ((x-0.5) * (x-0.5) + (y-0.5) * (y-0.5) < 0.25 * 0.25 , 1, 0)
-    set smoothing type      = diffusive
-    set diffusion factor    = 1
+    set Function constants  = eps=1.5, hCell=0.0022, center=0.5
+    set Function expression = 0.5 - 0.5*tanh((sqrt((x-center)*(x-center)+(y-center)*(y-center))-0.25)/(2*eps*hCell))
   end
 end
 

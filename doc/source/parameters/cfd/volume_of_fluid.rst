@@ -48,11 +48,11 @@ The default values of the VOF parameters are given in the text box below.
 
       subsection algebraic interface reinitialization
         set output reinitialization steps = false
-        set steady-state criterion        = 1e-2
-        set max steps number              = 5
+        set steady-state criterion        = 1e-4
+        set max steps number              = 10000
         set diffusivity multiplier        = 1.0
         set diffusivity power             = 1.0
-        set reinitialization CFL          = 1.0
+        set artificial time-step factor   = 0.25
       end
     end
 
@@ -187,10 +187,10 @@ The interface reinitialization process ends either when steady-state (``steady-s
 * ``steady-state criterion``: one of the two stop criteria of the interface reinitialization process. This parameter :math:`(\alpha_\text{ss})` acts as a tolerance for reaching steady-state when solving the algebraic interface reinitialization partial differential equation (PDE).
 
   .. math::
-   \alpha_\text{ss} \geq \frac{ \lVert \phi_\text{reinit}^{\tau + 1} - \phi_\text{reinit}^{\tau} \rVert_2}{\Delta \tau}
+   \alpha_\text{ss} \geq \frac{ \lVert \phi_\text{reinit}^{\iota + 1} - \phi_\text{reinit}^{\iota} \rVert_2}{\lVert \phi_\text{reinit}^{\iota} \rVert_2}
 
 
-  where :math:`\tau` is the pseudo-time used to solve the reinitialization PDE and :math:`\Delta \tau` is the associated pseudo-time-step.
+  where :math:`\iota` is the artificial time iterator used to solve the reinitialization PDE and :math:`\Delta \tau` is the associated artificial time-step.
 
 * ``max steps number``: indicates the maximum number of interface reinitialization steps that can be applied before the process ends.
 
@@ -203,12 +203,19 @@ The algebraic interface reinitialization PDE contains a diffusion term. This ter
 
 * ``diffusivity power``: power :math:`(d)` to which the smallest cell-size value :math:`(h_\text{min})` is elevated in the evaluation of the diffusion coefficient of the PDE.
 
-* ``reinitialization CFL``: CFL condition of the interface reinitialization process. This is used to evaluate the pseudo-time-step :math:`(\Delta\tau)`.
+.. note::
+
+    Here, we define the cell size :math:`(h)` as being the diameter of:
+
+    - a disk with equivalent area in 2D, and;
+    - a sphere with equivalent volume in 3D.
+
+* ``artificial time-step factor``: factor used to evaluate the artificial time-step :math:`(\Delta\tau)`.
 
   .. math::
-    \Delta \tau = C_\text{CFL} \, h_\text{min}
+    \Delta \tau = \min{\left(\frac{C_\tau \, h_\text{min}^2}{\varepsilon}, \Delta t \right)}
 
-  where :math:`C_\text{CFL}` is the imposed CFL condition and :math:`h_\text{min}` is the size of the smallest cell.
+  where :math:`C_\tau` is the imposed artificial time-step factor, :math:`h_\text{min}` is the size of the smallest cell, and :math:`\Delta t` is the simulation time-step.
 
 Phase Filtration
 ~~~~~~~~~~~~~~~~~~

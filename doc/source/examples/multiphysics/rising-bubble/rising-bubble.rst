@@ -153,7 +153,13 @@ The ``vof dcdd stabilization`` is turned off as it had a negative impact on volu
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 
-In the ``initial conditions`` subsection, the initial velocity and initial position of the liquid phase are defined. The light phase is initially defined as a circle with a radius :math:`r= 0.25` and a center located at :math:`(x,y)=(0.5, 0.5)`. We enable the use of a projection step to ensure that the initial phase distribution is sufficiently smooth, as explained in the :doc:`../static-bubble/static-bubble` example.
+In the ``initial conditions`` subsection, the initial velocity and initial position of the liquid phase are defined. The light phase is initially defined as a circle with a radius :math:`r= 0.25` and a center located at :math:`(x_\text{c},y_\text{c})=(0.5, 0.5)`. To ensure that the initial condition is sufficiently smooth, we define the phase fraction field with the analytical solution of both the PDE and geometric reinitialization methods:
+
+.. math::
+
+    \phi = 0.5 - 0.5 \tanh \left[ \frac{d}{2\varepsilon h}\right]
+
+where :math:`d = \left[\sqrt{(x-x_\text{c})^2 + (y-y_\text{c})^2} - 0.25\right]` is the signed distance from the interface, :math:`\varepsilon` an interface thickness parameter, and :math:`h` the smallest cell size.
 
 .. code-block:: text
 
@@ -163,12 +169,8 @@ In the ``initial conditions`` subsection, the initial velocity and initial posit
         set Function expression = 0; 0; 0
       end
       subsection VOF
-        set Function expression = if ((x-0.5) * (x-0.5) + (y-0.5) * (y-0.5) < 0.25 * 0.25 , 1, 0)
-      
-        subsection projection step
-          set enable           = true
-          set diffusion factor = 1
-        end
+        set Function constants  = eps=1, hCell=0.0022, center=0.5
+        set Function expression = 0.5 - 0.5*tanh((sqrt((x-center)*(x-center)+(y-center)*(y-center))-0.25)/(2*eps*hCell))
       end
     end
 
@@ -335,7 +337,7 @@ The same python post-processing code (``rising-bubble.py``) is used for test cas
 .. code-block:: text
   :class: copy-button
 
-  python3 ./rising-bubble.py -f rising-bubble-proj -c 2
+  python3 ./rising-bubble.py -p rising-bubble-proj -c 2
   
 The following image shows the shape of the bubble after :math:`3` seconds of simulation, and compares it with results obtained by three different codes reported in the work of Hysing *et al.* [#hysing2009]_: TP2D, FreeLIFE and MooNMD.
 
@@ -367,7 +369,7 @@ Parameter Files
 
 For the methods other than ``projection-based interface sharpening``, the ``.prm`` file is modified as follows. In the ``VOF`` subsection, the ``interface regularization method`` is changed to ``geometric interface reinitialization`` or ``algebraic interface reinitialization``. The associated parameter files, ``rising-bubble-geo.prm`` and ``rising-bubble-alge.prm`` respectively, are available in the example's folder. The subsections are modified according to each regularization method: 
 
-* With the geometric method, the phase fraction field is regularized using the signed distance from the interface, as described in :doc:`../../../theory/multiphase/cfd/vof` theory guide. The ``max reinitialization distance`` parameter is set to :math:`0.032` and we select the ``piecewise polynomial`` function to transform the signed distance in a phase fraction field.
+* With the geometric method, the phase fraction field is regularized using the signed distance from the interface, as described in :doc:`../../../theory/multiphase/cfd/vof` theory guide. We select the ``tanh`` function to transform the signed distance in a phase fraction field. The ``tanh thickness`` is set to :math:`0.0066` and the ``max reinitialization distance`` parameter is set to :math:`0.0264`.
 
 .. code-block:: text
 
@@ -376,12 +378,24 @@ For the methods other than ``projection-based interface sharpening``, the ``.prm
       set frequency  = 20
       set verbosity  = verbose
       subsection geometric interface reinitialization
-        set max reinitialization distance = 0.032
-        set transformation type           = piecewise polynomial
+        set max reinitialization distance = 0.0264
+        set tanh thickness                = 0.0066
+        set transformation type           = tanh
       end
     end
 
-* For the algebraic method, an intermidiary PDE is solved to compress the interface until reaching a pseudo-steady-state. This PDE is described in :doc:`../../../theory/multiphase/cfd/vof` theory guide. Setting the ``steady-state criterion`` to :math:`10^{-3}` yields good results.
+For the geometric method, we use a slightly thicker interface and we adapt the initial condition accordingly by increasing :math:`\varepsilon` from :math:`1` to :math:`1.5`.
+
+.. code-block:: text
+
+    subsection initial conditions
+      subsection VOF
+        set Function constants  = eps=1.5, hCell=0.0022, center=0.5
+        set Function expression = 0.5 - 0.5*tanh((sqrt((x-center)*(x-center)+(y-center)*(y-center))-0.25)/(2*eps*hCell))
+      end
+    end
+
+* For the algebraic method, an intermediary PDE is solved to compress the interface until reaching a pseudo-steady-state. This PDE is described in :doc:`../../../theory/multiphase/cfd/vof` theory guide. Setting the ``diffusivity multiplier`` to :math:`1` yields good results.
 
 .. code-block:: text
 
@@ -390,7 +404,7 @@ For the methods other than ``projection-based interface sharpening``, the ``.prm
       set frequency = 20
       set verbosity = verbose
       subsection algebraic interface reinitialization
-        set steady-state criterion = 1e-3
+        set diffusivity multiplier = 1
       end
     end
 
@@ -410,12 +424,12 @@ To run the simulations for the geometric and algebraic regularization methods:
 
   mpirun -np 8 lethe-fluid rising-bubble-alge.prm
 
-We are interested in four metrics for this comparison: the barycenter position and velocity, the bubble shape, and the volume conservation. To compare these metrics between the three regularization methods, the python post-processing script ``rising-bubble-comparison.py`` is used:
+We are interested in four metrics for this comparison: the barycenter position and velocity, the bubble shape, and the volume conservation. To compare these metrics between the three regularization methods, the python post-processing script ``rising-bubble.py`` is used:
 
 .. code-block:: text
   :class: copy-button
 
-  python3 ./rising-bubble-comparison.py -s rising-bubble-proj -g rising-bubble-geo -a rising-bubble-alge -c 1
+  python3 ./rising-bubble.py -p rising-bubble-proj -g rising-bubble-geo -a rising-bubble-alge -c 1
   
 where ``rising-bubble-proj``, ``rising-bubble-geo``, and ``rising-bubble-alge`` are the folders that contain the simulation results. Additionally, ``-c 1`` is used for test case 1 and ``-c 2`` for test case 2. 
   
@@ -458,7 +472,7 @@ Case 1
   * :math:`V =\int_{\Omega_\mathrm{1}} 1 \, d\Omega`, denoted the geometric volume
     where :math:`\Omega_1` represents the domain occupied by fluid 1, corresponding to the bubble in this case.
     
-  The following images show the evolution of their ratio to the initial volume throughout the simulation, with the global volume shown on the left and the geometric volume, on the right. The PDE-based method has a smaller volume variation, while the projection-based method has a maximum volume variation of about :math:`0.25 %` and the geometric method has a maximum volume loss of :math:`0.6%` at the end of the simulation.
+  The following images show the evolution of their ratio to the initial volume throughout the simulation, with the global volume shown on the left and the geometric volume, on the right. The PDE-based method has a smaller volume variation, while the projection-based method has a maximum volume variation of about :math:`0.1 %` and the geometric method has a maximum volume loss of :math:`1.0 %` at the end of the simulation.
 
   .. image:: images/global-mass-conservation-case1.png
       :width: 350
@@ -483,7 +497,7 @@ Case 2
 
 * Bubble Contour
 
-  Regarding the final shape and dimensions of the bubble, the geometric and algebraic methods seem to reproduce the results from  Hysing *et al.* [#hysing2009]_ more accurately than the projection-based method. However, the three regularization methods capture the skirt of the bubble differently: the geometric and projection-based methods result, respectively, in a continuous and discontinuous skirt, while the PDE-based does not capture this feature.
+  Regarding the final shape and dimensions of the bubble, the geometric and algebraic methods seem to reproduce the results from  Hysing *et al.* [#hysing2009]_ more accurately than the projection-based method. However, the three regularization methods capture the skirt of the bubble differently: the geometric method results in a continuous skirt, while the PDE-based and projection-based methods result in a discontinuous skirt.
 
   .. image:: images/proj-bubble-contour-case2.png
       :width: 350

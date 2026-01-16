@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /*
@@ -226,9 +226,10 @@ namespace Parameters
     /// Constant representing the power to which the mesh-size is elevated in
     /// the evaluation of the diffusion coefficient.
     double diffusivity_power;
-    /// CFL for the reinitialization equation
-    double reinitialization_cfl;
-    /// Steady-state criterion used for the pseudo-time-stepping scheme.
+    /// Constant factor used in the computation of the artificial time-step of
+    /// the reinitialization equation
+    double dtau_factor;
+    /// Steady-state criterion used for the artificial time-stepping scheme.
     double steady_state_criterion;
     /// Maximum number of reinitialization steps.
     double max_steps_number;
