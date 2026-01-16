@@ -115,7 +115,7 @@ NormalDistribution::NormalDistribution(
           system_matrix.compute_lu_factorization();
           system_matrix.solve(system_rhs);
 
-          // USE THE MATHEMATICALLY CORRECT MAPPING:
+          // Apply the delta
           sigma_n += system_rhs[0];
           mu_n += system_rhs[1];
 
