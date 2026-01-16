@@ -12,8 +12,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
   - changes the weak formulation of the problem solved (the curvature field is no more required);
   - changes how the artificial time-step is computed;
   - changes how the steady-state criterion is evaluated;
-  - removes the filtered VOF solution field for the computation of the projected phase gradient used to compute the unit interface normal vector and the curvature, and;
-  - renames the `reinitialization CFL` parameter to `artificial time-step factor` (an alias was made for `reinitialization CFL`, to avoid parameter file version issues)
+  - removes the filtered VOF solution field for the computation of the projected phase gradient used to compute the unit interface normal vector and the curvature;
+  - renames the `reinitialization CFL` parameter to `artificial time-step factor` (an alias was made for `reinitialization CFL`, to avoid parameter file version issues), and;
+  - changes default values of algebraic reinitialization parameters.
 
   This PR also updates the rising bubble example. Other VOF examples with surface tension force (static bubble, capillary wave, and Rayleigh-Plateau instability) will have to be checked and updated in a future PR. [#1879](https://github.com/chaos-polymtl/lethe/pull/1879)
 
