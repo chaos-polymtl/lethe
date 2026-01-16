@@ -159,7 +159,7 @@ In the ``initial conditions`` subsection, the initial velocity and initial posit
 
     \phi = 0.5 - 0.5 \tanh \left[ \frac{d}{2\varepsilon h}\right]
 
-where :math:`d = \left[\sqrt{(x-x_\text{c})^2 + (y-y_\text{c})^2} - 0.25\right]` is the signed distance from the interface, :math:`\varepsilon` an interface thickness parameter, and :math:`h` the smallest cell-size.
+where :math:`d = \left[\sqrt{(x-x_\text{c})^2 + (y-y_\text{c})^2} - 0.25\right]` is the signed distance from the interface, :math:`\varepsilon` an interface thickness parameter, and :math:`h` the smallest cell size.
 
 .. code-block:: text
 
@@ -497,7 +497,7 @@ Case 2
 
 * Bubble Contour
 
-  Regarding the final shape and dimensions of the bubble, the geometric and algebraic methods seem to reproduce the results from  Hysing *et al.* [#hysing2009]_ more accurately than the projection-based method. However, the three regularization methods capture the skirt of the bubble differently: the geometric method result in a continuous skirt, while the PDE-based and projection-based methods result in a discontinuous skirt.
+  Regarding the final shape and dimensions of the bubble, the geometric and algebraic methods seem to reproduce the results from  Hysing *et al.* [#hysing2009]_ more accurately than the projection-based method. However, the three regularization methods capture the skirt of the bubble differently: the geometric method results in a continuous skirt, while the PDE-based and projection-based methods result in a discontinuous skirt.
 
   .. image:: images/proj-bubble-contour-case2.png
       :width: 350

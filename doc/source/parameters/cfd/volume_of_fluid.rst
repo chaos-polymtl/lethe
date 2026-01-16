@@ -205,7 +205,7 @@ The algebraic interface reinitialization PDE contains a diffusion term. This ter
 
 .. note::
 
-    Here, we define the cell-size :math:`(h)` as being the diameter of:
+    Here, we define the cell size :math:`(h)` as being the diameter of:
 
     - a disk with equivalent area in 2D, and;
     - a sphere with equivalent volume in 3D.
