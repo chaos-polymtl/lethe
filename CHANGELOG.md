@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- MINOR In the cylindrical packed bed example, the pressure drop across the bed is compared with the Ergun correlation. This was done in PR [#1840], where a bed porosity of 0.45 was used in the correlation. In this PR, the bed porosity is calculated using the bed height that is extracted from the simulation instead, leading to a better estimate for the pressure drop. [#1881] (https://github.com/chaos-polymtl/lethe/pull/1881)
+
 - MINOR This PR adds the option to declare a particle size distribution in the parameter file as volume-based for the ``normal`` and ``lognormal`` distribution. The ``custom`` distribution is the only distribution that is not supporting the ``number-based`` distribution. The will get fixed in a follow up PR. [#1875](https://github.com/chaos-polymtl/lethe/pull/1875)
 
 ## [Master] - 2026/01/15
