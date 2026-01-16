@@ -5,7 +5,7 @@
  * @brief Inserting particles following a log-normal distribution. At the end, the
  * mean and standard deviation of the inserted particles is computed. By
  * increasing the number of inserted particles, those two values should converge
- * to the parameter used as inputs.
+ * to the parameters used as inputs.
  */
 
 // Deal.II includes
@@ -149,8 +149,8 @@ main(int argc, char **argv)
            DEM::DEMProperties::PropertiesIndex,
            DistributionWeightingType::number_based>(0.005, 0.0005);
 
-      // For the volume based test, the mu and sigma were choose to match
-      // the same output as the number based one.
+      // For the volume-based test, the mu and sigma are chosen to match
+      // the same output as the number-based one.
       test<3,
            DEM::DEMProperties::PropertiesIndex,
            DistributionWeightingType::volume_based>(0.005151505, 0.0005151505);

@@ -41,13 +41,12 @@ NormalDistribution::NormalDistribution(
       // for. Because of this, volume-based distribution is not supported for
       // now. MFIX-exa uses a homotopy method to solve the system.
 
-
       // Volume-based parameters
-      const double mv  = d_average;
-      const double mv2 = mv * mv;
+      const double mv  = d_average; // volume-based mean
+      const double mv2 = mv * mv;   // volume-based mean squared
 
-      const double sv  = d_standard_deviation;
-      const double sv2 = sv * sv;
+      const double sv = d_standard_deviation; // volume-based standard deviation
+      const double sv2 = sv * sv; // volume-based standard deviation squared
 
       // Matrix and RHS
       LAPACKFullMatrix<double> system_matrix;
@@ -56,24 +55,26 @@ NormalDistribution::NormalDistribution(
       double       residual_l2_norm  = 1.;
       unsigned int iteration_counter = 0;
 
-      // Initial estimates of mu_n and sigma_n
-      double mu_n    = d_average;
+      // Initial estimates
+      // mean based on number
+      double mu_n = d_average;
+      // standard deviation based on number
       double sigma_n = d_standard_deviation;
-      while (residual_l2_norm > 1.e-12 && iteration_counter < 1000)
+
+      system_matrix.reinit(2);
+      system_rhs.reinit(2);
+      while (residual_l2_norm > 1.e-12 && iteration_counter < 100)
         {
-          system_matrix.reinit(2);
-          system_rhs.reinit(2);
+          const double mn  = mu_n;      // mean
+          const double mn2 = mn * mn;   // mean squared
+          const double mn3 = mn2 * mn;  // mean cubed
+          const double mn4 = mn2 * mn2; // mean ^4
+          const double mn5 = mn4 * mn;  // mean ^5
 
-          const double sn  = sigma_n;
-          const double sn2 = sn * sn;
-          const double sn3 = sn2 * sn;
-          const double sn4 = sn2 * sn2;
-
-          const double mn  = mu_n;
-          const double mn2 = mn * mn;
-          const double mn3 = mn2 * mn;
-          const double mn4 = mn2 * mn2;
-          const double mn5 = mn4 * mn;
+          const double sn  = sigma_n;   // standard deviation
+          const double sn2 = sn * sn;   // standard deviation squared
+          const double sn3 = sn2 * sn;  // standard deviation cubed
+          const double sn4 = sn2 * sn2; // standard deviation ^4
 
           // Jacobien
           const double dR1_sigma_n =
@@ -123,7 +124,7 @@ NormalDistribution::NormalDistribution(
           iteration_counter++;
         }
       AssertThrow(
-        iteration_counter < 1000.,
+        iteration_counter < 100.,
         ExcMessage("The numbered weighted mean and standard deviation of "
                    "the normal distribution has not been found from the volume "
                    "weighted values provided in the parameter file. To solve "

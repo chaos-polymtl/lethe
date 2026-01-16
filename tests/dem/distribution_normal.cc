@@ -5,7 +5,7 @@
  * @brief Inserting particles following a normal distribution. At the end, the
  * mean and standard deviation of the inserted particles is computed. By
  * increasing the number of inserted particles, those two values should converge
- * the parameter used as inputs.
+ * the parameters used as inputs.
  */
 
 // Deal.II includes
@@ -146,7 +146,8 @@ main(int argc, char **argv)
       test<3,
            DEM::DEMProperties::PropertiesIndex,
            DistributionWeightingType::number_based>(0.005, 0.0005);
-
+      // For the volume-based test, the mu and sigma are chose to match
+      // the same output as the number-based one.
       const double mu_v    = 0.0051470873786407766;
       const double sigma_v = 0.000492877682433179;
       test<3,
