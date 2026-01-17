@@ -61,10 +61,11 @@ NormalDistribution::NormalDistribution(
       // standard deviation based on number
       double sigma_n = d_standard_deviation;
 
-      system_matrix.reinit(2);
-      system_rhs.reinit(2);
       while (residual_l2_norm > 1.e-12 && iteration_counter < 100)
         {
+          system_matrix.reinit(2);
+          system_rhs.reinit(2);
+          
           const double mn  = mu_n;      // mean
           const double mn2 = mn * mn;   // mean squared
           const double mn3 = mn2 * mn;  // mean cubed
