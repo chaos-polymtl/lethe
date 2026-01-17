@@ -65,7 +65,7 @@ NormalDistribution::NormalDistribution(
         {
           system_matrix.reinit(2);
           system_rhs.reinit(2);
-          
+
           const double mn  = mu_n;      // mean
           const double mn2 = mn * mn;   // mean squared
           const double mn3 = mn2 * mn;  // mean cubed
