@@ -11,5 +11,6 @@ var searchData=
   ['normal_8',['normal',['../namespaceParameters_1_1Lagrangian.html#a83e8d3abd57e25e255ac5702e20b98dfafea087517c26fadd409bd4b9dc642555',1,'Parameters::Lagrangian']]],
   ['normal_5fnewton_9',['normal_newton',['../structParameters_1_1NonLinearSolver.html#aadd162b7703a436847050b2aaae3871da848ab1d6d2e577e49380e63ec45e0220',1,'Parameters::NonLinearSolver']]],
   ['noslip_10',['noslip',['../namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a38404c8a4847911c5e63eabe9a294b16',1,'BoundaryConditions']]],
-  ['number_11',['number',['../structParameters_1_1MeshAdaptation.html#a1fa9f6181e03ea0f83ec0dbcac755a45ab1bc248a7ff2b2e95569f56de68615df',1,'Parameters::MeshAdaptation']]]
+  ['number_11',['number',['../structParameters_1_1MeshAdaptation.html#a1fa9f6181e03ea0f83ec0dbcac755a45ab1bc248a7ff2b2e95569f56de68615df',1,'Parameters::MeshAdaptation']]],
+  ['number_5fbased_12',['number_based',['../namespaceParameters_1_1Lagrangian.html#ab28c126ba6e82486f6016aeb54a29e1ca779fb825a4a50647900a2d41430c3757',1,'Parameters::Lagrangian']]]
 ];

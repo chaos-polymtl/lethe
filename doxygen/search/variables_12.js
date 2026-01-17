@@ -93,7 +93,7 @@ var searchData=
   ['stabilization_90',['stabilization',['../structParameters_1_1Stabilization.html#ae7aa4d80ac010b83de1242172de802ef',1,'Parameters::Stabilization::stabilization'],['../classSimulationParameters.html#a4b697f9306ced1d13f9c4f82e94c8d52',1,'SimulationParameters::stabilization'],['../classNavierStokesOperatorBase.html#ab9efff8facaebd37096ecd6c38288ef7',1,'NavierStokesOperatorBase::stabilization']]],
   ['stabilization_5fparameter_91',['stabilization_parameter',['../classNavierStokesOperatorBase.html#ae8d363d2a6b894e69c37ac282b33756c',1,'NavierStokesOperatorBase']]],
   ['stabilization_5fparameter_5flsic_92',['stabilization_parameter_lsic',['../classNavierStokesOperatorBase.html#a6616318aab72fa75cad3dd2f7ff9eb71',1,'NavierStokesOperatorBase']]],
-  ['standard_5fdeviation_93',['standard_deviation',['../classNormalDistribution.html#a1df50c4fe9ef7a702e37a7bdd55d9782',1,'NormalDistribution']]],
+  ['standard_5fdeviation_93',['standard_deviation',['../classNormalDistribution.html#a5b28c0c702dea6b4cf8783211600c546',1,'NormalDistribution']]],
   ['start_5flog_94',['start_log',['../structcollision__event.html#aa1af3f4de41e56f357412240532d5e59',1,'collision_event']]],
   ['start_5ftime_95',['start_time',['../classParameters_1_1Laser.html#a75db00793ab2931723bf68e836663849',1,'Parameters::Laser']]],
   ['starting_5fpoint_96',['starting_point',['../structParameters_1_1Lagrangian_1_1ParticleRayTracing.html#acb7449ed805fab935cc1aad4f96410c6',1,'Parameters::Lagrangian::ParticleRayTracing']]],

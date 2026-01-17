@@ -103,8 +103,8 @@ Inheritance diagram for LogNormalDistribution:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a12a68c885c6ea2e3e7852a076ba87a85" id="r_a12a68c885c6ea2e3e7852a076ba87a85"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogNormalDistribution.html#a12a68c885c6ea2e3e7852a076ba87a85">LogNormalDistribution</a> (const double &amp;d_average, const double &amp;d_standard_deviation, const unsigned int &amp;prn_seed, const double min_cutoff, const double max_cutoff)</td></tr>
-<tr class="separator:a12a68c885c6ea2e3e7852a076ba87a85"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac05b953df1965097e944c074d70de044" id="r_ac05b953df1965097e944c074d70de044"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogNormalDistribution.html#ac05b953df1965097e944c074d70de044">LogNormalDistribution</a> (const double &amp;d_average, const double &amp;d_standard_deviation, const unsigned int &amp;prn_seed, double min_cutoff, double max_cutoff, const <a class="el" href="namespaceParameters_1_1Lagrangian.html#ab28c126ba6e82486f6016aeb54a29e1c">Parameters::Lagrangian::DistributionWeightingType</a> &amp;distribution_weighting_type)</td></tr>
+<tr class="separator:ac05b953df1965097e944c074d70de044"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f7a3bf7960aaa3a8bd56479e5b6005b" id="r_a5f7a3bf7960aaa3a8bd56479e5b6005b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogNormalDistribution.html#a5f7a3bf7960aaa3a8bd56479e5b6005b">particle_size_sampling</a> (const unsigned int &amp;number_of_particles) override</td></tr>
 <tr class="separator:a5f7a3bf7960aaa3a8bd56479e5b6005b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a577be6db92a240cc9618e63dbea8ef2b" id="r_a577be6db92a240cc9618e63dbea8ef2b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogNormalDistribution.html#a577be6db92a240cc9618e63dbea8ef2b">find_min_diameter</a> () override</td></tr>
@@ -121,27 +121,33 @@ Public Member Functions</h2></td></tr>
 Private Attributes</h2></td></tr>
 <tr class="memitem:aae25b9cc558dce011407ecd38e0b7901" id="r_aae25b9cc558dce011407ecd38e0b7901"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogNormalDistribution.html#aae25b9cc558dce011407ecd38e0b7901">sigma_ln</a></td></tr>
 <tr class="separator:aae25b9cc558dce011407ecd38e0b7901"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acb4d156fede9cae5bd0d85ff41b82141" id="r_acb4d156fede9cae5bd0d85ff41b82141"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogNormalDistribution.html#acb4d156fede9cae5bd0d85ff41b82141">mu_ln</a></td></tr>
-<tr class="separator:acb4d156fede9cae5bd0d85ff41b82141"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ade3c0896130265a43b6f51cce0fd7b" id="r_a2ade3c0896130265a43b6f51cce0fd7b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogNormalDistribution.html#a2ade3c0896130265a43b6f51cce0fd7b">mu_ln</a></td></tr>
+<tr class="separator:a2ade3c0896130265a43b6f51cce0fd7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af33f67d552611047c2a350331a1a87f2" id="r_af33f67d552611047c2a350331a1a87f2"><td class="memItemLeft" align="right" valign="top">std::mt19937&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogNormalDistribution.html#af33f67d552611047c2a350331a1a87f2">gen</a></td></tr>
 <tr class="separator:af33f67d552611047c2a350331a1a87f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8a5bc788de3518f505f181256cea7a02" id="r_a8a5bc788de3518f505f181256cea7a02"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogNormalDistribution.html#a8a5bc788de3518f505f181256cea7a02">dia_min_cutoff</a></td></tr>
-<tr class="separator:a8a5bc788de3518f505f181256cea7a02"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1e7aaa960e7e54e1887dc92302c15a9a" id="r_a1e7aaa960e7e54e1887dc92302c15a9a"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogNormalDistribution.html#a1e7aaa960e7e54e1887dc92302c15a9a">dia_max_cutoff</a></td></tr>
-<tr class="separator:a1e7aaa960e7e54e1887dc92302c15a9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pub_attribs_classDistribution"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_classDistribution')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classDistribution.html">Distribution</a></td></tr>
 <tr class="memitem:a7117bc322467803abcc3cd6397dde672 inherit pub_attribs_classDistribution" id="r_a7117bc322467803abcc3cd6397dde672"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDistribution.html#a7117bc322467803abcc3cd6397dde672">particle_sizes</a></td></tr>
 <tr class="separator:a7117bc322467803abcc3cd6397dde672 inherit pub_attribs_classDistribution"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_methods_classDistribution"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classDistribution')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classDistribution.html">Distribution</a></td></tr>
+<tr class="memitem:a2203fc363e9c2101c5809f9abb9dd080 inherit pro_methods_classDistribution" id="r_a2203fc363e9c2101c5809f9abb9dd080"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDistribution.html#a2203fc363e9c2101c5809f9abb9dd080">Distribution</a> (const <a class="el" href="namespaceParameters_1_1Lagrangian.html#ab28c126ba6e82486f6016aeb54a29e1c">Parameters::Lagrangian::DistributionWeightingType</a> &amp;distribution_weighting_type)</td></tr>
+<tr class="separator:a2203fc363e9c2101c5809f9abb9dd080 inherit pro_methods_classDistribution"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_attribs_classDistribution"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classDistribution')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classDistribution.html">Distribution</a></td></tr>
+<tr class="memitem:a7e09273b70dd38a97eb39f621a406bf3 inherit pro_attribs_classDistribution" id="r_a7e09273b70dd38a97eb39f621a406bf3"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="namespaceParameters_1_1Lagrangian.html#ab28c126ba6e82486f6016aeb54a29e1c">Parameters::Lagrangian::DistributionWeightingType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDistribution.html#a7e09273b70dd38a97eb39f621a406bf3">weighting_type</a></td></tr>
+<tr class="separator:a7e09273b70dd38a97eb39f621a406bf3 inherit pro_attribs_classDistribution"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d5b72937397fcf9c56e063344b4145f inherit pro_attribs_classDistribution" id="r_a2d5b72937397fcf9c56e063344b4145f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDistribution.html#a2d5b72937397fcf9c56e063344b4145f">dia_min_cutoff</a></td></tr>
+<tr class="separator:a2d5b72937397fcf9c56e063344b4145f inherit pro_attribs_classDistribution"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ff363f5c360f367d85ea31660dcfe96 inherit pro_attribs_classDistribution" id="r_a2ff363f5c360f367d85ea31660dcfe96"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDistribution.html#a2ff363f5c360f367d85ea31660dcfe96">dia_max_cutoff</a></td></tr>
+<tr class="separator:a2ff363f5c360f367d85ea31660dcfe96 inherit pro_attribs_classDistribution"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="distributions_8h_source.html#l00142">142</a> of file <a class="el" href="distributions_8h_source.html">distributions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8h_source.html#l00153">153</a> of file <a class="el" href="distributions_8h_source.html">distributions.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a12a68c885c6ea2e3e7852a076ba87a85" name="a12a68c885c6ea2e3e7852a076ba87a85"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a12a68c885c6ea2e3e7852a076ba87a85">&#9670;&#160;</a></span>LogNormalDistribution()</h2>
+<a id="ac05b953df1965097e944c074d70de044" name="ac05b953df1965097e944c074d70de044"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac05b953df1965097e944c074d70de044">&#9670;&#160;</a></span>LogNormalDistribution()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -167,14 +173,20 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const double&#160;</td>
+          <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>min_cutoff</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>max_cutoff</em>&#160;</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>max_cutoff</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="namespaceParameters_1_1Lagrangian.html#ab28c126ba6e82486f6016aeb54a29e1c">Parameters::Lagrangian::DistributionWeightingType</a> &amp;&#160;</td>
+          <td class="paramname"><em>distribution_weighting_type</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -192,13 +204,14 @@ Additional Inherited Members</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">prn_seed</td><td>Pseudo-random number seed for the diameter generation. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">min_cutoff</td><td>Minimum cutoff diameter. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">max_cutoff</td><td>Maximum cutoff diameter. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">distribution_weighting_type</td><td>Weighting type of the distribution. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00105">105</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00227">227</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="distributions_8h_source.html#l00219">dia_max_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00219">dia_min_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00209">mu_ln</a>, and <a class="el" href="distributions_8h_source.html#l00204">sigma_ln</a>.</p>
+<p class="reference">References <a class="el" href="distributions_8h_source.html#l00027">Distribution::dia_max_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00022">Distribution::dia_min_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00223">mu_ln</a>, <a class="el" href="distributions_8h_source.html#l00218">sigma_ln</a>, and <a class="el" href="distributions_8h_source.html#l00014">Distribution::weighting_type</a>.</p>
 
 </div>
 </div>
@@ -231,9 +244,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classDistribution.html#af426f32ff999e52f8ec4070ce85bb5bc">Distribution</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00173">173</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00312">312</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="distributions_8h_source.html#l00219">dia_max_cutoff</a>.</p>
+<p class="reference">References <a class="el" href="distributions_8h_source.html#l00027">Distribution::dia_max_cutoff</a>.</p>
 
 </div>
 </div>
@@ -265,9 +278,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classDistribution.html#a279e7f5a4849f5d5e1d1bf2dc571e71b">Distribution</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00167">167</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00306">306</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="distributions_8h_source.html#l00219">dia_min_cutoff</a>.</p>
+<p class="reference">References <a class="el" href="distributions_8h_source.html#l00022">Distribution::dia_min_cutoff</a>.</p>
 
 </div>
 </div>
@@ -305,9 +318,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classDistribution.html#a25c9716767378d25a26d211cc2b00824">Distribution</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00146">146</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00284">284</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="distributions_8h_source.html#l00219">dia_max_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00219">dia_min_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00214">gen</a>, <a class="el" href="distributions_8h_source.html#l00209">mu_ln</a>, <a class="el" href="distributions_8h_source.html#l00012">Distribution::particle_sizes</a>, and <a class="el" href="distributions_8h_source.html#l00204">sigma_ln</a>.</p>
+<p class="reference">References <a class="el" href="distributions_8h_source.html#l00027">Distribution::dia_max_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00022">Distribution::dia_min_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00228">gen</a>, <a class="el" href="distributions_8h_source.html#l00223">mu_ln</a>, <a class="el" href="distributions_8h_source.html#l00030">Distribution::particle_sizes</a>, and <a class="el" href="distributions_8h_source.html#l00218">sigma_ln</a>.</p>
 
 </div>
 </div>
@@ -356,63 +369,13 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classDistribution.html#ad712a3cd8733ff1565cec30bff96ac8e">Distribution</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00179">179</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00318">318</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="distributions_8h_source.html#l00219">dia_max_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00219">dia_min_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00209">mu_ln</a>, and <a class="el" href="distributions_8h_source.html#l00204">sigma_ln</a>.</p>
+<p class="reference">References <a class="el" href="distributions_8h_source.html#l00027">Distribution::dia_max_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00022">Distribution::dia_min_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00223">mu_ln</a>, and <a class="el" href="distributions_8h_source.html#l00218">sigma_ln</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a1e7aaa960e7e54e1887dc92302c15a9a" name="a1e7aaa960e7e54e1887dc92302c15a9a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1e7aaa960e7e54e1887dc92302c15a9a">&#9670;&#160;</a></span>dia_max_cutoff</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double LogNormalDistribution::dia_max_cutoff</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="distributions_8h_source.html#l00219">219</a> of file <a class="el" href="distributions_8h_source.html">distributions.h</a>.</p>
-
-</div>
-</div>
-<a id="a8a5bc788de3518f505f181256cea7a02" name="a8a5bc788de3518f505f181256cea7a02"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8a5bc788de3518f505f181256cea7a02">&#9670;&#160;</a></span>dia_min_cutoff</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double LogNormalDistribution::dia_min_cutoff</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Cut off diameters values. </p>
-
-<p class="definition">Definition at line <a class="el" href="distributions_8h_source.html#l00219">219</a> of file <a class="el" href="distributions_8h_source.html">distributions.h</a>.</p>
-
-</div>
-</div>
 <a id="af33f67d552611047c2a350331a1a87f2" name="af33f67d552611047c2a350331a1a87f2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af33f67d552611047c2a350331a1a87f2">&#9670;&#160;</a></span>gen</h2>
 
@@ -435,12 +398,12 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Random number generator for the diameter selection. </p>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8h_source.html#l00214">214</a> of file <a class="el" href="distributions_8h_source.html">distributions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8h_source.html#l00228">228</a> of file <a class="el" href="distributions_8h_source.html">distributions.h</a>.</p>
 
 </div>
 </div>
-<a id="acb4d156fede9cae5bd0d85ff41b82141" name="acb4d156fede9cae5bd0d85ff41b82141"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acb4d156fede9cae5bd0d85ff41b82141">&#9670;&#160;</a></span>mu_ln</h2>
+<a id="a2ade3c0896130265a43b6f51cce0fd7b" name="a2ade3c0896130265a43b6f51cce0fd7b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2ade3c0896130265a43b6f51cce0fd7b">&#9670;&#160;</a></span>mu_ln</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -449,7 +412,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const double LogNormalDistribution::mu_ln</td>
+          <td class="memname">double LogNormalDistribution::mu_ln</td>
         </tr>
       </table>
   </td>
@@ -461,7 +424,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Average diameter of the normal distribution. </p>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8h_source.html#l00209">209</a> of file <a class="el" href="distributions_8h_source.html">distributions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8h_source.html#l00223">223</a> of file <a class="el" href="distributions_8h_source.html">distributions.h</a>.</p>
 
 </div>
 </div>
@@ -487,7 +450,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Standard deviation of distribution of the normal distribution. </p>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8h_source.html#l00204">204</a> of file <a class="el" href="distributions_8h_source.html">distributions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8h_source.html#l00218">218</a> of file <a class="el" href="distributions_8h_source.html">distributions.h</a>.</p>
 
 </div>
 </div>

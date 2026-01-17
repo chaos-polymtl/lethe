@@ -33,6 +33,7 @@ In this subsection, gravitational acceleration, and the physical properties of t
       set maximum diameter cutoff           = -1.
 
       # If distribution type = normal, lognormal or custom
+      set distribution weighting basis      = number
       set distribution prn seed             = 1
 
       # For every distribution types
@@ -86,41 +87,60 @@ In this subsection, gravitational acceleration, and the physical properties of t
 * For each particle type, we have to define a separate subsection (for instance, ``subsection particle type 0``) to specify its physical properties.
 
 .. note::
-    If the particles in a simulation are monodispersed and have the same physical properties, the ``number of particle types`` should be equal to zero. For polydispersed systems, the ``number of particle types`` is selected equal to the number of particles types in the simulation. For each particle type, a separate subsection ``particle type n`` should be defined (n starts from zero to ``number of particle types`` - 1) which contains all the physical properties related to that particle type.
+    For each particle type, a separate subsection ``particle type n`` should be defined (n starts from zero to ``number of particle types`` - 1) which contains all the physical properties related to that particle type.
 
 * The ``size distribution type`` parameter specifies the size distribution for each particle type. For each particle type, four ``size distribution type`` can be defined: ``uniform``, ``normal``, ``lognormal`` and ``custom``.
 
   - For the ``uniform`` size distribution, the diameter of the particles is constant.
   - For the ``normal`` size distribution, the particle diameters are randomly sampled from a normal distribution with an average diameter and a standard deviation.
-  - For the ``lognormal`` size distribution, the particle diameters are randomly sampled from a lognormal distribution with an average diameter and a standard deviation.
+  - For the ``lognormal`` size distribution, the particle diameters are randomly sampled from a lognormal distribution with an arithmetic average diameter and a standard deviation.
   - For the ``custom`` size distribution, particle diameters are sampled from a list of diameters with a corresponding list of probabilities.
 
 .. note::
-    In the ``custom`` size distribution, the probability values are based on the volume fraction taken by all the particles of the associated diameter, not to the total number of particles. For example, if a probability is equal to ``0.5`` , this means that half of the total volume of inserted particles will be occupied by particle with the associated diameter value.
+    In the ``custom`` size distribution, the probability values represent the fraction of the total particle volume occupied by each diameter, rather than the fraction of particles by number. For example, if a probability is 0.5 for a particular diameter, this means that, as the total number of inserted particles becomes very large, approximately half of the total particle volume will consist of particles with that diameter.
 
 * The ``diameter`` parameter defines the diameter of the particles in a ``uniform`` distribution.
 
-* For a ``normal`` distribution, the ``average diameter`` and the ``standard deviation`` parameters defines the average (:math:`{\mu_d}`) and the standard deviation (:math:`{\sigma_d}`) of the particle size distribution *weighted by number*. The ``minimum cutoff`` and ``maximum cutoff`` parameters can be used to limit the lower and upper value of the diameter sampled from the distribution. If set to ``-1``, those two bounds are set to :math:`\mu_d \pm2.5 \sigma_d`. The number-weighted probability density function (:math:`f_{x}^{N}(d)`)  of a normal distribution is defined as:
+* For a ``normal`` distribution, the ``average diameter`` and the ``standard deviation`` parameters define the average (:math:`{\mu_d}`) and the standard deviation (:math:`{\sigma_d}`) of the particle size distribution. The ``minimum cutoff`` and ``maximum cutoff`` parameters can be used to limit the lower and upper value of the diameter sampled from the distribution. If set to ``-1``, those two bounds are set to :math:`\mu_d \pm2.5 \sigma_d`. The number-weighted probability density function (:math:`f_{x}^{N}(d)`)  of a normal distribution is defined as:
 
 .. math::
     f_{x}^{N}(d)=\frac{1}{\sigma_d\sqrt{2\pi}}\exp\left(-\frac{(d-\mu_d)^2}{2\sigma_{d}^2}\right).
 
-* For a ``lognormal`` distribution, the ``average diameter`` and the ``standard deviation`` parameters defines the average (:math:`{\mu_d}`) and the standard deviation (:math:`{\sigma_d}`) of the particle size distribution *weighted by number*. The ``minimum cutoff`` and ``maximum cutoff`` parameters can be used to limit the lower and upper value of the diameter sampled from the distribution. If set to ``-1``, those two bounds are set to :math:`\exp(\mu \pm2.5 \sigma)`. The number-weighted probability density function (:math:`f_{x}^{N}(d)`)  of a lognormal distribution is defined as:
+* For a ``lognormal`` distribution, the ``average diameter`` and the ``standard deviation`` parameters defines the arithmetic average (:math:`{\mu_d}`) and the arithmetic standard deviation (:math:`{\sigma_d}`) of the particle size distribution. The ``minimum cutoff`` and ``maximum cutoff`` parameters can be used to limit the lower and upper value of the diameter sampled from the distribution. If set to ``-1``, those two bounds are set to :math:`\exp(\mu \pm2.5 \sigma)`. The number-weighted probability density function (:math:`f_{x}^{N}(d)`)  of a lognormal distribution is defined as:
 
 .. math::
-    f_{x}^{N}(d)=\frac{1}{\sigma\sqrt{2\pi}}\exp\left(-\frac{(d-\mu)^2}{2\sigma^2}\right).
+    f_{x}^{N}(d)=\frac{1}{\sigma_n\sqrt{2\pi}}\exp\left(-\frac{(d-\mu_n)^2}{2\sigma^2}\right).
 
-where :math:`{\mu}` and :math:`{\sigma}` are the mean and standard deviation of the underlying normal distribution which can be computed using:
-
-.. math::
-    \sigma = \sqrt{\ln \left(1 + \left(\frac{\sigma_d}{\mu_d}\right)^2\right)},
+where :math:`{\mu_n}` and :math:`{\sigma_n}` are the are the number-weighted mean and standard deviation of the underlying normal distribution which can be computed using :
 
 .. math::
-    \mu = \ln(\mu_d) - 0.5 \sigma^2.
+    \sigma_n = \sqrt{\ln \left(1 + \left(\frac{\sigma_d}{\mu_d}\right)^2\right)},
+
+.. math::
+    \mu_n = \ln(\mu_d) - 0.5 \sigma_n^2.
 
 * For a ``custom`` distribution, the ``custom diameters`` parameter defines the different diameter values used when generating particles. The ``custom volume fractions`` parameter defines the probabilities corresponding to each diameter value previously declared based on volume fraction. Both list must have the same length.
 
-* For a ``normal`` or a ``custom`` distribution, the ``distribution prn seed`` parameter defines the pseudo-random number (PRN) generator with which the diameters values are getting generated.
+* The ``distribution weighting basis`` parameter defines the basis of the distribution. This parameter can be defined as ``volume`` or ``number``. A number-weighted cumulative density function (CDF) (:math:`{Q_0(d)}}`) can be interpreted as the number of particle that have a diameter smaller then  :math:`{d}}` divided by the total number of particles. A volume-weighted CDF (:math:`{Q_3(d)}}`) can be interpreted as the sum of the volume occupied by the particles that have a diameter smaller then  :math:`{d}}` divided by the total volume of particles. As such, number- and volume-weighted distributions a of given particle sample are not the same, but it is possible to correlate these two definitions. For a ``normal`` distribution, the relation between the number-weighted mean (:math:`{\mu_n}`) and standard deviation (:math:`{\sigma_n}`) and the volume-weighted mean (:math:`{\mu_v}`) and standard deviation (:math:`{\sigma_v}`) is given by:
+
+.. math::
+    \mu_v = \frac{3 \sigma_n ^4 + 6 \sigma_n^2\mu_n^2 + \mu_n^4 }{3. \sigma_n \mu_n + \mu_n^3}
+
+.. math::
+    \sigma_v = \frac{3 \sigma_n ^4 \left( 3 \mu_n + 2 b \right) + \sigma_n^2 \left( \mu_n^3 + 6 \mu_n^2 b + 3 \mu_n b^2 \right) + \mu_n3 b^2}{3. \sigma_n \mu_n + \mu_n^3 }
+
+where :math:`{b = \mu_n - \mu_v}`. For a lognormal distribution, the corresponding relations are defined as:
+
+.. math::
+    \sigma_v = \sigma_n
+
+.. math::
+    \mu_v = \mu_n + 3 \sigma_v^2
+
+.. note::
+    The ``distribution weighting basis`` parameter set to ``volume`` is only functional for ``lognormal`` and ``custom``distributions. For ``normal`` distributions, it must be set to ``number``.
+
+* For ``normal``,  ``lognormal`` or a ``custom`` distributions, the ``distribution prn seed`` parameter defines the pseudo-random number (PRN) generator with which the diameters values are getting generated.
 
 * The ``number of particles`` parameter defines the number of particles for each type.
 

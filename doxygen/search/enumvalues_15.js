@@ -12,5 +12,6 @@ var searchData=
   ['vof_5fdirichlet_9',['vof_dirichlet',['../namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a5a19e60e01f033270d00a46bd121b3c5',1,'BoundaryConditions']]],
   ['void_5ffraction_10',['void_fraction',['../multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666',1,'multiphysics.h']]],
   ['volume_11',['volume',['../classParameters_1_1Lagrangian_1_1InsertionInfo.html#a8935f71b97c7cce069b63a2e28949a4ba210ab9e731c9c36c2c38db15c28a8d1c',1,'Parameters::Lagrangian::InsertionInfo']]],
-  ['volumetric_5fcontribution_12',['volumetric_contribution',['../namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2fa3906bf6786ff134ebbc0d81bd7f84cee',1,'DEM::CFDDEMProperties']]]
+  ['volume_5fbased_12',['volume_based',['../namespaceParameters_1_1Lagrangian.html#ab28c126ba6e82486f6016aeb54a29e1ca7788d7cf7f267d82eee8b2a1e3782624',1,'Parameters::Lagrangian']]],
+  ['volumetric_5fcontribution_13',['volumetric_contribution',['../namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2fa3906bf6786ff134ebbc0d81bd7f84cee',1,'DEM::CFDDEMProperties']]]
 ];
