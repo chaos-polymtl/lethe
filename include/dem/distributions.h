@@ -1,13 +1,31 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_distributions_h
 #define lethe_distributions_h
 
+#include <core/parameters_lagrangian.h>
+
 #include <random>
 
 class Distribution
 {
+protected:
+  const Parameters::Lagrangian::DistributionWeightingType weighting_type;
+
+  Distribution(const Parameters::Lagrangian::DistributionWeightingType
+                 &distribution_weighting_type);
+
+  /**
+   * @brief Minimal cutoff diameters values.
+   */
+  double dia_min_cutoff;
+
+  /**
+   * @brief Maximum cutoff diameters values.
+   */
+  double dia_max_cutoff;
+
 public:
   std::vector<double> particle_sizes;
 
@@ -66,12 +84,15 @@ public:
    * @param[in] prn_seed Pseudo-random number seed for the diameter generation.
    * @param[in] min_cutoff Minimum cutoff diameter.
    * @param[in] max_cutoff Maximum cutoff diameter.
+   * @param[in[ distribution_weighting_type Weighting type of the distribution.
    */
   NormalDistribution(const double       &d_average,
                      const double       &d_standard_deviation,
                      const unsigned int &prn_seed,
-                     const double       &min_cutoff,
-                     const double       &max_cutoff);
+                     double              min_cutoff,
+                     double              max_cutoff,
+                     const Parameters::Lagrangian::DistributionWeightingType
+                       &distribution_weighting_type);
 
   /**
    * @brief Carries out the size sampling of each particle inserted at an insertion
@@ -115,27 +136,17 @@ private:
   /**
    * @brief Average diameter of the normal distribution.
    */
-  const double diameter_average;
+  double diameter_average;
 
   /**
-   * @brief Standard deviation of distribution of the normal distribution.
+   * @brief Standard deviation of the normal distribution.
    */
-  const double standard_deviation;
+  double standard_deviation;
 
   /**
    * @brief Random number generator for the diameter selection.
    */
   std::mt19937 gen;
-
-  /**
-   * @brief Minimal cut off diameters values.
-   */
-  double dia_min_cutoff;
-
-  /**
-   * @brief Maximum cut off diameters values.
-   */
-  double dia_max_cutoff;
 };
 
 
@@ -152,12 +163,15 @@ public:
    * @param[in] prn_seed Pseudo-random number seed for the diameter generation.
    * @param[in] min_cutoff Minimum cutoff diameter.
    * @param[in] max_cutoff Maximum cutoff diameter.
+   * @param[in] distribution_weighting_type Weighting type of the distribution.
    */
   LogNormalDistribution(const double       &d_average,
                         const double       &d_standard_deviation,
                         const unsigned int &prn_seed,
-                        const double        min_cutoff,
-                        const double        max_cutoff);
+                        double              min_cutoff,
+                        double              max_cutoff,
+                        const Parameters::Lagrangian::DistributionWeightingType
+                          &distribution_weighting_type);
 
   /**
    * @brief Carries out the size sampling of each particle inserted at an insertion
@@ -206,17 +220,12 @@ private:
   /**
    * @brief Average diameter of the normal distribution.
    */
-  const double mu_ln;
+  double mu_ln;
 
   /**
    * @brief Random number generator for the diameter selection.
    */
   std::mt19937 gen;
-
-  /**
-   * @brief Cut off diameters values.
-   */
-  double dia_min_cutoff, dia_max_cutoff;
 };
 
 class UniformDistribution : public Distribution
@@ -286,10 +295,17 @@ public:
    * @param[in] d_probabilities Vector of probability values based on volume
    * fraction with respect to each diameter value.
    * @param[in] prn_seed Pseudo-random number seed for the diameter generation.
+  // * @param[in] min_cutoff Minimum cutoff diameter.
+  // * @param[in] max_cutoff Maximum cutoff diameter.
+   * @param[in] distribution_weighting_type Weighting type of the distribution.
    */
   CustomDistribution(const std::vector<double> &d_list,
                      const std::vector<double> &d_probabilities,
-                     const unsigned int        &prn_seed);
+                     const unsigned int        &prn_seed,
+                     // double                     min_cutoff,
+                     // double                     max_cutoff,
+                     const Parameters::Lagrangian::DistributionWeightingType
+                       &distribution_weighting_type);
 
   /**
    * @brief Carries out the size sampling of each particle inserted at an insertion
@@ -347,5 +363,68 @@ private:
    */
   std::mt19937 gen;
 };
+
+/**
+ * @brief Setup the distributions for each particle type at the start of a
+ * simulation.
+ */
+using namespace Parameters::Lagrangian;
+inline void
+setup_distributions(const LagrangianPhysicalProperties &lpp,
+                    std::vector<std::shared_ptr<Distribution>>
+                                &size_distribution_object_container,
+                    double      &maximum_particle_diameter,
+                    unsigned int mpi_process_id,
+                    const ConditionalOStream &pcout)
+{
+  for (unsigned int particle_type = 0; particle_type < lpp.particle_type_number;
+       particle_type++)
+    {
+      switch (lpp.distribution_type.at(particle_type))
+        {
+          case SizeDistributionType::uniform:
+            size_distribution_object_container[particle_type] =
+              std::make_shared<UniformDistribution>(
+                lpp.particle_average_diameter.at(particle_type));
+            break;
+          case SizeDistributionType::normal:
+            size_distribution_object_container[particle_type] =
+              std::make_shared<NormalDistribution>(
+                lpp.particle_average_diameter.at(particle_type),
+                lpp.particle_size_std.at(particle_type),
+                lpp.seed_for_distributions[particle_type] + mpi_process_id,
+                lpp.diameter_min_cutoff.at(particle_type),
+                lpp.diameter_max_cutoff.at(particle_type),
+                lpp.distribution_weighting_type.at(particle_type));
+            break;
+          case SizeDistributionType::lognormal:
+            size_distribution_object_container[particle_type] =
+              std::make_shared<LogNormalDistribution>(
+                lpp.particle_average_diameter.at(particle_type),
+                lpp.particle_size_std.at(particle_type),
+                lpp.seed_for_distributions[particle_type] + mpi_process_id,
+                lpp.diameter_min_cutoff.at(particle_type),
+                lpp.diameter_max_cutoff.at(particle_type),
+                lpp.distribution_weighting_type.at(particle_type));
+            break;
+          case SizeDistributionType::custom:
+            size_distribution_object_container[particle_type] =
+              std::make_shared<CustomDistribution>(
+                lpp.particle_custom_diameter.at(particle_type),
+                lpp.particle_custom_probability.at(particle_type),
+                lpp.seed_for_distributions[particle_type] + mpi_process_id,
+                // lpp.diameter_min_cutoff.at(particle_type),
+                // lpp.diameter_max_cutoff.at(particle_type),
+                lpp.distribution_weighting_type.at(particle_type));
+            break;
+        }
+      size_distribution_object_container[particle_type]
+        ->print_psd_declaration_string(particle_type, pcout);
+
+      maximum_particle_diameter = std::max(
+        maximum_particle_diameter,
+        size_distribution_object_container[particle_type]->find_max_diameter());
+    }
+}
 
 #endif

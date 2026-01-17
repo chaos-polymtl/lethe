@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_parameters_lagrangian_h
@@ -49,6 +49,12 @@ namespace Parameters
       custom
     };
 
+    enum class DistributionWeightingType : std::uint8_t
+    {
+      number_based,
+      volume_based
+    };
+
     struct LagrangianPhysicalProperties
     {
     public:
@@ -73,11 +79,14 @@ namespace Parameters
       std::unordered_map<unsigned int, std::vector<double>>
         particle_custom_probability;
 
+      // Random seed for the size distribution
+      std::vector<unsigned int> seed_for_distributions;
+
       // Cutoff used for the lognormal distribution
       std::vector<double> diameter_min_cutoff, diameter_max_cutoff;
 
-      // Random seed for the size distribution
-      std::vector<unsigned int> seed_for_distributions;
+      // Distribution weighting type of each particle type
+      std::vector<DistributionWeightingType> distribution_weighting_type;
 
       // Distribution type of each particle type
       std::vector<SizeDistributionType> distribution_type;
@@ -220,6 +229,9 @@ namespace Parameters
        * based on volume fraction for the custom distribution for each particle
        * type.
        * @param[in,out] seed_for_dist Random seed for the size distribution.
+       * @param[in,out] dia_min_cutoff
+       * @param[in,out] dia_max_cutoff
+       * @param[in,out] distribution_weighting_basis_type
        * @param[in,out] p_number Number of each particle type.
        * @param[in,out] p_density Density of each particle type.
        * @param[in,out] p_youngs_modulus Young's modulus of each particle type.
@@ -255,10 +267,12 @@ namespace Parameters
         std::unordered_map<unsigned int, std::vector<double>>
           &p_custom_diameter,
         std::unordered_map<unsigned int, std::vector<double>>
-                                                 &p_custom_probability,
-        std::vector<unsigned int>                &seed_for_dist,
-        std::vector<double>                      &diameter_min_cutoff,
-        std::vector<double>                      &diameter_max_cutoff,
+                                  &p_custom_probability,
+        std::vector<unsigned int> &seed_for_dist,
+        std::vector<double>       &dia_min_cutoff,
+        std::vector<double>       &dia_max_cutoff,
+        std::vector<DistributionWeightingType>
+          &distribution_weighting_basis_type,
         std::unordered_map<unsigned int, int>    &p_number,
         std::unordered_map<unsigned int, double> &p_density,
         std::unordered_map<unsigned int, double> &p_youngs_modulus,

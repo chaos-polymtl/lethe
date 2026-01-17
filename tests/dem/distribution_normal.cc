@@ -1,11 +1,11 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
  * @brief Inserting particles following a normal distribution. At the end, the
  * mean and standard deviation of the inserted particles is computed. By
  * increasing the number of inserted particles, those two values should converge
- * the parameter used as inputs.
+ * the parameters used as inputs.
  */
 
 // Deal.II includes
@@ -22,9 +22,11 @@
 
 using namespace dealii;
 
-template <int dim, typename PropertiesIndex>
+template <int dim,
+          typename PropertiesIndex,
+          DistributionWeightingType weighting_type>
 void
-test()
+test(const double mu, const double sigma)
 {
   // Creating the mesh and refinement
   parallel::distributed::Triangulation<dim> tr(MPI_COMM_WORLD);
@@ -39,41 +41,49 @@ test()
   MappingQ<dim>            mapping(1);
   DEMSolverParameters<dim> dem_parameters;
 
+  Parameters::Lagrangian::InsertionInfo<dim> &insert_info =
+    dem_parameters.insertion_info;
+
+  Parameters::Lagrangian::LagrangianPhysicalProperties &lpp =
+    dem_parameters.lagrangian_physical_properties;
+
   // Defining simulation general parameters
-  dem_parameters.insertion_info.insertion_box_point_1 = {-0.5, -0.5, -0.05};
-  dem_parameters.insertion_info.insertion_box_point_2 = {0.5, 0.5, 0.05};
-  dem_parameters.insertion_info.direction_sequence    = {0, 1, 2};
-  dem_parameters.insertion_info.inserted_this_step    = 1000;
-  dem_parameters.insertion_info.distance_threshold    = 2;
-  dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
-  dem_parameters.lagrangian_physical_properties.distribution_type.push_back(
+  // Insertion info
+  insert_info.insertion_box_point_1    = {-0.5, -0.5, -0.05};
+  insert_info.insertion_box_point_2    = {0.5, 0.5, 0.05};
+  insert_info.direction_sequence       = {0, 1, 2};
+  insert_info.inserted_this_step       = 1000;
+  insert_info.distance_threshold       = 2;
+  insert_info.insertion_maximum_offset = 0.75;
+  insert_info.seed_for_insertion       = 19;
+
+  // Lagrangian physical properties
+  lpp.particle_type_number = 1;
+  lpp.distribution_weighting_type.push_back(weighting_type);
+  lpp.distribution_type.push_back(
     Parameters::Lagrangian::SizeDistributionType::normal);
-  dem_parameters.lagrangian_physical_properties.particle_average_diameter[0] =
-    0.005;
-  dem_parameters.lagrangian_physical_properties.particle_size_std[0] = 0.0005;
-  dem_parameters.lagrangian_physical_properties.seed_for_distributions
-    .push_back(10);
-  dem_parameters.lagrangian_physical_properties.diameter_min_cutoff.push_back(
-    -1.);
-  dem_parameters.lagrangian_physical_properties.diameter_max_cutoff.push_back(
-    -1.);
-  dem_parameters.lagrangian_physical_properties.density_particle[0] = 2500;
-  dem_parameters.lagrangian_physical_properties.number[0]           = 1000;
-  dem_parameters.insertion_info.insertion_maximum_offset            = 0.75;
-  dem_parameters.insertion_info.seed_for_insertion                  = 19;
+  lpp.particle_average_diameter[0] = mu;
+  lpp.particle_size_std[0]         = sigma;
+  lpp.seed_for_distributions.push_back(10);
+  lpp.diameter_min_cutoff.push_back(-1.);
+  lpp.diameter_max_cutoff.push_back(-1.);
+  lpp.density_particle[0] = 2500;
+  lpp.number[0]           = 1000;
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
     tr, mapping, PropertiesIndex::n_properties);
 
-  // Calling uniform insertion
+  // Calling normal distribution
   std::vector<std::shared_ptr<Distribution>> distribution_object_container;
-  distribution_object_container.push_back(std::make_shared<NormalDistribution>(
-    dem_parameters.lagrangian_physical_properties.particle_average_diameter[0],
-    dem_parameters.lagrangian_physical_properties.particle_size_std[0],
-    dem_parameters.lagrangian_physical_properties.seed_for_distributions[0],
-    dem_parameters.lagrangian_physical_properties.diameter_min_cutoff[0],
-    dem_parameters.lagrangian_physical_properties.diameter_max_cutoff[0]));
+
+  distribution_object_container.push_back(
+    std::make_shared<NormalDistribution>(lpp.particle_average_diameter[0],
+                                         lpp.particle_size_std[0],
+                                         lpp.seed_for_distributions[0],
+                                         lpp.diameter_min_cutoff[0],
+                                         lpp.diameter_max_cutoff[0],
+                                         lpp.distribution_weighting_type[0]));
 
   // Calling volume insertion
   InsertionVolume<dim, PropertiesIndex> insertion_object(
@@ -85,10 +95,15 @@ test()
   insertion_object.insert(particle_handler, tr, dem_parameters);
 
   // Output
-  double             sum_dp          = 0.;
-  int                particle_number = 0;
-  const unsigned int total_number_of_particles =
-    dem_parameters.lagrangian_physical_properties.number[0];
+  if constexpr (weighting_type == DistributionWeightingType::number_based)
+    deallog << "Numbered weighted normal distribution " << std::endl;
+
+  if constexpr (weighting_type == DistributionWeightingType::volume_based)
+    deallog << "Volume weighted normal distribution " << std::endl;
+
+  double             sum_dp                    = 0.;
+  int                particle_number           = 0;
+  const unsigned int total_number_of_particles = lpp.number[0];
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
        ++particle, ++particle_number)
@@ -113,11 +128,11 @@ test()
 
       variance += std::pow(dp - mean_dp, 2);
     }
-  variance           = variance / total_number_of_particles;
-  const double sigma = sqrt(variance);
+  variance                 = variance / total_number_of_particles;
+  const double sigma_verif = std::sqrt(variance);
 
   deallog << "Distribution mean: " << mean_dp << std::endl;
-  deallog << "Distribution standard distribution: " << sigma << std::endl;
+  deallog << "Distribution standard deviation: " << sigma_verif << std::endl;
 }
 
 int
@@ -128,7 +143,16 @@ main(int argc, char **argv)
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
       initlog();
-      test<3, DEM::DEMProperties::PropertiesIndex>();
+      test<3,
+           DEM::DEMProperties::PropertiesIndex,
+           DistributionWeightingType::number_based>(0.005, 0.0005);
+      // For the volume-based test, the mu and sigma are chose to match
+      // the same output as the number-based one.
+      const double mu_v    = 0.0051470873786407766;
+      const double sigma_v = 0.000492877682433179;
+      test<3,
+           DEM::DEMProperties::PropertiesIndex,
+           DistributionWeightingType::volume_based>(mu_v, sigma_v);
     }
   catch (std::exception &exc)
     {
