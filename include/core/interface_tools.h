@@ -677,7 +677,7 @@ namespace InterfaceTools
      * opposite faces
      */
     inline void
-    get_face_dofs(unsigned int               local_face_id,
+    get_face_local_dofs(unsigned int               local_face_id,
                            std::vector<unsigned int> &local_dofs)
     {
       local_dofs = face_dofs_map.at(local_face_id);
@@ -940,6 +940,7 @@ namespace InterfaceTools
       const Point<dim>                  &x_I_real,
       const DerivativeForm<1, dim - 1, dim>
                                &transformation_jacobian,
+      const std::vector<double> &face_local_dof_values,                         
       LAPACKFullMatrix<double> &jacobian_matrix)
     {
 
@@ -993,6 +994,14 @@ namespace InterfaceTools
                 }
               jacobian_matrix.set(i,j, matrix_ij);
             }
+        }
+
+      double off_diag_H = 0;
+      if constexpr (dim == 3)
+        {
+          off_diag_H = jacobian_matrix(0,1) + face_local_dof_values[0] -face_local_dof_values[1] -face_local_dof_values[2] + face_local_dof_values[3];
+          jacobian_matrix.set(0,1, off_diag_H);
+          jacobian_matrix.set(1,0, off_diag_H);
         }
         
         // std::cout <<"hessian_matrix = " << std::endl;

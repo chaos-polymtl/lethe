@@ -17,6 +17,8 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
+#include <deal.II/base/timer.h>
+
 // Lethe
 #include <core/interface_tools.h>
 #include <core/parameters.h>
@@ -36,6 +38,9 @@ test()
   signed distance computations for a sphere.
   */
   MPI_Comm mpi_communicator(MPI_COMM_WORLD);
+
+  TimerOutput timer(std::cout, TimerOutput::summary,
+                   TimerOutput::wall_times);
 
   // Triangulation (as a shared_ptr to reproduce an arbitrary background solver
   // architecture)
@@ -100,14 +105,16 @@ test()
       max_reinitialization_distance,
       0.0,
       1.0,
-      Parameters::Verbosity::quiet);
+      Parameters::Verbosity::verbose);
 
   signed_distance_solver->setup_dofs();
   signed_distance_solver->set_level_set_from_background_mesh(
     background_dof_handler, background_level_set);
 
   // Solve the signed_distance field.
-  signed_distance_solver->solve();
+  timer.enter_subsection ("Signed distance solver");
+    signed_distance_solver->solve();
+  timer.leave_subsection();
 
   // Get the signed_distance field from the SignedDistanceSolver
   auto &signed_distance = signed_distance_solver->get_signed_distance();
