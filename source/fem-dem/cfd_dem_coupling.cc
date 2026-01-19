@@ -1503,6 +1503,12 @@ template <int dim>
 void
 CFDDEMSolver<dim>::solve()
 {
+  AssertThrow(
+    this->simulation_parameters.simulation_control.method !=
+      Parameters::SimulationControl::TimeSteppingMethod::steady,
+    ExcMessage(
+      "To run a steady simulation of a fluid-particle mixture, the lethe-fluid-vans application should be used."));
+
   this->computing_timer.enter_subsection("Read mesh, manifolds and particles");
 
   read_mesh_and_manifolds(
