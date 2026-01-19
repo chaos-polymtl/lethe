@@ -1,5 +1,6 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019, 2021, 2023-2024, 2026 The Lethe Authors
-// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+// SPDX-FileCopyrightText: Copyright (c) 2019, 2021, 2023-2024, 2026 The Lethe
+// Authors SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR
+// LGPL-2.1-or-later
 
 // check the read and write of simulationcontrol
 
