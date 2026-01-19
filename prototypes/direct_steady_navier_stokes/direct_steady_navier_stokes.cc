@@ -411,11 +411,7 @@ DirectSteadyNavierStokes<dim>::refine_mesh()
   setup_dofs();
   BlockVector<double> tmp(dofs_per_block);
 
-#if DEAL_II_VERSION_GTE(9, 7, 0)
   solution_transfer.interpolate(tmp);
-#else
-  solution_transfer.interpolate(tmp, present_solution);
-#endif
 
   nonzero_constraints.distribute(tmp);
   initialize_system();
@@ -432,11 +428,7 @@ DirectSteadyNavierStokes<dim>::refine_mesh_uniform()
   setup_dofs();
   BlockVector<double> tmp(dofs_per_block);
 
-#if DEAL_II_VERSION_GTE(9, 7, 0)
   solution_transfer.interpolate(tmp);
-#else
-  solution_transfer.interpolate(tmp, present_solution);
-#endif
 
   nonzero_constraints.distribute(tmp);
   initialize_system();

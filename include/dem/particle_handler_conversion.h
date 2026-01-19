@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef particle_handler_conversion_h
@@ -84,15 +84,9 @@ convert_particle_handler(
   // Calculate global bounding box for global insertion
   const auto my_bounding_box = GridTools::compute_mesh_predicate_bounding_box(
     triangulation, IteratorFilters::LocallyOwnedCell());
-#if DEAL_II_VERSION_GTE(9, 7, 0)
   const auto global_bounding_boxes =
     Utilities::MPI::all_gather(triangulation.get_mpi_communicator(),
                                my_bounding_box);
-#else
-  const auto global_bounding_boxes =
-    Utilities::MPI::all_gather(triangulation.get_communicator(),
-                               my_bounding_box);
-#endif
 
   // Do the global insertion
   ph_out.insert_global_particles(ph_out_points,

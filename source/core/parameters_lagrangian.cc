@@ -846,13 +846,7 @@ namespace Parameters
             std::make_shared<Functions::ParsedFunction<dim>>(1);
           prm.enter_subsection("cell weight function");
           {
-#if DEAL_II_VERSION_GTE(9, 7, 0)
             cell_weight_function_parsed->declare_parameters(prm, 1, "1000");
-
-#else
-            cell_weight_function_parsed->declare_parameters(prm, 1);
-
-#endif
           }
           prm.leave_subsection();
 

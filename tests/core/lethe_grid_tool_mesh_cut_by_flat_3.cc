@@ -12,16 +12,13 @@
 // Lethe
 #include <core/lethe_grid_tools.h>
 
+#include <deal.II/grid/cell_data.h>
+
 #include <deal.II/numerics/data_out.h>
 
-#include <algorithm>
-
-// This include is only required for 9.7 and above.
-#if DEAL_II_VERSION_GTE(9, 7, 0)
-#  include <deal.II/grid/cell_data.h>
-#endif
-
 #include <../tests/tests.h>
+
+#include <algorithm>
 
 
 void
