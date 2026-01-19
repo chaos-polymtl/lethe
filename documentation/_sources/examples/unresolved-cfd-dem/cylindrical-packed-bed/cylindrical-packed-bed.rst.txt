@@ -370,7 +370,21 @@ The simulation is run using the ``lethe-fluid-vans`` application. Assuming that 
 -------------
 Results VANS
 -------------
-The results are shown in the plots below. The first plot visualises the velocity of the fluid and the void fraction along the center axis of the cylinder. We see that the fluid rapidly accelerates in as the void fraction decreases to ensure mass conservation. The second plot displays the pressure drop resulting from the particle-fluid interactions. The quasi totality of the pressure drop occurs within the bed of particles.
+The results are shown in the plots below. The first plot visualizes the velocity of the fluid and the void fraction along the axis of the cylinder. As expected, within the particle bed, the fluid velocity rises sharply while the void fraction decreases, reflecting mass conservation.
+
+The second plot displays the pressure drop resulting from particle-fluid interactions. It can be seen that the quasi-totality of the pressure drop occurs within the bed of particles. The dashed horizontal line corresponds to the pressure drop obtained from the Ergun correlation [#Ergun1952]_:
+
+.. math::
+    \Delta P = \left( \frac{150 (1-\varepsilon)^2 \mu U}{d_p^2 \varepsilon^3} + \frac{1.75 (1-\varepsilon) \rho U^2}{d_p \varepsilon^3} \right) H_{\rm bed}
+
+where :math:`\varepsilon` is the porosity of the packed bed, :math:`\mu` and :math:`\rho` are the dynamic viscosity and density of the fluid respectively, :math:`U` is the superficial velocity, :math:`d_p` is the particle diameter and :math:`H_{\rm bed}` is the height of the packed bed.To evaluate this correlation, we first determine the bed height by identifying the position of the highest particle in the bed at the last time step of the DEM simulation. The mean bed porosity is then calculated as:
+
+.. math::
+        \varepsilon = 1 - \frac{V_{\rm p}}{V_{\rm bed}}
+
+where :math:`V_{\rm p}` is the total volume of particles in the bed and :math:`V_{\rm bed} = H_{\rm bed}\cdot \pi (d_c/2)^2` is the total volume of the packed bed, :math:`d_{\rm c}` being the column diameter.
+
+The Ergun correlation provides a reasonable estimate of the expected order of magnitude. In this case, it predicts a pressure drop of approximately :math:`54` Pa, which is comparable to the numerical result (:math:`45` Pa).
 
 .. image:: images/velocity_void_fraction.png
     :alt: velocity and void fraction distribution
@@ -379,3 +393,9 @@ The results are shown in the plots below. The first plot visualises the velocity
 .. image:: images/pressure_drop_void_fraction.png
     :alt: pressure drop in packed bed
     :align: center
+
+-----------
+References
+-----------
+
+.. [#Ergun1952] \S. Ergun, “Fluid flow through packed columns,” *Chemical Engineering Progress*, vol. 48, no. 2, pp. 89, 1952\.

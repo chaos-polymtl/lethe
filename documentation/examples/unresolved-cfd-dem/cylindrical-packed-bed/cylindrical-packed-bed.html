@@ -745,9 +745,30 @@ end
 </section>
 <section id="results-vans">
 <h2>Results VANS<a class="headerlink" href="#results-vans" title="Link to this heading">#</a></h2>
-<p>The results are shown in the plots below. The first plot visualises the velocity of the fluid and the void fraction along the center axis of the cylinder. We see that the fluid rapidly accelerates in as the void fraction decreases to ensure mass conservation. The second plot displays the pressure drop resulting from the particle-fluid interactions. The quasi totality of the pressure drop occurs within the bed of particles.</p>
+<p>The results are shown in the plots below. The first plot visualizes the velocity of the fluid and the void fraction along the axis of the cylinder. As expected, within the particle bed, the fluid velocity rises sharply while the void fraction decreases, reflecting mass conservation.</p>
+<p>The second plot displays the pressure drop resulting from particle-fluid interactions. It can be seen that the quasi-totality of the pressure drop occurs within the bed of particles. The dashed horizontal line corresponds to the pressure drop obtained from the Ergun correlation <a class="footnote-reference brackets" href="#ergun1952" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\Delta P = \left( \frac{150 (1-\varepsilon)^2 \mu U}{d_p^2 \varepsilon^3} + \frac{1.75 (1-\varepsilon) \rho U^2}{d_p \varepsilon^3} \right) H_{\rm bed}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(\varepsilon\)</span> is the porosity of the packed bed, <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\rho\)</span> are the dynamic viscosity and density of the fluid respectively, <span class="math notranslate nohighlight">\(U\)</span> is the superficial velocity, <span class="math notranslate nohighlight">\(d_p\)</span> is the particle diameter and <span class="math notranslate nohighlight">\(H_{\rm bed}\)</span> is the height of the packed bed.To evaluate this correlation, we first determine the bed height by identifying the position of the highest particle in the bed at the last time step of the DEM simulation. The mean bed porosity is then calculated as:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\varepsilon = 1 - \frac{V_{\rm p}}{V_{\rm bed}}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(V_{\rm p}\)</span> is the total volume of particles in the bed and <span class="math notranslate nohighlight">\(V_{\rm bed} = H_{\rm bed}\cdot \pi (d_c/2)^2\)</span> is the total volume of the packed bed, <span class="math notranslate nohighlight">\(d_{\rm c}\)</span> being the column diameter.</p>
+<p>The Ergun correlation provides a reasonable estimate of the expected order of magnitude. In this case, it predicts a pressure drop of approximately <span class="math notranslate nohighlight">\(54\)</span> Pa, which is comparable to the numerical result (<span class="math notranslate nohighlight">\(45\)</span> Pa).</p>
 <img alt="velocity and void fraction distribution" class="align-center" src="../../../_images/velocity_void_fraction.png" />
 <img alt="pressure drop in packed bed" class="align-center" src="../../../_images/pressure_drop_void_fraction.png" />
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="ergun1952" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">1</a><span class="fn-bracket">]</span></span>
+<p>S. Ergun, “Fluid flow through packed columns,” <em>Chemical Engineering Progress</em>, vol. 48, no. 2, pp. 89, 1952.</p>
+</aside>
+</aside>
 </section>
 </section>
 
@@ -835,6 +856,7 @@ end
 </li>
 <li><a class="reference internal" href="#running-the-vans-simulation">Running the VANS Simulation</a></li>
 <li><a class="reference internal" href="#results-vans">Results VANS</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
 </ul>
 </li>
 </ul>
