@@ -4,6 +4,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026-01-19
+
+### Changed
+
+- MINOR Remove deprecated checks for deal.II 9.7 version. [#1884](https://github.com/chaos-polymtl/lethe/pull/1884)
+
 ## [Master] - 2026-01-16
 
 ### Changed
