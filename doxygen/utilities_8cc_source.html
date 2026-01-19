@@ -93,7 +93,7 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">utilities.cc</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="utilities_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors</span></div>
+<a href="utilities_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;core/revision.h&gt;</span></div>
@@ -863,7 +863,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00737" name="l00737"></a><span class="lineno"><a class="line" href="utilities_8h.html#a8f95af8244cc326628392a04517913c7">  737</a></span><a class="code hl_function" href="utilities_8cc.html#a8f95af8244cc326628392a04517913c7">print_version_info</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout)</div>
 <div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>{</div>
 <div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span>  (void)pcout;</div>
-<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span><span class="preprocessor">#if DEAL_II_VERSION_GTE(9, 7, 0)</span></div>
+<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span> </div>
 <div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>  <span class="comment">// Copy the tags to be able to delete the first v</span></div>
 <div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>  std::string lethe_tag  = LETHE_GIT_FANCY_TAG;</div>
 <div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>  std::string dealii_tag = DEAL_II_GIT_FANCY_TAG;</div>
@@ -872,140 +872,127 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>  pcout &lt;&lt; <span class="stringliteral">&quot;lethe/&quot;</span> &lt;&lt; lethe_tag.erase(0, 1) &lt;&lt; <span class="stringliteral">&quot; deal.II/&quot;</span></div>
 <div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>        &lt;&lt; dealii_tag.erase(0, 1) &lt;&lt; std::endl;</div>
 <div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>  pcout &lt;&lt; std::endl;</div>
-<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>  AssertThrow(</div>
-<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>    <span class="keyword">false</span>,</div>
-<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>    ExcMessage(</div>
-<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>      <span class="stringliteral">&quot;To print version information using -V you need a version of deal.II &gt;= 9.7.0.&quot;</span>));</div>
-<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>}</div>
+<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span>}</div>
 </div>
-<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span><span class="comment"></span> </div>
-<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span><span class="comment"> * @brief Parse the arguments given to the application</span></div>
-<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span><span class="comment"> * @param[in] argc Number of arguments</span></div>
-<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span><span class="comment"> * @param[in] argv Array of strings representing the arguments</span></div>
-<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span><span class="comment"> * @return Tuple containing a map with the command line flags</span></div>
-<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span><span class="comment"> * and a boolean set to 1 for the specific flag; and a vector of</span></div>
-<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span><span class="comment"> * strings with the rest of the arguments that are not flags; in Lethe,</span></div>
-<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span><span class="comment"> * this corresponds to the parameter file given to the application.</span></div>
-<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>std::tuple&lt;std::map&lt;std::string, bool&gt;, std::vector&lt;std::string&gt;&gt;</div>
-<div class="foldopen" id="foldopen00768" data-start="{" data-end="}">
-<div class="line"><a id="l00768" name="l00768"></a><span class="lineno"><a class="line" href="utilities_8h.html#a3badf505e17c1f77892888491dd53f5f">  768</a></span><a class="code hl_function" href="utilities_8cc.html#a3badf505e17c1f77892888491dd53f5f">parse_args</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv)</div>
-<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>{</div>
-<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>  <span class="keywordtype">int</span>                         argi = 1; <span class="comment">// skip program name</span></div>
-<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>  std::map&lt;std::string, bool&gt; options{};</div>
-<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>  <span class="keywordflow">for</span> (; argi &lt; argc; ++argi)</div>
-<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>    {</div>
-<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>      std::string arg{argv[argi]};</div>
-<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>      <span class="keyword">auto</span>        n{arg.length()};</div>
-<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>      <span class="keywordflow">if</span> (n == 0 || arg[0] != <span class="charliteral">&#39;-&#39;</span> || n == 1)</div>
-<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>        { <span class="comment">// empty arg or single hyphen</span></div>
-<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>          <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>        }</div>
-<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>      <span class="keywordflow">if</span> (arg[1] != <span class="charliteral">&#39;-&#39;</span>)</div>
-<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>        { <span class="comment">// short option</span></div>
-<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>          <span class="keywordflow">for</span> (<span class="keyword">decltype</span>(n) i = 1; i &lt; n; ++i)</div>
-<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>            {</div>
-<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>              options[std::string{<span class="charliteral">&#39;-&#39;</span>} + std::string{arg[i]}] = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>            }</div>
-<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>        }</div>
-<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>      <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>        { <span class="comment">// long option</span></div>
-<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>          <span class="keywordflow">if</span> (n == 2)</div>
-<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>            { <span class="comment">// done options on &quot;--&quot; and skip it</span></div>
-<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>              argi++;</div>
-<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>              <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>            }</div>
-<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>          options[arg] = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span>        }</div>
+<div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span><span class="comment"></span> </div>
+<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span><span class="comment"> * @brief Parse the arguments given to the application</span></div>
+<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span><span class="comment"> * @param[in] argc Number of arguments</span></div>
+<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span><span class="comment"> * @param[in] argv Array of strings representing the arguments</span></div>
+<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span><span class="comment"> * @return Tuple containing a map with the command line flags</span></div>
+<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span><span class="comment"> * and a boolean set to 1 for the specific flag; and a vector of</span></div>
+<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span><span class="comment"> * strings with the rest of the arguments that are not flags; in Lethe,</span></div>
+<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span><span class="comment"> * this corresponds to the parameter file given to the application.</span></div>
+<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>std::tuple&lt;std::map&lt;std::string, bool&gt;, std::vector&lt;std::string&gt;&gt;</div>
+<div class="foldopen" id="foldopen00762" data-start="{" data-end="}">
+<div class="line"><a id="l00762" name="l00762"></a><span class="lineno"><a class="line" href="utilities_8h.html#a3badf505e17c1f77892888491dd53f5f">  762</a></span><a class="code hl_function" href="utilities_8cc.html#a3badf505e17c1f77892888491dd53f5f">parse_args</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> **argv)</div>
+<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span>{</div>
+<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>  <span class="keywordtype">int</span>                         argi = 1; <span class="comment">// skip program name</span></div>
+<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>  std::map&lt;std::string, bool&gt; options{};</div>
+<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>  <span class="keywordflow">for</span> (; argi &lt; argc; ++argi)</div>
+<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>    {</div>
+<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>      std::string arg{argv[argi]};</div>
+<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>      <span class="keyword">auto</span>        n{arg.length()};</div>
+<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>      <span class="keywordflow">if</span> (n == 0 || arg[0] != <span class="charliteral">&#39;-&#39;</span> || n == 1)</div>
+<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>        { <span class="comment">// empty arg or single hyphen</span></div>
+<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>          <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>        }</div>
+<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>      <span class="keywordflow">if</span> (arg[1] != <span class="charliteral">&#39;-&#39;</span>)</div>
+<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>        { <span class="comment">// short option</span></div>
+<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>          <span class="keywordflow">for</span> (<span class="keyword">decltype</span>(n) i = 1; i &lt; n; ++i)</div>
+<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>            {</div>
+<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>              options[std::string{<span class="charliteral">&#39;-&#39;</span>} + std::string{arg[i]}] = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>            }</div>
+<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>        }</div>
+<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>      <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>        { <span class="comment">// long option</span></div>
+<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>          <span class="keywordflow">if</span> (n == 2)</div>
+<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>            { <span class="comment">// done options on &quot;--&quot; and skip it</span></div>
+<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>              argi++;</div>
+<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>              <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>            }</div>
+<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>          options[arg] = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>        }</div>
+<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>    }</div>
+<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>  std::vector&lt;std::string&gt; args{};</div>
+<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>  <span class="keywordflow">for</span> (; argi &lt; argc; ++argi)</div>
+<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>    {</div>
+<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>      std::string arg{argv[argi]};</div>
+<div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span>      args.push_back(arg);</div>
 <div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>    }</div>
-<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>  std::vector&lt;std::string&gt; args{};</div>
-<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>  <span class="keywordflow">for</span> (; argi &lt; argc; ++argi)</div>
-<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span>    {</div>
-<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>      std::string arg{argv[argi]};</div>
-<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>      args.push_back(arg);</div>
-<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>    }</div>
-<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>  <span class="keywordflow">return</span> {options, args};</div>
-<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span>}</div>
+<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span>  <span class="keywordflow">return</span> {options, args};</div>
+<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span>}</div>
 </div>
-<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span><span class="comment"></span> </div>
-<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span><span class="comment">/**</span></div>
-<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span><span class="comment"> * @brief Print the parameters given by the parameter file of the application</span></div>
-<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span><span class="comment"> * @param[in] pcout Parallel output stream</span></div>
-<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span><span class="comment"> * @param[in] prm Object containing the parameters parsed from the parameter</span></div>
-<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span><span class="comment"> * file</span></div>
-<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00814" data-start="{" data-end="}">
-<div class="line"><a id="l00814" name="l00814"></a><span class="lineno"><a class="line" href="utilities_8h.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">  814</a></span><a class="code hl_function" href="utilities_8cc.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">print_parameters_to_output_file</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout,</div>
-<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>                                <span class="keyword">const</span> ParameterHandler   &amp;prm,</div>
-<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>                                <span class="keyword">const</span> std::string        &amp;file_name)</div>
-<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>{</div>
-<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span>  <span class="keyword">const</span> std::string print_parameters =</div>
-<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>    <a class="code hl_function" href="utilities_8cc.html#a34ac72c0df6c4a24f85c97b22d137520">get_last_value_of_parameter</a>(file_name, <span class="stringliteral">&quot;print parameters&quot;</span>);</div>
-<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span> </div>
-<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>  <span class="keywordflow">if</span> (print_parameters == <span class="stringliteral">&quot;only changed&quot;</span>)</div>
-<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>    {</div>
-<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span><span class="preprocessor">#if DEAL_II_VERSION_GTE(9, 7, 0)</span></div>
-<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>      prm.print_parameters(pcout.get_stream(),</div>
-<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>                           ParameterHandler::OutputStyle::PRM |</div>
-<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>                             ParameterHandler::OutputStyle::Short |</div>
-<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>                             ParameterHandler::KeepDeclarationOrder |</div>
-<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>                             ParameterHandler::KeepOnlyChanged);</div>
-<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>      pcout &lt;&lt; std::endl &lt;&lt; std::endl;</div>
-<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>      AssertThrow(</div>
-<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>        <span class="keyword">false</span>,</div>
-<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>        ExcMessage(</div>
-<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>          <span class="stringliteral">&quot;To print only changed parameters you need a version of deal.II &gt;= 9.7.0.&quot;</span>));</div>
-<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>    }</div>
-<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (print_parameters == <span class="stringliteral">&quot;all&quot;</span>)</div>
-<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>    {</div>
-<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>      prm.print_parameters(pcout.get_stream(),</div>
-<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span>                           ParameterHandler::OutputStyle::PRM |</div>
-<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>                             ParameterHandler::OutputStyle::Short |</div>
-<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>                             ParameterHandler::KeepDeclarationOrder);</div>
-<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>      pcout &lt;&lt; std::endl &lt;&lt; std::endl;</div>
+<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span><span class="comment"></span> </div>
+<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span><span class="comment">/**</span></div>
+<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span><span class="comment"> * @brief Print the parameters given by the parameter file of the application</span></div>
+<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span><span class="comment"> * @param[in] pcout Parallel output stream</span></div>
+<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span><span class="comment"> * @param[in] prm Object containing the parameters parsed from the parameter</span></div>
+<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span><span class="comment"> * file</span></div>
+<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00808" data-start="{" data-end="}">
+<div class="line"><a id="l00808" name="l00808"></a><span class="lineno"><a class="line" href="utilities_8h.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">  808</a></span><a class="code hl_function" href="utilities_8cc.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">print_parameters_to_output_file</a>(<span class="keyword">const</span> ConditionalOStream &amp;pcout,</div>
+<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span>                                <span class="keyword">const</span> ParameterHandler   &amp;prm,</div>
+<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span>                                <span class="keyword">const</span> std::string        &amp;file_name)</div>
+<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span>{</div>
+<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span>  <span class="keyword">const</span> std::string print_parameters =</div>
+<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>    <a class="code hl_function" href="utilities_8cc.html#a34ac72c0df6c4a24f85c97b22d137520">get_last_value_of_parameter</a>(file_name, <span class="stringliteral">&quot;print parameters&quot;</span>);</div>
+<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span> </div>
+<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>  <span class="keywordflow">if</span> (print_parameters == <span class="stringliteral">&quot;only changed&quot;</span>)</div>
+<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>    {</div>
+<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>      prm.print_parameters(pcout.get_stream(),</div>
+<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span>                           ParameterHandler::OutputStyle::PRM |</div>
+<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>                             ParameterHandler::OutputStyle::Short |</div>
+<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>                             ParameterHandler::KeepDeclarationOrder |</div>
+<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>                             ParameterHandler::KeepOnlyChanged);</div>
+<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>      pcout &lt;&lt; std::endl &lt;&lt; std::endl;</div>
+<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>    }</div>
+<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (print_parameters == <span class="stringliteral">&quot;all&quot;</span>)</div>
+<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>    {</div>
+<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>      prm.print_parameters(pcout.get_stream(),</div>
+<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>                           ParameterHandler::OutputStyle::PRM |</div>
+<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>                             ParameterHandler::OutputStyle::Short |</div>
+<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>                             ParameterHandler::KeepDeclarationOrder);</div>
+<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>      pcout &lt;&lt; std::endl &lt;&lt; std::endl;</div>
+<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>    }</div>
+<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span>}</div>
+</div>
+<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span> </div>
+<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00835" data-start="{" data-end="}">
+<div class="line"><a id="l00835" name="l00835"></a><span class="lineno"><a class="line" href="utilities_8h.html#a6bff1c25176117effa0161cb4ebfc520">  835</a></span><a class="code hl_function" href="utilities_8cc.html#a6bff1c25176117effa0161cb4ebfc520">delete_vtu_and_pvd_files</a>(<span class="keyword">const</span> std::string &amp;output_path)</div>
+<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span>{</div>
+<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span><span class="preprocessor">#if __GNUC__ &gt; 7</span></div>
+<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;filename : std::filesystem::directory_iterator{output_path})</div>
+<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>    {</div>
+<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span>      <span class="keywordflow">if</span> (filename.path().extension() == <span class="stringliteral">&quot;.vtu&quot;</span> ||</div>
+<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>          filename.path().extension() == <span class="stringliteral">&quot;.pvd&quot;</span> ||</div>
+<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>          filename.path().extension() == <span class="stringliteral">&quot;.pvtu&quot;</span>)</div>
+<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>        std::filesystem::remove(filename.path());</div>
 <div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>    }</div>
-<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span>}</div>
-</div>
-<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span> </div>
-<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00848" data-start="{" data-end="}">
-<div class="line"><a id="l00848" name="l00848"></a><span class="lineno"><a class="line" href="utilities_8h.html#a6bff1c25176117effa0161cb4ebfc520">  848</a></span><a class="code hl_function" href="utilities_8cc.html#a6bff1c25176117effa0161cb4ebfc520">delete_vtu_and_pvd_files</a>(<span class="keyword">const</span> std::string &amp;output_path)</div>
-<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span>{</div>
-<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span><span class="preprocessor">#if __GNUC__ &gt; 7</span></div>
-<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>  <span class="keywordflow">for</span> (<span class="keyword">auto</span> <span class="keyword">const</span> &amp;filename : std::filesystem::directory_iterator{output_path})</div>
-<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span>    {</div>
-<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span>      <span class="keywordflow">if</span> (filename.path().extension() == <span class="stringliteral">&quot;.vtu&quot;</span> ||</div>
-<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span>          filename.path().extension() == <span class="stringliteral">&quot;.pvd&quot;</span> ||</div>
-<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span>          filename.path().extension() == <span class="stringliteral">&quot;.pvtu&quot;</span>)</div>
-<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span>        std::filesystem::remove(filename.path());</div>
-<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span>    }</div>
-<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span>  AssertThrow(</div>
-<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>    <span class="keyword">false</span>,</div>
-<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span>    ExcMessage(</div>
-<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span>      <span class="stringliteral">&quot;Deleting old vtu files is not possible with the current compiler version.&quot;</span>));</div>
-<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span>}</div>
+<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span>  AssertThrow(</div>
+<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span>    <span class="keyword">false</span>,</div>
+<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span>    ExcMessage(</div>
+<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span>      <span class="stringliteral">&quot;Deleting old vtu files is not possible with the current compiler version.&quot;</span>));</div>
+<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>}</div>
 </div>
 <div class="ttc" id="autilities_8cc_html_a0f8ab7bdfb51d1a2ab56c0c25a3b53a9"><div class="ttname"><a href="utilities_8cc.html#a0f8ab7bdfb51d1a2ab56c0c25a3b53a9">make_table_scalars_vectors</a></div><div class="ttdeci">TableHandler make_table_scalars_vectors(const std::vector&lt; T &gt; &amp;independent_values, const std::string &amp;independent_column_name, const std::vector&lt; std::vector&lt; double &gt; &gt; &amp;dependent_vector, const std::vector&lt; std::string &gt; &amp;dependent_column_names, const unsigned int display_precision, const bool display_scientific_notation)</div><div class="ttdoc">Generate a table from a vector of scalars (independent variable) and a vector of vectors of scalars (...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00015">utilities.cc:15</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a26caf69c3015c7f933fff04bb7bd9ead"><div class="ttname"><a href="utilities_8cc.html#a26caf69c3015c7f933fff04bb7bd9ead">make_table_scalars_tensors</a></div><div class="ttdeci">TableHandler make_table_scalars_tensors(const std::vector&lt; T &gt; &amp;independent_vector, const std::string &amp;independent_column_name, const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;dependent_vector, const std::vector&lt; std::string &gt; &amp;dependent_column_names, const unsigned int display_precision, const bool display_scientific_notation)</div><div class="ttdoc">Generate a table from a vector of scalars (independent variable) and a vector of Tensor&lt;1,...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00050">utilities.cc:50</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a2f4c4c70d98da93b973297b97e085b90"><div class="ttname"><a href="utilities_8cc.html#a2f4c4c70d98da93b973297b97e085b90">get_dimension</a></div><div class="ttdeci">unsigned int get_dimension(const std::string &amp;file_name)</div><div class="ttdoc">Extract the dimension in which to run Lethe from the contents of the parameter file....</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00632">utilities.cc:632</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a34ac72c0df6c4a24f85c97b22d137520"><div class="ttname"><a href="utilities_8cc.html#a34ac72c0df6c4a24f85c97b22d137520">get_last_value_of_parameter</a></div><div class="ttdeci">std::string get_last_value_of_parameter(const std::string &amp;file_name, const std::string &amp;parameter_name)</div><div class="ttdoc">Retrieves the value of a specific parameter from an input file. Returns an empty string if the parame...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00549">utilities.cc:549</a></div></div>
-<div class="ttc" id="autilities_8cc_html_a3badf505e17c1f77892888491dd53f5f"><div class="ttname"><a href="utilities_8cc.html#a3badf505e17c1f77892888491dd53f5f">parse_args</a></div><div class="ttdeci">std::tuple&lt; std::map&lt; std::string, bool &gt;, std::vector&lt; std::string &gt; &gt; parse_args(int argc, char **argv)</div><div class="ttdoc">Parse the arguments given to the application.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00768">utilities.cc:768</a></div></div>
+<div class="ttc" id="autilities_8cc_html_a3badf505e17c1f77892888491dd53f5f"><div class="ttname"><a href="utilities_8cc.html#a3badf505e17c1f77892888491dd53f5f">parse_args</a></div><div class="ttdeci">std::tuple&lt; std::map&lt; std::string, bool &gt;, std::vector&lt; std::string &gt; &gt; parse_args(int argc, char **argv)</div><div class="ttdoc">Parse the arguments given to the application.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00762">utilities.cc:762</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a3da00f7bc4b8457a3b104895cc393e9e"><div class="ttname"><a href="utilities_8cc.html#a3da00f7bc4b8457a3b104895cc393e9e">make_table_tensors_scalars</a></div><div class="ttdeci">TableHandler make_table_tensors_scalars(const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;independent_vector, const std::vector&lt; std::string &gt; &amp;independent_column_names, const std::vector&lt; double &gt; &amp;dependent_vector, const std::string &amp;dependent_column_name, const unsigned int display_precision, const bool display_scientific_notation)</div><div class="ttdoc">Generate a table from a vector of Tensor&lt;1,dim&gt; (independent variables) and a vector of scalars (depe...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00174">utilities.cc:174</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a4a15c94c7b62291bc0451cfa1cb05449"><div class="ttname"><a href="utilities_8cc.html#a4a15c94c7b62291bc0451cfa1cb05449">fill_table_from_file</a></div><div class="ttdeci">void fill_table_from_file(TableHandler &amp;table, const std::string &amp;file_name, const std::string &amp;delimiter)</div><div class="ttdoc">Reads a file generated by a deal.II TableHandler and fills a TableHandler with its data.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00210">utilities.cc:210</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a4b182f49ed10ffa3d2d50a9a309cd2f0"><div class="ttname"><a href="utilities_8cc.html#a4b182f49ed10ffa3d2d50a9a309cd2f0">create_output_folder</a></div><div class="ttdeci">void create_output_folder(const std::string &amp;dirname)</div><div class="ttdoc">Creates the simulation output folder.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00358">utilities.cc:358</a></div></div>
-<div class="ttc" id="autilities_8cc_html_a5f8e2b4fdf7a2b6eceab3461c4edd221"><div class="ttname"><a href="utilities_8cc.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">print_parameters_to_output_file</a></div><div class="ttdeci">void print_parameters_to_output_file(const ConditionalOStream &amp;pcout, const ParameterHandler &amp;prm, const std::string &amp;file_name)</div><div class="ttdoc">Print the parameters given by the parameter file of the application.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00814">utilities.cc:814</a></div></div>
+<div class="ttc" id="autilities_8cc_html_a5f8e2b4fdf7a2b6eceab3461c4edd221"><div class="ttname"><a href="utilities_8cc.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">print_parameters_to_output_file</a></div><div class="ttdeci">void print_parameters_to_output_file(const ConditionalOStream &amp;pcout, const ParameterHandler &amp;prm, const std::string &amp;file_name)</div><div class="ttdoc">Print the parameters given by the parameter file of the application.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00808">utilities.cc:808</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a6761d32800de2739011760d71ae33c09"><div class="ttname"><a href="utilities_8cc.html#a6761d32800de2739011760d71ae33c09">delete_output_folder</a></div><div class="ttdeci">void delete_output_folder(const std::string &amp;dirname)</div><div class="ttdoc">Delete the output folder and its content.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00369">utilities.cc:369</a></div></div>
-<div class="ttc" id="autilities_8cc_html_a6bff1c25176117effa0161cb4ebfc520"><div class="ttname"><a href="utilities_8cc.html#a6bff1c25176117effa0161cb4ebfc520">delete_vtu_and_pvd_files</a></div><div class="ttdeci">void delete_vtu_and_pvd_files(const std::string &amp;output_path)</div><div class="ttdoc">Delete vtu and pvd files.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00848">utilities.cc:848</a></div></div>
+<div class="ttc" id="autilities_8cc_html_a6bff1c25176117effa0161cb4ebfc520"><div class="ttname"><a href="utilities_8cc.html#a6bff1c25176117effa0161cb4ebfc520">delete_vtu_and_pvd_files</a></div><div class="ttdeci">void delete_vtu_and_pvd_files(const std::string &amp;output_path)</div><div class="ttdoc">Delete vtu and pvd files.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00835">utilities.cc:835</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a6eae881564cc80b005d6023feb6aa610"><div class="ttname"><a href="utilities_8cc.html#a6eae881564cc80b005d6023feb6aa610">fill_string_vectors_from_file</a></div><div class="ttdeci">void fill_string_vectors_from_file(std::map&lt; std::string, std::vector&lt; std::string &gt; &gt; &amp;map, const std::string &amp;file, const std::string &amp;delimiter)</div><div class="ttdoc">Function that read a file that was build from a dealii table and create a map with the key being the ...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00309">utilities.cc:309</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a8f95af8244cc326628392a04517913c7"><div class="ttname"><a href="utilities_8cc.html#a8f95af8244cc326628392a04517913c7">print_version_info</a></div><div class="ttdeci">void print_version_info(const ConditionalOStream &amp;pcout)</div><div class="ttdoc">Print the information of the deal.II and Lethe branches used to run an application in the &quot;git descri...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00737">utilities.cc:737</a></div></div>
 <div class="ttc" id="autilities_8cc_html_a9be87343e816d07edaee585ada17cd4a"><div class="ttname"><a href="utilities_8cc.html#a9be87343e816d07edaee585ada17cd4a">get_max_subsection_size</a></div><div class="ttdeci">int get_max_subsection_size(const std::string &amp;file_name)</div><div class="ttdoc">Extract the maximum value between the number of boundary conditions and the number of manifolds from ...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8cc_source.html#l00698">utilities.cc:698</a></div></div>
