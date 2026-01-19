@@ -156,7 +156,7 @@ calculate_viscous_dissipation(
 /**
  * @brief Calculates the apparent viscosity of the fluid for non Newtonian flows.
  * @return the apparent viscosity
- * Post-processing frunction
+ * Post-processing function
  *
  * @param dof_handler The dof_handler used for the calculation
  *

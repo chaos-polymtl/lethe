@@ -99,6 +99,12 @@ This subsection is the most important in a simulation and therefore, the most co
   
     # Subdivision of mesh cell in postprocessing
     set subdivision = 1
+
+    #---------------------------------------------------
+    # Explicit coupling constraint parameters
+    #---------------------------------------------------
+    # Set time-step to respect the capillary time-step constraint
+    set respect capillary time-step constraint = true
   end
 
 * ``method``: time-stepping method used. The available options are: 
@@ -215,3 +221,28 @@ Paraview output file parameters
 
   .. tip::
 	  Generally, we advise to use a subdivision level of :math:`(n)` for interpolation order of :math:`n`. For example, a Q2-Q1 interpolation could be visualized with ``set subdivision = 2``.
+
+---------------------------------------
+Explicit coupling constraint parameters
+---------------------------------------
+
+* ``respect capillary time-step constraint``: computes and replaces initial time-step with the capillary time-step [#denner2022]_:
+
+  .. math::
+
+    \Delta t_\sigma = \min_{x \in \Omega}\left(\sqrt{\frac{(\rho_0 + \rho_1) h^3}{2 \pi \sigma}}\right)
+
+  where
+    * :math:`\sigma` is the surface tension;
+    * :math:`\rho_0` and :math:`\rho_1` are respectively the densities of fluid :math:`0` and :math:`1`, and;
+    * :math:`h` is the cell size.
+
+  This is used in the coupling of the :doc:`Navier-Stokes equations <../../theory/multiphysics/fluid_dynamics/navier-stokes>` with the :doc:`VOF <../../theory/multiphase/cfd/vof>` method to simulate multiphase flows with surface tension. If ``adapt`` is also enabled, the time-step will adapt to respect the capillary time-step constraint dynamically.
+
+****
+
+----------
+References
+----------
+
+.. [#denner2022] \F. Denner, F. Evrard, and B. van Wachem, “Breaching the capillary time-step constraint using a coupled VOF method with implicit surface tension,” *J. Comput. Phys.*, vol. 459, p. 111128, Jun. 2022, doi: `10.1016/j.jcp.2022.111128 <https://doi.org/10.1016/j.jcp.2022.111128>`_\.

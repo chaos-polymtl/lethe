@@ -113,7 +113,7 @@ namespace Parameters
     /**
      * Boolean indicating if the capillary time-step constraint should be
      * controlling the simulation time-step
-    */
+     */
     bool respect_capillary_time_step_constraint;
 
     // Aimed tolerance at which simulation is stopped

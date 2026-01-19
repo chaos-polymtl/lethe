@@ -468,6 +468,14 @@ public:
           "The current implementation for constraining solid domains with\n "
           "temperature is not implemented for Cahn Hilliard simulations.\n ");
       }
+
+    if (simulation_control.respect_capillary_time_step_constraint)
+      AssertThrow(
+        (multiphysics.vof_parameters.surface_tension_force.enable &&
+         multiphysics.VOF),
+        ExcMessage(
+          "The current implementation only allows the capillary time-step constraint \n "
+          "to be respected for VOF multiphase flows with surface tension.\n "));
   }
 
   inline bool

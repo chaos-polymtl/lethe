@@ -1177,6 +1177,171 @@ VolumeOfFluid<dim>::calculate_momentum(
 }
 
 template <int dim>
+double
+VolumeOfFluid<dim>::compute_capillary_time_step_constraint(
+  const bool pressure_dependent,
+  const bool temperature_dependent)
+{
+  // Get MPI communicator
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
+
+  // Initialize VOF FEValues and get number of quadrature points
+  FEValues<dim>      fe_values_vof(*this->mapping,
+                              *this->fe,
+                              *this->cell_quadrature,
+                              update_quadrature_points | update_JxW_values);
+  const unsigned int n_q_points = this->cell_quadrature->size();
+
+  // Initialize DoF handlers for fluid dynamics and heat transfer
+  const DoFHandler<dim> *dof_handler_fd = nullptr;
+  const DoFHandler<dim> *dof_handler_ht = nullptr;
+
+  // Initialize FEValues fluid dynamics and heat transfer unique_ptr
+  std::unique_ptr<FEValues<dim>> fe_values_fd;
+  std::unique_ptr<FEValues<dim>> fe_values_ht;
+
+  // Initialize solution vectors for fluid dynamics and heat transfer
+  const GlobalVectorType *current_solution_fd = nullptr;
+  const GlobalVectorType *current_solution_ht = nullptr;
+
+  // Extractor for the pressure component of the fluid dynamics solution
+  const FEValuesExtractors::Scalar pressure(dim);
+
+  // Get fluid dynamics DoFHandler for the pressure field if needed
+  if (pressure_dependent)
+    {
+      dof_handler_fd =
+        &multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+      QGauss<dim> quadrature_formula_fd(dof_handler_fd->get_fe().degree + 1);
+      fe_values_fd = std::make_unique<FEValues<dim>>(*this->mapping,
+                                                     dof_handler_fd->get_fe(),
+                                                     quadrature_formula_fd,
+                                                     update_values);
+      current_solution_fd =
+        &multiphysics->get_solution(PhysicsID::fluid_dynamics);
+    }
+
+  // Get heat transfer DoFHandler for the temperature field if required
+  if (temperature_dependent)
+    {
+      dof_handler_ht = &multiphysics->get_dof_handler(PhysicsID::heat_transfer);
+      QGauss<dim> quadrature_formula_ht(dof_handler_ht->get_fe().degree + 1);
+      fe_values_ht = std::make_unique<FEValues<dim>>(*this->mapping,
+                                                     dof_handler_ht->get_fe(),
+                                                     quadrature_formula_ht,
+                                                     update_values);
+      current_solution_ht =
+        &multiphysics->get_solution(PhysicsID::heat_transfer);
+    }
+
+  // Initialize local vectors
+  std::vector<double> density_0(n_q_points);
+  std::vector<double> density_1(n_q_points);
+  std::vector<double> pressure_values(n_q_points);
+  std::vector<double> surface_tension(n_q_points);
+  std::vector<double> temperature_values(n_q_points);
+
+  // Get physical property models and initialize independent fields
+  std::map<field, std::vector<double>> fields;
+  const auto                           density_models =
+    this->simulation_parameters.physical_properties_manager
+      .get_density_vector();
+  std::shared_ptr<SurfaceTensionModel> surface_tension_model =
+    this->simulation_parameters.physical_properties_manager
+      .get_surface_tension();
+  fields.insert(
+    std::pair<field, std::vector<double>>(field::pressure, n_q_points));
+  fields.insert(
+    std::pair<field, std::vector<double>>(field::temperature, n_q_points));
+
+  // Initialize capillary time-step constraint
+  double capillary_time_step_constraint = std::numeric_limits<double>::max();
+
+  // Cell size
+  double h;
+
+  // Element degree
+  const unsigned int degree = this->dof_handler->get_fe().degree;
+
+  // Loop over active cells
+  for (const auto &cell_vof : this->dof_handler->active_cell_iterators())
+    {
+      if (cell_vof->is_locally_owned())
+        {
+          fe_values_vof.reinit(cell_vof);
+
+          if (pressure_dependent)
+            {
+              // Get fluid dynamics active cell iterator
+              typename DoFHandler<dim>::active_cell_iterator cell_fd(
+                &(*(this->triangulation)),
+                cell_vof->level(),
+                cell_vof->index(),
+                dof_handler_fd);
+
+              fe_values_fd->reinit(cell_fd);
+              (*fe_values_fd)[pressure].get_function_values(
+                *current_solution_fd, pressure_values);
+              set_field_vector(field::pressure, pressure_values, fields);
+            }
+
+          if (temperature_dependent)
+            {
+              // Get heat transfer active cell iterator
+              typename DoFHandler<dim>::active_cell_iterator cell_ht(
+                &(*(this->triangulation)),
+                cell_vof->level(),
+                cell_vof->index(),
+                dof_handler_ht);
+
+              fe_values_ht->reinit(cell_ht);
+              fe_values_ht->get_function_values(*current_solution_ht,
+                                                temperature_values);
+              set_field_vector(field::temperature, temperature_values, fields);
+            }
+
+          // Compute physical properties of the cell
+          density_models[0]->vector_value(fields, density_0);
+          density_models[1]->vector_value(fields, density_1);
+          surface_tension_model->vector_value(fields, surface_tension);
+
+          // Compute cell diameter
+          double cell_measure =
+            compute_cell_measure_with_JxW(fe_values_vof.get_JxW_values());
+          h = compute_cell_diameter<dim>(cell_measure, degree);
+
+          // TODO AA cleanup
+          // this->pcout << "h: " << h << std::endl;
+
+          // Loop over quadrature points
+          for (unsigned int q = 0; q < n_q_points; q++)
+            {
+              double density_average = 0.5 * (density_0[q] + density_1[q]);
+              double surface_tension_q = std::max(surface_tension[q], 1e-16);
+              double denominator_inv = 1 / (numbers::PI * surface_tension_q);
+
+              // this->pcout << "density_average: " << density_average << std::endl;
+              // this->pcout << "denominator_inv: " << denominator_inv << std::endl;
+
+              // Compute capillary time-step constraint
+              double new_capillary_time_step_constraint =
+                std::sqrt(density_average * Utilities::fixed_power<3>(h) *
+                          denominator_inv);
+
+              // Keep minimum between current and previously saved value
+              capillary_time_step_constraint =
+                std::min(new_capillary_time_step_constraint,
+                         capillary_time_step_constraint);
+            }
+        }
+    }
+  // this->pcout << "capillary_time_step_constraint: " << capillary_time_step_constraint << std::endl;
+
+  // Get the minimum among active processes
+  return Utilities::MPI::min(capillary_time_step_constraint, mpi_communicator);
+}
+
+template <int dim>
 void
 VolumeOfFluid<dim>::finish_simulation()
 {
@@ -1647,6 +1812,22 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
               output.close();
             }
         }
+    }
+
+  // Compute and update current capillary time-step constraint
+  if (this->simulation_parameters.simulation_control.method !=
+        Parameters::SimulationControl::TimeSteppingMethod::steady &&
+      this->simulation_parameters.multiphysics.vof_parameters
+        .surface_tension_force.enable &&
+      this->simulation_parameters.simulation_control.adapt)
+    {
+      // Compute capillary time-step constraint
+      this->simulation_control->set_capillary_time_step_constraint(
+        compute_capillary_time_step_constraint(
+          this->simulation_parameters.physical_properties_manager
+            .field_is_required(field::pressure),
+          this->simulation_parameters.physical_properties_manager
+            .field_is_required(field::temperature)));
     }
 
   if (this->simulation_parameters.timer.type ==
@@ -2617,6 +2798,28 @@ VolumeOfFluid<dim>::set_initial_conditions()
               delete_output_folder(folder);
               create_output_folder(folder);
             }
+        }
+    }
+
+  if (this->simulation_parameters.simulation_control.method !=
+        Parameters::SimulationControl::TimeSteppingMethod::steady &&
+      this->simulation_parameters.multiphysics.vof_parameters
+        .surface_tension_force.enable)
+    {
+      // Compute capillary time-step constraint
+      this->simulation_control->set_capillary_time_step_constraint(
+        compute_capillary_time_step_constraint(
+          this->simulation_parameters.physical_properties_manager
+            .field_is_required(field::pressure),
+          this->simulation_parameters.physical_properties_manager
+            .field_is_required(field::temperature)));
+
+      // Update initial time-step with capillary constraint if requested
+      if (this->simulation_parameters.simulation_control
+            .respect_capillary_time_step_constraint)
+        {
+          this->simulation_control
+            ->set_initial_time_step_with_capillary_time_step_constraint();
         }
     }
 

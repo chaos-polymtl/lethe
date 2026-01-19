@@ -21,6 +21,9 @@ SimulationControl::SimulationControl(const Parameters::SimulationControl &param)
   , number_mesh_adapt(param.number_mesh_adaptation)
   , CFL(0)
   , max_CFL(param.maxCFL)
+  , capillary_time_step_constraint(std::numeric_limits<double>::max())
+  , respect_capillary_time_step_constraint(
+      param.respect_capillary_time_step_constraint)
   , residual(DBL_MAX)
   , stop_tolerance(param.stop_tolerance)
   , output_iteration_frequency(param.output_iteration_frequency)
@@ -337,6 +340,12 @@ SimulationControlTransient::calculate_time_step()
         new_time_step = time_step * max_CFL / CFL;
 
       new_time_step = std::min(new_time_step, max_dt);
+
+      if (respect_capillary_time_step_constraint)
+        {
+          new_time_step =
+            std::min(new_time_step, capillary_time_step_constraint);
+        }
     }
 
   // Ensure that the time step for the last iteration is kept regardless of the
