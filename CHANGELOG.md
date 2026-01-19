@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MINOR Remove deprecated checks for deal.II 9.7 version. [#1884](https://github.com/chaos-polymtl/lethe/pull/1884)
+- MINOR The latest Lethe release is compatible with deal.ii 9.7, and we don't have CI checks with 9.6 version (or below) anymore. Hence, this PR removes deprecated checks for deal.II versions prior to 9.7. [#1884](https://github.com/chaos-polymtl/lethe/pull/1884)
 
 ## [Master] - 2026-01-16
 
