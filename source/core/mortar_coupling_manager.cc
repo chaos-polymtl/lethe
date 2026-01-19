@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <deal.II/base/config.h>
@@ -447,8 +447,6 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center,
 
 
 /*-------------- Auxiliary Functions -------------------------------*/
-
-#if DEAL_II_VERSION_GTE(9, 7, 0)
 template <int dim>
 std::tuple<std::vector<unsigned int>, std::vector<double>, double>
 compute_n_subdivisions_and_radius(
@@ -658,20 +656,6 @@ compute_n_subdivisions_and_radius(
           {radius, length_rot_axis},
           pre_rotation_min};
 }
-#else
-template <int dim>
-std::tuple<std::vector<unsigned int>, std::vector<double>, double>
-compute_n_subdivisions_and_radius(const Triangulation<dim> &,
-                                  const Mapping<dim> &,
-                                  const Parameters::Mortar<dim> &)
-{
-  AssertThrow(false,
-              ExcMessage(
-                "The mortar coupling requires deal.II 9.7 or more recent."));
-
-  return {{1, 1}, {1.0, 0}, 0.0};
-}
-#endif
 
 template <int dim>
 Quadrature<dim>
@@ -692,7 +676,6 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
 
 
 /*-------------- MortarManagerCircle -------------------------------*/
-
 template <int dim>
 Point<dim>
 MortarManagerCircle<dim>::from_1D(const double radiant) const
@@ -719,7 +702,6 @@ MortarManagerCircle<dim>::get_normal(const Point<dim> &point) const
 
 
 /*-------------- CouplingOperator -------------------------------*/
-#if DEAL_II_VERSION_GTE(9, 7, 0)
 template <int dim, typename Number>
 CouplingOperator<dim, Number>::CouplingOperator(
   const Mapping<dim>                                        &mapping,
@@ -750,10 +732,10 @@ CouplingOperator<dim, Number>::CouplingOperator(
   std::vector<types::global_dof_index> is_local_cell;
   std::vector<types::global_dof_index> is_ghost_cell;
 
-#  ifdef DEBUG
+#ifdef DEBUG
   std::vector<double> vec_local_cells(n_sub_cells * 2, 0.0);
   std::vector<double> vec_ghost_cells(n_sub_cells * 2, 0.0);
-#  endif
+#endif
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
@@ -790,10 +772,10 @@ CouplingOperator<dim, Number>::CouplingOperator(
                     id_ghost = i;
                   }
 
-#  ifdef DEBUG
+#ifdef DEBUG
                 vec_local_cells[id_local] += 1.0;
                 vec_ghost_cells[id_ghost] += 1.0;
-#  endif
+#endif
                 is_local_cell.emplace_back(id_local);
                 is_ghost_cell.emplace_back(id_ghost);
 
@@ -917,7 +899,7 @@ CouplingOperator<dim, Number>::CouplingOperator(
               data.all_penalty_parameter.emplace_back(penalty_parameter);
           }
 
-#  ifdef DEBUG
+#ifdef DEBUG
   Utilities::MPI::sum(vec_local_cells,
                       dof_handler.get_mpi_communicator(),
                       vec_local_cells);
@@ -988,7 +970,7 @@ CouplingOperator<dim, Number>::CouplingOperator(
           AssertThrow(false, ExcInternalError());
         }
     }
-#  endif
+#endif
 
   // Setup communication
   partitioner.reinit(is_local_cell,
@@ -1041,29 +1023,6 @@ CouplingOperator<dim, Number>::CouplingOperator(
       dof_handler.get_mpi_communicator());
   }
 }
-#else
-template <int dim, typename Number>
-CouplingOperator<dim, Number>::CouplingOperator(
-  const Mapping<dim>                                        &mapping,
-  const DoFHandler<dim>                                     &dof_handler,
-  const AffineConstraints<Number>                           &constraints,
-  const std::shared_ptr<CouplingEvaluationBase<dim, Number>> evaluator,
-  const std::shared_ptr<MortarManagerBase<dim>>              mortar_manager,
-  const unsigned int                                         bid_m,
-  const unsigned int                                         bid_p,
-  const double)
-  : mapping(mapping)
-  , dof_handler(dof_handler)
-  , bid_m(bid_m)
-  , bid_p(bid_p)
-  , evaluator(evaluator)
-  , mortar_manager(mortar_manager)
-{
-  AssertThrow(false,
-              ExcMessage(
-                "The mortar coupling requires deal.II 9.7 or more recent."));
-}
-#endif
 
 template <int dim, typename Number>
 const AffineConstraints<Number> &
@@ -1153,7 +1112,6 @@ CouplingOperator<dim, Number>::get_dof_indices(
   return local_dofs;
 }
 
-#if DEAL_II_VERSION_GTE(9, 7, 0)
 template <int dim, typename Number>
 template <typename VectorType>
 void
@@ -1267,13 +1225,6 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
   dst_internal.compress(VectorOperation::add);
   dst.add(1.0, dst_internal);
 }
-#else
-template <int dim, typename Number>
-template <typename VectorType>
-void
-CouplingOperator<dim, Number>::vmult_add(VectorType &, const VectorType &) const
-{}
-#endif
 
 template <int dim, typename Number>
 template <typename VectorType>
@@ -1370,7 +1321,6 @@ CouplingOperator<dim, Number>::add_sparsity_pattern_entries(
     }
 }
 
-#if DEAL_II_VERSION_GTE(9, 7, 0)
 template <int dim, typename Number>
 void
 CouplingOperator<dim, Number>::add_system_matrix_entries(
@@ -1529,21 +1479,9 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
   AssertDimension(ptr_q, data.all_normals.size());
   AssertDimension(ptr_dofs, dof_indices.size());
 }
-#else
-template <int dim, typename Number>
-void
-CouplingOperator<dim, Number>::add_system_matrix_entries(
-  TrilinosWrappers::SparseMatrix &) const
-{
-  AssertThrow(false,
-              ExcMessage(
-                "The mortar coupling requires deal.II 9.7 or more recent."));
-}
-#endif
 
 
 /*-------------- CouplingEvaluationSIPG -------------------------------*/
-
 template <int dim, int n_components, typename Number>
 CouplingEvaluationSIPG<dim, n_components, Number>::CouplingEvaluationSIPG(
   const Mapping<dim>    &mapping,

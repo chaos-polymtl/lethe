@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_load_balancing_h
@@ -188,8 +188,6 @@ public:
   inline void
   connect_weight_signals()
   {
-#if DEAL_II_VERSION_GTE(9, 7, 0)
-
     triangulation->signals.weight.connect(
       [&](const typename Triangulation<dim>::cell_iterator &cell,
           const typename Triangulation<dim>::CellStatus) -> unsigned int {
@@ -203,35 +201,6 @@ public:
             status) -> unsigned int {
         return this->calculate_total_cell_weight(cell, status);
       });
-
-#elif (DEAL_II_VERSION_MAJOR < 10 && DEAL_II_VERSION_MINOR < 7)
-    triangulation->signals.weight.connect(
-      [&](const typename Triangulation<dim>::cell_iterator &,
-          const typename Triangulation<dim>::CellStatus) -> unsigned int {
-        return cell_weight;
-      });
-
-    triangulation->signals.weight.connect(
-      [&](const typename parallel::distributed::Triangulation<
-            dim>::cell_iterator &cell,
-          const typename parallel::distributed::Triangulation<dim>::CellStatus
-            status) -> unsigned int {
-        return this->calculate_total_cell_weight(cell, status);
-      });
-
-#else
-    // Connect the default cell weight function
-    triangulation->signals.weight.connect(
-      [&](const typename Triangulation<dim>::cell_iterator &,
-          const CellStatus) -> unsigned int { return cell_weight; });
-
-    triangulation->signals.weight.connect(
-      [&](const typename parallel::distributed::Triangulation<
-            dim>::cell_iterator &cell,
-          const CellStatus       status) -> unsigned int {
-        return this->calculate_total_cell_weight(cell, status);
-      });
-#endif
   }
 
   /**

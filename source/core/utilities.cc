@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/revision.h>
@@ -737,7 +737,7 @@ void
 print_version_info(const ConditionalOStream &pcout)
 {
   (void)pcout;
-#if DEAL_II_VERSION_GTE(9, 7, 0)
+
   // Copy the tags to be able to delete the first v
   std::string lethe_tag  = LETHE_GIT_FANCY_TAG;
   std::string dealii_tag = DEAL_II_GIT_FANCY_TAG;
@@ -746,12 +746,6 @@ print_version_info(const ConditionalOStream &pcout)
   pcout << "lethe/" << lethe_tag.erase(0, 1) << " deal.II/"
         << dealii_tag.erase(0, 1) << std::endl;
   pcout << std::endl;
-#else
-  AssertThrow(
-    false,
-    ExcMessage(
-      "To print version information using -V you need a version of deal.II >= 9.7.0."));
-#endif
 }
 
 /**
@@ -820,19 +814,12 @@ print_parameters_to_output_file(const ConditionalOStream &pcout,
 
   if (print_parameters == "only changed")
     {
-#if DEAL_II_VERSION_GTE(9, 7, 0)
       prm.print_parameters(pcout.get_stream(),
                            ParameterHandler::OutputStyle::PRM |
                              ParameterHandler::OutputStyle::Short |
                              ParameterHandler::KeepDeclarationOrder |
                              ParameterHandler::KeepOnlyChanged);
       pcout << std::endl << std::endl;
-#else
-      AssertThrow(
-        false,
-        ExcMessage(
-          "To print only changed parameters you need a version of deal.II >= 9.7.0."));
-#endif
     }
   else if (print_parameters == "all")
     {

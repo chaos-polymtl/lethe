@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2020, 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2020, 2024, 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <deal.II/base/function.h>
@@ -411,11 +411,7 @@ DirectSteadyNavierStokes<dim>::refine_mesh()
   setup_dofs();
   BlockVector<double> tmp(dofs_per_block);
 
-#if DEAL_II_VERSION_GTE(9, 7, 0)
   solution_transfer.interpolate(tmp);
-#else
-  solution_transfer.interpolate(tmp, present_solution);
-#endif
 
   nonzero_constraints.distribute(tmp);
   initialize_system();
@@ -432,11 +428,7 @@ DirectSteadyNavierStokes<dim>::refine_mesh_uniform()
   setup_dofs();
   BlockVector<double> tmp(dofs_per_block);
 
-#if DEAL_II_VERSION_GTE(9, 7, 0)
   solution_transfer.interpolate(tmp);
-#else
-  solution_transfer.interpolate(tmp, present_solution);
-#endif
 
   nonzero_constraints.distribute(tmp);
   initialize_system();

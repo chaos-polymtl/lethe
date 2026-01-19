@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <deal.II/base/function.h>
@@ -167,11 +167,8 @@ Settings::try_parse(const std::string &prm_filename)
         << "****  directory, or use the following default values\n"
         << "****  to create an input file:\n";
       if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
-#if DEAL_II_VERSION_GTE(9, 7, 0)
         prm.print_parameters(std::cout, ParameterHandler::DefaultStyle);
-#else
-        prm.print_parameters(std::cout, ParameterHandler::Text);
-#endif
+
       return false;
     }
 

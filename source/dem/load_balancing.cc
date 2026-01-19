@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <dem/adaptive_sparse_contacts.h>
@@ -71,14 +71,9 @@ LagrangianLoadBalancing<dim, PropertiesIndex>::
           if (cell->is_locally_owned())
             {
               // Apply the cell weight
-#if DEAL_II_VERSION_GTE(9, 7, 0)
               Point<dim> cell_barycenter = cell->center();
               load_weight +=
                 static_cast<int>(cell_weight_function->value(cell_barycenter));
-#else
-              load_weight += cell_weight;
-#endif
-
 
               // Get the mobility status of the cell and the number of particles
               const unsigned int cell_mobility_status =

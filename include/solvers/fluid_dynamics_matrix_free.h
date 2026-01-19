@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_fluid_dynamics_matrix_free_h
@@ -51,14 +51,7 @@ protected:
 #ifndef LETHE_GMG_USE_FLOAT
   using MGNumber = double;
 #else
-#  if DEAL_II_VERSION_GTE(9, 7, 0)
-  using MGNumber              = float;
-#  else
-  AssertThrow(
-    false,
-    ExcMessage(
-      "Single precision for the geometric multigrid preconditioner requires a version of deal.II >= 9.7.0."));
-#  endif
+  using MGNumber = float;
 #endif
 
   using VectorType         = LinearAlgebra::distributed::Vector<Number>;
@@ -75,15 +68,9 @@ protected:
   using PreconditionerTypeGC =
     PreconditionMG<dim, MGVectorType, GCTransferType>;
 
-#if DEAL_II_VERSION_GTE(9, 7, 0)
   using CoarseGridSolverApply = MGCoarseGridApplyOperator<
     MGVectorType,
     PreconditionAdapter<MGVectorType, TrilinosVectorType>>;
-#else
-  using CoarseGridSolverApply = MGCoarseGridApplyPreconditioner<
-    MGVectorType,
-    PreconditionAdapter<MGVectorType, TrilinosVectorType>>;
-#endif
 
 public:
   /**

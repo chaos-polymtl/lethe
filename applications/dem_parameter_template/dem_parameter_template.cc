@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2021, 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2021, 2024, 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 // check the read and write of simulationcontrol
@@ -17,22 +17,14 @@ main()
         DEMSolverParameters<2> dem_parameters;
         dem_parameters.declare(prm);
         std::ofstream output_prm("dem-2d.prm");
-#if DEAL_II_VERSION_GTE(9, 7, 0)
         prm.print_parameters(output_prm, prm.PRM);
-#else
-        prm.print_parameters(output_prm, prm.Text);
-#endif
       }
       {
         ParameterHandler       prm;
         DEMSolverParameters<3> dem_parameters;
         dem_parameters.declare(prm);
         std::ofstream output_prm("dem-3d.prm");
-#if DEAL_II_VERSION_GTE(9, 7, 0)
         prm.print_parameters(output_prm, prm.PRM);
-#else
-        prm.print_parameters(output_prm, prm.Text);
-#endif
       }
     }
   catch (std::exception &exc)

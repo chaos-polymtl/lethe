@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -2521,7 +2521,6 @@ MFNavierStokesPreconditionGMG<dim>::initialize_auxiliary_physics(
       this->mg_transfer_gc_temperature =
         std::make_shared<GCTransferType>(this->transfers_temperature);
 
-#if DEAL_II_VERSION_GTE(9, 7, 0)
       this->mg_transfer_gc_temperature->build(
         temperature_dof_handler, [&](const auto l, auto &vec) {
           vec.reinit(this->temperature_dof_handlers[l].locally_owned_dofs(),
@@ -2529,7 +2528,6 @@ MFNavierStokesPreconditionGMG<dim>::initialize_auxiliary_physics(
                        this->temperature_dof_handlers[l]),
                      this->temperature_dof_handlers[l].get_mpi_communicator());
         });
-#endif
 
       MGLevelObject<MGVectorType> mg_temperature_solution(this->minlevel,
                                                           this->maxlevel);

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <deal.II/base/convergence_table.h>
@@ -546,13 +546,10 @@ main(int argc, char **argv)
 
   run<dim, fe_degree, 1, MemorySpace::Host>(n_refinements, table);
   run<dim, fe_degree, 1, MemorySpace::Default>(n_refinements, table);
-
-#if DEAL_II_VERSION_GTE(9, 7, 0)
   run<dim, fe_degree, dim, MemorySpace::Host>(n_refinements, table);
   run<dim, fe_degree, dim, MemorySpace::Default>(n_refinements, table);
   run<dim, fe_degree, dim + 1, MemorySpace::Host>(n_refinements, table);
   run<dim, fe_degree, dim + 1, MemorySpace::Default>(n_refinements, table);
-#endif
 
   if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
     table.write_text(std::cout);
