@@ -1,0 +1,3 @@
+add_executable(mortar_poisson_matrix_based poisson_matrix_based.cc
+  mortarfunctions.h)
+deal_ii_setup_target(mortar_poisson_matrix_based)
