@@ -1310,18 +1310,12 @@ VolumeOfFluid<dim>::compute_capillary_time_step_constraint(
             compute_cell_measure_with_JxW(fe_values_vof.get_JxW_values());
           h = compute_cell_diameter<dim>(cell_measure, degree);
 
-          // TODO AA cleanup
-          // this->pcout << "h: " << h << std::endl;
-
           // Loop over quadrature points
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              double density_average = 0.5 * (density_0[q] + density_1[q]);
+              double density_average   = 0.5 * (density_0[q] + density_1[q]);
               double surface_tension_q = std::max(surface_tension[q], 1e-16);
-              double denominator_inv = 1 / (numbers::PI * surface_tension_q);
-
-              // this->pcout << "density_average: " << density_average << std::endl;
-              // this->pcout << "denominator_inv: " << denominator_inv << std::endl;
+              double denominator_inv   = 1 / (numbers::PI * surface_tension_q);
 
               // Compute capillary time-step constraint
               double new_capillary_time_step_constraint =
@@ -1335,7 +1329,6 @@ VolumeOfFluid<dim>::compute_capillary_time_step_constraint(
             }
         }
     }
-  // this->pcout << "capillary_time_step_constraint: " << capillary_time_step_constraint << std::endl;
 
   // Get the minimum among active processes
   return Utilities::MPI::min(capillary_time_step_constraint, mpi_communicator);

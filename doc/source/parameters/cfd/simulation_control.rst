@@ -237,6 +237,13 @@ Explicit coupling constraint parameters
     * :math:`\rho_0` and :math:`\rho_1` are respectively the densities of fluid :math:`0` and :math:`1`, and;
     * :math:`h` is the cell size.
 
+  .. note::
+
+      Here, we define the cell size :math:`(h)` as being the diameter of:
+
+      - a disk with equivalent area in 2D, and;
+      - a sphere with equivalent volume in 3D.
+
   This is used in the coupling of the :doc:`Navier-Stokes equations <../../theory/multiphysics/fluid_dynamics/navier-stokes>` with the :doc:`VOF <../../theory/multiphase/cfd/vof>` method to simulate multiphase flows with surface tension. If ``adapt`` is also enabled, the time-step will adapt to respect the capillary time-step constraint dynamically.
 
 ****

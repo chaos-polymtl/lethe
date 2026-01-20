@@ -175,7 +175,7 @@ public:
    */
   double
   compute_capillary_time_step_constraint(const bool pressure_dependent,
-                               const bool temperature_dependent);
+                                         const bool temperature_dependent);
 
   /**
    * @brief Carry out the operations required to finish a simulation correctly.
