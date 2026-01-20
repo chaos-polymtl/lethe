@@ -629,8 +629,7 @@ namespace InterfaceTools
     }
 
     /**
-     * @brief Set the map of local id of the opposite DoFs to the given face
-     * (works for quad only).
+     * @brief Set the map of local id of the face DoFs (works for quad only).
      */
     inline void
     set_face_dofs_map()
@@ -661,7 +660,7 @@ namespace InterfaceTools
      * @param[in] local_face_id Local id of the face in the cell
      *
      * @param[out] local_opposite_dofs The vector containing the id of the
-     * opposite faces
+     * opposite DoFs
      */
     inline void
     get_face_opposite_dofs(unsigned int               local_face_id,
@@ -671,13 +670,12 @@ namespace InterfaceTools
     };
 
     /**
-     * @brief Return the local id of the opposite DoFs to the given face
-     * (works for quad only).
+     * @brief Return the local id of the face DoFs (works for quad only).
      *
      * @param[in] local_face_id Local id of the face in the cell
      *
      * @param[out] local_opposite_dofs The vector containing the id of the
-     * opposite faces
+     * local DoFs
      */
     inline void
     get_face_local_dofs(unsigned int               local_face_id,

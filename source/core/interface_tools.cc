@@ -566,7 +566,6 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
   if constexpr (dim == 3)
     n_opposite_dofs_per_faces = 4;
 
-
   unsigned int n_dofs_per_faces = 2;
   if constexpr (dim == 3)
     n_dofs_per_faces = 4;
@@ -588,14 +587,14 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
   if constexpr (dim == 3)
     ref_face_center_point(1) = 0.5;
 
-  // Stencil
+  // Evalutation points
   std::vector<Point<dim>> x_n_ref_vector(n_opposite_dofs_per_faces);
   std::vector<Point<dim>> x_n_real_vector(n_opposite_dofs_per_faces);
   Tensor<1, dim>          distance_gradients;
 
-  // Transformation jacobians
-  DerivativeForm<1, dim, dim>     cell_transformation_jacobians;
-  DerivativeForm<1, dim - 1, dim> face_transformation_jacobians;
+  // Transformation jacobian
+  DerivativeForm<1, dim, dim>     cell_transformation_jacobian;
+  DerivativeForm<1, dim - 1, dim> face_transformation_jacobian;
 
   // Jacobian matrix, residual vector and correction
   LAPACKFullMatrix<double> jacobian_matrix(dim - 1, dim - 1);
@@ -764,12 +763,12 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                             fe_point_evaluation.quadrature_point(i);
                           distance_gradients =
                             fe_point_evaluation.get_gradient(i);
-                          cell_transformation_jacobians =
+                          cell_transformation_jacobian =
                             fe_point_evaluation.jacobian(i);
                           get_face_transformation_jacobian(
-                            cell_transformation_jacobians,
+                            cell_transformation_jacobian,
                             j,
-                            face_transformation_jacobians);
+                            face_transformation_jacobian);
 
                           /* Compute the jacobian matrix. The Ax=b system is
                         formulated as the dim-1 system. We solve for the
@@ -777,7 +776,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                           compute_analytical_jacobian(
                             x_n_real_vector[i],
                             x_I_real,
-                            face_transformation_jacobians,
+                            face_transformation_jacobian,
                             face_local_dof_values,
                             jacobian_matrix);
 
@@ -787,7 +786,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                           Tensor<1, dim - 1> residual_n;
                           compute_residual(x_n_to_x_I_real,
                                            distance_gradients,
-                                           face_transformation_jacobians,
+                                           face_transformation_jacobian,
                                            residual_n);
 
                           // Convert the right hand side to the right format
