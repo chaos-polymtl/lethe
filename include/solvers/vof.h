@@ -49,6 +49,10 @@ DeclExceptionMsg(
   "The VOF physics has been set to use DG and the latter implementation currently does not support any interface regularization mechanism.");
 
 DeclExceptionMsg(
+  UnsupportedRegularizationWithSimplex,
+  "The VOF physics has been set to use simplex and the latter implementation currently does not support the geometric interface regularization mechanism.");
+
+DeclExceptionMsg(
   UnsupportedInitialProjection,
   "The VOF physics has been set to use DG and the latter implementation currently does not support defining an initial condition with a projection.");
 

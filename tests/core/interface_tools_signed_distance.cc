@@ -65,7 +65,7 @@ test()
   // Discretize the domain as in an arbitrary background solver
   std::shared_ptr<FiniteElement<dim>> background_fe =
     std::make_shared<FE_Q<dim>>(1);
-  std::shared_ptr<Mapping<dim>> background_mapping =
+  std::shared_ptr<MappingQ<dim>> background_mapping =
     std::make_shared<MappingQ<dim>>(background_fe->degree);
 
   DoFHandler<dim> background_dof_handler =
