@@ -557,8 +557,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
   // of each face of the cell. This reduces the number of calls to
   // FEPointEvaluation.reinit() compared to a routine based on the opposite
   // faces of each DoF of the cell.
-  const unsigned int        dofs_per_cell  = fe->n_dofs_per_cell();
-  unsigned int              faces_per_cell = 4;
+  const unsigned int dofs_per_cell  = fe->n_dofs_per_cell();
+  unsigned int       faces_per_cell = 4;
   if constexpr (dim == 3)
     faces_per_cell = 6;
 
@@ -591,10 +591,10 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
   // Stencil
   std::vector<Point<dim>> x_n_ref_vector(n_opposite_dofs_per_faces);
   std::vector<Point<dim>> x_n_real_vector(n_opposite_dofs_per_faces);
-  Tensor<1, dim> distance_gradients;
+  Tensor<1, dim>          distance_gradients;
 
   // Transformation jacobians
-  DerivativeForm<1, dim, dim> cell_transformation_jacobians;
+  DerivativeForm<1, dim, dim>     cell_transformation_jacobians;
   DerivativeForm<1, dim - 1, dim> face_transformation_jacobians;
 
   // Jacobian matrix, residual vector and correction
@@ -719,7 +719,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
                   for (unsigned int i = 0; i < n_dofs_per_faces; ++i)
                     {
-                      face_local_dof_values[i] = cell_dof_values[face_local_dofs[i]];
+                      face_local_dof_values[i] =
+                        cell_dof_values[face_local_dofs[i]];
                     }
 
                   constexpr double tol           = 1e-9;
@@ -732,13 +733,12 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                   while (*std::ranges::max_element(correction_norm) > tol &&
                          newton_it < newton_max_it)
                     {
-
                       /* Prepare FEPointEvaluation to compute value and
                       gradient at the stencil points*/
                       fe_point_evaluation.reinit(cell, x_n_ref_vector);
                       fe_point_evaluation.evaluate(cell_dof_values,
                                                    EvaluationFlags::gradients);
-                      
+
                       // Loop over the face's opposite DoFs
                       for (unsigned int i = 0; i < n_opposite_dofs_per_faces;
                            ++i)
@@ -760,7 +760,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                           x_I_real = dof_support_points.at(
                             dof_indices[local_face_opposite_dof]);
 
-                          x_n_real_vector[i] = fe_point_evaluation.quadrature_point(i);
+                          x_n_real_vector[i] =
+                            fe_point_evaluation.quadrature_point(i);
                           distance_gradients =
                             fe_point_evaluation.get_gradient(i);
                           cell_transformation_jacobians =
@@ -778,8 +779,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                             x_I_real,
                             face_transformation_jacobians,
                             face_local_dof_values,
-                            jacobian_matrix
-                          );
+                            jacobian_matrix);
 
                           x_n_to_x_I_real = x_I_real - x_n_real_vector[i];
 

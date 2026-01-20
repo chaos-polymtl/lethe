@@ -628,7 +628,7 @@ namespace InterfaceTools
         }
     }
 
-        /**
+    /**
      * @brief Set the map of local id of the opposite DoFs to the given face
      * (works for quad only).
      */
@@ -637,10 +637,10 @@ namespace InterfaceTools
     {
       if constexpr (dim == 2)
         {
-          face_dofs_map[0] = {0,2};
-          face_dofs_map[1] = {1,3};
-          face_dofs_map[2] = {0,1};
-          face_dofs_map[3] = {2,3};
+          face_dofs_map[0] = {0, 2};
+          face_dofs_map[1] = {1, 3};
+          face_dofs_map[2] = {0, 1};
+          face_dofs_map[3] = {2, 3};
         }
 
       if constexpr (dim == 3)
@@ -670,7 +670,7 @@ namespace InterfaceTools
       local_opposite_dofs = face_opposite_dofs_map.at(local_face_id);
     };
 
-     /**
+    /**
      * @brief Return the local id of the opposite DoFs to the given face
      * (works for quad only).
      *
@@ -681,7 +681,7 @@ namespace InterfaceTools
      */
     inline void
     get_face_local_dofs(unsigned int               local_face_id,
-                           std::vector<unsigned int> &local_dofs)
+                        std::vector<unsigned int> &local_dofs)
     {
       local_dofs = face_dofs_map.at(local_face_id);
     };
@@ -941,10 +941,10 @@ namespace InterfaceTools
      * @brief
      * Compute the analytical jacobian at the point x_n of the distance
      * minimization problem for the DoF x_I in the reference face space (dim -
-     * 1): J_R = J^T*H*J, where J is the face transformation jacobian, and 
-     * H is the Hessian matrix in the real space (H = H(d) + H(||x_I - x_n||)). 
+     * 1): J_R = J^T*H*J, where J is the face transformation jacobian, and
+     * H is the Hessian matrix in the real space (H = H(d) + H(||x_I - x_n||)).
      *
-     * @param[in] x_real evaluation point x_n in the real spac. 
+     * @param[in] x_real evaluation point x_n in the real spac.
      *
      * @param[in] x_I_real coordinate of the DoF x_I in the real space
      *
@@ -956,22 +956,21 @@ namespace InterfaceTools
      */
     inline void
     compute_analytical_jacobian(
-      const Point<dim>     &x_real,
-      const Point<dim>                  &x_I_real,
-      const DerivativeForm<1, dim - 1, dim>
-                               &transformation_jacobian,
-      const std::vector<double> &face_local_dof_values,                         
-      LAPACKFullMatrix<double> &jacobian_matrix)
+      const Point<dim>                      &x_real,
+      const Point<dim>                      &x_I_real,
+      const DerivativeForm<1, dim - 1, dim> &transformation_jacobian,
+      const std::vector<double>             &face_local_dof_values,
+      LAPACKFullMatrix<double>              &jacobian_matrix)
     {
-
-      const Tensor<1, dim> x_n_to_x_I_real_p1 =
-            x_I_real - x_real;
+      const Tensor<1, dim> x_n_to_x_I_real_p1 = x_I_real - x_real;
 
       const double x_n_to_x_I_real_p1_norm = x_n_to_x_I_real_p1.norm();
 
-      const double x_n_to_x_I_real_p1_norm_inv = 1.0/x_n_to_x_I_real_p1_norm;
+      const double x_n_to_x_I_real_p1_norm_inv = 1.0 / x_n_to_x_I_real_p1_norm;
 
-      const double x_n_to_x_I_real_p1_norm_cubic_inv = x_n_to_x_I_real_p1_norm_inv * x_n_to_x_I_real_p1_norm_inv * x_n_to_x_I_real_p1_norm_inv;
+      const double x_n_to_x_I_real_p1_norm_cubic_inv =
+        x_n_to_x_I_real_p1_norm_inv * x_n_to_x_I_real_p1_norm_inv *
+        x_n_to_x_I_real_p1_norm_inv;
 
       LAPACKFullMatrix<double> hessian_matrix(dim, dim);
 
@@ -979,52 +978,58 @@ namespace InterfaceTools
         {
           for (unsigned int j = 0; j < dim; ++j)
             {
-              double h_ij = -(x_n_to_x_I_real_p1[i]*x_n_to_x_I_real_p1[j])*x_n_to_x_I_real_p1_norm_cubic_inv;
+              double h_ij = -(x_n_to_x_I_real_p1[i] * x_n_to_x_I_real_p1[j]) *
+                            x_n_to_x_I_real_p1_norm_cubic_inv;
               if (i == j)
                 h_ij += x_n_to_x_I_real_p1_norm_inv;
-              
-              hessian_matrix.set(i,j, h_ij);
-            }
-        }
-        
-      const DerivativeForm<1, dim, dim - 1> transformation_jacobian_tanspose = transformation_jacobian.transpose();
-      
-      LAPACKFullMatrix<double> H_x_transformation_jacobian(dim, dim-1);
-      for (unsigned int i = 0; i < dim; ++i)
-        {
-          for (unsigned int j = 0; j < dim-1; ++j)
-            {
-              double matrix_ij = 0;
-              for (unsigned int k = 0; k < dim; ++k)
-                {
-                  matrix_ij += hessian_matrix(i,k)*transformation_jacobian[k][j];
-                }
-              H_x_transformation_jacobian.set(i,j, matrix_ij);
+
+              hessian_matrix.set(i, j, h_ij);
             }
         }
 
-      for (unsigned int i = 0; i < dim-1; ++i)
+      const DerivativeForm<1, dim, dim - 1> transformation_jacobian_tanspose =
+        transformation_jacobian.transpose();
+
+      LAPACKFullMatrix<double> H_x_transformation_jacobian(dim, dim - 1);
+      for (unsigned int i = 0; i < dim; ++i)
         {
-          for (unsigned int j = 0; j < dim-1; ++j)
+          for (unsigned int j = 0; j < dim - 1; ++j)
             {
               double matrix_ij = 0;
               for (unsigned int k = 0; k < dim; ++k)
                 {
-                  matrix_ij += transformation_jacobian_tanspose[i][k]*H_x_transformation_jacobian(k,j);
+                  matrix_ij +=
+                    hessian_matrix(i, k) * transformation_jacobian[k][j];
                 }
-              jacobian_matrix.set(i,j, matrix_ij);
+              H_x_transformation_jacobian.set(i, j, matrix_ij);
+            }
+        }
+
+      for (unsigned int i = 0; i < dim - 1; ++i)
+        {
+          for (unsigned int j = 0; j < dim - 1; ++j)
+            {
+              double matrix_ij = 0;
+              for (unsigned int k = 0; k < dim; ++k)
+                {
+                  matrix_ij += transformation_jacobian_tanspose[i][k] *
+                               H_x_transformation_jacobian(k, j);
+                }
+              jacobian_matrix.set(i, j, matrix_ij);
             }
         }
 
       // In Q1, off-diagonal terms are coming from the term H(d) of the
-      // real space Hessian. FEPointEvaluation doesn't include the 
+      // real space Hessian. FEPointEvaluation doesn't include the
       // implementation of the Hessian, hence it is computed by hand.
       double off_diag_H = 0;
       if constexpr (dim == 3)
         {
-          off_diag_H = jacobian_matrix(0,1) + face_local_dof_values[0] -face_local_dof_values[1] -face_local_dof_values[2] + face_local_dof_values[3];
-          jacobian_matrix.set(0,1, off_diag_H);
-          jacobian_matrix.set(1,0, off_diag_H);
+          off_diag_H = jacobian_matrix(0, 1) + face_local_dof_values[0] -
+                       face_local_dof_values[1] - face_local_dof_values[2] +
+                       face_local_dof_values[3];
+          jacobian_matrix.set(0, 1, off_diag_H);
+          jacobian_matrix.set(1, 0, off_diag_H);
         }
     };
 
@@ -1125,7 +1130,6 @@ namespace InterfaceTools
     std::map<unsigned int, std::vector<unsigned int>> face_opposite_dofs_map;
 
     std::map<unsigned int, std::vector<unsigned int>> face_dofs_map;
-
   };
 } // namespace InterfaceTools
 

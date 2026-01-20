@@ -3,6 +3,7 @@
 
 // Deal.II includes
 #include <deal.II/base/function_signed_distance.h>
+#include <deal.II/base/timer.h>
 
 #include <deal.II/distributed/tria.h>
 
@@ -16,8 +17,6 @@
 #include <deal.II/grid/tria.h>
 
 #include <deal.II/numerics/vector_tools.h>
-
-#include <deal.II/base/timer.h>
 
 // Lethe
 #include <core/interface_tools.h>
@@ -39,8 +38,7 @@ test()
   */
   MPI_Comm mpi_communicator(MPI_COMM_WORLD);
 
-  TimerOutput timer(std::cout, TimerOutput::summary,
-                   TimerOutput::wall_times);
+  TimerOutput timer(std::cout, TimerOutput::summary, TimerOutput::wall_times);
 
   // Triangulation (as a shared_ptr to reproduce an arbitrary background solver
   // architecture)
@@ -112,8 +110,8 @@ test()
     background_dof_handler, background_level_set);
 
   // Solve the signed_distance field.
-  timer.enter_subsection ("Signed distance solver");
-    signed_distance_solver->solve();
+  timer.enter_subsection("Signed distance solver");
+  signed_distance_solver->solve();
   timer.leave_subsection();
 
   // Get the signed_distance field from the SignedDistanceSolver
