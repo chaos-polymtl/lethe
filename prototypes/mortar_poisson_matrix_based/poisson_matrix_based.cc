@@ -26,8 +26,8 @@
 
 #include <fstream>
 
-#include "./mortar_operator.h"
 #include "./generate_grids.h"
+#include "./mortar_operator.h"
 
 using namespace dealii;
 

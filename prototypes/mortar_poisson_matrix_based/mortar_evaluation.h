@@ -3,8 +3,8 @@
 
 #include <deal.II/base/config.h>
 
-#include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/fe_nothing.h>
+#include <deal.II/fe/fe_system.h>
 
 using namespace dealii;
 

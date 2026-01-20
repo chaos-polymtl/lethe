@@ -6,8 +6,8 @@
 #include <deal.II/base/mpi_noncontiguous_partitioner.h>
 #include <deal.II/base/mpi_noncontiguous_partitioner.templates.h>
 
-#include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/fe_nothing.h>
+#include <deal.II/fe/fe_system.h>
 
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_solver.h>
@@ -20,8 +20,8 @@
 #include <deal.II/matrix_free/tools.h>
 
 #include "./auxiliary_functions.h"
-#include "./mortar_manager.h"
 #include "./mortar_evaluation.h"
+#include "./mortar_manager.h"
 
 using namespace dealii;
 
