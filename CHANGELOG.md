@@ -4,6 +4,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026-01-23
+
+### Changed
+
+- MAJOR Some initial tests created for the mortar feature became obsolete as the code developed. Hence, this PR cleans up the mortar tests and moves the more representative ones (that are not used anymore) to the prototypes folder. [#1887](https://github.com/chaos-polymtl/lethe/pull/1887)
+
 ## [Master] - 2026-01-22
 
 ### Fixed
