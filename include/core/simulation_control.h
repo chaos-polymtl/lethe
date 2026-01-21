@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -141,6 +141,29 @@ protected:
    * doi: 10.1016/j.jcp.2022.111128
    */
   double capillary_time_step_constraint;
+
+  /**
+   * @brief The user inputted ratio between the time-step and the capillary
+   * time-step constraint (Δt/Δt_σ).
+   *
+   * When SimulationControl::respect_capillary_time_step_constraint is set to
+   * @p true, the time-step of the simulation should respect the following:
+   *
+   * \f[
+   * \Delta t \leq  \text{CTR} \, \Delta t_\sigma
+   * \f]
+   *
+   * with \f$ \Delta t \f$ the computed time-step, \f$ \text{CTR} \f$ the
+   * capillary time-step ratio, and \f$ \Delta t_\sigma \f$ the
+   * SimulationControl::capillary_time_step_constraint.
+   */
+  double capillary_time_step_ratio;
+
+  /**
+   * @brief Computed ratio between the current time-step and the capillary
+   * time-step constraint (Δt/Δt_σ).
+   */
+  double current_capillary_time_step_ratio;
 
   /**
    * @brief Enable adaptive time-stepping that respects the capillary time-step
@@ -541,14 +564,25 @@ public:
   }
 
   /**
-   * @brief Updates initial time-step to respect the capillary time-step constraint
+   * @brief Update initial time-step to respect the capillary time-step constraint
    */
   void
   set_initial_time_step_with_capillary_time_step_constraint()
   {
-    initial_time_step =
-      std::min(capillary_time_step_constraint, initial_time_step);
+    double capillary_time_step =
+      capillary_time_step_constraint * capillary_time_step_ratio;
+    initial_time_step = std::min(initial_time_step, capillary_time_step);
     set_current_time_step(initial_time_step);
+  }
+
+  /**
+   * @brief Set the current capillary time-step ratio (Δt/Δt_σ)
+   */
+  void
+  set_current_capillary_time_step_ratio()
+  {
+    current_capillary_time_step_ratio =
+      time_step / capillary_time_step_constraint;
   }
 
   /**
@@ -676,14 +710,14 @@ public:
   }
 
   /**
-   * @brief Get current capillary time-step constraint value
+   * @brief Get current capillary time-step ratio (Δt/Δt_σ)
    *
-   * @return Current capillary time-step constraint value
+   * @return Current capillary time-step ratio (Δt/Δt_σ) value
    */
   double
-  get_capillary_time_step_constraint() const
+  get_current_capillary_time_step_ratio() const
   {
-    return capillary_time_step_constraint;
+    return current_capillary_time_step_ratio;
   }
 
   /**

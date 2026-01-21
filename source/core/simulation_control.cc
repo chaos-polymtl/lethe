@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/simulation_control.h>
@@ -22,6 +22,8 @@ SimulationControl::SimulationControl(const Parameters::SimulationControl &param)
   , CFL(0)
   , max_CFL(param.maxCFL)
   , capillary_time_step_constraint(std::numeric_limits<double>::max())
+  , capillary_time_step_ratio(param.capillary_time_step_ratio)
+  , current_capillary_time_step_ratio(0)
   , respect_capillary_time_step_constraint(
       param.respect_capillary_time_step_constraint)
   , residual(DBL_MAX)
@@ -281,10 +283,29 @@ SimulationControlTransient::print_progression(const ConditionalOStream &pcout)
   ss << "Transient iteration: " << std::setw(8) << std::left << iteration_number
      << " Time: " << std::setw(8) << std::left << current_time
      << " Time step: " << std::setw(8) << std::left << time_step
-     << " CFL: " << std::setw(8) << std::left << SimulationControl::get_CFL();
+     << " CFL: " << std::setw(8) << std::left << this->get_CFL();
+
+  unsigned int first_line_size = ss.str().size();
+
+  if (respect_capillary_time_step_constraint)
+    {
+      // Get the length of blank spaces to add
+      std::stringstream cfl_ss;
+      cfl_ss << std::setprecision(this->log_precision) << std::setw(8)
+             << std::left << this->get_CFL();
+      const unsigned int cfl_value_length = cfl_ss.str().size();
+      const unsigned int blank_space_length =
+        first_line_size - std::strlen(" CFL: ") - cfl_value_length;
+
+      // Print CTR value on a new line, under CFL
+      ss << '\n'
+         << std::setw(blank_space_length) << " "
+         << " CTR: " << std::setw(8) << std::left
+         << this->get_current_capillary_time_step_ratio();
+    }
 
   // Announce string
-  announce_string(pcout, ss.str(), '*');
+  announce_string(pcout, ss.str(), first_line_size, '*');
 }
 
 bool
@@ -311,6 +332,13 @@ SimulationControlTransient::integrate()
       update_assembly_method();
       add_time_step(calculate_time_step());
       current_time += time_step;
+
+      // Calculate CTR for printing on consol if capillary time-step constraint
+      // is enabled
+      if (respect_capillary_time_step_constraint)
+        {
+          set_current_capillary_time_step_ratio();
+        }
 
       if (is_bdf())
         update_bdf_coefficients();
@@ -343,8 +371,9 @@ SimulationControlTransient::calculate_time_step()
 
       if (respect_capillary_time_step_constraint)
         {
-          new_time_step =
-            std::min(new_time_step, capillary_time_step_constraint);
+          double capillary_time_step =
+            capillary_time_step_constraint * capillary_time_step_ratio;
+          new_time_step = std::min(new_time_step, capillary_time_step);
         }
     }
 
@@ -375,7 +404,7 @@ SimulationControlTransient::is_output_iteration()
         {
           // Check if the current step number matches the following condition:
           // (The step number matches the output frequency OR is the last
-          // tiem-step) AND the current time is within the output time interval
+          // time-step) AND the current time is within the output time interval
           return ((get_step_number() % output_iteration_frequency == 0 ||
                    is_at_end()) &&
                   get_current_time() >= output_time_interval[0] &&

@@ -1207,15 +1207,21 @@ VolumeOfFluid<dim>::compute_capillary_time_step_constraint(
   // Extractor for the pressure component of the fluid dynamics solution
   const FEValuesExtractors::Scalar pressure(dim);
 
+  // Initialize local vectors
+  std::vector<double> density_0(n_q_points);
+  std::vector<double> density_1(n_q_points);
+  std::vector<double> pressure_values(n_q_points);
+  std::vector<double> surface_tension(n_q_points);
+  std::vector<double> temperature_values(n_q_points);
+
   // Get fluid dynamics DoFHandler for the pressure field if needed
   if (pressure_dependent)
     {
       dof_handler_fd =
         &multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
-      QGauss<dim> quadrature_formula_fd(dof_handler_fd->get_fe().degree + 1);
       fe_values_fd = std::make_unique<FEValues<dim>>(*this->mapping,
                                                      dof_handler_fd->get_fe(),
-                                                     quadrature_formula_fd,
+                                                     *this->cell_quadrature,
                                                      update_values);
       current_solution_fd =
         &multiphysics->get_solution(PhysicsID::fluid_dynamics);
@@ -1225,22 +1231,13 @@ VolumeOfFluid<dim>::compute_capillary_time_step_constraint(
   if (temperature_dependent)
     {
       dof_handler_ht = &multiphysics->get_dof_handler(PhysicsID::heat_transfer);
-      QGauss<dim> quadrature_formula_ht(dof_handler_ht->get_fe().degree + 1);
-      fe_values_ht = std::make_unique<FEValues<dim>>(*this->mapping,
+      fe_values_ht   = std::make_unique<FEValues<dim>>(*this->mapping,
                                                      dof_handler_ht->get_fe(),
-                                                     quadrature_formula_ht,
+                                                     *this->cell_quadrature,
                                                      update_values);
       current_solution_ht =
         &multiphysics->get_solution(PhysicsID::heat_transfer);
     }
-
-  // Initialize local vectors
-  std::vector<double> density_0(n_q_points);
-  std::vector<double> density_1(n_q_points);
-  std::vector<double> pressure_values(n_q_points);
-  std::vector<double> surface_tension(n_q_points);
-  std::vector<double> temperature_values(n_q_points);
-
   // Get physical property models and initialize independent fields
   std::map<field, std::vector<double>> fields;
   const auto                           density_models =
@@ -1313,9 +1310,10 @@ VolumeOfFluid<dim>::compute_capillary_time_step_constraint(
           // Loop over quadrature points
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              double density_average   = 0.5 * (density_0[q] + density_1[q]);
-              double surface_tension_q = std::max(surface_tension[q], 1e-16);
-              double denominator_inv   = 1 / (numbers::PI * surface_tension_q);
+              double density_average = 0.5 * (density_0[q] + density_1[q]);
+              double surface_tension_q =
+                std::max(surface_tension[q], 1e-16); // Avoid division by zero
+              double denominator_inv = 1 / (numbers::PI * surface_tension_q);
 
               // Compute capillary time-step constraint
               double new_capillary_time_step_constraint =

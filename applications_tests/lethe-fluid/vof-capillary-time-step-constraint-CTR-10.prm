@@ -4,10 +4,8 @@
 #-------------------------------------------------------------------------------
 # DESCRIPTION:
 # This test checks that the adaptive capillary time-step constraint is well
-# applied for cases with adaptive mesh refinement (with the kelly error
-# estimator on the phase indicator). The density and the surface tension
-# considered here remain constant.
-# Only the cell sizes evolve with time.
+# applied for cases with a capillary time-step ratio set to 10 (Δt/Δt_σ). The
+# mesh, the densities and the surface tension considered here remain constant.
 #-------------------------------------------------------------------------------
 
 # Listing of Parameters
@@ -21,12 +19,13 @@ set dimension = 2
 
 subsection simulation control
   set method                                 = bdf2
-  set time end                               = 0.055
-  set time step                              = 0.055
+  set time end                               = 0.15
+  set time step                              = 0.15
   set adapt                                  = true
-  set output name                            = vof-capillary-time-step-constraint-kelly-refinement
+  set output name                            = vof-capillary-time-step-constraint-CTR-10
   set output frequency                       = 0
   set respect capillary time-step constraint = true
+  set capillary time-step ratio              = 10
 end
 
 #---------------------------------------------------
@@ -60,23 +59,7 @@ subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
   set grid arguments     = 2, 1 : -0.5, 0 : 0.5, 0.5 : false
-  set initial refinement = 2
-end
-
-#---------------------------------------------------
-# Mesh Adaptation
-#---------------------------------------------------
-
-subsection mesh adaptation
-  set type                     = kelly
-  set variable                 = phase
-  set fraction type            = fraction
-  set max refinement level     = 5
-  set min refinement level     = 3
-  set frequency                = 1
-  set fraction refinement      = 0.99
-  set fraction coarsening      = 0.01
-  set initial refinement steps = 1
+  set initial refinement = 5
 end
 
 #---------------------------------------------------

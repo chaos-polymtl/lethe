@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MINOR This PR adds the option to compute the capillary time-step constraint as the simulation time-step with the parameter ``respect capillary time-step constraint`` (in the ``simulation control`` subsection) enabled. It is especially useful when simulating capillary flows. When this option is paired with ``adapt`` (for adaptive time-stepping), the time-step will be dynamically updated to respect the capillary time-step constraint at every time-step. []()
+- MINOR This PR adds the option to compute the capillary time-step constraint as the simulation time-step with the parameter ``respect capillary time-step constraint`` (in the ``simulation control`` subsection) enabled. It is especially useful when simulating capillary flows. When this option is paired with ``adapt`` (for adaptive time-stepping), the time-step will be dynamically updated to respect the capillary time-step constraint at every time-step. Additionally, with parameter ``capillary time-step ratio``, users can specify a multiple of the capillary time-step constraint. []()
 - MINOR This PR is a follow-up for the time harmonic electromagnetic auxiliary physics rudimentary implementation #1852. It links its physical material properties #1862 to the assembly, creates the waveguide port boundary conditions, update previous application tests related to the physics and add a new one for a dissipative medium. It also removes .prm in the examples/multiphysics/waveguide as this example will come in a follow up PR. [#1882](https://github.com/chaos-polymtl/lethe/pull/1882) 
 
 ## [Master] - 2026-01-23

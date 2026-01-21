@@ -4,9 +4,12 @@
 #-------------------------------------------------------------------------------
 # DESCRIPTION:
 # This test checks that the adaptive capillary time-step constraint is well
-# applied for cases with isothermal compressible flows (pressure-dependent
-# density). The mesh and the surface tension considered here remain constant.
-# Only the density evolves with time.
+# applied for cases with adaptive mesh refinement (with the kelly error
+# estimator on the phase indicator). The densities and the surface tension
+# considered here remain constant.
+# Only the cell sizes evolve with time.
+# Additionally, this test is run in 2nd order BDF to test the time-step 
+# progression from the initial condition with update_assembly_method().
 #-------------------------------------------------------------------------------
 
 # Listing of Parameters
@@ -19,12 +22,11 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method                                 = bdf1
-  set time end                               = 0.04
-  set time step                              = 0.04
+  set method                                 = bdf2
+  set time end                               = 0.055
+  set time step                              = 0.055
   set adapt                                  = true
-  set max cfl                                = 10 # Set high to ensure that the CFL is not the limiting factor
-  set output name                            = vof-capillary-time-step-constraint-isothermal-compressible-flow
+  set output name                            = vof-capillary-time-step-constraint-kelly-refinement-bdf2
   set output frequency                       = 0
   set respect capillary time-step constraint = true
 end
@@ -47,7 +49,7 @@ subsection initial conditions
     set Function expression = 0; 0; 0
   end
   subsection VOF
-    set Function constants  = eps=1.5, hCell=0.03526, center=0, radius=0.25
+    set Function constants  = eps=1.5, hCell=0.01763, center=0, radius=0.25
     set Function expression = 0.5 - 0.5*tanh((sqrt((x-center)*(x-center)+(y-center)*(y-center))-radius)/(2*eps*hCell))
   end
 end
@@ -59,8 +61,24 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
-  set grid arguments     = 2, 1 : -0.5, 0 : 0.5, 0.5 : true
-  set initial refinement = 4
+  set grid arguments     = 2, 1 : -0.5, 0 : 0.5, 0.5 : false
+  set initial refinement = 2
+end
+
+#---------------------------------------------------
+# Mesh Adaptation
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type                     = kelly
+  set variable                 = phase
+  set fraction type            = fraction
+  set max refinement level     = 5
+  set min refinement level     = 2
+  set frequency                = 1
+  set fraction refinement      = 0.99
+  set fraction coarsening      = 0.01
+  set initial refinement steps = 1
 end
 
 #---------------------------------------------------
@@ -71,10 +89,9 @@ subsection VOF
   subsection interface regularization method
     set type      = geometric interface reinitialization
     set frequency = 1
-    #set verbosity = verbose
     subsection geometric interface reinitialization
-      set max reinitialization distance = 0.31734
-      set tanh thickness                = 0.10578
+      set max reinitialization distance = 0.1587
+      set tanh thickness                = 0.05289
       set transformation type           = tanh
     end
   end
@@ -96,12 +113,7 @@ end
 subsection physical properties
   set number of fluids = 2
   subsection fluid 1
-    set density model = isothermal_ideal_gas
-    subsection isothermal_ideal_gas
-      set density_ref = 10
-      set R           = 287.05
-      set T           = 298.15
-    end
+    set density             = 10
     set kinematic viscosity = 0.1
   end
   subsection fluid 0
@@ -125,26 +137,15 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 3
+  set number = 1
   subsection bc 0
-    set id   = 0, 1
-    set type = outlet
-  end
-  subsection bc 1
-    set id   = 2
-    set type = slip
-  end
-  subsection bc 2
-    set id   = 3
-    set type = function
-    subsection v
-      set Function expression = -10
-    end
+    set id   = 0
+    set type = noslip
   end
 end
 
 subsection boundary conditions VOF
-  set number = 4
+  set number = 1
 end
 
 #---------------------------------------------------
@@ -162,6 +163,7 @@ end
 subsection post-processing
   set calculate mass conservation = false
 end
+
 
 #---------------------------------------------------
 # FEM

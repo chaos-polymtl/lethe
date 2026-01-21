@@ -105,6 +105,9 @@ This subsection is the most important in a simulation and therefore, the most co
     #---------------------------------------------------
     # Set time-step to respect the capillary time-step constraint
     set respect capillary time-step constraint = true
+
+    # Set time-step to respect the capillary time-step constraint
+    set capillary time-step ratio = 1.0
   end
 
 * ``method``: time-stepping method used. The available options are: 
@@ -226,7 +229,7 @@ Paraview output file parameters
 Explicit coupling constraint parameters
 ---------------------------------------
 
-* ``respect capillary time-step constraint``: computes and replaces initial time-step with the capillary time-step [#denner2022]_:
+* ``respect capillary time-step constraint``: computes and replaces initial time-step with the capillary time-step constraint [#denner2022]_:
 
   .. math::
 
@@ -245,6 +248,18 @@ Explicit coupling constraint parameters
       - a sphere with equivalent volume in 3D.
 
   This is used in the coupling of the :doc:`Navier-Stokes equations <../../theory/multiphysics/fluid_dynamics/navier-stokes>` with the :doc:`VOF <../../theory/multiphase/cfd/vof>` method to simulate multiphase flows with surface tension. If ``adapt`` is also enabled, the time-step will adapt to respect the capillary time-step constraint dynamically.
+
+  .. note::
+
+    When ``adapt`` is also enabled, the simulation time-step takes the minimal value between ``max time step``, the time-step computed with ``max cfl`` and the imposed capillary time-step.
+
+* ``capillary time-step ratio``: corresponds to the aimed ratio of the simulation time-step over the capillary time-step constraint:
+
+  .. math::
+
+    \text{CTR} = \frac{\Delta t}{\Delta t_\sigma}
+
+  where :math:`\text{CTR}` is the capillary time-step ratio.
 
 ****
 
