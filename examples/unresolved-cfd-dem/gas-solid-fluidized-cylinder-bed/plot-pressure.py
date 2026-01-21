@@ -290,7 +290,8 @@ for keys, sub in dataset_keys_list:
 
 if args.validate:
     final_solution = [Re.reshape(-1,1), sol]
-    headers_list = ["Re"] + list(datasets.keys())
+    file_keys = [k.replace(" ", "-") for k in datasets.keys()]
+    headers_list = ["Re"] + file_keys
     
     final_solution = np.hstack(final_solution)
     file_suffix = args.output_suffix if args.output_suffix else "mf-qcm-si"
