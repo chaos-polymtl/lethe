@@ -1366,9 +1366,16 @@ template <int dim, typename VectorType>
 std::vector<OutputStruct<dim, GlobalVectorType>>
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::gather_output_hook()
 {
+
 #ifndef LETHE_USE_LDV
-  convert_vector_dealii_to_trilinos(this->signed_distance_output,
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
+
+  GlobalVectorType tmp_local_signed_distance(this->locally_owned_dofs, mpi_communicator);
+
+  convert_vector_dealii_to_trilinos(tmp_local_signed_distance,
                                     this->signed_distance);
+
+  this->signed_distance_output = tmp_local_signed_distance;                                  
 #else
   this->signed_distance_output = this->signed_distance;
 #endif
