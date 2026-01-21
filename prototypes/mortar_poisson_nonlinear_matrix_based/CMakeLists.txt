@@ -1,4 +1,4 @@
-add_executable(mortar_poisson_nonlinear_matrix_based poisson_nonlinear_matrix_based_01.cc
+add_executable(mortar_poisson_nonlinear_matrix_based poisson_nonlinear_matrix_based.cc
   auxiliary_functions.h
   generate_grids.h
   mortar_evaluation.h
