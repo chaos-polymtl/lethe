@@ -300,7 +300,7 @@ public:
   {
     DataOut<dim> data_out;
     std::string  filename =
-      "poisson_nonlinear_MB-" + Utilities::int_to_string(it) + ".vtu";
+      "out-" + Utilities::int_to_string(it) + ".vtu";
 
     solution.update_ghost_values();
 

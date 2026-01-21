@@ -456,7 +456,7 @@ run(const std::string &formulation, const std::string &grid = "hyper_cube")
         DataOut<dim>::CurvedCellRegion::curved_inner_cells);
 
       static unsigned int counter = 0;
-      data_out.write_vtu_in_parallel("poisson_dg." + std::to_string(counter) +
+      data_out.write_vtu_in_parallel("out." + std::to_string(counter) +
                                        ".vtu",
                                      MPI_COMM_WORLD);
       counter++;

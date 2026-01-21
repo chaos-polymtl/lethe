@@ -218,7 +218,7 @@ public:
     data_out.build_patches(mapping,
                            fe_degree + 1,
                            DataOut<dim>::CurvedCellRegion::curved_inner_cells);
-    data_out.write_vtu_in_parallel("poisson_MB.vtu", MPI_COMM_WORLD);
+    data_out.write_vtu_in_parallel("out.vtu", MPI_COMM_WORLD);
   }
 
 

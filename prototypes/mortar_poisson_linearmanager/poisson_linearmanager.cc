@@ -224,7 +224,7 @@ main(int argc, char **argv)
         mapping,
         fe_degree + 1,
         DataOut<dim>::CurvedCellRegion::curved_inner_cells);
-      data_out.write_vtu_in_parallel("poisson_dg.vtu", MPI_COMM_WORLD);
+      data_out.write_vtu_in_parallel("out.vtu", MPI_COMM_WORLD);
     }
   catch (std::exception &exc)
     {
