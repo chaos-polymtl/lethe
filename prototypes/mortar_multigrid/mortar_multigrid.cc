@@ -47,8 +47,8 @@
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/vector_tools.h>
 
-#include "./generate_grids.h"
-#include "./mortar_operator.h"
+#include "../mortar_functions/generate_grids.h"
+#include "../mortar_functions/mortar_operator.h"
 
 using namespace dealii;
 

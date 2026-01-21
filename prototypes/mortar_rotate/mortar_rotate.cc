@@ -5,8 +5,8 @@
  * @brief MyMortarManagerCircle: check generated points.
  */
 
-#include "./generate_grids.h"
-#include "./mortar_operator.h"
+#include "../mortar_functions/generate_grids.h"
+#include "../mortar_functions/mortar_operator.h"
 
 void
 test_01()
