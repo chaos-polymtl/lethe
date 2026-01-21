@@ -55,6 +55,12 @@ namespace Parameters
       volume_based
     };
 
+    enum class ProbabilityFunctionType : std::uint8_t
+    {
+      PDF, // probability density function
+      CDF  // cumulative density function
+    };
+
     struct LagrangianPhysicalProperties
     {
     public:
@@ -64,20 +70,39 @@ namespace Parameters
       // Number of particle types
       unsigned int particle_type_number;
 
+      // Distribution type of each particle type (uniform, normal, lognormal,
+      // custom)
+      std::vector<SizeDistributionType> distribution_type;
+
       // Average diameter of each particle type
-      std::unordered_map<unsigned int, double> particle_average_diameter;
+      std::vector<double> particle_average_diameter;
 
       // Size standard deviation of each particle type
-      std::unordered_map<unsigned int, double> particle_size_std;
+      std::vector<double> particle_size_std;
+
+      // Indicate if the custom distribution is read from file
+      std::vector<bool> custom_distribution_from_file;
+
+      // Filename for the custom distribution for each particle type
+      std::vector<std::string> custom_distribution_filenames;
+
+      // Custom distribution function type (PDF or CDF)
+      std::vector<ProbabilityFunctionType> custom_probability_function_type;
+
+      // Indicated if the generated diameter values from the custom distribution
+      // are interpolated
+      std::vector<bool> custom_distribution_interpolation;
 
       // List of diameters for the custom distribution for each particle type
-      std::unordered_map<unsigned int, std::vector<double>>
-        particle_custom_diameter;
+      std::vector<std::vector<double>> particle_custom_diameter;
 
       // Probability of each diameter value based on volume fraction for the
       // custom distribution for each particle type
-      std::unordered_map<unsigned int, std::vector<double>>
-        particle_custom_probability;
+      std::vector<std::vector<double>> particle_custom_probability;
+
+      // Distribution weighting type of each particle type (number-based,
+      // volume-based)
+      std::vector<DistributionWeightingType> distribution_weighting_type;
 
       // Random seed for the size distribution
       std::vector<unsigned int> seed_for_distributions;
@@ -85,64 +110,56 @@ namespace Parameters
       // Cutoff used for the lognormal distribution
       std::vector<double> diameter_min_cutoff, diameter_max_cutoff;
 
-      // Distribution weighting type of each particle type
-      std::vector<DistributionWeightingType> distribution_weighting_type;
-
-      // Distribution type of each particle type
-      std::vector<SizeDistributionType> distribution_type;
-
       // Number of each particle type
-      std::unordered_map<unsigned int, int> number;
+      std::vector<int> number;
 
       // Density of each particle type
-      std::unordered_map<unsigned int, double> density_particle;
+      std::vector<double> density_particle;
 
       // Young's modulus of each particle type
-      std::unordered_map<unsigned int, double> youngs_modulus_particle;
+      std::vector<double> youngs_modulus_particle;
 
       // Poisson's ratio of each particle type
-      std::unordered_map<unsigned int, double> poisson_ratio_particle;
-
-      // Surface energy of each particle type
-      std::unordered_map<unsigned int, double> surface_energy_particle;
-
-      // Hamaker constant of each particle type
-      std::unordered_map<unsigned int, double> hamaker_constant_particle;
+      std::vector<double> poisson_ratio_particle;
 
       // Coefficients of restitution of each particle type
-      std::unordered_map<unsigned int, double> restitution_coefficient_particle;
+      std::vector<double> restitution_coefficient_particle;
 
       // Friction coefficient of each particle type
-      std::unordered_map<unsigned int, double> friction_coefficient_particle;
+      std::vector<double> friction_coefficient_particle;
 
       // Rolling viscous damping coefficient of each particle type
-      std::unordered_map<unsigned int, double>
-        rolling_viscous_damping_coefficient_particle;
+      std::vector<double> rolling_viscous_damping_coefficient_particle;
 
       // Rolling friction coefficient of each particle type
-      std::unordered_map<unsigned int, double>
-        rolling_friction_coefficient_particle;
+      std::vector<double> rolling_friction_coefficient_particle;
+
+      // Surface energy of each particle type
+      std::vector<double> surface_energy_particle;
+
+      // Hamaker constant of each particle type
+      std::vector<double> hamaker_constant_particle;
 
       // Thermal conductivity of each particle type
-      std::unordered_map<unsigned int, double> thermal_conductivity_particle;
+      std::vector<double> thermal_conductivity_particle;
 
       // Specific heat of each particle type
-      std::unordered_map<unsigned int, double> specific_heat_particle;
+      std::vector<double> specific_heat_particle;
 
       // Microhardness of each particle type
-      std::unordered_map<unsigned int, double> microhardness_particle;
+      std::vector<double> microhardness_particle;
 
       // Surface slope of each particle type
-      std::unordered_map<unsigned int, double> surface_slope_particle;
+      std::vector<double> surface_slope_particle;
 
       // Surface roughness of each particle type
-      std::unordered_map<unsigned int, double> surface_roughness_particle;
+      std::vector<double> surface_roughness_particle;
 
       // Thermal accommodation coefficient of each particle type
-      std::unordered_map<unsigned int, double> thermal_accommodation_particle;
+      std::vector<double> thermal_accommodation_particle;
 
       // Real Young's modulus of each particle type
-      std::unordered_map<unsigned int, double> real_youngs_modulus_particle;
+      std::vector<double> real_youngs_modulus_particle;
 
       // Young's modulus of wall
       double youngs_modulus_wall;
@@ -216,82 +233,83 @@ namespace Parameters
 
       /**
        * @brief initialize_containers - Initialize the containers
-       * used to store the physical properties of each particle type.
-       *
-       * @param[in,out] p_average_diameter Average diameter of each particle
-       * type.
-       * @param[in,out] p_size_std Size standard deviation of each particle
-       * type.
-       * @param[in,out] dist_types Distribution type of each particle type.
-       * @param[in,out] p_custom_diameter List of diameters for the custom
-       * distribution for each particle type.
-       * @param[in,out] p_custom_probability Probability of each diameter value
-       * based on volume fraction for the custom distribution for each particle
-       * type.
-       * @param[in,out] seed_for_dist Random seed for the size distribution.
-       * @param[in,out] dia_min_cutoff
-       * @param[in,out] dia_max_cutoff
-       * @param[in,out] distribution_weighting_basis_type
-       * @param[in,out] p_number Number of each particle type.
-       * @param[in,out] p_density Density of each particle type.
-       * @param[in,out] p_youngs_modulus Young's modulus of each particle type.
-       * @param[in,out] p_poisson_ratio Poisson's ratio of each particle type.
-       * @param[in,out] p_restitution_coefficient Coefficients of restitution
+       * used to store the particle size distribution and physical properties
        * of each particle type.
-       * @param[in,out] p_friction_coefficient Friction coefficient of each
-       * particle type.
+       *
+       * @param[in,out] dist_types Distribution type.
+       * @param[in,out] p_average_diameter Average diameter.
+       * @param[in,out] p_size_std Diameter standard deviation for the
+       * normal and lognormal distributions.
+       * @param[in,out] custom_dist_read_from_file Stores if the diameter and
+       * probability values are stored in a separate file.
+       * @param[in,out] custom_dist_file_names Stores the name of the files
+       * where the custom distributions are stored.
+       * @param[in,out] custom_function_type Stores whether the values defining
+       * the custom distribution are related to the PDF or the CDF.
+       * @param[in,out] custom_interpolation Stores whether the diameter value
+       * are interpolated from the input values.
+       * @param[in,out] custom_diameter_values Lists of diameters for the custom
+       * distribution.
+       * @param[in,out] custom_probabilities_values Lists of probability of each
+       * diameter value for the custom distribution.
+       * @param[in,out] distribution_weighting_basis_type Weighting basis for
+       * the PSD.
+       * @param[in,out] seed_for_dist Pseudo random seed for the PSD sampling.
+       * @param[in,out] dia_min_cutoff Minimal cutoff value when sampling a PSD.
+       * @param[in,out] dia_max_cutoff Maximal cutoff value when sampling a PSD.
+       * @param[in,out] p_number Number of particle.
+       * @param[in,out] p_density Density.
+       * @param[in,out] p_youngs_modulus Young's modulus.
+       * @param[in,out] p_poisson_ratio Poisson's ratio.
+       * @param[in,out] p_restitution_coefficient Coefficients of restitution.
+       * @param[in,out] p_friction_coefficient Sliding friction coefficient.
        * @param[in,out] p_rolling_viscous_damping_coefficient Rolling viscous
-       * damping coefficient of each particle type.
-       * @param[in,out] p_rolling_friction_coefficient Rolling friction
-       * coefficient of each particle type.
-       * @param[in,out] p_surface_energy Surface energy of each particle type.
-       * @param[in,out] p_hamaker_constant Hamaker constant of each particle
-       * type.
-       * @param[in,out] p_thermal_conductivity Thermal conductivity of each
-       * particle type.
-       * @param[in,out] p_specific_heat Specific heat of each particle type.
-       * @param[in,out] p_microhardness Microhardness of each particle type.
-       * @param[in,out] p_surface_slope Surface slope of each particle type.
-       * @param[in,out] p_surface_roughness Surface roughness of each particle
-       * type.
+       * damping coefficient
+       * @param[in,out] p_rolling_friction_coefficient Rolling friction.
+       * @param[in,out] p_surface_energy Surface energy.
+       * @param[in,out] p_hamaker_constant Hamaker constant.
+       * @param[in,out] p_thermal_conductivity Thermal conductivity.
+       * @param[in,out] p_specific_heat Specific heat.
+       * @param[in,out] p_microhardness Microhardness.
+       * @param[in,out] p_surface_slope Surface slope.
+       * @param[in,out] p_surface_roughness Surface roughness.
        * @param[in,out] p_thermal_accommodation Thermal accommodation
-       * coefficient of each particle type.
-       * @param[in,out] p_real_youngs_modulus Real Young's modulus of each
-       * particle type.
+       * coefficient.
+       * @param[in,out] p_real_youngs_modulus Real Young's modulus \
        */
       void
       initialize_containers(
-        std::unordered_map<unsigned int, double> &p_average_diameter,
-        std::unordered_map<unsigned int, double> &p_size_std,
-        std::vector<SizeDistributionType>        &dist_types,
-        std::unordered_map<unsigned int, std::vector<double>>
-          &p_custom_diameter,
-        std::unordered_map<unsigned int, std::vector<double>>
-                                  &p_custom_probability,
+        std::vector<SizeDistributionType>    &dist_types,
+        std::vector<double>                  &p_average_diameter,
+        std::vector<double>                  &p_size_std,
+        std::vector<bool>                    &custom_dist_read_from_file,
+        std::vector<std::string>             &custom_dist_file_names,
+        std::vector<ProbabilityFunctionType> &custom_function_type,
+        std::vector<bool>                    &custom_interpolation,
+        std::vector<std::vector<double>>     &custom_diameter_values,
+        std::vector<std::vector<double>>     &custom_probabilities_values,
+        std::vector<DistributionWeightingType>
+                                  &distribution_weighting_basis_type,
         std::vector<unsigned int> &seed_for_dist,
         std::vector<double>       &dia_min_cutoff,
         std::vector<double>       &dia_max_cutoff,
-        std::vector<DistributionWeightingType>
-          &distribution_weighting_basis_type,
-        std::unordered_map<unsigned int, int>    &p_number,
-        std::unordered_map<unsigned int, double> &p_density,
-        std::unordered_map<unsigned int, double> &p_youngs_modulus,
-        std::unordered_map<unsigned int, double> &p_poisson_ratio,
-        std::unordered_map<unsigned int, double> &p_restitution_coefficient,
-        std::unordered_map<unsigned int, double> &p_friction_coefficient,
-        std::unordered_map<unsigned int, double>
-          &p_rolling_viscous_damping_coefficient,
-        std::unordered_map<unsigned int, double>
-          &p_rolling_friction_coefficient,
-        std::unordered_map<unsigned int, double> &p_surface_energy,
-        std::unordered_map<unsigned int, double> &p_hamaker_constant,
-        std::unordered_map<unsigned int, double> &p_thermal_conductivity,
-        std::unordered_map<unsigned int, double> &p_specific_heat,
-        std::unordered_map<unsigned int, double> &p_microhardness,
-        std::unordered_map<unsigned int, double> &p_surface_slope,
-        std::unordered_map<unsigned int, double> &p_surface_roughness,
-        std::unordered_map<unsigned int, double> &p_thermal_accommodation,
-        std::unordered_map<unsigned int, double> &p_real_youngs_modulus) const;
+        std::vector<int>          &p_number,
+        std::vector<double>       &p_density,
+        std::vector<double>       &p_youngs_modulus,
+        std::vector<double>       &p_poisson_ratio,
+        std::vector<double>       &p_restitution_coefficient,
+        std::vector<double>       &p_friction_coefficient,
+        std::vector<double>       &p_rolling_viscous_damping_coefficient,
+        std::vector<double>       &p_rolling_friction_coefficient,
+        std::vector<double>       &p_surface_energy,
+        std::vector<double>       &p_hamaker_constant,
+        std::vector<double>       &p_thermal_conductivity,
+        std::vector<double>       &p_specific_heat,
+        std::vector<double>       &p_microhardness,
+        std::vector<double>       &p_surface_slope,
+        std::vector<double>       &p_surface_roughness,
+        std::vector<double>       &p_thermal_accommodation,
+        std::vector<double>       &p_real_youngs_modulus) const;
     };
 
     template <int dim>
