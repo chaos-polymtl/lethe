@@ -942,7 +942,7 @@ namespace InterfaceTools
      * 1): J_R = J^T*H*J, where J is the face transformation jacobian, and
      * H is the Hessian matrix in the real space (H = H(d) + H(||x_I - x_n||)).
      *
-     * @param[in] x_real evaluation point x_n in the real spac.
+     * @param[in] x_real evaluation point x_n in the real space.
      *
      * @param[in] x_I_real coordinate of the DoF x_I in the real space
      *
