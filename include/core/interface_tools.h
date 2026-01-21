@@ -674,7 +674,7 @@ namespace InterfaceTools
      *
      * @param[in] local_face_id Local id of the face in the cell
      *
-     * @param[out] local_opposite_dofs The vector containing the id of the
+     * @param[out] local_dofs The vector containing the id of the
      * local DoFs
      */
     inline void
@@ -972,9 +972,9 @@ namespace InterfaceTools
 
       LAPACKFullMatrix<double> hessian_matrix(dim, dim);
 
-      for (unsigned int i = 0; i < dim; ++i)
+      for (int i = 0; i < dim; ++i)
         {
-          for (unsigned int j = 0; j < dim; ++j)
+          for (int j = 0; j < dim; ++j)
             {
               double h_ij = -(x_n_to_x_I_real_p1[i] * x_n_to_x_I_real_p1[j]) *
                             x_n_to_x_I_real_p1_norm_cubic_inv;
@@ -985,16 +985,16 @@ namespace InterfaceTools
             }
         }
 
-      const DerivativeForm<1, dim, dim - 1> transformation_jacobian_tanspose =
+      const DerivativeForm<1, dim, dim - 1> transformation_jacobian_transpose =
         transformation_jacobian.transpose();
 
       LAPACKFullMatrix<double> H_x_transformation_jacobian(dim, dim - 1);
-      for (unsigned int i = 0; i < dim; ++i)
+      for (int i = 0; i < dim; ++i)
         {
-          for (unsigned int j = 0; j < dim - 1; ++j)
+          for (int j = 0; j < dim - 1; ++j)
             {
               double matrix_ij = 0;
-              for (unsigned int k = 0; k < dim; ++k)
+              for (int k = 0; k < dim; ++k)
                 {
                   matrix_ij +=
                     hessian_matrix(i, k) * transformation_jacobian[k][j];
@@ -1003,14 +1003,14 @@ namespace InterfaceTools
             }
         }
 
-      for (unsigned int i = 0; i < dim - 1; ++i)
+      for (int i = 0; i < dim - 1; ++i)
         {
-          for (unsigned int j = 0; j < dim - 1; ++j)
+          for (int j = 0; j < dim - 1; ++j)
             {
               double matrix_ij = 0;
-              for (unsigned int k = 0; k < dim; ++k)
+              for (int k = 0; k < dim; ++k)
                 {
-                  matrix_ij += transformation_jacobian_tanspose[i][k] *
+                  matrix_ij += transformation_jacobian_transpose[i][k] *
                                H_x_transformation_jacobian(k, j);
                 }
               jacobian_matrix.set(i, j, matrix_ij);
