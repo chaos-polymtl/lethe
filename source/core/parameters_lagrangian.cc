@@ -134,15 +134,19 @@ namespace Parameters
     LagrangianPhysicalProperties::parse_parameters(ParameterHandler &prm)
     {
       prm.enter_subsection("lagrangian physical properties");
-      initialize_containers(particle_average_diameter,
+      initialize_containers(distribution_type,
+                            particle_average_diameter,
                             particle_size_std,
-                            distribution_type,
+                            custom_distribution_from_file,
+                            custom_distribution_filenames,
+                            custom_probability_function_type,
+                            custom_distribution_interpolation,
                             particle_custom_diameter,
                             particle_custom_probability,
+                            distribution_weighting_type,
                             seed_for_distributions,
                             diameter_min_cutoff,
                             diameter_max_cutoff,
-                            distribution_weighting_type,
                             number,
                             density_particle,
                             youngs_modulus_particle,
@@ -219,25 +223,66 @@ namespace Parameters
                         Patterns::Selection("uniform|normal|lognormal|custom"),
                         "Particle size distribution"
                         "Choices are <uniform|normal|lognormal|custom>.");
+
+      // Uniform
+      prm.declare_alias("average diameter", "diameter", false);
+
+      // Normal and lognormal distributions
       prm.declare_entry("average diameter",
                         "0.001",
                         Patterns::Double(),
-                        "Particle diameter");
-      prm.declare_alias("average diameter", "diameter", false);
+                        "Particle diameter.");
       prm.declare_entry("standard deviation",
                         "0",
                         Patterns::Double(),
-                        "Particle size standard deviation");
-      prm.declare_entry("custom diameters",
+                        "Particle size standard deviation.");
+
+      // Custom distribution
+      prm.declare_entry("custom distribution from file",
+                        "false",
+                        Patterns::Bool(),
+                        "Indicates if the diameter and probability "
+                        "values are extracted from a file.");
+      prm.declare_entry("custom distribution from file",
+                        "custom_distribution.txt",
+                        Patterns::FileName(),
+                        "Indicates the file where the custom distribution "
+                        "value should be read from.");
+
+      prm.declare_entry("custom distribution probability function type",
+                        "PDF",
+                        Patterns::Selection("PDF|CDF"),
+                        "Particle size distribution"
+                        "Choices are <PDF|CDF>.");
+
+
+      prm.declare_alias("custom diameters values", "custom diameters", false);
+      prm.declare_entry("custom diameters values",
                         "0.001 , 0.0005",
                         Patterns::List(Patterns::Double()),
                         "Diameter values for a custom distribution");
-      prm.declare_entry("custom volume fractions",
-                        "0.6 , 0.4",
-                        Patterns::List(Patterns::Double()),
-                        "Probabilities of each diameter of the custom"
-                        " distribution based on the volume fraction");
-      prm.declare_entry("random seed distribution",
+
+      prm.declare_alias("custom diameters probabilities",
+                        "custom volume fractions",
+                        false);
+      prm.declare_entry(
+        "custom diameters probabilities",
+        "0.6 , 0.4",
+        Patterns::List(Patterns::Double()),
+        "Probabilities of each diameter of the custom"
+        "Probabilities associated with each diameter values for "
+        "a custom distribution. ");
+
+      // Normal, lognormal and custom distributions
+      prm.declare_entry("distribution weighting basis",
+                        "number",
+                        Patterns::Selection("number|volume"),
+                        "Weighting basis for the size distribution. "
+                        "Choices are <number|volume>.");
+      prm.declare_alias("distribution prn seed",
+                        "random seed distribution",
+                        false);
+      prm.declare_entry("distribution prn seed",
                         "1",
                         Patterns::Integer(),
                         "Seed for generation of random numbers"
@@ -245,22 +290,19 @@ namespace Parameters
       prm.declare_entry("minimum diameter cutoff",
                         "-1.",
                         Patterns::Double(),
-                        "Cutoff values used when the log-normal distribution "
+                        "Minimal cutoff value when sampling a distribution."
                         "is used. If equal to -1., the cut of will be fixed at "
                         "0.1% of the cumulative density function of the "
-                        "log-normal distribution");
+                        "distribution");
       prm.declare_entry("maximum diameter cutoff",
                         "-1.",
                         Patterns::Double(),
                         "Cutoff values used when the log-normal distribution "
                         "is used. If equal to -1., the cut of will be fixed at "
                         "99.9% of the cumulative density function of the "
-                        "log-normal distribution");
-      prm.declare_entry("distribution weighting basis",
-                        "number",
-                        Patterns::Selection("number|volume"),
-                        "Weighting basis for the size distribution. "
-                        "Choices are <number|volume>.");
+                        "distribution");
+
+      // Every type of distribution
       prm.declare_entry("number of particles",
                         "0",
                         Patterns::Integer(),
@@ -374,13 +416,13 @@ namespace Parameters
       const std::string size_distribution_type_str =
         prm.get("size distribution type");
       if (size_distribution_type_str == "uniform")
-        distribution_type.at(particle_type) = SizeDistributionType::uniform;
+        distribution_type.push_back(SizeDistributionType::uniform);
       else if (size_distribution_type_str == "normal")
-        distribution_type.at(particle_type) = SizeDistributionType::normal;
+        distribution_type.push_back(SizeDistributionType::normal);
       else if (size_distribution_type_str == "lognormal")
-        distribution_type.at(particle_type) = SizeDistributionType::lognormal;
+        distribution_type.push_back(SizeDistributionType::lognormal);
       else if (size_distribution_type_str == "custom")
-        distribution_type.at(particle_type) = SizeDistributionType::custom;
+        distribution_type.push_back(SizeDistributionType::custom);
       else
         AssertThrow(
           false,
@@ -431,65 +473,68 @@ namespace Parameters
 
     void
     LagrangianPhysicalProperties::initialize_containers(
-      std::unordered_map<unsigned int, double>              &p_average_diameter,
-      std::unordered_map<unsigned int, double>              &p_size_std,
-      std::vector<SizeDistributionType>                     &dist_type,
-      std::unordered_map<unsigned int, std::vector<double>> &p_custom_diameter,
-      std::unordered_map<unsigned int, std::vector<double>>
-                                             &p_custom_probability,
+      std::vector<SizeDistributionType>      &dist_types,
+      std::vector<double>                    &p_average_diameter,
+      std::vector<double>                    &p_size_std,
+      std::vector<bool>                      &custom_dist_read_from_file,
+      std::vector<std::string>               &custom_dist_file_names,
+      std::vector<ProbabilityFunctionType>   &custom_function_type,
+      std::vector<bool>                      &custom_interpolation,
+      std::vector<std::vector<double>>       &custom_diameter_values,
+      std::vector<std::vector<double>>       &custom_probabilities_values,
+      std::vector<DistributionWeightingType> &distribution_weighting_basis_type,
       std::vector<unsigned int>              &seed_for_dist,
       std::vector<double>                    &dia_min_cutoff,
       std::vector<double>                    &dia_max_cutoff,
-      std::vector<DistributionWeightingType> &distribution_weighting_basis_type,
-      std::unordered_map<unsigned int, int>  &p_number,
-      std::unordered_map<unsigned int, double> &p_density,
-      std::unordered_map<unsigned int, double> &p_youngs_modulus,
-      std::unordered_map<unsigned int, double> &p_poisson_ratio,
-      std::unordered_map<unsigned int, double> &p_restitution_coefficient,
-      std::unordered_map<unsigned int, double> &p_friction_coefficient,
-      std::unordered_map<unsigned int, double>
-        &p_rolling_viscous_damping_coefficient,
-      std::unordered_map<unsigned int, double> &p_rolling_friction_coefficient,
-      std::unordered_map<unsigned int, double> &p_surface_energy,
-      std::unordered_map<unsigned int, double> &hamaker_constant_p,
-      std::unordered_map<unsigned int, double> &thermal_conductivity_p,
-      std::unordered_map<unsigned int, double> &specific_heat_p,
-      std::unordered_map<unsigned int, double> &microhardness_p,
-      std::unordered_map<unsigned int, double> &surface_slope_p,
-      std::unordered_map<unsigned int, double> &surface_roughness_p,
-      std::unordered_map<unsigned int, double> &thermal_accommodation_p,
-      std::unordered_map<unsigned int, double> &real_youngs_modulus_p) const
+      std::vector<int>                       &p_number,
+      std::vector<double>                    &p_density,
+      std::vector<double>                    &p_youngs_modulus,
+      std::vector<double>                    &p_poisson_ratio,
+      std::vector<double>                    &p_restitution_coefficient,
+      std::vector<double>                    &p_friction_coefficient,
+      std::vector<double> &p_rolling_viscous_damping_coefficient,
+      std::vector<double> &p_rolling_friction_coefficient,
+      std::vector<double> &p_surface_energy,
+      std::vector<double> &p_hamaker_constant,
+      std::vector<double> &p_thermal_conductivity,
+      std::vector<double> &p_specific_heat,
+      std::vector<double> &p_microhardness,
+      std::vector<double> &p_surface_slope,
+      std::vector<double> &p_surface_roughness,
+      std::vector<double> &p_thermal_accommodation,
+      std::vector<double> &p_real_youngs_modulus) const
     {
-      for (unsigned int counter = 0; counter < particle_type_maximum_number;
-           ++counter)
-        {
-          p_average_diameter.insert({counter, 0.});
-          p_size_std.insert({counter, 0.});
-          dist_type.push_back(SizeDistributionType::uniform);
-          p_custom_diameter.insert({counter, {0.}});
-          p_custom_probability.insert({counter, {1.}});
-          p_number.insert({counter, 0});
-          p_density.insert({counter, 0.});
-          p_youngs_modulus.insert({counter, 0.});
-          p_poisson_ratio.insert({counter, 0.});
-          p_restitution_coefficient.insert({counter, 0.});
-          p_friction_coefficient.insert({counter, 0.});
-          p_rolling_viscous_damping_coefficient.insert({counter, 0.});
-          p_rolling_friction_coefficient.insert({counter, 0.});
-          p_surface_energy.insert({counter, 0.});
-          hamaker_constant_p.insert({counter, 0.});
-          thermal_conductivity_p.insert({counter, 0.});
-          specific_heat_p.insert({counter, 0.});
-          microhardness_p.insert({counter, 0.});
-          surface_slope_p.insert({counter, 0.});
-          surface_roughness_p.insert({counter, 0.});
-          thermal_accommodation_p.insert({counter, 0.});
-          real_youngs_modulus_p.insert({counter, 0.});
-        }
+      dist_types.reserve(particle_type_maximum_number);
+      p_average_diameter.reserve(particle_type_maximum_number);
+      p_size_std.reserve(particle_type_maximum_number);
+      custom_dist_read_from_file.reserve(particle_type_maximum_number);
+      custom_dist_file_names.reserve(particle_type_maximum_number);
+      custom_function_type.reserve(particle_type_maximum_number);
+      custom_interpolation.reserve(particle_type_maximum_number);
+      custom_diameter_values.reserve(particle_type_maximum_number);
+      custom_probabilities_values.reserve(particle_type_maximum_number);
+      distribution_weighting_basis_type.reserve(particle_type_maximum_number);
       seed_for_dist.reserve(particle_type_maximum_number);
       dia_min_cutoff.reserve(particle_type_maximum_number);
       dia_max_cutoff.reserve(particle_type_maximum_number);
-      distribution_weighting_basis_type.resize(particle_type_maximum_number);
+      p_number.reserve(particle_type_maximum_number);
+      p_density.reserve(particle_type_maximum_number);
+      p_youngs_modulus.reserve(particle_type_maximum_number);
+      p_poisson_ratio.reserve(particle_type_maximum_number);
+      p_restitution_coefficient.reserve(particle_type_maximum_number);
+      p_friction_coefficient.reserve(particle_type_maximum_number);
+      p_rolling_viscous_damping_coefficient.reserve(
+        particle_type_maximum_number);
+      p_rolling_friction_coefficient.reserve(particle_type_maximum_number);
+      p_surface_energy.reserve(particle_type_maximum_number);
+      p_hamaker_constant.reserve(particle_type_maximum_number);
+      p_thermal_conductivity.reserve(particle_type_maximum_number);
+      p_specific_heat.reserve(particle_type_maximum_number);
+      p_microhardness.reserve(particle_type_maximum_number);
+      p_surface_slope.reserve(particle_type_maximum_number);
+      p_surface_roughness.reserve(particle_type_maximum_number);
+      p_thermal_accommodation.reserve(particle_type_maximum_number);
+      p_real_youngs_modulus.reserve(particle_type_maximum_number);
     }
 
     template <int dim>
