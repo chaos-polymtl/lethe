@@ -218,6 +218,7 @@ namespace Parameters
     void
     LagrangianPhysicalProperties::declareDefaultEntry(ParameterHandler &prm)
     {
+      // Defines the type of distribution
       prm.declare_entry("size distribution type",
                         "uniform",
                         Patterns::Selection("uniform|normal|lognormal|custom"),
@@ -243,30 +244,35 @@ namespace Parameters
                         Patterns::Bool(),
                         "Indicates if the diameter and probability "
                         "values are extracted from a file.");
-      prm.declare_entry("custom distribution from file",
+      prm.declare_entry("custom distribution filename",
                         "custom_distribution.txt",
                         Patterns::FileName(),
                         "Indicates the file where the custom distribution "
                         "value should be read from.");
-
       prm.declare_entry("custom distribution probability function type",
                         "PDF",
                         Patterns::Selection("PDF|CDF"),
                         "Particle size distribution"
                         "Choices are <PDF|CDF>.");
+      prm.declare_entry("custom distribution interpolation",
+                        "false",
+                        Patterns::Bool(),
+                        "Indicates if the sampling using the custom "
+                        "distribution should be interpolated.");
 
-
-      prm.declare_alias("custom diameters values", "custom diameters", false);
-      prm.declare_entry("custom diameters values",
+      prm.declare_alias("custom distribution diameters values",
+                        "custom diameters",
+                        false);
+      prm.declare_entry("custom distribution diameters values",
                         "0.001 , 0.0005",
                         Patterns::List(Patterns::Double()),
                         "Diameter values for a custom distribution");
 
-      prm.declare_alias("custom diameters probabilities",
+      prm.declare_alias("custom distribution diameters probabilities",
                         "custom volume fractions",
                         false);
       prm.declare_entry(
-        "custom diameters probabilities",
+        "custom distributio diameters probabilities",
         "0.6 , 0.4",
         Patterns::List(Patterns::Double()),
         "Probabilities of each diameter of the custom"
@@ -378,41 +384,7 @@ namespace Parameters
       const unsigned int     &particle_type,
       const ParameterHandler &prm)
     {
-      // unordered maps
-      particle_average_diameter.at(particle_type) =
-        prm.get_double("average diameter");
-      particle_size_std.at(particle_type) =
-        prm.get_double("standard deviation");
-      particle_custom_diameter.at(particle_type) =
-        convert_string_to_vector<double>(prm, "custom diameters");
-      particle_custom_probability.at(particle_type) =
-        convert_string_to_vector<double>(prm, "custom volume fractions");
-
-      // vectors
-      seed_for_distributions.push_back(
-        prm.get_integer("random seed distribution"));
-      diameter_min_cutoff.push_back(prm.get_double("minimum diameter cutoff"));
-      diameter_max_cutoff.push_back(prm.get_double("maximum diameter cutoff"));
-
-      double probability_sum =
-        std::reduce(particle_custom_probability.at(particle_type).begin(),
-                    particle_custom_probability.at(particle_type).end());
-
-      // We make sure that the cumulative probability is equal to 1.
-      if (std::abs(probability_sum - 1.0) > 1.e-5)
-        {
-          throw(std::runtime_error(
-            "Invalid custom volume fraction. The sum of volume fractions should be equal to 1.0 "));
-        }
-      std::string distribution_weighting_type_str =
-        prm.get("distribution weighting basis");
-      if (distribution_weighting_type_str == "number")
-        distribution_weighting_type.at(particle_type) =
-          DistributionWeightingType::number_based;
-      else
-        distribution_weighting_type.at(particle_type) =
-          DistributionWeightingType::volume_based;
-
+      // Defines the type of distribution
       const std::string size_distribution_type_str =
         prm.get("size distribution type");
       if (size_distribution_type_str == "uniform")
@@ -423,44 +395,107 @@ namespace Parameters
         distribution_type.push_back(SizeDistributionType::lognormal);
       else if (size_distribution_type_str == "custom")
         distribution_type.push_back(SizeDistributionType::custom);
-      else
-        AssertThrow(
-          false,
-          dealii::ExcMessage(
-            "Invalid size distribution type. Choices are <uniform|normal|custom>."));
 
-      number.at(particle_type) = prm.get_integer("number of particles");
-      density_particle.at(particle_type) = prm.get_double("density particles");
-      youngs_modulus_particle.at(particle_type) =
-        prm.get_double("young modulus particles");
-      poisson_ratio_particle.at(particle_type) =
-        prm.get_double("poisson ratio particles");
-      restitution_coefficient_particle.at(particle_type) =
-        prm.get_double("restitution coefficient particles");
-      friction_coefficient_particle.at(particle_type) =
-        prm.get_double("friction coefficient particles");
-      rolling_viscous_damping_coefficient_particle.at(particle_type) =
-        prm.get_double("rolling viscous damping particles");
-      rolling_friction_coefficient_particle.at(particle_type) =
-        prm.get_double("rolling friction particles");
-      surface_energy_particle.at(particle_type) =
-        prm.get_double("surface energy particles");
-      hamaker_constant_particle.at(particle_type) =
-        prm.get_double("hamaker constant particles");
-      thermal_conductivity_particle.at(particle_type) =
-        prm.get_double("thermal conductivity particles");
-      specific_heat_particle.at(particle_type) =
-        prm.get_double("specific heat particles");
-      microhardness_particle.at(particle_type) =
-        prm.get_double("microhardness particles");
-      surface_slope_particle.at(particle_type) =
-        prm.get_double("surface slope particles");
-      surface_roughness_particle.at(particle_type) =
-        prm.get_double("surface roughness particles");
-      thermal_accommodation_particle.at(particle_type) =
-        prm.get_double("thermal accommodation particles");
-      real_youngs_modulus_particle.at(particle_type) =
-        prm.get_double("real young modulus particles");
+      // Normal and lognormal distributions
+      particle_average_diameter.push_back(prm.get_double("average diameter"));
+      particle_size_std.push_back(prm.get_double("standard deviation"));
+
+      // Custom distribution
+      custom_distribution_from_file.push_back(
+        prm.get_bool("custom distribution from file"));
+      custom_distribution_filenames.push_back(
+        prm.get("custom distribution filename"));
+
+      const std::string custom_probability_function_type_str =
+        prm.get("custom distribution probability function type");
+      if (custom_probability_function_type_str == "PDF")
+        custom_probability_function_type.push_back(
+          ProbabilityFunctionType::PDF);
+      else if (custom_probability_function_type_str == "CDF")
+        custom_probability_function_type.push_back(
+          ProbabilityFunctionType::CDF);
+
+      custom_distribution_interpolation.push_back(
+        prm.get_bool("custom distribution interpolation"));
+
+      particle_custom_diameter.push_back(convert_string_to_vector<double>(
+        prm, "custom distribution diameters values"));
+
+      particle_custom_probability.push_back(convert_string_to_vector<double>(
+        prm, "custom distribution diameters probabilities"));
+
+      std::cout << particle_custom_probability[0][0]
+                << particle_custom_probability[0][1] << std::endl;
+
+
+      // Normal, lognormal and custom distributions
+      std::string distribution_weighting_type_str =
+        prm.get("distribution weighting basis");
+      if (distribution_weighting_type_str == "number")
+        distribution_weighting_type.push_back(
+          DistributionWeightingType::number_based);
+      else
+        distribution_weighting_type.push_back(
+          DistributionWeightingType::volume_based);
+
+      seed_for_distributions.push_back(
+        prm.get_integer("distribution prn seed"));
+
+      diameter_min_cutoff.push_back(prm.get_double("minimum diameter cutoff"));
+      diameter_max_cutoff.push_back(prm.get_double("maximum diameter cutoff"));
+
+      number.push_back(prm.get_integer("number of particles"));
+      density_particle.push_back(prm.get_double("density particles"));
+      youngs_modulus_particle.push_back(
+        prm.get_double("young modulus particles"));
+      poisson_ratio_particle.push_back(
+        prm.get_double("poisson ratio particles"));
+      restitution_coefficient_particle.push_back(
+        prm.get_double("restitution coefficient particles"));
+      friction_coefficient_particle.push_back(
+        prm.get_double("friction coefficient particles"));
+      rolling_viscous_damping_coefficient_particle.push_back(
+        prm.get_double("rolling viscous damping particles"));
+      rolling_friction_coefficient_particle.push_back(
+        prm.get_double("rolling friction particles"));
+
+      surface_energy_particle.push_back(
+        prm.get_double("surface energy particles"));
+      hamaker_constant_particle.push_back(
+        prm.get_double("hamaker constant particles"));
+      thermal_conductivity_particle.push_back(
+        prm.get_double("thermal conductivity particles"));
+      specific_heat_particle.push_back(
+        prm.get_double("specific heat particles"));
+      microhardness_particle.push_back(
+        prm.get_double("microhardness particles"));
+      surface_slope_particle.push_back(
+        prm.get_double("surface slope particles"));
+      surface_roughness_particle.push_back(
+        prm.get_double("surface roughness particles"));
+      thermal_accommodation_particle.push_back(
+        prm.get_double("thermal accommodation particles"));
+      real_youngs_modulus_particle.push_back(
+        prm.get_double("real young modulus particles"));
+
+      std::cout << __LINE__ << std::endl;
+
+      // Checks
+      std::cout << particle_type << std::endl;
+      std::cout << particle_custom_probability[particle_type].size()
+                << std::endl;
+      const double probability_sum =
+        std::reduce(particle_custom_probability.at(particle_type).begin(),
+                    particle_custom_probability.at(particle_type).end());
+
+      // We make sure that the cumulative probability is equal to 1.
+      if (std::abs(probability_sum - 1.0) > 1.e-5)
+        {
+          throw(std::runtime_error(
+            "Invalid custom volume fraction. The sum of volume fractions should be equal to 1.0 "));
+        }
+      std::cout << __LINE__ << std::endl;
+
       // Only use the real Young's modulus if it is higher than the Young's
       // modulus
       if (real_youngs_modulus_particle.at(particle_type) <
@@ -469,6 +504,7 @@ namespace Parameters
           real_youngs_modulus_particle.at(particle_type) =
             youngs_modulus_particle.at(particle_type);
         }
+      std::cout << __LINE__ << std::endl;
     }
 
     void

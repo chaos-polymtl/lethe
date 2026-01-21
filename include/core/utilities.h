@@ -1047,6 +1047,8 @@ convert_string_to_vector(const ParameterHandler &prm,
     }
   if constexpr (std::is_same<T, double>::value)
     {
+      std::cout << entry_string << std::endl;
+
       std::vector<T> vector = Utilities::string_to_double(vector_of_string);
       return vector;
     }
