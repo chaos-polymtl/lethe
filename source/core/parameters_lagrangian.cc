@@ -272,7 +272,7 @@ namespace Parameters
                         "custom volume fractions",
                         false);
       prm.declare_entry(
-        "custom distributio diameters probabilities",
+        "custom distribution diameters probabilities",
         "0.6 , 0.4",
         Patterns::List(Patterns::Double()),
         "Probabilities of each diameter of the custom"
@@ -424,8 +424,12 @@ namespace Parameters
       particle_custom_probability.push_back(convert_string_to_vector<double>(
         prm, "custom distribution diameters probabilities"));
 
-      std::cout << particle_custom_probability[0][0]
-                << particle_custom_probability[0][1] << std::endl;
+      std::vector<double> temp_vector = convert_string_to_vector<double>(
+        prm, prm.get("custom distribution diameters probabilities"));
+
+      std::cout << __LINE__ << std::endl;
+      std::cout << temp_vector[0]  << " " << temp_vector[1] << std::endl;
+      std::cout << __LINE__ << std::endl;
 
 
       // Normal, lognormal and custom distributions
@@ -478,23 +482,22 @@ namespace Parameters
       real_youngs_modulus_particle.push_back(
         prm.get_double("real young modulus particles"));
 
-      std::cout << __LINE__ << std::endl;
-
       // Checks
-      std::cout << particle_type << std::endl;
-      std::cout << particle_custom_probability[particle_type].size()
-                << std::endl;
       const double probability_sum =
         std::reduce(particle_custom_probability.at(particle_type).begin(),
                     particle_custom_probability.at(particle_type).end());
 
+      std::cout << __LINE__ << std::endl;
+      std::cout << particle_type << std::endl;
+      std::cout << particle_custom_probability.at(particle_type)[0]
+                << std::endl;
+      std::cout << probability_sum << std::endl;
       // We make sure that the cumulative probability is equal to 1.
       if (std::abs(probability_sum - 1.0) > 1.e-5)
         {
           throw(std::runtime_error(
             "Invalid custom volume fraction. The sum of volume fractions should be equal to 1.0 "));
         }
-      std::cout << __LINE__ << std::endl;
 
       // Only use the real Young's modulus if it is higher than the Young's
       // modulus
@@ -504,7 +507,6 @@ namespace Parameters
           real_youngs_modulus_particle.at(particle_type) =
             youngs_modulus_particle.at(particle_type);
         }
-      std::cout << __LINE__ << std::endl;
     }
 
     void
