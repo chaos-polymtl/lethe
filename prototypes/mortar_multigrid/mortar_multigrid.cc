@@ -411,9 +411,9 @@ main(int argc, char **argv)
   Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
   try
-  {
-    test<2>(3, 3);
-  }
+    {
+      test<2>(3, 3);
+    }
   catch (std::exception &exc)
     {
       std::cerr << std::endl
