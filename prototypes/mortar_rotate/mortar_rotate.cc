@@ -11,7 +11,7 @@
 void
 test_01()
 {
-const unsigned int              dim                 = 3;
+  const unsigned int              dim                 = 3;
   const std::vector<unsigned int> n_subdivisions      = {10, 3};
   const unsigned int              n_quadrature_points = 3;
   const std::vector<double>       radius              = {1.2, 0.4};
@@ -26,9 +26,9 @@ const unsigned int              dim                 = 3;
       std::cout << "Rotation angle: " << rotate << std::endl;
 
       const MortarManagerCircle<dim> manager(n_subdivisions,
-                                               radius,
-                                               QGauss<dim>(n_quadrature_points),
-                                               rotate);
+                                             radius,
+                                             QGauss<dim>(n_quadrature_points),
+                                             rotate);
 
       std::cout << manager.get_n_mortars() << std::endl;
       std::cout << manager.get_n_total_mortars() << std::endl;
@@ -49,7 +49,7 @@ const unsigned int              dim                 = 3;
               Point<dim> p;
               p[0] = radius[0] * std::cos(rad);
               p[1] = radius[0] * std::sin(rad);
-              
+
               p[dim - 1] = radius[1] / n_subdivisions[1] * (j + 0.5);
 
               const auto indices = manager.get_mortar_indices(p, rotate != 0.0);

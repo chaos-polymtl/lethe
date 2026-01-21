@@ -299,8 +299,7 @@ public:
   output_results(unsigned int it)
   {
     DataOut<dim> data_out;
-    std::string  filename =
-      "out-" + Utilities::int_to_string(it) + ".vtu";
+    std::string  filename = "out-" + Utilities::int_to_string(it) + ".vtu";
 
     solution.update_ghost_values();
 
