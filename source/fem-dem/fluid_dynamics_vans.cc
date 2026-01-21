@@ -842,9 +842,17 @@ FluidDynamicsVANS<dim>::gather_output_hook()
         particle_projector.particle_velocity.locally_relevant_dofs,
         this->mpi_communicator);
 
+      GlobalVectorType particle_velocity_locally_owned;
+      particle_velocity.reinit(
+        particle_projector.particle_velocity.locally_owned_dofs,
+        this->mpi_communicator);
+
       convert_vector_dealii_to_trilinos(
-        particle_velocity,
+        particle_velocity_locally_owned,
         particle_projector.particle_velocity.particle_field_solution);
+
+      particle_velocity = particle_velocity_locally_owned;
+
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
         particle_projector.particle_velocity.dof_handler,
@@ -860,10 +868,16 @@ FluidDynamicsVANS<dim>::gather_output_hook()
             particle_projector.particle_velocity.locally_relevant_dofs,
             this->mpi_communicator);
 
+          GlobalVectorType fluid_drag_on_particles_locally_owned;
+          fluid_drag_on_particles.reinit(
+            particle_projector.particle_velocity.locally_owned_dofs,
+            this->mpi_communicator);
+
           convert_vector_dealii_to_trilinos(
-            fluid_drag_on_particles,
+            fluid_drag_on_particles_locally_owned,
             particle_projector.fluid_drag_on_particles.particle_field_solution);
 
+          fluid_drag_on_particles = fluid_drag_on_particles_locally_owned;
           solution_output_structs.emplace_back(
             std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
             this->particle_projector.fluid_drag_on_particles.dof_handler,
@@ -879,10 +893,19 @@ FluidDynamicsVANS<dim>::gather_output_hook()
             particle_projector.particle_velocity.locally_relevant_dofs,
             this->mpi_communicator);
 
+          GlobalVectorType
+            fluid_force_on_particles_two_way_coupling_locally_owned;
+          fluid_force_on_particles_two_way_coupling.reinit(
+            particle_projector.particle_velocity.locally_owned_dofs,
+            this->mpi_communicator);
+
           convert_vector_dealii_to_trilinos(
-            fluid_force_on_particles_two_way_coupling,
+            fluid_force_on_particles_two_way_coupling_locally_owned,
             particle_projector.fluid_force_on_particles_two_way_coupling
               .particle_field_solution);
+
+          fluid_force_on_particles_two_way_coupling =
+            fluid_force_on_particles_two_way_coupling_locally_owned;
 
           solution_output_structs.emplace_back(
             std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
