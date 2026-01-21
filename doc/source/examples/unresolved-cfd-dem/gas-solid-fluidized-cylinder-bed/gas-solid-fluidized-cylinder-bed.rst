@@ -408,7 +408,16 @@ The matrix-free solver is run following:
 Results
 --------
 
-The pressure drop is calculated during the simulation. In the post-processing Python script, for each velocity value (which lasts for :math:`0.05` s), we average the pressure drop over the last :math:`0.025` s and calculate the corresponding standard deviation. The resulting mean pressure drop is then plotted as a function of the Reynolds number, with the standard deviation shown as error bars. The vertical lines correspond to the fluidization limit predicted by the Wen-Yu [#WenYu1966]_ correlation:
+The pressure drop is calculated during the simulation. In the post-processing Python script, for each velocity value (which lasts for :math:`0.05` s), we average the pressure drop over the last :math:`0.025` s and calculate the corresponding standard deviation. The resulting mean pressure drop is then plotted as a function of the Reynolds number, with the standard deviation shown as error bars.
+
+By default, running the script without any arguments assumes that all nine simulations have been run and plots them into two different plots (as shown subsequently). Nonetheless, if the user wishes to process specific cases, the script accepts command-line arguments specifying the solver type (matrix-based, ``mb``, or matrix-free, ``mf``), the filtering approach (``pcm`` or ``qcm``) and the drag coupling scheme (``explicit``, ``semi-implicit``, or ``implicit``). An ``output-suffix`` argument can also be provided to specify the suffix appended to the name of the generated plot.
+For example, to plot only the output of simulations using the matrix-based and matrix-free solvers with a QCM filter and an implicit drag coupling, and to save the output using a custom suffix:
+
+.. code-block:: text
+
+   python3 plot-pressure-validation.py --solver mb mf --filter qcm --drag implicit --output-suffix mb-mf-qcm-i
+
+In the plots below, the vertical lines correspond to the fluidization limit predicted by the Wen-Yu [#WenYu1966]_ correlation:
 
 .. math::
   \mathrm{Re}_{\text{mf}} = \left(33.7^2 + 0.0408 \, Ar \right)^{0.5} - 33.7
