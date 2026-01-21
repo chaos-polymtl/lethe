@@ -8,7 +8,7 @@
 # estimator on the phase indicator). The densities and the surface tension
 # considered here remain constant.
 # Only the cell sizes evolve with time.
-# Additionally, this test is run in 2nd order BDF to test the time-step 
+# Additionally, this test is run in 2nd order BDF to test the time-step
 # progression from the initial condition with update_assembly_method().
 #-------------------------------------------------------------------------------
 
@@ -163,7 +163,6 @@ end
 subsection post-processing
   set calculate mass conservation = false
 end
-
 
 #---------------------------------------------------
 # FEM

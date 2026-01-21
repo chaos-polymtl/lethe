@@ -145,7 +145,6 @@ subsection post-processing
   set calculate mass conservation = false
 end
 
-
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
