@@ -32,7 +32,7 @@ recreate_folder "$folder"
 
 
 # Process the simulation
-python3 ./plot-pressure.py --validate
+python3 ./plot-pressure.py --validate --solver mf --filter qcm --drag semi-implicit --output-suffix mf-qcm-si
 
 # Copy the information to the log folder
 cp $plots $folder

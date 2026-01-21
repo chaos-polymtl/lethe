@@ -6,26 +6,66 @@
 #############################################################################
 import argparse
 import numpy as np
-import pyvista as pv
-import pandas as pd
 
 import matplotlib.pyplot as plt
-from cycler import cycler
 
 #############################################################################
 # Setup plot parameters
 #############################################################################
-colors=['#1b9e77','#d95f02','#7570b3']
-markers = ['o', 's']
 
-plt.rcParams['axes.prop_cycle'] = cycler(color=colors)
+# Marker by bed type
+marker_map = {
+    "MB PCM": "o",
+    "MB QCM": "s",
+    "MF QCM": "D"
+}
+
+# Color by drag/coupling scheme
+color_map = {
+    "Explicit": "#1b9e77",   
+    "Semi-Implicit": "#d95f02",  
+    "Implicit": "#7570b3"   
+}
+
 
 #############################################################################
-# Define argument parser for validation mode
+# Define argument parser
 #############################################################################
-parser = argparse.ArgumentParser(description='Arguments for the post-processing of the cylindrical fluidized bed example')
-parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
-args, leftovers=parser.parse_known_args()
+parser = argparse.ArgumentParser(
+    description='Arguments for the post-processing of the cylindrical fluidized bed example'
+)
+parser.add_argument(
+    "--validate", action="store_true",
+    help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures",
+    default=False)
+parser.add_argument(
+    "--solver", type=str, nargs="+", choices=["mb", "mf"],
+    help="Solver type(s): mb or mf"
+)
+parser.add_argument(
+    "--filter", type=str, nargs="+", choices=["pcm", "qcm"],
+    help="Filter type(s): pcm or qcm"
+)
+parser.add_argument(
+    "--drag", type=str, nargs="+",
+    choices=["explicit", "semi-implicit", "implicit"],
+    help="Drag coupling scheme(s)"
+)
+parser.add_argument( "--output-suffix", "-s", type=str, help="Suffix for the plot name")
+
+args, leftovers = parser.parse_known_args()
+
+solver_given = args.solver is not None
+filter_given = args.filter is not None
+drag_given   = args.drag   is not None
+
+if args.output_suffix and not (solver_given and filter_given and drag_given):
+    raise ValueError(
+        "If you use --output-suffix, you must also provide --solver, --filter, and --drag."
+    )
+if (solver_given or filter_given or drag_given) and not (solver_given and filter_given and drag_given):
+    raise ValueError("You must provide --solver, --filter, and --drag together.")
+    
 
 #############################################################################
 # Helper functions
@@ -45,10 +85,17 @@ def bin_and_average(time, pressure, bins, averaging_window):
     return np.array(mean_p), np.array(std_p)
 
 # === Plotting function ===
-def plot_pressure(datasets, Re, dataset_keys, labels, subscript, validate):
-    for i, (key, label) in enumerate(zip(dataset_keys, labels)):
-        marker = markers[(i // 3) % len(markers)]
-        plt.errorbar(Re, datasets[key]["mean"], yerr=datasets[key]["std"], fmt=marker+'-',  markerfacecolor='none', markersize=8, capsize=3, label=label)
+def plot_pressure(datasets, Re, dataset_keys, subscript, validate):
+    for i, key in enumerate(dataset_keys):
+        # Determine which marker (corresponds to combination of solver and filter used) and what color (corresponds to drag scheme) to use for the plot
+        parts = key.split()
+        solver = " ".join(parts[:2])
+        drag_coupling = parts[-1]
+        
+        marker = marker_map[solver]
+        color = color_map[drag_coupling]
+        
+        plt.errorbar(Re, datasets[key]["mean"], yerr=datasets[key]["std"], fmt=marker+'-',  color=color, markerfacecolor='none', markersize=8, capsize=3, label=key)
         
     plt.plot([0, max(Re)], [delta_p_analytical]*2, 'k--', label="Fluidization Δp")
     plt.plot([Re_mf_WY_inlet, Re_mf_WY_inlet], [0, max([datasets[k]["mean"].max() for k in dataset_keys])*1.1], 'k:')
@@ -86,36 +133,68 @@ def plot_pressure(datasets, Re, dataset_keys, labels, subscript, validate):
     plt.legend()
     if validate:
         plt.savefig(f"pressure-drop-Re-{subscript}.pdf")
-        mean_col = datasets[key]["mean"].reshape(-1, 1)
-        solution = mean_col
+        solution = np.hstack([datasets[k]["mean"].reshape(-1,1) for k in dataset_keys])
         return solution
     else:
         plt.savefig(f"pressure-drop-{subscript}.png", dpi=600, bbox_inches='tight')
         plt.show()
 
+# Use input data to build the keys of the dataset to be used in the plot
+def build_key(solver, flt, drag):
+    # Pretty label used in plots
+    solver_label = solver.upper()
+    filter_label = flt.upper()
+    drag_label = drag.title() if drag != "semi-implicit" else "Semi-Implicit"
+    return f"{solver_label} {filter_label} {drag_label}"
+
+def build_path(solver, flt, drag):
+    # Matches your directory naming convention
+    solver_part = "mb" if solver == "mb" else "mf"
+    filter_part = flt
+    drag_part = drag.replace("-", "_")
+
+    if solver == "mb":
+        return f"output_{solver_part}_{filter_part}_{drag_part}/pressure_drop.dat"
+    else:
+        return f"output_{solver_part}_{drag_part}/pressure_drop.dat"
 
 #############################################################################
 # Load data
 #############################################################################
-if args.validate:
-    data_files = {"MF_QCM_SI": "output_mf_semi_implicit/pressure_drop.dat"}
+datasets = {}
+data_files = {}
+
+if args.solver and args.filter and args.drag:
+    for solver in args.solver:
+        for flt in args.filter:
+            for drag in args.drag:
+
+                # MF only supports QCM
+                if solver == "mf" and flt == "pcm":
+                    continue
+
+                key = build_key(solver, flt, drag)
+                path = build_path(solver, flt, drag)
+
+                data_files[key] = path
 else:
     data_files = {
-        "MB_PCM_E": "output_mb_pcm_explicit/pressure_drop.dat",
-        "MB_PCM_SI": "output_mb_pcm_semi_implicit/pressure_drop.dat",
-        "MB_PCM_I": "output_mb_pcm_implicit/pressure_drop.dat",
-        "MB_QCM_E": "output_mb_qcm_explicit/pressure_drop.dat",
-        "MB_QCM_SI": "output_mb_qcm_semi_implicit/pressure_drop.dat",
-        "MB_QCM_I": "output_mb_qcm_implicit/pressure_drop.dat",
-        "MF_QCM_E": "output_mf_explicit/pressure_drop.dat",
-        "MF_QCM_SI": "output_mf_semi_implicit/pressure_drop.dat",
-        "MF_QCM_I": "output_mf_implicit/pressure_drop.dat"
+        "MB PCM Explicit": "output_mb_pcm_explicit/pressure_drop.dat",
+        "MB PCM Semi-Implicit": "output_mb_pcm_semi_implicit/pressure_drop.dat",
+        "MB PCM Implicit": "output_mb_pcm_implicit/pressure_drop.dat",
+        "MB QCM Explicit": "output_mb_qcm_explicit/pressure_drop.dat",
+        "MB QCM Semi-Implicit": "output_mb_qcm_semi_implicit/pressure_drop.dat",
+        "MB QCM Implicit": "output_mb_qcm_implicit/pressure_drop.dat",
+        "MF QCM Explicit": "output_mf_explicit/pressure_drop.dat",
+        "MF QCM Semi-Implicit": "output_mf_semi_implicit/pressure_drop.dat",
+        "MF QCM Implicit": "output_mf_implicit/pressure_drop.dat"
     }
-datasets = {}
+
 for key, path in data_files.items():
     t, p, _ = np.loadtxt(path, unpack=True, skiprows=1)
     datasets[key] = {"t": t, "p": p}
 
+print(datasets)
 #############################################################################
 # Physical properties
 #############################################################################    
@@ -186,31 +265,35 @@ for key, ds in datasets.items():
 velocity = np.minimum(0.02 * np.floor(bin_centers / 0.05 + 1), 0.3)
 Re = velocity * D / nu
 
-if args.validate:
-    sol = plot_pressure(
-    datasets,
-    Re,
-    ["MF_QCM_SI"],
-    ["MF QCM Semi-Implicit"],
-    "mf-qcm-si", args.validate)
+if args.solver and args.filter and args.drag:
+    dataset_keys = list(datasets.keys())
+    if args.output_suffix:
+        suffix = args.output_suffix
+    else:
+        # Example: MB-QCM-Explicit-Implicit
+        parts = [
+            "-".join(s.upper() for s in args.solver),
+            "-".join(f.upper() for f in args.filter),
+            "-".join(d.replace("-", "").title() for d in args.drag),]
+        suffix = "_".join(parts)
+    dataset_keys_list = [(dataset_keys, suffix)]
 else:
-    plot_pressure(
-    datasets,
-    Re,
-    ["MB_PCM_E", "MB_PCM_SI", "MB_PCM_I", "MB_QCM_E", "MB_QCM_SI", "MB_QCM_I"],
-    ["MB PCM Explicit", "MB PCM Semi-Implicit", "MB PCM Implicit", "MB QCM Explicit", "MB QCM Semi-Implicit", "MB QCM Implicit"],
-    "MB", args.validate)
+    dataset_keys_list = [
+        (["MB PCM Explicit", "MB PCM Semi-Implicit", "MB PCM Implicit",
+          "MB QCM Explicit", "MB QCM Semi-Implicit", "MB QCM Implicit"], "MB"),
+        (["MF QCM Explicit", "MF QCM Semi-Implicit", "MF QCM Implicit",
+          "MB QCM Explicit", "MB QCM Semi-Implicit", "MB QCM Implicit"], "MB-MF")
+    ]
 
-    plot_pressure(
-        datasets,
-        Re,
-        ["MF_QCM_E", "MF_QCM_SI", "MF_QCM_I", "MB_QCM_E", "MB_QCM_SI", "MB_QCM_I"],
-        ["MF QCM Explicit", "MF QCM Semi-Implicit", "MF QCM Implicit", "MB QCM Explicit", "MB QCM Semi-Implicit", "MB QCM Implicit"],
-        "MB-MF", args.validate)
+for keys, sub in dataset_keys_list:
+    sol=plot_pressure(datasets, Re, keys, sub, args.validate)
 
 if args.validate:
     final_solution = [Re.reshape(-1,1), sol]
-    headers_list = ["Re", "delta_p"]
+    headers_list = ["Re"] + list(datasets.keys())
     
     final_solution = np.hstack(final_solution)
-    np.savetxt("solution-pressure-drop-Re-mf-qcm-si.dat", final_solution, header=" ".join(headers_list))
+    file_suffix = args.output_suffix if args.output_suffix else "mf-qcm-si"
+    filename = f"solution-pressure-drop-Re-{file_suffix}.dat"
+    
+    np.savetxt(filename, final_solution, header=" ".join(headers_list))
