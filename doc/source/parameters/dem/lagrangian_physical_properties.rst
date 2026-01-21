@@ -31,8 +31,8 @@ In this subsection, gravitational acceleration, and the physical properties of t
       set custom distribution filename                  = custom_distribution.txt
       set custom distribution probability function type = PDF
       set custom distribution interpolation             = false
-      set custom diameters values                       = 0.001, 0.0005
-      set custom diameters probabilities                = 0.6  , 1.0
+      set custom distribution diameters values          = 0.001, 0.0005
+      set custom distribution diameters probabilities   = 0.6  , 1.0
 
       # If distribution type = normal, lognormal or custom
       set distribution weighting basis      = number
