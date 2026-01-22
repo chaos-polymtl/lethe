@@ -417,6 +417,7 @@ public:
 
    /**
    * @brief Store the values of the prescribed Neumann traction boundary condition to use it
+   * (σ . n , v)  = (t, v)
    * in the residual assembly and Jacobian ?
    */
   void
