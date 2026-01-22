@@ -4,6 +4,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026-01-22
+
+### Fixed
+
+- MINOR The hopper example post-processing script was not working anymore since the change in the definition of the floating wall. The script would try to parse "nx" from the .prm file, but this variable did not exist anymore. This PR fixes this issue by removing this parameter parsing. Furthermore, we have identified an issue with the automatic validation script which can keep on reusing old pdf of the results if the generation of the new ones did not work. This is also fixed by automatically removing all PDF that were already present in the case folder. [#1889](https://github.com/chaos-polymtl/lethe/pull/1889)
+
 ## [Master] - 2026-01-21
 
 ### Changed
