@@ -43,14 +43,7 @@ start = int(particle.prm_dict['end time'] /
 
 # Position and normal vector of the outlet
 hopper_outlet = 0
-if int(particle.prm_dict['nx']):
-    normal_vect = 0
-elif int(particle.prm_dict['ny']):
-    normal_vect = 1
-elif int(particle.prm_dict['nz']):
-    normal_vect = 2
-else:
-    sys.exit('No normal vector for Hopper outlet.')
+normal_vect = 1 # The outlet is in the normal direction y
 
 # Create a list to store the number of particles below the outlet
 number_of_particles_below = []
