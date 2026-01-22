@@ -609,8 +609,11 @@ CFDDEMMatrixFree<dim>::read_checkpoint()
 #ifndef LETHE_USE_LDV
   // We also wish the Trilinos solution to be updated.
   convert_vector_dealii_to_trilinos(
-    this->particle_projector.void_fraction_locally_relevant,
+    this->particle_projector.void_fraction_locally_owned,
     this->particle_projector.void_fraction_solution);
+
+  this->particle_projector.void_fraction_locally_relevant =
+    this->particle_projector.void_fraction_locally_owned;
 #endif
 
   for (unsigned int i = 0;
@@ -623,8 +626,10 @@ CFDDEMMatrixFree<dim>::read_checkpoint()
 #ifndef LETHE_USE_LDV
       // We also wish the Trilinos solution to be updated.
       convert_vector_dealii_to_trilinos(
-        this->particle_projector.previous_void_fraction[i],
+        this->particle_projector.void_fraction_locally_owned,
         this->particle_projector.void_fraction_previous_solution[i]);
+      this->particle_projector.previous_void_fraction[i] =
+        this->particle_projector.void_fraction_locally_owned;
 #endif
     }
 

@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The cylindrical gas–solid fluidized bed example, introduced in PR [#1844], has been added to the Lucille validation test suite. The selected validation case uses the matrix-free solver with a semi-implicit drag scheme and a QCM filter. The corresponding post-processing Python script has been modified to allow users to select the simulation configuration to be post-processed. [#1880](https://github.com/chaos-polymtl/lethe/pull/1880)
 
+### Fixed
+
+- MINOR Calls to convert_vector_dealii_to_trilinos() were failling due to new restriction on ghosted Trilinos vectors in dealii. This PR fixes this using a temporary locally owned vector. [#1888](https://github.com/chaos-polymtl/lethe/pull/1888)
+
 ## [Master] - 2026-01-20
 
 ### Changed
