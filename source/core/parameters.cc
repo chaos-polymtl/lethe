@@ -135,7 +135,7 @@ namespace Parameters
         "respect capillary time-step constraint",
         "false",
         Patterns::Bool(),
-        "By setting to 'true', it ensures that the capillary time-step constraint is respected throughout the simulation. This must be paired with an adaptive time-stepping simulation.");
+        "By setting to 'true', it ensures that the capillary time-step constraint is respected at the initial condition. To respect it throughout the simulation, it must be paired with an adaptive time-stepping simulation.");
       prm.declare_entry(
         "capillary time-step ratio",
         "1.0",

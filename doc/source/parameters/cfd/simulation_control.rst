@@ -106,7 +106,7 @@ This subsection is the most important in a simulation and therefore, the most co
     # Set time-step to respect the capillary time-step constraint
     set respect capillary time-step constraint = true
 
-    # Set time-step to respect the capillary time-step constraint
+    # Set targeted capillary time-step ratio (Δt/Δt_σ)
     set capillary time-step ratio = 1.0
   end
 
