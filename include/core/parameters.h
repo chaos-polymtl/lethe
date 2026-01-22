@@ -127,7 +127,7 @@ namespace Parameters
      *
      * @remark By default, this is set to 1.
      */
-    double capillary_time_step_ratio;
+    double target_capillary_time_step_ratio;
 
     // Aimed tolerance at which simulation is stopped
     double stop_tolerance;

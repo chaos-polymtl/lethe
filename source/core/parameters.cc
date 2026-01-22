@@ -272,8 +272,9 @@ namespace Parameters
       max_dt = prm.get_double("max time step");
       respect_capillary_time_step_constraint =
         prm.get_bool("respect capillary time-step constraint");
-      capillary_time_step_ratio = prm.get_double("capillary time-step ratio");
-      stop_tolerance            = prm.get_double("stop tolerance");
+      target_capillary_time_step_ratio =
+        prm.get_double("capillary time-step ratio");
+      stop_tolerance = prm.get_double("stop tolerance");
       adaptative_time_step_scaling =
         prm.get_double("adaptative time step scaling");
       startup_timestep_scaling = prm.get_double("startup time scaling");

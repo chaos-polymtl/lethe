@@ -102,7 +102,7 @@ protected:
   /**
    * @brief Courant-Friedrich-Levy (CFL) condition value
    *
-   * @remark Since the simulation control is unaware of the information
+   * @remark Since the SimulationControl is unaware of the information
    * propagation mechanism (for instance the velocity), the current CFL must be
    * set by the solver itself using set_CFL().
    */
@@ -157,7 +157,7 @@ protected:
    * capillary time-step ratio, and \f$ \Delta t_\sigma \f$ the
    * SimulationControl::capillary_time_step_constraint.
    */
-  double capillary_time_step_ratio;
+  double target_capillary_time_step_ratio;
 
   /**
    * @brief Computed ratio between the current time-step and the capillary
@@ -181,7 +181,7 @@ protected:
    * tension,” J. Comput. Phys., vol. 459, p. 111128, Jun. 2022,
    * doi: 10.1016/j.jcp.2022.111128
    */
-  double respect_capillary_time_step_constraint;
+  bool respect_capillary_time_step_constraint;
 
   /// Current value of the norm of the right-hand side residual
   double residual;
@@ -559,18 +559,20 @@ public:
     Assert(
       time_step > 0,
       ExcMessage(
-        "You are trying to set a null or negative time-step in a SimulationControl. This is now allowed, we cannot go backward in time."));
+        "You are trying to set a null or negative time-step in a SimulationControl. This is not allowed, we cannot go backward in time."));
     time_step = new_time_step;
   }
 
   /**
-   * @brief Update initial time-step to respect the capillary time-step constraint
+   * @brief Update initial time-step to respect the capillary time-step
+   * constraint. If the initial time-step is already below the capillary
+   * time-step, then we do not change it.
    */
   void
-  set_initial_time_step_with_capillary_time_step_constraint()
+  limit_initial_time_step_with_capillary_time_step_constraint()
   {
     double capillary_time_step =
-      capillary_time_step_constraint * capillary_time_step_ratio;
+      capillary_time_step_constraint * target_capillary_time_step_ratio;
     initial_time_step = std::min(initial_time_step, capillary_time_step);
     set_current_time_step(initial_time_step);
   }
@@ -581,6 +583,12 @@ public:
   void
   set_current_capillary_time_step_ratio()
   {
+    AssertThrow(
+      capillary_time_step_constraint > 0,
+      ExcMessage(
+        "The current value of the capillary time-step constraint is set to a null or negative value.\n"
+        "This is not allowed. Make sure that 'respect capillary time-step constraint' is set to 'true' to compute the capillary time-step constraint."));
+
     current_capillary_time_step_ratio =
       time_step / capillary_time_step_constraint;
   }

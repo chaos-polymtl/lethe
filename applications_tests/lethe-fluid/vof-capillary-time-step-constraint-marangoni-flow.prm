@@ -4,7 +4,7 @@
 #-------------------------------------------------------------------------------
 # DESCRIPTION:
 # This test checks that the adaptive capillary time-step constraint is well
-# applied for cases with marangoni flow (here, temperature-dependent
+# applied for cases with Marangoni flow (here, temperature-dependent
 # surface tension). The mesh and the densities considered here remain constant.
 # Only the surface tension evolves with time.
 #-------------------------------------------------------------------------------

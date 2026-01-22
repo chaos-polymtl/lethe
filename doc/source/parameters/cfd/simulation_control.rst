@@ -229,7 +229,7 @@ Paraview output file parameters
 Explicit coupling constraint parameters
 ---------------------------------------
 
-* ``respect capillary time-step constraint``: computes and replaces initial time-step with the capillary time-step constraint [#denner2022]_:
+* ``respect capillary time-step constraint``: computes the capillary time-step constraint [#denner2022]_:
 
   .. math::
 
@@ -246,6 +246,8 @@ Explicit coupling constraint parameters
 
       - a disk with equivalent area in 2D, and;
       - a sphere with equivalent volume in 3D.
+
+  and replaces the initial time-step with :math:`\Delta t_\sigma` if it is smaller than the user-imposed initial ``time step``.
 
   This is used in the coupling of the :doc:`Navier-Stokes equations <../../theory/multiphysics/fluid_dynamics/navier-stokes>` with the :doc:`VOF <../../theory/multiphase/cfd/vof>` method to simulate multiphase flows with surface tension. If ``adapt`` is also enabled, the time-step will adapt to respect the capillary time-step constraint dynamically.
 

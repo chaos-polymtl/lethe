@@ -1254,9 +1254,6 @@ VolumeOfFluid<dim>::compute_capillary_time_step_constraint(
   // Initialize capillary time-step constraint
   double capillary_time_step_constraint = std::numeric_limits<double>::max();
 
-  // Cell size
-  double h;
-
   // Element degree
   const unsigned int degree = this->dof_handler->get_fe().degree;
 
@@ -1302,10 +1299,10 @@ VolumeOfFluid<dim>::compute_capillary_time_step_constraint(
           density_models[1]->vector_value(fields, density_1);
           surface_tension_model->vector_value(fields, surface_tension);
 
-          // Compute cell diameter
+          // Compute cell equivalent diameter (cell size)
           double cell_measure =
             compute_cell_measure_with_JxW(fe_values_vof.get_JxW_values());
-          h = compute_cell_diameter<dim>(cell_measure, degree);
+          double h = compute_cell_diameter<dim>(cell_measure, degree);
 
           // Loop over quadrature points
           for (unsigned int q = 0; q < n_q_points; q++)
@@ -2810,7 +2807,7 @@ VolumeOfFluid<dim>::set_initial_conditions()
             .respect_capillary_time_step_constraint)
         {
           this->simulation_control
-            ->set_initial_time_step_with_capillary_time_step_constraint();
+            ->limit_initial_time_step_with_capillary_time_step_constraint();
         }
     }
 

@@ -8,7 +8,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MINOR This PR adds the option to compute the capillary time-step constraint as the simulation time-step with the parameter ``respect capillary time-step constraint`` (in the ``simulation control`` subsection) enabled. It is especially useful when simulating capillary flows. When this option is paired with ``adapt`` (for adaptive time-stepping), the time-step will be dynamically updated to respect the capillary time-step constraint at every time-step. Additionally, with the parameter ``capillary time-step ratio``, users can specify a multiple of the capillary time-step constraint. Finally, a new overload of the ``announce_string`` function has also been added to allow multiple line banners. [#1886](https://github.com/chaos-polymtl/lethe/pull/1886)
+- MINOR This PR adds the option to set a simulation time-step that respects the capillary time-step constraint through enabling (setting to `true`) the parameter `respect capillary time-step constraint` ($\Delta t_\sigma$) in the `simulation control` subsection. This constraint is especially useful when simulating capillary flows. With the parameter `capillary time-step ratio` (
+  $\text{CTR}$), users can specify a multiple of the default capillary time-step constraint as defined by [1]. By default, the $\text{CTR}$ is set to 1. A $\text{CTR}$ value < 1 can improve stability for highly dynamic cases, and using a $\text{CTR}$ value > 1 can lead to a significant decrease in computation time in some cases. Additionally, when this option is  paired with `adapt` (for adaptive time-stepping), the time-step will be dynamically updated to respect the capillary time-step ($\text{CTR} \times \Delta t_\sigma $) at every time-step.
+
+  Finally, a new overload of the `announce_string` function has also been added to allow multiple line banners. [#1886](https://github.com/chaos-polymtl/lethe/pull/1886)
+
+  [1] F. Denner, F. Evrard, and B. van Wachem “Breaching the capillary
+  time-step constraint using a coupled VOF method with implicit surface tension,” J. Comput. Phys., vol. 459, p. 111128, Jun. 2022, doi: 10.1016/j.jcp.2022.111128
 - MINOR This PR is a follow-up for the time harmonic electromagnetic auxiliary physics rudimentary implementation #1852. It links its physical material properties #1862 to the assembly, creates the waveguide port boundary conditions, update previous application tests related to the physics and add a new one for a dissipative medium. It also removes .prm in the examples/multiphysics/waveguide as this example will come in a follow up PR. [#1882](https://github.com/chaos-polymtl/lethe/pull/1882) 
 
 ## [Master] - 2026-01-23

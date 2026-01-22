@@ -22,7 +22,7 @@ SimulationControl::SimulationControl(const Parameters::SimulationControl &param)
   , CFL(0)
   , max_CFL(param.maxCFL)
   , capillary_time_step_constraint(std::numeric_limits<double>::max())
-  , capillary_time_step_ratio(param.capillary_time_step_ratio)
+  , target_capillary_time_step_ratio(param.target_capillary_time_step_ratio)
   , current_capillary_time_step_ratio(0)
   , respect_capillary_time_step_constraint(
       param.respect_capillary_time_step_constraint)
@@ -333,7 +333,7 @@ SimulationControlTransient::integrate()
       add_time_step(calculate_time_step());
       current_time += time_step;
 
-      // Calculate CTR for printing on consol if capillary time-step constraint
+      // Calculate CTR to print on the console if capillary time-step constraint
       // is enabled
       if (respect_capillary_time_step_constraint)
         {
@@ -372,7 +372,7 @@ SimulationControlTransient::calculate_time_step()
       if (respect_capillary_time_step_constraint)
         {
           double capillary_time_step =
-            capillary_time_step_constraint * capillary_time_step_ratio;
+            capillary_time_step_constraint * target_capillary_time_step_ratio;
           new_time_step = std::min(new_time_step, capillary_time_step);
         }
     }
