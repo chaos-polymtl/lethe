@@ -424,14 +424,6 @@ namespace Parameters
       particle_custom_probability.push_back(convert_string_to_vector<double>(
         prm, "custom distribution diameters probabilities"));
 
-      std::vector<double> temp_vector = convert_string_to_vector<double>(
-        prm, prm.get("custom distribution diameters probabilities"));
-
-      std::cout << __LINE__ << std::endl;
-      std::cout << temp_vector[0]  << " " << temp_vector[1] << std::endl;
-      std::cout << __LINE__ << std::endl;
-
-
       // Normal, lognormal and custom distributions
       std::string distribution_weighting_type_str =
         prm.get("distribution weighting basis");
@@ -487,11 +479,6 @@ namespace Parameters
         std::reduce(particle_custom_probability.at(particle_type).begin(),
                     particle_custom_probability.at(particle_type).end());
 
-      std::cout << __LINE__ << std::endl;
-      std::cout << particle_type << std::endl;
-      std::cout << particle_custom_probability.at(particle_type)[0]
-                << std::endl;
-      std::cout << probability_sum << std::endl;
       // We make sure that the cumulative probability is equal to 1.
       if (std::abs(probability_sum - 1.0) > 1.e-5)
         {
