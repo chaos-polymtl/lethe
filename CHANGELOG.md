@@ -4,6 +4,10 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026-01-26
+
+- MINOR This PR is a follow-up for the time harmonic electromagnetic auxiliary physics rudimentary implementation #1852. It links its physical material properties #1862 to the assembly, creates the waveguide port boundary conditions, update previous application tests related to the physics and add a new one for a dissipative medium. It also removes .prm in the examples/multiphysics/waveguide as this example will come in a follow up PR. [#1882](https://github.com/chaos-polymtl/lethe/pull/1882) 
+
 ## [Master] - 2026-01-23
 
 ### Changed
