@@ -148,7 +148,7 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
                   local_matrix_ij += phi_p_i * div_phi_u_j;
 
                   // PSPG GLS term
-                  local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
+                  // local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
                 }
 
               if (component_i < dim && component_j < dim)
@@ -174,9 +174,9 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
                   // does not alter the number of newton iteration for
                   // convergence, but greatly simplifies assembly.
 
-                  local_matrix_ij +=
-                    tau * (strong_jac * grad_phi_u_i_x_velocity +
-                           strong_residual_x_grad_phi_u_i * phi_u_j);
+                  // local_matrix_ij +=
+                  //   tau * (strong_jac * grad_phi_u_i_x_velocity +
+                  //          strong_residual_x_grad_phi_u_i * phi_u_j);
                 }
 
               local_matrix_ij *= JxW;
@@ -2093,6 +2093,86 @@ PressureBoundaryCondition<dim>::assemble_rhs(
 
 template class PressureBoundaryCondition<2>;
 template class PressureBoundaryCondition<3>;
+
+template <int dim>
+void
+NeumannTractionBoundaryCondition<dim>::assemble_matrix(
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  //This method is just for compilation purpose and no assembly is done.
+}
+
+template <int dim>
+void
+NeumannTractionBoundaryCondition<dim>::assemble_rhs(
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  if (!scratch_data.is_boundary_cell)
+    return;
+
+  std::vector<std::vector<double>> prescribed_pressure_values;
+  prescribed_pressure_values = std::vector<std::vector<double>>(
+    scratch_data.n_faces, std::vector<double>(scratch_data.n_faces_q_points));
+
+  std::vector<std::vector<Tensor<1, dim>>> gn_bc =
+    std::vector<std::vector<Tensor<1, dim>>>(scratch_data.n_faces,
+                                             std::vector<Tensor<1, dim>>(
+                                               scratch_data.n_faces_q_points));
+
+
+  auto &local_rhs = copy_data.local_rhs;
+
+  // Neumann traction boundary condition, loop on faces
+  //    ∫_Γ_N  v · t  dΓ
+  //
+  // where:
+  //   - Ω is the domain,
+  //   - Γ_N is the boundary where the Neumann traction condition is applied, n is the outward normal vector on Γ_N,
+  //   - v is the velocity test function,
+  //   - t is the prescribed traction (force per unit area) on the boundary Γ_N.
+
+  for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
+    {
+      // Check if the face is on a boundary
+      if (scratch_data.is_boundary_face[f])
+        {
+          types::boundary_id boundary_id = scratch_data.boundary_face_id[f];
+          std::cout << "Boundary id for Neumann traction BC: " << boundary_id << std::endl;
+          // Check if the face is part of the boundary that as a
+          // Neumann traction BC.
+          if (this->neumann_traction_boundary_conditions.type.at(boundary_id) ==
+              BoundaryConditions::BoundaryType::Neumann_traction)
+            {
+              std::cout << "Assembling Neumann traction BC on boundary id: " << boundary_id << std::endl;
+              // Assemble the rhs of the BC
+              for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
+                {
+                  const double JxW = scratch_data.face_JxW[f][q];
+                  
+                  gn_bc[f][q][0] = neumann_traction_boundary_conditions.navier_stokes_functions.at(boundary_id)->t_x.
+                                    value(scratch_data.face_quadrature_points[f][q]);
+                  gn_bc[f][q][1] = neumann_traction_boundary_conditions.navier_stokes_functions.at(boundary_id)->t_y.
+                                    value(scratch_data.face_quadrature_points[f][q]);
+                  std::cout << "traction vector: "<< gn_bc[f][q][0] <<" "<< gn_bc[f][q][1] << std::endl;
+                  if constexpr (dim == 3)
+                    gn_bc[f][q][2] = neumann_traction_boundary_conditions.navier_stokes_functions.at(boundary_id)->t_z.
+                                    value(scratch_data.face_quadrature_points[f][q]);
+                  for (const unsigned int i :
+                       scratch_data.fe_face_values.dof_indices())
+                    {
+                      local_rhs(i) -=
+                        -scratch_data.face_phi_u[f][q][i] * (gn_bc[f][q]) * JxW;
+                    }
+                }
+            }
+        }
+    }
+}
+
+template class NeumannTractionBoundaryCondition<2>;
+template class NeumannTractionBoundaryCondition<3>;
 
 template <int dim>
 void

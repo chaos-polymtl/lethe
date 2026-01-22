@@ -425,10 +425,13 @@ namespace BoundaryConditions
         prm.enter_subsection("t_y");
         navier_stokes_functions[boundary_id]->t_y.parse_parameters(prm);
         prm.leave_subsection();
-
-        prm.enter_subsection("t_z");
-        navier_stokes_functions[boundary_id]->t_z.parse_parameters(prm);
-        prm.leave_subsection();
+        
+        if (dim == 3)
+          {
+            prm.enter_subsection("t_z");
+            navier_stokes_functions[boundary_id]->t_z.parse_parameters(prm);
+            prm.leave_subsection();
+          }
 
         prm.enter_subsection("center of rotation");
         navier_stokes_functions[boundary_id]->center_of_rotation[0] =
@@ -461,8 +464,9 @@ namespace BoundaryConditions
         if (op == "pressure")
           {
             this->type[boundary_id] = BoundaryType::pressure;
+           
           }
-        if(op == "Neumann_traction")
+        if(op == "Neumann traction")
           {
             this->type[boundary_id] = BoundaryType::Neumann_traction;
           }
@@ -511,17 +515,17 @@ namespace BoundaryConditions
           */
             
             //Prescribed Neumann traction function
-            prm.enter_subsection("t_x");
-            navier_stokes_functions[boundary_id]->t_x.parse_parameters(prm);
-            prm.leave_subsection();
+            // prm.enter_subsection("t_x");
+            // navier_stokes_functions[boundary_id]->t_x.parse_parameters(prm);
+            // prm.leave_subsection();
 
-            prm.enter_subsection("t_y");
-            navier_stokes_functions[boundary_id]->t_y.parse_parameters(prm);
-            prm.leave_subsection();
+            // prm.enter_subsection("t_y");
+            // navier_stokes_functions[boundary_id]->t_y.parse_parameters(prm);
+            // prm.leave_subsection();
 
-            prm.enter_subsection("t_z");
-            navier_stokes_functions[boundary_id]->t_z.parse_parameters(prm);
-            prm.leave_subsection();
+            // prm.enter_subsection("t_z");
+            // navier_stokes_functions[boundary_id]->t_z.parse_parameters(prm);
+            // prm.leave_subsection();
 
 
             prm.enter_subsection("p");
@@ -2069,11 +2073,22 @@ NavierStokesFunctionDefined<dim>::value(const Point<dim>  &point,
 template <int dim>
 class NavierStokesTractionFunctionDefined : public Function<dim>
 {
+  /*
+    Functions::ParsedFunction<dim> *t;
+  */
   Functions::ParsedFunction<dim> *t_x;
   Functions::ParsedFunction<dim> *t_y;
   Functions::ParsedFunction<dim> *t_z;
 
 public:
+
+  /*
+  NavierStokesTractionFunctionDefined(Functions::ParsedFunction<dim> *pt)
+    : Function<dim>(dim)
+    , t(pt)
+  {}
+  
+  */
   NavierStokesTractionFunctionDefined(Functions::ParsedFunction<dim> *pt_x,
                               Functions::ParsedFunction<dim> *pt_y,
                               Functions::ParsedFunction<dim> *pt_z)
@@ -2119,6 +2134,20 @@ NavierStokesTractionFunctionDefined<dim>::value(const Point<dim>  &point,
   return 0.;
 }
 
+/*
+template <int dim>
+double
+NavierStokesTractionFunctionDefined<dim>::value(const Point<dim>  &point,
+                                        const unsigned int component) const
+{
+  Assert(component < this->n_components,
+         ExcIndexRange(component, 0, this->n_components));
+
+      return t->value(point, component);
+  
+}
+
+*/
 
 
 /**

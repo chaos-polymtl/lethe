@@ -842,7 +842,13 @@ NavierStokesOperatorBase<dim, number>::
 
           for (const auto q : face_integrator.quadrature_point_indices())
           {
-            Point<dim, VectorizedArray<number>> point_batch =
+            //std::cout << "Boundary ID: " << face_integrator.boundary_id() << std::endl;
+            //std::cout << prescribed_neumann_traction[face- n_inner_faces,q][0] << prescribed_neumann_traction[face- n_inner_faces,q][0] << std::endl;
+            if (this->boundary_conditions.type.at(
+                    face_integrator.boundary_id()) ==
+                  BoundaryConditions::BoundaryType::Neumann_traction)
+            {
+                  Point<dim, VectorizedArray<number>> point_batch =
                     face_integrator.quadrature_point(q);
 
 
@@ -864,12 +870,14 @@ NavierStokesOperatorBase<dim, number>::
                         .at(face_integrator.boundary_id())
                         ->t_z,
                       point_batch);
+            }
           }
   }
   this->timer.leave_subsection("operator::evaluate_prescribed_neumann_traction");
 }
-
 }
+
+
 
 
 template <int dim, typename number>
@@ -1398,7 +1406,8 @@ NavierStokesOperatorBase<dim, number>::do_internal_face_integral_range(
 template <int dim, typename number>
 template <bool assemble_residual>
 void
-NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_range(
+NavierStokesOperatorBase<dim, number>::
+do_boundary_face_integral_range(
   const MatrixFree<dim, number>               &matrix_free,
   VectorType                                  &dst,
   const VectorType                            &src,
@@ -1429,6 +1438,7 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_range(
 // (v,β·(u-u_target)) - ν(v,∇δu·n) - ν(∇v·n,(u-u_target))
 // 2. Outlet boundary conditions using the directional do-nothing method.
 // It adds the following term: -(v,β(u·n)_·u) where (u·n)_=min(0,u·n)
+// 3. Neumann traction boundary conditions adding the term (t,v) on the RHS
 template <int dim, typename number>
 template <bool assemble_residual>
 void
@@ -1508,7 +1518,7 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
       integrator.integrate(EvaluationFlags::EvaluationFlags::values |
                            EvaluationFlags::EvaluationFlags::gradients);
     }
-    // This part assembles the prescribed Neumann traction boundary condition $\sigma \dot \mathbf{n} = \mathbf{t}$
+    // This part assembles the prescribed Neumann traction boundary condition  (σ . n , v)  = (t, v)
     // only on the RHS (residual) since it does not depend on the solution
     else if(this->boundary_conditions.type.at(integrator.boundary_id()) ==
             BoundaryConditions::BoundaryType::Neumann_traction)
