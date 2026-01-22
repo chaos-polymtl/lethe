@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020, 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020, 2024, 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -25,10 +25,11 @@ test()
   simulation_control_parameters.time_end = 0.5;
   simulation_control_parameters.output_control =
     Parameters::SimulationControl::OutputControl::iteration;
-  simulation_control_parameters.output_iteration_frequency        = 2;
-  simulation_control_parameters.time_step_independent_of_end_time = true;
-  simulation_control_parameters.output_time_interval              = {0,
-                                                                     1.7976931348623157e3};
+  simulation_control_parameters.output_iteration_frequency             = 2;
+  simulation_control_parameters.time_step_independent_of_end_time      = true;
+  simulation_control_parameters.output_time_interval                   = {0,
+                                                                          1.7976931348623157e3};
+  simulation_control_parameters.respect_capillary_time_step_constraint = false;
 
   {
     SimulationControlTransient simulation_control(

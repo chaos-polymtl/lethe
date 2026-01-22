@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2024, 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -51,6 +51,7 @@ test()
   simulationControlParameters.output_folder              = "canard";
   simulationControlParameters.output_iteration_frequency = 8;
   simulationControlParameters.output_time_interval = {0, 1.7976931348623157e3};
+  simulationControlParameters.respect_capillary_time_step_constraint = false;
 
   std::shared_ptr<SimulationControl> simulation_control;
   simulation_control =
