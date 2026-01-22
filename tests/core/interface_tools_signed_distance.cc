@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 // Deal.II includes
@@ -60,7 +60,7 @@ test()
   // Discretize the domain as in an arbitrary background solver
   std::shared_ptr<FiniteElement<dim>> background_fe =
     std::make_shared<FE_Q<dim>>(1);
-  std::shared_ptr<Mapping<dim>> background_mapping =
+  std::shared_ptr<MappingQ<dim>> background_mapping =
     std::make_shared<MappingQ<dim>>(background_fe->degree);
 
   DoFHandler<dim> background_dof_handler =

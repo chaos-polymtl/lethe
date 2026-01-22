@@ -50,6 +50,13 @@ VolumeOfFluid<dim>::VolumeOfFluid(
                !simulation_parameters.fem_parameters.VOF_uses_dg),
               UnsupportedRegularization());
 
+  AssertThrow(((simulation_parameters.mesh.simplex &&
+                simulation_parameters.multiphysics.vof_parameters
+                    .regularization_method.regularization_method_type !=
+                  Parameters::RegularizationMethodType::geometric) ||
+               !simulation_parameters.mesh.simplex),
+              UnsupportedRegularizationWithSimplex());
+
   if (simulation_parameters.fem_parameters.VOF_uses_dg &&
       this->simulation_parameters.post_processing.calculate_mass_conservation)
     {

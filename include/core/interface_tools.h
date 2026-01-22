@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_interface_tools_h
@@ -420,8 +420,12 @@ namespace InterfaceTools
       , pcout(std::cout,
               (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0))
     {
-      mapping = std::make_shared<MappingFE<dim>>(*fe);
+      // MappingQ is required to reduce significantly the computational time of
+      // the FEPointEvaluation.reinit(). Using MappingQ and FE_Q allow to take
+      // the "fast path" in FEPointEvaluation calls.
+      mapping = std::make_shared<MappingQ<dim>>(fe->degree);
       set_face_opposite_dofs_map();
+      set_face_dofs_map();
     }
 
     /**
@@ -625,19 +629,59 @@ namespace InterfaceTools
     }
 
     /**
+     * @brief Set the map of local id of the face DoFs (works for quad only).
+     */
+    inline void
+    set_face_dofs_map()
+    {
+      if constexpr (dim == 2)
+        {
+          face_dofs_map[0] = {0, 2};
+          face_dofs_map[1] = {1, 3};
+          face_dofs_map[2] = {0, 1};
+          face_dofs_map[3] = {2, 3};
+        }
+
+      if constexpr (dim == 3)
+        {
+          face_dofs_map[0] = {0, 2, 4, 6};
+          face_dofs_map[1] = {1, 3, 5, 7};
+          face_dofs_map[2] = {0, 1, 4, 5};
+          face_dofs_map[3] = {2, 3, 6, 7};
+          face_dofs_map[4] = {0, 1, 2, 3};
+          face_dofs_map[5] = {4, 5, 6, 7};
+        }
+    }
+
+    /**
      * @brief Return the local id of the opposite DoFs to the given face
      * (works for quad only).
      *
      * @param[in] local_face_id Local id of the face in the cell
      *
      * @param[out] local_opposite_dofs The vector containing the id of the
-     * opposite faces
+     * opposite DoFs
      */
     inline void
     get_face_opposite_dofs(unsigned int               local_face_id,
                            std::vector<unsigned int> &local_opposite_dofs)
     {
       local_opposite_dofs = face_opposite_dofs_map.at(local_face_id);
+    };
+
+    /**
+     * @brief Return the local id of the face DoFs (works for quad only).
+     *
+     * @param[in] local_face_id Local id of the face in the cell
+     *
+     * @param[out] local_dofs The vector containing the id of the
+     * local DoFs
+     */
+    inline void
+    get_face_local_dofs(unsigned int               local_face_id,
+                        std::vector<unsigned int> &local_dofs)
+    {
+      local_dofs = face_dofs_map.at(local_face_id);
     };
 
     /**
@@ -893,6 +937,102 @@ namespace InterfaceTools
 
     /**
      * @brief
+     * Compute the analytical jacobian at the point x_n of the distance
+     * minimization problem for the DoF x_I in the reference face space (dim -
+     * 1): J_R = J^T*H*J, where J is the face transformation jacobian, and
+     * H is the Hessian matrix in the real space (H = H(d) + H(||x_I - x_n||)).
+     *
+     * @param[in] x_real evaluation point x_n in the real space.
+     *
+     * @param[in] x_I_real coordinate of the DoF x_I in the real space
+     *
+     * @param[in] transformation_jacobian face transformation jacobian
+     *
+     * @param[in] face_local_dof_values values of the DoFs of the face
+     *
+     * @param[out] jacobian_matrix jacobian matrix of the minimization problem
+     */
+    inline void
+    compute_analytical_jacobian(
+      const Point<dim>                      &x_real,
+      const Point<dim>                      &x_I_real,
+      const DerivativeForm<1, dim - 1, dim> &transformation_jacobian,
+      const std::vector<double>             &face_local_dof_values,
+      LAPACKFullMatrix<double>              &jacobian_matrix)
+    {
+      const Tensor<1, dim> x_n_to_x_I_real_p1 = x_I_real - x_real;
+
+      const double x_n_to_x_I_real_p1_norm = x_n_to_x_I_real_p1.norm();
+
+      const double x_n_to_x_I_real_p1_norm_inv = 1.0 / x_n_to_x_I_real_p1_norm;
+
+      const double x_n_to_x_I_real_p1_norm_cubic_inv =
+        x_n_to_x_I_real_p1_norm_inv * x_n_to_x_I_real_p1_norm_inv *
+        x_n_to_x_I_real_p1_norm_inv;
+
+      LAPACKFullMatrix<double> hessian_matrix(dim, dim);
+
+      for (int i = 0; i < dim; ++i)
+        {
+          for (int j = 0; j < dim; ++j)
+            {
+              double h_ij = -(x_n_to_x_I_real_p1[i] * x_n_to_x_I_real_p1[j]) *
+                            x_n_to_x_I_real_p1_norm_cubic_inv;
+              if (i == j)
+                h_ij += x_n_to_x_I_real_p1_norm_inv;
+
+              hessian_matrix.set(i, j, h_ij);
+            }
+        }
+
+      const DerivativeForm<1, dim, dim - 1> transformation_jacobian_transpose =
+        transformation_jacobian.transpose();
+
+      LAPACKFullMatrix<double> H_x_transformation_jacobian(dim, dim - 1);
+      for (int i = 0; i < dim; ++i)
+        {
+          for (int j = 0; j < dim - 1; ++j)
+            {
+              double matrix_ij = 0;
+              for (int k = 0; k < dim; ++k)
+                {
+                  matrix_ij +=
+                    hessian_matrix(i, k) * transformation_jacobian[k][j];
+                }
+              H_x_transformation_jacobian.set(i, j, matrix_ij);
+            }
+        }
+
+      for (int i = 0; i < dim - 1; ++i)
+        {
+          for (int j = 0; j < dim - 1; ++j)
+            {
+              double matrix_ij = 0;
+              for (int k = 0; k < dim; ++k)
+                {
+                  matrix_ij += transformation_jacobian_transpose[i][k] *
+                               H_x_transformation_jacobian(k, j);
+                }
+              jacobian_matrix.set(i, j, matrix_ij);
+            }
+        }
+
+      // In Q1, off-diagonal terms are coming from the term H(d) of the
+      // real space Hessian. FEPointEvaluation doesn't include the
+      // implementation of the Hessian, hence it is computed by hand.
+      double off_diag_H = 0;
+      if constexpr (dim == 3)
+        {
+          off_diag_H = jacobian_matrix(0, 1) + face_local_dof_values[0] -
+                       face_local_dof_values[1] - face_local_dof_values[2] +
+                       face_local_dof_values[3];
+          jacobian_matrix.set(0, 1, off_diag_H);
+          jacobian_matrix.set(1, 0, off_diag_H);
+        }
+    };
+
+    /**
+     * @brief
      * Compute the distance according to: d(x_I) = d(x_n) + ||x_I - x_n||
      *
      * @param[in] x_n_to_x_I_real vector from x_n to x_I in the real space
@@ -912,7 +1052,7 @@ namespace InterfaceTools
     std::shared_ptr<FiniteElement<dim>> fe;
 
     /// Mapping between the real and reference space
-    std::shared_ptr<Mapping<dim>> mapping;
+    std::shared_ptr<MappingQ<dim>> mapping;
 
     /// Maximum redistanciation distance
     const double max_distance;
@@ -986,6 +1126,8 @@ namespace InterfaceTools
     PVDHandler pvd_handler_signed_distance;
 
     std::map<unsigned int, std::vector<unsigned int>> face_opposite_dofs_map;
+
+    std::map<unsigned int, std::vector<unsigned int>> face_dofs_map;
   };
 } // namespace InterfaceTools
 

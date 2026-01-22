@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_vof_h
@@ -47,6 +47,10 @@ DeclException1(
 DeclExceptionMsg(
   UnsupportedRegularization,
   "The VOF physics has been set to use DG and the latter implementation currently does not support any interface regularization mechanism.");
+
+DeclExceptionMsg(
+  UnsupportedRegularizationWithSimplex,
+  "The VOF physics has been set to use simplex and the latter implementation currently does not support the geometric interface regularization mechanism.");
 
 DeclExceptionMsg(
   UnsupportedInitialProjection,

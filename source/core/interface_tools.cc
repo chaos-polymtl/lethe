@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/interface_tools.h>
@@ -557,14 +557,25 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
   // of each face of the cell. This reduces the number of calls to
   // FEPointEvaluation.reinit() compared to a routine based on the opposite
   // faces of each DoF of the cell.
+  const unsigned int dofs_per_cell  = fe->n_dofs_per_cell();
+  unsigned int       faces_per_cell = 4;
+  if constexpr (dim == 3)
+    faces_per_cell = 6;
+
   unsigned int n_opposite_dofs_per_faces = 2;
   if constexpr (dim == 3)
     n_opposite_dofs_per_faces = 4;
-  std::vector<unsigned int> face_opposite_dofs(n_opposite_dofs_per_faces);
-  const unsigned int        dofs_per_cell  = fe->n_dofs_per_cell();
-  unsigned int              faces_per_cell = 4;
+
+  unsigned int n_dofs_per_faces = 2;
   if constexpr (dim == 3)
-    faces_per_cell = 6;
+    n_dofs_per_faces = 4;
+
+  std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+  std::vector<double>                  cell_dof_values(dofs_per_cell);
+
+  std::vector<unsigned int> face_opposite_dofs(n_opposite_dofs_per_faces);
+  std::vector<unsigned int> face_local_dofs(n_dofs_per_faces);
+  std::vector<double>       face_local_dof_values(n_dofs_per_faces);
 
   // Initialization of points and tensors
   Point<dim>     x_I_real;
@@ -576,20 +587,14 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
   if constexpr (dim == 3)
     ref_face_center_point(1) = 0.5;
 
-  // Stencil
+  // Evalutation points
   std::vector<Point<dim>> x_n_ref_vector(n_opposite_dofs_per_faces);
   std::vector<Point<dim>> x_n_real_vector(n_opposite_dofs_per_faces);
-  std::vector<Point<dim>> stencil_ref(2 * dim - 1);
-  std::vector<Point<dim>> stencil_ref_vector(
-    n_opposite_dofs_per_faces * 2 * dim - 1);
-  std::vector<Point<dim>>     stencil_real(2 * dim - 1);
-  std::vector<Tensor<1, dim>> distance_gradients(2 * dim - 1);
+  Tensor<1, dim>          distance_gradients;
 
-  // Transformation jacobians
-  std::vector<DerivativeForm<1, dim, dim>> cell_transformation_jacobians(
-    2 * dim - 1);
-  std::vector<DerivativeForm<1, dim - 1, dim>> face_transformation_jacobians(
-    2 * dim - 1);
+  // Transformation jacobian
+  DerivativeForm<1, dim, dim>     cell_transformation_jacobian;
+  DerivativeForm<1, dim - 1, dim> face_transformation_jacobian;
 
   // Jacobian matrix, residual vector and correction
   LAPACKFullMatrix<double> jacobian_matrix(dim - 1, dim - 1);
@@ -655,8 +660,6 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
         pcout << "Solving signed distance of layer " << count << std::endl;
       change = false;
 
-      std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
-      std::vector<double>                  cell_dof_values(dofs_per_cell);
       for (const auto &cell : dof_handler.active_cell_iterators())
         {
           if (cell->is_locally_owned())
@@ -700,6 +703,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
               for (unsigned int j = 0; j < faces_per_cell; ++j)
                 {
                   get_face_opposite_dofs(j, face_opposite_dofs);
+                  get_face_local_dofs(j, face_local_dofs);
 
                   for (unsigned int i = 0; i < n_opposite_dofs_per_faces; ++i)
                     {
@@ -712,44 +716,25 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                       outside_check[i]   = 0;
                     }
 
+                  for (unsigned int i = 0; i < n_dofs_per_faces; ++i)
+                    {
+                      face_local_dof_values[i] =
+                        cell_dof_values[face_local_dofs[i]];
+                    }
+
                   constexpr double tol           = 1e-9;
                   unsigned int     newton_it     = 0;
                   constexpr int    newton_max_it = 100;
+
 
                   // Solve the minimization problem with Newton method
                   // using a numerical jacobian
                   while (*std::ranges::max_element(correction_norm) > tol &&
                          newton_it < newton_max_it)
                     {
-                      for (unsigned int i = 0; i < n_opposite_dofs_per_faces;
-                           ++i)
-                        {
-                          /* Set stencil for numerical jacobian computation.
-                           The entries of the vector are the following:
-                                    4
-
-                               1    0    2
-
-                                    3
-                          The entry 0 is the current evaluation point. */
-                          const double perturbation =
-                            std::max(1e-6 * x_n_ref_vector[i].norm(), 1e-8);
-
-                          compute_numerical_jacobian_stencil(x_n_ref_vector[i],
-                                                             j,
-                                                             perturbation,
-                                                             stencil_ref);
-
-                          for (int k = 0; k < 2 * dim - 1; ++k)
-                            {
-                              stencil_ref_vector[k + (2 * dim - 1) * i] =
-                                stencil_ref[k];
-                            }
-                        }
-
                       /* Prepare FEPointEvaluation to compute value and
                       gradient at the stencil points*/
-                      fe_point_evaluation.reinit(cell, stencil_ref_vector);
+                      fe_point_evaluation.reinit(cell, x_n_ref_vector);
                       fe_point_evaluation.evaluate(cell_dof_values,
                                                    EvaluationFlags::gradients);
 
@@ -774,45 +759,34 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                           x_I_real = dof_support_points.at(
                             dof_indices[local_face_opposite_dof]);
 
-                          // Get the required values at each stencil point
-                          for (int k = 0; k < 2 * dim - 1; k++)
-                            {
-                              stencil_real[k] =
-                                fe_point_evaluation.quadrature_point(
-                                  k + i * (2 * dim - 1));
-                              distance_gradients[k] =
-                                fe_point_evaluation.get_gradient(
-                                  k + i * (2 * dim - 1));
-                              cell_transformation_jacobians[k] =
-                                fe_point_evaluation.jacobian(k +
-                                                             i * (2 * dim - 1));
-                              get_face_transformation_jacobian(
-                                cell_transformation_jacobians[k],
-                                j,
-                                face_transformation_jacobians[k]);
-                            }
-
-                          const double perturbation =
-                            std::max(1e-6 * x_n_ref_vector[i].norm(), 1e-8);
+                          x_n_real_vector[i] =
+                            fe_point_evaluation.quadrature_point(i);
+                          distance_gradients =
+                            fe_point_evaluation.get_gradient(i);
+                          cell_transformation_jacobian =
+                            fe_point_evaluation.jacobian(i);
+                          get_face_transformation_jacobian(
+                            cell_transformation_jacobian,
+                            j,
+                            face_transformation_jacobian);
 
                           /* Compute the jacobian matrix. The Ax=b system is
                         formulated as the dim-1 system. We solve for the
                         correction in the reference face. */
-                          compute_numerical_jacobian(
-                            stencil_real,
+                          compute_analytical_jacobian(
+                            x_n_real_vector[i],
                             x_I_real,
-                            distance_gradients,
-                            face_transformation_jacobians,
-                            perturbation,
+                            face_transformation_jacobian,
+                            face_local_dof_values,
                             jacobian_matrix);
 
-                          x_n_to_x_I_real = x_I_real - stencil_real[0];
+                          x_n_to_x_I_real = x_I_real - x_n_real_vector[i];
 
                           // Compute the right hand side.
                           Tensor<1, dim - 1> residual_n;
                           compute_residual(x_n_to_x_I_real,
-                                           distance_gradients[0],
-                                           face_transformation_jacobians[0],
+                                           distance_gradients,
+                                           face_transformation_jacobian,
                                            residual_n);
 
                           // Convert the right hand side to the right format
@@ -837,7 +811,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                               residual_n_vec, j);
 
                           /* Compute the solution (the point x_n_p1_ref on the
-        face minimizing the distance)*/
+                          face minimizing the distance)*/
                           x_n_p1_ref = x_n_ref_vector[i] + correction;
 
                           /* Relax the correction if it brings us outside

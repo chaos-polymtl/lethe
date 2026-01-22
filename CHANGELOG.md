@@ -4,6 +4,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026-01-20
+
+### Changed
+
+- MINOR This PR improves the performances of the signed distance solver. Previously, the bottleneck was the calls to FEPointEvaluation.reinit(cell, points_vector) in compute_second_neighbors(). Hence, the cost of these calls has been reduce in two ways: 1)  the numerical jacobian of the minimization problem was replace by the analytic jacaobian to reduce the number of points to reinit for and 2) the MappingFE(Fe_Q) was replaced by a MappingQ(fe.degree) to take the fast path in FEPointEvaluation.reinit() (those two mapping are equivalent, but MappingFe was not recognized for the fast path). For the 3D simulation of the rising bubble benchmark, we have a speed up of approx. 7x for the signed distance computations. Hence, the geometric reinitialization is not the bottleneck of the simulation anymore. [#1885](https://github.com/chaos-polymtl/lethe/pull/1885)
+
 ## [Master] - 2026-01-19
 
 ### Changed
