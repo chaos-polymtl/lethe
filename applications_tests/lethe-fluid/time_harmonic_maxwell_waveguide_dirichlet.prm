@@ -107,44 +107,44 @@ subsection boundary conditions time harmonic maxwell
   subsection bc 1
     set id   = 4
     set type = electric field
-    subsection E x real
+    subsection E x real part
       set Function expression = 0
     end
-    subsection E x imag
+    subsection E x imag part
       set Function expression = 0
     end
-    subsection E y real
+    subsection E y real part
       set Function expression = 0
     end
-    subsection E y imag
+    subsection E y imag part
       set Function expression = 20^(1/2)/(4)*sin(4*pi*x)
     end
-    subsection E z real
+    subsection E z real part
       set Function expression = 0
     end
-    subsection E z imag
+    subsection E z imag part
       set Function expression = 0
     end
   end
   subsection bc 2
     set id   = 5
     set type = magnetic field
-    subsection H x real
+    subsection H x real part
       set Function expression = 0
     end
-    subsection H x imag
+    subsection H x imag part
       set Function expression = -0.5*sin(4*pi*x)
     end
-    subsection H y real
+    subsection H y real part
       set Function expression = 0
     end
-    subsection H y imag
+    subsection H y imag part
       set Function expression = 0
     end
-    subsection H z real
+    subsection H z real part
       set Function expression = cos(4*pi*x)
     end
-    subsection H z imag
+    subsection H z imag part
       set Function expression = 0
     end
   end

@@ -915,6 +915,15 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
 
             TimeHarmonicMaxwell::mode_order_n[inlet] =
               prm.get_integer("mode order n");
+
+            // Check that the choice of mode orders is valid
+            if (TimeHarmonicMaxwell::mode_order_m[inlet] == 0 &&
+                TimeHarmonicMaxwell::mode_order_n[inlet] == 0)
+              {
+                throw(std::runtime_error(
+                  "Invalid waveguide mode orders m and n. "
+                  "At least one of the two mode orders must be non-zero."));
+              }
           }
           prm.leave_subsection();
 

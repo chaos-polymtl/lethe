@@ -137,28 +137,28 @@ subsection boundary conditions time harmonic maxwell
   subsection bc 2
     set id   = 5
     set type = impedance boundary
-    subsection excitation x real
+    subsection excitation x real part
       set Function expression = 0
     end
-    subsection excitation x imag
+    subsection excitation x imag part
       set Function expression = 0
     end
-    subsection excitation y real
+    subsection excitation y real part
       set Function expression = 0
     end
-    subsection excitation y imag
+    subsection excitation y imag part
       set Function expression = 0
     end
-    subsection excitation z real
+    subsection excitation z real part
       set Function expression = 0
     end
-    subsection excitation z imag
+    subsection excitation z imag part
       set Function expression = 0
     end
-    subsection surface admittance real
+    subsection surface admittance real part
       set Function expression = 0.360746
     end
-    subsection surface admittance imag
+    subsection surface admittance imag part
       set Function expression = 0.132856
     end
   end
