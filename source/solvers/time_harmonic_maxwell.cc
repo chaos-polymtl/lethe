@@ -1073,9 +1073,9 @@ template <>
 void
 TimeHarmonicMaxwell<3>::assemble_system_matrix()
 {
-  // Constexpr values and used in the assembly. Since we are in the specialized
-  // 3D function we define dim=3 here. This makes easier to read the code below
-  // to see what are templated in dim and what are not.
+  // Constexpr values that are used in the assembly. Since we are in the
+  // specialized 3D function we define dim=3 here. This makes easier to read the
+  // code below to see what are templated in dim and what are not.
   static constexpr double               PI = numbers::PI;
   static constexpr std::complex<double> imag{0., 1.};
   static constexpr int                  dim = 3;

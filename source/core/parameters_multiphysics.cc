@@ -945,15 +945,17 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
               const Tensor<1, dim> vec3 =
                 tmp_corners[3] -
                 tmp_corners[0]; // Vector from corner 1 to corner 4
-              const double determinant =
-                scalar_product(vec3, cross_product_3d(vec1, vec2));
 
-              // The triple scalar product scales as the volume of the
-              // parallelepiped defined by the three vectors. So we scale
-              // thetolerance of 10^-10 by the product of the norms of the three
-              // vectors to have a relative tolerance.
-              const double tolerance =
-                1e-10 * vec1.norm() * vec2.norm() * vec3.norm();
+              // The triple scalar product (determinant) scales as the volume of
+              // the parallelepiped defined by the three vectors. So we make the
+              // it dimensionless by a characteristic volume (product of the
+              // norms of the three vectors). This way we can set a tolerance
+              // that is independent of the actual size of the waveguide.
+              const double determinant =
+                scalar_product(vec3, cross_product_3d(vec1, vec2)) /
+                (vec1.norm() * vec2.norm() * vec3.norm());
+
+              const double tolerance = 1e-10;
 
               AssertThrow(std::abs(determinant) < tolerance,
                           ExcMessage(
