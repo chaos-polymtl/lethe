@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2024-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # This file contains the list of validation test cases used in the large-scale validation of Lethe
@@ -13,6 +13,7 @@ examples/multiphysics/rising-bubble 128
 examples/dem/3d-rectangular-hopper 64
 examples/dem/3d-rotating-drum 128
 examples/unresolved-cfd-dem/pseudo-2d-gas-solid-fluidized-bed 128
+examples/unresolved-cfd-dem/gas-solid-fluidized-cylinder-bed 128
 examples/sharp-immersed-boundary/sedimentation-1-cuboid 128
 
 

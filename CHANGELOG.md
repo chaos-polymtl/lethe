@@ -4,6 +4,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026-01-21
+
+### Changed
+
+- MINOR The cylindrical gas–solid fluidized bed example, introduced in PR [#1844], has been added to the Lucille validation test suite. The selected validation case uses the matrix-free solver with a semi-implicit drag scheme and a QCM filter. The corresponding post-processing Python script has been modified to allow users to select the simulation configuration to be post-processed. [#1880](https://github.com/chaos-polymtl/lethe/pull/1880)
+
 ## [Master] - 2026-01-20
 
 ### Changed
