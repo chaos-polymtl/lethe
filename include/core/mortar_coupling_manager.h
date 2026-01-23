@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_core_mortar_coupling_manager_h
@@ -373,8 +373,8 @@ contract(const Tensor<2, dim, Number> &grad,
  *
  */
 template <int n_components, int dim, typename Number>
-Tensor<1, n_components, Number>
-inline contract(const Tensor<1, n_components, Tensor<1, dim, Number>> &grad,
+inline Tensor<1, n_components, Number>
+contract(const Tensor<1, n_components, Tensor<1, dim, Number>> &grad,
          const Tensor<1, dim, Number>                          &normal)
 {
   Tensor<1, n_components, Number> result;

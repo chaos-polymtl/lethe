@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief MyMortarManagerCircle: check generated points.
+ * @brief MortarManagerCircle: check generated points.
  */
 
 #include "../mortar_functions/generate_grids.h"
