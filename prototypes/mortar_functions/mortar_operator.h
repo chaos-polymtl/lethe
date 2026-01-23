@@ -1734,7 +1734,7 @@ public:
 
     compute_penalty_parameters();
 
-    panalty_factor = compute_pentaly_factor(dof_handler.get_fe().degree, 1.0);
+    penalty_factor = compute_penalty_factor(dof_handler.get_fe().degree, 1.0);
   }
 
   /**
@@ -1989,7 +1989,7 @@ protected:
 
     const auto sigma = std::max(phi_m.read_cell_data(penalty_parameters),
                                 phi_p.read_cell_data(penalty_parameters)) *
-                       panalty_factor;
+                       penalty_factor;
 
     for (const auto q : phi_m.quadrature_point_indices())
       {
@@ -2024,7 +2024,7 @@ protected:
 
     phi.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
 
-    const auto sigma = phi.read_cell_data(penalty_parameters) * panalty_factor;
+    const auto sigma = phi.read_cell_data(penalty_parameters) * penalty_factor;
 
     for (const auto q : phi.quadrature_point_indices())
       {
@@ -2092,7 +2092,7 @@ protected:
   }
 
   Number
-  compute_pentaly_factor(const unsigned int degree, const Number factor) const
+  compute_penalty_factor(const unsigned int degree, const Number factor) const
   {
     return factor * (degree + 1.0) * (degree + 1.0);
   }
@@ -2102,7 +2102,7 @@ protected:
   mutable bool                                 valid_system;
 
   AlignedVector<VectorizedArrayType> penalty_parameters;
-  VectorizedArrayType                panalty_factor;
+  VectorizedArrayType                penalty_factor;
 
   std::shared_ptr<CouplingOperator<dim, Number>> coupling_operator;
 };
@@ -2167,8 +2167,8 @@ public:
 
     compute_penalty_parameters();
 
-    panalty_factor =
-      compute_pentaly_factor(dof_handler.get_fe().degree, sip_factor);
+    penalty_factor =
+      compute_penalty_factor(dof_handler.get_fe().degree, sip_factor);
   }
 
   /**
@@ -2619,7 +2619,7 @@ private:
 
     const auto sigma = std::max(phi_u_m.read_cell_data(penalty_parameters),
                                 phi_u_p.read_cell_data(penalty_parameters)) *
-                       panalty_factor;
+                       penalty_factor;
 
     VectorizedArrayType mask = 1.0;
 
@@ -2711,7 +2711,7 @@ private:
     phi_p_m.evaluate(EvaluationFlags::values);
 
     const auto sigma =
-      phi_u_m.read_cell_data(penalty_parameters) * panalty_factor;
+      phi_u_m.read_cell_data(penalty_parameters) * penalty_factor;
 
     for (const auto q : phi_u_m.quadrature_point_indices())
       {
@@ -2826,7 +2826,7 @@ private:
   }
 
   Number
-  compute_pentaly_factor(const unsigned int degree, const Number factor) const
+  compute_penalty_factor(const unsigned int degree, const Number factor) const
   {
     return factor * (degree + 1.0) * (degree + 1.0);
   }
@@ -2844,7 +2844,7 @@ private:
   mutable bool                                 valid_system;
 
   AlignedVector<VectorizedArrayType> penalty_parameters;
-  VectorizedArrayType                panalty_factor;
+  VectorizedArrayType                penalty_factor;
 
   std::shared_ptr<CouplingOperator<dim, Number>> coupling_operator;
 

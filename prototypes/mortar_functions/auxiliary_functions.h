@@ -36,7 +36,7 @@ construct_quadrature(const Quadrature<dim> &quad)
  * @return Rank-0 tensor
  */
 template <int dim, typename Number>
-Number
+inline Number
 contract(const Tensor<1, dim, Number> &grad,
          const Tensor<1, dim, Number> &normal)
 {
@@ -52,7 +52,7 @@ contract(const Tensor<1, dim, Number> &grad,
  * @return Rank-1 tensor
  */
 template <int dim, typename Number>
-Tensor<1, dim, Number>
+inline Tensor<1, dim, Number>
 contract(const Tensor<2, dim, Number> &grad,
          const Tensor<1, dim, Number> &normal)
 {
@@ -69,7 +69,7 @@ contract(const Tensor<2, dim, Number> &grad,
  *
  */
 template <int n_components, int dim, typename Number>
-Tensor<1, n_components, Number>
+inline Tensor<1, n_components, Number>
 contract(const Tensor<1, n_components, Tensor<1, dim, Number>> &grad,
          const Tensor<1, dim, Number>                          &normal)
 {
@@ -90,7 +90,7 @@ contract(const Tensor<1, n_components, Tensor<1, dim, Number>> &grad,
  * @return Rank-1 tensor
  */
 template <int dim, typename Number>
-Tensor<1, dim, Number>
+inline Tensor<1, dim, Number>
 outer(const Number &value, const Tensor<1, dim, Number> &normal)
 {
   return value * normal;
@@ -106,7 +106,7 @@ outer(const Number &value, const Tensor<1, dim, Number> &normal)
  * @return Rank-2 tensor
  */
 template <int dim, typename Number>
-Tensor<2, dim, Number>
+inline Tensor<2, dim, Number>
 outer(const Tensor<1, dim, Number> &value, const Tensor<1, dim, Number> &normal)
 {
   Tensor<2, dim, Number> result;
@@ -126,7 +126,7 @@ outer(const Tensor<1, dim, Number> &value, const Tensor<1, dim, Number> &normal)
  * @return Rank-2 tensor for n_components
  */
 template <int n_components, int dim, typename Number>
-Tensor<1, n_components, Tensor<1, dim, Number>>
+inline Tensor<1, n_components, Tensor<1, dim, Number>>
 outer(const Tensor<1, n_components, Number> &value,
       const Tensor<1, dim, Number>          &normal)
 {
@@ -205,7 +205,13 @@ symm_scalar_product_add(Tensor<1, 1, Number>       &v_gradient,
   v_gradient[0] += u_gradient[0] * factor;
 }
 
-
+/**
+ * @brief Create a temporary vector where mortar evaluation data is stored
+ * before being passed to the system matrix
+ *
+ * @param[in] ptr Vector of values on one of the mortar sides
+ * @param[in] offset Number of components to offset the ptr vector
+ */
 template <typename T>
 class BufferRW
 {
@@ -214,7 +220,7 @@ public:
     : ptr(ptr ? (ptr + offset) : nullptr)
   {}
 
-  void
+  inline void
   write(const T &in)
   {
     ptr[0] = in;
@@ -222,7 +228,7 @@ public:
   }
 
   template <int dim>
-  void
+  inline void
   write(const Tensor<1, dim, T> &in)
   {
     for (int i = 0; i < dim; ++i)
@@ -232,7 +238,7 @@ public:
   }
 
   template <typename T0>
-  T0
+  inline T0
   read() const
   {
     T0 result = {};
@@ -247,7 +253,7 @@ private:
   mutable T *ptr;
 
   template <int dim>
-  void
+  inline void
   read(Tensor<1, dim, T> &out) const
   {
     for (int i = 0; i < dim; ++i)
@@ -256,7 +262,7 @@ private:
     ptr += dim;
   }
 
-  void
+  inline void
   read(T &out) const
   {
     out = ptr[0];

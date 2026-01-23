@@ -129,11 +129,7 @@ main(int argc, char **argv)
       constraints.reinit(dof_handler.locally_owned_dofs(),
                          locally_relevant_dofs);
       DoFTools::make_zero_boundary_constraints(dof_handler, 0, constraints);
-      // DoFTools::make_zero_boundary_constraints(dof_handler, 2, constraints);
-      // DoFTools::make_zero_boundary_constraints(dof_handler, 3, constraints);
       DoFTools::make_zero_boundary_constraints(dof_handler, 5, constraints);
-      // DoFTools::make_zero_boundary_constraints(dof_handler, 6, constraints);
-      // DoFTools::make_zero_boundary_constraints(dof_handler, 7, constraints);
 
       DoFTools::make_periodicity_constraints(dof_handler, 2, 3, 1, constraints);
       DoFTools::make_periodicity_constraints(dof_handler, 6, 7, 1, constraints);

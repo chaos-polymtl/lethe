@@ -140,7 +140,7 @@ hyper_cube_with_cylindrical_hole_with_tolerance(const double radius,
 
   // crete unique triangulation
   GridGenerator::merge_triangulations(tria_0, tria_1, tria, 1e-9, true, false);
-  // store manifolds in merged triangulaiton
+  // store manifolds in merged triangulation
   tria.set_manifold(0, SphericalManifold<dim>(Point<dim>()));
   tria.set_manifold(1, FlatManifold<dim>());
   tria.set_manifold(2, SphericalManifold<dim>(Point<dim>()));

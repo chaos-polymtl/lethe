@@ -56,6 +56,8 @@ public:
   /**
    * @brief Evaluate values and gradients at the coupling entries
    *
+   * @param[in] data Coupling evaluation data containing values of normals,
+   * weights, and penalty parameters at each integration point
    * @param[in,out] buffer Temporary vector where data is stored before being
    * passes to the system matrix
    * @param[in] ptr_q Pointer for the quadrature point index related to the
@@ -75,6 +77,8 @@ public:
   /**
    * @brief Perform integral of mortar elements at the rotor-stator interface
    *
+   * @param[in] data Coupling evaluation data containing values of normals,
+   * weights, and penalty parameters at each integration point
    * @param[in] buffer Temporary vector where data is stored before being passes
    * to the system matrix
    * @param[in] ptr_q Pointer for the quadrature point index related to the
