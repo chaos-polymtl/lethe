@@ -209,9 +209,9 @@ template&lt;int dim2&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00253">253</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00265">265</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
-<p class="reference">References <a class="el" href="mortar__coupling__manager_8h_source.html#l00123">MortarManagerBase&lt; dim &gt;::n_subdivisions</a>.</p>
+<p class="reference">References <a class="el" href="mortar__coupling__manager_8h_source.html#l00133">MortarManagerBase&lt; dim &gt;::n_subdivisions</a>.</p>
 
 </div>
 </div>
@@ -257,7 +257,7 @@ template&lt;int dim2&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00266">266</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00278">278</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -362,7 +362,8 @@ template&lt;int dim&gt; </div>
 <p>Returns the mesh alignment type and cell index. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">face_center</td><td>Face center</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">face_center</td><td>Face center </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">is_inner</td><td>Boolean that indicates whether the face is part of the rotor (inner) side of the mortar interface</td></tr>
   </table>
   </dd>
 </dl>
@@ -409,6 +410,7 @@ template&lt;int dim&gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">face_center</td><td>Face center </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">is_inner</td><td>Boolean that indicates whether the face is part of the rotor (inner) side of the mortar interface </td></tr>
   </table>
   </dd>
 </dl>
@@ -572,7 +574,8 @@ template&lt;int dim&gt; </div>
 <p>Returns the normal vector for the quadrature points. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">face_center</td><td>Face center</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">face_center</td><td>Face center </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">is_inner</td><td>Boolean that indicates whether the face is part of the rotor (inner) side of the mortar interface</td></tr>
   </table>
   </dd>
 </dl>
@@ -613,7 +616,8 @@ template&lt;int dim&gt; </div>
 <p>Returns the coordinates of the quadrature points at both sides of the interface. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">face_center</td><td>Face center</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">face_center</td><td>Face center </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">is_inner</td><td>Boolean that indicates whether the face is part of the rotor (inner) side of the mortar interface</td></tr>
   </table>
   </dd>
 </dl>
@@ -654,7 +658,8 @@ template&lt;int dim&gt; </div>
 <p>Returns the coordinates of the quadrature points at the interface. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">face_center</td><td>Face center</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">face_center</td><td>Face center </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">is_inner</td><td>Boolean that indicates whether the face is part of the rotor (inner) side of the mortar interface</td></tr>
   </table>
   </dd>
 </dl>
@@ -695,7 +700,8 @@ template&lt;int dim&gt; </div>
 <p>Returns the weights of the quadrature points at both sides of the interface. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">face_center</td><td>Face center</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">face_center</td><td>Face center </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">is_inner</td><td>Boolean that indicates whether the face is part of the rotor (inner) side of the mortar interface</td></tr>
   </table>
   </dd>
 </dl>
@@ -785,7 +791,7 @@ template&lt;int dim&gt; </div>
 
 <p>Number of quadrature points per cell. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00168">168</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00180">180</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -805,7 +811,7 @@ template&lt;int dim&gt; </div>
 
 <p>Number of cells at the interface between inner and outer domains. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00123">123</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00133">133</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -833,7 +839,7 @@ template&lt;int dim&gt; </div>
 
 <p>Mortar quadrature. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00166">166</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00178">178</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -852,7 +858,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Vector containing the radius at the mortar interface and the domain length in the direction of the rotation axis </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00126">126</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00136">136</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -880,7 +886,7 @@ template&lt;int dim&gt; </div>
 
 <p>Rotation angle for the inner domain. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00170">170</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00182">182</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>

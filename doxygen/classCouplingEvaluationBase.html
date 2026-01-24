@@ -121,7 +121,7 @@ Public Member Functions</h2></td></tr>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim, typename Number&gt;<br />
 class CouplingEvaluationBase&lt; dim, Number &gt;</div><p>Base class for coupling evaluation routines. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00533">533</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00545">545</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a9e67247dd52621ec1add9d16e26f5794" name="a9e67247dd52621ec1add9d16e26f5794"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9e67247dd52621ec1add9d16e26f5794">&#9670;&#160;</a></span>~CouplingEvaluationBase()</h2>
@@ -269,6 +269,7 @@ template&lt;int dim, typename Number &gt; </div>
 <p>Evaluate values and gradients at the coupling entries. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">data</td><td>Coupling evaluation data containing values of normals, weights, and penalty parameters at each integration point </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">buffer</td><td>Temporary vector where data is stored before being passes to the system matrix </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">ptr_q</td><td>Pointer for the quadrature point index related to the rotor-stator interface </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">q_stride</td><td>Pointer for the cell index in which the quadrature point lies in </td></tr>
@@ -344,6 +345,7 @@ template&lt;int dim, typename Number &gt; </div>
 <p>Perform integral of mortar elements at the rotor-stator interface. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">data</td><td>Coupling evaluation data containing values of normals, weights, and penalty parameters at each integration point </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">buffer</td><td>Temporary vector where data is stored before being passes to the system matrix </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">ptr_q</td><td>Pointer for the quadrature point index related to the rotor-stator interface </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">q_stride</td><td>Pointer for the cell index in which the quadrature point lies in </td></tr>
