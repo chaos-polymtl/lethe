@@ -125,7 +125,7 @@ protected:
    * \Delta t_\sigma = \sqrt{\frac{(\rho_0 + \rho_1) h^3}{2 \pi \sigma}}
    * \f]
    *
-   * with \f$ \sigma\f$ the surface tension, \f$ \rho_0\f$ and \f$
+   * with \f$ \sigma\f$ the surface tension coefficient, \f$ \rho_0\f$ and \f$
    * \rho_1\f$ the densities of fluid 0 and 1 respectively, and \f$ h\f$ the
    * smallest cell measure.
    *
@@ -150,10 +150,10 @@ protected:
    * @p true, the time-step of the simulation should respect the following:
    *
    * \f[
-   * \Delta t \leq  \text{CTR} \, \Delta t_\sigma
+   * \Delta t \leq  N_\text{CTR} \, \Delta t_\sigma
    * \f]
    *
-   * with \f$ \Delta t \f$ the computed time-step, \f$ \text{CTR} \f$ the
+   * with \f$ \Delta t \f$ the computed time-step, \f$ N_\text{CTR} \f$ the
    * capillary time-step ratio, and \f$ \Delta t_\sigma \f$ the
    * SimulationControl::capillary_time_step_constraint.
    */
@@ -587,7 +587,8 @@ public:
       capillary_time_step_constraint > 0,
       ExcMessage(
         "The current value of the capillary time-step constraint is set to a null or negative value.\n"
-        "This is not allowed. Make sure that 'respect capillary time-step constraint' is set to 'true' to compute the capillary time-step constraint."));
+        "This is not allowed. Make sure that the 'capillary_time_step_constraint' is computed and\n"
+        "that the parameter 'respect capillary time-step constraint' is set to 'true'."));
 
     current_capillary_time_step_ratio =
       time_step / capillary_time_step_constraint;

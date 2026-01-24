@@ -104,7 +104,7 @@ This subsection is the most important in a simulation and therefore, the most co
     # Explicit coupling constraint parameters
     #---------------------------------------------------
     # Set time-step to respect the capillary time-step constraint
-    set respect capillary time-step constraint = true
+    set respect capillary time-step constraint = false
 
     # Set targeted capillary time-step ratio (Δt/Δt_σ)
     set capillary time-step ratio = 1.0
@@ -236,7 +236,7 @@ Explicit coupling constraint parameters
     \Delta t_\sigma = \min_{x \in \Omega}\left(\sqrt{\frac{(\rho_0 + \rho_1) h^3}{2 \pi \sigma}}\right)
 
   where
-    * :math:`\sigma` is the surface tension;
+    * :math:`\sigma` is the surface tension coefficient;
     * :math:`\rho_0` and :math:`\rho_1` are respectively the densities of fluid :math:`0` and :math:`1`, and;
     * :math:`h` is the cell size.
 
@@ -247,7 +247,7 @@ Explicit coupling constraint parameters
       - a disk with equivalent area in 2D, and;
       - a sphere with equivalent volume in 3D.
 
-  and replaces the initial time-step with :math:`\Delta t_\sigma` if it is smaller than the user-imposed initial ``time step``.
+  and replaces the initial time-step with :math:`N_\text{CTR} \Delta t_\sigma` if it is smaller than the user-imposed initial ``time step``. :math:`N_\text{CTR}` is the user-defined ``capillary time-step ratio``.
 
   This is used in the coupling of the :doc:`Navier-Stokes equations <../../theory/multiphysics/fluid_dynamics/navier-stokes>` with the :doc:`VOF <../../theory/multiphase/cfd/vof>` method to simulate multiphase flows with surface tension. If ``adapt`` is also enabled, the time-step will adapt to respect the capillary time-step constraint dynamically.
 
@@ -259,9 +259,9 @@ Explicit coupling constraint parameters
 
   .. math::
 
-    \text{CTR} = \frac{\Delta t}{\Delta t_\sigma}
+    N_\text{CTR} = \frac{\Delta t}{\Delta t_\sigma}
 
-  where :math:`\text{CTR}` is the capillary time-step ratio.
+  where :math:`N_\text{CTR}` is the capillary time-step ratio.
 
 ****
 

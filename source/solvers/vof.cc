@@ -1807,7 +1807,9 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
         Parameters::SimulationControl::TimeSteppingMethod::steady &&
       this->simulation_parameters.multiphysics.vof_parameters
         .surface_tension_force.enable &&
-      this->simulation_parameters.simulation_control.adapt)
+      this->simulation_parameters.simulation_control.adapt &&
+      this->simulation_parameters.simulation_control
+        .respect_capillary_time_step_constraint)
     {
       // Compute capillary time-step constraint
       this->simulation_control->set_capillary_time_step_constraint(
@@ -2792,7 +2794,9 @@ VolumeOfFluid<dim>::set_initial_conditions()
   if (this->simulation_parameters.simulation_control.method !=
         Parameters::SimulationControl::TimeSteppingMethod::steady &&
       this->simulation_parameters.multiphysics.vof_parameters
-        .surface_tension_force.enable)
+        .surface_tension_force.enable &&
+      this->simulation_parameters.simulation_control
+        .respect_capillary_time_step_constraint)
     {
       // Compute capillary time-step constraint
       this->simulation_control->set_capillary_time_step_constraint(
@@ -2803,12 +2807,18 @@ VolumeOfFluid<dim>::set_initial_conditions()
             .field_is_required(field::temperature)));
 
       // Update initial time-step with capillary constraint if requested
-      if (this->simulation_parameters.simulation_control
-            .respect_capillary_time_step_constraint)
-        {
-          this->simulation_control
-            ->limit_initial_time_step_with_capillary_time_step_constraint();
-        }
+      this->simulation_control
+        ->limit_initial_time_step_with_capillary_time_step_constraint();
+
+      if (!this->simulation_parameters.simulation_control.adapt)
+        this->pcout
+          << "Warning: Adaptive time-stepping is disabled. \n"
+             "Therefore, the capillary time-step constraint might not be respected through the \n"
+             "simulation if either of the mesh cell size, the densities or the surface tension \n"
+             "coefficient evolves dynamically. To ensure that the capillary time-step \n"
+             "constraint is respected dynamically, set 'adapt' to 'true' in the 'simulation \n"
+             "control' subsection."
+          << std::endl;
     }
 
   percolate_time_vectors();
