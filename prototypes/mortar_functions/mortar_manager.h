@@ -96,6 +96,8 @@ public:
    * @brief Returns the indices of all mortars at both sides of the interface
    *
    * @param[in] face_center Face center
+   * @param[in] is_inner Boolean that indicates whether the face is part of the
+   * rotor (inner) side of the mortar interface
    */
   std::vector<unsigned int>
   get_mortar_indices(const Point<dim> &face_center, const bool is_inner) const
@@ -181,6 +183,8 @@ public:
    * @brief Returns the coordinates of the quadrature points at both sides of the interface
    *
    * @param[in] face_center Face center
+   * @param[in] is_inner Boolean that indicates whether the face is part of the
+   * rotor (inner) side of the mortar interface
    *
    * @return points Coordinate of quadrature points of the cell
    */
@@ -277,6 +281,8 @@ public:
    * @brief Returns the coordinates of the quadrature points at the interface
    *
    * @param[in] face_center Face center
+   * @param[in] is_inner Boolean that indicates whether the face is part of the
+   * rotor (inner) side of the mortar interface
    *
    * @return points Coordinate of quadrature points of the cell
    */
@@ -354,6 +360,8 @@ public:
    * @brief Returns the weights of the quadrature points at both sides of the interface
    *
    * @param[in] face_center Face center
+   * @param[in] is_inner Boolean that indicates whether the face is part of the
+   * rotor (inner) side of the mortar interface
    *
    * @return points Angular weights of quadrature points of the cell
    */
@@ -422,6 +430,8 @@ public:
    * @brief Returns the normal vector for the quadrature points
    *
    * @param[in] face_center Face center
+   * @param[in] is_inner Boolean that indicates whether the face is part of the
+   * rotor (inner) side of the mortar interface
    *
    * @return result Normal vectors of the cell quadrature points
    */
@@ -452,6 +462,8 @@ protected:
    * @brief Returns the mesh alignment type and cell index
    *
    * @param[in] face_center Face center
+   * @param[in] is_inner Boolean that indicates whether the face is part of the
+   * rotor (inner) side of the mortar interface
    *
    * @return type Cell configuration type at the interface
    * type = 0: mesh aligned
