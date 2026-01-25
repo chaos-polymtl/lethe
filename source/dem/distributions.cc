@@ -3,6 +3,7 @@
 
 #include <core/utilities.h>
 
+#include "dem/insertion_volume.h"
 #include <dem/distributions.h>
 
 #include <deal.II/lac/lapack_full_matrix.h>
@@ -382,45 +383,224 @@ CustomDistribution::CustomDistribution(
   const std::vector<double> &d_list,
   const std::vector<double> &d_probabilities,
   const unsigned int        &prn_seed,
-  // const double               min_cutoff,
-  // const double               max_cutoff,
+  const double               min_cutoff,
+  const double               max_cutoff,
   const Parameters::Lagrangian::DistributionWeightingType
-    &distribution_weighting_type)
+    &distribution_weighting_type,
+  const Parameters::Lagrangian::ProbabilityFunctionType &function_type,
+  const bool                                             interpolate)
   : Distribution(distribution_weighting_type)
-  , diameter_custom_values(d_list)
+  , diameter_values(d_list)
+  , interpolate_diameter_values(interpolate)
   , gen(prn_seed)
 {
-  AssertThrow(distribution_weighting_type ==
-                DistributionWeightingType::volume_based,
-              ExcMessage(
-                "Custom distribution only supports volume-based "
-                "distribution. Please set the 'distribution weighting basis' "
-                "parameter to `volume`."));
+  const unsigned int n_diameter_values = diameter_values.size();
 
-  std::vector<double> cumulative_probability_vector, n_i_vector;
-  double              n_tot = 0.;
+  // We do all the checks here so simply the readability
+  AssertThrow(n_diameter_values == d_probabilities.size(),
+              ExcMessage("The number of diameter values and "
+                         "probability values need to be the same."));
 
-  cumulative_probability_vector.reserve(d_probabilities.size());
-  n_i_vector.reserve(d_probabilities.size());
+  AssertThrow(std::ranges::is_sorted(diameter_values),
+              ExcMessage("The \"custom distribution diameters values\" "
+                         "parameter is not defined properly. Make sure to "
+                         "defined every diameter value in ascending order."));
 
-  for (unsigned int i = 0; i < diameter_custom_values.size(); ++i)
+  if (function_type == ProbabilityFunctionType::CDF)
     {
-      n_i_vector.push_back(d_probabilities[i] / Utilities::fixed_power<3>(
-                                                  diameter_custom_values[i]));
-      n_tot += n_i_vector[i];
+      AssertThrow(std::ranges::is_sorted(d_probabilities) &&
+                    d_probabilities.back() <= 1.0 + 1e-5,
+                  ExcMessage("When using a custom distribution defined as a "
+                             "CDF, the probability values need to be defined in"
+                             " ascending order and no probability value can be "
+                             "over 1."));
+      if (interpolate_diameter_values)
+        {
+          AssertThrow(d_probabilities[0] == 0.,
+                      ExcMessage("When using a custom distribution defined"
+                                 " as a CFD with interpolation, the first "
+                                 "probability value needs to be equal to 0."));
+        }
+      AssertThrow(d_probabilities.back() == 1.,
+                  ExcMessage("When using the custom distribution defined "
+                             "as a CFD, the last probability value needs to be"
+                             " equal to 1."));
+    }
+  if (function_type == ProbabilityFunctionType::PDF)
+    {
+      if (interpolate_diameter_values)
+        {
+          AssertThrow(d_probabilities[0] == 0.,
+                      ExcMessage("When using the custom distribution "
+                                 "defined as a PFD with interpolation, the "
+                                 "first probability value needs to be equal"
+                                 " to 0. "));
+        }
+      AssertThrow(d_probabilities.back() == 0.,
+                  ExcMessage("When using the custom distribution "
+                             "defined as a PFD with or without "
+                             "interpolation, the last probability value "
+                             "needs to be equal to 0."));
     }
 
-  double i_probability;
-  double cumulative_value = 0.;
-
-  for (unsigned int i = 0; i < diameter_custom_values.size(); ++i)
+  // We need to convert the input probability function to a number based CFD.
+  if (this->weighting_type == DistributionWeightingType::number_based)
     {
-      i_probability = n_i_vector[i] / n_tot;
-      cumulative_value += i_probability;
-      cumulative_probability_vector.push_back(cumulative_value);
-    }
+      if (function_type == ProbabilityFunctionType::CDF)
+        {
+          // If the input probability function is already a number based CFD,
+          // we need to do nothing.
+          number_based_cdf = d_probabilities;
+        }
+      else if (function_type == ProbabilityFunctionType::PDF)
+        {
+          // If the input probability function is a number based PDF, we convert
+          // that PDF into a CDF by integrating from d = 0 to
+          // d = diameter_values[i] using the trapezoidal rule.
 
-  diameter_custom_cumul_prob = cumulative_probability_vector;
+          const std::vector<double> pdf_values      = d_probabilities;
+          double                    integral_0_to_d = 0.;
+          number_based_cdf[0]                       = 0.;
+          for (unsigned int i = 1; i < n_diameter_values; ++i)
+            {
+              integral_0_to_d += 0.5 * (pdf_values[i] + pdf_values[i - 1]) *
+                                 (diameter_values[i] - diameter_values[i - 1]);
+              number_based_cdf[i] = integral_0_to_d;
+            }
+
+          // We did not check priorly that the integral of the input PDF was
+          // equal to one, thus we need to normalize the new CDF.
+          for (unsigned int i = 1; i < n_diameter_values; ++i)
+            number_based_cdf[i] /= integral_0_to_d;
+        }
+    }
+  else if (this->weighting_type == DistributionWeightingType::volume_based)
+    {
+      if (interpolate_diameter_values)
+        {
+          // The first diameter probability value is zero due to the
+          // interpolation check done above.
+
+          // It is easy to go from a volume-based CDF to a number-based CDF.
+          // If the user specify a volume-based PDF, we find the associated
+          // CDF using trapezoidal integration, then go from volume-based to
+          // number-based
+          std::vector<double> volume_based_cdf(n_diameter_values, 0.);
+          if (function_type == ProbabilityFunctionType::PDF)
+            {
+              for (unsigned int i = 1; i < n_diameter_values; ++i)
+                {
+                  volume_based_cdf[i] =
+                    volume_based_cdf[i - 1] +
+                    0.5 * (d_probabilities[i] + d_probabilities[i - 1]) *
+                      (diameter_values[i] - diameter_values[i - 1]);
+                }
+
+              // Making sure that the CDF ends at 1.0
+              for (unsigned int i = 1; i < n_diameter_values; ++i)
+                volume_based_cdf[i] /= volume_based_cdf.back();
+            }
+
+          // If the input function is already a CDF, we simply copy it
+          // to the volume_based_cdf vector
+          if (function_type == ProbabilityFunctionType::CDF)
+            volume_based_cdf = d_probabilities;
+
+          // Vector to store the unnormalized number fractions (dfn) for
+          // each bin
+          std::vector<double> dfn(n_diameter_values - 1, 0.0);
+          double              total_number_sum = 0.0;
+
+          // Calculate the number fractions for each bin
+          // We iterate through (N-1) bins.
+          for (unsigned int i = 0; i < n_diameter_values - 1; ++i)
+            {
+              // Boundaries of the current size bin
+              const double d_low  = diameter_values[i];
+              const double d_high = diameter_values[i + 1];
+
+              // The volume fraction (dfv) is the change in the CDF.
+              // Because CDF is the integral of the probability density,
+              // the difference between two consecutive nodes gives
+              // the total volume contained in this bin.
+              const double this_bin_volume_fraction =
+                volume_based_cdf[i + 1] - volume_based_cdf[i];
+
+              // Number (N) scales with Volume (V) by N = V / (pi/6
+              // * D^3). Since D varies across the bin, we must use the
+              // average of (1/D^3) of this bin.
+              //
+              // Assumption: The volume is distributed LINEARLY across this
+              // diameter bin. Under this assumption, the 'Weight' is the
+              // Mean Value of the function 1/D^3: Weight = [1 / (d_high -
+              // d_low)] * Integral from d_low to d_high of (1/x^3) dx
+              //
+              // Solving the integral:
+              // 1. Integral of x^-3 is -1/(2x^2).
+              // 2. Evaluated: [1/(2*d_low^2) - 1/(2*d_high^2)] / (d_high -
+              // d_low)
+              // 3. Simplified: (d_high^2 - d_low^2) / [2 * d_low^2 *
+              // d_high^2 * (d_high - d_low)]
+              // 4. Using (a^2 - b^2) = (a-b)(a+b), the (d_high - d_low)
+              // terms cancel out.
+              //
+              // Final Weight Formula: (d_low + d_high) / (2 * d_low^2 *
+              // d_high^2)
+
+              const double weight =
+                (d_low + d_high) /
+                (2.0 * std::pow(d_low, 2) * std::pow(d_high, 2));
+
+              // Convert volume fraction to a relative number fraction
+              // (dfn). Note: This value is not yet normalized; it's a
+              // relative particle count.
+              dfn[i] = this_bin_volume_fraction * weight;
+
+              // Sum the relative counts. This sum will be used as the
+              // denominator to normalize the final number-based CDF so it
+              // ends at 1.0.
+              total_number_sum += dfn[i];
+            }
+          // Reconstruct the CDF from the Number Fractions while making sure to
+          // normalize every value.
+          number_based_cdf[0] = 0.0;
+          for (unsigned int i = 1; i < n_diameter_values - 1; ++i)
+            {
+              number_based_cdf[i] =
+                number_based_cdf[i - 1] + dfn[i] / total_number_sum;
+            }
+          number_based_cdf.back() = 1.;
+        }
+      else // No interpolation
+        {
+          std::vector<double> volume_fraction(n_diameter_values, 0.);
+
+          if (function_type == ProbabilityFunctionType::CDF)
+            {
+              volume_fraction[0] = d_probabilities[0];
+              for (unsigned int i = 1; i < n_diameter_values; ++i)
+                volume_fraction[i] =
+                  d_probabilities[i] - d_probabilities[i - 1];
+            }
+
+          if (function_type == ProbabilityFunctionType::PDF)
+            {
+              volume_fraction = d_probabilities;
+            }
+
+          double n_tot = 0.;
+          for (unsigned int i = 0; i < n_diameter_values; ++i)
+            {
+              number_based_cdf[i] =
+                volume_fraction[i] /
+                Utilities::fixed_power<3>(diameter_values[i]);
+              n_tot += volume_fraction[i];
+            }
+          // Normalized
+          for (unsigned int i = 0; i < n_diameter_values; ++i)
+            number_based_cdf[i] /= n_tot;
+        }
+    }
 }
 
 void
@@ -430,37 +610,61 @@ CustomDistribution::particle_size_sampling(
   this->particle_sizes.clear();
   this->particle_sizes.reserve(number_of_particles);
 
-  std::uniform_real_distribution<> dis(0.0, diameter_custom_cumul_prob.back());
+  // We sample a random number U between [0, CDF_max]
+  // CDF_max is 1.0, but using .back() is safer for floating point precision.
+  std::uniform_real_distribution<> dis(0.0, number_based_cdf.back() - 1e-12);
 
   for (unsigned int i = 0; i < number_of_particles; ++i)
     {
-      // Search to find the appropriate diameter index
-      auto it = std::ranges::upper_bound(diameter_custom_cumul_prob, dis(gen));
+      double U = dis(gen);
 
-      // if dis(gen) returns exactly the maximum value of the cumulative
-      // distribution vector
-      if (it == diameter_custom_cumul_prob.end())
+      // Find the first element in the CDF strictly greater than our random
+      // number U. 'it' will point to the upper bound of the bin (node i+1).
+      auto it = std::ranges::upper_bound(number_based_cdf, U);
+
+      unsigned int index_high =
+        static_cast<unsigned int>(it - number_based_cdf.begin());
+
+      if (interpolate_diameter_values)
         {
-          it = it - 1; // Move back to the last valid element
+          // Interpolated Sampling (Piece-wise Linear)
+          const unsigned int index_low = index_high - 1;
+
+          const double d_low    = diameter_values[index_low];
+          const double d_high   = diameter_values[index_high];
+          const double cdf_low  = number_based_cdf[index_low];
+          const double cdf_high = number_based_cdf[index_high];
+
+          // We search for the d that satisfy:
+          // a * d + b = U
+          // where: a = d_high - d_low / cdf_high - cdf_low
+          //        b = cdf_low - a * d_low
+
+          const double a = d_high - d_low / (cdf_high - cdf_low);
+          const double b = cdf_low - a * d_low;
+
+          const double sampled_diameter = (U - b)/ a;
+          this->particle_sizes.push_back(sampled_diameter);
         }
-
-      unsigned int index =
-        static_cast<unsigned int>(it - diameter_custom_cumul_prob.begin());
-
-      this->particle_sizes.push_back(diameter_custom_values[index]);
+      else
+        {
+          // Discrete Sampling
+          // We simply pick the diameter corresponding to the upper bound node.
+          this->particle_sizes.push_back(diameter_values[index_high]);
+        }
     }
 }
 
 double
 CustomDistribution::find_min_diameter()
 {
-  return *std::ranges::min_element(diameter_custom_values);
+  return *std::ranges::min_element(diameter_values);
 }
 
 double
 CustomDistribution::find_max_diameter()
 {
-  return *std::ranges::max_element(diameter_custom_values);
+  return *std::ranges::max_element(diameter_values);
 }
 
 void

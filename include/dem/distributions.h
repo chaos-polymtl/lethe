@@ -295,17 +295,24 @@ public:
    * @param[in] d_probabilities Vector of probability values based on volume
    * fraction with respect to each diameter value.
    * @param[in] prn_seed Pseudo-random number seed for the diameter generation.
-  // * @param[in] min_cutoff Minimum cutoff diameter.
-  // * @param[in] max_cutoff Maximum cutoff diameter.
+   * @param[in] min_cutoff Minimum cutoff diameter.
+   * @param[in] max_cutoff Maximum cutoff diameter.
    * @param[in] distribution_weighting_type Weighting type of the distribution.
+   * @param function_type Defines whether the input probability values are related to
+   * the PDF or the CDF.
+   * @param[in] interpolate Indicates if the diameter value are linearly
+   * interpolated between input diameter and probability values.
    */
-  CustomDistribution(const std::vector<double> &d_list,
-                     const std::vector<double> &d_probabilities,
-                     const unsigned int        &prn_seed,
-                     // double                     min_cutoff,
-                     // double                     max_cutoff,
-                     const Parameters::Lagrangian::DistributionWeightingType
-                       &distribution_weighting_type);
+  CustomDistribution(
+    const std::vector<double> &d_list,
+    const std::vector<double> &d_probabilities,
+    const unsigned int        &prn_seed,
+    const double               min_cutoff,
+    const double               max_cutoff,
+    const Parameters::Lagrangian::DistributionWeightingType
+      &distribution_weighting_type,
+    const Parameters::Lagrangian::ProbabilityFunctionType &function_type,
+    const bool                                             interpolate);
 
   /**
    * @brief Carries out the size sampling of each particle inserted at an insertion
@@ -349,14 +356,21 @@ private:
   /**
    * Vector containing all the diameters values.
    */
-  const std::vector<double> diameter_custom_values;
+  const std::vector<double> diameter_values;
 
   /**
    * @brief Vector containing cumulative probabilities associated with de
    * diameter_custom_values vector. The probabilities are based on the volume
    * fraction, not the number of particles.
    */
-  std::vector<double> diameter_custom_cumul_prob;
+  std::vector<double> number_based_cdf;
+
+  // const ProbabilityFunctionType function_type;
+  /**
+   * @brief Indicates if the diameter values are interpolated between input values
+   * during sampling.
+   */
+  const bool interpolate_diameter_values;
 
   /**
    * @brief Random number generator for the diameter selection.
@@ -413,9 +427,11 @@ setup_distributions(const LagrangianPhysicalProperties &lpp,
                 lpp.particle_custom_diameter.at(particle_type),
                 lpp.particle_custom_probability.at(particle_type),
                 lpp.seed_for_distributions[particle_type] + mpi_process_id,
-                // lpp.diameter_min_cutoff.at(particle_type),
-                // lpp.diameter_max_cutoff.at(particle_type),
-                lpp.distribution_weighting_type.at(particle_type));
+                lpp.diameter_min_cutoff.at(particle_type),
+                lpp.diameter_max_cutoff.at(particle_type),
+                lpp.distribution_weighting_type.at(particle_type),
+                lpp.custom_probability_function_type.at(particle_type),
+                lpp.custom_distribution_interpolation.at(particle_type));
             break;
         }
       size_distribution_object_container[particle_type]
