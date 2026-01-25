@@ -500,7 +500,7 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
             pressure_scaling_factor * scratch_data.grad_phi_p[q][j];
 
           strong_jacobian_vec[q][j] +=
-            (  velocity_gradient * phi_u_j * void_fraction 
+            ( velocity_gradient * phi_u_j * void_fraction 
              + grad_phi_u_j * velocity * void_fraction 
              // Mass Source
              + mass_source * phi_u_j 
@@ -565,14 +565,6 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
                     }
                   // Compute term ν_fε_f ∂_j(ϕ_i) ∂_i(δu_j) +
                   // ν_f ϕ_i ∂_i(δu_j) ∂_j(ε_f) (i and j are vector components)
-                  // local_matrix_ij += void_fraction * kinematic_viscosity *
-                  //                      scalar_product(transpose(grad_phi_u_j), grad_phi_u_i)
-                  //                      +
-                  //                    kinematic_viscosity *
-                  //                      void_fraction_gradients  *
-                  //                      grad_phi_u_j * phi_u_i;
-                  // In shape functions components terms, if this improves
-                  // performance:
                   local_matrix_ij += void_fraction * kinematic_viscosity *
                                        grad_phi_u_i[component_i][component_j] *
                                        grad_phi_u_j[component_j][component_i] 

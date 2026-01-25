@@ -310,6 +310,7 @@ public:
           {
             // Compute term ∂j(∂iuj) = ∂i(∂juj) to be used in the strong
             // residual of the VANS  momentum equations
+            this->velocity_gradient_divergence[q] = 0;
             for (int d1 = 0; d1 < dim; ++d1)
               {
                 for (int d2 = 0; d2 < dim; ++d2)
@@ -359,8 +360,10 @@ public:
 
             if (gather_void_fraction)
               {
+                this->gradient_divergence_phi_u[q][k] = 0;
                 // Compute term ∂j(∂iuj) = ∂i(∂juj) to be used in the strong
                 // Jacobian of the VANS  momentum equations
+
                 for (int d1 = 0; d1 < dim; ++d1)
                   {
                     for (int d2 = 0; d2 < dim; ++d2)
