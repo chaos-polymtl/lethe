@@ -231,11 +231,11 @@ namespace Parameters
       // Normal and lognormal distributions
       prm.declare_entry("average diameter",
                         "0.001",
-                        Patterns::Double(),
+                        Patterns::Double(0.),
                         "Particle diameter.");
       prm.declare_entry("standard deviation",
                         "0",
-                        Patterns::Double(),
+                        Patterns::Double(0.),
                         "Particle size standard deviation.");
 
       // Custom distribution
@@ -265,7 +265,7 @@ namespace Parameters
                         false);
       prm.declare_entry("custom distribution diameters values",
                         "0.001 , 0.0005",
-                        Patterns::List(Patterns::Double()),
+                        Patterns::List(Patterns::Double(0.)),
                         "Diameter values for a custom distribution");
 
       prm.declare_alias("custom distribution diameters probabilities",
@@ -274,7 +274,7 @@ namespace Parameters
       prm.declare_entry(
         "custom distribution diameters probabilities",
         "0.6 , 0.4",
-        Patterns::List(Patterns::Double()),
+        Patterns::List(Patterns::Double(0.)),
         "Probabilities of each diameter of the custom"
         "Probabilities associated with each diameter values for "
         "a custom distribution. ");
@@ -311,43 +311,43 @@ namespace Parameters
       // Every type of distribution
       prm.declare_entry("number of particles",
                         "0",
-                        Patterns::Integer(),
+                        Patterns::Integer(0),
                         "Number of particles of this type");
       prm.declare_entry("density particles",
                         "1000",
-                        Patterns::Double(),
+                        Patterns::Double(0),
                         "Particle density");
       prm.declare_entry("young modulus particles",
                         "1000000",
-                        Patterns::Double(),
+                        Patterns::Double(0),
                         "Particle Young's modulus");
       prm.declare_entry("poisson ratio particles",
                         "0.3",
-                        Patterns::Double(),
+                        Patterns::Double(0.),
                         "Particle Poisson ratio");
       prm.declare_entry("restitution coefficient particles",
                         "0.1",
-                        Patterns::Double(),
+                        Patterns::Double(0., 1.),
                         "Particle restitution coefficient");
       prm.declare_entry("friction coefficient particles",
                         "0.1",
-                        Patterns::Double(),
+                        Patterns::Double(0.),
                         "Particle friction coefficient");
       prm.declare_entry("rolling viscous damping particles",
                         "0.1",
-                        Patterns::Double(),
+                        Patterns::Double(0.),
                         "Particle rolling viscous damping");
       prm.declare_entry("rolling friction particles",
                         "0.1",
-                        Patterns::Double(),
+                        Patterns::Double(0.),
                         "Particle rolling friction");
       prm.declare_entry("surface energy particles",
                         "0.0",
-                        Patterns::Double(),
+                        Patterns::Double(0.),
                         "Particle surface energy");
       prm.declare_entry("hamaker constant particles",
                         "4.e-19",
-                        Patterns::Double(),
+                        Patterns::Double(0.),
                         "Material Hamaker constant");
       prm.declare_entry("thermal conductivity particles",
                         "1",
@@ -475,17 +475,6 @@ namespace Parameters
         prm.get_double("real young modulus particles"));
 
       // Checks
-      const double probability_sum =
-        std::reduce(particle_custom_probability.at(particle_type).begin(),
-                    particle_custom_probability.at(particle_type).end());
-
-      // We make sure that the cumulative probability is equal to 1.
-      if (std::abs(probability_sum - 1.0) > 1.e-5)
-        {
-          throw(std::runtime_error(
-            "Invalid custom volume fraction. The sum of volume fractions should be equal to 1.0 "));
-        }
-
       // Only use the real Young's modulus if it is higher than the Young's
       // modulus
       if (real_youngs_modulus_particle.at(particle_type) <
