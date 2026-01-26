@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <solvers/time_harmonic_maxwell.h>
@@ -97,6 +97,184 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
   if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
     this->computing_timer.disable_output();
 }
+
+
+
+template <>
+std::pair<Tensor<1, 2, std::complex<double>>, std::complex<double>>
+TimeHarmonicMaxwell<2>::compute_waveguide_port_excitation(
+  const Point<2> & /*p*/,
+  const Tensor<1, 2> & /*normal*/,
+  const std::complex<double> & /*epsilon_r_eff*/,
+  const std::complex<double> & /*mu_r*/,
+  const unsigned int /*boundary_id_index*/)
+{
+  // The waveguide port excitation would be completely different in 2D as curls
+  // and cross products are not defined the same way as in 3D. Therefore, we do
+  // not implement it for now and throw an error if someone tries to use the 2D
+  // version.
+  AssertThrow(false, TimeHarmonicMaxwellDimensionNotSupported(2));
+  return std::pair<Tensor<1, 2, std::complex<double>>, std::complex<double>>();
+}
+
+template <>
+std::pair<Tensor<1, 3, std::complex<double>>, std::complex<double>>
+TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
+  const Point<3>             &p,
+  const Tensor<1, 3>         &normal,
+  const std::complex<double> &epsilon_r_eff,
+  const std::complex<double> &mu_r,
+  const unsigned int          boundary_id_index)
+{
+  // Define some constexpr values for the computation
+  static constexpr std::complex<double> imag{0., 1.};
+  static constexpr double               PI  = numbers::PI;
+  static constexpr unsigned int         dim = 3;
+
+  // Gather the relevant waveguide parameters
+  const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters =
+    this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
+  const double omega =
+    2.0 * PI * time_harmonic_maxwell_parameters.electromagnetic_frequency;
+  const auto &waveguide_corners =
+    time_harmonic_maxwell_parameters.waveguide_corners[boundary_id_index];
+  const Parameters::WaveguideMode mode =
+    time_harmonic_maxwell_parameters.waveguide_mode[boundary_id_index];
+  const unsigned int m =
+    time_harmonic_maxwell_parameters.mode_order_m[boundary_id_index];
+  const unsigned int n =
+    time_harmonic_maxwell_parameters.mode_order_n[boundary_id_index];
+
+  // We first define the transverse face vectors of the waveguide in the global
+  // system
+  Tensor<1, dim> transverse_vector_1 =
+    waveguide_corners[1] - waveguide_corners[0];
+  Tensor<1, dim> transverse_vector_2 =
+    waveguide_corners[2] - waveguide_corners[0];
+  double         length_t1 = transverse_vector_1.norm();
+  double         length_t2 = transverse_vector_2.norm();
+  Tensor<1, dim> e_t1      = transverse_vector_1 / length_t1;
+  Tensor<1, dim> e_t2      = transverse_vector_2 / length_t2;
+
+  // Verify that the those transverse vectors with respect to the normal of the
+  // face is coherent and form an orthogonal basis.
+  if (!(std::abs(normal * e_t1) < 1e-12) && !(std::abs(normal * e_t2) < 1e-12))
+    AssertThrow(
+      false,
+      ExcMessage(
+        "The transverse plane defined by the waveguide corners for the waveguide port at boundary ID " +
+        std::to_string(time_harmonic_maxwell_parameters
+                         .waveguide_boundary_ids[boundary_id_index]) +
+        " is not orthogonal to the boundary face normal. Please check the waveguide corners definition in the input prm file."));
+
+  // Ensure e_t1 and e_t2 form a right-handed coordinate system with the normal.
+  // They do if the scalar triple product is negative. If they don't, we swap
+  // e_t1 and e_t2.
+  if ((normal * cross_product_3d(e_t1, e_t2)) > 0)
+    {
+      length_t1 = transverse_vector_2.norm();
+      length_t2 = transverse_vector_1.norm();
+      e_t1      = transverse_vector_2 / length_t1;
+      e_t2      = transverse_vector_1 / length_t2;
+    }
+
+  // Compute the various wavenumber k in using this global coordinate system
+  double k_t1 = m * PI / length_t1;                   // Transverse wavenumber 1
+  double k_t2 = n * PI / length_t2;                   // Transverse wavenumber 2
+  double k_c  = std::sqrt(k_t1 * k_t1 + k_t2 * k_t2); // Cutoff wavenumber
+  std::complex<double> k =
+    omega * std::sqrt(epsilon_r_eff * mu_r); // Wavenumber in the medium
+  std::complex<double> k_l =
+    std::sqrt(k * k - k_c * k_c); // Longitudinal wavenumber
+
+  // Verify that the mode is not evanescent, i.e. k_l is not purely imaginary
+  // (k_c^2 < k^2).
+  AssertThrow(std::norm(k) > (k_c * k_c),
+              ExcMessage(
+                "The chosen mode for the waveguide port at boundary ID " +
+                std::to_string(time_harmonic_maxwell_parameters
+                                 .waveguide_boundary_ids[boundary_id_index]) +
+                " is evanescent at the given frequency. Please "
+                "choose another mode or increase the frequency."));
+
+  // Now we want to compute the electromagnetic field and surface admittance at
+  // point p as if the waveguide center was at the origin. So we will perform a
+  // change of basis to a local coordinate system where the waveguide center is
+  // at the origin.
+
+  Tensor<1, dim> origin_local =
+    0.25 * (waveguide_corners[0] + waveguide_corners[1] + waveguide_corners[2] +
+            waveguide_corners[3]);
+  Tensor<1, dim> p_local =
+    p - origin_local; // Coordinates of point p in this local system.
+  double x_local = p_local * e_t1; // Coordinate along e_t1 in the local system
+  double y_local = p_local * e_t2; // Coordinate along e_t2 in the local system
+  // We assume that the z_local coordinate is 0 since we are on the face.
+
+  // Finally, we can compute the eletromagnetic excitation at point p.
+  Tensor<1, dim, std::complex<double>> E_inc;
+  Tensor<1, dim, std::complex<double>> H_inc;
+  Tensor<1, dim, std::complex<double>> excitation;
+  std::complex<double>                 surface_admittance;
+
+
+  if (mode == Parameters::WaveguideMode::TE)
+    {
+      std::complex<double> factor =
+        imag * k * k / (k_c * k_c * epsilon_r_eff * omega);
+
+      E_inc[0] = -factor * k_t2 * std::cos(k_t1 * (x_local + length_t1 / 2)) *
+                 std::sin(k_t2 * (y_local + length_t2 / 2));
+      E_inc[1] = factor * k_t1 * std::sin(k_t1 * (x_local + length_t1 / 2)) *
+                 std::cos(k_t2 * (y_local + length_t2 / 2));
+      E_inc[2] = 0.0;
+
+      H_inc[0] = -imag * k_l * k_t1 / (k_c * k_c) *
+                 std::sin(k_t1 * (x_local + length_t1 / 2)) *
+                 std::cos(k_t2 * (y_local + length_t2 / 2));
+      H_inc[1] = -imag * k_l * k_t2 / (k_c * k_c) *
+                 std::cos(k_t1 * (x_local + length_t1 / 2)) *
+                 std::sin(k_t2 * (y_local + length_t2 / 2));
+      H_inc[2] = std::cos(k_t1 * (x_local + length_t1 / 2)) *
+                 std::cos(k_t2 * (y_local + length_t2 / 2));
+
+      surface_admittance = k_l / (omega * mu_r);
+
+      excitation = cross_product_3d(normal, H_inc) +
+                   map_H12(surface_admittance * E_inc, normal);
+    }
+  else if (mode == Parameters::WaveguideMode::TM)
+    {
+      std::complex<double> factor = imag * k * k / (k_c * k_c * mu_r * omega);
+
+      H_inc[0] = -factor * k_t2 * std::sin(k_t1 * (x_local + length_t1 / 2)) *
+                 std::cos(k_t2 * (y_local + length_t2 / 2));
+      H_inc[1] = factor * k_t1 * std::cos(k_t1 * (x_local + length_t1 / 2)) *
+                 std::sin(k_t2 * (y_local + length_t2 / 2));
+      H_inc[2] = 0.0;
+
+      E_inc[0] = imag * k_l * k_t1 / (k_c * k_c) *
+                 std::cos(k_t1 * (x_local + length_t1 / 2)) *
+                 std::sin(k_t2 * (y_local + length_t2 / 2));
+      E_inc[1] = imag * k_l * k_t2 / (k_c * k_c) *
+                 std::sin(k_t1 * (x_local + length_t1 / 2)) *
+                 std::cos(k_t2 * (y_local + length_t2 / 2));
+      E_inc[2] = std::sin(k_t1 * (x_local + length_t1 / 2)) *
+                 std::sin(k_t2 * (y_local + length_t2 / 2));
+
+      surface_admittance = omega * epsilon_r_eff / k_l;
+
+      excitation = cross_product_3d(normal, H_inc) +
+                   map_H12(surface_admittance * E_inc, normal);
+    }
+  else
+    {
+      AssertThrow(false, ExcMessage("Unknown waveguide mode type."));
+    }
+
+  return std::make_pair(excitation, surface_admittance);
+}
+
 
 template <int dim>
 std::vector<OutputStruct<dim, GlobalVectorType>>
@@ -239,7 +417,10 @@ TimeHarmonicMaxwell<dim>::calculate_L2_error()
   L2_error_H_real = Utilities::MPI::sum(L2_error_H_real, mpi_communicator);
   L2_error_H_imag = Utilities::MPI::sum(L2_error_H_imag, mpi_communicator);
 
-  return {L2_error_E_real, L2_error_E_imag, L2_error_H_real, L2_error_H_imag};
+  return {std::sqrt(L2_error_E_real),
+          std::sqrt(L2_error_E_imag),
+          std::sqrt(L2_error_H_real),
+          std::sqrt(L2_error_H_imag)};
 }
 
 
@@ -255,22 +436,26 @@ TimeHarmonicMaxwell<dim>::finish_simulation()
       simulation_parameters.analytical_solution->verbosity !=
         Parameters::Verbosity::quiet)
     {
-      this->error_table.evaluate_all_convergence_rates(
+      ConvergenceTable &error_table = this->error_table;
+
+      error_table.omit_column_from_convergence_rate_evaluation("cells");
+
+      error_table.evaluate_all_convergence_rates(
         ConvergenceTable::reduction_rate_log2);
 
-      this->error_table.set_scientific("error_E_real", true);
-      this->error_table.set_scientific("error_E_imag", true);
-      this->error_table.set_scientific("error_H_real", true);
-      this->error_table.set_scientific("error_H_imag", true);
-      this->error_table.set_precision(
-        "error_E_real", this->simulation_control->get_log_precision());
-      this->error_table.set_precision(
-        "error_E_imag", this->simulation_control->get_log_precision());
-      this->error_table.set_precision(
-        "error_H_real", this->simulation_control->get_log_precision());
-      this->error_table.set_precision(
-        "error_H_imag", this->simulation_control->get_log_precision());
-      this->error_table.write_text(std::cout);
+      error_table.set_scientific("error_E_real", true);
+      error_table.set_scientific("error_E_imag", true);
+      error_table.set_scientific("error_H_real", true);
+      error_table.set_scientific("error_H_imag", true);
+      error_table.set_precision("error_E_real",
+                                this->simulation_control->get_log_precision());
+      error_table.set_precision("error_E_imag",
+                                this->simulation_control->get_log_precision());
+      error_table.set_precision("error_H_real",
+                                this->simulation_control->get_log_precision());
+      error_table.set_precision("error_H_imag",
+                                this->simulation_control->get_log_precision());
+      error_table.write_text(std::cout);
     }
 }
 
@@ -361,8 +546,9 @@ TimeHarmonicMaxwell<dim>::post_mesh_adaptation()
   // Interpolate the solution at time and previous time
   this->solution_transfer->interpolate(tmp);
 
-  // Distribute constraints
-  this->nonzero_constraints.distribute(tmp);
+  // Distribute constraints does not need to be call for the DPG method transfer
+  // as they live on the skeleton only, but we transfer the interior solution
+  // only for multiphysics purposes.
 
   // Fix on the new mesh
   *this->present_solution = tmp;
@@ -887,58 +1073,62 @@ template <>
 void
 TimeHarmonicMaxwell<3>::assemble_system_matrix()
 {
-  // Material properties
-  std::complex<double> epsilon_r;
-  std::complex<double> mu_r;
-  double               sigma_r;
-
-  epsilon_r = {1., 0.};
-  mu_r      = {1., 0.};
-  sigma_r   = 0.;
-
-  /// Excitation properties
-  double       frequency;
-  unsigned int mode_x;
-  unsigned int mode_y;
-  double       waveguide_a;
-  double       waveguide_b;
-
-  frequency   = 670356315.7;
-  mode_x      = 1;
-  mode_y      = 0;
-  waveguide_a = 0.25;
-  waveguide_b = 0.25;
-
-  // TODO:   the parameters above will need to be removed when they are added to
-  // the physical properties
-
-  TimerOutput::Scope t(this->computing_timer, "Assemble matrix and RHS");
-
-  // Constexpr values and used in the assembly.
-  static constexpr double               speed_of_light = 299792458.;
-  static constexpr double               pi             = std::numbers::pi;
+  // Constexpr values that are used in the assembly. Since we are in the
+  // specialized 3D function we define dim=3 here. This makes easier to read the
+  // code below to see what are templated in dim and what are not.
+  static constexpr double               PI = numbers::PI;
   static constexpr std::complex<double> imag{0., 1.};
   static constexpr int                  dim = 3;
-  // Since we are in the specialized 3D function we define dim=3 here. This
-  // makes easier to read the code below to see what are templated in dim
-  // and what are not.
+
+  // Get properties manager and extract the models for the physical properties
+  const auto &properties_manager =
+    this->simulation_parameters.physical_properties_manager;
+
+  const auto electric_conductivity_model =
+    properties_manager.get_electric_conductivity();
+
+  const auto electric_permittivity_model_real =
+    properties_manager.get_electric_permittivity_real();
+
+  const auto electric_permittivity_model_imag =
+    properties_manager.get_electric_permittivity_imag();
+
+  const auto magnetic_permeability_model =
+    properties_manager.get_magnetic_permeability_real();
+
+  const auto magnetic_permeability_model_imag =
+    properties_manager.get_magnetic_permeability_imag();
+
+  // At the moment, we only support constant properties for time-harmonic
+  // Maxwell so we can get their values directly here.
+  std::map<field, double>
+    field_values; // Empty map since no field dependence for now
+  std::complex<double> epsilon_r_eff = {
+    electric_permittivity_model_real->value(field_values),
+    electric_permittivity_model_imag->value(field_values) +
+      electric_conductivity_model->value(field_values)};
+
+  std::complex<double> mu_r = {magnetic_permeability_model->value(field_values),
+                               magnetic_permeability_model_imag->value(
+                                 field_values)};
+
+  /// Excitation properties
+  const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters =
+    this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
+  const double omega =
+    2.0 * PI * time_harmonic_maxwell_parameters.electromagnetic_frequency;
 
   // We define some constants that will be used during the assembly. Those
   // would change according to the material parameters, but here we only have
   // one material.
-
-  const double               omega = 2.0 * pi * frequency / speed_of_light;
-  const std::complex<double> epsilon_r_eff = epsilon_r + imag * sigma_r;
-  const std::complex<double> k_z =
-    (std::sqrt(omega * omega * epsilon_r_eff * mu_r -
-               std::pow(mode_x * M_PI / waveguide_a, 2) -
-               std::pow(mode_y * M_PI / waveguide_b, 2)));
   const std::complex<double> iwmu_r       = imag * omega * mu_r;
   const std::complex<double> conj_iwmu_r  = std::conj(iwmu_r);
   const std::complex<double> iweps_r      = imag * omega * epsilon_r_eff;
   const std::complex<double> conj_iweps_r = std::conj(iweps_r);
-  const std::complex<double> kz_wmur      = k_z / (omega * mu_r);
-  const std::complex<double> conj_kz_wmur = std::conj(kz_wmur);
+
+
+  TimerOutput::Scope t(this->computing_timer, "Assemble matrix and RHS");
+
 
   // We then create the corresponding FEValues and FEFaceValues objects. Note
   // that only the test space needs gradients because of the ultraweak
@@ -1128,7 +1318,8 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
   BoundaryConditions::BoundaryType bc_type(
     BoundaryConditions::BoundaryType::none);
   Tensor<1, dim, std::complex<double>> g_inc;
-  std::complex<double>                 surface_impedance;
+  std::complex<double>                 boundary_surface_admittance;
+  std::complex<double>                 conj_boundary_surface_admittance;
 
   // As it is standard we first loop over the cells of the triangulation. Here
   // we have the choice of the DoFHandler to perform this loop. We use the
@@ -1453,10 +1644,10 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                   // minimize there.
                   if ((bc_type ==
                        BoundaryConditions::BoundaryType::silver_muller) ||
-                      (bc_type == BoundaryConditions::BoundaryType::
-                                    electromagnetic_excitation) ||
                       (bc_type ==
-                       BoundaryConditions::BoundaryType::imperfect_conductor))
+                       BoundaryConditions::BoundaryType::impedance_boundary) ||
+                      (bc_type ==
+                       BoundaryConditions::BoundaryType::waveguide_port))
                     {
                       if ((current_element_test_i == 0) ||
                           (current_element_test_i == 1))
@@ -1649,12 +1840,29 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                   if (bc_type ==
                       BoundaryConditions::BoundaryType::silver_muller)
                     {
+                      boundary_surface_admittance = sqrt(epsilon_r_eff / mu_r);
+                      conj_boundary_surface_admittance =
+                        std::conj(boundary_surface_admittance);
                       g_inc = 0.;
                     }
-                  if (bc_type == BoundaryConditions::BoundaryType::
-                                   electromagnetic_excitation)
+                  if (bc_type ==
+                      BoundaryConditions::BoundaryType::impedance_boundary)
                     {
                       unsigned int face_id = face->boundary_id();
+
+                      boundary_surface_admittance =
+                        this->simulation_parameters
+                          .boundary_conditions_time_harmonic_electromagnetics
+                          .surface_admittance_real.at(face_id)
+                          ->value(position) +
+                        imag *
+                          this->simulation_parameters
+                            .boundary_conditions_time_harmonic_electromagnetics
+                            .surface_admittance_imag.at(face_id)
+                            ->value(position);
+
+                      conj_boundary_surface_admittance =
+                        std::conj(boundary_surface_admittance);
 
                       // Get the incident electromagnetic field at this face
                       g_inc[0] =
@@ -1668,7 +1876,6 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                             .excitation_x_imag.at(face_id)
                             ->value(position);
 
-                      ;
                       g_inc[1] =
                         this->simulation_parameters
                           .boundary_conditions_time_harmonic_electromagnetics
@@ -1692,32 +1899,51 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                             ->value(position);
                     }
                   if (bc_type ==
-                      BoundaryConditions::BoundaryType::imperfect_conductor)
+                      BoundaryConditions::BoundaryType::waveguide_port)
                     {
-                      g_inc = 0.;
+                      unsigned int boundary_index = std::distance(
+                        time_harmonic_maxwell_parameters.waveguide_boundary_ids
+                          .begin(),
+                        std::ranges::find(time_harmonic_maxwell_parameters
+                                            .waveguide_boundary_ids,
+                                          face->boundary_id()));
+
+                      std::tie(g_inc, boundary_surface_admittance) =
+                        compute_waveguide_port_excitation(position,
+                                                          normal,
+                                                          epsilon_r_eff,
+                                                          mu_r,
+                                                          boundary_index);
+
+                      conj_boundary_surface_admittance =
+                        std::conj(boundary_surface_admittance);
                     }
 
                   // Now we loop on each relationship container to assemble
                   // the relevant matrices.
                   for (const auto &[i, j] : G_FF)
                     {
-                      G_matrix(i, j) += (conj_kz_wmur * F_face[j] * kz_wmur *
-                                         F_face_conj[i] * JxW_face)
-                                          .real();
+                      G_matrix(i, j) +=
+                        (conj_boundary_surface_admittance * F_face[j] *
+                         boundary_surface_admittance * F_face_conj[i] *
+                         JxW_face)
+                          .real();
                     }
 
                   for (const auto &[i, j] : G_FI)
                     {
-                      G_matrix(i, j) += (n_cross_I_face[j] * kz_wmur *
-                                         F_face_conj[i] * JxW_face)
-                                          .real();
+                      G_matrix(i, j) +=
+                        (n_cross_I_face[j] * boundary_surface_admittance *
+                         F_face_conj[i] * JxW_face)
+                          .real();
                     }
 
                   for (const auto &[i, j] : G_IF)
                     {
-                      G_matrix(i, j) += (conj_kz_wmur * F_face[j] *
-                                         n_cross_I_face_conj[i] * JxW_face)
-                                          .real();
+                      G_matrix(i, j) +=
+                        (conj_boundary_surface_admittance * F_face[j] *
+                         n_cross_I_face_conj[i] * JxW_face)
+                          .real();
                     }
 
                   for (const auto &[i, j] : G_II)
@@ -1742,7 +1968,9 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                   for (const auto &[i, j] : B_hat_FE)
                     {
                       B_hat_matrix(i, j) -=
-                        (kz_wmur * E_hat[j] * F_face_conj[i] * JxW_face).real();
+                        (boundary_surface_admittance * E_hat[j] *
+                         F_face_conj[i] * JxW_face)
+                          .real();
                     }
 
                   for (const auto &i : l_F)
@@ -1839,58 +2067,58 @@ template <>
 void
 TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
 {
-  // Material properties
-  std::complex<double> epsilon_r;
-  std::complex<double> mu_r;
-  double               sigma_r;
+  // Constexpr values and used in the assembly. Since we are in the specialized
+  // 3D function we define dim=3 here. This makes easier to read the code below
+  // to see what are templated in dim and what are not.
+  static constexpr double               PI = numbers::PI;
+  static constexpr std::complex<double> imag{0., 1.};
+  static constexpr int                  dim = 3;
 
-  epsilon_r = {1., 0.};
-  mu_r      = {1., 0.};
-  sigma_r   = 0.;
+  // Get properties manager and extract the models for the physical properties
+  const auto &properties_manager =
+    this->simulation_parameters.physical_properties_manager;
+
+  const auto electric_conductivity_model =
+    properties_manager.get_electric_conductivity();
+
+  const auto electric_permittivity_model_real =
+    properties_manager.get_electric_permittivity_real();
+
+  const auto electric_permittivity_model_imag =
+    properties_manager.get_electric_permittivity_imag();
+
+  const auto magnetic_permeability_model =
+    properties_manager.get_magnetic_permeability_real();
+
+  const auto magnetic_permeability_model_imag =
+    properties_manager.get_magnetic_permeability_imag();
+
+  // At the moment, we only support constant properties for time-harmonic
+  // Maxwell so we can get their values directly here.
+  std::map<field, double>
+    field_values; // Empty map since no field dependence for now
+  std::complex<double> epsilon_r_eff = {
+    electric_permittivity_model_real->value(field_values),
+    electric_permittivity_model_imag->value(field_values) +
+      electric_conductivity_model->value(field_values)};
+
+  std::complex<double> mu_r = {magnetic_permeability_model->value(field_values),
+                               magnetic_permeability_model_imag->value(
+                                 field_values)};
 
   /// Excitation properties
-  double       frequency;
-  unsigned int mode_x;
-  unsigned int mode_y;
-  double       waveguide_a;
-  double       waveguide_b;
-
-  frequency   = 670356315.7;
-  mode_x      = 1;
-  mode_y      = 0;
-  waveguide_a = 0.25;
-  waveguide_b = 0.25;
-
-  // TODO:   the above parameters will need to be removed when they are added to
-  // the physical properties
-
-  TimerOutput::Scope t(this->computing_timer, "Reconstruct interior solution");
-
-  // Constexpr values and used in the assembly.
-  static constexpr double               speed_of_light = 299792458.;
-  static constexpr double               pi             = std::numbers::pi;
-  static constexpr std::complex<double> imag{0., 1.};
-  static constexpr int                  dim =
-    3; // Since we are in the specialized 3D function we define dim=3 here. This
-       // makes it easier to read the code below to see what is templated in dim
-       // and what is not.
+  const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters =
+    this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
+  const double omega =
+    2.0 * PI * time_harmonic_maxwell_parameters.electromagnetic_frequency;
 
   // We define some constants that will be used during the assembly. Those
   // would change according to the material parameters, but here we only have
   // one material.
-
-  const double               omega = 2.0 * pi * frequency / speed_of_light;
-  const std::complex<double> epsilon_r_eff = epsilon_r + imag * sigma_r;
-  const std::complex<double> k_z =
-    (std::sqrt(omega * omega * epsilon_r_eff * mu_r -
-               std::pow(mode_x * M_PI / waveguide_a, 2) -
-               std::pow(mode_y * M_PI / waveguide_b, 2)));
   const std::complex<double> iwmu_r       = imag * omega * mu_r;
   const std::complex<double> conj_iwmu_r  = std::conj(iwmu_r);
   const std::complex<double> iweps_r      = imag * omega * epsilon_r_eff;
   const std::complex<double> conj_iweps_r = std::conj(iweps_r);
-  const std::complex<double> kz_wmur      = k_z / (omega * mu_r);
-  const std::complex<double> conj_kz_wmur = std::conj(kz_wmur);
 
   // We then create the corresponding FEValues and FEFaceValues objects. Note
   // that only the test space needs gradients because of the ultraweak
@@ -2063,7 +2291,8 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
   // We also create objects used for the various Robin boundary conditions.
   BoundaryConditions::BoundaryType     bc_type;
   Tensor<1, dim, std::complex<double>> g_inc;
-  std::complex<double>                 surface_impedance;
+  std::complex<double>                 boundary_surface_admittance;
+  std::complex<double>                 conj_boundary_surface_admittance;
 
   // The above declarations are the same as the ones in the assembly of the
   // skeleton system. Below we add new ones that are specific to the
@@ -2413,10 +2642,10 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                   // minimize there.
                   if ((bc_type ==
                        BoundaryConditions::BoundaryType::silver_muller) ||
-                      (bc_type == BoundaryConditions::BoundaryType::
-                                    electromagnetic_excitation) ||
                       (bc_type ==
-                       BoundaryConditions::BoundaryType::imperfect_conductor))
+                       BoundaryConditions::BoundaryType::impedance_boundary) ||
+                      (bc_type ==
+                       BoundaryConditions::BoundaryType::waveguide_port))
                     {
                       if ((current_element_test_i == 0) ||
                           (current_element_test_i == 1))
@@ -2609,15 +2838,31 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                   if (bc_type ==
                       BoundaryConditions::BoundaryType::silver_muller)
                     {
+                      boundary_surface_admittance = sqrt(epsilon_r_eff / mu_r);
+                      conj_boundary_surface_admittance =
+                        std::conj(boundary_surface_admittance);
                       g_inc = 0.;
                     }
-                  if (bc_type == BoundaryConditions::BoundaryType::
-                                   electromagnetic_excitation)
+                  if (bc_type ==
+                      BoundaryConditions::BoundaryType::impedance_boundary)
                     {
                       unsigned int face_id = face->boundary_id();
 
-                      // Get the incident electromagnetic field at this face
+                      boundary_surface_admittance =
+                        this->simulation_parameters
+                          .boundary_conditions_time_harmonic_electromagnetics
+                          .surface_admittance_real.at(face_id)
+                          ->value(position) +
+                        imag *
+                          this->simulation_parameters
+                            .boundary_conditions_time_harmonic_electromagnetics
+                            .surface_admittance_imag.at(face_id)
+                            ->value(position);
 
+                      conj_boundary_surface_admittance =
+                        std::conj(boundary_surface_admittance);
+
+                      // Get the incident electromagnetic field at this face
                       g_inc[0] =
                         this->simulation_parameters
                           .boundary_conditions_time_harmonic_electromagnetics
@@ -2629,7 +2874,6 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                             .excitation_x_imag.at(face_id)
                             ->value(position);
 
-                      ;
                       g_inc[1] =
                         this->simulation_parameters
                           .boundary_conditions_time_harmonic_electromagnetics
@@ -2653,44 +2897,51 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                             ->value(position);
                     }
                   if (bc_type ==
-                      BoundaryConditions::BoundaryType::imperfect_conductor)
+                      BoundaryConditions::BoundaryType::waveguide_port)
                     {
-                      Function<dim> &surface_impedance_real =
-                        *this->simulation_parameters
-                           .boundary_conditions_time_harmonic_electromagnetics
-                           .surface_impedance_real.at(face->boundary_id());
-                      Function<dim> &surface_impedance_imag =
-                        *this->simulation_parameters
-                           .boundary_conditions_time_harmonic_electromagnetics
-                           .surface_impedance_imag.at(face->boundary_id());
+                      unsigned int boundary_index = std::distance(
+                        time_harmonic_maxwell_parameters.waveguide_boundary_ids
+                          .begin(),
+                        std::ranges::find(time_harmonic_maxwell_parameters
+                                            .waveguide_boundary_ids,
+                                          face->boundary_id()));
 
-                      surface_impedance =
-                        surface_impedance_real.value(position) +
-                        imag * surface_impedance_imag.value(position);
-                      g_inc = 0.;
+                      std::tie(g_inc, boundary_surface_admittance) =
+                        compute_waveguide_port_excitation(position,
+                                                          normal,
+                                                          epsilon_r_eff,
+                                                          mu_r,
+                                                          boundary_index);
+
+                      conj_boundary_surface_admittance =
+                        std::conj(boundary_surface_admittance);
                     }
 
                   // Now we loop on each relationship container to assemble
                   // the relevant matrices.
                   for (const auto &[i, j] : G_FF)
                     {
-                      G_matrix(i, j) += (conj_kz_wmur * F_face[j] * kz_wmur *
-                                         F_face_conj[i] * JxW_face)
-                                          .real();
+                      G_matrix(i, j) +=
+                        (conj_boundary_surface_admittance * F_face[j] *
+                         boundary_surface_admittance * F_face_conj[i] *
+                         JxW_face)
+                          .real();
                     }
 
                   for (const auto &[i, j] : G_FI)
                     {
-                      G_matrix(i, j) += (n_cross_I_face[j] * kz_wmur *
-                                         F_face_conj[i] * JxW_face)
-                                          .real();
+                      G_matrix(i, j) +=
+                        (n_cross_I_face[j] * boundary_surface_admittance *
+                         F_face_conj[i] * JxW_face)
+                          .real();
                     }
 
                   for (const auto &[i, j] : G_IF)
                     {
-                      G_matrix(i, j) += (conj_kz_wmur * F_face[j] *
-                                         n_cross_I_face_conj[i] * JxW_face)
-                                          .real();
+                      G_matrix(i, j) +=
+                        (conj_boundary_surface_admittance * F_face[j] *
+                         n_cross_I_face_conj[i] * JxW_face)
+                          .real();
                     }
 
                   for (const auto &[i, j] : G_II)
@@ -2715,7 +2966,9 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                   for (const auto &[i, j] : B_hat_FE)
                     {
                       B_hat_matrix(i, j) -=
-                        (kz_wmur * E_hat[j] * F_face_conj[i] * JxW_face).real();
+                        (boundary_surface_admittance * E_hat[j] *
+                         F_face_conj[i] * JxW_face)
+                          .real();
                     }
 
                   for (const auto &i : l_F)

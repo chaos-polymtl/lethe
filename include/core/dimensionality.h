@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_dimensionality_h
@@ -93,6 +93,7 @@ namespace Parameters
     double surface_tension_gradient_scaling;
     double cahn_hilliard_mobility_scaling;
     double cahn_hilliard_epsilon_scaling;
+    double electromagnetic_frequency_scaling;
   };
 } // namespace Parameters
 

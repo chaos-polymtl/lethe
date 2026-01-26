@@ -28,8 +28,9 @@ DeclException1(
   << " is equal or smaller than 0." << std::endl
   << "Interface regularization method requires an frequency larger than 0.");
 
+template <int dim>
 void
-Parameters::Multiphysics::declare_parameters(ParameterHandler &prm) const
+Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
 {
   prm.enter_subsection("multiphysics");
   {
@@ -79,11 +80,14 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm) const
 
   vof_parameters.declare_parameters(prm);
   cahn_hilliard_parameters.declare_parameters(prm);
+  time_harmonic_maxwell_parameters.declare_parameters(prm);
 }
 
+template <int dim>
 void
-Parameters::Multiphysics::parse_parameters(ParameterHandler     &prm,
-                                           const Dimensionality &dimensions)
+Parameters::Multiphysics<dim>::parse_parameters(
+  ParameterHandler     &prm,
+  const Dimensionality &dimensions)
 {
   prm.enter_subsection("multiphysics");
   {
@@ -101,6 +105,7 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler     &prm,
   prm.leave_subsection();
   vof_parameters.parse_parameters(prm);
   cahn_hilliard_parameters.parse_parameters(prm, dimensions);
+  time_harmonic_maxwell_parameters.parse_parameters(prm, dimensions);
 }
 
 void
@@ -766,3 +771,218 @@ Parameters::CahnHilliard::parse_parameters(ParameterHandler     &prm,
   }
   prm.leave_subsection();
 }
+
+template <int dim>
+void
+Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
+  ParameterHandler &prm) const
+{
+  prm.enter_subsection("time harmonic maxwell");
+  {
+    prm.declare_entry(
+      "electromagnetic frequency",
+      "1",
+      Patterns::Double(),
+      "Frequency of the time harmonic electromagnetic wave excitation (in Hz).");
+
+    prm.declare_entry("number of waveguide inlets",
+                      "0",
+                      Patterns::Integer(0),
+                      "Number of waveguide inlets in the simulation.");
+
+    // Declare a fixed maximum number of waveguide inlets.
+    // Only the ones specified by "number of waveguide inlets" will be parsed.
+    // This is necessary because declare_parameters runs before the file is
+    // read, so we can't know the actual number of inlets at declaration time.
+    constexpr unsigned int max_waveguide_inlets = 10;
+
+    for (unsigned int inlet = 0; inlet < max_waveguide_inlets; ++inlet)
+      {
+        prm.enter_subsection("waveguide inlet " + std::to_string(inlet));
+        {
+          prm.declare_entry(
+            "port boundary id",
+            "0",
+            Patterns::Integer(0),
+            "The boundary id where the waveguide inlet is applied.");
+
+          prm.enter_subsection("waveguide mode");
+          {
+            prm.declare_entry(
+              "mode type",
+              "TE",
+              Patterns::Selection("TE|TM"),
+              "The waveguide mode excitation for a rectangular waveguide can be either Transverse Electric (TE) or Transverse Magnetic (TM).");
+
+            prm.declare_entry(
+              "mode order m",
+              "1",
+              Patterns::Integer(),
+              "The mode order m in the first transverse direction of the rectangular waveguide.");
+
+            prm.declare_entry(
+              "mode order n",
+              "0",
+              Patterns::Integer(),
+              "The mode order n in the second transverse direction of the rectangular waveguide.");
+          }
+          prm.leave_subsection();
+
+          const unsigned int num_corners = Utilities::fixed_power<2>(dim - 1);
+          for (unsigned int corner = 0; corner < num_corners; ++corner)
+            {
+              if constexpr (dim == 2)
+                {
+                  prm.declare_entry("corner " + std::to_string(corner),
+                                    "0, 0",
+                                    Patterns::List(Patterns::Double(), 2, 2),
+                                    "Coordinates of corner " +
+                                      std::to_string(corner));
+                }
+              else if constexpr (dim == 3)
+                {
+                  prm.declare_entry("corner " + std::to_string(corner),
+                                    "0, 0, 0",
+                                    Patterns::List(Patterns::Double(), 3, 3),
+                                    "Coordinates of corner " +
+                                      std::to_string(corner));
+                }
+            }
+        }
+        prm.leave_subsection();
+      }
+  }
+  prm.leave_subsection();
+}
+
+template <int dim>
+void
+Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
+  ParameterHandler     &prm,
+  const Dimensionality &dimensions)
+{
+  prm.enter_subsection("time harmonic maxwell");
+  {
+    TimeHarmonicMaxwell::electromagnetic_frequency =
+      prm.get_double("electromagnetic frequency") *
+      dimensions.electromagnetic_frequency_scaling;
+
+    TimeHarmonicMaxwell::number_of_waveguide_inlets =
+      prm.get_integer("number of waveguide inlets");
+
+    // Ensure that the number of waveguide inlets is smaller than the maximum
+    // declared in declare_parameters.
+    AssertThrow(
+      TimeHarmonicMaxwell::number_of_waveguide_inlets <= 10,
+      ExcMessage(
+        "The number of waveguide inlets specified exceeds "
+        "the maximum allowed. Please increase the value "
+        "of max_waveguide_inlets in the code declare_parameters section of the TimeHarmonicMaxwell class."));
+
+    // Resize vectors to hold the correct number of inlets
+    TimeHarmonicMaxwell::waveguide_mode.resize(number_of_waveguide_inlets);
+    TimeHarmonicMaxwell::mode_order_m.resize(number_of_waveguide_inlets);
+    TimeHarmonicMaxwell::mode_order_n.resize(number_of_waveguide_inlets);
+    TimeHarmonicMaxwell::waveguide_boundary_ids.resize(
+      number_of_waveguide_inlets);
+
+    for (unsigned int inlet = 0; inlet < number_of_waveguide_inlets; ++inlet)
+      {
+        prm.enter_subsection("waveguide inlet " + std::to_string(inlet));
+        {
+          TimeHarmonicMaxwell::waveguide_boundary_ids[inlet] =
+            prm.get_integer("port boundary id");
+
+          prm.enter_subsection("waveguide mode");
+          {
+            const std::string op_mode_type = prm.get("mode type");
+            if (op_mode_type == "TE")
+              {
+                TimeHarmonicMaxwell::waveguide_mode[inlet] =
+                  Parameters::WaveguideMode::TE;
+              }
+            else if (op_mode_type == "TM")
+              {
+                TimeHarmonicMaxwell::waveguide_mode[inlet] =
+                  Parameters::WaveguideMode::TM;
+              }
+            else
+              throw(std::runtime_error("Invalid waveguide mode type. "
+                                       "Options are 'TE' or 'TM'."));
+
+            TimeHarmonicMaxwell::mode_order_m[inlet] =
+              prm.get_integer("mode order m");
+
+            TimeHarmonicMaxwell::mode_order_n[inlet] =
+              prm.get_integer("mode order n");
+
+            // Check that the choice of mode orders is valid
+            if (TimeHarmonicMaxwell::mode_order_m[inlet] == 0 &&
+                TimeHarmonicMaxwell::mode_order_n[inlet] == 0)
+              {
+                throw(std::runtime_error(
+                  "Invalid waveguide mode orders m and n. "
+                  "At least one of the two mode orders must be non-zero."));
+              }
+          }
+          prm.leave_subsection();
+
+          const unsigned int num_corners = Utilities::fixed_power<2>(dim - 1);
+          std::array<Tensor<1, dim>, num_corners> tmp_corners;
+
+          for (unsigned int corner = 0; corner < num_corners; ++corner)
+            {
+              const std::string corner_name =
+                "corner " + std::to_string(corner);
+              const Tensor<1, dim> corner_value =
+                value_string_to_tensor<dim>(prm.get(corner_name));
+
+              tmp_corners[corner] = corner_value;
+            }
+
+          // In 3D, verify that the provided corners define a coplanar
+          // quadrilateral. This is not useful in 2D as any 2 points are always
+          // collinear.
+          if constexpr (dim == 3)
+            {
+              const Tensor<1, dim> vec1 =
+                tmp_corners[1] -
+                tmp_corners[0]; // Vector from corner 1 to corner 2
+              const Tensor<1, dim> vec2 =
+                tmp_corners[2] -
+                tmp_corners[0]; // Vector from corner 1 to corner 3
+              const Tensor<1, dim> vec3 =
+                tmp_corners[3] -
+                tmp_corners[0]; // Vector from corner 1 to corner 4
+
+              // The triple scalar product (determinant) scales as the volume of
+              // the parallelepiped defined by the three vectors. So we make the
+              // it dimensionless by a characteristic volume (product of the
+              // norms of the three vectors). This way we can set a tolerance
+              // that is independent of the actual size of the waveguide.
+              const double determinant =
+                scalar_product(vec3, cross_product_3d(vec1, vec2)) /
+                (vec1.norm() * vec2.norm() * vec3.norm());
+
+              const double tolerance = 1e-10;
+
+              AssertThrow(std::abs(determinant) < tolerance,
+                          ExcMessage(
+                            "The provided corners for waveguide inlet " +
+                            std::to_string(inlet) +
+                            " do not define a coplanar quadrilateral. "
+                            "Please check the corner coordinates."));
+            }
+
+          TimeHarmonicMaxwell::waveguide_corners.push_back(tmp_corners);
+        }
+        prm.leave_subsection();
+      }
+  }
+  prm.leave_subsection();
+}
+
+template struct Parameters::TimeHarmonicMaxwell<2>;
+template struct Parameters::TimeHarmonicMaxwell<3>;
+template struct Parameters::Multiphysics<2>;
+template struct Parameters::Multiphysics<3>;

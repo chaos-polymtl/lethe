@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/parameters.h>
@@ -1287,13 +1287,13 @@ namespace Parameters
         "Model used for the calculation of the electric permittivity"
         "Choices are <constant>.");
       prm.declare_entry(
-        "electric permittivity real",
+        "electric permittivity real part",
         "1",
         Patterns::Double(),
         "Real part of the electric permittivity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
       prm.declare_entry(
-        "electric permittivity imag",
+        "electric permittivity imag part",
         "0",
         Patterns::Double(),
         "Imaginary part of the electric permittivity for the fluid corresponding to Phase = " +
@@ -1306,13 +1306,13 @@ namespace Parameters
         "Model used for the calculation of the magnetic permeability"
         "Choices are <constant>.");
       prm.declare_entry(
-        "magnetic permeability real",
+        "magnetic permeability real part",
         "1",
         Patterns::Double(),
         "Real part of the magnetic permeability for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
       prm.declare_entry(
-        "magnetic permeability imag",
+        "magnetic permeability imag part",
         "0",
         Patterns::Double(),
         "Imaginary part of the magnetic permeability for the fluid corresponding to Phase = " +
@@ -1484,14 +1484,18 @@ namespace Parameters
       op = prm.get("electric permittivity model");
       if (op == "constant")
         electric_permittivity_model = ElectricPermittivityModel::constant;
-      electric_permittivity_real = prm.get_double("electric permittivity real");
-      electric_permittivity_imag = prm.get_double("electric permittivity imag");
+      electric_permittivity_real =
+        prm.get_double("electric permittivity real part");
+      electric_permittivity_imag =
+        prm.get_double("electric permittivity imag part");
 
       op = prm.get("magnetic permeability model");
       if (op == "constant")
         magnetic_permeability_model = MagneticPermeabilityModel::constant;
-      magnetic_permeability_real = prm.get_double("magnetic permeability real");
-      magnetic_permeability_imag = prm.get_double("magnetic permeability imag");
+      magnetic_permeability_real =
+        prm.get_double("magnetic permeability real part");
+      magnetic_permeability_imag =
+        prm.get_double("magnetic permeability imag part");
     }
     prm.leave_subsection();
   }

@@ -57,7 +57,7 @@ public:
   Parameters::VelocitySource                    velocity_sources;
   std::shared_ptr<Parameters::IBParticles<dim>> particlesParameters;
   Parameters::DynamicFlowControl                flow_control;
-  Parameters::Multiphysics                      multiphysics;
+  Parameters::Multiphysics<dim>                 multiphysics;
   Parameters::ConstrainSolidDomain<dim>         constrain_solid_domain;
   Parameters::Stabilization                     stabilization;
   Parameters::ALE<dim>                          ale;

@@ -868,7 +868,7 @@ public:
   };
 
 private:
-  const Parameters::Multiphysics             multiphysics_parameters;
+  const Parameters::Multiphysics<dim>        multiphysics_parameters;
   std::map<PhysicsID, Parameters::Verbosity> verbosity;
   ConditionalOStream                         pcout;
 

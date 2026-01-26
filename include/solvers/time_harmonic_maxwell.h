@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_time_harmonic_maxwell_h
@@ -15,6 +15,7 @@
 #include <solvers/simulation_parameters.h>
 
 #include <deal.II/base/convergence_table.h>
+#include <deal.II/base/numbers.h>
 #include <deal.II/base/tensor.h>
 #include <deal.II/base/timer.h>
 
@@ -45,7 +46,7 @@
 #include <memory.h>
 
 #include <complex>
-#include <numbers>
+#include <ranges>
 
 
 /**
@@ -105,10 +106,10 @@
 ///   [ ] copy_local_rhs_to_global_rhs
 /// [x] Physics field
 /// [x] Multiphysics interface components
-/// [ ] Physical Properties
-///   [ ] Electrical conductivity
-///   [ ] Permittivity
-///   [ ] Permeability
+/// [x] Physical Properties
+///   [x] Electrical conductivity
+///   [x] Permittivity
+///   [x] Permeability
 /// [X] FEM section for DPG
 /// [ ] Mesh adaptation
 
@@ -531,6 +532,30 @@ private:
     return result;
   }
 
+
+  /**
+   * @brief This helper function compute a waveguide excitation boundary condition dynamically from the input parameters. It is only implemented for 3D problems.
+   *
+   * @tparam dim Spatial dimension.
+   * @param p Input position where to compute the electromagnetic excitation amplitude.
+   * @param normal Unit normal vector defining the face orientation of the waveguide port.
+   * @param epsilon_r_eff Effective electric permittivity at the point p.
+   * @param mu_r Effective magnetic permeability at the point p.
+   * @param boundary_id_index Index to identify to which waveguide port condition we are applying the excitation. The default value is 0, which can be used when there is only one waveguide port defined in the input file.
+   * @return The value of the waveguide excitation boundary condition Tensor<1, dim, std::complex<double>> and the surface admittance at the given position in a std::pair format.
+   */
+  std::pair<Tensor<1, dim, std::complex<double>>, std::complex<double>>
+  compute_waveguide_port_excitation(
+    const Point<dim>           &p,
+    const Tensor<1, dim>       &normal,
+    const std::complex<double> &local_epsilon_r_eff,
+    const std::complex<double> &local_mu_r,
+    const unsigned int          boundary_id_index = 0);
+
+  /**
+   * @brief Pointer to the multiphysics interface that manages the coupling
+   * between the different physics solvers.
+   */
   MultiphysicsInterface<dim> *multiphysics;
 
   /**

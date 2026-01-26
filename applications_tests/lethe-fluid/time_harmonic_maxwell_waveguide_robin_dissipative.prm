@@ -1,12 +1,17 @@
-# SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # This test case runs the time-harmonic electromagnetic solver to simulate the
 # propagation of half a wavelength in a waveguide with perfectly conducting walls.
 # This test imposes Robin boundary conditions: build-in waveguide port excitation
 # at the inlet and an abosrbing impedance boundary at the outlet to verify the
-# implementation of those conditions. The mode tested is the TM12. Note that
-# the test offset the geometry to test this functionality also.
+# implementation of those conditions. The mode tested is the TE12 with a
+# dissipative medium. Note that the test also change the dimension to centimeters,
+# but increase the frequency to make sure the problem is not in a high frequency
+# regime (kL >> 1), but still show a noticable decay of the wave amplitude.
+# This test does not exactly fall back to the right convergence order because
+# the mesh resolution is not high enough. However, it can not be increase or
+# the test in DEBUG will timeout.
 
 # Listing of Parameters
 #----------------------
@@ -44,15 +49,15 @@ subsection physical properties
   set number of fluids = 1
   subsection fluid 0
     set electric conductivity model = constant
-    set electric conductivity       = 0.
+    set electric conductivity       = 0.07
 
     set electric permittivity model     = constant
     set electric permittivity real part = 1.
-    set electric permittivity imag part = 0.
+    set electric permittivity imag part = 0.01
 
     set magnetic permeability model     = constant
     set magnetic permeability real part = 1.
-    set magnetic permeability imag part = 0.
+    set magnetic permeability imag part = 0.02
   end
 end
 
@@ -64,6 +69,14 @@ subsection mesh
   set type           = dealii
   set grid type      = subdivided_hyper_rectangle
   set grid arguments = 1, 2, 1 : 1, 1, 1 : 1.25, 1.5, 1.25 : true
+end
+
+#---------------------------------------------------
+# Dimensionality
+#---------------------------------------------------
+
+subsection dimensionality
+  set length = 0.01
 end
 
 #---------------------------------------------------
@@ -80,7 +93,7 @@ end
 #---------------------------------------------------
 
 subsection time harmonic maxwell
-  set electromagnetic frequency  = 8.99377374e8
+  set electromagnetic frequency  = 8.99377374e10
   set number of waveguide inlets = 1
 
   subsection waveguide inlet 0
@@ -92,7 +105,7 @@ subsection time harmonic maxwell
     set corner 3 = 1.25, 1.5, 1
 
     subsection waveguide mode
-      set mode type    = TM
+      set mode type    = TE
       set mode order m = 1
       set mode order n = 2
     end
@@ -143,10 +156,10 @@ subsection boundary conditions time harmonic maxwell
       set Function expression = 0
     end
     subsection surface admittance real part
-      set Function expression = 3
+      set Function expression = 0.360746
     end
     subsection surface admittance imag part
-      set Function expression = 0.
+      set Function expression = 0.132856
     end
   end
 end
@@ -159,7 +172,7 @@ subsection analytical solution
   set enable    = true
   set verbosity = verbose
   subsection electromagnetics
-    set Function expression = -1/4 * cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * sin(2*pi*(z-1));    -1/4 * sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * sin(2*pi*(z-1));    sin(4*pi*(x-1)) * sin(4*pi*(y-1)) * cos(2*pi*(z-1));    1/4 * cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * cos(2*pi*(z-1));    1/4 * sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * cos(2*pi*(z-1));    sin(4*pi*(x-1)) * sin(4*pi*(y-1)) * sin(2*pi*(z-1));    3/4 * sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * sin(2*pi*(z-1));    -3/4 * cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * sin(2*pi*(z-1));     0.;    -3/4 * sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * cos(2*pi*(z-1));      3/4 * cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * cos(2*pi*(z-1));  0.
+    set Function expression = cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (0.014987*cos(6.767844*(z-1)) + 0.750154*sin(6.767844*(z-1)));    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (-0.014987*cos(6.767844*(z-1)) - 0.750154*sin(6.767844*(z-1)));    0.;    cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (-0.750154*cos(6.767844*(z-1)) + 0.014987*sin(6.767844*(z-1)));    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (0.750154*cos(6.767844*(z-1)) - 0.014987*sin(6.767844*(z-1)));    0.;    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (0.104397*cos(6.767844*(z-1)) + 0.269215*sin(6.767844*(z-1)));    cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (0.104397*cos(6.767844*(z-1)) + 0.269215*sin(6.767844*(z-1)));    cos(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * cos(6.767844*(z-1));    sin(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (-0.269215*cos(6.767844*(z-1)) + 0.104397*sin(6.767844*(z-1)));    cos(4*pi*(x-1)) * sin(4*pi*(y-1)) * exp(-2.624723*(z-1)) * (-0.269215*cos(6.767844*(z-1)) + 0.104397*sin(6.767844*(z-1)));    cos(4*pi*(x-1)) * cos(4*pi*(y-1)) * exp(-2.624723*(z-1)) * sin(6.767844*(z-1))
   end
 end
 
