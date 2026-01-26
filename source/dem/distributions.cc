@@ -9,6 +9,7 @@
 #include <deal.II/lac/lapack_full_matrix.h>
 
 #include <numbers>
+#include <numeric>
 Distribution::Distribution(
   const DistributionWeightingType &distribution_weighting_type)
   : weighting_type(distribution_weighting_type)
@@ -432,12 +433,27 @@ CustomDistribution::CustomDistribution(
                                  "defined as a PFD with interpolation, the "
                                  "first probability value needs to be equal"
                                  " to 0. "));
+
+          AssertThrow(d_probabilities.back() == 0.,
+                      ExcMessage(
+                        "When using the custom distribution "
+                        "defined as a PFD with interpolation, the last "
+                        "probability value "
+                        "needs to be equal to 0."));
         }
-      AssertThrow(d_probabilities.back() == 0.,
-                  ExcMessage("When using the custom distribution "
-                             "defined as a PFD with or without "
-                             "interpolation, the last probability value "
-                             "needs to be equal to 0."));
+      else
+        {
+          AssertThrow(std::abs(std::accumulate(d_probabilities.begin(),
+                                               d_probabilities.end(),
+                                               0.) -
+                               1.) <= 1e-5,
+                      ExcMessage(
+                        "When using the custom distribution "
+                        "defined as a PFD without interpolation, "
+                        "probability values are used as volume fraction, "
+                        "thus the sum of every probability value should be "
+                        "equal to 1."));
+        }
     }
 
   // We need to convert the input probability values (d_probabilities) function
@@ -455,21 +471,21 @@ CustomDistribution::CustomDistribution(
           // If the input probability function is a number based PDF, we convert
           // that PDF into a CDF by integrating from d = 0 to
           // d = diameter_values[i] using the trapezoidal method.
-
-          const std::vector<double> pdf_values      = d_probabilities;
-          double                    integral_0_to_d = 0.;
+          double                    n_tot = 0;
+          const std::vector<double> number_fraction = d_probabilities;
           number_based_cdf[0]                       = d_probabilities[0];
           for (unsigned int i = 1; i < n_diameter_values; ++i)
             {
-              integral_0_to_d += 0.5 * (pdf_values[i] + pdf_values[i - 1]) *
-                                 (diameter_values[i] - diameter_values[i - 1]);
-              number_based_cdf[i] = integral_0_to_d;
+              number_based_cdf[i] =
+                number_based_cdf[i - 1] + d_probabilities[i];
+              n_tot += number_based_cdf[i];
             }
+
 
           // We did not check priorly that the integral of the input PDF was
           // equal to one, thus we need to normalize the new CDF.
           for (unsigned int i = 0; i < n_diameter_values; ++i)
-            number_based_cdf[i] /= integral_0_to_d;
+            number_based_cdf[i] /=  n_tot;
         }
     }
   else if (this->weighting_type == DistributionWeightingType::volume_based)
@@ -486,8 +502,7 @@ CustomDistribution::CustomDistribution(
           std::vector<double> volume_based_cdf(n_diameter_values, 0.);
           if (function_type == ProbabilityFunctionType::PDF)
             {
-              // We start at [1] since [0] needs to be = 0., which is already
-              // the case.
+              // Start integration from index 1
               for (unsigned int i = 1; i < n_diameter_values; ++i)
                 {
                   volume_based_cdf[i] =
@@ -495,10 +510,10 @@ CustomDistribution::CustomDistribution(
                     0.5 * (d_probabilities[i] + d_probabilities[i - 1]) *
                       (diameter_values[i] - diameter_values[i - 1]);
                 }
-
-              // Normalize the volume based CDF
-              for (unsigned int i = 1; i < n_diameter_values; ++i)
-                volume_based_cdf[i] /= volume_based_cdf.back();
+              // Normalize after full integration
+              const double integral_total = volume_based_cdf.back();
+              for (unsigned int i = 0; i < n_diameter_values; ++i)
+                volume_based_cdf[i] /= integral_total;
             }
 
           // If the input function is already a CDF, we simply copy it
@@ -593,15 +608,25 @@ CustomDistribution::CustomDistribution(
           if (function_type == ProbabilityFunctionType::PDF)
             volume_fraction = d_probabilities;
 
+          std::vector<double> number_based_pdf(n_diameter_values);
+          double              n_tot = 0.;
           for (unsigned int i = 0; i < n_diameter_values; ++i)
             {
-              number_based_cdf[i] =
+              number_based_pdf[i] =
                 volume_fraction[i] /
                 Utilities::fixed_power<3>(diameter_values[i]);
+
+              n_tot += number_based_pdf[i];
             }
+
           // Normalized
-          for (unsigned int i = 0; i < n_diameter_values; ++i)
-            number_based_cdf[i] /= number_based_cdf.back();
+          number_based_cdf[0] = number_based_pdf[0] / n_tot;
+          for (unsigned int i = 1; i < n_diameter_values; ++i)
+            {
+              number_based_cdf[i] =
+                number_based_cdf[i - 1] + number_based_pdf[i] / n_tot;
+              std::cout << number_based_cdf[i] << std::endl;
+            }
         }
     }
 }
@@ -648,7 +673,8 @@ CustomDistribution::particle_size_sampling(
           const double inv_d_low2  = 1.0 / (d_low * d_low);
           const double inv_d_high2 = 1.0 / (d_high * d_high);
 
-          const double sampled_diameter = 1.0 / std::sqrt(inv_d_low2 - u_local * (inv_d_low2 - inv_d_high2));
+          const double sampled_diameter =
+            1.0 / std::sqrt(inv_d_low2 - u_local * (inv_d_low2 - inv_d_high2));
 
           this->particle_sizes.push_back(sampled_diameter);
         }
