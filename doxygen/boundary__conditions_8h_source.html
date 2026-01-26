@@ -93,7 +93,7 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">boundary_conditions.h</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="boundary__conditions_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors</span></div>
+<a href="boundary__conditions_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#ifndef lethe_boundary_conditions_h</span></div>
@@ -188,8 +188,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae00c4bcecdb269fd409e0a19d07b0dc9">silver_muller</a>,</div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8aa79864cf485f38be6b1076d4b73e51b2">electric_field</a>,</div>
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a8732c340b849ed4f600a10f719097755">magnetic_field</a>,</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a04052570caa36d1667c5d382f702f697">electromagnetic_excitation</a>,</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a3eca10dc7a5c5ee78ae132bb9eb98296">imperfect_conductor</a></div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab7c1e17b9ed3e1002ff5b1057421da05">impedance_boundary</a>,</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a805dc066461856ae03531d14d90b9045">waveguide_port</a></div>
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>  };</div>
 </div>
 <div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span><span class="comment"></span> </div>
@@ -1665,18 +1665,18 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01506" name="l01506"></a><span class="lineno"><a class="line" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#ab6f2f80a569a92881ec1cc3aa4fd71ed"> 1506</a></span>      <a class="code hl_variable" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#ab6f2f80a569a92881ec1cc3aa4fd71ed">imposed_electromagnetic_fields</a>;</div>
 <div class="line"><a id="l01507" name="l01507"></a><span class="lineno"> 1507</span><span class="comment"></span> </div>
 <div class="line"><a id="l01508" name="l01508"></a><span class="lineno"> 1508</span><span class="comment">    /// The following functions are associated with both imperfect conductor</span></div>
-<div class="line"><a id="l01509" name="l01509"></a><span class="lineno"> 1509</span><span class="comment">    /// and imposed electromagnetic excitation boundary conditions of the Time</span></div>
-<div class="line"><a id="l01510" name="l01510"></a><span class="lineno"> 1510</span><span class="comment">    /// Harmonic Maxwell equations, but are parsed individually because they</span></div>
-<div class="line"><a id="l01511" name="l01511"></a><span class="lineno"> 1511</span><span class="comment">    /// will not be applied to the vector solution and will therefore be handled</span></div>
-<div class="line"><a id="l01512" name="l01512"></a><span class="lineno"> 1512</span><span class="comment">    /// manually in the solver.</span></div>
+<div class="line"><a id="l01509" name="l01509"></a><span class="lineno"> 1509</span><span class="comment">    /// and imposed electromagnetic excitation or absorption boundary conditions</span></div>
+<div class="line"><a id="l01510" name="l01510"></a><span class="lineno"> 1510</span><span class="comment">    /// of the Time Harmonic Maxwell equations, but are parsed individually</span></div>
+<div class="line"><a id="l01511" name="l01511"></a><span class="lineno"> 1511</span><span class="comment">    /// because they will not be applied to the vector solution and will</span></div>
+<div class="line"><a id="l01512" name="l01512"></a><span class="lineno"> 1512</span><span class="comment">    /// therefore be handled manually in the solver.</span></div>
 <div class="line"><a id="l01513" name="l01513"></a><span class="lineno"> 1513</span><span class="comment"></span> </div>
 <div class="line"><a id="l01514" name="l01514"></a><span class="lineno"> 1514</span>    <span class="comment">// Impedance</span></div>
 <div class="line"><a id="l01515" name="l01515"></a><span class="lineno"> 1515</span>    std::map&lt;types::boundary_id,</div>
 <div class="line"><a id="l01516" name="l01516"></a><span class="lineno"> 1516</span>             std::shared_ptr&lt;Functions::ParsedFunction&lt;dim&gt;&gt;&gt;</div>
-<div class="line"><a id="l01517" name="l01517"></a><span class="lineno"><a class="line" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#ae20febacfa5c6a30cba8cb6c2d8143f4"> 1517</a></span>      <a class="code hl_variable" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#ae20febacfa5c6a30cba8cb6c2d8143f4">surface_impedance_real</a>;</div>
+<div class="line"><a id="l01517" name="l01517"></a><span class="lineno"><a class="line" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#afe2177b20e12e6af5942db412795036e"> 1517</a></span>      <a class="code hl_variable" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#afe2177b20e12e6af5942db412795036e">surface_admittance_real</a>;</div>
 <div class="line"><a id="l01518" name="l01518"></a><span class="lineno"> 1518</span>    std::map&lt;types::boundary_id,</div>
 <div class="line"><a id="l01519" name="l01519"></a><span class="lineno"> 1519</span>             std::shared_ptr&lt;Functions::ParsedFunction&lt;dim&gt;&gt;&gt;</div>
-<div class="line"><a id="l01520" name="l01520"></a><span class="lineno"><a class="line" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#a10904e87d295774c12d27e4e59e43ea5"> 1520</a></span>      <a class="code hl_variable" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#a10904e87d295774c12d27e4e59e43ea5">surface_impedance_imag</a>;</div>
+<div class="line"><a id="l01520" name="l01520"></a><span class="lineno"><a class="line" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#a050fcb6f0c769951b6b4a38bbdfaffa7"> 1520</a></span>      <a class="code hl_variable" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#a050fcb6f0c769951b6b4a38bbdfaffa7">surface_admittance_imag</a>;</div>
 <div class="line"><a id="l01521" name="l01521"></a><span class="lineno"> 1521</span><span class="comment"></span> </div>
 <div class="line"><a id="l01522" name="l01522"></a><span class="lineno"> 1522</span><span class="comment">    /// Excitation</span></div>
 <div class="line"><a id="l01523" name="l01523"></a><span class="lineno"> 1523</span><span class="comment"></span>    std::map&lt;types::boundary_id,</div>
@@ -1743,9 +1743,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01582" name="l01582"></a><span class="lineno"> 1582</span>      <span class="stringliteral">&quot;type&quot;</span>,</div>
 <div class="line"><a id="l01583" name="l01583"></a><span class="lineno"> 1583</span>      <span class="stringliteral">&quot;silver muller&quot;</span>,</div>
 <div class="line"><a id="l01584" name="l01584"></a><span class="lineno"> 1584</span>      Patterns::Selection(</div>
-<div class="line"><a id="l01585" name="l01585"></a><span class="lineno"> 1585</span>        <span class="stringliteral">&quot;pec|pmc|silver muller|electric field|magnetic field|electromagnetic excitation|imperfect conductor&quot;</span>),</div>
+<div class="line"><a id="l01585" name="l01585"></a><span class="lineno"> 1585</span>        <span class="stringliteral">&quot;pec|pmc|silver muller|electric field|magnetic field|impedance boundary|waveguide port&quot;</span>),</div>
 <div class="line"><a id="l01586" name="l01586"></a><span class="lineno"> 1586</span>      <span class="stringliteral">&quot;Type of boundary condition for Time Harmonic Maxwell equations&quot;</span></div>
-<div class="line"><a id="l01587" name="l01587"></a><span class="lineno"> 1587</span>      <span class="stringliteral">&quot;Choices are &lt;pec|pmc|silver muller|electric field|magnetic field|electromagnetic excitation|imperfect conductor&gt;.&quot;</span>);</div>
+<div class="line"><a id="l01587" name="l01587"></a><span class="lineno"> 1587</span>      <span class="stringliteral">&quot;Choices are &lt;pec|pmc|silver muller|electric field|magnetic field|impedance boundary|waveguide port&gt;.&quot;</span>);</div>
 <div class="line"><a id="l01588" name="l01588"></a><span class="lineno"> 1588</span> </div>
 <div class="line"><a id="l01589" name="l01589"></a><span class="lineno"> 1589</span>    prm.declare_entry(<span class="stringliteral">&quot;id&quot;</span>,</div>
 <div class="line"><a id="l01590" name="l01590"></a><span class="lineno"> 1590</span>                      Utilities::int_to_string(default_boundary_id, 2),</div>
@@ -1756,51 +1756,51 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01595" name="l01595"></a><span class="lineno"> 1595</span>    <span class="comment">// declare the appropriate parameters for the relevant boundary conditions.</span></div>
 <div class="line"><a id="l01596" name="l01596"></a><span class="lineno"> 1596</span>    <a class="code hl_class" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryFunctions.html">TimeHarmonicMaxwellBoundaryFunctions&lt;dim&gt;</a> temporary_em_functions;</div>
 <div class="line"><a id="l01597" name="l01597"></a><span class="lineno"> 1597</span> </div>
-<div class="line"><a id="l01598" name="l01598"></a><span class="lineno"> 1598</span>    prm.enter_subsection(<span class="stringliteral">&quot;E x real&quot;</span>);</div>
+<div class="line"><a id="l01598" name="l01598"></a><span class="lineno"> 1598</span>    prm.enter_subsection(<span class="stringliteral">&quot;E x real part&quot;</span>);</div>
 <div class="line"><a id="l01599" name="l01599"></a><span class="lineno"> 1599</span>    temporary_em_functions.<a class="code hl_variable" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryFunctions.html#af2c915a04c3f31a17170df76ff9b418a">e_x_real</a>.declare_parameters(prm);</div>
 <div class="line"><a id="l01600" name="l01600"></a><span class="lineno"> 1600</span>    prm.leave_subsection();</div>
 <div class="line"><a id="l01601" name="l01601"></a><span class="lineno"> 1601</span> </div>
-<div class="line"><a id="l01602" name="l01602"></a><span class="lineno"> 1602</span>    prm.enter_subsection(<span class="stringliteral">&quot;E y real&quot;</span>);</div>
+<div class="line"><a id="l01602" name="l01602"></a><span class="lineno"> 1602</span>    prm.enter_subsection(<span class="stringliteral">&quot;E y real part&quot;</span>);</div>
 <div class="line"><a id="l01603" name="l01603"></a><span class="lineno"> 1603</span>    temporary_em_functions.<a class="code hl_variable" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryFunctions.html#ad9205c6a8b8d33d1b87bb5fa7f922a19">e_y_real</a>.declare_parameters(prm);</div>
 <div class="line"><a id="l01604" name="l01604"></a><span class="lineno"> 1604</span>    prm.leave_subsection();</div>
 <div class="line"><a id="l01605" name="l01605"></a><span class="lineno"> 1605</span> </div>
-<div class="line"><a id="l01606" name="l01606"></a><span class="lineno"> 1606</span>    prm.enter_subsection(<span class="stringliteral">&quot;E z real&quot;</span>);</div>
+<div class="line"><a id="l01606" name="l01606"></a><span class="lineno"> 1606</span>    prm.enter_subsection(<span class="stringliteral">&quot;E z real part&quot;</span>);</div>
 <div class="line"><a id="l01607" name="l01607"></a><span class="lineno"> 1607</span>    temporary_em_functions.<a class="code hl_variable" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryFunctions.html#a37e04652793c1dc842a48caac7bcb10a">e_z_real</a>.declare_parameters(prm);</div>
 <div class="line"><a id="l01608" name="l01608"></a><span class="lineno"> 1608</span>    prm.leave_subsection();</div>
 <div class="line"><a id="l01609" name="l01609"></a><span class="lineno"> 1609</span> </div>
-<div class="line"><a id="l01610" name="l01610"></a><span class="lineno"> 1610</span>    prm.enter_subsection(<span class="stringliteral">&quot;E x imag&quot;</span>);</div>
+<div class="line"><a id="l01610" name="l01610"></a><span class="lineno"> 1610</span>    prm.enter_subsection(<span class="stringliteral">&quot;E x imag part&quot;</span>);</div>
 <div class="line"><a id="l01611" name="l01611"></a><span class="lineno"> 1611</span>    temporary_em_functions.<a class="code hl_variable" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryFunctions.html#a8ef7729a26207386e191cae7e210506e">e_x_imag</a>.declare_parameters(prm);</div>
 <div class="line"><a id="l01612" name="l01612"></a><span class="lineno"> 1612</span>    prm.leave_subsection();</div>
 <div class="line"><a id="l01613" name="l01613"></a><span class="lineno"> 1613</span> </div>
-<div class="line"><a id="l01614" name="l01614"></a><span class="lineno"> 1614</span>    prm.enter_subsection(<span class="stringliteral">&quot;E y imag&quot;</span>);</div>
+<div class="line"><a id="l01614" name="l01614"></a><span class="lineno"> 1614</span>    prm.enter_subsection(<span class="stringliteral">&quot;E y imag part&quot;</span>);</div>
 <div class="line"><a id="l01615" name="l01615"></a><span class="lineno"> 1615</span>    temporary_em_functions.<a class="code hl_variable" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryFunctions.html#a4d1659d036ca21aa95a2f2781e36a817">e_y_imag</a>.declare_parameters(prm);</div>
 <div class="line"><a id="l01616" name="l01616"></a><span class="lineno"> 1616</span>    prm.leave_subsection();</div>
 <div class="line"><a id="l01617" name="l01617"></a><span class="lineno"> 1617</span> </div>
-<div class="line"><a id="l01618" name="l01618"></a><span class="lineno"> 1618</span>    prm.enter_subsection(<span class="stringliteral">&quot;E z imag&quot;</span>);</div>
+<div class="line"><a id="l01618" name="l01618"></a><span class="lineno"> 1618</span>    prm.enter_subsection(<span class="stringliteral">&quot;E z imag part&quot;</span>);</div>
 <div class="line"><a id="l01619" name="l01619"></a><span class="lineno"> 1619</span>    temporary_em_functions.<a class="code hl_variable" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryFunctions.html#ae6359f9a735c15467a4658d12b086852">e_z_imag</a>.declare_parameters(prm);</div>
 <div class="line"><a id="l01620" name="l01620"></a><span class="lineno"> 1620</span>    prm.leave_subsection();</div>
 <div class="line"><a id="l01621" name="l01621"></a><span class="lineno"> 1621</span> </div>
-<div class="line"><a id="l01622" name="l01622"></a><span class="lineno"> 1622</span>    prm.enter_subsection(<span class="stringliteral">&quot;H x real&quot;</span>);</div>
+<div class="line"><a id="l01622" name="l01622"></a><span class="lineno"> 1622</span>    prm.enter_subsection(<span class="stringliteral">&quot;H x real part&quot;</span>);</div>
 <div class="line"><a id="l01623" name="l01623"></a><span class="lineno"> 1623</span>    temporary_em_functions.<a class="code hl_variable" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryFunctions.html#a8064e5b5b9a05577573d2dfb9279e078">h_x_real</a>.declare_parameters(prm);</div>
 <div class="line"><a id="l01624" name="l01624"></a><span class="lineno"> 1624</span>    prm.leave_subsection();</div>
 <div class="line"><a id="l01625" name="l01625"></a><span class="lineno"> 1625</span> </div>
-<div class="line"><a id="l01626" name="l01626"></a><span class="lineno"> 1626</span>    prm.enter_subsection(<span class="stringliteral">&quot;H y real&quot;</span>);</div>
+<div class="line"><a id="l01626" name="l01626"></a><span class="lineno"> 1626</span>    prm.enter_subsection(<span class="stringliteral">&quot;H y real part&quot;</span>);</div>
 <div class="line"><a id="l01627" name="l01627"></a><span class="lineno"> 1627</span>    temporary_em_functions.<a class="code hl_variable" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryFunctions.html#a72d75d7bb4ee7d1478dca4aeed2837a5">h_y_real</a>.declare_parameters(prm);</div>
 <div class="line"><a id="l01628" name="l01628"></a><span class="lineno"> 1628</span>    prm.leave_subsection();</div>
 <div class="line"><a id="l01629" name="l01629"></a><span class="lineno"> 1629</span> </div>
-<div class="line"><a id="l01630" name="l01630"></a><span class="lineno"> 1630</span>    prm.enter_subsection(<span class="stringliteral">&quot;H z real&quot;</span>);</div>
+<div class="line"><a id="l01630" name="l01630"></a><span class="lineno"> 1630</span>    prm.enter_subsection(<span class="stringliteral">&quot;H z real part&quot;</span>);</div>
 <div class="line"><a id="l01631" name="l01631"></a><span class="lineno"> 1631</span>    temporary_em_functions.<a class="code hl_variable" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryFunctions.html#a5058213e6a15196137e7798d39dfeb13">h_z_real</a>.declare_parameters(prm);</div>
 <div class="line"><a id="l01632" name="l01632"></a><span class="lineno"> 1632</span>    prm.leave_subsection();</div>
 <div class="line"><a id="l01633" name="l01633"></a><span class="lineno"> 1633</span> </div>
-<div class="line"><a id="l01634" name="l01634"></a><span class="lineno"> 1634</span>    prm.enter_subsection(<span class="stringliteral">&quot;H x imag&quot;</span>);</div>
+<div class="line"><a id="l01634" name="l01634"></a><span class="lineno"> 1634</span>    prm.enter_subsection(<span class="stringliteral">&quot;H x imag part&quot;</span>);</div>
 <div class="line"><a id="l01635" name="l01635"></a><span class="lineno"> 1635</span>    temporary_em_functions.<a class="code hl_variable" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryFunctions.html#a03187c184dc33785404ffc90967245a3">h_x_imag</a>.declare_parameters(prm);</div>
 <div class="line"><a id="l01636" name="l01636"></a><span class="lineno"> 1636</span>    prm.leave_subsection();</div>
 <div class="line"><a id="l01637" name="l01637"></a><span class="lineno"> 1637</span> </div>
-<div class="line"><a id="l01638" name="l01638"></a><span class="lineno"> 1638</span>    prm.enter_subsection(<span class="stringliteral">&quot;H y imag&quot;</span>);</div>
+<div class="line"><a id="l01638" name="l01638"></a><span class="lineno"> 1638</span>    prm.enter_subsection(<span class="stringliteral">&quot;H y imag part&quot;</span>);</div>
 <div class="line"><a id="l01639" name="l01639"></a><span class="lineno"> 1639</span>    temporary_em_functions.<a class="code hl_variable" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryFunctions.html#a0f9214d59be29a24da031ce5ff34d20d">h_y_imag</a>.declare_parameters(prm);</div>
 <div class="line"><a id="l01640" name="l01640"></a><span class="lineno"> 1640</span>    prm.leave_subsection();</div>
 <div class="line"><a id="l01641" name="l01641"></a><span class="lineno"> 1641</span> </div>
-<div class="line"><a id="l01642" name="l01642"></a><span class="lineno"> 1642</span>    prm.enter_subsection(<span class="stringliteral">&quot;H z imag&quot;</span>);</div>
+<div class="line"><a id="l01642" name="l01642"></a><span class="lineno"> 1642</span>    prm.enter_subsection(<span class="stringliteral">&quot;H z imag part&quot;</span>);</div>
 <div class="line"><a id="l01643" name="l01643"></a><span class="lineno"> 1643</span>    temporary_em_functions.<a class="code hl_variable" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryFunctions.html#a1433aeed00f115c0b88e36e5fac8f945">h_z_imag</a>.declare_parameters(prm);</div>
 <div class="line"><a id="l01644" name="l01644"></a><span class="lineno"> 1644</span>    prm.leave_subsection();</div>
 <div class="line"><a id="l01645" name="l01645"></a><span class="lineno"> 1645</span> </div>
@@ -1808,35 +1808,35 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01647" name="l01647"></a><span class="lineno"> 1647</span>    <span class="comment">// relevant boundary conditions.</span></div>
 <div class="line"><a id="l01648" name="l01648"></a><span class="lineno"> 1648</span>    Functions::ParsedFunction&lt;dim&gt; temporary_function;</div>
 <div class="line"><a id="l01649" name="l01649"></a><span class="lineno"> 1649</span> </div>
-<div class="line"><a id="l01650" name="l01650"></a><span class="lineno"> 1650</span>    prm.enter_subsection(<span class="stringliteral">&quot;surface impedance real&quot;</span>);</div>
+<div class="line"><a id="l01650" name="l01650"></a><span class="lineno"> 1650</span>    prm.enter_subsection(<span class="stringliteral">&quot;surface admittance real part&quot;</span>);</div>
 <div class="line"><a id="l01651" name="l01651"></a><span class="lineno"> 1651</span>    temporary_function.declare_parameters(prm);</div>
 <div class="line"><a id="l01652" name="l01652"></a><span class="lineno"> 1652</span>    prm.leave_subsection();</div>
 <div class="line"><a id="l01653" name="l01653"></a><span class="lineno"> 1653</span> </div>
-<div class="line"><a id="l01654" name="l01654"></a><span class="lineno"> 1654</span>    prm.enter_subsection(<span class="stringliteral">&quot;surface impedance imag&quot;</span>);</div>
+<div class="line"><a id="l01654" name="l01654"></a><span class="lineno"> 1654</span>    prm.enter_subsection(<span class="stringliteral">&quot;surface admittance imag part&quot;</span>);</div>
 <div class="line"><a id="l01655" name="l01655"></a><span class="lineno"> 1655</span>    temporary_function.declare_parameters(prm);</div>
 <div class="line"><a id="l01656" name="l01656"></a><span class="lineno"> 1656</span>    prm.leave_subsection();</div>
 <div class="line"><a id="l01657" name="l01657"></a><span class="lineno"> 1657</span> </div>
-<div class="line"><a id="l01658" name="l01658"></a><span class="lineno"> 1658</span>    prm.enter_subsection(<span class="stringliteral">&quot;excitation x real&quot;</span>);</div>
+<div class="line"><a id="l01658" name="l01658"></a><span class="lineno"> 1658</span>    prm.enter_subsection(<span class="stringliteral">&quot;excitation x real part&quot;</span>);</div>
 <div class="line"><a id="l01659" name="l01659"></a><span class="lineno"> 1659</span>    temporary_function.declare_parameters(prm);</div>
 <div class="line"><a id="l01660" name="l01660"></a><span class="lineno"> 1660</span>    prm.leave_subsection();</div>
 <div class="line"><a id="l01661" name="l01661"></a><span class="lineno"> 1661</span> </div>
-<div class="line"><a id="l01662" name="l01662"></a><span class="lineno"> 1662</span>    prm.enter_subsection(<span class="stringliteral">&quot;excitation x imag&quot;</span>);</div>
+<div class="line"><a id="l01662" name="l01662"></a><span class="lineno"> 1662</span>    prm.enter_subsection(<span class="stringliteral">&quot;excitation x imag part&quot;</span>);</div>
 <div class="line"><a id="l01663" name="l01663"></a><span class="lineno"> 1663</span>    temporary_function.declare_parameters(prm);</div>
 <div class="line"><a id="l01664" name="l01664"></a><span class="lineno"> 1664</span>    prm.leave_subsection();</div>
 <div class="line"><a id="l01665" name="l01665"></a><span class="lineno"> 1665</span> </div>
-<div class="line"><a id="l01666" name="l01666"></a><span class="lineno"> 1666</span>    prm.enter_subsection(<span class="stringliteral">&quot;excitation y real&quot;</span>);</div>
+<div class="line"><a id="l01666" name="l01666"></a><span class="lineno"> 1666</span>    prm.enter_subsection(<span class="stringliteral">&quot;excitation y real part&quot;</span>);</div>
 <div class="line"><a id="l01667" name="l01667"></a><span class="lineno"> 1667</span>    temporary_function.declare_parameters(prm);</div>
 <div class="line"><a id="l01668" name="l01668"></a><span class="lineno"> 1668</span>    prm.leave_subsection();</div>
 <div class="line"><a id="l01669" name="l01669"></a><span class="lineno"> 1669</span> </div>
-<div class="line"><a id="l01670" name="l01670"></a><span class="lineno"> 1670</span>    prm.enter_subsection(<span class="stringliteral">&quot;excitation y imag&quot;</span>);</div>
+<div class="line"><a id="l01670" name="l01670"></a><span class="lineno"> 1670</span>    prm.enter_subsection(<span class="stringliteral">&quot;excitation y imag part&quot;</span>);</div>
 <div class="line"><a id="l01671" name="l01671"></a><span class="lineno"> 1671</span>    temporary_function.declare_parameters(prm);</div>
 <div class="line"><a id="l01672" name="l01672"></a><span class="lineno"> 1672</span>    prm.leave_subsection();</div>
 <div class="line"><a id="l01673" name="l01673"></a><span class="lineno"> 1673</span> </div>
-<div class="line"><a id="l01674" name="l01674"></a><span class="lineno"> 1674</span>    prm.enter_subsection(<span class="stringliteral">&quot;excitation z real&quot;</span>);</div>
+<div class="line"><a id="l01674" name="l01674"></a><span class="lineno"> 1674</span>    prm.enter_subsection(<span class="stringliteral">&quot;excitation z real part&quot;</span>);</div>
 <div class="line"><a id="l01675" name="l01675"></a><span class="lineno"> 1675</span>    temporary_function.declare_parameters(prm);</div>
 <div class="line"><a id="l01676" name="l01676"></a><span class="lineno"> 1676</span>    prm.leave_subsection();</div>
 <div class="line"><a id="l01677" name="l01677"></a><span class="lineno"> 1677</span> </div>
-<div class="line"><a id="l01678" name="l01678"></a><span class="lineno"> 1678</span>    prm.enter_subsection(<span class="stringliteral">&quot;excitation z imag&quot;</span>);</div>
+<div class="line"><a id="l01678" name="l01678"></a><span class="lineno"> 1678</span>    prm.enter_subsection(<span class="stringliteral">&quot;excitation z imag part&quot;</span>);</div>
 <div class="line"><a id="l01679" name="l01679"></a><span class="lineno"> 1679</span>    temporary_function.declare_parameters(prm);</div>
 <div class="line"><a id="l01680" name="l01680"></a><span class="lineno"> 1680</span>    prm.leave_subsection();</div>
 <div class="line"><a id="l01681" name="l01681"></a><span class="lineno"> 1681</span>  }</div>
@@ -1916,62 +1916,62 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01751" name="l01751"></a><span class="lineno"> 1751</span>        imposed_electromagnetic_fields[boundary_id] =</div>
 <div class="line"><a id="l01752" name="l01752"></a><span class="lineno"> 1752</span>          std::make_shared&lt;TimeHarmonicMaxwellBoundaryFunctions&lt;dim&gt;&gt;();</div>
 <div class="line"><a id="l01753" name="l01753"></a><span class="lineno"> 1753</span> </div>
-<div class="line"><a id="l01754" name="l01754"></a><span class="lineno"> 1754</span>        prm.enter_subsection(<span class="stringliteral">&quot;E x real&quot;</span>);</div>
+<div class="line"><a id="l01754" name="l01754"></a><span class="lineno"> 1754</span>        prm.enter_subsection(<span class="stringliteral">&quot;E x real part&quot;</span>);</div>
 <div class="line"><a id="l01755" name="l01755"></a><span class="lineno"> 1755</span>        imposed_electromagnetic_fields[boundary_id]-&gt;e_x_real.parse_parameters(</div>
 <div class="line"><a id="l01756" name="l01756"></a><span class="lineno"> 1756</span>          prm);</div>
 <div class="line"><a id="l01757" name="l01757"></a><span class="lineno"> 1757</span>        prm.leave_subsection();</div>
 <div class="line"><a id="l01758" name="l01758"></a><span class="lineno"> 1758</span> </div>
-<div class="line"><a id="l01759" name="l01759"></a><span class="lineno"> 1759</span>        prm.enter_subsection(<span class="stringliteral">&quot;E y real&quot;</span>);</div>
+<div class="line"><a id="l01759" name="l01759"></a><span class="lineno"> 1759</span>        prm.enter_subsection(<span class="stringliteral">&quot;E y real part&quot;</span>);</div>
 <div class="line"><a id="l01760" name="l01760"></a><span class="lineno"> 1760</span>        imposed_electromagnetic_fields[boundary_id]-&gt;e_y_real.parse_parameters(</div>
 <div class="line"><a id="l01761" name="l01761"></a><span class="lineno"> 1761</span>          prm);</div>
 <div class="line"><a id="l01762" name="l01762"></a><span class="lineno"> 1762</span>        prm.leave_subsection();</div>
 <div class="line"><a id="l01763" name="l01763"></a><span class="lineno"> 1763</span> </div>
-<div class="line"><a id="l01764" name="l01764"></a><span class="lineno"> 1764</span>        prm.enter_subsection(<span class="stringliteral">&quot;E z real&quot;</span>);</div>
+<div class="line"><a id="l01764" name="l01764"></a><span class="lineno"> 1764</span>        prm.enter_subsection(<span class="stringliteral">&quot;E z real part&quot;</span>);</div>
 <div class="line"><a id="l01765" name="l01765"></a><span class="lineno"> 1765</span>        imposed_electromagnetic_fields[boundary_id]-&gt;e_z_real.parse_parameters(</div>
 <div class="line"><a id="l01766" name="l01766"></a><span class="lineno"> 1766</span>          prm);</div>
 <div class="line"><a id="l01767" name="l01767"></a><span class="lineno"> 1767</span>        prm.leave_subsection();</div>
 <div class="line"><a id="l01768" name="l01768"></a><span class="lineno"> 1768</span> </div>
-<div class="line"><a id="l01769" name="l01769"></a><span class="lineno"> 1769</span>        prm.enter_subsection(<span class="stringliteral">&quot;E x imag&quot;</span>);</div>
+<div class="line"><a id="l01769" name="l01769"></a><span class="lineno"> 1769</span>        prm.enter_subsection(<span class="stringliteral">&quot;E x imag part&quot;</span>);</div>
 <div class="line"><a id="l01770" name="l01770"></a><span class="lineno"> 1770</span>        imposed_electromagnetic_fields[boundary_id]-&gt;e_x_imag.parse_parameters(</div>
 <div class="line"><a id="l01771" name="l01771"></a><span class="lineno"> 1771</span>          prm);</div>
 <div class="line"><a id="l01772" name="l01772"></a><span class="lineno"> 1772</span>        prm.leave_subsection();</div>
 <div class="line"><a id="l01773" name="l01773"></a><span class="lineno"> 1773</span> </div>
-<div class="line"><a id="l01774" name="l01774"></a><span class="lineno"> 1774</span>        prm.enter_subsection(<span class="stringliteral">&quot;E y imag&quot;</span>);</div>
+<div class="line"><a id="l01774" name="l01774"></a><span class="lineno"> 1774</span>        prm.enter_subsection(<span class="stringliteral">&quot;E y imag part&quot;</span>);</div>
 <div class="line"><a id="l01775" name="l01775"></a><span class="lineno"> 1775</span>        imposed_electromagnetic_fields[boundary_id]-&gt;e_y_imag.parse_parameters(</div>
 <div class="line"><a id="l01776" name="l01776"></a><span class="lineno"> 1776</span>          prm);</div>
 <div class="line"><a id="l01777" name="l01777"></a><span class="lineno"> 1777</span>        prm.leave_subsection();</div>
 <div class="line"><a id="l01778" name="l01778"></a><span class="lineno"> 1778</span> </div>
-<div class="line"><a id="l01779" name="l01779"></a><span class="lineno"> 1779</span>        prm.enter_subsection(<span class="stringliteral">&quot;E z imag&quot;</span>);</div>
+<div class="line"><a id="l01779" name="l01779"></a><span class="lineno"> 1779</span>        prm.enter_subsection(<span class="stringliteral">&quot;E z imag part&quot;</span>);</div>
 <div class="line"><a id="l01780" name="l01780"></a><span class="lineno"> 1780</span>        imposed_electromagnetic_fields[boundary_id]-&gt;e_z_imag.parse_parameters(</div>
 <div class="line"><a id="l01781" name="l01781"></a><span class="lineno"> 1781</span>          prm);</div>
 <div class="line"><a id="l01782" name="l01782"></a><span class="lineno"> 1782</span>        prm.leave_subsection();</div>
 <div class="line"><a id="l01783" name="l01783"></a><span class="lineno"> 1783</span> </div>
-<div class="line"><a id="l01784" name="l01784"></a><span class="lineno"> 1784</span>        prm.enter_subsection(<span class="stringliteral">&quot;H x real&quot;</span>);</div>
+<div class="line"><a id="l01784" name="l01784"></a><span class="lineno"> 1784</span>        prm.enter_subsection(<span class="stringliteral">&quot;H x real part&quot;</span>);</div>
 <div class="line"><a id="l01785" name="l01785"></a><span class="lineno"> 1785</span>        imposed_electromagnetic_fields[boundary_id]-&gt;h_x_real.parse_parameters(</div>
 <div class="line"><a id="l01786" name="l01786"></a><span class="lineno"> 1786</span>          prm);</div>
 <div class="line"><a id="l01787" name="l01787"></a><span class="lineno"> 1787</span>        prm.leave_subsection();</div>
 <div class="line"><a id="l01788" name="l01788"></a><span class="lineno"> 1788</span> </div>
-<div class="line"><a id="l01789" name="l01789"></a><span class="lineno"> 1789</span>        prm.enter_subsection(<span class="stringliteral">&quot;H y real&quot;</span>);</div>
+<div class="line"><a id="l01789" name="l01789"></a><span class="lineno"> 1789</span>        prm.enter_subsection(<span class="stringliteral">&quot;H y real part&quot;</span>);</div>
 <div class="line"><a id="l01790" name="l01790"></a><span class="lineno"> 1790</span>        imposed_electromagnetic_fields[boundary_id]-&gt;h_y_real.parse_parameters(</div>
 <div class="line"><a id="l01791" name="l01791"></a><span class="lineno"> 1791</span>          prm);</div>
 <div class="line"><a id="l01792" name="l01792"></a><span class="lineno"> 1792</span>        prm.leave_subsection();</div>
 <div class="line"><a id="l01793" name="l01793"></a><span class="lineno"> 1793</span> </div>
-<div class="line"><a id="l01794" name="l01794"></a><span class="lineno"> 1794</span>        prm.enter_subsection(<span class="stringliteral">&quot;H z real&quot;</span>);</div>
+<div class="line"><a id="l01794" name="l01794"></a><span class="lineno"> 1794</span>        prm.enter_subsection(<span class="stringliteral">&quot;H z real part&quot;</span>);</div>
 <div class="line"><a id="l01795" name="l01795"></a><span class="lineno"> 1795</span>        imposed_electromagnetic_fields[boundary_id]-&gt;h_z_real.parse_parameters(</div>
 <div class="line"><a id="l01796" name="l01796"></a><span class="lineno"> 1796</span>          prm);</div>
 <div class="line"><a id="l01797" name="l01797"></a><span class="lineno"> 1797</span>        prm.leave_subsection();</div>
 <div class="line"><a id="l01798" name="l01798"></a><span class="lineno"> 1798</span> </div>
-<div class="line"><a id="l01799" name="l01799"></a><span class="lineno"> 1799</span>        prm.enter_subsection(<span class="stringliteral">&quot;H x imag&quot;</span>);</div>
+<div class="line"><a id="l01799" name="l01799"></a><span class="lineno"> 1799</span>        prm.enter_subsection(<span class="stringliteral">&quot;H x imag part&quot;</span>);</div>
 <div class="line"><a id="l01800" name="l01800"></a><span class="lineno"> 1800</span>        imposed_electromagnetic_fields[boundary_id]-&gt;h_x_imag.parse_parameters(</div>
 <div class="line"><a id="l01801" name="l01801"></a><span class="lineno"> 1801</span>          prm);</div>
 <div class="line"><a id="l01802" name="l01802"></a><span class="lineno"> 1802</span>        prm.leave_subsection();</div>
 <div class="line"><a id="l01803" name="l01803"></a><span class="lineno"> 1803</span> </div>
-<div class="line"><a id="l01804" name="l01804"></a><span class="lineno"> 1804</span>        prm.enter_subsection(<span class="stringliteral">&quot;H y imag&quot;</span>);</div>
+<div class="line"><a id="l01804" name="l01804"></a><span class="lineno"> 1804</span>        prm.enter_subsection(<span class="stringliteral">&quot;H y imag part&quot;</span>);</div>
 <div class="line"><a id="l01805" name="l01805"></a><span class="lineno"> 1805</span>        imposed_electromagnetic_fields[boundary_id]-&gt;h_y_imag.parse_parameters(</div>
 <div class="line"><a id="l01806" name="l01806"></a><span class="lineno"> 1806</span>          prm);</div>
 <div class="line"><a id="l01807" name="l01807"></a><span class="lineno"> 1807</span>        prm.leave_subsection();</div>
 <div class="line"><a id="l01808" name="l01808"></a><span class="lineno"> 1808</span> </div>
-<div class="line"><a id="l01809" name="l01809"></a><span class="lineno"> 1809</span>        prm.enter_subsection(<span class="stringliteral">&quot;H z imag&quot;</span>);</div>
+<div class="line"><a id="l01809" name="l01809"></a><span class="lineno"> 1809</span>        prm.enter_subsection(<span class="stringliteral">&quot;H z imag part&quot;</span>);</div>
 <div class="line"><a id="l01810" name="l01810"></a><span class="lineno"> 1810</span>        imposed_electromagnetic_fields[boundary_id]-&gt;h_z_imag.parse_parameters(</div>
 <div class="line"><a id="l01811" name="l01811"></a><span class="lineno"> 1811</span>          prm);</div>
 <div class="line"><a id="l01812" name="l01812"></a><span class="lineno"> 1812</span>        prm.leave_subsection();</div>
@@ -1979,49 +1979,49 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01814" name="l01814"></a><span class="lineno"> 1814</span><span class="comment">        /// The following functions are parsed individually because they will be</span></div>
 <div class="line"><a id="l01815" name="l01815"></a><span class="lineno"> 1815</span><span class="comment">        /// used for Robin boundary conditions and will not be applied on the</span></div>
 <div class="line"><a id="l01816" name="l01816"></a><span class="lineno"> 1816</span><span class="comment">        /// global solution vector.</span></div>
-<div class="line"><a id="l01817" name="l01817"></a><span class="lineno"> 1817</span><span class="comment"></span>        prm.enter_subsection(<span class="stringliteral">&quot;surface impedance real&quot;</span>);</div>
-<div class="line"><a id="l01818" name="l01818"></a><span class="lineno"> 1818</span>        this-&gt;surface_impedance_real[boundary_id] =</div>
+<div class="line"><a id="l01817" name="l01817"></a><span class="lineno"> 1817</span><span class="comment"></span>        prm.enter_subsection(<span class="stringliteral">&quot;surface admittance real part&quot;</span>);</div>
+<div class="line"><a id="l01818" name="l01818"></a><span class="lineno"> 1818</span>        this-&gt;surface_admittance_real[boundary_id] =</div>
 <div class="line"><a id="l01819" name="l01819"></a><span class="lineno"> 1819</span>          std::make_shared&lt;Functions::ParsedFunction&lt;dim&gt;&gt;();</div>
-<div class="line"><a id="l01820" name="l01820"></a><span class="lineno"> 1820</span>        this-&gt;surface_impedance_real[boundary_id]-&gt;parse_parameters(prm);</div>
+<div class="line"><a id="l01820" name="l01820"></a><span class="lineno"> 1820</span>        this-&gt;surface_admittance_real[boundary_id]-&gt;parse_parameters(prm);</div>
 <div class="line"><a id="l01821" name="l01821"></a><span class="lineno"> 1821</span>        prm.leave_subsection();</div>
 <div class="line"><a id="l01822" name="l01822"></a><span class="lineno"> 1822</span> </div>
-<div class="line"><a id="l01823" name="l01823"></a><span class="lineno"> 1823</span>        prm.enter_subsection(<span class="stringliteral">&quot;surface impedance imag&quot;</span>);</div>
-<div class="line"><a id="l01824" name="l01824"></a><span class="lineno"> 1824</span>        this-&gt;surface_impedance_imag[boundary_id] =</div>
+<div class="line"><a id="l01823" name="l01823"></a><span class="lineno"> 1823</span>        prm.enter_subsection(<span class="stringliteral">&quot;surface admittance imag part&quot;</span>);</div>
+<div class="line"><a id="l01824" name="l01824"></a><span class="lineno"> 1824</span>        this-&gt;surface_admittance_imag[boundary_id] =</div>
 <div class="line"><a id="l01825" name="l01825"></a><span class="lineno"> 1825</span>          std::make_shared&lt;Functions::ParsedFunction&lt;dim&gt;&gt;();</div>
-<div class="line"><a id="l01826" name="l01826"></a><span class="lineno"> 1826</span>        this-&gt;surface_impedance_imag[boundary_id]-&gt;parse_parameters(prm);</div>
+<div class="line"><a id="l01826" name="l01826"></a><span class="lineno"> 1826</span>        this-&gt;surface_admittance_imag[boundary_id]-&gt;parse_parameters(prm);</div>
 <div class="line"><a id="l01827" name="l01827"></a><span class="lineno"> 1827</span>        prm.leave_subsection();</div>
 <div class="line"><a id="l01828" name="l01828"></a><span class="lineno"> 1828</span> </div>
-<div class="line"><a id="l01829" name="l01829"></a><span class="lineno"> 1829</span>        prm.enter_subsection(<span class="stringliteral">&quot;excitation x real&quot;</span>);</div>
+<div class="line"><a id="l01829" name="l01829"></a><span class="lineno"> 1829</span>        prm.enter_subsection(<span class="stringliteral">&quot;excitation x real part&quot;</span>);</div>
 <div class="line"><a id="l01830" name="l01830"></a><span class="lineno"> 1830</span>        this-&gt;excitation_x_real[boundary_id] =</div>
 <div class="line"><a id="l01831" name="l01831"></a><span class="lineno"> 1831</span>          std::make_shared&lt;Functions::ParsedFunction&lt;dim&gt;&gt;();</div>
 <div class="line"><a id="l01832" name="l01832"></a><span class="lineno"> 1832</span>        this-&gt;excitation_x_real[boundary_id]-&gt;parse_parameters(prm);</div>
 <div class="line"><a id="l01833" name="l01833"></a><span class="lineno"> 1833</span>        prm.leave_subsection();</div>
 <div class="line"><a id="l01834" name="l01834"></a><span class="lineno"> 1834</span> </div>
-<div class="line"><a id="l01835" name="l01835"></a><span class="lineno"> 1835</span>        prm.enter_subsection(<span class="stringliteral">&quot;excitation y real&quot;</span>);</div>
+<div class="line"><a id="l01835" name="l01835"></a><span class="lineno"> 1835</span>        prm.enter_subsection(<span class="stringliteral">&quot;excitation y real part&quot;</span>);</div>
 <div class="line"><a id="l01836" name="l01836"></a><span class="lineno"> 1836</span>        this-&gt;excitation_y_real[boundary_id] =</div>
 <div class="line"><a id="l01837" name="l01837"></a><span class="lineno"> 1837</span>          std::make_shared&lt;Functions::ParsedFunction&lt;dim&gt;&gt;();</div>
 <div class="line"><a id="l01838" name="l01838"></a><span class="lineno"> 1838</span>        this-&gt;excitation_y_real[boundary_id]-&gt;parse_parameters(prm);</div>
 <div class="line"><a id="l01839" name="l01839"></a><span class="lineno"> 1839</span>        prm.leave_subsection();</div>
 <div class="line"><a id="l01840" name="l01840"></a><span class="lineno"> 1840</span> </div>
-<div class="line"><a id="l01841" name="l01841"></a><span class="lineno"> 1841</span>        prm.enter_subsection(<span class="stringliteral">&quot;excitation z real&quot;</span>);</div>
+<div class="line"><a id="l01841" name="l01841"></a><span class="lineno"> 1841</span>        prm.enter_subsection(<span class="stringliteral">&quot;excitation z real part&quot;</span>);</div>
 <div class="line"><a id="l01842" name="l01842"></a><span class="lineno"> 1842</span>        this-&gt;excitation_z_real[boundary_id] =</div>
 <div class="line"><a id="l01843" name="l01843"></a><span class="lineno"> 1843</span>          std::make_shared&lt;Functions::ParsedFunction&lt;dim&gt;&gt;();</div>
 <div class="line"><a id="l01844" name="l01844"></a><span class="lineno"> 1844</span>        this-&gt;excitation_z_real[boundary_id]-&gt;parse_parameters(prm);</div>
 <div class="line"><a id="l01845" name="l01845"></a><span class="lineno"> 1845</span>        prm.leave_subsection();</div>
 <div class="line"><a id="l01846" name="l01846"></a><span class="lineno"> 1846</span> </div>
-<div class="line"><a id="l01847" name="l01847"></a><span class="lineno"> 1847</span>        prm.enter_subsection(<span class="stringliteral">&quot;excitation x imag&quot;</span>);</div>
+<div class="line"><a id="l01847" name="l01847"></a><span class="lineno"> 1847</span>        prm.enter_subsection(<span class="stringliteral">&quot;excitation x imag part&quot;</span>);</div>
 <div class="line"><a id="l01848" name="l01848"></a><span class="lineno"> 1848</span>        this-&gt;excitation_x_imag[boundary_id] =</div>
 <div class="line"><a id="l01849" name="l01849"></a><span class="lineno"> 1849</span>          std::make_shared&lt;Functions::ParsedFunction&lt;dim&gt;&gt;();</div>
 <div class="line"><a id="l01850" name="l01850"></a><span class="lineno"> 1850</span>        this-&gt;excitation_x_imag[boundary_id]-&gt;parse_parameters(prm);</div>
 <div class="line"><a id="l01851" name="l01851"></a><span class="lineno"> 1851</span>        prm.leave_subsection();</div>
 <div class="line"><a id="l01852" name="l01852"></a><span class="lineno"> 1852</span> </div>
-<div class="line"><a id="l01853" name="l01853"></a><span class="lineno"> 1853</span>        prm.enter_subsection(<span class="stringliteral">&quot;excitation y imag&quot;</span>);</div>
+<div class="line"><a id="l01853" name="l01853"></a><span class="lineno"> 1853</span>        prm.enter_subsection(<span class="stringliteral">&quot;excitation y imag part&quot;</span>);</div>
 <div class="line"><a id="l01854" name="l01854"></a><span class="lineno"> 1854</span>        this-&gt;excitation_y_imag[boundary_id] =</div>
 <div class="line"><a id="l01855" name="l01855"></a><span class="lineno"> 1855</span>          std::make_shared&lt;Functions::ParsedFunction&lt;dim&gt;&gt;();</div>
 <div class="line"><a id="l01856" name="l01856"></a><span class="lineno"> 1856</span>        this-&gt;excitation_y_imag[boundary_id]-&gt;parse_parameters(prm);</div>
 <div class="line"><a id="l01857" name="l01857"></a><span class="lineno"> 1857</span>        prm.leave_subsection();</div>
 <div class="line"><a id="l01858" name="l01858"></a><span class="lineno"> 1858</span> </div>
-<div class="line"><a id="l01859" name="l01859"></a><span class="lineno"> 1859</span>        prm.enter_subsection(<span class="stringliteral">&quot;excitation z imag&quot;</span>);</div>
+<div class="line"><a id="l01859" name="l01859"></a><span class="lineno"> 1859</span>        prm.enter_subsection(<span class="stringliteral">&quot;excitation z imag part&quot;</span>);</div>
 <div class="line"><a id="l01860" name="l01860"></a><span class="lineno"> 1860</span>        this-&gt;excitation_z_imag[boundary_id] =</div>
 <div class="line"><a id="l01861" name="l01861"></a><span class="lineno"> 1861</span>          std::make_shared&lt;Functions::ParsedFunction&lt;dim&gt;&gt;();</div>
 <div class="line"><a id="l01862" name="l01862"></a><span class="lineno"> 1862</span>        this-&gt;excitation_z_imag[boundary_id]-&gt;parse_parameters(prm);</div>
@@ -2049,13 +2049,13 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01884" name="l01884"></a><span class="lineno"> 1884</span>          {</div>
 <div class="line"><a id="l01885" name="l01885"></a><span class="lineno"> 1885</span>            this-&gt;type[boundary_id] = <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a8732c340b849ed4f600a10f719097755">BoundaryType::magnetic_field</a>;</div>
 <div class="line"><a id="l01886" name="l01886"></a><span class="lineno"> 1886</span>          }</div>
-<div class="line"><a id="l01887" name="l01887"></a><span class="lineno"> 1887</span>        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;electromagnetic excitation&quot;</span>)</div>
+<div class="line"><a id="l01887" name="l01887"></a><span class="lineno"> 1887</span>        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;impedance boundary&quot;</span>)</div>
 <div class="line"><a id="l01888" name="l01888"></a><span class="lineno"> 1888</span>          {</div>
-<div class="line"><a id="l01889" name="l01889"></a><span class="lineno"> 1889</span>            this-&gt;type[boundary_id] = <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a04052570caa36d1667c5d382f702f697">BoundaryType::electromagnetic_excitation</a>;</div>
+<div class="line"><a id="l01889" name="l01889"></a><span class="lineno"> 1889</span>            this-&gt;type[boundary_id] = <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab7c1e17b9ed3e1002ff5b1057421da05">BoundaryType::impedance_boundary</a>;</div>
 <div class="line"><a id="l01890" name="l01890"></a><span class="lineno"> 1890</span>          }</div>
-<div class="line"><a id="l01891" name="l01891"></a><span class="lineno"> 1891</span>        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;imperfect conductor&quot;</span>)</div>
+<div class="line"><a id="l01891" name="l01891"></a><span class="lineno"> 1891</span>        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;waveguide port&quot;</span>)</div>
 <div class="line"><a id="l01892" name="l01892"></a><span class="lineno"> 1892</span>          {</div>
-<div class="line"><a id="l01893" name="l01893"></a><span class="lineno"> 1893</span>            this-&gt;type[boundary_id] = <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a3eca10dc7a5c5ee78ae132bb9eb98296">BoundaryType::imperfect_conductor</a>;</div>
+<div class="line"><a id="l01893" name="l01893"></a><span class="lineno"> 1893</span>            this-&gt;type[boundary_id] = <a class="code hl_enumvalue" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a805dc066461856ae03531d14d90b9045">BoundaryType::waveguide_port</a>;</div>
 <div class="line"><a id="l01894" name="l01894"></a><span class="lineno"> 1894</span>          }</div>
 <div class="line"><a id="l01895" name="l01895"></a><span class="lineno"> 1895</span>        <span class="keywordflow">else</span></div>
 <div class="line"><a id="l01896" name="l01896"></a><span class="lineno"> 1896</span>          {</div>
@@ -2481,7 +2481,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassBoundaryConditions_1_1NSBoundaryFunctions_html_a731755ef1eaf9285b24894b180e5ea0c"><div class="ttname"><a href="classBoundaryConditions_1_1NSBoundaryFunctions.html#a731755ef1eaf9285b24894b180e5ea0c">BoundaryConditions::NSBoundaryFunctions::p</a></div><div class="ttdeci">Functions::ParsedFunction&lt; dim &gt; p</div><div class="ttdoc">Pressure.</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00150">boundary_conditions.h:150</a></div></div>
 <div class="ttc" id="aclassBoundaryConditions_1_1NSBoundaryFunctions_html_ade03b6ebd7441af51ee913caa55ac34e"><div class="ttname"><a href="classBoundaryConditions_1_1NSBoundaryFunctions.html#ade03b6ebd7441af51ee913caa55ac34e">BoundaryConditions::NSBoundaryFunctions::center_of_rotation</a></div><div class="ttdeci">Point&lt; dim &gt; center_of_rotation</div><div class="ttdoc">Point for the center of rotation.</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00153">boundary_conditions.h:153</a></div></div>
 <div class="ttc" id="aclassBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions_html"><div class="ttname"><a href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions</a></div><div class="ttdoc">This class manages the boundary conditions for Time Harmonic Maxwell solver. It introduces the bounda...</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l01499">boundary_conditions.h:1500</a></div></div>
-<div class="ttc" id="aclassBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions_html_a10904e87d295774c12d27e4e59e43ea5"><div class="ttname"><a href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#a10904e87d295774c12d27e4e59e43ea5">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions::surface_impedance_imag</a></div><div class="ttdeci">std::map&lt; types::boundary_id, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; &gt; surface_impedance_imag</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l01520">boundary_conditions.h:1520</a></div></div>
+<div class="ttc" id="aclassBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions_html_a050fcb6f0c769951b6b4a38bbdfaffa7"><div class="ttname"><a href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#a050fcb6f0c769951b6b4a38bbdfaffa7">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions::surface_admittance_imag</a></div><div class="ttdeci">std::map&lt; types::boundary_id, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; &gt; surface_admittance_imag</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l01520">boundary_conditions.h:1520</a></div></div>
 <div class="ttc" id="aclassBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions_html_a184fb88c2c5c0df30544164dce8c471f"><div class="ttname"><a href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#a184fb88c2c5c0df30544164dce8c471f">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions::declare_default_entry</a></div><div class="ttdeci">void declare_default_entry(ParameterHandler &amp;prm, types::boundary_id default_boundary_id)</div><div class="ttdoc">Declares the default parameters for a boundary condition id i_bc.</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l01577">boundary_conditions.h:1577</a></div></div>
 <div class="ttc" id="aclassBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions_html_a2d2cc609975fc0ff918f0641dc16580e"><div class="ttname"><a href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#a2d2cc609975fc0ff918f0641dc16580e">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions::excitation_y_imag</a></div><div class="ttdeci">std::map&lt; types::boundary_id, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; &gt; excitation_y_imag</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l01537">boundary_conditions.h:1537</a></div></div>
 <div class="ttc" id="aclassBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions_html_a45d184aa29e47bcfedeaf044a7fd325a"><div class="ttname"><a href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#a45d184aa29e47bcfedeaf044a7fd325a">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions::excitation_z_imag</a></div><div class="ttdeci">std::map&lt; types::boundary_id, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; &gt; excitation_z_imag</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l01540">boundary_conditions.h:1540</a></div></div>
@@ -2492,8 +2492,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions_html_aaa4c9c2e14db002a608c25e398ce0819"><div class="ttname"><a href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#aaa4c9c2e14db002a608c25e398ce0819">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions::excitation_x_imag</a></div><div class="ttdeci">std::map&lt; types::boundary_id, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; &gt; excitation_x_imag</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l01534">boundary_conditions.h:1534</a></div></div>
 <div class="ttc" id="aclassBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions_html_ab62a184d1e013e884fe0384fd23b7fd1"><div class="ttname"><a href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#ab62a184d1e013e884fe0384fd23b7fd1">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions::parse_parameters</a></div><div class="ttdeci">void parse_parameters(ParameterHandler &amp;prm)</div><div class="ttdoc">Parses the Time Harmonic Maxwell boundary conditions.</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l01915">boundary_conditions.h:1915</a></div></div>
 <div class="ttc" id="aclassBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions_html_ab6f2f80a569a92881ec1cc3aa4fd71ed"><div class="ttname"><a href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#ab6f2f80a569a92881ec1cc3aa4fd71ed">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions::imposed_electromagnetic_fields</a></div><div class="ttdeci">std::map&lt; types::boundary_id, std::shared_ptr&lt; TimeHarmonicMaxwellBoundaryFunctions&lt; dim &gt; &gt; &gt; imposed_electromagnetic_fields</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l01506">boundary_conditions.h:1506</a></div></div>
-<div class="ttc" id="aclassBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions_html_ae20febacfa5c6a30cba8cb6c2d8143f4"><div class="ttname"><a href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#ae20febacfa5c6a30cba8cb6c2d8143f4">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions::surface_impedance_real</a></div><div class="ttdeci">std::map&lt; types::boundary_id, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; &gt; surface_impedance_real</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l01517">boundary_conditions.h:1517</a></div></div>
 <div class="ttc" id="aclassBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions_html_af9400e794082547bb202f6fba0b10d76"><div class="ttname"><a href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#af9400e794082547bb202f6fba0b10d76">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions::parse_boundary</a></div><div class="ttdeci">void parse_boundary(ParameterHandler &amp;prm)</div><div class="ttdoc">Parse the information for a boundary condition.</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l01729">boundary_conditions.h:1729</a></div></div>
+<div class="ttc" id="aclassBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions_html_afe2177b20e12e6af5942db412795036e"><div class="ttname"><a href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#afe2177b20e12e6af5942db412795036e">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions::surface_admittance_real</a></div><div class="ttdeci">std::map&lt; types::boundary_id, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; &gt; surface_admittance_real</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l01517">boundary_conditions.h:1517</a></div></div>
 <div class="ttc" id="aclassBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryFunctions_html"><div class="ttname"><a href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryFunctions.html">BoundaryConditions::TimeHarmonicMaxwellBoundaryFunctions</a></div><div class="ttdoc">This class manages the functions associated with both imposed electric and magnetic fields boundary c...</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00175">boundary_conditions.h:176</a></div></div>
 <div class="ttc" id="aclassBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryFunctions_html_a03187c184dc33785404ffc90967245a3"><div class="ttname"><a href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryFunctions.html#a03187c184dc33785404ffc90967245a3">BoundaryConditions::TimeHarmonicMaxwellBoundaryFunctions::h_x_imag</a></div><div class="ttdeci">Functions::ParsedFunction&lt; dim &gt; h_x_imag</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00190">boundary_conditions.h:190</a></div></div>
 <div class="ttc" id="aclassBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryFunctions_html_a0f9214d59be29a24da031ce5ff34d20d"><div class="ttname"><a href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryFunctions.html#a0f9214d59be29a24da031ce5ff34d20d">BoundaryConditions::TimeHarmonicMaxwellBoundaryFunctions::h_y_imag</a></div><div class="ttdeci">Functions::ParsedFunction&lt; dim &gt; h_y_imag</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00191">boundary_conditions.h:191</a></div></div>
@@ -2554,23 +2554,23 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="amultiphysics_8h_html_ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef"><div class="ttname"><a href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">tracer</a></div><div class="ttdeci">@ tracer</div><div class="ttdef"><b>Definition</b> <a href="multiphysics_8h_source.html#l00011">multiphysics.h:11</a></div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html"><div class="ttname"><a href="namespaceBoundaryConditions.html">BoundaryConditions</a></div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00055">boundary_conditions.h:56</a></div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryConditions::BoundaryType</a></div><div class="ttdeci">BoundaryType</div><div class="ttdef"><b>Definition</b> <a href="boundary__conditions_8h_source.html#l00058">boundary_conditions.h:59</a></div></div>
-<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8a04052570caa36d1667c5d382f702f697"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a04052570caa36d1667c5d382f702f697">BoundaryConditions::BoundaryType::electromagnetic_excitation</a></div><div class="ttdeci">@ electromagnetic_excitation</div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8a04130da60e65c7800006cd7886515b56"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a04130da60e65c7800006cd7886515b56">BoundaryConditions::BoundaryType::pmc</a></div><div class="ttdeci">@ pmc</div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8a0c072613d3a455a20f2a80d22865825e"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a0c072613d3a455a20f2a80d22865825e">BoundaryConditions::BoundaryType::noflux</a></div><div class="ttdeci">@ noflux</div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8a1940f9f2a34c8894367379761bf6ae11"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a1940f9f2a34c8894367379761bf6ae11">BoundaryConditions::BoundaryType::cahn_hilliard_noflux</a></div><div class="ttdeci">@ cahn_hilliard_noflux</div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8a334c4a4c42fdb79d7ebc3e73b517e6f8"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a334c4a4c42fdb79d7ebc3e73b517e6f8">BoundaryConditions::BoundaryType::none</a></div><div class="ttdeci">@ none</div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8a38404c8a4847911c5e63eabe9a294b16"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a38404c8a4847911c5e63eabe9a294b16">BoundaryConditions::BoundaryType::noslip</a></div><div class="ttdeci">@ noslip</div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8a3daec8dea85232fa2baef18aeb2334d8"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a3daec8dea85232fa2baef18aeb2334d8">BoundaryConditions::BoundaryType::slip</a></div><div class="ttdeci">@ slip</div></div>
-<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8a3eca10dc7a5c5ee78ae132bb9eb98296"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a3eca10dc7a5c5ee78ae132bb9eb98296">BoundaryConditions::BoundaryType::imperfect_conductor</a></div><div class="ttdeci">@ imperfect_conductor</div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8a526a99532e70736e1153dec9f45ff924"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a526a99532e70736e1153dec9f45ff924">BoundaryConditions::BoundaryType::periodic_neighbor</a></div><div class="ttdeci">@ periodic_neighbor</div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8a5a19e60e01f033270d00a46bd121b3c5"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a5a19e60e01f033270d00a46bd121b3c5">BoundaryConditions::BoundaryType::vof_dirichlet</a></div><div class="ttdeci">@ vof_dirichlet</div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8a653ca5ac2544b1bc952023bd93949517"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a653ca5ac2544b1bc952023bd93949517">BoundaryConditions::BoundaryType::cahn_hilliard_free_angle</a></div><div class="ttdeci">@ cahn_hilliard_free_angle</div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f">BoundaryConditions::BoundaryType::tracer_dirichlet</a></div><div class="ttdeci">@ tracer_dirichlet</div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8a805dc066461856ae03531d14d90b9045"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a805dc066461856ae03531d14d90b9045">BoundaryConditions::BoundaryType::waveguide_port</a></div><div class="ttdeci">@ waveguide_port</div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8a8732c340b849ed4f600a10f719097755"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a8732c340b849ed4f600a10f719097755">BoundaryConditions::BoundaryType::magnetic_field</a></div><div class="ttdeci">@ magnetic_field</div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8aa4ce007979d6464c66498b96d4ce5b74"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8aa4ce007979d6464c66498b96d4ce5b74">BoundaryConditions::BoundaryType::convection_radiation</a></div><div class="ttdeci">@ convection_radiation</div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8aa79864cf485f38be6b1076d4b73e51b2"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8aa79864cf485f38be6b1076d4b73e51b2">BoundaryConditions::BoundaryType::electric_field</a></div><div class="ttdeci">@ electric_field</div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8ab0ba1623558e169131cb513037504286"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab0ba1623558e169131cb513037504286">BoundaryConditions::BoundaryType::outlet</a></div><div class="ttdeci">@ outlet</div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8ab1004baebeb1fd16f6bb7780e9b5d3e3"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab1004baebeb1fd16f6bb7780e9b5d3e3">BoundaryConditions::BoundaryType::cahn_hilliard_angle_of_contact</a></div><div class="ttdeci">@ cahn_hilliard_angle_of_contact</div></div>
+<div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8ab7c1e17b9ed3e1002ff5b1057421da05"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab7c1e17b9ed3e1002ff5b1057421da05">BoundaryConditions::BoundaryType::impedance_boundary</a></div><div class="ttdeci">@ impedance_boundary</div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8ac1c425268e68385d1ab5074c17a94f14"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ac1c425268e68385d1ab5074c17a94f14">BoundaryConditions::BoundaryType::function</a></div><div class="ttdeci">@ function</div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8ac3592ad763cac73a15466c0d3c10a77d"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ac3592ad763cac73a15466c0d3c10a77d">BoundaryConditions::BoundaryType::pec</a></div><div class="ttdeci">@ pec</div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8ac6bda74f8a2d6e410535eaa3dca28e9d"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ac6bda74f8a2d6e410535eaa3dca28e9d">BoundaryConditions::BoundaryType::partial_slip</a></div><div class="ttdeci">@ partial_slip</div></div>

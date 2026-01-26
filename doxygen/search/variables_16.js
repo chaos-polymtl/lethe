@@ -7,7 +7,10 @@ var searchData=
   ['wall_5frolling_5ffriction_5fcoefficient_4',['wall_rolling_friction_coefficient',['../classParameters_1_1IBParticles.html#af729dd820b3479251cd9e7e074869d96',1,'Parameters::IBParticles']]],
   ['wall_5fthermal_5fconductivity_5',['wall_thermal_conductivity',['../classParticleWallContactForce.html#aa06fa6dcc52c62f1838c83fd12a6ccd6',1,'ParticleWallContactForce']]],
   ['wall_5fyoungs_5fmodulus_6',['wall_youngs_modulus',['../classParameters_1_1IBParticles.html#af67e6b0d0ab134d94bc53fa332c5bacf',1,'Parameters::IBParticles']]],
-  ['weighting_5ftype_7',['weighting_type',['../classDistribution.html#a7e09273b70dd38a97eb39f621a406bf3',1,'Distribution::weighting_type'],['../classPreconditionASM.html#a8d85fcf5a96522fc5c8361b980f2d5f4',1,'PreconditionASM::weighting_type']]],
-  ['weights_8',['weights',['../classRBFShape.html#a8cc4d4b1396d905f163cfa5851c27e48',1,'RBFShape::weights'],['../classPreconditionASM.html#abefaf957da70a206468f2ded86e84a7d',1,'PreconditionASM::weights']]],
-  ['write_5ftime_5fin_5ferror_5ftable_9',['write_time_in_error_table',['../structParameters_1_1Timer.html#a9dd988af6e082f56fe0fbce35a09addf',1,'Parameters::Timer']]]
+  ['waveguide_5fboundary_5fids_7',['waveguide_boundary_ids',['../structParameters_1_1TimeHarmonicMaxwell.html#a431ed966e330ee824ff949dc7f86268f',1,'Parameters::TimeHarmonicMaxwell']]],
+  ['waveguide_5fcorners_8',['waveguide_corners',['../structParameters_1_1TimeHarmonicMaxwell.html#a3dc2a007d2932b3b12dddb0a42e84fca',1,'Parameters::TimeHarmonicMaxwell']]],
+  ['waveguide_5fmode_9',['waveguide_mode',['../structParameters_1_1TimeHarmonicMaxwell.html#a79dccedd0710d6998becd7df5e4ebd4e',1,'Parameters::TimeHarmonicMaxwell']]],
+  ['weighting_5ftype_10',['weighting_type',['../classDistribution.html#a7e09273b70dd38a97eb39f621a406bf3',1,'Distribution::weighting_type'],['../classPreconditionASM.html#a8d85fcf5a96522fc5c8361b980f2d5f4',1,'PreconditionASM::weighting_type']]],
+  ['weights_11',['weights',['../classRBFShape.html#a8cc4d4b1396d905f163cfa5851c27e48',1,'RBFShape::weights'],['../classPreconditionASM.html#abefaf957da70a206468f2ded86e84a7d',1,'PreconditionASM::weights']]],
+  ['write_5ftime_5fin_5ferror_5ftable_12',['write_time_in_error_table',['../structParameters_1_1Timer.html#a9dd988af6e082f56fe0fbce35a09addf',1,'Parameters::Timer']]]
 ];

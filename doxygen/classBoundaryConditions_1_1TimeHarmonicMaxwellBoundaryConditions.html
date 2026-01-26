@@ -120,10 +120,10 @@ Public Member Functions</h2></td></tr>
 Public Attributes</h2></td></tr>
 <tr class="memitem:ab6f2f80a569a92881ec1cc3aa4fd71ed" id="r_ab6f2f80a569a92881ec1cc3aa4fd71ed"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, std::shared_ptr&lt; <a class="el" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryFunctions.html">TimeHarmonicMaxwellBoundaryFunctions</a>&lt; dim &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#ab6f2f80a569a92881ec1cc3aa4fd71ed">imposed_electromagnetic_fields</a></td></tr>
 <tr class="separator:ab6f2f80a569a92881ec1cc3aa4fd71ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae20febacfa5c6a30cba8cb6c2d8143f4" id="r_ae20febacfa5c6a30cba8cb6c2d8143f4"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#ae20febacfa5c6a30cba8cb6c2d8143f4">surface_impedance_real</a></td></tr>
-<tr class="separator:ae20febacfa5c6a30cba8cb6c2d8143f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a10904e87d295774c12d27e4e59e43ea5" id="r_a10904e87d295774c12d27e4e59e43ea5"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#a10904e87d295774c12d27e4e59e43ea5">surface_impedance_imag</a></td></tr>
-<tr class="separator:a10904e87d295774c12d27e4e59e43ea5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe2177b20e12e6af5942db412795036e" id="r_afe2177b20e12e6af5942db412795036e"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#afe2177b20e12e6af5942db412795036e">surface_admittance_real</a></td></tr>
+<tr class="separator:afe2177b20e12e6af5942db412795036e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a050fcb6f0c769951b6b4a38bbdfaffa7" id="r_a050fcb6f0c769951b6b4a38bbdfaffa7"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#a050fcb6f0c769951b6b4a38bbdfaffa7">surface_admittance_imag</a></td></tr>
+<tr class="separator:a050fcb6f0c769951b6b4a38bbdfaffa7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8727d887de5e47b79d79485d0d00deef" id="r_a8727d887de5e47b79d79485d0d00deef"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#a8727d887de5e47b79d79485d0d00deef">excitation_x_real</a></td></tr>
 <tr class="separator:a8727d887de5e47b79d79485d0d00deef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a47b066c97b28a13eaa2e6ed69e85e68b" id="r_a47b066c97b28a13eaa2e6ed69e85e68b"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, std::shared_ptr&lt; Functions::ParsedFunction&lt; dim &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#a47b066c97b28a13eaa2e6ed69e85e68b">excitation_y_real</a></td></tr>
@@ -274,7 +274,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l01729">1729</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
 
-<p class="reference">References <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8aa79864cf485f38be6b1076d4b73e51b2">BoundaryConditions::electric_field</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a04052570caa36d1667c5d382f702f697">BoundaryConditions::electromagnetic_excitation</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a3eca10dc7a5c5ee78ae132bb9eb98296">BoundaryConditions::imperfect_conductor</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a8732c340b849ed4f600a10f719097755">BoundaryConditions::magnetic_field</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ac3592ad763cac73a15466c0d3c10a77d">BoundaryConditions::pec</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a04130da60e65c7800006cd7886515b56">BoundaryConditions::pmc</a>, and <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae00c4bcecdb269fd409e0a19d07b0dc9">BoundaryConditions::silver_muller</a>.</p>
+<p class="reference">References <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8aa79864cf485f38be6b1076d4b73e51b2">BoundaryConditions::electric_field</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab7c1e17b9ed3e1002ff5b1057421da05">BoundaryConditions::impedance_boundary</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a8732c340b849ed4f600a10f719097755">BoundaryConditions::magnetic_field</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ac3592ad763cac73a15466c0d3c10a77d">BoundaryConditions::pec</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a04130da60e65c7800006cd7886515b56">BoundaryConditions::pmc</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae00c4bcecdb269fd409e0a19d07b0dc9">BoundaryConditions::silver_muller</a>, and <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a805dc066461856ae03531d14d90b9045">BoundaryConditions::waveguide_port</a>.</p>
 
 </div>
 </div>
@@ -440,8 +440,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a10904e87d295774c12d27e4e59e43ea5" name="a10904e87d295774c12d27e4e59e43ea5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a10904e87d295774c12d27e4e59e43ea5">&#9670;&#160;</a></span>surface_impedance_imag</h2>
+<a id="a050fcb6f0c769951b6b4a38bbdfaffa7" name="a050fcb6f0c769951b6b4a38bbdfaffa7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a050fcb6f0c769951b6b4a38bbdfaffa7">&#9670;&#160;</a></span>surface_admittance_imag</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -449,7 +449,7 @@ template&lt;int dim&gt; </div>
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt;types::boundary_id, std::shared_ptr&lt;Functions::ParsedFunction&lt;dim&gt; &gt; &gt; <a class="el" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions</a>&lt; dim &gt;::surface_impedance_imag</td>
+          <td class="memname">std::map&lt;types::boundary_id, std::shared_ptr&lt;Functions::ParsedFunction&lt;dim&gt; &gt; &gt; <a class="el" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions</a>&lt; dim &gt;::surface_admittance_imag</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -458,8 +458,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="ae20febacfa5c6a30cba8cb6c2d8143f4" name="ae20febacfa5c6a30cba8cb6c2d8143f4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae20febacfa5c6a30cba8cb6c2d8143f4">&#9670;&#160;</a></span>surface_impedance_real</h2>
+<a id="afe2177b20e12e6af5942db412795036e" name="afe2177b20e12e6af5942db412795036e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe2177b20e12e6af5942db412795036e">&#9670;&#160;</a></span>surface_admittance_real</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -467,11 +467,11 @@ template&lt;int dim&gt; </div>
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt;types::boundary_id, std::shared_ptr&lt;Functions::ParsedFunction&lt;dim&gt; &gt; &gt; <a class="el" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions</a>&lt; dim &gt;::surface_impedance_real</td>
+          <td class="memname">std::map&lt;types::boundary_id, std::shared_ptr&lt;Functions::ParsedFunction&lt;dim&gt; &gt; &gt; <a class="el" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions</a>&lt; dim &gt;::surface_admittance_real</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>The following functions are associated with both imperfect conductor and imposed electromagnetic excitation boundary conditions of the Time Harmonic Maxwell equations, but are parsed individually because they will not be applied to the vector solution and will therefore be handled manually in the solver. </p>
+<p>The following functions are associated with both imperfect conductor and imposed electromagnetic excitation or absorption boundary conditions of the Time Harmonic Maxwell equations, but are parsed individually because they will not be applied to the vector solution and will therefore be handled manually in the solver. </p>
 
 <p class="definition">Definition at line <a class="el" href="boundary__conditions_8h_source.html#l01517">1517</a> of file <a class="el" href="boundary__conditions_8h_source.html">boundary_conditions.h</a>.</p>
 

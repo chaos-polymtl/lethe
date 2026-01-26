@@ -123,66 +123,73 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    <a class="code hl_variable" href="classParameters_1_1Dimensionality.html#a4f4a74e13a25091f4fc9c032e7f4bfc1">surface_tension_gradient_scaling</a> = 1. * theta * T * T / M;</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <a class="code hl_variable" href="classParameters_1_1Dimensionality.html#a636f1acc2bed2cfa2a81d9be704b877c">cahn_hilliard_mobility_scaling</a>   = 1. * M / L / L / L / T;</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    <a class="code hl_variable" href="classParameters_1_1Dimensionality.html#ae66bedc890daea206984e38b01172574">cahn_hilliard_epsilon_scaling</a>    = 1. / L;</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>  }</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    <a class="code hl_variable" href="classParameters_1_1Dimensionality.html#ad08cd9e9f640d8de5b67e5a0228b450c">electromagnetic_frequency_scaling</a> =</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>      1. * L /</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>      299792458.0; <span class="comment">// speed of light in m/s to get the frequency scaling</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>                   <span class="comment">// to match the other electromagnetic properties. It is not</span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>                   <span class="comment">// necessary to rescale by time because in the time harmonic</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>                   <span class="comment">// form the time scale cancels out as the solution is</span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>                   <span class="comment">// independent of it.</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>  }</div>
 </div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>  <span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00033" data-start="{" data-end="}">
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="classParameters_1_1Dimensionality.html#ad312cee4b1fab271b691c94bc302fbd5">   33</a></span>  <a class="code hl_function" href="classParameters_1_1Dimensionality.html#ad312cee4b1fab271b691c94bc302fbd5">Dimensionality::declare_parameters</a>(ParameterHandler &amp;prm)</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>  {</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    prm.enter_subsection(<span class="stringliteral">&quot;dimensionality&quot;</span>);</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    {</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>      prm.declare_entry(</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        <span class="stringliteral">&quot;length&quot;</span>,</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        <span class="stringliteral">&quot;1&quot;</span>,</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        Patterns::Double(),</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        <span class="stringliteral">&quot;Length scale. The default value assumed is meters. If the simulation is carried out in centimeters,&quot;</span></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>        <span class="stringliteral">&quot; a length of 0.01 should be specified. If the simulation is carried out in kilometers, a length of 1000 should be specified.&quot;</span>);</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>  <span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00040" data-start="{" data-end="}">
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="classParameters_1_1Dimensionality.html#ad312cee4b1fab271b691c94bc302fbd5">   40</a></span>  <a class="code hl_function" href="classParameters_1_1Dimensionality.html#ad312cee4b1fab271b691c94bc302fbd5">Dimensionality::declare_parameters</a>(ParameterHandler &amp;prm)</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>  {</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    prm.enter_subsection(<span class="stringliteral">&quot;dimensionality&quot;</span>);</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    {</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>      prm.declare_entry(</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        <span class="stringliteral">&quot;time&quot;</span>,</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        <span class="stringliteral">&quot;length&quot;</span>,</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        <span class="stringliteral">&quot;1&quot;</span>,</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        Patterns::Double(),</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        <span class="stringliteral">&quot;Time scale. The default value assumed is seconds. If the simulation is carried out in milliseconds,&quot;</span></div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>        <span class="stringliteral">&quot; a time of 0.001 should be specified.&quot;</span>);</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        <span class="stringliteral">&quot;Length scale. The default value assumed is meters. If the simulation is carried out in centimeters,&quot;</span></div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>        <span class="stringliteral">&quot; a length of 0.01 should be specified. If the simulation is carried out in kilometers, a length of 1000 should be specified.&quot;</span>);</div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>      prm.declare_entry(</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>        <span class="stringliteral">&quot;mass&quot;</span>,</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>        <span class="stringliteral">&quot;time&quot;</span>,</div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        <span class="stringliteral">&quot;1&quot;</span>,</div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        Patterns::Double(),</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        <span class="stringliteral">&quot;Mass scale. The default value assumed is kilograms. If the simulation is carried out in grams,&quot;</span></div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        <span class="stringliteral">&quot; a mass of 0.001 should be specified.&quot;</span>);</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        <span class="stringliteral">&quot;Time scale. The default value assumed is seconds. If the simulation is carried out in milliseconds,&quot;</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        <span class="stringliteral">&quot; a time of 0.001 should be specified.&quot;</span>);</div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>      prm.declare_entry(</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        <span class="stringliteral">&quot;temperature&quot;</span>,</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        <span class="stringliteral">&quot;mass&quot;</span>,</div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        <span class="stringliteral">&quot;1&quot;</span>,</div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        Patterns::Double(),</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        <span class="stringliteral">&quot;Temperature scale. The default value assumed is Kelvin. If the simulation is carried out in kiloKelvin,&quot;</span></div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        <span class="stringliteral">&quot; a temperature of 1000 should be specified.&quot;</span>);</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    }</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    prm.leave_subsection();</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>  }</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        <span class="stringliteral">&quot;Mass scale. The default value assumed is kilograms. If the simulation is carried out in grams,&quot;</span></div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        <span class="stringliteral">&quot; a mass of 0.001 should be specified.&quot;</span>);</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>      prm.declare_entry(</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        <span class="stringliteral">&quot;temperature&quot;</span>,</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>        <span class="stringliteral">&quot;1&quot;</span>,</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>        Patterns::Double(),</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>        <span class="stringliteral">&quot;Temperature scale. The default value assumed is Kelvin. If the simulation is carried out in kiloKelvin,&quot;</span></div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>        <span class="stringliteral">&quot; a temperature of 1000 should be specified.&quot;</span>);</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    }</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    prm.leave_subsection();</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>  }</div>
 </div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>  <span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00070" data-start="{" data-end="}">
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno"><a class="line" href="classParameters_1_1Dimensionality.html#ae06179d1575260448053b506733bc578">   70</a></span>  <a class="code hl_function" href="classParameters_1_1Dimensionality.html#ae06179d1575260448053b506733bc578">Dimensionality::parse_parameters</a>(ParameterHandler &amp;prm)</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>  {</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    prm.enter_subsection(<span class="stringliteral">&quot;dimensionality&quot;</span>);</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    {</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>      <a class="code hl_variable" href="classParameters_1_1Dimensionality.html#ae7f05ccb2938d184ed6773615c72001e">length</a>      = prm.get_double(<span class="stringliteral">&quot;length&quot;</span>);</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>      <a class="code hl_variable" href="classParameters_1_1Dimensionality.html#a3c13b086edca292110a45d3e0bab0c3c">time</a>        = prm.get_double(<span class="stringliteral">&quot;time&quot;</span>);</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>      <a class="code hl_variable" href="classParameters_1_1Dimensionality.html#a0af99c4a20b40633dbf00f8bb5e34491">mass</a>        = prm.get_double(<span class="stringliteral">&quot;mass&quot;</span>);</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>      <a class="code hl_variable" href="classParameters_1_1Dimensionality.html#a6398f9ff2f122d6e477c5e24e3a8e50f">temperature</a> = prm.get_double(<span class="stringliteral">&quot;temperature&quot;</span>);</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    }</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    prm.leave_subsection();</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    <span class="comment">// Define all scales using these dimensions</span></div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    <a class="code hl_function" href="classParameters_1_1Dimensionality.html#af95e1c486549b73779eee55fde43b696">define_all_scales</a>();</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>  }</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>  <span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00077" data-start="{" data-end="}">
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno"><a class="line" href="classParameters_1_1Dimensionality.html#ae06179d1575260448053b506733bc578">   77</a></span>  <a class="code hl_function" href="classParameters_1_1Dimensionality.html#ae06179d1575260448053b506733bc578">Dimensionality::parse_parameters</a>(ParameterHandler &amp;prm)</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>  {</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    prm.enter_subsection(<span class="stringliteral">&quot;dimensionality&quot;</span>);</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    {</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>      <a class="code hl_variable" href="classParameters_1_1Dimensionality.html#ae7f05ccb2938d184ed6773615c72001e">length</a>      = prm.get_double(<span class="stringliteral">&quot;length&quot;</span>);</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>      <a class="code hl_variable" href="classParameters_1_1Dimensionality.html#a3c13b086edca292110a45d3e0bab0c3c">time</a>        = prm.get_double(<span class="stringliteral">&quot;time&quot;</span>);</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>      <a class="code hl_variable" href="classParameters_1_1Dimensionality.html#a0af99c4a20b40633dbf00f8bb5e34491">mass</a>        = prm.get_double(<span class="stringliteral">&quot;mass&quot;</span>);</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>      <a class="code hl_variable" href="classParameters_1_1Dimensionality.html#a6398f9ff2f122d6e477c5e24e3a8e50f">temperature</a> = prm.get_double(<span class="stringliteral">&quot;temperature&quot;</span>);</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    }</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    prm.leave_subsection();</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    <span class="comment">// Define all scales using these dimensions</span></div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    <a class="code hl_function" href="classParameters_1_1Dimensionality.html#af95e1c486549b73779eee55fde43b696">define_all_scales</a>();</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>  }</div>
 </div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>} <span class="comment">// namespace Parameters</span></div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>} <span class="comment">// namespace Parameters</span></div>
 <div class="ttc" id="aclassParameters_1_1Dimensionality_html_a0af99c4a20b40633dbf00f8bb5e34491"><div class="ttname"><a href="classParameters_1_1Dimensionality.html#a0af99c4a20b40633dbf00f8bb5e34491">Parameters::Dimensionality::mass</a></div><div class="ttdeci">double mass</div><div class="ttdef"><b>Definition</b> <a href="dimensionality_8h_source.html#l00073">dimensionality.h:73</a></div></div>
 <div class="ttc" id="aclassParameters_1_1Dimensionality_html_a1240b4f88b9058e5b5fc3ae8cf28cbb7"><div class="ttname"><a href="classParameters_1_1Dimensionality.html#a1240b4f88b9058e5b5fc3ae8cf28cbb7">Parameters::Dimensionality::specific_heat_scaling</a></div><div class="ttdeci">double specific_heat_scaling</div><div class="ttdef"><b>Definition</b> <a href="dimensionality_8h_source.html#l00087">dimensionality.h:87</a></div></div>
 <div class="ttc" id="aclassParameters_1_1Dimensionality_html_a320039afb290a0d41880ed9de5dd506b"><div class="ttname"><a href="classParameters_1_1Dimensionality.html#a320039afb290a0d41880ed9de5dd506b">Parameters::Dimensionality::viscosity_scaling</a></div><div class="ttdeci">double viscosity_scaling</div><div class="ttdef"><b>Definition</b> <a href="dimensionality_8h_source.html#l00086">dimensionality.h:86</a></div></div>
@@ -195,9 +202,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassParameters_1_1Dimensionality_html_a6c69a8c1b75661b68744dd546ea2b6b9"><div class="ttname"><a href="classParameters_1_1Dimensionality.html#a6c69a8c1b75661b68744dd546ea2b6b9">Parameters::Dimensionality::specific_gas_constant_scaling</a></div><div class="ttdeci">double specific_gas_constant_scaling</div><div class="ttdef"><b>Definition</b> <a href="dimensionality_8h_source.html#l00085">dimensionality.h:85</a></div></div>
 <div class="ttc" id="aclassParameters_1_1Dimensionality_html_a871b83d7e1e171582e092b58435de5b9"><div class="ttname"><a href="classParameters_1_1Dimensionality.html#a871b83d7e1e171582e092b58435de5b9">Parameters::Dimensionality::thermal_expansion_scaling</a></div><div class="ttdeci">double thermal_expansion_scaling</div><div class="ttdef"><b>Definition</b> <a href="dimensionality_8h_source.html#l00091">dimensionality.h:91</a></div></div>
 <div class="ttc" id="aclassParameters_1_1Dimensionality_html_a93ce9aac024fc23cb55c2ceca982ff98"><div class="ttname"><a href="classParameters_1_1Dimensionality.html#a93ce9aac024fc23cb55c2ceca982ff98">Parameters::Dimensionality::density_scaling</a></div><div class="ttdeci">double density_scaling</div><div class="ttdef"><b>Definition</b> <a href="dimensionality_8h_source.html#l00084">dimensionality.h:84</a></div></div>
-<div class="ttc" id="aclassParameters_1_1Dimensionality_html_ad312cee4b1fab271b691c94bc302fbd5"><div class="ttname"><a href="classParameters_1_1Dimensionality.html#ad312cee4b1fab271b691c94bc302fbd5">Parameters::Dimensionality::declare_parameters</a></div><div class="ttdeci">static void declare_parameters(ParameterHandler &amp;prm)</div><div class="ttdoc">Declares the fundamental dimensions of the parameter file.</div><div class="ttdef"><b>Definition</b> <a href="dimensionality_8cc_source.html#l00033">dimensionality.cc:33</a></div></div>
+<div class="ttc" id="aclassParameters_1_1Dimensionality_html_ad08cd9e9f640d8de5b67e5a0228b450c"><div class="ttname"><a href="classParameters_1_1Dimensionality.html#ad08cd9e9f640d8de5b67e5a0228b450c">Parameters::Dimensionality::electromagnetic_frequency_scaling</a></div><div class="ttdeci">double electromagnetic_frequency_scaling</div><div class="ttdef"><b>Definition</b> <a href="dimensionality_8h_source.html#l00096">dimensionality.h:96</a></div></div>
+<div class="ttc" id="aclassParameters_1_1Dimensionality_html_ad312cee4b1fab271b691c94bc302fbd5"><div class="ttname"><a href="classParameters_1_1Dimensionality.html#ad312cee4b1fab271b691c94bc302fbd5">Parameters::Dimensionality::declare_parameters</a></div><div class="ttdeci">static void declare_parameters(ParameterHandler &amp;prm)</div><div class="ttdoc">Declares the fundamental dimensions of the parameter file.</div><div class="ttdef"><b>Definition</b> <a href="dimensionality_8cc_source.html#l00040">dimensionality.cc:40</a></div></div>
 <div class="ttc" id="aclassParameters_1_1Dimensionality_html_adc261d46ba981d0c8201324c7e6196c4"><div class="ttname"><a href="classParameters_1_1Dimensionality.html#adc261d46ba981d0c8201324c7e6196c4">Parameters::Dimensionality::thermal_conductivity_scaling</a></div><div class="ttdeci">double thermal_conductivity_scaling</div><div class="ttdef"><b>Definition</b> <a href="dimensionality_8h_source.html#l00088">dimensionality.h:88</a></div></div>
-<div class="ttc" id="aclassParameters_1_1Dimensionality_html_ae06179d1575260448053b506733bc578"><div class="ttname"><a href="classParameters_1_1Dimensionality.html#ae06179d1575260448053b506733bc578">Parameters::Dimensionality::parse_parameters</a></div><div class="ttdeci">void parse_parameters(ParameterHandler &amp;prm)</div><div class="ttdoc">Parses the fundamental dimensions from the parameter file.</div><div class="ttdef"><b>Definition</b> <a href="dimensionality_8cc_source.html#l00070">dimensionality.cc:70</a></div></div>
+<div class="ttc" id="aclassParameters_1_1Dimensionality_html_ae06179d1575260448053b506733bc578"><div class="ttname"><a href="classParameters_1_1Dimensionality.html#ae06179d1575260448053b506733bc578">Parameters::Dimensionality::parse_parameters</a></div><div class="ttdeci">void parse_parameters(ParameterHandler &amp;prm)</div><div class="ttdoc">Parses the fundamental dimensions from the parameter file.</div><div class="ttdef"><b>Definition</b> <a href="dimensionality_8cc_source.html#l00077">dimensionality.cc:77</a></div></div>
 <div class="ttc" id="aclassParameters_1_1Dimensionality_html_ae66bedc890daea206984e38b01172574"><div class="ttname"><a href="classParameters_1_1Dimensionality.html#ae66bedc890daea206984e38b01172574">Parameters::Dimensionality::cahn_hilliard_epsilon_scaling</a></div><div class="ttdeci">double cahn_hilliard_epsilon_scaling</div><div class="ttdef"><b>Definition</b> <a href="dimensionality_8h_source.html#l00095">dimensionality.h:95</a></div></div>
 <div class="ttc" id="aclassParameters_1_1Dimensionality_html_ae7f05ccb2938d184ed6773615c72001e"><div class="ttname"><a href="classParameters_1_1Dimensionality.html#ae7f05ccb2938d184ed6773615c72001e">Parameters::Dimensionality::length</a></div><div class="ttdeci">double length</div><div class="ttdef"><b>Definition</b> <a href="dimensionality_8h_source.html#l00072">dimensionality.h:72</a></div></div>
 <div class="ttc" id="aclassParameters_1_1Dimensionality_html_af449c6f9313fdcee05bc1d36fff71b86"><div class="ttname"><a href="classParameters_1_1Dimensionality.html#af449c6f9313fdcee05bc1d36fff71b86">Parameters::Dimensionality::enthalpy_scaling</a></div><div class="ttdeci">double enthalpy_scaling</div><div class="ttdef"><b>Definition</b> <a href="dimensionality_8h_source.html#l00089">dimensionality.h:89</a></div></div>

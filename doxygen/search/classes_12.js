@@ -8,7 +8,7 @@ var searchData=
   ['thermalconductivityphasechange_5',['ThermalConductivityPhaseChange',['../classThermalConductivityPhaseChange.html',1,'']]],
   ['thermalexpansionmodel_6',['ThermalExpansionModel',['../classThermalExpansionModel.html',1,'']]],
   ['thermalexpansionphasechange_7',['ThermalExpansionPhaseChange',['../classThermalExpansionPhaseChange.html',1,'']]],
-  ['timeharmonicmaxwell_8',['TimeHarmonicMaxwell',['../classTimeHarmonicMaxwell.html',1,'']]],
+  ['timeharmonicmaxwell_8',['timeharmonicmaxwell',['../structParameters_1_1TimeHarmonicMaxwell.html',1,'Parameters::TimeHarmonicMaxwell&lt; dim &gt;'],['../classTimeHarmonicMaxwell.html',1,'TimeHarmonicMaxwell&lt; dim &gt;']]],
   ['timeharmonicmaxwellboundaryconditions_9',['TimeHarmonicMaxwellBoundaryConditions',['../classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html',1,'BoundaryConditions']]],
   ['timeharmonicmaxwellboundaryfunctions_10',['TimeHarmonicMaxwellBoundaryFunctions',['../classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryFunctions.html',1,'BoundaryConditions']]],
   ['timeharmonicmaxwellelectricfielddefined_11',['TimeHarmonicMaxwellElectricFieldDefined',['../classTimeHarmonicMaxwellElectricFieldDefined.html',1,'']]],

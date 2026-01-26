@@ -94,16 +94,19 @@ $(function() {
 <div class="contents">
 <div class="textblock"><code>#include &lt;<a class="el" href="parameters_8h_source.html">core/parameters.h</a>&gt;</code><br />
 <code>#include &lt;deal.II/base/parameter_handler.h&gt;</code><br />
+<code>#include &lt;deal.II/base/utilities.h&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for parameters_multiphysics.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="parameters__multiphysics_8h__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2include_2core_2parameters__multiphysics_8h" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2parameters__multiphysics_8h" id="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2parameters__multiphysics_8h">
-<area shape="rect" title=" " alt="" coords="2433,5,2654,60"/>
+<area shape="rect" title=" " alt="" coords="3206,5,3428,60"/>
 <area shape="rect" href="parameters_8h.html" title=" " alt="" coords="2329,108,2470,133"/>
-<area shape="poly" title=" " alt="" coords="2501,62,2432,103,2429,99,2498,58"/>
+<area shape="poly" title=" " alt="" coords="3206,47,2484,114,2484,109,3206,42"/>
 <area shape="rect" title=" " alt="" coords="3276,445,3446,485"/>
-<area shape="poly" title=" " alt="" coords="2655,32,2848,41,2958,51,3066,66,3165,88,3245,116,3276,133,3299,153,3314,175,3320,200,3320,291,3323,329,3330,367,3351,432,3345,433,3325,368,3317,330,3314,291,3314,200,3310,177,3295,156,3273,138,3243,121,3163,93,3066,72,2958,57,2848,47,2654,38"/>
+<area shape="poly" title=" " alt="" coords="3320,60,3320,200,3320,291,3323,329,3330,367,3351,432,3345,433,3325,368,3317,330,3314,291,3314,200,3314,60"/>
+<area shape="rect" title=" " alt="" coords="3354,108,3517,133"/>
+<area shape="poly" title=" " alt="" coords="3355,58,3410,98,3407,102,3352,62"/>
 <area shape="rect" href="dimensionality_8h.html" title=" " alt="" coords="2808,277,2970,302"/>
 <area shape="poly" title=" " alt="" coords="2434,131,2843,270,2841,275,2433,136"/>
 <area shape="poly" title=" " alt="" coords="2452,131,2656,179,2822,216,2893,235,2983,267,3080,308,3174,355,3320,436,3317,441,3171,359,3078,313,2981,272,2892,240,2821,221,2655,184,2451,136"/>
@@ -365,7 +368,9 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1CahnHilliard.html">Parameters::CahnHilliard</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Multiphysics.html">Parameters::Multiphysics</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1TimeHarmonicMaxwell.html">Parameters::TimeHarmonicMaxwell&lt; dim &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Multiphysics.html">Parameters::Multiphysics&lt; dim &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
@@ -402,6 +407,10 @@ Enumerations</h2></td></tr>
 , <a class="el" href="namespaceParameters.html#a326d18b20b98632daf31aad2a3119462a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>
  }</td></tr>
 <tr class="separator:a326d18b20b98632daf31aad2a3119462"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c6eda968f919b83f3e2e3fc92c54a08" id="r_a3c6eda968f919b83f3e2e3fc92c54a08"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters.html#a3c6eda968f919b83f3e2e3fc92c54a08">Parameters::WaveguideMode</a> : std::int8_t { <a class="el" href="namespaceParameters.html#a3c6eda968f919b83f3e2e3fc92c54a08a83f56f37a245ccaf8c885814074777f6">Parameters::TE</a>
+, <a class="el" href="namespaceParameters.html#a3c6eda968f919b83f3e2e3fc92c54a08aac7a4fbd0d788d94f43454817e1c208c">Parameters::TM</a>
+ }</td></tr>
+<tr class="separator:a3c6eda968f919b83f3e2e3fc92c54a08"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->

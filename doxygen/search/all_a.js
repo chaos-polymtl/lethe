@@ -33,7 +33,7 @@ var searchData=
   ['immersed_5fsolid_5ftanh_5fparameters_30',['immersed_solid_tanh_parameters',['../classParameters_1_1Material.html#a7412ca075eb12d74a8db7c04feea3f51',1,'Parameters::Material']]],
   ['immersedsolidgaussianparameters_31',['ImmersedSolidGaussianParameters',['../structParameters_1_1ImmersedSolidGaussianParameters.html',1,'Parameters']]],
   ['immersedsolidtanhparameters_32',['ImmersedSolidTanhParameters',['../structParameters_1_1ImmersedSolidTanhParameters.html',1,'Parameters']]],
-  ['imperfect_5fconductor_33',['imperfect_conductor',['../namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a3eca10dc7a5c5ee78ae132bb9eb98296',1,'BoundaryConditions']]],
+  ['impedance_5fboundary_33',['impedance_boundary',['../namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab7c1e17b9ed3e1002ff5b1057421da05',1,'BoundaryConditions']]],
   ['implicit_5fstabilization_34',['implicit_stabilization',['../structParameters_1_1CFDDEM.html#acd1a358b0ccac0ef0bc4167d9698910b',1,'Parameters::CFDDEM']]],
   ['imposed_5felectromagnetic_5ffields_35',['imposed_electromagnetic_fields',['../classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html#ab6f2f80a569a92881ec1cc3aa4fd71ed',1,'BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions']]],
   ['impulsion_36',['impulsion',['../classIBParticle.html#a982aa8afc19a6196c3b3391f1551f669',1,'IBParticle']]],
