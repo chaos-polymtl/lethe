@@ -500,16 +500,15 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
             pressure_scaling_factor * scratch_data.grad_phi_p[q][j];
 
           strong_jacobian_vec[q][j] +=
-            ( velocity_gradient * phi_u_j * void_fraction 
-             + grad_phi_u_j * velocity * void_fraction 
+            (velocity_gradient * phi_u_j * void_fraction +
+             grad_phi_u_j * velocity * void_fraction
              // Mass Source
-             + mass_source * phi_u_j 
+             + mass_source * phi_u_j
              // Pressure
              + void_fraction * grad_phi_p_j
              // Kinematic viscosity
-             - void_fraction * kinematic_viscosity * laplacian_phi_u_j 
-             - void_fraction * kinematic_viscosity * gradient_divergence_phi_u_j
-            );
+             - void_fraction * kinematic_viscosity * laplacian_phi_u_j -
+             void_fraction * kinematic_viscosity * gradient_divergence_phi_u_j);
         }
 
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -567,8 +566,8 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
                   // ν_f ϕ_i ∂_i(δu_j) ∂_j(ε_f) (i and j are vector components)
                   local_matrix_ij += void_fraction * kinematic_viscosity *
                                        grad_phi_u_i[component_i][component_j] *
-                                       grad_phi_u_j[component_j][component_i] 
-                                    + kinematic_viscosity *
+                                       grad_phi_u_j[component_j][component_i] +
+                                     kinematic_viscosity *
                                        grad_phi_u_j[component_j][component_i] *
                                        void_fraction_gradients[component_j] *
                                        phi_u_i[component_i];
@@ -707,7 +706,7 @@ VANSAssemblerCoreModelA<dim>::assemble_rhs(
         - void_fraction * kinematic_viscosity * velocity_laplacian
         // Compute term ∂j∂iuj = ∂i∂juj
         - void_fraction * kinematic_viscosity * velocity_gradient_divergence
-            // Force
+        // Force
         - force * void_fraction + strong_residual_vec[q];
 
       // Assembly of the right-hand side
@@ -727,21 +726,21 @@ VANSAssemblerCoreModelA<dim>::assemble_rhs(
           if (component_i < dim)
             local_rhs_i += (
               // Momentum
-              - (void_fraction * kinematic_viscosity *
+              -(void_fraction * kinematic_viscosity *
                   scalar_product(velocity_gradient, grad_phi_u_i) +
                 kinematic_viscosity * velocity_gradient *
-                  void_fraction_gradients * phi_u_i)
-              - (void_fraction * kinematic_viscosity * div_phi_u_i *
+                  void_fraction_gradients * phi_u_i) -
+              (void_fraction * kinematic_viscosity * div_phi_u_i *
                  velocity_divergence +
                kinematic_viscosity * velocity_divergence *
-                 void_fraction_gradients * phi_u_i)
-              - velocity_gradient * velocity * void_fraction * phi_u_i
+                 void_fraction_gradients * phi_u_i) -
+              velocity_gradient * velocity * void_fraction * phi_u_i
               // Mass Source
               - mass_source * velocity * phi_u_i
               // Pressure and Force
               + (void_fraction * pressure * div_phi_u_i +
-                 pressure * void_fraction_gradients * phi_u_i)
-              + force * void_fraction * phi_u_i);
+                 pressure * void_fraction_gradients * phi_u_i) +
+              force * void_fraction * phi_u_i);
 
           if (component_i == dim)
             // Continuity
