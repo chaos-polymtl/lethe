@@ -646,6 +646,8 @@ VANSOperator<dim, number>::local_evaluate_residual(
               // ν(∇v,ɛ∇u)
               gradient_result[i] = kinematic_viscosity * vf_value * gradient[i];
 
+
+
               // -(∇·v,ɛp)
               gradient_result[i][i] += -vf_value * value[dim];
 
@@ -679,6 +681,10 @@ VANSOperator<dim, number>::local_evaluate_residual(
                   // ν(v,∇ɛ∇u)
                   value_result[i] +=
                     kinematic_viscosity * gradient[k][i] * vf_gradient[k];
+                  // BB new add
+                  // ν(∇v,ɛ∇u^T)
+                  gradient_result[i][k] += kinematic_viscosity * vf_value * gradient[k][i];
+
                   // +(v,ɛ(u·∇)u)
                   value_result[i] += vf_value * gradient[i][k] * value[k];
                 }
