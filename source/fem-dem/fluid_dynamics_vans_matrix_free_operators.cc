@@ -397,6 +397,9 @@ VANSOperator<dim, number>::do_cell_integral_local(
           gradient_result[i] = kinematic_viscosity * vf_value * gradient[i];
           // ν(v,∇ɛ∇δu)
           value_result[i] = kinematic_viscosity * vf_gradient * gradient[i];
+          // BB new add
+          // ν(v,∇δu∇ɛ)
+          value_result[i] += kinematic_viscosity * gradient[i] * vf_gradient;
           // -(∇·v,ɛδp)
           gradient_result[i][i] += -vf_value * value[dim];
           // -(v,δp∇ɛ)
@@ -414,6 +417,11 @@ VANSOperator<dim, number>::do_cell_integral_local(
               value_result[i] +=
                 vf_value * (gradient[i][k] * previous_values[k] +
                             previous_gradient[i][k] * value[k]);
+
+              // BB new add
+              // ν(∇v,ɛ∇δu^T)
+              gradient_result[i][k] +=
+                kinematic_viscosity * vf_value * gradient[k][i];
             }
           // +(v,ɛ ∂t δu)
           if (transient)
@@ -641,6 +649,7 @@ VANSOperator<dim, number>::local_evaluate_residual(
               // -(∇·v,ɛp)
               gradient_result[i][i] += -vf_value * value[dim];
 
+
               // -(v,ɛf)
               value_result[i] = -source_value[i];
 
@@ -666,6 +675,10 @@ VANSOperator<dim, number>::local_evaluate_residual(
                   // ν(v,∇u∇ɛ)
                   value_result[i] +=
                     kinematic_viscosity * gradient[i][k] * vf_gradient[k];
+                  // BB new add
+                  // ν(v,∇ɛ∇u)
+                  value_result[i] +=
+                    kinematic_viscosity * gradient[k][i] * vf_gradient[k];
                   // +(v,ɛ(u·∇)u)
                   value_result[i] += vf_value * gradient[i][k] * value[k];
                 }
