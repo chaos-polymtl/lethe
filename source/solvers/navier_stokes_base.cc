@@ -2098,8 +2098,7 @@ NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar_operators()
 template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::rotate_rotor_mapping(
-  const bool is_first,
-  double     mortar_interface_radius)
+  const bool is_first)
 {
   if (!this->simulation_parameters.mortar_parameters.enable)
     return;
