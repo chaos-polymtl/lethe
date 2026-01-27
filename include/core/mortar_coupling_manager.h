@@ -34,10 +34,7 @@ public:
    * control, including the rotor mesh parameters
    */
   template <int dim2>
-  MortarManagerBase(const Quadrature<dim2>        &quadrature,
-                    const Mapping<dim>            &mapping,
-                    const DoFHandler<dim>         &dof_handler,
-                    const Parameters::Mortar<dim> &mortar_parameters);
+  MortarManagerBase(const Quadrature<dim2> &quadrature);
   /**
    * @brief Default destructor
    */
@@ -258,11 +255,7 @@ protected:
 
 template <int dim>
 template <int dim2>
-MortarManagerBase<dim>::MortarManagerBase(
-  const Quadrature<dim2>        &quadrature_in,
-  const Mapping<dim>            &mapping,
-  const DoFHandler<dim>         &dof_handler,
-  const Parameters::Mortar<dim> &mortar_parameters)
+MortarManagerBase<dim>::MortarManagerBase(const Quadrature<dim2> &quadrature_in)
   : quadrature(quadrature_in.get_tensor_basis()[0])
   , n_quadrature_points(quadrature.size())
 {}
@@ -275,10 +268,7 @@ MortarManagerCircle<dim>::MortarManagerCircle(
   const Mapping<dim>            &mapping,
   const DoFHandler<dim>         &dof_handler,
   const Parameters::Mortar<dim> &mortar_parameters)
-  : MortarManagerBase<dim>(construct_quadrature(quadrature, mortar_parameters),
-                           mapping,
-                           dof_handler,
-                           mortar_parameters)
+  : MortarManagerBase<dim>(construct_quadrature(quadrature, mortar_parameters))
 {
   // Compute and store the number of subdivisions at the interface, the mortar
   // interface position, and the initial mesh rotation angle
