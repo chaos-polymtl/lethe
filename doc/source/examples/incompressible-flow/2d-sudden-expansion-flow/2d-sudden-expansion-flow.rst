@@ -58,16 +58,16 @@ For :math:`\textrm{Re} = 610`, a transient second-order backward differentiation
 .. code-block:: text
 
     subsection simulation control
-      set method           = bdf2
-      set output name      = sudden-expansion-flow-output
-      set output frequency = 15
-      set adapt            = true
-      set max cfl          = 5
-      set time step        = 0.001
-      set time end         = 15
+      set method                         = bdf2
+      set output name                    = sudden-expansion-flow-output
+      set output frequency               = 15
+      set adapt time-step to respect CFL = true
+      set max cfl                        = 5
+      set time step                      = 0.001
+      set time end                       = 15
     end
 
-in which ``adapt``, ``max cfl``, and ``time step`` parameters are defined so that the time step is small enough to capture the flow behaviour without large damping oscillations. The final simulation time is taken as :math:`t_{end} = 15` s so that results can be compared to the reference case in [#durst1993]_.
+in which ``adapt time-step to respect CFL``, ``max cfl``, and ``time step`` parameters are defined so that the time step is small enough to capture the flow behaviour without large damping oscillations. The final simulation time is taken as :math:`t_{end} = 15` s so that results can be compared to the reference case in [#durst1993]_.
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~

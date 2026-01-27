@@ -234,13 +234,15 @@ The ``simulation control`` subsection controls the flow of the simulation. To ma
 .. code-block:: text
 
     subsection simulation control
-      set method            = bdf2
-      set time step         = 0.01
-      set adapt             = true
-      set max cfl           = 1
-      set time end          = 60  
-      set output frequency  = 10    
-      set subdivision       = 2
+      set method                         = bdf2
+      set output name                    = taylor-couette
+      set output path                    = ./output/
+      set time end                       = 60
+      set adapt time-step to respect CFL = true
+      set max cfl                        = 1
+      set time step                      = 0.01
+      set output frequency               = 10
+      set subdivision                    = 2
     end
 
 .. tip::

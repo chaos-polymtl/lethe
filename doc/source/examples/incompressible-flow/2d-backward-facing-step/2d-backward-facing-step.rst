@@ -64,17 +64,17 @@ However, at :math:`\mathrm{Re} = 1000`, convergence can be quite difficult to ob
 .. code-block:: text
 
     subsection simulation control
-      set method                       = steady_bdf
-      set stop tolerance               = 1e-5
-      set time step                    = 0.005
-      set adapt                        = true
-      set max cfl                      = 1e5
-      set adaptative time step scaling = 1.2
-      set output name                  = backward_facing_step_output
-      set output frequency             = 1
+      set method                         = steady_bdf
+      set stop tolerance                 = 1e-5
+      set time step                      = 0.005
+      set adapt time-step to respect CFL = true
+      set max cfl                        = 1e5
+      set adaptative time step scaling   = 1.2
+      set output name                    = backward_facing_step_output
+      set output frequency               = 1
     end
   
-``stop tolerance``, ``time step``, ``adapt``, ``max cfl`` and ``adaptive time step scaling`` are parameters that control the pseudo steady-state simulation. In this case, choosing ``stop tolerance = 1e-5`` ensures that the simulation reaches steady state while keeping the number of time iterations to a minimum. Moreover, one can notice a very high value for the ``max cfl``; however, since it is used with ``adaptative time step scaling`` (and since *Lethe* is an implicit solver), even a very high value of the CFL does not compromise the results.
+``stop tolerance``, ``time step``, ``adapt time-step to respect CFL``, ``max cfl`` and ``adaptive time step scaling`` are parameters that control the pseudo steady-state simulation. In this case, choosing ``stop tolerance = 1e-5`` ensures that the simulation reaches steady state while keeping the number of time iterations to a minimum. Moreover, one can notice a very high value for the ``max cfl``; however, since it is used with ``adaptative time step scaling`` (and since *Lethe* is an implicit solver), even a very high value of the CFL does not compromise the results.
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
