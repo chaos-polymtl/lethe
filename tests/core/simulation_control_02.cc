@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020, 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020, 2024, 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -31,7 +31,8 @@ test()
   simulationControlParameters.output_folder              = "canard";
   simulationControlParameters.output_iteration_frequency = 8;
   simulationControlParameters.output_time_interval       = {0, 1000000000};
-  simulationControlParameters.time_step_independent_of_end_time = true;
+  simulationControlParameters.time_step_independent_of_end_time      = true;
+  simulationControlParameters.respect_capillary_time_step_constraint = false;
 
   SimulationControlSteady simulation_control(simulationControlParameters);
 

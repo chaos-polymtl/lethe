@@ -147,6 +147,35 @@ public:
   calculate_barycenter(const GlobalVectorType &solution,
                        const VectorType       &current_solution_fd);
 
+  /**
+   * @brief Computes the capillary time-step constraint
+   *
+   * The time-step constraint for capillary-driven multiphase flows
+   * is computed according to [1]:
+   * \f[
+   * \Delta t_\sigma = \sqrt{\frac{(\rho_0 + \rho_1) h^3}{2 \pi \sigma}}
+   * \f]
+   *
+   * @param[in] pressure_dependent Boolean indicating if the pressure field is
+   * required. The DensityIsothermalIdealGas model requires the pressure field
+   * to compute the density.
+   *
+   * @param[in] temperature_dependent Boolean indicating if the temperature
+   * field is required. The SurfaceTensionLinear and SurfaceTensionPhaseChange
+   * models depend on the temperature field.
+   *
+   * @return Computed value of the capillary time-step constraint
+   *
+   * Reference:
+   *
+   * [1] F. Denner, F. Evrard, and B. van Wachem, “Breaching the capillary
+   * time-step constraint using a coupled VOF method with implicit surface
+   * tension,” J. Comput. Phys., vol. 459, p. 111128, Jun. 2022,
+   * doi: 10.1016/j.jcp.2022.111128
+   */
+  double
+  compute_capillary_time_step_constraint(const bool pressure_dependent,
+                                         const bool temperature_dependent);
 
   /**
    * @brief Carry out the operations required to finish a simulation correctly.

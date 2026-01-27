@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2021, 2024-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2021, 2024-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -38,15 +38,16 @@ test()
   Parameters::SimulationControl simulation_control_parameters;
   simulation_control_parameters.method =
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
-  simulation_control_parameters.dt                                = 0.1;
-  simulation_control_parameters.time_end                          = 1.0;
-  simulation_control_parameters.output_iteration_frequency        = 1;
-  simulation_control_parameters.adapt                             = true;
-  simulation_control_parameters.adaptative_time_step_scaling      = 0.95;
-  simulation_control_parameters.max_dt                            = 1e6;
-  simulation_control_parameters.output_time_interval              = {0,
-                                                                     1.7976931348623157e3};
-  simulation_control_parameters.time_step_independent_of_end_time = true;
+  simulation_control_parameters.dt                                     = 0.1;
+  simulation_control_parameters.time_end                               = 1.0;
+  simulation_control_parameters.output_iteration_frequency             = 1;
+  simulation_control_parameters.adapt                                  = true;
+  simulation_control_parameters.adaptative_time_step_scaling           = 0.95;
+  simulation_control_parameters.max_dt                                 = 1e6;
+  simulation_control_parameters.output_time_interval                   = {0,
+                                                                          1.7976931348623157e3};
+  simulation_control_parameters.time_step_independent_of_end_time      = true;
+  simulation_control_parameters.respect_capillary_time_step_constraint = false;
 
   Parameters::PostProcessing postprocessing_parameters;
   postprocessing_parameters.calculate_average_velocities        = true;

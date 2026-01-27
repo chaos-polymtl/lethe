@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -102,9 +102,9 @@ protected:
   /**
    * @brief Courant-Friedrich-Levy (CFL) condition value
    *
-   * Since the simulation control is unaware of the information propagation
-   * mechanism (for instance the velocity), the current CFL must be set by the
-   * solver itself using set_CFL().
+   * @remark Since the SimulationControl is unaware of the information
+   * propagation mechanism (for instance the velocity), the current CFL must be
+   * set by the solver itself using set_CFL().
    */
   double CFL;
 
@@ -115,6 +115,73 @@ protected:
    * time stepping or steady-state simulations, this parameter remains unused.
    */
   double max_CFL;
+
+  /**
+   * @brief Capillary time-step constraint for simulation time-stepping
+   *
+   * Time-step constraint for capillary-driven multiphase flows. The constraint
+   * is computed according to [1]:
+   * \f[
+   * \Delta t_\sigma = \sqrt{\frac{(\rho_0 + \rho_1) h^3}{2 \pi \sigma}}
+   * \f]
+   *
+   * with \f$ \sigma\f$ the surface tension coefficient, \f$ \rho_0\f$ and \f$
+   * \rho_1\f$ the densities of fluid 0 and 1 respectively, and \f$ h\f$ the
+   * smallest cell measure.
+   *
+   * @remark Since SimulationControl is unaware of the physical properties and
+   * cells dimensions, the current capillary time-step constraint must be set
+   * through SimulationControl::set_capillary_time_step_constraint.
+   *
+   * Reference:
+   *
+   * [1] F. Denner, F. Evrard, and B. van Wachem, “Breaching the capillary
+   * time-step constraint using a coupled VOF method with implicit surface
+   * tension,” J. Comput. Phys., vol. 459, p. 111128, Jun. 2022,
+   * doi: 10.1016/j.jcp.2022.111128
+   */
+  double capillary_time_step_constraint;
+
+  /**
+   * @brief The user inputted ratio between the time-step and the capillary
+   * time-step constraint (Δt/Δt_σ).
+   *
+   * When SimulationControl::respect_capillary_time_step_constraint is set to
+   * @p true, the time-step of the simulation should respect the following:
+   *
+   * \f[
+   * \Delta t \leq  N_\text{CTR} \, \Delta t_\sigma
+   * \f]
+   *
+   * with \f$ \Delta t \f$ the computed time-step, \f$ N_\text{CTR} \f$ the
+   * capillary time-step ratio, and \f$ \Delta t_\sigma \f$ the
+   * SimulationControl::capillary_time_step_constraint.
+   */
+  double target_capillary_time_step_ratio;
+
+  /**
+   * @brief Computed ratio between the current time-step and the capillary
+   * time-step constraint (Δt/Δt_σ).
+   */
+  double current_capillary_time_step_ratio;
+
+  /**
+   * @brief Enable adaptive time-stepping that respects the capillary time-step
+   * constraint.
+   *
+   * For capillary-driven multiphase flows, stability of the solved problem can
+   * be ensured by respecting the capillary time-step constraint [1].
+   * By default, this parameter is set to false and can only be used when
+   * simulating multiphase flows.
+   *
+   * Reference:
+   *
+   * [1] F. Denner, F. Evrard, and B. van Wachem, “Breaching the capillary
+   * time-step constraint using a coupled VOF method with implicit surface
+   * tension,” J. Comput. Phys., vol. 459, p. 111128, Jun. 2022,
+   * doi: 10.1016/j.jcp.2022.111128
+   */
+  bool respect_capillary_time_step_constraint;
 
   /// Current value of the norm of the right-hand side residual
   double residual;
@@ -460,6 +527,21 @@ public:
     CFL = p_CFL;
   }
 
+  /**
+   * @brief Set the value of the current capillary time-step constraint
+   *
+   * The solver computes and provides the current capillary time-step
+   * constraint to the SimulationControl for use in adaptive time-stepping.
+   *
+   * @param[in] p_capillary_time_step_constraint Value of the current capillary
+   * time-step constraint computed by the solver.
+   */
+  void
+  set_capillary_time_step_constraint(
+    const double p_capillary_time_step_constraint)
+  {
+    capillary_time_step_constraint = p_capillary_time_step_constraint;
+  }
 
   /**
    * @brief Manually force the value of the time step for the present iteration
@@ -477,8 +559,39 @@ public:
     Assert(
       time_step > 0,
       ExcMessage(
-        "You are trying to set a null or negative time-step in a SimulationControl. This is now allowed, we cannot go backward in time."));
+        "You are trying to set a null or negative time-step in a SimulationControl. This is not allowed, we cannot go backward in time."));
     time_step = new_time_step;
+  }
+
+  /**
+   * @brief Update initial time-step to respect the capillary time-step
+   * constraint. If the initial time-step is already below the capillary
+   * time-step, then we do not change it.
+   */
+  void
+  limit_initial_time_step_with_capillary_time_step_constraint()
+  {
+    double capillary_time_step =
+      capillary_time_step_constraint * target_capillary_time_step_ratio;
+    initial_time_step = std::min(initial_time_step, capillary_time_step);
+    set_current_time_step(initial_time_step);
+  }
+
+  /**
+   * @brief Set the current capillary time-step ratio (Δt/Δt_σ)
+   */
+  void
+  set_current_capillary_time_step_ratio()
+  {
+    AssertThrow(
+      capillary_time_step_constraint > 0,
+      ExcMessage(
+        "The current value of the capillary time-step constraint is set to a null or negative value.\n"
+        "This is not allowed. Make sure that the 'capillary_time_step_constraint' is computed and\n"
+        "that the parameter 'respect capillary time-step constraint' is set to 'true'."));
+
+    current_capillary_time_step_ratio =
+      time_step / capillary_time_step_constraint;
   }
 
   /**
@@ -603,6 +716,17 @@ public:
   get_CFL() const
   {
     return CFL;
+  }
+
+  /**
+   * @brief Get current capillary time-step ratio (Δt/Δt_σ)
+   *
+   * @return Current capillary time-step ratio (Δt/Δt_σ) value
+   */
+  double
+  get_current_capillary_time_step_ratio() const
+  {
+    return current_capillary_time_step_ratio;
   }
 
   /**

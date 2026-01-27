@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -60,7 +60,7 @@ test()
                            Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
                              0);
 
-  // Construct VOF subequtions interface object
+  // Construct VOF subequations interface object
   VOFSubequationsInterface<dim> subequations_interface(solver_parameters,
                                                        pcout,
                                                        tria,

@@ -1,0 +1,50 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       32
+   Number of degrees of freedom: 351
+   Volume of triangulation:      0.5
+   Number of VOF degrees of freedom: 45
+   Number of active cells:       110
+   Number of degrees of freedom: 1129
+   Volume of triangulation:      0.5
+   Number of VOF degrees of freedom: 135
+
+*********************************************************************************
+Transient iteration: 1        Time: 0.0133656 Time step: 0.0133656 CFL: 0       
+                                                                   CTR: 0.4     
+*********************************************************************************
+
+***********************************************************************************
+Transient iteration: 2        Time: 0.0354188 Time step: 0.0220532 CFL: 0.00318655
+                                                                   CTR: 0.66    
+***********************************************************************************
+   Number of active cells:       350
+   Number of degrees of freedom: 3455
+   Volume of triangulation:      0.5
+   Number of VOF degrees of freedom: 397
+
+**********************************************************************************
+Transient iteration: 3        Time: 0.0472324 Time step: 0.0118136 CFL: 0.0142999
+                                                                   CTR: 1       
+**********************************************************************************
+   Number of active cells:       1160
+   Number of degrees of freedom: 11057
+   Volume of triangulation:      0.5
+   Number of VOF degrees of freedom: 1247
+
+***********************************************************************************
+Transient iteration: 4        Time: 0.0514091 Time step: 0.00417674 CFL: 0.0127477
+                                                                    CTR: 1       
+***********************************************************************************
+   Number of active cells:       1226
+   Number of degrees of freedom: 11712
+   Volume of triangulation:      0.5
+   Number of VOF degrees of freedom: 1322
+
+************************************************************************************
+Transient iteration: 5        Time: 0.0555859 Time step: 0.00417674 CFL: 0.00408071
+                                                                    CTR: 1       
+************************************************************************************
+   Number of active cells:       1202
+   Number of degrees of freedom: 11445
+   Volume of triangulation:      0.5
+   Number of VOF degrees of freedom: 1291

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_utilities_h
@@ -474,6 +474,31 @@ announce_string(const ConditionalOStream &pcout,
   pcout << std::string(expression.size() + 1, delimiter) << std::endl;
 }
 
+/**
+ * @brief Prints an expression string surrounded from above and bottom with a
+ * lines of a specified @p delimiter character (by default, '-'). The length of
+ * the banner lines is the length of the string + 1 character.
+ *
+ * @param[in] pcout Parallel conditional output stream used to print the
+ * information
+ * @param[in] expression Expression string that will be printed
+ * @param[in] banner_size Length of the decorative banner lines
+ * @param[in] delimiter Characters composing the decorative lines of the banner.
+ * By default, '-' is used.
+ *
+ * @remark The overload of the function with @p banner_size is used for cases
+ * where the @p expression string is multiple lines long.
+ */
+inline void
+announce_string(const ConditionalOStream &pcout,
+                const std::string        &expression,
+                const unsigned int        banner_size,
+                const char                delimiter = '-')
+{
+  pcout << std::string(banner_size + 1, delimiter) << std::endl;
+  pcout << expression << std::endl;
+  pcout << std::string(banner_size + 1, delimiter) << std::endl;
+}
 /**
  * @brief Serializes a TableHandler to a file using Boost serialization.
  *

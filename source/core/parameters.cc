@@ -131,6 +131,16 @@ namespace Parameters
                         "1e6",
                         Patterns::Double(),
                         "Maximum time step value");
+      prm.declare_entry(
+        "respect capillary time-step constraint",
+        "false",
+        Patterns::Bool(),
+        "By setting to 'true', it ensures that the capillary time-step constraint is respected at the initial condition. To respect it throughout the simulation, it must be paired with an adaptive time-stepping simulation.");
+      prm.declare_entry(
+        "capillary time-step ratio",
+        "1.0",
+        Patterns::Double(0),
+        "The capillary time-step ratio (CTR) corresponds to the ratio of the time-step over capillary time-step constraint (Δt/Δt_σ)");
       prm.declare_entry("stop tolerance",
                         "1e-10",
                         Patterns::Double(),
@@ -258,8 +268,12 @@ namespace Parameters
       adapt    = prm.get_bool("adapt");
       time_step_independent_of_end_time =
         prm.get_bool("time step independent of end time");
-      maxCFL         = prm.get_double("max cfl");
-      max_dt         = prm.get_double("max time step");
+      maxCFL = prm.get_double("max cfl");
+      max_dt = prm.get_double("max time step");
+      respect_capillary_time_step_constraint =
+        prm.get_bool("respect capillary time-step constraint");
+      target_capillary_time_step_ratio =
+        prm.get_double("capillary time-step ratio");
       stop_tolerance = prm.get_double("stop tolerance");
       adaptative_time_step_scaling =
         prm.get_double("adaptative time step scaling");

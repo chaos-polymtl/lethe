@@ -1,0 +1,194 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+#-------------------------------------------------------------------------------
+# DESCRIPTION:
+# This test checks that the adaptive capillary time-step constraint is well
+# applied for cases with a capillary time-step ratio set to 10 (Δt/Δt_σ). The
+# mesh, the densities and the surface tension considered here remain constant.
+#-------------------------------------------------------------------------------
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method                                 = bdf2
+  set time end                               = 0.15
+  set time step                              = 0.15
+  set adapt                                  = true
+  set output name                            = vof-capillary-time-step-constraint-CTR-10
+  set output frequency                       = 0
+  set respect capillary time-step constraint = true
+  set capillary time-step ratio              = 10
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set VOF = true
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+
+subsection initial conditions
+  set type = nodal
+  subsection uvwp
+    set Function expression = 0; 0; 0
+  end
+  subsection VOF
+    set Function constants  = eps=1.5, hCell=0.01763, center=0, radius=0.25
+    set Function expression = 0.5 - 0.5*tanh((sqrt((x-center)*(x-center)+(y-center)*(y-center))-radius)/(2*eps*hCell))
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 2, 1 : -0.5, 0 : 0.5, 0.5 : false
+  set initial refinement = 5
+end
+
+#---------------------------------------------------
+# VOF
+#---------------------------------------------------
+
+subsection VOF
+  subsection interface regularization method
+    set type      = geometric interface reinitialization
+    set frequency = 1
+    subsection geometric interface reinitialization
+      set max reinitialization distance = 0.1587
+      set tanh thickness                = 0.05289
+      set transformation type           = tanh
+    end
+  end
+  subsection phase filtration
+    set type = tanh
+  end
+  subsection surface tension force
+    set enable                                   = true
+    set phase fraction gradient diffusion factor = 4
+    set curvature diffusion factor               = 1
+    set output auxiliary fields                  = true
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 2
+  subsection fluid 1
+    set density             = 10
+    set kinematic viscosity = 0.1
+  end
+  subsection fluid 0
+    set density             = 10
+    set kinematic viscosity = 0.1
+  end
+  set number of material interactions = 1
+  subsection material interaction 0
+    set type = fluid-fluid
+    subsection fluid-fluid interaction
+      set first fluid id              = 0
+      set second fluid id             = 1
+      set surface tension model       = constant
+      set surface tension coefficient = 1
+    end
+  end
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 1
+  subsection bc 0
+    set id   = 0
+    set type = noslip
+  end
+end
+
+subsection boundary conditions VOF
+  set number = 1
+end
+
+#---------------------------------------------------
+# Stabilization
+#---------------------------------------------------
+
+subsection stabilization
+  set vof dcdd stabilization = false
+end
+
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
+subsection post-processing
+  set calculate mass conservation = false
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity order = 2
+  set pressure order = 1
+  set VOF order      = 1
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection VOF
+    set tolerance      = 1e-9
+    set max iterations = 20
+    set verbosity      = quiet
+  end
+  subsection fluid dynamics
+    set tolerance      = 1e-9
+    set max iterations = 20
+    set verbosity      = quiet
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity         = quiet
+    set method            = gmres
+    set relative residual = 1e-3
+    set minimum residual  = 1e-10
+    set preconditioner    = ilu
+  end
+  subsection VOF
+    set verbosity         = quiet
+    set method            = gmres
+    set relative residual = 1e-3
+    set minimum residual  = 1e-10
+    set preconditioner    = ilu
+  end
+end

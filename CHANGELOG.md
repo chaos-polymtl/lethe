@@ -4,8 +4,18 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Master] - 2026-01-26
+## [Master] - 2026/01/26
 
+### Added
+
+- MINOR This PR adds the option to set a simulation initial time-step that respects the capillary time-step constraint through enabling (setting to `true`) the parameter `respect capillary time-step constraint` ($\Delta t_\sigma$) in the `simulation control` subsection. This constraint is especially useful when simulating capillary flows. With the parameter `capillary time-step ratio` ($N_\text{CTR}$), users can specify a multiple of the default capillary time-step constraint as defined by [1]. By default, the $N_\text{CTR}$ is set to 1. A $N_\text{CTR}$ value < 1 can improve stability for highly dynamic cases, and using a $N_\text{CTR}$ value > 1 can lead to a significant decrease in computation time in some cases. 
+
+  Additionally, when `respect capillary time-step constraint` is  paired with `adapt` (for adaptive time-stepping), the time-step will be dynamically updated to respect the capillary time-step ($N_\text{CTR} \times \Delta t_\sigma $) at every time-step. A warning message is printed on the console when `adapt` is disabled to inform the user that the capillary time-step constraint might not be respected if either of the mesh cell size, the densities or the surface tension coefficient evolves dynamically.
+
+  Finally, a new overload of the `announce_string` function has also been added to allow multiple line banners. [#1886](https://github.com/chaos-polymtl/lethe/pull/1886)
+
+  [1] F. Denner, F. Evrard, and B. van Wachem “Breaching the capillary
+  time-step constraint using a coupled VOF method with implicit surface tension,” J. Comput. Phys., vol. 459, p. 111128, Jun. 2022, doi: 10.1016/j.jcp.2022.111128
 - MINOR This PR is a follow-up for the time harmonic electromagnetic auxiliary physics rudimentary implementation #1852. It links its physical material properties #1862 to the assembly, creates the waveguide port boundary conditions, update previous application tests related to the physics and add a new one for a dissipative medium. It also removes .prm in the examples/multiphysics/waveguide as this example will come in a follow up PR. [#1882](https://github.com/chaos-polymtl/lethe/pull/1882) 
 
 ## [Master] - 2026-01-23

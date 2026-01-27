@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /*
@@ -110,6 +110,25 @@ namespace Parameters
     // Max time step
     double max_dt;
 
+    /**
+     * Boolean indicating if the capillary time-step constraint should be
+     * controlling the simulation time-step
+     *
+     * @remark By default, this is set to @p false.
+     */
+    bool respect_capillary_time_step_constraint;
+
+    /**
+     * The capillary time-step ratio (CTR) corresponds to the imposed value for
+     * the ratio between the time-step and the capillary time-step constraint
+     * (Δt/Δt_σ) to be respected when
+     * SimulationControl::respect_capillary_time_step_constraint
+     * is set to @p true.
+     *
+     * @remark By default, this is set to 1.
+     */
+    double target_capillary_time_step_ratio;
+
     // Aimed tolerance at which simulation is stopped
     double stop_tolerance;
 
@@ -119,7 +138,7 @@ namespace Parameters
     // BDF startup time scaling
     double startup_timestep_scaling;
 
-    // True if the time-step should be overriden upon restart
+    // True if the time-step should be overridden upon restart
     bool override_time_step_on_restart;
 
     // Number of mesh adaptation (steady simulations)
