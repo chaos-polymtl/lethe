@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -2092,9 +2092,7 @@ NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar_operators()
       this->zero_constraints,
       this->mortar_coupling_evaluator,
       this->mortar_manager,
-      this->simulation_parameters.mortar_parameters.rotor_boundary_id,
-      this->simulation_parameters.mortar_parameters.stator_boundary_id,
-      this->simulation_parameters.mortar_parameters.sip_factor);
+      this->simulation_parameters.mortar_parameters);
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -2140,10 +2138,7 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_rotor_mapping(
     *this->dof_handler,
     *this->mapping_cache,
     *this->mapping,
-    std::get<1>(compute_n_subdivisions_and_radius(
-      *this->triangulation,
-      *this->mapping,
-      this->simulation_parameters.mortar_parameters))[0],
+    this->mortar_interface_radius,
     rotation_angle,
     this->simulation_parameters.mortar_parameters.center_of_rotation,
     this->simulation_parameters.mortar_parameters.rotation_axis);

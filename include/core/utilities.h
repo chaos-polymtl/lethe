@@ -978,19 +978,19 @@ point_to_angle(const Point<dim> &point,
 
 /**
  * @brief Converts radius to point in cartesian coordinates (in the x-y plane)
- * @param[in] radius Radial distance.
- * @param[in] rad Angle (in radians).
+ * @param[in] radius Radial distance
+ * @param[in] angle_rad Angle (in radians)
  *
- * @return point Point cartesian coordinates
+ * @return point Point in cartesian coordinates
  */
 template <int dim>
 inline Point<dim>
-radius_to_point(const double radius, const double rad)
+radius_to_point(const double radius, const double angle_rad)
 {
   Point<dim> point;
 
-  point[0] = radius * std::cos(rad);
-  point[1] = radius * std::sin(rad);
+  point[0] = radius * std::cos(angle_rad);
+  point[1] = radius * std::sin(angle_rad);
 
   return point;
 }

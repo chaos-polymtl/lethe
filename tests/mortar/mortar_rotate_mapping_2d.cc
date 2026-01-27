@@ -99,16 +99,17 @@ test()
   dof_handler.distribute_dofs(fe);
 
   // Number of subdivisions and rotor radius
-  const auto [n_subdivisions, radius, prerotation] =
-    compute_n_subdivisions_and_radius(triangulation,
-                                      mapping,
-                                      mortar_parameters);
+  const auto [n_subdivisions, interface_dimensions, prerotation] =
+    compute_interface_parameters(triangulation, mapping, mortar_parameters);
 
   Assert(prerotation == 0.0, ExcInternalError());
 
   // Rotate mapping
-  LetheGridTools::rotate_mapping(
-    dof_handler, mapping_cache, mapping, radius[0], rotation_angle);
+  LetheGridTools::rotate_mapping(dof_handler,
+                                 mapping_cache,
+                                 mapping,
+                                 interface_dimensions[0],
+                                 rotation_angle);
 
   // Print information
   if (Utilities::MPI::this_mpi_process(comm) == 0)
@@ -116,19 +117,22 @@ test()
       deallog << "Rotation angle (rad) : " << rotation_angle << std::endl;
       deallog << "Number of subdivisions at interface : " << n_subdivisions[0]
               << std::endl;
-      deallog << "Radius : " << radius[0] << std::endl;
+      deallog << "Radius : " << interface_dimensions[0] << std::endl;
     }
   // Rotate mapping
-  LetheGridTools::rotate_mapping(
-    dof_handler, mapping_cache, mapping, radius[0] * 10, rotation_angle);
+  LetheGridTools::rotate_mapping(dof_handler,
+                                 mapping_cache,
+                                 mapping,
+                                 interface_dimensions[0] * 10,
+                                 rotation_angle);
 
   const auto [n_subdivisions1, radius1, prerotation1] =
-    compute_n_subdivisions_and_radius(triangulation,
-                                      mapping_cache,
-                                      mortar_parameters);
+    compute_interface_parameters(triangulation,
+                                 mapping_cache,
+                                 mortar_parameters);
 
   AssertDimension(n_subdivisions[0], n_subdivisions1[0]);
-  AssertDimension(radius[0], radius[0]);
+  AssertDimension(interface_dimensions[0], interface_dimensions[0]);
   Assert(std::abs(rotation_angle - prerotation1) < 1.e-8, ExcInternalError());
 }
 

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -846,7 +846,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
   if (this->simulation_parameters.mortar_parameters.enable)
     scratch_data.reinit_mortar(cell,
                                this->simulation_parameters.mortar_parameters,
-                               this->mortar_manager->radius[0]);
+                               this->mortar_manager->interface_dimensions[0]);
 
   scratch_data.calculate_physical_properties();
 
@@ -1081,7 +1081,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_rhs(
   if (this->simulation_parameters.mortar_parameters.enable)
     scratch_data.reinit_mortar(cell,
                                this->simulation_parameters.mortar_parameters,
-                               this->mortar_manager->radius[0]);
+                               this->mortar_manager->interface_dimensions[0]);
 
   scratch_data.calculate_physical_properties();
 
@@ -1480,7 +1480,7 @@ template <int dim>
 void
 FluidDynamicsMatrixBased<dim>::setup_AMG()
 {
-  TimerOutput::Scope t(this->computing_timer, "setup_AMG");
+  TimerOutput::Scope t(this->computing_timer, "Setup AMG");
 
   // Constant modes for velocity
   std::vector<std::vector<bool>> constant_modes;
@@ -2093,6 +2093,11 @@ FluidDynamicsMatrixBased<dim>::solve()
         this->simulation_parameters.restart_parameters.restart,
         this->simulation_parameters.boundary_conditions,
         this->simulation_parameters.mortar_parameters);
+      // Compute rotor-stator interface radius
+      this->mortar_interface_radius = std::get<1>(compute_interface_parameters(
+        *this->triangulation,
+        *this->mapping,
+        this->simulation_parameters.mortar_parameters))[0];
       // Create and initialize mapping cache
       this->mapping_cache =
         std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);

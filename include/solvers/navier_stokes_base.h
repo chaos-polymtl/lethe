@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_navier_stokes_base_h
@@ -1045,6 +1045,7 @@ protected:
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
 
   // Mortar coupling manager and operator
+  double                                         mortar_interface_radius;
   std::shared_ptr<MortarManagerCircle<dim>>      mortar_manager;
   std::shared_ptr<CouplingOperator<dim, double>> mortar_coupling_operator;
   std::shared_ptr<NavierStokesCouplingEvaluation<dim, double>>

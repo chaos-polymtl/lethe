@@ -47,13 +47,10 @@ MortarManagerBase<dim>::get_n_total_mortars() const
     n_total_subdivisions *= n_subdivisions[1];
 
   if (this->is_mesh_aligned()) // aligned
-    {
-      return n_total_subdivisions;
-    }
+    return n_total_subdivisions;
+
   else // inside/outside
-    {
-      return 2 * n_total_subdivisions;
-    }
+    return 2 * n_total_subdivisions;
 }
 
 template <int dim>
@@ -64,13 +61,10 @@ MortarManagerBase<dim>::get_n_mortars() const
     return 1;
 
   if (this->is_mesh_aligned()) // aligned
-    {
-      return 1;
-    }
+    return 1;
+
   else // inside/outside
-    {
-      return 2;
-    }
+    return 2;
 }
 
 template <int dim>
@@ -166,7 +160,7 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
   double       delta_1 = 1.0;
 
   if constexpr (dim == 3)
-    delta_1 = radius[1] / n_subdivisions[1];
+    delta_1 = interface_dimensions[1] / n_subdivisions[1];
 
   if (type == 0) // aligned
     {
@@ -326,7 +320,7 @@ MortarManagerBase<dim>::get_weights(const Point<dim> &face_center,
   double       delta_1 = 1.0;
 
   if (dim == 3)
-    delta_1 = radius[1] / n_subdivisions[1];
+    delta_1 = interface_dimensions[1] / n_subdivisions[1];
 
   if (type == 0) // aligned
     {
@@ -334,8 +328,8 @@ MortarManagerBase<dim>::get_weights(const Point<dim> &face_center,
       weights.reserve(n_quadrature_points);
 
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
-        weights.emplace_back(radius[0] * quadrature.weight(q) * delta_0 *
-                             delta_1);
+        weights.emplace_back(interface_dimensions[0] * quadrature.weight(q) *
+                             delta_0 * delta_1);
 
       return weights;
     }
@@ -363,11 +357,11 @@ MortarManagerBase<dim>::get_weights(const Point<dim> &face_center,
       weights.reserve(2 * n_quadrature_points);
 
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
-        weights.emplace_back(radius[0] * quadrature.weight(q) *
+        weights.emplace_back(interface_dimensions[0] * quadrature.weight(q) *
                              (rad_1 - rad_0) * delta_1);
 
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
-        weights.emplace_back(radius[0] * quadrature.weight(q) *
+        weights.emplace_back(interface_dimensions[0] * quadrature.weight(q) *
                              (rad_2 - rad_1) * delta_1);
 
       return weights;
@@ -417,7 +411,7 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center,
 
   if constexpr (dim == 3)
     {
-      const double delta_1 = radius[1] / n_subdivisions[1];
+      const double delta_1 = interface_dimensions[1] / n_subdivisions[1];
       id_out_plane         = static_cast<unsigned int>(
         std::round((face_center[2] - delta_1 / 2) / delta_1));
     }
@@ -449,10 +443,9 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center,
 /*-------------- Auxiliary Functions -------------------------------*/
 template <int dim>
 std::tuple<std::vector<unsigned int>, std::vector<double>, double>
-compute_n_subdivisions_and_radius(
-  const Triangulation<dim>      &triangulation,
-  const Mapping<dim>            &mapping,
-  const Parameters::Mortar<dim> &mortar_parameters)
+compute_interface_parameters(const Triangulation<dim>      &triangulation,
+                             const Mapping<dim>            &mapping,
+                             const Parameters::Mortar<dim> &mortar_parameters)
 {
   // Number of subdivisions per process
   unsigned int n_subdivisions_local = 0;
@@ -553,9 +546,7 @@ compute_n_subdivisions_and_radius(
                             n_subdivisions_plane_local++;
                         }
                       else
-                        {
-                          n_subdivisions_plane_local++;
-                        }
+                        n_subdivisions_plane_local++;
 
                       const auto vertices = mapping.get_vertices(cell, face_no);
 
@@ -678,9 +669,10 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
 /*-------------- MortarManagerCircle -------------------------------*/
 template <int dim>
 Point<dim>
-MortarManagerCircle<dim>::from_1D(const double radiant) const
+MortarManagerCircle<dim>::from_1D(const double angle_rad) const
 {
-  return radius_to_point<dim>(this->radius[0], radiant + pre_rotation_angle);
+  return radius_to_point<dim>(this->interface_dimensions[0],
+                              angle_rad + this->pre_rotation_angle);
 }
 
 template <int dim>
@@ -688,7 +680,7 @@ double
 MortarManagerCircle<dim>::to_1D(const Point<dim> &point) const
 {
   return std::fmod(point_to_angle(point, this->center_of_rotation) -
-                     pre_rotation_angle + 2 * numbers::PI,
+                     this->pre_rotation_angle + 2 * numbers::PI,
                    2 * numbers::PI);
 }
 
@@ -709,13 +701,11 @@ CouplingOperator<dim, Number>::CouplingOperator(
   const AffineConstraints<Number>                           &constraints,
   const std::shared_ptr<CouplingEvaluationBase<dim, Number>> evaluator,
   const std::shared_ptr<MortarManagerBase<dim>>              mortar_manager,
-  const unsigned int                                         bid_m,
-  const unsigned int                                         bid_p,
-  const double                                               sip_factor)
+  const Parameters::Mortar<dim>                             &mortar_parameters)
   : mapping(mapping)
   , dof_handler(dof_handler)
-  , bid_m(bid_m)
-  , bid_p(bid_p)
+  , bid_m(mortar_parameters.rotor_boundary_id)
+  , bid_p(mortar_parameters.stator_boundary_id)
   , evaluator(evaluator)
   , mortar_manager(mortar_manager)
 {
@@ -723,8 +713,8 @@ CouplingOperator<dim, Number>::CouplingOperator(
   this->relevant_dof_indices = evaluator->get_relevant_dof_indices();
   this->n_dofs_per_cell      = this->relevant_dof_indices.size();
 
-  data.penalty_factor =
-    compute_penalty_factor(dof_handler.get_fe().degree, sip_factor);
+  data.penalty_factor = compute_penalty_factor(dof_handler.get_fe().degree,
+                                               mortar_parameters.sip_factor);
 
   // Number of cells
   const unsigned int n_sub_cells = mortar_manager->get_n_total_mortars();
@@ -1481,139 +1471,6 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
 }
 
 
-/*-------------- CouplingEvaluationSIPG -------------------------------*/
-template <int dim, int n_components, typename Number>
-CouplingEvaluationSIPG<dim, n_components, Number>::CouplingEvaluationSIPG(
-  const Mapping<dim>    &mapping,
-  const DoFHandler<dim> &dof_handler,
-  const unsigned int     first_selected_component)
-  : fe_sub(dof_handler.get_fe().base_element(
-             dof_handler.get_fe()
-               .component_to_base_index(first_selected_component)
-               .first),
-           n_components)
-  , phi_m(mapping, fe_sub, update_values | update_gradients)
-{
-  for (unsigned int i = 0; i < dof_handler.get_fe().n_dofs_per_cell(); ++i)
-    if ((first_selected_component <=
-         dof_handler.get_fe().system_to_component_index(i).first) &&
-        (dof_handler.get_fe().system_to_component_index(i).first <
-         first_selected_component + n_components))
-      relevant_dof_indices.push_back(i);
-}
-
-template <int dim, int n_components, typename Number>
-unsigned int
-CouplingEvaluationSIPG<dim, n_components, Number>::data_size() const
-{
-  return n_components * 2;
-}
-
-template <int dim, int n_components, typename Number>
-const std::vector<unsigned int> &
-CouplingEvaluationSIPG<dim, n_components, Number>::get_relevant_dof_indices()
-  const
-{
-  return relevant_dof_indices;
-}
-
-template <int dim, int n_components, typename Number>
-void
-CouplingEvaluationSIPG<dim, n_components, Number>::local_reinit(
-  const typename Triangulation<dim>::cell_iterator &cell,
-  const ArrayView<const Point<dim, Number>>        &points) const
-{
-  this->phi_m.reinit(cell, points);
-}
-
-template <int dim, int n_components, typename Number>
-void
-CouplingEvaluationSIPG<dim, n_components, Number>::local_evaluate(
-  const CouplingEvaluationData<dim, Number> &data,
-  const Vector<Number>                      &buffer,
-  const unsigned int                         ptr_q,
-  const unsigned int                         q_stride,
-  Number                                    *all_values_m) const
-{
-  this->phi_m.evaluate(buffer,
-                       EvaluationFlags::values | EvaluationFlags::gradients);
-
-  for (const auto q : this->phi_m.quadrature_point_indices())
-    {
-      // Quadrature point index ('global' index within the rotor-stator
-      // interface)
-      const unsigned int q_index = ptr_q + q;
-
-      // Normal, value, and gradient referring to the quadrature point
-      const auto normal     = data.all_normals[q_index];
-      const auto value_m    = this->phi_m.get_value(q);
-      const auto gradient_m = contract(this->phi_m.get_gradient(q), normal);
-
-      // Initialize buffer for 'negative' side of the interface (i.e. rotor),
-      // where information is evaluated
-      BufferRW<Number> buffer_m(all_values_m, q * 2 * n_components * q_stride);
-      // Store values and gradients at the created buffer
-      buffer_m.write(value_m);
-      buffer_m.write(gradient_m);
-    }
-}
-
-template <int dim, int n_components, typename Number>
-void
-CouplingEvaluationSIPG<dim, n_components, Number>::local_integrate(
-  const CouplingEvaluationData<dim, Number> &data,
-  Vector<Number>                            &buffer,
-  const unsigned int                         ptr_q,
-  const unsigned int                         q_stride,
-  Number                                    *all_values_m,
-  Number                                    *all_values_p) const
-{
-  for (const auto q : this->phi_m.quadrature_point_indices())
-    {
-      const unsigned int q_index = ptr_q + q;
-      // Initialize buffer for both 'mortar' and 'non-mortar' sides of the
-      // interface
-      BufferRW<Number> buffer_m(all_values_m, q * 2 * n_components * q_stride);
-      BufferRW<Number> buffer_p(all_values_p, q * 2 * n_components * q_stride);
-      // Read shape functions values and gradients stored in the buffer
-      const auto value_m           = buffer_m.template read<value_type>();
-      const auto value_p           = buffer_p.template read<value_type>();
-      const auto normal_gradient_m = buffer_m.template read<value_type>();
-      const auto normal_gradient_p = buffer_p.template read<value_type>();
-
-      const auto JxW               = data.all_weights[q_index];
-      const auto penalty_parameter = data.all_penalty_parameter[q_index];
-      const auto normal            = data.all_normals[q_index];
-
-      // The expression for the jump on the mortar interface is
-      // jump(u) = u_m * normal_m + u_p * normal_p. Since we are accessing only
-      // the value of normal_m, we use a minus sign here because normal_p = -
-      // normal_m
-      const auto value_jump = outer((value_m - value_p), normal);
-
-      // The expression for the average on the mortar interface is
-      // avg(∇u).n = (∇u_m.normal_m + ∇u_p.normal_p) * 0.5. For the same reason
-      // above, we include the negative sign here
-      const auto gradient_normal_avg =
-        (normal_gradient_m - normal_gradient_p) * 0.5;
-
-      // SIPG penalty parameter
-      const double sigma = penalty_parameter * data.penalty_factor;
-
-      // - (n avg(∇v), jump(u))
-      this->phi_m.submit_gradient(-value_jump * 0.5 * JxW, q);
-
-      // + (jump(v), σ jump(u) - avg(∇u) n)
-      this->phi_m.submit_value(
-        (contract(value_jump, normal) * sigma - gradient_normal_avg) * JxW, q);
-    }
-  // Multiply previous terms by respective test functions values/gradients
-  this->phi_m.test_and_sum(buffer,
-                           EvaluationFlags::values |
-                             EvaluationFlags::gradients);
-}
-
-
 /*----------- NavierStokesCouplingEvaluation -------------------------*/
 
 template <int dim, typename Number>
@@ -1866,29 +1723,18 @@ template void
 CouplingOperator<3, double>::add_diagonal_entries(
   LinearAlgebra::distributed::Vector<float> &) const;
 
-template class CouplingEvaluationSIPG<1, 1, double>;
-template class CouplingEvaluationSIPG<1, 2, double>;
-template class CouplingEvaluationSIPG<2, 1, double>;
-template class CouplingEvaluationSIPG<2, 2, double>;
-template class CouplingEvaluationSIPG<2, 3, double>;
-template class CouplingEvaluationSIPG<3, 1, double>;
-template class CouplingEvaluationSIPG<3, 3, double>;
-template class CouplingEvaluationSIPG<3, 4, double>;
-
 template class NavierStokesCouplingEvaluation<2, double>;
 template class NavierStokesCouplingEvaluation<3, double>;
 
 template std::tuple<std::vector<unsigned int>, std::vector<double>, double>
-compute_n_subdivisions_and_radius<2>(
-  const Triangulation<2>      &triangulation,
-  const Mapping<2>            &mapping,
-  const Parameters::Mortar<2> &mortar_parameters);
+compute_interface_parameters<2>(const Triangulation<2>      &triangulation,
+                                const Mapping<2>            &mapping,
+                                const Parameters::Mortar<2> &mortar_parameters);
 
 template std::tuple<std::vector<unsigned int>, std::vector<double>, double>
-compute_n_subdivisions_and_radius<3>(
-  const Triangulation<3>      &triangulation,
-  const Mapping<3>            &mapping,
-  const Parameters::Mortar<3> &mortar_parameters);
+compute_interface_parameters<3>(const Triangulation<3>      &triangulation,
+                                const Mapping<3>            &mapping,
+                                const Parameters::Mortar<3> &mortar_parameters);
 
 template Quadrature<2>
 construct_quadrature(const Quadrature<2>         &quadrature,

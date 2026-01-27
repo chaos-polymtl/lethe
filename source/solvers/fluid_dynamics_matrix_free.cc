@@ -1660,11 +1660,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                   level_constraint,
                   this->mg_operators[level]->mortar_coupling_evaluator_mf,
                   this->mg_operators[level]->mortar_manager_mf,
-                  this->simulation_parameters.mortar_parameters
-                    .rotor_boundary_id,
-                  this->simulation_parameters.mortar_parameters
-                    .stator_boundary_id,
-                  this->simulation_parameters.mortar_parameters.sip_factor);
+                  this->simulation_parameters.mortar_parameters);
 
               this->mg_setup_timer.leave_subsection("Set up mortar operators");
             }
@@ -2454,7 +2450,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
              ->get_system_matrix_free()
              .get_mapping_info()
              .mapping,
-          this->mg_operators[level]->mortar_manager_mf->radius[0],
+          this->mg_operators[level]->mortar_manager_mf->interface_dimensions[0],
           this->simulation_parameters.mortar_parameters.center_of_rotation,
           this->simulation_parameters.mortar_parameters.rotor_angular_velocity);
 
@@ -2693,6 +2689,11 @@ FluidDynamicsMatrixFree<dim>::solve()
         this->simulation_parameters.restart_parameters.restart,
         this->simulation_parameters.boundary_conditions,
         this->simulation_parameters.mortar_parameters);
+      // Compute rotor-stator interface radius
+      this->mortar_interface_radius = std::get<1>(compute_interface_parameters(
+        *this->triangulation,
+        *this->mapping,
+        this->simulation_parameters.mortar_parameters))[0];
       // Create and initialize mapping cache
       this->mapping_cache =
         std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
@@ -3021,9 +3022,7 @@ FluidDynamicsMatrixFree<dim>::reinit_mortar_operators_mf()
       this->zero_constraints,
       this->system_operator->mortar_coupling_evaluator_mf,
       this->system_operator->mortar_manager_mf,
-      this->simulation_parameters.mortar_parameters.rotor_boundary_id,
-      this->simulation_parameters.mortar_parameters.stator_boundary_id,
-      this->simulation_parameters.mortar_parameters.sip_factor);
+      this->simulation_parameters.mortar_parameters);
 }
 
 template <int dim>
@@ -3179,7 +3178,7 @@ FluidDynamicsMatrixFree<dim>::assemble_system_rhs()
   if (this->simulation_parameters.mortar_parameters.enable)
     this->system_operator->evaluate_velocity_ale(
       *this->get_mapping(),
-      this->system_operator->mortar_manager_mf->radius[0],
+      this->system_operator->mortar_manager_mf->interface_dimensions[0],
       this->simulation_parameters.mortar_parameters.center_of_rotation,
       this->simulation_parameters.mortar_parameters.rotor_angular_velocity);
 
@@ -3502,7 +3501,7 @@ FluidDynamicsMatrixFree<dim>::setup_preconditioner()
   if (this->simulation_parameters.mortar_parameters.enable)
     this->system_operator->evaluate_velocity_ale(
       *this->get_mapping(),
-      this->system_operator->mortar_manager_mf->radius[0],
+      this->system_operator->mortar_manager_mf->interface_dimensions[0],
       this->simulation_parameters.mortar_parameters.center_of_rotation,
       this->simulation_parameters.mortar_parameters.rotor_angular_velocity);
 

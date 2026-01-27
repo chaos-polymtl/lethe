@@ -4,6 +4,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/01/27
+
+### Changed
+
+- MINOR After PR #1887, some constructors in `mortar_coupling_manager.h` became obsolete. The refactoring in this PR removes these unused constructors, adds some missing functions descriptions, and renames some functions/variables to improve readability. Lastly, the function `compute_n_subdivisions_and_radius` (now named `compute_interface_parameters`) was redundantly being called 4 times every iteration. This PR also addresses this by calling such function only once per iteration. [#1891](https://github.com/chaos-polymtl/lethe/pull/1891)
+
 ## [Master] - 2026/01/26
 
 ### Added
