@@ -39,13 +39,14 @@ test()
   Parameters::SimulationControl simulation_control_parameters;
   simulation_control_parameters.method =
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
-  simulation_control_parameters.dt                                     = 0.1;
-  simulation_control_parameters.time_end                               = 1.0;
-  simulation_control_parameters.adapt                                  = true;
-  simulation_control_parameters.adaptative_time_step_scaling           = 0.99;
-  simulation_control_parameters.max_dt                                 = 1e6;
-  simulation_control_parameters.time_step_independent_of_end_time      = true;
-  simulation_control_parameters.respect_capillary_time_step_constraint = false;
+  simulation_control_parameters.dt                                   = 0.1;
+  simulation_control_parameters.time_end                             = 1.0;
+  simulation_control_parameters.adapt                                = true;
+  simulation_control_parameters.adapt_with_cfl                       = true;
+  simulation_control_parameters.adaptative_time_step_scaling         = 0.99;
+  simulation_control_parameters.max_dt                               = 1e6;
+  simulation_control_parameters.time_step_independent_of_end_time    = true;
+  simulation_control_parameters.adapt_with_capillary_time_step_ratio = false;
 
   Parameters::PostProcessing postprocessing_parameters;
   postprocessing_parameters.calculate_average_velocities        = true;

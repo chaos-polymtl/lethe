@@ -146,7 +146,7 @@ protected:
    * @brief The user inputted ratio between the time-step and the capillary
    * time-step constraint (Δt/Δt_σ).
    *
-   * When SimulationControl::respect_capillary_time_step_constraint is set to
+   * When SimulationControl::adapt_with_capillary_time_step_ratio is set to
    * @p true, the time-step of the simulation should respect the following:
    *
    * \f[
@@ -157,7 +157,7 @@ protected:
    * capillary time-step ratio, and \f$ \Delta t_\sigma \f$ the
    * SimulationControl::capillary_time_step_constraint.
    */
-  double target_capillary_time_step_ratio;
+  double max_capillary_time_step_ratio;
 
   /**
    * @brief Computed ratio between the current time-step and the capillary
@@ -181,7 +181,7 @@ protected:
    * tension,” J. Comput. Phys., vol. 459, p. 111128, Jun. 2022,
    * doi: 10.1016/j.jcp.2022.111128
    */
-  bool respect_capillary_time_step_constraint;
+  bool adapt_with_capillary_time_step_ratio;
 
   /// Current value of the norm of the right-hand side residual
   double residual;
@@ -572,7 +572,7 @@ public:
   limit_initial_time_step_with_capillary_time_step_constraint()
   {
     double capillary_time_step =
-      capillary_time_step_constraint * target_capillary_time_step_ratio;
+      capillary_time_step_constraint * max_capillary_time_step_ratio;
     initial_time_step = std::min(initial_time_step, capillary_time_step);
     set_current_time_step(initial_time_step);
   }
@@ -588,7 +588,7 @@ public:
       ExcMessage(
         "The current value of the capillary time-step constraint is set to a null or negative value.\n"
         "This is not allowed. Make sure that the 'capillary_time_step_constraint' is computed and\n"
-        "that the parameter 'respect capillary time-step constraint' is set to 'true'."));
+        "that the parameter 'adapt time-step to respect CTR' is set to 'true'."));
 
     current_capillary_time_step_ratio =
       time_step / capillary_time_step_constraint;
@@ -904,8 +904,18 @@ public:
 class SimulationControlTransient : public SimulationControl
 {
 protected:
-  /// Enable adaptive time stepping
+  /**
+   * Boolean indicating if adaptive time-stepping is enabled.
+   * To enable it, either SimulationControl::adapt_with_cfl or
+   * SimulationControl::adapt_with_capillary_time_step_ratio.
+   */
   bool adapt;
+
+  /**
+   * Boolean indicating if the CFL condition should be controlling the
+   * simulation time-step.
+   */
+  bool adapt_with_cfl;
 
   /**
    * @brief Time step scaling factor for adaptive time stepping

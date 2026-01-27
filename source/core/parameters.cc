@@ -105,10 +105,11 @@ namespace Parameters
                         Patterns::Double(),
                         "Scaling factor used in the iterations necessary to "
                         "start-up the BDF schemes.");
-      prm.declare_entry("adapt",
-                        "false",
-                        Patterns::Bool(),
-                        "Adaptative time-stepping <true|false>");
+      prm.declare_entry(
+        "adapt time-step to respect CFL",
+        "false",
+        Patterns::Bool(),
+        "Adapt time-step to respect the maximum CFL condition. When multiple conditions are applied to the time-step, this ensures that the CFL condition is also respected (Δt ≤ Δt_{CFL}). <true|false>");
       prm.declare_entry(
         "override time step on restart",
         "false",
@@ -132,12 +133,12 @@ namespace Parameters
                         Patterns::Double(),
                         "Maximum time step value");
       prm.declare_entry(
-        "respect capillary time-step constraint",
+        "adapt time-step to respect CTR",
         "false",
         Patterns::Bool(),
-        "By setting to 'true', it ensures that the capillary time-step constraint is respected at the initial condition. To respect it throughout the simulation, it must be paired with an adaptive time-stepping simulation.");
+        "By setting to 'true', it ensures that the imposed maximum capillary time-step ratio (CTR) is respected throughout the simulation (Δt ≤ Δt_{CTR}). <true|false>");
       prm.declare_entry(
-        "capillary time-step ratio",
+        "max capillary time-step ratio",
         "1.0",
         Patterns::Double(0),
         "The capillary time-step ratio (CTR) corresponds to the ratio of the time-step over capillary time-step constraint (Δt/Δt_σ)");
@@ -263,17 +264,17 @@ namespace Parameters
         {
           AssertThrow(false, ExcMessage("Invalid output control scheme"));
         }
-      dt       = prm.get_double("time step");
-      time_end = prm.get_double("time end");
-      adapt    = prm.get_bool("adapt");
+      dt             = prm.get_double("time step");
+      time_end       = prm.get_double("time end");
+      adapt_with_cfl = prm.get_bool("adapt time-step to respect CFL");
       time_step_independent_of_end_time =
         prm.get_bool("time step independent of end time");
       maxCFL = prm.get_double("max cfl");
       max_dt = prm.get_double("max time step");
-      respect_capillary_time_step_constraint =
-        prm.get_bool("respect capillary time-step constraint");
-      target_capillary_time_step_ratio =
-        prm.get_double("capillary time-step ratio");
+      adapt_with_capillary_time_step_ratio =
+        prm.get_bool("adapt time-step to respect CTR");
+      max_capillary_time_step_ratio =
+        prm.get_double("max capillary time-step ratio");
       stop_tolerance = prm.get_double("stop tolerance");
       adaptative_time_step_scaling =
         prm.get_double("adaptative time step scaling");
@@ -297,6 +298,7 @@ namespace Parameters
       group_files   = prm.get_integer("group files");
       log_frequency = prm.get_integer("log frequency");
       log_precision = prm.get_integer("log precision");
+      adapt         = adapt_with_cfl || adapt_with_capillary_time_step_ratio;
     }
     prm.leave_subsection();
   } // namespace Parameters
