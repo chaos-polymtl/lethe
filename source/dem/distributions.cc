@@ -627,12 +627,14 @@ CustomDistribution::CustomDistribution(
             }
 
           // Normalized
+
           number_based_cdf[0] = number_based_pdf[0] / n_tot;
           for (unsigned int i = 1; i < n_diameter_values; ++i)
             {
               number_based_cdf[i] =
                 number_based_cdf[i - 1] + number_based_pdf[i] / n_tot;
             }
+          std::cout<<number_based_cdf[0] << " " << number_based_cdf[1] << std::endl;
         }
     }
 }
@@ -647,22 +649,21 @@ CustomDistribution::particle_size_sampling(
   // We sample a random number U between [0, CDF_max]
   // CDF_max is 1.0, but using .back() is safer for floating point precision.
   std::uniform_real_distribution<> dis(0.0, number_based_cdf.back() - 1e-12);
-
-  for (unsigned int i = 0; i < number_of_particles; ++i)
+  if (interpolate_diameter_values)
     {
-      // Number between 0. and 1.
-      const double u_global = dis(gen);
-
-      // Find the first element in the CDF strictly greater than our random
-      // number u_global. 'it' will point to the upper bound of the bin (node
-      // i+1).
-      auto it = std::ranges::upper_bound(number_based_cdf, u_global);
-
-      const unsigned int index_high =
-        static_cast<unsigned int>(it - number_based_cdf.begin());
-
-      if (interpolate_diameter_values)
+      for (unsigned int i = 0; i < number_of_particles; ++i)
         {
+          // Number between 0. and 1.
+          const double u_global = dis(gen);
+
+          // Find the first element in the CDF strictly greater than our random
+          // number u_global. 'it' will point to the upper bound of the bin
+          // (node i+1).
+          auto it = std::ranges::upper_bound(number_based_cdf, u_global);
+
+          const unsigned int index_high =
+            static_cast<unsigned int>(it - number_based_cdf.begin());
+
           // Interpolated Sampling (Piece-wise Linear)
           const unsigned int index_low = index_high - 1;
 
@@ -684,8 +685,22 @@ CustomDistribution::particle_size_sampling(
 
           this->particle_sizes.push_back(sampled_diameter);
         }
-      else
+    }
+  else
+    {
+      for (unsigned int i = 0; i < number_of_particles; ++i)
         {
+          // Number between 0. and 1.
+          const double u = dis(gen);
+
+          // Find the first element in the CDF strictly greater than our random
+          // number u_global. 'it' will point to the upper bound of the bin
+          // (node i+1).
+          auto it = std::ranges::upper_bound(number_based_cdf, u);
+
+          const unsigned int index_high =
+            static_cast<unsigned int>(it - number_based_cdf.begin());
+
           // Discrete Sampling
           // We simply pick the diameter corresponding to the upper bound node.
           this->particle_sizes.push_back(diameter_values[index_high]);
