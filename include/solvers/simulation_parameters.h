@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_simulation_parameters_h
@@ -469,7 +469,7 @@ public:
           "temperature is not implemented for Cahn Hilliard simulations.\n ");
       }
 
-    if (simulation_control.respect_capillary_time_step_constraint)
+    if (simulation_control.adapt_with_capillary_time_step_ratio)
       AssertThrow(
         (multiphysics.vof_parameters.surface_tension_force.enable &&
          multiphysics.VOF),

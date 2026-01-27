@@ -4,8 +4,8 @@
 #-------------------------------------------------------------------------------
 # DESCRIPTION:
 # This test checks that the adaptive capillary time-step constraint is well
-# applied for cases with a capillary time-step ratio set to 10 (Δt/Δt_σ). The
-# mesh, the densities and the surface tension considered here remain constant.
+# applied for cases with a maximum capillary time-step ratio set to 10 (Δt/Δt_σ).
+# The mesh, the densities and the surface tension considered here remain constant.
 #-------------------------------------------------------------------------------
 
 # Listing of Parameters
@@ -18,14 +18,14 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method                                 = bdf2
-  set time end                               = 0.15
-  set time step                              = 0.15
-  set adapt                                  = true
-  set output name                            = vof-capillary-time-step-constraint-CTR-10
-  set output frequency                       = 0
-  set respect capillary time-step constraint = true
-  set capillary time-step ratio              = 10
+  set method                         = bdf2
+  set time end                       = 0.15
+  set time step                      = 0.15
+  set adapt time-step to respect CFL = true
+  set output name                    = vof-capillary-time-step-constraint-CTR-10
+  set output frequency               = 0
+  set adapt time-step to respect CTR = true
+  set max capillary time-step ratio  = 10
 end
 
 #---------------------------------------------------

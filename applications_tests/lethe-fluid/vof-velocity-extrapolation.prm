@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2024, 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -11,13 +11,13 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf2
-  set time end         = 1.6
-  set time step        = 0.1
-  set adapt            = true
-  set max cfl          = 0.4
-  set output name      = vof-velocity-extrapolation
-  set output frequency = 0
+  set method                         = bdf2
+  set time end                       = 1.6
+  set time step                      = 0.1
+  set adapt time-step to respect CFL = true
+  set max cfl                        = 0.4
+  set output name                    = vof-velocity-extrapolation
+  set output frequency               = 0
 end
 
 #---------------------------------------------------

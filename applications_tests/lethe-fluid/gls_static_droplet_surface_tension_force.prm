@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2022-2023 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2022-2023, 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -11,14 +11,14 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = bdf1
-  set time end          = 0.005
-  set time step         = 0.001
-  set adapt             = false
-  set number mesh adapt = 0
-  set output name       = static_bubble
-  set output frequency  = 0
-  set subdivision       = 1
+  set method                         = bdf1
+  set time end                       = 0.005
+  set time step                      = 0.001
+  set adapt time-step to respect CFL = false
+  set number mesh adapt              = 0
+  set output name                    = static_bubble
+  set output frequency               = 0
+  set subdivision                    = 1
 end
 
 #---------------------------------------------------

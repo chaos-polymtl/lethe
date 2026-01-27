@@ -19,18 +19,19 @@ test()
 
   simulation_control_parameters.dt                       = 1;
   simulation_control_parameters.adapt                    = false;
+  simulation_control_parameters.adapt_with_cfl           = false;
   simulation_control_parameters.maxCFL                   = 1;
   simulation_control_parameters.startup_timestep_scaling = 0.4;
   simulation_control_parameters.bdf_startup_method =
     Parameters::SimulationControl::BDFStartupMethods::multiple_step_bdf;
-  simulation_control_parameters.time_end                          = 4;
-  simulation_control_parameters.number_mesh_adaptation            = 0;
-  simulation_control_parameters.output_name                       = "test";
-  simulation_control_parameters.subdivision                       = 7;
-  simulation_control_parameters.output_folder                     = "canard";
-  simulation_control_parameters.output_iteration_frequency        = 8;
-  simulation_control_parameters.time_step_independent_of_end_time = true;
-  simulation_control_parameters.respect_capillary_time_step_constraint = false;
+  simulation_control_parameters.time_end                             = 4;
+  simulation_control_parameters.number_mesh_adaptation               = 0;
+  simulation_control_parameters.output_name                          = "test";
+  simulation_control_parameters.subdivision                          = 7;
+  simulation_control_parameters.output_folder                        = "canard";
+  simulation_control_parameters.output_iteration_frequency           = 8;
+  simulation_control_parameters.time_step_independent_of_end_time    = true;
+  simulation_control_parameters.adapt_with_capillary_time_step_ratio = false;
 
   {
     simulation_control_parameters.method =

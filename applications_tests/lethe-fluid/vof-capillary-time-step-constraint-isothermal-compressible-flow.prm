@@ -19,14 +19,14 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method                                 = bdf1
-  set time end                               = 0.04
-  set time step                              = 0.04
-  set adapt                                  = true
-  set max cfl                                = 10 # Set high to ensure that the CFL is not the limiting factor
-  set output name                            = vof-capillary-time-step-constraint-isothermal-compressible-flow
-  set output frequency                       = 0
-  set respect capillary time-step constraint = true
+  set method                         = bdf1
+  set time end                       = 0.04
+  set time step                      = 0.04
+  set adapt time-step to respect CFL = true
+  set max cfl                        = 10 # Set high to ensure that the CFL is not the limiting factor
+  set output name                    = vof-capillary-time-step-constraint-isothermal-compressible-flow
+  set output frequency               = 0
+  set adapt time-step to respect CTR = true
 end
 
 #---------------------------------------------------

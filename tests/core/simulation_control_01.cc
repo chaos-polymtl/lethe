@@ -17,19 +17,20 @@ void
 test()
 {
   Parameters::SimulationControl simulationControlParameters;
-  simulationControlParameters.dt     = 0.01;
-  simulationControlParameters.adapt  = false;
-  simulationControlParameters.maxCFL = 99;
+  simulationControlParameters.dt             = 0.01;
+  simulationControlParameters.adapt          = false;
+  simulationControlParameters.adapt_with_cfl = false;
+  simulationControlParameters.maxCFL         = 99;
   simulationControlParameters.method =
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
-  simulationControlParameters.time_end                               = 999;
-  simulationControlParameters.number_mesh_adaptation                 = 9;
-  simulationControlParameters.output_name                            = "test";
-  simulationControlParameters.subdivision                            = 7;
-  simulationControlParameters.output_folder                          = "canard";
-  simulationControlParameters.output_iteration_frequency             = 8;
-  simulationControlParameters.time_step_independent_of_end_time      = true;
-  simulationControlParameters.respect_capillary_time_step_constraint = false;
+  simulationControlParameters.time_end                             = 999;
+  simulationControlParameters.number_mesh_adaptation               = 9;
+  simulationControlParameters.output_name                          = "test";
+  simulationControlParameters.subdivision                          = 7;
+  simulationControlParameters.output_folder                        = "canard";
+  simulationControlParameters.output_iteration_frequency           = 8;
+  simulationControlParameters.time_step_independent_of_end_time    = true;
+  simulationControlParameters.adapt_with_capillary_time_step_ratio = false;
 
   SimulationControlTransient simulationControl(simulationControlParameters);
 
