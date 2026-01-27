@@ -593,8 +593,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
   Tensor<1, dim>          distance_gradients;
 
   // Transformation jacobian
-  DerivativeForm<1, dim, dim>     cell_transformation_jacobian;
-  DerivativeForm<1, dim - 1, dim> face_transformation_jacobian;
+  DerivativeForm<1, dim, dim> cell_transformation_jacobian;
+  LAPACKFullMatrix<double>    face_transformation_jacobian(dim, dim - 1);
 
   // Jacobian matrix, residual vector and correction
   LAPACKFullMatrix<double> jacobian_matrix(dim - 1, dim - 1);
@@ -728,7 +728,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
 
                   // Solve the minimization problem with Newton method
-                  // using a numerical jacobian
+                  // using a analytical jacobian
                   while (*std::ranges::max_element(correction_norm) > tol &&
                          newton_it < newton_max_it)
                     {
@@ -770,17 +770,17 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                             j,
                             face_transformation_jacobian);
 
+                          x_n_to_x_I_real = x_I_real - x_n_real_vector[i];
+
                           /* Compute the jacobian matrix. The Ax=b system is
                         formulated as the dim-1 system. We solve for the
                         correction in the reference face. */
                           compute_analytical_jacobian(
-                            x_n_real_vector[i],
-                            x_I_real,
+                            x_n_to_x_I_real,
                             face_transformation_jacobian,
                             face_local_dof_values,
                             jacobian_matrix);
 
-                          x_n_to_x_I_real = x_I_real - x_n_real_vector[i];
 
                           // Compute the right hand side.
                           Tensor<1, dim - 1> residual_n;
