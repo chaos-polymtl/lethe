@@ -206,8 +206,8 @@ protected:
  *
  * @return n_subdivisions Number of cells at the interface between inner
  * and outer domains
- * @return interface_dimensions Vector containing the radius at the mortar interface and the domain length
-  /// in the direction of the rotation axis
+ * @return interface_dimensions Vector containing the radius at the mortar interface and the
+ * domain length in the direction of the rotation axis
  * @return pre_rotation_angle Rotation angle of the initial mesh configuration
  */
 template <int dim>

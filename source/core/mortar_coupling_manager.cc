@@ -47,10 +47,10 @@ MortarManagerBase<dim>::get_n_total_mortars() const
     n_total_subdivisions *= n_subdivisions[1];
 
   if (this->is_mesh_aligned()) // aligned
-      return n_total_subdivisions;
+    return n_total_subdivisions;
 
   else // inside/outside
-      return 2 * n_total_subdivisions;
+    return 2 * n_total_subdivisions;
 }
 
 template <int dim>
@@ -61,10 +61,10 @@ MortarManagerBase<dim>::get_n_mortars() const
     return 1;
 
   if (this->is_mesh_aligned()) // aligned
-      return 1;
+    return 1;
 
   else // inside/outside
-      return 2;
+    return 2;
 }
 
 template <int dim>
@@ -328,8 +328,8 @@ MortarManagerBase<dim>::get_weights(const Point<dim> &face_center,
       weights.reserve(n_quadrature_points);
 
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
-        weights.emplace_back(interface_dimensions[0] * quadrature.weight(q) * delta_0 *
-                             delta_1);
+        weights.emplace_back(interface_dimensions[0] * quadrature.weight(q) *
+                             delta_0 * delta_1);
 
       return weights;
     }
@@ -547,7 +547,7 @@ compute_n_subdivisions_and_radius(
                             n_subdivisions_plane_local++;
                         }
                       else
-                          n_subdivisions_plane_local++;
+                        n_subdivisions_plane_local++;
 
                       const auto vertices = mapping.get_vertices(cell, face_no);
 
