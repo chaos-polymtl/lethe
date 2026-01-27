@@ -107,8 +107,11 @@ test()
   Assert(prerotation == 0.0, ExcInternalError());
 
   // Rotate mapping
-  LetheGridTools::rotate_mapping(
-    dof_handler, mapping_cache, mapping, interface_dimensions[0], rotation_angle);
+  LetheGridTools::rotate_mapping(dof_handler,
+                                 mapping_cache,
+                                 mapping,
+                                 interface_dimensions[0],
+                                 rotation_angle);
 
   // Print information
   if (Utilities::MPI::this_mpi_process(comm) == 0)
@@ -119,8 +122,11 @@ test()
       deallog << "Radius : " << interface_dimensions[0] << std::endl;
     }
   // Rotate mapping
-  LetheGridTools::rotate_mapping(
-    dof_handler, mapping_cache, mapping, interface_dimensions[0] * 10, rotation_angle);
+  LetheGridTools::rotate_mapping(dof_handler,
+                                 mapping_cache,
+                                 mapping,
+                                 interface_dimensions[0] * 10,
+                                 rotation_angle);
 
   const auto [n_subdivisions1, radius1, prerotation1] =
     compute_n_subdivisions_and_radius(triangulation,

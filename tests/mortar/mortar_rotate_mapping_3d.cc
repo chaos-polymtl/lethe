@@ -128,7 +128,8 @@ test()
       deallog << "Axial direction subdivisions : " << n_subdivisions[1]
               << std::endl;
       deallog << "Radius : " << interface_dimensions[0] << std::endl;
-      deallog << "Axial direction length : " << interface_dimensions[1] << std::endl;
+      deallog << "Axial direction length : " << interface_dimensions[1]
+              << std::endl;
     }
 }
 
