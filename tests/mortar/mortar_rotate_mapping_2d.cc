@@ -100,9 +100,7 @@ test()
 
   // Number of subdivisions and rotor radius
   const auto [n_subdivisions, interface_dimensions, prerotation] =
-    compute_n_subdivisions_and_radius(triangulation,
-                                      mapping,
-                                      mortar_parameters);
+    compute_interface_parameters(triangulation, mapping, mortar_parameters);
 
   Assert(prerotation == 0.0, ExcInternalError());
 
@@ -129,9 +127,9 @@ test()
                                  rotation_angle);
 
   const auto [n_subdivisions1, radius1, prerotation1] =
-    compute_n_subdivisions_and_radius(triangulation,
-                                      mapping_cache,
-                                      mortar_parameters);
+    compute_interface_parameters(triangulation,
+                                 mapping_cache,
+                                 mortar_parameters);
 
   AssertDimension(n_subdivisions[0], n_subdivisions1[0]);
   AssertDimension(interface_dimensions[0], interface_dimensions[0]);

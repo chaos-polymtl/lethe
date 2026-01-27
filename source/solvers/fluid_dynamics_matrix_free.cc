@@ -2690,11 +2690,10 @@ FluidDynamicsMatrixFree<dim>::solve()
         this->simulation_parameters.boundary_conditions,
         this->simulation_parameters.mortar_parameters);
       // Compute rotor-stator interface radius
-      this->mortar_interface_radius =
-        std::get<1>(compute_n_subdivisions_and_radius(
-          *this->triangulation,
-          *this->mapping,
-          this->simulation_parameters.mortar_parameters))[0];
+      this->mortar_interface_radius = std::get<1>(compute_interface_parameters(
+        *this->triangulation,
+        *this->mapping,
+        this->simulation_parameters.mortar_parameters))[0];
       // Create and initialize mapping cache
       this->mapping_cache =
         std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);

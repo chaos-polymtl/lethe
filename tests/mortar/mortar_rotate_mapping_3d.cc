@@ -106,9 +106,7 @@ test()
 
   // Number of subdivisions and rotor radius
   const auto [n_subdivisions, interface_dimensions, _] =
-    compute_n_subdivisions_and_radius(triangulation,
-                                      mapping,
-                                      mortar_parameters);
+    compute_interface_parameters(triangulation, mapping, mortar_parameters);
 
   // Rotate mapping
   LetheGridTools::rotate_mapping(dof_handler,

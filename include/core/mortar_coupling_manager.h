@@ -197,8 +197,8 @@ protected:
 };
 
 /**
- * @brief Compute the number of subdivisions at the rotor-stator interface and the interface
- * dimensions
+ * @brief Compute parameters of the mortar interface: n_subdivisions, interface_dimensions,
+ * and pre_rotation_angle
  * @param[in] triangulation The triangulation object
  * @param[in] mapping Mapping associated to the domain
  * @param[in] mortar_parameters The information about the mortar method
@@ -212,10 +212,9 @@ protected:
  */
 template <int dim>
 std::tuple<std::vector<unsigned int>, std::vector<double>, double>
-compute_n_subdivisions_and_radius(
-  const Triangulation<dim>      &triangulation,
-  const Mapping<dim>            &mapping,
-  const Parameters::Mortar<dim> &mortar_parameters);
+compute_interface_parameters(const Triangulation<dim>      &triangulation,
+                             const Mapping<dim>            &mapping,
+                             const Parameters::Mortar<dim> &mortar_parameters);
 
 /**
  * @brief Construct oversampled quadrature
@@ -286,9 +285,9 @@ MortarManagerCircle<dim>::MortarManagerCircle(
   std::tie(this->n_subdivisions,
            this->interface_dimensions,
            this->pre_rotation_angle) =
-    compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
-                                      mapping,
-                                      mortar_parameters);
+    compute_interface_parameters(dof_handler.get_triangulation(),
+                                 mapping,
+                                 mortar_parameters);
   this->rotation_angle =
     mortar_parameters.rotor_rotation_angle->value(Point<dim>());
   this->center_of_rotation = mortar_parameters.center_of_rotation;

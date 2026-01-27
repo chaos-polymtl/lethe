@@ -443,10 +443,9 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center,
 /*-------------- Auxiliary Functions -------------------------------*/
 template <int dim>
 std::tuple<std::vector<unsigned int>, std::vector<double>, double>
-compute_n_subdivisions_and_radius(
-  const Triangulation<dim>      &triangulation,
-  const Mapping<dim>            &mapping,
-  const Parameters::Mortar<dim> &mortar_parameters)
+compute_interface_parameters(const Triangulation<dim>      &triangulation,
+                             const Mapping<dim>            &mapping,
+                             const Parameters::Mortar<dim> &mortar_parameters)
 {
   // Number of subdivisions per process
   unsigned int n_subdivisions_local = 0;
@@ -1728,16 +1727,14 @@ template class NavierStokesCouplingEvaluation<2, double>;
 template class NavierStokesCouplingEvaluation<3, double>;
 
 template std::tuple<std::vector<unsigned int>, std::vector<double>, double>
-compute_n_subdivisions_and_radius<2>(
-  const Triangulation<2>      &triangulation,
-  const Mapping<2>            &mapping,
-  const Parameters::Mortar<2> &mortar_parameters);
+compute_interface_parameters<2>(const Triangulation<2>      &triangulation,
+                                const Mapping<2>            &mapping,
+                                const Parameters::Mortar<2> &mortar_parameters);
 
 template std::tuple<std::vector<unsigned int>, std::vector<double>, double>
-compute_n_subdivisions_and_radius<3>(
-  const Triangulation<3>      &triangulation,
-  const Mapping<3>            &mapping,
-  const Parameters::Mortar<3> &mortar_parameters);
+compute_interface_parameters<3>(const Triangulation<3>      &triangulation,
+                                const Mapping<3>            &mapping,
+                                const Parameters::Mortar<3> &mortar_parameters);
 
 template Quadrature<2>
 construct_quadrature(const Quadrature<2>         &quadrature,
