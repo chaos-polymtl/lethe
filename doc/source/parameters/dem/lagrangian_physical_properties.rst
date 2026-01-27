@@ -27,8 +27,6 @@ In this subsection, gravitational acceleration, and the physical properties of t
       set standard deviation                = 0.0
 
       # If distribution type = custom
-      set custom distribution from file                 = false
-      set custom distribution filename                  = custom_distribution.txt
       set custom distribution probability function type = PDF
       set custom distribution interpolation             = false
       set custom distribution diameters values          = 0.001, 0.0005
