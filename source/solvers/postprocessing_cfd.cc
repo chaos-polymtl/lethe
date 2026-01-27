@@ -675,8 +675,6 @@ calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
   std::vector<Tensor<1, dim>> local_velocity_values(n_q_points);
   double                      domain_volume =
     GridTools::volume(dof_handler.get_triangulation(), mapping);
-  // double domain_volume =
-  // GridTools::volume(dof_handler.get_triangulation(),*mapping);
 
   double KEU = 0.0;
 
@@ -1268,8 +1266,6 @@ calculate_L2_error(const DoFHandler<dim> &dof_handler,
   exact_pressure_integral =
     Utilities::MPI::sum(exact_pressure_integral, mpi_communicator);
 
-  // double global_volume    =
-  // GridTools::volume(dof_handler.get_triangulation(),*mapping);
   double global_volume =
     GridTools::volume(dof_handler.get_triangulation(), mapping);
   double average_pressure       = pressure_integral / global_volume;

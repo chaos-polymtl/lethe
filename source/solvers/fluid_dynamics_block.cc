@@ -875,7 +875,7 @@ template <int dim>
 void
 FluidDynamicsBlock<dim>::setup_AMG()
 {
-  TimerOutput::Scope t(this->computing_timer, "setup_AMG");
+  TimerOutput::Scope t(this->computing_timer, "Setup AMG");
 
   //**********************************************
   // Trillinos Wrapper AMG Preconditioner
