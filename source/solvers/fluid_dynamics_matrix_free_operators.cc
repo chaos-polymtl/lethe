@@ -1524,13 +1524,22 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
             BoundaryConditions::BoundaryType::Neumann_traction)
     {
       integrator.evaluate(EvaluationFlags::values);
-      if constexpr(assemble_residual)
       {
          for (const auto q : integrator.quadrature_point_indices())
         {
-          
-                
-          integrator.submit_value(this->prescribed_neumann_traction(face_index,q), q);
+             typename FEFaceIntegrator::value_type    value_result    = {};
+             for (int d = 0; d < dim; ++d)
+               {
+                 // Because we have enabled submission of the value for the faces, a value must be provided
+                 // even when the operator is assembled. When the RHS is being assembled, we provide the value of the traction,
+                 // and when the operator is assembled, we provide a zero value. This contexpr if has zero cost.
+                 if constexpr(assemble_residual)
+                   // The matrix free solver assembles the residual and not - the residual, so a minus sign here is necessary.
+                 value_result[d] = -this->prescribed_neumann_traction(face_index,q)[d];
+                 else
+                   value_result[d] = 0;
+               }
+          integrator.submit_value(value_result, q);
         }
         
           integrator.integrate(EvaluationFlags::EvaluationFlags::values);
