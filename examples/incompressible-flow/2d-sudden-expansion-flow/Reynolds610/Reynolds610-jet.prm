@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -11,13 +11,13 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf2
-  set output name      = sudden-expansion-flow-output
-  set output frequency = 15
-  set adapt            = true
-  set max cfl          = 5
-  set time step        = 0.001
-  set time end         = 15
+  set method                         = bdf2
+  set output name                    = sudden-expansion-flow-output
+  set output frequency               = 15
+  set adapt time-step to respect CFL = true
+  set max cfl                        = 5
+  set time step                      = 0.001
+  set time end                       = 15
 end
 
 #---------------------------------------------------

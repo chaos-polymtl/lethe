@@ -347,7 +347,7 @@ Possibilities for Extension
 
 - This case is very interesting to postprocess. Try to postprocess this case using other quantities (vorticity, q-criterion) and use the results to generate interesting animations. Feel free to share them with us!
 
-- This case can also be used to experiment with adaptive time step. In the simulation control section add ``adapt = true`` and ``set max cfl = 1``, similar results should be obtained but with significantly less iterations as larger time steps are taken. To postprocess the results use the additional script ``calculate_dissipation_rate_constant_cfl.py`` given in the same folder to calculate the kinetic energy rate. 
+- This case can also be used to experiment with adaptive time step. In the simulation control section add ``adapt time-step to respect CFL = true`` and ``set max cfl = 1``, similar results should be obtained but with significantly less iterations as larger time steps are taken. To postprocess the results use the additional script ``calculate_dissipation_rate_constant_cfl.py`` given in the same folder to calculate the kinetic energy rate.
 
 
 ------------

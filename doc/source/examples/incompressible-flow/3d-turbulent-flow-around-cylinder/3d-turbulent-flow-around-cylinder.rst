@@ -196,16 +196,17 @@ The ``simulation control`` subsection controls the flow of the simulation. To ma
 
 .. code-block:: text
 
-  subsection simulation control
-    set method           = bdf2
-    set output name      = cylinder-Re3900
-    set output path      = ./output/
-    set time end         = 200                               
-    set adapt            = true
-    set max cfl          = 1
-    set time step        = 0.002
-    set output frequency = 500
-  end
+    subsection simulation control
+      set method                         = bdf2
+      set output name                    = cylinder-Re3900
+      set output path                    = ./output/
+      set time end                       = 200
+      set adapt time-step to respect CFL = true
+      set max cfl                        = 1
+      set time step                      = 0.002
+      set output frequency               = 500
+      set subdivision                    = 1
+    end
 
 
 ----------------------

@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -11,12 +11,12 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method                       = steady_bdf
-  set adapt                        = true
-  set max cfl                      = 1000
-  set stop tolerance               = 1e-7
-  set adaptative time step scaling = 1.1
-  set time step                    = 0.001
+  set method                         = steady_bdf
+  set adapt time-step to respect CFL = true
+  set max cfl                        = 1000
+  set stop tolerance                 = 1e-7
+  set adaptative time step scaling   = 1.1
+  set time step                      = 0.001
 end
 
 #---------------------------------------------------
