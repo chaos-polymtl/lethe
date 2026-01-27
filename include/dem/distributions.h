@@ -360,12 +360,10 @@ private:
 
   /**
    * @brief Vector containing cumulative probabilities associated with de
-   * diameter_custom_values vector. The probabilities are based on the volume
-   * fraction, not the number of particles.
+   * diameter_values vector. The probabilities are based on the number based CDF.
    */
   std::vector<double> number_based_cdf;
 
-  // const ProbabilityFunctionType function_type;
   /**
    * @brief Indicates if the diameter values are interpolated between input values
    * during sampling.
