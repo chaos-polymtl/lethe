@@ -266,19 +266,7 @@ MortarManagerBase<dim>::MortarManagerBase(
   const Parameters::Mortar<dim> &mortar_parameters)
   : quadrature(quadrature_in.get_tensor_basis()[0])
   , n_quadrature_points(quadrature.size())
-{
-  // Compute and store the number of subdivisions at the interface, the mortar
-  // interface position, and the initial mesh rotation angle
-  std::tie(n_subdivisions, interface_dimensions, pre_rotation_angle) =
-    compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
-                                      mapping,
-                                      mortar_parameters);
-  this->n_subdivisions       = n_subdivisions;
-  this->interface_dimensions = interface_dimensions;
-  this->pre_rotation_angle   = pre_rotation_angle;
-  this->rotation_angle =
-    mortar_parameters.rotor_rotation_angle->value(Point<dim>());
-}
+{}
 
 
 template <int dim>
@@ -290,6 +278,16 @@ MortarManagerCircle<dim>::MortarManagerCircle(
   const Parameters::Mortar<dim> &mortar_parameters)
   : MortarManagerBase<dim>(quadrature, mapping, dof_handler, mortar_parameters)
 {
+  // Compute and store the number of subdivisions at the interface, the mortar
+  // interface position, and the initial mesh rotation angle
+  std::tie(this->n_subdivisions,
+           this->interface_dimensions,
+           this->pre_rotation_angle) =
+    compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
+                                      mapping,
+                                      mortar_parameters);
+  this->rotation_angle =
+    mortar_parameters.rotor_rotation_angle->value(Point<dim>());
   this->center_of_rotation = mortar_parameters.center_of_rotation;
 }
 
