@@ -2092,9 +2092,7 @@ NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar_operators()
       this->zero_constraints,
       this->mortar_coupling_evaluator,
       this->mortar_manager,
-      this->simulation_parameters.mortar_parameters.rotor_boundary_id,
-      this->simulation_parameters.mortar_parameters.stator_boundary_id,
-      this->simulation_parameters.mortar_parameters.sip_factor);
+      this->simulation_parameters.mortar_parameters);
 }
 
 template <int dim, typename VectorType, typename DofsType>

@@ -531,7 +531,7 @@ protected:
 
   /**
    * @brief Convert angle (in radians) to quadrature point in real space
-   * 
+   *
    * @param[in] angle_rad Angle (in radians)
    * @return Point in cartesian coordinates
    */
@@ -540,7 +540,7 @@ protected:
 
   /**
    * @brief Convert quadrature point in real space to angle (in radians)
-   * 
+   *
    * @param[in] point Point in cartesian coordinates
    * @return Angle (in radians)
    */
@@ -549,7 +549,7 @@ protected:
 
   /**
    * @brief Return the normal for a given quadrature point
-   * 
+   *
    * @param[in] point Point in cartesian coordinates
    * @return Corresponding outward normal vector
    */

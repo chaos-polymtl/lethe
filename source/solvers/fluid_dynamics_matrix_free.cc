@@ -1660,11 +1660,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                   level_constraint,
                   this->mg_operators[level]->mortar_coupling_evaluator_mf,
                   this->mg_operators[level]->mortar_manager_mf,
-                  this->simulation_parameters.mortar_parameters
-                    .rotor_boundary_id,
-                  this->simulation_parameters.mortar_parameters
-                    .stator_boundary_id,
-                  this->simulation_parameters.mortar_parameters.sip_factor);
+                  this->simulation_parameters.mortar_parameters);
 
               this->mg_setup_timer.leave_subsection("Set up mortar operators");
             }
@@ -3021,9 +3017,7 @@ FluidDynamicsMatrixFree<dim>::reinit_mortar_operators_mf()
       this->zero_constraints,
       this->system_operator->mortar_coupling_evaluator_mf,
       this->system_operator->mortar_manager_mf,
-      this->simulation_parameters.mortar_parameters.rotor_boundary_id,
-      this->simulation_parameters.mortar_parameters.stator_boundary_id,
-      this->simulation_parameters.mortar_parameters.sip_factor);
+      this->simulation_parameters.mortar_parameters);
 }
 
 template <int dim>

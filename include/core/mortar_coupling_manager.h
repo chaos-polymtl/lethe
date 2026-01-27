@@ -24,18 +24,20 @@ template <int dim>
 class MortarManagerBase
 {
 public:
+  /**
+   * @brief Mortar manager base constructor
+   *
+   * @param[in] quadrature Quadrature for local cell operations
+   * @param[in] mapping Mapping associated to the domain
+   * @param[in] dof_handler DoFHandler associated to the triangulation
+   * @param[in] mortar_parameters The information about the mortar method
+   * control, including the rotor mesh parameters
+   */
   template <int dim2>
-  MortarManagerBase(unsigned int            n_subdivisions,
-                    double                  radius,
-                    const Quadrature<dim2> &quadrature,
-                    const double            rotation_angle);
-
-  template <int dim2>
-  MortarManagerBase(const std::vector<unsigned int> &n_subdivisions,
-                    const std::vector<double>       &radius,
-                    const Quadrature<dim2>          &quadrature,
-                    const double                     rotation_angle);
-
+  MortarManagerBase(const Quadrature<dim2>        &quadrature,
+                    const Mapping<dim>            &mapping,
+                    const DoFHandler<dim>         &dof_handler,
+                    const Parameters::Mortar<dim> &mortar_parameters);
   /**
    * @brief Default destructor
    */
@@ -134,6 +136,11 @@ public:
   /// Vector containing the radius at the mortar interface and the domain length
   /// in the direction of the rotation axis
   std::vector<double> radius;
+  /// Rotation angle for the inner domain
+  double rotation_angle;
+  /// Initial rotation angle used for computing mortar locations, accounting for
+  /// cases here the element edges are not aligned with the x axis
+  double pre_rotation_angle;
 
 protected:
   /**
@@ -187,8 +194,6 @@ protected:
   Quadrature<std::max(1, dim - 1)> quadrature;
   /// Number of quadrature points per cell
   const unsigned int n_quadrature_points;
-  /// Rotation angle for the inner domain
-  const double rotation_angle;
 };
 
 /**
@@ -229,22 +234,6 @@ class MortarManagerCircle : public MortarManagerBase<dim>
 {
 public:
   template <int dim2>
-  MortarManagerCircle(unsigned int            n_subdivisions,
-                      double                  radius,
-                      const Quadrature<dim2> &quadrature,
-                      const double            rotation_angle,
-                      const Point<dim>       &center_of_rotation = Point<dim>(),
-                      const double            pre_rotation_angle = 0.0);
-
-  template <int dim2>
-  MortarManagerCircle(std::vector<unsigned int> n_subdivisions,
-                      std::vector<double>       radius,
-                      const Quadrature<dim2>   &quadrature,
-                      const double              rotation_angle,
-                      const Point<dim> &center_of_rotation = Point<dim>(),
-                      const double      pre_rotation_angle = 0.0);
-
-  template <int dim2>
   MortarManagerCircle(const Quadrature<dim2>        &quadrature,
                       const Mapping<dim>            &mapping,
                       const DoFHandler<dim>         &dof_handler,
@@ -260,70 +249,31 @@ protected:
   Tensor<1, dim, double>
   get_normal(const Point<dim> &point) const override;
 
-  /// Initial rotation angle used for computing mortar locations, accounting for
-  /// cases here the element edges are not aligned with the x axis
-  const double pre_rotation_angle;
-
   /// Center of rotation
-  const Point<dim> center_of_rotation;
+  Point<dim> center_of_rotation;
 };
 
 
 template <int dim>
 template <int dim2>
-MortarManagerBase<dim>::MortarManagerBase(unsigned int n_subdivisions,
-                                          double       radius,
-                                          const Quadrature<dim2> &quadrature_in,
-                                          const double rotation_angle)
-  : MortarManagerBase(std::vector<unsigned int>{n_subdivisions, 1},
-                      std::vector<double>{radius, 1.0},
-                      quadrature_in,
-                      rotation_angle)
-{}
-
-
-template <int dim>
-template <int dim2>
 MortarManagerBase<dim>::MortarManagerBase(
-  const std::vector<unsigned int> &n_subdivisions,
-  const std::vector<double>       &radius,
-  const Quadrature<dim2>          &quadrature_in,
-  const double                     rotation_angle)
-  : n_subdivisions(n_subdivisions)
-  , radius(radius)
-  , quadrature(quadrature_in.get_tensor_basis()[0])
+  const Quadrature<dim2>        &quadrature_in,
+  const Mapping<dim>            &mapping,
+  const DoFHandler<dim>         &dof_handler,
+  const Parameters::Mortar<dim> &mortar_parameters)
+  : quadrature(quadrature_in.get_tensor_basis()[0])
   , n_quadrature_points(quadrature.size())
-  , rotation_angle(rotation_angle)
-{}
-
-
-template <int dim>
-template <int dim2>
-MortarManagerCircle<dim>::MortarManagerCircle(
-  unsigned int            n_subdivisions,
-  double                  radius,
-  const Quadrature<dim2> &quadrature,
-  const double            rotation_angle,
-  const Point<dim>       &center_of_rotation,
-  const double            pre_rotation_angle)
-  : MortarManagerBase<dim>(n_subdivisions, radius, quadrature, rotation_angle)
-  , pre_rotation_angle(pre_rotation_angle)
-  , center_of_rotation(center_of_rotation)
-{}
-
-template <int dim>
-template <int dim2>
-MortarManagerCircle<dim>::MortarManagerCircle(
-  std::vector<unsigned int> n_subdivisions,
-  std::vector<double>       radius,
-  const Quadrature<dim2>   &quadrature,
-  const double              rotation_angle,
-  const Point<dim>         &center_of_rotation,
-  const double              pre_rotation_angle)
-  : MortarManagerBase<dim>(n_subdivisions, radius, quadrature, rotation_angle)
-  , pre_rotation_angle(pre_rotation_angle)
-  , center_of_rotation(center_of_rotation)
-{}
+{
+  std::tie(n_subdivisions, radius, pre_rotation_angle) =
+    compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
+                                      mapping,
+                                      mortar_parameters);
+  this->n_subdivisions     = n_subdivisions;
+  this->radius             = radius;
+  this->pre_rotation_angle = pre_rotation_angle;
+  this->rotation_angle =
+    mortar_parameters.rotor_rotation_angle->value(Point<dim>());
+}
 
 
 template <int dim>
@@ -333,23 +283,10 @@ MortarManagerCircle<dim>::MortarManagerCircle(
   const Mapping<dim>            &mapping,
   const DoFHandler<dim>         &dof_handler,
   const Parameters::Mortar<dim> &mortar_parameters)
-  : MortarManagerCircle(
-      std::get<0>(
-        compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
-                                          mapping,
-                                          mortar_parameters)),
-      std::get<1>(
-        compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
-                                          mapping,
-                                          mortar_parameters)),
-      construct_quadrature(quadrature, mortar_parameters),
-      mortar_parameters.rotor_rotation_angle->value(Point<dim>()),
-      mortar_parameters.center_of_rotation,
-      std::get<2>(
-        compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
-                                          mapping,
-                                          mortar_parameters)))
-{}
+  : MortarManagerBase<dim>(quadrature, mapping, dof_handler, mortar_parameters)
+{
+  this->center_of_rotation = mortar_parameters.center_of_rotation;
+}
 
 
 /**
@@ -652,9 +589,7 @@ public:
     const AffineConstraints<Number>                           &constraints,
     const std::shared_ptr<CouplingEvaluationBase<dim, Number>> evaluator,
     const std::shared_ptr<MortarManagerBase<dim>>              mortar_manager,
-    const unsigned int                                         bid_m,
-    const unsigned int                                         bid_p,
-    const double                                               sip_factor);
+    const Parameters::Mortar<dim> &mortar_parameters);
 
   /**
    * @brief Return object containing problem constraints
@@ -859,55 +794,6 @@ private:
   }
 };
 
-
-
-template <int dim, int n_components, typename Number>
-class CouplingEvaluationSIPG : public CouplingEvaluationBase<dim, Number>
-{
-public:
-  using FEPointIntegrator = FEPointEvaluation<n_components, dim, dim, Number>;
-  using value_type        = typename FEPointIntegrator::value_type;
-
-  CouplingEvaluationSIPG(const Mapping<dim>    &mapping,
-                         const DoFHandler<dim> &dof_handler,
-                         const unsigned int     first_selected_component = 0);
-
-  unsigned int
-  data_size() const override;
-
-  const std::vector<unsigned int> &
-  get_relevant_dof_indices() const override;
-
-  void
-  local_reinit(
-    const typename Triangulation<dim>::cell_iterator &cell,
-    const ArrayView<const Point<dim, Number>>        &points) const override;
-
-  void
-  local_evaluate(const CouplingEvaluationData<dim, Number> &data,
-                 const Vector<Number>                      &buffer,
-                 const unsigned int                         ptr_q,
-                 const unsigned int                         q_stride,
-                 Number *all_value_m) const override;
-
-  void
-  local_integrate(const CouplingEvaluationData<dim, Number> &data,
-                  Vector<Number>                            &buffer,
-                  const unsigned int                         ptr_q,
-                  const unsigned int                         q_stride,
-                  Number                                    *all_value_m,
-                  Number *all_value_p) const override;
-
-  /// Finite element that matches the components `n_components` components
-  /// starting at component with index `first_selected_component`
-  const FESystem<dim> fe_sub;
-
-  /// Interface to the evaluation of mortar coupling interpolated solution
-  mutable FEPointIntegrator phi_m;
-
-  /// Relevant dof indices
-  std::vector<unsigned int> relevant_dof_indices;
-};
 
 template <int dim, typename Number>
 class NavierStokesCouplingEvaluation
