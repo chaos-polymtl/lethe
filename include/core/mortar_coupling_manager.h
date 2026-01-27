@@ -135,7 +135,7 @@ public:
   std::vector<unsigned int> n_subdivisions;
   /// Vector containing the radius at the mortar interface and the domain length
   /// in the direction of the rotation axis
-  std::vector<double> radius;
+  std::vector<double> interface_dimensions;
   /// Rotation angle for the inner domain
   double rotation_angle;
   /// Initial rotation angle used for computing mortar locations, accounting for
@@ -197,7 +197,8 @@ protected:
 };
 
 /**
- * @brief Compute the number of subdivisions at the rotor-stator interface and the rotor radius
+ * @brief Compute the number of subdivisions at the rotor-stator interface and the interface
+ * dimensions
  * @param[in] triangulation The triangulation object
  * @param[in] mapping Mapping associated to the domain
  * @param[in] mortar_parameters The information about the mortar method
@@ -205,7 +206,9 @@ protected:
  *
  * @return n_subdivisions Number of cells at the interface between inner
  * and outer domains
- * @return radius Radius at the interface between inner and outer domains
+ * @return interface_dimensions Vector containing the radius at the mortar interface and the domain length
+  /// in the direction of the rotation axis
+ * @return pre_rotation_angle Rotation angle of the initial mesh configuration
  */
 template <int dim>
 std::tuple<std::vector<unsigned int>, std::vector<double>, double>
@@ -264,13 +267,15 @@ MortarManagerBase<dim>::MortarManagerBase(
   : quadrature(quadrature_in.get_tensor_basis()[0])
   , n_quadrature_points(quadrature.size())
 {
-  std::tie(n_subdivisions, radius, pre_rotation_angle) =
+  // Compute and store the number of subdivisions at the interface, the mortar
+  // interface position, and the initial mesh rotation angle
+  std::tie(n_subdivisions, interface_dimensions, pre_rotation_angle) =
     compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
                                       mapping,
                                       mortar_parameters);
-  this->n_subdivisions     = n_subdivisions;
-  this->radius             = radius;
-  this->pre_rotation_angle = pre_rotation_angle;
+  this->n_subdivisions       = n_subdivisions;
+  this->interface_dimensions = interface_dimensions;
+  this->pre_rotation_angle   = pre_rotation_angle;
   this->rotation_angle =
     mortar_parameters.rotor_rotation_angle->value(Point<dim>());
 }
@@ -485,7 +490,7 @@ struct CouplingEvaluationData
 
 
 /**
- * @brief Base class for coupling evaluation routines.
+ * @brief Base class for coupling evaluation routines
  */
 template <int dim, typename Number>
 class CouplingEvaluationBase
@@ -493,13 +498,13 @@ class CouplingEvaluationBase
 public:
   virtual ~CouplingEvaluationBase() = default;
   /**
-   * Number of data points of type Number associated to a quadrature point.
+   * Number of data points of type Number associated to a quadrature point
    */
   virtual unsigned int
   data_size() const = 0;
 
   /**
-   * @brief Return relevant dof indices.
+   * @brief Return relevant dof indices
    */
   virtual const std::vector<unsigned int> &
   get_relevant_dof_indices() const = 0;
@@ -574,14 +579,15 @@ class CouplingOperator
 {
 public:
   /**
-   * @brief Constructor.
+   * @brief Mortar coupling operator constructor
    *
-   * @param[in] bid_m Boundary ID of the face whose outwards-pointing
-   *   normal shows in the same direction as the normal provided by
-   *   @p mortar_manager.
-   * @param[in] bid_p Boundary ID of the face whose outwards-pointing
-   *   normal shows in the opposite direction as the normal provided by
-   *   @p mortar_manager.
+   * @param[in] quadrature Quadrature for local cell operations
+   * @param[in] dof_handler DoFHandler associated to the triangulation
+   * @param[in] constraints Constraints object
+   * @param[in] evaluator Mortar evaluation data
+   * @param[in] mortar_manager Mortar manager
+   * @param[in] mortar_parameters The information about the mortar method
+   * control, including the rotor mesh parameters
    */
   CouplingOperator(
     const Mapping<dim>                                        &mapping,
@@ -652,7 +658,6 @@ private:
    * @brief Compute penalty parameter in a cell
    *
    * @param[in] cell Cell iterator
-   * @return Penalty parameter
    *
    * @return penalty parameter value from SIPG method
    * penalty_parameter = (A(∂Ω_e \ Γ_h)/2 + A(∂Ω_e ∩ Γ_h))/V(Ω_e)
@@ -662,12 +667,12 @@ private:
     const typename Triangulation<dim>::cell_iterator &cell) const;
 
   /**
-   * @brief Returns angle of a point (cell center)
+   * @brief Returns the point corresponding to the cell center
    *
    * @param[in] cell Cell iterator
    * @param[in] face Face iterator
    *
-   * @return Angle in radians
+   * @return Cell center in cartesian coordinates
    */
   Point<dim>
   get_face_center(const typename Triangulation<dim>::cell_iterator &cell,
@@ -677,6 +682,8 @@ private:
    * @brief Returns dof indices
    *
    * @param[in] cell Cell iterator
+   *
+   * @return Vector of global dof indices
    */
   std::vector<types::global_dof_index>
   get_dof_indices(
@@ -701,9 +708,11 @@ protected:
   /// Number of data points per quadrature point
   unsigned int q_data_size;
 
-  /// Boundary ID of the inner domain (rotor)
+  /// Boundary ID of the face whose outwards-pointing normal shows in the
+  /// same direction as the normal provided by @p mortar_manager
   const unsigned int bid_m;
-  /// Boundary ID of the outer domain (stator)
+  /// Boundary ID of the face whose outwards-pointing normal shows in the
+  /// opposite direction as the normal provided by @p mortar_manager
   const unsigned int bid_p;
 
   /// List of relevant DoF indices per cell
@@ -732,14 +741,17 @@ protected:
 /**
  * @brief Create a temporary vector where mortar evaluation data is stored
  * before being passed to the system matrix
- *
- * @param[in] ptr Vector of values on one of the mortar sides
- * @param[in] offset Number of components to offset the ptr vector
  */
 template <typename T>
 class BufferRW
 {
 public:
+  /**
+   * @brief Class constructor
+   *
+   * @param[in] ptr Vector of values on one of the mortar sides
+   * @param[in] offset Number of components to offset the ptr vector
+   */
   BufferRW(T *ptr, const unsigned int offset)
     : ptr(ptr ? (ptr + offset) : nullptr)
   {}
@@ -795,6 +807,10 @@ private:
 };
 
 
+/**
+ * @brief Class subscriber of the CouplingEvaluationBase for the
+ * Navier-Stokes equations
+ */
 template <int dim, typename Number>
 class NavierStokesCouplingEvaluation
   : public CouplingEvaluationBase<dim, Number>
@@ -805,12 +821,19 @@ public:
 
   using u_value_type = typename FEPointIntegratorU::value_type;
 
+  /**
+   * @brief Class constructor
+
+   * @param[in] mapping Mapping associated to the domain
+   * @param[in] dof_handler DoFHandler associated to the triangulation
+   * @param[in] kinematic_vicosity Kinematic viscosity
+   */
   NavierStokesCouplingEvaluation(const Mapping<dim>    &mapping,
                                  const DoFHandler<dim> &dof_handler,
                                  const double           kinematic_viscosity);
 
   /**
-   *    @brief Default destructor.
+   * @brief Default destructor
    */
   virtual ~NavierStokesCouplingEvaluation() = default;
 

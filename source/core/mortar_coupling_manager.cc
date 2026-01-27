@@ -166,7 +166,7 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
   double       delta_1 = 1.0;
 
   if constexpr (dim == 3)
-    delta_1 = radius[1] / n_subdivisions[1];
+    delta_1 = interface_dimensions[1] / n_subdivisions[1];
 
   if (type == 0) // aligned
     {
@@ -326,7 +326,7 @@ MortarManagerBase<dim>::get_weights(const Point<dim> &face_center,
   double       delta_1 = 1.0;
 
   if (dim == 3)
-    delta_1 = radius[1] / n_subdivisions[1];
+    delta_1 = interface_dimensions[1] / n_subdivisions[1];
 
   if (type == 0) // aligned
     {
@@ -334,7 +334,7 @@ MortarManagerBase<dim>::get_weights(const Point<dim> &face_center,
       weights.reserve(n_quadrature_points);
 
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
-        weights.emplace_back(radius[0] * quadrature.weight(q) * delta_0 *
+        weights.emplace_back(interface_dimensions[0] * quadrature.weight(q) * delta_0 *
                              delta_1);
 
       return weights;
@@ -363,11 +363,11 @@ MortarManagerBase<dim>::get_weights(const Point<dim> &face_center,
       weights.reserve(2 * n_quadrature_points);
 
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
-        weights.emplace_back(radius[0] * quadrature.weight(q) *
+        weights.emplace_back(interface_dimensions[0] * quadrature.weight(q) *
                              (rad_1 - rad_0) * delta_1);
 
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
-        weights.emplace_back(radius[0] * quadrature.weight(q) *
+        weights.emplace_back(interface_dimensions[0] * quadrature.weight(q) *
                              (rad_2 - rad_1) * delta_1);
 
       return weights;
@@ -417,7 +417,7 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center,
 
   if constexpr (dim == 3)
     {
-      const double delta_1 = radius[1] / n_subdivisions[1];
+      const double delta_1 = interface_dimensions[1] / n_subdivisions[1];
       id_out_plane         = static_cast<unsigned int>(
         std::round((face_center[2] - delta_1 / 2) / delta_1));
     }
@@ -680,7 +680,7 @@ template <int dim>
 Point<dim>
 MortarManagerCircle<dim>::from_1D(const double angle_rad) const
 {
-  return radius_to_point<dim>(this->radius[0],
+  return radius_to_point<dim>(this->interface_dimensions[0],
                               angle_rad + this->pre_rotation_angle);
 }
 

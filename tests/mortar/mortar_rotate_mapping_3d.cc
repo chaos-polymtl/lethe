@@ -105,7 +105,7 @@ test()
   dof_handler.distribute_dofs(fe);
 
   // Number of subdivisions and rotor radius
-  const auto [n_subdivisions, radius, _] =
+  const auto [n_subdivisions, interface_dimensions, _] =
     compute_n_subdivisions_and_radius(triangulation,
                                       mapping,
                                       mortar_parameters);
@@ -114,7 +114,7 @@ test()
   LetheGridTools::rotate_mapping(dof_handler,
                                  mapping_cache,
                                  mapping,
-                                 radius[0],
+                                 interface_dimensions[0],
                                  rotation_angle,
                                  mortar_parameters.center_of_rotation,
                                  mortar_parameters.rotation_axis);
@@ -127,8 +127,8 @@ test()
               << std::endl;
       deallog << "Axial direction subdivisions : " << n_subdivisions[1]
               << std::endl;
-      deallog << "Radius : " << radius[0] << std::endl;
-      deallog << "Axial direction length : " << radius[1] << std::endl;
+      deallog << "Radius : " << interface_dimensions[0] << std::endl;
+      deallog << "Axial direction length : " << interface_dimensions[1] << std::endl;
     }
 }
 

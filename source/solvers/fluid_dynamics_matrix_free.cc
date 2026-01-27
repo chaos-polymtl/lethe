@@ -2450,7 +2450,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
              ->get_system_matrix_free()
              .get_mapping_info()
              .mapping,
-          this->mg_operators[level]->mortar_manager_mf->radius[0],
+          this->mg_operators[level]->mortar_manager_mf->interface_dimensions[0],
           this->simulation_parameters.mortar_parameters.center_of_rotation,
           this->simulation_parameters.mortar_parameters.rotor_angular_velocity);
 
@@ -3178,7 +3178,7 @@ FluidDynamicsMatrixFree<dim>::assemble_system_rhs()
   if (this->simulation_parameters.mortar_parameters.enable)
     this->system_operator->evaluate_velocity_ale(
       *this->get_mapping(),
-      this->system_operator->mortar_manager_mf->radius[0],
+      this->system_operator->mortar_manager_mf->interface_dimensions[0],
       this->simulation_parameters.mortar_parameters.center_of_rotation,
       this->simulation_parameters.mortar_parameters.rotor_angular_velocity);
 
@@ -3501,7 +3501,7 @@ FluidDynamicsMatrixFree<dim>::setup_preconditioner()
   if (this->simulation_parameters.mortar_parameters.enable)
     this->system_operator->evaluate_velocity_ale(
       *this->get_mapping(),
-      this->system_operator->mortar_manager_mf->radius[0],
+      this->system_operator->mortar_manager_mf->interface_dimensions[0],
       this->simulation_parameters.mortar_parameters.center_of_rotation,
       this->simulation_parameters.mortar_parameters.rotor_angular_velocity);
 

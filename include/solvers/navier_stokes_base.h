@@ -513,13 +513,9 @@ protected:
    * first defined, this function is called twice before the iterate() loop. The
    * parameter is_first just prevents the mortar verbosity from being printed
    * twice
-   * @param[in] mortar_interface_radius Radius at the rotor-stator interface.
-   * This value is computed and passed as a parameter at the first call of the
-   * function
    */
   void
-  rotate_rotor_mapping(const bool is_first,
-                       double     mortar_interface_radius = 0.0);
+  rotate_rotor_mapping(const bool is_first);
 
   /**
    * @brief Update non-zero constraints if the boundary is time dependent.
