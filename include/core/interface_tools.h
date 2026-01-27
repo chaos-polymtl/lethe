@@ -779,9 +779,6 @@ namespace InterfaceTools
       Tensor<1, dim> residual_real =
         distance_gradient - (1.0 / x_n_to_x_I_real.norm()) * x_n_to_x_I_real;
 
-      // DerivativeForm<1, dim, dim - 1> transformation_jac_transpose =
-      // transformation_jac.transpose();
-
       for (unsigned int i = 0; i < dim - 1; ++i)
         for (unsigned int j = 0; j < dim; ++j)
           residual_ref[i] += transformation_jac(j, i) * residual_real[j];
