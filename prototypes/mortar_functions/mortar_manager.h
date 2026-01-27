@@ -530,19 +530,28 @@ protected:
 
 
   /**
-   * @brief Convert radiant to quadrature point in real space.
+   * @brief Convert angle (in radians) to quadrature point in real space
+   * 
+   * @param[in] angle_rad Angle (in radians)
+   * @return Point in cartesian coordinates
    */
   virtual Point<dim>
-  from_1D(const double radiant) const = 0;
+  from_1D(const double angle_rad) const = 0;
 
   /**
-   * @brief Convert quadrature point in real space to radiant.
+   * @brief Convert quadrature point in real space to angle (in radians)
+   * 
+   * @param[in] point Point in cartesian coordinates
+   * @return Angle (in radians)
    */
   virtual double
   to_1D(const Point<dim> &point) const = 0;
 
   /**
-   * @brief Return the normal for a given quadrature point.
+   * @brief Return the normal for a given quadrature point
+   * 
+   * @param[in] point Point in cartesian coordinates
+   * @return Corresponding outward normal vector
    */
   virtual Tensor<1, dim, double>
   get_normal(const Point<dim> &point) const = 0;
@@ -606,12 +615,12 @@ MortarManagerCircle<dim>::MortarManagerCircle(
 
 template <int dim>
 Point<dim>
-MortarManagerCircle<dim>::from_1D(const double radiant) const
+MortarManagerCircle<dim>::from_1D(const double angle_rad) const
 {
   Point<dim> point;
 
-  point[0] = this->radius[0] * std::cos(radiant);
-  point[1] = this->radius[0] * std::sin(radiant);
+  point[0] = this->radius[0] * std::cos(angle_rad);
+  point[1] = this->radius[0] * std::sin(angle_rad);
 
   return point;
 }

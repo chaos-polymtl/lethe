@@ -678,9 +678,10 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
 /*-------------- MortarManagerCircle -------------------------------*/
 template <int dim>
 Point<dim>
-MortarManagerCircle<dim>::from_1D(const double radiant) const
+MortarManagerCircle<dim>::from_1D(const double angle_rad) const
 {
-  return radius_to_point<dim>(this->radius[0], radiant + pre_rotation_angle);
+  return radius_to_point<dim>(this->radius[0],
+                              angle_rad + this->pre_rotation_angle);
 }
 
 template <int dim>
