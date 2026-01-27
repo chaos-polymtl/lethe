@@ -540,6 +540,15 @@
 
   # Subdivision of mesh cell in postprocessing
   set subdivision = 1
+
+  #---------------------------------------------------
+  # Explicit coupling constraint parameters
+  #---------------------------------------------------
+  # Set time-step to respect the capillary time-step constraint
+  set respect capillary time-step constraint = false
+
+  # Set targeted capillary time-step ratio (Δt/Δt_σ)
+  set capillary time-step ratio = 1.0
 end
 </pre></div>
 </div>
@@ -670,6 +679,56 @@ end
 </li>
 </ul>
 </section>
+<section id="explicit-coupling-constraint-parameters">
+<h2>Explicit coupling constraint parameters<a class="headerlink" href="#explicit-coupling-constraint-parameters" title="Link to this heading">#</a></h2>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">respect</span> <span class="pre">capillary</span> <span class="pre">time-step</span> <span class="pre">constraint</span></code>: computes the capillary time-step constraint <a class="footnote-reference brackets" href="#denner2022" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\Delta t_\sigma = \min_{x \in \Omega}\left(\sqrt{\frac{(\rho_0 + \rho_1) h^3}{2 \pi \sigma}}\right)\]</div>
+</div>
+<dl class="simple">
+<dt>where</dt><dd><ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\sigma\)</span> is the surface tension coefficient;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\rho_0\)</span> and <span class="math notranslate nohighlight">\(\rho_1\)</span> are respectively the densities of fluid <span class="math notranslate nohighlight">\(0\)</span> and <span class="math notranslate nohighlight">\(1\)</span>, and;</p></li>
+<li><p><span class="math notranslate nohighlight">\(h\)</span> is the cell size.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Here, we define the cell size <span class="math notranslate nohighlight">\((h)\)</span> as being the diameter of:</p>
+<ul class="simple">
+<li><p>a disk with equivalent area in 2D, and;</p></li>
+<li><p>a sphere with equivalent volume in 3D.</p></li>
+</ul>
+</div>
+<p>and replaces the initial time-step with <span class="math notranslate nohighlight">\(N_\text{CTR} \Delta t_\sigma\)</span> if it is smaller than the user-imposed initial <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">step</span></code>. <span class="math notranslate nohighlight">\(N_\text{CTR}\)</span> is the user-defined <code class="docutils literal notranslate"><span class="pre">capillary</span> <span class="pre">time-step</span> <span class="pre">ratio</span></code>.</p>
+<p>This is used in the coupling of the <a class="reference internal" href="../../theory/multiphysics/fluid_dynamics/navier-stokes.html"><span class="doc">Navier-Stokes equations</span></a> with the <a class="reference internal" href="../../theory/multiphase/cfd/vof.html"><span class="doc">VOF</span></a> method to simulate multiphase flows with surface tension. If <code class="docutils literal notranslate"><span class="pre">adapt</span></code> is also enabled, the time-step will adapt to respect the capillary time-step constraint dynamically.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">adapt</span></code> is also enabled, the simulation time-step takes the minimal value between <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">time</span> <span class="pre">step</span></code>, the time-step computed with <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">cfl</span></code> and the imposed capillary time-step.</p>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">capillary</span> <span class="pre">time-step</span> <span class="pre">ratio</span></code>: corresponds to the aimed ratio of the simulation time-step over the capillary time-step constraint:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[N_\text{CTR} = \frac{\Delta t}{\Delta t_\sigma}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(N_\text{CTR}\)</span> is the capillary time-step ratio.</p>
+</li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="denner2022" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>F. Denner, F. Evrard, and B. van Wachem, “Breaching the capillary time-step constraint using a coupled VOF method with implicit surface tension,” <em>J. Comput. Phys.</em>, vol. 459, p. 111128, Jun. 2022, doi: <a class="reference external" href="https://doi.org/10.1016/j.jcp.2022.111128">10.1016/j.jcp.2022.111128</a>.</p>
+</aside>
+</aside>
+</section>
 </section>
 
         </article>
@@ -733,6 +792,8 @@ end
 <li><a class="reference internal" href="#transient-simulations-parameters">Transient simulations parameters</a></li>
 <li><a class="reference internal" href="#log-file-parameters">Log file parameters</a></li>
 <li><a class="reference internal" href="#paraview-output-file-parameters">Paraview output file parameters</a></li>
+<li><a class="reference internal" href="#explicit-coupling-constraint-parameters">Explicit coupling constraint parameters</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
 </ul>
 </li>
 </ul>
