@@ -365,7 +365,8 @@ public:
             // In the VANS momentum equations, the viscous stress tensor
             // includes the gradient of the divergence of the velocity, ∇(∇·u) =
             // ∂i(∂juj). This results in a term ∂i(∂jδuj), which we compute here
-            // when assembling VANS-specific contributions (gated by gather_void_fraction).
+            // when assembling VANS-specific contributions (gated by
+            // gather_void_fraction).
             if (gather_void_fraction)
               {
                 this->gradient_divergence_phi_u[q][k] = 0;

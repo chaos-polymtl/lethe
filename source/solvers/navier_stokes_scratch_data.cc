@@ -318,7 +318,7 @@ NavierStokesScratchData<dim>::enable_void_fraction(
   gather_void_fraction = true;
   // The hessian is needed to calculate the gradient of the velocity divergence
   // term in the stress tensor
-  gather_hessian       = true;
+  gather_hessian = true;
 
   // Contrary to the other physics, we enable the calculation of the JxW values
   // on the void fraction
