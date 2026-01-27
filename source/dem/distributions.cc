@@ -495,20 +495,24 @@ CustomDistribution::CustomDistribution(
 
           if (function_type == ProbabilityFunctionType::PDF)
             {
-              // 1. Convert Volume-PDF segments to relative Number fractions (dfn)
+              // 1. Convert Volume-PDF segments to relative Number fractions
+              // (dfn)
               for (unsigned int i = 0; i < n_diameter_values - 1; ++i)
                 {
                   const double d_low  = diameter_values[i];
                   const double d_high = diameter_values[i + 1];
 
-                  // The volume fraction in this segment is the integral (area) of the PDF.
-                  // We use the trapezoidal rule for a piecewise linear PDF.
+                  // The volume fraction in this segment is the integral (area)
+                  // of the PDF. We use the trapezoidal rule for a piecewise
+                  // linear PDF.
                   const double this_bin_volume_fraction =
-                    0.5 * (d_probabilities[i] + d_probabilities[i + 1]) * (d_high - d_low);
+                    0.5 * (d_probabilities[i] + d_probabilities[i + 1]) *
+                    (d_high - d_low);
 
                   // Use the same analytical weight as your CDF branch:
                   // Weight = Mean value of (1/D^3) over the bin
-                  const double weight = (d_low + d_high) / (2.0 * std::pow(d_low * d_high, 2));
+                  const double weight =
+                    (d_low + d_high) / (2.0 * std::pow(d_low * d_high, 2));
 
                   dfn[i] = this_bin_volume_fraction * weight;
                   total_number_sum += dfn[i];
@@ -518,7 +522,8 @@ CustomDistribution::CustomDistribution(
               number_based_cdf.assign(n_diameter_values, 0.0);
               for (unsigned int i = 0; i < n_diameter_values - 1; ++i)
                 {
-                  number_based_cdf[i + 1] = number_based_cdf[i] + (dfn[i] / total_number_sum);
+                  number_based_cdf[i + 1] =
+                    number_based_cdf[i] + (dfn[i] / total_number_sum);
                 }
               number_based_cdf.back() = 1.0;
             }
