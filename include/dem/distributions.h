@@ -360,7 +360,8 @@ private:
 
   /**
    * @brief Vector containing cumulative probabilities associated with de
-   * diameter_values vector. The probabilities are based on the number based CDF.
+   * diameter_values vector. The probabilities are based on the number based
+   * CDF.
    */
   std::vector<double> number_based_cdf;
 
