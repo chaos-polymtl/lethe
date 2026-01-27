@@ -294,7 +294,7 @@ public:
       current_solution, this->velocity_gradients);
     this->fe_values[velocities].get_function_laplacians(
       current_solution, this->velocity_laplacians);
-    if (gather_hessian || gather_void_fraction)
+    if (gather_hessian)
       this->fe_values[velocities].get_function_hessians(
         current_solution, this->velocity_hessians);
 
@@ -306,10 +306,14 @@ public:
     for (unsigned int q = 0; q < this->n_q_points; ++q)
       {
         this->velocity_divergences[q] = trace(this->velocity_gradients[q]);
+        // In the VANS momentum equations, the viscous stress tensor includes
+        // the gradient of the divergence of the velocity, ∇(∇·u) = ∂i(∂juj). We
+        // therefore compute this quantity here when assembling VANS-specific
+        // contributions (gated by gather_void_fraction).
         if (gather_void_fraction)
           {
-            // Compute term ∂j(∂iuj) = ∂i(∂juj) to be used in the strong
-            // residual of the VANS  momentum equations
+            // Compute term ∂j(∂iuj) = ∂i(∂juj) for use in the strong residual
+            // of the VANS momentum equations.
             this->velocity_gradient_divergence[q] = 0;
             for (int d1 = 0; d1 < dim; ++d1)
               {
@@ -358,11 +362,15 @@ public:
             for (int d = 0; d < dim; ++d)
               this->laplacian_phi_u[q][k][d] = trace(this->hess_phi_u[q][k][d]);
 
+            // In the VANS momentum equations, the viscous stress tensor
+            // includes the gradient of the divergence of the velocity, ∇(∇·u) =
+            // ∂i(∂juj). This results in a term ∂i(∂jδuj), which we compute here
+            // when assembling VANS-specific contributions (gated by gather_void_fraction).
             if (gather_void_fraction)
               {
                 this->gradient_divergence_phi_u[q][k] = 0;
-                // Compute term ∂j(∂iuj) = ∂i(∂juj) to be used in the strong
-                // Jacobian of the VANS  momentum equations
+                // Compute term ∂j(∂iδuj) = ∂i(∂jδuj) to be used in the strong
+                // Jacobian of the VANS momentum equations
 
                 for (int d1 = 0; d1 < dim; ++d1)
                   {

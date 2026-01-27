@@ -470,16 +470,17 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual =
+        // Term εfuj∂jui
         velocity_gradient * velocity * void_fraction
-        // Mass Source
+        // Mass Source: mass_source*ui
         + mass_source * velocity
-        // Pressure
+        // Pressure: εf∂ip
         + void_fraction * pressure_gradient
-        // Kinematic viscosity laplacian term
+        // Kinematic viscosity laplacian term: -νfεf∂j∂jui
         - void_fraction * kinematic_viscosity * velocity_laplacian
-        // Compute term ∂j∂iuj = ∂i∂juj
+        // Term -νfεf∂j∂iuj = -νfεf∂i∂juj
         - void_fraction * kinematic_viscosity * velocity_gradient_divergence
-        // Force
+        // Force: -fi*εf
         - force * void_fraction + strong_residual_vec[q];
 
       // Pressure scaling factor
