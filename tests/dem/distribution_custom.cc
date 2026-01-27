@@ -64,7 +64,8 @@ test()
   lpp.diameter_min_cutoff.push_back(-1.);
   lpp.diameter_max_cutoff.push_back(-1.);
   lpp.distribution_weighting_type.push_back(weighting_type);
-  lpp.custom_probability_function_type.push_back(Parameters::Lagrangian::ProbabilityFunctionType::PDF);
+  lpp.custom_probability_function_type.push_back(
+    Parameters::Lagrangian::ProbabilityFunctionType::PDF);
 
   // lpp.diameter_min_cutoff.push_back(-1);
   // lpp.diameter_max_cutoff.push_back(-1.);
@@ -77,15 +78,15 @@ test()
 
   // Calling custom distribution
   std::vector<std::shared_ptr<Distribution>> distribution_object_container;
-  distribution_object_container.push_back(
-    std::make_shared<CustomDistribution>(lpp.particle_custom_diameter[0],
-                                         lpp.particle_custom_probability[0],
-                                         lpp.seed_for_distributions[0],
-                                         lpp.diameter_min_cutoff[0],
-                                         lpp.diameter_max_cutoff[0],
-                                         lpp.distribution_weighting_type[0],
-                                         lpp.custom_probability_function_type[0],
-                                         false));
+  distribution_object_container.push_back(std::make_shared<CustomDistribution>(
+    lpp.particle_custom_diameter[0],
+    lpp.particle_custom_probability[0],
+    lpp.seed_for_distributions[0],
+    lpp.diameter_min_cutoff[0],
+    lpp.diameter_max_cutoff[0],
+    lpp.distribution_weighting_type[0],
+    lpp.custom_probability_function_type[0],
+    false));
 
   // Calling volume insertion
   InsertionVolume<dim, PropertiesIndex> insertion_object(
