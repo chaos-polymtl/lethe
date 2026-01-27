@@ -276,7 +276,10 @@ MortarManagerCircle<dim>::MortarManagerCircle(
   const Mapping<dim>            &mapping,
   const DoFHandler<dim>         &dof_handler,
   const Parameters::Mortar<dim> &mortar_parameters)
-  : MortarManagerBase<dim>(quadrature, mapping, dof_handler, mortar_parameters)
+  : MortarManagerBase<dim>(construct_quadrature(quadrature, mortar_parameters),
+                           mapping,
+                           dof_handler,
+                           mortar_parameters)
 {
   // Compute and store the number of subdivisions at the interface, the mortar
   // interface position, and the initial mesh rotation angle
