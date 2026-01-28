@@ -47,13 +47,13 @@ Simulation Control
 .. code-block:: text
 
     subsection simulation control
-      set method             = bdf2
-      set time step          = 0.0005 
-      set adapt              = true
-      set output frequency   = 10
-      set max cfl            = 0.5
-      set time end           = 0.6    
-      set output path        = out/
+      set method                         = bdf2
+      set time step                      = 0.0005
+      set adapt time-step to respect CFL = true
+      set output frequency               = 10
+      set max cfl                        = 0.5
+      set time end                       = 0.6
+      set output path                    = out/
     end
 
 * The ``time step`` is set to  ``0.0005``. This is very small for this case but it ensures that the particle is properly accelerated from rest at the beginning of the simulation. In order to reduce the computational time, we use use adaptive time stepping with a maximum CFL of ``0.5``. This will allow the time step to increase as the particle accelerates and the flow becomes more steady around the particle.

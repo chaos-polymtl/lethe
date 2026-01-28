@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2023-2024, 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -10,16 +10,16 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = bdf1
-  set output name       = jurins-law-2d
-  set output frequency  = 10
-  set output path       = ./outputs/50/
-  set max time step     = 5e-4
-  set adapt             = true
-  set max cfl           = 0.8
-  set time end          = 0.5
-  set time step         = 5e-4
-  set output boundaries = true
+  set method                         = bdf1
+  set output name                    = jurins-law-2d
+  set output frequency               = 10
+  set output path                    = ./outputs/50/
+  set max time step                  = 5e-4
+  set adapt time-step to respect CFL = true
+  set max cfl                        = 0.8
+  set time end                       = 0.5
+  set time step                      = 5e-4
+  set output boundaries              = true
 end
 
 #---------------------------------------------------

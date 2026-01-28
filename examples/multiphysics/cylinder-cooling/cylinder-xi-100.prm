@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #---------------------------------------------------
@@ -12,15 +12,15 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method                       = bdf2
-  set time step                    = 0.00001
-  set adapt                        = true
-  set adaptative time step scaling = 1.02
-  set time end                     = 100
-  set output frequency             = 50
-  set output name                  = out
-  set output path                  = ./output-xi-100/
-  set max cfl                      = 5
+  set method                         = bdf2
+  set time step                      = 0.00001
+  set adapt time-step to respect CFL = true
+  set adaptative time step scaling   = 1.02
+  set time end                       = 100
+  set output frequency               = 50
+  set output name                    = out
+  set output path                    = ./output-xi-100/
+  set max cfl                        = 5
 end
 
 #---------------------------------------------------

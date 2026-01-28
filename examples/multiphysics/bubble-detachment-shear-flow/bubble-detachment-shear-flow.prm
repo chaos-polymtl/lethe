@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2023-2024, 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -11,16 +11,16 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = bdf2
-  set output name       = article-3d
-  set output frequency  = 15
-  set output path       = ./outputs/output/
-  set time end          = 0.5
-  set adapt             = true
-  set max cfl           = 0.9
-  set time step         = 5e-7
-  set max time step     = 7.9784e-06 # Capillary timestep condition
-  set output boundaries = true
+  set method                         = bdf2
+  set output name                    = article-3d
+  set output frequency               = 15
+  set output path                    = ./outputs/output/
+  set time end                       = 0.5
+  set adapt time-step to respect CFL = true
+  set max cfl                        = 0.9
+  set time step                      = 5e-7
+  set max time step                  = 7.9784e-06 # Capillary timestep condition
+  set output boundaries              = true
 end
 
 #---------------------------------------------------

@@ -63,21 +63,21 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-Time integration is handled by a 1st order backward differentiation scheme (`bdf1`), for a :math:`0.5 \ \text{s}` simulation time with an initial time step of :math:`0.0005 \ \text{s}`. Time-step adaptation is enabled using ``adapt=true`` and the max CFL is :math:`0.8`. ``output boundaries`` is set to ``true`` to get a ``.vtu`` file containing the indices of the boundaries of the domain.
+Time integration is handled by a 1st order backward differentiation scheme (`bdf1`), for a :math:`0.5 \ \text{s}` simulation time with an initial time step of :math:`0.0005 \ \text{s}`. Time-step adaptation is enabled using ``adapt time-step to respect CFL` = true`` and the max CFL is :math:`0.8`. ``output boundaries`` is set to ``true`` to get a ``.vtu`` file containing the indices of the boundaries of the domain.
 
 .. code-block:: text
 
     subsection simulation control
-      set method            = bdf1
-      set output name       = jurins-law-2d
-      set output frequency  = 10
-      set output path       = ./
-      set max time step     = 5e-4
-      set adapt             = true
-      set max cfl           = 0.8
-      set time end          = 0.5
-      set time step         = 5e-4
-      set output boundaries = true
+      set method                         = bdf1
+      set output name                    = jurins-law-2d
+      set output frequency               = 10
+      set output path                    = ./outputs/50/
+      set max time step                  = 5e-4
+      set adapt time-step to respect CFL = true
+      set max cfl                        = 0.8
+      set time end                       = 0.5
+      set time step                      = 5e-4
+      set output boundaries              = true
     end
 
 Multiphysics

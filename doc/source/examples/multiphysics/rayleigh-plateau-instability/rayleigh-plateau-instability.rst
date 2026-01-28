@@ -79,15 +79,15 @@ The time integration is handled by a 2nd-order backward differentiation scheme (
 .. code-block:: text
 
     subsection simulation control
-      set method           = bdf2
-      set time end         = 0.08
-      set time step        = 4.4e-5
-      set adapt            = true
-      set max cfl          = 0.75
-      set max time step    = 4.4e-5
-      set output name      = rayleigh-plateau
-      set output frequency = 5
-      set output path      = ./output_delta0_20/
+      set method                         = bdf2
+      set time end                       = 0.08
+      set time step                      = 4.4e-5
+      set adapt time-step to respect CFL = true
+      set max cfl                        = 0.75
+      set max time step                  = 4.4e-5
+      set output name                    = rayleigh-plateau
+      set output frequency               = 5
+      set output path                    = ./output_delta0_20/
     end
 
 Multiphysics

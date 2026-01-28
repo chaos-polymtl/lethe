@@ -78,17 +78,17 @@ The time integration is handled by a 1st order backward differentiation scheme t
 .. code-block:: text
 
     subsection simulation control
-      set method                       = bdf1
-      set time step                    = 0.001
-      set adapt                        = true
-      set max cfl                      = 0.9
-      set stop tolerance               = 1e-5
-      set adaptative time step scaling = 1.3
-      set number mesh adapt            = 0
-      set output name                  = rayleigh-benard_convection
-      set output control               = time
-      set output time frequency        = 0.5
-      set output path                  = ./output/
+      set method                         = steady_bdf
+      set time end                       = 10
+      set time step                      = 0.001
+      set adapt time-step to respect CFL = true
+      set max cfl                        = 0.9
+      set stop tolerance                 = 1e-5
+      set adaptative time step scaling   = 1.3
+      set output name                    = rayleigh-benard_convection
+      set output control                 = time
+      set output time frequency          = 0.5
+      set output path                    = ./output/
     end
 
 Multiphysics

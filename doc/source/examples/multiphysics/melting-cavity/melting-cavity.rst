@@ -91,16 +91,16 @@ time step of :math:`0.01` second.
 .. code-block:: text
 
     subsection simulation control
-      set method                       = bdf1
-      set time end                     = 41
-      set time step                    = 0.01
-      set adapt                        = true 
-      set max cfl                      = 0.8
-      set adaptative time step scaling = 1.1
-      set output name                  = melting
-      set output control               = iteration
-      set output frequency             = 100
-      set output path                  = ./output/
+      set method                         = bdf1
+      set time end                       = 41
+      set time step                      = 0.01
+      set adapt time-step to respect CFL = true
+      set max cfl                        = 0.8
+      set adaptative time step scaling   = 1.1
+      set output name                    = melting
+      set output control                 = iteration
+      set output frequency               = 100
+      set output path                    = ./output/
     end
 
 Multiphysics

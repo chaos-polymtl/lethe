@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -11,14 +11,14 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf2
-  set time end         = 2.5
-  set time step        = 0.1
-  set adapt            = true
-  set max cfl          = 1
-  set output name      = air-bubble-compression
-  set output frequency = 5
-  set output path      = ./output/
+  set method                         = bdf2
+  set time end                       = 2.5
+  set time step                      = 0.1
+  set adapt time-step to respect CFL = true
+  set max cfl                        = 1
+  set output name                    = air-bubble-compression
+  set output frequency               = 5
+  set output path                    = ./output/
 end
 
 #---------------------------------------------------

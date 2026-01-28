@@ -71,14 +71,14 @@ time-step of :math:`0.01` seconds.
 .. code-block:: text
 
     subsection simulation control
-      set method           = bdf1
-      set time end         = 4
-      set time step        = 0.01
-      set adapt            = true
-      set max cfl          = 0.5
-      set output name      = dam-break
-      set output frequency = 20
-      set output path      = ./output/
+      set method                         = bdf1
+      set time end                       = 4
+      set time step                      = 0.01
+      set adapt time-step to respect CFL = true
+      set max cfl                        = 0.5
+      set output name                    = dam-break
+      set output frequency               = 20
+      set output path                    = ./output/
     end
 
 Multiphysics

@@ -65,14 +65,14 @@ The initial time-step is set to :math:`0.1 \, \text{s}` and the simulation lasts
 .. code-block:: text
 
     subsection simulation control
-      set method           = bdf2
-      set time end         = 2.5
-      set time step        = 0.1
-      set adapt            = true
-      set max cfl          = 1
-      set output name      = air-bubble-compression
-      set output frequency = 5
-      set output path      = ./output/
+      set method                         = bdf2
+      set time end                       = 2.5
+      set time step                      = 0.1
+      set adapt time-step to respect CFL = true
+      set max cfl                        = 1
+      set output name                    = air-bubble-compression
+      set output frequency               = 5
+      set output path                    = ./output/
     end
 
 Multiphysics
