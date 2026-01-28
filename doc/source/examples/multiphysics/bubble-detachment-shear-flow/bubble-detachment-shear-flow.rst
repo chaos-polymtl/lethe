@@ -67,18 +67,18 @@ where :math:`\rho_a` and :math:`\rho_l` are the densities of the gas and the liq
 
 .. code-block:: text
 
-  subsection simulation control
-    set method                         = bdf2
-    set output name                    = article-3d
-    set output frequency               = 15
-    set output path                    = ./outputs/output/
-    set time end                       = 0.5
-    set adapt time-step to respect CFL = true
-    set max cfl                        = 0.9
-    set time step                      = 5e-7
-    set max time step                  = 7.9784e-06 # Capillary timestep condition
-    set output boundaries              = true
-  end
+    subsection simulation control
+      set method                         = bdf2
+      set output name                    = article-3d
+      set output frequency               = 15
+      set output path                    = ./outputs/output/
+      set time end                       = 0.5
+      set adapt time-step to respect CFL = true
+      set max cfl                        = 0.9
+      set time step                      = 5e-7
+      set max time step                  = 7.9784e-06 # Capillary timestep condition
+      set output boundaries              = true
+    end
 
 
 Multiphysics

@@ -205,7 +205,6 @@ The ``simulation control`` subsection controls the flow of the simulation. To ma
       set max cfl                        = 1
       set time step                      = 0.002
       set output frequency               = 500
-      set subdivision                    = 1
     end
 
 
