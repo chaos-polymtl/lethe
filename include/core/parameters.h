@@ -103,13 +103,13 @@ namespace Parameters
 
     /**
      * Boolean indicating if adaptive time-stepping is enabled.
-     * To enable it, either SimulationControl::adapt_with_cfl or
+     * To enable it, enable either SimulationControl::adapt_with_cfl or
      * SimulationControl::adapt_with_capillary_time_step_ratio.
      *
      * @remark By default, this is set to @p false since both
      * SimulationControl::adapt_with_cfl and
      * SimulationControl::adapt_with_capillary_time_step_ratio are set to
-     * @false by default.
+     * @p false by default.
      */
     bool adapt;
 
@@ -128,8 +128,8 @@ namespace Parameters
     double max_dt;
 
     /**
-     * Boolean indicating if the capillary time-step should be controlling the
-     * simulation time-step
+     * Boolean indicating if the capillary time-step ratio should be controlling
+     * the simulation time-step
      *
      * @remark By default, this is set to @p false.
      */

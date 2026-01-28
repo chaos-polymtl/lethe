@@ -906,7 +906,7 @@ class SimulationControlTransient : public SimulationControl
 protected:
   /**
    * Boolean indicating if adaptive time-stepping is enabled.
-   * To enable it, either SSimulationControlTransient::adapt_with_cfl or
+   * To enable it, enable either SimulationControlTransient::adapt_with_cfl or
    * SimulationControl::adapt_with_capillary_time_step_ratio.
    */
   bool adapt;
@@ -972,7 +972,7 @@ protected:
    * @brief Calculate the next value of the time step
    *
    * If SimulationControlTransient::adapt_with_cfl is enabled, the time-step is
-   * calculated to ensure that theCFL condition is bound by the maximal CFL
+   * calculated to ensure that the CFL condition is bound by the maximal CFL
    * value. If SimulationControl::adapt_with_capillary_time_step_ratio is
    * enabled, the time-step is calculated to ensure that it is bound
    * by the maximal CTR value. The new time-step is scaled by
