@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MINOR The analytical Jacobian computation involves symmetric matrices and the implementation was not taking advantage of that. Additionally, intermediary matrices where reallocated each time the function was called. This PR improves the performances of compute_analytical_jacobian() by using the symmetry property in matrix-matrix products. It also includes the intermediary matrices as attributes of the SignedDistanceSolver class to avoid mutiple re-instanciation. The gain in terms of computational is about 20% in 3D. [#1893](https://github.com/chaos-polymtl/lethe/pull/1893)
+- MINOR The analytical Jacobian computation involves symmetric matrices and the implementation was not taking advantage of that. Additionally, intermediary matrices where reallocated each time the function was called. This PR improves the performance of compute_analytical_jacobian() by using the symmetry property in matrix-matrix products. It also includes the intermediary matrices as attributes of the SignedDistanceSolver class to avoid multiple re-instanciation. The gain in terms of computational time is about 20% in 3D. [#1893](https://github.com/chaos-polymtl/lethe/pull/1893)
 
 ## [Master] - 2026/01/26
 

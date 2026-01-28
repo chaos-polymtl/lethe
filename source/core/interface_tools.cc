@@ -728,7 +728,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
 
                   // Solve the minimization problem with Newton method
-                  // using a analytical jacobian
+                  // using an analytical Jacobian matrix
                   while (*std::ranges::max_element(correction_norm) > tol &&
                          newton_it < newton_max_it)
                     {
