@@ -21,7 +21,6 @@ subsection simulation control
   set method                         = bdf2
   set time end                       = 0.15
   set time step                      = 0.15
-  set adapt time-step to respect CFL = true
   set output name                    = vof-capillary-time-step-constraint-CTR-10
   set output frequency               = 0
   set adapt time-step to respect CTR = true
