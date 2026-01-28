@@ -22,19 +22,21 @@ In this subsection, gravitational acceleration, and the physical properties of t
       # If distribution type = uniform
       set diameter                          = 0.001
 
-      # If distribution type = custom
-      set custom diameters                  = 0.001 , 0.0005
-      set custom volume fractions           = 0.6   , 0.4
-
       # If distribution type = normal or lognormal
       set average diameter                  = 0.001
       set standard deviation                = 0.0
-      set minimum diameter cutoff           = -1.
-      set maximum diameter cutoff           = -1.
+
+      # If distribution type = custom
+      set custom distribution probability function type = PDF
+      set custom distribution interpolation             = false
+      set custom distribution diameters values          = 0.001, 0.0005
+      set custom distribution diameters probabilities   = 0.6  , 1.0
 
       # If distribution type = normal, lognormal or custom
       set distribution weighting basis      = number
       set distribution prn seed             = 1
+      set minimum diameter cutoff           = -1.
+      set maximum diameter cutoff           = -1.
 
       # For every distribution types
       set number of particles               = 0
