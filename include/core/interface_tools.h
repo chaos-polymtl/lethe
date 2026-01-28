@@ -909,7 +909,6 @@ namespace InterfaceTools
 
           hessian_matrix(i, i) = h_ii;
 
-
           for (int j = i + 1; j < dim; ++j)
             {
               double h_ij = -(x_n_to_x_I_real_p1[i] * x_n_to_x_I_real_p1[j]) *
