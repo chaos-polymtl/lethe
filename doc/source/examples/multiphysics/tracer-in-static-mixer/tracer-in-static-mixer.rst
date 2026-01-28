@@ -60,12 +60,9 @@ Simulation control
 .. code-block:: text
 
     subsection simulation control
-      set method    = bdf1
-      set time end  = 40e-4
-      set time step = 1e-4
-
-      set adapt = false
-
+      set method           = bdf1
+      set time end         = 40e-4
+      set time step        = 1e-4
       set output path      = ./output/
       set output name      = output
       set output control   = iteration

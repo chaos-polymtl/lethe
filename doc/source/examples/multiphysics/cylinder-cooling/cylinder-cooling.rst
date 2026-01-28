@@ -78,7 +78,8 @@ Boundary Conditions
 
 The next step is establishing the boundary conditions for the fluid flow. We specify an inlet velocity of :math:`20` (``id = 3``) in order to obtain a Reynolds number of :math:`20`. A slip boundary condition is set on the outer walls of the domain (``id = 5``) and an outlet boundary conditions is set for the right boundary (``id = 4``). The remaining ids (``id = 1`` and ``id = 2``) are defined on the cylinder but are not used in what follows. 
 
-.. Note ::
+.. Note::
+
     The ids of the boundaries are written in the second column of the ``cylinder.msh`` file in the ``$PhysicalNames`` section.
 
 .. code-block:: text
@@ -190,17 +191,15 @@ We solve the Navier-Stokes and the heat transfer equation in time. In the simula
 .. code-block:: text
 
     subsection simulation control
-        set method                       = bdf2
-        set time end                     = 20
-        
-        set time step                    = 0.000001
-        set adapt                        = true
-        set adaptative time step scaling = 1.02
-        set max cfl                      = 5
-
-        set output frequency             = 10
-        set output name                  = out
-        set output path                  = ./output-xi-1/
+      set method                         = bdf2
+      set time step                      = 0.000001
+      set adapt time-step to respect CFL = true
+      set max cfl                        = 5
+      set adaptative time step scaling   = 1.02
+      set time end                       = 20
+      set output frequency               = 10
+      set output name                    = out
+      set output path                    = ./output-xi-1/
     end
 
 .. warning::

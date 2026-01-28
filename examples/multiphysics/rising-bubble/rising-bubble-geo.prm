@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -14,7 +14,7 @@ subsection simulation control
   set method                            = bdf2
   set time end                          = 3
   set time step                         = 0.001
-  set adapt                             = true
+  set adapt time-step to respect CFL    = true
   set max cfl                           = 0.80
   set output name                       = rising-bubble
   set output frequency                  = 10

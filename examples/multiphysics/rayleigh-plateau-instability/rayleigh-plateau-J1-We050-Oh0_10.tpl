@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2024-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -11,15 +11,15 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf2
-  set time end         = 0.08
-  set time step        = 4.4e-5
-  set adapt            = true
-  set max cfl          = 0.75
-  set max time step    = 4.4e-5
-  set output name      = rayleigh-plateau
-  set output frequency = 5
-  set output path      = ./output_deltaDELTA_VALUE_OUTPUT/
+  set method                         = bdf2
+  set time end                       = 0.08
+  set time step                      = 4.4e-5
+  set adapt time-step to respect CFL = true
+  set max cfl                        = 0.75
+  set max time step                  = 4.4e-5
+  set output name                    = rayleigh-plateau
+  set output frequency               = 5
+  set output path                    = ./output_deltaDELTA_VALUE_OUTPUT/
 end
 
 #---------------------------------------------------
@@ -138,9 +138,9 @@ subsection boundary conditions
     set periodic_direction = 1
   end
   subsection bc 2
-    set id                 = 1
-    set type               = outlet
-    set beta               = 0
+    set id   = 1
+    set type = outlet
+    set beta = 0
   end
 end
 
@@ -180,9 +180,9 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set relative residual  = 1e-3
-    set minimum residual   = 1e-9
-    set preconditioner     = amg
+    set relative residual = 1e-3
+    set minimum residual  = 1e-9
+    set preconditioner    = amg
   end
   subsection VOF
     set relative residual = 1e-8

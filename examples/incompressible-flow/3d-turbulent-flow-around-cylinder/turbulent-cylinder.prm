@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2024, 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -11,15 +11,14 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf2
-  set output name      = cylinder-Re3900
-  set output path      = ./output/
-  set time end         = 200
-  set adapt            = true
-  set max cfl          = 1
-  set time step        = 0.002
-  set output frequency = 500
-  set subdivision      = 1
+  set method                         = bdf2
+  set output name                    = cylinder-Re3900
+  set output path                    = ./output/
+  set time end                       = 200
+  set adapt time-step to respect CFL = true
+  set max cfl                        = 1
+  set time step                      = 0.002
+  set output frequency               = 500
 end
 
 #---------------------------------------------------

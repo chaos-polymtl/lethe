@@ -22,10 +22,10 @@ SimulationControl::SimulationControl(const Parameters::SimulationControl &param)
   , CFL(0)
   , max_CFL(param.maxCFL)
   , capillary_time_step_constraint(std::numeric_limits<double>::max())
-  , target_capillary_time_step_ratio(param.target_capillary_time_step_ratio)
+  , max_capillary_time_step_ratio(param.max_capillary_time_step_ratio)
   , current_capillary_time_step_ratio(0)
-  , respect_capillary_time_step_constraint(
-      param.respect_capillary_time_step_constraint)
+  , adapt_with_capillary_time_step_ratio(
+      param.adapt_with_capillary_time_step_ratio)
   , residual(DBL_MAX)
   , stop_tolerance(param.stop_tolerance)
   , output_iteration_frequency(param.output_iteration_frequency)
@@ -256,6 +256,7 @@ SimulationControlTransient::SimulationControlTransient(
   const Parameters::SimulationControl &param)
   : SimulationControl(param)
   , adapt(param.adapt)
+  , adapt_with_cfl(param.adapt_with_cfl)
   , adaptative_time_step_scaling(param.adaptative_time_step_scaling)
   , max_dt(param.max_dt)
   , time_last_output(0.)
@@ -287,7 +288,7 @@ SimulationControlTransient::print_progression(const ConditionalOStream &pcout)
 
   unsigned int first_line_size = ss.str().size();
 
-  if (respect_capillary_time_step_constraint)
+  if (adapt_with_capillary_time_step_ratio)
     {
       // Get the length of blank spaces to add
       std::stringstream cfl_ss;
@@ -335,7 +336,7 @@ SimulationControlTransient::integrate()
 
       // Calculate CTR to print on the console if capillary time-step constraint
       // is enabled
-      if (respect_capillary_time_step_constraint)
+      if (adapt_with_capillary_time_step_ratio)
         {
           set_current_capillary_time_step_ratio();
         }
@@ -364,15 +365,16 @@ SimulationControlTransient::calculate_time_step()
   if (adapt && iteration_number > 1)
     {
       new_time_step = time_step * adaptative_time_step_scaling;
-      if (CFL > 0 && max_CFL / CFL < adaptative_time_step_scaling)
+      if (adapt_with_cfl && CFL > 0 &&
+          max_CFL / CFL < adaptative_time_step_scaling)
         new_time_step = time_step * max_CFL / CFL;
 
       new_time_step = std::min(new_time_step, max_dt);
 
-      if (respect_capillary_time_step_constraint)
+      if (adapt_with_capillary_time_step_ratio)
         {
           double capillary_time_step =
-            capillary_time_step_constraint * target_capillary_time_step_ratio;
+            capillary_time_step_constraint * max_capillary_time_step_ratio;
           new_time_step = std::min(new_time_step, capillary_time_step);
         }
     }

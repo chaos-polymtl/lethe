@@ -18,9 +18,10 @@ test()
 {
   Parameters::SimulationControl simulationControlParameters;
 
-  simulationControlParameters.dt     = 0.01;
-  simulationControlParameters.adapt  = false;
-  simulationControlParameters.maxCFL = 99;
+  simulationControlParameters.dt             = 0.01;
+  simulationControlParameters.adapt          = false;
+  simulationControlParameters.adapt_with_cfl = false;
+  simulationControlParameters.maxCFL         = 99;
   simulationControlParameters.method =
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
 
@@ -31,8 +32,8 @@ test()
   simulationControlParameters.output_folder              = "canard";
   simulationControlParameters.output_iteration_frequency = 8;
   simulationControlParameters.output_time_interval       = {0, 1000000000};
-  simulationControlParameters.time_step_independent_of_end_time      = true;
-  simulationControlParameters.respect_capillary_time_step_constraint = false;
+  simulationControlParameters.time_step_independent_of_end_time    = true;
+  simulationControlParameters.adapt_with_capillary_time_step_ratio = false;
 
   SimulationControlSteady simulation_control(simulationControlParameters);
 

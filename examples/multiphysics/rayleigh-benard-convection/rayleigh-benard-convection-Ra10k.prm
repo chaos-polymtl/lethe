@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2022-2024 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2022-2024, 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -11,17 +11,17 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method                       = steady_bdf
-  set time end                     = 10
-  set time step                    = 0.001
-  set adapt                        = true
-  set max cfl                      = 0.9
-  set stop tolerance               = 1e-5
-  set adaptative time step scaling = 1.3
-  set output name                  = rayleigh-benard_convection
-  set output control               = time
-  set output time frequency        = 0.5
-  set output path                  = ./output/
+  set method                         = steady_bdf
+  set time end                       = 10
+  set time step                      = 0.001
+  set adapt time-step to respect CFL = true
+  set max cfl                        = 0.9
+  set stop tolerance                 = 1e-5
+  set adaptative time step scaling   = 1.3
+  set output name                    = rayleigh-benard_convection
+  set output control                 = time
+  set output time frequency          = 0.5
+  set output path                    = ./output/
 end
 
 #---------------------------------------------------

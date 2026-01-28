@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2023-2024, 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -11,15 +11,15 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method                       = bdf2
-  set time end                     = 50
-  set time step                    = 0.01
-  set adapt                        = true
-  set max cfl                      = 0.1
-  set output name                  = sloshing-in-rectangular-tank_Re2000
-  set output path                  = ./output_Re2000/
-  set output frequency             = 30
-  set adaptative time step scaling = 1.025
+  set method                         = bdf2
+  set time end                       = 50
+  set time step                      = 0.01
+  set adapt time-step to respect CFL = true
+  set max cfl                        = 0.1
+  set output name                    = sloshing-in-rectangular-tank_Re2000
+  set output path                    = ./output_Re2000/
+  set output frequency               = 30
+  set adaptative time step scaling   = 1.025
 end
 
 #---------------------------------------------------

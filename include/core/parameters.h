@@ -101,8 +101,25 @@ namespace Parameters
     // end time specify. Both for fixed time step and adaptive time step.
     bool time_step_independent_of_end_time;
 
-    // Adaptative time stepping
+    /**
+     * Boolean indicating if adaptive time-stepping is enabled.
+     * To enable it, enable either SimulationControl::adapt_with_cfl or
+     * SimulationControl::adapt_with_capillary_time_step_ratio.
+     *
+     * @remark By default, this is set to @p false since both
+     * SimulationControl::adapt_with_cfl and
+     * SimulationControl::adapt_with_capillary_time_step_ratio are set to
+     * @p false by default.
+     */
     bool adapt;
+
+    /**
+     * Boolean indicating if the CFL condition should be controlling the
+     * simulation time-step.
+     *
+     * @remark By default, this is set to @p false.
+     */
+    bool adapt_with_cfl;
 
     // Max CFL
     double maxCFL;
@@ -111,23 +128,23 @@ namespace Parameters
     double max_dt;
 
     /**
-     * Boolean indicating if the capillary time-step constraint should be
-     * controlling the simulation time-step
+     * Boolean indicating if the capillary time-step ratio should be controlling
+     * the simulation time-step
      *
      * @remark By default, this is set to @p false.
      */
-    bool respect_capillary_time_step_constraint;
+    bool adapt_with_capillary_time_step_ratio;
 
     /**
      * The capillary time-step ratio (CTR) corresponds to the imposed value for
      * the ratio between the time-step and the capillary time-step constraint
-     * (Δt/Δt_σ) to be respected when
-     * SimulationControl::respect_capillary_time_step_constraint
+     * (Δt/Δt_σ) to be maximally respected when
+     * SimulationControl::adapt_with_capillary_time_step_ratio
      * is set to @p true.
      *
      * @remark By default, this is set to 1.
      */
-    double target_capillary_time_step_ratio;
+    double max_capillary_time_step_ratio;
 
     // Aimed tolerance at which simulation is stopped
     double stop_tolerance;

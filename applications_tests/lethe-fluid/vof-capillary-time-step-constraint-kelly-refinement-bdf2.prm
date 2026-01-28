@@ -22,13 +22,12 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method                                 = bdf2
-  set time end                               = 0.055
-  set time step                              = 0.055
-  set adapt                                  = true
-  set output name                            = vof-capillary-time-step-constraint-kelly-refinement-bdf2
-  set output frequency                       = 0
-  set respect capillary time-step constraint = true
+  set method                         = bdf2
+  set time end                       = 0.055
+  set time step                      = 0.055
+  set output name                    = vof-capillary-time-step-constraint-kelly-refinement-bdf2
+  set output frequency               = 0
+  set adapt time-step to respect CTR = true
 end
 
 #---------------------------------------------------

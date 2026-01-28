@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2023, 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -11,14 +11,14 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf2
-  set output name      = naca-output
-  set output path      = ./output/
-  set output frequency = 50
-  set adapt            = true
-  set max cfl          = 10
-  set time end         = 40
-  set time step        = 0.01
+  set method                         = bdf2
+  set output name                    = naca-output
+  set output path                    = ./output/
+  set output frequency               = 50
+  set adapt time-step to respect CFL = true
+  set max cfl                        = 10
+  set time end                       = 40
+  set time step                      = 0.01
 end
 
 #---------------------------------------------------

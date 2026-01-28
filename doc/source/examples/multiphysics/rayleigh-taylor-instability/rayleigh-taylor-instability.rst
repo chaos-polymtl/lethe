@@ -70,7 +70,7 @@ Simulation Control
 
 Time integration is handled by a 2nd order backward differentiation scheme
 (``bdf2``), for a :math:`0.75\, \text{s}` simulation time with an initial
-time-step of :math:`0.0002` seconds. Time-step adaptation is enabled using ``adapt = true``
+time-step of :math:`0.0002` seconds. Time-step adaptation is enabled using ``adapt time-step to respect CFL` = true``
 and the max CFL is :math:`0.8`.
 
 .. note::   
@@ -80,15 +80,15 @@ and the max CFL is :math:`0.8`.
 .. code-block:: text
 
     subsection simulation control
-      set method           = bdf2
-      set time end         = 0.75
-      set time step        = 0.001
-      set adapt            = true
-      set max cfl          = 0.8
-      set output control   = iteration
-      set output frequency = 10
-      set output name      = rayleigh-taylor
-      set output path      = ./output/
+      set method                         = bdf2
+      set time end                       = 0.75
+      set time step                      = 0.001
+      set adapt time-step to respect CFL = true
+      set max cfl                        = 0.8
+      set output control                 = iteration
+      set output frequency               = 20
+      set output name                    = rayleigh-taylor
+      set output path                    = ./output/
     end
 
 Multiphysics

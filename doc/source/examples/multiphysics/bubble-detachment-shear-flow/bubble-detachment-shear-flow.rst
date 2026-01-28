@@ -58,7 +58,7 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-Time integration is handled by a 2nd order backward differentiation scheme (`bdf2`), for a :math:`0.5 \ \text{s}` simulation time with an initial time step of :math:`5 \times 10^{-7} \ \text{s}`. Time-step adaptation is enabled using ``adapt = true`` and the ``max cfl`` is :math:`0.9`. ``output boundaries`` is set to ``true`` to get a ``.vtu`` file containing the indices of the boundaries of the domain. The maximum time step is computed using the capillary time step condition given below:
+Time integration is handled by a 2nd order backward differentiation scheme (`bdf2`), for a :math:`0.5 \ \text{s}` simulation time with an initial time step of :math:`5 \times 10^{-7} \ \text{s}`. Time-step adaptation is enabled using ``adapt time-step to respect CFL` = true`` and the ``max cfl`` is :math:`0.9`. ``output boundaries`` is set to ``true`` to get a ``.vtu`` file containing the indices of the boundaries of the domain. The maximum time step is computed using the capillary time step condition given below:
 
 .. math::
     \Delta t < \Delta t_\sigma = \sqrt{\frac{(\rho_a+\rho_l)\Delta x^3}{4\pi\sigma}}
@@ -68,16 +68,16 @@ where :math:`\rho_a` and :math:`\rho_l` are the densities of the gas and the liq
 .. code-block:: text
 
     subsection simulation control
-      set method            = bdf2
-      set output name       = article-3d
-      set output frequency  = 15
-      set output path       = ./outputs/output/
-      set time end          = 0.5
-      set adapt             = true
-      set max cfl           = 0.9
-      set time step         = 5e-7
-      set max time step     = 7.9784e-06 # Capillary timestep condition
-      set output boundaries = true
+      set method                         = bdf2
+      set output name                    = article-3d
+      set output frequency               = 15
+      set output path                    = ./outputs/output/
+      set time end                       = 0.5
+      set adapt time-step to respect CFL = true
+      set max cfl                        = 0.9
+      set time step                      = 5e-7
+      set max time step                  = 7.9784e-06 # Capillary timestep condition
+      set output boundaries              = true
     end
 
 

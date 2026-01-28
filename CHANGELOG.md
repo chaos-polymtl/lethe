@@ -4,6 +4,14 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/01/28
+
+### Changed
+
+- MAJOR This PR refactors adaptive time-step parameters. As pointed out in the review of PR [#1886](https://github.com/chaos-polymtl/lethe/pull/1886), having `adapt` controlling the time-step with both the CFL condition and the capillary time-step constraint (with `respect capillary time-step constraint` enabled) seems inappropriate. Instead, both conditions can now be enabled independently. `adapt time-step to respect CFL` can be set to `true` to control adaptive time-stepping with the user-chosen `max cfl` and `adapt time-step to respect CTR` can be set to `true` to control the time-step with `max capillary time-step ratio`. When both are enabled, the most constraining (smallest) sets the new time-step value. As this is an important parameter change, an alias was made for the old parameter `adapt` (=`adapt time-step to respect CFL`).
+  Additionally, `respect capillary time-step constraint` has been replaced by `adapt time-step to respect CTR` and `capillary time-step ratio` by `max capillary time-step ratio`.
+  All tests and examples affected by this change have been updated. [#1894](https://github.com/chaos-polymtl/lethe/pull/1894)
+
 ## [Master] - 2026/01/27
 
 ### Changed

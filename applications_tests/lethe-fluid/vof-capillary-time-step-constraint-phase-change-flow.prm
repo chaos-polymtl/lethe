@@ -19,13 +19,13 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method                                 = bdf1
-  set time end                               = 0.1
-  set time step                              = 0.1
-  set adapt                                  = true
-  set output frequency                       = 0
-  set output name                            = vof-capillary-time-step-constraint-phase-change-flow
-  set respect capillary time-step constraint = true
+  set method                         = bdf1
+  set time end                       = 0.1
+  set time step                      = 0.1
+  set adapt time-step to respect CFL = true
+  set output frequency               = 0
+  set output name                    = vof-capillary-time-step-constraint-phase-change-flow
+  set adapt time-step to respect CTR = true
 end
 
 #---------------------------------------------------
