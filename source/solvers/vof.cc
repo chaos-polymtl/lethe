@@ -1879,7 +1879,7 @@ VolumeOfFluid<dim>::modify_solution()
         .enable)
     {
       this->vof_subequations_interface->set_vof_solution_and_dof_handler(
-        *this->present_solution, *this->dof_handler);
+        this->level_set, *this->dof_handler);
       this->vof_subequations_interface->solve_specific_subequation(
         VOFSubequationsID::phase_gradient_projection);
       this->vof_subequations_interface->solve_specific_subequation(
@@ -2756,7 +2756,7 @@ VolumeOfFluid<dim>::set_initial_conditions()
         .algebraic_interface_reinitialization.enable)
     {
       this->vof_subequations_interface->set_vof_solution_and_dof_handler(
-        *this->present_solution, *this->dof_handler);
+        this->level_set, *this->dof_handler);
       this->vof_subequations_interface->solve_specific_subequation(
         VOFSubequationsID::phase_gradient_projection);
       this->vof_subequations_interface->solve_specific_subequation(
