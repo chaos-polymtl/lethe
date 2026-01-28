@@ -713,8 +713,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>  Tensor&lt;1, dim&gt;          distance_gradients;</div>
 <div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span> </div>
 <div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>  <span class="comment">// Transformation jacobian</span></div>
-<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>  DerivativeForm&lt;1, dim, dim&gt;     cell_transformation_jacobian;</div>
-<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>  DerivativeForm&lt;1, dim - 1, dim&gt; face_transformation_jacobian;</div>
+<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>  DerivativeForm&lt;1, dim, dim&gt; cell_transformation_jacobian;</div>
+<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>  LAPACKFullMatrix&lt;double&gt;    face_transformation_jacobian(dim, dim - 1);</div>
 <div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span> </div>
 <div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>  <span class="comment">// Jacobian matrix, residual vector and correction</span></div>
 <div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>  LAPACKFullMatrix&lt;double&gt; jacobian_matrix(dim - 1, dim - 1);</div>
@@ -848,7 +848,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span> </div>
 <div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span> </div>
 <div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span>                  <span class="comment">// Solve the minimization problem with Newton method</span></div>
-<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>                  <span class="comment">// using a numerical jacobian</span></div>
+<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>                  <span class="comment">// using an analytical Jacobian matrix</span></div>
 <div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>                  <span class="keywordflow">while</span> (*std::ranges::max_element(correction_norm) &gt; tol &amp;&amp;</div>
 <div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>                         newton_it &lt; newton_max_it)</div>
 <div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span>                    {</div>
@@ -890,17 +890,17 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>                            j,</div>
 <div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>                            face_transformation_jacobian);</div>
 <div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span> </div>
-<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>                          <span class="comment">/* Compute the jacobian matrix. The Ax=b system is</span></div>
-<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span><span class="comment">                        formulated as the dim-1 system. We solve for the</span></div>
-<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span><span class="comment">                        correction in the reference face. */</span></div>
-<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>                          compute_analytical_jacobian(</div>
-<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>                            x_n_real_vector[i],</div>
-<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>                            x_I_real,</div>
-<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>                            face_transformation_jacobian,</div>
-<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>                            face_local_dof_values,</div>
-<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>                            jacobian_matrix);</div>
-<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span> </div>
-<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>                          x_n_to_x_I_real = x_I_real - x_n_real_vector[i];</div>
+<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>                          x_n_to_x_I_real = x_I_real - x_n_real_vector[i];</div>
+<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span> </div>
+<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>                          <span class="comment">/* Compute the jacobian matrix. The Ax=b system is</span></div>
+<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span><span class="comment">                        formulated as the dim-1 system. We solve for the</span></div>
+<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span><span class="comment">                        correction in the reference face. */</span></div>
+<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>                          compute_analytical_jacobian(</div>
+<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>                            x_n_to_x_I_real,</div>
+<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>                            face_transformation_jacobian,</div>
+<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>                            face_local_dof_values,</div>
+<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>                            jacobian_matrix);</div>
+<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span> </div>
 <div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span> </div>
 <div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>                          <span class="comment">// Compute the right hand side.</span></div>
 <div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>                          Tensor&lt;1, dim - 1&gt; residual_n;</div>
