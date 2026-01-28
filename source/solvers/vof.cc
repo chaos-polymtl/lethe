@@ -1878,6 +1878,7 @@ VolumeOfFluid<dim>::modify_solution()
   if (simulation_parameters.multiphysics.vof_parameters.surface_tension_force
         .enable)
     {
+      this->level_set *= -1.0;
       this->vof_subequations_interface->set_vof_solution_and_dof_handler(
         this->level_set, *this->dof_handler);
       this->vof_subequations_interface->solve_specific_subequation(
@@ -2755,6 +2756,8 @@ VolumeOfFluid<dim>::set_initial_conditions()
       simulation_parameters.multiphysics.vof_parameters.regularization_method
         .algebraic_interface_reinitialization.enable)
     {
+      this->level_set *= -1.0;
+
       this->vof_subequations_interface->set_vof_solution_and_dof_handler(
         this->level_set, *this->dof_handler);
       this->vof_subequations_interface->solve_specific_subequation(
