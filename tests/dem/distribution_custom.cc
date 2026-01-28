@@ -56,8 +56,7 @@ test()
 
   // Lagrangian physical properties
   lpp.particle_type_number = 1;
-  lpp.distribution_type.push_back(
-    SizeDistributionType::custom);
+  lpp.distribution_type.push_back(SizeDistributionType::custom);
   lpp.particle_custom_diameter.push_back({0.0025, 0.0050});
   lpp.particle_custom_probability.push_back({0.5, 0.5});
   lpp.seed_for_distributions.push_back(10);
@@ -65,8 +64,7 @@ test()
   lpp.diameter_max_cutoff.push_back(-1.);
   lpp.distribution_weighting_type.push_back(
     DistributionWeightingType::volume_based);
-  lpp.custom_probability_function_type.push_back(
-    ProbabilityFunctionType::PDF);
+  lpp.custom_probability_function_type.push_back(ProbabilityFunctionType::PDF);
 
   // lpp.diameter_min_cutoff.push_back(-1);
   // lpp.diameter_max_cutoff.push_back(-1.);
@@ -104,8 +102,8 @@ test()
   if constexpr (weighting_type == DistributionWeightingType::volume_based)
     deallog << "Volume weighted normal distribution " << std::endl;
 
-  unsigned int particle_number = 0;
-  unsigned int n_particle_1 = 0, n_particle_2 = 0;
+  unsigned int     particle_number = 0;
+  unsigned int     n_particle_1 = 0, n_particle_2 = 0;
   constexpr double d1 = 0.0025, d2 = 0.0050;
 
   for (auto particle = particle_handler.begin();
@@ -116,19 +114,17 @@ test()
 
       double dp = particle_properties[PropertiesIndex::dp];
 
-      //deallog << "Particle " << particle_number << " diameter is: " << dp
-      //        << std::endl;
+      // deallog << "Particle " << particle_number << " diameter is: " << dp
+      //         << std::endl;
 
       if (dp == d1)
         n_particle_1++;
       else //(dp == d2)
         n_particle_2++;
     }
-  const double volume_particle_1 =
-    n_particle_1 *  std::pow(d1, 3);
-  const double volume_particle_2 =
-    n_particle_2 *  std::pow(d2, 3);
-  const double total_volume = volume_particle_1 + volume_particle_2;
+  const double volume_particle_1 = n_particle_1 * std::pow(d1, 3);
+  const double volume_particle_2 = n_particle_2 * std::pow(d2, 3);
+  const double total_volume      = volume_particle_1 + volume_particle_2;
 
   deallog << "Volume fraction particle 1: " << volume_particle_1 / total_volume
           << std::endl;

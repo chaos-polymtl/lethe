@@ -41,10 +41,9 @@ test(const double mu, const double sigma)
   MappingQ<dim>            mapping(1);
   DEMSolverParameters<dim> dem_parameters;
 
-  Parameters::Lagrangian::InsertionInfo<dim> &insert_info =
-    dem_parameters.insertion_info;
+  InsertionInfo<dim> &insert_info = dem_parameters.insertion_info;
 
-  Parameters::Lagrangian::LagrangianPhysicalProperties &lpp =
+  LagrangianPhysicalProperties &lpp =
     dem_parameters.lagrangian_physical_properties;
 
   // Defining simulation general parameters
@@ -60,15 +59,14 @@ test(const double mu, const double sigma)
   // Lagrangian physical properties
   lpp.particle_type_number = 1;
   lpp.distribution_weighting_type.push_back(weighting_type);
-  lpp.distribution_type.push_back(
-    Parameters::Lagrangian::SizeDistributionType::normal);
-  lpp.particle_average_diameter[0] = mu;
-  lpp.particle_size_std[0]         = sigma;
+  lpp.distribution_type.push_back(SizeDistributionType::normal);
+  lpp.particle_average_diameter.push_back(mu);
+  lpp.particle_size_std.push_back(sigma);
   lpp.seed_for_distributions.push_back(10);
   lpp.diameter_min_cutoff.push_back(-1.);
   lpp.diameter_max_cutoff.push_back(-1.);
-  lpp.density_particle[0] = 2500;
-  lpp.number[0]           = 1000;
+  lpp.density_particle.push_back(2500);
+  lpp.number.push_back(1000);
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(

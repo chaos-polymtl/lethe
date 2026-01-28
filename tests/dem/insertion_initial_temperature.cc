@@ -41,6 +41,11 @@ test()
   MappingQ<dim>            mapping(1);
   DEMSolverParameters<dim> dem_parameters;
 
+  InsertionInfo<dim> &insertion_info = dem_parameters.insertion_info;
+
+  LagrangianPhysicalProperties &lpp =
+    dem_parameters.lagrangian_physical_properties;
+
   // Creating function for initial temperature
   Table<2, double> exponents(1, 3);
   exponents[0][0]                        = 1.0;
@@ -53,31 +58,27 @@ test()
   // entries to define the parsed function.
   auto initial_temperature =
     std::make_shared<Functions::Polynomial<dim>>(exponents, coefficients);
-  dem_parameters.insertion_info.initial_temperature_function =
-    initial_temperature;
+  insertion_info.initial_temperature_function = initial_temperature;
 
   // Defining simulation general parameters
-  dem_parameters.insertion_info.insertion_plane_normal_vector =
-    Tensor<1, 3>({0., 1., 0.});
-  dem_parameters.insertion_info.insertion_plane_point = Point<3>({0., 1.75, 0});
-  dem_parameters.insertion_info.distance_threshold    = 0.25;
-  dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
-  dem_parameters.lagrangian_physical_properties.particle_average_diameter[0] =
-    0.2;
-  dem_parameters.lagrangian_physical_properties.distribution_type.push_back(
-    Parameters::Lagrangian::SizeDistributionType::uniform);
-  dem_parameters.lagrangian_physical_properties.particle_size_std[0] = 0;
-  dem_parameters.lagrangian_physical_properties.density_particle[0]  = 2500;
-  dem_parameters.lagrangian_physical_properties.number[0]            = 10;
-  dem_parameters.insertion_info.insertion_maximum_offset             = 0.2;
-  dem_parameters.insertion_info.seed_for_insertion                   = 19;
-  dem_parameters.insertion_info.insertion_frequency                  = 2;
+  insertion_info.insertion_plane_normal_vector = Tensor<1, 3>({0., 1., 0.});
+  insertion_info.insertion_plane_point         = Point<3>({0., 1.75, 0});
+  insertion_info.distance_threshold            = 0.25;
+  insertion_info.insertion_maximum_offset      = 0.2;
+  insertion_info.seed_for_insertion            = 19;
+  insertion_info.insertion_frequency           = 2;
+
+  lpp.particle_type_number = 1;
+  lpp.distribution_type.push_back(SizeDistributionType::uniform);
+  lpp.particle_average_diameter.push_back(0.2);
+  lpp.density_particle.push_back(2500);
+  lpp.number.push_back(10);
+  lpp.specific_heat_particle.push_back(0.1);
 
   // Calling uniform insertion
   std::vector<std::shared_ptr<Distribution>> distribution_object_container;
-  distribution_object_container.push_back(std::make_shared<UniformDistribution>(
-    dem_parameters.lagrangian_physical_properties
-      .particle_average_diameter[0]));
+  distribution_object_container.push_back(
+    std::make_shared<UniformDistribution>(lpp.particle_average_diameter.at(0)));
 
   // Calling plane insertion
   InsertionPlane<dim, PropertiesIndex> insertion_object(
