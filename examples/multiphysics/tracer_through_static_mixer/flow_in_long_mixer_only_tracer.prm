@@ -4,14 +4,13 @@
 set dimension = 3
 
 subsection simulation control
-  set method                         = bdf1
-  set time end                       = 500
-  set time step                      = 10
-  set adapt time-step to respect CFL = false
-  set output path                    = ./output/
-  set output name                    = output
-  set output control                 = iteration
-  set output frequency               = 1
+  set method           = bdf1
+  set time end         = 500
+  set time step        = 10
+  set output path      = ./output/
+  set output name      = output
+  set output control   = iteration
+  set output frequency = 1
 end
 
 subsection restart
