@@ -110,6 +110,7 @@ namespace Parameters
         "false",
         Patterns::Bool(),
         "Adapt time-step to respect the maximum CFL condition. When multiple conditions are applied to the time-step, this ensures that the CFL condition is also respected (Δt ≤ Δt_{CFL}). <true|false>");
+      prm.declare_alias("adapt time-step to respect CFL", "adapt", true);
       prm.declare_entry(
         "override time step on restart",
         "false",
