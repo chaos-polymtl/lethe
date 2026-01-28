@@ -4,6 +4,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/01/27
+
+### Changed
+
+- MINOR The analytical Jacobian computation in the SignedDistanceSolver involves symmetric matrices and the implementation was not taking advantage of that. Additionally, intermediary matrices where reallocated each time the function was called. This PR improves the performance of compute_analytical_jacobian() by using the symmetry property in matrix-matrix products. It also includes the intermediary matrices as attributes of the SignedDistanceSolver class to avoid multiple re-instanciation. The gain in terms of computational time is about 20% in 3D. [#1893](https://github.com/chaos-polymtl/lethe/pull/1893)
+
 ## [Master] - 2026/01/26
 
 ### Added
@@ -16,6 +22,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
   [1] F. Denner, F. Evrard, and B. van Wachem “Breaching the capillary
   time-step constraint using a coupled VOF method with implicit surface tension,” J. Comput. Phys., vol. 459, p. 111128, Jun. 2022, doi: 10.1016/j.jcp.2022.111128
+
 - MINOR This PR is a follow-up for the time harmonic electromagnetic auxiliary physics rudimentary implementation #1852. It links its physical material properties #1862 to the assembly, creates the waveguide port boundary conditions, update previous application tests related to the physics and add a new one for a dissipative medium. It also removes .prm in the examples/multiphysics/waveguide as this example will come in a follow up PR. [#1882](https://github.com/chaos-polymtl/lethe/pull/1882) 
 
 ## [Master] - 2026-01-23
