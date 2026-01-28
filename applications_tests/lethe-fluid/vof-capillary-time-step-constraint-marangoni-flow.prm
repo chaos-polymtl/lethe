@@ -7,6 +7,8 @@
 # applied for cases with Marangoni flow (here, temperature-dependent
 # surface tension). The mesh and the densities considered here remain constant.
 # Only the surface tension evolves with time.
+# Here, adaptive time-stepping with CFL is also enabled to see the 'competition'
+# between both time-step constraints.
 #-------------------------------------------------------------------------------
 
 # Listing of Parameters
