@@ -162,9 +162,13 @@ Transient simulations parameters
 
   where :math:`q` the Gauss points and :math:`|\mathbf{u}_q|` is the velocity at the Gauss points. Essentially, the maximum CFL is the max of the CFL evaluated at every Gauss point in the mesh.
 
-* ``max time step``: maximum time step value that can be reached during the simulation. This parameter is only used when either ``adapt time-step to respect CFL`` or ``adapt time-step to respect CFL`` is set to ``true`` (adaptive time-stepping enabled). It is useful when the problem of interest has an additional time step constraint.
+* ``max time step``: maximum time step value that can be reached during the simulation.It is useful when the problem of interest has an additional time-step constraint.
 
 * ``adaptative time step scaling``: rate of increase of the time step value. The new time step value is fixed by ``adaptative time step scaling`` * ``previous value of the time step``.
+
+.. warning::
+
+   ``max time step`` and ``adaptative time step scaling`` are only used when either ``adapt time-step to respect CFL`` or ``adapt time-step to respect CFL`` is set to ``true`` (adaptive time-stepping enabled). ``max time step`` enforces a strict upper bound to the time-step, while ``adaptative time step scaling`` controls the adaptive time-stepping, by limiting the time-step variation from one time iteration to the following.
 
 * ``time step independent of end time``: this variable ensures that the time step of the simulation is always consistent at the end of the simulation. If one uses a time step that eventually leads exactly to the end time of the simulation this variable does not do anything. However, if adaptive time stepping is used or the end time is not exactly reached when using certain fixed time step, this flag ensures that the simulation does not change the last time step to reach the end time. For example, if your end time is 20, and you have a time step that leads to a last iteration until 20.1, all your results will be outputted until 20.1. If you wish to have exactly 20, you need to set this flag to ``false``. 
 
