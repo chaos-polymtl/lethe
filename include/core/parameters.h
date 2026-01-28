@@ -105,8 +105,13 @@ namespace Parameters
      * Boolean indicating if adaptive time-stepping is enabled.
      * To enable it, either SimulationControl::adapt_with_cfl or
      * SimulationControl::adapt_with_capillary_time_step_ratio.
+     *
+     * @remark By default, this is set to @p false since both
+     * SimulationControl::adapt_with_cfl and
+     * SimulationControl::adapt_with_capillary_time_step_ratio are set to
+     * @false by default.
      */
-    bool adapt = false;
+    bool adapt;
 
     /**
      * Boolean indicating if the CFL condition should be controlling the

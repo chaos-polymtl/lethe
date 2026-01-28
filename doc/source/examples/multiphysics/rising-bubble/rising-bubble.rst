@@ -63,14 +63,15 @@ Time integration is handled by a 2nd order backward differentiation scheme (``bd
 .. code-block:: text
 
     subsection simulation control
-      set method           = bdf2
-      set time end         = 3
-      set time step        = 0.001
-      set adapt            = true
-      set max cfl          = 0.8
-      set output name      = rising-bubble
-      set output frequency = 20
-      set output path      = ./rising-bubble-proj/
+      set method                            = bdf2
+      set time end                          = 3
+      set time step                         = 0.001
+      set adapt time-step to respect CFL    = true
+      set max cfl                           = 0.80
+      set output name                       = rising-bubble
+      set output frequency                  = 20
+      set output path                       = ./rising-bubble-proj/
+      set time step independent of end time = false
     end
 
 Multiphysics

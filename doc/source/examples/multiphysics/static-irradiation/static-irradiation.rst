@@ -76,15 +76,15 @@ The time integration is handled by a first order backward differentiation scheme
 .. code-block:: text
 
     subsection simulation control
-      set method           = bdf1
-      set time end         = 0.0005
-      set time step        = 1.9e-8
-      set adapt            = true
-      set max cfl          = 0.06
-      set max time step    = 1.9e-8
-      set output name      = static-irradiation
-      set output path      = output/
-      set output frequency = 100
+      set method                         = bdf1
+      set time end                       = 0.0005
+      set time step                      = 1.9e-8
+      set adapt time-step to respect CFL = true
+      set max cfl                        = 0.06
+      set max time step                  = 1.9e-8
+      set output name                    = static-irradiation
+      set output path                    = output/
+      set output frequency               = 100
     end
     
 Multiphysics

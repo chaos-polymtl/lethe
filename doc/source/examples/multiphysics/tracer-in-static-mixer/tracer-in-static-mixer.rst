@@ -60,16 +60,14 @@ Simulation control
 .. code-block:: text
 
     subsection simulation control
-      set method    = bdf1
-      set time end  = 40e-4
-      set time step = 1e-4
-
-      set adapt = false
-
-      set output path      = ./output/
-      set output name      = output
-      set output control   = iteration
-      set output frequency = 5
+      set method                         = bdf1
+      set time end                       = 40e-4
+      set time step                      = 1e-4
+      set adapt time-step to respect CFL = false
+      set output path                    = ./output/
+      set output name                    = output
+      set output control                 = iteration
+      set output frequency               = 5
     end
 
 We use a ``bdf1`` time integration scheme with a short ``time step = 1e-4`` :math:`\text{s}`. After ``time end = 40e-4`` :math:`\text{s}`, we consider that the velocity field has reached a steady state. According to :doc:`../../sharp-immersed-boundary/3d-rbf-static-mixer/3d-rbf-static-mixer`, the pressure drop varies by less than :math:`5` % in the range [30, 40] :math:`\text{s}`.

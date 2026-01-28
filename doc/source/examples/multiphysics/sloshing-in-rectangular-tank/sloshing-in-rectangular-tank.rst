@@ -73,15 +73,15 @@ The results for this problem are highly sensitive to the accuracy of the time-st
 .. code-block:: text
 
     subsection simulation control
-      set method                       = bdf2
-      set time end                     = 50
-      set time step                    = 0.01
-      set adapt                        = true
-      set max cfl                      = 0.25
-      set output name                  = sloshing-in-rectangular-tank_Re20
-      set output path                  = ./output_Re20/
-      set output frequency             = 1
-      set adaptative time step scaling = 1.025
+      set method                         = bdf2
+      set time end                       = 50
+      set time step                      = 0.01
+      set adapt time-step to respect CFL = true
+      set max cfl                        = 0.25
+      set output name                    = sloshing-in-rectangular-tank_Re20
+      set output path                    = ./output_Re20/
+      set output frequency               = 2
+      set adaptative time step scaling   = 1.025
     end
 
 Multiphysics
