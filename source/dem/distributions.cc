@@ -394,10 +394,25 @@ CustomDistribution::CustomDistribution(
   , interpolate_diameter_values(interpolate)
   , gen(prn_seed)
 {
+  // Min and max cutoff
+  // Assuming that that the diameter values are in ascending order
+  if (min_cutoff < 0.)
+    {
+      this->dia_min_cutoff = diameter_values[0] - 1e-8;
+    }
+  else
+    {
+      this->dia_min_cutoff = min_cutoff;
+    }
+  if (max_cutoff < 0.)
+    this->dia_max_cutoff = diameter_values.back() + 1e-8;
+  else
+    this->dia_max_cutoff = max_cutoff;
+
+  // We do all the checks here to simplify the readability
   const unsigned int n_diameter_values = diameter_values.size();
   number_based_cdf.resize(n_diameter_values, 0.);
 
-  // We do all the checks here to simplify the readability
   AssertThrow(n_diameter_values == d_probabilities.size(),
               ExcMessage("The number of diameter values and "
                          "probability values need to be the same."));
@@ -634,7 +649,8 @@ CustomDistribution::CustomDistribution(
               number_based_cdf[i] =
                 number_based_cdf[i - 1] + number_based_pdf[i] / n_tot;
             }
-          std::cout<<number_based_cdf[0] << " " << number_based_cdf[1] << std::endl;
+          std::cout << number_based_cdf[0] << " " << number_based_cdf[1]
+                    << std::endl;
         }
     }
 }
@@ -645,13 +661,14 @@ CustomDistribution::particle_size_sampling(
 {
   this->particle_sizes.clear();
   this->particle_sizes.reserve(number_of_particles);
+  unsigned int n_created_diameter = 0;
 
   // We sample a random number U between [0, CDF_max]
   // CDF_max is 1.0, but using .back() is safer for floating point precision.
   std::uniform_real_distribution<> dis(0.0, number_based_cdf.back() - 1e-12);
   if (interpolate_diameter_values)
     {
-      for (unsigned int i = 0; i < number_of_particles; ++i)
+      while (n_created_diameter < number_of_particles)
         {
           // Number between 0. and 1.
           const double u_global = dis(gen);
@@ -683,12 +700,17 @@ CustomDistribution::particle_size_sampling(
           const double sampled_diameter =
             1.0 / std::sqrt(inv_d_low2 - u_local * (inv_d_low2 - inv_d_high2));
 
-          this->particle_sizes.push_back(sampled_diameter);
+          if (sampled_diameter > this->dia_min_cutoff &&
+              sampled_diameter < this->dia_max_cutoff)
+            {
+              n_created_diameter++;
+              this->particle_sizes.push_back(sampled_diameter);
+            }
         }
     }
   else
     {
-      for (unsigned int i = 0; i < number_of_particles; ++i)
+      while (n_created_diameter < number_of_particles)
         {
           // Number between 0. and 1.
           const double u = dis(gen);
@@ -702,8 +724,15 @@ CustomDistribution::particle_size_sampling(
             static_cast<unsigned int>(it - number_based_cdf.begin());
 
           // Discrete Sampling
-          // We simply pick the diameter corresponding to the upper bound node.
-          this->particle_sizes.push_back(diameter_values[index_high]);
+          // We simply pick the diameter corresponding to the upper bound node
+          // and check if it is within the cutoffs.
+          const double sampled_diameter = diameter_values[index_high];
+          if (sampled_diameter > this->dia_min_cutoff &&
+              sampled_diameter < this->dia_max_cutoff)
+            {
+              n_created_diameter++;
+              this->particle_sizes.push_back(sampled_diameter);
+            }
         }
     }
 }
