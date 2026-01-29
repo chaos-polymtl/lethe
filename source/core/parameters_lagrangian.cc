@@ -1497,6 +1497,9 @@ namespace Parameters
                             boundary_rotational_speed,
                             boundary_rotational_vector,
                             point_on_rotation_axis,
+                            periodic_boundary_0;
+                            periodic_boundary_1;
+                            periodic_direction;
                             outlet_boundaries,
                             bc_types);
 
@@ -1516,13 +1519,12 @@ namespace Parameters
     BCDEM::declareDefaultEntry(ParameterHandler &prm)
     {
       prm.declare_entry("boundary id", "0", Patterns::Integer(), "Boundary ID");
-      prm.declare_entry(
-        "type",
-        "fixed_wall",
-        Patterns::Selection(
-          "fixed_wall|outlet|translational|rotational|periodic"),
-        "Type of boundary condition"
-        "Choices are <fixed_wall|outlet|translational|rotational|periodic>.");
+      prm.declare_entry("type",
+                        "fixed_wall",
+                        Patterns::Selection(
+                          "fixed_wall|outlet|translational|rotational|periodic"),
+                        "Type of boundary condition"
+                        "Choices are <fixed_wall|outlet|translational|rotational|periodic>.");
 
       prm.declare_entry("speed x",
                         "0.",
@@ -1560,11 +1562,11 @@ namespace Parameters
                         "0, 0, 0",
                         Patterns::List(Patterns::Double()),
                         "Point on the rotational vector");
-      prm.declare_entry(
-        "periodic direction",
-        "0",
-        Patterns::Integer(),
-        "Periodic direction or normal direction of periodic boundary");
+
+      prm.declare_entry("periodic direction",
+                        "0",
+                        Patterns::Integer(),
+                        "Periodic direction or normal direction of periodic boundary");
     }
 
     void
@@ -1619,9 +1621,9 @@ namespace Parameters
       else if (boundary_type == "periodic")
         {
           bc_types.push_back(BoundaryType::periodic);
-          this->periodic_boundary_0 = prm.get_integer("periodic id 0");
-          this->periodic_boundary_1 = prm.get_integer("periodic id 1");
-          this->periodic_direction  = prm.get_integer("periodic direction");
+          this->periodic_boundary_0.at(boundary_id) = prm.get_integer("periodic id 0");
+          this->periodic_boundary_1.at(boundary_id) = prm.get_integer("periodic id 1");
+          this->periodic_direction.at(boundary_id)  = prm.get_integer("periodic direction");
         }
       else
         {
@@ -1635,6 +1637,9 @@ namespace Parameters
       std::unordered_map<unsigned int, double>       &boundary_rot_speed,
       std::unordered_map<unsigned int, Tensor<1, 3>> &boundary_rot_vector,
       std::unordered_map<unsigned int, Point<3>>     &point_on_rot_axis,
+      std::unordered_map<types::boundary_id>         &periodic_bndry_0,
+      std::unordered_map<types::boundary_id>         &periodic_bndry_1,
+      std::unordered_map<types::boundary_id>         &periodic_dir,
       std::vector<unsigned int>                      &outlet_boundaries_id,
       std::vector<BoundaryType>                      &boundaries_types) const
     {
@@ -1646,6 +1651,9 @@ namespace Parameters
           boundary_rot_speed.insert({counter, 0});
           boundary_rot_vector.insert({counter, zero_tensor});
           point_on_rot_axis.insert({counter, Point<3>(zero_tensor)});
+          periodic_bndry_0.insert({counter, 0});
+          periodic_bndry_1.insert({counter, 0});
+          periodic_dir.insert({counter, 0});
         }
 
       // NOTE This first vector should not be initialized this big.

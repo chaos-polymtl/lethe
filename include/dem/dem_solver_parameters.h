@@ -46,14 +46,14 @@ public:
                       "Print all the parameters, or only"
                       "the changed parameters or none");
 
-    Parameters::SimulationControl::declare_parameters(prm);
-    Parameters::Mesh::declare_parameters(prm);
-    Parameters::Restart::declare_parameters(prm);
-    Parameters::Timer::declare_parameters(prm);
-    Parameters::Testing::declare_parameters(prm);
+    simulation_control.declare_parameters(prm);
+    mesh.declare_parameters(prm);
+    restart.declare_parameters(prm);
+    timer.declare_parameters(prm);
+    test.declare_parameters(prm);
     lagrangian_physical_properties.declare_parameters(prm);
-    Parameters::Lagrangian::InsertionInfo<dim>::declare_parameters(prm);
-    Parameters::Lagrangian::ModelParameters<dim>::declare_parameters(prm);
+    insertion_info.declare_parameters(prm);
+    model_parameters.declare_parameters(prm);
     floating_walls.declare_parameters(prm);
     floating_grid.declare_parameters(prm);
     boundary_conditions.declare_parameters(prm);
