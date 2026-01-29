@@ -134,7 +134,7 @@ DEMSolver<dim, PropertiesIndex>::setup_parameters()
   // Assign gravity/acceleration
   g = parameters.lagrangian_physical_properties.g;
 
-  // If this is a start simulation
+  // If this is a restart simulation
   if (parameters.restart.restart)
     {
       action_manager->restart_simulation();

@@ -45,7 +45,7 @@ namespace DEM
    * @brief DEM data structure containers
    * To improve readability of containers, there's a simple description above
    * all declarations which follow these representation :
-   * <> : map or unordered map
+   * <> : map or unordered map or unordered multimap
    * () : tuple or pair
    * [] : vector
    */
@@ -191,9 +191,8 @@ namespace DEM
       cell_set;
 
     // <cell id, periodic cells info>
-    typedef ankerl::unordered_dense::
-      map<types::global_cell_index, periodic_boundaries_cells_info_struct<dim>>
-        periodic_boundaries_cells_info;
+    typedef std::unordered_multimap<types::global_cell_index,
+      periodic_boundaries_cells_info_struct<dim>> periodic_boundaries_cells_info;
 
     // <cell id, integer value>
     typedef ankerl::unordered_dense::map<types::global_cell_index, unsigned int>
