@@ -381,6 +381,8 @@ VANSOperator<dim, number>::do_cell_integral_local(
       auto previous_gradient = this->nonlinear_previous_gradient(cell, q);
       auto previous_hessian_diagonal =
         this->nonlinear_previous_hessian_diagonal(cell, q);
+      auto previous_hessian =
+  this->nonlinear_previous_hessian(cell, q);
 
       // Add the drag force with the momentum coupling
       for (int d = 0; d < dim; ++d)
@@ -495,10 +497,10 @@ VANSOperator<dim, number>::do_cell_integral_local(
                      kinematic_viscosity * hessian_diagonal[i][l]);
 
                   // BB addition
-                  // (-νɛ∇(∇·u))τ(u·∇)v
+                  // (-νɛ∇(∇·δu))τ(u·∇)v
                   gradient_result[i][k] +=
                     -tau * kinematic_viscosity *
-                                           vf_value * value[k] *
+                                           vf_value * previous_values[k] *
                                            hessian[l][l][i];
                 }
               // +(ɛ∇δp)τ(u·∇)v
@@ -522,6 +524,13 @@ VANSOperator<dim, number>::do_cell_integral_local(
                     tau * value[k] * vf_value *
                     (previous_gradient[i][l] * previous_values[l] -
                      kinematic_viscosity * previous_hessian_diagonal[i][l]);
+
+                  // BB addition
+                  // (-νɛ∇(∇·u))τ(δu·∇)v
+                  gradient_result[i][k] +=
+                    -tau * kinematic_viscosity *
+                                           vf_value * value[k] *
+                                           previous_hessian[l][l][i];
                 }
               // +(ɛ∇p - ɛf)τ(δu·∇)v
               gradient_result[i][k] +=
