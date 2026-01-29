@@ -58,8 +58,8 @@ public:
     Parameters::Timer::declare_parameters(prm);
     Parameters::Testing::declare_parameters(prm);
     lagrangian_physical_properties.declare_parameters(prm);
-    Parameters::Lagrangian::InsertionInfo<dim>::declare_parameters(prm);
-    Parameters::Lagrangian::ModelParameters<dim>::declare_parameters(prm);
+    insertion_info.declare_parameters(prm);
+    model_parameters.declare_parameters(prm);
     floating_walls.declare_parameters(prm);
     floating_grid.declare_parameters(prm);
     boundary_conditions.declare_parameters(prm);
