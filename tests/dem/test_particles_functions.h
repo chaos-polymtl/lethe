@@ -118,22 +118,22 @@ set_default_dem_parameters(const unsigned int        particle_type_number,
   // Particle parameters
   for (unsigned int i = 0; i < particle_type_number; ++i)
     {
-      properties.density_particle[i]                             = 1000;
-      properties.youngs_modulus_particle[i]                      = 1000000;
-      properties.poisson_ratio_particle[i]                       = 0.3;
-      properties.restitution_coefficient_particle[i]             = 0.1;
-      properties.friction_coefficient_particle[i]                = 0.1;
-      properties.rolling_friction_coefficient_particle[i]        = 0.1;
-      properties.rolling_viscous_damping_coefficient_particle[i] = 0.1;
-      properties.surface_energy_particle[i]                      = 0.0;
-      properties.hamaker_constant_particle[i]                    = 4.e-19;
-      properties.thermal_conductivity_particle[i]                = 1;
-      properties.specific_heat_particle[i]                       = 1000;
-      properties.microhardness_particle[i]                       = 1.e9;
-      properties.surface_slope_particle[i]                       = 0.1;
-      properties.surface_roughness_particle[i]                   = 1.e-9;
-      properties.thermal_accommodation_particle[i]               = 0.7;
-      properties.real_youngs_modulus_particle[i]                 = 1.e9;
+      properties.density_particle.push_back(1000);
+      properties.youngs_modulus_particle.push_back(1000000);
+      properties.poisson_ratio_particle.push_back(0.3);
+      properties.restitution_coefficient_particle.push_back(0.1);
+      properties.friction_coefficient_particle.push_back(0.1);
+      properties.rolling_friction_coefficient_particle.push_back(0.1);
+      properties.rolling_viscous_damping_coefficient_particle.push_back(0.1);
+      properties.surface_energy_particle.push_back(0.0);
+      properties.hamaker_constant_particle.push_back(4.e-19);
+      properties.thermal_conductivity_particle.push_back(1);
+      properties.specific_heat_particle.push_back(1000);
+      properties.microhardness_particle.push_back(1.e9);
+      properties.surface_slope_particle.push_back(0.1);
+      properties.surface_roughness_particle.push_back(1.e-9);
+      properties.thermal_accommodation_particle.push_back(0.7);
+      properties.real_youngs_modulus_particle.push_back(1.e9);
     }
 
   // Wall parameters
