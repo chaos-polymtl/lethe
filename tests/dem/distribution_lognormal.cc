@@ -41,10 +41,9 @@ test(const double mu, const double sigma)
   MappingQ<dim>            mapping(1);
   DEMSolverParameters<dim> dem_parameters;
 
-  Parameters::Lagrangian::InsertionInfo<dim> &insert_info =
-    dem_parameters.insertion_info;
+  InsertionInfo<dim> &insert_info = dem_parameters.insertion_info;
 
-  Parameters::Lagrangian::LagrangianPhysicalProperties &lpp =
+  LagrangianPhysicalProperties &lpp =
     dem_parameters.lagrangian_physical_properties;
 
   // Defining simulation general parameters

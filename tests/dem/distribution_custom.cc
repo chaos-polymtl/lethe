@@ -38,10 +38,9 @@ test()
   MappingQ<dim>            mapping(1);
   DEMSolverParameters<dim> dem_parameters;
 
-  Parameters::Lagrangian::InsertionInfo<dim> &insert_info =
-    dem_parameters.insertion_info;
+  InsertionInfo<dim> &insert_info = dem_parameters.insertion_info;
 
-  Parameters::Lagrangian::LagrangianPhysicalProperties &lpp =
+  LagrangianPhysicalProperties &lpp =
     dem_parameters.lagrangian_physical_properties;
 
   // Defining simulation general parameters
@@ -113,9 +112,6 @@ test()
       auto particle_properties = particle->get_properties();
 
       double dp = particle_properties[PropertiesIndex::dp];
-
-      // deallog << "Particle " << particle_number << " diameter is: " << dp
-      //         << std::endl;
 
       if (dp == d1)
         n_particle_1++;

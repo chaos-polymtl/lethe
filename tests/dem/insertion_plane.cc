@@ -36,22 +36,26 @@ test()
   MappingQ<dim>            mapping(1);
   DEMSolverParameters<dim> dem_parameters;
 
+  InsertionInfo<dim>           &insert_info = dem_parameters.insertion_info;
+  LagrangianPhysicalProperties &lpp =
+    dem_parameters.lagrangian_physical_properties;
+
   // Defining simulation general parameters
-  dem_parameters.insertion_info.insertion_plane_normal_vector =
-    Tensor<1, 3>({0., 1., 0.});
-  dem_parameters.insertion_info.insertion_plane_point = Point<3>({0., 1.75, 0});
-  dem_parameters.insertion_info.distance_threshold    = 0.25;
-  dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
-  dem_parameters.lagrangian_physical_properties.particle_average_diameter[0] =
-    0.2;
-  dem_parameters.lagrangian_physical_properties.distribution_type.push_back(
-    Parameters::Lagrangian::SizeDistributionType::uniform);
-  dem_parameters.lagrangian_physical_properties.particle_size_std[0] = 0;
-  dem_parameters.lagrangian_physical_properties.density_particle[0]  = 2500;
-  dem_parameters.lagrangian_physical_properties.number[0]            = 16;
-  dem_parameters.insertion_info.insertion_maximum_offset             = 0.2;
-  dem_parameters.insertion_info.seed_for_insertion                   = 19;
-  dem_parameters.insertion_info.insertion_frequency                  = 2;
+  // Insertion info
+  insert_info.insertion_plane_normal_vector = Tensor<1, 3>({0., 1., 0.});
+  insert_info.insertion_plane_point         = Point<3>({0., 1.75, 0});
+  insert_info.distance_threshold            = 0.25;
+  insert_info.insertion_maximum_offset      = 0.2;
+  insert_info.seed_for_insertion            = 19;
+  insert_info.insertion_frequency           = 2;
+
+  // Lagrangian physical properties
+  lpp.particle_type_number = 1;
+  lpp.particle_average_diameter.push_back(0.2);
+  lpp.distribution_type.push_back(SizeDistributionType::uniform);
+  lpp.particle_size_std.push_back(0);
+  lpp.density_particle.push_back(2500);
+  lpp.number.push_back(16);
 
   // Calling uniform insertion
   std::vector<std::shared_ptr<Distribution>> distribution_object_container;
