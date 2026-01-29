@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief This test checks that the time-step round-off errors
+ * @brief This test checks that the time step round-off errors
  * do not affect the end of the simulation
  */
 

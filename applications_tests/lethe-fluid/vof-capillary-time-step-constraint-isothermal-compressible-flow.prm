@@ -24,7 +24,7 @@ subsection simulation control
   set time step                      = 0.04
   set output name                    = vof-capillary-time-step-constraint-isothermal-compressible-flow
   set output frequency               = 0
-  set adapt time-step to respect CTR = true
+  set adapt time step to respect CTR = true
 end
 
 #---------------------------------------------------

@@ -76,7 +76,7 @@ The results for this problem are highly sensitive to the accuracy of the time-st
       set method                         = bdf2
       set time end                       = 50
       set time step                      = 0.01
-      set adapt time-step to respect CFL = true
+      set adapt time step to respect CFL = true
       set max cfl                        = 0.25
       set output name                    = sloshing-in-rectangular-tank_Re20
       set output path                    = ./output_Re20/

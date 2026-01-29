@@ -1,6 +1,6 @@
 Running on 1 MPI rank(s)...
 The particle size distribution of particle type 0 is uniform.
-DEM time-step is 2203.52% of Rayleigh time step
+DEM time step is 2203.52% of Rayleigh time step
    Number of active cells:       128
    Number of degrees of freedom: 900
    Volume of triangulation:      0.00025
@@ -9,7 +9,7 @@ Initializing DEM parameters
 Warning: expansion of particle-wall contact list is disabled. 
 This feature is useful in geometries with concave boundaries. 
 Finished initializing DEM parameters
-DEM time-step is 0.005 s
+DEM time step is 0.005 s
 --------------
 Void Fraction
 --------------

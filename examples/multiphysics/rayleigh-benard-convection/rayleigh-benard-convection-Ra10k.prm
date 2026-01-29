@@ -14,7 +14,7 @@ subsection simulation control
   set method                         = steady_bdf
   set time end                       = 10
   set time step                      = 0.001
-  set adapt time-step to respect CFL = true
+  set adapt time step to respect CFL = true
   set max cfl                        = 0.9
   set stop tolerance                 = 1e-5
   set adaptative time step scaling   = 1.3

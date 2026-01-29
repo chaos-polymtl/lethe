@@ -14,7 +14,7 @@ subsection simulation control
   set method                         = bdf1
   set time end                       = 0.01
   set time step                      = 0.01
-  set adapt time-step to respect CFL = false
+  set adapt time step to respect CFL = false
   set output name                    = radiation
   set output frequency               = 0
 end

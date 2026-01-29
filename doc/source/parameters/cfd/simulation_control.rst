@@ -41,9 +41,9 @@ This subsection is the most important in a simulation and therefore, the most co
     set time step = 1
   
     # Adaptive time-stepping with imposed max CFL
-    set adapt time-step to respect CFL = false
+    set adapt time step to respect CFL = false
 
-    # True if the time-step should be overriden upon restart
+    # True if the time step should be overridden upon restart
     set override time step on restart = false
   
     # Maximum CFL value
@@ -103,8 +103,8 @@ This subsection is the most important in a simulation and therefore, the most co
     #---------------------------------------------------
     # Explicit coupling constraint parameters
     #---------------------------------------------------
-    # Set time-step to respect the imposed capillary time-step ratio
-    set adapt time-step to respect CTR = false
+    # Set time step to respect the imposed capillary time-step ratio
+    set adapt time step to respect CTR = false
 
     # Set targeted maximum capillary time-step ratio (Δt/Δt_σ)
     set max capillary time-step ratio = 1.0
@@ -151,11 +151,11 @@ Transient simulations parameters
 
 * ``time step``: value of the time step.
 
-* ``adapt time-step to respect CFL``: If set to ``true``, the time-step will evolve to ensure that the ``max cfl`` value is respected. The time-step is updated with the minimum value between ``time step``, ``max time step`` and the computed time-step with ``max cfl``.
+* ``adapt time step to respect CFL``: If set to ``true``, the time step will evolve to ensure that the ``max cfl`` value is respected. The time step is updated with the minimum value between ``time step``, ``max time step`` and the computed time step with ``max cfl``.
 
-* ``override time step on restart``: controls if the time step should be overridden by the set value upon restart. If set to ``true``, the time-step will be set to the value of ``time step`` and the time-step value recorded at the last checkpoint will be overridden at the start of the simulation.
+* ``override time step on restart``: controls if the time step should be overridden by the set value upon restart. If set to ``true``, the time step will be set to the value of ``time step`` and the time-step value recorded at the last checkpoint will be overridden at the start of the simulation.
 
-* ``max cfl``: maximum value of the :math:`\text{CFL}` condition number that can be reached during the simulation. This parameter is only used when ``set adapt time-step to respect CFL = true``. The :math:`N_{\mathrm{CFL}}` is calculated as:
+* ``max cfl``: maximum value of the :math:`\text{CFL}` condition number that can be reached during the simulation. This parameter is only used when ``set adapt time step to respect CFL = true``. The :math:`N_{\mathrm{CFL}}` is calculated as:
 
   .. math::
     N_{\mathrm{CFL}} = \max_q \frac{|\mathbf{u}_q| \Delta t} {h}
@@ -168,7 +168,7 @@ Transient simulations parameters
 
 .. warning::
 
-   ``max time step`` and ``adaptative time step scaling`` are only used when either ``adapt time-step to respect CFL`` or ``adapt time-step to respect CFL`` is set to ``true`` (adaptive time-stepping enabled). ``max time step`` enforces a strict upper bound to the time-step, while ``adaptative time step scaling`` controls the adaptive time-stepping, by limiting the time-step variation from one time iteration to the following.
+   ``max time step`` and ``adaptative time step scaling`` are only used when either ``adapt time step to respect CFL`` or ``adapt time step to respect CFL`` is set to ``true`` (adaptive time-stepping enabled). ``max time step`` enforces a strict upper bound to the time step, while ``adaptative time step scaling`` controls the adaptive time-stepping, by limiting the time-step variation from one time iteration to the following.
 
 * ``time step independent of end time``: this variable ensures that the time step of the simulation is always consistent at the end of the simulation. If one uses a time step that eventually leads exactly to the end time of the simulation this variable does not do anything. However, if adaptive time stepping is used or the end time is not exactly reached when using certain fixed time step, this flag ensures that the simulation does not change the last time step to reach the end time. For example, if your end time is 20, and you have a time step that leads to a last iteration until 20.1, all your results will be outputted until 20.1. If you wish to have exactly 20, you need to set this flag to ``false``. 
 
@@ -233,7 +233,7 @@ Paraview output file parameters
 Explicit coupling constraint parameters
 ---------------------------------------
 
-* ``adapt time-step to respect CTR``: computes the capillary time-step constraint [#denner2022]_:
+* ``adapt time step to respect CTR``: computes the capillary time-step constraint [#denner2022]_:
 
   .. math::
 
@@ -251,25 +251,25 @@ Explicit coupling constraint parameters
       - a disk with equivalent area in 2D, and;
       - a sphere with equivalent volume in 3D.
 
-  and replaces the time-step with the capillary time-step :math:`\left(\Delta t_\text{CTR} = N_\text{CTR, max} \times \Delta t_\sigma\right)` if it is smaller than the user-imposed initial ``time step`` and ``max time step``. :math:`N_\text{CTR, max}` is the user-defined ``max capillary time-step ratio``.
+  and replaces the time step with the capillary time step :math:`\left(\Delta t_\text{CTR} = N_\text{CTR, max} \times \Delta t_\sigma\right)` if it is smaller than the user-imposed initial ``time step`` and ``max time step``. :math:`N_\text{CTR, max}` is the user-defined ``max capillary time-step ratio``.
 
   This is used in the coupling of the :doc:`Navier-Stokes equations <../../theory/multiphysics/fluid_dynamics/navier-stokes>` with the :doc:`VOF <../../theory/multiphase/cfd/vof>` method to simulate multiphase flows with surface tension.
 
   .. note::
 
-    When ``adapt time-step to respect CFL`` is also enabled, the simulation time-step takes the minimal value between ``time step``, ``max time step``, the time-step computed with ``max cfl`` (:math:`\Delta t_\text{CFL}`) and the imposed capillary time-step.
+    When ``adapt time step to respect CFL`` is also enabled, the simulation time step takes the minimum value between ``time step``, ``max time step``, the time step computed with ``max cfl`` (:math:`\Delta t_\text{CFL}`) and the imposed capillary time step.
 
     .. math::
 
       \Delta t_\text{new} = \min{\left(\Delta t, \Delta t_\text{max}, \Delta t_\text{CTR}, \Delta t_\text{CFL}\right)}
 
-* ``max capillary time-step ratio``: corresponds to the aimed ratio of the simulation time-step over the capillary time-step constraint:
+* ``max capillary time-step ratio``: corresponds to the aimed ratio of the simulation time step over the capillary time-step constraint:
 
   .. math::
 
     N_\text{CTR} = \frac{\Delta t}{\Delta t_\sigma}
 
-  where :math:`N_\text{CTR}` is the capillary time-step ratio. The time-step is updated such that:
+  where :math:`N_\text{CTR}` is the capillary time-step ratio. The time step is updated such that:
 
   .. math::
 

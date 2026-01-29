@@ -14,7 +14,7 @@ subsection simulation control
   set method                         = bdf1
   set time end                       = 41
   set time step                      = 0.01
-  set adapt time-step to respect CFL = true
+  set adapt time step to respect CFL = true
   set max cfl                        = 0.8
   set adaptative time step scaling   = 1.1
   set output name                    = melting

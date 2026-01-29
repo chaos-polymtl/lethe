@@ -193,7 +193,7 @@ We solve the Navier-Stokes and the heat transfer equation in time. In the simula
     subsection simulation control
       set method                         = bdf2
       set time step                      = 0.000001
-      set adapt time-step to respect CFL = true
+      set adapt time step to respect CFL = true
       set max cfl                        = 5
       set adaptative time step scaling   = 1.02
       set time end                       = 20

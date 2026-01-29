@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_parameters_cfd_dem_h
@@ -67,14 +67,14 @@ namespace Parameters
    *   fluid, the previous fluid velocity is used to evaluate the momentum
    *   transfer coefficient, while the current fluid velocity is used to
    *   calculate relative velocity between the particle and the fluid. This
-   *   provides extensive stability, but for larger time-step may lead to a
+   *   provides extensive stability, but for larger time step may lead to a
    *   slight violation of Newton's third law since the drag applied on the
    *   fluid is not strictly equal to the drag applied to the particles.
    *
    * - **fully_explicit**:
    *   The drag is evaluated entirely using known quantities from the previous
    *   time step. The outcome conditionally stable and may require very small
-   *   coupling time-step when the density of the fluid is much lower than the
+   *   coupling time step when the density of the fluid is much lower than the
    *   density of the particles
    *
    */

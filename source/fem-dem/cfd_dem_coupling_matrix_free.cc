@@ -253,7 +253,7 @@ CFDDEMMatrixFree<dim>::initialize_dem_parameters()
     }
 
   this->pcout << "Finished initializing DEM parameters" << std::endl
-              << "DEM time-step is " << dem_time_step << " s" << std::endl;
+              << "DEM time step is " << dem_time_step << " s" << std::endl;
 }
 
 template <int dim>
@@ -1636,7 +1636,7 @@ CFDDEMMatrixFree<dim>::solve()
         // Load balancing if needed
         load_balance();
 
-        // Update DEM time-step when the simulation uses adaptive time-stepping
+        // Update DEM time step when the simulation uses adaptive time-stepping
         if (this->simulation_control->is_adaptive_time_stepping())
           update_dem_time_step();
 

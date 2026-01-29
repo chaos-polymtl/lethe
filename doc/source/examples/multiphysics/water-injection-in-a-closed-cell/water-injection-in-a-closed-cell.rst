@@ -61,7 +61,7 @@ The initial time step is set to :math:`0.005 \, \text{s}` and the simulation end
       set method                         = bdf2
       set time end                       = 0.49
       set time step                      = 0.005
-      set adapt time-step to respect CFL = true
+      set adapt time step to respect CFL = true
       set max cfl                        = 0.75
       set output name                    = water-injection-in-a-closed-cell
       set output frequency               = 5

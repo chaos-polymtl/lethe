@@ -15,7 +15,7 @@ subsection simulation control
   set output name                    = taylor-couette
   set output path                    = ./output/
   set time end                       = 60
-  set adapt time-step to respect CFL = true
+  set adapt time step to respect CFL = true
   set max cfl                        = 1
   set time step                      = 0.01
   set output frequency               = 10

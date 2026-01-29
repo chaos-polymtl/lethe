@@ -14,7 +14,7 @@ subsection simulation control
   set method                         = bdf2
   set time end                       = 1.6
   set time step                      = 0.1
-  set adapt time-step to respect CFL = true
+  set adapt time step to respect CFL = true
   set max cfl                        = 0.4
   set output name                    = vof-velocity-extrapolation
   set output frequency               = 0

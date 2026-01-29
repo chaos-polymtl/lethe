@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/parameters_lagrangian.h>
@@ -1048,7 +1048,7 @@ IBParticlesDEM<dim>::calculate_force_model(
     (normal_relative_velocity_value * normal_unit_vector);
 
   // Calculation of new tangential_displacement, since this value is
-  // history-dependent it needs the value at previous time-step
+  // history-dependent it needs the value at previous time step
   // This variable is the main reason that we have iterations over
   // two different vectors : tangential_displacement of the particles
   // which were already in contact needs to be

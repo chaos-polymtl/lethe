@@ -15,7 +15,7 @@ subsection simulation control
   set method                         = bdf2
   set time end                       = 3.0
   set time step                      = 0.001
-  set adapt time-step to respect CFL = false
+  set adapt time step to respect CFL = false
   set max cfl                        = 0.5
   set output name                    = thermocapillary_migration
   set output frequency               = 50

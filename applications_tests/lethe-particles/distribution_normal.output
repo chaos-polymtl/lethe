@@ -4,8 +4,8 @@ Running on 1 rank(s)
 *********************
 The particle size distribution of particle type 0 is normal.
 The minimal and maximal cutoffs of the distribution are at 0.125782 and 99.4046 respectively.
-DEM time-step is 0.0124804% of Rayleigh time step
-Warning: It is recommended to increase the time-step
+DEM time step is 0.0124804% of Rayleigh time step
+Warning: It is recommended to increase the time step
 Reading triangulation
 
 Finished reading triangulation

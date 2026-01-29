@@ -225,7 +225,7 @@ namespace Parameters
     bool enable = false;
     /**
      * Enables/Disables @p pvtu format outputs of the algebraic interface
-     * reinitialization steps of the last simulated time-step.
+     * reinitialization steps of the last simulated time step.
      * The files are stored in a folder named
      * @p algebraic-reinitialization-steps-output located inside the
      * <tt>output path</tt> folder specified in the <tt>simulation control</tt>
@@ -238,7 +238,7 @@ namespace Parameters
     /// Constant representing the power to which the mesh-size is elevated in
     /// the evaluation of the diffusion coefficient.
     double diffusivity_power;
-    /// Constant factor used in the computation of the artificial time-step of
+    /// Constant factor used in the computation of the artificial time step of
     /// the reinitialization equation
     double dtau_factor;
     /// Steady-state criterion used for the artificial time-stepping scheme.
@@ -308,7 +308,7 @@ namespace Parameters
     /// Regularization method type
     Parameters::RegularizationMethodType regularization_method_type;
 
-    /// Regularization frequency at every \f$x\f$ time-steps the VOF phase
+    /// Regularization frequency at every \f$x\f$ time steps the VOF phase
     /// fraction field will be regularized
     int frequency;
 

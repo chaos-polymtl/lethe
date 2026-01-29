@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # CFD-DEM simulation with adaptive time-stepping on the CFD
-# This will cause the DEM time-step to change whenever the CFD time-step changes
+# This will cause the DEM time step to change whenever the CFD time step changes
 
 # Listing of Parameters
 #----------------------
@@ -17,7 +17,7 @@ subsection simulation control
   set method                         = bdf1
   set output frequency               = 0
   set time end                       = 0.05
-  set adapt time-step to respect CFL = true
+  set adapt time step to respect CFL = true
   set time step                      = 0.0025
   set max time step                  = 0.005
   set log precision                  = 6

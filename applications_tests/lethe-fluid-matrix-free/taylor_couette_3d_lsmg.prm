@@ -14,7 +14,7 @@ subsection simulation control
   set method                         = bdf2
   set time end                       = 1
   set time step                      = 0.0125
-  set adapt time-step to respect CFL = true
+  set adapt time step to respect CFL = true
   set max cfl                        = 1
   set output frequency               = 0
 end

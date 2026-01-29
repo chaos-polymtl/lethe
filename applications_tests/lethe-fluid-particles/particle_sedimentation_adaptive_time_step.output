@@ -1,6 +1,6 @@
 Running on 1 MPI rank(s)...
 The particle size distribution of particle type 0 is uniform.
-DEM time-step is 9.13532% of Rayleigh time step
+DEM time step is 9.13532% of Rayleigh time step
 Reading DEM checkpoint
 Finished reading DEM checkpoint
 1 particles are in the simulation
@@ -12,7 +12,7 @@ Initializing DEM parameters
 Warning: expansion of particle-wall contact list is disabled. 
 This feature is useful in geometries with concave boundaries. 
 Finished initializing DEM parameters
-DEM time-step is 2.5e-05 s
+DEM time step is 2.5e-05 s
 --------------
 Void Fraction
 --------------
@@ -32,7 +32,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM time-step is 9.13532% of Rayleigh time step
+DEM time step is 9.13532% of Rayleigh time step
 DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
@@ -55,7 +55,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM time-step is 10.0489% of Rayleigh time step
+DEM time step is 10.0489% of Rayleigh time step
 DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
@@ -78,7 +78,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM time-step is 11.0537% of Rayleigh time step
+DEM time step is 11.0537% of Rayleigh time step
 DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
@@ -101,7 +101,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM time-step is 12.1591% of Rayleigh time step
+DEM time step is 12.1591% of Rayleigh time step
 DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
@@ -124,7 +124,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM time-step is 13.375% of Rayleigh time step
+DEM time step is 13.375% of Rayleigh time step
 DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
@@ -147,7 +147,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM time-step is 14.7125% of Rayleigh time step
+DEM time step is 14.7125% of Rayleigh time step
 DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
@@ -170,7 +170,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM time-step is 16.1838% of Rayleigh time step
+DEM time step is 16.1838% of Rayleigh time step
 DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
@@ -193,7 +193,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM time-step is 17.8022% of Rayleigh time step
+DEM time step is 17.8022% of Rayleigh time step
 DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
@@ -216,7 +216,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM time-step is 18.2706% of Rayleigh time step
+DEM time step is 18.2706% of Rayleigh time step
 DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
@@ -239,7 +239,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM time-step is 18.2706% of Rayleigh time step
+DEM time step is 18.2706% of Rayleigh time step
 DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
@@ -262,7 +262,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM time-step is 18.2706% of Rayleigh time step
+DEM time step is 18.2706% of Rayleigh time step
 DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
@@ -285,7 +285,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM time-step is 18.2706% of Rayleigh time step
+DEM time step is 18.2706% of Rayleigh time step
 DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations
@@ -308,7 +308,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM time-step is 18.2706% of Rayleigh time step
+DEM time step is 18.2706% of Rayleigh time step
 DEM contact search at dem step 0
 DEM contact search at dem step 99
 Finished 100 DEM iterations

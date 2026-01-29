@@ -126,7 +126,7 @@ This subsection contains the parameters related to the sharp immersed boundary s
 
     * The ``ib particles pvd file`` parameter is the file's name that will be created to animate the particles. This file stores all the variables calculated for each of the particles. This file is compatible with Paraview.
     
-    * The ``print DEM`` parameter is a boolean that define if particles' informations are printed on the terminal when particles' time-step is finished.
+    * The ``print DEM`` parameter is a boolean that define if particles' information are printed on the terminal when particles' time step is finished.
 
     * When the ``enable extra sharp interface vtu output field`` parameter is set to ``true``, it enables the output of additional value fields in the vtu file produced by the simulation. Currently, these additional output fields consist of: the id of the cell that cuts a specific cell (``cell_cut``).
     
@@ -159,7 +159,7 @@ This subsection contains the parameters related to the sharp immersed boundary s
 
     * The ``alpha`` parameter is the relaxation parameter used when solving the dynamics equation of the particle.
     
-    * The ``contact search frequency`` parameter is used to set the updating frequency of the contact search list. By default, it is set to 1, which means that the contact search list is updated at each time-step.
+    * The ``contact search frequency`` parameter is used to set the updating frequency of the contact search list. By default, it is set to 1, which means that the contact search list is updated at each time step.
     
     * The ``contact search radius factor`` parameter is used to create the list of potential contacting particles. Two given particles with respective radii :math:`R_1` and :math:`R_2` are in potential contact if the distance between them is < :math:`(R_1 + R_2) * factor`. The default value of this parameter is set to 3.
 
@@ -185,7 +185,7 @@ This subsection contains the parameters related to the sharp immersed boundary s
     * The ``lubrication range min`` parameter defines the minimal distance used in the lubrication force calculation. The range is defined as a multiple of the smallest cell. This limits the force that can be applied on a particle since the lubrification force has a singularity when the distance between 2 particles is 0. We use this parameter to define a lower bound on the distance between 2 particles for the force calculation to avoid this singularity. Physically, this distance can be interpreted as the surface roughness of the particles.
 
     .. note::
-        The lubrication force between two particles is expressed by the equation :math:`\mathbf{F_{lub_{ij}}} = \frac{3}{2} \pi \mu_f \left(\frac{d_{p_i} d_{p_j}}{d_{p_i}+d_{p_j}}\right)^2 \frac{1}{y}(\mathbf{v_{ij}}\cdot \mathbf{e_{ij}})\mathbf{e_{ij}}`. Where :math:`\mu_f` is the fluid viscosity, :math:`d_{p_i}` the diameter of the first particle, :math:`d_{p_j}` the diameter of the second particle, :math:`y` the gap between the two particles, :math:`\mathbf{v_{ij}}` the relative velocity of the two particles, :math:`\mathbf{e_{ij}}` the unit vector along the line that joint the centroide of the two particles. In the case of particle wall lubrication force we take the diameter of the second particle to be infinity [#kim2005]_.
+        The lubrication force between two particles is expressed by the equation :math:`\mathbf{F_{lub_{ij}}} = \frac{3}{2} \pi \mu_f \left(\frac{d_{p_i} d_{p_j}}{d_{p_i}+d_{p_j}}\right)^2 \frac{1}{y}(\mathbf{v_{ij}}\cdot \mathbf{e_{ij}})\mathbf{e_{ij}}`. Where :math:`\mu_f` is the fluid viscosity, :math:`d_{p_i}` the diameter of the first particle, :math:`d_{p_j}` the diameter of the second particle, :math:`y` the gap between the two particles, :math:`\mathbf{v_{ij}}` the relative velocity of the two particles, :math:`\mathbf{e_{ij}}` the unit vector along the line that joint the centroid of the two particles. In the case of particle wall lubrication force we take the diameter of the second particle to be infinity [#kim2005]_.
         This model requires a constant viscosity and density of the fluid.
 
     * The ``particle nonlinear tolerance`` parameter controls particle dynamics' nonlinear tolerance. The nonlinear solver won't have converged until the residual on the dynamics equations of all the particles is smaller than this threshold.

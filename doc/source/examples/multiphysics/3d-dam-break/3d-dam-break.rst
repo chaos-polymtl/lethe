@@ -90,11 +90,11 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-Time integration is handled by a 1st order backward differentiation scheme (`bdf1`), for a :math:`6 \ \text{s}` simulation time with an initial time-step of :math:`0.001 \ \text{s}`. Time-step adaptation is enabled using ``adapt time-step to respect CFL` = true``
+Time integration is handled by a 1st order backward differentiation scheme (`bdf1`), for a :math:`6 \ \text{s}` simulation time with an initial time step of :math:`0.001 \ \text{s}`. Time-step adaptation is enabled using ``adapt time step to respect CFL` = true``
 and the max CFL is :math:`0.8`.
 
 .. note::
-    This example uses an adaptive time-stepping method, where the time-steps are modified during the simulation to keep the maximum value of the CFL condition below the given threshold (0.5).
+    This example uses an adaptive time-stepping method, where the time steps are modified during the simulation to keep the maximum value of the CFL condition below the given threshold (0.5).
 
 .. code-block:: text
 
@@ -102,7 +102,7 @@ and the max CFL is :math:`0.8`.
       set method                         = bdf1
       set time end                       = 6
       set time step                      = 0.001
-      set adapt time-step to respect CFL = true
+      set adapt time step to respect CFL = true
       set max cfl                        = 0.8
       set output name                    = 3d-dam-break
       set output frequency               = 5

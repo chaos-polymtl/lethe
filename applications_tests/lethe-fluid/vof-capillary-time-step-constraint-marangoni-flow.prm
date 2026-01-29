@@ -24,10 +24,10 @@ subsection simulation control
   set method                         = bdf1
   set time end                       = 0.012
   set time step                      = 0.01
-  set adapt time-step to respect CFL = true
+  set adapt time step to respect CFL = true
   set output name                    = vof-capillary-time-step-constraint-marangoni-flow
   set output frequency               = 0
-  set adapt time-step to respect CTR = true
+  set adapt time step to respect CTR = true
 end
 
 #---------------------------------------------------

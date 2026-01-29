@@ -194,7 +194,7 @@ At :math:`\mathrm{Re} = 150`, the flow has separated, resulting in an unstable w
     subsection simulation control
       set method                         = steady_bdf
       set time step                      = 0.1
-      set adapt time-step to respect CFL = true
+      set adapt time step to respect CFL = true
       set max cfl                        = 1000
       set stop tolerance                 = 1e-5
       set adaptative time step scaling   = 1.2

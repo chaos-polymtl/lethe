@@ -185,7 +185,7 @@ Parameters::VOF_RegularizationMethod::declare_parameters(
       "frequency",
       "10",
       Patterns::Integer(),
-      "Reinitialization frequency (number of time-steps) at which the "
+      "Reinitialization frequency (number of time steps) at which the "
       "interface regularization process will be applied to the VOF "
       "phase fraction field.");
     prm.declare_entry(
@@ -531,7 +531,7 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
       "artificial time-step factor",
       "0.25",
       Patterns::Double(),
-      "Factor multiplying the artificial time-step in the algebraic "
+      "Factor multiplying the artificial time step in the algebraic "
       "interface reinitialization.");
     prm.declare_alias("artificial time-step factor",
                       "reinitialization CFL",

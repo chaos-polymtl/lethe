@@ -74,7 +74,7 @@ The parameter file for the case of :math:`\delta_0 = 0.20` is shown below.
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
-The time integration is handled by a 2nd-order backward differentiation scheme (bdf2) with a maximum time-step of :math:`\Delta t = 4.4 \times 10^{-5} \; \text{s} \approx \Delta t_\sigma` which corresponds to the capillary time-step constraint (see :doc:`capillary wave example <../capillary-wave/capillary-wave>`).
+The time integration is handled by a 2nd-order backward differentiation scheme (bdf2) with a maximum time step of :math:`\Delta t = 4.4 \times 10^{-5} \; \text{s} \approx \Delta t_\sigma` which corresponds to the capillary time-step constraint (see :doc:`capillary wave example <../capillary-wave/capillary-wave>`).
 
 .. code-block:: text
 
@@ -82,7 +82,7 @@ The time integration is handled by a 2nd-order backward differentiation scheme (
       set method                         = bdf2
       set time end                       = 0.08
       set time step                      = 4.4e-5
-      set adapt time-step to respect CFL = true
+      set adapt time step to respect CFL = true
       set max cfl                        = 0.75
       set max time step                  = 4.4e-5
       set output name                    = rayleigh-plateau

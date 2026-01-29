@@ -369,7 +369,7 @@ The results are shown in the animation below. We can see the complex motion of t
 
 
 .. note:: 
-    The results shown in the animation were obtained with a finer mesh and with a finer time-step.
+    The results shown in the animation were obtained with a finer mesh and with a lower time step.
 
 .. raw:: html
 

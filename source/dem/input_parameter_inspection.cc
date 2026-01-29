@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2021, 2023-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2021, 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <dem/input_parameter_inspection.h>
@@ -34,17 +34,17 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
 
   const double time_step_rayleigh_ratio =
     parameters.simulation_control.dt / rayleigh_time_step;
-  pcout << "DEM time-step is " << time_step_rayleigh_ratio * 100
+  pcout << "DEM time step is " << time_step_rayleigh_ratio * 100
         << "% of Rayleigh time step" << std::endl;
 
   if (time_step_rayleigh_ratio > 0.15)
     {
-      pcout << "Warning: It is recommended to decrease the time-step"
+      pcout << "Warning: It is recommended to decrease the time step"
             << std::endl;
     }
   else if (time_step_rayleigh_ratio < 0.01)
     {
-      pcout << "Warning: It is recommended to increase the time-step"
+      pcout << "Warning: It is recommended to increase the time step"
             << std::endl;
     }
 

@@ -71,7 +71,7 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The time integration is handled by a first order backward differentiation scheme (``bdf1``) with a maximum time-step of :math:`\Delta t = 1.9 \times 10^{-8} \; \text{s} < \Delta t_\sigma` which corresponds to the capillary time-step constraint (see :doc:`capillary wave example <../capillary-wave/capillary-wave>`). We use adaptive time stepping with a maximum CFL of :math:`0.06` to prevent instability resulting from the explicit coupling between the NS and HT solvers through the recoil pressure and evaporative cooling. 
+The time integration is handled by a first order backward differentiation scheme (``bdf1``) with a maximum time step of :math:`\Delta t = 1.9 \times 10^{-8} \; \text{s} < \Delta t_\sigma` which corresponds to the capillary time-step constraint (see :doc:`capillary wave example <../capillary-wave/capillary-wave>`). We use adaptive time stepping with a maximum CFL of :math:`0.06` to prevent instability resulting from the explicit coupling between the NS and HT solvers through the recoil pressure and evaporative cooling.
 
 .. code-block:: text
 
@@ -79,7 +79,7 @@ The time integration is handled by a first order backward differentiation scheme
       set method                         = bdf1
       set time end                       = 0.0005
       set time step                      = 1.9e-8
-      set adapt time-step to respect CFL = true
+      set adapt time step to respect CFL = true
       set max cfl                        = 0.06
       set max time step                  = 1.9e-8
       set output name                    = static-irradiation

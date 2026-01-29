@@ -15,7 +15,7 @@ subsection simulation control
   set output frequency               = 10
   set output path                    = ./outputs/50/
   set max time step                  = 5e-4
-  set adapt time-step to respect CFL = true
+  set adapt time step to respect CFL = true
   set max cfl                        = 0.8
   set time end                       = 0.5
   set time step                      = 5e-4

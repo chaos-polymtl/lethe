@@ -59,8 +59,8 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-Time integration is handled by a 2nd-order backward differentiation scheme (``bdf2``) with a variable time-step.
-The initial time-step is set to :math:`0.1 \, \text{s}` and the simulation lasts :math:`2.5 \, \text{s}`.
+Time integration is handled by a 2nd-order backward differentiation scheme (``bdf2``) with a variable time step.
+The initial time step is set to :math:`0.1 \, \text{s}` and the simulation lasts :math:`2.5 \, \text{s}`.
 
 .. code-block:: text
 
@@ -68,7 +68,7 @@ The initial time-step is set to :math:`0.1 \, \text{s}` and the simulation lasts
       set method                         = bdf2
       set time end                       = 2.5
       set time step                      = 0.1
-      set adapt time-step to respect CFL = true
+      set adapt time step to respect CFL = true
       set max cfl                        = 1
       set output name                    = air-bubble-compression
       set output frequency               = 5

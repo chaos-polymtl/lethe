@@ -115,7 +115,7 @@ namespace Parameters
 
     /**
      * Boolean indicating if the CFL condition should be controlling the
-     * simulation time-step.
+     * simulation time step.
      *
      * @remark By default, this is set to @p false.
      */
@@ -129,7 +129,7 @@ namespace Parameters
 
     /**
      * Boolean indicating if the capillary time-step ratio should be controlling
-     * the simulation time-step
+     * the simulation time step
      *
      * @remark By default, this is set to @p false.
      */
@@ -137,8 +137,8 @@ namespace Parameters
 
     /**
      * The capillary time-step ratio (CTR) corresponds to the imposed value for
-     * the ratio between the time-step and the capillary time-step constraint
-     * (Δt/Δt_σ) to be maximally respected when
+     * the ratio between the current time step and the capillary time-step
+     * constraint (Δt/Δt_σ) to be maximally respected when
      * SimulationControl::adapt_with_capillary_time_step_ratio
      * is set to @p true.
      *
@@ -155,7 +155,7 @@ namespace Parameters
     // BDF startup time scaling
     double startup_timestep_scaling;
 
-    // True if the time-step should be overridden upon restart
+    // True if the time step should be overridden upon restart
     bool override_time_step_on_restart;
 
     // Number of mesh adaptation (steady simulations)

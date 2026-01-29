@@ -305,9 +305,9 @@ private:
   dem_iterator(unsigned int counter);
 
   /**
-   * @brief Calculate the new DEM time-step.
+   * @brief Calculate the new DEM time step.
    *
-   * Calculate the new DEM time-step in a CFD-DEM simulation with adaptive
+   * Calculate the new DEM time step in a CFD-DEM simulation with adaptive
    * time-stepping
    *
    */
@@ -317,7 +317,7 @@ private:
     dem_time_step =
       this->simulation_control->get_time_step() / coupling_frequency;
     const double time_step_rayleigh_ratio = dem_time_step / rayleigh_time_step;
-    this->pcout << "DEM time-step is " << time_step_rayleigh_ratio * 100
+    this->pcout << "DEM time step is " << time_step_rayleigh_ratio * 100
                 << "% of Rayleigh time step" << std::endl;
   }
 

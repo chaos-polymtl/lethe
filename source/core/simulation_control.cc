@@ -319,7 +319,7 @@ SimulationControlTransient::integrate()
       previous_time = current_time;
 
       // Reset the first assembly to true to indicate that we are starting
-      // the time-step. This variable is used to monitor the initial residual
+      // the time step. This variable is used to monitor the initial residual
       // of the set of non-linear equation which can be used for example in
       // steady-bdf methods
       first_assembly = true;
@@ -406,7 +406,7 @@ SimulationControlTransient::is_output_iteration()
         {
           // Check if the current step number matches the following condition:
           // (The step number matches the output frequency OR is the last
-          // time-step) AND the current time is within the output time interval
+          // time step) AND the current time is within the output time interval
           return ((get_step_number() % output_iteration_frequency == 0 ||
                    is_at_end()) &&
                   get_current_time() >= output_time_interval[0] &&
@@ -537,7 +537,7 @@ SimulationControlTransient::read(const std::string &prefix)
 
   if (override_time_step_on_restart)
     {
-      // Fix the time-step to the new provided value.
+      // Fix the time step to the new provided value.
       // We understand that users may wish to override the checkpointed
       // time-step value with another one.
       const double old_CFL       = CFL;

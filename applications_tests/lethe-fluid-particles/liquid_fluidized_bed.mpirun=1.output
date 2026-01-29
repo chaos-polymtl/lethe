@@ -1,6 +1,6 @@
 Running on 1 MPI rank(s)...
 The particle size distribution of particle type 0 is uniform.
-DEM time-step is 2.433653979% of Rayleigh time step
+DEM time step is 2.433653979% of Rayleigh time step
 Reading DEM checkpoint
 Finished reading DEM checkpoint
 10000 particles are in the simulation
@@ -12,7 +12,7 @@ Initializing DEM parameters
 Warning: expansion of particle-wall contact list is disabled. 
 This feature is useful in geometries with concave boundaries. 
 Finished initializing DEM parameters
-DEM time-step is 1e-05 s
+DEM time step is 1e-05 s
 --------------
 Void Fraction
 --------------

@@ -2,7 +2,7 @@
 Discrete Element Method (DEM)
 ***********************************************
 The discrete element method (DEM) solver in Lethe is called ``lethe-particles`` and supports two-dimensional and three-dimensional simulations.
-In ``simulation_control``, the general simulation parameters (for example, time-step, end time) are defined. The ``timer`` and ``test`` sections are used for timing the classes and functions, and testing the reproducibility of the results.
+In ``simulation_control``, the general simulation parameters (for example, time step, end time) are defined. The ``timer`` and ``test`` sections are used for timing the classes and functions, and testing the reproducibility of the results.
 In ``model parameters``, we define the simulation models, including particle-particle and particle-wall contact models.
 In the ``lagrangian physical properties`` section,  particles and walls physical properties are defined.
 The ``mesh`` section defines the simulation triangulation and refinements.

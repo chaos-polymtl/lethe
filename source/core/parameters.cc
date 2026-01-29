@@ -106,16 +106,16 @@ namespace Parameters
                         "Scaling factor used in the iterations necessary to "
                         "start-up the BDF schemes.");
       prm.declare_entry(
-        "adapt time-step to respect CFL",
+        "adapt time step to respect CFL",
         "false",
         Patterns::Bool(),
-        "Adapt time-step to respect the maximum CFL condition. When multiple conditions are applied to the time-step, this ensures that the CFL condition is also respected (Δt ≤ Δt_{CFL}). <true|false>");
-      prm.declare_alias("adapt time-step to respect CFL", "adapt", true);
+        "Adapt the time step to respect the maximum CFL condition. When multiple conditions are applied to the time step, this ensures that the CFL condition is also respected (Δt ≤ Δt_{CFL}). <true|false>");
+      prm.declare_alias("adapt time step to respect CFL", "adapt", true);
       prm.declare_entry(
         "override time step on restart",
         "false",
         Patterns::Bool(),
-        "Override checkpointed time-step upon restart <true|false>");
+        "Override checkpointed time step upon restart <true|false>");
       prm.declare_entry(
         "time step independent of end time",
         "true",
@@ -134,7 +134,7 @@ namespace Parameters
                         Patterns::Double(),
                         "Maximum time step value");
       prm.declare_entry(
-        "adapt time-step to respect CTR",
+        "adapt time step to respect CTR",
         "false",
         Patterns::Bool(),
         "By setting to 'true', it ensures that the imposed maximum capillary time-step ratio (CTR) is respected throughout the simulation (Δt ≤ Δt_{CTR}). <true|false>");
@@ -142,7 +142,7 @@ namespace Parameters
         "max capillary time-step ratio",
         "1.0",
         Patterns::Double(0),
-        "The capillary time-step ratio (CTR) corresponds to the ratio of the time-step over capillary time-step constraint (Δt/Δt_σ)");
+        "The capillary time-step ratio (CTR) corresponds to the ratio of the time step over capillary time-step constraint (Δt/Δt_σ)");
       prm.declare_entry("stop tolerance",
                         "1e-10",
                         Patterns::Double(),
@@ -267,13 +267,13 @@ namespace Parameters
         }
       dt             = prm.get_double("time step");
       time_end       = prm.get_double("time end");
-      adapt_with_cfl = prm.get_bool("adapt time-step to respect CFL");
+      adapt_with_cfl = prm.get_bool("adapt time step to respect CFL");
       time_step_independent_of_end_time =
         prm.get_bool("time step independent of end time");
       maxCFL = prm.get_double("max cfl");
       max_dt = prm.get_double("max time step");
       adapt_with_capillary_time_step_ratio =
-        prm.get_bool("adapt time-step to respect CTR");
+        prm.get_bool("adapt time step to respect CTR");
       max_capillary_time_step_ratio =
         prm.get_double("max capillary time-step ratio");
       stop_tolerance = prm.get_double("stop tolerance");
@@ -3812,7 +3812,7 @@ namespace Parameters
           "print DEM",
           "true",
           Patterns::Bool(),
-          "Bool to define if particles' information are printed on the terminal when particles' time-step is finished");
+          "Bool to define if particles' information are printed on the terminal when particles' time step is finished");
         prm.declare_entry(
           "enable extra sharp interface vtu output field",
           "false",

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -56,7 +56,7 @@ VOFAssemblerCore<dim>::assemble_matrix(const VOFScratchData<dim> &scratch_data,
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation is
       // steady or unsteady. In the unsteady case, it includes the value
-      // of the time-step. Hypothesis: advection dominated problem
+      // of the time step. Hypothesis: advection dominated problem
       // (Pe>3) [Bochev et al., Stability of the SUPG finite element
       // method for transient advection-diffusion problems, CMAME 2004]
       const double tau =
@@ -165,7 +165,7 @@ VOFAssemblerCore<dim>::assemble_rhs(const VOFScratchData<dim> &scratch_data,
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation is
       // steady or unsteady. In the unsteady case, it includes the value
-      // of the time-step. Hypothesis: advection dominated problem
+      // of the time step. Hypothesis: advection dominated problem
       // (Pe>3) [Bochev et al., Stability of the SUPG finite element
       // method for transient advection-diffusion problems, CMAME 2004]
       const double tau =

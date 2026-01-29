@@ -644,7 +644,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve()
   // Check if all required solutions are valid
   check_dependencies_validity();
 
-  // Compute current time-step
+  // Compute current time step
   this->current_time_step   = compute_time_step();
   this->time_step_vector[0] = this->current_time_step;
 
@@ -667,7 +667,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve()
     {
       announce_string(this->pcout, "VOF algebraic interface reinitialization");
 
-      this->pcout << "Current algebraic reinitialization time-step: "
+      this->pcout << "Current algebraic reinitialization time step: "
                   << this->current_time_step << std::endl;
     }
 

@@ -58,7 +58,7 @@ Time integration is handled by a 2nd order backward differentiation scheme (``bd
 
 .. note::   
     This example uses an adaptive time-stepping method, where the 
-    time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold. Using ``output frequency = 20`` ensures that the results are written every :math:`20` iterations. Consequently, the time increment between each vtu file is not constant.
+    time step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold. Using ``output frequency = 20`` ensures that the results are written every :math:`20` iterations. Consequently, the time increment between each vtu file is not constant.
 
 .. code-block:: text
 
@@ -66,7 +66,7 @@ Time integration is handled by a 2nd order backward differentiation scheme (``bd
       set method                            = bdf2
       set time end                          = 3
       set time step                         = 0.001
-      set adapt time-step to respect CFL    = true
+      set adapt time step to respect CFL    = true
       set max cfl                           = 0.80
       set output name                       = rising-bubble
       set output frequency                  = 20

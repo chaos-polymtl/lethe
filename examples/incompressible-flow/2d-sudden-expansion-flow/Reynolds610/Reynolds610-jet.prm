@@ -14,7 +14,7 @@ subsection simulation control
   set method                         = bdf2
   set output name                    = sudden-expansion-flow-output
   set output frequency               = 15
-  set adapt time-step to respect CFL = true
+  set adapt time step to respect CFL = true
   set max cfl                        = 5
   set time step                      = 0.001
   set time end                       = 15

@@ -17,7 +17,7 @@ subsection simulation control
   set time step                      = 2e-7
   set max cfl                        = 0.75
   set max time step                  = 2e-7
-  set adapt time-step to respect CFL = true
+  set adapt time step to respect CFL = true
 end
 
 #---------------------------------------------------

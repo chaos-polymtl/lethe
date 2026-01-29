@@ -14,7 +14,7 @@ subsection simulation control
   set method                         = bdf1
   set time end                       = 0.004
   set time step                      = 0.001
-  set adapt time-step to respect CFL = false
+  set adapt time step to respect CFL = false
   set number mesh adapt              = 0
   set output name                    = static_bubble_stf_with_tanh_filter
   set output frequency               = 0

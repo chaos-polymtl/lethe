@@ -12,7 +12,7 @@ set dimension = 2
 
 subsection simulation control
   set method                         = bdf1
-  set adapt time-step to respect CFL = true
+  set adapt time step to respect CFL = true
   set max cfl                        = 1
   set time step                      = 0.01     # Time step
   set time end                       = 0.455991 # End time of simulation

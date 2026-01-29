@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_particle_particle_contact_force_h
@@ -225,7 +225,7 @@ protected:
       (normal_relative_velocity_value * normal_unit_vector);
 
     // Calculation of new tangential_displacement, since this value is history
-    // dependent it needs the value at previous time-step. This variable is the
+    // dependent it needs the value at previous time step. This variable is the
     // main reason that we have iteration over  two different vectors :
     // tangential_displacement of the particles which were already in contact
     // needs to modified using its history, while the tangential_displacements

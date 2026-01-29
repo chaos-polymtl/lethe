@@ -51,7 +51,7 @@ The problem is transient. An adaptative time step is used to ensure that the CFL
       set output name                    = naca-output
       set output path                    = ./output/
       set output frequency               = 50
-      set adapt time-step to respect CFL = true
+      set adapt time step to respect CFL = true
       set max cfl                        = 10
       set time end                       = 40
       set time step                      = 0.01

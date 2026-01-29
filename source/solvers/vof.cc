@@ -2805,7 +2805,7 @@ VolumeOfFluid<dim>::set_initial_conditions()
           this->simulation_parameters.physical_properties_manager
             .field_is_required(field::temperature)));
 
-      // Update initial time-step with capillary constraint if requested
+      // Update initial time step with capillary constraint if requested
       this->simulation_control
         ->limit_initial_time_step_with_capillary_time_step_constraint();
     }
