@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -117,7 +117,7 @@ end
 
 subsection source term
   subsection fluid dynamics
-    set Function expression = 1.0*pi*(2.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)^2*sin(pi*y)^2 - 1.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)^2 + 2.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)*sin(pi*y) - 1.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*y)^2 + 1.0*exp(2*sin(pi*x)*sin(pi*y))*sin(pi*(x + y)) + 0.5*exp(2)*sin(pi*y)*cos(pi*x))*exp(-2)  ;  1.0*pi*(2.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)^2*sin(pi*y)^2 - 1.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)^2 + 2.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)*sin(pi*y) - 1.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*y)^2 + 1.0*exp(2*sin(pi*x)*sin(pi*y))*sin(pi*(x + y)) + 0.5*exp(2)*sin(pi*x)*cos(pi*y))*exp(-2)  ;  0
+    set Function expression = 1.0*pi*(3.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)^2*sin(pi*y)^2 - 1.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)^2 - 1.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)*sin(pi*y)*cos(pi*x)*cos(pi*y) + 3.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)*sin(pi*y) - 2.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*y)^2 - 1.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*cos(pi*x)*cos(pi*y) + 1.0*exp(2*sin(pi*x)*sin(pi*y))*sin(pi*(x + y)) + 0.5*exp(2)*sin(pi*y)*cos(pi*x))*exp(-2)  ;  1.0*pi*(3.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)^2*sin(pi*y)^2 - 2.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)^2 - 1.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)*sin(pi*y)*cos(pi*x)*cos(pi*y) + 3.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)*sin(pi*y) - 1.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*y)^2 - 1.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*cos(pi*x)*cos(pi*y) + 1.0*exp(2*sin(pi*x)*sin(pi*y))*sin(pi*(x + y)) + 0.5*exp(2)*sin(pi*x)*cos(pi*y))*exp(-2)  ;  0
   end
 end
 

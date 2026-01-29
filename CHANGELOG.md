@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The analytical Jacobian computation in the SignedDistanceSolver involves symmetric matrices and the implementation was not taking advantage of that. Additionally, intermediary matrices where reallocated each time the function was called. This PR improves the performance of compute_analytical_jacobian() by using the symmetry property in matrix-matrix products. It also includes the intermediary matrices as attributes of the SignedDistanceSolver class to avoid multiple re-instanciation. The gain in terms of computational time is about 20% in 3D. [#1893](https://github.com/chaos-polymtl/lethe/pull/1893)
 
+### Fixed
+
+- MINOR Added a missing term in the volume-filtered momentum conservation equation stress tensor. The term $\varepsilon_{\mathrm{f}} \nu \partial_j \partial_i u_j$ was omitted in the previous implementation. The outputs of the `lethe-fluid-particles` and `lethe-fluid-vans` application tests changed only slightly, except for MMS test case 2, which was updated so that the source term accounts for this correction. The outputs of the affected tests were updated accordingly. [#1890](https://github.com/chaos-polymtl/lethe/pull/1890)
+
 ## [Master] - 2026/01/26
 
 ### Added

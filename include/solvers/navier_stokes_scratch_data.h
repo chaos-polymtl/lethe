@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_navier_stokes_scratch_data_h
@@ -306,6 +306,24 @@ public:
     for (unsigned int q = 0; q < this->n_q_points; ++q)
       {
         this->velocity_divergences[q] = trace(this->velocity_gradients[q]);
+        // In the VANS momentum equations, the viscous stress tensor includes
+        // the gradient of the divergence of the velocity, ∇(∇·u) = ∂i(∂juj). We
+        // therefore compute this quantity here when assembling VANS-specific
+        // contributions (gated by gather_void_fraction).
+        if (gather_void_fraction)
+          {
+            // Compute term ∂j(∂iuj) = ∂i(∂juj) for use in the strong residual
+            // of the VANS momentum equations.
+            this->velocity_gradient_divergence[q] = 0;
+            for (int d1 = 0; d1 < dim; ++d1)
+              {
+                for (int d2 = 0; d2 < dim; ++d2)
+                  {
+                    this->velocity_gradient_divergence[q][d1] +=
+                      (this->velocity_hessians[q][d2][d1][d2]);
+                  }
+              }
+          }
       }
 
     // Gather pressure (values, gradient)
@@ -343,6 +361,27 @@ public:
             this->hess_phi_u[q][k] = this->fe_values[velocities].hessian(k, q);
             for (int d = 0; d < dim; ++d)
               this->laplacian_phi_u[q][k][d] = trace(this->hess_phi_u[q][k][d]);
+
+            // In the VANS momentum equations, the viscous stress tensor
+            // includes the gradient of the divergence of the velocity, ∇(∇·u) =
+            // ∂i(∂juj). This results in a term ∂i(∂jδuj), which we compute here
+            // when assembling VANS-specific contributions (gated by
+            // gather_void_fraction).
+            if (gather_void_fraction)
+              {
+                this->gradient_divergence_phi_u[q][k] = 0;
+                // Compute term ∂j(∂iδuj) = ∂i(∂jδuj) to be used in the strong
+                // Jacobian of the VANS momentum equations
+
+                for (int d1 = 0; d1 < dim; ++d1)
+                  {
+                    for (int d2 = 0; d2 < dim; ++d2)
+                      {
+                        this->gradient_divergence_phi_u[q][k][d1] +=
+                          (this->hess_phi_u[q][k][d2][d1][d2]);
+                      }
+                  }
+              }
             // Pressure
             this->phi_p[q][k]      = this->fe_values[pressure].value(k, q);
             this->grad_phi_p[q][k] = this->fe_values[pressure].gradient(k, q);
@@ -1478,11 +1517,13 @@ public:
   std::vector<unsigned int> components;
 
   // Velocity and pressure values
-  std::vector<Tensor<1, dim>>              velocity_values;
-  std::vector<double>                      velocity_divergences;
-  std::vector<Tensor<2, dim>>              velocity_gradients;
-  std::vector<Tensor<1, dim>>              velocity_laplacians;
-  std::vector<Tensor<3, dim>>              velocity_hessians;
+  std::vector<Tensor<1, dim>> velocity_values;
+  std::vector<double>         velocity_divergences;
+  std::vector<Tensor<2, dim>> velocity_gradients;
+  std::vector<Tensor<1, dim>> velocity_laplacians;
+  std::vector<Tensor<3, dim>> velocity_hessians;
+  std::vector<Tensor<1, dim>> velocity_gradient_divergence;
+  // The gradient of the velocity divergence
   std::vector<Tensor<1, dim>>              velocity_for_stabilization;
   std::vector<double>                      shear_rate;
   std::vector<double>                      pressure_values;
@@ -1496,6 +1537,7 @@ public:
   Table<2, Tensor<1, dim>> phi_u;
   Table<2, Tensor<3, dim>> hess_phi_u;
   Table<2, Tensor<1, dim>> laplacian_phi_u;
+  Table<2, Tensor<1, dim>> gradient_divergence_phi_u;
   Table<2, Tensor<2, dim>> grad_phi_u;
   Table<2, double>         phi_p;
   Table<2, Tensor<1, dim>> grad_phi_p;

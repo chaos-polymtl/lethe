@@ -1664,7 +1664,7 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
 
   // We project both the fluid force (without drag) and the drag force.
   // We do not announce the string since the projection can be called
-  // multiple time if this is a non-linear problem and the coupling is
+  // multiple times if this is a non-linear problem and the coupling is
   // implicit.
   calculate_field_projection(fluid_force_on_particles_two_way_coupling);
   calculate_field_projection(fluid_drag_on_particles);
