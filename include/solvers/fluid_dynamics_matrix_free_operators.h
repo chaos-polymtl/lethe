@@ -711,6 +711,14 @@ protected:
     nonlinear_previous_hessian_diagonal;
 
   /**
+ * @brief Table with correct alignment for vectorization to store the hessian
+ *  of the previous newton step.
+ *
+ */
+  Table<2, Tensor<1, dim + 1, Tensor<2, dim, VectorizedArray<number>>>>
+    nonlinear_previous_hessian;
+
+  /**
    * @brief Table with correct alignment for vectorization to store the time derivatives
    * of previous solutions.
    *
