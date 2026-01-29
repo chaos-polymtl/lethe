@@ -12,6 +12,8 @@
 Distribution::Distribution(
   const DistributionWeightingType &distribution_weighting_type)
   : weighting_type(distribution_weighting_type)
+  , dia_min_cutoff(0)
+  , dia_max_cutoff(0)
 {}
 
 NormalDistribution::NormalDistribution(
@@ -35,7 +37,7 @@ NormalDistribution::NormalDistribution(
   // the average and standard deviation to be number-based. To do so, we need to
   // solve a nonlinear system.
   // https://mfix.netl.doe.gov/doc/mfix-exa/guide/latest/references/size_distributions.html#normal-distribution
-  else if (this->weighting_type == DistributionWeightingType::volume_based)
+  else // this->weighting_type == DistributionWeightingType::volume_based
     {
       // Either there is an error with the Newton-Raphson solver or the problem
       // is too stiff due to the order of the polynomial we are trying to solve
@@ -100,7 +102,7 @@ NormalDistribution::NormalDistribution(
           system_matrix.set(1, 0, dR2_sigma_n);
           system_matrix.set(1, 1, dR2_mu_n);
 
-          // Resisual RHS
+          // Residual RHS
           const double R1 =
             3. * sn4 + 6. * sn2 * mn2 + mn4 - mv * (3. * sn2 * mn + mn3);
 
@@ -247,7 +249,7 @@ LogNormalDistribution::LogNormalDistribution(
   // If the user specified the distribution as volume-based, we need to convert
   // the average and standard deviation to be number-based.
   // https://mfix.netl.doe.gov/doc/mfix-exa/guide/latest/references/size_distributions.html#log-normal-distribution
-  else if (this->weighting_type == DistributionWeightingType::volume_based)
+  else // this->weighting_type == DistributionWeightingType::volume_based
     {
       mu_ln = std::log(d_average) - 3.5 * Utilities::fixed_power<2>(sigma_ln);
     }
@@ -394,26 +396,25 @@ CustomDistribution::CustomDistribution(
   , interpolate_diameter_values(interpolate)
   , gen(prn_seed)
 {
-  // Min and max cutoff
-  // Assuming that that the diameter values are in ascending order
+  // Assuming that the diameter values are in ascending order. There is a check
+  // for that right after
+  // Min cutoff
   if (min_cutoff < 0.)
-    {
-      this->dia_min_cutoff = diameter_values[0] - 1e-8;
-    }
+    this->dia_min_cutoff = diameter_values[0] - 1e-8;
   else
-    {
-      this->dia_min_cutoff = min_cutoff;
-    }
+    this->dia_min_cutoff = min_cutoff;
+
+  // Max cutoff
   if (max_cutoff < 0.)
     this->dia_max_cutoff = diameter_values.back() + 1e-8;
   else
     this->dia_max_cutoff = max_cutoff;
 
   // We do all the checks here to simplify the readability
-  const unsigned int n_diameter_values = diameter_values.size();
-  number_based_cdf.resize(n_diameter_values, 0.);
+  const unsigned int number_d_values = diameter_values.size();
+  number_based_cdf.resize(number_d_values, 0.);
 
-  AssertThrow(n_diameter_values == d_probabilities.size(),
+  AssertThrow(number_d_values == d_probabilities.size(),
               ExcMessage("The number of diameter values and "
                          "probability values need to be the same."));
 
@@ -447,14 +448,12 @@ CustomDistribution::CustomDistribution(
                       ExcMessage("When using the custom distribution "
                                  "defined as a PFD with interpolation, the "
                                  "first probability value needs to be equal"
-                                 " to 0. "));
+                                 " to 0."));
 
           AssertThrow(d_probabilities.back() == 0.,
-                      ExcMessage(
-                        "When using the custom distribution "
-                        "defined as a PFD with interpolation, the last "
-                        "probability value "
-                        "needs to be equal to 0."));
+                      ExcMessage("When using the custom distribution defined"
+                                 " as a PFD with interpolation, the last "
+                                 "probability value needs to be equal to 0."));
         }
       else
         {
@@ -462,12 +461,11 @@ CustomDistribution::CustomDistribution(
                                                d_probabilities.end(),
                                                0.) -
                                1.) <= 1e-5,
-                      ExcMessage(
-                        "When using the custom distribution "
-                        "defined as a PFD without interpolation, "
-                        "probability values are used as fraction, "
-                        "thus the sum of every probability value should be "
-                        "equal to 1."));
+                      ExcMessage("When using the custom distribution "
+                                 "defined as a PFD without interpolation, "
+                                 "probability values are used as fraction, "
+                                 "thus the sum of every probability value "
+                                 "should be equal to 1."));
         }
     }
 
@@ -478,7 +476,7 @@ CustomDistribution::CustomDistribution(
       if (function_type == ProbabilityFunctionType::CDF)
         {
           // If the input probability function is already given as a number
-          // based CFD, we need to do nothing.
+          // based CFD, nothing needs to be done.
           number_based_cdf = d_probabilities;
         }
       else if (function_type == ProbabilityFunctionType::PDF)
@@ -488,16 +486,15 @@ CustomDistribution::CustomDistribution(
           // d = diameter_values[i] using the trapezoidal method.
           number_based_cdf[0] = d_probabilities[0];
           double n_tot        = 0;
-          for (unsigned int i = 1; i < n_diameter_values; ++i)
+          for (unsigned int i = 1; i < number_d_values; ++i)
             {
               number_based_cdf[i] =
                 number_based_cdf[i - 1] + d_probabilities[i];
               n_tot += number_based_cdf[i];
             }
 
-          // We did not check priorly that the integral of the input PDF was
-          // equal to one, thus we need to normalize the new CDF.
-          for (unsigned int i = 0; i < n_diameter_values; ++i)
+          // We normalize the new CDF.
+          for (unsigned int i = 1; i < number_d_values; ++i)
             number_based_cdf[i] /= n_tot;
         }
     }
@@ -505,123 +502,85 @@ CustomDistribution::CustomDistribution(
     {
       if (interpolate_diameter_values)
         {
-          std::vector<double> dfn(n_diameter_values - 1, 0.0);
-          double              total_number_sum = 0.0;
+          // Relative number fraction (dfn)
+          std::vector<double> dfn(number_d_values - 1, 0.0);
+          double              number_fraction_sum = 0.0;
 
-          if (function_type == ProbabilityFunctionType::PDF)
+          // Calculate the number fractions for each bin
+          // We iterate through (N-1) bins.
+          for (unsigned int i = 0; i < number_d_values - 1; ++i)
             {
-              // 1. Convert Volume-PDF segments to relative Number fractions
-              // (dfn)
-              for (unsigned int i = 0; i < n_diameter_values - 1; ++i)
-                {
-                  const double d_low  = diameter_values[i];
-                  const double d_high = diameter_values[i + 1];
+              // Boundaries of the current size bin
+              const double d_low  = diameter_values[i];
+              const double d_high = diameter_values[i + 1];
 
-                  // The volume fraction in this segment is the integral (area)
-                  // of the PDF. We use the trapezoidal rule for a piecewise
-                  // linear PDF.
-                  const double this_bin_volume_fraction =
-                    0.5 * (d_probabilities[i] + d_probabilities[i + 1]) *
-                    (d_high - d_low);
+              // The volume fraction (dfv) is the area under the PDF or the
+              // difference in CDF between consecutive diameter values.
+              // the difference between two consecutive nodes gives
+              // the volume fraction contained in this .
+              double this_bin_volume_fraction;
+              if (function_type == ProbabilityFunctionType::PDF)
+                this_bin_volume_fraction =
+                  0.5 * (d_probabilities[i] + d_probabilities[i + 1]) *
+                  (d_high - d_low);
+              else
+                this_bin_volume_fraction =
+                  d_probabilities[i + 1] - d_probabilities[i];
 
-                  // Use the same analytical weight as your CDF branch:
-                  // Weight = Mean value of (1/D^3) over the bin
-                  const double weight =
-                    (d_low + d_high) / (2.0 * std::pow(d_low * d_high, 2));
+              // Number (N) scales with Volume (V) by N = V / (pi/6
+              // * D^3). Since D varies across the bin, we must use the
+              // average of (1/D^3) of this bin.
+              //
+              // Assumption: The volume is distributed LINEARLY across this
+              // diameter bin. Under this assumption, the 'Weight' is the
+              // Mean Value of the function 1/D^3: Weight = [1 / (d_high -
+              // d_low)] * Integral from d_low to d_high of (1/x^3) dx
+              //
+              // Solving the integral:
+              // 1. Integral of x^-3 dx  = -1/(2x^2).
+              // 2. Evaluated the integral:
+              // [1/(2*d_low^2) - 1/(2*d_high^2)] / (d_high - d_low)
+              // 3. Simplified: (d_high^2 - d_low^2) / [2 * d_low^2 *
+              // d_high^2 * (d_high - d_low)]
+              // 4. Using (a^2 - b^2) = (a-b)(a+b), the (d_high - d_low)
+              // terms cancel out.
+              //
+              // Final Weight Formula: (d_low + d_high) / (2 * d_low^2 *
+              // d_high^2)
+              const double weight =
+                (d_low + d_high) / (2.0 * std::pow(d_low * d_high, 2));
 
-                  dfn[i] = this_bin_volume_fraction * weight;
-                  total_number_sum += dfn[i];
-                }
+              // Convert volume fraction to a relative number fraction
+              // (dfn). Note: This value is not yet normalized; it's a
+              // relative particle count.
+              dfn[i] = this_bin_volume_fraction * weight;
 
-              // 2. Construct and normalize the Number-based CDF
-              number_based_cdf.assign(n_diameter_values, 0.0);
-              for (unsigned int i = 0; i < n_diameter_values - 1; ++i)
-                {
-                  number_based_cdf[i + 1] =
-                    number_based_cdf[i] + (dfn[i] / total_number_sum);
-                }
-              number_based_cdf.back() = 1.0;
+              // Sum the relative counts. This sum will be used as the
+              // denominator to normalize the final number-based CDF so it
+              // ends at 1.0.
+              number_fraction_sum += dfn[i];
             }
 
-          // If the input function is already a CDF, we simply copy it
-          // to the volume_based_cdf vector
-          if (function_type == ProbabilityFunctionType::CDF)
-            {
-              std::vector<double> volume_based_cdf(n_diameter_values, 0.);
-              volume_based_cdf = d_probabilities;
+          // Reconstruct the CDF from the Number fractions while making sure
+          // to normalize every value.
+          number_based_cdf[0] = 0.0;
+          for (unsigned int i = 1; i < number_d_values - 1; ++i)
+            number_based_cdf[i] =
+              number_based_cdf[i - 1] + (dfn[i - 1] / number_fraction_sum);
 
-              // Calculate the number fractions for each bin
-              // We iterate through (N-1) bins.
-              for (unsigned int i = 0; i < n_diameter_values - 1; ++i)
-                {
-                  // Boundaries of the current size bin
-                  const double d_low  = diameter_values[i];
-                  const double d_high = diameter_values[i + 1];
-
-                  // The volume fraction (dfv) is the change in the CDF.
-                  // Because CDF is the integral of the probability density,
-                  // the difference between two consecutive nodes gives
-                  // the volume fraction contained in this bin.
-                  const double this_bin_volume_fraction =
-                    volume_based_cdf[i + 1] - volume_based_cdf[i];
-
-                  // Number (N) scales with Volume (V) by N = V / (pi/6
-                  // * D^3). Since D varies across the bin, we must use the
-                  // average of (1/D^3) of this bin.
-                  //
-                  // Assumption: The volume is distributed LINEARLY across this
-                  // diameter bin. Under this assumption, the 'Weight' is the
-                  // Mean Value of the function 1/D^3: Weight = [1 / (d_high -
-                  // d_low)] * Integral from d_low to d_high of (1/x^3) dx
-                  //
-                  // Solving the integral:
-                  // 1. Integral of x^-3 dx  = -1/(2x^2).
-                  // 2. Evaluated the integral:
-                  // [1/(2*d_low^2) - 1/(2*d_high^2)] / (d_high - d_low)
-                  // 3. Simplified: (d_high^2 - d_low^2) / [2 * d_low^2 *
-                  // d_high^2 * (d_high - d_low)]
-                  // 4. Using (a^2 - b^2) = (a-b)(a+b), the (d_high - d_low)
-                  // terms cancel out.
-                  //
-                  // Final Weight Formula: (d_low + d_high) / (2 * d_low^2 *
-                  // d_high^2)
-                  const double weight =
-                    (d_low + d_high) / (2.0 * std::pow(d_low * d_high, 2));
-
-                  // Convert volume fraction to a relative number fraction
-                  // (dfn). Note: This value is not yet normalized; it's a
-                  // relative particle count.
-                  dfn[i] = this_bin_volume_fraction * weight;
-
-                  // Sum the relative counts. This sum will be used as the
-                  // denominator to normalize the final number-based CDF so it
-                  // ends at 1.0.
-                  total_number_sum += dfn[i];
-                }
-              // Reconstruct the CDF from the Number fractions while making sure
-              // to normalize every value.
-              number_based_cdf[0] = 0.0;
-              for (unsigned int i = 1; i < n_diameter_values - 1; ++i)
-                {
-                  // number_based_cdf[i] represents the probability of being <=
-                  // diameter_values[i]
-                  number_based_cdf[i] =
-                    number_based_cdf[i - 1] + (dfn[i - 1] / total_number_sum);
-                }
-              number_based_cdf.back() = 1.;
-            }
+          number_based_cdf.back() = 1.;
         }
       else // No interpolation
         {
           // Volume fractions of every diameter values.
-          std::vector<double> volume_fraction(n_diameter_values, 0.);
+          std::vector<double> volume_fraction(number_d_values, 0.);
 
           // If the user specify a volume-based CDF, we convert it to
           // volume-based PDF first.
           if (function_type == ProbabilityFunctionType::CDF)
             {
               volume_fraction[0] = d_probabilities[0];
-              for (unsigned int i = 1; i < n_diameter_values; ++i)
+              for (unsigned int i = 1; i < number_d_values; ++i)
                 volume_fraction[i] =
                   d_probabilities[i] - d_probabilities[i - 1];
             }
@@ -630,9 +589,9 @@ CustomDistribution::CustomDistribution(
           if (function_type == ProbabilityFunctionType::PDF)
             volume_fraction = d_probabilities;
 
-          std::vector<double> number_based_pdf(n_diameter_values);
+          std::vector<double> number_based_pdf(number_d_values);
           double              n_tot = 0.;
-          for (unsigned int i = 0; i < n_diameter_values; ++i)
+          for (unsigned int i = 0; i < number_d_values; ++i)
             {
               number_based_pdf[i] =
                 volume_fraction[i] /
@@ -642,9 +601,8 @@ CustomDistribution::CustomDistribution(
             }
 
           // Normalized
-
           number_based_cdf[0] = number_based_pdf[0] / n_tot;
-          for (unsigned int i = 1; i < n_diameter_values; ++i)
+          for (unsigned int i = 1; i < number_d_values; ++i)
             {
               number_based_cdf[i] =
                 number_based_cdf[i - 1] + number_based_pdf[i] / n_tot;

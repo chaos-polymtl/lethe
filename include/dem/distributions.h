@@ -84,7 +84,7 @@ public:
    * @param[in] prn_seed Pseudo-random number seed for the diameter generation.
    * @param[in] min_cutoff Minimum cutoff diameter.
    * @param[in] max_cutoff Maximum cutoff diameter.
-   * @param[in[ distribution_weighting_type Weighting type of the distribution.
+   * @param[in] distribution_weighting_type Weighting type of the distribution.
    */
   NormalDistribution(const double       &d_average,
                      const double       &d_standard_deviation,
@@ -240,7 +240,7 @@ public:
   UniformDistribution(const double &d_values);
 
   /**
-   * @brief Carries out the size sampling of every particles inserted at an insertion
+   * @brief Carries out the size sampling of every particle inserted at an insertion
    * time step for the uniform distribution.
    *
    * @param number_of_particles Number of particle inserted at a given insertion time step.
@@ -378,7 +378,7 @@ private:
 };
 
 /**
- * @brief Setup the distributions for each particle type at the start of a
+ * @brief Set up the distributions for each particle type at the start of a
  * simulation.
  */
 using namespace Parameters::Lagrangian;
