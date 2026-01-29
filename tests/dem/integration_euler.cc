@@ -43,26 +43,33 @@ test()
   MappingQ<dim> mapping(1);
 
   // Defining general simulation parameters
+  // Gravitational acceleration = 0, 0, -9.81 m/s2
   Tensor<1, dim> g{{0, 0, -9.81}};
-  double         dt = 0.00001;
+
+  // Time step
+  constexpr double dt = 0.00001;
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
     tr, mapping, PropertiesIndex::n_properties);
-  // inserting one particle at x = 0 , y = 0 and z = 0 m
-  // initial velocity of particles = 0, 0, 0 m/s
-  // gravitational acceleration = 0, 0, -9.81 m/s2
+
+  // Inserting one particle at x = 0 , y = 0 and z = 0 m
   Point<3> position1 = {0, 0, 0};
   int      id        = 0;
 
   DEMSolverParameters<dim> dem_parameters;
-  dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
-  dem_parameters.lagrangian_physical_properties.density_particle[0]  = 2500;
+  // Lagrangian physical properties
+  Parameters::Lagrangian::LagrangianPhysicalProperties &lpp =
+    dem_parameters.lagrangian_physical_properties;
+  lpp.particle_type_number = 1;
+  lpp.density_particle.push_back(2500);
 
   Particles::Particle<dim> particle1(position1, position1, id);
 
   typename Triangulation<dim>::active_cell_iterator particle_cell =
     GridTools::find_active_cell_around_point(tr, particle1.get_location());
+
+  // Inserting one particle and defining its properties
   Particles::ParticleIterator<dim> pit =
     particle_handler.insert_particle(particle1, particle_cell);
 
@@ -76,7 +83,7 @@ test()
   pit->get_properties()[DEM::DEMProperties::PropertiesIndex::omega_x] = 0;
   pit->get_properties()[DEM::DEMProperties::PropertiesIndex::omega_y] = 0;
   pit->get_properties()[DEM::DEMProperties::PropertiesIndex::omega_z] = 0;
-  // mass and moment of inertia
+  // Mass
   pit->get_properties()[DEM::DEMProperties::PropertiesIndex::mass] = 1;
 
   std::vector<Tensor<1, 3>> torque;
@@ -86,10 +93,12 @@ test()
   force.push_back(Tensor<1, dim>({0, 0, 0}));
   MOI.push_back(1);
 
+  // Calling explicit Euler integrator
   ExplicitEulerIntegrator<dim, DEM::DEMProperties::PropertiesIndex>
     integrator_object;
   integrator_object.integrate(particle_handler, g, dt, torque, force, MOI);
 
+  // Output
   for (auto particle_iterator = particle_handler.begin();
        particle_iterator != particle_handler.end();
        ++particle_iterator)
