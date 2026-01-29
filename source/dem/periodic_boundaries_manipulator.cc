@@ -12,12 +12,16 @@
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_values.h>
 
+#include <algorithm>
+
+// TODO: data structure periodic_boundaries_cells_info must be defined 
+// as std::unordered_multimap
+
 using namespace dealii;
 
 template <int dim>
 PeriodicBoundariesManipulator<dim>::PeriodicBoundariesManipulator()
   : periodic_boundaries_enabled(false)
-  , constant_periodic_offset(Tensor<1, dim>())
 {}
 
 template <int dim>
@@ -71,6 +75,12 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
     return;
 
   periodic_boundaries_cells_information.clear();
+  periodic_offsets.clear();
+
+  // Temp storage to calculate offsets only once per ID
+  std::map<types::boundary_id, bool> offset_calculated;
+  for (auto id : periodic_boundaries_ids)
+    offset_calculated[id] = false;
 
   // Iterating over the active cells in the triangulation
   for (const auto &cell : triangulation.active_cell_iterators())
@@ -82,29 +92,44 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
               // Iterating over cell faces
               for (const auto &face : cell->face_iterators())
                 {
-                  // Check if face is on the periodic boundary 0
-                  // Pairs of periodic cells are stored once.
                   unsigned int face_boundary_id = face->boundary_id();
-                  if (face_boundary_id == periodic_boundary_0)
+
+                  // Check if facematches any of the PB IDs
+                  auto it = std::find(periodic_boundaries_ids.begin(),
+                                      periodic_boundaries_ids.end(),
+                                      face_boundary_id);
+
+                  if (it != periodic_boundaries_ids.end())
                     {
-                      // Save boundaries information related to the cell on
-                      // the periodic boundary 0
-                      // Information about both boundaries are stored in
-                      // periodic_boundary_cells_info_struct
-                      periodic_boundaries_cells_info_struct<dim>
-                                   boundaries_information;
+                      // Found a primary periodic face. Index in vectors corresponds 
+                      // to 'it' position
+                      size_t index = std::distance(periodic_boundaries_ids.begin(), it);
+                      unsigned int current_direction = directions[index];
+
+                      periodic_boundaries_cells_info_struct<dim> boundaries_information;
                       unsigned int face_id = cell->face_iterator_to_index(face);
 
                       get_periodic_boundaries_info(cell,
                                                    face_id,
                                                    boundaries_information);
 
-                      // Store boundaries information in map with cell id at
-                      // periodic boundary 0 as key
+                      // Insert into multimap
                       periodic_boundaries_cells_information.insert(
                         {boundaries_information.cell
                            ->global_active_cell_index(),
                          boundaries_information});
+
+                      // Calculate offset if not yet done for this PB ID
+                      if (!offset_calculated[face_boundary_id])
+                      {
+                        Tensor<1, dim> offset;
+                        offset[current_direction] = 
+                          boundaries_information.point_on_periodic_face[current_direction] -
+                          boundaries_information.point_on_face[current_direction];
+
+                        periodic_offsets[face_boundary_id] = offset;
+                        offset_calculated[face_boundary_id] = true;
+                      }
                     }
                 }
             }
@@ -133,6 +158,25 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
        &particles_in_cell,
   bool &particle_has_been_moved)
 {
+  // Retrieve correct offset for this specific boundary interaction.
+  // If particles are in pb0 cell, we use the stored offset map.
+  // If they are in the periodic neighbor (pb1), we infer the ID from
+  // the stored pb0 ID. The struct stores the 'boundary_id' of the face.
+
+  Tensor<1, dim> relevant_offset;
+
+  // boundaries_cells_content.boundary_id corresponds to the face on the
+  // "main" side (pb0)
+  if (periodic_offsets.find(boundaries_cells_content.boundary_id) != periodic_offsets.end())
+  {
+    relevant_offset = periodic_offsets.at(boundaries_cells_content.boundary_id);
+  }
+  else
+  {
+    // Fallback/error, map_periodic_cells should populate this
+    return;
+  }
+
   for (auto particle = particles_in_cell.begin();
        particle != particles_in_cell.end();
        ++particle)
@@ -149,13 +193,13 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
         {
           point_on_face          = boundaries_cells_content.point_on_face;
           normal_vector          = boundaries_cells_content.normal_vector;
-          distance_between_faces = constant_periodic_offset;
+          distance_between_faces = relevant_offset;
         }
       else
         {
           point_on_face = boundaries_cells_content.point_on_periodic_face;
           normal_vector = boundaries_cells_content.periodic_normal_vector;
-          distance_between_faces = -constant_periodic_offset;
+          distance_between_faces = -relevant_offset;
         }
 
       // Calculate distance between particle position and the face of
@@ -192,6 +236,8 @@ PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
 
   if (!periodic_boundaries_cells_information.empty())
     {
+      // Iterate over all entries. If using multimap, this correctly handles
+      // corner cells twice :once for x-boundary, once for y-boundary (in 2D)
       for (auto boundaries_cells_information_iterator =
              periodic_boundaries_cells_information.begin();
            boundaries_cells_information_iterator !=
@@ -204,9 +250,7 @@ PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
           auto cell          = boundaries_cells_content.cell;
           auto periodic_cell = boundaries_cells_content.periodic_cell;
 
-          // Check and execute displacement of particles crossing a periodic
-          // wall.
-          // Case when particle goes from periodic boundary 0 to 1
+          // Main cell (pb0 side)
           if (cell->is_locally_owned())
             {
               typename Particles::ParticleHandler<dim>::particle_iterator_range
@@ -224,7 +268,7 @@ PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
                 }
             }
 
-          // Case when particle goes from periodic boundary 1 to 0
+          // Periodic neighbor (pb1 side)
           if (periodic_cell->is_locally_owned())
             {
               typename Particles::ParticleHandler<dim>::particle_iterator_range
