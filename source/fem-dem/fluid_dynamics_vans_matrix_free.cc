@@ -593,47 +593,55 @@ FluidDynamicsVANSMatrixFree<dim>::gather_output_hook()
                          name,
                          component_interpretation);
 
-  std::vector<std::string> force_names(dim, "fluid_drag_on_particles");
-  std::vector<DataComponentInterpretation::DataComponentInterpretation>
-    force_component_interpretation(
-      dim, DataComponentInterpretation::component_is_part_of_vector);
+  if constexpr (dim > 2)
+    {
+      std::vector<std::string> force_names(dim, "fluid_drag_on_particles");
+      std::vector<DataComponentInterpretation::DataComponentInterpretation>
+        force_component_interpretation(
+          dim, DataComponentInterpretation::component_is_part_of_vector);
 
-  OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
-    particle_fluid_drag_struct(
-      particle_projector.fluid_drag_on_particles.dof_handler,
-      particle_projector.fluid_drag_on_particles.particle_field_solution,
-      force_names,
-      force_component_interpretation);
+      OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
+        particle_fluid_drag_struct(
+          particle_projector.fluid_drag_on_particles.dof_handler,
+          particle_projector.fluid_drag_on_particles.particle_field_solution,
+          force_names,
+          force_component_interpretation);
 
-  std::vector<std::string> particle_velocity_names(dim, "particle_velocity");
-  std::vector<DataComponentInterpretation::DataComponentInterpretation>
-    particle_velocity_component_interpretation(
-      dim, DataComponentInterpretation::component_is_part_of_vector);
+      std::vector<std::string> particle_velocity_names(dim,
+                                                       "particle_velocity");
+      std::vector<DataComponentInterpretation::DataComponentInterpretation>
+        particle_velocity_component_interpretation(
+          dim, DataComponentInterpretation::component_is_part_of_vector);
 
-  OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
-    particle_velocity_struct(
-      particle_projector.particle_velocity.dof_handler,
-      particle_projector.particle_velocity.particle_field_solution,
-      particle_velocity_names,
-      particle_velocity_component_interpretation);
+      OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
+        particle_velocity_struct(
+          particle_projector.particle_velocity.dof_handler,
+          particle_projector.particle_velocity.particle_field_solution,
+          particle_velocity_names,
+          particle_velocity_component_interpretation);
 
-  std::vector<std::string> mtc_name(1, "momentum_transfer_coefficient");
-  std::vector<DataComponentInterpretation::DataComponentInterpretation>
-    mtc_component_interpretation(
-      1, DataComponentInterpretation::component_is_scalar);
+      std::vector<std::string> mtc_name(1, "momentum_transfer_coefficient");
+      std::vector<DataComponentInterpretation::DataComponentInterpretation>
+        mtc_component_interpretation(
+          1, DataComponentInterpretation::component_is_scalar);
 
-  OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
-    mtc_struct(
-      particle_projector.momentum_transfer_coefficient.dof_handler,
-      particle_projector.momentum_transfer_coefficient.particle_field_solution,
-      mtc_name,
-      mtc_component_interpretation);
+      OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
+        mtc_struct(particle_projector.momentum_transfer_coefficient.dof_handler,
+                   particle_projector.momentum_transfer_coefficient
+                     .particle_field_solution,
+                   mtc_name,
+                   mtc_component_interpretation);
 
 
-  return {void_fraction_struct,
-          particle_fluid_drag_struct,
-          particle_velocity_struct,
-          mtc_struct};
+      return {void_fraction_struct,
+              particle_fluid_drag_struct,
+              particle_velocity_struct,
+              mtc_struct};
+    }
+  else
+    {
+      return {void_fraction_struct};
+    }
 }
 
 template <int dim>
