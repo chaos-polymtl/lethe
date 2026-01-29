@@ -9,10 +9,21 @@
 #include <core/shape.h>
 #include <core/vector.h>
 
+#include <dem/adaptive_sparse_contacts.h>
+#include <dem/data_containers.h>
+#include <dem/lagrangian_post_processing.h>
+#include <dem/log_collision_data.h>
+#include <dem/set_particle_particle_contact_force_model.h>
+#include <dem/visualization.h>
+
 #include <solvers/fluid_dynamics_matrix_based.h>
 
 #include <fem-dem/cfd_dem_simulation_parameters.h>
 #include <fem-dem/ib_particles_dem.h>
+
+#include <deal.II/particles/particle_handler.h>
+
+#include <unordered_set>
 
 using namespace dealii;
 
@@ -251,6 +262,32 @@ private:
    */
   void
   finish_time_step_particles();
+
+  void
+  handle_dem_particle_output_and_postprocessing();
+
+  void
+  build_ib_particle_handler(
+    Particles::ParticleHandler<dim, dim> &particle_handler,
+    typename DEM::dem_data_structures<dim>::particle_index_iterator_map
+                                       &particle_container,
+    std::unordered_set<unsigned int>   &local_particle_ids) const;
+
+  void
+  build_contact_containers(
+    const typename DEM::dem_data_structures<dim>::particle_index_iterator_map
+                                      &particle_container,
+    const std::unordered_set<unsigned int> &local_particle_ids,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &local_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+                          &ghost_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::particle_wall_in_contact
+                          &particle_wall_in_contact) const;
+
+  void
+  fill_particle_properties(const IBParticle<dim> &particle,
+                           std::vector<double>   &properties) const;
 
   /**
    * @brief
@@ -616,6 +653,8 @@ private:
     assemblers_inside_ib;
 
   PVDHandler ib_particles_pvdhandler;
+  PVDHandler ib_particles_pvdhandler_force_chains;
+  PVDHandler ib_grid_pvdhandler;
 
   std::vector<IBParticle<dim>> particles;
   double                       particle_residual;
@@ -626,6 +665,11 @@ private:
   // Object used to sub-time step the particle dynamics to allow contact between
   // particles.
   IBParticlesDEM<dim> ib_dem;
+
+  AdaptiveSparseContacts<dim, DEM::CFDDEMProperties::PropertiesIndex>
+    sparse_contacts_object;
+  OngoingCollisionLog<dim>   ongoing_collision_log;
+  CompletedCollisionLog<dim> collision_event_log;
 
   // Function that describes all solids signed distance functions together
   std::shared_ptr<Shape<dim>> combined_shapes;

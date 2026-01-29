@@ -256,6 +256,18 @@ public:
 
   std::vector<IBParticle<dim>> dem_particles;
 
+  const std::map<unsigned int, std::map<unsigned int, ContactInfo>> &
+  get_particle_particle_contact_map() const
+  {
+    return pp_contact_map;
+  }
+
+  const std::map<unsigned int, std::map<unsigned int, ContactInfo>> &
+  get_particle_wall_contact_map() const
+  {
+    return pw_contact_map;
+  }
+
 private:
   /**
    * @brief Check whether a boundary should be ignored for Sharp-IB particle
