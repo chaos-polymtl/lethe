@@ -361,9 +361,15 @@ VANSOperator<dim, number>::do_cell_integral_local(
       typename FECellIntegrator::gradient_type gradient =
         integrator.get_gradient(q);
       typename FECellIntegrator::gradient_type hessian_diagonal;
+      typename FECellIntegrator::hessian_type hessian;
 
-      if (this->enable_hessians_jacobian)
-        hessian_diagonal = integrator.get_hessian_diagonal(q);
+      // The strong form of the residual requires both the laplacian
+      // and the gradient of the divergence of the velocity field.
+      if (this->enable_hessians_residual)
+        {
+          hessian_diagonal = integrator.get_hessian_diagonal(q);
+          hessian = integrator.get_hessian(q);
+        }
 
       // Result value/gradient we will use
       typename FECellIntegrator::value_type    value_result;
@@ -439,6 +445,13 @@ VANSOperator<dim, number>::do_cell_integral_local(
                 (-kinematic_viscosity * hessian_diagonal[i][k] +
                  gradient[i][k] * previous_values[k] +
                  previous_gradient[i][k] * value[k]);
+
+              // BB addition
+              // (-νɛ∇(∇·u))·τ∇q
+              gradient_result[dim][i] +=
+              -tau * kinematic_viscosity *
+                         vf_value *
+                         hessian[k][k][i];
             }
           // +ɛ(∂t δu)·τ∇q
           if (transient)
@@ -480,6 +493,13 @@ VANSOperator<dim, number>::do_cell_integral_local(
                     (gradient[i][l] * previous_values[l] +
                      vf_value * previous_gradient[i][l] * value[l] -
                      kinematic_viscosity * hessian_diagonal[i][l]);
+
+                  // BB addition
+                  // (-νɛ∇(∇·u))τ(u·∇)v
+                  gradient_result[i][k] +=
+                    -tau * kinematic_viscosity *
+                                           vf_value * value[k] *
+                                           hessian[l][l][i];
                 }
               // +(ɛ∇δp)τ(u·∇)v
               gradient_result[i][k] +=
@@ -627,7 +647,6 @@ VANSOperator<dim, number>::local_evaluate_residual(
           // and the gradient of the divergence of the velocity field.
           if (this->enable_hessians_residual)
             {
-              // The laplacian is the diagonal of the hessian matrix
               hessian_diagonal = integrator.get_hessian_diagonal(q);
               hessian = integrator.get_hessian(q);
             }
