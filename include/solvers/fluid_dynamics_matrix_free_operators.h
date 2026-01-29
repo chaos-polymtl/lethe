@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_fluid_dynamics_matrix_free_operators_h
@@ -711,10 +711,10 @@ protected:
     nonlinear_previous_hessian_diagonal;
 
   /**
- * @brief Table with correct alignment for vectorization to store the hessian
- *  of the previous newton step.
- *
- */
+   * @brief Table with correct alignment for vectorization to store the hessian
+   *  of the previous newton step.
+   *
+   */
   Table<2, Tensor<1, dim + 1, Tensor<2, dim, VectorizedArray<number>>>>
     nonlinear_previous_hessian;
 
