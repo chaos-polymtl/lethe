@@ -794,6 +794,8 @@ FluidDynamicsSharp<dim>::define_particles()
     this->simulation_parameters.particlesParameters,
     std::make_shared<Parameters::Lagrangian::FloatingWalls<dim>>(
       cfd_dem_parameters.dem_parameters.floating_walls),
+    std::make_shared<Parameters::Lagrangian::BCDEM>(
+      cfd_dem_parameters.dem_parameters.boundary_conditions),
     this->mpi_communicator,
     particles);
 
@@ -4531,6 +4533,8 @@ FluidDynamicsSharp<dim>::read_checkpoint()
     this->simulation_parameters.particlesParameters,
     std::make_shared<Parameters::Lagrangian::FloatingWalls<dim>>(
       cfd_dem_parameters.dem_parameters.floating_walls),
+    std::make_shared<Parameters::Lagrangian::BCDEM>(
+      cfd_dem_parameters.dem_parameters.boundary_conditions),
     this->mpi_communicator,
     particles);
   ib_dem.update_contact_candidates();

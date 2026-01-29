@@ -8,22 +8,104 @@
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/fe_values.h>
 
+#include <algorithm>
+
 template <int dim>
 void
 IBParticlesDEM<dim>::initialize(
   const std::shared_ptr<Parameters::IBParticles<dim>> &p_nsparam,
   const std::shared_ptr<Parameters::Lagrangian::FloatingWalls<dim>>
                                       fw_parameters,
+  const std::shared_ptr<Parameters::Lagrangian::BCDEM>
+    &boundary_conditions_parameters_input,
   const MPI_Comm                     &mpi_communicator_input,
   const std::vector<IBParticle<dim>> &particles)
 {
   parameters                = p_nsparam;
   floating_walls_parameters = fw_parameters;
+  boundary_conditions_parameters = boundary_conditions_parameters_input;
   mpi_communicator          = mpi_communicator_input;
   dem_particles             = particles;
   boundary_cells.resize(dem_particles.size());
 
   std::vector<types::boundary_id> boundary_index(0);
+}
+
+template <int dim>
+bool
+IBParticlesDEM<dim>::is_boundary_excluded(const unsigned int boundary_id) const
+{
+  if (!boundary_conditions_parameters)
+    return false;
+
+  const auto &outlet_boundaries =
+    boundary_conditions_parameters->outlet_boundaries;
+  if (std::find(outlet_boundaries.begin(),
+                outlet_boundaries.end(),
+                boundary_id) != outlet_boundaries.end())
+    return true;
+
+  const auto &bc_types = boundary_conditions_parameters->bc_types;
+  const bool  has_periodic =
+    std::find(bc_types.begin(),
+              bc_types.end(),
+              Parameters::Lagrangian::BCDEM::BoundaryType::periodic) !=
+    bc_types.end();
+  if (has_periodic &&
+      (boundary_id == boundary_conditions_parameters->periodic_boundary_0 ||
+       boundary_id == boundary_conditions_parameters->periodic_boundary_1))
+    return true;
+
+  return false;
+}
+
+template <int dim>
+void
+IBParticlesDEM<dim>::get_wall_motion(
+  const unsigned int boundary_id,
+  const Point<dim>  &point_on_boundary,
+  Tensor<1, 3>      &wall_velocity,
+  Tensor<1, 3>      &wall_angular_velocity,
+  Point<dim>        &wall_center_of_rotation) const
+{
+  wall_velocity        = Tensor<1, 3>();
+  wall_angular_velocity = Tensor<1, 3>();
+  wall_center_of_rotation = point_on_boundary;
+
+  if (!boundary_conditions_parameters)
+    return;
+
+  const auto &translational_velocity_map =
+    boundary_conditions_parameters->boundary_translational_velocity;
+  const auto translational_it = translational_velocity_map.find(boundary_id);
+  if (translational_it != translational_velocity_map.end())
+    wall_velocity = translational_it->second;
+
+  const auto &rotational_speed_map =
+    boundary_conditions_parameters->boundary_rotational_speed;
+  const auto &rotational_vector_map =
+    boundary_conditions_parameters->boundary_rotational_vector;
+  const auto rotational_speed_it =
+    rotational_speed_map.find(boundary_id);
+  const auto rotational_vector_it =
+    rotational_vector_map.find(boundary_id);
+  if (rotational_speed_it != rotational_speed_map.end() &&
+      rotational_vector_it != rotational_vector_map.end())
+    {
+      wall_angular_velocity =
+        rotational_speed_it->second * rotational_vector_it->second;
+    }
+
+  const auto &rotation_axis_map =
+    boundary_conditions_parameters->point_on_rotation_axis;
+  const auto rotation_axis_it = rotation_axis_map.find(boundary_id);
+  if (rotation_axis_it != rotation_axis_map.end())
+    {
+      wall_center_of_rotation[0] = rotation_axis_it->second[0];
+      wall_center_of_rotation[1] = rotation_axis_it->second[1];
+      if constexpr (dim == 3)
+        wall_center_of_rotation[2] = rotation_axis_it->second[2];
+    }
 }
 template <int dim>
 void
@@ -448,6 +530,9 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
                         fe_face_values.quadrature_point(f_q_point);
                       boundary_information.boundary_index =
                         cells_at_boundary[i]->face(face_id)->boundary_id();
+                      if (is_boundary_excluded(
+                            boundary_information.boundary_index))
+                        continue;
                       auto iterator = best_contact_candidate[p_i].find(
                         boundary_information.boundary_index);
 
@@ -567,7 +652,9 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                     floating_walls_parameters->points_on_walls[i];
                   floating_wall_cell_info.normal_vector =
                     floating_walls_parameters->floating_walls_normal_vectors[i];
-                  best_cells[lowest_floating_wall_indices + i + 1] =
+                  floating_wall_cell_info.boundary_index =
+                    lowest_floating_wall_indices + i + 1;
+                  best_cells[floating_wall_cell_info.boundary_index] =
                     floating_wall_cell_info;
                 }
             }
@@ -722,9 +809,17 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                   Tensor<1, 3> wall_angular_velocity;
                   Point<dim>   wall_center_of_rotation;
 
-                  pw_contact_map[particle.particle_id][boundary_index]
+                  get_wall_motion(boundary_cell.boundary_index,
+                                  point_on_boundary,
+                                  wall_velocity,
+                                  wall_angular_velocity,
+                                  wall_center_of_rotation);
+
+                  pw_contact_map[particle.particle_id]
+                                [boundary_cell.boundary_index]
                     .normal_overlap = normal_overlap;
-                  pw_contact_map[particle.particle_id][boundary_index]
+                  pw_contact_map[particle.particle_id]
+                                [boundary_cell.boundary_index]
                     .normal_vector = normal;
 
                   ObjectProperties particle_properties;
@@ -860,7 +955,9 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
                     floating_walls_parameters->points_on_walls[i];
                   floating_wall_cell_info.normal_vector =
                     floating_walls_parameters->floating_walls_normal_vectors[i];
-                  best_cells[lowest_floating_wall_indices + i + 1] =
+                  floating_wall_cell_info.boundary_index =
+                    lowest_floating_wall_indices + i + 1;
+                  best_cells[floating_wall_cell_info.boundary_index] =
                     floating_wall_cell_info;
                 }
             }
@@ -878,6 +975,20 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
                 tensor_nd_to_3d(boundary_cell_information.normal_vector);
               auto point_on_boundary =
                 boundary_cell_information.point_on_boundary;
+              Tensor<1, 3> wall_velocity;
+              Tensor<1, 3> wall_angular_velocity;
+              Point<dim>   wall_center_of_rotation;
+
+              get_wall_motion(boundary_cell.boundary_index,
+                              point_on_boundary,
+                              wall_velocity,
+                              wall_angular_velocity,
+                              wall_center_of_rotation);
+              Tensor<1, 3> wall_velocity_at_point =
+                wall_velocity +
+                cross_product_3d(wall_angular_velocity,
+                                 point_nd_to_3d(point_on_boundary) -
+                                   point_nd_to_3d(wall_center_of_rotation));
 
               // Calculation of gap
               Point<3> particle_position_3d = point_nd_to_3d(particle.position);
@@ -912,7 +1023,8 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
                     }
                   // Evaluate the force
                   radial_velocity =
-                    scalar_product(-radial_vector, particle.velocity);
+                    scalar_product(-radial_vector,
+                                   particle.velocity - wall_velocity_at_point);
                   f_lub = 3 / 2 * PI * mu * (particle.radius) *
                             (particle.radius) / gap * radial_velocity *
                             radial_vector / radial_vector.norm() -

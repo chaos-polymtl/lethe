@@ -13,6 +13,18 @@
 
 using namespace dealii;
 
+namespace Parameters
+{
+  template <int dim>
+  class IBParticles;
+  namespace Lagrangian
+  {
+    template <int dim>
+    class FloatingWalls;
+    struct BCDEM;
+  } // namespace Lagrangian
+} // namespace Parameters
+
 /**
  * @brief A solver class for the DEM used in conjunction with IB particles and
  * fluid_dynamics_sharp. This class defines and uses some functions of the
@@ -65,6 +77,7 @@ public:
    *
    * @param p_nsparam The parameters for the immersed boundary particles
    * @param floating_walls_parameters The parameters for the floating walls.
+   * @param boundary_conditions_parameters The parameters for the DEM boundary conditions.
    * @param mpi_communicator_input The mpi communicator of the simulation.
    * @param particles The particles vector containing all the IB particles.
    */
@@ -72,6 +85,8 @@ public:
   initialize(const std::shared_ptr<Parameters::IBParticles<dim>> &p_nsparam,
              const std::shared_ptr<Parameters::Lagrangian::FloatingWalls<dim>>
                                                  floating_walls_parameters,
+             const std::shared_ptr<Parameters::Lagrangian::BCDEM>
+               &boundary_conditions_parameters,
              const MPI_Comm                     &mpi_communicator_input,
              const std::vector<IBParticle<dim>> &particles);
 
@@ -239,6 +254,16 @@ public:
   std::vector<IBParticle<dim>> dem_particles;
 
 private:
+  bool
+  is_boundary_excluded(const unsigned int boundary_id) const;
+
+  void
+  get_wall_motion(const unsigned int boundary_id,
+                  const Point<dim>  &point_on_boundary,
+                  Tensor<1, 3>      &wall_velocity,
+                  Tensor<1, 3>      &wall_angular_velocity,
+                  Point<dim>        &wall_center_of_rotation) const;
+
   // A struct to store boundary cells' information
   struct BoundaryCellsInfo
   {
@@ -281,6 +306,8 @@ private:
   std::shared_ptr<Parameters::IBParticles<dim>> parameters;
   std::shared_ptr<Parameters::Lagrangian::FloatingWalls<dim>>
                            floating_walls_parameters;
+  std::shared_ptr<Parameters::Lagrangian::BCDEM>
+    boundary_conditions_parameters;
   DEMSolverParameters<dim> dem_parameters{};
   MPI_Comm                 mpi_communicator;
 
