@@ -18,7 +18,7 @@ test()
   Parameters::SimulationControl simulation_control_parameters;
 
   simulation_control_parameters.dt                       = 1;
-  simulation_control_parameters.adapt                    = false;
+  simulation_control_parameters.adapt_required           = false;
   simulation_control_parameters.adapt_with_cfl           = false;
   simulation_control_parameters.maxCFL                   = 1;
   simulation_control_parameters.startup_timestep_scaling = 0.4;

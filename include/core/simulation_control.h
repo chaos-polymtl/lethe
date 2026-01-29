@@ -909,7 +909,7 @@ protected:
    * To enable it, enable either SimulationControlTransient::adapt_with_cfl or
    * SimulationControl::adapt_with_capillary_time_step_ratio.
    */
-  bool adapt;
+  bool adapt_required;
 
   /**
    * Boolean indicating if the CFL condition should be controlling the
@@ -1011,7 +1011,7 @@ public:
   bool
   is_adaptive_time_stepping() const override
   {
-    return adapt;
+    return adapt_required;
   }
 
   /**

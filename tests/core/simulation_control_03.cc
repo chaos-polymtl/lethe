@@ -18,7 +18,7 @@ test()
   Parameters::SimulationControl simulation_control_parameters;
 
   simulation_control_parameters.dt             = 0.1;
-  simulation_control_parameters.adapt          = false;
+  simulation_control_parameters.adapt_required = false;
   simulation_control_parameters.adapt_with_cfl = false;
   simulation_control_parameters.maxCFL         = 2;
   simulation_control_parameters.method =
@@ -157,7 +157,7 @@ test()
   }
 
   {
-    simulation_control_parameters.adapt                        = true;
+    simulation_control_parameters.adapt_required               = true;
     simulation_control_parameters.adapt_with_cfl               = true;
     simulation_control_parameters.time_end                     = 20;
     simulation_control_parameters.dt                           = 1;
@@ -199,7 +199,7 @@ test()
       }
   }
   {
-    simulation_control_parameters.adapt                        = true;
+    simulation_control_parameters.adapt_required               = true;
     simulation_control_parameters.adapt_with_cfl               = true;
     simulation_control_parameters.time_end                     = 25;
     simulation_control_parameters.dt                           = 1;
@@ -242,7 +242,7 @@ test()
   }
 
   {
-    simulation_control_parameters.adapt                        = true;
+    simulation_control_parameters.adapt_required               = true;
     simulation_control_parameters.adapt_with_cfl               = true;
     simulation_control_parameters.time_end                     = 25;
     simulation_control_parameters.dt                           = 1;
@@ -285,7 +285,7 @@ test()
   }
 
   {
-    simulation_control_parameters.adapt                        = true;
+    simulation_control_parameters.adapt_required               = true;
     simulation_control_parameters.adapt_with_cfl               = true;
     simulation_control_parameters.time_end                     = 25;
     simulation_control_parameters.dt                           = 1;

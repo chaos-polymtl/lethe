@@ -255,7 +255,7 @@ SimulationControl::get_checkpointed_simulation_control_info(
 SimulationControlTransient::SimulationControlTransient(
   const Parameters::SimulationControl &param)
   : SimulationControl(param)
-  , adapt(param.adapt)
+  , adapt_required(param.adapt_required)
   , adapt_with_cfl(param.adapt_with_cfl)
   , adaptative_time_step_scaling(param.adaptative_time_step_scaling)
   , max_dt(param.max_dt)
@@ -362,7 +362,7 @@ SimulationControlTransient::calculate_time_step()
 {
   double new_time_step = time_step;
 
-  if (adapt && iteration_number > 1)
+  if (adapt_required && iteration_number > 1)
     {
       new_time_step = time_step * adaptative_time_step_scaling;
       if (adapt_with_cfl && CFL > 0 &&

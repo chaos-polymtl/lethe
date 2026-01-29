@@ -41,7 +41,7 @@ test()
   simulation_control_parameters.dt                                   = 0.1;
   simulation_control_parameters.time_end                             = 1.0;
   simulation_control_parameters.output_iteration_frequency           = 1;
-  simulation_control_parameters.adapt                                = true;
+  simulation_control_parameters.adapt_required                       = true;
   simulation_control_parameters.adapt_with_cfl                       = true;
   simulation_control_parameters.adaptative_time_step_scaling         = 0.95;
   simulation_control_parameters.max_dt                               = 1e6;

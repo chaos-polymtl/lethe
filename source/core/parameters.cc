@@ -295,11 +295,11 @@ namespace Parameters
         convert_string_to_vector<double>(prm, "output time interval");
       output_boundaries = prm.get_bool("output boundaries");
 
-      subdivision   = prm.get_integer("subdivision");
-      group_files   = prm.get_integer("group files");
-      log_frequency = prm.get_integer("log frequency");
-      log_precision = prm.get_integer("log precision");
-      adapt         = adapt_with_cfl || adapt_with_capillary_time_step_ratio;
+      subdivision    = prm.get_integer("subdivision");
+      group_files    = prm.get_integer("group files");
+      log_frequency  = prm.get_integer("log frequency");
+      log_precision  = prm.get_integer("log precision");
+      adapt_required = adapt_with_cfl || adapt_with_capillary_time_step_ratio;
     }
     prm.leave_subsection();
   } // namespace Parameters

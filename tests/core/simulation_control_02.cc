@@ -19,7 +19,7 @@ test()
   Parameters::SimulationControl simulationControlParameters;
 
   simulationControlParameters.dt             = 0.01;
-  simulationControlParameters.adapt          = false;
+  simulationControlParameters.adapt_required = false;
   simulationControlParameters.adapt_with_cfl = false;
   simulationControlParameters.maxCFL         = 99;
   simulationControlParameters.method =

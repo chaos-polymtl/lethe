@@ -38,7 +38,7 @@ test()
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
   simulation_control_parameters.dt                                   = 0.1;
   simulation_control_parameters.time_end                             = 1.0;
-  simulation_control_parameters.adapt                                = false;
+  simulation_control_parameters.adapt_required                       = false;
   simulation_control_parameters.adapt_with_cfl                       = false;
   simulation_control_parameters.time_step_independent_of_end_time    = true;
   simulation_control_parameters.adapt_with_capillary_time_step_ratio = false;

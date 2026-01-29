@@ -111,7 +111,7 @@ namespace Parameters
      * SimulationControl::adapt_with_capillary_time_step_ratio are set to
      * @p false by default.
      */
-    bool adapt;
+    bool adapt_required;
 
     /**
      * Boolean indicating if the CFL condition should be controlling the

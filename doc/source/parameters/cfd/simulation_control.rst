@@ -162,7 +162,7 @@ Transient simulations parameters
 
   where :math:`q` the Gauss points and :math:`|\mathbf{u}_q|` is the velocity at the Gauss points. Essentially, the maximum CFL is the max of the CFL evaluated at every Gauss point in the mesh.
 
-* ``max time step``: maximum time step value that can be reached during the simulation.It is useful when the problem of interest has an additional time-step constraint.
+* ``max time step``: maximum time step value that can be reached during the simulation. It is useful when the problem of interest has an additional time-step constraint.
 
 * ``adaptative time step scaling``: rate of increase of the time step value. The new time step value is fixed by ``adaptative time step scaling`` * ``previous value of the time step``.
 
@@ -263,17 +263,13 @@ Explicit coupling constraint parameters
 
       \Delta t_\text{new} = \min{\left(\Delta t, \Delta t_\text{max}, \Delta t_\text{CTR}, \Delta t_\text{CFL}\right)}
 
-* ``max capillary time-step ratio``: corresponds to the aimed ratio of the simulation time step over the capillary time-step constraint:
-
-  .. math::
-
-    N_\text{CTR} = \frac{\Delta t}{\Delta t_\sigma}
-
-  where :math:`N_\text{CTR}` is the capillary time-step ratio. The time step is updated such that:
+* ``max capillary time-step ratio``: corresponds to the aimed ratio of the simulation time step over the capillary time-step constraint :math:`\left(\frac{\Delta t}{\Delta t_\sigma} \right)`. The time step is updated such that:
 
   .. math::
 
     \Delta t_\text{new} \leq N_\text{CTR, max} \, \Delta t_\sigma
+
+  where :math:`N_\text{CTR, max}` is the maximum capillary time-step ratio.
 
 ****
 
