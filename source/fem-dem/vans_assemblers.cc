@@ -565,6 +565,14 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
                     }
                   // Compute term ν_fε_f ∂_j(ϕ_i) ∂_i(δu_j) +
                   // ν_f ϕ_i ∂_i(δu_j) ∂_j(ε_f) (i and j are vector components)
+                  // Using the tensor product
+                  // local_matrix_ij += void_fraction * kinematic_viscosity *
+                  //                      scalar_product(transpose(grad_phi_u_j), grad_phi_u_i)
+                  //                      +
+                  //                    kinematic_viscosity *
+                  //                      void_fraction_gradients  *
+                  //                      grad_phi_u_j * phi_u_i;
+                  // Using component_i and component_j if the improvement in performance is worth it
                   local_matrix_ij += void_fraction * kinematic_viscosity *
                                        grad_phi_u_i[component_i][component_j] *
                                        grad_phi_u_j[component_j][component_i] +
