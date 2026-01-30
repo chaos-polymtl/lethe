@@ -13,7 +13,7 @@
 #include <deal.II/particles/particle_handler.h>
 
 #include <vector>
-#include <map>
+#include <unordered_map>
 
 using namespace dealii;
 
@@ -39,13 +39,13 @@ public:
   /**
    * @brief Sets the periodic boundaries parameters.
    *
-   * @param[in] periodic_boundary_ids_0 Vector of IDs of the first boundary of each PB pair.
-   * @param[in] periodic_directions Vector of perpendicular axes of each PB pair.
+   * @param[in] periodic_boundary_ids_0 Map of IDs of the first boundary of each PB pair.
+   * @param[in] periodic_directions Map of perpendicular axes of each PB pair.
    */
   void
   set_periodic_boundaries_information(
-    const std::vector<types::boundary_id> &periodic_boundary_ids_0,
-    const std::vector<unsigned int>       &periodic_directions)
+    const std::unordered_map<unsigned int, types::boundary_id> &periodic_boundary_ids_0,
+    const std::unordered_map<unsigned int, unsigned int>       &periodic_directions)
   {
     // If function is reached and vectors are not empty
     if (!periodic_boundary_ids_0.empty())
@@ -55,8 +55,8 @@ public:
         // Communicate to the action manager that there are periodic boundaries
         DEMActionManager::get_action_manager()->set_periodic_boundaries_enabled();
 
-        periodic_boundary_ids = periodic_boundary_ids_0;
-        directions           = periodic_directions;
+        periodic_boundaries_ids = periodic_boundary_ids_0;
+        directions              = periodic_directions;
 
         // Initialize offset map
         periodic_offsets.clear();
@@ -159,20 +159,20 @@ private:
   /**
    * @brief IDs of the first periodic boundary of each pair.
    */
-  std::vector<types::boundary_id> periodic_boundaries_ids;
+  std::unordered_map<unsigned int, types::boundary_id> periodic_boundaries_ids;
 
   /**
    * @brief Direction of the periodic boundaries, it is the perpendicular axis of
    * the periodic boundaries.
    */
-  std::vector<unsigned int> directions;
+  std::unordered_map<unsigned int, unsigned int> directions;
 
   /**
    * @brief Map storing offset distance between periodic boundaries, keyed by the
    * boundary ID (pb0). It is calculated from the first pair of cells on periodic
    * boundaries, all pair of cells are assumed to have the same offset.
    */
-  std::map<types::boundary_id, Tensor<1, dim> periodic_offsets;
+  std::unordered_map<types::boundary_id, Tensor<1, dim>> periodic_offsets;
 };
 
 #endif
