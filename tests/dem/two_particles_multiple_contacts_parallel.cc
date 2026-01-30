@@ -41,29 +41,28 @@ test()
   MappingQ<dim>            mapping(1);
   DEMSolverParameters<dim> dem_parameters;
 
+  Parameters::Lagrangian::LagrangianPhysicalProperties &lpp =
+    dem_parameters.lagrangian_physical_properties;
+
+  set_default_dem_parameters(1, dem_parameters);
+
   // Defining general simulation parameters
   Tensor<1, 3> g{{0, 0, 0}};
-  double       dt                                                    = 0.00001;
-  double       particle_diameter                                     = 0.005;
-  unsigned int step_end                                              = 1000;
-  unsigned int output_frequency                                      = 10;
-  dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
-  dem_parameters.lagrangian_physical_properties.youngs_modulus_particle[0] =
-    50000000;
-  dem_parameters.lagrangian_physical_properties.poisson_ratio_particle[0] = 0.9;
-  dem_parameters.lagrangian_physical_properties
-    .restitution_coefficient_particle[0] = 0.9;
-  dem_parameters.lagrangian_physical_properties
-    .friction_coefficient_particle[0] = 0.5;
-  dem_parameters.lagrangian_physical_properties
-    .rolling_viscous_damping_coefficient_particle[0] = 0.5;
-  dem_parameters.lagrangian_physical_properties
-    .rolling_friction_coefficient_particle[0] = 0.1;
-  dem_parameters.lagrangian_physical_properties.surface_energy_particle[0] = 0.;
-  dem_parameters.lagrangian_physical_properties.hamaker_constant_particle[0] =
-    0.;
-  dem_parameters.lagrangian_physical_properties.density_particle[0] = 2500;
-  double neighborhood_threshold = 1.3 * particle_diameter;
+  double       dt                                     = 0.00001;
+  double       particle_diameter                      = 0.005;
+  unsigned int step_end                               = 1000;
+  unsigned int output_frequency                       = 10;
+  lpp.particle_type_number                            = 1;
+  lpp.youngs_modulus_particle[0]                      = 50000000;
+  lpp.poisson_ratio_particle[0]                       = 0.9;
+  lpp.restitution_coefficient_particle[0]             = 0.9;
+  lpp.friction_coefficient_particle[0]                = 0.5;
+  lpp.rolling_viscous_damping_coefficient_particle[0] = 0.5;
+  lpp.rolling_friction_coefficient_particle[0]        = 0.1;
+  lpp.surface_energy_particle[0]                      = 0.;
+  lpp.hamaker_constant_particle[0]                    = 0.;
+  lpp.density_particle[0]                             = 2500;
+  double neighborhood_threshold                       = 1.3 * particle_diameter;
   dem_parameters.model_parameters.rolling_resistance_method =
     Parameters::Lagrangian::RollingResistanceMethod::constant;
 

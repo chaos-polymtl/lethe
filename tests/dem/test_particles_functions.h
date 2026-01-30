@@ -62,7 +62,7 @@ construct_particle_iterator(
  * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
  * @param pit Particle Iterator where the particle is inserted.
  * @param type Particle type.
- * @param particle_diameter Particle diameter.
+ * @param diameter Particle diameter.
  * @param mass Particle mass.
  * @param v Particle velocity.
  * @param omega Particle angular velocity.
@@ -106,10 +106,10 @@ void
 set_default_dem_parameters(const unsigned int        particle_type_number,
                            DEMSolverParameters<dim> &dem_parameters)
 {
-  Parameters::Lagrangian::LagrangianPhysicalProperties &properties =
+  Parameters::Lagrangian::LagrangianPhysicalProperties &lpp =
     dem_parameters.lagrangian_physical_properties;
 
-  properties.particle_type_number = particle_type_number;
+  lpp.particle_type_number = particle_type_number;
 
   // Rolling resistance method
   dem_parameters.model_parameters.rolling_resistance_method =
@@ -118,46 +118,60 @@ set_default_dem_parameters(const unsigned int        particle_type_number,
   // Particle parameters
   for (unsigned int i = 0; i < particle_type_number; ++i)
     {
-      properties.density_particle.push_back(1000);
-      properties.youngs_modulus_particle.push_back(1000000);
-      properties.poisson_ratio_particle.push_back(0.3);
-      properties.restitution_coefficient_particle.push_back(0.1);
-      properties.friction_coefficient_particle.push_back(0.1);
-      properties.rolling_friction_coefficient_particle.push_back(0.1);
-      properties.rolling_viscous_damping_coefficient_particle.push_back(0.1);
-      properties.surface_energy_particle.push_back(0.0);
-      properties.hamaker_constant_particle.push_back(4.e-19);
-      properties.thermal_conductivity_particle.push_back(1);
-      properties.specific_heat_particle.push_back(1000);
-      properties.microhardness_particle.push_back(1.e9);
-      properties.surface_slope_particle.push_back(0.1);
-      properties.surface_roughness_particle.push_back(1.e-9);
-      properties.thermal_accommodation_particle.push_back(0.7);
-      properties.real_youngs_modulus_particle.push_back(1.e9);
+      lpp.particle_average_diameter.push_back(0.1);
+      lpp.custom_distribution_from_file.push_back(false);
+      lpp.custom_distribution_filenames.emplace_back(" ");
+      lpp.custom_probability_function_type.push_back(
+        Parameters::Lagrangian::ProbabilityFunctionType::PDF);
+      lpp.custom_distribution_interpolation.push_back(false);
+      lpp.particle_custom_diameter.push_back(std::vector<double>{0.1, 0.2});
+      lpp.particle_custom_probability.push_back(std::vector<double>{0.5, 0.5});
+      lpp.distribution_weighting_type.push_back(
+        Parameters::Lagrangian::DistributionWeightingType::number_based);
+      lpp.seed_for_distributions.push_back(1);
+      lpp.diameter_min_cutoff.push_back(-1.);
+      lpp.diameter_max_cutoff.push_back(-1.);
+      lpp.number.push_back(0);
+      lpp.density_particle.push_back(1000);
+      lpp.youngs_modulus_particle.push_back(1000000);
+      lpp.poisson_ratio_particle.push_back(0.3);
+      lpp.restitution_coefficient_particle.push_back(0.1);
+      lpp.friction_coefficient_particle.push_back(0.1);
+      lpp.rolling_viscous_damping_coefficient_particle.push_back(0.1);
+      lpp.rolling_friction_coefficient_particle.push_back(0.1);
+      lpp.surface_energy_particle.push_back(0.0);
+      lpp.hamaker_constant_particle.push_back(4.e-19);
+      lpp.thermal_conductivity_particle.push_back(1);
+      lpp.specific_heat_particle.push_back(1000);
+      lpp.microhardness_particle.push_back(1.e9);
+      lpp.surface_slope_particle.push_back(0.1);
+      lpp.surface_roughness_particle.push_back(1.e-9);
+      lpp.thermal_accommodation_particle.push_back(0.7);
+      lpp.real_youngs_modulus_particle.push_back(1.e9);
     }
 
   // Wall parameters
-  properties.youngs_modulus_wall          = 1000000;
-  properties.poisson_ratio_wall           = 0.3;
-  properties.restitution_coefficient_wall = 0.1;
-  properties.friction_coefficient_wall    = 0.1;
-  properties.rolling_friction_wall        = 0.1;
-  properties.rolling_viscous_damping_wall = 0.1;
-  properties.surface_energy_wall          = 0.0;
-  properties.hamaker_constant_wall        = 4.e-19;
-  properties.thermal_conductivity_wall    = 100;
-  properties.microhardness_wall           = 1.e9;
-  properties.surface_slope_wall           = 0.1;
-  properties.surface_roughness_wall       = 1.e-10;
-  properties.thermal_accommodation_wall   = 0.7;
-  properties.real_youngs_modulus_wall     = 1.e9;
+  lpp.youngs_modulus_wall          = 1000000;
+  lpp.poisson_ratio_wall           = 0.3;
+  lpp.restitution_coefficient_wall = 0.1;
+  lpp.friction_coefficient_wall    = 0.1;
+  lpp.rolling_friction_wall        = 0.1;
+  lpp.rolling_viscous_damping_wall = 0.1;
+  lpp.surface_energy_wall          = 0.0;
+  lpp.hamaker_constant_wall        = 4.e-19;
+  lpp.thermal_conductivity_wall    = 100;
+  lpp.microhardness_wall           = 1.e9;
+  lpp.surface_slope_wall           = 0.1;
+  lpp.surface_roughness_wall       = 1.e-10;
+  lpp.thermal_accommodation_wall   = 0.7;
+  lpp.real_youngs_modulus_wall     = 1.e9;
 
   // Interstitial gas parameters
-  properties.thermal_conductivity_gas     = 0.01;
-  properties.specific_heat_gas            = 1000;
-  properties.dynamic_viscosity_gas        = 1.e-5;
-  properties.specific_heats_ratio_gas     = 1;
-  properties.molecular_mean_free_path_gas = 68.e-9;
+  lpp.thermal_conductivity_gas     = 0.01;
+  lpp.specific_heat_gas            = 1000;
+  lpp.dynamic_viscosity_gas        = 1.e-5;
+  lpp.specific_heats_ratio_gas     = 1;
+  lpp.molecular_mean_free_path_gas = 68.e-9;
 }
 
 
@@ -180,7 +194,7 @@ reinitialize_contact_outcomes(
        ++particle)
     {
       // Getting id of particle as local variable
-      unsigned int particle_id = particle->get_id();
+      unsigned int particle_id = particle->get_local_index();
 
       // Reinitializing contact outcomes of particles in the system
       contact_outcome.force[particle_id][0] = 0;

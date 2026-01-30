@@ -33,8 +33,8 @@ test()
   set_default_dem_parameters(1, dem_parameters);
 
   Tensor<1, dim> g{{0, 0, -9.81}};
-  double         dt                                        = 0.00001;
-  double         particle_diameter                         = 0.005;
+  double         dt                            = 0.00001;
+  double         particle_diameter             = 0.005;
   lpp.particle_type_number                     = 1;
   lpp.youngs_modulus_particle[0]               = 50000000;
   lpp.poisson_ratio_particle[0]                = 0.3;

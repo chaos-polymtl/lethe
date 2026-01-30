@@ -28,43 +28,46 @@ test()
   MappingQ<dim> mapping(1);
 
   // Defining simulation general parameters
-  DEMSolverParameters<dim>                              dem_parameters;
-  Parameters::Lagrangian::LagrangianPhysicalProperties &properties =
+  // Defining general simulation parameters
+  DEMSolverParameters<dim> dem_parameters;
+  set_default_dem_parameters(1, dem_parameters);
+
+  Parameters::Lagrangian::LagrangianPhysicalProperties &lpp =
     dem_parameters.lagrangian_physical_properties;
   Parameters::Lagrangian::ModelParameters<dim> &model_param =
     dem_parameters.model_parameters;
 
   const Tensor<1, dim> g{{0, 0, 0}};
-  const double         dt                                    = 0.1;
-  const double         particle_diameter                     = 0.01;
-  const double         specific_heat                         = 840;
-  properties.particle_type_number                            = 1;
-  properties.youngs_modulus_particle[0]                      = 65e9;
-  properties.poisson_ratio_particle[0]                       = 0.22;
-  properties.restitution_coefficient_particle[0]             = 0.8;
-  properties.friction_coefficient_particle[0]                = 1;
-  properties.rolling_friction_coefficient_particle[0]        = 0.02;
-  properties.density_particle[0]                             = 2521;
-  properties.rolling_viscous_damping_coefficient_particle[0] = 0.;
-  properties.surface_energy_particle[0]                      = 0.;
-  properties.hamaker_constant_particle[0]                    = 0.;
+  const double         dt                             = 0.1;
+  const double         particle_diameter              = 0.01;
+  const double         specific_heat                  = 840;
+  lpp.particle_type_number                            = 1;
+  lpp.youngs_modulus_particle[0]                      = 65e9;
+  lpp.poisson_ratio_particle[0]                       = 0.22;
+  lpp.restitution_coefficient_particle[0]             = 0.8;
+  lpp.friction_coefficient_particle[0]                = 1;
+  lpp.rolling_friction_coefficient_particle[0]        = 0.02;
+  lpp.density_particle[0]                             = 2521;
+  lpp.rolling_viscous_damping_coefficient_particle[0] = 0.;
+  lpp.surface_energy_particle[0]                      = 0.;
+  lpp.hamaker_constant_particle[0]                    = 0.;
   model_param.rolling_resistance_method =
     Parameters::Lagrangian::RollingResistanceMethod::constant;
 
   const double neighborhood_threshold = std::pow(1.3 * particle_diameter, 2);
 
   // Defining parameters for thermal DEM
-  properties.surface_roughness_particle[0]     = 25e-9;
-  properties.surface_slope_particle[0]         = 0.078;
-  properties.microhardness_particle[0]         = 9e9;
-  properties.thermal_conductivity_particle[0]  = 1;
-  properties.thermal_conductivity_gas          = 0.027;
-  properties.dynamic_viscosity_gas             = 1.85e-5;
-  properties.specific_heat_gas                 = 1006;
-  properties.specific_heats_ratio_gas          = 1;
-  properties.molecular_mean_free_path_gas      = 68e-9;
-  properties.thermal_accommodation_particle[0] = 0.7;
-  properties.real_youngs_modulus_particle[0]   = 65e9;
+  lpp.surface_roughness_particle[0]     = 25e-9;
+  lpp.surface_slope_particle[0]         = 0.078;
+  lpp.microhardness_particle[0]         = 9e9;
+  lpp.thermal_conductivity_particle[0]  = 1;
+  lpp.thermal_conductivity_gas          = 0.027;
+  lpp.dynamic_viscosity_gas             = 1.85e-5;
+  lpp.specific_heat_gas                 = 1006;
+  lpp.specific_heats_ratio_gas          = 1;
+  lpp.molecular_mean_free_path_gas      = 68e-9;
+  lpp.thermal_accommodation_particle[0] = 0.7;
+  lpp.real_youngs_modulus_particle[0]   = 65e9;
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
