@@ -225,14 +225,13 @@ namespace Parameters
                         "Particle size distribution"
                         "Choices are <uniform|normal|lognormal|custom>.");
 
-      // Uniform
-      prm.declare_alias("average diameter", "diameter", false);
-
       // Normal and lognormal distributions
       prm.declare_entry("average diameter",
                         "0.001",
                         Patterns::Double(0.),
                         "Particle diameter.");
+      // (Alias for the uniform distribution)
+      prm.declare_alias("average diameter", "diameter", false);
       prm.declare_entry("standard deviation",
                         "0",
                         Patterns::Double(0.),
@@ -260,16 +259,12 @@ namespace Parameters
                         "Indicates if the sampling using the custom "
                         "distribution should be interpolated.");
 
-      prm.declare_alias("custom distribution diameters values",
-                        "custom diameters",
-                        false);
       prm.declare_entry("custom distribution diameters values",
                         "0.001 , 0.0005",
                         Patterns::List(Patterns::Double(0.)),
                         "Diameter values for a custom distribution");
-
-      prm.declare_alias("custom distribution diameters probabilities",
-                        "custom volume fractions",
+      prm.declare_alias("custom distribution diameters values",
+                        "custom diameters",
                         false);
       prm.declare_entry(
         "custom distribution diameters probabilities",
@@ -278,6 +273,9 @@ namespace Parameters
         "Probabilities of each diameter of the custom"
         "Probabilities associated with each diameter values for "
         "a custom distribution. ");
+      prm.declare_alias("custom distribution diameters probabilities",
+                        "custom volume fractions",
+                        false);
 
       // Normal, lognormal and custom distributions
       prm.declare_entry("distribution weighting basis",
@@ -285,14 +283,14 @@ namespace Parameters
                         Patterns::Selection("number|volume"),
                         "Weighting basis for the size distribution. "
                         "Choices are <number|volume>.");
-      prm.declare_alias("distribution prn seed",
-                        "random seed distribution",
-                        false);
       prm.declare_entry("distribution prn seed",
                         "1",
                         Patterns::Integer(),
                         "Seed for generation of random numbers"
                         " for the size distribution");
+      prm.declare_alias("distribution prn seed",
+                        "random seed distribution",
+                        false);
       prm.declare_entry("minimum diameter cutoff",
                         "-1.",
                         Patterns::Double(),
