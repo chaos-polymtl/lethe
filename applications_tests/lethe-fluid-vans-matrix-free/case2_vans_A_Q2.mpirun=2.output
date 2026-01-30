@@ -1,4 +1,4 @@
-Running on 1 MPI rank(s)...
+Running on 2 MPI rank(s)...
    Number of active cells:       256
    Number of degrees of freedom: 3267
    Volume of triangulation:      4
@@ -34,5 +34,5 @@ Void Fraction
 --------------
 cells  error_velocity    error_pressure   
   256 5.387912e-04    - 2.420696e-02    - 
- 1024 6.446705e-05 3.06 5.941452e-03 2.03 
+ 1024 6.446698e-05 3.06 5.941452e-03 2.03 
  4096 7.960057e-06 3.02 1.475389e-03 2.01 
