@@ -425,7 +425,7 @@ VANSOperator<dim, number>::do_cell_integral_local(
               gradient_result[i][k] +=
                 kinematic_viscosity * vf_value * gradient[k][i];
               // ν(v,∇ɛ∇δu)
-              value_result[i] += kinematic_viscosity * vf_gradient[i] * gradient[i][k];
+              value_result[i] += kinematic_viscosity * vf_gradient[k] * gradient[k][i];
               // BB new add
               // ν(v,∇ɛ∇δu^T)
               value_result[i] += kinematic_viscosity *  vf_gradient[k] * gradient[i][k];
