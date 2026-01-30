@@ -147,7 +147,7 @@ private:
 
   /**
    * @brief ID of the first periodic boundary. No needs to store the second one
-   * since there are linked on the triangulation, and accessible through
+   * since they are linked on the triangulation, and accessible through
    * functions on cells on the boundary condition 0.
    */
   types::boundary_id periodic_boundary_0;
