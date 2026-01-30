@@ -18,8 +18,6 @@
 
 #include <solvers/isothermal_compressible_navier_stokes_cls_assembler.h>
 #include <solvers/navier_stokes_cls_assemblers.h>
-#include <solvers/isothermal_compressible_navier_stokes_vof_assembler.h>
-#include <solvers/navier_stokes_vof_assemblers.h>
 #include <solvers/postprocessing_cfd.h>
 
 #include <fem-dem/fluid_dynamics_sharp.h>
@@ -5148,6 +5146,11 @@ FluidDynamicsSharp<dim>::solve()
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
   this->update_multiphysics_time_average_solution();
+  if (this->simulation_parameters.restart_parameters.restart == false &&
+      this->simulation_control->is_output_iteration())
+    {
+      handle_dem_particle_output_and_postprocessing();
+    }
 
   while (this->simulation_control->integrate())
     {
