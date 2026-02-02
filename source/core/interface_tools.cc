@@ -1164,8 +1164,9 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
             {
               eta_n = 0.0;
             }
+          const unsigned int cell_index_local = cell->active_cell_index();
 
-          eta_cell[cell_index] = eta_n;
+          eta_cell[cell_index_local] = eta_n;
 
           std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
           cell->get_dof_indices(dof_indices);
