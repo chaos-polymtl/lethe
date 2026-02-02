@@ -421,7 +421,7 @@ CustomDistribution::CustomDistribution(
   AssertThrow(std::ranges::is_sorted(diameter_values),
               ExcMessage("The \"custom distribution diameters values\" "
                          "parameter is not defined properly. Make sure to "
-                         "defined every diameter value in ascending order."));
+                         "define the diameter values in ascending order."));
 
   if (function_type == ProbabilityFunctionType::CDF)
     {
@@ -436,7 +436,7 @@ CustomDistribution::CustomDistribution(
         {
           AssertThrow(d_probabilities[0] == 0.,
                       ExcMessage("When using a custom distribution defined"
-                                 " as a CFD with interpolation, the first "
+                                 " as a CDF with interpolation, the first "
                                  "probability value needs to be equal to 0."));
         }
     }
@@ -470,7 +470,7 @@ CustomDistribution::CustomDistribution(
     }
 
   // We need to convert the input probability values (d_probabilities)
-  // to a number based CFD to sample diameter values correctly.
+  // to a number-based CDF to sample diameter values correctly.
   if (this->weighting_type == DistributionWeightingType::number_based)
     {
       if (function_type == ProbabilityFunctionType::CDF)
@@ -481,7 +481,7 @@ CustomDistribution::CustomDistribution(
         }
       else if (function_type == ProbabilityFunctionType::PDF)
         {
-          // If the input probability function is a number based PDF, we convert
+          // If the input probability function is a number-based PDF, we convert
           // this PDF into a CDF by integrating from d = 0 to
           // d = diameter_values[i] using the trapezoidal method.
           number_based_cdf[0] = d_probabilities[0];
@@ -516,7 +516,7 @@ CustomDistribution::CustomDistribution(
 
               // The volume fraction (dfv) is the area under the PDF or the
               // difference in CDF between consecutive diameter values.
-              // the difference between two consecutive nodes gives
+              // The difference between two consecutive nodes gives
               // the volume fraction contained in this .
               double this_bin_volume_fraction;
               if (function_type == ProbabilityFunctionType::PDF)
@@ -538,7 +538,7 @@ CustomDistribution::CustomDistribution(
               //
               // Solving the integral:
               // 1. Integral of x^-3 dx  = -1/(2x^2).
-              // 2. Evaluated the integral:
+              // 2. Evaluate the integral:
               // [1/(2*d_low^2) - 1/(2*d_high^2)] / (d_high - d_low)
               // 3. Simplified: (d_high^2 - d_low^2) / [2 * d_low^2 *
               // d_high^2 * (d_high - d_low)]
@@ -572,10 +572,10 @@ CustomDistribution::CustomDistribution(
         }
       else // No interpolation
         {
-          // Volume fractions of every diameter values.
+          // Volume fraction of every diameter value.
           std::vector<double> volume_fraction(number_d_values, 0.);
 
-          // If the user specify a volume-based CDF, we convert it to
+          // If the user specifies a volume-based CDF, we convert it to
           // volume-based PDF first.
           if (function_type == ProbabilityFunctionType::CDF)
             {
