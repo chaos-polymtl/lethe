@@ -1222,10 +1222,12 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::compute_volume_correction
     {
       if (cell->is_locally_owned())
         {
-          const unsigned int cell_index = cell->active_cell_index();
+          const unsigned int local_cell_index = cell->active_cell_index();
+          const unsigned int global_cell_index = cell->global_active_cell_index();
+
 
           // The cell is not intersected, no need to correct the volume
-          if (interface_reconstruction_vertices.find(cell_index) ==
+          if (interface_reconstruction_vertices.find(global_cell_index) ==
               interface_reconstruction_vertices.end())
             {
               continue;
@@ -1250,7 +1252,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::compute_volume_correction
                 {
                   cell_rhs(i) +=
                     (fe_values.shape_value(i, q_point) *
-                      eta_cell[cell_index] * fe_values.JxW(q_point));
+                      eta_cell[local_cell_index] * fe_values.JxW(q_point));
                 }
             }
           cell->get_dof_indices(local_dof_indices);
