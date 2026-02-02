@@ -298,10 +298,10 @@ public:
    * @param[in] min_cutoff Minimum cutoff diameter.
    * @param[in] max_cutoff Maximum cutoff diameter.
    * @param[in] distribution_weighting_type Weighting type of the distribution.
-   * @param function_type Defines whether the input probability values are related to
-   * the PDF or the CDF.
-   * @param[in] interpolate Indicates if the diameter value are linearly
-   * interpolated between input diameter and probability values.
+   * @param[in] function_type Defines whether the input probability values
+   * correspond to the PDF or the CDF.
+   * @param[in] interpolate Indicates whether the diameter sampled values are
+   * linearly interpolated between input diameter and probability values.
    */
   CustomDistribution(
     const std::vector<double> &d_list,
@@ -359,15 +359,15 @@ private:
   const std::vector<double> diameter_values;
 
   /**
-   * @brief Vector containing cumulative probabilities associated with de
-   * diameter_values vector. The probabilities are based on the number based
+   * @brief Vector containing cumulative probabilities associated with the
+   * diameter_values vector. The stored values are based on the number based
    * CDF.
    */
   std::vector<double> number_based_cdf;
 
   /**
-   * @brief Indicates if the diameter values are interpolated between input values
-   * during sampling.
+   * @brief Indicates whether the diameter values are interpolated between the
+   * input values during sampling.
    */
   const bool interpolate_diameter_values;
 

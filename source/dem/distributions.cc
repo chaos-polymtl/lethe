@@ -398,13 +398,15 @@ CustomDistribution::CustomDistribution(
 {
   // Assuming that the diameter values are in ascending order. There is a check
   // for that right after
-  // Min cutoff
+  // Min cutoff : The default value is -1. If the does not change the default
+  // value, the minimum cutoff is set to the smallest diameter value - a small
+  // epsilon.
   if (min_cutoff < 0.)
     this->dia_min_cutoff = diameter_values[0] - 1e-8;
   else
     this->dia_min_cutoff = min_cutoff;
 
-  // Max cutoff
+  // Same thing for the max cutoff.
   if (max_cutoff < 0.)
     this->dia_max_cutoff = diameter_values.back() + 1e-8;
   else
@@ -533,27 +535,28 @@ CustomDistribution::CustomDistribution(
               //
               // Assumption: The volume is distributed LINEARLY across this
               // diameter bin. Under this assumption, the 'Weight' is the
-              // Mean Value of the function 1/D^3: Weight = [1 / (d_high -
-              // d_low)] * Integral from d_low to d_high of (1/x^3) dx
+              // Mean Value of the function 1/D^3:
+              // Weight = [1 / (d_high - d_low)] * Integral from d_low to d_high of (1/x^3) dx
               //
               // Solving the integral:
               // 1. Integral of x^-3 dx  = -1/(2x^2).
-              // 2. Evaluate the integral:
-              // [1/(2*d_low^2) - 1/(2*d_high^2)] / (d_high - d_low)
-              // 3. Simplified: (d_high^2 - d_low^2) / [2 * d_low^2 *
-              // d_high^2 * (d_high - d_low)]
-              // 4. Using (a^2 - b^2) = (a-b)(a+b), the (d_high - d_low)
-              // terms cancel out.
+              // 2. Evaluate the integral: [1/(2*d_low^2) - 1/(2*d_high^2)]
+              // 3. Simplify the evaluated integral : (d_high^2 - d_low^2) / [2
+              // * d_low^2 * d_high^2 ]
+              // 4. Using (a^2 - b^2) = (a-b)(a+b), (d_high^2 - d_low^2) becomes
+              // (d_high - d_low)(d_high + d_low).
+              // 5. Weight = [1 / (d_high - d_low)] * Integral, thus the
+              // (d_high - d_low) term is cancelled.
               //
               // Final Weight Formula: (d_low + d_high) / (2 * d_low^2 *
               // d_high^2)
               const double weight =
                 (d_low + d_high) / (2.0 * std::pow(d_low * d_high, 2));
 
-              // Convert volume fraction to a relative number fraction
-              // (dfn). Note: This value is not yet normalized; it's a
-              // relative particle count.
-              dfn[i] = this_bin_volume_fraction * weight;
+                // Convert volume fraction to a relative number fraction
+                // (dfn). Note: This value is not yet normalized; it's a
+                // relative particle count.
+                dfn[i] = this_bin_volume_fraction * weight;
 
               // Sum the relative counts. This sum will be used as the
               // denominator to normalize the final number-based CDF so it

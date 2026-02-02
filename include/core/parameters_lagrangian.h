@@ -89,8 +89,8 @@ namespace Parameters
       // Custom distribution function type (PDF or CDF)
       std::vector<ProbabilityFunctionType> custom_probability_function_type;
 
-      // Indicates whether the diameter values generated from the custom distribution
-      // are interpolated
+      // Indicates whether the diameter values generated from the custom
+      // distribution are interpolated
       std::vector<bool> custom_distribution_interpolation;
 
       // List of diameters for the custom distribution for each particle type
@@ -236,21 +236,22 @@ namespace Parameters
        * used to store the particle size distribution and physical properties
        * of each particle type.
        *
-       * @param[in,out] dist_types Distribution type.
+       * @param[in,out] dist_types Indicates the SizeDistributionType type.
        * @param[in,out] p_average_diameter Average diameter.
        * @param[in,out] p_size_std Diameter standard deviation for the
        * normal and lognormal distributions.
-       * @param[in,out] custom_dist_read_from_file Indicates whether the diameter and
-       * probability values are stored in a separate file.
-       * @param[in,out] custom_dist_file_names Vector of filenames from which the custom distributions are read.
-       * @param[in,out] custom_function_type Indicates whether the values defining
-       * the custom distribution correspond to the PDF or the CDF.
-       * @param[in,out] custom_interpolation Indicates whether the diameter values
-       * are interpolated from the input values.
+       * @param[in,out] custom_dist_read_from_file Indicates whether the
+       * diameter and probability values are stored in a separate file.
+       * @param[in,out] custom_dist_file_names Vector of filenames from which
+       * the custom distributions are read.
+       * @param[in,out] custom_function_type Indicates whether the values
+       * defining the custom distribution correspond to the PDF or the CDF.
+       * @param[in,out] custom_interpolation Indicates whether the diameter
+       * values are interpolated from the input values.
        * @param[in,out] custom_diameter_values Lists of diameters for the custom
        * distribution.
-       * @param[in,out] custom_probabilities_values Lists of probability values corresponding to each
-       * diameter value in the custom distribution.
+       * @param[in,out] custom_probabilities_values Lists of probability values
+       * corresponding to each diameter value in the custom distribution.
        * @param[in,out] distribution_weighting_basis_type Weighting basis for
        * the PSD.
        * @param[in,out] seed_for_dist Pseudo random seed for the PSD sampling.
@@ -264,7 +265,8 @@ namespace Parameters
        * @param[in,out] p_friction_coefficient Sliding friction coefficient.
        * @param[in,out] p_rolling_viscous_damping_coefficient Rolling viscous
        * damping coefficient
-       * @param[in,out] p_rolling_friction_coefficient Rolling friction coefficient.
+       * @param[in,out] p_rolling_friction_coefficient Rolling friction
+       * coefficient.
        * @param[in,out] p_surface_energy Surface energy.
        * @param[in,out] p_hamaker_constant Hamaker constant.
        * @param[in,out] p_thermal_conductivity Thermal conductivity.
