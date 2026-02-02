@@ -24,6 +24,13 @@
 
 #include <deal.II/lac/lapack_full_matrix.h>
 
+#include <deal.II/lac/trilinos_precondition.h>
+#include <deal.II/lac/trilinos_sparse_matrix.h>
+#include <deal.II/lac/trilinos_vector.h>
+#include <deal.II/lac/solver_control.h>
+#include <deal.II/lac/trilinos_solver.h>
+#include <deal.II/lac/solver_cg.h>
+
 #include <deal.II/matrix_free/fe_point_evaluation.h>
 
 #include <deal.II/non_matching/fe_immersed_values.h>
@@ -577,6 +584,9 @@ namespace InterfaceTools
     void
     compute_cell_wise_volume_correction();
 
+    void
+    compute_volume_correction_L2_projection(Vector<double> &eta_cell, const MPI_Comm &mpi_communicator);
+
     /**
      * @brief Correct the global volume to match the volume englobed by the given level
      * of the level_set field
@@ -1035,6 +1045,9 @@ namespace InterfaceTools
 
     /// Hanging node constraints
     AffineConstraints<double> constraints;
+
+    TrilinosWrappers::SparseMatrix system_matrix_volume_correction;
+    VectorType                     system_rhs_volume_correction;
 
     /// Surface vertices of the interface reconstruction stored in a cell-wise
     /// map (volume cell)
