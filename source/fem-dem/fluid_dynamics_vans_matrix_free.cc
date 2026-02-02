@@ -396,7 +396,7 @@ FluidDynamicsVANSMatrixFree<dim>::read_dem()
   AssertThrow(
     dim == 3,
     ExcMessage(
-      "The DEM coupling capabilities of the VANS solver only support 3D calculations. All of the CFD-DEM closure term rely on the usage of 3D spherical particles and, consequently, 2D CFD-DEM simulations are currently not supported"));
+      "The DEM coupling capabilities of the VANS solver only support 3D calculations. All of the CFD-DEM closure terms rely on the usage of 3D spherical particles and, consequently, 2D CFD-DEM simulations are currently not supported"));
 
 
   std::string prefix =
