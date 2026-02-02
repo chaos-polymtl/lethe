@@ -909,7 +909,7 @@ protected:
    * To enable it, enable either SimulationControlTransient::adapt_with_cfl or
    * SimulationControl::adapt_with_capillary_time_step_ratio.
    */
-  bool adapt_required;
+  bool time_step_adaptation_required;
 
   /**
    * Boolean indicating if the CFL condition should be controlling the
@@ -972,9 +972,9 @@ protected:
    * @brief Calculate the next value of the time step
    *
    * If SimulationControlTransient::adapt_with_cfl is enabled, the time step is
-   * calculated to ensure that the CFL condition is bound by the maximal CFL
+   * calculated to ensure that the CFL condition is bounded by the maximal CFL
    * value. If SimulationControl::adapt_with_capillary_time_step_ratio is
-   * enabled, the time step is calculated to ensure that it is bound
+   * enabled, the time step is calculated to ensure that it is bounded
    * by the maximal CTR value. The new time step is scaled by
    * SimulationControlTransient::adaptative_time_step_scaling. If the
    * SimulationControl::time_step_independent_of_end_time is set to @p false, the
@@ -1011,7 +1011,7 @@ public:
   bool
   is_adaptive_time_stepping() const override
   {
-    return adapt_required;
+    return time_step_adaptation_required;
   }
 
   /**

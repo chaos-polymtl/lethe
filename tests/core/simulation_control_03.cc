@@ -17,10 +17,10 @@ test()
 {
   Parameters::SimulationControl simulation_control_parameters;
 
-  simulation_control_parameters.dt             = 0.1;
-  simulation_control_parameters.adapt_required = false;
-  simulation_control_parameters.adapt_with_cfl = false;
-  simulation_control_parameters.maxCFL         = 2;
+  simulation_control_parameters.dt                            = 0.1;
+  simulation_control_parameters.time_step_adaptation_required = false;
+  simulation_control_parameters.adapt_with_cfl                = false;
+  simulation_control_parameters.maxCFL                        = 2;
   simulation_control_parameters.method =
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
   simulation_control_parameters.time_end = 0.5;
@@ -157,13 +157,13 @@ test()
   }
 
   {
-    simulation_control_parameters.adapt_required               = true;
-    simulation_control_parameters.adapt_with_cfl               = true;
-    simulation_control_parameters.time_end                     = 20;
-    simulation_control_parameters.dt                           = 1;
-    simulation_control_parameters.adaptative_time_step_scaling = 1.2;
-    simulation_control_parameters.maxCFL                       = 2;
-    simulation_control_parameters.max_dt                       = 1e6;
+    simulation_control_parameters.time_step_adaptation_required = true;
+    simulation_control_parameters.adapt_with_cfl                = true;
+    simulation_control_parameters.time_end                      = 20;
+    simulation_control_parameters.dt                            = 1;
+    simulation_control_parameters.adaptative_time_step_scaling  = 1.2;
+    simulation_control_parameters.maxCFL                        = 2;
+    simulation_control_parameters.max_dt                        = 1e6;
     simulation_control_parameters.output_control =
       Parameters::SimulationControl::OutputControl::iteration;
     simulation_control_parameters.output_iteration_frequency = 8;
@@ -199,12 +199,12 @@ test()
       }
   }
   {
-    simulation_control_parameters.adapt_required               = true;
-    simulation_control_parameters.adapt_with_cfl               = true;
-    simulation_control_parameters.time_end                     = 25;
-    simulation_control_parameters.dt                           = 1;
-    simulation_control_parameters.adaptative_time_step_scaling = 1.2;
-    simulation_control_parameters.maxCFL                       = 2;
+    simulation_control_parameters.time_step_adaptation_required = true;
+    simulation_control_parameters.adapt_with_cfl                = true;
+    simulation_control_parameters.time_end                      = 25;
+    simulation_control_parameters.dt                            = 1;
+    simulation_control_parameters.adaptative_time_step_scaling  = 1.2;
+    simulation_control_parameters.maxCFL                        = 2;
     simulation_control_parameters.output_control =
       Parameters::SimulationControl::OutputControl::time;
     simulation_control_parameters.output_times_vector   = {7.5, 22.1};
@@ -242,13 +242,13 @@ test()
   }
 
   {
-    simulation_control_parameters.adapt_required               = true;
-    simulation_control_parameters.adapt_with_cfl               = true;
-    simulation_control_parameters.time_end                     = 25;
-    simulation_control_parameters.dt                           = 1;
-    simulation_control_parameters.adaptative_time_step_scaling = 1.2;
-    simulation_control_parameters.maxCFL                       = 2;
-    simulation_control_parameters.max_dt                       = 1e6;
+    simulation_control_parameters.time_step_adaptation_required = true;
+    simulation_control_parameters.adapt_with_cfl                = true;
+    simulation_control_parameters.time_end                      = 25;
+    simulation_control_parameters.dt                            = 1;
+    simulation_control_parameters.adaptative_time_step_scaling  = 1.2;
+    simulation_control_parameters.maxCFL                        = 2;
+    simulation_control_parameters.max_dt                        = 1e6;
     simulation_control_parameters.output_control =
       Parameters::SimulationControl::OutputControl::time;
     simulation_control_parameters.output_times_vector   = {-1};
@@ -285,13 +285,13 @@ test()
   }
 
   {
-    simulation_control_parameters.adapt_required               = true;
-    simulation_control_parameters.adapt_with_cfl               = true;
-    simulation_control_parameters.time_end                     = 25;
-    simulation_control_parameters.dt                           = 1;
-    simulation_control_parameters.adaptative_time_step_scaling = 1.2;
-    simulation_control_parameters.maxCFL                       = 2;
-    simulation_control_parameters.max_dt                       = 1e6;
+    simulation_control_parameters.time_step_adaptation_required = true;
+    simulation_control_parameters.adapt_with_cfl                = true;
+    simulation_control_parameters.time_end                      = 25;
+    simulation_control_parameters.dt                            = 1;
+    simulation_control_parameters.adaptative_time_step_scaling  = 1.2;
+    simulation_control_parameters.maxCFL                        = 2;
+    simulation_control_parameters.max_dt                        = 1e6;
     simulation_control_parameters.output_control =
       Parameters::SimulationControl::OutputControl::time;
     simulation_control_parameters.output_times_vector   = {-1};

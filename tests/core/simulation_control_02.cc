@@ -18,10 +18,10 @@ test()
 {
   Parameters::SimulationControl simulationControlParameters;
 
-  simulationControlParameters.dt             = 0.01;
-  simulationControlParameters.adapt_required = false;
-  simulationControlParameters.adapt_with_cfl = false;
-  simulationControlParameters.maxCFL         = 99;
+  simulationControlParameters.dt                            = 0.01;
+  simulationControlParameters.time_step_adaptation_required = false;
+  simulationControlParameters.adapt_with_cfl                = false;
+  simulationControlParameters.maxCFL                        = 99;
   simulationControlParameters.method =
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
 
