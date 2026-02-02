@@ -89,7 +89,7 @@ namespace Parameters
       // Custom distribution function type (PDF or CDF)
       std::vector<ProbabilityFunctionType> custom_probability_function_type;
 
-      // Indicated if the generated diameter values from the custom distribution
+      // Indicates whether the diameter values generated from the custom distribution
       // are interpolated
       std::vector<bool> custom_distribution_interpolation;
 
@@ -110,7 +110,7 @@ namespace Parameters
       // Cutoff used for the lognormal distribution
       std::vector<double> diameter_min_cutoff, diameter_max_cutoff;
 
-      // Number of each particle type
+      // Number particles of each particle type
       std::vector<int> number;
 
       // Density of each particle type
@@ -240,32 +240,31 @@ namespace Parameters
        * @param[in,out] p_average_diameter Average diameter.
        * @param[in,out] p_size_std Diameter standard deviation for the
        * normal and lognormal distributions.
-       * @param[in,out] custom_dist_read_from_file Stores if the diameter and
+       * @param[in,out] custom_dist_read_from_file Indicates whether the diameter and
        * probability values are stored in a separate file.
-       * @param[in,out] custom_dist_file_names Stores the name of the files
-       * where the custom distributions are stored.
-       * @param[in,out] custom_function_type Stores whether the values defining
-       * the custom distribution are related to the PDF or the CDF.
-       * @param[in,out] custom_interpolation Stores whether the diameter value
+       * @param[in,out] custom_dist_file_names Vector of filenames from which the custom distributions are read.
+       * @param[in,out] custom_function_type Indicates whether the values defining
+       * the custom distribution correspond to the PDF or the CDF.
+       * @param[in,out] custom_interpolation Indicates whether the diameter values
        * are interpolated from the input values.
        * @param[in,out] custom_diameter_values Lists of diameters for the custom
        * distribution.
-       * @param[in,out] custom_probabilities_values Lists of probability of each
-       * diameter value for the custom distribution.
+       * @param[in,out] custom_probabilities_values Lists of probability values corresponding to each
+       * diameter value in the custom distribution.
        * @param[in,out] distribution_weighting_basis_type Weighting basis for
        * the PSD.
        * @param[in,out] seed_for_dist Pseudo random seed for the PSD sampling.
        * @param[in,out] dia_min_cutoff Minimal cutoff value when sampling a PSD.
        * @param[in,out] dia_max_cutoff Maximal cutoff value when sampling a PSD.
-       * @param[in,out] p_number Number of particle.
+       * @param[in,out] p_number Number of particles.
        * @param[in,out] p_density Density.
        * @param[in,out] p_youngs_modulus Young's modulus.
        * @param[in,out] p_poisson_ratio Poisson's ratio.
-       * @param[in,out] p_restitution_coefficient Coefficients of restitution.
+       * @param[in,out] p_restitution_coefficient Coefficient of restitution.
        * @param[in,out] p_friction_coefficient Sliding friction coefficient.
        * @param[in,out] p_rolling_viscous_damping_coefficient Rolling viscous
        * damping coefficient
-       * @param[in,out] p_rolling_friction_coefficient Rolling friction.
+       * @param[in,out] p_rolling_friction_coefficient Rolling friction coefficient.
        * @param[in,out] p_surface_energy Surface energy.
        * @param[in,out] p_hamaker_constant Hamaker constant.
        * @param[in,out] p_thermal_conductivity Thermal conductivity.
@@ -275,7 +274,7 @@ namespace Parameters
        * @param[in,out] p_surface_roughness Surface roughness.
        * @param[in,out] p_thermal_accommodation Thermal accommodation
        * coefficient.
-       * @param[in,out] p_real_youngs_modulus Real Young's modulus \
+       * @param[in,out] p_real_youngs_modulus Real Young's modulus.
        */
       void
       initialize_containers(
