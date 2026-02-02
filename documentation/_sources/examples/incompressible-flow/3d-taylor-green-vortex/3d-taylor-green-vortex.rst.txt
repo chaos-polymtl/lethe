@@ -153,7 +153,7 @@ To monitor the kinetic energy and the enstrophy, we set both calculation to ``tr
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The ``simulation control`` subsection controls the flow of the simulation. To maximize the temporal accuracy of the simulation, we use a second order ``bdf2`` scheme. Results are written every 2 time-steps. To ensure a more adequate visualization of the high-order elements, we set ``subdivision = 3``. This will allow Paraview to render the high-order solutions with more fidelity.
+The ``simulation control`` subsection controls the flow of the simulation. To maximize the temporal accuracy of the simulation, we use a second order ``bdf2`` scheme. Results are written every 2 time steps. To ensure a more adequate visualization of the high-order elements, we set ``subdivision = 3``. This will allow Paraview to render the high-order solutions with more fidelity.
 
 .. code-block:: text
 
@@ -347,7 +347,7 @@ Possibilities for Extension
 
 - This case is very interesting to postprocess. Try to postprocess this case using other quantities (vorticity, q-criterion) and use the results to generate interesting animations. Feel free to share them with us!
 
-- This case can also be used to experiment with adaptive time step. In the simulation control section add ``adapt = true`` and ``set max cfl = 1``, similar results should be obtained but with significantly less iterations as larger time steps are taken. To postprocess the results use the additional script ``calculate_dissipation_rate_constant_cfl.py`` given in the same folder to calculate the kinetic energy rate. 
+- This case can also be used to experiment with adaptive time step. In the simulation control section add ``adapt time step to respect CFL = true`` and ``set max cfl = 1``, similar results should be obtained but with significantly less iterations as larger time steps are taken. To postprocess the results use the additional script ``calculate_dissipation_rate_constant_cfl.py`` given in the same folder to calculate the kinetic energy rate.
 
 
 ------------

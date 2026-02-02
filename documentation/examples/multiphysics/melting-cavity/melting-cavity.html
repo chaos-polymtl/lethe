@@ -515,23 +515,23 @@ time step of <span class="math notranslate nohighlight">\(0.01\)</span> second.<
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This example uses an adaptive time-stepping method, where the
-time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold (0.9 here).</p>
+time step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold (0.9 here).</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Note that the melting process is slow compared to the time-scale of the velocity. Hence we expect a large number of time-steps and a long simulation.</p>
+<p>Note that the melting process is slow compared to the time-scale of the velocity. Hence we expect a large number of time steps and a long simulation.</p>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
-  set method                       = bdf1
-  set time end                     = 41
-  set time step                    = 0.01
-  set adapt                        = true
-  set max cfl                      = 0.8
-  set adaptative time step scaling = 1.1
-  set output name                  = melting
-  set output control               = iteration
-  set output frequency             = 100
-  set output path                  = ./output/
+  set method                         = bdf1
+  set time end                       = 41
+  set time step                      = 0.01
+  set adapt time step to respect CFL = true
+  set max cfl                        = 0.8
+  set adaptative time step scaling   = 1.1
+  set output name                    = melting
+  set output control                 = iteration
+  set output frequency               = 100
+  set output path                    = ./output/
 end
 </pre></div>
 </div>

@@ -192,20 +192,20 @@ To monitor the average velocity and pressure, we set ``calculate average velocit
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The ``simulation control`` subsection controls the flow of the simulation. To maximize the temporal accuracy of the simulation, we use a second-order ``bdf2`` scheme. Results are written every 500 time-steps. 
+The ``simulation control`` subsection controls the flow of the simulation. To maximize the temporal accuracy of the simulation, we use a second-order ``bdf2`` scheme. Results are written every 500 time steps.
 
 .. code-block:: text
 
-  subsection simulation control
-    set method           = bdf2
-    set output name      = cylinder-Re3900
-    set output path      = ./output/
-    set time end         = 200                               
-    set adapt            = true
-    set max cfl          = 1
-    set time step        = 0.002
-    set output frequency = 500
-  end
+    subsection simulation control
+      set method                         = bdf2
+      set output name                    = cylinder-Re3900
+      set output path                    = ./output/
+      set time end                       = 200
+      set adapt time step to respect CFL = true
+      set max cfl                        = 1
+      set time step                      = 0.002
+      set output frequency               = 500
+    end
 
 
 ----------------------

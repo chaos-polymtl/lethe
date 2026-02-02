@@ -93,7 +93,7 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">parameters_cfd_dem.h</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="parameters__cfd__dem_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors</span></div>
+<a href="parameters__cfd__dem_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#ifndef lethe_parameters_cfd_dem_h</span></div>
@@ -168,14 +168,14 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="comment">   *   fluid, the previous fluid velocity is used to evaluate the momentum</span></div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="comment">   *   transfer coefficient, while the current fluid velocity is used to</span></div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="comment">   *   calculate relative velocity between the particle and the fluid. This</span></div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="comment">   *   provides extensive stability, but for larger time-step may lead to a</span></div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="comment">   *   provides extensive stability, but for larger time step may lead to a</span></div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span><span class="comment">   *   slight violation of Newton&#39;s third law since the drag applied on the</span></div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span><span class="comment">   *   fluid is not strictly equal to the drag applied to the particles.</span></div>
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span><span class="comment">   *</span></div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span><span class="comment">   * - **fully_explicit**:</span></div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span><span class="comment">   *   The drag is evaluated entirely using known quantities from the previous</span></div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span><span class="comment">   *   time step. The outcome conditionally stable and may require very small</span></div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="comment">   *   coupling time-step when the density of the fluid is much lower than the</span></div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="comment">   *   coupling time step when the density of the fluid is much lower than the</span></div>
 <div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span><span class="comment">   *   density of the particles</span></div>
 <div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="comment">   *</span></div>
 <div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span><span class="comment">   */</span></div>

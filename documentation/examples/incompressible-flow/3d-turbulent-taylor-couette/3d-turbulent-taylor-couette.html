@@ -635,15 +635,17 @@ end
 </section>
 <section id="simulation-control">
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">simulation</span> <span class="pre">control</span></code> subsection controls the flow of the simulation. To maximize the temporal accuracy of the simulation, we use a second-order <code class="docutils literal notranslate"><span class="pre">bdf2</span></code> scheme. Results are written every 10 time-steps. To ensure a more adequate visualization of the high-order elements, we set <code class="docutils literal notranslate"><span class="pre">subdivision</span> <span class="pre">=</span> <span class="pre">2</span></code>. This will allow Paraview to render the high-order solutions with more fidelity.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">simulation</span> <span class="pre">control</span></code> subsection controls the flow of the simulation. To maximize the temporal accuracy of the simulation, we use a second-order <code class="docutils literal notranslate"><span class="pre">bdf2</span></code> scheme. Results are written every 10 time steps. To ensure a more adequate visualization of the high-order elements, we set <code class="docutils literal notranslate"><span class="pre">subdivision</span> <span class="pre">=</span> <span class="pre">2</span></code>. This will allow Paraview to render the high-order solutions with more fidelity.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
-  set method            = bdf2
-  set time step         = 0.01
-  set adapt             = true
-  set max cfl           = 1
-  set time end          = 60
-  set output frequency  = 10
-  set subdivision       = 2
+  set method                         = bdf2
+  set output name                    = taylor-couette
+  set output path                    = ./output/
+  set time end                       = 60
+  set adapt time step to respect CFL = true
+  set max cfl                        = 1
+  set time step                      = 0.01
+  set output frequency               = 10
+  set subdivision                    = 2
 end
 </pre></div>
 </div>

@@ -93,7 +93,7 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">isothermal_compressible_navier_stokes_vof_assembler.cc</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="isothermal__compressible__navier__stokes__vof__assembler_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors</span></div>
+<a href="isothermal__compressible__navier__stokes__vof__assembler_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2023-2024, 2026 The Lethe Authors</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;<a class="code" href="bdf_8h.html">core/bdf.h</a>&gt;</span></div>
@@ -181,7 +181,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>      <span class="comment">// Calculation of the GLS stabilization parameter. The</span></div>
 <div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>      <span class="comment">// stabilization parameter used is different if the simulation</span></div>
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>      <span class="comment">// is steady or unsteady. In the unsteady case it includes the</span></div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>      <span class="comment">// value of the time-step</span></div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>      <span class="comment">// value of the time step</span></div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>      <span class="keyword">const</span> <span class="keywordtype">double</span> tau =</div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>        this-&gt;simulation_control-&gt;get_assembly_method() ==</div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>            <a class="code hl_enumvalue" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::TimeSteppingMethod::steady</a> ?</div>
@@ -362,7 +362,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>      <span class="comment">// Calculation of the GLS stabilization parameter. The</span></div>
 <div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>      <span class="comment">// stabilization parameter used is different if the simulation</span></div>
 <div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>      <span class="comment">// is steady or unsteady. In the unsteady case it includes the</span></div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>      <span class="comment">// value of the time-step</span></div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>      <span class="comment">// value of the time step</span></div>
 <div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>      <span class="keyword">const</span> <span class="keywordtype">double</span> tau =</div>
 <div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>        this-&gt;simulation_control-&gt;get_assembly_method() ==</div>
 <div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>            <a class="code hl_enumvalue" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::TimeSteppingMethod::steady</a> ?</div>

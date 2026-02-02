@@ -385,7 +385,7 @@ var searchData=
   ['postprocessors_2eh_382',['postprocessors.h',['../postprocessors_8h.html',1,'']]],
   ['potential_5fcahn_5fhilliard_5forder_383',['potential_cahn_hilliard_order',['../structParameters_1_1FEM.html#ad455d960df990fb708a6e7a1d63cbc4a',1,'Parameters::FEM']]],
   ['potential_5fsmoothing_5fcoefficient_384',['potential_smoothing_coefficient',['../structParameters_1_1CahnHilliard.html#a9a470cbe7f58b13fe0b5211d88665dea',1,'Parameters::CahnHilliard']]],
-  ['powerlaw_385',['powerlaw',['../classPowerLaw.html',1,'PowerLaw'],['../classPowerLaw.html#a4ae21d3099d9c0b8343ce62073519e20',1,'PowerLaw::PowerLaw()'],['../classParameters_1_1Material.html#a78e253a535ca9d21466208edad15e5eaae9f7a4aafeda67a0dab579ba480c24d6',1,'Parameters::Material::powerlaw']]],
+  ['powerlaw_385',['powerlaw',['../classPowerLaw.html',1,'PowerLaw'],['../classParameters_1_1Material.html#a78e253a535ca9d21466208edad15e5eaae9f7a4aafeda67a0dab579ba480c24d6',1,'Parameters::Material::powerlaw'],['../classPowerLaw.html#a4ae21d3099d9c0b8343ce62073519e20',1,'PowerLaw::PowerLaw()']]],
   ['powerlaw_5fparameters_386',['powerlaw_parameters',['../structParameters_1_1NonNewtonian.html#a40396ac89acdc7b56e94dec75ad11b0a',1,'Parameters::NonNewtonian']]],
   ['powerlawparameters_387',['PowerLawParameters',['../structParameters_1_1PowerLawParameters.html',1,'Parameters']]],
   ['pp_5fcontact_5fmap_388',['pp_contact_map',['../classIBParticlesDEM.html#a71310bd230b6cc15d733f660f19f0b26',1,'IBParticlesDEM']]],

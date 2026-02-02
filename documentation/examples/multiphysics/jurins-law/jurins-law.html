@@ -497,18 +497,18 @@ The computational domain is described in the following figure (not to scale):</p
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Link to this heading">#</a></h2>
 <section id="simulation-control">
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
-<p>Time integration is handled by a 1st order backward differentiation scheme (<cite>bdf1</cite>), for a <span class="math notranslate nohighlight">\(0.5 \ \text{s}\)</span> simulation time with an initial time step of <span class="math notranslate nohighlight">\(0.0005 \ \text{s}\)</span>. Time-step adaptation is enabled using <code class="docutils literal notranslate"><span class="pre">adapt=true</span></code> and the max CFL is <span class="math notranslate nohighlight">\(0.8\)</span>. <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">boundaries</span></code> is set to <code class="docutils literal notranslate"><span class="pre">true</span></code> to get a <code class="docutils literal notranslate"><span class="pre">.vtu</span></code> file containing the indices of the boundaries of the domain.</p>
+<p>Time integration is handled by a 1st order backward differentiation scheme (<cite>bdf1</cite>), for a <span class="math notranslate nohighlight">\(0.5 \ \text{s}\)</span> simulation time with an initial time step of <span class="math notranslate nohighlight">\(0.0005 \ \text{s}\)</span>. Time-step adaptation is enabled using <code class="docutils literal notranslate"><span class="pre">adapt</span> <span class="pre">time</span> <span class="pre">step</span> <span class="pre">to</span> <span class="pre">respect</span> <span class="pre">CFL`</span> <span class="pre">=</span> <span class="pre">true</span></code> and the max CFL is <span class="math notranslate nohighlight">\(0.8\)</span>. <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">boundaries</span></code> is set to <code class="docutils literal notranslate"><span class="pre">true</span></code> to get a <code class="docutils literal notranslate"><span class="pre">.vtu</span></code> file containing the indices of the boundaries of the domain.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
-  set method            = bdf1
-  set output name       = jurins-law-2d
-  set output frequency  = 10
-  set output path       = ./
-  set max time step     = 5e-4
-  set adapt             = true
-  set max cfl           = 0.8
-  set time end          = 0.5
-  set time step         = 5e-4
-  set output boundaries = true
+  set method                         = bdf1
+  set output name                    = jurins-law-2d
+  set output frequency               = 10
+  set output path                    = ./outputs/50/
+  set max time step                  = 5e-4
+  set adapt time step to respect CFL = true
+  set max cfl                        = 0.8
+  set time end                       = 0.5
+  set time step                      = 5e-4
+  set output boundaries              = true
 end
 </pre></div>
 </div>
@@ -595,7 +595,7 @@ end
 </section>
 <section id="cahn-hilliard">
 <h3>Cahn-Hilliard<a class="headerlink" href="#cahn-hilliard" title="Link to this heading">#</a></h3>
-<p>In the <code class="docutils literal notranslate"><span class="pre">cahn</span> <span class="pre">hilliard</span></code> subsection, we set the <code class="docutils literal notranslate"><span class="pre">potential</span> <span class="pre">smoothing</span> <span class="pre">coefficient</span></code> (soon to be deprecated) to <span class="math notranslate nohighlight">\(0\)</span>. The interface thickness is set to be determined automatically based on the mesh size in the <code class="docutils literal notranslate"><span class="pre">epsilon</span></code> subsection. We also output the interface thickness for each time-step by setting the <code class="docutils literal notranslate"><span class="pre">verbosity</span></code> to <code class="docutils literal notranslate"><span class="pre">verbose</span></code> to know its exact value for the initial conditions.</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">cahn</span> <span class="pre">hilliard</span></code> subsection, we set the <code class="docutils literal notranslate"><span class="pre">potential</span> <span class="pre">smoothing</span> <span class="pre">coefficient</span></code> (soon to be deprecated) to <span class="math notranslate nohighlight">\(0\)</span>. The interface thickness is set to be determined automatically based on the mesh size in the <code class="docutils literal notranslate"><span class="pre">epsilon</span></code> subsection. We also output the interface thickness for each time step by setting the <code class="docutils literal notranslate"><span class="pre">verbosity</span></code> to <code class="docutils literal notranslate"><span class="pre">verbose</span></code> to know its exact value for the initial conditions.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection cahn hilliard
   set potential smoothing coefficient = 0
 
@@ -712,7 +712,7 @@ end
 <table class="docutils align-default">
 <tbody>
 <tr class="row-odd"><td><figure class="align-center" id="pressure-field-at-the-end-of-the-simulation">
-<img alt="Representation of the pressure field at the last time-step of the simulation (t = 0.498212 s). The pressure gradient at the vicinity of the interface corresponds to that expected by the Young-Laplace  equation, with an overpressure at positive curvature interfaces and depressions at negative curvature interfaces." src="../../../_images/pressure_difference.png" />
+<img alt="Representation of the pressure field at the last time step of the simulation (t = 0.498212 s). The pressure gradient at the vicinity of the interface corresponds to that expected by the Young-Laplace  equation, with an overpressure at positive curvature interfaces and depressions at negative curvature interfaces." src="../../../_images/pressure_difference.png" />
 <figcaption>
 <p><span class="caption-text">Pressure fields at the end of the simulation for different angles of contact.</span><a class="headerlink" href="#pressure-field-at-the-end-of-the-simulation" title="Link to this image">#</a></p>
 </figcaption>

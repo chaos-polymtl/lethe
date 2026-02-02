@@ -505,15 +505,15 @@ This leads to an oscillatory wave problem which is highly sensitive to the time 
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
 <p>The results for this problem are highly sensitive to the accuracy of the time-stepping scheme. For this reason, we use a 2nd order backward differentiation scheme (<code class="docutils literal notranslate"><span class="pre">bdf2</span></code>) with a variable time-step. The <code class="docutils literal notranslate"><span class="pre">adaptive</span> <span class="pre">time</span> <span class="pre">step</span> <span class="pre">scaling</span></code> is set to <span class="math notranslate nohighlight">\(1.025\)</span> to ensure that the time-step does not rise too quickly during wave oscillations.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
-  set method                       = bdf2
-  set time end                     = 50
-  set time step                    = 0.01
-  set adapt                        = true
-  set max cfl                      = 0.25
-  set output name                  = sloshing-in-rectangular-tank_Re20
-  set output path                  = ./output_Re20/
-  set output frequency             = 1
-  set adaptative time step scaling = 1.025
+  set method                         = bdf2
+  set time end                       = 50
+  set time step                      = 0.01
+  set adapt time step to respect CFL = true
+  set max cfl                        = 0.25
+  set output name                    = sloshing-in-rectangular-tank_Re20
+  set output path                    = ./output_Re20/
+  set output frequency               = 2
+  set adaptative time step scaling   = 1.025
 end
 </pre></div>
 </div>

@@ -55,7 +55,7 @@ In the example below, only ``fluid dynamics`` is shown but the same block can be
 		* Setting ``reuse matrix = true`` enables the usage of the same Jacobian matrix for the following non-linear problem.
 
 	.. tip::
-		The ``inexact_newton`` solver, along with ``reuse matrix = true`` can be worthwhile in transient simulations with a small time-step. The goal is to seek a compromise between the cost of assembling the matrix and the preconditioner versus the cost of solving the linear system of equations.
+		The ``inexact_newton`` solver, along with ``reuse matrix = true`` can be worthwhile in transient simulations with a small time step. The goal is to seek a compromise between the cost of assembling the matrix and the preconditioner versus the cost of solving the linear system of equations.
 
 	* ``kinsol_newton`` solver, that uses the Newton-Raphson solver through deal.II, as implemented in the `Sundials library <https://computing.llnl.gov/projects/sundials/kinsol>`_. This solver has an internal algorithm that decides whether to reassemble the Jacobian matrix or not. This non-linear solver is still being tested.
 		* ``kinsol strategy`` parameter enables to choose the strategy that will be used by the kinsol newton solver, and can be ``line_search`` (default value), ``normal_newton``, ``fixed_point`` or ``picard``.

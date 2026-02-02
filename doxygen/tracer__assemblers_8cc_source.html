@@ -93,7 +93,7 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">tracer_assemblers.cc</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="tracer__assemblers_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors</span></div>
+<a href="tracer__assemblers_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2021-2024, 2026 The Lethe Authors</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;<a class="code" href="bdf_8h.html">core/bdf.h</a>&gt;</span></div>
@@ -184,7 +184,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>      <span class="comment">// Calculation of the GLS stabilization parameter. The</span></div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>      <span class="comment">// stabilization parameter used is different if the simulation is</span></div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>      <span class="comment">// steady or unsteady. In the unsteady case it includes the value</span></div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>      <span class="comment">// of the time-step</span></div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>      <span class="comment">// of the time step</span></div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>      <span class="keyword">const</span> <span class="keywordtype">double</span> tau =</div>
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>        <a class="code hl_function" href="time__integration__utilities_8h.html#a2070dbfdd25ef92b18165612d533e92d">is_steady</a>(method) ?</div>
 <div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +</div>
@@ -305,7 +305,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>      <span class="comment">// Calculation of the GLS stabilization parameter. The</span></div>
 <div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>      <span class="comment">// stabilization parameter used is different if the simulation is</span></div>
 <div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>      <span class="comment">// steady or unsteady. In the unsteady case it includes the value</span></div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>      <span class="comment">// of the time-step</span></div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>      <span class="comment">// of the time step</span></div>
 <div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>      <span class="keyword">const</span> <span class="keywordtype">double</span> tau =</div>
 <div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>        <a class="code hl_function" href="time__integration__utilities_8h.html#a2070dbfdd25ef92b18165612d533e92d">is_steady</a>(method) ?</div>
 <div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +</div>

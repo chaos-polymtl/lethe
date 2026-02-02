@@ -65,7 +65,7 @@ This subsection controls the mesh adaptation method, with default values given b
 		* coarsened if coarsening is necessary for *all* variables
 
 * The frequency at which the mesh is refined is controlled with the ``frequency`` parameter. If ``set frequency = 1``, the mesh is refined at every iteration. 
-	* For transient simulation, this means at every time-step. 
+	* For transient simulation, this means at every time step.
 	* For steady-state simulation in which the steady-state problem is solved on successively refined meshes, the user should have ``set frequency = 1``, which is the default value.
 
 * The minimal and maximal refinement level reachable for a cell are controlled respectively with the ``min refinement`` and ``max refinement`` parameters.

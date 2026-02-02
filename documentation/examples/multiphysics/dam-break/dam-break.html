@@ -495,22 +495,22 @@ gravity field of <span class="math notranslate nohighlight">\(-1\)</span> is app
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
 <p>Time integration is handled by a 1st order backward differentiation scheme
 <cite>(bdf1)</cite>, for a <span class="math notranslate nohighlight">\(4.1\)</span> s simulation time with an initial
-time-step of <span class="math notranslate nohighlight">\(0.01\)</span> seconds.</p>
+time step of <span class="math notranslate nohighlight">\(0.01\)</span> seconds.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This example uses an adaptive time-stepping method, where the
-time-steps are modified during the simulation to keep the maximum value of the CFL condition
+time steps are modified during the simulation to keep the maximum value of the CFL condition
 below a given threshold.</p>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
-  set method           = bdf1
-  set time end         = 4
-  set time step        = 0.01
-  set adapt            = true
-  set max cfl          = 0.5
-  set output name      = dam-break
-  set output frequency = 20
-  set output path      = ./output/
+  set method                         = bdf1
+  set time end                       = 4
+  set time step                      = 0.01
+  set adapt time step to respect CFL = true
+  set max cfl                        = 0.5
+  set output name                    = dam-break
+  set output frequency               = 20
+  set output path                    = ./output/
 end
 </pre></div>
 </div>

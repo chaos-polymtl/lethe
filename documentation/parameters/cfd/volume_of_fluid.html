@@ -526,10 +526,10 @@ end
 </ul>
 <section id="interface-regularization-method">
 <h2>Interface Regularization Method<a class="headerlink" href="#interface-regularization-method" title="Link to this heading">#</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">interface</span> <span class="pre">regularization</span> <span class="pre">method</span></code> defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time-step.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">interface</span> <span class="pre">regularization</span> <span class="pre">method</span></code> defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: sets the method of regularization. There are four methods available:<code class="docutils literal notranslate"><span class="pre">none</span></code>, <code class="docutils literal notranslate"><span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code>, <code class="docutils literal notranslate"><span class="pre">geometric</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code>, and <code class="docutils literal notranslate"><span class="pre">algebraic</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code>. If <code class="docutils literal notranslate"><span class="pre">none</span></code> is selected, the interface is not regularized. The three other types are described bellow along with their corresponding subsection.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">frequency</span></code>: indicates the frequency at which the regularization process is applied to the VOF phase fraction field. For instance, if the user specifies <code class="docutils literal notranslate"><span class="pre">frequency</span> <span class="pre">=</span> <span class="pre">2</span></code>, the interface will be regularized once every <span class="math notranslate nohighlight">\(2\)</span> time-steps.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">frequency</span></code>: indicates the frequency at which the regularization process is applied to the VOF phase fraction field. For instance, if the user specifies <code class="docutils literal notranslate"><span class="pre">frequency</span> <span class="pre">=</span> <span class="pre">2</span></code>, the interface will be regularized once every <span class="math notranslate nohighlight">\(2\)</span> time steps.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">verbosity</span></code>: displays the solution process of the regularization method. The different levels of verbosity are:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">quiet</span></code>: default verbosity level; no information on the process is displayed.</p>
@@ -629,7 +629,7 @@ number of iterations to reach the mass conservation tolerance.
 <div class="math notranslate nohighlight">
 \[\alpha_\text{ss} \geq \frac{ \lVert \phi_\text{reinit}^{\iota + 1} - \phi_\text{reinit}^{\iota} \rVert_2}{\lVert \phi_\text{reinit}^{\iota} \rVert_2}\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(\iota\)</span> is the artificial time iterator used to solve the reinitialization PDE and <span class="math notranslate nohighlight">\(\Delta \tau\)</span> is the associated artificial time-step.</p>
+<p>where <span class="math notranslate nohighlight">\(\iota\)</span> is the artificial time iterator used to solve the reinitialization PDE and <span class="math notranslate nohighlight">\(\Delta \tau\)</span> is the associated artificial time step.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">steps</span> <span class="pre">number</span></code>: indicates the maximum number of interface reinitialization steps that can be applied before the process ends.</p></li>
 </ul>
@@ -651,12 +651,12 @@ number of iterations to reach the mass conservation tolerance.
 </ul>
 </div>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">artificial</span> <span class="pre">time-step</span> <span class="pre">factor</span></code>: factor used to evaluate the artificial time-step <span class="math notranslate nohighlight">\((\Delta\tau)\)</span>.</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">artificial</span> <span class="pre">time-step</span> <span class="pre">factor</span></code>: factor used to evaluate the artificial time step <span class="math notranslate nohighlight">\((\Delta\tau)\)</span>.</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\Delta \tau = \min{\left(\frac{C_\tau \, h_\text{min}^2}{\varepsilon}, \Delta t \right)}\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(C_\tau\)</span> is the imposed artificial time-step factor, <span class="math notranslate nohighlight">\(h_\text{min}\)</span> is the size of the smallest cell, and <span class="math notranslate nohighlight">\(\Delta t\)</span> is the simulation time-step.</p>
+<p>where <span class="math notranslate nohighlight">\(C_\tau\)</span> is the imposed artificial time-step factor, <span class="math notranslate nohighlight">\(h_\text{min}\)</span> is the size of the smallest cell, and <span class="math notranslate nohighlight">\(\Delta t\)</span> is the simulation time step.</p>
 </li>
 </ul>
 </section>

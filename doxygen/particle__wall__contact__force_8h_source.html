@@ -93,7 +93,7 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">particle_wall_contact_force.h</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="particle__wall__contact__force_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors</span></div>
+<a href="particle__wall__contact__force_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#ifndef lethe_particle_wall_contact_force_h</span></div>
@@ -301,7 +301,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span> </div>
 <div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>    <span class="comment">// Calculating new tangential_displacement</span></div>
 <div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>    <span class="comment">// Since this value is history-dependent, it needs the value at previous</span></div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>    <span class="comment">// time-step. This variable is the main reason that we have iteration over</span></div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>    <span class="comment">// time step. This variable is the main reason that we have iteration over</span></div>
 <div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>    <span class="comment">// two different vectors (pairs_in_contact and contact_pair_candidates):</span></div>
 <div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>    <span class="comment">// tangential_displacement of the particles which were already in contact</span></div>
 <div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>    <span class="comment">// (pairs_in_contact) needs to be modified using its history, while the</span></div>
@@ -374,7 +374,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span> </div>
 <div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>    <span class="comment">// Calculate the new tangential_displacement</span></div>
 <div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>    <span class="comment">// Since this value is history-dependent, it needs the value at</span></div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>    <span class="comment">// previous time-step.</span></div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>    <span class="comment">// previous time step.</span></div>
 <div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>    contact_info.<a class="code hl_variable" href="structparticle__wall__contact__info.html#aad4d3eeaa60714017f1285a89200f10e">tangential_displacement</a> += tangential_relative_velocity * dt;</div>
 <div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>  }</div>
 </div>

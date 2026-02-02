@@ -93,7 +93,7 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">input_parameter_inspection.cc</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="input__parameter__inspection_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2020-2021, 2023-2025 The Lethe Authors</span></div>
+<a href="input__parameter__inspection_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2020-2021, 2023-2026 The Lethe Authors</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;<a class="code" href="input__parameter__inspection_8h.html">dem/input_parameter_inspection.h</a>&gt;</span></div>
@@ -130,17 +130,17 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>  <span class="keyword">const</span> <span class="keywordtype">double</span> time_step_rayleigh_ratio =</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    parameters.simulation_control.dt / rayleigh_time_step;</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>  pcout &lt;&lt; <span class="stringliteral">&quot;DEM time-step is &quot;</span> &lt;&lt; time_step_rayleigh_ratio * 100</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>  pcout &lt;&lt; <span class="stringliteral">&quot;DEM time step is &quot;</span> &lt;&lt; time_step_rayleigh_ratio * 100</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        &lt;&lt; <span class="stringliteral">&quot;% of Rayleigh time step&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>  <span class="keywordflow">if</span> (time_step_rayleigh_ratio &gt; 0.15)</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    {</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>      pcout &lt;&lt; <span class="stringliteral">&quot;Warning: It is recommended to decrease the time-step&quot;</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>      pcout &lt;&lt; <span class="stringliteral">&quot;Warning: It is recommended to decrease the time step&quot;</span></div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>            &lt;&lt; std::endl;</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    }</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (time_step_rayleigh_ratio &lt; 0.01)</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    {</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>      pcout &lt;&lt; <span class="stringliteral">&quot;Warning: It is recommended to increase the time-step&quot;</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>      pcout &lt;&lt; <span class="stringliteral">&quot;Warning: It is recommended to increase the time step&quot;</span></div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>            &lt;&lt; std::endl;</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    }</div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>

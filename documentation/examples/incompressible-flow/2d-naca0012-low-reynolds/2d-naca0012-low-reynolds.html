@@ -475,14 +475,14 @@
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
 <p>The problem is transient. An adaptative time step is used to ensure that the CFL <span class="math notranslate nohighlight">\(&lt;10\)</span> condition is obtained. This boundary for the CFL number was chosen to get relevant results while having reasonable simulation times. The reader is referred to the <a class="reference internal" href="../2d-lid-driven-cavity-flow/lid-driven-cavity-flow.html"><span class="doc">Lid-Driven Cavity Flow</span></a> example for a better understanding of the time step adaptation to keep the CFL below a certain threshold. A second-order backward differentiation (BDF2) scheme was chosen.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
-  set method            = bdf2
-  set output name       = naca-output
-  set output path       = ./output/
-  set output frequency  = 50
-  set adapt             = true
-  set max cfl           = 10
-  set time end          = 40
-  set time step         = 0.01
+  set method                         = bdf2
+  set output name                    = naca-output
+  set output path                    = ./output/
+  set output frequency               = 50
+  set adapt time step to respect CFL = true
+  set max cfl                        = 10
+  set time end                       = 40
+  set time step                      = 0.01
 end
 </pre></div>
 </div>

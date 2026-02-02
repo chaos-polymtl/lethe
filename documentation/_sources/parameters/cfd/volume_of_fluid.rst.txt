@@ -88,10 +88,10 @@ The default values of the VOF parameters are given in the text box below.
 Interface Regularization Method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``subsection interface regularization method`` defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time-step. 
+The ``subsection interface regularization method`` defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step.
 
 * ``type``: sets the method of regularization. There are four methods available:``none``, ``projection-based interface sharpening``, ``geometric interface reinitialization``, and ``algebraic interface reinitialization``. If ``none`` is selected, the interface is not regularized. The three other types are described bellow along with their corresponding subsection.
-* ``frequency``: indicates the frequency at which the regularization process is applied to the VOF phase fraction field. For instance, if the user specifies ``frequency = 2``, the interface will be regularized once every :math:`2` time-steps.
+* ``frequency``: indicates the frequency at which the regularization process is applied to the VOF phase fraction field. For instance, if the user specifies ``frequency = 2``, the interface will be regularized once every :math:`2` time steps.
 
 * ``verbosity``: displays the solution process of the regularization method. The different levels of verbosity are:
 
@@ -190,7 +190,7 @@ The interface reinitialization process ends either when steady-state (``steady-s
    \alpha_\text{ss} \geq \frac{ \lVert \phi_\text{reinit}^{\iota + 1} - \phi_\text{reinit}^{\iota} \rVert_2}{\lVert \phi_\text{reinit}^{\iota} \rVert_2}
 
 
-  where :math:`\iota` is the artificial time iterator used to solve the reinitialization PDE and :math:`\Delta \tau` is the associated artificial time-step.
+  where :math:`\iota` is the artificial time iterator used to solve the reinitialization PDE and :math:`\Delta \tau` is the associated artificial time step.
 
 * ``max steps number``: indicates the maximum number of interface reinitialization steps that can be applied before the process ends.
 
@@ -210,12 +210,12 @@ The algebraic interface reinitialization PDE contains a diffusion term. This ter
     - a disk with equivalent area in 2D, and;
     - a sphere with equivalent volume in 3D.
 
-* ``artificial time-step factor``: factor used to evaluate the artificial time-step :math:`(\Delta\tau)`.
+* ``artificial time-step factor``: factor used to evaluate the artificial time step :math:`(\Delta\tau)`.
 
   .. math::
     \Delta \tau = \min{\left(\frac{C_\tau \, h_\text{min}^2}{\varepsilon}, \Delta t \right)}
 
-  where :math:`C_\tau` is the imposed artificial time-step factor, :math:`h_\text{min}` is the size of the smallest cell, and :math:`\Delta t` is the simulation time-step.
+  where :math:`C_\tau` is the imposed artificial time-step factor, :math:`h_\text{min}` is the size of the smallest cell, and :math:`\Delta t` is the simulation time step.
 
 Phase Filtration
 ~~~~~~~~~~~~~~~~~~

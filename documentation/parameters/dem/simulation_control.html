@@ -456,9 +456,9 @@
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Lethe-DEM compares the selected <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">step</span></code> to Rayleigh time-step and prints a warning if the selected <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">step</span></code> is too small or too large. Users should modify the <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">step</span></code> if they see this warning.</p>
+<p>Lethe-DEM compares the selected <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">step</span></code> to Rayleigh time step and prints a warning if the selected <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">step</span></code> is too small or too large. Users should modify the <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">step</span></code> if they see this warning.</p>
 </div>
-<p>The Rayleigh time-step is defined as:</p>
+<p>The Rayleigh time step is defined as:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[{\Delta}t_{Ra}=\frac{\pi}{2}{d_p}\sqrt{\frac{\rho_p}{G}}(\frac{1}{0.1631\nu+0.8766})\]</div>
@@ -469,7 +469,7 @@
 <p>If the <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">path</span></code> is specified in the parameter handler file, a folder with the specified name should be created before starting simulation in the working directory.</p>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
-  # DEM time-step
+  # DEM time step
   set time step         = 1e-5
 
   # Simulation end time

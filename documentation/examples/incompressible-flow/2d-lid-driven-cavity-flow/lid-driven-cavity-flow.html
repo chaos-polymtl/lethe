@@ -616,17 +616,15 @@ end
 <h3>Higher-Reynolds Case (<span class="math notranslate nohighlight">\(\mathrm{Re}=7500\)</span>)<a class="headerlink" href="#higher-reynolds-case-mathrm-re-7500" title="Link to this heading">#</a></h3>
 <p>We now consider the case at a Reynolds number of 7500. At this value of the Reynolds number, the <code class="docutils literal notranslate"><span class="pre">steady</span></code> solver will generally not converge as the problem is too non-linear (or too stiff). A workaround for this issue is to use an adjoint time-stepping strategy. This strategy consists in transforming the steady-state problem into a transient problem and to use an increasingly large time-step to reach a steady-state solution. This method is called <code class="docutils literal notranslate"><span class="pre">steady_bdf</span></code> in Lethe.</p>
 <p>It can be used by modifying the <code class="docutils literal notranslate"><span class="pre">simulation</span> <span class="pre">control</span></code> subsection:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
-  set method                       = steady_bdf
-  set adapt                        = true
-  set max cfl                      = 1000
-  set stop tolerance               = 1e-7
-  set adaptative time step scaling = 1.1
-  set time step                    = 0.001
-end
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>set method                         = steady_bdf
+set adapt time step to respect CFL = true
+set max cfl                        = 1000
+set stop tolerance                 = 1e-7
+set adaptative time step scaling   = 1.1
+set time step                      = 0.001
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">adapt</span></code> parameter allows dynamic time-step adaptation. This feature is also used in transient simulations to carry simulations at a constant CFL number. The <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">cfl</span></code> controls the maximum value of the CFL reached during the simulation. Remember that Lethe is an implicit solver and, as such, can theoretically manage absurdly large values of the CFL. The <code class="docutils literal notranslate"><span class="pre">stop-tolerance</span></code> controls the initial tolerance of a time-step below which steady-state will be considered reached.  The <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">step</span></code> controls the initial value of the time step and, finally, the <code class="docutils literal notranslate"><span class="pre">adaptative</span> <span class="pre">time</span> <span class="pre">step</span> <span class="pre">scaling</span></code> controls the rate of increase of the time step. The increase of the time step follows:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">adapt</span> <span class="pre">time</span> <span class="pre">step</span> <span class="pre">to</span> <span class="pre">respect</span> <span class="pre">CFL</span></code> parameter allows dynamic time-step adaptation. This feature is used in transient simulations to carry simulations at a constant CFL number. The <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">cfl</span></code> controls the maximum value of the CFL reached during the simulation. Remember that Lethe is an implicit solver and, as such, can theoretically manage absurdly large values of the CFL. The <code class="docutils literal notranslate"><span class="pre">stop-tolerance</span></code> controls the initial tolerance of a time-step below which steady-state will be considered reached.  The <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">step</span></code> controls the initial value of the time step and, finally, the <code class="docutils literal notranslate"><span class="pre">adaptative</span> <span class="pre">time</span> <span class="pre">step</span> <span class="pre">scaling</span></code> controls the rate of increase of the time step. The increase of the time step follows:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\Delta t_{n+1} = \alpha \Delta t_{n}\]</div>

@@ -494,17 +494,17 @@ The initial configuration of this example is illustrated below.</p>
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Link to this heading">#</a></h2>
 <section id="simulation-control">
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
-<p>Time integration is handled by a 2nd-order backward differentiation scheme (<code class="docutils literal notranslate"><span class="pre">bdf2</span></code>) with a variable time-step.
-The initial time-step is set to <span class="math notranslate nohighlight">\(0.1 \, \text{s}\)</span> and the simulation lasts <span class="math notranslate nohighlight">\(2.5 \, \text{s}\)</span>.</p>
+<p>Time integration is handled by a 2nd-order backward differentiation scheme (<code class="docutils literal notranslate"><span class="pre">bdf2</span></code>) with a variable time step.
+The initial time step is set to <span class="math notranslate nohighlight">\(0.1 \, \text{s}\)</span> and the simulation lasts <span class="math notranslate nohighlight">\(2.5 \, \text{s}\)</span>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
-  set method           = bdf2
-  set time end         = 2.5
-  set time step        = 0.1
-  set adapt            = true
-  set max cfl          = 1
-  set output name      = air-bubble-compression
-  set output frequency = 5
-  set output path      = ./output/
+  set method                         = bdf2
+  set time end                       = 2.5
+  set time step                      = 0.1
+  set adapt time step to respect CFL = true
+  set max cfl                        = 1
+  set output name                    = air-bubble-compression
+  set output frequency               = 5
+  set output path                    = ./output/
 end
 </pre></div>
 </div>

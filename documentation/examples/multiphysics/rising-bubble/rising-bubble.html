@@ -485,17 +485,18 @@ An external gravity field of <span class="math notranslate nohighlight">\(-0.98\
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This example uses an adaptive time-stepping method, where the
-time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold. Using <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">frequency</span> <span class="pre">=</span> <span class="pre">20</span></code> ensures that the results are written every <span class="math notranslate nohighlight">\(20\)</span> iterations. Consequently, the time increment between each vtu file is not constant.</p>
+time step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold. Using <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">frequency</span> <span class="pre">=</span> <span class="pre">20</span></code> ensures that the results are written every <span class="math notranslate nohighlight">\(20\)</span> iterations. Consequently, the time increment between each vtu file is not constant.</p>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
-  set method           = bdf2
-  set time end         = 3
-  set time step        = 0.001
-  set adapt            = true
-  set max cfl          = 0.8
-  set output name      = rising-bubble
-  set output frequency = 20
-  set output path      = ./rising-bubble-proj/
+  set method                            = bdf2
+  set time end                          = 3
+  set time step                         = 0.001
+  set adapt time step to respect CFL    = true
+  set max cfl                           = 0.80
+  set output name                       = rising-bubble
+  set output frequency                  = 20
+  set output path                       = ./rising-bubble-proj/
+  set time step independent of end time = false
 end
 </pre></div>
 </div>

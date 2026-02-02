@@ -522,17 +522,17 @@
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Link to this heading">#</a></h2>
 <section id="simulation-control">
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
-<p>The time integration is handled by a first order backward differentiation scheme (<code class="docutils literal notranslate"><span class="pre">bdf1</span></code>) with a maximum time-step of <span class="math notranslate nohighlight">\(\Delta t = 1.9 \times 10^{-8} \; \text{s} &lt; \Delta t_\sigma\)</span> which corresponds to the capillary time-step constraint (see <a class="reference internal" href="../capillary-wave/capillary-wave.html"><span class="doc">capillary wave example</span></a>). We use adaptive time stepping with a maximum CFL of <span class="math notranslate nohighlight">\(0.06\)</span> to prevent instability resulting from the explicit coupling between the NS and HT solvers through the recoil pressure and evaporative cooling.</p>
+<p>The time integration is handled by a first order backward differentiation scheme (<code class="docutils literal notranslate"><span class="pre">bdf1</span></code>) with a maximum time step of <span class="math notranslate nohighlight">\(\Delta t = 1.9 \times 10^{-8} \; \text{s} &lt; \Delta t_\sigma\)</span> which corresponds to the capillary time-step constraint (see <a class="reference internal" href="../capillary-wave/capillary-wave.html"><span class="doc">capillary wave example</span></a>). We use adaptive time stepping with a maximum CFL of <span class="math notranslate nohighlight">\(0.06\)</span> to prevent instability resulting from the explicit coupling between the NS and HT solvers through the recoil pressure and evaporative cooling.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
-  set method           = bdf1
-  set time end         = 0.0005
-  set time step        = 1.9e-8
-  set adapt            = true
-  set max cfl          = 0.06
-  set max time step    = 1.9e-8
-  set output name      = static-irradiation
-  set output path      = output/
-  set output frequency = 100
+  set method                         = bdf1
+  set time end                       = 0.0005
+  set time step                      = 1.9e-8
+  set adapt time step to respect CFL = true
+  set max cfl                        = 0.06
+  set max time step                  = 1.9e-8
+  set output name                    = static-irradiation
+  set output path                    = output/
+  set output frequency               = 100
 end
 </pre></div>
 </div>

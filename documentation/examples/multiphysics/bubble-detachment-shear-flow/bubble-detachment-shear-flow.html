@@ -491,23 +491,23 @@ Below, all the parameters are set for a simulation whose shear rate is <span cla
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Link to this heading">#</a></h2>
 <section id="simulation-control">
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
-<p>Time integration is handled by a 2nd order backward differentiation scheme (<cite>bdf2</cite>), for a <span class="math notranslate nohighlight">\(0.5 \ \text{s}\)</span> simulation time with an initial time step of <span class="math notranslate nohighlight">\(5 \times 10^{-7} \ \text{s}\)</span>. Time-step adaptation is enabled using <code class="docutils literal notranslate"><span class="pre">adapt</span> <span class="pre">=</span> <span class="pre">true</span></code> and the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">cfl</span></code> is <span class="math notranslate nohighlight">\(0.9\)</span>. <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">boundaries</span></code> is set to <code class="docutils literal notranslate"><span class="pre">true</span></code> to get a <code class="docutils literal notranslate"><span class="pre">.vtu</span></code> file containing the indices of the boundaries of the domain. The maximum time step is computed using the capillary time step condition given below:</p>
+<p>Time integration is handled by a 2nd order backward differentiation scheme (<cite>bdf2</cite>), for a <span class="math notranslate nohighlight">\(0.5 \ \text{s}\)</span> simulation time with an initial time step of <span class="math notranslate nohighlight">\(5 \times 10^{-7} \ \text{s}\)</span>. Time-step adaptation is enabled using <code class="docutils literal notranslate"><span class="pre">adapt</span> <span class="pre">time</span> <span class="pre">step</span> <span class="pre">to</span> <span class="pre">respect</span> <span class="pre">CFL`</span> <span class="pre">=</span> <span class="pre">true</span></code> and the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">cfl</span></code> is <span class="math notranslate nohighlight">\(0.9\)</span>. <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">boundaries</span></code> is set to <code class="docutils literal notranslate"><span class="pre">true</span></code> to get a <code class="docutils literal notranslate"><span class="pre">.vtu</span></code> file containing the indices of the boundaries of the domain. The maximum time step is computed using the capillary time step condition given below:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\Delta t &lt; \Delta t_\sigma = \sqrt{\frac{(\rho_a+\rho_l)\Delta x^3}{4\pi\sigma}}\]</div>
 </div>
 <p>where <span class="math notranslate nohighlight">\(\rho_a\)</span> and <span class="math notranslate nohighlight">\(\rho_l\)</span> are the densities of the gas and the liquid phases, respectively, <span class="math notranslate nohighlight">\(\Delta x\)</span> is the minimum cell size of the mesh and <span class="math notranslate nohighlight">\(\sigma\)</span> is the surface tension coefficient.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
-  set method            = bdf2
-  set output name       = article-3d
-  set output frequency  = 15
-  set output path       = ./outputs/output/
-  set time end          = 0.5
-  set adapt             = true
-  set max cfl           = 0.9
-  set time step         = 5e-7
-  set max time step     = 7.9784e-06 # Capillary timestep condition
-  set output boundaries = true
+  set method                         = bdf2
+  set output name                    = article-3d
+  set output frequency               = 15
+  set output path                    = ./outputs/output/
+  set time end                       = 0.5
+  set adapt time step to respect CFL = true
+  set max cfl                        = 0.9
+  set time step                      = 5e-7
+  set max time step                  = 7.9784e-06 # Capillary timestep condition
+  set output boundaries              = true
 end
 </pre></div>
 </div>
@@ -566,7 +566,7 @@ end
 </section>
 <section id="cahn-hilliard">
 <h3>Cahn-Hilliard<a class="headerlink" href="#cahn-hilliard" title="Link to this heading">#</a></h3>
-<p>In the <code class="docutils literal notranslate"><span class="pre">cahn</span> <span class="pre">hilliard</span></code> subsection, we set the <code class="docutils literal notranslate"><span class="pre">potential</span> <span class="pre">smoothing</span> <span class="pre">coefficient</span></code> (soon to be deprecated) to <span class="math notranslate nohighlight">\(0\)</span>. The interface thickness is set to be determined automatically based on the mesh size in the <code class="docutils literal notranslate"><span class="pre">epsilon</span></code> subsection. We also output the interface thickness for each time-step by setting the <code class="docutils literal notranslate"><span class="pre">verbosity</span></code> to <code class="docutils literal notranslate"><span class="pre">verbose</span></code> to know its exact value for the initial conditions.</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">cahn</span> <span class="pre">hilliard</span></code> subsection, we set the <code class="docutils literal notranslate"><span class="pre">potential</span> <span class="pre">smoothing</span> <span class="pre">coefficient</span></code> (soon to be deprecated) to <span class="math notranslate nohighlight">\(0\)</span>. The interface thickness is set to be determined automatically based on the mesh size in the <code class="docutils literal notranslate"><span class="pre">epsilon</span></code> subsection. We also output the interface thickness for each time step by setting the <code class="docutils literal notranslate"><span class="pre">verbosity</span></code> to <code class="docutils literal notranslate"><span class="pre">verbose</span></code> to know its exact value for the initial conditions.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection cahn hilliard
   set potential smoothing coefficient = 0
   subsection epsilon

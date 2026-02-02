@@ -603,17 +603,15 @@ end
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
 <p>We solve the Navier-Stokes and the heat transfer equation in time. In the simulation control subsection we therefore need to specify the time-stepping scheme, the simulation end time and other parameters related to the growth rate of the time step. A maximum CFL of 5 is set to limit the maximal time step. The parameters related to the output of the .vtu files are also specified in this subsection.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
-    set method                       = bdf2
-    set time end                     = 20
-
-    set time step                    = 0.000001
-    set adapt                        = true
-    set adaptative time step scaling = 1.02
-    set max cfl                      = 5
-
-    set output frequency             = 10
-    set output name                  = out
-    set output path                  = ./output-xi-1/
+  set method                         = bdf2
+  set time step                      = 0.000001
+  set adapt time step to respect CFL = true
+  set max cfl                        = 5
+  set adaptative time step scaling   = 1.02
+  set time end                       = 20
+  set output frequency               = 10
+  set output name                    = out
+  set output path                    = ./output-xi-1/
 end
 </pre></div>
 </div>

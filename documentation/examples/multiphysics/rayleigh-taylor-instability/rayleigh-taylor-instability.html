@@ -509,23 +509,23 @@
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
 <p>Time integration is handled by a 2nd order backward differentiation scheme
 (<code class="docutils literal notranslate"><span class="pre">bdf2</span></code>), for a <span class="math notranslate nohighlight">\(0.75\, \text{s}\)</span> simulation time with an initial
-time-step of <span class="math notranslate nohighlight">\(0.0002\)</span> seconds. Time-step adaptation is enabled using <code class="docutils literal notranslate"><span class="pre">adapt</span> <span class="pre">=</span> <span class="pre">true</span></code>
+time step of <span class="math notranslate nohighlight">\(0.0002\)</span> seconds. Time-step adaptation is enabled using <code class="docutils literal notranslate"><span class="pre">adapt</span> <span class="pre">time</span> <span class="pre">step</span> <span class="pre">to</span> <span class="pre">respect</span> <span class="pre">CFL`</span> <span class="pre">=</span> <span class="pre">true</span></code>
 and the max CFL is <span class="math notranslate nohighlight">\(0.8\)</span>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This example uses an adaptive time-stepping method, where the
-time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold (<span class="math notranslate nohighlight">\(0.8\)</span> here).</p>
+time step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold (<span class="math notranslate nohighlight">\(0.8\)</span> here).</p>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
-  set method           = bdf2
-  set time end         = 0.75
-  set time step        = 0.001
-  set adapt            = true
-  set max cfl          = 0.8
-  set output control   = iteration
-  set output frequency = 10
-  set output name      = rayleigh-taylor
-  set output path      = ./output/
+  set method                         = bdf2
+  set time end                       = 0.75
+  set time step                      = 0.001
+  set adapt time step to respect CFL = true
+  set max cfl                        = 0.8
+  set output control                 = iteration
+  set output frequency               = 20
+  set output name                    = rayleigh-taylor
+  set output path                    = ./output/
 end
 </pre></div>
 </div>

@@ -509,17 +509,17 @@
 <p>The parameter file for the case of <span class="math notranslate nohighlight">\(\delta_0 = 0.20\)</span> is shown below.</p>
 <section id="simulation-control">
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
-<p>The time integration is handled by a 2nd-order backward differentiation scheme (bdf2) with a maximum time-step of <span class="math notranslate nohighlight">\(\Delta t = 4.4 \times 10^{-5} \; \text{s} \approx \Delta t_\sigma\)</span> which corresponds to the capillary time-step constraint (see <a class="reference internal" href="../capillary-wave/capillary-wave.html"><span class="doc">capillary wave example</span></a>).</p>
+<p>The time integration is handled by a 2nd-order backward differentiation scheme (bdf2) with a maximum time step of <span class="math notranslate nohighlight">\(\Delta t = 4.4 \times 10^{-5} \; \text{s} \approx \Delta t_\sigma\)</span> which corresponds to the capillary time-step constraint (see <a class="reference internal" href="../capillary-wave/capillary-wave.html"><span class="doc">capillary wave example</span></a>).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
-  set method           = bdf2
-  set time end         = 0.08
-  set time step        = 4.4e-5
-  set adapt            = true
-  set max cfl          = 0.75
-  set max time step    = 4.4e-5
-  set output name      = rayleigh-plateau
-  set output frequency = 5
-  set output path      = ./output_delta0_20/
+  set method                         = bdf2
+  set time end                       = 0.08
+  set time step                      = 4.4e-5
+  set adapt time step to respect CFL = true
+  set max cfl                        = 0.75
+  set max time step                  = 4.4e-5
+  set output name                    = rayleigh-plateau
+  set output frequency               = 5
+  set output path                    = ./output_delta0_20/
 end
 </pre></div>
 </div>

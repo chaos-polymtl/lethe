@@ -479,13 +479,13 @@
 <section id="simulation-control">
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
-  set method             = bdf2
-  set time step          = 0.0005
-  set adapt              = true
-  set output frequency   = 10
-  set max cfl            = 0.5
-  set time end           = 0.6
-  set output path        = out/
+  set method                         = bdf2
+  set time step                      = 0.0005
+  set adapt time step to respect CFL = true
+  set output frequency               = 10
+  set max cfl                        = 0.5
+  set time end                       = 0.6
+  set output path                    = out/
 end
 </pre></div>
 </div>

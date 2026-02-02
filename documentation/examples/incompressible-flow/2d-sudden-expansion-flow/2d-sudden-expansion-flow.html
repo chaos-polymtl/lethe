@@ -487,17 +487,17 @@ end
 </div>
 <p>For <span class="math notranslate nohighlight">\(\textrm{Re} = 610\)</span>, a transient second-order backward differentiation scheme is used:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
-  set method           = bdf2
-  set output name      = sudden-expansion-flow-output
-  set output frequency = 15
-  set adapt            = true
-  set max cfl          = 5
-  set time step        = 0.001
-  set time end         = 15
+  set method                         = bdf2
+  set output name                    = sudden-expansion-flow-output
+  set output frequency               = 15
+  set adapt time step to respect CFL = true
+  set max cfl                        = 5
+  set time step                      = 0.001
+  set time end                       = 15
 end
 </pre></div>
 </div>
-<p>in which <code class="docutils literal notranslate"><span class="pre">adapt</span></code>, <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">cfl</span></code>, and <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">step</span></code> parameters are defined so that the time step is small enough to capture the flow behaviour without large damping oscillations. The final simulation time is taken as <span class="math notranslate nohighlight">\(t_{end} = 15\)</span> s so that results can be compared to the reference case in <a class="footnote-reference brackets" href="#durst1993" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+<p>in which <code class="docutils literal notranslate"><span class="pre">adapt</span> <span class="pre">time</span> <span class="pre">step</span> <span class="pre">to</span> <span class="pre">respect</span> <span class="pre">CFL</span></code>, <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">cfl</span></code>, and <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">step</span></code> parameters are defined so that the time step is small enough to capture the flow behaviour without large damping oscillations. The final simulation time is taken as <span class="math notranslate nohighlight">\(t_{end} = 15\)</span> s so that results can be compared to the reference case in <a class="footnote-reference brackets" href="#durst1993" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
 </section>
 <section id="physical-properties">
 <h3>Physical Properties<a class="headerlink" href="#physical-properties" title="Link to this heading">#</a></h3>

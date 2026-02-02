@@ -493,14 +493,14 @@ The initial configuration of this example is illustrated below.</p>
 <p>The time integration is handled by a 2nd-order backward differentiation scheme (<code class="docutils literal notranslate"><span class="pre">bdf2</span></code>) with a variable time step.
 The initial time step is set to <span class="math notranslate nohighlight">\(0.005 \, \text{s}\)</span> and the simulation ends at <span class="math notranslate nohighlight">\(t_{end} = 0.49 \, \text{s}\)</span>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
-  set method           = bdf2
-  set time end         = 0.49
-  set time step        = 0.005
-  set adapt            = true
-  set max cfl          = 0.75
-  set output name      = water-injection-in-a-closed-cell
-  set output frequency = 5
-  set output path      = ./output/
+  set method                         = bdf2
+  set time end                       = 0.49
+  set time step                      = 0.005
+  set adapt time step to respect CFL = true
+  set max cfl                        = 0.75
+  set output name                    = water-injection-in-a-closed-cell
+  set output frequency               = 5
+  set output path                    = ./output/
 end
 </pre></div>
 </div>

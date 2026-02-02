@@ -247,12 +247,12 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:a8076938c753b8c1aa190c5cc54570f72"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a534693cd3ca18ff964a73ac7972456b9" id="r_a534693cd3ca18ff964a73ac7972456b9"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a534693cd3ca18ff964a73ac7972456b9">capillary_time_step_constraint</a></td></tr>
 <tr class="separator:a534693cd3ca18ff964a73ac7972456b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0872e0458e2792f590d64050c93fc2de" id="r_a0872e0458e2792f590d64050c93fc2de"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a0872e0458e2792f590d64050c93fc2de">target_capillary_time_step_ratio</a></td></tr>
-<tr class="separator:a0872e0458e2792f590d64050c93fc2de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab2d3ddf2c00886c03e8bc0f8715ecbf0" id="r_ab2d3ddf2c00886c03e8bc0f8715ecbf0"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#ab2d3ddf2c00886c03e8bc0f8715ecbf0">max_capillary_time_step_ratio</a></td></tr>
+<tr class="separator:ab2d3ddf2c00886c03e8bc0f8715ecbf0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a203de68d91ab8c4ee37da22bf7ce08c0" id="r_a203de68d91ab8c4ee37da22bf7ce08c0"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a203de68d91ab8c4ee37da22bf7ce08c0">current_capillary_time_step_ratio</a></td></tr>
 <tr class="separator:a203de68d91ab8c4ee37da22bf7ce08c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a56c6f86dd4d8d386aaa10654750a3b36" id="r_a56c6f86dd4d8d386aaa10654750a3b36"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a56c6f86dd4d8d386aaa10654750a3b36">respect_capillary_time_step_constraint</a></td></tr>
-<tr class="separator:a56c6f86dd4d8d386aaa10654750a3b36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa5271d237d440530af5b536dd7d7932a" id="r_aa5271d237d440530af5b536dd7d7932a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#aa5271d237d440530af5b536dd7d7932a">adapt_with_capillary_time_step_ratio</a></td></tr>
+<tr class="separator:aa5271d237d440530af5b536dd7d7932a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9b51b522b58e9de31b48e46861e807cf" id="r_a9b51b522b58e9de31b48e46861e807cf"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a9b51b522b58e9de31b48e46861e807cf">residual</a></td></tr>
 <tr class="separator:a9b51b522b58e9de31b48e46861e807cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3551ab0e32b459e5d6f60ec3133ebcdd" id="r_a3551ab0e32b459e5d6f60ec3133ebcdd"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a3551ab0e32b459e5d6f60ec3133ebcdd">stop_tolerance</a></td></tr>
@@ -1288,7 +1288,7 @@ Static Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Check if this is the first assembly of the present iteration. </p>
-<p>If it indeed is the first assembly, then the first_assembly flag is set to false. This function is used when providing the residual to the simulation control object when using steady-bdf methods. Since the residual must be provided once per time-step (and at the beginning), this function is used to identify that.</p>
+<p>If it indeed is the first assembly, then the first_assembly flag is set to false. This function is used when providing the residual to the simulation control object when using steady-bdf methods. Since the residual must be provided once per time step (and at the beginning), this function is used to identify that.</p>
 <dl class="section return"><dt>Returns</dt><dd>true if this is the first assembly, false otherwise</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>This method has a side effect: it sets first_assembly to false after being called when it returns true. </dd></dl>
 
@@ -1453,11 +1453,11 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Update initial time-step to respect the capillary time-step constraint. If the initial time-step is already below the capillary time-step, then we do not change it. </p>
+<p>Update initial time step to respect the capillary time-step constraint. If the initial time step is already below the capillary time step, then we do not change it. </p>
 
 <p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00572">572</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00143">capillary_time_step_constraint</a>, <a class="el" href="simulation__control_8h_source.html#l00068">initial_time_step</a>, <a class="el" href="simulation__control_8h_source.html#l00557">set_current_time_step()</a>, and <a class="el" href="simulation__control_8h_source.html#l00160">target_capillary_time_step_ratio</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00143">capillary_time_step_constraint</a>, <a class="el" href="simulation__control_8h_source.html#l00068">initial_time_step</a>, <a class="el" href="simulation__control_8h_source.html#l00160">max_capillary_time_step_ratio</a>, and <a class="el" href="simulation__control_8h_source.html#l00557">set_current_time_step()</a>.</p>
 
 </div>
 </div>
@@ -1895,6 +1895,35 @@ Static Protected Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="aa5271d237d440530af5b536dd7d7932a" name="aa5271d237d440530af5b536dd7d7932a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa5271d237d440530af5b536dd7d7932a">&#9670;&#160;</a></span>adapt_with_capillary_time_step_ratio</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool SimulationControl::adapt_with_capillary_time_step_ratio</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Enable adaptive time-stepping that respects the capillary time-step constraint. </p>
+<p>For capillary-driven multiphase flows, stability of the solved problem can be ensured by respecting the capillary time-step constraint [1]. By default, this parameter is set to false and can only be used when simulating multiphase flows.</p>
+<p>Reference:</p>
+<p>[1] F. Denner, F. Evrard, and B. van Wachem, “Breaching the capillary time-step constraint using a coupled VOF method with implicit surface tension,” J. Comput. Phys., vol. 459, p. 111128, Jun. 2022, doi: 10.1016/j.jcp.2022.111128 </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00184">184</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+
+</div>
+</div>
 <a id="afcef58567807100d062bceb13c9540a5" name="afcef58567807100d062bceb13c9540a5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afcef58567807100d062bceb13c9540a5">&#9670;&#160;</a></span>assembly_method</h2>
 
@@ -2057,7 +2086,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Computed ratio between the current time-step and the capillary time-step constraint (Δt/Δt_σ). </p>
+<p>Computed ratio between the current time step and the capillary time-step constraint (Δt/Δt_σ). </p>
 
 <p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00166">166</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
@@ -2271,6 +2300,39 @@ Static Protected Attributes</h2></td></tr>
 <p>Controls the number of significant digits displayed on the standard outputs. </p>
 
 <p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00229">229</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+
+</div>
+</div>
+<a id="ab2d3ddf2c00886c03e8bc0f8715ecbf0" name="ab2d3ddf2c00886c03e8bc0f8715ecbf0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab2d3ddf2c00886c03e8bc0f8715ecbf0">&#9670;&#160;</a></span>max_capillary_time_step_ratio</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double SimulationControl::max_capillary_time_step_ratio</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The user inputted ratio between the time step and the capillary time-step constraint (Δt/Δt_σ). </p>
+<p>When <a class="el" href="classSimulationControl.html#aa5271d237d440530af5b536dd7d7932a" title="Enable adaptive time-stepping that respects the capillary time-step constraint.">SimulationControl::adapt_with_capillary_time_step_ratio</a> is set to <code>true</code>, the time step of the simulation should respect the following:</p>
+<p class="formulaDsp">
+\[
+\Delta t \leq  N_\text{CTR} \, \Delta t_\sigma
+\]
+</p>
+<p>with \( \Delta t \) the computed time step, \( N_\text{CTR} \) the capillary time-step ratio, and \( \Delta t_\sigma \) the <a class="el" href="classSimulationControl.html#a534693cd3ca18ff964a73ac7972456b9" title="Capillary time-step constraint for simulation time-stepping.">SimulationControl::capillary_time_step_constraint</a>. </p>
+
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00160">160</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -2539,35 +2601,6 @@ Static Protected Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a56c6f86dd4d8d386aaa10654750a3b36" name="a56c6f86dd4d8d386aaa10654750a3b36"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a56c6f86dd4d8d386aaa10654750a3b36">&#9670;&#160;</a></span>respect_capillary_time_step_constraint</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool SimulationControl::respect_capillary_time_step_constraint</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Enable adaptive time-stepping that respects the capillary time-step constraint. </p>
-<p>For capillary-driven multiphase flows, stability of the solved problem can be ensured by respecting the capillary time-step constraint [1]. By default, this parameter is set to false and can only be used when simulating multiphase flows.</p>
-<p>Reference:</p>
-<p>[1] F. Denner, F. Evrard, and B. van Wachem, “Breaching the capillary time-step constraint using a coupled VOF method with implicit surface tension,” J. Comput. Phys., vol. 459, p. 111128, Jun. 2022, doi: 10.1016/j.jcp.2022.111128 </p>
-
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00184">184</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
-
-</div>
-</div>
 <a id="a099661c9b1f07453cef87bf845b7b464" name="a099661c9b1f07453cef87bf845b7b464"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a099661c9b1f07453cef87bf845b7b464">&#9670;&#160;</a></span>startup_timestep_scaling</h2>
 
@@ -2588,7 +2621,7 @@ Static Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>The time scaling used for small time-steps at the startup of the simulation. </p>
+<p>The time scaling used for small time steps at the startup of the simulation. </p>
 <p>This scaling factor is applied during the startup phase when using high-order BDF methods to gradually transition to the full-order scheme. </p>
 
 <p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00263">263</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
@@ -2645,39 +2678,6 @@ Static Protected Attributes</h2></td></tr>
 <p>Number of mesh subdivisions to be used when outputting the results. </p>
 
 <p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00232">232</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
-
-</div>
-</div>
-<a id="a0872e0458e2792f590d64050c93fc2de" name="a0872e0458e2792f590d64050c93fc2de"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0872e0458e2792f590d64050c93fc2de">&#9670;&#160;</a></span>target_capillary_time_step_ratio</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">double SimulationControl::target_capillary_time_step_ratio</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>The user inputted ratio between the time-step and the capillary time-step constraint (Δt/Δt_σ). </p>
-<p>When <a class="el" href="classSimulationControl.html#a56c6f86dd4d8d386aaa10654750a3b36" title="Enable adaptive time-stepping that respects the capillary time-step constraint.">SimulationControl::respect_capillary_time_step_constraint</a> is set to <code>true</code>, the time-step of the simulation should respect the following:</p>
-<p class="formulaDsp">
-\[
-\Delta t \leq  N_\text{CTR} \, \Delta t_\sigma
-\]
-</p>
-<p>with \( \Delta t \) the computed time-step, \( N_\text{CTR} \) the capillary time-step ratio, and \( \Delta t_\sigma \) the <a class="el" href="classSimulationControl.html#a534693cd3ca18ff964a73ac7972456b9" title="Capillary time-step constraint for simulation time-stepping.">SimulationControl::capillary_time_step_constraint</a>. </p>
-
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00160">160</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>

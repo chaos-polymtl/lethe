@@ -445,7 +445,7 @@
         <article role="main">
           <section id="capillary-wave">
 <h1>Capillary Wave<a class="headerlink" href="#capillary-wave" title="Link to this heading">#</a></h1>
-<p>This example simulates the damping of a small amplitude capillary wave for different time-steps allowing us to study the capillary time-step constraint. The problem is inspired by the test case of Denner <em>et al.</em> <a class="footnote-reference brackets" href="#denner2022" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
+<p>This example simulates the damping of a small amplitude capillary wave for different time steps allowing us to study the capillary time-step constraint. The problem is inspired by the test case of Denner <em>et al.</em> <a class="footnote-reference brackets" href="#denner2022" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
 <hr class="docutils" />
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
@@ -527,7 +527,7 @@
 \[\Delta t_\sigma = \frac{\Delta x}{\sqrt{2} c_\sigma} = \sqrt{\frac{\hat{\rho}}{2\pi\sigma}{{\Delta x}^3}}\]</div>
 </div>
 <p>with the shortest unambiguously resolved capillary wave having a wavelength of <span class="math notranslate nohighlight">\(\lambda_\sigma = 2 \Delta x\)</span> <a class="footnote-reference brackets" href="#denner2015" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
-<p>Therefore, in order to get stable simulation results, <span class="math notranslate nohighlight">\(\Delta t &lt; \Delta t_\sigma\)</span> should be respected. In this example, different time-steps will be used to explore the stability limit of Lethe’s current implementation.</p>
+<p>Therefore, in order to get stable simulation results, <span class="math notranslate nohighlight">\(\Delta t &lt; \Delta t_\sigma\)</span> should be respected. In this example, different time steps will be used to explore the stability limit of Lethe’s current implementation.</p>
 </section>
 <hr class="docutils" />
 <section id="parameter-file">
@@ -535,7 +535,7 @@
 <section id="simulation-control">
 <h3>Simulation Control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
 <p>Below, the <code class="docutils literal notranslate"><span class="pre">simulation</span> <span class="pre">control</span></code> subsection for the case of <span class="math notranslate nohighlight">\(\Delta t \approx 0.95\Delta t_\sigma \approx 0.95(3.9 \times 10^{-9})\, \text{s}\)</span> is shown. For other cases, the <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">step</span></code> value will change and accordingly the <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">frequency</span></code> will also.</p>
-<p>The time integration is handled by a 2nd-order backward differentiation scheme (bdf2) with a constant time-step of <span class="math notranslate nohighlight">\(\Delta t=3.7 \times 10^{-9} \, \text{s}\)</span>. To assess the stability of the simulation results, the wave is simulated for <span class="math notranslate nohighlight">\(t_{\text{end}} = \frac{50}{\omega_\sigma} \approx 4.5 \times 10^{-5} \, \text{s}\)</span>.</p>
+<p>The time integration is handled by a 2nd-order backward differentiation scheme (bdf2) with a constant time step of <span class="math notranslate nohighlight">\(\Delta t=3.7 \times 10^{-9} \, \text{s}\)</span>. To assess the stability of the simulation results, the wave is simulated for <span class="math notranslate nohighlight">\(t_{\text{end}} = \frac{50}{\omega_\sigma} \approx 4.5 \times 10^{-5} \, \text{s}\)</span>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection simulation control
   set method           = bdf2
   set time end         = 0.000045
@@ -725,7 +725,7 @@ Make sure that the information entered in the Python script corresponds to the o
 </section>
 <section id="results-for-delta-t-mathrm-tsm-times-delta-t-sigma-with-mathrm-tsm-in-0-95-15-20">
 <h3>Results for <span class="math notranslate nohighlight">\(\Delta t = \mathrm{TSM} \times \Delta t_\sigma\)</span> with <span class="math notranslate nohighlight">\(\mathrm{TSM} \in \{0.95,15,20\}\)</span><a class="headerlink" href="#results-for-delta-t-mathrm-tsm-times-delta-t-sigma-with-mathrm-tsm-in-0-95-15-20" title="Link to this heading">#</a></h3>
-<p>A comparison figure for multiple time-steps can be generated using the <code class="docutils literal notranslate"><span class="pre">capillary-wave-combined.py</span></code> Python script:</p>
+<p>A comparison figure for multiple time steps can be generated using the <code class="docutils literal notranslate"><span class="pre">capillary-wave-combined.py</span></code> Python script:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>python3 capillary-wave-combined.py ./capillaryWaveData_rho_1_nu_5e-6_prosperetti.csv 0.95 15 20
 </pre></div>
 </div>
@@ -736,7 +736,7 @@ Make sure that the information entered in the Python script corresponds to the o
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>If you want to <strong>prostprocess multiple cases consecutively and generate the comparison figure</strong> in one entry, a Bash script (<code class="docutils literal notranslate"><span class="pre">capillary-wave-time-step-sensitivity-postprocess.sh</span></code>) is provided. Make sure that the file has executable permissions before calling it using:</p>
+<p>If you want to <strong>postprocess multiple cases consecutively and generate the comparison figure</strong> in one entry, a Bash script (<code class="docutils literal notranslate"><span class="pre">capillary-wave-time-step-sensitivity-postprocess.sh</span></code>) is provided. Make sure that the file has executable permissions before calling it using:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>./capillary-wave-time-step-sensitivity-postprocess.sh ./capillaryWaveData_rho_1_nu_5e-6_prosperetti.csv &quot;{0.95,15,20}&quot; -sa
 </pre></div>
 </div>
@@ -749,7 +749,7 @@ Make sure that the information entered in the Python script corresponds to the o
 <tr class="row-odd"><td><figure class="align-center" id="comparison-of-wave-amplitude-evolutions-for-different-time-steps-for-math-mathrm-oh-0-057">
 <a class="reference internal image-reference" href="../../../_images/TSM_comparison_figure.png"><img alt="../../../_images/TSM_comparison_figure.png" src="../../../_images/TSM_comparison_figure.png" style="width: 800px;" /></a>
 <figcaption>
-<p><span class="caption-text">Comparison of wave relative amplitude evolutions for different time-steps for <span class="math notranslate nohighlight">\(\mathrm{Oh=0.057}\)</span> at the interface</span><a class="headerlink" href="#comparison-of-wave-amplitude-evolutions-for-different-time-steps-for-math-mathrm-oh-0-057" title="Link to this image">#</a></p>
+<p><span class="caption-text">Comparison of wave relative amplitude evolutions for different time steps for <span class="math notranslate nohighlight">\(\mathrm{Oh=0.057}\)</span> at the interface</span><a class="headerlink" href="#comparison-of-wave-amplitude-evolutions-for-different-time-steps-for-math-mathrm-oh-0-057" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 </td>
@@ -765,7 +765,7 @@ Make sure that the information entered in the Python script corresponds to the o
 <tr class="row-odd"><td><figure class="align-center" id="comparison-of-wave-amplitude-evolutions-for-different-time-steps-for-math-mathrm-oh-0-08">
 <a class="reference internal image-reference" href="../../../_images/TSM_comparison_figure_ref-6.png"><img alt="../../../_images/TSM_comparison_figure_ref-6.png" src="../../../_images/TSM_comparison_figure_ref-6.png" style="width: 800px;" /></a>
 <figcaption>
-<p><span class="caption-text">Comparison of wave relative amplitude evolutions for different time-steps for <span class="math notranslate nohighlight">\(\mathrm{Oh=0.08}\)</span> at the interface</span><a class="headerlink" href="#comparison-of-wave-amplitude-evolutions-for-different-time-steps-for-math-mathrm-oh-0-08" title="Link to this image">#</a></p>
+<p><span class="caption-text">Comparison of wave relative amplitude evolutions for different time steps for <span class="math notranslate nohighlight">\(\mathrm{Oh=0.08}\)</span> at the interface</span><a class="headerlink" href="#comparison-of-wave-amplitude-evolutions-for-different-time-steps-for-math-mathrm-oh-0-08" title="Link to this image">#</a></p>
 </figcaption>
 </figure>
 </td>
