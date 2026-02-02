@@ -393,6 +393,12 @@ template <int dim>
 void
 FluidDynamicsVANSMatrixFree<dim>::read_dem()
 {
+  AssertThrow(
+    dim == 3,
+    ExcMessage(
+      "The DEM coupling capabilities of the VANS solver only support 3D calculations. All of the CFD-DEM closure term rely on the usage of 3D spherical particles and, consequently, 2D CFD-DEM simulations are currently not supported"));
+
+
   std::string prefix =
     this->cfd_dem_simulation_parameters.void_fraction->dem_file_name;
 
@@ -593,6 +599,11 @@ FluidDynamicsVANSMatrixFree<dim>::gather_output_hook()
                          name,
                          component_interpretation);
 
+  // Since the information related to the particles are always 3-dimensional
+  // (e.g. the velocity of the particles, the drag, etc.) we prevent the output
+  // of the particle-laden information if the solver is running in 2D. The 2D
+  // capability of the CFD-DEM component of the VANS solver have never really
+  // been assessed and so running them is very uncertain at the time.
   if constexpr (dim > 2)
     {
       std::vector<std::string> force_names(dim, "fluid_drag_on_particles");
