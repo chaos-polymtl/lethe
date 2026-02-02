@@ -60,7 +60,7 @@ test(const double mu, const double sigma)
   lpp.particle_type_number = 1;
   lpp.distribution_weighting_type.push_back(weighting_type);
   lpp.distribution_type.push_back(
-    Parameters::Lagrangian::SizeDistributionType::normal);
+    Parameters::Lagrangian::SizeDistributionType::lognormal);
   lpp.particle_average_diameter.push_back(mu);
   lpp.particle_size_std.push_back(sigma);
   lpp.seed_for_distributions.push_back(10);

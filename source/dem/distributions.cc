@@ -536,7 +536,8 @@ CustomDistribution::CustomDistribution(
               // Assumption: The volume is distributed LINEARLY across this
               // diameter bin. Under this assumption, the 'Weight' is the
               // Mean Value of the function 1/D^3:
-              // Weight = [1 / (d_high - d_low)] * Integral from d_low to d_high of (1/x^3) dx
+              // Weight = [1 / (d_high - d_low)] * Integral from d_low to d_high
+              // of (1/x^3) dx
               //
               // Solving the integral:
               // 1. Integral of x^-3 dx  = -1/(2x^2).
@@ -553,10 +554,10 @@ CustomDistribution::CustomDistribution(
               const double weight =
                 (d_low + d_high) / (2.0 * std::pow(d_low * d_high, 2));
 
-                // Convert volume fraction to a relative number fraction
-                // (dfn). Note: This value is not yet normalized; it's a
-                // relative particle count.
-                dfn[i] = this_bin_volume_fraction * weight;
+              // Convert volume fraction to a relative number fraction
+              // (dfn). Note: This value is not yet normalized; it's a
+              // relative particle count.
+              dfn[i] = this_bin_volume_fraction * weight;
 
               // Sum the relative counts. This sum will be used as the
               // denominator to normalize the final number-based CDF so it
@@ -610,8 +611,6 @@ CustomDistribution::CustomDistribution(
               number_based_cdf[i] =
                 number_based_cdf[i - 1] + number_based_pdf[i] / n_tot;
             }
-          std::cout << number_based_cdf[0] << " " << number_based_cdf[1]
-                    << std::endl;
         }
     }
 }

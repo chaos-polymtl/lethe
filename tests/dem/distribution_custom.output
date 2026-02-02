@@ -1,6 +1,6 @@
 
-DEAL::Volume weighted normal distribution
-DEAL::Volume fraction particle 1: 0.502060
-DEAL::Volume fraction particle 2: 0.497940
-DEAL::Number of particle 1: 8897
-DEAL::Number of particle 2: 1103
+DEAL::Volume weighted custom distribution
+DEAL::Volume fraction of particle with diameter 1: 0.502060
+DEAL::Volume fraction of particle with diameter 2: 0.497940
+DEAL::Number of particle with diameter 1: 8897
+DEAL::Number of particle with diameter 2: 1103

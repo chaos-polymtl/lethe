@@ -57,7 +57,7 @@ test()
   lpp.particle_type_number = 1;
   lpp.distribution_type.push_back(SizeDistributionType::custom);
   lpp.particle_custom_diameter.push_back({0.0025, 0.0050});
-  lpp.particle_custom_probability.push_back({0.5, 0.5});
+  lpp.particle_custom_probability.push_back({0.499, 0.501});
   lpp.seed_for_distributions.push_back(10);
   lpp.diameter_min_cutoff.push_back(-1.);
   lpp.diameter_max_cutoff.push_back(-1.);
@@ -97,9 +97,9 @@ test()
 
   // Output
   if constexpr (weighting_type == DistributionWeightingType::number_based)
-    deallog << "Numbered weighted normal distribution " << std::endl;
+    deallog << "Numbered weighted custom distribution " << std::endl;
   if constexpr (weighting_type == DistributionWeightingType::volume_based)
-    deallog << "Volume weighted normal distribution " << std::endl;
+    deallog << "Volume weighted custom distribution " << std::endl;
 
   unsigned int     particle_number = 0;
   unsigned int     n_particle_1 = 0, n_particle_2 = 0;
@@ -122,12 +122,14 @@ test()
   const double volume_particle_2 = n_particle_2 * std::pow(d2, 3);
   const double total_volume      = volume_particle_1 + volume_particle_2;
 
-  deallog << "Volume fraction particle 1: " << volume_particle_1 / total_volume
+  deallog << "Volume fraction of particle with diameter 1: "
+          << volume_particle_1 / total_volume << std::endl;
+  deallog << "Volume fraction of particle with diameter 2: "
+          << volume_particle_2 / total_volume << std::endl;
+  deallog << "Number of particle with diameter 1: " << n_particle_1
           << std::endl;
-  deallog << "Volume fraction particle 2: " << volume_particle_2 / total_volume
+  deallog << "Number of particle with diameter 2: " << n_particle_2
           << std::endl;
-  deallog << "Number of particle 1: " << n_particle_1 << std::endl;
-  deallog << "Number of particle 2: " << n_particle_2 << std::endl;
 }
 
 int
