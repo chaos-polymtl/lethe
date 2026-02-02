@@ -8,7 +8,7 @@
 # estimator on the phase indicator). The densities and the surface tension
 # considered here remain constant.
 # Only the cell sizes evolve with time.
-# Additionally, this test is run in 2nd order BDF to test the time-step
+# Additionally, this test is run in 2nd order BDF to test the time step
 # progression from the initial condition with update_assembly_method().
 #-------------------------------------------------------------------------------
 
@@ -22,13 +22,12 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method                                 = bdf2
-  set time end                               = 0.055
-  set time step                              = 0.055
-  set adapt                                  = true
-  set output name                            = vof-capillary-time-step-constraint-kelly-refinement-bdf2
-  set output frequency                       = 0
-  set respect capillary time-step constraint = true
+  set method                         = bdf2
+  set time end                       = 0.055
+  set time step                      = 0.055
+  set output name                    = vof-capillary-time-step-constraint-kelly-refinement-bdf2
+  set output frequency               = 0
+  set adapt time step to respect CTR = true
 end
 
 #---------------------------------------------------

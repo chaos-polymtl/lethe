@@ -2,7 +2,7 @@
 Capillary Wave
 ================================
 
-This example simulates the damping of a small amplitude capillary wave for different time-steps allowing us to study the capillary time-step constraint. The problem is inspired by the test case of Denner *et al.* [#denner2022]_
+This example simulates the damping of a small amplitude capillary wave for different time steps allowing us to study the capillary time-step constraint. The problem is inspired by the test case of Denner *et al.* [#denner2022]_
 
 ****
 
@@ -89,7 +89,7 @@ Since, the phase fraction (:math:`\phi`) is treated explicitly, the temporal res
 
 with the shortest unambiguously resolved capillary wave having a wavelength of :math:`\lambda_\sigma = 2 \Delta x` [#denner2015]_.
 
-Therefore, in order to get stable simulation results, :math:`\Delta t < \Delta t_\sigma` should be respected. In this example, different time-steps will be used to explore the stability limit of Lethe's current implementation.
+Therefore, in order to get stable simulation results, :math:`\Delta t < \Delta t_\sigma` should be respected. In this example, different time steps will be used to explore the stability limit of Lethe's current implementation.
 
 ****
 
@@ -101,7 +101,7 @@ Simulation Control
 ~~~~~~~~~~~~~~~~~~
 Below, the ``simulation control`` subsection for the case of :math:`\Delta t \approx 0.95\Delta t_\sigma \approx 0.95(3.9 \times 10^{-9})\, \text{s}` is shown. For other cases, the ``time step`` value will change and accordingly the ``output frequency`` will also.
 
-The time integration is handled by a 2nd-order backward differentiation scheme (bdf2) with a constant time-step of :math:`\Delta t=3.7 \times 10^{-9} \, \text{s}`. To assess the stability of the simulation results, the wave is simulated for :math:`t_{\text{end}} = \frac{50}{\omega_\sigma} \approx 4.5 \times 10^{-5} \, \text{s}`.
+The time integration is handled by a 2nd-order backward differentiation scheme (bdf2) with a constant time step of :math:`\Delta t=3.7 \times 10^{-9} \, \text{s}`. To assess the stability of the simulation results, the wave is simulated for :math:`t_{\text{end}} = \frac{50}{\omega_\sigma} \approx 4.5 \times 10^{-5} \, \text{s}`.
 
 .. code-block:: text
 
@@ -319,7 +319,7 @@ with ``./capillaryWaveData_rho_1_nu_5e-6_prosperetti.csv`` being the path to the
 Results for :math:`\Delta t = \mathrm{TSM} \times \Delta t_\sigma` with :math:`\mathrm{TSM} \in \{0.95,15,20\}`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A comparison figure for multiple time-steps can be generated using the ``capillary-wave-combined.py`` Python script:
+A comparison figure for multiple time steps can be generated using the ``capillary-wave-combined.py`` Python script:
 
 .. code-block:: text
   :class: copy-button
@@ -332,7 +332,7 @@ with ``./capillaryWaveData_rho_1_nu_5e-6_prosperetti.csv`` being the path to the
   Before running ``capillary-wave-combined.py``, data from individual cases must be extracted using ``capillary-wave-postprocess.py`` as shown in the subsection above.
 
 .. tip::
-  If you want to **prostprocess multiple cases consecutively and generate the comparison figure** in one entry, a Bash script (``capillary-wave-time-step-sensitivity-postprocess.sh``) is provided. Make sure that the file has executable permissions before calling it using:
+  If you want to **postprocess multiple cases consecutively and generate the comparison figure** in one entry, a Bash script (``capillary-wave-time-step-sensitivity-postprocess.sh``) is provided. Make sure that the file has executable permissions before calling it using:
 
   .. code-block:: text
       :class: copy-button
@@ -347,9 +347,9 @@ The following figure presents a comparison between the analytical results and th
 |  .. figure:: images/TSM_comparison_figure.png                                                                                |
 |     :align: center                                                                                                           |
 |     :width: 800                                                                                                              |
-|     :name: Comparison of wave amplitude evolutions for different time-steps for :math:`\mathrm{Oh=0.057}`                    |
+|     :name: Comparison of wave amplitude evolutions for different time steps for :math:`\mathrm{Oh=0.057}`                    |
 |                                                                                                                              |
-|     Comparison of wave relative amplitude evolutions for different time-steps for :math:`\mathrm{Oh=0.057}` at the interface |
+|     Comparison of wave relative amplitude evolutions for different time steps for :math:`\mathrm{Oh=0.057}` at the interface |
 |                                                                                                                              |
 +------------------------------------------------------------------------------------------------------------------------------+
 
@@ -361,9 +361,9 @@ By increasing the mesh resolution by an additional refinement, the :math:`\mathr
 |  .. figure:: images/TSM_comparison_figure_ref-6.png                                                                         |
 |     :align: center                                                                                                          |
 |     :width: 800                                                                                                             |
-|     :name: Comparison of wave amplitude evolutions for different time-steps for :math:`\mathrm{Oh=0.08}`                    |
+|     :name: Comparison of wave amplitude evolutions for different time steps for :math:`\mathrm{Oh=0.08}`                    |
 |                                                                                                                             |
-|     Comparison of wave relative amplitude evolutions for different time-steps for :math:`\mathrm{Oh=0.08}` at the interface |
+|     Comparison of wave relative amplitude evolutions for different time steps for :math:`\mathrm{Oh=0.08}` at the interface |
 |                                                                                                                             |
 +-----------------------------------------------------------------------------------------------------------------------------+
 

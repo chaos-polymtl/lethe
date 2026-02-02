@@ -40,7 +40,7 @@ The ``lagrangian post-processing`` enables VTU files output generated with the s
 * The granular temperature for each cell.
 
 .. important::
- The particles' average velocity and the granular temperature are cell based results calculated instantaneously at each outputting time-step. This means that they are only instantaneous spatial averages, i.e, DO NOT correspond to temporal averages measured between the outputs. For a higher resolution of the results in time, we recommend the use of a lower ``output frequency`` (:doc:`../dem/simulation_control`).
+ The particles' average velocity and the granular temperature are cell based results calculated instantaneously at each outputting time step. This means that they are only instantaneous spatial averages, i.e, DO NOT correspond to temporal averages measured between the outputs. For a higher resolution of the results in time, we recommend the use of a lower ``output frequency`` (:doc:`../dem/simulation_control`).
 
 ----------------------------
 Force chains post-processing

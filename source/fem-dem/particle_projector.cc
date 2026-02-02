@@ -699,7 +699,7 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
   system_rhs_void_fraction    = 0;
   system_matrix_void_fraction = 0;
 
-  // Clear all contributions of particles from the previous time-step
+  // Clear all contributions of particles from the previous time step
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())

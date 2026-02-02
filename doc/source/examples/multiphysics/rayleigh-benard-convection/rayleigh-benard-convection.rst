@@ -69,26 +69,26 @@ For simplicity, we present only the parameter file for :math:`Ra=10^4`.
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The time integration is handled by a 1st order backward differentiation scheme to reach a steady-state solution `(steady_bdf)`. A stop tolerance of :math:`1e-5` has been selected to ensure that the system reaches steady-state. The initial time-step is set to :math:`0.001` s, but this will be adapted during the simulation.
+The time integration is handled by a 1st order backward differentiation scheme to reach a steady-state solution `(steady_bdf)`. A stop tolerance of :math:`1e-5` has been selected to ensure that the system reaches steady-state. The initial time step is set to :math:`0.001` s, but this will be adapted during the simulation.
 
 .. note::   
     This example uses an adaptive time-stepping method, where the 
-    time-step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold (0.9 here). Using ``output control = time``, and ``output time frequency = 0.5`` the simulation results are written every 0.5 seconds regardless of the time-steps.
+    time step is modified during the simulation to keep the maximum value of the CFL condition below a given threshold (0.9 here). Using ``output control = time``, and ``output time frequency = 0.5`` the simulation results are written every 0.5 seconds regardless of the time steps.
 
 .. code-block:: text
 
     subsection simulation control
-      set method                       = bdf1
-      set time step                    = 0.001
-      set adapt                        = true
-      set max cfl                      = 0.9
-      set stop tolerance               = 1e-5
-      set adaptative time step scaling = 1.3
-      set number mesh adapt            = 0
-      set output name                  = rayleigh-benard_convection
-      set output control               = time
-      set output time frequency        = 0.5
-      set output path                  = ./output/
+      set method                         = steady_bdf
+      set time end                       = 10
+      set time step                      = 0.001
+      set adapt time step to respect CFL = true
+      set max cfl                        = 0.9
+      set stop tolerance                 = 1e-5
+      set adaptative time step scaling   = 1.3
+      set output name                    = rayleigh-benard_convection
+      set output control                 = time
+      set output time frequency          = 0.5
+      set output path                    = ./output/
     end
 
 Multiphysics
@@ -170,7 +170,7 @@ to run the simulations using eight CPU cores for the :math:`Ra=10^4` and :math:`
 .. warning:: 
     Make sure to compile lethe in `Release` mode and 
     run in parallel using mpirun. The first simulation takes
-    :math:`\approx` 20 minutes on 8 processes and the second at :math:`Ra=10^6` can take a few hours because of the much smaller time-step required to respect the CFL condition.
+    :math:`\approx` 20 minutes on 8 processes and the second at :math:`Ra=10^6` can take a few hours because of the much smaller time step required to respect the CFL condition.
 
 
 -------

@@ -61,24 +61,24 @@ Simulation Control
 
 Time integration is handled by a 1st order backward differentiation scheme 
 `(bdf1)`, for a :math:`4.1` s simulation time with an initial 
-time-step of :math:`0.01` seconds.
+time step of :math:`0.01` seconds.
 
 .. note::   
     This example uses an adaptive time-stepping method, where the 
-    time-steps are modified during the simulation to keep the maximum value of the CFL condition
+    time steps are modified during the simulation to keep the maximum value of the CFL condition
     below a given threshold.
 
 .. code-block:: text
 
     subsection simulation control
-      set method           = bdf1
-      set time end         = 4
-      set time step        = 0.01
-      set adapt            = true
-      set max cfl          = 0.5
-      set output name      = dam-break
-      set output frequency = 20
-      set output path      = ./output/
+      set method                         = bdf1
+      set time end                       = 4
+      set time step                      = 0.01
+      set adapt time step to respect CFL = true
+      set max cfl                        = 0.5
+      set output name                    = dam-break
+      set output frequency               = 20
+      set output path                    = ./output/
     end
 
 Multiphysics

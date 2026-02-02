@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -67,7 +67,7 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
       // Calculation of the SUPG stabilization parameter. The
       // stabilization parameter used is different if the simulation is
       // steady or unsteady. In the unsteady case it includes the value
-      // of the time-step
+      // of the time step
       const double tau =
         is_steady(method) ?
           1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
@@ -166,7 +166,7 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
       // Calculation of the SUPG stabilization parameter. The
       // stabilization parameter used is different if the simulation is
       // steady or unsteady. In the unsteady case it includes the value
-      // of the time-step
+      // of the time step
       const double tau =
         is_steady(method) ?
           1. / std::sqrt(std::pow(2. * u_mag / h, 2) +

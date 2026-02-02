@@ -143,24 +143,24 @@ protected:
   double capillary_time_step_constraint;
 
   /**
-   * @brief The user inputted ratio between the time-step and the capillary
+   * @brief The user inputted ratio between the time step and the capillary
    * time-step constraint (Δt/Δt_σ).
    *
-   * When SimulationControl::respect_capillary_time_step_constraint is set to
-   * @p true, the time-step of the simulation should respect the following:
+   * When SimulationControl::adapt_with_capillary_time_step_ratio is set to
+   * @p true, the time step of the simulation should respect the following:
    *
    * \f[
    * \Delta t \leq  N_\text{CTR} \, \Delta t_\sigma
    * \f]
    *
-   * with \f$ \Delta t \f$ the computed time-step, \f$ N_\text{CTR} \f$ the
+   * with \f$ \Delta t \f$ the computed time step, \f$ N_\text{CTR} \f$ the
    * capillary time-step ratio, and \f$ \Delta t_\sigma \f$ the
    * SimulationControl::capillary_time_step_constraint.
    */
-  double target_capillary_time_step_ratio;
+  double max_capillary_time_step_ratio;
 
   /**
-   * @brief Computed ratio between the current time-step and the capillary
+   * @brief Computed ratio between the current time step and the capillary
    * time-step constraint (Δt/Δt_σ).
    */
   double current_capillary_time_step_ratio;
@@ -181,7 +181,7 @@ protected:
    * tension,” J. Comput. Phys., vol. 459, p. 111128, Jun. 2022,
    * doi: 10.1016/j.jcp.2022.111128
    */
-  bool respect_capillary_time_step_constraint;
+  bool adapt_with_capillary_time_step_ratio;
 
   /// Current value of the norm of the right-hand side residual
   double residual;
@@ -255,7 +255,7 @@ protected:
   Parameters::SimulationControl::BDFStartupMethods bdf_start_method;
 
   /**
-   * @brief The time scaling used for small time-steps at the startup of the simulation
+   * @brief The time scaling used for small time steps at the startup of the simulation
    *
    * This scaling factor is applied during the startup phase when using
    * high-order BDF methods to gradually transition to the full-order scheme.
@@ -487,7 +487,7 @@ public:
    * If it indeed is the first assembly, then the first_assembly flag is set to
    * false. This function is used when providing the residual to the simulation
    * control object when using steady-bdf methods. Since the residual must be
-   * provided once per time-step (and at the beginning), this function is used
+   * provided once per time step (and at the beginning), this function is used
    * to identify that.
    *
    * @return true if this is the first assembly, false otherwise
@@ -559,20 +559,20 @@ public:
     Assert(
       time_step > 0,
       ExcMessage(
-        "You are trying to set a null or negative time-step in a SimulationControl. This is not allowed, we cannot go backward in time."));
+        "You are trying to set a null or negative time step in a SimulationControl. This is not allowed, we cannot go backward in time."));
     time_step = new_time_step;
   }
 
   /**
-   * @brief Update initial time-step to respect the capillary time-step
-   * constraint. If the initial time-step is already below the capillary
-   * time-step, then we do not change it.
+   * @brief Update initial time step to respect the capillary time-step
+   * constraint. If the initial time step is already below the capillary
+   * time step, then we do not change it.
    */
   void
   limit_initial_time_step_with_capillary_time_step_constraint()
   {
     double capillary_time_step =
-      capillary_time_step_constraint * target_capillary_time_step_ratio;
+      capillary_time_step_constraint * max_capillary_time_step_ratio;
     initial_time_step = std::min(initial_time_step, capillary_time_step);
     set_current_time_step(initial_time_step);
   }
@@ -588,7 +588,7 @@ public:
       ExcMessage(
         "The current value of the capillary time-step constraint is set to a null or negative value.\n"
         "This is not allowed. Make sure that the 'capillary_time_step_constraint' is computed and\n"
-        "that the parameter 'respect capillary time-step constraint' is set to 'true'."));
+        "that the parameter 'adapt time step to respect CTR' is set to 'true'."));
 
     current_capillary_time_step_ratio =
       time_step / capillary_time_step_constraint;
@@ -904,8 +904,18 @@ public:
 class SimulationControlTransient : public SimulationControl
 {
 protected:
-  /// Enable adaptive time stepping
-  bool adapt;
+  /**
+   * Boolean indicating if adaptive time-stepping is enabled.
+   * To enable it, enable either SimulationControlTransient::adapt_with_cfl or
+   * SimulationControl::adapt_with_capillary_time_step_ratio.
+   */
+  bool time_step_adaptation_required;
+
+  /**
+   * Boolean indicating if the CFL condition should be controlling the
+   * simulation time step.
+   */
+  bool adapt_with_cfl;
 
   /**
    * @brief Time step scaling factor for adaptive time stepping
@@ -943,7 +953,7 @@ protected:
   bool no_more_output_times;
 
   /**
-   * @brief Flag to override the time-step with the set value upon restart
+   * @brief Flag to override the time step with the set value upon restart
    */
   bool override_time_step_on_restart;
 
@@ -961,14 +971,17 @@ protected:
   /**
    * @brief Calculate the next value of the time step
    *
-   * If adaptation is enabled, the time step is calculated to ensure that the
-   * CFL condition is bound by the maximal CFL value. The new time step is
-   * scaled by adaptative_time_step_scaling. If the
-   * time_step_independent_of_end_time is set to false, the time step is
-   * adjusted to meet exactly the end time; the default is to not modify the
-   * time step.
+   * If SimulationControlTransient::adapt_with_cfl is enabled, the time step is
+   * calculated to ensure that the CFL condition is bounded by the maximal CFL
+   * value. If SimulationControl::adapt_with_capillary_time_step_ratio is
+   * enabled, the time step is calculated to ensure that it is bounded
+   * by the maximal CTR value. The new time step is scaled by
+   * SimulationControlTransient::adaptative_time_step_scaling. If the
+   * SimulationControl::time_step_independent_of_end_time is set to @p false, the
+   * time step is adjusted to meet exactly the end time; the default is to not
+   * modify the time step.
    *
-   * @return The calculated time step value
+   * @return The calculated time-step value
    */
   virtual double
   calculate_time_step() override;
@@ -998,7 +1011,7 @@ public:
   bool
   is_adaptive_time_stepping() const override
   {
-    return adapt;
+    return time_step_adaptation_required;
   }
 
   /**

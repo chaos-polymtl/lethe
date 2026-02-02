@@ -22,10 +22,10 @@ SimulationControl::SimulationControl(const Parameters::SimulationControl &param)
   , CFL(0)
   , max_CFL(param.maxCFL)
   , capillary_time_step_constraint(std::numeric_limits<double>::max())
-  , target_capillary_time_step_ratio(param.target_capillary_time_step_ratio)
+  , max_capillary_time_step_ratio(param.max_capillary_time_step_ratio)
   , current_capillary_time_step_ratio(0)
-  , respect_capillary_time_step_constraint(
-      param.respect_capillary_time_step_constraint)
+  , adapt_with_capillary_time_step_ratio(
+      param.adapt_with_capillary_time_step_ratio)
   , residual(DBL_MAX)
   , stop_tolerance(param.stop_tolerance)
   , output_iteration_frequency(param.output_iteration_frequency)
@@ -255,7 +255,8 @@ SimulationControl::get_checkpointed_simulation_control_info(
 SimulationControlTransient::SimulationControlTransient(
   const Parameters::SimulationControl &param)
   : SimulationControl(param)
-  , adapt(param.adapt)
+  , time_step_adaptation_required(param.time_step_adaptation_required)
+  , adapt_with_cfl(param.adapt_with_cfl)
   , adaptative_time_step_scaling(param.adaptative_time_step_scaling)
   , max_dt(param.max_dt)
   , time_last_output(0.)
@@ -287,7 +288,7 @@ SimulationControlTransient::print_progression(const ConditionalOStream &pcout)
 
   unsigned int first_line_size = ss.str().size();
 
-  if (respect_capillary_time_step_constraint)
+  if (adapt_with_capillary_time_step_ratio)
     {
       // Get the length of blank spaces to add
       std::stringstream cfl_ss;
@@ -318,7 +319,7 @@ SimulationControlTransient::integrate()
       previous_time = current_time;
 
       // Reset the first assembly to true to indicate that we are starting
-      // the time-step. This variable is used to monitor the initial residual
+      // the time step. This variable is used to monitor the initial residual
       // of the set of non-linear equation which can be used for example in
       // steady-bdf methods
       first_assembly = true;
@@ -335,7 +336,7 @@ SimulationControlTransient::integrate()
 
       // Calculate CTR to print on the console if capillary time-step constraint
       // is enabled
-      if (respect_capillary_time_step_constraint)
+      if (adapt_with_capillary_time_step_ratio)
         {
           set_current_capillary_time_step_ratio();
         }
@@ -361,18 +362,19 @@ SimulationControlTransient::calculate_time_step()
 {
   double new_time_step = time_step;
 
-  if (adapt && iteration_number > 1)
+  if (time_step_adaptation_required && iteration_number > 1)
     {
       new_time_step = time_step * adaptative_time_step_scaling;
-      if (CFL > 0 && max_CFL / CFL < adaptative_time_step_scaling)
+      if (adapt_with_cfl && CFL > 0 &&
+          max_CFL / CFL < adaptative_time_step_scaling)
         new_time_step = time_step * max_CFL / CFL;
 
       new_time_step = std::min(new_time_step, max_dt);
 
-      if (respect_capillary_time_step_constraint)
+      if (adapt_with_capillary_time_step_ratio)
         {
           double capillary_time_step =
-            capillary_time_step_constraint * target_capillary_time_step_ratio;
+            capillary_time_step_constraint * max_capillary_time_step_ratio;
           new_time_step = std::min(new_time_step, capillary_time_step);
         }
     }
@@ -404,7 +406,7 @@ SimulationControlTransient::is_output_iteration()
         {
           // Check if the current step number matches the following condition:
           // (The step number matches the output frequency OR is the last
-          // time-step) AND the current time is within the output time interval
+          // time step) AND the current time is within the output time interval
           return ((get_step_number() % output_iteration_frequency == 0 ||
                    is_at_end()) &&
                   get_current_time() >= output_time_interval[0] &&
@@ -535,7 +537,7 @@ SimulationControlTransient::read(const std::string &prefix)
 
   if (override_time_step_on_restart)
     {
-      // Fix the time-step to the new provided value.
+      // Fix the time step to the new provided value.
       // We understand that users may wish to override the checkpointed
       // time-step value with another one.
       const double old_CFL       = CFL;

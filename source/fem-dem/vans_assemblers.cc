@@ -86,7 +86,7 @@ VANSAssemblerCoreModelB<dim>::assemble_matrix(
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
       // is steady or unsteady. In the unsteady case it includes the
-      // value of the time-step
+      // value of the time step
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
@@ -296,7 +296,7 @@ VANSAssemblerCoreModelB<dim>::assemble_rhs(
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
       // is steady or unsteady. In the unsteady case it includes the
-      // value of the time-step
+      // value of the time step
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
@@ -456,7 +456,7 @@ VANSAssemblerCoreModelA<dim>::assemble_matrix(
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
       // is steady or unsteady. In the unsteady case it includes the
-      // value of the time-step
+      // value of the time step
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
@@ -694,7 +694,7 @@ VANSAssemblerCoreModelA<dim>::assemble_rhs(
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
       // is steady or unsteady. In the unsteady case it includes the
-      // value of the time-step
+      // value of the time step
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?

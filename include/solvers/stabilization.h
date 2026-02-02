@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_stabilization_h
@@ -40,7 +40,7 @@ calculate_navier_stokes_gls_tau_steady(const double u_mag,
  * @param kinematic_viscosity Kinematic viscosity
  * @param h Cell size; it should be calculated using the diameter of a sphere of
  * equal volume to that of the cell.
- * @param sdt Inverse of the time-step (1/dt)
+ * @param sdt Inverse of the time step (1/dt)
  *
  * @return Value of the stabilization parameter - tau
  */
