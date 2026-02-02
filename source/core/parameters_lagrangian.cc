@@ -241,13 +241,13 @@ namespace Parameters
       prm.declare_entry("custom distribution from file",
                         "false",
                         Patterns::Bool(),
-                        "Indicates if the diameter and probability "
+                        "Indicates whether the diameter and probability "
                         "values are extracted from a file.");
       prm.declare_entry("custom distribution filename",
                         "custom_distribution.txt",
                         Patterns::FileName(),
                         "Indicates the file where the custom distribution "
-                        "value should be read from.");
+                        "values should be read from.");
       prm.declare_entry("custom distribution probability function type",
                         "PDF",
                         Patterns::Selection("PDF|CDF"),
@@ -256,7 +256,7 @@ namespace Parameters
       prm.declare_entry("custom distribution interpolation",
                         "false",
                         Patterns::Bool(),
-                        "Indicates if the sampling using the custom "
+                        "Indicates whether the sampling using the custom "
                         "distribution should be interpolated.");
 
       prm.declare_entry("custom distribution diameters values",
@@ -270,7 +270,6 @@ namespace Parameters
         "custom distribution diameters probabilities",
         "0.6 , 0.4",
         Patterns::List(Patterns::Double(0.)),
-        "Probabilities of each diameter of the custom"
         "Probabilities associated with each diameter values for "
         "a custom distribution. ");
       prm.declare_alias("custom distribution diameters probabilities",
@@ -294,17 +293,17 @@ namespace Parameters
       prm.declare_entry("minimum diameter cutoff",
                         "-1.",
                         Patterns::Double(),
-                        "Minimal cutoff value when sampling a distribution."
-                        "is used. If equal to -1., the cut of will be fixed at "
+                        "Minimum cutoff value when sampling a distribution."
+                        "If equal to -1., the cutoff will be fixed at "
                         "0.1% of the cumulative density function of the "
-                        "distribution");
+                        "distribution.");
       prm.declare_entry("maximum diameter cutoff",
                         "-1.",
                         Patterns::Double(),
-                        "Cutoff values used when the log-normal distribution "
-                        "is used. If equal to -1., the cut of will be fixed at "
+                        "Maximum cutoff value when sampling a distribution. "
+                        "If equal to -1., the cutoff will be fixed at "
                         "99.9% of the cumulative density function of the "
-                        "distribution");
+                        "distribution.");
 
       // Every type of distribution
       prm.declare_entry("number of particles",
@@ -452,7 +451,6 @@ namespace Parameters
         prm.get_double("rolling viscous damping particles"));
       rolling_friction_coefficient_particle.push_back(
         prm.get_double("rolling friction particles"));
-
       surface_energy_particle.push_back(
         prm.get_double("surface energy particles"));
       hamaker_constant_particle.push_back(
