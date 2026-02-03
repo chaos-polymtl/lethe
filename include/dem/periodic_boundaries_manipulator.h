@@ -42,8 +42,8 @@ public:
    */
   void
   set_periodic_boundaries_information(
-    const types::boundary_id periodic_boundary_id_0,
-    const unsigned int       periodic_direction)
+    const std::unordered_map<unsigned int, types::boundary_id> periodic_boundary_id_0,
+    const std::unordered_map<unsigned int, unsigned int>       periodic_direction)
   {
     // If function is reached, there are periodic boundaries in the simulation
     periodic_boundaries_enabled = true;
@@ -150,13 +150,13 @@ private:
    * since they are linked on the triangulation, and accessible through
    * functions on cells on the boundary condition 0.
    */
-  types::boundary_id periodic_boundary_0;
+  std::unordered_map<unsigned int, types::boundary_id> periodic_boundary_0;
 
   /**
    * @brief Direction of the periodic boundary, it is the perpendicular axis of
    * the periodic boundaries.
    */
-  unsigned int direction;
+  std::unordered_map<unsigned int, unsigned int> direction;
 
   /**
    * @brief Offset distance between periodic boundaries, it is calculated from

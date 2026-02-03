@@ -85,27 +85,30 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
                   // Check if face is on the periodic boundary 0
                   // Pairs of periodic cells are stored once.
                   unsigned int face_boundary_id = face->boundary_id();
-                  if (face_boundary_id == periodic_boundary_0)
+                  for (const auto& pair : periodic_boundary_0) 
                     {
-                      // Save boundaries information related to the cell on
-                      // the periodic boundary 0
-                      // Information about both boundaries are stored in
-                      // periodic_boundary_cells_info_struct
-                      periodic_boundaries_cells_info_struct<dim>
-                                   boundaries_information;
-                      unsigned int face_id = cell->face_iterator_to_index(face);
+                      if (pair.second == face_boundary_id) 
+                        {
+                          // Save boundaries information related to the cell on
+                          // the periodic boundary 0
+                          // Information about both boundaries are stored in
+                          // periodic_boundary_cells_info_struct
+                          periodic_boundaries_cells_info_struct<dim>
+                                      boundaries_information;
+                          unsigned int face_id = cell->face_iterator_to_index(face);
 
-                      get_periodic_boundaries_info(cell,
-                                                   face_id,
-                                                   boundaries_information);
+                          get_periodic_boundaries_info(cell,
+                                                      face_id,
+                                                      boundaries_information);
 
-                      // Store boundaries information in map with cell id at
-                      // periodic boundary 0 as key
-                      periodic_boundaries_cells_information.insert(
-                        {boundaries_information.cell
-                           ->global_active_cell_index(),
-                         boundaries_information});
-                    }
+                          // Store boundaries information in map with cell id at
+                          // periodic boundary 0 as key
+                          periodic_boundaries_cells_information.insert(
+                            {boundaries_information.cell
+                              ->global_active_cell_index(),
+                            boundaries_information});
+                        }
+                    } 
                 }
             }
         }
