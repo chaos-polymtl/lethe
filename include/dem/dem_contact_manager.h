@@ -90,7 +90,7 @@ public:
   update_contacts();
 
   /**
-   * @breif Execute functions to update the particle iterators in local-local
+   * @brief Execute functions to update the particle iterators in local-local
    * contact containers.
    *
    * This is essential since sort_particles_into_subdomains_and_cells() and
