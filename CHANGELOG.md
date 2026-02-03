@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MAJOR This PR updates the project version to the current release tag. [#1904](https://github.com/chaos-polymtl/lethe/pull/1904)
 
+### Fixed
+
+- MAJOR This PR fixes the boussinesq buoyancy term that was miscalculated in VOF. Contrary to the Navier Stockes equations from the `PSPGSUPGNavierStokesAssemblerCore`, when using VOF, the density term appears explicitely in both left and right had sides of the assembly from `GLSNavierStokesVOFAssemblerCore`. As such, the BuoyancyAssembler from the base Navier Stockes code did not compute the proper buoyancy term. This was fixed by adding a new buoyancy assembler specific for VOF `navier_stockes_vof_assemblers` and changed the setup assembler in both `fluid_dynamic_matrix_based` and `fluid_dynamic_block` to compute buoyancy properly. All tests affected by this change have been updated and a new VOF specific buoyancy test has been added to the application test suite.
+
 ## [Master] - 2026/01/29
 
 ### Changed
