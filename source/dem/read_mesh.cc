@@ -23,12 +23,16 @@ read_mesh(const Parameters::Mesh   &mesh_parameters,
   attach_grid_to_triangulation(triangulation, mesh_parameters);
 
   // Check if there are periodic boundaries
+  std::vector<unsigned int> periodic_bc_indices;
   for (unsigned int i_bc = 0; i_bc < bc_params.bc_types.size(); ++i_bc)
     {
       if (bc_params.bc_types[i_bc] ==
           Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
-        match_periodic_boundaries(triangulation, bc_params);
+        periodic_bc_indices.push_back(i_bc);
     }
+  
+  if (!periodic_bc_indices.empty())
+    match_periodic_boundaries(triangulation, bc_params, periodic_bc_indices);
 
   if (!restart)
     {
@@ -58,17 +62,21 @@ read_mesh(const Parameters::Mesh   &mesh_parameters,
 template <int dim, int spacedim>
 void
 match_periodic_boundaries(Triangulation<dim, spacedim>        &triangulation,
-                          const Parameters::Lagrangian::BCDEM &bc_param)
+                          const Parameters::Lagrangian::BCDEM &bc_param,
+                          const std::vector<unsigned int>     &periodic_bc_indices)
 {
   std::vector<GridTools::PeriodicFacePair<
     typename Triangulation<dim, spacedim>::cell_iterator>>
     periodicity_vector;
 
-  GridTools::collect_periodic_faces(triangulation,
-                                    bc_param.periodic_boundary_0,
-                                    bc_param.periodic_boundary_1,
-                                    bc_param.periodic_direction,
-                                    periodicity_vector);
+  for (const auto &i_bc : periodic_bc_indices)
+    {
+      GridTools::collect_periodic_faces(triangulation,
+                                        bc_param.periodic_boundary_0[i_bc],
+                                        bc_param.periodic_boundary_1[i_bc],
+                                        bc_param.periodic_direction[i_bc],
+                                        periodicity_vector);
+    }
   triangulation.add_periodicity(periodicity_vector);
 }
 

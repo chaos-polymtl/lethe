@@ -44,8 +44,13 @@ public:
    */
   void
   set_periodic_boundaries_information(
+<<<<<<< HEAD
     const std::unordered_map<unsigned int, types::boundary_id> &periodic_boundary_ids_0,
     const std::unordered_map<unsigned int, unsigned int>       &periodic_directions)
+=======
+    const std::unordered_map<unsigned int, types::boundary_id> periodic_boundary_id_0,
+    const std::unordered_map<unsigned int, unsigned int>       periodic_direction)
+>>>>>>> bd6a750b8 (merge avec le reste de la branche)
   {
     // If function is reached and vectors are not empty
     if (!periodic_boundary_ids_0.empty())
@@ -159,13 +164,21 @@ private:
   /**
    * @brief IDs of the first periodic boundary of each pair.
    */
+<<<<<<< HEAD
   std::unordered_map<unsigned int, types::boundary_id> periodic_boundaries_ids;
+=======
+  std::unordered_map<unsigned int, types::boundary_id> periodic_boundary_0;
+>>>>>>> bd6a750b8 (merge avec le reste de la branche)
 
   /**
    * @brief Direction of the periodic boundaries, it is the perpendicular axis of
    * the periodic boundaries.
    */
+<<<<<<< HEAD
   std::unordered_map<unsigned int, unsigned int> directions;
+=======
+  std::unordered_map<unsigned int, unsigned int> direction;
+>>>>>>> bd6a750b8 (merge avec le reste de la branche)
 
   /**
    * @brief Map storing offset distance between periodic boundaries, keyed by the
