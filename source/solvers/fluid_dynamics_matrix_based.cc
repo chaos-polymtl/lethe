@@ -419,7 +419,8 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
     {
       if (this->simulation_parameters.multiphysics.VOF)
         {
-          // VOF formulation includes density explicitly in the momentum equation
+          // VOF formulation includes density explicitly in the momentum
+          // equation
           this->assemblers.emplace_back(
             std::make_shared<BuoyancyAssemblyVOF<dim>>(
               this->simulation_control,
@@ -428,11 +429,10 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
         }
       else
         {
-          this->assemblers.emplace_back(
-            std::make_shared<BuoyancyAssembly<dim>>(
-              this->simulation_control,
-              this->simulation_parameters.physical_properties_manager
-                .get_reference_temperature()));
+          this->assemblers.emplace_back(std::make_shared<BuoyancyAssembly<dim>>(
+            this->simulation_control,
+            this->simulation_parameters.physical_properties_manager
+              .get_reference_temperature()));
         }
     }
 

@@ -57,7 +57,7 @@ end
 subsection physical properties
   set number of fluids = 2
   subsection fluid 0
-    set density = 10
+    set density              = 10
     set thermal expansion    = 0.01
     set thermal conductivity = 1
   end
@@ -212,7 +212,7 @@ subsection linear solver
     set ilu preconditioner absolute tolerance = 1e-14
     set ilu preconditioner relative tolerance = 1.00
   end
-    subsection VOF
+  subsection VOF
     set verbosity                             = quiet
     set method                                = gmres
     set relative residual                     = 1e-13
