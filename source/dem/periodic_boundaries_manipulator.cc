@@ -109,6 +109,9 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
                           get_periodic_boundaries_info(cell,
                                                       face_id,
                                                       boundaries_information);
+                          get_periodic_boundaries_info(cell,
+                                                      face_id,
+                                                      boundaries_information);
 
                           // Insert into multimap
                           periodic_boundaries_cells_information.insert(

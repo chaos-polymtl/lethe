@@ -157,7 +157,9 @@ private:
   bool periodic_boundaries_enabled;
 
   /**
-   * @brief IDs of the first periodic boundary of each pair.
+   * @brief ID of the first periodic boundary. No needs to store the second one
+   * since they are linked on the triangulation, and accessible through
+   * functions on cells on the boundary condition 0.
    */
   std::unordered_map<unsigned int, types::boundary_id> periodic_boundaries_ids;
 
