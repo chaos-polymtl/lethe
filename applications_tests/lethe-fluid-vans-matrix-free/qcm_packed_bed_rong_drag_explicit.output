@@ -23,8 +23,8 @@ Transient iteration: 2        Time: 0.0002   Time step: 0.0001   CFL: 0.0108719
 --------------
 Void Fraction
 --------------
-Pressure drop: 49.865 Pa
-Total pressure drop: 49.865 Pa
+Pressure drop: 49.8647 Pa
+Total pressure drop: 49.8647 Pa
 
 ********************************************************************************
 Transient iteration: 3        Time: 0.0003   Time step: 0.0001   CFL: 0.0105467
@@ -32,8 +32,8 @@ Transient iteration: 3        Time: 0.0003   Time step: 0.0001   CFL: 0.0105467
 --------------
 Void Fraction
 --------------
-Pressure drop: 48.8517 Pa
-Total pressure drop: 48.8518 Pa
+Pressure drop: 48.8514 Pa
+Total pressure drop: 48.8514 Pa
 
 ********************************************************************************
 Transient iteration: 4        Time: 0.0004   Time step: 0.0001   CFL: 0.0103276
@@ -41,8 +41,8 @@ Transient iteration: 4        Time: 0.0004   Time step: 0.0001   CFL: 0.0103276
 --------------
 Void Fraction
 --------------
-Pressure drop: 48.6848 Pa
-Total pressure drop: 48.6849 Pa
+Pressure drop: 48.6845 Pa
+Total pressure drop: 48.6845 Pa
 
 ********************************************************************************
 Transient iteration: 5        Time: 0.0005   Time step: 0.0001   CFL: 0.0101801
@@ -50,8 +50,8 @@ Transient iteration: 5        Time: 0.0005   Time step: 0.0001   CFL: 0.0101801
 --------------
 Void Fraction
 --------------
-Pressure drop: 48.5761 Pa
-Total pressure drop: 48.5761 Pa
+Pressure drop: 48.5758 Pa
+Total pressure drop: 48.5758 Pa
 
 ********************************************************************************
 Transient iteration: 6        Time: 0.0006   Time step: 0.0001   CFL: 0.0100833
@@ -59,8 +59,8 @@ Transient iteration: 6        Time: 0.0006   Time step: 0.0001   CFL: 0.0100833
 --------------
 Void Fraction
 --------------
-Pressure drop: 48.4886 Pa
-Total pressure drop: 48.4886 Pa
+Pressure drop: 48.4883 Pa
+Total pressure drop: 48.4883 Pa
 
 ********************************************************************************
 Transient iteration: 7        Time: 0.0007   Time step: 0.0001   CFL: 0.0100247
@@ -68,32 +68,32 @@ Transient iteration: 7        Time: 0.0007   Time step: 0.0001   CFL: 0.0100247
 --------------
 Void Fraction
 --------------
-Pressure drop: 48.4154 Pa
-Total pressure drop: 48.4154 Pa
+Pressure drop: 48.4151 Pa
+Total pressure drop: 48.4151 Pa
 
 *********************************************************************************
-Transient iteration: 8        Time: 0.0008   Time step: 0.0001   CFL: 0.00999515
+Transient iteration: 8        Time: 0.0008   Time step: 0.0001   CFL: 0.00999513
 *********************************************************************************
 --------------
 Void Fraction
 --------------
-Pressure drop: 48.353 Pa
-Total pressure drop: 48.353 Pa
+Pressure drop: 48.3527 Pa
+Total pressure drop: 48.3527 Pa
 
 *********************************************************************************
-Transient iteration: 9        Time: 0.0009   Time step: 0.0001   CFL: 0.00998538
+Transient iteration: 9        Time: 0.0009   Time step: 0.0001   CFL: 0.00998536
 *********************************************************************************
 --------------
 Void Fraction
 --------------
-Pressure drop: 48.299 Pa
-Total pressure drop: 48.299 Pa
+Pressure drop: 48.2987 Pa
+Total pressure drop: 48.2987 Pa
 
 *********************************************************************************
-Transient iteration: 10       Time: 0.001    Time step: 0.0001   CFL: 0.00999241
+Transient iteration: 10       Time: 0.001    Time step: 0.0001   CFL: 0.00999239
 *********************************************************************************
 --------------
 Void Fraction
 --------------
-Pressure drop: 48.2517 Pa
-Total pressure drop: 48.2517 Pa
+Pressure drop: 48.2514 Pa
+Total pressure drop: 48.2514 Pa

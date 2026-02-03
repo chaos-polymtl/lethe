@@ -65,7 +65,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number                = 4
+  set number                = 1
   set fix pressure constant = true
 
   subsection bc 0
@@ -78,39 +78,6 @@ subsection boundary conditions
       set Function expression = exp(sin(-pi)*sin(pi*y))/exp(1)
     end
   end
-
-  subsection bc 1
-    set id   = 1
-    set type = function
-    subsection u
-      set Function expression = exp(sin(pi)*sin(pi*y))/exp(1)
-    end
-    subsection v
-      set Function expression = exp(sin(pi)*sin(pi*y))/exp(1)
-    end
-  end
-
-  subsection bc 2
-    set id   = 2
-    set type = function
-    subsection u
-      set Function expression = exp(sin(pi*x)*sin(-pi))/exp(1)
-    end
-    subsection v
-      set Function expression = exp(sin(pi*x)*sin(-pi))/exp(1)
-    end
-  end
-
-  subsection bc 3
-    set id   = 3
-    set type = function
-    subsection u
-      set Function expression = exp(sin(pi*x)*sin(pi))/exp(1)
-    end
-    subsection v
-      set Function expression = exp(sin(pi*x)*sin(pi))/exp(1)
-    end
-  end
 end
 
 #---------------------------------------------------
@@ -119,7 +86,7 @@ end
 
 subsection source term
   subsection fluid dynamics
-    set Function expression = 1.0*pi*(2.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)^2*sin(pi*y)^2 - 1.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)^2 + 2.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)*sin(pi*y) - 1.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*y)^2 + 1.0*exp(2*sin(pi*x)*sin(pi*y))*sin(pi*(x + y)) + 0.5*exp(2)*sin(pi*y)*cos(pi*x))*exp(-2)  ;  1.0*pi*(2.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)^2*sin(pi*y)^2 - 1.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)^2 + 2.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)*sin(pi*y) - 1.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*y)^2 + 1.0*exp(2*sin(pi*x)*sin(pi*y))*sin(pi*(x + y)) + 0.5*exp(2)*sin(pi*x)*cos(pi*y))*exp(-2)  ;  0
+    set Function expression = 1.0*pi*(3.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)^2*sin(pi*y)^2 - 1.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)^2 - 1.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)*sin(pi*y)*cos(pi*x)*cos(pi*y) + 3.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)*sin(pi*y) - 2.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*y)^2 - 1.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*cos(pi*x)*cos(pi*y) + 1.0*exp(2*sin(pi*x)*sin(pi*y))*sin(pi*(x + y)) + 0.5*exp(2)*sin(pi*y)*cos(pi*x))*exp(-2)  ;  1.0*pi*(3.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)^2*sin(pi*y)^2 - 2.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)^2 - 1.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)*sin(pi*y)*cos(pi*x)*cos(pi*y) + 3.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*x)*sin(pi*y) - 1.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*sin(pi*y)^2 - 1.0*pi*exp(sin(pi*x)*sin(pi*y) + 1)*cos(pi*x)*cos(pi*y) + 1.0*exp(2*sin(pi*x)*sin(pi*y))*sin(pi*(x + y)) + 0.5*exp(2)*sin(pi*x)*cos(pi*y))*exp(-2)  ;  0
   end
 end
 

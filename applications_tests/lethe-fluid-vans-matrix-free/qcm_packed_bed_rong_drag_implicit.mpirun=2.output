@@ -15,7 +15,7 @@ Transient iteration: 1        Time: 0.0001   Time step: 0.0001   CFL: 0.00337154
 Void Fraction
 --------------
 Pressure drop: 520.3 Pa
-Total pressure drop: 520.301 Pa
+Total pressure drop: 520.3 Pa
 
 ********************************************************************************
 Transient iteration: 2        Time: 0.0002   Time step: 0.0001   CFL: 0.0105694
@@ -23,8 +23,8 @@ Transient iteration: 2        Time: 0.0002   Time step: 0.0001   CFL: 0.0105694
 --------------
 Void Fraction
 --------------
-Pressure drop: 49.5892 Pa
-Total pressure drop: 49.5892 Pa
+Pressure drop: 49.5889 Pa
+Total pressure drop: 49.5889 Pa
 
 ********************************************************************************
 Transient iteration: 3        Time: 0.0003   Time step: 0.0001   CFL: 0.0105506
@@ -32,8 +32,8 @@ Transient iteration: 3        Time: 0.0003   Time step: 0.0001   CFL: 0.0105506
 --------------
 Void Fraction
 --------------
-Pressure drop: 48.0097 Pa
-Total pressure drop: 48.0097 Pa
+Pressure drop: 48.0094 Pa
+Total pressure drop: 48.0094 Pa
 
 *******************************************************************************
 Transient iteration: 4        Time: 0.0004   Time step: 0.0001   CFL: 0.010463
@@ -41,8 +41,8 @@ Transient iteration: 4        Time: 0.0004   Time step: 0.0001   CFL: 0.010463
 --------------
 Void Fraction
 --------------
-Pressure drop: 47.9272 Pa
-Total pressure drop: 47.9272 Pa
+Pressure drop: 47.9269 Pa
+Total pressure drop: 47.9269 Pa
 
 *******************************************************************************
 Transient iteration: 5        Time: 0.0005   Time step: 0.0001   CFL: 0.010407
@@ -50,26 +50,26 @@ Transient iteration: 5        Time: 0.0005   Time step: 0.0001   CFL: 0.010407
 --------------
 Void Fraction
 --------------
-Pressure drop: 47.9044 Pa
-Total pressure drop: 47.9044 Pa
+Pressure drop: 47.9041 Pa
+Total pressure drop: 47.9041 Pa
 
 ********************************************************************************
-Transient iteration: 6        Time: 0.0006   Time step: 0.0001   CFL: 0.0103733
+Transient iteration: 6        Time: 0.0006   Time step: 0.0001   CFL: 0.0103732
 ********************************************************************************
 --------------
 Void Fraction
 --------------
-Pressure drop: 47.8899 Pa
-Total pressure drop: 47.8899 Pa
+Pressure drop: 47.8896 Pa
+Total pressure drop: 47.8896 Pa
 
 ********************************************************************************
-Transient iteration: 7        Time: 0.0007   Time step: 0.0001   CFL: 0.0103537
+Transient iteration: 7        Time: 0.0007   Time step: 0.0001   CFL: 0.0103536
 ********************************************************************************
 --------------
 Void Fraction
 --------------
-Pressure drop: 47.8793 Pa
-Total pressure drop: 47.8793 Pa
+Pressure drop: 47.879 Pa
+Total pressure drop: 47.879 Pa
 
 ********************************************************************************
 Transient iteration: 8        Time: 0.0008   Time step: 0.0001   CFL: 0.0103429
@@ -77,8 +77,8 @@ Transient iteration: 8        Time: 0.0008   Time step: 0.0001   CFL: 0.0103429
 --------------
 Void Fraction
 --------------
-Pressure drop: 47.8713 Pa
-Total pressure drop: 47.8713 Pa
+Pressure drop: 47.871 Pa
+Total pressure drop: 47.871 Pa
 
 ********************************************************************************
 Transient iteration: 9        Time: 0.0009   Time step: 0.0001   CFL: 0.0103376
@@ -86,8 +86,8 @@ Transient iteration: 9        Time: 0.0009   Time step: 0.0001   CFL: 0.0103376
 --------------
 Void Fraction
 --------------
-Pressure drop: 47.865 Pa
-Total pressure drop: 47.865 Pa
+Pressure drop: 47.8647 Pa
+Total pressure drop: 47.8647 Pa
 
 ********************************************************************************
 Transient iteration: 10       Time: 0.001    Time step: 0.0001   CFL: 0.0103357
@@ -95,5 +95,5 @@ Transient iteration: 10       Time: 0.001    Time step: 0.0001   CFL: 0.0103357
 --------------
 Void Fraction
 --------------
-Pressure drop: 47.8601 Pa
-Total pressure drop: 47.8601 Pa
+Pressure drop: 47.8598 Pa
+Total pressure drop: 47.8598 Pa

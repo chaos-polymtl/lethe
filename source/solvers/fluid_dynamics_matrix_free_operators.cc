@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -829,6 +829,7 @@ NavierStokesOperatorBase<dim, number>::
   nonlinear_previous_values.reinit(n_cells, integrator.n_q_points);
   nonlinear_previous_gradient.reinit(n_cells, integrator.n_q_points);
   nonlinear_previous_hessian_diagonal.reinit(n_cells, integrator.n_q_points);
+  nonlinear_previous_hessian.reinit(n_cells, integrator.n_q_points);
   stabilization_parameter.reinit(n_cells, integrator.n_q_points);
   stabilization_parameter_lsic.reinit(n_cells, integrator.n_q_points);
   kinematic_viscosity_vector.reinit(n_cells, integrator.n_q_points);
@@ -881,8 +882,11 @@ NavierStokesOperatorBase<dim, number>::
             velocity_for_stabilization(cell, q) -= this->velocity_ale(cell, q);
 
           if (this->enable_hessians_jacobian)
-            nonlinear_previous_hessian_diagonal(cell, q) =
-              integrator.get_hessian_diagonal(q);
+            {
+              nonlinear_previous_hessian_diagonal(cell, q) =
+                integrator.get_hessian_diagonal(q);
+              nonlinear_previous_hessian(cell, q) = integrator.get_hessian(q);
+            }
 
           // Calculate tau
           VectorizedArray<number> u_mag_squared = 1e-12;

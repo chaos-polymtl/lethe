@@ -12,7 +12,7 @@ Steady iteration:        1/3
 --------------
 Void Fraction
 --------------
-L2 error velocity: 0.00330659
+L2 error velocity: 0.00336471
 
 *****************************
 Steady iteration:        2/3
@@ -23,7 +23,7 @@ Steady iteration:        2/3
 --------------
 Void Fraction
 --------------
-L2 error velocity: 0.000412597
+L2 error velocity: 0.000414451
 
 *****************************
 Steady iteration:        3/3
@@ -34,8 +34,8 @@ Steady iteration:        3/3
 --------------
 Void Fraction
 --------------
-L2 error velocity: 5.15264e-05
+L2 error velocity: 5.1585e-05
 cells  error_velocity    error_pressure   
-  256 3.306587e-03    - 4.066649e-02    - 
- 1024 4.125975e-04 3.00 1.014277e-02 2.00 
- 4096 5.152641e-05 3.00 2.533041e-03 2.00 
+  256 3.364713e-03    - 1.433648e-01    - 
+ 1024 4.144513e-04 3.02 3.458744e-02 2.05 
+ 4096 5.158497e-05 3.01 8.552141e-03 2.02 
