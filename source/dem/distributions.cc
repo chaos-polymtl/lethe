@@ -448,13 +448,13 @@ CustomDistribution::CustomDistribution(
         {
           AssertThrow(d_probabilities[0] == 0.,
                       ExcMessage("When using the custom distribution "
-                                 "defined as a PFD with interpolation, the "
+                                 "defined as a PDF with interpolation, the "
                                  "first probability value needs to be equal"
                                  " to 0."));
 
           AssertThrow(d_probabilities.back() == 0.,
                       ExcMessage("When using the custom distribution defined"
-                                 " as a PFD with interpolation, the last "
+                                 " as a PDF with interpolation, the last "
                                  "probability value needs to be equal to 0."));
         }
       else
@@ -464,7 +464,7 @@ CustomDistribution::CustomDistribution(
                                                0.) -
                                1.) <= 1e-5,
                       ExcMessage("When using the custom distribution "
-                                 "defined as a PFD without interpolation, "
+                                 "defined as a PDF without interpolation, "
                                  "probability values are used as fraction, "
                                  "thus the sum of every probability value "
                                  "should be equal to 1."));
@@ -477,7 +477,7 @@ CustomDistribution::CustomDistribution(
     {
       if (function_type == ProbabilityFunctionType::CDF)
         {
-          // If the input probability function is already given as a number
+          // If the input probability function is already given as a number-
           // based CFD, nothing needs to be done.
           number_based_cdf = d_probabilities;
         }
@@ -519,7 +519,7 @@ CustomDistribution::CustomDistribution(
               // The volume fraction (dfv) is the area under the PDF or the
               // difference in CDF between consecutive diameter values.
               // The difference between two consecutive nodes gives
-              // the volume fraction contained in this .
+              // the volume fraction contained in this bin.
               double this_bin_volume_fraction;
               if (function_type == ProbabilityFunctionType::PDF)
                 this_bin_volume_fraction =
