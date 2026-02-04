@@ -158,7 +158,7 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
 
   // Verify that the those transverse vectors with respect to the normal of the
   // face is coherent and form an orthogonal basis.
-  if (!(std::abs(normal * e_t1) < 1e-12) && !(std::abs(normal * e_t2) < 1e-12))
+  if ((std::abs(normal * e_t1) > 1e-12) || (std::abs(normal * e_t2) > 1e-12))
     AssertThrow(
       false,
       ExcMessage(
@@ -167,15 +167,24 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
                          .waveguide_boundary_ids[boundary_id_index]) +
         " is not orthogonal to the boundary face normal. Please check the waveguide corners definition in the input prm file."));
 
-  // Ensure e_t1 and e_t2 form a right-handed coordinate system with the normal.
-  // They do if the scalar triple product is negative. If they don't, we swap
-  // e_t1 and e_t2.
-  if ((normal * cross_product_3d(e_t1, e_t2)) > 0)
+  // Create a third vector to complete the right-handed coordinate system
+  Tensor<1, dim> e_t3 = cross_product_3d(e_t1, e_t2);
+
+  // Determine if e_t3 needs to be flipped to point in the direction opposite to
+  // the outward normal. For an incident wave at the inlet, the propagation
+  // direction should point into the domain (opposite to the outward normal).
+  // We use the sign of (normal · t3) to determine this:
+  //   - If normal · t3 > 0: t3 points outward, need to flip entire system
+  //   - If normal · t3 < 0: t3 points inward (correct for incident wave)
+  double sign_factor = 1.0;
+  if ((normal * e_t3) > 0)
     {
-      length_t1 = transverse_vector_2.norm();
-      length_t2 = transverse_vector_1.norm();
-      e_t1      = transverse_vector_2 / length_t1;
-      e_t2      = transverse_vector_1 / length_t2;
+      // Flip t3 to point inward (opposite to outward normal)
+      // To maintain a right-handed system, we also flip t2
+      e_t2 = -e_t2;
+      e_t3 = -e_t3;
+      // This sign factor accounts for the coordinate flip in the y' direction
+      sign_factor = -1.0;
     }
 
   // Compute the various wavenumber k in using this global coordinate system
@@ -188,7 +197,8 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
     std::sqrt(k * k - k_c * k_c); // Longitudinal wavenumber
 
   // Verify that the mode is not evanescent, i.e. k_l is not purely imaginary
-  // (k_c^2 < k^2).
+  // (k_c^2 < k^2). Std::norm computes the squared magnitude of a complex
+  // number.
   AssertThrow(std::norm(k) > (k_c * k_c),
               ExcMessage(
                 "The chosen mode for the waveguide port at boundary ID " +
@@ -201,71 +211,103 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
   // point p as if the waveguide center was at the origin. So we will perform a
   // change of basis to a local coordinate system where the waveguide center is
   // at the origin.
-
   Tensor<1, dim> origin_local =
     0.25 * (waveguide_corners[0] + waveguide_corners[1] + waveguide_corners[2] +
             waveguide_corners[3]);
+
   Tensor<1, dim> p_local =
     p - origin_local; // Coordinates of point p in this local system.
   double x_local = p_local * e_t1; // Coordinate along e_t1 in the local system
-  double y_local = p_local * e_t2; // Coordinate along e_t2 in the local system
+  double y_local =
+    sign_factor * (p_local * e_t2); // Coordinate along e_t2 in the local system
   // We assume that the z_local coordinate is 0 since we are on the face.
 
-  // Finally, we can compute the eletromagnetic excitation at point p.
+  // Compute the E and H field components for the TE mode in the local
+  // coordinate system {t1, t2, t3} = {x', y', z'}. We assume z' = 0 at the
+  // boundary.
+  Tensor<1, dim, std::complex<double>> E_inc_local;
+  Tensor<1, dim, std::complex<double>> H_inc_local;
+
+  // We will also need to map these local fields back to the global system at
+  // the end. so We define the rotation matrix from local to global system and
+  // the final fields
+  Tensor<2, dim, double> rotation_matrix;
+  for (unsigned int i = 0; i < dim; ++i)
+    {
+      rotation_matrix[i][0] = e_t1[i];
+      rotation_matrix[i][1] = sign_factor * e_t2[i];
+      rotation_matrix[i][2] = e_t3[i];
+    }
+
   Tensor<1, dim, std::complex<double>> E_inc;
   Tensor<1, dim, std::complex<double>> H_inc;
   Tensor<1, dim, std::complex<double>> excitation;
   std::complex<double>                 surface_admittance;
-
 
   if (mode == Parameters::WaveguideMode::TE)
     {
       std::complex<double> factor =
         imag * k * k / (k_c * k_c * epsilon_r_eff * omega);
 
-      E_inc[0] = -factor * k_t2 * std::cos(k_t1 * (x_local + length_t1 / 2)) *
-                 std::sin(k_t2 * (y_local + length_t2 / 2));
-      E_inc[1] = factor * k_t1 * std::sin(k_t1 * (x_local + length_t1 / 2)) *
-                 std::cos(k_t2 * (y_local + length_t2 / 2));
-      E_inc[2] = 0.0;
+      E_inc_local[0] = -factor * k_t2 *
+                       std::cos(k_t1 * (x_local + length_t1 / 2)) *
+                       std::sin(k_t2 * (y_local + length_t2 / 2));
+      E_inc_local[1] = factor * k_t1 *
+                       std::sin(k_t1 * (x_local + length_t1 / 2)) *
+                       std::cos(k_t2 * (y_local + length_t2 / 2));
+      E_inc_local[2] = 0.0;
 
-      H_inc[0] = -imag * k_l * k_t1 / (k_c * k_c) *
-                 std::sin(k_t1 * (x_local + length_t1 / 2)) *
-                 std::cos(k_t2 * (y_local + length_t2 / 2));
-      H_inc[1] = -imag * k_l * k_t2 / (k_c * k_c) *
-                 std::cos(k_t1 * (x_local + length_t1 / 2)) *
-                 std::sin(k_t2 * (y_local + length_t2 / 2));
-      H_inc[2] = std::cos(k_t1 * (x_local + length_t1 / 2)) *
-                 std::cos(k_t2 * (y_local + length_t2 / 2));
+      H_inc_local[0] = -imag * k_l * k_t1 / (k_c * k_c) *
+                       std::sin(k_t1 * (x_local + length_t1 / 2)) *
+                       std::cos(k_t2 * (y_local + length_t2 / 2));
+      H_inc_local[1] = -imag * k_l * k_t2 / (k_c * k_c) *
+                       std::cos(k_t1 * (x_local + length_t1 / 2)) *
+                       std::sin(k_t2 * (y_local + length_t2 / 2));
+      H_inc_local[2] = std::cos(k_t1 * (x_local + length_t1 / 2)) *
+                       std::cos(k_t2 * (y_local + length_t2 / 2));
+
+      // Map local fields to global coordinate system
+      E_inc = rotation_matrix * E_inc_local;
+      H_inc = rotation_matrix * H_inc_local;
 
       surface_admittance = k_l / (omega * mu_r);
 
-      excitation = cross_product_3d(normal, H_inc) +
-                   map_H12(surface_admittance * E_inc, normal);
+      // We need to account for the possible flip in the y' direction when
+      // computing the excitation so we use sign_factor here.
+      excitation = cross_product_3d(sign_factor * normal, H_inc) +
+                   map_H12(surface_admittance * E_inc, sign_factor * normal);
     }
   else if (mode == Parameters::WaveguideMode::TM)
     {
       std::complex<double> factor = imag * k * k / (k_c * k_c * mu_r * omega);
 
-      H_inc[0] = -factor * k_t2 * std::sin(k_t1 * (x_local + length_t1 / 2)) *
-                 std::cos(k_t2 * (y_local + length_t2 / 2));
-      H_inc[1] = factor * k_t1 * std::cos(k_t1 * (x_local + length_t1 / 2)) *
-                 std::sin(k_t2 * (y_local + length_t2 / 2));
-      H_inc[2] = 0.0;
+      H_inc_local[0] = -factor * k_t2 *
+                       std::sin(k_t1 * (x_local + length_t1 / 2)) *
+                       std::cos(k_t2 * (y_local + length_t2 / 2));
+      H_inc_local[1] = factor * k_t1 *
+                       std::cos(k_t1 * (x_local + length_t1 / 2)) *
+                       std::sin(k_t2 * (y_local + length_t2 / 2));
+      H_inc_local[2] = 0.0;
 
-      E_inc[0] = imag * k_l * k_t1 / (k_c * k_c) *
-                 std::cos(k_t1 * (x_local + length_t1 / 2)) *
-                 std::sin(k_t2 * (y_local + length_t2 / 2));
-      E_inc[1] = imag * k_l * k_t2 / (k_c * k_c) *
-                 std::sin(k_t1 * (x_local + length_t1 / 2)) *
-                 std::cos(k_t2 * (y_local + length_t2 / 2));
-      E_inc[2] = std::sin(k_t1 * (x_local + length_t1 / 2)) *
-                 std::sin(k_t2 * (y_local + length_t2 / 2));
+      E_inc_local[0] = imag * k_l * k_t1 / (k_c * k_c) *
+                       std::cos(k_t1 * (x_local + length_t1 / 2)) *
+                       std::sin(k_t2 * (y_local + length_t2 / 2));
+      E_inc_local[1] = imag * k_l * k_t2 / (k_c * k_c) *
+                       std::sin(k_t1 * (x_local + length_t1 / 2)) *
+                       std::cos(k_t2 * (y_local + length_t2 / 2));
+      E_inc_local[2] = std::sin(k_t1 * (x_local + length_t1 / 2)) *
+                       std::sin(k_t2 * (y_local + length_t2 / 2));
+
+      // Map local fields to global coordinate system
+      E_inc = rotation_matrix * E_inc_local;
+      H_inc = rotation_matrix * H_inc_local;
 
       surface_admittance = omega * epsilon_r_eff / k_l;
 
-      excitation = cross_product_3d(normal, H_inc) +
-                   map_H12(surface_admittance * E_inc, normal);
+      // We need to account for the possible flip in the y' direction when
+      // computing the excitation so we use sign_factor here.
+      excitation = cross_product_3d(sign_factor * normal, H_inc) +
+                   map_H12(surface_admittance * E_inc, sign_factor * normal);
     }
   else
     {
