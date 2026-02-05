@@ -12,7 +12,7 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
     # Thermal physics
     set heat transfer                   = false
     set viscous dissipation             = false
-    set buoyancy force                  = false
+    set thermal buoyancy force           = false
 
     # Tracer
     set tracer                          = false
@@ -37,7 +37,7 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
   When ``set heat transfer = true``, these optional parameters can be used:
    * ``viscous dissipation``: controls if the viscous dissipation is taken into account in the heat transfer equation.
 
-   * ``buoyancy force``: controls if the buoyancy force is taken into account in the Navier-Stokes equations. The buoyancy force is calculated using the Boussinesq approximation.
+   * ``thermal buoyancy force``: controls if the thermal buoyancy force is taken into account in the Navier-Stokes equations. The thermal buoyancy force is calculated using the Boussinesq approximation.
 
 .. seealso::
 
