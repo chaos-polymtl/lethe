@@ -1480,7 +1480,7 @@ template <int dim>
 void
 FluidDynamicsMatrixBased<dim>::setup_AMG()
 {
-  TimerOutput::Scope t(this->computing_timer, "setup_AMG");
+  TimerOutput::Scope t(this->computing_timer, "Setup AMG");
 
   // Constant modes for velocity
   std::vector<std::vector<bool>> constant_modes;

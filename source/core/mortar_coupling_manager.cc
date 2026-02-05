@@ -47,13 +47,9 @@ MortarManagerBase<dim>::get_n_total_mortars() const
     n_total_subdivisions *= n_subdivisions[1];
 
   if (this->is_mesh_aligned()) // aligned
-    {
-      return n_total_subdivisions;
-    }
+    return n_total_subdivisions;
   else // inside/outside
-    {
-      return 2 * n_total_subdivisions;
-    }
+    return 2 * n_total_subdivisions;
 }
 
 template <int dim>
@@ -64,13 +60,9 @@ MortarManagerBase<dim>::get_n_mortars() const
     return 1;
 
   if (this->is_mesh_aligned()) // aligned
-    {
-      return 1;
-    }
+    return 1;
   else // inside/outside
-    {
-      return 2;
-    }
+    return 2;
 }
 
 template <int dim>
@@ -678,9 +670,9 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
 /*-------------- MortarManagerCircle -------------------------------*/
 template <int dim>
 Point<dim>
-MortarManagerCircle<dim>::from_1D(const double radiant) const
+MortarManagerCircle<dim>::from_1D(const double angle_rad) const
 {
-  return radius_to_point<dim>(this->radius[0], radiant + pre_rotation_angle);
+  return radius_to_point<dim>(this->radius[0], angle_rad + pre_rotation_angle);
 }
 
 template <int dim>
