@@ -337,7 +337,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
   tmp_local_level_set *= scaling;
 
-  // tmp_local_level_set.add(-iso_level);
+  tmp_local_level_set.add(-iso_level);
 
   level_set = tmp_local_level_set;
 }
@@ -365,7 +365,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
                                         dof_handler,
                                         *fe,
                                         level_set,
-                                        iso_level,
+                                        0.0,
                                         interface_reconstruction_vertices,
                                         interface_reconstruction_cells,
                                         intersected_dofs);
@@ -1205,7 +1205,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
             InterfaceTools::compute_cell_wise_volume(fe_point_evaluation,
                                                      cell,
                                                      cell_level_set_dof_values,
-                                                     -iso_level,
+                                                     0.0,
                                                      fe->degree + 1);
 
           // Get the signed distance values to be corrected
@@ -1484,7 +1484,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
   double global_volume, surface;
 
   std::tie(global_volume, surface) = compute_surface_and_volume(
-    dof_handler, *fe, level_set, iso_level, mpi_communicator);
+    dof_handler, *fe, level_set, 0.0, mpi_communicator);
 
   /* Initialization of values for the secant method. The subscript nm1 (or n
   minus 1) stands for the previous secant iteration (it = n-1), the
