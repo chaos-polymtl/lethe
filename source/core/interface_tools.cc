@@ -337,6 +337,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
   tmp_local_level_set *= scaling;
 
+  // tmp_local_level_set.add(-iso_level);
+
   level_set = tmp_local_level_set;
 }
 
@@ -370,7 +372,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
 
   /* Compute the distance for the DoFs of the intersected cells (the ones in
   the intersected_dofs set). They correspond to the first neighbor DoFs.*/
-  compute_first_neighbors_distance();
+  // compute_first_neighbors_distance();
+  compute_first_neighbors_distance_minimization();
 
   /* Compute signed distance from distance (only first neighbors have an
   updated value)*/
@@ -404,7 +407,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::initialize_distance()
       distance(p)            = max_distance;
       distance_with_ghost(p) = max_distance;
 
-      const double sgn_level_set_value = sgn(level_set(p) - iso_level);
+      const double sgn_level_set_value = sgn(level_set(p) - 0.0);
       signed_distance(p)               = max_distance * sgn_level_set_value;
       signed_distance_with_ghost(p)    = max_distance * sgn_level_set_value;
     }
@@ -485,6 +488,145 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::exchange_distance()
       compress(VectorOperation::min) operation*/
       distance(p) = distance_with_ghost(p);
     }
+}
+
+template <int dim, typename VectorType>
+void
+InterfaceTools::SignedDistanceSolver<dim, VectorType>::
+  newton_raphson_method_for_minimization(const Point<dim>          &point,
+                                         const std::vector<double> &dof_values,
+                                         Point<dim> &closest_point)
+{
+  // X, Y, Z, lambda
+  Vector<double> current_solution(dim + 1);
+  Vector<double> solution_update(dim + 1);
+
+  Vector<double>     residual(dim + 1);
+  FullMatrix<double> hessian(dim + 1, dim + 1);
+
+  for (unsigned int i = 0; i < dim; ++i)
+    current_solution[i] = closest_point[i];
+
+  // std::cout << "Point = " << point <<std::endl;
+
+
+  for (unsigned int newton_iter = 0; newton_iter < 20; ++newton_iter)
+    {
+      hessian             = 0.0;
+      residual            = 0.0;
+      const double lambda = current_solution[dim];
+      for (unsigned int k = 0; k < dof_values.size(); ++k)
+        {
+          const auto value_k = fe->shape_value(k, closest_point);
+          const auto grad_k  = fe->shape_grad(k, closest_point);
+          const auto hess_k  = fe->shape_grad_grad(k, closest_point);
+          for (unsigned int i = 0; i < dim; ++i)
+            {
+              for (unsigned int j = 0; j < dim; ++j)
+                hessian(i, j) += lambda * dof_values[k] * hess_k[i][j];
+
+              hessian(i, dim) += dof_values[k] * grad_k[i];
+              hessian(dim, i) += dof_values[k] * grad_k[i];
+            }
+
+          for (unsigned int i = 0; i < dim; ++i)
+            residual[i] -= lambda * dof_values[k] * grad_k[i];
+
+          residual[dim] -= dof_values[k] * value_k;
+        }
+
+
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          residual[i] -= current_solution[i] - point[i];
+          hessian[i][i] += 1.0;
+        }
+
+      // std::cout << "Jacobian = " << std::endl;
+      // hessian.print_formatted(std::cout);
+      if (residual.l2_norm() < 1e-10)
+        break;
+
+      // std::cout << "Residual norm = " << residual.l2_norm() << std::endl;
+
+      hessian.gauss_jordan();
+      hessian.vmult(solution_update, residual);
+      current_solution += solution_update;
+
+      for (unsigned int i = 0; i < dim; ++i)
+        closest_point[i] = current_solution[i];
+      // std::cout << "closest_point = " << closest_point <<std::endl;
+    }
+
+  // Check if the Newton iteration converged
+  // std::cout << residual.l2_norm() << std::endl;
+  Assert(residual.l2_norm() < 1e-10,
+         ExcMessage("Newton iteration did not converge"));
+}
+
+
+template <int dim, typename VectorType>
+void
+InterfaceTools::SignedDistanceSolver<dim, VectorType>::
+  compute_first_neighbors_distance_minimization()
+{
+  NonMatching::MeshClassifier<dim> mesh_classifier(dof_handler, level_set);
+  mesh_classifier.reclassify();
+
+  
+  const unsigned int dofs_per_cell = fe->n_dofs_per_cell();
+
+  std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+  std::vector<double>                  cell_dof_values(dofs_per_cell);
+
+  std::vector<types::global_dof_index> neighbor_dof_indices(dofs_per_cell);
+  std::vector<double>                  neighbor_dof_values(dofs_per_cell);
+
+  std::map<types::global_dof_index, Point<dim>> dof_support_points =
+    DoFTools::map_dofs_to_support_points(*mapping, dof_handler);
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if ((cell->is_locally_owned()))
+        {
+          const NonMatching::LocationToLevelSet cell_location =
+            mesh_classifier.location_to_level_set(cell);
+
+          if (cell_location != NonMatching::LocationToLevelSet::intersected)
+            continue;
+
+          cell->get_dof_values(level_set,
+                               cell_dof_values.begin(),
+                               cell_dof_values.end());
+
+          cell->get_dof_indices(dof_indices);
+
+          for (unsigned int i = 0; i < dofs_per_cell; ++i)
+            {
+              const Point<dim> point = dof_support_points.at(dof_indices[i]);
+
+              const Point<dim> unit_point =
+                mapping->transform_real_to_unit_cell(cell, point);
+
+              Point<dim> unit_closest_point = unit_point;
+
+              newton_raphson_method_for_minimization(unit_point,
+                                                     cell_dof_values,
+                                                     unit_closest_point);
+
+              Point<dim> closest_point =
+                mapping->transform_unit_to_real_cell(cell, unit_closest_point);
+
+              Tensor<1, dim> point_closest_point_vec = point - closest_point;
+
+              distance(dof_indices[i]) =
+                std::min(std::abs(distance(dof_indices[i])),
+                         std::abs(point_closest_point_vec.norm()));
+            }
+        }
+    }
+
+  exchange_distance();
 }
 
 template <int dim, typename VectorType>

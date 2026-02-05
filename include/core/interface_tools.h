@@ -34,6 +34,7 @@
 #include <deal.II/matrix_free/fe_point_evaluation.h>
 
 #include <deal.II/non_matching/fe_immersed_values.h>
+#include <deal.II/non_matching/mesh_classifier.h>
 
 #include <deal.II/numerics/vector_tools.h>
 
@@ -556,6 +557,20 @@ namespace InterfaceTools
     void
     initialize_distance();
 
+
+    void
+    newton_raphson_method_for_minimization(
+      const Point<dim>          &point,
+      const std::vector<double> &dof_values,
+      Point<dim>                &closest_point);
+
+    /**
+     * @brief Compute the geometric distance (minimization) between the interface
+     * reconstruction and the DoFs of the intersected cells (first neighbors)
+     */
+    void
+    compute_first_neighbors_distance_minimization();
+    
     /**
      * @brief Compute the geometric distance (brute force) between the interface
      * reconstruction and the DoFs of the intersected cells (first neighbors)

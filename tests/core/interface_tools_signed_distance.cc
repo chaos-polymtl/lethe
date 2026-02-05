@@ -63,90 +63,120 @@ test()
   std::shared_ptr<MappingQ<dim>> background_mapping =
     std::make_shared<MappingQ<dim>>(background_fe->degree);
 
-  DoFHandler<dim> background_dof_handler =
-    DoFHandler(*background_triangulation);
-  background_dof_handler.distribute_dofs(*background_fe);
-
-  IndexSet background_locally_owned_dofs =
-    background_dof_handler.locally_owned_dofs();
-  IndexSet background_locally_relevant_dofs =
-    DoFTools::extract_locally_relevant_dofs(background_dof_handler);
-
-  // Set the background level-set field of the sphere
-  GlobalVectorType background_level_set(background_locally_owned_dofs,
-                                        background_locally_relevant_dofs,
-                                        mpi_communicator);
-
-  const double sphere_radius = 0.25;
-  Point<dim>   sphere_center = Point<dim>();
-  for (int n = 0; n < dim; n++)
+  DoFHandler<dim> background_dof_handler;
+  for (unsigned int m = 0; m < 6; m++)
     {
-      sphere_center[n] = 0.5;
+      background_dof_handler.reinit(*background_triangulation);
+      background_dof_handler.distribute_dofs(*background_fe);
+
+
+      IndexSet background_locally_owned_dofs =
+        background_dof_handler.locally_owned_dofs();
+      IndexSet background_locally_relevant_dofs =
+        DoFTools::extract_locally_relevant_dofs(background_dof_handler);
+
+      // Set the background level-set field of the sphere
+      GlobalVectorType background_level_set(background_locally_owned_dofs,
+                                            background_locally_relevant_dofs,
+                                            mpi_communicator);
+      GlobalVectorType tmp_background_level_set(background_locally_owned_dofs,
+                                            mpi_communicator);
+                                            
+      const double sphere_radius = 0.23;
+      Point<dim>   sphere_center = Point<dim>();
+      for (unsigned int n = 0; n < dim; n++)
+        {
+          sphere_center[n] = 0.5;
+        }
+      VectorTools::interpolate(
+        *background_mapping,
+        background_dof_handler,
+        Functions::SignedDistance::Sphere<dim>(sphere_center, sphere_radius),
+        tmp_background_level_set);
+
+      background_level_set = tmp_background_level_set;
+
+      // Instanciate the SignedDistanceSolver as it would as a member of the
+      // background solver class
+      double max_reinitialization_distance = 1.0;
+      std::shared_ptr<
+        InterfaceTools::SignedDistanceSolver<dim, GlobalVectorType>>
+        signed_distance_solver = std::make_shared<
+          InterfaceTools::SignedDistanceSolver<dim, GlobalVectorType>>(
+          background_triangulation,
+          background_fe,
+          max_reinitialization_distance,
+          0.0,
+          1.0,
+          Parameters::Verbosity::quiet);
+
+      signed_distance_solver->setup_dofs();
+      signed_distance_solver->set_level_set_from_background_mesh(
+        background_dof_handler, background_level_set);
+
+      // Solve the signed_distance field.
+      signed_distance_solver->solve();
+
+      // Get the signed_distance field from the SignedDistanceSolver
+      // auto &signed_distance = signed_distance_solver->get_signed_distance();
+
+      // Interpolate the signed_distance solution from the SignedDistanceSolver
+      // DoFHandler to the main solver DoFHandler.
+      GlobalVectorType background_signed_distance(
+        background_locally_owned_dofs,
+        background_locally_relevant_dofs,
+        mpi_communicator);
+
+      GlobalVectorType tmp_background_signed_distance(
+        background_locally_owned_dofs, mpi_communicator);
+
+      FETools::interpolate(signed_distance_solver->dof_handler,
+                           signed_distance_solver->get_signed_distance(),
+                           background_dof_handler,
+                           tmp_background_signed_distance);
+
+      background_signed_distance = tmp_background_signed_distance;
+
+      // Compute the L2 norm of the error.
+      Vector<float> error_per_cell(background_triangulation->n_active_cells());
+
+      VectorTools::integrate_difference(
+        *background_mapping,
+        background_dof_handler,
+        background_signed_distance,
+        Functions::SignedDistance::Sphere<dim>(sphere_center, sphere_radius),
+        error_per_cell,
+        QGauss<dim>(background_fe->degree + 1),
+        VectorTools::L2_norm);
+
+      const double error_L2 =
+        VectorTools::compute_global_error(*background_triangulation,
+                                          error_per_cell,
+                                          VectorTools::L2_norm);
+
+      deallog << "The L2 norm of the signed distance error in " << dim
+              << "D is: " << error_L2 << std::endl;
+
+
+      // output solution
+      DataOut<dim> data_out;
+      data_out.attach_dof_handler(background_dof_handler);
+      data_out.add_data_vector(background_signed_distance, "signed_distance");
+      data_out.add_data_vector(background_level_set,
+                               "analytic_signed_distance");
+
+      data_out.build_patches();
+      const std::string filename = Utilities::int_to_string(dim) +
+                                   "D_solution_ref_level_" +
+                                   Utilities::int_to_string(m) + ".vtk";
+      std::ofstream output(filename);
+      data_out.write_vtk(output);
+      std::cout << "Output written to " << filename << std::endl;
+
+
+
+      background_triangulation->refine_global(1);
     }
-  VectorTools::interpolate(
-    *background_mapping,
-    background_dof_handler,
-    Functions::SignedDistance::Sphere<dim>(sphere_center, sphere_radius),
-    background_level_set);
-
-  // Instanciate the SignedDistanceSolver as it would as a member of the
-  // background solver class
-  double max_reinitialization_distance = 1.0;
-  std::shared_ptr<InterfaceTools::SignedDistanceSolver<dim, GlobalVectorType>>
-    signed_distance_solver = std::make_shared<
-      InterfaceTools::SignedDistanceSolver<dim, GlobalVectorType>>(
-      background_triangulation,
-      background_fe,
-      max_reinitialization_distance,
-      0.0,
-      1.0,
-      Parameters::Verbosity::quiet);
-
-  signed_distance_solver->setup_dofs();
-  signed_distance_solver->set_level_set_from_background_mesh(
-    background_dof_handler, background_level_set);
-
-  // Solve the signed_distance field.
-  signed_distance_solver->solve();
-
-  // Get the signed_distance field from the SignedDistanceSolver
-  auto &signed_distance = signed_distance_solver->get_signed_distance();
-
-  // Interpolate the signed_distance solution from the SignedDistanceSolver
-  // DoFHandler to the main solver DoFHandler.
-  GlobalVectorType background_signed_distance(background_locally_owned_dofs,
-                                              background_locally_relevant_dofs,
-                                              mpi_communicator);
-
-  TrilinosWrappers::MPI::Vector tmp_background_signed_distance(
-    background_locally_owned_dofs, mpi_communicator);
-
-  FETools::interpolate(signed_distance_solver->dof_handler,
-                       signed_distance,
-                       background_dof_handler,
-                       tmp_background_signed_distance);
-
-  background_signed_distance = tmp_background_signed_distance;
-
-  // Compute the L2 norm of the error.
-  Vector<float> error_per_cell(background_triangulation->n_active_cells());
-
-  VectorTools::integrate_difference(
-    *background_mapping,
-    background_dof_handler,
-    background_signed_distance,
-    Functions::SignedDistance::Sphere<dim>(sphere_center, sphere_radius),
-    error_per_cell,
-    QGauss<dim>(background_fe->degree + 1),
-    VectorTools::L2_norm);
-
-  const double error_L2 =
-    VectorTools::compute_global_error(*background_triangulation,
-                                      error_per_cell,
-                                      VectorTools::L2_norm);
-
-  deallog << "The L2 norm of the signed distance error in " << dim
-          << "D is: " << error_L2 << std::endl;
 }
 
 int
