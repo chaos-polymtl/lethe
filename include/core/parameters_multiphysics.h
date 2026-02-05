@@ -447,7 +447,7 @@ namespace Parameters
 
     // subparameters for heat_transfer
     bool viscous_dissipation;
-    bool buoyancy_force;
+    bool thermal_buoyancy_force;
 
     Parameters::VOF                      vof_parameters;
     Parameters::CahnHilliard             cahn_hilliard_parameters;
