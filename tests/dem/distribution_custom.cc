@@ -21,9 +21,12 @@ using namespace dealii;
 
 template <int dim,
           typename PropertiesIndex,
-          DistributionWeightingType weighting_type>
+          DistributionWeightingType weighting_type,
+          ProbabilityFunctionType   function_type,
+          bool                      interpolate>
 void
-test()
+test(const std::vector<double> &diameter_list,
+     const std::vector<double> &probability_list)
 {
   // Creating the mesh and refinement
   parallel::distributed::Triangulation<dim> tr(MPI_COMM_WORLD);
@@ -56,17 +59,13 @@ test()
   // Lagrangian physical properties
   lpp.particle_type_number = 1;
   lpp.distribution_type.push_back(SizeDistributionType::custom);
-  lpp.particle_custom_diameter.push_back({0.0025, 0.0050});
-  lpp.particle_custom_probability.push_back({0.5, 0.5});
+  lpp.particle_custom_diameter.push_back(diameter_list);
+  lpp.particle_custom_probability.push_back(probability_list);
   lpp.seed_for_distributions.push_back(10);
   lpp.diameter_min_cutoff.push_back(-1.);
   lpp.diameter_max_cutoff.push_back(-1.);
-  lpp.distribution_weighting_type.push_back(
-    DistributionWeightingType::volume_based);
+  lpp.distribution_weighting_type.push_back(weighting_type);
   lpp.custom_probability_function_type.push_back(ProbabilityFunctionType::PDF);
-
-  // lpp.diameter_min_cutoff.push_back(-1);
-  // lpp.diameter_max_cutoff.push_back(-1.);
   lpp.density_particle.push_back(2500);
   lpp.number.push_back(100000);
 
@@ -84,7 +83,7 @@ test()
     lpp.diameter_max_cutoff.at(0),
     lpp.distribution_weighting_type.at(0),
     lpp.custom_probability_function_type.at(0),
-    false));
+    interpolate));
 
   // Calling volume insertion
   InsertionVolume<dim, PropertiesIndex> insertion_object(
@@ -126,7 +125,7 @@ test()
           << volume_particle_1 / total_volume << std::endl;
   deallog << "Volume fraction of particle with diameter 2: "
           << volume_particle_2 / total_volume << std::endl;
-  deallog << "Number of particle with diameter 1: " << n_particle_1
+  deallog << "Number fraction of particle with diameter 1: " << n_particle_1
           << std::endl;
   deallog << "Number of particle with diameter 2: " << n_particle_2
           << std::endl;
@@ -139,10 +138,34 @@ main(int argc, char **argv)
     {
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
+      // Dicrete
+      const std::vector<double> d_list_1 = {0.0025, 0.0050};
+      const std::vector<double> p_list_1 = {0.5, 0.5};
       initlog();
       test<3,
            DEM::DEMProperties::PropertiesIndex,
-           DistributionWeightingType::volume_based>();
+           DistributionWeightingType::volume_based,
+           ProbabilityFunctionType::PDF,
+           false>(d_list_1, p_list_1);
+      test<3,
+           DEM::DEMProperties::PropertiesIndex,
+           DistributionWeightingType::number_based,
+           ProbabilityFunctionType::PDF,
+           false>(d_list_1, p_list_1);
+
+      // Interpolate
+      const std::vector<double> d_list_2 = {0.0025, 0.0050};
+      const std::vector<double> p_list_2 = {0.1, 0.2, 0.3};
+      test<3,
+           DEM::DEMProperties::PropertiesIndex,
+           DistributionWeightingType::volume_based,
+           ProbabilityFunctionType::CDF,
+           false>(d_list_2, p_list_2);
+
+      test<3,
+           DEM::DEMProperties::PropertiesIndex,
+           DistributionWeightingType::number_based,
+           false>(d_list_2, p_list_2);
     }
   catch (std::exception &exc)
     {

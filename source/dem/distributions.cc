@@ -495,7 +495,6 @@ CustomDistribution::CustomDistribution(
                 0.5 * (d_probabilities[i - 1] + d_probabilities[i]) /
                   (diameter_values[i] - diameter_values[i - 1]);
               n_tot += number_based_cdf[i];
-
             }
 
           // We normalize the new CDF.
@@ -709,7 +708,7 @@ CustomDistribution::find_min_diameter()
 double
 CustomDistribution::find_max_diameter()
 {
-  return  this->dia_max_cutoff;
+  return this->dia_max_cutoff;
 }
 
 void
