@@ -57,7 +57,7 @@ test()
   lpp.particle_type_number = 1;
   lpp.distribution_type.push_back(SizeDistributionType::custom);
   lpp.particle_custom_diameter.push_back({0.0025, 0.0050});
-  lpp.particle_custom_probability.push_back({0.499, 0.501});
+  lpp.particle_custom_probability.push_back({0.5, 0.5});
   lpp.seed_for_distributions.push_back(10);
   lpp.diameter_min_cutoff.push_back(-1.);
   lpp.diameter_max_cutoff.push_back(-1.);

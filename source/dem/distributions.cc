@@ -483,21 +483,24 @@ CustomDistribution::CustomDistribution(
         }
       else if (function_type == ProbabilityFunctionType::PDF)
         {
-          // If the input probability function is a number-based PDF, we convert
-          // this PDF into a CDF by integrating from d = 0 to
-          // d = diameter_values[i] using the trapezoidal method.
+          // If the input probability function is a number-based PDF, we
+          // convert this PDF into a CDF by integrating from d = 0 to d =
+          // diameter_values[i] using the trapezoidal method.
           number_based_cdf[0] = d_probabilities[0];
           double n_tot        = 0;
           for (unsigned int i = 1; i < number_d_values; ++i)
             {
               number_based_cdf[i] =
-                number_based_cdf[i - 1] + d_probabilities[i];
+                number_based_cdf[i - 1] +
+                0.5 * (d_probabilities[i - 1] + d_probabilities[i]) /
+                  (diameter_values[i] - diameter_values[i - 1]);
               n_tot += number_based_cdf[i];
+
             }
 
           // We normalize the new CDF.
           for (unsigned int i = 1; i < number_d_values; ++i)
-            number_based_cdf[i] /= n_tot;
+            number_based_cdf[i] /= number_based_cdf.back();
         }
     }
   else if (this->weighting_type == DistributionWeightingType::volume_based)
@@ -700,13 +703,13 @@ CustomDistribution::particle_size_sampling(
 double
 CustomDistribution::find_min_diameter()
 {
-  return *std::ranges::min_element(diameter_values);
+  return this->dia_min_cutoff;
 }
 
 double
 CustomDistribution::find_max_diameter()
 {
-  return *std::ranges::max_element(diameter_values);
+  return  this->dia_max_cutoff;
 }
 
 void
