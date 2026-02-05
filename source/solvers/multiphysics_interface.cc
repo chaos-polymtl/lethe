@@ -67,15 +67,13 @@ DeclException1(
   << "), while VOF is not activated (false)." << std::endl
   << "Interface sharpening cannot be activated without activating VOF.");
 
-DeclExceptionMsg(
-  CahnHilliardWithHeatTransferError,
-  "Cahn-Hilliard and heat transfer are both activated. "
-  "This combination is not currently supported.");
+DeclExceptionMsg(CahnHilliardWithHeatTransferError,
+                 "Cahn-Hilliard and heat transfer are both activated. "
+                 "This combination is not currently supported.");
 
-DeclExceptionMsg(
-  CahnHilliardWithThermalBuoyancyForceError,
-  "Cahn-Hilliard and thermal buoyancy force are both activated. "
-  "This combination is not currently supported.");
+DeclExceptionMsg(CahnHilliardWithThermalBuoyancyForceError,
+                 "Cahn-Hilliard and thermal buoyancy force are both activated. "
+                 "This combination is not currently supported.");
 
 template <int dim>
 MultiphysicsInterface<dim>::MultiphysicsInterface(
@@ -267,7 +265,7 @@ MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
   bool fluid_dynamics_enabled = nsparam.multiphysics.fluid_dynamics;
   bool interface_sharpening_enabled =
     nsparam.multiphysics.vof_parameters.regularization_method.sharpening.enable;
-  bool VOF_enabled          = nsparam.multiphysics.VOF;
+  bool VOF_enabled           = nsparam.multiphysics.VOF;
   bool cahn_hilliard_enabled = nsparam.multiphysics.cahn_hilliard;
 
   // To avoid getting unused parameter warning
