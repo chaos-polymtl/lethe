@@ -10,6 +10,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MAJOR This PR updates the project version to the current release tag. [#1904](https://github.com/chaos-polymtl/lethe/pull/1904)
 
+## [Master] - 2026/02/05
+
+### Changed
+
+- MINOR Renamed `buoyancy force` to `thermal buoyancy force` in the multiphysics subsection to distinguish it from the Archimedes buoyancy force used in DEM/CFD-DEM. The parameter `set buoyancy force` is now `set thermal buoyancy force`, the assembler classes `BuoyancyAssembly` and `BuoyancyAssemblyVOF` are now `ThermalBuoyancyAssembly` and `ThermalBuoyancyAssemblyVOF`, and the matrix-free operator member `buoyancy_term` is now `thermal_buoyancy_term`. A deprecated alias ensures that existing parameter files using `set buoyancy force` continue to work. All affected tests, examples, and documentation have been updated.
+
 ### Fixed
 
 - MAJOR This PR fixes the Boussinesq buoyancy term that was miscalculated in VOF. Contrary to the Navier-Stokes equations from the `PSPGSUPGNavierStokesAssemblerCore`, when using VOF, the density term appears explicitely in both left and right had sides of the assembly from `GLSNavierStokesVOFAssemblerCore`. As such, the BuoyancyAssembler from the base Navier-Stokes code did not compute the proper buoyancy term. This was fixed by adding a new buoyancy assembler specific for VOF `navier_stokes_vof_assemblers` and changed the setup assembler in both `fluid_dynamic_matrix_based` and `fluid_dynamic_block` to compute buoyancy properly. All tests affected by this change have been updated and a new VOF specific buoyancy test has been added to the application test suite.
