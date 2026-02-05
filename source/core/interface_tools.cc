@@ -380,8 +380,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
   compute_signed_distance_from_distance();
 
   // Conserve local and global volume
-  compute_cell_wise_volume_correction();
-  conserve_global_volume();
+  // compute_cell_wise_volume_correction();
+  // conserve_global_volume();
 
   /* Compute the distance for the DoFs of the rest of the mesh. They
   correspond to the second neighbors DoFs. */
