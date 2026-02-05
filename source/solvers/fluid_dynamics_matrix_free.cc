@@ -32,6 +32,8 @@
 #else
 #  include <deal.II/multigrid/mg_transfer_global_coarsening.templates.h>
 #endif
+#include <core/lethe_grid_tools.h>
+
 #include <deal.II/lac/trilinos_solver.h>
 
 #include <deal.II/multigrid/multigrid.h>
@@ -1448,10 +1450,47 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                       << std::endl;
         }
 
+      // Create mappings for each level if mortar is enabled
+      if (this->simulation_parameters.mortar_parameters.enable)
+        this->mappings.resize(this->minlevel, this->maxlevel);
+
       // Apply constraints and create mg operators for each level
       for (unsigned int level = this->minlevel; level <= this->maxlevel;
            ++level)
         {
+          this->mg_setup_timer.enter_subsection("Create mappings");
+          std::shared_ptr<Mapping<dim>> level_mapping;
+
+          // If mortar is enabled, one MappingQCache<dim> object is created for
+          // each level to access correct mapping information. Otherwise, the
+          // MappingQ<dim> object passed to the current function can be used in
+          // all levels
+          if (this->simulation_parameters.mortar_parameters.enable)
+            {
+              this->mappings[level] = std::make_shared<MappingQCache<dim>>(
+                this->dof_handlers[level].get_fe().degree);
+
+              LetheGridTools::rotate_mapping(
+                this->dof_handlers[level],
+                *this->mappings[level],
+                *mapping,
+                std::get<1>(compute_n_subdivisions_and_radius(
+                  *this->coarse_grid_triangulations[level],
+                  *mapping,
+                  this->simulation_parameters.mortar_parameters))[0],
+                this->simulation_parameters.mortar_parameters
+                  .rotor_rotation_angle->value(Point<dim>()),
+                this->simulation_parameters.mortar_parameters
+                  .center_of_rotation,
+                this->simulation_parameters.mortar_parameters.rotation_axis);
+
+              level_mapping = this->mappings[level];
+            }
+          else
+            level_mapping = mapping;
+
+          this->mg_setup_timer.leave_subsection("Create mappings");
+
           const auto &level_dof_handler = this->dof_handlers[level];
           auto       &level_constraint  = constraints[level];
 
@@ -1484,7 +1523,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                     0,
                     no_normal_flux_boundaries,
                     level_constraint,
-                    *mapping,
+                    *level_mapping,
                     this->use_manifold_for_normal);
                 }
               else if (type == BoundaryConditions::BoundaryType::periodic)
@@ -1531,7 +1570,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                        type == BoundaryConditions::BoundaryType::function)
                 {
                   VectorTools::interpolate_boundary_values(
-                    *mapping,
+                    *level_mapping,
                     level_dof_handler,
                     id,
                     dealii::Functions::ZeroFunction<dim, MGNumber>(dim + 1),
@@ -1613,7 +1652,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
           this->create_level_operator(level);
 
           this->mg_operators[level]->reinit(
-            *mapping,
+            *level_mapping,
             level_dof_handler,
             level_constraint,
             quadrature_mg,
@@ -1640,14 +1679,14 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               this->mg_operators[level]->mortar_manager_mf =
                 std::make_shared<MortarManagerCircle<dim>>(
                   quadrature_mg,
-                  *mapping,
+                  *level_mapping,
                   level_dof_handler,
                   this->simulation_parameters.mortar_parameters);
 
               // Coupling evaluator
               this->mg_operators[level]->mortar_coupling_evaluator_mf =
                 std::make_shared<NavierStokesCouplingEvaluation<dim, double>>(
-                  *mapping,
+                  *level_mapping,
                   level_dof_handler,
                   physical_properties_manager->get_rheology()
                     ->get_kinematic_viscosity());
@@ -1655,7 +1694,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               // Coupling operator
               this->mg_operators[level]->mortar_coupling_operator_mf =
                 std::make_shared<CouplingOperator<dim, double>>(
-                  *mapping,
+                  *level_mapping,
                   level_dof_handler,
                   level_constraint,
                   this->mg_operators[level]->mortar_coupling_evaluator_mf,
@@ -3281,7 +3320,7 @@ FluidDynamicsMatrixFree<dim>::create_GMG()
     *this->dof_handler,
     this->dof_handler_fe_q_iso_q1);
 
-  gmg_preconditioner->reinit(this->get_mapping(),
+  gmg_preconditioner->reinit(this->mapping,
                              this->cell_quadrature,
                              this->forcing_function,
                              this->simulation_control,
