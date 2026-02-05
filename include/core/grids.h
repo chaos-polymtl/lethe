@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_grids_h
@@ -147,5 +147,21 @@ refine_triangulation_at_boundaries(
       triangulation.execute_coarsening_and_refinement();
     }
 }
+
+/**
+ * @brief Apply scaling, translation and rotation to the mesh in the listed order.
+ *
+ * @tparam dim An integer that denotes the dimensionality of the geometry.
+ * @tparam spacedim An integer that denotes the dimension of the space occupied
+ * by the embedded solid.
+ *
+ * @param[in] mesh_parameters Parameters of the mesh.
+ * @param[in] triangulation Triangulation object on which the mesh.
+ * transformations are applied.
+ */
+template <int dim, int spacedim = dim>
+void
+apply_mesh_transformation(const Parameters::Mesh       &mesh_parameters,
+                          Triangulation<dim, spacedim> &triangulation);
 
 #endif

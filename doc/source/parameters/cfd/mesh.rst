@@ -1,3 +1,7 @@
+..
+  SPDX-FileCopyrightText: Copyright (c) 2022-2024, 2026 The Lethe Authors
+  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 ====
 Mesh
 ====
@@ -46,14 +50,14 @@ This subsection provides information of the simulation geometry and its mesh. Th
     set initial translation = 0, 0, 0
 
     # Rotation to apply to the mesh
-    set initial rotation axis  = 1, 0, 0
+    set initial rotation axis  = 1, 0, 0 # Only valid in 3D
     set initial rotation angle = 0
 
     # Mesh scaling factor
     set scale = 1
   end
 
-* The following choices for the mesh type are available:
+* The following choices for the mesh ``type`` are available:
     * ``gmsh``: if this type is chosen, a ``.msh`` file generated from GMSH can be used. In this case, the grid file name must be specified in the ``file name`` variable.
     * ``dealii``: if this type is chosen, the deal.II grid generator class can be used. For additional documentation on these grids, you can consult the deal.II documentation for the `GridGenerator <https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html>`_ . The type of grid is specified by the ``grid type`` parameter and the arguments used for grid generation by the ``grid arguments`` parameter. 
     * ``periodic_hills``: if this type is chosen a mesh for the periodic hills CFD benchmark is created. For more details on this type of mesh and its grid arguments refer to :doc:`../../examples/incompressible-flow/3d-flow-over-periodic-hills/3d-flow-over-periodic-hills`.
@@ -68,21 +72,24 @@ This subsection provides information of the simulation geometry and its mesh. Th
     :width: 600
     :align: center
 
-* The `initial refinement` number determines the number of refinements the grid will undergo in the simulation before the simulation is run. This allows one to refine a coarse grid automatically. By default, most deal.II grids will be as coarse as possible and need to be refined. This is a desirable behavior for parallel simulations, since for quad/hex meshes, the coarsest level of the grid is shared amongst all cores. Consequently, using a coarse grid with too many cells will lead to a prohibitive memory consumption.
+* The ``initial refinement`` number determines the number of refinements the grid will undergo in the simulation before the simulation is run. This allows one to refine a coarse grid automatically. By default, most deal.II grids will be as coarse as possible and need to be refined. This is a desirable behavior for parallel simulations, since for quad/hex meshes, the coarsest level of the grid is shared amongst all cores. Consequently, using a coarse grid with too many cells will lead to a prohibitive memory consumption.
 
-* The `initial boundary refinement` determines the number of refinements the grid will undergo in the simulation in the vicinities of the boundary specified by the ``boundaries refined`` parameter.
+* The ``initial boundary refinement`` determines the number of refinements the grid will undergo in the simulation in the vicinities of the boundary specified by the ``boundaries refined`` parameter.
 
-* The `enable target size` and `target size` respectively enable and provide a maximal target size that initial refinement cycles must lead towards, in contrast to the more common way of specifying the number of refinement cycles to apply.
+* The ``enable target size`` and ``target size`` respectively enable and provide a maximal target size that initial refinement cycles must lead towards, in contrast to the more common way of specifying the number of refinement cycles to apply.
 
-* The `check diamond cells` and `expand particle-wall contact search` are parameters used in particles simulations. The former is used to verify the quality of the background mesh; detecting diamond cells is important as they should be avoided. The latter serves a purpose in contact detection when the background mesh is concave.
+* The ``check diamond cells`` and ``expand particle-wall contact search`` are parameters used in particles simulations. The former is used to verify the quality of the background mesh; detecting diamond cells is important as they should be avoided. The latter serves a purpose in contact detection when the background mesh is concave.
 
-* `simplex`. If simplex is set to true, it indicates that the mesh being read is made of only simplex elements. If the mesh is of ``type = dealii`` it will be converted from a quad/hex mesh to a simplex mesh. If the mesh is of ``type = gsmh``, it will be read from a file as long as it is only made of simplices.
+* ``simplex``. If simplex is set to true, it indicates that the mesh being read is made of only simplex elements. If the mesh is of ``type = dealii`` it will be converted from a quad/hex mesh to a simplex mesh. If the mesh is of ``type = gsmh``, it will be read from a file as long as it is only made of simplices.
 
-* The `initial translation` parameter provides a way to move the mesh in space prior to simulating the problem. It can be useful when space-dependent functions are used, but that generating a translated mesh is inconvenient or impossible.
+* The ``initial translation`` parameter provides a way to move the mesh in space prior to simulating the problem. It can be useful when space-dependent functions are used, but that generating a translated mesh is inconvenient or impossible.
 
-* The `initial rotation axis` and `initial rotation angle` parameters provide another way to move the mesh prior to simulating the problem.
+* The ``initial rotation axis`` and ``initial rotation angle`` parameters provide another way to move the mesh prior to simulating the problem.
 
-* The `scale` parameter is used to scale the mesh. This is useful when the mesh is made in a different set of unit than what is desired by the simulation.
+  .. attention::
+    In 2D, ``initial rotation axis`` is ignored and the mesh rotates counter-clockwise around the origin of the coordinate system.
+
+* The ``scale`` parameter is used to scale the mesh. This is useful when the mesh is made in a different set of unit than what is desired by the simulation.
 
 .. warning::
-        When scale, translation and rotation are used together, the scaling is applied first, then the rotation, then the translation.
+    When scale, translation and rotation are used together, the scaling is applied first, then the rotation, then the translation.

@@ -1,3 +1,7 @@
+..
+  SPDX-FileCopyrightText: Copyright (c) 2024, 2026 The Lethe Authors
+  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 ===================================
 Static Irradiation of a Bare Plate
 ===================================
@@ -113,12 +117,15 @@ The coarse level mesh considered for this example is generated with Pointwise to
     end
 
     subsection box refinement
-      subsection mesh
-        set type           = dealii
-        set grid type      = subdivided_hyper_rectangle
-        set grid arguments = 8,1 : 0,0.3925: 0.6,0.4675: false
+      set number of refinement boxes = 1
+      subsection box 0
+        subsection mesh
+          set type           = dealii
+          set grid type      = subdivided_hyper_rectangle
+          set grid arguments = 8,1 : 0,0.3925: 0.6,0.4675: false
+        end
+        set additional refinement = 3
       end
-      set initial refinement = 3
     end
 
 Mesh Adaptation
@@ -339,7 +346,7 @@ We defined the laser heat source in the ``laser parameters`` subsection. In the 
       end
     end
 
-The laser is static in the middle of the domain at the metal-gas interface :math:`\vec{x} = [0.3, 0.43]`, hence its ``path`` is independent of the time. Note that the :math:`y` component of the ``path`` is not relevant: the ``gaussian_heat_flux_vof_interface`` model applies the laser heat flux at the metal-gas interface no matter its postion along the :math:`y` axis. This allows us to model the effect of the interface deformation on the surface heat flux.
+The laser is static in the middle of the domain at the metal-gas interface :math:`\vec{x} = [0.3, 0.43]`, hence its ``path`` is independent of the time. Note that the :math:`y` component of the ``path`` is not relevant: the ``gaussian_heat_flux_vof_interface`` model applies the laser heat flux at the metal-gas interface no matter its position along the :math:`y` axis. This allows us to model the effect of the interface deformation on the surface heat flux.
 
 Evaporation
 ~~~~~~~~~~~

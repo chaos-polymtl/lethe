@@ -1626,12 +1626,33 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  /**
+   * Container of parameters for box refinement. The region to refine can be
+   * described by either a GMSH or a deal.II mesh.
+   */
   struct MeshBoxRefinement
   {
-    // GMSH or dealii
-    std::shared_ptr<Mesh> box_mesh;
-    // Initial refinement level of primitive mesh contained in the box
-    unsigned int initial_refinement;
+    /// Number of boxes delimiting refinement regions
+    unsigned int number_of_refinement_boxes;
+
+    /**
+     * Maximum number of refinement boxes that can be defined by a user.
+     *
+     * @remark A maximal value has to be initialized to fill the vectors with
+     * parameter declarations.
+     */
+    const unsigned int max_number_of_refinement_boxes = 5;
+
+    /**
+     * Shared pointer of a vector of GMSH and deal.II meshes representing
+     * refinement areas.
+     */
+    std::shared_ptr<std::vector<Mesh>> refinement_boxes_meshes =
+      std::make_shared<std::vector<Mesh>>(max_number_of_refinement_boxes);
+
+    /// Vector of additional refinement values of the different boxes
+    std::vector<unsigned int> box_additional_refinements =
+      std::vector<unsigned int>(max_number_of_refinement_boxes);
 
     void
     declare_parameters(ParameterHandler &prm);

@@ -1,0 +1,85 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+#-------------------------------------------------------------------------------
+# DESCRIPTION:
+# This test checks that box refinements at the initial condition are correctly
+# generated in 2D.
+# It also checks mesh scaling, translation and rotation in 2D.
+# In 2D, the rotation can only be done counter-clockwise around the origin of
+# the system of coordinates.
+#-------------------------------------------------------------------------------
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = steady
+  set output name      = multiple-box-refinement-2d
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_rectangle
+  set grid arguments     = -2.5, -2.5: 2.5, 2.5 : false
+  set initial refinement = 5
+end
+
+subsection box refinement
+  set number of refinement boxes = 3
+  subsection box 0
+    subsection mesh
+      set type                   = dealii
+      set grid type              = hyper_rectangle
+      set grid arguments         = -0.75,-0.75 : 0.75,0.75 : false
+      set initial rotation angle = 0.78540 # pi/4
+      set scale                  = 1.25
+    end
+    set additional refinement = 1
+  end
+  subsection box 1
+    subsection mesh
+      set type                = dealii
+      set grid type           = hyper_rectangle
+      set grid arguments      = -0.35,-0.55 : 0.35,0.35 : false
+      set initial translation = 0, -1
+    end
+    set additional refinement = 2
+  end
+  subsection box 2
+    subsection mesh
+      set type               = dealii
+      set grid type          = hyper_shell
+      set grid arguments     = -1.5,1.5 : 0.6 : 1 : 0 : false
+      set initial refinement = 2
+    end
+    set additional refinement = 1
+  end
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set fluid dynamics = false
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 1
+end
