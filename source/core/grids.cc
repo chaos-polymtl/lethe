@@ -631,7 +631,7 @@ read_mesh_and_manifolds_for_stator_and_rotor(
       std::to_string(n_faces_rotor_interface_total) +
       ") is different from the number of faces at the stator interface ID #" +
       std::to_string(mortar_parameters.stator_boundary_id) + " (" +
-      std::to_string(n_faces_rotor_interface_total) + ")."));
+      std::to_string(n_faces_stator_interface_total) + ")."));
 }
 
 template void
