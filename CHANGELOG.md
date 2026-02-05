@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- MINOR Added validation checks for unsupported multiphysics combinations. Cahn-Hilliard with heat transfer and Cahn-Hilliard with thermal buoyancy force now throw since these combinations are not currently supported. Using the isothermal ideal gas density model with the thermal buoyancy force now throws since the isothermal ideal gas model assumes thermal independence of the density, which is incompatible with the thermal buoyancy force.
+
 - MINOR Renamed `buoyancy force` to `thermal buoyancy force` in the multiphysics subsection to distinguish it from the Archimedes buoyancy force used in DEM/CFD-DEM. The parameter `set buoyancy force` is now `set thermal buoyancy force`, the assembler classes `BuoyancyAssembly` and `BuoyancyAssemblyVOF` are now `ThermalBuoyancyAssembly` and `ThermalBuoyancyAssemblyVOF`, and the matrix-free operator member `buoyancy_term` is now `thermal_buoyancy_term`. A deprecated alias ensures that existing parameter files using `set buoyancy force` continue to work. All affected tests, examples, and documentation have been updated. [#1898](https://github.com/chaos-polymtl/lethe/pull/1898)
 
 ### Fixed
