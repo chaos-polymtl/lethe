@@ -1049,44 +1049,6 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
             average_velocities->post_mesh_adaptation();
         }
     }
-
-  // Check if there is inconsistency with adaptive mesh refinement
-  if (this->simulation_parameters.mesh_adaptation.type !=
-      Parameters::MeshAdaptation::Type::none)
-    {
-      const unsigned int current_max_level_of_refinement =
-        this->triangulation->n_global_levels() - 1;
-      AssertThrow(
-        current_max_level_of_refinement <=
-          this->simulation_parameters.mesh_adaptation.maximum_refinement_level,
-        ExcMessage(
-          "The current maximum refinement level of the triangulation is " +
-          Utilities::int_to_string(current_max_level_of_refinement) +
-          " and it exceeds the \n"
-          "maximum level of refinement imposed in the 'mesh adaptation' subsection (" +
-          Utilities::int_to_string(this->simulation_parameters.mesh_adaptation
-                                     .maximum_refinement_level) +
-          ").\n"
-          "Please either: \n"
-          " - decrease the 'initial refinement' value in the 'mesh' subsection;\n"
-          " - decrease the 'additional refinement' values in the 'box refinement' subsection;\n"
-          " - or increase the 'max refinement level' in the mesh adaptation' subsection."));
-      AssertThrow(
-        current_max_level_of_refinement >=
-          this->simulation_parameters.mesh_adaptation.minimum_refinement_level,
-        ExcMessage(
-          "The current minimum refinement level of the triangulation is " +
-          Utilities::int_to_string(current_max_level_of_refinement) +
-          " and it is lower than the \n"
-          "minimum level of refinement imposed in the 'mesh adaptation' subsection (" +
-          Utilities::int_to_string(this->simulation_parameters.mesh_adaptation
-                                     .minimum_refinement_level) +
-          ").\n"
-          "Please either: \n"
-          " - increase the 'initial refinement' value in the 'mesh' subsection;\n"
-          " - increase the 'additional refinement' values in the 'box refinement' subsection;\n"
-          " - or decrease the 'min refinement level' in the mesh adaptation' subsection."));
-    }
 }
 
 
