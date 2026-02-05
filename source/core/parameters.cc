@@ -2804,6 +2804,9 @@ namespace Parameters
               "0",
               Patterns::Integer(0),
               "Additional refinements of the principal mesh within the area delimited by the 'box' mesh.");
+            prm.declare_alias("additional refinement",
+                              "initial refinement",
+                              true);
           }
           prm.leave_subsection();
         }
