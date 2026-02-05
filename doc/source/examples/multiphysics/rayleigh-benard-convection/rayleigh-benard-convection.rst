@@ -94,14 +94,14 @@ The time integration is handled by a 1st order backward differentiation scheme t
 Multiphysics
 ~~~~~~~~~~~~
 
-The ``multiphysics`` subsection enables to turn on ``true`` and off ``false`` the physics of interest. Here ``heat transfer``, ``buoyancy force``, and ``fluid dynamics`` are chosen.
+The ``multiphysics`` subsection enables to turn on ``true`` and off ``false`` the physics of interest. Here ``heat transfer``, ``thermal buoyancy force``, and ``fluid dynamics`` are chosen.
 
 .. code-block:: text
 
     subsection multiphysics
-      set buoyancy force = true
-      set heat transfer  = true
-      set fluid dynamics = true
+      set thermal buoyancy force = true
+      set heat transfer          = true
+      set fluid dynamics         = true
     end
 
 Source Term
