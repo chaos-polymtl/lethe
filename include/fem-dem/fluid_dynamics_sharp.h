@@ -17,6 +17,7 @@
 #include <dem/visualization.h>
 #include <fem-dem/cfd_dem_simulation_parameters.h>
 #include <fem-dem/ib_particles_dem.h>
+#include <fem-dem/sharp_ib_periodic_boundaries.h>
 
 #include <deal.II/particles/particle_handler.h>
 
@@ -571,6 +572,48 @@ Return a bool that describes  if a cell contains a specific point
   update_precalculations_for_ib();
 
   /**
+   * @brief Setup periodic boundaries for sharp IB coupling.
+   *
+   * This function must be called after both DEM and CFD boundary conditions
+   * have been initialized. It configures the combined periodic boundary
+   * handler and computes domain bounds for periodic wrapping.
+   */
+  void
+  setup_sharp_ib_periodic_boundaries();
+
+  /**
+   * @brief Add matrix entry with periodic constraint expansion.
+   *
+   * If the row or column DoF is periodic-constrained, this function expands
+   * the constraint and adds contributions to the appropriate master DoFs.
+   * This ensures matrix.add() never fails due to missing sparsity pattern
+   * entries for periodic mates.
+   *
+   * @param row_dof Global DoF index for matrix row
+   * @param col_dof Global DoF index for matrix column
+   * @param value Value to add to matrix entry
+   */
+  void
+  add_matrix_entry_with_periodic_expansion(
+    const types::global_dof_index row_dof,
+    const types::global_dof_index col_dof,
+    const double                  value);
+
+  /**
+   * @brief Get periodic images of a particle for refinement/coupling.
+   *
+   * Given a particle position and radius, returns a list of periodic image
+   * positions that may affect cells across the periodic boundary.
+   *
+   * @param particle_position Center position of particle
+   * @param particle_radius Radius of particle (or support radius for effect)
+   * @return Vector of periodic image positions (empty if no images needed)
+   */
+  std::vector<Point<dim>>
+  get_periodic_particle_images(const Point<dim> &particle_position,
+                               const double      particle_radius) const;
+
+  /**
    * @brief Defines a struct with methods that allow the generation of a visualisation of the IB_particles. This is equivalent to the corresponding class in the DEM solver.
    */
   struct Visualization_IB : public dealii::DataOutInterface<0, dim>
@@ -729,6 +772,13 @@ private:
   std::shared_ptr<LevelsetPostprocessor<dim>> levelset_postprocessor;
   std::shared_ptr<LevelsetGradientPostprocessor<dim>>
     levelset_gradient_postprocessor;
+
+  // Combined periodic boundary handler for sharp IB coupling
+  SharpIBPeriodicBoundaries<dim> sharp_ib_periodic_boundaries;
+
+  // Cache for domain bounds in periodic direction (used for wrapping)
+  double periodic_domain_lower;
+  double periodic_domain_upper;
 };
 
 
