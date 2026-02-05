@@ -156,7 +156,18 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
   Tensor<1, dim> e_t1      = transverse_vector_1 / length_t1;
   Tensor<1, dim> e_t2      = transverse_vector_2 / length_t2;
 
-  // Verify that the those transverse vectors with respect to the normal of the
+  // Check if the transverse vectors form a perfect rectangle (orthogonal and
+  // aligned with the axes)
+  AssertThrow(
+    std::abs(e_t1 * e_t2) < 1e-12,
+    ExcMessage(
+      "The transverse plane defined by the waveguide corners for the waveguide port at boundary ID " +
+      std::to_string(time_harmonic_maxwell_parameters
+                       .waveguide_boundary_ids[boundary_id_index]) +
+      " is not a perfect rectangle (i.e., the vector created by the waveguide corners are not orthogonal). Please check the waveguide corners definition in the input prm file."));
+
+
+  // Also verify that those transverse vectors with respect to the normal of the
   // face is coherent and form an orthogonal basis.
   if ((std::abs(normal * e_t1) > 1e-12) || (std::abs(normal * e_t2) > 1e-12))
     AssertThrow(
@@ -176,15 +187,27 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
   // We use the sign of (normal · t3) to determine this:
   //   - If normal · t3 > 0: t3 points outward, need to flip entire system
   //   - If normal · t3 < 0: t3 points inward (correct for incident wave)
-  double sign_factor = 1.0;
   if ((normal * e_t3) > 0)
     {
       // Flip t3 to point inward (opposite to outward normal)
       // To maintain a right-handed system, we also flip t2
       e_t2 = -e_t2;
       e_t3 = -e_t3;
-      // This sign factor accounts for the coordinate flip in the y' direction
-      sign_factor = -1.0;
+    }
+
+  // We will also need to map these local fields back and forth between the
+  // global system  and the local system. So we define the rotation matrix (from
+  // local to global) and its transpose (from global to local).
+  Tensor<2, dim, double> rotation_matrix;
+  Tensor<2, dim, double> rotation_matrix_transpose;
+  for (unsigned int i = 0; i < dim; ++i)
+    {
+      rotation_matrix[i][0]           = e_t1[i];
+      rotation_matrix[i][1]           = e_t2[i];
+      rotation_matrix[i][2]           = e_t3[i];
+      rotation_matrix_transpose[0][i] = e_t1[i];
+      rotation_matrix_transpose[1][i] = e_t2[i];
+      rotation_matrix_transpose[2][i] = e_t3[i];
     }
 
   // Compute the various wavenumber k in using this global coordinate system
@@ -216,10 +239,10 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
             waveguide_corners[3]);
 
   Tensor<1, dim> p_local =
-    p - origin_local; // Coordinates of point p in this local system.
-  double x_local = p_local * e_t1; // Coordinate along e_t1 in the local system
-  double y_local =
-    sign_factor * (p_local * e_t2); // Coordinate along e_t2 in the local system
+    rotation_matrix_transpose *
+    (p - origin_local);        // Coordinates of point p in this local system.
+  double x_local = p_local[0]; // Coordinate along e_t1 in the local system
+  double y_local = p_local[1]; // Coordinate along e_t2 in the local system
   // We assume that the z_local coordinate is 0 since we are on the face.
 
   // Compute the E and H field components for the TE mode in the local
@@ -227,17 +250,6 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
   // boundary.
   Tensor<1, dim, std::complex<double>> E_inc_local;
   Tensor<1, dim, std::complex<double>> H_inc_local;
-
-  // We will also need to map these local fields back to the global system at
-  // the end. so We define the rotation matrix from local to global system and
-  // the final fields
-  Tensor<2, dim, double> rotation_matrix;
-  for (unsigned int i = 0; i < dim; ++i)
-    {
-      rotation_matrix[i][0] = e_t1[i];
-      rotation_matrix[i][1] = sign_factor * e_t2[i];
-      rotation_matrix[i][2] = e_t3[i];
-    }
 
   Tensor<1, dim, std::complex<double>> E_inc;
   Tensor<1, dim, std::complex<double>> H_inc;
@@ -272,14 +284,12 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
 
       surface_admittance = k_l / (omega * mu_r);
 
-      // We need to account for the possible flip in the y' direction when
-      // computing the excitation so we use sign_factor here.
-      excitation = cross_product_3d(sign_factor * normal, H_inc) +
-                   map_H12(surface_admittance * E_inc, sign_factor * normal);
+      excitation = cross_product_3d(normal, H_inc) +
+                   map_H12(surface_admittance * E_inc, normal);
     }
   else if (mode == Parameters::WaveguideMode::TM)
     {
-      std::complex<double> factor = imag * k * k / (k_c * k_c * mu_r * omega);
+      std::complex<double> factor = -imag * k * k / (k_c * k_c * mu_r * omega);
 
       H_inc_local[0] = -factor * k_t2 *
                        std::sin(k_t1 * (x_local + length_t1 / 2)) *
@@ -304,10 +314,8 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
 
       surface_admittance = omega * epsilon_r_eff / k_l;
 
-      // We need to account for the possible flip in the y' direction when
-      // computing the excitation so we use sign_factor here.
-      excitation = cross_product_3d(sign_factor * normal, H_inc) +
-                   map_H12(surface_admittance * E_inc, sign_factor * normal);
+      excitation = cross_product_3d(normal, H_inc) +
+                   map_H12(surface_admittance * E_inc, normal);
     }
   else
     {
