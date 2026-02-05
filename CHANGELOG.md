@@ -4,15 +4,27 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/02/11
+
+### Added
+
+- MAJOR This PR adds the option to have up to 5 different box refinement meshes. `number of refinement boxes` declares the number of refinement boxes and each box has its own subsection (`box #`). Within the subsection, `additional refinement` defines the number of additional times the simulation triangulation is refined within the box region. An alias for `additional refinement` with its previous name `initial refinement` prevents compatibility issues. A `mesh` subsubsection defines the parameters of the refinement mesh. Within the latter, users can define scaling, translation and rotation of the refinement mesh.
+
+  This PR also adds a new function `apply_mesh_transformation` for applying scaling, translation, and rotation transformation to meshes in the listed order.
+
+  Two application tests (2D and 3D) added to `lethe-fluid` protects the software against regressions.
+
+  Finally, this PR updates all concerned examples, tests and documentation.[#1901](https://github.com/chaos-polymtl/lethe/pull/1901)
+
 ## [Master] - 2026/02/09
 
 ### Added
 
-- MINOR This PR adds the option to declare a ``custom distribution`` as ``volume`` or ``number`` weighted. In addition, an option was added to the "custom distribution" allowing the sampled diameter values to be interpolated between input data points. Finally, the ``custom distribution`` diameter values and probability values can be define using the probability density function (PDF) or the cummulative density function (CDF) of the particle size distribution (PSD). [1892](https://github.com/chaos-polymtl/lethe/pull/1892)
+- MINOR This PR adds the option to declare a ``custom distribution`` as ``volume`` or ``number`` weighted. In addition, an option was added to the "custom distribution" allowing the sampled diameter values to be interpolated between input data points. Finally, the ``custom distribution`` diameter values and probability values can be define using the probability density function (PDF) or the cummulative density function (CDF) of the particle size distribution (PSD). [#1892](https://github.com/chaos-polymtl/lethe/pull/1892)
 
 ### Changed 
 
-- MINOR Containers for the lagrangian particle properties are changed from ``std::unordered_map`` to ``std::vectors``.  [1892](https://github.com/chaos-polymtl/lethe/pull/1892)
+- MINOR Containers for the lagrangian particle properties are changed from ``std::unordered_map`` to ``std::vectors``.  [#1892](https://github.com/chaos-polymtl/lethe/pull/1892)
 
 ## [Master] - 2026/02/07
 
