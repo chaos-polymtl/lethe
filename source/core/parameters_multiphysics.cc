@@ -75,7 +75,9 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
                       "false",
                       Patterns::Bool(),
                       "Thermal buoyancy force calculation <true|false>");
-    prm.declare_alias("thermal buoyancy force", "buoyancy force", true); // temporary alias for backward compatibility
+    prm.declare_alias("thermal buoyancy force",
+                      "buoyancy force",
+                      true); // temporary alias for backward compatibility
   }
   prm.leave_subsection();
 
@@ -100,7 +102,7 @@ Parameters::Multiphysics<dim>::parse_parameters(
     electromagnetics = prm.get_bool("electromagnetics");
 
     // subparameters for heat_transfer
-    viscous_dissipation = prm.get_bool("viscous dissipation");
+    viscous_dissipation    = prm.get_bool("viscous dissipation");
     thermal_buoyancy_force = prm.get_bool("thermal buoyancy force");
   }
   prm.leave_subsection();

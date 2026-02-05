@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include "solvers/time_harmonic_maxwell.h"
@@ -246,8 +246,9 @@ void
 MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
   const SimulationParameters<dim> &nsparam)
 {
-  bool thermal_buoyancy_force_enabled = nsparam.multiphysics.thermal_buoyancy_force;
-  bool heat_transfer_enabled  = nsparam.multiphysics.heat_transfer;
+  bool thermal_buoyancy_force_enabled =
+    nsparam.multiphysics.thermal_buoyancy_force;
+  bool heat_transfer_enabled = nsparam.multiphysics.heat_transfer;
   bool marangoni_effect_enabled =
     nsparam.multiphysics.vof_parameters.surface_tension_force
       .enable_marangoni_effect;
@@ -267,12 +268,13 @@ MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
   // Dependence of thermal buoyancy force on fluid dynamics
   AssertThrow(!(thermal_buoyancy_force_enabled == true &&
                 fluid_dynamics_enabled == false),
-              ThermalBuoyancyWithoutFluidDynamicsError(thermal_buoyancy_force_enabled));
+              ThermalBuoyancyWithoutFluidDynamicsError(
+                thermal_buoyancy_force_enabled));
 
   // Dependence of thermal buoyancy force on heat transfer
-  AssertThrow(!(thermal_buoyancy_force_enabled == true &&
-                heat_transfer_enabled == false),
-              ThermalBuoyancyWithoutHeatTransferError(thermal_buoyancy_force_enabled));
+  AssertThrow(
+    !(thermal_buoyancy_force_enabled == true && heat_transfer_enabled == false),
+    ThermalBuoyancyWithoutHeatTransferError(thermal_buoyancy_force_enabled));
 
   // Dependence of Marangoni effect on fluid dynamics
   AssertThrow(!(marangoni_effect_enabled == true &&

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_navier_stokes_assemblers_h
@@ -665,8 +665,9 @@ template <int dim>
 class ThermalBuoyancyAssembly : public NavierStokesAssemblerBase<dim>
 {
 public:
-  ThermalBuoyancyAssembly(const std::shared_ptr<SimulationControl> &simulation_control,
-                   const double reference_temperature)
+  ThermalBuoyancyAssembly(
+    const std::shared_ptr<SimulationControl> &simulation_control,
+    const double                              reference_temperature)
     : simulation_control(simulation_control)
     , reference_temperature(reference_temperature)
   {}

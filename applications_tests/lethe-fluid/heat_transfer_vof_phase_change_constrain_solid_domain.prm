@@ -22,9 +22,9 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set heat transfer  = true
+  set heat transfer          = true
   set thermal buoyancy force = true
-  set VOF            = true
+  set VOF                    = true
 end
 
 #---------------------------------------------------
