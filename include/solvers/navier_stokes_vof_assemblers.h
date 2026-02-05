@@ -405,7 +405,7 @@ public:
 
 
 /**
- * @brief Assembles the buoyancy source term for VOF simulations.
+ * @brief Assembles the thermal buoyancy source term for VOF simulations.
  * This assembler includes density explicitly in the buoyancy term since
  * the VOF momentum equation is written as:
  * \f$ \rho \frac{\partial \mathbf{u}}{\partial t} + \rho \mathbf{u} \cdot
@@ -421,10 +421,10 @@ public:
  * @ingroup assemblers
  */
 template <int dim>
-class BuoyancyAssemblyVOF : public NavierStokesAssemblerBase<dim>
+class ThermalBuoyancyAssemblyVOF : public NavierStokesAssemblerBase<dim>
 {
 public:
-  BuoyancyAssemblyVOF(
+  ThermalBuoyancyAssemblyVOF(
     const std::shared_ptr<SimulationControl> &simulation_control,
     const double                              reference_temperature)
     : simulation_control(simulation_control)

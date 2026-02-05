@@ -45,25 +45,26 @@ FluidDynamicsBlock<dim>::setup_assemblers()
 {
   this->assemblers.clear();
 
-  // Buoyant force
-  if (this->simulation_parameters.multiphysics.buoyancy_force)
+  // Thermal buoyancy force
+  if (this->simulation_parameters.multiphysics.thermal_buoyancy_force)
     {
       if (this->simulation_parameters.multiphysics.VOF)
         {
           // VOF formulation includes density explicitly in the momentum
           // equation
           this->assemblers.emplace_back(
-            std::make_shared<BuoyancyAssemblyVOF<dim>>(
+            std::make_shared<ThermalBuoyancyAssemblyVOF<dim>>(
               this->simulation_control,
               this->simulation_parameters.physical_properties_manager
                 .get_reference_temperature()));
         }
       else
         {
-          this->assemblers.emplace_back(std::make_shared<BuoyancyAssembly<dim>>(
-            this->simulation_control,
-            this->simulation_parameters.physical_properties_manager
-              .get_reference_temperature()));
+          this->assemblers.emplace_back(
+            std::make_shared<ThermalBuoyancyAssembly<dim>>(
+              this->simulation_control,
+              this->simulation_parameters.physical_properties_manager
+                .get_reference_temperature()));
         }
     }
 

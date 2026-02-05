@@ -1780,7 +1780,7 @@ template class LaplaceAssembly<3>;
 
 template <int dim>
 void
-BuoyancyAssembly<dim>::assemble_matrix(
+ThermalBuoyancyAssembly<dim>::assemble_matrix(
   const NavierStokesScratchData<dim> & /*scratch_data*/,
   StabilizedMethodsTensorCopyData<dim> & /*copy_data*/)
 {}
@@ -1789,7 +1789,7 @@ BuoyancyAssembly<dim>::assemble_matrix(
 
 template <int dim>
 void
-BuoyancyAssembly<dim>::assemble_rhs(
+ThermalBuoyancyAssembly<dim>::assemble_rhs(
   const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -1831,8 +1831,8 @@ BuoyancyAssembly<dim>::assemble_rhs(
     }
 }
 
-template class BuoyancyAssembly<2>;
-template class BuoyancyAssembly<3>;
+template class ThermalBuoyancyAssembly<2>;
+template class ThermalBuoyancyAssembly<3>;
 
 template <int dim>
 void

@@ -653,7 +653,7 @@ public:
 
 
 /**
- * @brief Class that assembles a buoyancy forcing term using the Boussinesq
+ * @brief Class that assembles a thermal buoyancy forcing term using the Boussinesq
  * approximation. For more information, read Chapter 10 of Transport phenomena
  * by Bird et al., or "Boussinesq approximation (buoyancy)" page on Wikipedia.
  *
@@ -662,10 +662,10 @@ public:
  * @ingroup assemblers
  */
 template <int dim>
-class BuoyancyAssembly : public NavierStokesAssemblerBase<dim>
+class ThermalBuoyancyAssembly : public NavierStokesAssemblerBase<dim>
 {
 public:
-  BuoyancyAssembly(const std::shared_ptr<SimulationControl> &simulation_control,
+  ThermalBuoyancyAssembly(const std::shared_ptr<SimulationControl> &simulation_control,
                    const double reference_temperature)
     : simulation_control(simulation_control)
     , reference_temperature(reference_temperature)
