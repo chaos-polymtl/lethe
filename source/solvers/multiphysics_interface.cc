@@ -12,18 +12,18 @@
 #define _unused(x) ((void)(x))
 
 DeclException1(
-  BuoyancyWithoutFluidDynamicsError,
+  ThermalBuoyancyWithoutFluidDynamicsError,
   bool,
-  << std::boolalpha << "Buoyancy force is activated (" << arg1
+  << std::boolalpha << "Thermal buoyancy force is activated (" << arg1
   << "), while fluid dynamics is not activated (false)." << std::endl
-  << "Buoyancy force cannot be activated without activating fluid dynamics.");
+  << "Thermal buoyancy force cannot be activated without activating fluid dynamics.");
 
 DeclException1(
-  BuoyancyWithoutHeatTransferError,
+  ThermalBuoyancyWithoutHeatTransferError,
   bool,
-  << std::boolalpha << "Buoyancy force is activated (" << arg1
+  << std::boolalpha << "Thermal buoyancy force is activated (" << arg1
   << "), while heat transfer is not activated (false)." << std::endl
-  << "Buoyancy force cannot be activated without activating heat transfer.");
+  << "Thermal buoyancy force cannot be activated without activating heat transfer.");
 
 DeclException1(
   MarangoniWithoutFluidDynamicsError,
@@ -246,7 +246,7 @@ void
 MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
   const SimulationParameters<dim> &nsparam)
 {
-  bool buoyancy_force_enabled = nsparam.multiphysics.buoyancy_force;
+  bool thermal_buoyancy_force_enabled = nsparam.multiphysics.thermal_buoyancy_force;
   bool heat_transfer_enabled  = nsparam.multiphysics.heat_transfer;
   bool marangoni_effect_enabled =
     nsparam.multiphysics.vof_parameters.surface_tension_force
@@ -259,20 +259,20 @@ MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
   bool VOF_enabled = nsparam.multiphysics.VOF;
 
   // To avoid getting unused parameter warning
-  _unused(buoyancy_force_enabled && heat_transfer_enabled &&
+  _unused(thermal_buoyancy_force_enabled && heat_transfer_enabled &&
           marangoni_effect_enabled && surface_tension_force_enabled &&
           fluid_dynamics_enabled && interface_sharpening_enabled &&
           VOF_enabled);
 
-  // Dependence of buoyant force on fluid dynamics
-  AssertThrow(!(buoyancy_force_enabled == true &&
+  // Dependence of thermal buoyancy force on fluid dynamics
+  AssertThrow(!(thermal_buoyancy_force_enabled == true &&
                 fluid_dynamics_enabled == false),
-              BuoyancyWithoutFluidDynamicsError(buoyancy_force_enabled));
+              ThermalBuoyancyWithoutFluidDynamicsError(thermal_buoyancy_force_enabled));
 
-  // Dependence of buoyant force on heat transfer
-  AssertThrow(!(buoyancy_force_enabled == true &&
+  // Dependence of thermal buoyancy force on heat transfer
+  AssertThrow(!(thermal_buoyancy_force_enabled == true &&
                 heat_transfer_enabled == false),
-              BuoyancyWithoutHeatTransferError(buoyancy_force_enabled));
+              ThermalBuoyancyWithoutHeatTransferError(thermal_buoyancy_force_enabled));
 
   // Dependence of Marangoni effect on fluid dynamics
   AssertThrow(!(marangoni_effect_enabled == true &&
