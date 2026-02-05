@@ -273,8 +273,8 @@ namespace Parameters
         "Probabilities associated with each diameter values for "
         "a custom distribution. ");
       prm.declare_alias("custom distribution diameters probabilities",
-                        "custom volume fractions",
-                        false);
+        "Probabilities associated with each diameter value for "
+        "a custom distribution. ");
 
       // Normal, lognormal and custom distributions
       prm.declare_entry("distribution weighting basis",
