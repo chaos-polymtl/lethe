@@ -643,9 +643,9 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                                              this->thermal_expansion_0[q],
                                              this->thermal_expansion_1[q]);
 
-                  // Blend the product rho*beta per-phase to avoid
-                  // product-of-blends error: blend(rho)*blend(beta) !=
-                  // blend(rho*beta)
+                  // Phase interpolate the product rho*beta per-phase to avoid
+                  // cross term error from bilinear phase interpolation: 
+                  // interp_lin(rho)*interp_lin(beta) != interp_lin(rho*beta)
                   density_thermal_expansion[q] = calculate_point_property(
                     filtered_phase_value,
                     this->density_0[q] * this->thermal_expansion_0[q],
