@@ -1,6 +1,21 @@
 
 DEAL::Volume weighted custom distribution
-DEAL::Volume fraction of particle with diameter 1: 0.502060
-DEAL::Volume fraction of particle with diameter 2: 0.497940
-DEAL::Number of particle with diameter 1: 8897
-DEAL::Number of particle with diameter 2: 1103
+DEAL::Volume fraction smaller then 0.00250000 : 0.502060
+DEAL::Volume fraction smaller then 0.00500000 : 1.00000
+DEAL::Numbered weighted custom distribution
+DEAL::Number fraction smaller then 0.00250000 : 0.502100
+DEAL::Number fraction smaller then 0.00500000 : 1.00000
+DEAL::Volume weighted custom distribution
+DEAL::Volume fraction smaller then 0.00250000 : 0.100375
+DEAL::Volume fraction smaller then 0.00300000 : 0.201485
+DEAL::Volume fraction smaller then 0.00400000 : 0.351105
+DEAL::Volume fraction smaller then 0.00500000 : 0.606906
+DEAL::Volume fraction smaller then 0.00550000 : 0.768139
+DEAL::Volume fraction smaller then 0.00590000 : 1.00000
+DEAL::Numbered weighted custom distribution
+DEAL::Number fraction smaller then 0.00250000 : 0.0977000
+DEAL::Number fraction smaller then 0.00300000 : 0.193700
+DEAL::Number fraction smaller then 0.00400000 : 0.346200
+DEAL::Number fraction smaller then 0.00500000 : 0.599200
+DEAL::Number fraction smaller then 0.00550000 : 0.759600
+DEAL::Number fraction smaller then 0.00590000 : 1.00000

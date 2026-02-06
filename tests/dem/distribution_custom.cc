@@ -65,7 +65,7 @@ test(const std::vector<double> &diameter_list,
   lpp.diameter_min_cutoff.push_back(-1.);
   lpp.diameter_max_cutoff.push_back(-1.);
   lpp.distribution_weighting_type.push_back(weighting_type);
-  lpp.custom_probability_function_type.push_back(ProbabilityFunctionType::PDF);
+  lpp.custom_probability_function_type.push_back(function_type);
   lpp.density_particle.push_back(2500);
   lpp.number.push_back(100000);
 
@@ -100,35 +100,58 @@ test(const std::vector<double> &diameter_list,
   if constexpr (weighting_type == DistributionWeightingType::volume_based)
     deallog << "Volume weighted custom distribution " << std::endl;
 
-  unsigned int     particle_number = 0;
-  unsigned int     n_particle_1 = 0, n_particle_2 = 0;
-  constexpr double d1 = 0.0025, d2 = 0.0050;
+  unsigned int total_particle_number = particle_handler.n_global_particles();
 
+  double           total_volume = 0.;
+  constexpr double one_over_6   = 1. / 6.;
+
+  std::vector<double> number_based_cdf(diameter_list.size());
+  std::vector<double> volume_based_cdf(diameter_list.size());
+
+  // Compute the total volume of particle
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
-       ++particle, ++particle_number)
+       ++particle)
     {
-      auto particle_properties = particle->get_properties();
-
-      double dp = particle_properties[PropertiesIndex::dp];
-
-      if (dp == d1)
-        n_particle_1++;
-      else //(dp == d2)
-        n_particle_2++;
+      auto         particle_properties = particle->get_properties();
+      const double dp = particle_properties[PropertiesIndex::dp];
+      total_volume += M_PI * Utilities::fixed_power<3>(dp) * one_over_6;
     }
-  const double volume_particle_1 = n_particle_1 * std::pow(d1, 3);
-  const double volume_particle_2 = n_particle_2 * std::pow(d2, 3);
-  const double total_volume      = volume_particle_1 + volume_particle_2;
 
-  deallog << "Volume fraction of particle with diameter 1: "
-          << volume_particle_1 / total_volume << std::endl;
-  deallog << "Volume fraction of particle with diameter 2: "
-          << volume_particle_2 / total_volume << std::endl;
-  deallog << "Number fraction of particle with diameter 1: " << n_particle_1
-          << std::endl;
-  deallog << "Number of particle with diameter 2: " << n_particle_2
-          << std::endl;
+  // Loop over every particle, check if the diameter is smaller or equal to the
+  // input diameter value, print the CDF.
+  for (const double diameter_value_i : diameter_list)
+    {
+      double n_smaller_or_equal_particles                  = 0;
+      double volume_occupied_by_smaller_or_equal_particles = 0.;
+      for (auto particle = particle_handler.begin();
+           particle != particle_handler.end();
+           ++particle)
+        {
+          auto         particle_properties = particle->get_properties();
+          const double dp = particle_properties[PropertiesIndex::dp];
+          if (dp <= diameter_value_i)
+            {
+              n_smaller_or_equal_particles += 1.;
+              volume_occupied_by_smaller_or_equal_particles +=
+                M_PI * Utilities::fixed_power<3>(dp) * one_over_6;
+            }
+        }
+      // Output
+      if constexpr (weighting_type == DistributionWeightingType::number_based)
+        {
+          const double number_fraction =
+            n_smaller_or_equal_particles / total_particle_number;
+
+          deallog << "Number fraction smaller then " << diameter_value_i
+                  << " : " << number_fraction << std::endl;
+        }
+
+      if constexpr (weighting_type == DistributionWeightingType::volume_based)
+        deallog << "Volume fraction smaller then " << diameter_value_i << " : "
+                << volume_occupied_by_smaller_or_equal_particles / total_volume
+                << std::endl;
+    }
 }
 
 int
@@ -138,7 +161,7 @@ main(int argc, char **argv)
     {
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
-      // Dicrete
+      // Discrete
       const std::vector<double> d_list_1 = {0.0025, 0.0050};
       const std::vector<double> p_list_1 = {0.5, 0.5};
       initlog();
@@ -154,8 +177,9 @@ main(int argc, char **argv)
            false>(d_list_1, p_list_1);
 
       // Interpolate
-      const std::vector<double> d_list_2 = {0.0025, 0.0050};
-      const std::vector<double> p_list_2 = {0.1, 0.2, 0.3};
+      const std::vector<double> d_list_2 = {
+        0.0025, 0.0030, 0.0040, 0.0050, 0.0055, 0.0059};
+      const std::vector<double> p_list_2 = {0.1, 0.2, 0.35, 0.60, 0.76, 1.0};
       test<3,
            DEM::DEMProperties::PropertiesIndex,
            DistributionWeightingType::volume_based,
@@ -165,6 +189,7 @@ main(int argc, char **argv)
       test<3,
            DEM::DEMProperties::PropertiesIndex,
            DistributionWeightingType::number_based,
+           ProbabilityFunctionType::CDF,
            false>(d_list_2, p_list_2);
     }
   catch (std::exception &exc)
