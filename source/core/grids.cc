@@ -647,8 +647,10 @@ apply_mesh_transformation(const Parameters::Mesh       &mesh_parameters,
       // Box mesh translation
       GridTools::shift(mesh_parameters.translation, triangulation);
 
-      // Box mesh rotation around the origin of the system coordinates
-      GridTools::rotate(mesh_parameters.rotation_angle, triangulation);
+      // Box mesh rotation
+      GridTools::rotate(mesh_parameters.rotation_axis,
+                        mesh_parameters.rotation_angle,
+                        triangulation);
     }
   else if constexpr (dim == 3)
     {

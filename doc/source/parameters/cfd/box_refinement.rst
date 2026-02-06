@@ -6,12 +6,12 @@
 Box Refinement
 ==============
 
-The box refinement section allows for a specific region in the grid to be finer before the simulation starts. To do so, a box refinement can be added with the following example parameters:
+The box refinement section allows for a specific region in the grid to be finer before the simulation starts. To do so, a box refinement can be added with the following 3D example parameters:
 
 .. code-block:: text
 
   subsection box refinement
-  set number of refinement boxes = 1
+  set number of refinement boxes = 1 # By default, 0
     subsection box 0
       subsection mesh
         set type                   = dealii
@@ -20,14 +20,14 @@ The box refinement section allows for a specific region in the grid to be finer 
         set initial refinement     = 0
         set scale                  = 1
         set initial translation    = 0, 0, 0
-        set initial rotation axis  = 1, 0, 0 # Only valid in 3D
+        set initial rotation axis  = 1, 0, 0 # Only valid if the mesh is in a 3D space
         set initial rotation angle = 0
       end
-      set additional refinement = 2
+      set additional refinement = 2 # By default, 0
     end
   end
 
-* The ``number of refinement boxes`` corresponds to the number of refinement meshes we want to introduce (by default, it takes the value :math:`0`).
+* The ``number of refinement boxes`` corresponds to the number of refinement meshes we want to introduce.
 
   .. attention::
     At the moment, the software only supports up to :math:`5` different boxes.
@@ -49,7 +49,7 @@ The box refinement section allows for a specific region in the grid to be finer 
     The ``initial refinement`` of the ``hyper_cube`` should be as small as possible, since the initial refinement of the box mesh itself will not have any impact on the definition of the refinement zone.
     However, in the case of curved shape such as ``hyper_sphere``, as you increase the ``initial refinement`` of the box refinement mesh, it improves the geometry resolution.
 
-* The ``additional refinement`` parameter in the ``box refinement`` subsection will dictate the number of times the cells inside the box will be refined (by default, ``additional refinement`` takes the value :math:`0`).
+* The ``additional refinement`` parameter in the ``box refinement`` subsection indicates the number of times the cells inside the box will be refined.
 
   .. warning::
     This number is not the level of refinement of the cell, but the number of additional refinements applied within the region of the box at the initial condition. For instance, let us consider a simulation mesh with an ``initial refinement`` of :math:`1` and a box refinement mesh with an ``additional refinement`` of :math:`2` (as shown above). The level of refinement of cells within the box refinement region becomes: :math:`1 + 2 = 3`.
