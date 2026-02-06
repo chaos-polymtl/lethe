@@ -361,14 +361,14 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
   initialize_distance();
 
   // Identify intersected cells and compute the interface reconstruction.
-  InterfaceTools::reconstruct_interface(*mapping,
-                                        dof_handler,
-                                        *fe,
-                                        level_set,
-                                        0.0,
-                                        interface_reconstruction_vertices,
-                                        interface_reconstruction_cells,
-                                        intersected_dofs);
+  // InterfaceTools::reconstruct_interface(*mapping,
+  //                                       dof_handler,
+  //                                       *fe,
+  //                                       level_set,
+  //                                       0.0,
+  //                                       interface_reconstruction_vertices,
+  //                                       interface_reconstruction_cells,
+  //                                       intersected_dofs);
 
   /* Compute the distance for the DoFs of the intersected cells (the ones in
   the intersected_dofs set). They correspond to the first neighbor DoFs.*/
@@ -595,11 +595,15 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
           if (cell_location != NonMatching::LocationToLevelSet::intersected)
             continue;
 
+          const unsigned int cell_index = cell->global_active_cell_index();
+
           cell->get_dof_values(level_set,
                                cell_dof_values.begin(),
                                cell_dof_values.end());
 
           cell->get_dof_indices(dof_indices);
+          std::vector<Point<dim>>        surface_vertices;
+
 
           for (unsigned int i = 0; i < dofs_per_cell; ++i)
             {
@@ -622,6 +626,9 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
               distance(dof_indices[i]) =
                 std::min(std::abs(distance(dof_indices[i])),
                          std::abs(point_closest_point_vec.norm()));
+              intersected_dofs.insert(dof_indices[i]);
+
+              interface_reconstruction_vertices[cell_index] = surface_vertices;
             }
         }
     }
