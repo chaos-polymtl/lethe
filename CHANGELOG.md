@@ -8,11 +8,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MAJOR This PR adds the option to have up to 5 different box refinement meshes. `number of refinement boxes` declares the number of refinement boxes and each box has its own subsection (`box #`). Within the subsection, `additional refinement` defines the number of additional times the simulation triangulation is refined within the box region. An alias for `additional refinement` with its previous name `initial refinement` prevents compatibility issues. A `mesh` subsubsection defines the parameters of the refinement mesh. Within the latter, users can define scaling, translation and rotation of the refinement mesh.
+- MAJOR This PR adds the option to have up to 5 different box refinement meshes. `number of refinement boxes` declares the number of refinement boxes and each box has its own subsection (`box #`). Within the subsection, `additional refinement` defines the number of additional times the simulation triangulation is refined within the box region. An alias for `additional refinement` with its previous name `initial refinement` prevents compatibility issues. A `mesh` subsubsection defines the parameters of the refinement mesh. Within the latter, users can define scaling, translation and rotation of the refinement mesh. Two application tests (2D and 3D) added to `lethe-fluid` protects the software against regressions.
 
   This PR also adds a new function `apply_mesh_transformation` for applying scaling, translation, and rotation transformation to meshes in the listed order.
-
-  Two application tests (2D and 3D) added to `lethe-fluid` protects the software against regressions.
 
   Finally, this PR updates all concerned examples, tests and documentation.[#1901](https://github.com/chaos-polymtl/lethe/pull/1901)
 
