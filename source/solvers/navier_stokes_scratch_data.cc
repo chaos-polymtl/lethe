@@ -85,6 +85,7 @@ NavierStokesScratchData<dim>::allocate()
   dynamic_viscosity_for_stabilization   = std::vector<double>(n_q_points);
   kinematic_viscosity_for_stabilization = std::vector<double>(n_q_points);
   thermal_expansion                     = std::vector<double>(n_q_points);
+  density_thermal_expansion             = std::vector<double>(n_q_points);
   grad_kinematic_viscosity_shear_rate   = std::vector<double>(n_q_points);
 
   previous_density =
@@ -641,6 +642,14 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                     calculate_point_property(filtered_phase_value,
                                              this->thermal_expansion_0[q],
                                              this->thermal_expansion_1[q]);
+
+                  // Blend the product rho*beta per-phase to avoid
+                  // product-of-blends error: blend(rho)*blend(beta) !=
+                  // blend(rho*beta)
+                  density_thermal_expansion[q] = calculate_point_property(
+                    filtered_phase_value,
+                    this->density_0[q] * this->thermal_expansion_0[q],
+                    this->density_1[q] * this->thermal_expansion_1[q]);
                 }
 
               // Gather density_psi for isothermal compressible NS equations

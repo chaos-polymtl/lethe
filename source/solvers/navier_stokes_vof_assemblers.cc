@@ -1224,8 +1224,8 @@ BuoyancyAssemblyVOF<dim>::assemble_rhs(
       // Forcing term (gravity)
       const Tensor<1, dim> &force = scratch_data.force[q];
 
-      const double density           = scratch_data.density[q];
-      const double thermal_expansion = scratch_data.thermal_expansion[q];
+      const double density_thermal_expansion =
+        scratch_data.density_thermal_expansion[q];
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -1233,7 +1233,7 @@ BuoyancyAssemblyVOF<dim>::assemble_rhs(
       // Current temperature values
       double current_temperature = scratch_data.temperature_values[q];
 
-      strong_residual[q] += density * force * thermal_expansion *
+      strong_residual[q] += force * density_thermal_expansion *
                             (current_temperature - reference_temperature);
 
       // Assembly of the right-hand side
@@ -1241,7 +1241,7 @@ BuoyancyAssemblyVOF<dim>::assemble_rhs(
         {
           const auto phi_u_i = scratch_data.phi_u[q][i];
 
-          local_rhs(i) -= density * force * thermal_expansion *
+          local_rhs(i) -= force * density_thermal_expansion *
                           (current_temperature - reference_temperature) *
                           phi_u_i * JxW;
         }
