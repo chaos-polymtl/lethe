@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -832,7 +832,7 @@ template <int dim>
 void
 FluidDynamicsBlock<dim>::setup_ILU()
 {
-  TimerOutput::Scope t(this->computing_timer, "setup_ILU");
+  TimerOutput::Scope t(this->computing_timer, "Setup ILU");
 
   //**********************************************
   // Trillinos Wrapper ILU Preconditioner
@@ -875,7 +875,7 @@ template <int dim>
 void
 FluidDynamicsBlock<dim>::setup_AMG()
 {
-  TimerOutput::Scope t(this->computing_timer, "setup_AMG");
+  TimerOutput::Scope t(this->computing_timer, "Setup AMG");
 
   //**********************************************
   // Trillinos Wrapper AMG Preconditioner

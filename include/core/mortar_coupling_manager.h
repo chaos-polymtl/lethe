@@ -157,19 +157,28 @@ protected:
   get_config(const Point<dim> &face_center, const bool is_inner) const;
 
   /**
-   * @brief Convert radiant to quadrature point in real space.
+   * @brief Convert angle (in radians) to quadrature point in real space
+   *
+   * @param[in] angle_rad Angle (in radians)
+   * @return Point in cartesian coordinates
    */
   virtual Point<dim>
-  from_1D(const double radiant) const = 0;
+  from_1D(const double angle_rad) const = 0;
 
   /**
-   * @brief Convert quadrature point in real space to radiant.
+   * @brief Convert quadrature point in real space to angle (in radians)
+   *
+   * @param[in] point Point in cartesian coordinates
+   * @return Angle (in radians)
    */
   virtual double
   to_1D(const Point<dim> &point) const = 0;
 
   /**
-   * @brief Return the normal for a given quadrature point.
+   * @brief Return the normal for a given quadrature point
+   *
+   * @param[in] point Point in cartesian coordinates
+   * @return Corresponding outward normal vector
    */
   virtual Tensor<1, dim, double>
   get_normal(const Point<dim> &point) const = 0;
@@ -183,7 +192,8 @@ protected:
 };
 
 /**
- * @brief Compute the number of subdivisions at the rotor-stator interface and the rotor radius
+ * @brief Compute parameters of the mortar interface: n_subdivisions, interface_dimensions,
+ * and pre_rotation_angle
  * @param[in] triangulation The triangulation object
  * @param[in] mapping Mapping associated to the domain
  * @param[in] mortar_parameters The information about the mortar method
@@ -191,7 +201,9 @@ protected:
  *
  * @return n_subdivisions Number of cells at the interface between inner
  * and outer domains
- * @return radius Radius at the interface between inner and outer domains
+ * @return interface_dimensions Vector containing the radius at the mortar interface and the
+ * domain length in the direction of the rotation axis
+ * @return pre_rotation_angle Rotation angle of the initial mesh configuration
  */
 template <int dim>
 std::tuple<std::vector<unsigned int>, std::vector<double>, double>
@@ -243,7 +255,7 @@ public:
 
 protected:
   Point<dim>
-  from_1D(const double rad) const override;
+  from_1D(const double angle_rad) const override;
 
   double
   to_1D(const Point<dim> &point) const override;
@@ -628,14 +640,20 @@ class CouplingOperator
 {
 public:
   /**
-   * @brief Constructor.
+   * @brief Mortar coupling operator constructor
    *
+   * @param[in] quadrature Quadrature for local cell operations
+   * @param[in] dof_handler DoFHandler associated to the triangulation
+   * @param[in] constraints Constraints object
+   * @param[in] evaluator Mortar evaluation data
+   * @param[in] mortar_manager Mortar manager
    * @param[in] bid_m Boundary ID of the face whose outwards-pointing
-   *   normal shows in the same direction as the normal provided by
-   *   @p mortar_manager.
-   * @param[in] bid_p Boundary ID of the face whose outwards-pointing
-   *   normal shows in the opposite direction as the normal provided by
-   *   @p mortar_manager.
+   * normal shows in the same direction as the normal provided by
+   * @p mortar_manager.
+   * @param[in] bid_p Boundary ID of the face whose outwards-pointing normal
+   * shows in the opposite direction as the normal provided by
+   * @p mortar_manager.
+   * @param[in] sip_factor Penalty factor used in SIPG term
    */
   CouplingOperator(
     const Mapping<dim>                                        &mapping,
@@ -718,12 +736,12 @@ private:
     const typename Triangulation<dim>::cell_iterator &cell) const;
 
   /**
-   * @brief Returns angle of a point (cell center)
+   * @brief Returns the point corresponding to the cell center
    *
    * @param[in] cell Cell iterator
    * @param[in] face Face iterator
    *
-   * @return Angle in radians
+   * @return Cell center in cartesian coordinates
    */
   Point<dim>
   get_face_center(const typename Triangulation<dim>::cell_iterator &cell,
@@ -733,6 +751,8 @@ private:
    * @brief Returns dof indices
    *
    * @param[in] cell Cell iterator
+   *
+   * @return Vector of global dof indices
    */
   std::vector<types::global_dof_index>
   get_dof_indices(
@@ -757,9 +777,11 @@ protected:
   /// Number of data points per quadrature point
   unsigned int q_data_size;
 
-  /// Boundary ID of the inner domain (rotor)
+  /// Boundary ID of the face whose outwards-pointing normal shows in the
+  /// same direction as the normal provided by @p mortar_manager
   const unsigned int bid_m;
-  /// Boundary ID of the outer domain (stator)
+  /// Boundary ID of the face whose outwards-pointing normal shows in the
+  /// opposite direction as the normal provided by @p mortar_manager
   const unsigned int bid_p;
 
   /// List of relevant DoF indices per cell
@@ -788,14 +810,17 @@ protected:
 /**
  * @brief Create a temporary vector where mortar evaluation data is stored
  * before being passed to the system matrix
- *
- * @param[in] ptr Vector of values on one of the mortar sides
- * @param[in] offset Number of components to offset the ptr vector
  */
 template <typename T>
 class BufferRW
 {
 public:
+  /**
+   * @brief Class constructor
+   *
+   * @param[in] ptr Vector of values on one of the mortar sides
+   * @param[in] offset Number of components to offset the ptr vector
+   */
   BufferRW(T *ptr, const unsigned int offset)
     : ptr(ptr ? (ptr + offset) : nullptr)
   {}
@@ -910,12 +935,18 @@ public:
 
   using u_value_type = typename FEPointIntegratorU::value_type;
 
+  /**
+   * @brief Class constructor
+   * @param[in] mapping Mapping associated to the domain
+   * @param[in] dof_handler DoFHandler associated to the triangulation
+   * @param[in] kinematic_vicosity Kinematic viscosity
+   */
   NavierStokesCouplingEvaluation(const Mapping<dim>    &mapping,
                                  const DoFHandler<dim> &dof_handler,
                                  const double           kinematic_viscosity);
 
   /**
-   *    @brief Default destructor.
+   * @brief Default destructor
    */
   virtual ~NavierStokesCouplingEvaluation() = default;
 

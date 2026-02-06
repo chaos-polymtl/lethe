@@ -196,6 +196,9 @@ protected:
   /// DoF handlers for each of the levels of the global coarsening algorithm
   MGLevelObject<DoFHandler<dim>> dof_handlers;
 
+  /// MappingQCache for each of the levels of the global coarsening algorithm
+  MGLevelObject<std::shared_ptr<MappingQCache<dim>>> mappings;
+
   /// Transfers for each of the levels of the global coarsening algorithm
   MGLevelObject<MGTwoLevelTransfer<dim, MGVectorType>> transfers;
 
