@@ -807,7 +807,6 @@ protected:
   std::shared_ptr<MortarManagerBase<dim>>              mortar_manager;
 };
 
-
 /**
  * @brief Create a temporary vector where mortar evaluation data is stored
  * before being passed to the system matrix
