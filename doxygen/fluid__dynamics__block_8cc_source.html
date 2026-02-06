@@ -93,7 +93,7 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">fluid_dynamics_block.cc</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="fluid__dynamics__block_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors</span></div>
+<a href="fluid__dynamics__block_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;<a class="code" href="bdf_8h.html">core/bdf.h</a>&gt;</span></div>
@@ -960,7 +960,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="foldopen" id="foldopen00833" data-start="{" data-end="}">
 <div class="line"><a id="l00833" name="l00833"></a><span class="lineno"><a class="line" href="classFluidDynamicsBlock.html#ac3f989e70d156fc33c9c1feef0bfcf34">  833</a></span><a class="code hl_function" href="classFluidDynamicsBlock.html#ac3f989e70d156fc33c9c1feef0bfcf34">FluidDynamicsBlock&lt;dim&gt;::setup_ILU</a>()</div>
 <div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>{</div>
-<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;setup_ILU&quot;</span>);</div>
+<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Setup ILU&quot;</span>);</div>
 <div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span> </div>
 <div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>  <span class="comment">//**********************************************</span></div>
 <div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>  <span class="comment">// Trillinos Wrapper ILU Preconditioner</span></div>
@@ -1005,7 +1005,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="foldopen" id="foldopen00876" data-start="{" data-end="}">
 <div class="line"><a id="l00876" name="l00876"></a><span class="lineno"><a class="line" href="classFluidDynamicsBlock.html#a59e8e66446052e42ebcab065c6c8fb15">  876</a></span><a class="code hl_function" href="classFluidDynamicsBlock.html#a59e8e66446052e42ebcab065c6c8fb15">FluidDynamicsBlock&lt;dim&gt;::setup_AMG</a>()</div>
 <div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span>{</div>
-<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;setup_AMG&quot;</span>);</div>
+<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Setup AMG&quot;</span>);</div>
 <div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span> </div>
 <div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span>  <span class="comment">//**********************************************</span></div>
 <div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span>  <span class="comment">// Trillinos Wrapper AMG Preconditioner</span></div>

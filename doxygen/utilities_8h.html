@@ -422,9 +422,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a5df21d5e2572a5711790ce28e326a07d" id="r_a5df21d5e2572a5711790ce28e326a07d"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:a5df21d5e2572a5711790ce28e326a07d"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="utilities_8h.html#a5df21d5e2572a5711790ce28e326a07d">point_to_angle</a> (const Point&lt; dim &gt; &amp;point, const Point&lt; dim &gt; &amp;center_of_rotation=Point&lt; dim &gt;())</td></tr>
 <tr class="separator:a5df21d5e2572a5711790ce28e326a07d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0bea60f70f692902d4d84d9cf118ccaf" id="r_a0bea60f70f692902d4d84d9cf118ccaf"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
-<tr class="memitem:a0bea60f70f692902d4d84d9cf118ccaf"><td class="memTemplItemLeft" align="right" valign="top">Point&lt; dim &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="utilities_8h.html#a0bea60f70f692902d4d84d9cf118ccaf">radius_to_point</a> (const double radius, const double rad)</td></tr>
-<tr class="separator:a0bea60f70f692902d4d84d9cf118ccaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a237e7bc13643a8271e7fdb30aa0e848b" id="r_a237e7bc13643a8271e7fdb30aa0e848b"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:a237e7bc13643a8271e7fdb30aa0e848b"><td class="memTemplItemLeft" align="right" valign="top">Point&lt; dim &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="utilities_8h.html#a237e7bc13643a8271e7fdb30aa0e848b">radius_to_point</a> (const double radius, const double angle_rad)</td></tr>
+<tr class="separator:a237e7bc13643a8271e7fdb30aa0e848b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0ca4ad74cfa4ff603d94d8f520df07a5" id="r_a0ca4ad74cfa4ff603d94d8f520df07a5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8h.html#a0ca4ad74cfa4ff603d94d8f520df07a5">create_random_number_container</a> (std::vector&lt; double &gt; &amp;random_container, const unsigned int number_of_elements, const double maximum_range, const unsigned int prn_seed)</td></tr>
 <tr class="separator:a0ca4ad74cfa4ff603d94d8f520df07a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a642bc9ef98dbdbc0a480ea1a3b840b7a" id="r_a642bc9ef98dbdbc0a480ea1a3b840b7a"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
@@ -2207,8 +2207,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a0bea60f70f692902d4d84d9cf118ccaf" name="a0bea60f70f692902d4d84d9cf118ccaf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0bea60f70f692902d4d84d9cf118ccaf">&#9670;&#160;</a></span>radius_to_point()</h2>
+<a id="a237e7bc13643a8271e7fdb30aa0e848b" name="a237e7bc13643a8271e7fdb30aa0e848b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a237e7bc13643a8271e7fdb30aa0e848b">&#9670;&#160;</a></span>radius_to_point()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2228,7 +2228,7 @@ template&lt;int dim&gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>rad</em>&#160;</td>
+          <td class="paramname"><em>angle_rad</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -2246,8 +2246,8 @@ template&lt;int dim&gt; </div>
 <p>Converts radius to point in cartesian coordinates (in the x-y plane) </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">radius</td><td>Radial distance. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">rad</td><td>Angle (in radians).</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">radius</td><td>Radial distance </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">angle_rad</td><td>Angle (in radians)</td></tr>
   </table>
   </dd>
 </dl>

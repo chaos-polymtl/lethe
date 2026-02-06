@@ -93,7 +93,7 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">fluid_dynamics_matrix_based.cc</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="fluid__dynamics__matrix__based_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors</span></div>
+<a href="fluid__dynamics__matrix__based_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;<a class="code" href="bdf_8h.html">core/bdf.h</a>&gt;</span></div>
@@ -1614,7 +1614,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="foldopen" id="foldopen01481" data-start="{" data-end="}">
 <div class="line"><a id="l01481" name="l01481"></a><span class="lineno"><a class="line" href="classFluidDynamicsMatrixBased.html#a51cacc5e8ff5fb865a37412b924ce101"> 1481</a></span><a class="code hl_function" href="classFluidDynamicsMatrixBased.html#a51cacc5e8ff5fb865a37412b924ce101">FluidDynamicsMatrixBased&lt;dim&gt;::setup_AMG</a>()</div>
 <div class="line"><a id="l01482" name="l01482"></a><span class="lineno"> 1482</span>{</div>
-<div class="line"><a id="l01483" name="l01483"></a><span class="lineno"> 1483</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;setup_AMG&quot;</span>);</div>
+<div class="line"><a id="l01483" name="l01483"></a><span class="lineno"> 1483</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Setup AMG&quot;</span>);</div>
 <div class="line"><a id="l01484" name="l01484"></a><span class="lineno"> 1484</span> </div>
 <div class="line"><a id="l01485" name="l01485"></a><span class="lineno"> 1485</span>  <span class="comment">// Constant modes for velocity</span></div>
 <div class="line"><a id="l01486" name="l01486"></a><span class="lineno"> 1486</span>  std::vector&lt;std::vector&lt;bool&gt;&gt; constant_modes;</div>

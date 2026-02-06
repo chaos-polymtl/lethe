@@ -169,7 +169,7 @@ Private Attributes</h2></td></tr>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim, typename Number&gt;<br />
 class CouplingOperator&lt; dim, Number &gt;</div><p>Base class for the Coupling Operator Base. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00627">627</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00639">639</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a0ec58bc77b07f196be27f90ede1b67ce" name="a0ec58bc77b07f196be27f90ede1b67ce"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0ec58bc77b07f196be27f90ede1b67ce">&#9670;&#160;</a></span>CouplingOperator()</h2>
@@ -235,18 +235,24 @@ template&lt;int dim, typename Number &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Constructor. </p>
+<p>Mortar coupling operator constructor. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">quadrature</td><td>Quadrature for local cell operations </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dof_handler</td><td>DoFHandler associated to the triangulation </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">constraints</td><td>Constraints object </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">evaluator</td><td>Mortar evaluation data </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mortar_manager</td><td>Mortar manager </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">bid_m</td><td>Boundary ID of the face whose outwards-pointing normal shows in the same direction as the normal provided by <code>mortar_manager</code>. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">bid_p</td><td>Boundary ID of the face whose outwards-pointing normal shows in the opposite direction as the normal provided by <code>mortar_manager</code>. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">sip_factor</td><td>Penalty factor used in SIPG term </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l00706">706</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l00698">698</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="mortar__coupling__manager_8h_source.html#l00777">CouplingOperator&lt; dim, Number &gt;::all_points_ref</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00761">CouplingOperator&lt; dim, Number &gt;::bid_m</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00763">CouplingOperator&lt; dim, Number &gt;::bid_p</a>, <a class="el" href="mortar__coupling__manager_8cc_source.html#l01036">CouplingOperator&lt; dim, Number &gt;::compute_penalty_factor()</a>, <a class="el" href="mortar__coupling__manager_8cc_source.html#l01044">CouplingOperator&lt; dim, Number &gt;::compute_penalty_parameter()</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00781">CouplingOperator&lt; dim, Number &gt;::constraints_extended</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00778">CouplingOperator&lt; dim, Number &gt;::data</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00745">CouplingOperator&lt; dim, Number &gt;::dof_handler</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00772">CouplingOperator&lt; dim, Number &gt;::dof_indices</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00773">CouplingOperator&lt; dim, Number &gt;::dof_indices_ghost</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00784">CouplingOperator&lt; dim, Number &gt;::evaluator</a>, <a class="el" href="mortar__coupling__manager_8cc_source.html#l01100">CouplingOperator&lt; dim, Number &gt;::get_dof_indices()</a>, <a class="el" href="mortar__coupling__manager_8cc_source.html#l01090">CouplingOperator&lt; dim, Number &gt;::get_face_center()</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00743">CouplingOperator&lt; dim, Number &gt;::mapping</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00785">CouplingOperator&lt; dim, Number &gt;::mortar_manager</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00768">CouplingOperator&lt; dim, Number &gt;::n_dofs_per_cell</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00770">CouplingOperator&lt; dim, Number &gt;::partitioner</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00782">CouplingOperator&lt; dim, Number &gt;::partitioner_extended</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00758">CouplingOperator&lt; dim, Number &gt;::q_data_size</a>, and <a class="el" href="mortar__coupling__manager_8h_source.html#l00766">CouplingOperator&lt; dim, Number &gt;::relevant_dof_indices</a>.</p>
+<p class="reference">References <a class="el" href="mortar__coupling__manager_8h_source.html#l00799">CouplingOperator&lt; dim, Number &gt;::all_points_ref</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00782">CouplingOperator&lt; dim, Number &gt;::bid_m</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00785">CouplingOperator&lt; dim, Number &gt;::bid_p</a>, <a class="el" href="mortar__coupling__manager_8cc_source.html#l01028">CouplingOperator&lt; dim, Number &gt;::compute_penalty_factor()</a>, <a class="el" href="mortar__coupling__manager_8cc_source.html#l01036">CouplingOperator&lt; dim, Number &gt;::compute_penalty_parameter()</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00803">CouplingOperator&lt; dim, Number &gt;::constraints_extended</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00800">CouplingOperator&lt; dim, Number &gt;::data</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00765">CouplingOperator&lt; dim, Number &gt;::dof_handler</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00794">CouplingOperator&lt; dim, Number &gt;::dof_indices</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00795">CouplingOperator&lt; dim, Number &gt;::dof_indices_ghost</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00806">CouplingOperator&lt; dim, Number &gt;::evaluator</a>, <a class="el" href="mortar__coupling__manager_8cc_source.html#l01092">CouplingOperator&lt; dim, Number &gt;::get_dof_indices()</a>, <a class="el" href="mortar__coupling__manager_8cc_source.html#l01082">CouplingOperator&lt; dim, Number &gt;::get_face_center()</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00763">CouplingOperator&lt; dim, Number &gt;::mapping</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00807">CouplingOperator&lt; dim, Number &gt;::mortar_manager</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00790">CouplingOperator&lt; dim, Number &gt;::n_dofs_per_cell</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00792">CouplingOperator&lt; dim, Number &gt;::partitioner</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00804">CouplingOperator&lt; dim, Number &gt;::partitioner_extended</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00778">CouplingOperator&lt; dim, Number &gt;::q_data_size</a>, and <a class="el" href="mortar__coupling__manager_8h_source.html#l00788">CouplingOperator&lt; dim, Number &gt;::relevant_dof_indices</a>.</p>
 
 </div>
 </div>
@@ -279,7 +285,7 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01232">1232</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01224">1224</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 </div>
 </div>
@@ -309,7 +315,7 @@ template&lt;int dim, typename Number &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01307">1307</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01299">1299</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 </div>
 </div>
@@ -339,7 +345,7 @@ template&lt;int dim, typename Number &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01326">1326</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01318">1318</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 </div>
 </div>
@@ -389,7 +395,7 @@ template&lt;int dim, typename Number &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>penalty factor value penalty_factor = (degree + 1)^2 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01036">1036</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01028">1028</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 </div>
 </div>
@@ -430,7 +436,7 @@ template&lt;int dim, typename Number &gt; </div>
 <dd>
 penalty parameter value from SIPG method penalty_parameter = (A(∂Ω_e \ Γ_h)/2 + A(∂Ω_e ∩ Γ_h))/V(Ω_e) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01044">1044</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01036">1036</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 </div>
 </div>
@@ -454,7 +460,7 @@ template&lt;int dim, typename Number &gt; </div>
 <p>Return object containing problem constraints. </p>
 <dl class="section return"><dt>Returns</dt><dd>AffineConstraints </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01029">1029</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01021">1021</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 </div>
 </div>
@@ -487,12 +493,13 @@ template&lt;int dim, typename Number &gt; </div>
 <p>Returns dof indices. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">cell</td><td>Cell iterator </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">cell</td><td>Cell iterator</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>Vector of global dof indices </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01100">1100</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01092">1092</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 </div>
 </div>
@@ -532,7 +539,7 @@ template&lt;int dim, typename Number &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Returns angle of a point (cell center) </p>
+<p>Returns the point corresponding to the cell center. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">cell</td><td>Cell iterator </td></tr>
@@ -540,9 +547,9 @@ template&lt;int dim, typename Number &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Angle in radians </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Cell center in cartesian coordinates </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01090">1090</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01082">1082</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 </div>
 </div>
@@ -585,7 +592,7 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01118">1118</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01110">1110</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 </div>
 </div>
@@ -612,7 +619,7 @@ template&lt;int dim, typename Number &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00754">754</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00774">774</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -639,7 +646,7 @@ template&lt;int dim, typename Number &gt; </div>
 </div><div class="memdoc">
 <p>Vectors storing information at quadrature points for all cells at the rotor-stator interface </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00777">777</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00799">799</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -664,10 +671,9 @@ template&lt;int dim, typename Number &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Boundary ID of the face whose outwards-pointing normal shows in the same direction as the normal provided by <code>mortar_manager</code> </p>
 
-<p>Boundary ID of the inner domain (rotor) </p>
-
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00761">761</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00782">782</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -692,10 +698,9 @@ template&lt;int dim, typename Number &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Boundary ID of the face whose outwards-pointing normal shows in the opposite direction as the normal provided by <code>mortar_manager</code> </p>
 
-<p>Boundary ID of the outer domain (stator) </p>
-
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00763">763</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00785">785</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -723,7 +728,7 @@ template&lt;int dim, typename Number &gt; </div>
 
 <p>Constraints extended according to mortar entries. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00781">781</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00803">803</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -749,7 +754,7 @@ template&lt;int dim, typename Number &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00778">778</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00800">800</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -777,7 +782,7 @@ template&lt;int dim, typename Number &gt; </div>
 
 <p>DoFHandler associated to the triangulation. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00745">745</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00765">765</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -803,7 +808,7 @@ template&lt;int dim, typename Number &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00772">772</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00794">794</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -829,7 +834,7 @@ template&lt;int dim, typename Number &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00773">773</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00795">795</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -855,7 +860,7 @@ template&lt;int dim, typename Number &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00784">784</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00806">806</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -883,7 +888,7 @@ template&lt;int dim, typename Number &gt; </div>
 
 <p>Mapping of the domain. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00743">743</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00763">763</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -909,7 +914,7 @@ template&lt;int dim, typename Number &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00785">785</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00807">807</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -937,7 +942,7 @@ template&lt;int dim, typename Number &gt; </div>
 
 <p>Number of DoFs per cell. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00768">768</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00790">790</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -963,7 +968,7 @@ template&lt;int dim, typename Number &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00770">770</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00792">792</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -989,7 +994,7 @@ template&lt;int dim, typename Number &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00782">782</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00804">804</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1017,7 +1022,7 @@ template&lt;int dim, typename Number &gt; </div>
 
 <p>Number of data points per quadrature point. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00758">758</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00778">778</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -1045,7 +1050,7 @@ template&lt;int dim, typename Number &gt; </div>
 
 <p>List of relevant DoF indices per cell. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00766">766</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00788">788</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>

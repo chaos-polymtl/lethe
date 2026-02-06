@@ -238,7 +238,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Compute the number of subdivisions at the rotor-stator interface and the rotor radius. </p>
+<p>Compute parameters of the mortar interface: n_subdivisions, interface_dimensions, and pre_rotation_angle. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">triangulation</td><td>The triangulation object </td></tr>
@@ -249,9 +249,11 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>n_subdivisions Number of cells at the interface between inner and outer domains </dd>
 <dd>
-radius Radius at the interface between inner and outer domains </dd></dl>
+interface_dimensions Vector containing the radius at the mortar interface and the domain length in the direction of the rotation axis </dd>
+<dd>
+pre_rotation_angle Rotation angle of the initial mesh configuration </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l00452">452</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l00444">444</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="parameters_8h_source.html#l01919">Parameters::Mortar&lt; dim &gt;::center_of_rotation</a>, <a class="el" href="utilities_8h_source.html#l00970">point_to_angle()</a>, <a class="el" href="parameters_8h_source.html#l01931">Parameters::Mortar&lt; dim &gt;::radius_tolerance</a>, <a class="el" href="parameters_8h_source.html#l01921">Parameters::Mortar&lt; dim &gt;::rotation_axis</a>, <a class="el" href="parameters_8h_source.html#l01915">Parameters::Mortar&lt; dim &gt;::rotor_boundary_id</a>, and <a class="el" href="parameters_8h_source.html#l01917">Parameters::Mortar&lt; dim &gt;::stator_boundary_id</a>.</p>
 
@@ -419,7 +421,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Quadrature oversampled </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l00662">662</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l00654">654</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="parameters_8h_source.html#l01929">Parameters::Mortar&lt; dim &gt;::oversampling_factor</a>.</p>
 
