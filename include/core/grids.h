@@ -153,7 +153,7 @@ refine_triangulation_at_boundaries(
  *
  * @tparam dim An integer that denotes the dimensionality of the geometry.
  * @tparam spacedim An integer that denotes the dimension of the space occupied
- * by the embedded solid.
+ * by the embedded geometry.
  *
  * @param[in] mesh_parameters Parameters of the mesh.
  * @param[in] triangulation Triangulation object on which the mesh.
