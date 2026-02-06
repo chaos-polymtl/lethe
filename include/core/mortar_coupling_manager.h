@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_core_mortar_coupling_manager_h
@@ -63,6 +63,8 @@ public:
    * @brief Returns the indices of all mortars at both sides of the interface
    *
    * @param[in] face_center Face center
+   * @param[in] is_inner Boolean that indicates whether the face is part of the
+   * rotor (inner) side of the mortar interface
    */
   std::vector<unsigned int>
   get_mortar_indices(const Point<dim> &face_center, const bool is_inner) const;
@@ -83,6 +85,8 @@ public:
    * @brief Returns the coordinates of the quadrature points at both sides of the interface
    *
    * @param[in] face_center Face center
+   * @param[in] is_inner Boolean that indicates whether the face is part of the
+   * rotor (inner) side of the mortar interface
    *
    * @return points Coordinate of quadrature points of the cell
    */
@@ -93,6 +97,8 @@ public:
    * @brief Returns the coordinates of the quadrature points at the interface
    *
    * @param[in] face_center Face center
+   * @param[in] is_inner Boolean that indicates whether the face is part of the
+   * rotor (inner) side of the mortar interface
    *
    * @return points Coordinate of quadrature points of the cell
    */
@@ -103,6 +109,8 @@ public:
    * @brief Returns the weights of the quadrature points at both sides of the interface
    *
    * @param[in] face_center Face center
+   * @param[in] is_inner Boolean that indicates whether the face is part of the
+   * rotor (inner) side of the mortar interface
    *
    * @return points Angular weights of quadrature points of the cell
    */
@@ -113,6 +121,8 @@ public:
    * @brief Returns the normal vector for the quadrature points
    *
    * @param[in] face_center Face center
+   * @param[in] is_inner Boolean that indicates whether the face is part of the
+   * rotor (inner) side of the mortar interface
    *
    * @return result Normal vectors of the cell quadrature points
    */
@@ -130,6 +140,8 @@ protected:
    * @brief Returns the mesh alignment type and cell index
    *
    * @param[in] face_center Face center
+   * @param[in] is_inner Boolean that indicates whether the face is part of the
+   * rotor (inner) side of the mortar interface
    *
    * @return type Cell configuration type at the interface
    * type = 0: mesh aligned
@@ -352,7 +364,7 @@ MortarManagerCircle<dim>::MortarManagerCircle(
  * @return Rank-0 tensor
  */
 template <int dim, typename Number>
-Number
+inline Number
 contract(const Tensor<1, dim, Number> &grad,
          const Tensor<1, dim, Number> &normal)
 {
@@ -368,7 +380,7 @@ contract(const Tensor<1, dim, Number> &grad,
  * @return Rank-1 tensor
  */
 template <int dim, typename Number>
-Tensor<1, dim, Number>
+inline Tensor<1, dim, Number>
 contract(const Tensor<2, dim, Number> &grad,
          const Tensor<1, dim, Number> &normal)
 {
@@ -385,7 +397,7 @@ contract(const Tensor<2, dim, Number> &grad,
  *
  */
 template <int n_components, int dim, typename Number>
-Tensor<1, n_components, Number>
+inline Tensor<1, n_components, Number>
 contract(const Tensor<1, n_components, Tensor<1, dim, Number>> &grad,
          const Tensor<1, dim, Number>                          &normal)
 {
@@ -406,7 +418,7 @@ contract(const Tensor<1, n_components, Tensor<1, dim, Number>> &grad,
  * @return Rank-1 tensor
  */
 template <int dim, typename Number>
-Tensor<1, dim, Number>
+inline Tensor<1, dim, Number>
 outer(const Number &value, const Tensor<1, dim, Number> &normal)
 {
   return value * normal;
@@ -422,7 +434,7 @@ outer(const Number &value, const Tensor<1, dim, Number> &normal)
  * @return Rank-2 tensor
  */
 template <int dim, typename Number>
-Tensor<2, dim, Number>
+inline Tensor<2, dim, Number>
 outer(const Tensor<1, dim, Number> &value, const Tensor<1, dim, Number> &normal)
 {
   Tensor<2, dim, Number> result;
@@ -442,7 +454,7 @@ outer(const Tensor<1, dim, Number> &value, const Tensor<1, dim, Number> &normal)
  * @return Rank-2 tensor for n_components
  */
 template <int n_components, int dim, typename Number>
-Tensor<1, n_components, Tensor<1, dim, Number>>
+inline Tensor<1, n_components, Tensor<1, dim, Number>>
 outer(const Tensor<1, n_components, Number> &value,
       const Tensor<1, dim, Number>          &normal)
 {
@@ -572,6 +584,8 @@ public:
   /**
    * @brief Evaluate values and gradients at the coupling entries
    *
+   * @param[in] data Coupling evaluation data containing values of normals,
+   * weights, and penalty parameters at each integration point
    * @param[in,out] buffer Temporary vector where data is stored before being
    * passes to the system matrix
    * @param[in] ptr_q Pointer for the quadrature point index related to the
@@ -591,6 +605,8 @@ public:
   /**
    * @brief Perform integral of mortar elements at the rotor-stator interface
    *
+   * @param[in] data Coupling evaluation data containing values of normals,
+   * weights, and penalty parameters at each integration point
    * @param[in] buffer Temporary vector where data is stored before being passes
    * to the system matrix
    * @param[in] ptr_q Pointer for the quadrature point index related to the
@@ -792,6 +808,10 @@ protected:
 };
 
 
+/**
+ * @brief Create a temporary vector where mortar evaluation data is stored
+ * before being passed to the system matrix
+ */
 template <typename T>
 class BufferRW
 {
@@ -806,7 +826,7 @@ public:
     : ptr(ptr ? (ptr + offset) : nullptr)
   {}
 
-  void
+  inline void
   write(const T &in)
   {
     ptr[0] = in;
@@ -814,7 +834,7 @@ public:
   }
 
   template <int dim>
-  void
+  inline void
   write(const Tensor<1, dim, T> &in)
   {
     for (int i = 0; i < dim; ++i)
@@ -824,7 +844,7 @@ public:
   }
 
   template <typename T0>
-  T0
+  inline T0
   read() const
   {
     T0 result = {};
@@ -839,7 +859,7 @@ private:
   mutable T *ptr;
 
   template <int dim>
-  void
+  inline void
   read(Tensor<1, dim, T> &out) const
   {
     for (int i = 0; i < dim; ++i)
@@ -848,7 +868,7 @@ private:
     ptr += dim;
   }
 
-  void
+  inline void
   read(T &out) const
   {
     out = ptr[0];
