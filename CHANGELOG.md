@@ -4,6 +4,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/02/07
+
+### Changed
+
+- MAJOR This PR updates the project version to the current release tag. [#1904](https://github.com/chaos-polymtl/lethe/pull/1904)
+
 ## [Master] - 2026/01/29
 
 ### Changed
