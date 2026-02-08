@@ -1196,3 +1196,57 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
 
 template class GLSNavierStokesVOFAssemblerNonNewtonianCore<2>;
 template class GLSNavierStokesVOFAssemblerNonNewtonianCore<3>;
+
+template <int dim>
+void
+BuoyancyAssemblyVOF<dim>::assemble_matrix(
+  const NavierStokesScratchData<dim> & /*scratch_data*/,
+  StabilizedMethodsTensorCopyData<dim> & /*copy_data*/)
+{}
+
+template <int dim>
+void
+BuoyancyAssemblyVOF<dim>::assemble_rhs(
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Loop and quadrature information
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  auto &local_rhs       = copy_data.local_rhs;
+  auto &strong_residual = copy_data.strong_residual;
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Forcing term (gravity)
+      const Tensor<1, dim> &force = scratch_data.force[q];
+
+      const double density_thermal_expansion_eq =
+        scratch_data.density_thermal_expansion[q];
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      // Current temperature values
+      double current_temperature = scratch_data.temperature_values[q];
+
+      strong_residual[q] += force * density_thermal_expansion_eq *
+                            (current_temperature - reference_temperature);
+
+      // Assembly of the right-hand side
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_u_i = scratch_data.phi_u[q][i];
+
+          local_rhs(i) -= force * density_thermal_expansion_eq *
+                          (current_temperature - reference_temperature) *
+                          phi_u_i * JxW;
+        }
+    }
+}
+
+template class BuoyancyAssemblyVOF<2>;
+template class BuoyancyAssemblyVOF<3>;

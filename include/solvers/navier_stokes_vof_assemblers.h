@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_navier_stokes_vof_assemblers_h
@@ -402,4 +402,57 @@ public:
   const std::shared_ptr<SimulationControl> simulation_control;
   const Parameters::VOF                    vof_parameters;
 };
+
+
+/**
+ * @brief Assembles the buoyancy source term for VOF simulations.
+ * This assembler includes density explicitly in the buoyancy term since
+ * the VOF momentum equation is written as:
+ * \f$ \rho \frac{\partial \mathbf{u}}{\partial t} + \rho \mathbf{u} \cdot
+ * \nabla \mathbf{u} = ... \f$
+ *
+ * The weak form assembled is:
+ * \f$ -\rho \mathbf{g} \beta (T - T_0) \f$
+ *
+ * where \f$ \rho \f$ is the phase-fraction-weighted density.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class BuoyancyAssemblyVOF : public NavierStokesAssemblerBase<dim>
+{
+public:
+  BuoyancyAssemblyVOF(
+    const std::shared_ptr<SimulationControl> &simulation_control,
+    const double                              reference_temperature)
+    : simulation_control(simulation_control)
+    , reference_temperature(reference_temperature)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the weak form of:
+   * \f$-\rho \mathbf{g} \beta (T - T_0)\f$
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+private:
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const double                             reference_temperature;
+};
+
 #endif

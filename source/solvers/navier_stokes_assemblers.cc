@@ -1810,7 +1810,6 @@ BuoyancyAssembly<dim>::assemble_rhs(
 
       const double thermal_expansion = scratch_data.thermal_expansion[q];
 
-
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
 
@@ -1825,7 +1824,6 @@ BuoyancyAssembly<dim>::assemble_rhs(
         {
           const auto phi_u_i = scratch_data.phi_u[q][i];
 
-          // Laplacian on the velocity terms
           local_rhs(i) -= force * thermal_expansion *
                           (current_temperature - reference_temperature) *
                           phi_u_i * JxW;

@@ -1455,6 +1455,7 @@ public:
   /// Values of the dynamic viscosity used in the SUPG and PSPG stabilizations.
   std::vector<double>              dynamic_viscosity_for_stabilization;
   std::vector<double>              thermal_expansion;
+  std::vector<double>              density_thermal_expansion;
   std::vector<double>              grad_kinematic_viscosity_shear_rate;
   std::vector<std::vector<double>> previous_density;
 
