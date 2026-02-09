@@ -65,6 +65,21 @@ public:
     sharp_edge();
   }
 
+protected:
+  /**
+   * @brief Override to extend the sparsity pattern for periodic IB coupling.
+   *
+   * The base class builds the sparsity pattern with
+   * keep_constrained_dofs=false, which excludes entries on constrained
+   * (periodic slave) DoF rows. sharp_edge() writes IB equations on these
+   * rows, so we extend the pattern to include:
+   * - (slave, slave) diagonal entries
+   * - (slave, master) constraint coupling entries
+   * - (cut_cell_dof, master) entries for stencil column expansion
+   * Without these, matrix adds are silently dropped in release mode.
+   */
+  void
+  setup_dofs_fd() override;
 
 private:
   /**

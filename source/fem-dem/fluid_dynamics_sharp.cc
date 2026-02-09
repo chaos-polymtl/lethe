@@ -22,11 +22,16 @@
 
 #include <deal.II/base/work_stream.h>
 
+#include <deal.II/dofs/dof_renumbering.h>
+#include <deal.II/dofs/dof_tools.h>
+
 #include <deal.II/fe/fe_q.h>
 
 #include <deal.II/grid/grid_tools.h>
 
+#include <deal.II/lac/dynamic_sparsity_pattern.h>
 #include <deal.II/lac/full_matrix.h>
+#include <deal.II/lac/sparsity_tools.h>
 
 #include <boost/signals2/connection.hpp>
 
@@ -617,109 +622,143 @@ FluidDynamicsSharp<dim>::optimized_generate_cut_cells_map()
   // ID particle is associated with the cell in the map.
   for (int p = particles.size() - 1; p >= 0; --p)
     {
-      bool         empty    = true;
-      unsigned int lvl_iter = 0;
-
-      // Fix max level search
-      unsigned int max_lvl_search =
-        this->dof_handler->get_triangulation().n_levels() - 2;
-      if (max_lvl_search < 4)
-        max_lvl_search = this->dof_handler->get_triangulation().n_levels();
-
-      // Search for candidates until at least one is found or until the
-      // max_lvl_search is reached
-      while (empty || lvl_iter < max_lvl_search)
+      // Build positions to check: actual + periodic images
+      std::vector<Point<dim>> positions_to_check;
+      positions_to_check.push_back(particles[p].position);
+      if (sharp_ib_periodic_boundaries.is_periodic_enabled())
         {
-          const auto &cell_iterator =
-            this->dof_handler->cell_iterators_on_level(lvl_iter);
-
-          // Loop over the cells on level lvl_iter of the mesh
-          for (const auto &cell : cell_iterator)
-            {
-              auto is_candidate = generate_cut_cell_candidates(cell, p);
-
-              // check whether the cell is candidate for inside of cut
-              if (is_candidate.first)
-                {
-                  all_candidate_cells.insert(cell);
-                }
-              if (is_candidate.second)
-                {
-                  all_candidate_cells.insert(cell);
-                }
-            }
-          if (all_candidate_cells.size() > 0)
-            empty = false;
-
-          lvl_iter += 1;
+          std::vector<Point<dim>> images =
+            get_periodic_particle_images(particles[p].position,
+                                         particles[p].radius);
+          positions_to_check.insert(positions_to_check.end(),
+                                    images.begin(),
+                                    images.end());
         }
 
-      // Store list with all candidate cells
-      previous_all_candidate_cells = all_candidate_cells;
-
-      // If there are candidate cells
-      if (all_candidate_cells.size() != 0)
+      for (const auto &pos : positions_to_check)
         {
-          bool all_cells_are_active = false;
+          Point<dim> saved_pos = particles[p].position;
+          particles[p].position = pos;
+          particles[p].set_position(pos);
 
-          // Loop until candidate cells are active
-          while (!all_cells_are_active)
+          all_candidate_cells.clear();
+          previous_all_candidate_cells.clear();
+
+          bool         empty    = true;
+          unsigned int lvl_iter = 0;
+
+          // Fix max level search
+          unsigned int max_lvl_search =
+            this->dof_handler->get_triangulation().n_levels() - 2;
+          if (max_lvl_search < 4)
+            max_lvl_search =
+              this->dof_handler->get_triangulation().n_levels();
+
+          // Search for candidates until at least one is found or until the
+          // max_lvl_search is reached
+          while (empty || lvl_iter < max_lvl_search)
             {
-              all_cells_are_active = true;
-              all_candidate_cells.clear();
+              const auto &cell_iterator =
+                this->dof_handler->cell_iterators_on_level(lvl_iter);
 
-              // loop over the last set of candidates to check if it is still a
-              // candidate
-              for (auto cell : previous_all_candidate_cells)
+              // Loop over the cells on level lvl_iter of the mesh
+              for (const auto &cell : cell_iterator)
                 {
-                  auto is_candidate = generate_cut_cell_candidates(cell, p);
+                  auto is_candidate =
+                    generate_cut_cell_candidates(cell, p);
 
-                  // Check if cell is inside particles
+                  // check whether the cell is candidate for inside of cut
                   if (is_candidate.first)
                     {
-                      // If it is an active cell, add it to cells_inside_map
-                      if (cell->is_active())
-                        {
-                          cells_inside_map[cell] = {true, p};
-                        }
-                      else
-                        {
-                          // If we are here, the cell has children.
-                          all_cells_are_active = false;
-                          for (unsigned int j = 0; j < max_children; ++j)
-                            {
-                              // Store the children of the cell for
-                              // further checks.
-                              all_candidate_cells.insert(cell->child(j));
-                            }
-                        }
+                      all_candidate_cells.insert(cell);
                     }
-
                   if (is_candidate.second)
                     {
-                      // If it is an active cell, add it to cells_cut_map
-                      if (cell->is_active())
+                      all_candidate_cells.insert(cell);
+                    }
+                }
+              if (all_candidate_cells.size() > 0)
+                empty = false;
+
+              lvl_iter += 1;
+            }
+
+          // Store list with all candidate cells
+          previous_all_candidate_cells = all_candidate_cells;
+
+          // If there are candidate cells
+          if (all_candidate_cells.size() != 0)
+            {
+              bool all_cells_are_active = false;
+
+              // Loop until candidate cells are active
+              while (!all_cells_are_active)
+                {
+                  all_cells_are_active = true;
+                  all_candidate_cells.clear();
+
+                  // loop over the last set of candidates to check if it is
+                  // still a candidate
+                  for (auto cell : previous_all_candidate_cells)
+                    {
+                      auto is_candidate =
+                        generate_cut_cell_candidates(cell, p);
+
+                      // Check if cell is inside particles
+                      if (is_candidate.first)
                         {
-                          cut_cells_map[cell] = {true,
-                                                 p,
-                                                 std::vector<unsigned int>()};
-                        }
-                      else
-                        {
-                          // If we are here, the cell has children.
-                          all_cells_are_active = false;
-                          for (unsigned int j = 0; j < max_children; ++j)
+                          // If it is an active cell, add it to
+                          // cells_inside_map
+                          if (cell->is_active())
                             {
-                              // Store the children of the cell for
-                              // further checks.
-                              all_candidate_cells.insert(cell->child(j));
+                              cells_inside_map[cell] = {true, p};
+                            }
+                          else
+                            {
+                              // If we are here, the cell has children.
+                              all_cells_are_active = false;
+                              for (unsigned int j = 0; j < max_children;
+                                   ++j)
+                                {
+                                  // Store the children of the cell for
+                                  // further checks.
+                                  all_candidate_cells.insert(
+                                    cell->child(j));
+                                }
+                            }
+                        }
+
+                      if (is_candidate.second)
+                        {
+                          // If it is an active cell, add it to
+                          // cells_cut_map
+                          if (cell->is_active())
+                            {
+                              cut_cells_map[cell] = {
+                                true, p, std::vector<unsigned int>()};
+                            }
+                          else
+                            {
+                              // If we are here, the cell has children.
+                              all_cells_are_active = false;
+                              for (unsigned int j = 0; j < max_children;
+                                   ++j)
+                                {
+                                  // Store the children of the cell for
+                                  // further checks.
+                                  all_candidate_cells.insert(
+                                    cell->child(j));
+                                }
                             }
                         }
                     }
+                  previous_all_candidate_cells.clear();
+                  previous_all_candidate_cells = all_candidate_cells;
                 }
-              previous_all_candidate_cells.clear();
-              previous_all_candidate_cells = all_candidate_cells;
             }
+
+          particles[p].position = saved_pos;
+          particles[p].set_position(saved_pos);
         }
     }
 }
@@ -5468,6 +5507,50 @@ FluidDynamicsSharp<dim>::solve()
     }
 
   this->finish_simulation();
+}
+
+
+template <int dim>
+void
+FluidDynamicsSharp<dim>::setup_dofs_fd()
+{
+  // Call the base class to do all standard setup (DoF distribution,
+  // constraints, vector reinit, sparsity pattern, matrix reinit).
+  FluidDynamicsMatrixBased<dim>::setup_dofs_fd();
+
+  // If periodic boundaries are not enabled, the standard sparsity
+  // pattern (built with keep_constrained_dofs=false) is sufficient.
+  if (!sharp_ib_periodic_boundaries.is_periodic_enabled())
+    return;
+
+  // Rebuild the sparsity pattern with keep_constrained_dofs=true.
+  // The base class uses false, which excludes periodic slave DoF rows
+  // from the pattern. But sharp_edge() writes IB equations (stencil
+  // entries, constraint re-imposition, diagonal entries) on these rows.
+  // Without entries in the pattern, those adds are silently dropped by
+  // Trilinos in release mode, causing empty rows and unphysical
+  // velocities at the periodic boundary.
+  auto &nonzero_constraints = this->get_nonzero_constraints();
+
+  DynamicSparsityPattern dsp(this->locally_relevant_dofs);
+  DoFTools::make_sparsity_pattern(*this->dof_handler,
+                                  dsp,
+                                  nonzero_constraints,
+                                  true);
+
+  if (this->simulation_parameters.mortar_parameters.enable)
+    this->mortar_coupling_operator->add_sparsity_pattern_entries(dsp);
+
+  SparsityTools::distribute_sparsity_pattern(
+    dsp,
+    this->dof_handler->locally_owned_dofs(),
+    this->mpi_communicator,
+    this->locally_relevant_dofs);
+
+  this->system_matrix.reinit(this->locally_owned_dofs,
+                       this->locally_owned_dofs,
+                       dsp,
+                       this->mpi_communicator);
 }
 
 
