@@ -582,12 +582,17 @@ Return a bool that describes  if a cell contains a specific point
   setup_sharp_ib_periodic_boundaries();
 
   /**
-   * @brief Add matrix entry with periodic constraint expansion.
+   * @brief Add matrix entry, expanding column constraints for periodic DoFs.
    *
-   * If the row or column DoF is periodic-constrained, this function expands
-   * the constraint and adds contributions to the appropriate master DoFs.
-   * This ensures matrix.add() never fails due to missing sparsity pattern
-   * entries for periodic mates.
+   * When col_dof is a periodic-constrained (slave) DoF, the sparsity pattern
+   * (built with keep_constrained_dofs=false) does not include (row, slave)
+   * entries. This function expands the column constraint to redirect the
+   * entry to (row, master_col), which IS in the sparsity pattern.
+   *
+   * Row constraints are NOT expanded. sharp_edge() deliberately writes
+   * equations on constrained DoF rows; redirecting to master rows would
+   * corrupt master DoF equations. After the solve, constraints.distribute()
+   * correctly sets constrained DoF values from their masters.
    *
    * @param row_dof Global DoF index for matrix row
    * @param col_dof Global DoF index for matrix column
