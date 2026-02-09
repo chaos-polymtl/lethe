@@ -473,16 +473,15 @@ public:
       {
         for (const auto &fluid : physical_properties.fluids)
           {
-            if (fluid.density_model ==
-                Parameters::Material::DensityModel::isothermal_ideal_gas)
-              {
-                throw std::logic_error(
-                  "Inconsistency in .prm!\n "
-                  "Thermal buoyancy force is enabled while the isothermal ideal gas\n "
-                  "density model is used. The isothermal ideal gas density model assumes\n "
-                  "thermal independence of the density, which is incompatible with the\n "
-                  "thermal buoyancy force.");
-              }
+            AssertThrow(
+              fluid.density_model !=
+                Parameters::Material::DensityModel::isothermal_ideal_gas,
+              ExcMessage(
+                "Inconsistency in .prm!\n "
+                "Thermal buoyancy force is enabled while the isothermal ideal gas\n "
+                "density model is used. The isothermal ideal gas density model assumes\n "
+                "thermal independence of the density, which is incompatible with the\n "
+                "thermal buoyancy force."));
           }
       }
 
