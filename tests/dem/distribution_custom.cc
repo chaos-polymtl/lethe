@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief Inserting particles following a custom distribution.
+ * @brief Inserting particles following a custom distribution. At the end, the
+ * cumulative density function is reconstructed and should fall back to the
+ * input probability function used.
  */
 
 // Deal.II includes

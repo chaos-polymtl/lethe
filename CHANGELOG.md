@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MINOR This PR adds the option to declare a ``custom distribution`` as ``volume`` or ``number`` weighted. In addition, an option was added to the "custom distribution" allowing the sampled diameter values to be interpolated between input data points. Finally, the ``custom distribution`` diameter values and probability values can be define using the probability density function (PDF) or the cummulative density function (CDF) of the particle size distribution (PSD). 
+- MINOR This PR adds the option to declare a ``custom distribution`` as ``volume`` or ``number`` weighted. In addition, an option was added to the "custom distribution" allowing the sampled diameter values to be interpolated between input data points. Finally, the ``custom distribution`` diameter values and probability values can be define using the probability density function (PDF) or the cummulative density function (CDF) of the particle size distribution (PSD). [1892](https://github.com/chaos-polymtl/lethe/pull/1892)
 
 ### Changed 
 
