@@ -74,5 +74,5 @@ SubSimulationControlDEM::iterate()
   // First we increment the iteration number before returning the status;
   iteration_number++;
 
-  return (iteration_number == total_number_of_iterations);
+  return (iteration_number != total_number_of_iterations);
 }

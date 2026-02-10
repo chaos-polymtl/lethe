@@ -68,8 +68,14 @@ public:
   bool
   iterate();
 
+  unsigned int
+  get_iteration() const
+  {
+    return iteration_number;
+  }
+
   double
-  get_time_step_value() const
+  get_time_step() const
   {
     return time_step;
   }
