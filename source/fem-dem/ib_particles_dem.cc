@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <map>
 #include <utility>
+#include <cmath>
 
 template <int dim>
 void

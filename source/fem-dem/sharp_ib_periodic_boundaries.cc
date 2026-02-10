@@ -22,6 +22,7 @@ void
 SharpIBPeriodicBoundaries<dim>::setup(
   const bool                                    dem_periodic_enabled_input,
   const types::boundary_id                      dem_periodic_boundary_0_input,
+  const types::boundary_id                      dem_periodic_boundary_1_input,
   const unsigned int                            dem_periodic_direction_input,
   const BoundaryConditions::BoundaryConditions &cfd_boundary_conditions,
   const ConditionalOStream                     &pcout)
@@ -60,6 +61,7 @@ SharpIBPeriodicBoundaries<dim>::setup(
     {
       // Both are enabled - check if they match
       if (dem_periodic_boundary_0_input != cfd_periodic_boundary_0 ||
+          dem_periodic_boundary_1_input != cfd_periodic_boundary_1 ||
           dem_periodic_direction_input != cfd_periodic_direction)
         {
           periodicity_mismatch_detected = true;
@@ -87,7 +89,7 @@ SharpIBPeriodicBoundaries<dim>::setup(
     {
       // Only DEM is periodic - use its configuration
       periodic_boundary_0           = dem_periodic_boundary_0_input;
-      periodic_boundary_1           = dem_periodic_boundary_0_input + 1; // Assumption
+      periodic_boundary_1           = dem_periodic_boundary_1_input;
       periodic_direction            = dem_periodic_direction_input;
       periodicity_mismatch_detected = true; // CFD not periodic
     }
