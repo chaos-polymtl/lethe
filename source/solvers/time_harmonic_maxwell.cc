@@ -187,7 +187,14 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
   // normal). We use the sign of (normal · t3) to determine this:
   //   - If normal · t3 > 0: t3 points outward, need to flip entire system
   //   - If normal · t3 < 0: t3 points inward (correct for incident wave)
-  // Note that by swapping the basis vectors e_t1 and e_t2, we change the parity of the system since it is equivalent to a reflection. This means that pseudo vectors (like the magnetic field) will change sign while regular vectors (like the electric field) will not. Eventhough this does not affect the physics of the solution, it is important to be consistent with the definition of the mode profiles that we use, which assume a specific parity for the system. Therefore, we keep track of the status of the parity and apply it later on to the magnetic field when we compute the excitation.
+  // Note that by swapping the basis vectors e_t1 and e_t2, we change the parity
+  // of the system since it is equivalent to a reflection. This means that
+  // pseudo vectors (like the magnetic field) will change sign while regular
+  // vectors (like the electric field) will not. Eventhough this does not affect
+  // the physics of the solution, it is important to be consistent with the
+  // definition of the mode profiles that we use, which assume a specific parity
+  // for the system. Therefore, we keep track of the status of the parity and
+  // apply it later on to the magnetic field when we compute the excitation.
   double parity_factor = 1.0;
   if ((normal * e_t3) > 0)
     {
@@ -245,49 +252,55 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
     {
       std::complex<double> factor = imag * omega * mu_r / (k_c * k_c);
 
-      E_inc_local[0] = -factor * k_t2 * std::cos(k_t1 * (x_local + length_t1 / 2)) *
-                 std::sin(k_t2 * (y_local + length_t2 / 2));
-      E_inc_local[1] = factor * k_t1 * std::sin(k_t1 * (x_local + length_t1 / 2)) *
-                 std::cos(k_t2 * (y_local + length_t2 / 2));
+      E_inc_local[0] = -factor * k_t2 *
+                       std::cos(k_t1 * (x_local + length_t1 / 2)) *
+                       std::sin(k_t2 * (y_local + length_t2 / 2));
+      E_inc_local[1] = factor * k_t1 *
+                       std::sin(k_t1 * (x_local + length_t1 / 2)) *
+                       std::cos(k_t2 * (y_local + length_t2 / 2));
       E_inc_local[2] = 0.0;
 
       H_inc_local[0] = -imag * k_l * k_t1 / (k_c * k_c) *
-                 std::sin(k_t1 * (x_local + length_t1 / 2)) *
-                 std::cos(k_t2 * (y_local + length_t2 / 2));
+                       std::sin(k_t1 * (x_local + length_t1 / 2)) *
+                       std::cos(k_t2 * (y_local + length_t2 / 2));
       H_inc_local[1] = -imag * k_l * k_t2 / (k_c * k_c) *
-                 std::cos(k_t1 * (x_local + length_t1 / 2)) *
-                 std::sin(k_t2 * (y_local + length_t2 / 2));
+                       std::cos(k_t1 * (x_local + length_t1 / 2)) *
+                       std::sin(k_t2 * (y_local + length_t2 / 2));
       H_inc_local[2] = std::cos(k_t1 * (x_local + length_t1 / 2)) *
-                 std::cos(k_t2 * (y_local + length_t2 / 2));
+                       std::cos(k_t2 * (y_local + length_t2 / 2));
     }
   else if (mode == Parameters::WaveguideMode::TM)
     {
       std::complex<double> factor = imag * omega * epsilon_r_eff / (k_c * k_c);
 
-      H_inc_local[0] = factor * k_t2 * std::sin(k_t1 * (x_local + length_t1 / 2)) *
-                 std::cos(k_t2 * (y_local + length_t2 / 2));
-      H_inc_local[1] = -factor * k_t1 * std::cos(k_t1 * (x_local + length_t1 / 2)) *
-                 std::sin(k_t2 * (y_local + length_t2 / 2));
+      H_inc_local[0] = factor * k_t2 *
+                       std::sin(k_t1 * (x_local + length_t1 / 2)) *
+                       std::cos(k_t2 * (y_local + length_t2 / 2));
+      H_inc_local[1] = -factor * k_t1 *
+                       std::cos(k_t1 * (x_local + length_t1 / 2)) *
+                       std::sin(k_t2 * (y_local + length_t2 / 2));
       H_inc_local[2] = 0.0;
 
       E_inc_local[0] = imag * k_l * k_t1 / (k_c * k_c) *
-                 std::cos(k_t1 * (x_local + length_t1 / 2)) *
-                 std::sin(k_t2 * (y_local + length_t2 / 2));
+                       std::cos(k_t1 * (x_local + length_t1 / 2)) *
+                       std::sin(k_t2 * (y_local + length_t2 / 2));
       E_inc_local[1] = imag * k_l * k_t2 / (k_c * k_c) *
-                 std::sin(k_t1 * (x_local + length_t1 / 2)) *
-                 std::cos(k_t2 * (y_local + length_t2 / 2));
+                       std::sin(k_t1 * (x_local + length_t1 / 2)) *
+                       std::cos(k_t2 * (y_local + length_t2 / 2));
       E_inc_local[2] = std::sin(k_t1 * (x_local + length_t1 / 2)) *
-                 std::sin(k_t2 * (y_local + length_t2 / 2));
+                       std::sin(k_t2 * (y_local + length_t2 / 2));
     }
   else
     {
       AssertThrow(false, ExcMessage("Unknown waveguide mode type."));
     }
 
-  // Convert the E and H field components from the local coordinate system back to the
-  // global coordinate system using the basis vectors e_t1, e_t2, e_t3
-  Tensor<1, dim, std::complex<double>> E_inc = E_inc_local[0] * e_t1 + E_inc_local[1] * e_t2 + E_inc_local[2] * e_t3;
-  Tensor<1, dim, std::complex<double>> H_inc = H_inc_local[0] * e_t1 + H_inc_local[1] * e_t2 + H_inc_local[2] * e_t3;
+  // Convert the E and H field components from the local coordinate system back
+  // to the global coordinate system using the basis vectors e_t1, e_t2, e_t3
+  Tensor<1, dim, std::complex<double>> E_inc =
+    E_inc_local[0] * e_t1 + E_inc_local[1] * e_t2 + E_inc_local[2] * e_t3;
+  Tensor<1, dim, std::complex<double>> H_inc =
+    H_inc_local[0] * e_t1 + H_inc_local[1] * e_t2 + H_inc_local[2] * e_t3;
   Tensor<1, dim, std::complex<double>> excitation;
   std::complex<double>                 surface_admittance;
 
