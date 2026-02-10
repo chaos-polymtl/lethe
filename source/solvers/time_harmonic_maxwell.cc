@@ -140,9 +140,9 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
     time_harmonic_maxwell_parameters.waveguide_corners[boundary_id_index];
   const Parameters::WaveguideMode mode =
     time_harmonic_maxwell_parameters.waveguide_mode[boundary_id_index];
-  const unsigned int m =
+  unsigned int m =
     time_harmonic_maxwell_parameters.mode_order_m[boundary_id_index];
-  const unsigned int n =
+  unsigned int n =
     time_harmonic_maxwell_parameters.mode_order_n[boundary_id_index];
 
   // We first define the transverse face vectors of the waveguide in the global
@@ -181,33 +181,23 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
   // Create a third vector to complete the right-handed coordinate system
   Tensor<1, dim> e_t3 = cross_product_3d(e_t1, e_t2);
 
-  // Determine if e_t3 needs to be flipped to point in the direction opposite to
-  // the outward normal. For an incident wave at the inlet, the propagation
-  // direction should point into the domain (opposite to the outward normal).
-  // We use the sign of (normal · t3) to determine this:
+  // Determine if the system needs to be flipped so e_t3 points in the direction
+  // opposite to the outward normal. For an incident wave at the inlet, the
+  // propagation direction should point into the domain (opposite to the outward
+  // normal). We use the sign of (normal · t3) to determine this:
   //   - If normal · t3 > 0: t3 points outward, need to flip entire system
   //   - If normal · t3 < 0: t3 points inward (correct for incident wave)
+  // Note that by swapping the basis vectors e_t1 and e_t2, we change the parity of the system since it is equivalent to a reflection. This means that pseudo vectors (like the magnetic field) will change sign while regular vectors (like the electric field) will not. Eventhough this does not affect the physics of the solution, it is important to be consistent with the definition of the mode profiles that we use, which assume a specific parity for the system. Therefore, we keep track of the status of the parity and apply it later on to the magnetic field when we compute the excitation.
+  double parity_factor = 1.0;
   if ((normal * e_t3) > 0)
     {
-      // Flip t3 to point inward (opposite to outward normal)
-      // To maintain a right-handed system, we also flip t2
-      e_t2 = -e_t2;
-      e_t3 = -e_t3;
-    }
-
-  // We will also need to map these local fields back and forth between the
-  // global system  and the local system. So we define the rotation matrix (from
-  // local to global) and its transpose (from global to local).
-  Tensor<2, dim, double> rotation_matrix;
-  Tensor<2, dim, double> rotation_matrix_transpose;
-  for (unsigned int i = 0; i < dim; ++i)
-    {
-      rotation_matrix[i][0]           = e_t1[i];
-      rotation_matrix[i][1]           = e_t2[i];
-      rotation_matrix[i][2]           = e_t3[i];
-      rotation_matrix_transpose[0][i] = e_t1[i];
-      rotation_matrix_transpose[1][i] = e_t2[i];
-      rotation_matrix_transpose[2][i] = e_t3[i];
+      std::swap(e_t1, e_t2);
+      std::swap(length_t1, length_t2);
+      std::swap(m, n);
+      e_t3 =
+        cross_product_3d(e_t1, e_t2); // Recompute t3 after swapping t1 and t2
+                                      // to be sure the system is right-handed
+      parity_factor = -1.0;
     }
 
   // Compute the various wavenumber k in using this global coordinate system
@@ -216,8 +206,8 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
   double k_c  = std::sqrt(k_t1 * k_t1 + k_t2 * k_t2); // Cutoff wavenumber
   std::complex<double> k =
     omega * std::sqrt(epsilon_r_eff * mu_r); // Wavenumber in the medium
-  std::complex<double> k_l =
-    std::sqrt(k * k - k_c * k_c); // Longitudinal wavenumber
+  std::complex<double> k_l = std::sqrt(
+    k * k - std::complex<double>(k_c * k_c, 0)); // Longitudinal wavenumber
 
   // Verify that the mode is not evanescent, i.e. k_l is not purely imaginary
   // (k_c^2 < k^2). Std::norm computes the squared magnitude of a complex
@@ -239,10 +229,10 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
             waveguide_corners[3]);
 
   Tensor<1, dim> p_local =
-    rotation_matrix_transpose *
-    (p - origin_local);        // Coordinates of point p in this local system.
-  double x_local = p_local[0]; // Coordinate along e_t1 in the local system
-  double y_local = p_local[1]; // Coordinate along e_t2 in the local system
+    p - origin_local; // Coordinates of point p in this local system.
+
+  double x_local = p_local * e_t1; // Coordinate along e_t1 in the local system
+  double y_local = p_local * e_t2; // Coordinate along e_t2 in the local system
   // We assume that the z_local coordinate is 0 since we are on the face.
 
   // Compute the E and H field components for the TE mode in the local
@@ -251,76 +241,62 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
   Tensor<1, dim, std::complex<double>> E_inc_local;
   Tensor<1, dim, std::complex<double>> H_inc_local;
 
-  Tensor<1, dim, std::complex<double>> E_inc;
-  Tensor<1, dim, std::complex<double>> H_inc;
-  Tensor<1, dim, std::complex<double>> excitation;
-  std::complex<double>                 surface_admittance;
-
   if (mode == Parameters::WaveguideMode::TE)
     {
-      std::complex<double> factor =
-        imag * k * k / (k_c * k_c * epsilon_r_eff * omega);
+      std::complex<double> factor = imag * omega * mu_r / (k_c * k_c);
 
-      E_inc_local[0] = -factor * k_t2 *
-                       std::cos(k_t1 * (x_local + length_t1 / 2)) *
-                       std::sin(k_t2 * (y_local + length_t2 / 2));
-      E_inc_local[1] = factor * k_t1 *
-                       std::sin(k_t1 * (x_local + length_t1 / 2)) *
-                       std::cos(k_t2 * (y_local + length_t2 / 2));
+      E_inc_local[0] = -factor * k_t2 * std::cos(k_t1 * (x_local + length_t1 / 2)) *
+                 std::sin(k_t2 * (y_local + length_t2 / 2));
+      E_inc_local[1] = factor * k_t1 * std::sin(k_t1 * (x_local + length_t1 / 2)) *
+                 std::cos(k_t2 * (y_local + length_t2 / 2));
       E_inc_local[2] = 0.0;
 
       H_inc_local[0] = -imag * k_l * k_t1 / (k_c * k_c) *
-                       std::sin(k_t1 * (x_local + length_t1 / 2)) *
-                       std::cos(k_t2 * (y_local + length_t2 / 2));
+                 std::sin(k_t1 * (x_local + length_t1 / 2)) *
+                 std::cos(k_t2 * (y_local + length_t2 / 2));
       H_inc_local[1] = -imag * k_l * k_t2 / (k_c * k_c) *
-                       std::cos(k_t1 * (x_local + length_t1 / 2)) *
-                       std::sin(k_t2 * (y_local + length_t2 / 2));
+                 std::cos(k_t1 * (x_local + length_t1 / 2)) *
+                 std::sin(k_t2 * (y_local + length_t2 / 2));
       H_inc_local[2] = std::cos(k_t1 * (x_local + length_t1 / 2)) *
-                       std::cos(k_t2 * (y_local + length_t2 / 2));
-
-      // Map local fields to global coordinate system
-      E_inc = rotation_matrix * E_inc_local;
-      H_inc = rotation_matrix * H_inc_local;
-
-      surface_admittance = k_l / (omega * mu_r);
-
-      excitation = cross_product_3d(normal, H_inc) +
-                   map_H12(surface_admittance * E_inc, normal);
+                 std::cos(k_t2 * (y_local + length_t2 / 2));
     }
   else if (mode == Parameters::WaveguideMode::TM)
     {
-      std::complex<double> factor = -imag * k * k / (k_c * k_c * mu_r * omega);
+      std::complex<double> factor = imag * omega * epsilon_r_eff / (k_c * k_c);
 
-      H_inc_local[0] = -factor * k_t2 *
-                       std::sin(k_t1 * (x_local + length_t1 / 2)) *
-                       std::cos(k_t2 * (y_local + length_t2 / 2));
-      H_inc_local[1] = factor * k_t1 *
-                       std::cos(k_t1 * (x_local + length_t1 / 2)) *
-                       std::sin(k_t2 * (y_local + length_t2 / 2));
+      H_inc_local[0] = factor * k_t2 * std::sin(k_t1 * (x_local + length_t1 / 2)) *
+                 std::cos(k_t2 * (y_local + length_t2 / 2));
+      H_inc_local[1] = -factor * k_t1 * std::cos(k_t1 * (x_local + length_t1 / 2)) *
+                 std::sin(k_t2 * (y_local + length_t2 / 2));
       H_inc_local[2] = 0.0;
 
       E_inc_local[0] = imag * k_l * k_t1 / (k_c * k_c) *
-                       std::cos(k_t1 * (x_local + length_t1 / 2)) *
-                       std::sin(k_t2 * (y_local + length_t2 / 2));
+                 std::cos(k_t1 * (x_local + length_t1 / 2)) *
+                 std::sin(k_t2 * (y_local + length_t2 / 2));
       E_inc_local[1] = imag * k_l * k_t2 / (k_c * k_c) *
-                       std::sin(k_t1 * (x_local + length_t1 / 2)) *
-                       std::cos(k_t2 * (y_local + length_t2 / 2));
+                 std::sin(k_t1 * (x_local + length_t1 / 2)) *
+                 std::cos(k_t2 * (y_local + length_t2 / 2));
       E_inc_local[2] = std::sin(k_t1 * (x_local + length_t1 / 2)) *
-                       std::sin(k_t2 * (y_local + length_t2 / 2));
-
-      // Map local fields to global coordinate system
-      E_inc = rotation_matrix * E_inc_local;
-      H_inc = rotation_matrix * H_inc_local;
-
-      surface_admittance = omega * epsilon_r_eff / k_l;
-
-      excitation = cross_product_3d(normal, H_inc) +
-                   map_H12(surface_admittance * E_inc, normal);
+                 std::sin(k_t2 * (y_local + length_t2 / 2));
     }
   else
     {
       AssertThrow(false, ExcMessage("Unknown waveguide mode type."));
     }
+
+  // Convert the E and H field components from the local coordinate system back to the
+  // global coordinate system using the basis vectors e_t1, e_t2, e_t3
+  Tensor<1, dim, std::complex<double>> E_inc = E_inc_local[0] * e_t1 + E_inc_local[1] * e_t2 + E_inc_local[2] * e_t3;
+  Tensor<1, dim, std::complex<double>> H_inc = H_inc_local[0] * e_t1 + H_inc_local[1] * e_t2 + H_inc_local[2] * e_t3;
+  Tensor<1, dim, std::complex<double>> excitation;
+  std::complex<double>                 surface_admittance;
+
+  surface_admittance = (mode == Parameters::WaveguideMode::TE) ?
+                         k_l / (omega * mu_r) :
+                         omega * epsilon_r_eff / k_l;
+
+  excitation = parity_factor * cross_product_3d(normal, H_inc) +
+               map_H12(surface_admittance * E_inc, normal);
 
   return std::make_pair(excitation, surface_admittance);
 }
