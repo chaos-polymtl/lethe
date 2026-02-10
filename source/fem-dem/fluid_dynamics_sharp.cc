@@ -2593,6 +2593,29 @@ FluidDynamicsSharp<dim>::integrate_particles()
                   particles[p].position = ib_dem.dem_particles[p].position;
                   particles[p].set_position(particles[p].position);
                 }
+
+              // Wrap particle centroid across the periodic boundary.
+              // Both the BDF path (above) and the DEM sub-step copy path set
+              // particles[p].position without any domain-boundary awareness.
+              // If the particle has crossed the periodic face its coordinate
+              // in periodic_direction is outside [periodic_domain_lower,
+              // periodic_domain_upper], which causes find_cell_around_point
+              // to throw and the particle to be silently reverted.
+              // Wrapping here — before the domain check — maps the centroid
+              // back into the primary domain so the cell search succeeds.
+              // set_position() is called unconditionally further below (end of
+              // this block), so the shape's internal position is updated with
+              // the wrapped value.
+              // ib_dem.update_particles() at the start of the next call
+              // copies particles[] back to dem_particles[], so no separate
+              // update of ib_dem.dem_particles[p].position is required.
+              if (sharp_ib_periodic_boundaries.is_periodic_enabled())
+                particles[p].position =
+                  sharp_ib_periodic_boundaries.wrap_point(
+                    particles[p].position,
+                    periodic_domain_lower,
+                    periodic_domain_upper);
+
               // Check if the particle is in the domain. Throw an error if it's
               // the case.
               try
@@ -5523,23 +5546,46 @@ FluidDynamicsSharp<dim>::setup_dofs_fd()
   if (!sharp_ib_periodic_boundaries.is_periodic_enabled())
     return;
 
-  // Rebuild the sparsity pattern with keep_constrained_dofs=true.
-  // The base class uses false, which excludes periodic slave DoF rows
-  // from the pattern. But sharp_edge() writes IB equations (stencil
-  // entries, constraint re-imposition, diagonal entries) on these rows.
-  // Without entries in the pattern, those adds are silently dropped by
-  // Trilinos in release mode, causing empty rows and unphysical
-  // velocities at the periodic boundary.
+  // The base class built the sparsity pattern with
+  // keep_constrained_dofs=false, which excludes constrained (slave)
+  // DoF rows entirely. sharp_edge() re-imposes constraints on slave
+  // DoF rows for cut cells, writing (slave, slave) diagonal entries.
+  // Without these in the pattern, the adds are silently dropped by
+  // Trilinos in release mode.
+  //
+  // We must NOT use keep_constrained_dofs=true because that adds the
+  // full element coupling for ALL constrained rows (including the many
+  // hanging node slaves across refinement levels), which massively
+  // inflates the sparsity pattern and causes memory overflow.
+  // Instead, we rebuild with keep_constrained_dofs=false and manually
+  // add only the diagonal (slave, slave) entry for each constrained DoF.
   auto &nonzero_constraints = this->get_nonzero_constraints();
 
   DynamicSparsityPattern dsp(this->locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(*this->dof_handler,
                                   dsp,
                                   nonzero_constraints,
-                                  true);
+                                  false);
 
   if (this->simulation_parameters.mortar_parameters.enable)
     this->mortar_coupling_operator->add_sparsity_pattern_entries(dsp);
+
+  // Add diagonal entries for constrained DoF rows. sharp_edge()
+  // writes (slave, slave, sum_line) for constrained DoFs on cut cells.
+  // We add the diagonal for all constrained DoFs since we don't know
+  // which will be on cut cells at this point.
+  for (auto dof = this->locally_relevant_dofs.begin();
+       dof != this->locally_relevant_dofs.end();
+       ++dof)
+    {
+      const auto *entries =
+        this->zero_constraints.get_constraint_entries(*dof);
+      if (entries == nullptr)
+        entries = this->nonzero_constraints.get_constraint_entries(*dof);
+
+      if (entries != nullptr && !entries->empty())
+        dsp.add(*dof, *dof);
+    }
 
   SparsityTools::distribute_sparsity_pattern(
     dsp,
@@ -5548,9 +5594,9 @@ FluidDynamicsSharp<dim>::setup_dofs_fd()
     this->locally_relevant_dofs);
 
   this->system_matrix.reinit(this->locally_owned_dofs,
-                       this->locally_owned_dofs,
-                       dsp,
-                       this->mpi_communicator);
+                             this->locally_owned_dofs,
+                             dsp,
+                             this->mpi_communicator);
 }
 
 
