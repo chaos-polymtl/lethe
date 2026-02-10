@@ -34,6 +34,7 @@ add_library(lethe-core
   solid_objects_parameters.cc
   solutions_output.cc
   specific_heat_model.cc
+  sub_simulation_control.cc
   surface_tension_model.cc
   thermal_conductivity_model.cc
   thermal_expansion_model.cc
@@ -89,6 +90,7 @@ add_library(lethe-core
   ../../include/core/solid_objects_parameters.h
   ../../include/core/solutions_output.h
   ../../include/core/specific_heat_model.h
+  ../../include/core/sub_simulation_control.h
   ../../include/core/surface_tension_model.h
   ../../include/core/tensors_and_points_dimension_manipulation.h
   ../../include/core/thermal_conductivity_model.h
