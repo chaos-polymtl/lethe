@@ -299,10 +299,10 @@ Macros</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a2cc48021e86e383b900458a58111fbb6" id="r_a2cc48021e86e383b900458a58111fbb6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="multiphysics__interface_8cc.html#a2cc48021e86e383b900458a58111fbb6">DeclException1</a> (BuoyancyWithoutFluidDynamicsError, bool,&lt;&lt; std::boolalpha&lt;&lt; &quot;Buoyancy force is activated (&quot;&lt;&lt; arg1&lt;&lt; &quot;), while fluid dynamics is not activated (false).&quot;&lt;&lt; std::endl&lt;&lt; &quot;Buoyancy force cannot be activated without activating fluid dynamics.&quot;)</td></tr>
-<tr class="separator:a2cc48021e86e383b900458a58111fbb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae0bf60b1024518bde17577949d48e47c" id="r_ae0bf60b1024518bde17577949d48e47c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="multiphysics__interface_8cc.html#ae0bf60b1024518bde17577949d48e47c">DeclException1</a> (BuoyancyWithoutHeatTransferError, bool,&lt;&lt; std::boolalpha&lt;&lt; &quot;Buoyancy force is activated (&quot;&lt;&lt; arg1&lt;&lt; &quot;), while heat transfer is not activated (false).&quot;&lt;&lt; std::endl&lt;&lt; &quot;Buoyancy force cannot be activated without activating heat transfer.&quot;)</td></tr>
-<tr class="separator:ae0bf60b1024518bde17577949d48e47c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8fe5fda3f2d5614a32a07d5ea0e45ff5" id="r_a8fe5fda3f2d5614a32a07d5ea0e45ff5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="multiphysics__interface_8cc.html#a8fe5fda3f2d5614a32a07d5ea0e45ff5">DeclException1</a> (ThermalBuoyancyWithoutFluidDynamicsError, bool,&lt;&lt; std::boolalpha&lt;&lt; &quot;Thermal buoyancy force is activated (&quot;&lt;&lt; arg1&lt;&lt; &quot;), while fluid dynamics is not activated (false).&quot;&lt;&lt; std::endl&lt;&lt; &quot;Thermal buoyancy force cannot be activated without activating fluid dynamics.&quot;)</td></tr>
+<tr class="separator:a8fe5fda3f2d5614a32a07d5ea0e45ff5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa1d4632d4aba43d296d54afa97e9afc0" id="r_aa1d4632d4aba43d296d54afa97e9afc0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="multiphysics__interface_8cc.html#aa1d4632d4aba43d296d54afa97e9afc0">DeclException1</a> (ThermalBuoyancyWithoutHeatTransferError, bool,&lt;&lt; std::boolalpha&lt;&lt; &quot;Thermal buoyancy force is activated (&quot;&lt;&lt; arg1&lt;&lt; &quot;), while heat transfer is not activated (false).&quot;&lt;&lt; std::endl&lt;&lt; &quot;Thermal buoyancy force cannot be activated without activating heat transfer.&quot;)</td></tr>
+<tr class="separator:aa1d4632d4aba43d296d54afa97e9afc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a50850b326eacb0b537fab2629ae66a09" id="r_a50850b326eacb0b537fab2629ae66a09"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="multiphysics__interface_8cc.html#a50850b326eacb0b537fab2629ae66a09">DeclException1</a> (MarangoniWithoutFluidDynamicsError, bool,&lt;&lt; std::boolalpha&lt;&lt; &quot;Marangoni effect is activated (&quot;&lt;&lt; arg1&lt;&lt; &quot;), while fluid dynamics is not activated (false).&quot;&lt;&lt; std::endl&lt;&lt; &quot;Marangoni effect cannot be activated without activating fluid dynamics.&quot;)</td></tr>
 <tr class="separator:a50850b326eacb0b537fab2629ae66a09"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aac9822a56d7a718d6157e80fcb942d30" id="r_aac9822a56d7a718d6157e80fcb942d30"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="multiphysics__interface_8cc.html#aac9822a56d7a718d6157e80fcb942d30">DeclException1</a> (MarangoniWithoutHeatTransferError, bool,&lt;&lt; std::boolalpha&lt;&lt; &quot;Marangoni effect is activated (&quot;&lt;&lt; arg1&lt;&lt; &quot;), while heat transfer is not activated (false).&quot;&lt;&lt; std::endl&lt;&lt; &quot;Marangoni effect cannot be activated without activating heat transfer.&quot;)</td></tr>
@@ -338,88 +338,8 @@ Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a2cc48021e86e383b900458a58111fbb6" name="a2cc48021e86e383b900458a58111fbb6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2cc48021e86e383b900458a58111fbb6">&#9670;&#160;</a></span>DeclException1() <span class="overload">[1/8]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">DeclException1 </td>
-          <td>(</td>
-          <td class="paramtype">BuoyancyWithoutFluidDynamicsError&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&lt;&lt; std::boolalpha&lt;&lt; &quot;Buoyancy force is activated &#160;</td>
-          <td class="paramname">&quot;&lt;&lt; arg1&lt;&lt; &quot;, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">while fluid dynamics is not activated(false).&quot;&lt;&lt; std::endl&lt;&lt; &quot;Buoyancy force cannot be activated without activating fluid dynamics.&quot;&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ae0bf60b1024518bde17577949d48e47c" name="ae0bf60b1024518bde17577949d48e47c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae0bf60b1024518bde17577949d48e47c">&#9670;&#160;</a></span>DeclException1() <span class="overload">[2/8]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">DeclException1 </td>
-          <td>(</td>
-          <td class="paramtype">BuoyancyWithoutHeatTransferError&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&lt;&lt; std::boolalpha&lt;&lt; &quot;Buoyancy force is activated &#160;</td>
-          <td class="paramname">&quot;&lt;&lt; arg1&lt;&lt; &quot;, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">while heat transfer is not activated(false).&quot;&lt;&lt; std::endl&lt;&lt; &quot;Buoyancy force cannot be activated without activating heat transfer.&quot;&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a90d5fbad3b397a65eea097566feb10f5" name="a90d5fbad3b397a65eea097566feb10f5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a90d5fbad3b397a65eea097566feb10f5">&#9670;&#160;</a></span>DeclException1() <span class="overload">[3/8]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a90d5fbad3b397a65eea097566feb10f5">&#9670;&#160;</a></span>DeclException1() <span class="overload">[1/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -459,7 +379,7 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a id="a50850b326eacb0b537fab2629ae66a09" name="a50850b326eacb0b537fab2629ae66a09"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a50850b326eacb0b537fab2629ae66a09">&#9670;&#160;</a></span>DeclException1() <span class="overload">[4/8]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a50850b326eacb0b537fab2629ae66a09">&#9670;&#160;</a></span>DeclException1() <span class="overload">[2/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -499,7 +419,7 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a id="aac9822a56d7a718d6157e80fcb942d30" name="aac9822a56d7a718d6157e80fcb942d30"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aac9822a56d7a718d6157e80fcb942d30">&#9670;&#160;</a></span>DeclException1() <span class="overload">[5/8]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aac9822a56d7a718d6157e80fcb942d30">&#9670;&#160;</a></span>DeclException1() <span class="overload">[3/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -539,7 +459,7 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a id="a80a796fd22ef0b3db56609db0a2d8bec" name="a80a796fd22ef0b3db56609db0a2d8bec"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a80a796fd22ef0b3db56609db0a2d8bec">&#9670;&#160;</a></span>DeclException1() <span class="overload">[6/8]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a80a796fd22ef0b3db56609db0a2d8bec">&#9670;&#160;</a></span>DeclException1() <span class="overload">[4/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -579,7 +499,7 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a id="a21542b9e85978dfeb3a560dd4badbd2b" name="a21542b9e85978dfeb3a560dd4badbd2b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a21542b9e85978dfeb3a560dd4badbd2b">&#9670;&#160;</a></span>DeclException1() <span class="overload">[7/8]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a21542b9e85978dfeb3a560dd4badbd2b">&#9670;&#160;</a></span>DeclException1() <span class="overload">[5/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -619,7 +539,7 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a id="a187858b83974e922f1a6796cef808882" name="a187858b83974e922f1a6796cef808882"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a187858b83974e922f1a6796cef808882">&#9670;&#160;</a></span>DeclException1() <span class="overload">[8/8]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a187858b83974e922f1a6796cef808882">&#9670;&#160;</a></span>DeclException1() <span class="overload">[6/8]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -646,6 +566,86 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">while <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">VOF</a> is not activated(false).&quot;&lt;&lt; std::endl&lt;&lt; &quot;Surface tension force cannot be activated without activating VOF.&quot;&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a8fe5fda3f2d5614a32a07d5ea0e45ff5" name="a8fe5fda3f2d5614a32a07d5ea0e45ff5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8fe5fda3f2d5614a32a07d5ea0e45ff5">&#9670;&#160;</a></span>DeclException1() <span class="overload">[7/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DeclException1 </td>
+          <td>(</td>
+          <td class="paramtype">ThermalBuoyancyWithoutFluidDynamicsError&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&lt;&lt; std::boolalpha&lt;&lt; &quot;Thermal buoyancy force is activated &#160;</td>
+          <td class="paramname">&quot;&lt;&lt; arg1&lt;&lt; &quot;, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">while fluid dynamics is not activated(false).&quot;&lt;&lt; std::endl&lt;&lt; &quot;Thermal buoyancy force cannot be activated without activating fluid dynamics.&quot;&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aa1d4632d4aba43d296d54afa97e9afc0" name="aa1d4632d4aba43d296d54afa97e9afc0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa1d4632d4aba43d296d54afa97e9afc0">&#9670;&#160;</a></span>DeclException1() <span class="overload">[8/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DeclException1 </td>
+          <td>(</td>
+          <td class="paramtype">ThermalBuoyancyWithoutHeatTransferError&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&lt;&lt; std::boolalpha&lt;&lt; &quot;Thermal buoyancy force is activated &#160;</td>
+          <td class="paramname">&quot;&lt;&lt; arg1&lt;&lt; &quot;, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">while heat transfer is not activated(false).&quot;&lt;&lt; std::endl&lt;&lt; &quot;Thermal buoyancy force cannot be activated without activating heat transfer.&quot;&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>

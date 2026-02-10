@@ -1,5 +1,0 @@
-<map id="BuoyancyAssemblyVOF&lt; dim &gt;" name="BuoyancyAssemblyVOF&lt; dim &gt;">
-<area shape="rect" id="Node000001" title="Assembles the buoyancy source term for VOF simulations. This assembler includes density explicitly in..." alt="" coords="21,93,199,133"/>
-<area shape="rect" id="Node000002" href="$classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="5,5,215,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="113,59,113,93,107,93,107,59"/>
-</map>

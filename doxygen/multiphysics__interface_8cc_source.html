@@ -93,7 +93,7 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">multiphysics_interface.cc</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="multiphysics__interface_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors</span></div>
+<a href="multiphysics__interface_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="time__harmonic__maxwell_8h.html">solvers/time_harmonic_maxwell.h</a>&quot;</span></div>
@@ -106,56 +106,56 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;deal.II/base/exceptions.h&gt;</span></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno"><a class="line" href="multiphysics__interface_8cc.html#a0d638fe48e408fa87f9b8f86164d38b1">   12</a></span><span class="preprocessor">#define _unused(x) ((void)(x))</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno"><a class="line" href="multiphysics__interface_8cc.html#a2cc48021e86e383b900458a58111fbb6">   14</a></span><a class="code hl_function" href="multiphysics__interface_8cc.html#a2cc48021e86e383b900458a58111fbb6">DeclException1</a>(</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>  BuoyancyWithoutFluidDynamicsError,</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno"><a class="line" href="multiphysics__interface_8cc.html#a8fe5fda3f2d5614a32a07d5ea0e45ff5">   14</a></span><a class="code hl_function" href="multiphysics__interface_8cc.html#a8fe5fda3f2d5614a32a07d5ea0e45ff5">DeclException1</a>(</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>  ThermalBuoyancyWithoutFluidDynamicsError,</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>  <span class="keywordtype">bool</span>,</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>  &lt;&lt; std::boolalpha &lt;&lt; <span class="stringliteral">&quot;Buoyancy force is activated (&quot;</span> &lt;&lt; arg1</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>  &lt;&lt; std::boolalpha &lt;&lt; <span class="stringliteral">&quot;Thermal buoyancy force is activated (&quot;</span> &lt;&lt; arg1</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>  &lt;&lt; <span class="stringliteral">&quot;), while fluid dynamics is not activated (false).&quot;</span> &lt;&lt; std::endl</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>  &lt;&lt; <span class="stringliteral">&quot;Buoyancy force cannot be activated without activating fluid dynamics.&quot;</span>);</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>  &lt;&lt; <span class="stringliteral">&quot;Thermal buoyancy force cannot be activated without activating fluid dynamics.&quot;</span>);</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="multiphysics__interface_8cc.html#ae0bf60b1024518bde17577949d48e47c">   21</a></span><a class="code hl_function" href="multiphysics__interface_8cc.html#a2cc48021e86e383b900458a58111fbb6">DeclException1</a>(</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>  BuoyancyWithoutHeatTransferError,</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="multiphysics__interface_8cc.html#aa1d4632d4aba43d296d54afa97e9afc0">   21</a></span><a class="code hl_function" href="multiphysics__interface_8cc.html#a8fe5fda3f2d5614a32a07d5ea0e45ff5">DeclException1</a>(</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>  ThermalBuoyancyWithoutHeatTransferError,</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>  <span class="keywordtype">bool</span>,</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>  &lt;&lt; std::boolalpha &lt;&lt; <span class="stringliteral">&quot;Buoyancy force is activated (&quot;</span> &lt;&lt; arg1</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>  &lt;&lt; std::boolalpha &lt;&lt; <span class="stringliteral">&quot;Thermal buoyancy force is activated (&quot;</span> &lt;&lt; arg1</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>  &lt;&lt; <span class="stringliteral">&quot;), while heat transfer is not activated (false).&quot;</span> &lt;&lt; std::endl</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>  &lt;&lt; <span class="stringliteral">&quot;Buoyancy force cannot be activated without activating heat transfer.&quot;</span>);</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>  &lt;&lt; <span class="stringliteral">&quot;Thermal buoyancy force cannot be activated without activating heat transfer.&quot;</span>);</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="multiphysics__interface_8cc.html#a50850b326eacb0b537fab2629ae66a09">   28</a></span><a class="code hl_function" href="multiphysics__interface_8cc.html#a2cc48021e86e383b900458a58111fbb6">DeclException1</a>(</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="multiphysics__interface_8cc.html#a50850b326eacb0b537fab2629ae66a09">   28</a></span><a class="code hl_function" href="multiphysics__interface_8cc.html#a8fe5fda3f2d5614a32a07d5ea0e45ff5">DeclException1</a>(</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>  MarangoniWithoutFluidDynamicsError,</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>  <span class="keywordtype">bool</span>,</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>  &lt;&lt; std::boolalpha &lt;&lt; <span class="stringliteral">&quot;Marangoni effect is activated (&quot;</span> &lt;&lt; arg1</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>  &lt;&lt; <span class="stringliteral">&quot;), while fluid dynamics is not activated (false).&quot;</span> &lt;&lt; std::endl</div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>  &lt;&lt; <span class="stringliteral">&quot;Marangoni effect cannot be activated without activating fluid dynamics.&quot;</span>);</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno"><a class="line" href="multiphysics__interface_8cc.html#aac9822a56d7a718d6157e80fcb942d30">   35</a></span><a class="code hl_function" href="multiphysics__interface_8cc.html#a2cc48021e86e383b900458a58111fbb6">DeclException1</a>(</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno"><a class="line" href="multiphysics__interface_8cc.html#aac9822a56d7a718d6157e80fcb942d30">   35</a></span><a class="code hl_function" href="multiphysics__interface_8cc.html#a8fe5fda3f2d5614a32a07d5ea0e45ff5">DeclException1</a>(</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>  MarangoniWithoutHeatTransferError,</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>  <span class="keywordtype">bool</span>,</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>  &lt;&lt; std::boolalpha &lt;&lt; <span class="stringliteral">&quot;Marangoni effect is activated (&quot;</span> &lt;&lt; arg1</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>  &lt;&lt; <span class="stringliteral">&quot;), while heat transfer is not activated (false).&quot;</span> &lt;&lt; std::endl</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>  &lt;&lt; <span class="stringliteral">&quot;Marangoni effect cannot be activated without activating heat transfer.&quot;</span>);</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno"><a class="line" href="multiphysics__interface_8cc.html#a80a796fd22ef0b3db56609db0a2d8bec">   42</a></span><a class="code hl_function" href="multiphysics__interface_8cc.html#a2cc48021e86e383b900458a58111fbb6">DeclException1</a>(</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno"><a class="line" href="multiphysics__interface_8cc.html#a80a796fd22ef0b3db56609db0a2d8bec">   42</a></span><a class="code hl_function" href="multiphysics__interface_8cc.html#a8fe5fda3f2d5614a32a07d5ea0e45ff5">DeclException1</a>(</div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>  MarangoniWithoutSurfaceTensionForceError,</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>  <span class="keywordtype">bool</span>,</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>  &lt;&lt; std::boolalpha &lt;&lt; <span class="stringliteral">&quot;Marangoni effect is activated (&quot;</span> &lt;&lt; arg1</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>  &lt;&lt; <span class="stringliteral">&quot;), while surface tension force is not activated (false).&quot;</span> &lt;&lt; std::endl</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>  &lt;&lt; <span class="stringliteral">&quot;Marangoni effect cannot be activated without activating surface tension force.&quot;</span>);</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno"><a class="line" href="multiphysics__interface_8cc.html#a187858b83974e922f1a6796cef808882">   49</a></span><a class="code hl_function" href="multiphysics__interface_8cc.html#a2cc48021e86e383b900458a58111fbb6">DeclException1</a>(</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno"><a class="line" href="multiphysics__interface_8cc.html#a187858b83974e922f1a6796cef808882">   49</a></span><a class="code hl_function" href="multiphysics__interface_8cc.html#a8fe5fda3f2d5614a32a07d5ea0e45ff5">DeclException1</a>(</div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>  SurfaceTensionForceWithoutVOFError,</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>  <span class="keywordtype">bool</span>,</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>  &lt;&lt; std::boolalpha &lt;&lt; <span class="stringliteral">&quot;Surface tension force is activated (&quot;</span> &lt;&lt; arg1</div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  &lt;&lt; <span class="stringliteral">&quot;), while VOF is not activated (false).&quot;</span> &lt;&lt; std::endl</div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  &lt;&lt; <span class="stringliteral">&quot;Surface tension force cannot be activated without activating VOF.&quot;</span>);</div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="multiphysics__interface_8cc.html#a21542b9e85978dfeb3a560dd4badbd2b">   56</a></span><a class="code hl_function" href="multiphysics__interface_8cc.html#a2cc48021e86e383b900458a58111fbb6">DeclException1</a>(</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="multiphysics__interface_8cc.html#a21542b9e85978dfeb3a560dd4badbd2b">   56</a></span><a class="code hl_function" href="multiphysics__interface_8cc.html#a8fe5fda3f2d5614a32a07d5ea0e45ff5">DeclException1</a>(</div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>  MarangoniWithoutVOFError,</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>  <span class="keywordtype">bool</span>,</div>
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>  &lt;&lt; std::boolalpha &lt;&lt; <span class="stringliteral">&quot;Marangoni effect is activated (&quot;</span> &lt;&lt; arg1</div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>  &lt;&lt; <span class="stringliteral">&quot;), while VOF is not activated (false).&quot;</span> &lt;&lt; std::endl</div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>  &lt;&lt; <span class="stringliteral">&quot;Marangoni effect cannot be activated without activating VOF.&quot;</span>);</div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno"><a class="line" href="multiphysics__interface_8cc.html#a90d5fbad3b397a65eea097566feb10f5">   63</a></span><a class="code hl_function" href="multiphysics__interface_8cc.html#a2cc48021e86e383b900458a58111fbb6">DeclException1</a>(</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno"><a class="line" href="multiphysics__interface_8cc.html#a90d5fbad3b397a65eea097566feb10f5">   63</a></span><a class="code hl_function" href="multiphysics__interface_8cc.html#a8fe5fda3f2d5614a32a07d5ea0e45ff5">DeclException1</a>(</div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>  InterfaceSharpeningWithoutVOFError,</div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>  <span class="keywordtype">bool</span>,</div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>  &lt;&lt; std::boolalpha &lt;&lt; <span class="stringliteral">&quot;Interface sharpening is activated (&quot;</span> &lt;&lt; arg1</div>
@@ -356,67 +356,69 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00246" name="l00246"></a><span class="lineno"><a class="line" href="classMultiphysicsInterface.html#aaada3e3716bfe0c453d4f1e101b3bd60">  246</a></span><a class="code hl_function" href="classMultiphysicsInterface.html#aaada3e3716bfe0c453d4f1e101b3bd60">MultiphysicsInterface&lt;dim&gt;::inspect_multiphysics_models_dependencies</a>(</div>
 <div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>  <span class="keyword">const</span> <a class="code hl_class" href="classSimulationParameters.html">SimulationParameters&lt;dim&gt;</a> &amp;nsparam)</div>
 <div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>{</div>
-<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>  <span class="keywordtype">bool</span> buoyancy_force_enabled = nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a774fb8e87e87b3f003a9cb21d44c520c">multiphysics</a>.buoyancy_force;</div>
-<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>  <span class="keywordtype">bool</span> heat_transfer_enabled  = nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a774fb8e87e87b3f003a9cb21d44c520c">multiphysics</a>.heat_transfer;</div>
-<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>  <span class="keywordtype">bool</span> marangoni_effect_enabled =</div>
-<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>    nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a774fb8e87e87b3f003a9cb21d44c520c">multiphysics</a>.vof_parameters.surface_tension_force</div>
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>      .enable_marangoni_effect;</div>
-<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>  <span class="keywordtype">bool</span> surface_tension_force_enabled =</div>
-<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>    nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a774fb8e87e87b3f003a9cb21d44c520c">multiphysics</a>.vof_parameters.surface_tension_force.enable;</div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>  <span class="keywordtype">bool</span> fluid_dynamics_enabled = nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a774fb8e87e87b3f003a9cb21d44c520c">multiphysics</a>.fluid_dynamics;</div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>  <span class="keywordtype">bool</span> interface_sharpening_enabled =</div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>    nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a774fb8e87e87b3f003a9cb21d44c520c">multiphysics</a>.vof_parameters.regularization_method.sharpening.enable;</div>
-<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>  <span class="keywordtype">bool</span> VOF_enabled = nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a774fb8e87e87b3f003a9cb21d44c520c">multiphysics</a>.VOF;</div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span> </div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>  <span class="comment">// To avoid getting unused parameter warning</span></div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>  <a class="code hl_define" href="multiphysics__interface_8cc.html#a0d638fe48e408fa87f9b8f86164d38b1">_unused</a>(buoyancy_force_enabled &amp;&amp; heat_transfer_enabled &amp;&amp;</div>
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>          marangoni_effect_enabled &amp;&amp; surface_tension_force_enabled &amp;&amp;</div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>          fluid_dynamics_enabled &amp;&amp; interface_sharpening_enabled &amp;&amp;</div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>          VOF_enabled);</div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span> </div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>  <span class="comment">// Dependence of buoyant force on fluid dynamics</span></div>
-<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>  AssertThrow(!(buoyancy_force_enabled == <span class="keyword">true</span> &amp;&amp;</div>
-<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>                fluid_dynamics_enabled == <span class="keyword">false</span>),</div>
-<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>              BuoyancyWithoutFluidDynamicsError(buoyancy_force_enabled));</div>
-<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span> </div>
-<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>  <span class="comment">// Dependence of buoyant force on heat transfer</span></div>
-<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>  AssertThrow(!(buoyancy_force_enabled == <span class="keyword">true</span> &amp;&amp;</div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>                heat_transfer_enabled == <span class="keyword">false</span>),</div>
-<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>              BuoyancyWithoutHeatTransferError(buoyancy_force_enabled));</div>
-<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span> </div>
-<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>  <span class="comment">// Dependence of Marangoni effect on fluid dynamics</span></div>
-<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>  AssertThrow(!(marangoni_effect_enabled == <span class="keyword">true</span> &amp;&amp;</div>
-<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>                fluid_dynamics_enabled == <span class="keyword">false</span>),</div>
-<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>              MarangoniWithoutFluidDynamicsError(marangoni_effect_enabled));</div>
-<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span> </div>
-<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>  <span class="comment">// Dependence of Marangoni effect on heat transfer</span></div>
-<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>  AssertThrow(!(marangoni_effect_enabled == <span class="keyword">true</span> &amp;&amp;</div>
-<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>                heat_transfer_enabled == <span class="keyword">false</span>),</div>
-<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>              MarangoniWithoutHeatTransferError(marangoni_effect_enabled));</div>
-<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span> </div>
-<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>  <span class="comment">// Dependence of Marangoni effect on surface tension force</span></div>
-<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>  AssertThrow(!(marangoni_effect_enabled == <span class="keyword">true</span> &amp;&amp;</div>
-<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>                surface_tension_force_enabled == <span class="keyword">false</span>),</div>
-<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>              MarangoniWithoutSurfaceTensionForceError(</div>
-<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>                marangoni_effect_enabled));</div>
-<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span> </div>
-<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>  <span class="comment">// Dependence of surface tension force on VOF</span></div>
-<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>  AssertThrow(!(surface_tension_force_enabled == <span class="keyword">true</span> &amp;&amp; VOF_enabled == <span class="keyword">false</span>),</div>
-<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>              SurfaceTensionForceWithoutVOFError(</div>
-<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>                surface_tension_force_enabled));</div>
-<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span> </div>
-<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>  <span class="comment">// Dependence of Marangoni effect on VOF</span></div>
-<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>  AssertThrow(!(marangoni_effect_enabled == <span class="keyword">true</span> &amp;&amp; VOF_enabled == <span class="keyword">false</span>),</div>
-<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>              MarangoniWithoutVOFError(marangoni_effect_enabled));</div>
-<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span> </div>
-<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>  <span class="comment">// Dependence of interface sharpening on VOF</span></div>
-<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>  AssertThrow(!(interface_sharpening_enabled == <span class="keyword">true</span> &amp;&amp; VOF_enabled == <span class="keyword">false</span>),</div>
-<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>              InterfaceSharpeningWithoutVOFError(interface_sharpening_enabled));</div>
-<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>}</div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>  <span class="keywordtype">bool</span> thermal_buoyancy_force_enabled =</div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>    nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a774fb8e87e87b3f003a9cb21d44c520c">multiphysics</a>.thermal_buoyancy_force;</div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>  <span class="keywordtype">bool</span> heat_transfer_enabled = nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a774fb8e87e87b3f003a9cb21d44c520c">multiphysics</a>.heat_transfer;</div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>  <span class="keywordtype">bool</span> marangoni_effect_enabled =</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>    nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a774fb8e87e87b3f003a9cb21d44c520c">multiphysics</a>.vof_parameters.surface_tension_force</div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>      .enable_marangoni_effect;</div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>  <span class="keywordtype">bool</span> surface_tension_force_enabled =</div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>    nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a774fb8e87e87b3f003a9cb21d44c520c">multiphysics</a>.vof_parameters.surface_tension_force.enable;</div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>  <span class="keywordtype">bool</span> fluid_dynamics_enabled = nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a774fb8e87e87b3f003a9cb21d44c520c">multiphysics</a>.fluid_dynamics;</div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>  <span class="keywordtype">bool</span> interface_sharpening_enabled =</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>    nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a774fb8e87e87b3f003a9cb21d44c520c">multiphysics</a>.vof_parameters.regularization_method.sharpening.enable;</div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>  <span class="keywordtype">bool</span> VOF_enabled = nsparam.<a class="code hl_variable" href="classSimulationParameters.html#a774fb8e87e87b3f003a9cb21d44c520c">multiphysics</a>.VOF;</div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span> </div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>  <span class="comment">// To avoid getting unused parameter warning</span></div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>  <a class="code hl_define" href="multiphysics__interface_8cc.html#a0d638fe48e408fa87f9b8f86164d38b1">_unused</a>(thermal_buoyancy_force_enabled &amp;&amp; heat_transfer_enabled &amp;&amp;</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>          marangoni_effect_enabled &amp;&amp; surface_tension_force_enabled &amp;&amp;</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>          fluid_dynamics_enabled &amp;&amp; interface_sharpening_enabled &amp;&amp;</div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>          VOF_enabled);</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span> </div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>  <span class="comment">// Dependence of thermal buoyancy force on fluid dynamics</span></div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>  AssertThrow(!(thermal_buoyancy_force_enabled == <span class="keyword">true</span> &amp;&amp;</div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>                fluid_dynamics_enabled == <span class="keyword">false</span>),</div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>              ThermalBuoyancyWithoutFluidDynamicsError(</div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>                thermal_buoyancy_force_enabled));</div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span> </div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>  <span class="comment">// Dependence of thermal buoyancy force on heat transfer</span></div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>  AssertThrow(</div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>    !(thermal_buoyancy_force_enabled == <span class="keyword">true</span> &amp;&amp; heat_transfer_enabled == <span class="keyword">false</span>),</div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>    ThermalBuoyancyWithoutHeatTransferError(thermal_buoyancy_force_enabled));</div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span> </div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>  <span class="comment">// Dependence of Marangoni effect on fluid dynamics</span></div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>  AssertThrow(!(marangoni_effect_enabled == <span class="keyword">true</span> &amp;&amp;</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>                fluid_dynamics_enabled == <span class="keyword">false</span>),</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>              MarangoniWithoutFluidDynamicsError(marangoni_effect_enabled));</div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span> </div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>  <span class="comment">// Dependence of Marangoni effect on heat transfer</span></div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>  AssertThrow(!(marangoni_effect_enabled == <span class="keyword">true</span> &amp;&amp;</div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>                heat_transfer_enabled == <span class="keyword">false</span>),</div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>              MarangoniWithoutHeatTransferError(marangoni_effect_enabled));</div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span> </div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>  <span class="comment">// Dependence of Marangoni effect on surface tension force</span></div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>  AssertThrow(!(marangoni_effect_enabled == <span class="keyword">true</span> &amp;&amp;</div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>                surface_tension_force_enabled == <span class="keyword">false</span>),</div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>              MarangoniWithoutSurfaceTensionForceError(</div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>                marangoni_effect_enabled));</div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span> </div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>  <span class="comment">// Dependence of surface tension force on VOF</span></div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>  AssertThrow(!(surface_tension_force_enabled == <span class="keyword">true</span> &amp;&amp; VOF_enabled == <span class="keyword">false</span>),</div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>              SurfaceTensionForceWithoutVOFError(</div>
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>                surface_tension_force_enabled));</div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span> </div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>  <span class="comment">// Dependence of Marangoni effect on VOF</span></div>
+<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>  AssertThrow(!(marangoni_effect_enabled == <span class="keyword">true</span> &amp;&amp; VOF_enabled == <span class="keyword">false</span>),</div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>              MarangoniWithoutVOFError(marangoni_effect_enabled));</div>
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span> </div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>  <span class="comment">// Dependence of interface sharpening on VOF</span></div>
+<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>  AssertThrow(!(interface_sharpening_enabled == <span class="keyword">true</span> &amp;&amp; VOF_enabled == <span class="keyword">false</span>),</div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>              InterfaceSharpeningWithoutVOFError(interface_sharpening_enabled));</div>
+<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>}</div>
 </div>
-<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span> </div>
-<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classMultiphysicsInterface.html">MultiphysicsInterface&lt;2&gt;</a>;</div>
-<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classMultiphysicsInterface.html">MultiphysicsInterface&lt;3&gt;</a>;</div>
+<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span> </div>
+<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classMultiphysicsInterface.html">MultiphysicsInterface&lt;2&gt;</a>;</div>
+<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classMultiphysicsInterface.html">MultiphysicsInterface&lt;3&gt;</a>;</div>
 <div class="ttc" id="acahn__hilliard_8h_html"><div class="ttname"><a href="cahn__hilliard_8h.html">cahn_hilliard.h</a></div></div>
 <div class="ttc" id="aclassMultiphysicsInterface_html"><div class="ttname"><a href="classMultiphysicsInterface.html">MultiphysicsInterface</a></div><div class="ttdef"><b>Definition</b> <a href="multiphysics__interface_8h_source.html#l00036">multiphysics_interface.h:37</a></div></div>
 <div class="ttc" id="aclassMultiphysicsInterface_html_a0f9da9403c8164b4f59e67bad6ef5d1a"><div class="ttname"><a href="classMultiphysicsInterface.html#a0f9da9403c8164b4f59e67bad6ef5d1a">MultiphysicsInterface::physics</a></div><div class="ttdeci">std::map&lt; PhysicsID, std::shared_ptr&lt; AuxiliaryPhysics&lt; dim, GlobalVectorType &gt; &gt; &gt; physics</div><div class="ttdef"><b>Definition</b> <a href="multiphysics__interface_8h_source.html#l00890">multiphysics_interface.h:890</a></div></div>
@@ -445,7 +447,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="amultiphysics_8h_html_ae14bb720bc9a37edc36fb8d90df712c2ad4151ddbc1976755e1fcd118d2917fa8"><div class="ttname"><a href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ad4151ddbc1976755e1fcd118d2917fa8">heat_transfer</a></div><div class="ttdeci">@ heat_transfer</div><div class="ttdef"><b>Definition</b> <a href="multiphysics_8h_source.html#l00010">multiphysics.h:10</a></div></div>
 <div class="ttc" id="amultiphysics_8h_html_ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd"><div class="ttname"><a href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">cahn_hilliard</a></div><div class="ttdeci">@ cahn_hilliard</div><div class="ttdef"><b>Definition</b> <a href="multiphysics_8h_source.html#l00013">multiphysics.h:13</a></div></div>
 <div class="ttc" id="amultiphysics__interface_8cc_html_a0d638fe48e408fa87f9b8f86164d38b1"><div class="ttname"><a href="multiphysics__interface_8cc.html#a0d638fe48e408fa87f9b8f86164d38b1">_unused</a></div><div class="ttdeci">#define _unused(x)</div><div class="ttdef"><b>Definition</b> <a href="multiphysics__interface_8cc_source.html#l00012">multiphysics_interface.cc:12</a></div></div>
-<div class="ttc" id="amultiphysics__interface_8cc_html_a2cc48021e86e383b900458a58111fbb6"><div class="ttname"><a href="multiphysics__interface_8cc.html#a2cc48021e86e383b900458a58111fbb6">DeclException1</a></div><div class="ttdeci">DeclException1(BuoyancyWithoutFluidDynamicsError, bool,&lt;&lt; std::boolalpha&lt;&lt; &quot;Buoyancy force is activated (&quot;&lt;&lt; arg1&lt;&lt; &quot;), while fluid dynamics is not activated (false).&quot;&lt;&lt; std::endl&lt;&lt; &quot;Buoyancy force cannot be activated without activating fluid dynamics.&quot;)</div></div>
+<div class="ttc" id="amultiphysics__interface_8cc_html_a8fe5fda3f2d5614a32a07d5ea0e45ff5"><div class="ttname"><a href="multiphysics__interface_8cc.html#a8fe5fda3f2d5614a32a07d5ea0e45ff5">DeclException1</a></div><div class="ttdeci">DeclException1(ThermalBuoyancyWithoutFluidDynamicsError, bool,&lt;&lt; std::boolalpha&lt;&lt; &quot;Thermal buoyancy force is activated (&quot;&lt;&lt; arg1&lt;&lt; &quot;), while fluid dynamics is not activated (false).&quot;&lt;&lt; std::endl&lt;&lt; &quot;Thermal buoyancy force cannot be activated without activating fluid dynamics.&quot;)</div></div>
 <div class="ttc" id="amultiphysics__interface_8h_html"><div class="ttname"><a href="multiphysics__interface_8h.html">multiphysics_interface.h</a></div></div>
 <div class="ttc" id="anamespaceParameters_html_a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0"><div class="ttname"><a href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::Verbosity::verbose</a></div><div class="ttdeci">@ verbose</div></div>
 <div class="ttc" id="anamespaceParameters_html_a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d"><div class="ttname"><a href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a></div><div class="ttdeci">@ quiet</div></div>

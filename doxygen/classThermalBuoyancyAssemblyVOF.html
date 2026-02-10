@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Lethe Open-Source Library: BuoyancyAssemblyVOF&lt; dim &gt; Class Template Reference</title>
+<title>Lethe Open-Source Library: ThermalBuoyancyAssemblyVOF&lt; dim &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -84,31 +84,31 @@ $(function() {
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
-<a href="classBuoyancyAssemblyVOF-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">BuoyancyAssemblyVOF&lt; dim &gt; Class Template Reference</div></div>
+<a href="classThermalBuoyancyAssemblyVOF-members.html">List of all members</a>  </div>
+  <div class="headertitle"><div class="title">ThermalBuoyancyAssemblyVOF&lt; dim &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="navier__stokes__vof__assemblers_8h_source.html">navier_stokes_vof_assemblers.h</a>&gt;</code></p>
 <div class="dynheader">
-Inheritance diagram for BuoyancyAssemblyVOF&lt; dim &gt;:</div>
+Inheritance diagram for ThermalBuoyancyAssemblyVOF&lt; dim &gt;:</div>
 <div class="dyncontent">
-<div class="center"><img src="classBuoyancyAssemblyVOF__inherit__graph.png" border="0" usemap="#aBuoyancyAssemblyVOF_3_01dim_01_4_inherit__map" alt="Inheritance graph"/></div>
-<map name="aBuoyancyAssemblyVOF_3_01dim_01_4_inherit__map" id="aBuoyancyAssemblyVOF_3_01dim_01_4_inherit__map">
-<area shape="rect" title="Assembles the buoyancy source term for VOF simulations. This assembler includes density explicitly in..." alt="" coords="21,93,199,133"/>
-<area shape="rect" href="classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="5,5,215,45"/>
-<area shape="poly" title=" " alt="" coords="113,59,113,93,107,93,107,59"/>
+<div class="center"><img src="classThermalBuoyancyAssemblyVOF__inherit__graph.png" border="0" usemap="#aThermalBuoyancyAssemblyVOF_3_01dim_01_4_inherit__map" alt="Inheritance graph"/></div>
+<map name="aThermalBuoyancyAssemblyVOF_3_01dim_01_4_inherit__map" id="aThermalBuoyancyAssemblyVOF_3_01dim_01_4_inherit__map">
+<area shape="rect" title="Assembles the thermal buoyancy source term for VOF simulations. This assembler includes density expli..." alt="" coords="5,93,236,133"/>
+<area shape="rect" href="classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="16,5,225,45"/>
+<area shape="poly" title=" " alt="" coords="123,59,123,93,118,93,118,59"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a5614df5e43e59a6b0a877753ec55b986" id="r_a5614df5e43e59a6b0a877753ec55b986"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBuoyancyAssemblyVOF.html#a5614df5e43e59a6b0a877753ec55b986">BuoyancyAssemblyVOF</a> (const std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;<a class="el" href="classBuoyancyAssemblyVOF.html#a2da579e82f19251d0977df963ead434d">simulation_control</a>, const double <a class="el" href="classBuoyancyAssemblyVOF.html#ab048d2cc244341a15c1d5e00b8fc6408">reference_temperature</a>)</td></tr>
-<tr class="separator:a5614df5e43e59a6b0a877753ec55b986"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d4fdf4fbb9505e9cf218db3d0c21a08" id="r_a5d4fdf4fbb9505e9cf218db3d0c21a08"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBuoyancyAssemblyVOF.html#a5d4fdf4fbb9505e9cf218db3d0c21a08">assemble_matrix</a> (const <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData</a>&lt; dim &gt; &amp;copy_data) override</td></tr>
-<tr class="separator:a5d4fdf4fbb9505e9cf218db3d0c21a08"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3dd40ef49f052de31483375e83eae90d" id="r_a3dd40ef49f052de31483375e83eae90d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBuoyancyAssemblyVOF.html#a3dd40ef49f052de31483375e83eae90d">assemble_rhs</a> (const <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData</a>&lt; dim &gt; &amp;copy_data) override</td></tr>
-<tr class="separator:a3dd40ef49f052de31483375e83eae90d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3867ba2f8da1a1a13088939a53497dfb" id="r_a3867ba2f8da1a1a13088939a53497dfb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classThermalBuoyancyAssemblyVOF.html#a3867ba2f8da1a1a13088939a53497dfb">ThermalBuoyancyAssemblyVOF</a> (const std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;<a class="el" href="classThermalBuoyancyAssemblyVOF.html#a65555a1096ca1dc5273c6ff20ebd3f28">simulation_control</a>, const double <a class="el" href="classThermalBuoyancyAssemblyVOF.html#a32b5032bae25e3330795cdbcc2f09471">reference_temperature</a>)</td></tr>
+<tr class="separator:a3867ba2f8da1a1a13088939a53497dfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d5481e5b11a6eb36a8051395099e953" id="r_a0d5481e5b11a6eb36a8051395099e953"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classThermalBuoyancyAssemblyVOF.html#a0d5481e5b11a6eb36a8051395099e953">assemble_matrix</a> (const <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData</a>&lt; dim &gt; &amp;copy_data) override</td></tr>
+<tr class="separator:a0d5481e5b11a6eb36a8051395099e953"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aefd5a4994ac31e98b94a4ac562a3d4bd" id="r_aefd5a4994ac31e98b94a4ac562a3d4bd"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classThermalBuoyancyAssemblyVOF.html#aefd5a4994ac31e98b94a4ac562a3d4bd">assemble_rhs</a> (const <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData</a>&lt; dim &gt; &amp;copy_data) override</td></tr>
+<tr class="separator:aefd5a4994ac31e98b94a4ac562a3d4bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classPhysicsAssemblerBase"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classPhysicsAssemblerBase')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classPhysicsAssemblerBase.html">PhysicsAssemblerBase&lt; ScratchDataType, CopyDataType &gt;</a></td></tr>
 <tr class="memitem:a93134cecb4a4408c88b596b99c18886d inherit pub_methods_classPhysicsAssemblerBase" id="r_a93134cecb4a4408c88b596b99c18886d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsAssemblerBase.html#a93134cecb4a4408c88b596b99c18886d">assemble_matrix</a> (const ScratchDataType &amp;scratch_data, CopyDataType &amp;copy_data)=0</td></tr>
 <tr class="separator:a93134cecb4a4408c88b596b99c18886d inherit pub_methods_classPhysicsAssemblerBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -119,14 +119,14 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
-<tr class="memitem:a2da579e82f19251d0977df963ead434d" id="r_a2da579e82f19251d0977df963ead434d"><td class="memItemLeft" align="right" valign="top">const std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBuoyancyAssemblyVOF.html#a2da579e82f19251d0977df963ead434d">simulation_control</a></td></tr>
-<tr class="separator:a2da579e82f19251d0977df963ead434d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab048d2cc244341a15c1d5e00b8fc6408" id="r_ab048d2cc244341a15c1d5e00b8fc6408"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBuoyancyAssemblyVOF.html#ab048d2cc244341a15c1d5e00b8fc6408">reference_temperature</a></td></tr>
-<tr class="separator:ab048d2cc244341a15c1d5e00b8fc6408"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65555a1096ca1dc5273c6ff20ebd3f28" id="r_a65555a1096ca1dc5273c6ff20ebd3f28"><td class="memItemLeft" align="right" valign="top">const std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classThermalBuoyancyAssemblyVOF.html#a65555a1096ca1dc5273c6ff20ebd3f28">simulation_control</a></td></tr>
+<tr class="separator:a65555a1096ca1dc5273c6ff20ebd3f28"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32b5032bae25e3330795cdbcc2f09471" id="r_a32b5032bae25e3330795cdbcc2f09471"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classThermalBuoyancyAssemblyVOF.html#a32b5032bae25e3330795cdbcc2f09471">reference_temperature</a></td></tr>
+<tr class="separator:a32b5032bae25e3330795cdbcc2f09471"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
-class BuoyancyAssemblyVOF&lt; dim &gt;</div><p>Assembles the buoyancy source term for VOF simulations. This assembler includes density explicitly in the buoyancy term since the VOF momentum equation is written as:  \( \rho \frac{\partial \mathbf{u}}{\partial t} + \rho \mathbf{u} \cdot
+class ThermalBuoyancyAssemblyVOF&lt; dim &gt;</div><p>Assembles the thermal buoyancy source term for VOF simulations. This assembler includes density explicitly in the buoyancy term since the VOF momentum equation is written as:  \( \rho \frac{\partial \mathbf{u}}{\partial t} + \rho \mathbf{u} \cdot
 \nabla \mathbf{u} = ... \). </p>
 <p>The weak form assembled is: \( -\rho \mathbf{g} \beta (T - T_0) \)</p>
 <p>where \( \rho \) is the phase-fraction-weighted density.</p>
@@ -139,8 +139,8 @@ class BuoyancyAssemblyVOF&lt; dim &gt;</div><p>Assembles the buoyancy source ter
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__vof__assemblers_8h_source.html#l00424">424</a> of file <a class="el" href="navier__stokes__vof__assemblers_8h_source.html">navier_stokes_vof_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a5614df5e43e59a6b0a877753ec55b986" name="a5614df5e43e59a6b0a877753ec55b986"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5614df5e43e59a6b0a877753ec55b986">&#9670;&#160;</a></span>BuoyancyAssemblyVOF()</h2>
+<a id="a3867ba2f8da1a1a13088939a53497dfb" name="a3867ba2f8da1a1a13088939a53497dfb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3867ba2f8da1a1a13088939a53497dfb">&#9670;&#160;</a></span>ThermalBuoyancyAssemblyVOF()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -151,7 +151,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classBuoyancyAssemblyVOF.html">BuoyancyAssemblyVOF</a>&lt; dim &gt;<a class="el" href="classBuoyancyAssemblyVOF.html">::BuoyancyAssemblyVOF</a> </td>
+          <td class="memname"><a class="el" href="classThermalBuoyancyAssemblyVOF.html">ThermalBuoyancyAssemblyVOF</a>&lt; dim &gt;<a class="el" href="classThermalBuoyancyAssemblyVOF.html">::ThermalBuoyancyAssemblyVOF</a> </td>
           <td>(</td>
           <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="classSimulationControl.html">SimulationControl</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>simulation_control</em>, </td>
@@ -180,8 +180,8 @@ template&lt;int dim&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a5d4fdf4fbb9505e9cf218db3d0c21a08" name="a5d4fdf4fbb9505e9cf218db3d0c21a08"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5d4fdf4fbb9505e9cf218db3d0c21a08">&#9670;&#160;</a></span>assemble_matrix()</h2>
+<a id="a0d5481e5b11a6eb36a8051395099e953" name="a0d5481e5b11a6eb36a8051395099e953"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0d5481e5b11a6eb36a8051395099e953">&#9670;&#160;</a></span>assemble_matrix()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -192,7 +192,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classBuoyancyAssemblyVOF.html">BuoyancyAssemblyVOF</a>&lt; dim &gt;::assemble_matrix </td>
+          <td class="memname">void <a class="el" href="classThermalBuoyancyAssemblyVOF.html">ThermalBuoyancyAssemblyVOF</a>&lt; dim &gt;::assemble_matrix </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>scratch_data</em>, </td>
@@ -229,8 +229,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a3dd40ef49f052de31483375e83eae90d" name="a3dd40ef49f052de31483375e83eae90d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3dd40ef49f052de31483375e83eae90d">&#9670;&#160;</a></span>assemble_rhs()</h2>
+<a id="aefd5a4994ac31e98b94a4ac562a3d4bd" name="aefd5a4994ac31e98b94a4ac562a3d4bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aefd5a4994ac31e98b94a4ac562a3d4bd">&#9670;&#160;</a></span>assemble_rhs()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -241,7 +241,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classBuoyancyAssemblyVOF.html">BuoyancyAssemblyVOF</a>&lt; dim &gt;::assemble_rhs </td>
+          <td class="memname">void <a class="el" href="classThermalBuoyancyAssemblyVOF.html">ThermalBuoyancyAssemblyVOF</a>&lt; dim &gt;::assemble_rhs </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>scratch_data</em>, </td>
@@ -281,8 +281,8 @@ template&lt;int dim&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="ab048d2cc244341a15c1d5e00b8fc6408" name="ab048d2cc244341a15c1d5e00b8fc6408"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab048d2cc244341a15c1d5e00b8fc6408">&#9670;&#160;</a></span>reference_temperature</h2>
+<a id="a32b5032bae25e3330795cdbcc2f09471" name="a32b5032bae25e3330795cdbcc2f09471"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a32b5032bae25e3330795cdbcc2f09471">&#9670;&#160;</a></span>reference_temperature</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -293,7 +293,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const double <a class="el" href="classBuoyancyAssemblyVOF.html">BuoyancyAssemblyVOF</a>&lt; dim &gt;::reference_temperature</td>
+          <td class="memname">const double <a class="el" href="classThermalBuoyancyAssemblyVOF.html">ThermalBuoyancyAssemblyVOF</a>&lt; dim &gt;::reference_temperature</td>
         </tr>
       </table>
   </td>
@@ -307,8 +307,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a2da579e82f19251d0977df963ead434d" name="a2da579e82f19251d0977df963ead434d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2da579e82f19251d0977df963ead434d">&#9670;&#160;</a></span>simulation_control</h2>
+<a id="a65555a1096ca1dc5273c6ff20ebd3f28" name="a65555a1096ca1dc5273c6ff20ebd3f28"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a65555a1096ca1dc5273c6ff20ebd3f28">&#9670;&#160;</a></span>simulation_control</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -319,7 +319,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const std::shared_ptr&lt;<a class="el" href="classSimulationControl.html">SimulationControl</a>&gt; <a class="el" href="classBuoyancyAssemblyVOF.html">BuoyancyAssemblyVOF</a>&lt; dim &gt;::simulation_control</td>
+          <td class="memname">const std::shared_ptr&lt;<a class="el" href="classSimulationControl.html">SimulationControl</a>&gt; <a class="el" href="classThermalBuoyancyAssemblyVOF.html">ThermalBuoyancyAssemblyVOF</a>&lt; dim &gt;::simulation_control</td>
         </tr>
       </table>
   </td>

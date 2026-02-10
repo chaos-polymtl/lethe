@@ -138,8 +138,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a63547240ab69673bbfc4cff24e1d3a80"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab28f65d6c368e788ff8faeb2f1750dcc" id="r_ab28f65d6c368e788ff8faeb2f1750dcc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#ab28f65d6c368e788ff8faeb2f1750dcc">compute_forcing_term</a> ()</td></tr>
 <tr class="separator:ab28f65d6c368e788ff8faeb2f1750dcc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac358135fcd9717bc14aa1e65593c48eb" id="r_ac358135fcd9717bc14aa1e65593c48eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#ac358135fcd9717bc14aa1e65593c48eb">compute_buoyancy_term</a> (const <a class="el" href="classNavierStokesOperatorBase.html#af38ac45042fda00de01ec4f576b62eeb">VectorType</a> &amp;temperature_solution, const DoFHandler&lt; dim &gt; &amp;temperature_dof_handler)</td></tr>
-<tr class="separator:ac358135fcd9717bc14aa1e65593c48eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e04ed8cb38091a8fb653a22eb2e10b1" id="r_a3e04ed8cb38091a8fb653a22eb2e10b1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#a3e04ed8cb38091a8fb653a22eb2e10b1">compute_thermal_buoyancy_term</a> (const <a class="el" href="classNavierStokesOperatorBase.html#af38ac45042fda00de01ec4f576b62eeb">VectorType</a> &amp;temperature_solution, const DoFHandler&lt; dim &gt; &amp;temperature_dof_handler)</td></tr>
+<tr class="separator:a3e04ed8cb38091a8fb653a22eb2e10b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6f68d00a0e053fad9f4a7fd79690f759" id="r_a6f68d00a0e053fad9f4a7fd79690f759"><td class="memItemLeft" align="right" valign="top">types::global_dof_index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#a6f68d00a0e053fad9f4a7fd79690f759">m</a> () const</td></tr>
 <tr class="separator:a6f68d00a0e053fad9f4a7fd79690f759"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a162a5ebc0742593e2b2d10daf38418a2" id="r_a162a5ebc0742593e2b2d10daf38418a2"><td class="memItemLeft" align="right" valign="top">number&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#a162a5ebc0742593e2b2d10daf38418a2">el</a> (unsigned int, unsigned int) const</td></tr>
@@ -241,8 +241,8 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:a51028b69effddf76f9fbf5d6f8cf4ffb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a27ba098a2179adfe34e5e4530e29b0a8" id="r_a27ba098a2179adfe34e5e4530e29b0a8"><td class="memItemLeft" align="right" valign="top">Table&lt; 2, Tensor&lt; 1, dim, VectorizedArray&lt; number &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#a27ba098a2179adfe34e5e4530e29b0a8">forcing_terms</a></td></tr>
 <tr class="separator:a27ba098a2179adfe34e5e4530e29b0a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa9199e8db697c18155a310ae4d0200ee" id="r_aa9199e8db697c18155a310ae4d0200ee"><td class="memItemLeft" align="right" valign="top">Table&lt; 2, Tensor&lt; 1, dim, VectorizedArray&lt; number &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#aa9199e8db697c18155a310ae4d0200ee">buoyancy_term</a></td></tr>
-<tr class="separator:aa9199e8db697c18155a310ae4d0200ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47874404f125e6dde7c80029db276982" id="r_a47874404f125e6dde7c80029db276982"><td class="memItemLeft" align="right" valign="top">Table&lt; 2, Tensor&lt; 1, dim, VectorizedArray&lt; number &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#a47874404f125e6dde7c80029db276982">thermal_buoyancy_term</a></td></tr>
+<tr class="separator:a47874404f125e6dde7c80029db276982"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ada67989e2707a5bed19af9f19ba333c8" id="r_ada67989e2707a5bed19af9f19ba333c8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#ada67989e2707a5bed19af9f19ba333c8">enable_face_terms</a></td></tr>
 <tr class="separator:ada67989e2707a5bed19af9f19ba333c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e52b2816bb5034c26c893db2d1f6cac" id="r_a2e52b2816bb5034c26c893db2d1f6cac"><td class="memItemLeft" align="right" valign="top">Table&lt; 2, Tensor&lt; 1, dim+1, VectorizedArray&lt; number &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesOperatorBase.html#a2e52b2816bb5034c26c893db2d1f6cac">nonlinear_previous_values</a></td></tr>
@@ -593,47 +593,6 @@ template&lt;int dim, typename number &gt; </div>
 
 </div>
 </div>
-<a id="ac358135fcd9717bc14aa1e65593c48eb" name="ac358135fcd9717bc14aa1e65593c48eb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac358135fcd9717bc14aa1e65593c48eb">&#9670;&#160;</a></span>compute_buoyancy_term()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim, typename number &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classNavierStokesOperatorBase.html">NavierStokesOperatorBase</a>&lt; dim, number &gt;::compute_buoyancy_term </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classNavierStokesOperatorBase.html#af38ac45042fda00de01ec4f576b62eeb">VectorType</a> &amp;&#160;</td>
-          <td class="paramname"><em>temperature_solution</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const DoFHandler&lt; dim &gt; &amp;&#160;</td>
-          <td class="paramname"><em>temperature_dof_handler</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Precompute buoyancy term for heat-transfer coupling. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">temperature_solution</td><td>Present solution of the temperature as given by the multiphysics interface. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">temperature_dof_handler</td><td>DoF Handler used for the heat transfer. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l00353">353</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
-
-</div>
-</div>
 <a id="a63547240ab69673bbfc4cff24e1d3a80" name="a63547240ab69673bbfc4cff24e1d3a80"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a63547240ab69673bbfc4cff24e1d3a80">&#9670;&#160;</a></span>compute_element_size()</h2>
 
@@ -707,6 +666,47 @@ template&lt;int dim, typename number &gt; </div>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l01239">1239</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
+
+</div>
+</div>
+<a id="a3e04ed8cb38091a8fb653a22eb2e10b1" name="a3e04ed8cb38091a8fb653a22eb2e10b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3e04ed8cb38091a8fb653a22eb2e10b1">&#9670;&#160;</a></span>compute_thermal_buoyancy_term()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename number &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classNavierStokesOperatorBase.html">NavierStokesOperatorBase</a>&lt; dim, number &gt;::compute_thermal_buoyancy_term </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classNavierStokesOperatorBase.html#af38ac45042fda00de01ec4f576b62eeb">VectorType</a> &amp;&#160;</td>
+          <td class="paramname"><em>temperature_solution</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const DoFHandler&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>temperature_dof_handler</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Precompute thermal buoyancy term for heat-transfer coupling. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">temperature_solution</td><td>Present solution of the temperature as given by the multiphysics interface. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">temperature_dof_handler</td><td>DoF Handler used for the heat transfer. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html#l00353">353</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8cc_source.html">fluid_dynamics_matrix_free_operators.cc</a>.</p>
 
 </div>
 </div>
@@ -1920,34 +1920,6 @@ template&lt;int dim, typename number &gt; </div>
 
 </div>
 </div>
-<a id="aa9199e8db697c18155a310ae4d0200ee" name="aa9199e8db697c18155a310ae4d0200ee"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa9199e8db697c18155a310ae4d0200ee">&#9670;&#160;</a></span>buoyancy_term</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim, typename number &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Table&lt;2, Tensor&lt;1, dim, VectorizedArray&lt;number&gt; &gt; &gt; <a class="el" href="classNavierStokesOperatorBase.html">NavierStokesOperatorBase</a>&lt; dim, number &gt;::buoyancy_term</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Table with precomputed buoyancy term values. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00680">680</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
-
-</div>
-</div>
 <a id="a0f61a4f53daea8600b981c4ad6f4e528" name="a0f61a4f53daea8600b981c4ad6f4e528"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0f61a4f53daea8600b981c4ad6f4e528">&#9670;&#160;</a></span>constrained_indices</h2>
 
@@ -3009,6 +2981,34 @@ template&lt;int dim, typename number &gt; </div>
 <p>Sparse trilinos matrix used when the matrix of certain level is computed and stored. </p>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00602">602</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+
+</div>
+</div>
+<a id="a47874404f125e6dde7c80029db276982" name="a47874404f125e6dde7c80029db276982"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47874404f125e6dde7c80029db276982">&#9670;&#160;</a></span>thermal_buoyancy_term</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename number &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Table&lt;2, Tensor&lt;1, dim, VectorizedArray&lt;number&gt; &gt; &gt; <a class="el" href="classNavierStokesOperatorBase.html">NavierStokesOperatorBase</a>&lt; dim, number &gt;::thermal_buoyancy_term</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Table with precomputed thermal buoyancy term values. </p>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00680">680</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
 
 </div>
 </div>

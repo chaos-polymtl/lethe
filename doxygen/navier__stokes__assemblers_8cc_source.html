@@ -1891,7 +1891,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01780" name="l01780"></a><span class="lineno"> 1780</span> </div>
 <div class="line"><a id="l01781" name="l01781"></a><span class="lineno"> 1781</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
 <div class="line"><a id="l01782" name="l01782"></a><span class="lineno"> 1782</span><span class="keywordtype">void</span></div>
-<div class="line"><a id="l01783" name="l01783"></a><span class="lineno"> 1783</span>BuoyancyAssembly&lt;dim&gt;::assemble_matrix(</div>
+<div class="line"><a id="l01783" name="l01783"></a><span class="lineno"> 1783</span>ThermalBuoyancyAssembly&lt;dim&gt;::assemble_matrix(</div>
 <div class="line"><a id="l01784" name="l01784"></a><span class="lineno"> 1784</span>  <span class="keyword">const</span> <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a> &amp; <span class="comment">/*scratch_data*/</span>,</div>
 <div class="line"><a id="l01785" name="l01785"></a><span class="lineno"> 1785</span>  <a class="code hl_class" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData&lt;dim&gt;</a> &amp; <span class="comment">/*copy_data*/</span>)</div>
 <div class="line"><a id="l01786" name="l01786"></a><span class="lineno"> 1786</span>{}</div>
@@ -1900,7 +1900,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01789" name="l01789"></a><span class="lineno"> 1789</span> </div>
 <div class="line"><a id="l01790" name="l01790"></a><span class="lineno"> 1790</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
 <div class="line"><a id="l01791" name="l01791"></a><span class="lineno"> 1791</span><span class="keywordtype">void</span></div>
-<div class="line"><a id="l01792" name="l01792"></a><span class="lineno"> 1792</span>BuoyancyAssembly&lt;dim&gt;::assemble_rhs(</div>
+<div class="line"><a id="l01792" name="l01792"></a><span class="lineno"> 1792</span>ThermalBuoyancyAssembly&lt;dim&gt;::assemble_rhs(</div>
 <div class="line"><a id="l01793" name="l01793"></a><span class="lineno"> 1793</span>  <span class="keyword">const</span> <a class="code hl_class" href="classNavierStokesScratchData.html">NavierStokesScratchData&lt;dim&gt;</a>   &amp;scratch_data,</div>
 <div class="line"><a id="l01794" name="l01794"></a><span class="lineno"> 1794</span>  <a class="code hl_class" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData&lt;dim&gt;</a> &amp;copy_data)</div>
 <div class="line"><a id="l01795" name="l01795"></a><span class="lineno"> 1795</span>{</div>
@@ -1942,8 +1942,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01831" name="l01831"></a><span class="lineno"> 1831</span>    }</div>
 <div class="line"><a id="l01832" name="l01832"></a><span class="lineno"> 1832</span>}</div>
 <div class="line"><a id="l01833" name="l01833"></a><span class="lineno"> 1833</span> </div>
-<div class="line"><a id="l01834" name="l01834"></a><span class="lineno"> 1834</span><span class="keyword">template</span> <span class="keyword">class </span>BuoyancyAssembly&lt;2&gt;;</div>
-<div class="line"><a id="l01835" name="l01835"></a><span class="lineno"> 1835</span><span class="keyword">template</span> <span class="keyword">class </span>BuoyancyAssembly&lt;3&gt;;</div>
+<div class="line"><a id="l01834" name="l01834"></a><span class="lineno"> 1834</span><span class="keyword">template</span> <span class="keyword">class </span>ThermalBuoyancyAssembly&lt;2&gt;;</div>
+<div class="line"><a id="l01835" name="l01835"></a><span class="lineno"> 1835</span><span class="keyword">template</span> <span class="keyword">class </span>ThermalBuoyancyAssembly&lt;3&gt;;</div>
 <div class="line"><a id="l01836" name="l01836"></a><span class="lineno"> 1836</span> </div>
 <div class="line"><a id="l01837" name="l01837"></a><span class="lineno"> 1837</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
 <div class="line"><a id="l01838" name="l01838"></a><span class="lineno"> 1838</span><span class="keywordtype">void</span></div>
