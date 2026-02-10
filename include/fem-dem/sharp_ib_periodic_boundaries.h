@@ -49,6 +49,7 @@ public:
    *
    * @param dem_periodic_enabled True if DEM has periodic boundaries enabled
    * @param dem_periodic_boundary_0 DEM periodic boundary ID (first)
+   * @param dem_periodic_boundary_1 DEM periodic boundary ID (second)
    * @param dem_periodic_direction DEM periodic direction (0=x, 1=y, 2=z)
    * @param cfd_boundary_conditions CFD boundary conditions object
    * @param pcout Parallel output stream for warnings
@@ -56,6 +57,7 @@ public:
   void
   setup(const bool                                        dem_periodic_enabled,
         const types::boundary_id                          dem_periodic_boundary_0,
+        const types::boundary_id                          dem_periodic_boundary_1,
         const unsigned int                                dem_periodic_direction,
         const BoundaryConditions::BoundaryConditions     &cfd_boundary_conditions,
         const ConditionalOStream                         &pcout);

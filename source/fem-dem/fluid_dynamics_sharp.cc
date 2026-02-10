@@ -1944,7 +1944,6 @@ FluidDynamicsSharp<dim>::write_force_ib()
 
             table_p[p].write_text(output);
           }
-        MPI_Barrier(this->mpi_communicator);
       }
     }
 }
@@ -3072,6 +3071,36 @@ FluidDynamicsSharp<dim>::finish_time_step_particles()
       particles[p].previous_omega[0]       = particles[p].omega;
       particles[p].previous_orientation[0] = particles[p].orientation;
 
+      // BDF history correction after a periodic wrap.
+      //
+      // After a wrap, previous_positions[0] is in the wrapped coordinate frame
+      // while slots [1], [2], ... are still in the pre-wrap frame. A multi-step
+      // BDF formula that reads both frames produces a large spurious position
+      // jump on the next time step (e.g. BDF2: x = 4/3 * 0.02 - 1/3 * 0.90
+      // gives -0.27 for a particle that just crossed x=1 from x=0.98 to 0.02
+      // with L=1). Fix: shift each older slot by +/-L to match the frame of
+      // previous_positions[0]. The half-domain threshold is unambiguous because
+      // no physical particle can move L/2 in one time step under a CFL-limited
+      // Sharp-IB solver.
+      if (sharp_ib_periodic_boundaries.is_periodic_enabled())
+        {
+          const unsigned int dir =
+            sharp_ib_periodic_boundaries.get_periodic_direction();
+          const double L = periodic_domain_upper - periodic_domain_lower;
+
+          for (unsigned int i = 1;
+               i < particles[p].previous_positions.size();
+               ++i)
+            {
+              const double diff = particles[p].previous_positions[0][dir] -
+                                  particles[p].previous_positions[i][dir];
+              if (diff > 0.5 * L)
+                particles[p].previous_positions[i][dir] += L;
+              else if (diff < -0.5 * L)
+                particles[p].previous_positions[i][dir] -= L;
+            }
+        }
+
       particles[p].previous_fluid_forces = particles[p].fluid_forces;
       particles[p].previous_fluid_viscous_forces =
         particles[p].fluid_viscous_forces;
@@ -3768,7 +3797,7 @@ FluidDynamicsSharp<dim>::sharp_edge()
   // Loop on all the cell to define if the sharp edge cut them
   for (const auto &cell_cut : cell_iterator)
     {
-      if (cell_cut->is_locally_owned() || cell_cut->is_ghost())
+      if (cell_cut->is_locally_owned())
         {
           // Check if the cell_cut is cut or not by the IB and what the particle
           // the cut the cell_cut. If the particle is cut
@@ -5607,6 +5636,7 @@ FluidDynamicsSharp<dim>::setup_sharp_ib_periodic_boundaries()
   // Check if DEM has periodic boundaries enabled
   bool               dem_periodic_enabled      = false;
   types::boundary_id dem_periodic_boundary_0   = 0;
+  types::boundary_id dem_periodic_boundary_1   = 0;
   unsigned int       dem_periodic_direction    = 0;
 
   const auto &dem_bcs = cfd_dem_parameters.dem_parameters.boundary_conditions;
@@ -5619,6 +5649,7 @@ FluidDynamicsSharp<dim>::setup_sharp_ib_periodic_boundaries()
         {
           dem_periodic_enabled    = true;
           dem_periodic_boundary_0 = dem_bcs.periodic_boundary_0;
+          dem_periodic_boundary_1 = dem_bcs.periodic_boundary_1;
           dem_periodic_direction  = dem_bcs.periodic_direction;
           break; // Currently support only one periodic direction
         }
@@ -5628,6 +5659,7 @@ FluidDynamicsSharp<dim>::setup_sharp_ib_periodic_boundaries()
   sharp_ib_periodic_boundaries.setup(
     dem_periodic_enabled,
     dem_periodic_boundary_0,
+    dem_periodic_boundary_1,
     dem_periodic_direction,
     this->simulation_parameters.boundary_conditions,
     this->pcout);
@@ -5683,6 +5715,12 @@ FluidDynamicsSharp<dim>::add_matrix_entry_with_periodic_expansion(
   const types::global_dof_index col_dof,
   const double                  value)
 {
+  // Sharp-IB equations are assembled row-wise. Never write to a non-owned row:
+  // nonlocal row inserts are not guaranteed and can make parallel matrices
+  // rank-dependent.
+  if (!this->locally_owned_dofs.is_element(row_dof))
+    return;
+
   // When sharp_edge() writes IB stencil or constraint equations, the column
   // DoF may be a periodic slave whose entry is not in the sparsity pattern
   // (built with keep_constrained_dofs=false). We expand COLUMN constraints

@@ -9,6 +9,7 @@
 #include <deal.II/fe/fe_values.h>
 
 #include <algorithm>
+#include <cmath>
 
 template <int dim>
 void
@@ -575,14 +576,71 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
             }
         }
 
-      // Regroup the information of all the processor
-      auto global_boundary_cell =
-        Utilities::MPI::all_gather(this->mpi_communicator, boundary_cells[p_i]);
-      boundary_cells[p_i].clear();
-      for (unsigned int i = 0; i < global_boundary_cell.size(); ++i)
+      // Gather local candidates with their levelset so global merge can keep
+      // the physically closest boundary candidate per boundary id.
+      std::map<unsigned int, std::pair<BoundaryCellsInfo, double>>
+        local_boundary_candidates;
+      for (const auto &[boundary_id, boundary_info] : boundary_cells[p_i])
         {
-          boundary_cells[p_i].insert(global_boundary_cell[i].begin(),
-                                     global_boundary_cell[i].end());
+          const double levelset = best_contact_candidate[p_i][boundary_id];
+          local_boundary_candidates[boundary_id] = {boundary_info, levelset};
+        }
+
+      // Regroup the information of all processors.
+      const auto global_boundary_candidates = Utilities::MPI::all_gather(
+        this->mpi_communicator, local_boundary_candidates);
+
+      boundary_cells[p_i].clear();
+      std::map<unsigned int, double> global_best_levelset;
+      for (const auto &rank_candidates : global_boundary_candidates)
+        {
+          for (const auto &[boundary_id, candidate] : rank_candidates)
+            {
+              const auto  &candidate_info    = candidate.first;
+              const double candidate_levelset = candidate.second;
+              const auto current_best_level =
+                global_best_levelset.find(boundary_id);
+
+              bool accept_candidate = false;
+              if (current_best_level == global_best_levelset.end() ||
+                  candidate_levelset < current_best_level->second)
+                {
+                  accept_candidate = true;
+                }
+              else if (std::abs(candidate_levelset -
+                                current_best_level->second) < 1e-14)
+                {
+                  const auto current_candidate =
+                    boundary_cells[p_i].find(boundary_id);
+                  if (current_candidate == boundary_cells[p_i].end())
+                    {
+                      accept_candidate = true;
+                    }
+                  else
+                    {
+                      for (unsigned int d = 0; d < dim; ++d)
+                        {
+                          if (candidate_info.point_on_boundary[d] <
+                              current_candidate->second.point_on_boundary[d])
+                            {
+                              accept_candidate = true;
+                              break;
+                            }
+                          if (candidate_info.point_on_boundary[d] >
+                              current_candidate->second.point_on_boundary[d])
+                            {
+                              break;
+                            }
+                        }
+                    }
+                }
+
+              if (accept_candidate)
+                {
+                  global_best_levelset[boundary_id] = candidate_levelset;
+                  boundary_cells[p_i][boundary_id]  = candidate_info;
+                }
+            }
         }
     }
 }
