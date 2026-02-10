@@ -810,7 +810,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
                  ->number_of_refinement_boxes;
        ++i_box)
     {
-      // Read the mesh that define the box
+      // Read the mesh that defines the box
       Triangulation<dim> box_to_refine;
       if ((*this->simulation_parameters.mesh_box_refinement
               ->refinement_boxes_meshes)[i_box]
@@ -820,11 +820,11 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
                   ->refinement_boxes_meshes)[i_box]
                 .simplex)
             {
-              Triangulation<dim> basetria(
+              Triangulation<dim> base_tria(
                 Triangulation<dim>::limit_level_difference_at_vertices);
 
               GridIn<dim> grid_in;
-              grid_in.attach_triangulation(basetria);
+              grid_in.attach_triangulation(base_tria);
               std::ifstream input_file(
                 (*this->simulation_parameters.mesh_box_refinement
                     ->refinement_boxes_meshes)[i_box]
@@ -834,11 +834,11 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
 
               // By default, uses the METIS partitioner.
               // A user parameter option could be made to choose a partitioner.
-              GridTools::partition_triangulation(0, basetria);
+              GridTools::partition_triangulation(0, base_tria);
 
 
               auto construction_data = TriangulationDescription::Utilities::
-                create_description_from_triangulation(basetria,
+                create_description_from_triangulation(base_tria,
                                                       mpi_communicator);
 
               triangulation->create_triangulation(construction_data);
@@ -854,7 +854,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
               grid_in.read_msh(input_file);
             }
         }
-      // Dealii grids
+      // deal.II grids
       else if ((*this->simulation_parameters.mesh_box_refinement
                    ->refinement_boxes_meshes)[i_box]
                  .type == Parameters::Mesh::Type::dealii)
@@ -900,7 +900,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
               GridTools::partition_multigrid_levels(
                 temporary_tri_triangulation);
 
-              // extract relevant information from distributed triangulation
+              // Extract relevant information from distributed triangulation
               auto construction_data = TriangulationDescription::Utilities::
                 create_description_from_triangulation(
                   temporary_tri_triangulation,
@@ -987,25 +987,18 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
             previous_solutions_transfer;
           // Important to reserve to prevent pointer dangling
           previous_solutions_transfer.reserve(previous_solutions->size());
-          for (unsigned int i = 0; i < previous_solutions->size(); ++i)
+          for (unsigned int p = 0; p < previous_solutions->size(); ++p)
             {
               previous_solutions_transfer.emplace_back(
                 SolutionTransfer<dim, VectorType>(*this->dof_handler, true));
               if constexpr (std::is_same_v<
                               VectorType,
                               LinearAlgebra::distributed::Vector<double>>)
-                (*previous_solutions)[i].update_ghost_values();
-              previous_solutions_transfer[i]
+                (*previous_solutions)[p].update_ghost_values();
+              previous_solutions_transfer[p]
                 .prepare_for_coarsening_and_refinement(
-                  (*previous_solutions)[i]);
+                  (*previous_solutions)[p]);
             }
-
-          SolutionTransfer<dim, VectorType> solution_transfer_m1(
-            *this->dof_handler, true);
-          SolutionTransfer<dim, VectorType> solution_transfer_m2(
-            *this->dof_handler, true);
-          SolutionTransfer<dim, VectorType> solution_transfer_m3(
-            *this->dof_handler, true);
 
           if constexpr (std::is_same_v<
                           VectorType,

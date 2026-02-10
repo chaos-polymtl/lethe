@@ -50,7 +50,7 @@ This subsection provides information of the simulation geometry and its mesh. Th
     set initial translation = 0, 0, 0
 
     # Rotation to apply to the mesh
-    set initial rotation axis  = 1, 0, 0 # Only valid if the mesh is in a 3D space
+    set initial rotation axis  = 1, 0, 0
     set initial rotation angle = 0
 
     # Mesh scaling factor

@@ -1627,8 +1627,8 @@ namespace Parameters
   };
 
   /**
-   * Container of parameters for box refinement. The region to refine can be
-   * described by either a GMSH or a deal.II mesh.
+   * Container of the parameters for box refinements. The regions to refine can
+   * be described by either a GMSH or a deal.II mesh.
    */
   struct MeshBoxRefinement
   {
