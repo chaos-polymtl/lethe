@@ -189,12 +189,14 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
   //   - If normal · t3 < 0: t3 points inward (correct for incident wave)
   // Note that by swapping the basis vectors e_t1 and e_t2, we change the parity
   // of the system since it is equivalent to a reflection. This means that
-  // pseudo vectors (like the magnetic field) will change sign while regular
-  // vectors (like the electric field) will not. Eventhough this does not affect
+  // pseudo vectors (like the magnetic field) will not change sign while regular
+  // vectors (like the electric field) will. Eventhough this does not affect
   // the physics of the solution, it is important to be consistent with the
   // definition of the mode profiles that we use, which assume a specific parity
   // for the system. Therefore, we keep track of the status of the parity and
-  // apply it later on to the magnetic field when we compute the excitation.
+  // apply it later on to the magnetic field to make it consistent with the
+  // switch of sign that has been applied to the electric field when we compute
+  // the excitation.
   double parity_factor = 1.0;
   if ((normal * e_t3) > 0)
     {
