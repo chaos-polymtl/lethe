@@ -1,6 +1,16 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+/**
+ * @file parameters_lagrangian.h
+ * @brief Parameter structures for Lagrangian (DEM) particle simulations.
+ *
+ * This file defines the parameter classes and enumerations used to configure
+ * Lagrangian particle simulations in Lethe, including contact force models,
+ * particle physical properties, insertion methods, model parameters,
+ * floating walls, boundary conditions, grid motion, and post-processing.
+ */
+
 #ifndef lethe_parameters_lagrangian_h
 #define lethe_parameters_lagrangian_h
 
@@ -15,6 +25,9 @@ namespace Parameters
 {
   namespace Lagrangian
   {
+    /**
+     * @brief Contact force model for particle-particle interactions.
+     */
     enum class ParticleParticleContactForceModel : std::uint8_t
     {
       linear,
@@ -25,6 +38,9 @@ namespace Parameters
       DMT
     };
 
+    /**
+     * @brief Contact force model for particle-wall interactions.
+     */
     enum class ParticleWallContactForceModel : std::uint8_t
     {
       linear,
@@ -33,6 +49,9 @@ namespace Parameters
       DMT
     };
 
+    /**
+     * @brief Method used to compute the rolling resistance torque.
+     */
     enum RollingResistanceMethod : std::uint8_t
     {
       none,
@@ -41,6 +60,9 @@ namespace Parameters
       epsd
     };
 
+    /**
+     * @brief Type of particle size distribution.
+     */
     enum class SizeDistributionType : std::uint8_t
     {
       uniform,
@@ -49,6 +71,9 @@ namespace Parameters
       custom
     };
 
+    /**
+     * @brief Weighting basis for particle size distributions.
+     */
     enum class DistributionWeightingType : std::uint8_t
     {
       number_based,
@@ -57,173 +82,208 @@ namespace Parameters
 
     enum class ProbabilityFunctionType : std::uint8_t
     {
-      PDF, // probability density function
-      CDF  // cumulative density function
+      /// probability density function
+      PDF, 
+      /// cumulative density function
+      CDF  
     };
 
+    /**
+     * @brief Physical properties of particles, walls, and interstitial gas
+     * for Lagrangian (DEM) simulations.
+     *
+     * This structure stores all material properties needed for contact force
+     * computations, including per-particle-type mechanical and thermal
+     * properties, wall properties, and interstitial gas properties.
+     */
     struct LagrangianPhysicalProperties
     {
     public:
-      // Gravitational acceleration
+      /// Gravitational acceleration vector.
       Tensor<1, 3> g;
 
-      // Number of particle types
+      /// Number of particle types.
       unsigned int particle_type_number;
 
       // Distribution type of each particle type (uniform, normal, lognormal,
       // custom)
       std::vector<SizeDistributionType> distribution_type;
 
-      // Average diameter of each particle type
+      /// Average diameter of each particle type
       std::vector<double> particle_average_diameter;
 
-      // Size standard deviation of each particle type
+      /// Size standard deviation of each particle type
       std::vector<double> particle_size_std;
 
-      // Indicate if the custom distribution is read from file
+      /// Indicate if the custom distribution is read from file
       std::vector<bool> custom_distribution_from_file;
 
-      // Filename for the custom distribution for each particle type
+      /// Filename for the custom distribution for each particle type
       std::vector<std::string> custom_distribution_filenames;
 
-      // Custom distribution function type (PDF or CDF)
+      /// Custom distribution function type (PDF or CDF)
       std::vector<ProbabilityFunctionType> custom_probability_function_type;
 
-      // Indicates whether the diameter values generated from the custom
-      // distribution are interpolated
+      /// Indicates whether the diameter values generated from the custom
+      /// distribution are interpolated
       std::vector<bool> custom_distribution_interpolation;
 
-      // List of diameters for the custom distribution for each particle type
+      /// List of diameters for the custom distribution for each particle type
       std::vector<std::vector<double>> particle_custom_diameter;
 
-      // Probability of each diameter value based on volume fraction for the
-      // custom distribution for each particle type
+      /// Probability of each diameter value based on volume fraction for the
+      /// custom distribution for each particle type
       std::vector<std::vector<double>> particle_custom_probability;
 
-      // Distribution weighting type of each particle type (number-based,
-      // volume-based)
+      /// Distribution weighting type of each particle type (number-based,
+      /// volume-based)
       std::vector<DistributionWeightingType> distribution_weighting_type;
 
-      // Random seed for the size distribution
+      /// Random seed for the size distribution.
       std::vector<unsigned int> seed_for_distributions;
 
-      // Cutoff used for the lognormal distribution
+      /// Minimum diameter cutoff for lognormal distribution.
+      /// Maximum diameter cutoff for lognormal distribution.
       std::vector<double> diameter_min_cutoff, diameter_max_cutoff;
 
-      // Number particles of each particle type
+      /// Number particles of each particle type
       std::vector<int> number;
 
-      // Density of each particle type
+      /// Density of each particle type
       std::vector<double> density_particle;
 
-      // Young's modulus of each particle type
+      /// Young's modulus of each particle type
       std::vector<double> youngs_modulus_particle;
 
-      // Poisson's ratio of each particle type
+      /// Poisson's ratio of each particle type
       std::vector<double> poisson_ratio_particle;
 
-      // Coefficients of restitution of each particle type
+      /// Coefficients of restitution of each particle type
       std::vector<double> restitution_coefficient_particle;
 
-      // Friction coefficient of each particle type
+      /// Friction coefficient of each particle type
       std::vector<double> friction_coefficient_particle;
 
-      // Rolling viscous damping coefficient of each particle type
+      /// Rolling viscous damping coefficient of each particle type
       std::vector<double> rolling_viscous_damping_coefficient_particle;
 
-      // Rolling friction coefficient of each particle type
+      /// Rolling friction coefficient of each particle type
       std::vector<double> rolling_friction_coefficient_particle;
 
-      // Surface energy of each particle type
+      /// Surface energy of each particle type
       std::vector<double> surface_energy_particle;
 
-      // Hamaker constant of each particle type
+      /// Hamaker constant of each particle type
       std::vector<double> hamaker_constant_particle;
 
-      // Thermal conductivity of each particle type
+      /// Thermal conductivity of each particle type
       std::vector<double> thermal_conductivity_particle;
 
-      // Specific heat of each particle type
+      /// Specific heat of each particle type
       std::vector<double> specific_heat_particle;
 
-      // Microhardness of each particle type
+      /// Microhardness of each particle type
       std::vector<double> microhardness_particle;
 
-      // Surface slope of each particle type
+      /// Surface slope of each particle type
       std::vector<double> surface_slope_particle;
 
-      // Surface roughness of each particle type
+      /// Surface roughness of each particle type
       std::vector<double> surface_roughness_particle;
 
-      // Thermal accommodation coefficient of each particle type
+      /// Thermal accommodation coefficient of each particle type
       std::vector<double> thermal_accommodation_particle;
 
-      // Real Young's modulus of each particle type
+      /// Real Young's modulus of each particle type
       std::vector<double> real_youngs_modulus_particle;
 
-      // Young's modulus of wall
+      /// Young's modulus of the wall.
       double youngs_modulus_wall;
 
-      // Poisson's ratio of wall
+      /// Poisson's ratio of the wall.
       double poisson_ratio_wall;
 
-      // Coefficient of restitution of wall
+      /// Coefficient of restitution of the wall.
       double restitution_coefficient_wall;
 
-      // Friction coefficient of wall
+      /// Friction coefficient of the wall.
       double friction_coefficient_wall;
 
-      // Rolling friction coefficient wall
+      /// Rolling friction coefficient of the wall.
       double rolling_friction_wall;
 
-      // Rolling friction coefficient wall
+      /// Rolling viscous damping coefficient of the wall.
       double rolling_viscous_damping_wall;
 
-      // Surface energy wall
+      /// Surface energy of the wall.
       double surface_energy_wall;
 
-      // Hamaker constant wall
+      /// Hamaker constant of the wall.
       double hamaker_constant_wall;
 
-      // Thermal conductivity wall
+      /// Thermal conductivity of the wall.
       double thermal_conductivity_wall;
 
-      // Microhardness wall
+      /// Microhardness of the wall.
       double microhardness_wall;
 
-      // Surface slope wall
+      /// Surface slope of the wall.
       double surface_slope_wall;
 
-      // Surface roughness wall
+      /// Surface roughness of the wall.
       double surface_roughness_wall;
 
-      // Thermal accommodation wall
+      /// Thermal accommodation coefficient of the wall.
       double thermal_accommodation_wall;
 
-      // Real Young's modulus of wall
+      /// Real Young's modulus of the wall.
       double real_youngs_modulus_wall;
 
-      // Thermal conductivity of interstitial gas
+      /// Thermal conductivity of the interstitial gas.
       double thermal_conductivity_gas;
 
-      // Specific heat of interstitial gas
+      /// Specific heat of the interstitial gas.
       double specific_heat_gas;
 
-      // Dynamic viscosity of interstitial gas
+      /// Dynamic viscosity of the interstitial gas.
       double dynamic_viscosity_gas;
 
-      // Specific heats ratio of interstitial gas
+      /// Specific heats ratio of the interstitial gas.
       double specific_heats_ratio_gas;
 
-      // Molecular mean free path of interstitial gas
+      /// Molecular mean free path of the interstitial gas.
       double molecular_mean_free_path_gas;
 
+      /**
+       * @brief Declare the parameters in the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
       void
       declare_parameters(ParameterHandler &prm) const;
+
+      /**
+       * @brief Parse the parameters from the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
       void
       parse_parameters(ParameterHandler &prm);
+
+      /**
+       * @brief Declare default parameter entries for a single particle type.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
       static void
       declareDefaultEntry(ParameterHandler &prm);
+
+      /**
+       * @brief Parse the physical properties for a given particle type.
+       *
+       * @param[in] particle_type Index of the particle type to parse.
+       * @param[in] prm The parameter handler.
+       */
       void
       parse_particle_properties(const unsigned int     &particle_type,
                                 const ParameterHandler &prm);
@@ -313,11 +373,22 @@ namespace Parameters
         std::vector<double>       &p_real_youngs_modulus) const;
     };
 
+    /**
+     * @brief Parameters controlling particle insertion in DEM simulations.
+     *
+     * This class stores the insertion method, geometry, initial conditions,
+     * and scheduling parameters used to introduce particles into the domain.
+     * Four insertion methods are supported: file, list, plane, and volume.
+     *
+     * @tparam dim Number of spatial dimensions.
+     */
     template <int dim>
     class InsertionInfo
     {
     public:
-      // Insertion method
+      /**
+       * @brief Method used to insert particles.
+       */
       enum class InsertionMethod
       {
         file,
@@ -326,60 +397,88 @@ namespace Parameters
         volume
       } insertion_method;
 
-      // Inserted number of particles at each time step
+      /// Number of particles inserted at each insertion step.
       int inserted_this_step;
 
-      // Insertion frequency
+      /// Frequency of insertion (in time steps).
       int insertion_frequency;
 
-      /* Removal box: */
+      /// Enable removal of particles in a specified region.
       bool removing_particles_in_region;
 
-      // Clear box info (xmin,xmax,ymin,ymax,zmin,zmax)
+      /// First corner of the particle removal box.
+      /// Second corner of the particle removal box.
       Point<3> clear_box_point_1, clear_box_point_2;
 
-      /* File: */
+      /// List of input files for the file insertion method.
       std::vector<std::string> list_of_input_files;
 
-      /* Plane: */
-      // Plane normal vector
+      /// Normal vector of the insertion plane (plane method).
       Tensor<1, 3> insertion_plane_normal_vector;
-      // Plane point
+
+      /// Point on the insertion plane (plane method).
       Point<3> insertion_plane_point;
 
-      /* List */
-      // Containers used for the list insertion method
+      /// Position and velocity components for the list insertion method.
       std::vector<double> list_x, list_y, list_z, list_vx, list_vy, list_vz,
         list_wx, list_wy, list_wz, list_d, list_T;
 
-      /* Volume */
-      // Direction sequence for the insertion of particles (1st, 2nd, 3rd)
+      /// Direction sequence for particle insertion (1st, 2nd, 3rd).
       std::vector<unsigned int> direction_sequence;
-      // Insertion box info (p_1 , p_2)
+
+      /// First corner of the insertion box (volume method).
+      /// Second corner of the insertion box (volume method).
       Point<3> insertion_box_point_1, insertion_box_point_2;
-      // Insertion initial velocity conditions
+
+      /// Initial translational velocity of inserted particles.
+      /// Initial angular velocity of inserted particles.
       Tensor<1, 3> initial_vel, initial_omega;
-      // Function that returns the initial temperature of a particle based on
-      // time or its position.
+
+      /// Function returning the initial temperature of a particle based on
+      /// time or its position.
       std::shared_ptr<Function<dim>> initial_temperature_function;
-      // Insertion distance threshold
+
+      /// Minimum distance threshold between inserted particles.
       double distance_threshold;
-      // Insertion random number range
+
+      /// Maximum random offset applied to insertion positions.
       double insertion_maximum_offset;
-      // Insertion random number seed
+
+      /// Random seed for particle insertion.
       int seed_for_insertion;
 
+      /**
+       * @brief Declare the parameters in the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
       static void
       declare_parameters(ParameterHandler &prm);
+
+      /**
+       * @brief Parse the parameters from the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
       void
       parse_parameters(ParameterHandler &prm);
     };
 
+    /**
+     * @brief Numerical model parameters for DEM simulations.
+     *
+     * This class stores the contact detection, load balancing, force model
+     * selection, time integration, and sparse contact optimization parameters.
+     *
+     * @tparam dim Number of spatial dimensions.
+     */
     template <int dim>
     class ModelParameters
     {
     public:
-      // Load balance method
+      /**
+       * @brief Load balancing strategy for parallel DEM simulations.
+       */
       enum class LoadBalanceMethod
       {
         none,
@@ -389,93 +488,110 @@ namespace Parameters
         dynamic_with_sparse_contacts
       } load_balance_method;
 
-      // Load balance step (for single step load-balancing)
+      /// Load balance step (for single-step load balancing).
       unsigned int load_balance_step;
 
-      // Load balance frequency
+      /// Load balance frequency (in time steps).
       unsigned int load_balance_frequency;
 
-      // Load balance threshold (for dynamic load-balancing)
+      /// Load balance threshold (for dynamic load balancing).
       double load_balance_threshold;
 
-      // Load balance check frequency (for dynamic load-balancing)
+      /// Check frequency for dynamic load balancing.
       unsigned int dynamic_load_balance_check_frequency;
 
-      // Particle-particle, particle-wall broad and fine search frequency
+      /// Frequency of particle-particle and particle-wall contact detection.
       unsigned int contact_detection_frequency;
 
-      // Function that returns the weight of a cell base on its barycenter
-      // position.
+      /// Function returning the weight of a cell based on its barycenter
+      /// position.
       std::shared_ptr<Function<dim>> cell_weight_function;
 
-      // The particle weight for load balancing
+      /// Particle weight used for load balancing.
       unsigned int load_balance_particle_weight;
 
-      // Factors applied on the particle weight in load balancing for active and
-      // inactive cells (factor of mobile cells is always 1), only available
-      // when adaptive sparse contacts is enable
+      /// Factor applied to particle weight for active cells in load balancing
+      /// (only used with adaptive sparse contacts).
       double active_load_balancing_factor;
+
+      /// Factor applied to particle weight for inactive cells in load balancing
+      /// (only used with adaptive sparse contacts).
       double inactive_load_balancing_factor;
 
-      // Security factor for dynamic contact search
+      /// Safety factor for dynamic contact search.
       double dynamic_contact_search_factor;
 
-      // Contact detection method
+      /**
+       * @brief Contact detection method used in the simulation.
+       */
       enum class ContactDetectionMethod
       {
         constant,
         dynamic
       } contact_detection_method;
 
-      // Contact search neighborhood threshold (neighborhood diameter to
-      // particle diameter)
+      /// Contact search neighborhood threshold (neighborhood diameter to
+      /// particle diameter ratio).
       double neighborhood_threshold;
 
-      // Cut-off threshold where Van der Waals forces are ignored.
+      /// Cut-off threshold beyond which Van der Waals forces are ignored.
       double dmt_cut_off_threshold;
 
-      // Particle-particle contact force model
+      /// Particle-particle contact force model.
       ParticleParticleContactForceModel particle_particle_contact_force_model;
 
-      // Particle-wall contact force model
+      /// Particle-wall contact force model.
       ParticleWallContactForceModel particle_wall_contact_force_method;
 
-      // Rolling resistance torque method
+      /// Rolling resistance torque method.
       RollingResistanceMethod rolling_resistance_method;
 
-      // Model parameter for the EPSD rolling resistance model
+      /// Model parameter for the EPSD rolling resistance model.
       double f_coefficient_epsd;
 
-      // Integration method
+      /**
+       * @brief Time integration method for particle motion.
+       */
       enum class IntegrationMethod
       {
         velocity_verlet,
         explicit_euler
       } integration_method;
 
-      // Solver type
+      /// Solver type (DEM, CFD-DEM, or DEM multiphysics).
       DEM::SolverType solver_type;
 
-      // Disable particle contacts to optimize performance
+      /// Enable sparse particle contacts to optimize performance.
       bool sparse_particle_contacts;
 
-      // Enable advection of particles (applies cell average velocity and
-      // acceleration to particles)
+      /// Enable advection of particles using cell-averaged fluid velocity and
+      /// acceleration.
       bool advect_particles;
 
-      // Minimal granular temperature value of cells where particle contacts
-      // are considered
+      /// Minimum granular temperature for cells where particle contacts are
+      /// evaluated.
       double granular_temperature_threshold;
 
-      // Maximal solid fraction value of cells where particle contacts are
-      // considered no matter the granular temperature
+      /// Maximum solid fraction for cells where particle contacts are always
+      /// evaluated regardless of granular temperature.
       double solid_fraction_threshold;
 
-      // Disable position integration
+      /// Disable position integration for particles.
       bool disable_position_integration;
 
+      /**
+       * @brief Declare the parameters in the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
       static void
       declare_parameters(ParameterHandler &prm);
+
+      /**
+       * @brief Parse the parameters from the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
       void
       parse_parameters(ParameterHandler &prm);
     };
@@ -488,51 +604,95 @@ namespace Parameters
     class ForceTorqueOnWall
     {
     public:
-      // Enable force post-processing
+      /// Enable force and torque post-processing on wall boundaries.
       bool calculate_force_torque;
 
+      /// Verbosity level for force and torque output.
       Parameters::Verbosity force_torque_verbosity;
 
-      // Output frequency
+      /// Output frequency (in time steps).
       unsigned int output_frequency;
 
-      // Prefix for simulation output
+      /// File name prefix for force and torque output.
       std::string force_torque_output_name;
 
-      // Center of mass
+      /// Center of mass used for torque computation.
       Point<3> point_center_mass;
 
+      /**
+       * @brief Declare the parameters in the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
       static void
       declare_parameters(ParameterHandler &prm);
+
+      /**
+       * @brief Parse the parameters from the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
       void
       parse_parameters(ParameterHandler &prm);
     };
 
+    /**
+     * @brief Parameters for floating walls in DEM simulations.
+     *
+     * Floating walls are planar boundaries that can be activated and
+     * deactivated at specified times during the simulation. Each wall
+     * is defined by a point on its surface and a normal vector.
+     *
+     * @tparam dim Number of spatial dimensions.
+     */
     template <int dim>
     class FloatingWalls
     {
     public:
-      // Number of floating walls
+      /// Number of floating walls.
       unsigned int floating_walls_number;
 
-      // A point on each floating wall
+      /// A point on each floating wall surface.
       std::vector<Point<dim>> points_on_walls;
 
-      // Normal vectors of the floating walls
+      /// Outward normal vector of each floating wall.
       std::vector<Tensor<1, dim>> floating_walls_normal_vectors;
 
-      // Beginning time
+      /// Activation time of each floating wall.
       std::vector<double> time_start;
 
-      // Ending time
+      /// Deactivation time of each floating wall.
       std::vector<double> time_end;
 
+      /**
+       * @brief Declare the parameters in the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
       void
       declare_parameters(ParameterHandler &prm) const;
+
+      /**
+       * @brief Parse the parameters from the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
       void
       parse_parameters(ParameterHandler &prm);
+
+      /**
+       * @brief Declare default parameter entries for a single floating wall.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
       static void
       declareDefaultEntry(ParameterHandler &prm);
+
+      /**
+       * @brief Parse parameters for a single floating wall.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
       void
       parse_floating_wall(ParameterHandler &prm);
 
@@ -541,13 +701,21 @@ namespace Parameters
     };
 
 
+    /**
+     * @brief Boundary conditions for DEM simulations.
+     *
+     * This structure stores the boundary types, motion parameters, and
+     * periodic boundary information for each boundary of the DEM domain.
+     */
     struct BCDEM
     {
     public:
-      // Number of DEM boundary conditions
+      /// Number of DEM boundary conditions.
       unsigned int DEM_BC_number;
 
-      // Boundary condition type
+      /**
+       * @brief Type of boundary condition applied to a DEM domain boundary.
+       */
       enum class BoundaryType
       {
         fixed_wall,
@@ -557,42 +725,81 @@ namespace Parameters
         periodic
       };
 
-      // Vector of each boundary types
+      /// Boundary condition type for each boundary.
       std::vector<BoundaryType> bc_types;
 
-      // Outlet boundary IDs
+      /// Boundary IDs designated as outlets.
       std::vector<unsigned int> outlet_boundaries;
 
-      // Translational velocities of moving boundaries
+      /// Translational velocity of each moving boundary.
       std::unordered_map<unsigned int, Tensor<1, 3>>
         boundary_translational_velocity;
 
-      // Rotational speeds of rotating boundaries in rad/s
+      /// Rotational speed of each rotating boundary (rad/s).
       std::unordered_map<unsigned int, double> boundary_rotational_speed;
 
-      // Rotational axes of rotating boundaries
+      /// Rotational axis vector of each rotating boundary.
       std::unordered_map<unsigned int, Tensor<1, 3>> boundary_rotational_vector;
 
-      // Point on rotational axis
+      /// Point on the rotational axis of each rotating boundary.
       std::unordered_map<unsigned int, Point<3>> point_on_rotation_axis;
 
-      // Periodic boundary IDs
+      /// First periodic boundary ID.
       types::boundary_id periodic_boundary_0;
+
+      /// Second periodic boundary ID.
       types::boundary_id periodic_boundary_1;
+
+      /// Direction of periodicity.
       types::boundary_id periodic_direction;
 
-
+      /**
+       * @brief Declare the parameters in the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
       void
       declare_parameters(ParameterHandler &prm) const;
+
+      /**
+       * @brief Parse the parameters from the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
       void
       parse_parameters(ParameterHandler &prm);
+
+      /**
+       * @brief Declare default parameter entries for a single boundary
+       * condition.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
       static void
       declareDefaultEntry(ParameterHandler &prm);
+
+      /**
+       * @brief Parse boundary condition parameters for a single boundary.
+       *
+       * @param[in] prm The parameter handler.
+       */
       void
       parse_boundary_conditions(const ParameterHandler &prm);
 
     private:
       unsigned int DEM_BC_number_max = 10;
+
+      /**
+       * @brief Initialize the containers used to store boundary condition
+       * parameters.
+       *
+       * @param[in,out] boundary_trans_velocity Translational velocities.
+       * @param[in,out] boundary_rot_speed Rotational speeds.
+       * @param[in,out] boundary_rot_vector Rotational axis vectors.
+       * @param[in,out] point_on_rot_axis Points on rotation axes.
+       * @param[in,out] outlet_boundaries_id Outlet boundary IDs.
+       * @param[in,out] boundaries_types Boundary types.
+       */
       void
       initialize_containers(
         std::unordered_map<unsigned int, Tensor<1, 3>> &boundary_trans_velocity,
@@ -603,11 +810,21 @@ namespace Parameters
         std::vector<BoundaryType>                      &boundaries_types) const;
     };
 
+    /**
+     * @brief Parameters for grid (mesh) motion in DEM simulations.
+     *
+     * This class defines the type and parameters of the grid motion, which
+     * can be translational, rotational, or none.
+     *
+     * @tparam dim Number of spatial dimensions.
+     */
     template <int dim>
     class GridMotion
     {
     public:
-      // Grid motion type
+      /**
+       * @brief Type of grid motion.
+       */
       enum class MotionType
       {
         translational,
@@ -615,18 +832,28 @@ namespace Parameters
         none
       } motion_type;
 
-      // Translational velocity of the moving grid
+      /// Translational velocity of the moving grid.
       Tensor<1, dim> grid_translational_velocity;
 
-      // Rotational speed of rotating grid in rad/s
+      /// Rotational speed of the rotating grid (rad/s).
       double grid_rotational_speed;
 
-      // Rotational axis of rotating grid. Similar to deal.II, we use 0=x axis,
-      // 1=y axis, 2=z axis.
+      /// Rotational axis of the rotating grid (0=x, 1=y, 2=z).
       unsigned int grid_rotational_axis;
 
+      /**
+       * @brief Declare the parameters in the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
       static void
       declare_parameters(ParameterHandler &prm);
+
+      /**
+       * @brief Parse the parameters from the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
       void
       parse_parameters(ParameterHandler &prm);
     };
@@ -638,48 +865,81 @@ namespace Parameters
      */
     struct LagrangianPostProcessing
     {
-      // A bool variable which sets-up the Lagrangian post-processing
+      /// Enable Lagrangian post-processing.
       bool lagrangian_post_processing_enabled;
-      /// A bool variable which sets-up the force chains visualization
+
+      /// Enable force chains visualization.
       bool force_chains;
 
-      // Enable the logging of particle-wall contact statistics
+      /// Enable logging of particle-wall contact statistics.
       bool particle_wall_collision_statistics;
 
-      // State whether collisions with all walls should be logged
+      /// Log collisions with all walls (if false, only selected boundaries).
       bool log_collisions_with_all_walls;
 
-      // Boundary ids of the walls to log collisions with
+      /// Boundary IDs of the walls for which collisions are logged.
       std::vector<int> particle_wall_collision_boundary_ids;
 
+      /// Verbosity level for collision statistics output.
       Parameters::Verbosity collision_verbosity;
 
-      // Exporting collision statistics csv filename
+      /// File name for exporting collision statistics (CSV format).
       std::string collision_stats_file_name;
 
+      /**
+       * @brief Declare the parameters in the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
       static void
       declare_parameters(ParameterHandler &prm);
+
+      /**
+       * @brief Parse the parameters from the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
       void
       parse_parameters(ParameterHandler &prm);
     };
 
+    /**
+     * @brief Parameters for a floating grid in DEM simulations.
+     *
+     * A floating grid is an auxiliary mesh that can move independently of
+     * the main triangulation, activated between specified start and end times.
+     *
+     * @tparam dim Number of spatial dimensions.
+     */
     template <int dim>
     class FloatingGrid
     {
     public:
-      // Floating mesh motion information
+      /// Mesh parameters for the floating grid.
       Parameters::Mesh mesh;
 
-      // Floating grid motion information
+      /// Motion parameters for the floating grid.
       Parameters::Lagrangian::GridMotion<dim> motion;
 
-      // Beginning time
+      /// Activation time of the floating grid.
       double time_start;
-      // Ending time
+
+      /// Deactivation time of the floating grid.
       double time_end;
 
+      /**
+       * @brief Declare the parameters in the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
       void
       declare_parameters(ParameterHandler &prm);
+
+      /**
+       * @brief Parse the parameters from the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
       void
       parse_parameters(ParameterHandler &prm);
     };
@@ -691,34 +951,48 @@ namespace Parameters
     template <int dim>
     struct ParticleRayTracing
     {
-      // Location of the first photon to be inserted
+      /// Location of the first photon to be inserted.
       Point<3> starting_point;
 
-      // In which directions will the photons be inserted relative to the first
-      // photon.
+      /// Unit direction vectors along which photons are inserted relative to
+      /// the starting point.
       std::vector<Tensor<1, 3>> insertion_directions_units_vector;
 
-      // How many photon will be inserted in each of those directions.
+      /// Number of photons to insert along each direction.
       std::vector<unsigned int> n_photons_each_directions;
 
-      // What is the distance between each photon in each of those directions
-      // considering an offset equal to 0.
+      /// Spacing between consecutive photons along each direction (at zero
+      /// offset).
       std::vector<double> step_between_photons_each_directions;
 
-      // Reference displacement unit tensor
+      /// Reference unit tensor defining the photon displacement direction.
       Tensor<1, 3> ref_displacement_tensor_unit;
 
-      // Related to the offset insertion position.
-      double       max_insertion_offset;
+      /// Maximum random offset applied to the photon insertion position.
+      double max_insertion_offset;
+
+      /// Random seed for photon insertion position offset.
       unsigned int prn_seed_photon_insertion;
 
-      // Related to the offset in the displacement direction.
-      double       max_angular_offset;
+      /// Maximum angular offset applied to the photon displacement direction.
+      double max_angular_offset;
+
+      /// Random seed for photon displacement angular offset.
       unsigned int prn_seed_photon_displacement;
 
-      // Declare and parse function
+      /**
+       * @brief Declare the parameters in the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
       static void
       declare_parameters(ParameterHandler &prm);
+
+      /**
+       * @brief Parse the parameters from the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
       void
       parse_parameters(ParameterHandler &prm);
     };

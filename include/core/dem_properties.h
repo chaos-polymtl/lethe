@@ -1,6 +1,16 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020, 2022-2024 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+/**
+ * @file dem_properties.h
+ * @brief DEM particle property definitions and output name management.
+ *
+ * This file defines the property indices used to store and access particle
+ * data within the deal.II ParticleHandler PropertyPool. Separate index
+ * enumerations are provided for pure DEM, CFD-DEM, and DEM multiphysics
+ * simulations, as each carries a different set of per-particle properties.
+ */
+
 #ifndef lethe_dem_properties_h
 #define lethe_dem_properties_h
 
@@ -9,13 +19,16 @@
 
 namespace DEM
 {
-  /* @brief Identify which type of solver is used by the DEM
-   * particles. This is used to identify which index of the ParticleHandler
-   * corresponds to which properties. Two types of solvers are currently
-   * supported. DEM implies pure DEM simulation whereas cfd_dem is used to
-   * indicate simulations in which the particles are coupled to CFD (CFD-DEM).
-   * In the latter case the particles carry additional properties related to the
-   * particle-fluid coupling.
+  /**
+   * @brief Identifies which type of solver is used by the DEM particles.
+   *
+   * This is used to determine which index layout of the ParticleHandler
+   * PropertyPool corresponds to which set of properties. Three solver types
+   * are currently supported:
+   * - dem: pure DEM simulation.
+   * - cfd_dem: particles coupled to a CFD fluid solver (CFD-DEM), carrying
+   *   additional properties for particle-fluid coupling.
+   * - dem_mp: DEM multiphysics simulation with additional thermal properties.
    */
   enum SolverType
   {
@@ -27,10 +40,12 @@ namespace DEM
 
   namespace DEMProperties
   {
-    /* @brief Manage the specific particle indices of the particle properties
-     * within the PropertyPool of the ParticleHandler for pure DEM simulations.
-     * A regular enum must be used here since an int is required to the particle
-     * properties.
+    /**
+     * @brief Particle property indices for pure DEM simulations.
+     *
+     * Manages the specific particle indices within the PropertyPool of the
+     * ParticleHandler. A regular enum (not enum class) is used because an
+     * implicit conversion to int is required to access particle properties.
      */
     enum PropertiesIndex : int
     {
@@ -50,10 +65,15 @@ namespace DEM
 
   namespace CFDDEMProperties
   {
-    /* @brief Manage the specific particle indices of the particle properties
-     * within the PropertyPool of the ParticleHandler for CFD-DEM simulations.
-     * A regular enum must be used here since an int is required to the particle
-     * properties.
+    /**
+     * @brief Particle property indices for CFD-DEM simulations.
+     *
+     * Manages the specific particle indices within the PropertyPool of the
+     * ParticleHandler. In addition to the base DEM properties, CFD-DEM
+     * particles carry FEM coupling forces, drag forces, torques, volumetric
+     * contributions, and momentum transfer coefficients. A regular enum (not
+     * enum class) is used because an implicit conversion to int is required to
+     * access particle properties.
      */
     enum PropertiesIndex : int
     {
@@ -91,10 +111,14 @@ namespace DEM
 
   namespace DEMMPProperties
   {
-    /* @brief Manage the specific particle indices of the particle properties
-     * within the PropertyPool of the ParticleHandler for DEMMP simulations.
-     * A regular enum must be used here since an int is required to the particle
-     * properties.
+    /**
+     * @brief Particle property indices for DEM multiphysics simulations.
+     *
+     * Manages the specific particle indices within the PropertyPool of the
+     * ParticleHandler. In addition to the base DEM properties, DEM
+     * multiphysics particles carry temperature and specific heat properties.
+     * A regular enum (not enum class) is used because an implicit conversion
+     * to int is required to access particle properties.
      */
     enum PropertiesIndex : int
     {

@@ -8,31 +8,47 @@
 #include <deal.II/base/parsed_function.h>
 
 using namespace dealii;
+
 /**
- * The analytical solution class provides an interface for all common
- * elementS required for the calculation of analytical solution
- * All equation-specific analytical solution should derive
- * from the base class but also call it's declare_parameters and
- *parse_parameters routine. This allows specialize class to focus on their
- *specificity and forget about other non-specific elements that are generic to
- *the calculation of analytical solutions
- **/
+ * @file parameters_cfd_dem.h
+ * @brief Parameter structures for CFD-DEM coupled simulations.
+ *
+ * This file defines the parameter classes and enumerations used to configure
+ * CFD-DEM coupled simulations in Lethe, including void fraction computation
+ * methods, drag models, drag coupling strategies, VANS model selection, and
+ * the main CFDDEM parameter structure.
+ */
 namespace Parameters
 {
+  /**
+   * @brief Method used to compute the void fraction field.
+   */
   enum class VoidFractionMode
   {
+    /// Void fraction prescribed by an analytical function.
     function,
-    pcm, // The particle centered method
-    qcm, // The quadratured centered method
-    spm  // The satellite point method (divided approach)
+    /// Particle centered method.
+    pcm,
+    /// Quadrature centered method.
+    qcm,
+    /// Satellite point method (divided approach).
+    spm
   };
 
+  /**
+   * @brief Quadrature rule used for void fraction integration.
+   */
   enum class VoidFractionQuadratureRule
   {
-    gauss,        // Apply gauss quadrature rule (default)
-    gauss_lobatto // Apply gauss-lobatto quadrature rule
+    /// Gauss quadrature rule (default).
+    gauss,
+    /// Gauss-Lobatto quadrature rule.
+    gauss_lobatto
   };
 
+  /**
+   * @brief Drag force model for particle-fluid interaction in CFD-DEM.
+   */
   enum class DragModel
   {
     difelice,
@@ -86,13 +102,27 @@ namespace Parameters
   };
 
 
+  /**
+   * @brief Volume-Averaged Navier-Stokes (VANS) model formulation.
+   */
   enum class VANSModel
   {
+    /// Model A: volume-averaged continuity and momentum equations.
     modelA,
+    /// Model B: alternative VANS formulation.
     modelB
   };
 
 
+  /**
+   * @brief Parameters controlling the void fraction computation in CFD-DEM
+   * simulations.
+   *
+   * This class stores the method, quadrature settings, and auxiliary parameters
+   * used to compute the void fraction field from the particle distribution.
+   *
+   * @tparam dim Number of spatial dimensions.
+   */
   template <int dim>
   class VoidFractionParameters
   {
@@ -102,53 +132,139 @@ namespace Parameters
     {}
 
     /**
-     * Default destructor.
+     * @brief Default destructor.
      */
     virtual ~VoidFractionParameters() = default;
 
+    /**
+     * @brief Declare the parameters in the parameter handler.
+     *
+     * @param[in,out] prm The parameter handler.
+     */
     virtual void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters from the parameter handler.
+     *
+     * @param[in,out] prm The parameter handler.
+     */
     virtual void
     parse_parameters(ParameterHandler &prm);
 
   public:
-    VoidFractionMode               mode;
+    /// Void fraction computation method.
+    VoidFractionMode mode;
+
+    /// Analytical void fraction function (used when mode is function).
     Functions::ParsedFunction<dim> void_fraction;
-    bool                           read_dem;
-    std::string                    dem_file_name;
-    double                         l2_smoothing_length;
-    unsigned int                   particle_refinement_factor;
-    double                         qcm_sphere_diameter;
-    bool                           qcm_sphere_equal_cell_volume;
-    VoidFractionQuadratureRule     quadrature_rule;
-    unsigned int                   n_quadrature_points;
-    bool                           project_particle_velocity;
+
+    /// Read particle data from a DEM simulation checkpoint.
+    bool read_dem;
+
+    /// File name of the DEM simulation checkpoint.
+    std::string dem_file_name;
+
+    /// Smoothing length for L2 projection of the void fraction.
+    double l2_smoothing_length;
+
+    /// Refinement factor applied to the particle radius for void fraction.
+    unsigned int particle_refinement_factor;
+
+    /// Sphere diameter used in the quadrature centered method.
+    double qcm_sphere_diameter;
+
+    /// Use a sphere volume equal to the cell volume in QCM.
+    bool qcm_sphere_equal_cell_volume;
+
+    /// Quadrature rule used for void fraction integration.
+    VoidFractionQuadratureRule quadrature_rule;
+
+    /// Number of quadrature points used for void fraction integration.
+    unsigned int n_quadrature_points;
+
+    /// Project particle velocity onto the fluid mesh.
+    bool project_particle_velocity;
   };
 
+  /**
+   * @brief Parameters for the CFD-DEM coupled solver.
+   *
+   * This structure stores the coupling parameters, force model selections,
+   * and stabilization options used in CFD-DEM simulations.
+   */
   struct CFDDEM
   {
-    bool         grad_div;
-    DragModel    drag_model;
-    DragCoupling drag_coupling;
-    VANSModel    vans_model;
-    unsigned int coupling_frequency;
-    bool         drag_force;
-    bool         buoyancy_force;
-    bool         shear_force;
-    bool         pressure_force;
-    bool         saffman_lift_force;
-    bool         magnus_lift_force;
-    bool         rotational_viscous_torque;
-    bool         vortical_viscous_torque;
-    bool         void_fraction_time_derivative;
-    bool         interpolated_void_fraction;
-    double       cstar;
-    bool         implicit_stabilization;
-    bool         particle_statistics;
-    bool         project_particle_forces;
+    /// Enable grad-div stabilization.
+    bool grad_div;
 
+    /// Drag model used for particle-fluid interaction.
+    DragModel drag_model;
+
+    /// Numerical coupling strategy for drag force computation.
+    DragCoupling drag_coupling;
+
+    /// Volume-Averaged Navier-Stokes model formulation.
+    VANSModel vans_model;
+
+    /// Frequency of DEM-CFD coupling (in DEM time steps).
+    unsigned int coupling_frequency;
+
+    /// Enable drag force on particles.
+    bool drag_force;
+
+    /// Enable buoyancy force on particles.
+    bool buoyancy_force;
+
+    /// Enable shear force on particles.
+    bool shear_force;
+
+    /// Enable pressure gradient force on particles.
+    bool pressure_force;
+
+    /// Enable Saffman lift force on particles.
+    bool saffman_lift_force;
+
+    /// Enable Magnus lift force on particles.
+    bool magnus_lift_force;
+
+    /// Enable rotational viscous torque on particles.
+    bool rotational_viscous_torque;
+
+    /// Enable vortical viscous torque on particles.
+    bool vortical_viscous_torque;
+
+    /// Include the void fraction time derivative in the equations.
+    bool void_fraction_time_derivative;
+
+    /// Use interpolated void fraction instead of cell-averaged values.
+    bool interpolated_void_fraction;
+
+    /// Stabilization constant for the void fraction equation.
+    double cstar;
+
+    /// Enable implicit stabilization of the void fraction.
+    bool implicit_stabilization;
+
+    /// Enable output of particle statistics.
+    bool particle_statistics;
+
+    /// Project particle forces onto the fluid mesh.
+    bool project_particle_forces;
+
+    /**
+     * @brief Declare the parameters in the parameter handler.
+     *
+     * @param[in,out] prm The parameter handler.
+     */
     static void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters from the parameter handler.
+     *
+     * @param[in,out] prm The parameter handler.
+     */
     void
     parse_parameters(ParameterHandler &prm);
   };
