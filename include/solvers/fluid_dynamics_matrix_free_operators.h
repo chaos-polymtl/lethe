@@ -251,15 +251,15 @@ public:
 
 
   /**
-   * @brief Precompute buoyancy term for heat-transfer coupling.
+   * @brief Precompute thermal buoyancy term for heat-transfer coupling.
    *
    * @param[in] temperature_solution Present solution of the temperature
    * as given by the multiphysics interface.
    * @param[in] temperature_dof_handler DoF Handler used for the heat transfer.
    */
   void
-  compute_buoyancy_term(const VectorType      &temperature_solution,
-                        const DoFHandler<dim> &temperature_dof_handler);
+  compute_thermal_buoyancy_term(const VectorType      &temperature_solution,
+                                const DoFHandler<dim> &temperature_dof_handler);
 
   /**
    * @brief Get the total number of DoFs.
@@ -674,10 +674,10 @@ protected:
 
 
   /**
-   * @brief Table with precomputed buoyancy term values.
+   * @brief Table with precomputed thermal buoyancy term values.
    *
    */
-  Table<2, Tensor<1, dim, VectorizedArray<number>>> buoyancy_term;
+  Table<2, Tensor<1, dim, VectorizedArray<number>>> thermal_buoyancy_term;
 
   /**
    * @brief Flag to turn the calculation of face terms on or off.

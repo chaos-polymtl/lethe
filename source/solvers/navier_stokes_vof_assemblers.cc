@@ -1199,14 +1199,14 @@ template class GLSNavierStokesVOFAssemblerNonNewtonianCore<3>;
 
 template <int dim>
 void
-BuoyancyAssemblyVOF<dim>::assemble_matrix(
+ThermalBuoyancyAssemblyVOF<dim>::assemble_matrix(
   const NavierStokesScratchData<dim> & /*scratch_data*/,
   StabilizedMethodsTensorCopyData<dim> & /*copy_data*/)
 {}
 
 template <int dim>
 void
-BuoyancyAssemblyVOF<dim>::assemble_rhs(
+ThermalBuoyancyAssemblyVOF<dim>::assemble_rhs(
   const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -1248,5 +1248,5 @@ BuoyancyAssemblyVOF<dim>::assemble_rhs(
     }
 }
 
-template class BuoyancyAssemblyVOF<2>;
-template class BuoyancyAssemblyVOF<3>;
+template class ThermalBuoyancyAssemblyVOF<2>;
+template class ThermalBuoyancyAssemblyVOF<3>;

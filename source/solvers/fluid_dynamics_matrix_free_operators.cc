@@ -350,7 +350,7 @@ NavierStokesOperatorBase<dim, number>::compute_forcing_term()
 
 template <int dim, typename number>
 void
-NavierStokesOperatorBase<dim, number>::compute_buoyancy_term(
+NavierStokesOperatorBase<dim, number>::compute_thermal_buoyancy_term(
   const VectorType      &temperature_solution,
   const DoFHandler<dim> &temperature_dof_handler)
 {
@@ -368,7 +368,7 @@ NavierStokesOperatorBase<dim, number>::compute_buoyancy_term(
                           this->matrix_free.get_quadrature(),
                           update_values);
 
-  buoyancy_term.reinit(n_cells, fe_values.n_quadrature_points);
+  thermal_buoyancy_term.reinit(n_cells, fe_values.n_quadrature_points);
 
   std::vector<number> cell_temperature_solution(fe_values.n_quadrature_points);
   std::vector<double> thermal_expansion(fe_values.n_quadrature_points);
@@ -399,7 +399,7 @@ NavierStokesOperatorBase<dim, number>::compute_buoyancy_term(
               // (1 - β (T -Tref))g where the g has already been precomputed
               // in compute_forcing_term() function.
               for (int c = 0; c < dim; ++c)
-                buoyancy_term[cell][q][c][lane] =
+                thermal_buoyancy_term[cell][q][c][lane] =
                   forcing_terms[cell][q][c][lane] * scaling;
             }
         }
@@ -1544,8 +1544,8 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
       Tensor<1, dim, VectorizedArray<number>> source_value;
 
       // Evaluate source term function if enabled
-      if (!this->buoyancy_term.empty())
-        source_value = this->buoyancy_term(cell, q);
+      if (!this->thermal_buoyancy_term.empty())
+        source_value = this->thermal_buoyancy_term(cell, q);
       else if (this->forcing_function)
         source_value = this->forcing_terms(cell, q);
 
@@ -1847,8 +1847,8 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
           Tensor<1, dim, VectorizedArray<number>> source_value;
 
           // Evaluate source term function if enabled
-          if (!this->buoyancy_term.empty())
-            source_value = this->buoyancy_term(cell, q);
+          if (!this->thermal_buoyancy_term.empty())
+            source_value = this->thermal_buoyancy_term(cell, q);
           else if (this->forcing_function)
             source_value = this->forcing_terms(cell, q);
 

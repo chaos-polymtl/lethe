@@ -2580,7 +2580,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize_auxiliary_physics(
         {
           mg_temperature_solution[l].update_ghost_values();
 
-          this->mg_operators[l]->compute_buoyancy_term(
+          this->mg_operators[l]->compute_thermal_buoyancy_term(
             mg_temperature_solution[l], this->temperature_dof_handlers[l]);
         }
     }
@@ -2797,8 +2797,8 @@ FluidDynamicsMatrixFree<dim>::solve()
         {
           update_solutions_for_fluid_dynamics();
 
-          if (this->simulation_parameters.multiphysics.buoyancy_force)
-            this->system_operator->compute_buoyancy_term(
+          if (this->simulation_parameters.multiphysics.thermal_buoyancy_force)
+            this->system_operator->compute_thermal_buoyancy_term(
               temperature_present_solution,
               this->multiphysics->get_dof_handler(PhysicsID::heat_transfer));
         }
@@ -3333,7 +3333,7 @@ void
 FluidDynamicsMatrixFree<dim>::initialize_GMG()
 {
   // Initialize everything related to heat transfer within the MG algorithm
-  if (this->simulation_parameters.multiphysics.buoyancy_force)
+  if (this->simulation_parameters.multiphysics.thermal_buoyancy_force)
     dynamic_cast<MFNavierStokesPreconditionGMG<dim> *>(gmg_preconditioner.get())
       ->initialize_auxiliary_physics(this->multiphysics->get_dof_handler(
                                        PhysicsID::heat_transfer),

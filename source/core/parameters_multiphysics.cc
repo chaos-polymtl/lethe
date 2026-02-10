@@ -71,10 +71,13 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
                       Patterns::Bool(),
                       "Viscous dissipation in heat equation <true|false>");
 
-    prm.declare_entry("buoyancy force",
+    prm.declare_entry("thermal buoyancy force",
                       "false",
                       Patterns::Bool(),
-                      "Buoyant force calculation <true|false>");
+                      "Thermal buoyancy force calculation <true|false>");
+    prm.declare_alias("thermal buoyancy force",
+                      "buoyancy force",
+                      true); // temporary alias for backward compatibility
   }
   prm.leave_subsection();
 
@@ -99,8 +102,8 @@ Parameters::Multiphysics<dim>::parse_parameters(
     electromagnetics = prm.get_bool("electromagnetics");
 
     // subparameters for heat_transfer
-    viscous_dissipation = prm.get_bool("viscous dissipation");
-    buoyancy_force      = prm.get_bool("buoyancy force");
+    viscous_dissipation    = prm.get_bool("viscous dissipation");
+    thermal_buoyancy_force = prm.get_bool("thermal buoyancy force");
   }
   prm.leave_subsection();
   vof_parameters.parse_parameters(prm);

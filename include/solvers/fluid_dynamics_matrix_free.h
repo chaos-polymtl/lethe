@@ -369,7 +369,7 @@ public:
              const VectorType &time_derivative_previous_solutions);
 
   /**
-   * @brief Transfer the current temperature solution to the different multigrid levels and compute the buoyancy term in each of the multigrid operators.
+   * @brief Transfer the current temperature solution to the different multigrid levels and compute the thermal buoyancy term in each of the multigrid operators.
    *
    * @param[in] temperature_dof_handler DoF Handler used for the heat transfer.
    * @param[in] temperature_present_solution Present solution of the temperature

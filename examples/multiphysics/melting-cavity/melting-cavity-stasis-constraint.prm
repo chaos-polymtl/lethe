@@ -28,9 +28,9 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set heat transfer  = true
-  set buoyancy force = true
-  set fluid dynamics = true
+  set heat transfer          = true
+  set thermal buoyancy force = true
+  set fluid dynamics         = true
 end
 
 #---------------------------------------------------

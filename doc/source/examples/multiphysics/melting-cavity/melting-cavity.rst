@@ -106,14 +106,14 @@ time step of :math:`0.01` second.
 Multiphysics
 ~~~~~~~~~~~~
 
-The ``multiphysics`` subsection enables to turn on `(true)` and off `(false)` the physics of interest. Here ``heat transfer``, ``buoyancy force``, and ``fluid dynamics`` are chosen.
+The ``multiphysics`` subsection enables to turn on `(true)` and off `(false)` the physics of interest. Here ``heat transfer``, ``thermal buoyancy force``, and ``fluid dynamics`` are chosen.
 
 .. code-block:: text
 
     subsection multiphysics
-      set heat transfer  = true
-      set buoyancy force = true
-      set fluid dynamics = true
+      set heat transfer          = true
+      set thermal buoyancy force = true
+      set fluid dynamics         = true
     end 
     
 Initial Conditions
