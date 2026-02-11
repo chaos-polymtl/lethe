@@ -80,9 +80,13 @@ namespace Parameters
      */
     enum class SizeDistributionType : std::uint8_t
     {
+      /// Uniform distribution
       uniform,
+      /// Normal distribution
       normal,
+      /// Log-normal distribution
       lognormal,
+      /// Custom distribution
       custom
     };
 
@@ -91,16 +95,18 @@ namespace Parameters
      */
     enum class DistributionWeightingType : std::uint8_t
     {
+      /// Number-based distribution weighting
       number_based,
+      /// Voluem-based distribution weighting
       volume_based
     };
 
     enum class ProbabilityFunctionType : std::uint8_t
     {
-      /// probability density function
-      PDF, 
-      /// cumulative density function
-      CDF  
+      /// Probability density function
+      PDF,
+      /// Cumulative density function
+      CDF
     };
 
     /**
@@ -158,8 +164,10 @@ namespace Parameters
       std::vector<unsigned int> seed_for_distributions;
 
       /// Minimum diameter cutoff for lognormal distribution.
+      std::vector<double> diameter_min_cutoff;
+
       /// Maximum diameter cutoff for lognormal distribution.
-      std::vector<double> diameter_min_cutoff, diameter_max_cutoff;
+      std::vector<double> diameter_max_cutoff;
 
       /// Number particles of each particle type
       std::vector<int> number;
@@ -406,9 +414,13 @@ namespace Parameters
        */
       enum class InsertionMethod
       {
+        /// Insertion from a file listing particles
         file,
+        /// Insertion from a list in the prm file
         list,
+        /// Insertion from a plane defined by a point and a normal
         plane,
+        /// Insertion within a volume defined by a box
         volume
       } insertion_method;
 
@@ -422,8 +434,10 @@ namespace Parameters
       bool removing_particles_in_region;
 
       /// First corner of the particle removal box.
+      Point<3> clear_box_point_1;
+
       /// Second corner of the particle removal box.
-      Point<3> clear_box_point_1, clear_box_point_2;
+      Point<3> clear_box_point_2;
 
       /// List of input files for the file insertion method.
       std::vector<std::string> list_of_input_files;
@@ -434,20 +448,33 @@ namespace Parameters
       /// Point on the insertion plane (plane method).
       Point<3> insertion_plane_point;
 
-      /// Position and velocity components for the list insertion method.
-      std::vector<double> list_x, list_y, list_z, list_vx, list_vy, list_vz,
-        list_wx, list_wy, list_wz, list_d, list_T;
+      // Position and velocity components for the list insertion method.
+      std::vector<double> list_x, ///< x-position for list insertion.
+        list_y,                   ///< y-position for list insertion.
+        list_z,                   ///< z-position for list insertion.
+        list_vx,                  ///< x-velocity for list insertion.
+        list_vy,                  ///< y-velocity for list insertion.
+        list_vz,                  ///< z-velocity for list insertion.
+        list_wx,                  ///< x-angular velocity for list insertion.
+        list_wy,                  ///< y-angular velocity for list insertion.
+        list_wz,                  ///< z-angular velocity for list insertion.
+        list_d,                   ///< Diameter for list insertion.
+        list_T;                   ///< Temperature for list insertion
 
       /// Direction sequence for particle insertion (1st, 2nd, 3rd).
       std::vector<unsigned int> direction_sequence;
 
       /// First corner of the insertion box (volume method).
+      Point<3> insertion_box_point_1;
+
       /// Second corner of the insertion box (volume method).
-      Point<3> insertion_box_point_1, insertion_box_point_2;
+      Point<3> insertion_box_point_2;
 
       /// Initial translational velocity of inserted particles.
+      Tensor<1, 3> initial_vel;
+
       /// Initial angular velocity of inserted particles.
-      Tensor<1, 3> initial_vel, initial_omega;
+      Tensor<1, 3> initial_omega;
 
       /// Function returning the initial temperature of a particle based on
       /// time or its position.
