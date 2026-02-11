@@ -21,7 +21,7 @@ test()
   SubSimulationControlDEM fixed_iterations(
     SubSimulationControlDEM::DEMSubIterationLogic::fixed_number_of_iterations,
     0.1,
-    11,
+    2,
     1,
     1);
 
@@ -42,7 +42,7 @@ test()
     0.1,
     11,
     0.1,
-    0.06);
+    0.6);
 
   deallog << "Fixed fraction of Rayleigh time step" << std::endl;
 
