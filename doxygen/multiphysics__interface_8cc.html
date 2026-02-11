@@ -315,6 +315,10 @@ Functions</h2></td></tr>
 <tr class="separator:a21542b9e85978dfeb3a560dd4badbd2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a90d5fbad3b397a65eea097566feb10f5" id="r_a90d5fbad3b397a65eea097566feb10f5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="multiphysics__interface_8cc.html#a90d5fbad3b397a65eea097566feb10f5">DeclException1</a> (InterfaceSharpeningWithoutVOFError, bool,&lt;&lt; std::boolalpha&lt;&lt; &quot;Interface sharpening is activated (&quot;&lt;&lt; arg1&lt;&lt; &quot;), while <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">VOF</a> is not activated (false).&quot;&lt;&lt; std::endl&lt;&lt; &quot;Interface sharpening cannot be activated without activating VOF.&quot;)</td></tr>
 <tr class="separator:a90d5fbad3b397a65eea097566feb10f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7095870df5cba31e830254c3b6f6d491" id="r_a7095870df5cba31e830254c3b6f6d491"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="multiphysics__interface_8cc.html#a7095870df5cba31e830254c3b6f6d491">DeclExceptionMsg</a> (CahnHilliardWithHeatTransferError, &quot;Cahn-Hilliard and heat transfer are both activated. &quot; &quot;This combination is not currently supported.&quot;)</td></tr>
+<tr class="separator:a7095870df5cba31e830254c3b6f6d491"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a722db97bd326310875fc81a3959cdab0" id="r_a722db97bd326310875fc81a3959cdab0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="multiphysics__interface_8cc.html#a722db97bd326310875fc81a3959cdab0">DeclExceptionMsg</a> (CahnHilliardWithThermalBuoyancyForceError, &quot;Cahn-Hilliard and thermal buoyancy force are both activated. &quot; &quot;This combination is not currently supported.&quot;)</td></tr>
+<tr class="separator:a722db97bd326310875fc81a3959cdab0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="a0d638fe48e408fa87f9b8f86164d38b1" name="a0d638fe48e408fa87f9b8f86164d38b1"></a>
@@ -646,6 +650,62 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">while heat transfer is not activated(false).&quot;&lt;&lt; std::endl&lt;&lt; &quot;Thermal buoyancy force cannot be activated without activating heat transfer.&quot;&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7095870df5cba31e830254c3b6f6d491" name="a7095870df5cba31e830254c3b6f6d491"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7095870df5cba31e830254c3b6f6d491">&#9670;&#160;</a></span>DeclExceptionMsg() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DeclExceptionMsg </td>
+          <td>(</td>
+          <td class="paramtype">CahnHilliardWithHeatTransferError&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&quot;Cahn-Hilliard and heat transfer are both activated. &quot; &quot;This combination is not currently supported.&quot;&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a722db97bd326310875fc81a3959cdab0" name="a722db97bd326310875fc81a3959cdab0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a722db97bd326310875fc81a3959cdab0">&#9670;&#160;</a></span>DeclExceptionMsg() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DeclExceptionMsg </td>
+          <td>(</td>
+          <td class="paramtype">CahnHilliardWithThermalBuoyancyForceError&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&quot;Cahn-Hilliard and thermal buoyancy force are both activated. &quot; &quot;This combination is not currently supported.&quot;&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>

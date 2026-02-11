@@ -121,7 +121,7 @@ var searchData=
   ['fractiontype_118',['fractionType',['../structParameters_1_1MeshAdaptation.html#aa56d4d71eb38f6d12483c64dc54ae074',1,'Parameters::MeshAdaptation']]],
   ['frequency_119',['frequency',['../structParameters_1_1MeshAdaptation.html#aa611e9850b5ea3402cd20e157f129c21',1,'Parameters::MeshAdaptation::frequency'],['../structParameters_1_1Restart.html#a1d5f927419e83fb00ac44c5ae5d146ae',1,'Parameters::Restart::frequency'],['../structParameters_1_1VOF__RegularizationMethod.html#a4479f6464954f4c3315ea9d6685ab5bb',1,'Parameters::VOF_RegularizationMethod::frequency']]],
   ['friction_5fcoefficient_120',['friction_coefficient',['../classIBParticle.html#adddec01292ea0e889516e7f871a94b4b',1,'IBParticle']]],
-  ['friction_5fcoefficient_5fparticle_121',['friction_coefficient_particle',['../structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#aa425f102bccc91b11ea5a8805c5a5461',1,'Parameters::Lagrangian::LagrangianPhysicalProperties']]],
+  ['friction_5fcoefficient_5fparticle_121',['friction_coefficient_particle',['../structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#a1664b87f013cddfb7324d62685a2ee68',1,'Parameters::Lagrangian::LagrangianPhysicalProperties']]],
   ['friction_5fcoefficient_5fwall_122',['friction_coefficient_wall',['../structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#a8e52ef4d0c19d1101e46ce6ab872d74b',1,'Parameters::Lagrangian::LagrangianPhysicalProperties']]],
   ['fu_5fpreconditioner_123',['fu_preconditioner',['../classPreconditionAdapter.html#a709ccf5dce90c9b01b34e8df771a4f06',1,'PreconditionAdapter']]]
 ];
