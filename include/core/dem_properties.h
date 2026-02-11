@@ -117,8 +117,8 @@ namespace DEM
      * Manages the specific particle indices within the PropertyPool of the
      * ParticleHandler. In addition to the base DEM properties, DEM
      * multiphysics particles carry temperature and specific heat properties.
-     * A regular enum (not enum class) is used because an implicit conversion
-     * to int is required to access particle properties.
+     * @note A regular enum (not enum class) is used because an implicit 
+     * conversion to int is required to access particle properties.
      */
     enum PropertiesIndex : int
     {
