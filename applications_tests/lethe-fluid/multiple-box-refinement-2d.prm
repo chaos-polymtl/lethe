@@ -6,7 +6,7 @@
 # This test checks that box refinements at the initial condition are correctly
 # generated in 2D.
 # It also checks mesh scaling, translation and rotation in 2D.
-# In 2D, the rotation can only be done counter-clockwise around the origin of
+# In 2D, the rotation convention is counter-clockwise around the origin of
 # the system of coordinates.
 #-------------------------------------------------------------------------------
 
