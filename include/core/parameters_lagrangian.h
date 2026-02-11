@@ -30,11 +30,17 @@ namespace Parameters
      */
     enum class ParticleParticleContactForceModel : std::uint8_t
     {
+      /// Linear model
       linear,
+      /// Hertz-Mindlin model with a limitation on tangential force
       hertz_mindlin_limit_force,
+      /// Hertz-Mindlin model with a limitation on tangential overlap
       hertz_mindlin_limit_overlap,
+      /// Pure Hertz model
       hertz,
+      /// Hertz model with Johnson-Kendall-Roberts cohesive force
       hertz_JKR,
+      /// Derjaguin-Muller-Toporov model
       DMT
     };
 
@@ -43,9 +49,14 @@ namespace Parameters
      */
     enum class ParticleWallContactForceModel : std::uint8_t
     {
+      /// Linear model
       linear,
+      /// Non-linear force model. Corresponds to a Hertz-Mindlin with limitation
+      /// on tangential overlap
       nonlinear,
+      /// Johnson-Kendall-Roberts model
       JKR,
+      /// Derjaguin-Muller-Toporov model
       DMT
     };
 
@@ -54,9 +65,13 @@ namespace Parameters
      */
     enum RollingResistanceMethod : std::uint8_t
     {
+      /// No rolling resistance
       none,
+      /// Constant rolling resistance
       constant,
+      /// Viscous rolling resistance
       viscous,
+      /// Elastic-plastic spring-dashpot
       epsd
     };
 
