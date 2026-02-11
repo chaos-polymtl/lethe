@@ -57,6 +57,30 @@ public:
     fixed_fraction_of_rayleigh_time_step = 1
   };
 
+  /**
+   * @brief Construct a SubSimulationControlDEM object
+   *
+   * Depending on the iteration logic, the constructor calculates the total
+   * number of DEM iterations and the DEM time step. When using a fixed number
+   * of iterations, the time step is derived from the time interval and the
+   * coupling frequency. When using a fixed fraction of the Rayleigh
+   * characteristic time, the time step is set to the specified fraction and the
+   * number of iterations is derived accordingly.
+   *
+   * @param[in] iteration_logic The logic used to determine the DEM sub
+   * iteration time step and number of iterations.
+   * @param[in] time_interval The time interval over which the DEM sub
+   * iterations are to be carried out. This corresponds to the CFD time step.
+   * @param[in] coupling_frequency The number of DEM iterations per CFD time
+   * step. Only used when @p iteration_logic is
+   * DEMSubIterationLogic::fixed_number_of_iterations.
+   * @param[in] rayleigh_characteristic_time The Rayleigh characteristic time
+   * step of the particles.
+   * @param[in] fraction_of_rayleigh_characteristic_time The target fraction of
+   * the Rayleigh characteristic time to use as the DEM time step. Only used
+   * when @p iteration_logic is
+   * DEMSubIterationLogic::fixed_fraction_of_rayleigh_time_step.
+   */
   SubSimulationControlDEM(
     const DEMSubIterationLogic iteration_logic,
     const double               time_interval,
@@ -65,15 +89,36 @@ public:
     const double               fraction_of_rayleigh_characteristic_time);
 
 
+  /**
+   * @brief Advance the DEM sub simulation by one iteration
+   *
+   * Increments the iteration counter by one and checks whether additional
+   * iterations are required to complete the DEM sub simulation within the
+   * current CFD time step. As long as this method returns true, the DEM
+   * simulation should continue iterating.
+   *
+   * @return true if more iterations are needed, false if the sub simulation is
+   * complete.
+   */
   bool
   iterate();
 
+  /**
+   * @brief Get the current DEM sub iteration number
+   *
+   * @return The current iteration number within the DEM sub simulation.
+   */
   unsigned int
   get_iteration() const
   {
     return iteration_number;
   }
 
+  /**
+   * @brief Get the DEM sub simulation time step
+   *
+   * @return The time step used for the DEM sub iterations.
+   */
   double
   get_time_step() const
   {
@@ -94,7 +139,7 @@ private:
   /// Rayleigh characteristic time for the particles
   const double rayleigh_characteristic_time;
 
-  /// Targetted frction of the Rayleigh characteristic time
+  /// Targeted fraction of the Rayleigh characteristic time
   const double fraction_of_rayleigh_characteristic_time;
 
   /// Current value of the sub iteration number. This is initialized to zero.
