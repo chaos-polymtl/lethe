@@ -21,7 +21,9 @@ This subsection includes parameters related to multiphase flow simulations using
     set shear force                   = true
     set pressure force                = true
     set project particle forces       = false
+    set dem iteration control         = number of iterations # number of iterations | fraction of rayleigh time
     set coupling frequency            = 100
+    set fraction rayleigh time        = 0.1
     set implicit stabilization        = true
     set grad-div length scale         = 1
     set particle statistics           = true
@@ -80,13 +82,12 @@ This subsection includes parameters related to multiphase flow simulations using
 
 * The ``project particle forces`` option enables the inclusion of particle–fluid interaction forces directly in the VANS equations by projecting these forces from the particles onto the fluid using the ``qcm`` filter. Thus, it is only compatible with the ``qcm`` method, which can be selected in the void fraction subsection :doc:`void-fraction`. By default, this option is set to ``false``. In that case, the particle-fluid forces incorporated in the VANS equations are calculated in each cell as the average of the fluid forces acting on the particles within that cell.
 * The ``particle statistics`` parameter, when enabled, outputs statistics about the particles' velocity, kinetic energy, and the amount of contact detection.
-* The ``coupling frequency`` determines the number of DEM iterations per 1 CFD iteration.
-
-.. note::
-   The ``coupling frequency`` parameter is used to calculate the dem time step as it is not explicitly determined in the parameter file. It is calculated as: 
-
-   .. math::
+* The ``dem iteration control`` determines the strategy to carry out the DEM time-steps. Two modes are supported:
+    * ``dem iteration control = number of iterations``: A fixed number of DEM iterations (equal to ``coupling frequency``) is carried out per 1 CFD iteration. If the CFD time step is not constant, the DEM time step will changed dynamically.
+       .. math::
       \Delta t_{DEM} = \frac{\Delta t_{CFD}}{coupling frequency}
+
+    * ``dem iteration control = fraction of rayleigh time``: The DEM time step is fixed to a given fraction of the Rayleigh time ( equal to ``fraction rayleigh time``) and remains constant throughout the simulation. 
 
 * The ``implicit stabilization`` parameter determines whether or not we calculate the :math:`\tau` for the SUPG/PSPG stabilization and the :math:`\gamma` for the grad-div stabilization using the current velocity (implicit stabilization) or the velocity at the previous time step (explicit stabilization). By default, this is set to true. If difficulties are encountered in the convergence of the non-linear solver, a good practice is to set this to false.
 * The ``grad-div length scale`` parameter determines the value of the length scale constant :math:`c^*` in the calculation of :math:`\gamma = \nu + c^* \mathbf{u}`.
