@@ -13,6 +13,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
   This PR also adds a new function `apply_mesh_transformation` to scale, translate, and rotate the meshes in the listed order.
 
   Finally, this PR updates all concerned examples, tests and documentation.[#1901](https://github.com/chaos-polymtl/lethe/pull/1901)
+  
+### Added/Fixed
+
+- MAJOR This PR introduces a sub simulation control structure that controls the DEM iterations within CFD-DEM iterations. This structure is fully implemented, but is not fully used yet in the solvers to prevent changing the test outcome in this PR. Essentially, the sub simulation control is responsible for calculating the dem time step in a unified fashion and monitoring the DEM iterations. It also enabled to find a bug which is that the DEM time-step was always wrongly calculated when BDF2 simulations were carried out because the value of the CFD time-step taken to calculate the DEM time-step was not the correct one in the first two iterations. This PR fixes this, which now leads to the adequate results. This is why the outcome of two tests has changed. A follow-up PR will be done to adequately integrate the sub simulation control everywhere in the CFD-DEM solver and ensure that no internal variables are used to store the dem time step, iteration and etc. [1900](https://github.com/chaos-polymtl/lethe/pull/1900)
+
 
 ## [Master] - 2026/02/09
 
