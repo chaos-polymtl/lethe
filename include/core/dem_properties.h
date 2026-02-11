@@ -66,7 +66,7 @@ namespace DEM
 
   namespace CFDDEMProperties
   {
-/**
+    /**
      * @brief Particle property indices for CFD-DEM simulations.
      *
      * Manages the specific particle indices within the PropertyPool of the
@@ -118,7 +118,7 @@ namespace DEM
      * Manages the specific particle indices within the PropertyPool of the
      * ParticleHandler. In addition to the base DEM properties, DEM
      * multiphysics particles carry temperature and specific heat properties.
-     * @note A regular enum (not enum class) is used because an implicit 
+     * @note A regular enum (not enum class) is used because an implicit
      * conversion to int is required to access particle properties.
      */
     enum PropertiesIndex : int
