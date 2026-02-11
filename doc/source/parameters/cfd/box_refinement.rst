@@ -35,19 +35,19 @@ The box refinement section allows for a specific region in the grid to be finer 
 * The ``subsection box 0`` includes information regarding the 1st refinement box.
 
   .. note::
-    When a ``number of refinement boxes = 2``, the 2nd refinement box will be described in the ``subsection box 1``. We increment the last digit of the subsection name to describe a new refinement box.
+    When ``number of refinement boxes = 2``, the 2nd refinement box will be described in the ``subsection box 1``. We increment the last digit of the subsection name to describe a new refinement box.
 
 * The ``mesh`` subsection allows to define the region in which the fluid mesh needs to be uniformly refined. A cell will be refined if at least one of its degrees of freedom (DoFs) is located within the outer boundaries of the box specified in the ``grid arguments``. Therefore, in the 3D example above, every cell of the fluid mesh that has at least one of its DoFs located in the hexahedron located between (-1, -1, -1) and (1,1,1) will be refined.
 
   .. note::
-    The used mesh can be of any ``type`` and any ``grid type``. Additionally, box refinement meshes support scaling, translation, and rotation applied in the listed order.
+    The used mesh can be of any ``type`` and any ``grid type``. Additionally, box refinement meshes support scaling, translation, and rotation, applied in the listed order.
 
     .. seealso::
       For more information on meshes, see :doc:`the mesh documentation <./mesh>`.
 
   .. tip::
     The ``initial refinement`` of the ``hyper_cube`` should be as small as possible, since the initial refinement of the box mesh itself will not have any impact on the definition of the refinement zone.
-    However, in the case of curved shape such as a ``hyper_sphere``, increasing the ``initial refinement`` of the box refinement mesh improves the geometry resolution of the box boundary.
+    However, in the case of a curved shape such as a ``hyper_sphere``, increasing the ``initial refinement`` of the box refinement mesh improves the geometry resolution of the box boundary.
 
 * The ``additional refinement`` parameter in the ``box refinement`` subsection indicates the number of times the cells inside the box will be refined in addition to the ones prescribed in the :doc:`simulation mesh subsection<./mesh>`.
 

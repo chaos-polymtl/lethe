@@ -2824,7 +2824,7 @@ namespace Parameters
       AssertThrow(
         number_of_refinement_boxes <= max_number_of_refinement_boxes,
         ExcMessage(
-          "The current implementation limits the number of refinement box up to " +
+          "The current implementation limits the number of refinement boxes up to " +
           Utilities::int_to_string(max_number_of_refinement_boxes) +
           " refinement boxes.\n You have declared " +
           Utilities::int_to_string(number_of_refinement_boxes) +

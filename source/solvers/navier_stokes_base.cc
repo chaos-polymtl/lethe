@@ -929,7 +929,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
         }
 
       // Define a local DoFHandler of this mesh. This won't be needed in later
-      // version of LetheGridTools
+      // versions of LetheGridTools
       box_to_refine.refine_global(
         (*this->simulation_parameters.mesh_box_refinement
             ->refinement_boxes_meshes)[i_box]
