@@ -469,6 +469,22 @@ public:
           "temperature is not implemented for Cahn Hilliard simulations.\n ");
       }
 
+    if (multiphysics.thermal_buoyancy_force)
+      {
+        for (const auto &fluid : physical_properties.fluids)
+          {
+            AssertThrow(
+              fluid.density_model !=
+                Parameters::Material::DensityModel::isothermal_ideal_gas,
+              ExcMessage(
+                "Inconsistency in .prm!\n "
+                "Thermal buoyancy force is enabled while the isothermal ideal gas\n "
+                "density model is used. The isothermal ideal gas density model assumes\n "
+                "thermal independence of the density, which is incompatible with the\n "
+                "thermal buoyancy force."));
+          }
+      }
+
     if (simulation_control.adapt_with_capillary_time_step_ratio)
       AssertThrow(
         (multiphysics.vof_parameters.surface_tension_force.enable &&

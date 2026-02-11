@@ -67,6 +67,14 @@ DeclException1(
   << "), while VOF is not activated (false)." << std::endl
   << "Interface sharpening cannot be activated without activating VOF.");
 
+DeclExceptionMsg(CahnHilliardWithHeatTransferError,
+                 "Cahn-Hilliard and heat transfer are both activated. "
+                 "This combination is not currently supported.");
+
+DeclExceptionMsg(CahnHilliardWithThermalBuoyancyForceError,
+                 "Cahn-Hilliard and thermal buoyancy force are both activated. "
+                 "This combination is not currently supported.");
+
 template <int dim>
 MultiphysicsInterface<dim>::MultiphysicsInterface(
   const SimulationParameters<dim>                             &nsparam,
@@ -257,13 +265,14 @@ MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
   bool fluid_dynamics_enabled = nsparam.multiphysics.fluid_dynamics;
   bool interface_sharpening_enabled =
     nsparam.multiphysics.vof_parameters.regularization_method.sharpening.enable;
-  bool VOF_enabled = nsparam.multiphysics.VOF;
+  bool VOF_enabled           = nsparam.multiphysics.VOF;
+  bool cahn_hilliard_enabled = nsparam.multiphysics.cahn_hilliard;
 
   // To avoid getting unused parameter warning
   _unused(thermal_buoyancy_force_enabled && heat_transfer_enabled &&
           marangoni_effect_enabled && surface_tension_force_enabled &&
           fluid_dynamics_enabled && interface_sharpening_enabled &&
-          VOF_enabled);
+          VOF_enabled && cahn_hilliard_enabled);
 
   // Dependence of thermal buoyancy force on fluid dynamics
   AssertThrow(!(thermal_buoyancy_force_enabled == true &&
@@ -304,6 +313,15 @@ MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
   // Dependence of interface sharpening on VOF
   AssertThrow(!(interface_sharpening_enabled == true && VOF_enabled == false),
               InterfaceSharpeningWithoutVOFError(interface_sharpening_enabled));
+
+  // Cahn-Hilliard does not support heat transfer
+  AssertThrow(!(cahn_hilliard_enabled == true && heat_transfer_enabled == true),
+              CahnHilliardWithHeatTransferError());
+
+  // Cahn-Hilliard does not support thermal buoyancy force
+  AssertThrow(!(cahn_hilliard_enabled == true &&
+                thermal_buoyancy_force_enabled == true),
+              CahnHilliardWithThermalBuoyancyForceError());
 }
 
 template class MultiphysicsInterface<2>;
