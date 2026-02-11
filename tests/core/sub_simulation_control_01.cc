@@ -3,8 +3,10 @@
 
 /**
  * @brief This test checks the capabilities of the SubSimulationControlDEM
- * to adaptively calculate the step in both the fixed coupling frequency
- * and in the fixed fraction of Rayleigh time step modes.
+ * to correctly calculate the time step and the number of iterations in both
+ * the fixed coupling frequency and in the fixed fraction of Rayleigh time step
+ * modes. In both cases, the test iterates through all DEM sub iterations and
+ * verifies the iteration count and time step value at each step.
  */
 
 
@@ -17,7 +19,10 @@
 void
 test()
 {
-  // We first create a case with fixed number of iterations
+  // Test 1: Fixed number of iterations mode
+  // With a time interval of 0.1 s and a coupling frequency of 2, the DEM
+  // time step should be 0.1 / 2 = 0.05 s and 2 iterations should be performed.
+  // The Rayleigh time (1 s) and its fraction (1) are unused in this mode.
   SubSimulationControlDEM fixed_iterations(
     SubSimulationControlDEM::DEMSubIterationLogic::fixed_number_of_iterations,
     0.1,
@@ -35,7 +40,12 @@ test()
       ;
     }
 
-  // We then create a case with a fixed fraction of the Rayleigh time step
+  // Test 2: Fixed fraction of Rayleigh time step mode
+  // With a Rayleigh characteristic time of 0.1 s and a target fraction of 0.6,
+  // the DEM time step should be 0.1 * 0.6 = 0.06 s. With a time interval of
+  // 0.1 s, the number of iterations is ceil(0.1 / 0.06) = 2, and the actual
+  // time step is adjusted to 0.1 / 2 = 0.05 s to evenly divide the interval.
+  // The coupling frequency (11) is unused in this mode.
   SubSimulationControlDEM fixed_fraction(
     SubSimulationControlDEM::DEMSubIterationLogic::
       fixed_fraction_of_rayleigh_time_step,
