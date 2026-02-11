@@ -21,9 +21,9 @@ using namespace dealii;
  * @brief Exception raised when a solver does not support Nitsche solid
  * restriction but solids are defined in the parameter file.
  *
- * @param arg1 Number of solids defined in the parameter file.
- * @param arg2 Name of the current solver that does not support Nitsche.
- * @param arg3 Name of the solver that should be used instead.
+ * @param[in] arg1 Number of solids defined in the parameter file.
+ * @param[in] arg2 Name of the current solver that does not support Nitsche.
+ * @param[in] arg3 Name of the solver that should be used instead.
  */
 DeclException3(SolidWarning,
                unsigned int,
@@ -37,7 +37,7 @@ DeclException3(SolidWarning,
  * @brief Exception raised when no solid is defined but the solver attempts
  * to assemble a Nitsche restriction.
  *
- * @param arg1 Name of the solver in which the error occurred.
+ * @param[in] arg1 Name of the solver in which the error occurred.
  */
 DeclException1(
   NoSolidWarning,

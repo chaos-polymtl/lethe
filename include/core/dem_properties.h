@@ -44,7 +44,8 @@ namespace DEM
      * @brief Particle property indices for pure DEM simulations.
      *
      * Manages the specific particle indices within the PropertyPool of the
-     * ParticleHandler. A regular enum (not enum class) is used because an
+     * ParticleHandler.
+     * @note A regular enum (not enum class) is used because an
      * implicit conversion to int is required to access particle properties.
      */
     enum PropertiesIndex : int
@@ -65,15 +66,15 @@ namespace DEM
 
   namespace CFDDEMProperties
   {
-    /**
+/**
      * @brief Particle property indices for CFD-DEM simulations.
      *
      * Manages the specific particle indices within the PropertyPool of the
      * ParticleHandler. In addition to the base DEM properties, CFD-DEM
      * particles carry FEM coupling forces, drag forces, torques, volumetric
-     * contributions, and momentum transfer coefficients. A regular enum (not
-     * enum class) is used because an implicit conversion to int is required to
-     * access particle properties.
+     * contributions, and momentum transfer coefficients.
+     * @note A regular enum (not enum class) is used because an implicit
+     * conversion to int is required to access particle properties.
      */
     enum PropertiesIndex : int
     {
