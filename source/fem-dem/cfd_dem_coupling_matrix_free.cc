@@ -1650,7 +1650,6 @@ CFDDEMMatrixFree<dim>::solve()
           rayleigh_time_step,
           cfd_dem_prm.fraction_of_rayleigh_time);
 
-
         // First DEM iteration of the CFD iteration
         dem_action_manager->first_dem_of_cfddem_iteration_step();
 
@@ -1680,8 +1679,6 @@ CFDDEMMatrixFree<dim>::solve()
       }
 
       contact_search_total_number += contact_search_counter;
-
-
 
       this->postprocess(false);
       this->postprocess_cfd_dem();

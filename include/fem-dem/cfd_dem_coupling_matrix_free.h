@@ -305,10 +305,7 @@ private:
   dem_iterator(unsigned int counter);
 
   /**
-   * @brief Calculate the new DEM time step.
-   *
-   * Calculate the new DEM time step in a CFD-DEM simulation with adaptive
-   * time-stepping
+   * @brief Reports the ratio between the DEM time step and the Rayleigh time
    *
    */
   void
