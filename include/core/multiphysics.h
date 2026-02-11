@@ -22,12 +22,19 @@
  */
 enum PhysicsID : unsigned int
 {
-  fluid_dynamics   = 0,
-  heat_transfer    = 1,
-  tracer           = 2,
-  VOF              = 3,
-  cahn_hilliard    = 4,
-  void_fraction    = 5,
+  /// Fluid Dynamics (Velocity,Pressure)
+  fluid_dynamics = 0,
+  /// Heat transfer (Temperature)
+  heat_transfer = 1,
+  /// Passive scalar tracer (Tracer)
+  tracer = 2,
+  /// Conservative level-set / Volume-of-Fluid
+  VOF = 3,
+  /// Cahn Hilliard (Phase indicator, Potential)
+  cahn_hilliard = 4,
+  /// Void fraction
+  void_fraction = 5,
+  /// Time-harmonic electromagnetics (Electric field, Magnetic field)
   electromagnetics = 6
 };
 

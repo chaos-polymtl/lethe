@@ -51,11 +51,17 @@ namespace Parameters
    */
   enum class DragModel
   {
+    /// Di Felice
     difelice,
+    /// Rong
     rong,
+    /// Dallavalle - Valid only for dilute flows
     dallavalle,
+    /// Koch-Hill
     kochhill,
+    /// Beetstra
     beetstra,
+    /// Gidaspow
     gidaspow
   };
 
@@ -96,8 +102,11 @@ namespace Parameters
    */
   enum class DragCoupling
   {
+    /// Fully implicit drag coupling
     fully_implicit,
+    /// Semi-implicit drag coupling
     semi_implicit,
+    /// Explicit drag coupling
     fully_explicit
   };
 
@@ -180,7 +189,7 @@ namespace Parameters
     /// Quadrature rule used for void fraction integration.
     VoidFractionQuadratureRule quadrature_rule;
 
-    /// Number of quadrature points used for void fraction integration.
+    /// Number of quadrature points per cell used for void fraction integration.
     unsigned int n_quadrature_points;
 
     /// Project particle velocity onto the fluid mesh.
