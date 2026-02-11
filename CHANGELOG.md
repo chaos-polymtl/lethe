@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed 
 
-- MINOR Containers for the lagrangian particle properties are changed from ``std::unordered_map`` to ``std::vectors``. 
+- MINOR Containers for the lagrangian particle properties are changed from ``std::unordered_map`` to ``std::vectors``.  [1892](https://github.com/chaos-polymtl/lethe/pull/1892)
 
 ## [Master] - 2026/02/07
 
