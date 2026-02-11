@@ -53,7 +53,9 @@ public:
 
   enum class DEMSubIterationLogic
   {
-    fixed_number_of_iterations           = 0,
+    /// Fixed number of DEM iterations per CFD time step.
+    fixed_number_of_iterations = 0,
+    /// DEM time step is fixed at a constant fraction of the Rayleigh time step.
     fixed_fraction_of_rayleigh_time_step = 1
   };
 
