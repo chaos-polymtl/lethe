@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -21,6 +21,7 @@
 // Lethe
 #include <core/dem_properties.h>
 
+#include <../tests/dem/test_particles_functions.h>
 #include <dem/data_containers.h>
 #include <dem/dem_contact_manager.h>
 #include <dem/particle_particle_contact_force.h>
@@ -31,29 +32,6 @@
 #include <../tests/tests.h>
 
 using namespace dealii;
-
-template <int dim, typename PropertiesIndex>
-void
-reinitialize_contact_outcomes(
-  Particles::ParticleHandler<dim>              &particle_handler,
-  ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome)
-{
-  const unsigned int number_of_particles =
-    particle_handler.n_locally_owned_particles();
-  contact_outcome.resize_interaction_containers(number_of_particles);
-
-  for (unsigned int i = 0; i < number_of_particles; ++i)
-    {
-      // Reinitializing contact outcomes of particles in the system
-      contact_outcome.force[i][0] = 0;
-      contact_outcome.force[i][1] = 0;
-      contact_outcome.force[i][2] = 0;
-
-      contact_outcome.torque[i][0] = 0;
-      contact_outcome.torque[i][1] = 0;
-      contact_outcome.torque[i][2] = 0;
-    }
-}
 
 template <int dim, typename PropertiesIndex>
 void
@@ -68,31 +46,29 @@ test()
                             true);
   int refinement_number = 2;
   triangulation.refine_global(refinement_number);
-  MappingQ<dim>            mapping(1);
-  DEMSolverParameters<dim> dem_parameters;
+  MappingQ<dim>                                         mapping(1);
+  DEMSolverParameters<dim>                              dem_parameters;
+  Parameters::Lagrangian::LagrangianPhysicalProperties &lpp =
+    dem_parameters.lagrangian_physical_properties;
+
+  set_default_dem_parameters(1, dem_parameters);
 
   // Defining general simulation parameters
   Tensor<1, 3> g{{0, 0, 0}};
-  double       dt                                                    = 0.00001;
-  double       particle_diameter                                     = 0.005;
-  unsigned int step_end                                              = 1000;
-  unsigned int output_frequency                                      = 10;
-  dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
-  dem_parameters.lagrangian_physical_properties.youngs_modulus_particle[0] =
-    50000000;
-  dem_parameters.lagrangian_physical_properties.poisson_ratio_particle[0] = 0.9;
-  dem_parameters.lagrangian_physical_properties
-    .restitution_coefficient_particle[0] = 0.9;
-  dem_parameters.lagrangian_physical_properties
-    .friction_coefficient_particle[0] = 0.5;
-  dem_parameters.lagrangian_physical_properties
-    .rolling_viscous_damping_coefficient_particle[0] = 0.5;
-  dem_parameters.lagrangian_physical_properties
-    .rolling_friction_coefficient_particle[0] = 0.1;
-  dem_parameters.lagrangian_physical_properties.surface_energy_particle[0] = 0.;
-  dem_parameters.lagrangian_physical_properties.hamaker_constant_particle[0] =
-    0.;
-  dem_parameters.lagrangian_physical_properties.density_particle[0] = 2500;
+  double       dt                                     = 0.00001;
+  double       particle_diameter                      = 0.005;
+  unsigned int step_end                               = 1000;
+  unsigned int output_frequency                       = 10;
+  lpp.particle_type_number                            = 1;
+  lpp.youngs_modulus_particle[0]                      = 50000000;
+  lpp.poisson_ratio_particle[0]                       = 0.9;
+  lpp.restitution_coefficient_particle[0]             = 0.9;
+  lpp.friction_coefficient_particle[0]                = 0.5;
+  lpp.rolling_viscous_damping_coefficient_particle[0] = 0.5;
+  lpp.rolling_friction_coefficient_particle[0]        = 0.1;
+  lpp.surface_energy_particle[0]                      = 0.;
+  lpp.hamaker_constant_particle[0]                    = 0.;
+  lpp.density_particle[0]                             = 2500;
   dem_parameters.model_parameters.rolling_resistance_method =
     Parameters::Lagrangian::RollingResistanceMethod::constant;
 
