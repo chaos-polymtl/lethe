@@ -568,6 +568,7 @@ namespace Parameters
        */
       enum class ContactDetectionMethod
       {
+        /// Carry-out contact detection at a constant frequency.
         constant,
         dynamic
       } contact_detection_method; ///< Contact detection method used in the simulation.
