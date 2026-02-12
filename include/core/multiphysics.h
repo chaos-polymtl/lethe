@@ -30,7 +30,7 @@ enum PhysicsID : unsigned int
   tracer = 2,
   /// Conservative level-set / Volume-of-Fluid (Phase indicator / phase fraction)
   VOF = 3,
-  /// Cahn Hilliard (Phase indicator, Potential)
+  /// Cahn-Hilliard (Phase indicator, Potential)
   cahn_hilliard = 4,
   /// Void fraction
   void_fraction = 5,
