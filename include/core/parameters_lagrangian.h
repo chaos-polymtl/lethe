@@ -525,8 +525,18 @@ namespace Parameters
       {
         none,
         once,
+        /// No load-balancing will be performed.
+        none,
+        /// Perform load-balancing once.
+        once,
+        /// Perform load-balancing at a given frequency.
         frequent,
+        /// Perform load-balancing when the computational load among processes
+        /// becomes too uneven.
         dynamic,
+        /// Perform load-balancing in a similar manner to
+        /// LoadBalanceMethod::dynamic but considering also the mobility status
+        /// of the cells.
         dynamic_with_sparse_contacts
       } load_balance_method; ///< Load balancing strategy for parallel DEM simulations.
 
