@@ -570,6 +570,8 @@ namespace Parameters
       {
         /// Carry-out contact detection at a constant frequency.
         constant,
+        /// Carry-out contact detection when the maximum displacement of a 
+        /// particle exceeds the smallest contact search criterion.
         dynamic
       } contact_detection_method; ///< Contact detection method used in the simulation.
 
