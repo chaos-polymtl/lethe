@@ -609,7 +609,9 @@ namespace Parameters
        */
       enum class IntegrationMethod
       {
+        /// Velocity Verlet second-order time integration scheme.
         velocity_verlet,
+        /// Explicit Euler first-order time integration scheme.
         explicit_euler
       } integration_method; ///< Time integration method for particle motion.
 
