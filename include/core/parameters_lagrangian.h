@@ -528,7 +528,7 @@ namespace Parameters
         frequent,
         dynamic,
         dynamic_with_sparse_contacts
-      } load_balance_method;
+      } load_balance_method; ///< Load balancing strategy for parallel DEM simulations.
 
       /// Load balance step (for single-step load balancing).
       unsigned int load_balance_step;
