@@ -7,7 +7,7 @@
 # at the inlet and an abosrbing impedance boundary at the outlet to verify the
 # implementation of those conditions. The mode tested is the TM12. Note that
 # the test defines a set of corner points for the waveguide inlet so the resulting
-# tangential vector with the normal of the face is left-handed (we have the first
+# tangential vector with the normal of the waveguide inlet boundary faces is left-handed (we have the first
 # eigenvector is in the x-direction and second one is in the z direction). The
 # waveguide boundary condition should be able to recover the right orientation
 # when doing its computation so this fonctinonality is tested here.

@@ -167,8 +167,8 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
       " is not a perfect rectangle (i.e., the vector created by the waveguide corners are not orthogonal). Please check the waveguide corners definition in the input prm file."));
 
 
-  // Also verify that those transverse vectors with respect to the normal of the
-  // face is coherent and form an orthogonal basis.
+  // Also verify that those transverse vectors are perpendicular to the normal of the
+// face and form an orthogonal basis.
   if ((std::abs(normal * e_t1) > 1e-12) || (std::abs(normal * e_t2) > 1e-12))
     AssertThrow(
       false,
@@ -181,8 +181,8 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
   // Create a third vector to complete the right-handed coordinate system
   Tensor<1, dim> e_t3 = cross_product_3d(e_t1, e_t2);
 
-  // Determine if the system needs to be flipped so e_t3 points in the direction
-  // opposite to the outward normal. For an incident wave at the inlet, the
+  // Determine if the system needs to be flipped so the e_t3 vector points in the direction
+  // opposite to the outward normal of the face boundary. For an incident wave at the inlet, the
   // propagation direction should point into the domain (opposite to the outward
   // normal). We use the sign of (normal · t3) to determine this:
   //   - If normal · t3 > 0: t3 points outward, need to flip entire system
