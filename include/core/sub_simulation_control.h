@@ -141,8 +141,8 @@ private:
   /// Rayleigh characteristic time for the particles
   const double rayleigh_characteristic_time;
 
-  /// Targeted fraction of the Rayleigh characteristic time. This is only used when
-  /// iteration_logic=fixed_fraction_of_rayleigh_time_step
+  /// Targeted fraction of the Rayleigh characteristic time. This is only used
+  /// when iteration_logic=fixed_fraction_of_rayleigh_time_step
   const double fraction_of_rayleigh_characteristic_time;
 
   /// Current value of the sub iteration number. This is initialized to zero.
