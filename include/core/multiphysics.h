@@ -28,7 +28,8 @@ enum PhysicsID : unsigned int
   heat_transfer = 1,
   /// Passive scalar tracer (Tracer)
   tracer = 2,
-  /// Conservative level-set / Volume-of-Fluid (Phase indicator / phase fraction)
+  /// Conservative level-set / Volume-of-Fluid (Phase indicator / phase
+  /// fraction)
   VOF = 3,
   /// Cahn-Hilliard (Phase indicator, Potential)
   cahn_hilliard = 4,

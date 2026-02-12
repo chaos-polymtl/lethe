@@ -51,8 +51,8 @@ namespace Parameters
     {
       /// Linear model
       linear,
-      /// Non-linear force model that corresponds to a Hertz-Mindlin with limitation
-      /// on tangential overlap
+      /// Non-linear force model that corresponds to a Hertz-Mindlin with
+      /// limitation on tangential overlap
       nonlinear,
       /// Johnson-Kendall-Roberts model
       JKR,
@@ -538,7 +538,8 @@ namespace Parameters
         /// LoadBalanceMethod::dynamic but considering also the mobility status
         /// of the cells.
         dynamic_with_sparse_contacts
-      } load_balance_method; ///< Load balancing strategy for parallel DEM simulations.
+      } load_balance_method; ///< Load balancing strategy for parallel DEM
+                             ///< simulations.
 
       /// Load balance step (for single-step load balancing).
       unsigned int load_balance_step;
@@ -580,10 +581,11 @@ namespace Parameters
       {
         /// Carry-out contact detection at a constant frequency.
         constant,
-        /// Carry-out contact detection when the maximum displacement of a 
+        /// Carry-out contact detection when the maximum displacement of a
         /// particle exceeds the smallest contact search criterion.
         dynamic
-      } contact_detection_method; ///< Contact detection method used in the simulation.
+      } contact_detection_method; ///< Contact detection method used in the
+                                  ///< simulation.
 
       /// Contact search neighborhood threshold (neighborhood diameter to
       /// particle diameter ratio).
