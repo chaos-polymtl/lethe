@@ -598,7 +598,7 @@ namespace Parameters
       {
         velocity_verlet,
         explicit_euler
-      } integration_method;
+      } integration_method; ///< Time integration method for particle motion.
 
       /// Solver type (DEM, CFD-DEM, or DEM multiphysics).
       DEM::SolverType solver_type;
