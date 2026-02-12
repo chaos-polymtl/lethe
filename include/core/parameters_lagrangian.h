@@ -51,7 +51,7 @@ namespace Parameters
     {
       /// Linear model
       linear,
-      /// Non-linear force model. Corresponds to a Hertz-Mindlin with limitation
+      /// Non-linear force model that corresponds to a Hertz-Mindlin with limitation
       /// on tangential overlap
       nonlinear,
       /// Johnson-Kendall-Roberts model
@@ -97,7 +97,7 @@ namespace Parameters
     {
       /// Number-based distribution weighting
       number_based,
-      /// Voluem-based distribution weighting
+      /// Volume-based distribution weighting
       volume_based
     };
 
@@ -305,7 +305,7 @@ namespace Parameters
        * @brief Parse the physical properties for a given particle type.
        *
        * @param[in] particle_type Index of the particle type to parse.
-       * @param[in] prm The parameter handler.
+       * @param[in, out] prm The parameter handler.
        */
       void
       parse_particle_properties(const unsigned int     &particle_type,
