@@ -762,8 +762,17 @@ namespace Parameters
       {
         fixed_wall,
         outlet,
+        /// Static wall
+        fixed_wall,
+        /// Open boundary where particles may exit (outlet)
+        outlet,
+        /// Translating boundary at the velocity
+        /// BCDEM::boundary_translational_velocity.
         translational,
+        /// Rotating boundary described with BCDEM::boundary_rotational_vector,
+        /// BCDEM::point_on_rotation_axis, and BCDEM::boundary_rotational_speed.
         rotational,
+        /// Periodic boundary in the specified BCDEM::periodic_direction
         periodic
       };
 
