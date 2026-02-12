@@ -570,7 +570,7 @@ namespace Parameters
       {
         constant,
         dynamic
-      } contact_detection_method;
+      } contact_detection_method; ///< Contact detection method used in the simulation.
 
       /// Contact search neighborhood threshold (neighborhood diameter to
       /// particle diameter ratio).
