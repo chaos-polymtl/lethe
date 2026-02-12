@@ -422,7 +422,7 @@ namespace Parameters
         plane,
         /// Insertion within a volume defined by a box
         volume
-      } insertion_method;
+      } insertion_method; ///< Method used to insert particles
 
       /// Number of particles inserted at each insertion step.
       int inserted_this_step;
