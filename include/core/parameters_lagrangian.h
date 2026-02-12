@@ -523,8 +523,6 @@ namespace Parameters
        */
       enum class LoadBalanceMethod
       {
-        none,
-        once,
         /// No load-balancing will be performed.
         none,
         /// Perform load-balancing once.
