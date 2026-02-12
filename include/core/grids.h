@@ -156,7 +156,7 @@ refine_triangulation_at_boundaries(
  * by the embedded geometry.
  *
  * @param[in] mesh_parameters Parameters of the mesh.
- * @param[in] triangulation Triangulation object on which the mesh.
+ * @param[in, out] triangulation Triangulation object on which the mesh
  * transformations are applied.
  */
 template <int dim, int spacedim = dim>
