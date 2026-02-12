@@ -78,9 +78,9 @@
 <area shape="poly" id="edge34_Node000026_Node000027" title=" " alt="" coords="207,649,124,691,121,686,204,644"/>
 <area shape="rect" id="Node000031" href="$parameters_8h.html" title=" " alt="" coords="2015,357,2156,383"/>
 <area shape="poly" id="edge43_Node000030_Node000031" title=" " alt="" coords="2036,224,1998,242,1981,255,1968,271,1961,289,1968,308,1992,333,2023,350,2021,355,1989,337,1963,311,1956,289,1963,268,1977,251,1995,237,2034,219"/>
-<area shape="rect" id="Node000049" href="$parameters__lagrangian_8h.html" title=" " alt="" coords="1977,277,2194,302"/>
+<area shape="rect" id="Node000049" href="$parameters__lagrangian_8h.html" title="Parameter structures for Lagrangian (DEM) particle simulations." alt="" coords="1977,277,2194,302"/>
 <area shape="poly" id="edge62_Node000030_Node000049" title=" " alt="" coords="2088,222,2088,263,2083,263,2083,222"/>
-<area shape="rect" id="Node000050" href="$solid__objects__parameters_8h.html" title=" " alt="" coords="2219,269,2357,309"/>
+<area shape="rect" id="Node000050" href="$solid__objects__parameters_8h.html" title="Parameter classes for solid objects used in Nitsche immersed boundary and DEM simulations." alt="" coords="2219,269,2357,309"/>
 <area shape="poly" id="edge66_Node000030_Node000050" title=" " alt="" coords="2116,219,2228,262,2226,267,2114,224"/>
 <area shape="poly" id="edge58_Node000031_Node000009" title=" " alt="" coords="2014,375,1916,380,1804,389,1702,407,1662,418,1634,433,1606,459,1593,486,1590,518,1592,558,1597,600,1592,600,1587,559,1585,518,1588,485,1602,455,1630,428,1660,413,1701,401,1803,384,1916,374,2014,370"/>
 <area shape="poly" id="edge59_Node000031_Node000014" title=" " alt="" coords="2126,380,2179,400,2233,428,2273,461,2299,491,2325,522,2362,557,2416,595,2472,631,2572,686,2570,691,2469,635,2413,600,2358,561,2321,526,2295,495,2270,464,2231,433,2177,405,2124,385"/>
@@ -90,14 +90,14 @@
 <area shape="poly" id="edge46_Node000031_Node000033" title=" " alt="" coords="2026,385,1791,433,1772,438,1771,432,1790,428,2025,380"/>
 <area shape="rect" id="Node000046" title=" " alt="" coords="2150,519,2295,559"/>
 <area shape="poly" id="edge60_Node000031_Node000046" title=" " alt="" coords="2134,380,2174,399,2193,412,2209,429,2219,447,2225,467,2228,504,2223,505,2219,468,2214,449,2205,432,2190,416,2171,403,2132,385"/>
-<area shape="rect" id="Node000047" href="$multiphysics_8h.html" title=" " alt="" coords="1803,438,1952,463"/>
+<area shape="rect" id="Node000047" href="$multiphysics_8h.html" title="Identifiers for multiphysics modules and their solution fields." alt="" coords="1803,438,1952,463"/>
 <area shape="poly" id="edge57_Node000031_Node000047" title=" " alt="" coords="2056,385,1921,436,1920,431,2054,380"/>
 <area shape="rect" id="Node000048" title=" " alt="" coords="1977,431,2194,471"/>
 <area shape="poly" id="edge61_Node000031_Node000048" title=" " alt="" coords="2088,383,2088,417,2083,417,2083,383"/>
 <area shape="poly" id="edge45_Node000032_Node000014" title=" " alt="" coords="2464,550,2554,645,2593,683,2589,687,2550,649,2460,553"/>
 <area shape="poly" id="edge55_Node000033_Node000003" title=" " alt="" coords="1683,466,1588,503,1444,553,1272,606,1094,649,1005,664,929,673,799,678,669,681,592,686,503,697,478,702,477,697,502,692,592,681,668,675,799,672,928,667,1004,659,1093,644,1271,601,1442,548,1586,498,1681,461"/>
 <area shape="poly" id="edge56_Node000033_Node000025" title=" " alt="" coords="1749,461,2036,552,2236,619,2438,692,2444,694,2442,699,2436,697,2234,624,2035,557,1747,466"/>
-<area shape="rect" id="Node000034" href="$dem__properties_8h.html" title=" " alt="" coords="1907,614,2075,639"/>
+<area shape="rect" id="Node000034" href="$dem__properties_8h.html" title="DEM particle property definitions and output name management." alt="" coords="1907,614,2075,639"/>
 <area shape="poly" id="edge47_Node000033_Node000034" title=" " alt="" coords="1730,461,1962,604,1959,609,1728,466"/>
 <area shape="rect" id="Node000035" href="$shape_8h.html" title=" " alt="" coords="1601,526,1706,551"/>
 <area shape="poly" id="edge50_Node000033_Node000035" title=" " alt="" coords="1705,465,1671,516,1667,513,1701,462"/>

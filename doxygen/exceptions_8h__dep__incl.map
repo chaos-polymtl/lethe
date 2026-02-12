@@ -1,5 +1,5 @@
 <map id="/home/runner/work/lethe/lethe/include/core/exceptions.h" name="/home/runner/work/lethe/lethe/include/core/exceptions.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="855,5,1085,45"/>
+<area shape="rect" id="Node000001" title="Common exception declarations shared across multiple solvers in Lethe." alt="" coords="855,5,1085,45"/>
 <area shape="rect" id="Node000002" href="$fluid__dynamics__matrix__based_8h.html" title=" " alt="" coords="525,299,708,368"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="939,57,658,300,654,296,936,53"/>
 <area shape="rect" id="Node000012" href="$fluid__dynamics__matrix__free_8h.html" title=" " alt="" coords="861,306,1079,361"/>

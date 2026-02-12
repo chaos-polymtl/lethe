@@ -79,13 +79,13 @@
 <area shape="poly" id="edge34_Node000029_Node000030" title=" " alt="" coords="2636,488,2315,541,2314,536,2635,483"/>
 <area shape="rect" id="Node000031" href="$ib__particle_8h.html" title=" " alt="" coords="2681,541,2815,566"/>
 <area shape="poly" id="edge36_Node000029_Node000031" title=" " alt="" coords="2713,484,2737,527,2732,530,2708,487"/>
-<area shape="rect" id="Node000044" href="$multiphysics_8h.html" title=" " alt="" coords="2456,541,2605,566"/>
+<area shape="rect" id="Node000044" href="$multiphysics_8h.html" title="Identifiers for multiphysics modules and their solution fields." alt="" coords="2456,541,2605,566"/>
 <area shape="poly" id="edge43_Node000029_Node000044" title=" " alt="" coords="2680,488,2569,537,2567,533,2678,483"/>
 <area shape="poly" id="edge35_Node000030_Node000004" title=" " alt="" coords="2233,566,2229,607,2224,607,2228,566"/>
 <area shape="poly" id="edge40_Node000031_Node000005" title=" " alt="" coords="2726,569,2627,618,2625,613,2724,564"/>
 <area shape="poly" id="edge41_Node000031_Node000012" title=" " alt="" coords="2703,569,2465,628,2464,623,2701,563"/>
 <area shape="poly" id="edge42_Node000031_Node000025" title=" " alt="" coords="2772,564,2813,587,2855,619,2893,662,2921,703,2917,706,2889,665,2852,623,2810,592,2770,568"/>
-<area shape="rect" id="Node000032" href="$dem__properties_8h.html" title=" " alt="" coords="2673,629,2841,654"/>
+<area shape="rect" id="Node000032" href="$dem__properties_8h.html" title="DEM particle property definitions and output name management." alt="" coords="2673,629,2841,654"/>
 <area shape="poly" id="edge37_Node000031_Node000032" title=" " alt="" coords="2752,566,2757,615,2752,615,2747,566"/>
 <area shape="poly" id="edge38_Node000032_Node000023" title=" " alt="" coords="2707,657,2662,664,2493,678,2269,691,1737,711,900,730,900,725,1737,706,2269,686,2493,673,2661,659,2706,651"/>
 <area shape="poly" id="edge39_Node000032_Node000025" title=" " alt="" coords="2782,652,2898,708,2896,713,2780,657"/>
@@ -97,7 +97,7 @@
 <area shape="poly" id="edge61_Node000050_Node000029" title=" " alt="" coords="2623,133,2690,141,2758,153,2817,170,2839,181,2854,194,2866,215,2867,235,2860,254,2847,274,2808,317,2765,373,2720,449,2715,446,2760,371,2804,314,2843,270,2856,252,2862,234,2861,217,2850,198,2836,186,2815,175,2757,158,2689,146,2623,138"/>
 <area shape="poly" id="edge60_Node000050_Node000032" title=" " alt="" coords="2460,133,2147,138,1735,150,1536,159,1368,169,1247,183,1210,190,1192,198,1186,207,1185,215,1193,235,1255,306,1318,361,1381,403,1446,432,1511,451,1578,463,1647,467,1717,467,1865,462,2022,460,2105,466,2191,478,2280,499,2373,531,2409,551,2445,571,2542,594,2687,623,2686,629,2541,599,2443,576,2407,556,2371,536,2279,504,2190,483,2104,471,2022,466,1865,467,1717,473,1647,473,1578,468,1510,457,1444,437,1379,407,1315,365,1251,309,1188,237,1179,216,1182,205,1189,194,1208,185,1246,177,1367,164,1536,153,1735,145,2147,133,2460,128"/>
 <area shape="poly" id="edge79_Node000050_Node000047" title=" " alt="" coords="2623,129,2707,135,2798,146,2876,165,2906,178,2926,194,2938,213,2946,234,2949,279,2942,323,2930,360,2925,359,2937,322,2944,279,2940,235,2933,216,2922,198,2903,183,2874,170,2797,151,2707,140,2623,134"/>
-<area shape="rect" id="Node000051" href="$parameters__cfd__dem_8h.html" title=" " alt="" coords="1971,533,2127,573"/>
+<area shape="rect" id="Node000051" href="$parameters__cfd__dem_8h.html" title="Parameter structures for CFD&#45;DEM coupled simulations." alt="" coords="1971,533,2127,573"/>
 <area shape="poly" id="edge56_Node000050_Node000051" title=" " alt="" coords="2460,133,2155,140,1754,153,1397,173,1278,185,1242,191,1224,198,1205,220,1198,243,1199,303,1199,393,1204,406,1221,419,1285,444,1379,467,1495,488,1746,521,1958,542,1957,547,1745,526,1494,493,1378,472,1283,449,1218,423,1200,409,1193,394,1193,303,1193,242,1200,218,1221,194,1241,186,1278,179,1397,167,1754,148,2155,135,2460,128"/>
 <area shape="rect" id="Node000052" href="$physical__property__model_8h.html" title=" " alt="" coords="2993,196,3164,236"/>
 <area shape="poly" id="edge62_Node000050_Node000052" title=" " alt="" coords="2623,139,2975,193,2980,194,2979,199,2974,199,2622,144"/>

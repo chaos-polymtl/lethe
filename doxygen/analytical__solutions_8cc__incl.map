@@ -17,12 +17,12 @@
 <area shape="rect" id="Node000014" href="$utilities_8h.html" title=" " alt="" coords="2048,453,2163,478"/>
 <area shape="poly" id="edge33_Node000003_Node000014" title=" " alt="" coords="2111,215,2079,221,2046,231,2017,248,1993,271,1982,293,1982,317,1989,341,2003,364,2041,408,2080,442,2077,446,2037,412,1998,367,1984,343,1977,317,1977,292,1989,268,2013,243,2044,226,2077,216,2110,210"/>
 <area shape="poly" id="edge35_Node000003_Node000039" title=" " alt="" coords="2253,214,2319,226,2380,244,2403,257,2417,272,2420,290,2409,311,2386,324,2344,335,2223,352,2081,366,1953,374,1953,369,2081,360,2223,347,2343,329,2384,319,2405,307,2415,289,2413,274,2400,261,2378,249,2318,231,2252,220"/>
-<area shape="rect" id="Node000040" href="$multiphysics_8h.html" title=" " alt="" coords="2003,277,2152,302"/>
+<area shape="rect" id="Node000040" href="$multiphysics_8h.html" title="Identifiers for multiphysics modules and their solution fields." alt="" coords="2003,277,2152,302"/>
 <area shape="poly" id="edge32_Node000003_Node000040" title=" " alt="" coords="2168,224,2105,271,2102,266,2164,219"/>
 <area shape="rect" id="Node000041" title=" " alt="" coords="2177,269,2394,309"/>
 <area shape="poly" id="edge36_Node000003_Node000041" title=" " alt="" coords="2198,219,2251,259,2248,263,2195,224"/>
 <area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="2596,392,2505,524,2501,521,2591,389"/>
-<area shape="rect" id="Node000007" href="$dem__properties_8h.html" title=" " alt="" coords="25,453,193,478"/>
+<area shape="rect" id="Node000007" href="$dem__properties_8h.html" title="DEM particle property definitions and output name management." alt="" coords="25,453,193,478"/>
 <area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="1652,298,1414,316,1057,348,636,392,206,448,178,453,177,447,205,443,636,387,1057,343,1414,311,1651,293"/>
 <area shape="rect" id="Node000009" title=" " alt="" coords="78,541,141,566"/>
 <area shape="poly" id="edge31_Node000006_Node000009" title=" " alt="" coords="1651,294,1282,302,1028,311,759,325,499,345,273,371,179,387,103,405,47,425,28,436,15,447,9,458,9,469,21,492,46,514,75,532,72,536,43,518,17,495,3,470,4,457,11,444,25,432,45,420,102,400,178,382,272,366,499,339,759,320,1028,306,1282,297,1651,289"/>

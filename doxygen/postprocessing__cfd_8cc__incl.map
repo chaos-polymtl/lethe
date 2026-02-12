@@ -86,7 +86,7 @@
 <area shape="poly" id="edge40_Node000036_Node000037" title=" " alt="" coords="1180,463,1267,480,1313,496,1356,516,1383,535,1406,558,1442,601,1438,605,1402,561,1379,539,1353,521,1311,501,1265,485,1178,468"/>
 <area shape="rect" id="Node000038" href="$ib__particle_8h.html" title=" " alt="" coords="697,526,831,551"/>
 <area shape="poly" id="edge42_Node000036_Node000038" title=" " alt="" coords="1057,473,845,521,827,525,825,520,843,516,1056,468"/>
-<area shape="rect" id="Node000051" href="$multiphysics_8h.html" title=" " alt="" coords="856,526,1005,551"/>
+<area shape="rect" id="Node000051" href="$multiphysics_8h.html" title="Identifiers for multiphysics modules and their solution fields." alt="" coords="856,526,1005,551"/>
 <area shape="poly" id="edge53_Node000036_Node000051" title=" " alt="" coords="1083,473,970,523,968,518,1081,468"/>
 <area shape="rect" id="Node000052" title=" " alt="" coords="1030,519,1247,559"/>
 <area shape="poly" id="edge57_Node000036_Node000052" title=" " alt="" coords="1115,470,1129,505,1124,507,1110,472"/>
@@ -94,7 +94,7 @@
 <area shape="poly" id="edge51_Node000038_Node000021" title=" " alt="" coords="792,549,878,583,1007,630,1159,679,1318,717,1422,735,1511,744,1663,747,1816,748,1906,753,2011,765,2037,770,2036,775,2010,771,1905,759,1816,753,1663,753,1510,749,1421,740,1317,723,1158,684,1005,635,876,588,790,554"/>
 <area shape="poly" id="edge52_Node000038_Node000032" title=" " alt="" coords="779,550,797,568,815,592,825,620,825,634,820,648,795,680,768,698,695,723,647,737,605,745,532,750,458,753,416,759,367,771,360,773,358,768,366,765,415,754,458,748,532,745,604,740,646,732,694,717,766,694,792,676,815,645,819,633,820,621,810,595,793,572,775,553"/>
 <area shape="poly" id="edge50_Node000038_Node000034" title=" " alt="" coords="744,554,653,602,650,598,741,549"/>
-<area shape="rect" id="Node000039" href="$dem__properties_8h.html" title=" " alt="" coords="840,695,1008,720"/>
+<area shape="rect" id="Node000039" href="$dem__properties_8h.html" title="DEM particle property definitions and output name management." alt="" coords="840,695,1008,720"/>
 <area shape="poly" id="edge43_Node000038_Node000039" title=" " alt="" coords="788,549,826,572,865,605,894,643,915,681,911,683,890,646,861,609,823,577,785,554"/>
 <area shape="rect" id="Node000040" href="$shape_8h.html" title=" " alt="" coords="701,614,806,639"/>
 <area shape="poly" id="edge46_Node000038_Node000040" title=" " alt="" coords="765,552,759,600,754,600,760,551"/>

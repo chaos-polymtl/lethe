@@ -1,5 +1,5 @@
 <map id="/home/runner/work/lethe/lethe/include/core/solid_objects_parameters.h" name="/home/runner/work/lethe/lethe/include/core/solid_objects_parameters.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="4140,5,4323,60"/>
+<area shape="rect" id="Node000001" title="Parameter classes for solid objects used in Nitsche immersed boundary and DEM simulations." alt="" coords="4140,5,4323,60"/>
 <area shape="rect" id="Node000002" href="$serial__solid_8h.html" title=" " alt="" coords="3389,108,3572,163"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="4127,51,3573,124,3572,119,4126,45"/>
 <area shape="rect" id="Node000041" href="$solid__base_8h.html" title=" " alt="" coords="4140,108,4323,163"/>

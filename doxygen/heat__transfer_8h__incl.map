@@ -48,7 +48,7 @@
 <area shape="poly" id="edge4_Node000002_Node000042" title=" " alt="" coords="332,480,303,530,299,527,328,477"/>
 <area shape="rect" id="Node000009" title=" " alt="" coords="129,541,192,566"/>
 <area shape="poly" id="edge5_Node000002_Node000009" title=" " alt="" coords="314,481,198,537,196,532,312,476"/>
-<area shape="rect" id="Node000040" href="$multiphysics_8h.html" title=" " alt="" coords="1690,695,1839,720"/>
+<area shape="rect" id="Node000040" href="$multiphysics_8h.html" title="Identifiers for multiphysics modules and their solution fields." alt="" coords="1690,695,1839,720"/>
 <area shape="poly" id="edge3_Node000003_Node000040" title=" " alt="" coords="1073,639,1676,695,1676,700,1072,645"/>
 <area shape="poly" id="edge7_Node000043_Node000002" title=" " alt="" coords="364,398,348,441,343,439,359,397"/>
 <area shape="poly" id="edge8_Node000043_Node000003" title=" " alt="" coords="374,397,421,490,452,540,480,571,513,586,559,599,676,616,804,626,917,629,917,635,804,631,675,622,558,604,511,591,476,575,447,544,416,493,369,399"/>
@@ -117,7 +117,7 @@
 <area shape="poly" id="edge58_Node000101_Node000050" title=" " alt="" coords="1915,311,2036,328,2174,356,2240,373,2297,394,2343,417,2373,444,2382,462,2384,483,2375,521,2370,520,2378,482,2377,464,2369,447,2340,422,2295,399,2238,378,2173,361,2035,334,1914,317"/>
 <area shape="poly" id="edge54_Node000101_Node000052" title=" " alt="" coords="1759,324,1746,327,1572,353,1414,373,1413,368,1571,348,1746,321,1758,319"/>
 <area shape="poly" id="edge44_Node000101_Node000068" title=" " alt="" coords="1759,325,1746,327,1659,334,1548,338,1290,346,1160,356,1042,375,990,388,944,404,906,424,876,447,863,465,856,485,850,527,845,526,850,484,859,462,872,443,903,419,942,399,989,383,1041,369,1159,351,1289,341,1547,333,1658,329,1746,321,1758,319"/>
-<area shape="rect" id="Node000102" href="$exceptions_8h.html" title=" " alt="" coords="1525,372,1663,397"/>
+<area shape="rect" id="Node000102" href="$exceptions_8h.html" title="Common exception declarations shared across multiple solvers in Lethe." alt="" coords="1525,372,1663,397"/>
 <area shape="poly" id="edge41_Node000101_Node000102" title=" " alt="" coords="1779,327,1643,370,1642,365,1778,321"/>
 <area shape="poly" id="edge55_Node000101_Node000103" title=" " alt="" coords="1759,324,1746,327,1709,331,1675,332,1616,328,1589,329,1564,335,1539,349,1515,374,1510,383,1509,392,1520,412,1542,429,1568,444,1566,449,1539,434,1516,415,1504,394,1504,382,1511,370,1536,345,1562,330,1588,324,1616,323,1675,326,1709,326,1746,321,1758,319"/>
 <area shape="rect" id="Node000104" href="$solid__base_8h.html" title=" " alt="" coords="1965,372,2100,397"/>

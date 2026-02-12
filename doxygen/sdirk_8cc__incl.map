@@ -17,12 +17,12 @@
 <area shape="poly" id="edge33_Node000003_Node000014" title=" " alt="" coords="624,194,595,214,570,241,552,285,543,331,541,374,542,410,537,410,535,374,538,330,547,283,565,239,591,210,621,190"/>
 <area shape="rect" id="Node000039" title=" " alt="" coords="2733,328,2879,368"/>
 <area shape="poly" id="edge35_Node000003_Node000039" title=" " alt="" coords="665,190,728,238,752,261,763,270,779,277,831,289,911,299,1136,312,1423,318,1742,319,2350,318,2578,319,2714,325,2720,326,2719,331,2714,331,2578,325,2350,323,1742,325,1423,323,1136,317,910,304,830,295,777,283,760,274,749,265,724,242,661,195"/>
-<area shape="rect" id="Node000040" href="$multiphysics_8h.html" title=" " alt="" coords="790,247,939,273"/>
+<area shape="rect" id="Node000040" href="$multiphysics_8h.html" title="Identifiers for multiphysics modules and their solution fields." alt="" coords="790,247,939,273"/>
 <area shape="poly" id="edge32_Node000003_Node000040" title=" " alt="" coords="680,189,821,240,819,245,678,195"/>
 <area shape="rect" id="Node000041" title=" " alt="" coords="964,240,1181,280"/>
 <area shape="poly" id="edge36_Node000003_Node000041" title=" " alt="" coords="710,189,958,235,957,240,709,195"/>
 <area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="96,359,186,491,182,494,92,362"/>
-<area shape="rect" id="Node000007" href="$dem__properties_8h.html" title=" " alt="" coords="293,423,461,449"/>
+<area shape="rect" id="Node000007" href="$dem__properties_8h.html" title="DEM particle property definitions and output name management." alt="" coords="293,423,461,449"/>
 <area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="631,275,407,418,404,414,628,270"/>
 <area shape="rect" id="Node000009" title=" " alt="" coords="345,511,408,537"/>
 <area shape="poly" id="edge31_Node000006_Node000009" title=" " alt="" coords="580,270,507,284,424,311,383,330,345,354,311,383,283,417,277,436,283,455,306,483,336,503,334,507,303,487,278,457,271,436,278,415,307,379,342,350,380,326,422,306,505,279,579,265"/>

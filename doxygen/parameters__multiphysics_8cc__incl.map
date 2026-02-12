@@ -20,12 +20,12 @@
 <area shape="poly" id="edge33_Node000003_Node000014" title=" " alt="" coords="436,207,446,424,440,424,431,207"/>
 <area shape="rect" id="Node000039" title=" " alt="" coords="1386,343,1531,383"/>
 <area shape="poly" id="edge35_Node000003_Node000039" title=" " alt="" coords="486,204,552,223,620,252,635,263,645,274,655,284,670,292,734,309,815,320,909,326,1009,329,1209,331,1298,334,1372,340,1372,345,1298,340,1209,337,1009,334,908,331,815,325,733,314,668,297,652,288,642,278,632,267,617,257,550,228,485,209"/>
-<area shape="rect" id="Node000040" href="$multiphysics_8h.html" title=" " alt="" coords="681,262,831,287"/>
+<area shape="rect" id="Node000040" href="$multiphysics_8h.html" title="Identifiers for multiphysics modules and their solution fields." alt="" coords="681,262,831,287"/>
 <area shape="poly" id="edge32_Node000003_Node000040" title=" " alt="" coords="481,204,696,256,695,261,480,209"/>
 <area shape="rect" id="Node000041" title=" " alt="" coords="855,255,1073,295"/>
 <area shape="poly" id="edge36_Node000003_Node000041" title=" " alt="" coords="505,203,842,252,841,257,504,208"/>
 <area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="254,378,220,401,185,433,153,471,127,508,123,505,148,467,181,429,217,397,251,373"/>
-<area shape="rect" id="Node000007" href="$dem__properties_8h.html" title=" " alt="" coords="195,438,363,463"/>
+<area shape="rect" id="Node000007" href="$dem__properties_8h.html" title="DEM particle property definitions and output name management." alt="" coords="195,438,363,463"/>
 <area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="523,290,308,433,305,428,520,285"/>
 <area shape="rect" id="Node000009" title=" " alt="" coords="413,526,475,551"/>
 <area shape="poly" id="edge31_Node000006_Node000009" title=" " alt="" coords="542,288,544,321,542,368,534,421,516,472,497,499,474,520,470,516,493,495,511,469,529,419,537,367,538,321,537,288"/>

@@ -124,22 +124,37 @@ Enumerations</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Particle property indices for <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> multiphysics simulations. </p>
+<p>Manages the specific particle indices within the PropertyPool of the ParticleHandler. In addition to the base <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> properties, <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> multiphysics particles carry temperature and specific heat properties. </p><dl class="section note"><dt>Note</dt><dd>A regular enum (not enum class) is used because an implicit conversion to int is required to access particle properties. </dd></dl>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aca0676848b97f3864735e524aac253f8a0aec2d7eb09eb670d3d9affc8767ba56" name="aca0676848b97f3864735e524aac253f8a0aec2d7eb09eb670d3d9affc8767ba56"></a>type&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="aca0676848b97f3864735e524aac253f8a348a2340df4ec7ffcd610b03e80b0703" name="aca0676848b97f3864735e524aac253f8a348a2340df4ec7ffcd610b03e80b0703"></a>dp&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="aca0676848b97f3864735e524aac253f8a350708db287c03473fa23b181abd447b" name="aca0676848b97f3864735e524aac253f8a350708db287c03473fa23b181abd447b"></a>mass&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="aca0676848b97f3864735e524aac253f8a3961047b5a49d25d166d02c023d6e0f6" name="aca0676848b97f3864735e524aac253f8a3961047b5a49d25d166d02c023d6e0f6"></a>v_x&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="aca0676848b97f3864735e524aac253f8ac2f285f3fcefd2be647f1a1db8cac997" name="aca0676848b97f3864735e524aac253f8ac2f285f3fcefd2be647f1a1db8cac997"></a>v_y&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="aca0676848b97f3864735e524aac253f8a2f5b5915344cccdb2d60ae72440fd657" name="aca0676848b97f3864735e524aac253f8a2f5b5915344cccdb2d60ae72440fd657"></a>v_z&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="aca0676848b97f3864735e524aac253f8aa4f810e1a2af0663b9d4c9d36247b664" name="aca0676848b97f3864735e524aac253f8aa4f810e1a2af0663b9d4c9d36247b664"></a>omega_x&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="aca0676848b97f3864735e524aac253f8a3e9155363f4c867bb2f72dff67be08ce" name="aca0676848b97f3864735e524aac253f8a3e9155363f4c867bb2f72dff67be08ce"></a>omega_y&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="aca0676848b97f3864735e524aac253f8ada27e9b4cd32b4a0ea8ce0cd8b0d274a" name="aca0676848b97f3864735e524aac253f8ada27e9b4cd32b4a0ea8ce0cd8b0d274a"></a>omega_z&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="aca0676848b97f3864735e524aac253f8a32891fa53aeae88db39ab9887c6b3cd9" name="aca0676848b97f3864735e524aac253f8a32891fa53aeae88db39ab9887c6b3cd9"></a>T&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="aca0676848b97f3864735e524aac253f8aa71ab952dba2769feb0df52178f69331" name="aca0676848b97f3864735e524aac253f8aa71ab952dba2769feb0df52178f69331"></a>specific_heat&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="aca0676848b97f3864735e524aac253f8a8a4efe9b49d642c1b0a4d7f9e8873592" name="aca0676848b97f3864735e524aac253f8a8a4efe9b49d642c1b0a4d7f9e8873592"></a>n_properties&#160;</td><td class="fielddoc"></td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aca0676848b97f3864735e524aac253f8a0aec2d7eb09eb670d3d9affc8767ba56" name="aca0676848b97f3864735e524aac253f8a0aec2d7eb09eb670d3d9affc8767ba56"></a>type&#160;</td><td class="fielddoc"><p>Particle type. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="aca0676848b97f3864735e524aac253f8a348a2340df4ec7ffcd610b03e80b0703" name="aca0676848b97f3864735e524aac253f8a348a2340df4ec7ffcd610b03e80b0703"></a>dp&#160;</td><td class="fielddoc"><p>Diameter. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="aca0676848b97f3864735e524aac253f8a350708db287c03473fa23b181abd447b" name="aca0676848b97f3864735e524aac253f8a350708db287c03473fa23b181abd447b"></a>mass&#160;</td><td class="fielddoc"><p>Mass. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="aca0676848b97f3864735e524aac253f8a3961047b5a49d25d166d02c023d6e0f6" name="aca0676848b97f3864735e524aac253f8a3961047b5a49d25d166d02c023d6e0f6"></a>v_x&#160;</td><td class="fielddoc"><p>Velocity - x component. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="aca0676848b97f3864735e524aac253f8ac2f285f3fcefd2be647f1a1db8cac997" name="aca0676848b97f3864735e524aac253f8ac2f285f3fcefd2be647f1a1db8cac997"></a>v_y&#160;</td><td class="fielddoc"><p>Velocity - y component. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="aca0676848b97f3864735e524aac253f8a2f5b5915344cccdb2d60ae72440fd657" name="aca0676848b97f3864735e524aac253f8a2f5b5915344cccdb2d60ae72440fd657"></a>v_z&#160;</td><td class="fielddoc"><p>Velocity - z component. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="aca0676848b97f3864735e524aac253f8aa4f810e1a2af0663b9d4c9d36247b664" name="aca0676848b97f3864735e524aac253f8aa4f810e1a2af0663b9d4c9d36247b664"></a>omega_x&#160;</td><td class="fielddoc"><p>Angular velocity - x component. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="aca0676848b97f3864735e524aac253f8a3e9155363f4c867bb2f72dff67be08ce" name="aca0676848b97f3864735e524aac253f8a3e9155363f4c867bb2f72dff67be08ce"></a>omega_y&#160;</td><td class="fielddoc"><p>Angular velocity - y component. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="aca0676848b97f3864735e524aac253f8ada27e9b4cd32b4a0ea8ce0cd8b0d274a" name="aca0676848b97f3864735e524aac253f8ada27e9b4cd32b4a0ea8ce0cd8b0d274a"></a>omega_z&#160;</td><td class="fielddoc"><p>Angular velocity - z component. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="aca0676848b97f3864735e524aac253f8a32891fa53aeae88db39ab9887c6b3cd9" name="aca0676848b97f3864735e524aac253f8a32891fa53aeae88db39ab9887c6b3cd9"></a>T&#160;</td><td class="fielddoc"><p>Particle temperature. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="aca0676848b97f3864735e524aac253f8aa71ab952dba2769feb0df52178f69331" name="aca0676848b97f3864735e524aac253f8aa71ab952dba2769feb0df52178f69331"></a>specific_heat&#160;</td><td class="fielddoc"><p>Particle specific heat. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="aca0676848b97f3864735e524aac253f8a8a4efe9b49d642c1b0a4d7f9e8873592" name="aca0676848b97f3864735e524aac253f8a8a4efe9b49d642c1b0a4d7f9e8873592"></a>n_properties&#160;</td><td class="fielddoc"><p>Number of properties. </p>
+</td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="dem__properties_8h_source.html#l00099">99</a> of file <a class="el" href="dem__properties_8h_source.html">dem_properties.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__properties_8h_source.html#l00154">154</a> of file <a class="el" href="dem__properties_8h_source.html">dem_properties.h</a>.</p>
 
 </div>
 </div>

@@ -14,12 +14,12 @@
 <area shape="poly" id="edge47_Node000002_Node000013" title=" " alt="" coords="1991,296,1979,314,1968,337,1963,360,1970,381,1990,395,2029,413,2145,452,2394,520,2392,525,2143,457,2027,417,1987,400,1966,384,1958,360,1963,335,1974,312,1987,293"/>
 <area shape="rect" id="Node000038" title=" " alt="" coords="1391,431,1537,471"/>
 <area shape="poly" id="edge49_Node000002_Node000038" title=" " alt="" coords="1963,297,1538,429,1537,424,1961,292"/>
-<area shape="rect" id="Node000039" href="$multiphysics_8h.html" title=" " alt="" coords="1980,350,2129,375"/>
+<area shape="rect" id="Node000039" href="$multiphysics_8h.html" title="Identifiers for multiphysics modules and their solution fields." alt="" coords="1980,350,2129,375"/>
 <area shape="poly" id="edge46_Node000002_Node000039" title=" " alt="" coords="2009,293,2041,337,2036,340,2005,296"/>
 <area shape="rect" id="Node000040" title=" " alt="" coords="2154,343,2371,383"/>
 <area shape="poly" id="edge50_Node000002_Node000040" title=" " alt="" coords="2038,292,2187,336,2186,341,2036,297"/>
 <area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="2573,461,2684,508,2757,535,2833,556,2902,570,2961,579,3064,587,3168,591,3301,604,3300,609,3168,596,3063,592,2960,585,2901,576,2831,561,2755,540,2682,513,2571,466"/>
-<area shape="rect" id="Node000006" href="$dem__properties_8h.html" title=" " alt="" coords="93,526,261,551"/>
+<area shape="rect" id="Node000006" href="$dem__properties_8h.html" title="DEM particle property definitions and output name management." alt="" coords="93,526,261,551"/>
 <area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="715,370,608,378,481,390,363,408,316,420,281,433,254,451,230,472,194,516,190,513,226,469,251,446,279,428,314,415,362,403,481,385,607,372,715,365"/>
 <area shape="rect" id="Node000008" title=" " alt="" coords="86,614,149,639"/>
 <area shape="poly" id="edge45_Node000005_Node000008" title=" " alt="" coords="715,365,617,368,493,377,358,398,290,413,225,433,178,448,141,462,111,483,84,520,78,540,81,562,90,583,101,601,97,604,85,585,76,563,73,540,79,518,107,479,139,457,176,443,223,428,289,408,357,392,493,372,617,362,715,360"/>

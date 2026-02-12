@@ -183,8 +183,16 @@ Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
-class Parameters::Lagrangian::ModelParameters&lt; dim &gt;</div>
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00379">379</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+class Parameters::Lagrangian::ModelParameters&lt; dim &gt;</div><p>Numerical model parameters for <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> simulations. </p>
+<p>This class stores the contact detection, load balancing, force model selection, time integration, and sparse contact optimization parameters.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>Number of spatial dimensions. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00518">518</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="a6e187d80f1fbd4ca22af7cd03e0df47a" name="a6e187d80f1fbd4ca22af7cd03e0df47a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6e187d80f1fbd4ca22af7cd03e0df47a">&#9670;&#160;</a></span>ContactDetectionMethod</h2>
@@ -207,12 +215,16 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Contact detection method used in the simulation. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a6e187d80f1fbd4ca22af7cd03e0df47aa617ac08757d38a5a7ed91c224f0e90a0" name="a6e187d80f1fbd4ca22af7cd03e0df47aa617ac08757d38a5a7ed91c224f0e90a0"></a>constant&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a6e187d80f1fbd4ca22af7cd03e0df47aab72f3bd391ba731a35708bfd8cd8a68f" name="a6e187d80f1fbd4ca22af7cd03e0df47aab72f3bd391ba731a35708bfd8cd8a68f"></a>dynamic&#160;</td><td class="fielddoc"></td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a6e187d80f1fbd4ca22af7cd03e0df47aa617ac08757d38a5a7ed91c224f0e90a0" name="a6e187d80f1fbd4ca22af7cd03e0df47aa617ac08757d38a5a7ed91c224f0e90a0"></a>constant&#160;</td><td class="fielddoc"><p>Carry-out contact detection at a constant frequency. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a6e187d80f1fbd4ca22af7cd03e0df47aab72f3bd391ba731a35708bfd8cd8a68f" name="a6e187d80f1fbd4ca22af7cd03e0df47aab72f3bd391ba731a35708bfd8cd8a68f"></a>dynamic&#160;</td><td class="fielddoc"><p>Carry-out contact detection when the maximum displacement of a particle exceeds the smallest contact search criterion. </p>
+</td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00424">424</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00578">578</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -237,12 +249,16 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Time integration method for particle motion. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a69b38864ad36a204769a29375fda3012a8aa8cd071ddefe6f0e36574a3a18126a" name="a69b38864ad36a204769a29375fda3012a8aa8cd071ddefe6f0e36574a3a18126a"></a>velocity_verlet&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a69b38864ad36a204769a29375fda3012ad8334dcb1e9c0f73386322960f66ace4" name="a69b38864ad36a204769a29375fda3012ad8334dcb1e9c0f73386322960f66ace4"></a>explicit_euler&#160;</td><td class="fielddoc"></td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a69b38864ad36a204769a29375fda3012a8aa8cd071ddefe6f0e36574a3a18126a" name="a69b38864ad36a204769a29375fda3012a8aa8cd071ddefe6f0e36574a3a18126a"></a>velocity_verlet&#160;</td><td class="fielddoc"><p>Velocity Verlet second-order time integration scheme. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a69b38864ad36a204769a29375fda3012ad8334dcb1e9c0f73386322960f66ace4" name="a69b38864ad36a204769a29375fda3012ad8334dcb1e9c0f73386322960f66ace4"></a>explicit_euler&#160;</td><td class="fielddoc"><p>Explicit Euler first-order time integration scheme. </p>
+</td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00450">450</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00610">610</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -267,15 +283,22 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Load balancing strategy for parallel <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> simulations. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a3e6eb8f5729483f84a436e4222d86e66a334c4a4c42fdb79d7ebc3e73b517e6f8" name="a3e6eb8f5729483f84a436e4222d86e66a334c4a4c42fdb79d7ebc3e73b517e6f8"></a>none&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a3e6eb8f5729483f84a436e4222d86e66ae2eff6c2dafd909df8508f891b385d88" name="a3e6eb8f5729483f84a436e4222d86e66ae2eff6c2dafd909df8508f891b385d88"></a>once&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a3e6eb8f5729483f84a436e4222d86e66a030bb043d582f8f5569a8be85ea51911" name="a3e6eb8f5729483f84a436e4222d86e66a030bb043d582f8f5569a8be85ea51911"></a>frequent&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a3e6eb8f5729483f84a436e4222d86e66ab72f3bd391ba731a35708bfd8cd8a68f" name="a3e6eb8f5729483f84a436e4222d86e66ab72f3bd391ba731a35708bfd8cd8a68f"></a>dynamic&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a3e6eb8f5729483f84a436e4222d86e66a95531a392bff1f9c1747254c2d38655d" name="a3e6eb8f5729483f84a436e4222d86e66a95531a392bff1f9c1747254c2d38655d"></a>dynamic_with_sparse_contacts&#160;</td><td class="fielddoc"></td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a3e6eb8f5729483f84a436e4222d86e66a334c4a4c42fdb79d7ebc3e73b517e6f8" name="a3e6eb8f5729483f84a436e4222d86e66a334c4a4c42fdb79d7ebc3e73b517e6f8"></a>none&#160;</td><td class="fielddoc"><p>No load-balancing will be performed. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3e6eb8f5729483f84a436e4222d86e66ae2eff6c2dafd909df8508f891b385d88" name="a3e6eb8f5729483f84a436e4222d86e66ae2eff6c2dafd909df8508f891b385d88"></a>once&#160;</td><td class="fielddoc"><p>Perform load-balancing once. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3e6eb8f5729483f84a436e4222d86e66a030bb043d582f8f5569a8be85ea51911" name="a3e6eb8f5729483f84a436e4222d86e66a030bb043d582f8f5569a8be85ea51911"></a>frequent&#160;</td><td class="fielddoc"><p>Perform load-balancing at a given frequency. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3e6eb8f5729483f84a436e4222d86e66ab72f3bd391ba731a35708bfd8cd8a68f" name="a3e6eb8f5729483f84a436e4222d86e66ab72f3bd391ba731a35708bfd8cd8a68f"></a>dynamic&#160;</td><td class="fielddoc"><p>Perform load-balancing when the computational load among processes becomes too uneven. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3e6eb8f5729483f84a436e4222d86e66a95531a392bff1f9c1747254c2d38655d" name="a3e6eb8f5729483f84a436e4222d86e66a95531a392bff1f9c1747254c2d38655d"></a>dynamic_with_sparse_contacts&#160;</td><td class="fielddoc"><p>Perform load-balancing in a similar manner to <a class="el" href="classParameters_1_1Lagrangian_1_1ModelParameters.html#a3e6eb8f5729483f84a436e4222d86e66ab72f3bd391ba731a35708bfd8cd8a68f">LoadBalanceMethod::dynamic</a> but considering also the mobility status of the cells. </p>
+</td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00383">383</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00524">524</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -306,6 +329,14 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
+<p>Declare the parameters in the parameter handler. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">prm</td><td>The parameter handler. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8cc_source.html#l00861">861</a> of file <a class="el" href="parameters__lagrangian_8cc_source.html">parameters_lagrangian.cc</a>.</p>
 
 </div>
@@ -328,9 +359,17 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
+<p>Parse the parameters from the parameter handler. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">prm</td><td>The parameter handler. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 <p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8cc_source.html#l01044">1044</a> of file <a class="el" href="parameters__lagrangian_8cc_source.html">parameters_lagrangian.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00023">DEM::cfd_dem</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00039">Parameters::Lagrangian::constant</a>, <a class="el" href="dem__properties_8h_source.html#l00022">DEM::dem</a>, <a class="el" href="dem__properties_8h_source.html#l00024">DEM::dem_mp</a>, <a class="el" href="namespaceParameters_1_1Lagrangian.html#a2d003242b66f27f8c1fae956bd3c958aad42cf92d868a495517abc2d26231a523">Parameters::Lagrangian::DMT</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00041">Parameters::Lagrangian::epsd</a>, <a class="el" href="namespaceParameters_1_1Lagrangian.html#a2d003242b66f27f8c1fae956bd3c958aac59fdf769f34f251852c5cdbef876519">Parameters::Lagrangian::hertz</a>, <a class="el" href="namespaceParameters_1_1Lagrangian.html#a2d003242b66f27f8c1fae956bd3c958aa638c14a20811366fc71cab494ea05c3b">Parameters::Lagrangian::hertz_JKR</a>, <a class="el" href="namespaceParameters_1_1Lagrangian.html#a2d003242b66f27f8c1fae956bd3c958aaba022ec0e90d20310303f1b00842933a">Parameters::Lagrangian::hertz_mindlin_limit_force</a>, <a class="el" href="namespaceParameters_1_1Lagrangian.html#a2d003242b66f27f8c1fae956bd3c958aaace296ebda6d5aae5af60e422f24db99">Parameters::Lagrangian::hertz_mindlin_limit_overlap</a>, <a class="el" href="namespaceParameters_1_1Lagrangian.html#ab786c050e9bc6c2ea31d84c6de7d204ea7dfcd2d872a1f653ce346e9fbddf698f">Parameters::Lagrangian::JKR</a>, <a class="el" href="namespaceParameters_1_1Lagrangian.html#a2d003242b66f27f8c1fae956bd3c958aa9a932b3cb396238423eb2f33ec17d6aa">Parameters::Lagrangian::linear</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00038">Parameters::Lagrangian::none</a>, <a class="el" href="namespaceParameters_1_1Lagrangian.html#ab786c050e9bc6c2ea31d84c6de7d204ea06de001201911c5c9361c398bd7e9a79">Parameters::Lagrangian::nonlinear</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00040">Parameters::Lagrangian::viscous</a>.</p>
+<p class="reference">References <a class="el" href="dem__properties_8h_source.html#l00036">DEM::cfd_dem</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00071">Parameters::Lagrangian::constant</a>, <a class="el" href="dem__properties_8h_source.html#l00035">DEM::dem</a>, <a class="el" href="dem__properties_8h_source.html#l00037">DEM::dem_mp</a>, <a class="el" href="namespaceParameters_1_1Lagrangian.html#a2d003242b66f27f8c1fae956bd3c958aad42cf92d868a495517abc2d26231a523">Parameters::Lagrangian::DMT</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00075">Parameters::Lagrangian::epsd</a>, <a class="el" href="namespaceParameters_1_1Lagrangian.html#a2d003242b66f27f8c1fae956bd3c958aac59fdf769f34f251852c5cdbef876519">Parameters::Lagrangian::hertz</a>, <a class="el" href="namespaceParameters_1_1Lagrangian.html#a2d003242b66f27f8c1fae956bd3c958aa638c14a20811366fc71cab494ea05c3b">Parameters::Lagrangian::hertz_JKR</a>, <a class="el" href="namespaceParameters_1_1Lagrangian.html#a2d003242b66f27f8c1fae956bd3c958aaba022ec0e90d20310303f1b00842933a">Parameters::Lagrangian::hertz_mindlin_limit_force</a>, <a class="el" href="namespaceParameters_1_1Lagrangian.html#a2d003242b66f27f8c1fae956bd3c958aaace296ebda6d5aae5af60e422f24db99">Parameters::Lagrangian::hertz_mindlin_limit_overlap</a>, <a class="el" href="namespaceParameters_1_1Lagrangian.html#ab786c050e9bc6c2ea31d84c6de7d204ea7dfcd2d872a1f653ce346e9fbddf698f">Parameters::Lagrangian::JKR</a>, <a class="el" href="namespaceParameters_1_1Lagrangian.html#a2d003242b66f27f8c1fae956bd3c958aa9a932b3cb396238423eb2f33ec17d6aa">Parameters::Lagrangian::linear</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00069">Parameters::Lagrangian::none</a>, <a class="el" href="namespaceParameters_1_1Lagrangian.html#ab786c050e9bc6c2ea31d84c6de7d204ea06de001201911c5c9361c398bd7e9a79">Parameters::Lagrangian::nonlinear</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00073">Parameters::Lagrangian::viscous</a>.</p>
 
 </div>
 </div>
@@ -348,8 +387,9 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Factor applied to particle weight for active cells in load balancing (only used with adaptive sparse contacts). </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00417">417</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00566">566</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -366,8 +406,9 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Enable advection of particles using cell-averaged fluid velocity and acceleration. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00464">464</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00626">626</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -384,8 +425,9 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Function returning the weight of a cell based on its barycenter position. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00409">409</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00559">559</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -403,7 +445,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00405">405</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p>Frequency of particle-particle and particle-wall contact detection. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00555">555</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -420,6 +464,7 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Contact detection method used in the simulation. </p>
 
 </div>
 </div>
@@ -437,7 +482,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00475">475</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p>Disable position integration for particles. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00637">637</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -455,7 +502,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00435">435</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p>Cut-off threshold beyond which Van der Waals forces are ignored. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00593">593</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -473,7 +522,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00421">421</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p>Safety factor for dynamic contact search. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00573">573</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -491,7 +542,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00402">402</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p>Check frequency for dynamic load balancing. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00552">552</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -509,7 +562,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00447">447</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p>Model parameter for the EPSD rolling resistance model. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00605">605</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -526,8 +581,9 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Minimum granular temperature for cells where particle contacts are evaluated. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00468">468</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00630">630</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -544,8 +600,9 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Factor applied to particle weight for inactive cells in load balancing (only used with adaptive sparse contacts). </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00418">418</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00570">570</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -563,6 +620,8 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
+<p>Time integration method for particle motion. </p>
+
 </div>
 </div>
 <a id="aa3861b53f80779ff98ddb3bdd57e047e" name="aa3861b53f80779ff98ddb3bdd57e047e"></a>
@@ -579,7 +638,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00396">396</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p>Load balance frequency (in time steps). </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00546">546</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -596,6 +657,7 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Load balancing strategy for parallel <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> simulations. </p>
 
 </div>
 </div>
@@ -613,7 +675,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00412">412</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p>Particle weight used for load balancing. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00562">562</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -631,7 +695,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00393">393</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p>Load balance step (for single-step load balancing). </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00543">543</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -649,7 +715,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00399">399</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p>Load balance threshold (for dynamic load balancing). </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00549">549</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -666,8 +734,9 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Contact search neighborhood threshold (neighborhood diameter to particle diameter ratio). </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00432">432</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00590">590</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -685,7 +754,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00438">438</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p>Particle-particle contact force model. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00596">596</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -703,7 +774,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00441">441</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p>Particle-wall contact force model. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00599">599</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -721,7 +794,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00444">444</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p>Rolling resistance torque method. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00602">602</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -738,8 +813,9 @@ template&lt;int dim&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Maximum solid fraction for cells where particle contacts are always evaluated regardless of granular temperature. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00472">472</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00634">634</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -757,7 +833,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00457">457</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p>Solver type (<a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a>, CFD-DEM, or <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> multiphysics). </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00619">619</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
@@ -775,7 +853,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00460">460</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+<p>Enable sparse particle contacts to optimize performance. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00622">622</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>

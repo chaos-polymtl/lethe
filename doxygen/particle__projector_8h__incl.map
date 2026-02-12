@@ -1,6 +1,6 @@
 <map id="/home/runner/work/lethe/lethe/include/fem&#45;dem/particle_projector.h" name="/home/runner/work/lethe/lethe/include/fem&#45;dem/particle_projector.h">
 <area shape="rect" id="Node000001" title=" " alt="" coords="3483,5,3665,60"/>
-<area shape="rect" id="Node000002" href="$parameters__cfd__dem_8h.html" title=" " alt="" coords="2611,284,2767,324"/>
+<area shape="rect" id="Node000002" href="$parameters__cfd__dem_8h.html" title="Parameter structures for CFD&#45;DEM coupled simulations." alt="" coords="2611,284,2767,324"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="3572,61,3562,102,3543,151,3515,199,3496,220,3474,238,3431,252,3356,262,3149,274,2931,281,2780,287,2780,282,2931,276,3149,269,3355,257,3430,247,3471,234,3492,217,3510,196,3538,148,3556,100,3567,60"/>
 <area shape="rect" id="Node000005" href="$vector_8h.html" title=" " alt="" coords="563,115,670,141"/>
 <area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="3482,39,2504,65,1063,111,684,126,684,121,1063,105,2504,60,3482,34"/>
@@ -57,7 +57,7 @@
 <area shape="poly" id="edge13_Node000012_Node000013" title=" " alt="" coords="2309,136,2222,142,2129,154,2047,173,2015,184,1993,198,1979,215,1970,236,1962,278,1957,277,1965,235,1975,213,1990,194,2013,180,2045,167,2128,149,2222,137,2308,130"/>
 <area shape="rect" id="Node000014" href="$parameters_8h.html" title=" " alt="" coords="2427,379,2569,405"/>
 <area shape="poly" id="edge20_Node000012_Node000014" title=" " alt="" coords="2309,138,2240,145,2170,157,2110,175,2088,186,2073,198,2068,206,2068,215,2074,235,2084,264,2095,286,2111,304,2135,322,2185,341,2257,358,2414,380,2413,385,2256,363,2183,346,2133,326,2107,308,2091,289,2079,266,2069,237,2062,215,2063,205,2069,194,2085,181,2108,170,2169,152,2240,140,2308,132"/>
-<area shape="rect" id="Node000017" href="$dem__properties_8h.html" title=" " alt="" coords="1754,203,1922,229"/>
+<area shape="rect" id="Node000017" href="$dem__properties_8h.html" title="DEM particle property definitions and output name management." alt="" coords="1754,203,1922,229"/>
 <area shape="poly" id="edge19_Node000012_Node000017" title=" " alt="" coords="2309,143,1941,199,1913,203,1912,198,1940,193,2308,138"/>
 <area shape="rect" id="Node000052" href="$physical__property__model_8h.html" title=" " alt="" coords="2146,284,2317,324"/>
 <area shape="poly" id="edge21_Node000012_Node000052" title=" " alt="" coords="2309,139,2244,147,2178,159,2122,176,2102,186,2088,198,2081,210,2081,221,2085,231,2094,242,2121,261,2156,277,2154,282,2119,265,2090,246,2080,234,2076,221,2076,208,2084,194,2099,182,2120,171,2177,154,2243,141,2308,133"/>
@@ -110,7 +110,7 @@
 <area shape="poly" id="edge49_Node000094_Node000096" title=" " alt="" coords="3612,236,3619,277,3635,323,3651,347,3668,368,3664,371,3646,350,3630,325,3614,278,3607,237"/>
 <area shape="rect" id="Node000098" href="$manifolds_8h.html" title=" " alt="" coords="3645,291,3775,317"/>
 <area shape="poly" id="edge53_Node000094_Node000098" title=" " alt="" coords="3632,234,3687,280,3683,284,3628,238"/>
-<area shape="rect" id="Node000100" href="$solid__objects__parameters_8h.html" title=" " alt="" coords="3117,284,3255,324"/>
+<area shape="rect" id="Node000100" href="$solid__objects__parameters_8h.html" title="Parameter classes for solid objects used in Nitsche immersed boundary and DEM simulations." alt="" coords="3117,284,3255,324"/>
 <area shape="poly" id="edge58_Node000094_Node000100" title=" " alt="" coords="3536,235,3517,239,3269,287,3269,287,3268,281,3268,281,3516,233,3535,230"/>
 <area shape="rect" id="Node000101" href="$analytical__solutions_8h.html" title=" " alt="" coords="3280,284,3417,324"/>
 <area shape="poly" id="edge62_Node000094_Node000101" title=" " alt="" coords="3551,239,3419,282,3418,277,3550,234"/>

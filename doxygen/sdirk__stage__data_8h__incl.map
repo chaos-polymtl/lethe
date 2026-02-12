@@ -16,12 +16,12 @@
 <area shape="poly" id="edge47_Node000002_Node000013" title=" " alt="" coords="1839,135,1826,153,1815,176,1811,199,1813,210,1818,219,1840,230,1890,246,2047,285,2385,359,2383,364,2046,290,1889,251,1838,235,1814,223,1808,212,1806,199,1810,174,1822,151,1835,132"/>
 <area shape="rect" id="Node000038" title=" " alt="" coords="1547,269,1693,309"/>
 <area shape="poly" id="edge49_Node000002_Node000038" title=" " alt="" coords="1833,136,1659,263,1656,259,1830,131"/>
-<area shape="rect" id="Node000039" href="$multiphysics_8h.html" title=" " alt="" coords="1828,189,1977,214"/>
+<area shape="rect" id="Node000039" href="$multiphysics_8h.html" title="Identifiers for multiphysics modules and their solution fields." alt="" coords="1828,189,1977,214"/>
 <area shape="poly" id="edge46_Node000002_Node000039" title=" " alt="" coords="1857,132,1889,176,1884,179,1853,135"/>
 <area shape="rect" id="Node000040" title=" " alt="" coords="2002,181,2219,221"/>
 <area shape="poly" id="edge50_Node000002_Node000040" title=" " alt="" coords="1886,131,2035,175,2034,180,1884,136"/>
 <area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="2888,300,2936,347,2970,374,3008,395,3049,411,3084,422,3148,430,3216,433,3301,442,3300,448,3215,439,3148,436,3083,427,3047,416,3006,400,2967,378,2933,352,2884,304"/>
-<area shape="rect" id="Node000006" href="$dem__properties_8h.html" title=" " alt="" coords="93,365,261,390"/>
+<area shape="rect" id="Node000006" href="$dem__properties_8h.html" title="DEM particle property definitions and output name management." alt="" coords="93,365,261,390"/>
 <area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="798,207,673,213,523,225,380,244,323,257,281,272,254,289,230,311,194,355,190,351,226,307,251,285,279,267,322,251,379,239,522,220,673,208,798,202"/>
 <area shape="poly" id="edge45_Node000005_Node000008" title=" " alt="" coords="798,209,497,230,338,248,273,259,225,272,178,287,141,300,111,321,84,358,78,379,81,400,90,421,101,440,97,443,85,424,76,402,73,379,79,356,107,318,139,296,176,282,223,267,272,254,337,243,496,224,797,203"/>
 <area shape="rect" id="Node000009" href="$shape_8h.html" title=" " alt="" coords="1297,277,1402,302"/>

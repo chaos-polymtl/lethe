@@ -318,8 +318,7 @@ Functions</h2></td></tr>
 <tr class="separator:abf9a3d883f67a19bea80ba4d93ad1c1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>The analytical solution class provides an interface for all common elementS required for the calculation of analytical solution All equation-specific analytical solution should derive from the base class but also call it's declare_parameters and parse_parameters routine. This allows specialize class to focus on their specificity and forget about other non-specific elements that are generic to the calculation of analytical solutions</p>
-<p>Drift velocity that is added to the tracer velocity to account for simplified multiphase simulations using drift-flux modeling. </p>
+<div class="textblock"><p>Drift velocity that is added to the tracer velocity to account for simplified multiphase simulations using drift-flux modeling. </p>
 </div><h2 class="groupheader">Enumeration Type Documentation</h2>
 <a id="ab888bbb141fede015eec33a09e2a5e46" name="ab888bbb141fede015eec33a09e2a5e46"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab888bbb141fede015eec33a09e2a5e46">&#9670;&#160;</a></span>DragCoupling</h2>
@@ -349,12 +348,15 @@ Functions</h2></td></tr>
 <li><b>fully_explicit</b>: The drag is evaluated entirely using known quantities from the previous time step. The outcome conditionally stable and may require very small coupling time step when the density of the fluid is much lower than the density of the particles </li>
 </ul>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ab888bbb141fede015eec33a09e2a5e46a555ede1f7c02f9ecb183480feb7ae143" name="ab888bbb141fede015eec33a09e2a5e46a555ede1f7c02f9ecb183480feb7ae143"></a>fully_implicit&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="ab888bbb141fede015eec33a09e2a5e46a39bb015dfcfb544585920f86387836b7" name="ab888bbb141fede015eec33a09e2a5e46a39bb015dfcfb544585920f86387836b7"></a>semi_implicit&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="ab888bbb141fede015eec33a09e2a5e46a85e3a2ea2c77a301661f94bdd824138f" name="ab888bbb141fede015eec33a09e2a5e46a85e3a2ea2c77a301661f94bdd824138f"></a>fully_explicit&#160;</td><td class="fielddoc"></td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ab888bbb141fede015eec33a09e2a5e46a555ede1f7c02f9ecb183480feb7ae143" name="ab888bbb141fede015eec33a09e2a5e46a555ede1f7c02f9ecb183480feb7ae143"></a>fully_implicit&#160;</td><td class="fielddoc"><p>Fully implicit drag coupling. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ab888bbb141fede015eec33a09e2a5e46a39bb015dfcfb544585920f86387836b7" name="ab888bbb141fede015eec33a09e2a5e46a39bb015dfcfb544585920f86387836b7"></a>semi_implicit&#160;</td><td class="fielddoc"><p>Semi-implicit drag coupling. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ab888bbb141fede015eec33a09e2a5e46a85e3a2ea2c77a301661f94bdd824138f" name="ab888bbb141fede015eec33a09e2a5e46a85e3a2ea2c77a301661f94bdd824138f"></a>fully_explicit&#160;</td><td class="fielddoc"><p>Explicit drag coupling. </p>
+</td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__cfd__dem_8h_source.html#l00081">81</a> of file <a class="el" href="parameters__cfd__dem_8h_source.html">parameters_cfd_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__cfd__dem_8h_source.html#l00103">103</a> of file <a class="el" href="parameters__cfd__dem_8h_source.html">parameters_cfd_dem.h</a>.</p>
 
 </div>
 </div>
@@ -377,16 +379,24 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Drag force model for particle-fluid interaction in CFD-DEM. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a8b408c8f42632c3dd96b69b720ace6f6ab1f1e7a3c1ddcf75366181531f51873a" name="a8b408c8f42632c3dd96b69b720ace6f6ab1f1e7a3c1ddcf75366181531f51873a"></a>difelice&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a8b408c8f42632c3dd96b69b720ace6f6a08279be0e2c1aba70f92cd04058b995a" name="a8b408c8f42632c3dd96b69b720ace6f6a08279be0e2c1aba70f92cd04058b995a"></a>rong&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a8b408c8f42632c3dd96b69b720ace6f6a0d3593f2d6bf48e3e2700f0bc2a1e970" name="a8b408c8f42632c3dd96b69b720ace6f6a0d3593f2d6bf48e3e2700f0bc2a1e970"></a>dallavalle&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a8b408c8f42632c3dd96b69b720ace6f6a9e42d27391c1851954ee4d7795d713cf" name="a8b408c8f42632c3dd96b69b720ace6f6a9e42d27391c1851954ee4d7795d713cf"></a>kochhill&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a8b408c8f42632c3dd96b69b720ace6f6a8efa8d4f5786679eabd0fdb325bad76b" name="a8b408c8f42632c3dd96b69b720ace6f6a8efa8d4f5786679eabd0fdb325bad76b"></a>beetstra&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a8b408c8f42632c3dd96b69b720ace6f6a5b11eff46b4ff2d0e186789cb3a402ed" name="a8b408c8f42632c3dd96b69b720ace6f6a5b11eff46b4ff2d0e186789cb3a402ed"></a>gidaspow&#160;</td><td class="fielddoc"></td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a8b408c8f42632c3dd96b69b720ace6f6ab1f1e7a3c1ddcf75366181531f51873a" name="a8b408c8f42632c3dd96b69b720ace6f6ab1f1e7a3c1ddcf75366181531f51873a"></a>difelice&#160;</td><td class="fielddoc"><p>Di Felice. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a8b408c8f42632c3dd96b69b720ace6f6a08279be0e2c1aba70f92cd04058b995a" name="a8b408c8f42632c3dd96b69b720ace6f6a08279be0e2c1aba70f92cd04058b995a"></a>rong&#160;</td><td class="fielddoc"><p>Rong. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a8b408c8f42632c3dd96b69b720ace6f6a0d3593f2d6bf48e3e2700f0bc2a1e970" name="a8b408c8f42632c3dd96b69b720ace6f6a0d3593f2d6bf48e3e2700f0bc2a1e970"></a>dallavalle&#160;</td><td class="fielddoc"><p>Dallavalle - Valid only for dilute flows. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a8b408c8f42632c3dd96b69b720ace6f6a9e42d27391c1851954ee4d7795d713cf" name="a8b408c8f42632c3dd96b69b720ace6f6a9e42d27391c1851954ee4d7795d713cf"></a>kochhill&#160;</td><td class="fielddoc"><p>Koch-Hill. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a8b408c8f42632c3dd96b69b720ace6f6a8efa8d4f5786679eabd0fdb325bad76b" name="a8b408c8f42632c3dd96b69b720ace6f6a8efa8d4f5786679eabd0fdb325bad76b"></a>beetstra&#160;</td><td class="fielddoc"><p>Beetstra. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a8b408c8f42632c3dd96b69b720ace6f6a5b11eff46b4ff2d0e186789cb3a402ed" name="a8b408c8f42632c3dd96b69b720ace6f6a5b11eff46b4ff2d0e186789cb3a402ed"></a>gidaspow&#160;</td><td class="fielddoc"><p>Gidaspow. </p>
+</td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__cfd__dem_8h_source.html#l00036">36</a> of file <a class="el" href="parameters__cfd__dem_8h_source.html">parameters_cfd_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__cfd__dem_8h_source.html#l00052">52</a> of file <a class="el" href="parameters__cfd__dem_8h_source.html">parameters_cfd_dem.h</a>.</p>
 
 </div>
 </div>
@@ -674,12 +684,16 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Thermal boundary condition type applied on a solid object surface. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a4ececd73effa2abc7b6af12a2a10c960a62c6c14d8d0f4dd91221bce9ffdc8b1d" name="a4ececd73effa2abc7b6af12a2a10c960a62c6c14d8d0f4dd91221bce9ffdc8b1d"></a>adiabatic&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a4ececd73effa2abc7b6af12a2a10c960a7dd5f69c3c0085154fe93e890bb26caf" name="a4ececd73effa2abc7b6af12a2a10c960a7dd5f69c3c0085154fe93e890bb26caf"></a>isothermal&#160;</td><td class="fielddoc"></td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a4ececd73effa2abc7b6af12a2a10c960a62c6c14d8d0f4dd91221bce9ffdc8b1d" name="a4ececd73effa2abc7b6af12a2a10c960a62c6c14d8d0f4dd91221bce9ffdc8b1d"></a>adiabatic&#160;</td><td class="fielddoc"><p>No heat flux through the solid boundary. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a4ececd73effa2abc7b6af12a2a10c960a7dd5f69c3c0085154fe93e890bb26caf" name="a4ececd73effa2abc7b6af12a2a10c960a7dd5f69c3c0085154fe93e890bb26caf"></a>isothermal&#160;</td><td class="fielddoc"><p>Fixed temperature imposed on the solid boundary. </p>
+</td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="solid__objects__parameters_8h_source.html#l00016">16</a> of file <a class="el" href="solid__objects__parameters_8h_source.html">solid_objects_parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="solid__objects__parameters_8h_source.html#l00034">34</a> of file <a class="el" href="solid__objects__parameters_8h_source.html">solid_objects_parameters.h</a>.</p>
 
 </div>
 </div>
@@ -702,12 +716,16 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Volume-Averaged Navier-Stokes (VANS) model formulation. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a885ce66c74635a68dd078d94aedddac6aaab653aeeee220006e2b9f692569492c" name="a885ce66c74635a68dd078d94aedddac6aaab653aeeee220006e2b9f692569492c"></a>modelA&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a885ce66c74635a68dd078d94aedddac6ab35bb34924c70e61eec8a8bae8cac690" name="a885ce66c74635a68dd078d94aedddac6ab35bb34924c70e61eec8a8bae8cac690"></a>modelB&#160;</td><td class="fielddoc"></td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a885ce66c74635a68dd078d94aedddac6aaab653aeeee220006e2b9f692569492c" name="a885ce66c74635a68dd078d94aedddac6aaab653aeeee220006e2b9f692569492c"></a>modelA&#160;</td><td class="fielddoc"><p>Model A: volume-averaged continuity and momentum equations. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a885ce66c74635a68dd078d94aedddac6ab35bb34924c70e61eec8a8bae8cac690" name="a885ce66c74635a68dd078d94aedddac6ab35bb34924c70e61eec8a8bae8cac690"></a>modelB&#160;</td><td class="fielddoc"><p>Model B: alternative VANS formulation. </p>
+</td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__cfd__dem_8h_source.html#l00089">89</a> of file <a class="el" href="parameters__cfd__dem_8h_source.html">parameters_cfd_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__cfd__dem_8h_source.html#l00117">117</a> of file <a class="el" href="parameters__cfd__dem_8h_source.html">parameters_cfd_dem.h</a>.</p>
 
 </div>
 </div>
@@ -788,14 +806,20 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Method used to compute the void fraction field. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a59bccd897a552f378b3da967e9fa803fac1c425268e68385d1ab5074c17a94f14" name="a59bccd897a552f378b3da967e9fa803fac1c425268e68385d1ab5074c17a94f14"></a>function&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a59bccd897a552f378b3da967e9fa803faec5c8103218f27aa6ecfd3f11e1a6b45" name="a59bccd897a552f378b3da967e9fa803faec5c8103218f27aa6ecfd3f11e1a6b45"></a>pcm&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a59bccd897a552f378b3da967e9fa803fa68bf09624358e484ec7c4880e70a8ba1" name="a59bccd897a552f378b3da967e9fa803fa68bf09624358e484ec7c4880e70a8ba1"></a>qcm&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a59bccd897a552f378b3da967e9fa803fa51762626b4f785729159fd35eea74deb" name="a59bccd897a552f378b3da967e9fa803fa51762626b4f785729159fd35eea74deb"></a>spm&#160;</td><td class="fielddoc"></td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a59bccd897a552f378b3da967e9fa803fac1c425268e68385d1ab5074c17a94f14" name="a59bccd897a552f378b3da967e9fa803fac1c425268e68385d1ab5074c17a94f14"></a>function&#160;</td><td class="fielddoc"><p>Void fraction prescribed by an analytical function. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a59bccd897a552f378b3da967e9fa803faec5c8103218f27aa6ecfd3f11e1a6b45" name="a59bccd897a552f378b3da967e9fa803faec5c8103218f27aa6ecfd3f11e1a6b45"></a>pcm&#160;</td><td class="fielddoc"><p>Particle centered method. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a59bccd897a552f378b3da967e9fa803fa68bf09624358e484ec7c4880e70a8ba1" name="a59bccd897a552f378b3da967e9fa803fa68bf09624358e484ec7c4880e70a8ba1"></a>qcm&#160;</td><td class="fielddoc"><p>Quadrature centered method. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a59bccd897a552f378b3da967e9fa803fa51762626b4f785729159fd35eea74deb" name="a59bccd897a552f378b3da967e9fa803fa51762626b4f785729159fd35eea74deb"></a>spm&#160;</td><td class="fielddoc"><p>Satellite point method (divided approach). </p>
+</td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__cfd__dem_8h_source.html#l00022">22</a> of file <a class="el" href="parameters__cfd__dem_8h_source.html">parameters_cfd_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__cfd__dem_8h_source.html#l00026">26</a> of file <a class="el" href="parameters__cfd__dem_8h_source.html">parameters_cfd_dem.h</a>.</p>
 
 </div>
 </div>
@@ -818,12 +842,16 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Quadrature rule used for void fraction integration. </p>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a3c3b515caf96bc00d4181a1085dfdb84a710a4950250286365cf841f765a790f1" name="a3c3b515caf96bc00d4181a1085dfdb84a710a4950250286365cf841f765a790f1"></a>gauss&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a3c3b515caf96bc00d4181a1085dfdb84a9a8a1f8739356c62c5da46aef8be53fb" name="a3c3b515caf96bc00d4181a1085dfdb84a9a8a1f8739356c62c5da46aef8be53fb"></a>gauss_lobatto&#160;</td><td class="fielddoc"></td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a3c3b515caf96bc00d4181a1085dfdb84a710a4950250286365cf841f765a790f1" name="a3c3b515caf96bc00d4181a1085dfdb84a710a4950250286365cf841f765a790f1"></a>gauss&#160;</td><td class="fielddoc"><p>Gauss quadrature rule (default). </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3c3b515caf96bc00d4181a1085dfdb84a9a8a1f8739356c62c5da46aef8be53fb" name="a3c3b515caf96bc00d4181a1085dfdb84a9a8a1f8739356c62c5da46aef8be53fb"></a>gauss_lobatto&#160;</td><td class="fielddoc"><p>Gauss-Lobatto quadrature rule. </p>
+</td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__cfd__dem_8h_source.html#l00030">30</a> of file <a class="el" href="parameters__cfd__dem_8h_source.html">parameters_cfd_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__cfd__dem_8h_source.html#l00041">41</a> of file <a class="el" href="parameters__cfd__dem_8h_source.html">parameters_cfd_dem.h</a>.</p>
 
 </div>
 </div>

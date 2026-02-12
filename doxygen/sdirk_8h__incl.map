@@ -14,12 +14,12 @@
 <area shape="poly" id="edge47_Node000002_Node000013" title=" " alt="" coords="1538,117,1589,161,1624,185,1662,204,1790,251,1902,280,2002,296,2098,304,2300,312,2417,321,2554,340,2581,345,2580,350,2554,345,2417,326,2299,317,2098,309,2002,302,1901,286,1789,256,1660,209,1621,189,1586,165,1534,121"/>
 <area shape="rect" id="Node000038" title=" " alt="" coords="1452,255,1597,295"/>
 <area shape="poly" id="edge49_Node000002_Node000038" title=" " alt="" coords="1527,119,1527,241,1522,241,1522,119"/>
-<area shape="rect" id="Node000039" href="$multiphysics_8h.html" title=" " alt="" coords="1673,174,1822,199"/>
+<area shape="rect" id="Node000039" href="$multiphysics_8h.html" title="Identifiers for multiphysics modules and their solution fields." alt="" coords="1673,174,1822,199"/>
 <area shape="poly" id="edge46_Node000002_Node000039" title=" " alt="" coords="1558,116,1703,167,1701,172,1556,121"/>
 <area shape="rect" id="Node000040" title=" " alt="" coords="1847,167,2064,207"/>
 <area shape="poly" id="edge50_Node000002_Node000040" title=" " alt="" coords="1588,116,1839,162,1838,167,1587,121"/>
 <area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="96,286,186,418,182,421,92,289"/>
-<area shape="rect" id="Node000006" href="$dem__properties_8h.html" title=" " alt="" coords="293,350,461,375"/>
+<area shape="rect" id="Node000006" href="$dem__properties_8h.html" title="DEM particle property definitions and output name management." alt="" coords="293,350,461,375"/>
 <area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="869,195,658,216,553,234,512,245,481,257,454,275,430,296,394,340,389,337,426,293,450,270,478,252,510,240,552,229,657,211,869,190"/>
 <area shape="rect" id="Node000008" title=" " alt="" coords="345,438,408,463"/>
 <area shape="poly" id="edge45_Node000005_Node000008" title=" " alt="" coords="869,190,779,194,666,204,544,224,483,239,424,257,377,272,341,286,310,307,283,344,277,363,283,381,306,409,336,430,334,434,303,413,278,384,272,363,278,341,307,303,338,281,376,267,423,252,482,234,543,219,666,199,778,189,869,185"/>

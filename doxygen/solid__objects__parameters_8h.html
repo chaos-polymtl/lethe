@@ -100,7 +100,7 @@ Include dependency graph for solid_objects_parameters.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="solid__objects__parameters_8h__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2include_2core_2solid__objects__parameters_8h" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2solid__objects__parameters_8h" id="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2solid__objects__parameters_8h">
-<area shape="rect" title=" " alt="" coords="2338,5,2520,60"/>
+<area shape="rect" title="Parameter classes for solid objects used in Nitsche immersed boundary and DEM simulations." alt="" coords="2338,5,2520,60"/>
 <area shape="rect" href="parameters_8h.html" title=" " alt="" coords="2358,108,2500,133"/>
 <area shape="poly" title=" " alt="" coords="2432,60,2432,94,2426,94,2426,60"/>
 <area shape="rect" title=" " alt="" coords="3320,445,3490,485"/>
@@ -115,12 +115,12 @@ Include dependency graph for solid_objects_parameters.h:</div>
 <area shape="rect" href="utilities_8h.html" title=" " alt="" coords="2324,365,2438,390"/>
 <area shape="poly" title=" " alt="" coords="2481,131,2520,149,2537,163,2551,180,2558,201,2551,222,2524,267,2488,306,2450,337,2415,360,2412,355,2447,333,2485,302,2520,264,2547,220,2553,201,2547,183,2534,167,2517,154,2479,136"/>
 <area shape="poly" title=" " alt="" coords="2358,125,2306,129,2248,139,2190,157,2136,184,2116,199,2100,218,2075,258,2070,256,2095,215,2113,196,2133,179,2188,152,2247,134,2306,124,2358,119"/>
-<area shape="rect" href="multiphysics_8h.html" title=" " alt="" coords="2146,189,2296,214"/>
+<area shape="rect" href="multiphysics_8h.html" title="Identifiers for multiphysics modules and their solution fields." alt="" coords="2146,189,2296,214"/>
 <area shape="poly" title=" " alt="" coords="2400,136,2265,186,2263,181,2398,131"/>
 <area shape="rect" title=" " alt="" coords="2320,181,2538,221"/>
 <area shape="poly" title=" " alt="" coords="2432,134,2432,168,2426,168,2426,134"/>
 <area shape="poly" title=" " alt="" coords="3134,300,3363,436,3360,441,3131,304"/>
-<area shape="rect" href="dem__properties_8h.html" title=" " alt="" coords="24,365,192,390"/>
+<area shape="rect" href="dem__properties_8h.html" title="DEM particle property definitions and output name management." alt="" coords="24,365,192,390"/>
 <area shape="poly" title=" " alt="" coords="712,208,591,214,445,226,307,244,252,257,212,272,185,289,161,311,125,355,120,351,157,307,181,285,209,267,251,252,306,239,444,220,590,208,712,202"/>
 <area shape="rect" title=" " alt="" coords="76,453,139,478"/>
 <area shape="poly" title=" " alt="" coords="712,209,419,230,265,248,202,260,155,272,108,287,71,300,41,321,14,359,8,377,14,396,37,424,68,444,65,449,34,428,9,399,3,377,9,356,38,318,69,296,107,282,154,267,201,254,264,243,419,225,712,203"/>
@@ -198,7 +198,7 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="solid__objects__parameters_8h__dep__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2include_2core_2solid__objects__parameters_8hdep" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2solid__objects__parameters_8hdep" id="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2solid__objects__parameters_8hdep">
-<area shape="rect" title=" " alt="" coords="4140,5,4323,60"/>
+<area shape="rect" title="Parameter classes for solid objects used in Nitsche immersed boundary and DEM simulations." alt="" coords="4140,5,4323,60"/>
 <area shape="rect" href="serial__solid_8h.html" title=" " alt="" coords="3389,108,3572,163"/>
 <area shape="poly" title=" " alt="" coords="4127,51,3573,124,3572,119,4126,45"/>
 <area shape="rect" href="solid__base_8h.html" title=" " alt="" coords="4140,108,4323,163"/>
@@ -362,7 +362,17 @@ Enumerations</h2></td></tr>
  }</td></tr>
 <tr class="separator:a4ececd73effa2abc7b6af12a2a10c960"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-</div><!-- contents -->
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Parameter classes for solid objects used in Nitsche immersed boundary and <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> simulations. </p>
+<p>This file defines the parameter structures for configuring solid objects within Lethe simulations. It provides three levels of solid object management:</p><ul>
+<li>NitscheObject: individual solid for the Nitsche immersed boundary method.</li>
+<li>Nitsche: container managing multiple NitscheObject instances.</li>
+<li>RigidSolidObject: individual rigid solid for <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> simulations.</li>
+<li>DEMSolidObjects: container managing multiple RigidSolidObject instances as surfaces and volumes. </li>
+</ul>
+
+<p class="definition">Definition in file <a class="el" href="solid__objects__parameters_8h_source.html">solid_objects_parameters.h</a>.</p>
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8

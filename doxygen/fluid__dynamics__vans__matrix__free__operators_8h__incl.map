@@ -71,7 +71,7 @@
 <area shape="poly" id="edge30_Node000053_Node000057" title=" " alt="" coords="2283,246,2218,253,1990,271,1812,278,1634,284,1406,301,1341,309,1341,303,1406,296,1634,279,1812,273,1990,266,2218,248,2282,240"/>
 <area shape="rect" id="Node000059" href="$parameters__multiphysics_8h.html" title=" " alt="" coords="1688,306,1919,331"/>
 <area shape="poly" id="edge34_Node000053_Node000059" title=" " alt="" coords="2283,250,2264,253,2074,283,1906,307,1906,302,2073,278,2263,248,2282,245"/>
-<area shape="rect" id="Node000061" href="$solid__objects__parameters_8h.html" title=" " alt="" coords="2523,299,2662,339"/>
+<area shape="rect" id="Node000061" href="$solid__objects__parameters_8h.html" title="Parameter classes for solid objects used in Nitsche immersed boundary and DEM simulations." alt="" coords="2523,299,2662,339"/>
 <area shape="poly" id="edge37_Node000053_Node000061" title=" " alt="" coords="2407,248,2528,291,2526,296,2405,253"/>
 <area shape="rect" id="Node000062" href="$analytical__solutions_8h.html" title=" " alt="" coords="2687,299,2824,339"/>
 <area shape="poly" id="edge39_Node000053_Node000062" title=" " alt="" coords="2426,245,2439,248,2674,296,2673,301,2437,253,2425,251"/>
@@ -97,7 +97,7 @@
 <area shape="poly" id="edge67_Node000094_Node000058" title=" " alt="" coords="813,150,663,158,498,170,358,188,311,200,286,213,266,243,259,274,266,305,287,337,310,354,345,369,389,380,439,388,547,399,645,403,645,408,547,404,439,394,388,385,343,374,307,359,283,340,261,307,254,274,261,241,283,209,309,195,357,183,497,165,663,152,813,145"/>
 <area shape="poly" id="edge66_Node000094_Node000060" title=" " alt="" coords="813,149,630,160,531,173,439,191,364,215,336,230,315,247,304,266,301,287,310,310,330,337,353,346,400,354,556,366,769,373,1010,377,1468,381,1709,384,1741,389,1740,394,1708,389,1468,386,1010,383,769,378,556,371,400,359,351,351,327,341,305,313,296,287,299,264,311,244,333,226,362,210,438,185,530,167,629,155,812,143"/>
 <area shape="poly" id="edge75_Node000094_Node000089" title=" " alt="" coords="1024,141,1215,145,1471,155,1761,175,1911,189,2058,208,2058,213,1910,195,1761,180,1470,160,1215,150,1024,147"/>
-<area shape="rect" id="Node000095" href="$parameters__cfd__dem_8h.html" title=" " alt="" coords="341,299,497,339"/>
+<area shape="rect" id="Node000095" href="$parameters__cfd__dem_8h.html" title="Parameter structures for CFD&#45;DEM coupled simulations." alt="" coords="341,299,497,339"/>
 <area shape="poly" id="edge53_Node000094_Node000095" title=" " alt="" coords="813,149,713,155,608,166,516,185,481,198,456,213,442,228,433,247,424,286,418,284,428,245,438,225,452,209,478,193,515,180,608,161,713,150,812,144"/>
 <area shape="rect" id="Node000096" href="$vector_8h.html" title=" " alt="" coords="679,218,786,243"/>
 <area shape="poly" id="edge54_Node000094_Node000096" title=" " alt="" coords="894,158,771,215,769,210,892,153"/>

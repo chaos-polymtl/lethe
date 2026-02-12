@@ -51,7 +51,7 @@
 <area shape="poly" id="edge21_Node000003_Node000044" title=" " alt="" coords="891,231,811,279,808,274,889,227"/>
 <area shape="rect" id="Node000047" title=" " alt="" coords="859,357,1034,397"/>
 <area shape="poly" id="edge38_Node000003_Node000047" title=" " alt="" coords="915,228,942,343,937,345,909,229"/>
-<area shape="rect" id="Node000048" href="$solid__objects__parameters_8h.html" title=" " alt="" coords="1192,357,1331,397"/>
+<area shape="rect" id="Node000048" href="$solid__objects__parameters_8h.html" title="Parameter classes for solid objects used in Nitsche immersed boundary and DEM simulations." alt="" coords="1192,357,1331,397"/>
 <area shape="poly" id="edge28_Node000003_Node000048" title=" " alt="" coords="919,227,948,267,969,289,993,307,1038,329,1086,346,1179,366,1178,371,1085,351,1036,334,991,312,966,293,944,270,914,231"/>
 <area shape="rect" id="Node000013" href="$tensors__and__points__dimension__manipulation_8h.html" title=" " alt="" coords="403,445,605,485"/>
 <area shape="poly" id="edge32_Node000003_Node000013" title=" " alt="" coords="839,222,789,228,733,240,677,258,626,286,589,319,559,359,535,399,519,434,514,432,530,396,554,356,585,316,622,282,675,253,732,234,788,223,839,217"/>
@@ -67,7 +67,7 @@
 <area shape="poly" id="edge7_Node000005_Node000008" title=" " alt="" coords="1112,476,1226,532,1223,537,1110,481"/>
 <area shape="rect" id="Node000041" title=" " alt="" coords="1343,621,1489,661"/>
 <area shape="poly" id="edge19_Node000005_Node000041" title=" " alt="" coords="1159,465,1208,471,1262,482,1316,502,1364,531,1381,548,1394,567,1410,607,1405,609,1389,570,1377,551,1361,535,1314,507,1261,487,1207,476,1159,470"/>
-<area shape="rect" id="Node000042" href="$multiphysics_8h.html" title=" " alt="" coords="592,541,741,566"/>
+<area shape="rect" id="Node000042" href="$multiphysics_8h.html" title="Identifiers for multiphysics modules and their solution fields." alt="" coords="592,541,741,566"/>
 <area shape="poly" id="edge10_Node000005_Node000042" title=" " alt="" coords="1030,481,754,536,733,540,732,535,753,531,1029,475"/>
 <area shape="poly" id="edge11_Node000005_Node000016" title=" " alt="" coords="1018,478,580,536,531,543,530,538,580,531,1017,473"/>
 <area shape="rect" id="Node000043" title=" " alt="" coords="766,533,983,573"/>

@@ -96,7 +96,7 @@ Include dependency graph for exceptions.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="exceptions_8h__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2include_2core_2exceptions_8h" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2exceptions_8h" id="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2exceptions_8h">
-<area shape="rect" title=" " alt="" coords="5,5,235,45"/>
+<area shape="rect" title="Common exception declarations shared across multiple solvers in Lethe." alt="" coords="5,5,235,45"/>
 <area shape="rect" title=" " alt="" coords="28,93,212,119"/>
 <area shape="poly" title=" " alt="" coords="123,46,123,79,117,79,117,46"/>
 </map>
@@ -106,7 +106,7 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="exceptions_8h__dep__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2include_2core_2exceptions_8hdep" alt=""/></div>
 <map name="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2exceptions_8hdep" id="a_2home_2runner_2work_2lethe_2lethe_2include_2core_2exceptions_8hdep">
-<area shape="rect" title=" " alt="" coords="855,5,1085,45"/>
+<area shape="rect" title="Common exception declarations shared across multiple solvers in Lethe." alt="" coords="855,5,1085,45"/>
 <area shape="rect" href="fluid__dynamics__matrix__based_8h.html" title=" " alt="" coords="525,299,708,368"/>
 <area shape="poly" title=" " alt="" coords="939,57,658,300,654,296,936,53"/>
 <area shape="rect" href="fluid__dynamics__matrix__free_8h.html" title=" " alt="" coords="861,306,1079,361"/>
@@ -243,7 +243,12 @@ Functions</h2></td></tr>
 <tr class="memitem:ab5d93ae5c63eea113e8c4fb89bfbad26" id="r_ab5d93ae5c63eea113e8c4fb89bfbad26"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="exceptions_8h.html#ab5d93ae5c63eea113e8c4fb89bfbad26">DeclException1</a> (NoSolidWarning, std::string,&lt;&lt; &quot;No solid defined: impossible to assemble nitsche restriction in &quot;&lt;&lt; arg1&lt;&lt; &quot; solver. Change the 'number of solids' parameter.&quot;)</td></tr>
 <tr class="separator:ab5d93ae5c63eea113e8c4fb89bfbad26"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Common exception declarations shared across multiple solvers in Lethe. </p>
+<p>This file defines deal.II-style exception macros used to report errors related to the Nitsche immersed boundary method across different solver types, avoiding code repetition. </p>
+
+<p class="definition">Definition in file <a class="el" href="exceptions_8h_source.html">exceptions.h</a>.</p>
+</div><h2 class="groupheader">Function Documentation</h2>
 <a id="ab5d93ae5c63eea113e8c4fb89bfbad26" name="ab5d93ae5c63eea113e8c4fb89bfbad26"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab5d93ae5c63eea113e8c4fb89bfbad26">&#9670;&#160;</a></span>DeclException1()</h2>
 
@@ -275,6 +280,14 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Exception raised when no solid is defined but the solver attempts to assemble a Nitsche restriction. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">arg1</td><td>Name of the solver in which the error occurred. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -315,6 +328,16 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Exception raised when a solver does not support Nitsche solid restriction but solids are defined in the parameter file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">arg1</td><td>Number of solids defined in the parameter file. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">arg2</td><td>Name of the current solver that does not support Nitsche. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">arg3</td><td>Name of the solver that should be used instead. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

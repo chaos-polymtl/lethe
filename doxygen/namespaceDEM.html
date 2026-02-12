@@ -245,13 +245,20 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Identifies which type of solver is used by the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> particles. </p>
+<p>This is used to determine which index layout of the ParticleHandler PropertyPool corresponds to which set of properties. Three solver types are currently supported:</p><ul>
+<li>dem: pure <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> simulation.</li>
+<li>cfd_dem: particles coupled to a CFD fluid solver (CFD-DEM), carrying additional properties for particle-fluid coupling.</li>
+<li>dem_mp: <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> multiphysics simulation with additional thermal properties. </li>
+</ul>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ace9d7c6b123aa13027ca7915f1fa4d16aea5ce725f8de00f8350574078f10dd6d" name="ace9d7c6b123aa13027ca7915f1fa4d16aea5ce725f8de00f8350574078f10dd6d"></a>dem&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="ace9d7c6b123aa13027ca7915f1fa4d16a78ae406074be6be7fab62b1c41b968dd" name="ace9d7c6b123aa13027ca7915f1fa4d16a78ae406074be6be7fab62b1c41b968dd"></a>cfd_dem&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="ace9d7c6b123aa13027ca7915f1fa4d16a8d58726e06de5bb4b84ce216f2e06b12" name="ace9d7c6b123aa13027ca7915f1fa4d16a8d58726e06de5bb4b84ce216f2e06b12"></a>dem_mp&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="dem__properties_8h_source.html#l00020">20</a> of file <a class="el" href="dem__properties_8h_source.html">dem_properties.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dem__properties_8h_source.html#l00033">33</a> of file <a class="el" href="dem__properties_8h_source.html">dem_properties.h</a>.</p>
 
 </div>
 </div>

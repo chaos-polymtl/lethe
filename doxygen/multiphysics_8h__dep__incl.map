@@ -1,5 +1,5 @@
 <map id="/home/runner/work/lethe/lethe/include/core/multiphysics.h" name="/home/runner/work/lethe/lethe/include/core/multiphysics.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="4082,5,4323,45"/>
+<area shape="rect" id="Node000001" title="Identifiers for multiphysics modules and their solution fields." alt="" coords="4082,5,4323,45"/>
 <area shape="rect" id="Node000002" href="$parameters_8h.html" title=" " alt="" coords="2199,93,2433,133"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="4068,35,2433,109,2433,104,4068,30"/>
 <area shape="rect" id="Node000064" href="$multiphysics__interface_8h.html" title=" " alt="" coords="3540,607,3727,661"/>
@@ -52,7 +52,7 @@
 <area shape="poly" id="edge101_Node000002_Node000060" title=" " alt="" coords="2446,118,2582,126,2724,139,2841,156,2881,167,2903,179,2912,194,2915,208,2912,222,2904,237,2893,251,2881,259,2857,266,2831,271,2804,286,2771,326,2732,387,2663,505,2659,502,2727,384,2767,323,2801,282,2829,266,2855,261,2879,254,2889,247,2899,235,2907,220,2910,208,2907,196,2900,183,2879,172,2840,162,2724,144,2582,132,2446,123"/>
 <area shape="rect" id="Node000160" href="$mortar__coupling__manager_8h.html" title=" " alt="" coords="3017,607,3207,661"/>
 <area shape="poly" id="edge51_Node000002_Node000160" title=" " alt="" coords="2446,112,2672,116,2931,126,3052,135,3155,146,3233,161,3259,169,3276,179,3291,195,3300,210,3307,241,3303,317,3303,430,3299,460,3289,488,3273,514,3254,538,3209,578,3164,609,3161,604,3206,574,3250,534,3269,511,3284,486,3294,459,3297,430,3297,317,3302,242,3296,212,3287,198,3273,183,3257,174,3231,166,3154,151,3051,140,2931,131,2672,121,2446,118"/>
-<area shape="rect" id="Node000162" href="$parameters__lagrangian_8h.html" title=" " alt="" coords="1439,181,1660,236"/>
+<area shape="rect" id="Node000162" href="$parameters__lagrangian_8h.html" title="Parameter structures for Lagrangian (DEM) particle simulations." alt="" coords="1439,181,1660,236"/>
 <area shape="poly" id="edge53_Node000002_Node000162" title=" " alt="" coords="2186,127,1950,150,1679,184,1661,187,1660,182,1678,179,1949,144,2186,122"/>
 <area shape="rect" id="Node000163" href="$dem__solver__parameters_8h.html" title=" " alt="" coords="1735,291,1918,346"/>
 <area shape="poly" id="edge95_Node000002_Node000163" title=" " alt="" coords="2186,125,2063,134,1937,147,1834,163,1800,173,1782,183,1775,195,1771,208,1776,236,1789,265,1806,290,1802,293,1784,267,1770,238,1766,207,1770,193,1778,179,1798,168,1833,158,1936,141,2063,128,2185,119"/>
@@ -78,7 +78,7 @@
 <area shape="poly" id="edge114_Node000002_Node000236" title=" " alt="" coords="2447,115,2690,123,2976,136,3228,155,3317,166,3370,179,3389,192,3400,206,3411,221,3428,234,3463,250,3494,260,3550,269,3608,272,3680,281,3750,296,3749,301,3680,287,3607,277,3549,274,3493,265,3461,255,3425,238,3407,225,3396,210,3386,196,3368,184,3316,171,3227,160,2976,142,2690,129,2446,121"/>
 <area shape="rect" id="Node000237" href="$solid__base_8h.html" title=" " alt="" coords="3441,291,3623,346"/>
 <area shape="poly" id="edge83_Node000002_Node000237" title=" " alt="" coords="2446,113,2785,119,3199,130,3394,139,3559,150,3676,163,3712,171,3731,179,3741,193,3743,208,3740,222,3732,238,3710,262,3684,281,3654,295,3624,305,3623,300,3652,290,3681,276,3707,258,3727,234,3735,220,3738,208,3736,195,3728,183,3711,176,3675,168,3558,155,3394,144,3199,136,2784,124,2446,119"/>
-<area shape="rect" id="Node000239" href="$solid__objects__parameters_8h.html" title=" " alt="" coords="2095,181,2278,236"/>
+<area shape="rect" id="Node000239" href="$solid__objects__parameters_8h.html" title="Parameter classes for solid objects used in Nitsche immersed boundary and DEM simulations." alt="" coords="2095,181,2278,236"/>
 <area shape="poly" id="edge85_Node000002_Node000239" title=" " alt="" coords="2280,143,2225,183,2222,179,2277,139"/>
 <area shape="rect" id="Node000241" href="$time__integration__utilities_8h.html" title=" " alt="" coords="4581,181,4763,236"/>
 <area shape="poly" id="edge91_Node000002_Node000241" title=" " alt="" coords="2446,114,2886,120,3483,133,4080,152,4329,165,4518,179,4581,187,4580,192,4517,184,4329,170,4080,158,3483,138,2886,126,2446,119"/>

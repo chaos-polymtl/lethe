@@ -24,9 +24,9 @@
 <area shape="poly" id="edge56_Node000001_Node000051" title=" " alt="" coords="3382,29,3704,50,3906,67,4111,91,4111,96,3905,73,3704,55,3381,34"/>
 <area shape="rect" id="Node000003" href="$parameters_8h.html" title=" " alt="" coords="504,269,645,295"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="700,128,671,152,641,183,612,222,590,258,585,255,608,219,637,180,667,149,696,124"/>
-<area shape="rect" id="Node000042" href="$parameters__lagrangian_8h.html" title=" " alt="" coords="651,189,869,214"/>
+<area shape="rect" id="Node000042" href="$parameters__lagrangian_8h.html" title="Parameter structures for Lagrangian (DEM) particle simulations." alt="" coords="651,189,869,214"/>
 <area shape="poly" id="edge40_Node000002_Node000042" title=" " alt="" coords="722,125,749,175,745,178,717,127"/>
-<area shape="rect" id="Node000043" href="$solid__objects__parameters_8h.html" title=" " alt="" coords="268,181,407,221"/>
+<area shape="rect" id="Node000043" href="$solid__objects__parameters_8h.html" title="Parameter classes for solid objects used in Nitsche immersed boundary and DEM simulations." alt="" coords="268,181,407,221"/>
 <area shape="poly" id="edge44_Node000002_Node000043" title=" " alt="" coords="664,129,420,184,419,179,662,123"/>
 <area shape="rect" id="Node000004" href="$dimensionality_8h.html" title=" " alt="" coords="43,438,205,463"/>
 <area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="504,285,442,288,370,298,295,316,225,345,199,363,176,384,141,428,137,425,172,381,196,359,223,340,294,311,369,293,441,283,504,280"/>
@@ -38,12 +38,12 @@
 <area shape="poly" id="edge36_Node000003_Node000014" title=" " alt="" coords="646,288,2020,428,2251,448,2432,461,2611,479,2840,516,2859,520,2858,525,2840,521,2611,484,2431,466,2251,454,2020,433,645,293"/>
 <area shape="rect" id="Node000039" title=" " alt="" coords="281,431,426,471"/>
 <area shape="poly" id="edge38_Node000003_Node000039" title=" " alt="" coords="618,292,655,311,672,324,685,341,693,363,691,374,685,384,659,410,633,425,606,431,578,433,517,429,483,429,446,433,440,434,439,429,445,428,483,423,517,423,578,427,605,426,631,420,656,406,681,381,686,372,688,363,680,344,668,328,652,315,615,297"/>
-<area shape="rect" id="Node000040" href="$multiphysics_8h.html" title=" " alt="" coords="280,350,429,375"/>
+<area shape="rect" id="Node000040" href="$multiphysics_8h.html" title="Identifiers for multiphysics modules and their solution fields." alt="" coords="280,350,429,375"/>
 <area shape="poly" id="edge35_Node000003_Node000040" title=" " alt="" coords="544,297,401,348,399,343,542,292"/>
 <area shape="rect" id="Node000041" title=" " alt="" coords="454,343,671,383"/>
 <area shape="poly" id="edge39_Node000003_Node000041" title=" " alt="" coords="576,295,570,329,565,329,570,294"/>
 <area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="134,462,224,594,220,597,130,465"/>
-<area shape="rect" id="Node000007" href="$dem__properties_8h.html" title=" " alt="" coords="2660,526,2828,551"/>
+<area shape="rect" id="Node000007" href="$dem__properties_8h.html" title="DEM particle property definitions and output name management." alt="" coords="2660,526,2828,551"/>
 <area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="933,365,1204,383,1622,415,2119,459,2628,516,2666,521,2665,527,2628,521,2118,465,1621,420,1204,389,933,371"/>
 <area shape="rect" id="Node000009" title=" " alt="" coords="2449,614,2511,639"/>
 <area shape="poly" id="edge34_Node000006_Node000009" title=" " alt="" coords="822,378,734,406,686,425,641,448,604,473,581,500,576,513,576,527,581,542,592,557,620,568,678,579,867,595,1129,607,1432,615,2038,622,2435,623,2435,628,2038,628,1432,621,1129,613,867,601,677,584,618,573,589,561,576,544,571,528,571,512,576,497,601,469,638,443,683,421,732,401,821,373"/>
