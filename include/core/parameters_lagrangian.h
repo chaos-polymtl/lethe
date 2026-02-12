@@ -878,10 +878,15 @@ namespace Parameters
        */
       enum class MotionType
       {
+        /// Translating grid at the velocity
+        /// GridMotion::grid_translational_velocity.
         translational,
+        /// Rotating grid at the speed GridMotion::grid_rotational_speed around
+        /// the GridMotion::grid_rotational_axis.
         rotational,
+        /// Static grid.
         none
-      } motion_type;
+      } motion_type; ///< Type of grid motion.
 
       /// Translational velocity of the moving grid.
       Tensor<1, dim> grid_translational_velocity;
