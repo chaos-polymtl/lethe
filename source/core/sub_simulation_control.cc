@@ -50,12 +50,12 @@ SubSimulationControlDEM::SubSimulationControlDEM(
       time_step =
         fraction_of_rayleigh_characteristic_time * rayleigh_characteristic_time;
 
-      // We calculate the total number of iteration with the proposed time step
-      // We then take the cieiling of it to have a integer number of time steps
+      // We calculate the total number of iterations with the proposed time step
+      // We then take the ceiling of it to have a integer number of time steps
       total_number_of_iterations =
         static_cast<unsigned int>(std::ceil(time_interval / time_step));
 
-      // Since the total number of iterations need to be an integer, the actualy
+      // Since the total number of iterations needs to be an integer, the actual
       // value of the time step may have changed as a result of the previous
       // calculations. We then recalculate the time step.
       time_step = time_interval / double(total_number_of_iterations);

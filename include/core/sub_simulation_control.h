@@ -29,7 +29,7 @@ using namespace dealii;
  * The SubSimulationControlDEM class is responsible for managing the progression
  * of the DEM component of a CFD-DEM simulation.
  *
- * This class supports two logic for the DEM iteration:
+ * This class supports two approaches for the DEM iteration:
  * - Fixed number of iterations: In this case, a fixed number of DEM iterations
  * is carried out for each CFD time step. If the CFD uses adaptive time
  * stepping, then the DEM simulation time step may change dynamically during the
@@ -141,7 +141,8 @@ private:
   /// Rayleigh characteristic time for the particles
   const double rayleigh_characteristic_time;
 
-  /// Targeted fraction of the Rayleigh characteristic time
+  /// Targeted fraction of the Rayleigh characteristic time. This is only used when
+  /// iteration_logic=fixed_fraction_of_rayleigh_time_step
   const double fraction_of_rayleigh_characteristic_time;
 
   /// Current value of the sub iteration number. This is initialized to zero.
