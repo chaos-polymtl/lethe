@@ -775,8 +775,6 @@ namespace Parameters
        */
       enum class BoundaryType
       {
-        fixed_wall,
-        outlet,
         /// Static wall
         fixed_wall,
         /// Open boundary where particles may exit (outlet)
