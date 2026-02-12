@@ -1,17 +1,41 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019, 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019, 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+/**
+ * @file multiphysics.h
+ * @brief Identifiers for multiphysics modules and their solution fields.
+ *
+ * This file defines the enumerations used to identify the different physics
+ * modules available in Lethe (fluid dynamics, heat transfer, VOF, etc.) and
+ * the solution fields they produce. It also provides a utility function to
+ * convert a physics name string into its corresponding PhysicsID.
+ */
 
 #ifndef lethe_multiphysics_h
 #define lethe_multiphysics_h
 
+/**
+ * @brief Unique identifiers for each physics module in Lethe.
+ *
+ * These identifiers are used to index and refer to the different physics
+ * solvers throughout the multiphysics framework.
+ */
 enum PhysicsID : unsigned int
 {
-  fluid_dynamics   = 0,
-  heat_transfer    = 1,
-  tracer           = 2,
-  VOF              = 3,
-  cahn_hilliard    = 4,
-  void_fraction    = 5,
+  /// Fluid Dynamics (Velocity,Pressure)
+  fluid_dynamics = 0,
+  /// Heat transfer (Temperature)
+  heat_transfer = 1,
+  /// Passive scalar tracer (Tracer)
+  tracer = 2,
+  /// Conservative level-set / Volume-of-Fluid (Phase indicator / phase
+  /// fraction)
+  VOF = 3,
+  /// Cahn-Hilliard (Phase indicator, Potential)
+  cahn_hilliard = 4,
+  /// Void fraction
+  void_fraction = 5,
+  /// Time-harmonic electromagnetics (Electric field, Magnetic field)
   electromagnetics = 6
 };
 
