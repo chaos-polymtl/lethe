@@ -1707,12 +1707,25 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               this->mg_setup_timer.enter_subsection("Set up mortar operators");
 
               // Manager
-              this->mg_operators[level]->mortar_manager_mf =
-                std::make_shared<MortarManagerCircle<dim>>(
-                  quadrature_mg,
-                  *level_mapping,
-                  level_dof_handler,
-                  this->simulation_parameters.mortar_parameters);
+              if (this->simulation_parameters.mortar_parameters
+                    .interface_type ==
+                  Parameters::Mortar<dim>::InterfaceType::circular)
+                this->mg_operators[level]->mortar_manager_mf =
+                  std::make_shared<MortarManagerCircle<dim>>(
+                    quadrature_mg,
+                    *level_mapping,
+                    level_dof_handler,
+                    this->simulation_parameters.mortar_parameters);
+              else
+                {
+                  const double outer_radius = 1.0;
+                  this->mg_operators[level]->mortar_manager_mf =
+                    std::make_shared<MortarManagerLinear<dim>>(
+                      1, // number of subdivisions
+                      quadrature_mg,
+                      -outer_radius,
+                      outer_radius);
+                }
 
               // Coupling evaluator
               this->mg_operators[level]->mortar_coupling_evaluator_mf =
@@ -3069,12 +3082,23 @@ FluidDynamicsMatrixFree<dim>::reinit_mortar_operators_mf()
   TimerOutput::Scope t(this->computing_timer, "Reinit mortar operators");
 
   // Create mortar manager
-  this->system_operator->mortar_manager_mf =
-    std::make_shared<MortarManagerCircle<dim>>(
-      *this->cell_quadrature,
-      *this->get_mapping(),
-      *this->dof_handler,
-      this->simulation_parameters.mortar_parameters);
+  if (this->simulation_parameters.mortar_parameters.interface_type ==
+      Parameters::Mortar<dim>::InterfaceType::circular)
+    this->system_operator->mortar_manager_mf =
+      std::make_shared<MortarManagerCircle<dim>>(
+        *this->cell_quadrature,
+        *this->get_mapping(),
+        *this->dof_handler,
+        this->simulation_parameters.mortar_parameters);
+  else
+    {
+      const double outer_radius = 1.0;
+      this->system_operator->mortar_manager_mf =
+        std::make_shared<MortarManagerLinear<dim>>(1, // number of subdivisions
+                                                   *this->cell_quadrature,
+                                                   -outer_radius,
+                                                   outer_radius);
+    }
 
   // Create mortar coupling evaluator
   this->system_operator->mortar_coupling_evaluator_mf =

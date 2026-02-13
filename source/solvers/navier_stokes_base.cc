@@ -2122,11 +2122,23 @@ NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar_operators()
   TimerOutput::Scope t(this->computing_timer, "Reinit mortar operators");
 
   // Create mortar manager
-  this->mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
-    *this->cell_quadrature,
-    *this->get_mapping(),
-    *this->dof_handler,
-    this->simulation_parameters.mortar_parameters);
+  if (this->simulation_parameters.mortar_parameters.interface_type ==
+      Parameters::Mortar<dim>::InterfaceType::circular)
+    this->mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
+      *this->cell_quadrature,
+      *this->get_mapping(),
+      *this->dof_handler,
+      this->simulation_parameters.mortar_parameters);
+  else
+    {
+      const double outer_radius = 1.0;
+      this->mortar_manager =
+        std::make_shared<MortarManagerLinear<dim>>(1, // number of subdivisions
+                                                   *this->cell_quadrature,
+                                                   -outer_radius,
+                                                   outer_radius);
+    }
+
 
   // Create mortar coupling evaluator
   this->mortar_coupling_evaluator =
