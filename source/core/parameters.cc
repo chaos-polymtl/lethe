@@ -4555,8 +4555,10 @@ namespace Parameters
         else if (op == "linear")
           interface_type = InterfaceType::linear;
         else
-          throw std::logic_error(
-            "Error, invalid mortar interface type. Current choices are <circular|linear>.");
+          AssertThrow(
+            false,
+            ExcMessage(
+              "Error, invalid mortar interface type. Current choices are <circular|linear>."));
       }
       rotor_mesh->parse_parameters(prm);
       rotor_boundary_id  = prm.get_integer("rotor boundary id");
