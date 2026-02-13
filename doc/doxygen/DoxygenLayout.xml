@@ -20,6 +20,7 @@
       <tab type="globals" visible="yes" title="" intro=""/>
     </tab>
     <tab type="user" visible="yes" title="Lethe Project" url="https://chaos-polymtl.github.io/lethe/index.html" />
+    <tab type="user" visible="yes" title="About CHAOS Laboratory" url="https://www.chaos-lab.ca/" />
   </navindex>
 
   <!-- Layout definition for a class page -->

@@ -197,6 +197,7 @@ body {
  */
 .lgw-text {
     font-variant-numeric: tabular-nums;
+    transition: color 0.1s ease;
 }
 
 /**
@@ -210,4 +211,21 @@ body {
 #top .lethe-github-widget .lgw-name,
 #top .lethe-github-widget .lgw-text {
     color: var(--page-foreground-color) !important;
+}
+
+/**
+ * Hover state: turn everything white
+ * These rules must come AFTER the general color rules to override them
+ */
+#top .lethe-github-widget:hover .lgw-icon,
+#top .lethe-github-widget:hover .lgw-item,
+#top .lethe-github-widget:hover .lgw-name,
+#top .lethe-github-widget:hover .lgw-text,
+#top .lethe-github-widget:hover .lgw-row1,
+#top .lethe-github-widget:hover .lgw-row2 {
+    color: #DEDEDEFF !important;
+}
+
+#top .lethe-github-widget:hover .lgw-icon svg {
+    color: #DEDEDEFF !important;
 }
