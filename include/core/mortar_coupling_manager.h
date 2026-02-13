@@ -343,6 +343,42 @@ protected:
   const Point<dim> center_of_rotation;
 };
 
+/**
+ * @brief Mortar manager class for linear interface
+ */
+template <int dim>
+class MortarManagerLinear : public MortarManagerBase<dim>
+{
+public:
+  /**
+   * @brief Class constructor
+   *
+   * @param[in] n_subdivisions
+   * @param[in] quadrature
+   * @param[in] left
+   * @param[in] right
+   */
+  template <int dim2>
+  MortarManagerLinear(const unsigned int      n_subdivisions,
+                      const Quadrature<dim2> &quadrature,
+                      const double            left,
+                      const double            right);
+
+protected:
+  Point<dim>
+  from_1D(const double angle_rad) const override;
+
+  double
+  to_1D(const Point<dim> &point) const override;
+
+  Tensor<1, dim, double>
+  get_normal(const Point<dim> &point) const override;
+
+  ///
+  const double left;
+  ///
+  const double right;
+};
 
 template <int dim>
 template <int dim2>
@@ -426,6 +462,20 @@ MortarManagerCircle<dim>::MortarManagerCircle(
                                           mortar_parameters)))
 {}
 
+template <int dim>
+template <int dim2>
+MortarManagerLinear<dim>::MortarManagerLinear(
+  const unsigned int      n_subdivisions,
+  const Quadrature<dim2> &quadrature,
+  const double            left,
+  const double            right)
+  : MortarManagerBase<dim>(n_subdivisions,
+                           (right - left) / (2.0 * numbers::PI),
+                           quadrature,
+                           0.0)
+  , left(left)
+  , right(right)
+{}
 
 /**
  * @brief Compute inner product
