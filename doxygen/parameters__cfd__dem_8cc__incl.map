@@ -1,9 +1,13 @@
 <map id="/home/runner/work/lethe/lethe/source/core/parameters_cfd_dem.cc" name="/home/runner/work/lethe/lethe/source/core/parameters_cfd_dem.cc">
-<area shape="rect" id="Node000001" title=" " alt="" coords="72,5,289,60"/>
-<area shape="rect" id="Node000002" href="$parameters__cfd__dem_8h.html" title="Parameter structures for CFD&#45;DEM coupled simulations." alt="" coords="103,108,259,148"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="183,60,183,94,178,94,178,60"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="5,196,175,236"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="162,150,122,189,118,185,159,146"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="199,196,344,236"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="203,146,243,185,240,189,199,150"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="174,5,391,60"/>
+<area shape="rect" id="Node000002" href="$parameters__cfd__dem_8h.html" title="Parameter structures for CFD&#45;DEM coupled simulations." alt="" coords="205,108,361,148"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="285,60,285,94,280,94,280,60"/>
+<area shape="rect" id="Node000003" href="$sub__simulation__control_8h.html" title="Controls smaller simulation blocks within simulations." alt="" coords="21,196,174,236"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="243,150,151,193,149,188,241,146"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="198,196,367,236"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="285,148,285,182,280,182,280,148"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="391,196,537,236"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="324,146,413,188,411,193,321,150"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="5,284,189,309"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="100,236,100,270,95,270,95,236"/>
 </map>

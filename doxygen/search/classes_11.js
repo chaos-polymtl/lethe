@@ -30,10 +30,11 @@ var searchData=
   ['stabilizedmethodstensorcopydata_27',['StabilizedMethodsTensorCopyData',['../classStabilizedMethodsTensorCopyData.html',1,'']]],
   ['stasisconstraintwithtemperature_28',['StasisConstraintWithTemperature',['../structStasisConstraintWithTemperature.html',1,'']]],
   ['statistics_29',['statistics',['../classstatistics.html',1,'']]],
-  ['superquadric_30',['Superquadric',['../classSuperquadric.html',1,'']]],
-  ['surfacetensionconstant_31',['SurfaceTensionConstant',['../classSurfaceTensionConstant.html',1,'']]],
-  ['surfacetensionlinear_32',['SurfaceTensionLinear',['../classSurfaceTensionLinear.html',1,'']]],
-  ['surfacetensionmodel_33',['SurfaceTensionModel',['../classSurfaceTensionModel.html',1,'']]],
-  ['surfacetensionparameters_34',['SurfaceTensionParameters',['../structParameters_1_1SurfaceTensionParameters.html',1,'Parameters']]],
-  ['surfacetensionphasechange_35',['SurfaceTensionPhaseChange',['../classSurfaceTensionPhaseChange.html',1,'']]]
+  ['subsimulationcontroldem_30',['SubSimulationControlDEM',['../classSubSimulationControlDEM.html',1,'']]],
+  ['superquadric_31',['Superquadric',['../classSuperquadric.html',1,'']]],
+  ['surfacetensionconstant_32',['SurfaceTensionConstant',['../classSurfaceTensionConstant.html',1,'']]],
+  ['surfacetensionlinear_33',['SurfaceTensionLinear',['../classSurfaceTensionLinear.html',1,'']]],
+  ['surfacetensionmodel_34',['SurfaceTensionModel',['../classSurfaceTensionModel.html',1,'']]],
+  ['surfacetensionparameters_35',['SurfaceTensionParameters',['../structParameters_1_1SurfaceTensionParameters.html',1,'Parameters']]],
+  ['surfacetensionphasechange_36',['SurfaceTensionPhaseChange',['../classSurfaceTensionPhaseChange.html',1,'']]]
 ];

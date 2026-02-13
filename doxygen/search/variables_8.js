@@ -61,13 +61,13 @@ var searchData=
   ['intermediate_5fq_58',['intermediate_q',['../classCone.html#a033e5523eaa5f7128916247c54525476',1,'Cone']]],
   ['intermediate_5fw_59',['intermediate_w',['../classCutHollowSphere.html#af3fe8274ea33e5b7efb5385ec6ca1f65',1,'CutHollowSphere']]],
   ['interpolate_5fdiameter_5fvalues_60',['interpolate_diameter_values',['../classCustomDistribution.html#abaa9437ea013aec5d906ebde9f13f41e',1,'CustomDistribution']]],
-  ['interpolated_5fvoid_5ffraction_61',['interpolated_void_fraction',['../structParameters_1_1CFDDEM.html#a825c5406d8255e37eda65c67a14f2a14',1,'Parameters::CFDDEM::interpolated_void_fraction'],['../classNavierStokesScratchData.html#a50e47e5746c3b8e513d798318938235b',1,'NavierStokesScratchData::interpolated_void_fraction']]],
+  ['interpolated_5fvoid_5ffraction_61',['interpolated_void_fraction',['../classNavierStokesScratchData.html#a50e47e5746c3b8e513d798318938235b',1,'NavierStokesScratchData::interpolated_void_fraction'],['../structParameters_1_1CFDDEM.html#a825c5406d8255e37eda65c67a14f2a14',1,'Parameters::CFDDEM::interpolated_void_fraction']]],
   ['intersected_5fdofs_62',['intersected_dofs',['../classInterfaceTools_1_1SignedDistanceSolver.html#ab956e377d8a2e768281be5621dfe8283',1,'InterfaceTools::SignedDistanceSolver']]],
   ['intlevel_63',['intlevel',['../classMFNavierStokesPreconditionGMGBase.html#af439f6ea70d1be4669c59b97afb3cae7',1,'MFNavierStokesPreconditionGMGBase']]],
   ['inv_5frange_5ftime_64',['inv_range_time',['../classAverageScalar.html#a30c55acb412efbbcc332251080307e4f',1,'AverageScalar::inv_range_time'],['../classAverageVelocities.html#a34ca072240b3b25558df5e4ced6ad704',1,'AverageVelocities::inv_range_time']]],
   ['is_5fbdf_65',['is_bdf',['../structTimeSteppingData.html#a8869428fc476ef6f174f02000a406180',1,'TimeSteppingData']]],
   ['is_5fboundary_5fcell_66',['is_boundary_cell',['../classCahnHilliardScratchData.html#a9906da998707620bc0b5891c2a77b9be',1,'CahnHilliardScratchData::is_boundary_cell'],['../classHeatTransferScratchData.html#ab8ebb90c5f68c6dbe3c0463a06ca456c',1,'HeatTransferScratchData::is_boundary_cell'],['../classNavierStokesScratchData.html#a26944c6375322a4ad03b51b959f5b3f6',1,'NavierStokesScratchData::is_boundary_cell']]],
-  ['is_5fboundary_5fface_67',['is_boundary_face',['../classCahnHilliardScratchData.html#a01c7a824d8b0a2bd8b55918310618b13',1,'CahnHilliardScratchData::is_boundary_face'],['../classNavierStokesScratchData.html#a85c0cf98990e2f944e1043a13577d78b',1,'NavierStokesScratchData::is_boundary_face'],['../classHeatTransferScratchData.html#a7ea6d4a438c3a5081c15daeb81f70ffc',1,'HeatTransferScratchData::is_boundary_face']]],
+  ['is_5fboundary_5fface_67',['is_boundary_face',['../classNavierStokesScratchData.html#a85c0cf98990e2f944e1043a13577d78b',1,'NavierStokesScratchData::is_boundary_face'],['../classHeatTransferScratchData.html#a7ea6d4a438c3a5081c15daeb81f70ffc',1,'HeatTransferScratchData::is_boundary_face'],['../classCahnHilliardScratchData.html#a01c7a824d8b0a2bd8b55918310618b13',1,'CahnHilliardScratchData::is_boundary_face']]],
   ['is_5fboundary_5frefinement_5ffixed_68',['is_boundary_refinement_fixed',['../structParameters_1_1MeshAdaptation.html#a12be65d75af9ded0dc4fe3bb72fdcd4b',1,'Parameters::MeshAdaptation']]],
   ['is_5finitialized_69',['is_initialized',['../classPhysicalPropertiesManager.html#afc4e73a191dc9caf317aa013218dc198',1,'PhysicalPropertiesManager']]],
   ['is_5fsdirk_70',['is_sdirk',['../structTimeSteppingData.html#a2ef75db33b75976a4346454a790b5fe4',1,'TimeSteppingData']]],
@@ -76,5 +76,6 @@ var searchData=
   ['isothermal_5fideal_5fgas_5fdensity_5fparameters_73',['isothermal_ideal_gas_density_parameters',['../classParameters_1_1Material.html#a379e486438f4cfa6fe09698826074bbc',1,'Parameters::Material']]],
   ['iterable_5fnodes_74',['iterable_nodes',['../classRBFShape.html#a0c93189216143c45549d01818ace16a1',1,'RBFShape']]],
   ['iteration_5fcheck_5ffunction_75',['iteration_check_function',['../classLagrangianLoadBalancing.html#aa45b9e32d705899fbdd9a1d584752c08',1,'LagrangianLoadBalancing']]],
-  ['iteration_5fnumber_76',['iteration_number',['../classSimulationControl.html#a4ab5fb4679cef5aeca745bf0e76cc6e5',1,'SimulationControl']]]
+  ['iteration_5flogic_76',['iteration_logic',['../classSubSimulationControlDEM.html#a1ddde614f266ae1e5b0453d85f98b817',1,'SubSimulationControlDEM']]],
+  ['iteration_5fnumber_77',['iteration_number',['../classSimulationControl.html#a4ab5fb4679cef5aeca745bf0e76cc6e5',1,'SimulationControl::iteration_number'],['../classSubSimulationControlDEM.html#a1b1ae5421b8d2543e4f00d8c66d67396',1,'SubSimulationControlDEM::iteration_number']]]
 ];

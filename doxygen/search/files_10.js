@@ -33,6 +33,8 @@ var searchData=
   ['specific_5fheat_5fmodel_2eh_30',['specific_heat_model.h',['../specific__heat__model_8h.html',1,'']]],
   ['stabilization_2ecc_31',['stabilization.cc',['../stabilization_8cc.html',1,'']]],
   ['stabilization_2eh_32',['stabilization.h',['../stabilization_8h.html',1,'']]],
-  ['surface_5ftension_5fmodel_2ecc_33',['surface_tension_model.cc',['../surface__tension__model_8cc.html',1,'']]],
-  ['surface_5ftension_5fmodel_2eh_34',['surface_tension_model.h',['../surface__tension__model_8h.html',1,'']]]
+  ['sub_5fsimulation_5fcontrol_2ecc_33',['sub_simulation_control.cc',['../sub__simulation__control_8cc.html',1,'']]],
+  ['sub_5fsimulation_5fcontrol_2eh_34',['sub_simulation_control.h',['../sub__simulation__control_8h.html',1,'']]],
+  ['surface_5ftension_5fmodel_2ecc_35',['surface_tension_model.cc',['../surface__tension__model_8cc.html',1,'']]],
+  ['surface_5ftension_5fmodel_2eh_36',['surface_tension_model.h',['../surface__tension__model_8h.html',1,'']]]
 ];
