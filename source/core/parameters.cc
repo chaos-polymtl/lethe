@@ -4551,9 +4551,9 @@ namespace Parameters
       {
         const std::string op = prm.get("interface type");
         if (op == "circular")
-          interface_type = Type::circular;
+          interface_type = InterfaceType::circular;
         else if (op == "linear")
-          interface_type = Type::linear;
+          interface_type = InterfaceType::linear;
         else
           throw std::logic_error(
             "Error, invalid mortar interface type. Current choices are <circular|linear>.");

@@ -1949,7 +1949,7 @@ namespace Parameters
     /// Indicates whether mortar elements are enabled
     bool enable;
     /// Type of mortar interface
-    enum class Type : std::int8_t
+    enum class InterfaceType : std::int8_t
     {
       circular,
       linear
