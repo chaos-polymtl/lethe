@@ -4,6 +4,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/02/13
+
+### Fixed
+
+- MINOR There were missing timer subsections in some of the functions executed when mortar is enabled. This PR fixes this by adding timer subsections where mortar entries are added in the matrix and RHS assembler. [#1907](https://github.com/chaos-polymtl/lethe/pull/1907)
+
 ## [Master] - 2026/02/11
 
 ### Added
