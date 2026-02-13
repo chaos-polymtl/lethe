@@ -4,6 +4,8 @@
 #ifndef lethe_parameters_cfd_dem_h
 #define lethe_parameters_cfd_dem_h
 
+#include <core/sub_simulation_control.h>
+
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
 
@@ -216,8 +218,15 @@ namespace Parameters
     /// Volume-Averaged Navier-Stokes model formulation.
     VANSModel vans_model;
 
+    /// Method used to control the DEM sub iterations.
+    SubSimulationControlDEM::DEMSubIterationLogic dem_iteration_control;
+
     /// Frequency of DEM-CFD coupling (in DEM time steps).
     unsigned int coupling_frequency;
+
+    /// Fraction of rayleigh time. This is used for when the
+    /// DEMSubIterationLogic uses the Rayleigh time.
+    double fraction_of_rayleigh_time;
 
     /// Enable drag force on particles.
     bool drag_force;

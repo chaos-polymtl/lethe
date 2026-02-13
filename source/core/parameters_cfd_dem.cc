@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/parameters_cfd_dem.h>
@@ -163,10 +163,20 @@ namespace Parameters
                       Patterns::Selection(
                         "difelice|rong|dallavalle|kochhill|beetstra|gidaspow"),
                       "The drag model used to determine the drag coefficient");
+    prm.declare_entry(
+      "dem iteration control",
+      "number of iterations",
+      Patterns::Selection("number of iterations|fraction of rayleigh time"),
+      "The strategy used to control the DEM iterations in CFD-DEM simulations");
     prm.declare_entry("coupling frequency",
                       "100",
-                      Patterns::Integer(),
+                      Patterns::Integer(1),
                       "dem-cfd coupling frequency");
+    prm.declare_entry(
+      "fraction rayleigh time",
+      "0.1",
+      Patterns::Double(0., 1.),
+      "Fraction of Rayleigh time used to control the DEM iterations.");
     prm.declare_entry("vans model",
                       "modelA",
                       Patterns::Selection("modelA|modelB"),
@@ -220,10 +230,24 @@ namespace Parameters
     rotational_viscous_torque  = prm.get_bool("rotational viscous torque");
     vortical_viscous_torque    = prm.get_bool("vortical viscous torque");
     coupling_frequency         = prm.get_integer("coupling frequency");
+    fraction_of_rayleigh_time  = prm.get_double("fraction rayleigh time");
     cstar                      = prm.get_double("grad-div length scale");
     implicit_stabilization     = prm.get_bool("implicit stabilization");
     particle_statistics        = prm.get_bool("particle statistics");
     project_particle_forces    = prm.get_bool("project particle forces");
+
+    const std::string it_ctrl = prm.get("dem iteration control");
+    if (it_ctrl == "number of iterations")
+      dem_iteration_control = SubSimulationControlDEM::DEMSubIterationLogic::
+        fixed_number_of_iterations;
+    else if (it_ctrl == "fraction of rayleight time")
+      dem_iteration_control = SubSimulationControlDEM::DEMSubIterationLogic::
+        fixed_fraction_of_rayleigh_time_step;
+    else
+      AssertThrow(
+        false,
+        ExcMessage(
+          "An invalid dem iteration control strategy was parsed. Simulation will now stop."));
 
     const std::string op = prm.get("drag model");
     if (op == "difelice")

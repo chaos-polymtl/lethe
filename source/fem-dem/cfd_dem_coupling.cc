@@ -112,7 +112,13 @@ CFDDEMSolver<dim>::dem_setup_parameters()
                  rayleigh_time_step);
     }
 
-  update_dem_time_step();
+  // Give an initial estimation of the DEM time step that will be overwritten
+  // later on by the SubSimulationControlDEM
+  // TODO Refactor this when everything is in the sub time stepping
+  dem_time_step =
+    this->simulation_control->get_time_step() /
+    this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency;
+  report_rayleigh_time_ratio();
 
   // Check if there are periodic boundaries
   for (unsigned int i_bc = 0;
@@ -1645,9 +1651,21 @@ CFDDEMSolver<dim>::solve()
             }
         }
 
+      // DEM iterations
       {
         announce_string(this->pcout, "DEM");
         TimerOutput::Scope t(this->computing_timer, "DEM_Iterator");
+
+        // Make alias reference to improve readability
+        const auto &cfd_dem_prm = this->cfd_dem_simulation_parameters.cfd_dem;
+
+        // Create a simulation control object for the dem iterations
+        SubSimulationControlDEM dem_simulation_control(
+          cfd_dem_prm.dem_iteration_control,
+          this->simulation_control->get_time_step(),
+          cfd_dem_prm.coupling_frequency,
+          rayleigh_time_step,
+          cfd_dem_prm.fraction_of_rayleigh_time);
 
         // First DEM iteration of the CFD iteration
         dem_action_manager->first_dem_of_cfddem_iteration_step();
@@ -1655,25 +1673,28 @@ CFDDEMSolver<dim>::solve()
         // Load balancing if needed
         load_balance();
 
+        // Update DEM time step
+        // TODO, refactor this so in the future everything is passed through the
+        // simulation control instead of internal variables
+        dem_time_step = dem_simulation_control.get_time_step();
+
         // Update DEM time step when the simulation uses adaptive time-stepping
         if (this->simulation_control->is_adaptive_time_stepping())
-          update_dem_time_step();
+          report_rayleigh_time_ratio();
 
         contact_search_counter = 0;
-        for (unsigned int dem_counter = 0; dem_counter < coupling_frequency;
-             ++dem_counter)
+        while (dem_simulation_control.iterate())
           {
             // dem_iterator carries out the particle-particle and
             // particle_wall force calculations, integration and
             // update_ghost
-            dem_iterator(dem_counter);
+            dem_iterator(dem_simulation_control.get_iteration() - 1);
           }
+        this->pcout << "Finished " << dem_simulation_control.get_iteration()
+                    << " DEM iterations" << std::endl;
       }
 
       contact_search_total_number += contact_search_counter;
-
-      this->pcout << "Finished " << coupling_frequency << " DEM iterations"
-                  << std::endl;
 
       this->postprocess(false);
       this->postprocess_cfd_dem();
