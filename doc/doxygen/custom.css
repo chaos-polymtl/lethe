@@ -229,3 +229,38 @@ body {
 #top .lethe-github-widget:hover .lgw-icon svg {
     color: #DEDEDEFF !important;
 }
+
+/* ============================================================================
+   FOOTER LOGO AND COPYRIGHT
+   ============================================================================ */
+
+/* Show/hide logos based on theme */
+.chaos-logo {
+    transition: opacity 0.3s ease;
+}
+
+/* Light mode: show dark logo, hide light logo */
+.chaos-logo-light {
+    display: inline-block;
+}
+
+.chaos-logo-dark {
+    display: none;
+}
+
+/* Dark mode: hide dark logo, show light logo */
+html.dark-mode .chaos-logo-light,
+body[data-theme="dark"] .chaos-logo-light {
+    display: none;
+}
+
+html.dark-mode .chaos-logo-dark,
+body[data-theme="dark"] .chaos-logo-dark {
+    display: inline-block;
+}
+
+.chaos-copyright {
+    font-size: 0.9em;
+    color: var(--page-foreground-color);
+    opacity: 0.8;
+}
