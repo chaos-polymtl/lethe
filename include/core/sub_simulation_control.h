@@ -45,7 +45,7 @@ class SubSimulationControlDEM
 {
 public:
   /**
-   * @brief Type of iteration methods for DEM sub simulation control
+   * @brief Type of iteration method for DEM sub simulation control
    *
    * Declares the types of sub simulation control that are available for CFD-DEM
    * simulations.
