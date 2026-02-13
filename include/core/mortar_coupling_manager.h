@@ -385,7 +385,7 @@ protected:
   to_1D(const Point<dim> &point) const override;
 
   Tensor<1, dim, double>
-  get_normal(const Point<dim> &point) const override;
+  get_normal(const Point<dim> &) const override;
 
   ///
   const double left;
