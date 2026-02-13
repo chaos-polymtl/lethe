@@ -2132,11 +2132,12 @@ NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar_operators()
   else
     {
       const double outer_radius = 1.0;
-      this->mortar_manager =
-        std::make_shared<MortarManagerLinear<dim>>(1, // number of subdivisions
-                                                   *this->cell_quadrature,
-                                                   -outer_radius,
-                                                   outer_radius);
+      this->mortar_manager      = std::make_shared<MortarManagerLinear<dim>>(
+        *this->dof_handler,
+        this->simulation_parameters.mortar_parameters,
+        *this->cell_quadrature,
+        -outer_radius,
+        outer_radius);
     }
 
 

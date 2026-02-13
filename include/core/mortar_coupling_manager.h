@@ -371,10 +371,11 @@ public:
    * @param[in] right
    */
   template <int dim2>
-  MortarManagerLinear(const unsigned int      n_subdivisions,
-                      const Quadrature<dim2> &quadrature,
-                      const double            left,
-                      const double            right);
+  MortarManagerLinear(const DoFHandler<dim>         &dof_handler,
+                      const Parameters::Mortar<dim> &mortar_parameters,
+                      const Quadrature<dim2>        &quadrature,
+                      const double                   left,
+                      const double                   right);
 
 protected:
   Point<dim>
@@ -473,14 +474,17 @@ MortarManagerCircle<dim>::MortarManagerCircle(
 template <int dim>
 template <int dim2>
 MortarManagerLinear<dim>::MortarManagerLinear(
-  const unsigned int      n_subdivisions,
-  const Quadrature<dim2> &quadrature,
-  const double            left,
-  const double            right)
-  : MortarManagerBase<dim>(n_subdivisions,
-                           (right - left) / (2.0 * numbers::PI),
-                           quadrature,
-                           0.0)
+  const DoFHandler<dim>         &dof_handler,
+  const Parameters::Mortar<dim> &mortar_parameters,
+  const Quadrature<dim2>        &quadrature,
+  const double                   left,
+  const double                   right)
+  : MortarManagerBase<dim>(
+      compute_number_interface_cells(dof_handler.get_triangulation(),
+                                     mortar_parameters)[0],
+      (right - left) / (2.0 * numbers::PI),
+      quadrature,
+      0.0)
   , left(left)
   , right(right)
 {}
