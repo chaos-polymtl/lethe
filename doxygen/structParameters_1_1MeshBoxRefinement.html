@@ -104,14 +104,19 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:ab5fd71e00cfbcbd5b559ce6e390bf877" id="r_ab5fd71e00cfbcbd5b559ce6e390bf877"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="structParameters_1_1Mesh.html">Mesh</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1MeshBoxRefinement.html#ab5fd71e00cfbcbd5b559ce6e390bf877">box_mesh</a></td></tr>
-<tr class="separator:ab5fd71e00cfbcbd5b559ce6e390bf877"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a94c7daba4d7e6becb3ffae086253c700" id="r_a94c7daba4d7e6becb3ffae086253c700"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1MeshBoxRefinement.html#a94c7daba4d7e6becb3ffae086253c700">initial_refinement</a></td></tr>
-<tr class="separator:a94c7daba4d7e6becb3ffae086253c700"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af56f25ce3a27b97ce2f67f213fbc2550" id="r_af56f25ce3a27b97ce2f67f213fbc2550"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1MeshBoxRefinement.html#af56f25ce3a27b97ce2f67f213fbc2550">number_of_refinement_boxes</a></td></tr>
+<tr class="separator:af56f25ce3a27b97ce2f67f213fbc2550"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a81e90518c9c694ddbbf3c02f4c56bd26" id="r_a81e90518c9c694ddbbf3c02f4c56bd26"><td class="memItemLeft" align="right" valign="top">const unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1MeshBoxRefinement.html#a81e90518c9c694ddbbf3c02f4c56bd26">max_number_of_refinement_boxes</a> = 5</td></tr>
+<tr class="separator:a81e90518c9c694ddbbf3c02f4c56bd26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d65c320cae985ff01b0d432a1914c6f" id="r_a0d65c320cae985ff01b0d432a1914c6f"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; std::vector&lt; <a class="el" href="structParameters_1_1Mesh.html">Mesh</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1MeshBoxRefinement.html#a0d65c320cae985ff01b0d432a1914c6f">refinement_boxes_meshes</a></td></tr>
+<tr class="separator:a0d65c320cae985ff01b0d432a1914c6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a569c0550ea1d948dd680f21b08f085ab" id="r_a569c0550ea1d948dd680f21b08f085ab"><td class="memItemLeft" align="right" valign="top">std::vector&lt; unsigned int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1MeshBoxRefinement.html#a569c0550ea1d948dd680f21b08f085ab">box_additional_refinements</a></td></tr>
+<tr class="separator:a569c0550ea1d948dd680f21b08f085ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01629">1629</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<div class="textblock"><p>Container of the parameters for box refinements. The regions to refine can be described by either a GMSH or a deal.II mesh. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01633">1633</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="aa7cb5a67d3c5a7fa98f936df652a73d5" name="aa7cb5a67d3c5a7fa98f936df652a73d5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa7cb5a67d3c5a7fa98f936df652a73d5">&#9670;&#160;</a></span>declare_parameters()</h2>
@@ -129,9 +134,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l02785">2785</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l02788">2788</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l01632">box_mesh</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l01644">max_number_of_refinement_boxes</a>.</p>
 
 </div>
 </div>
@@ -151,42 +156,86 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l02801">2801</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l02818">2818</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l01632">box_mesh</a>, and <a class="el" href="parameters_8h_source.html#l01634">initial_refinement</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l01654">box_additional_refinements</a>, <a class="el" href="parameters_8h_source.html#l01644">max_number_of_refinement_boxes</a>, and <a class="el" href="parameters_8h_source.html#l01636">number_of_refinement_boxes</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="ab5fd71e00cfbcbd5b559ce6e390bf877" name="ab5fd71e00cfbcbd5b559ce6e390bf877"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab5fd71e00cfbcbd5b559ce6e390bf877">&#9670;&#160;</a></span>box_mesh</h2>
+<a id="a569c0550ea1d948dd680f21b08f085ab" name="a569c0550ea1d948dd680f21b08f085ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a569c0550ea1d948dd680f21b08f085ab">&#9670;&#160;</a></span>box_additional_refinements</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt;<a class="el" href="structParameters_1_1Mesh.html">Mesh</a>&gt; Parameters::MeshBoxRefinement::box_mesh</td>
+          <td class="memname">std::vector&lt;unsigned int&gt; Parameters::MeshBoxRefinement::box_additional_refinements</td>
         </tr>
       </table>
 </div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">=</div>
+<div class="line">      std::vector&lt;unsigned int&gt;(<a class="code hl_variable" href="structParameters_1_1MeshBoxRefinement.html#a81e90518c9c694ddbbf3c02f4c56bd26">max_number_of_refinement_boxes</a>)</div>
+<div class="ttc" id="astructParameters_1_1MeshBoxRefinement_html_a81e90518c9c694ddbbf3c02f4c56bd26"><div class="ttname"><a href="structParameters_1_1MeshBoxRefinement.html#a81e90518c9c694ddbbf3c02f4c56bd26">Parameters::MeshBoxRefinement::max_number_of_refinement_boxes</a></div><div class="ttdeci">const unsigned int max_number_of_refinement_boxes</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l01644">parameters.h:1644</a></div></div>
+</div><!-- fragment -->
+<p>Vector of additional refinement values of the different boxes. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01632">1632</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01654">1654</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
-<a id="a94c7daba4d7e6becb3ffae086253c700" name="a94c7daba4d7e6becb3ffae086253c700"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a94c7daba4d7e6becb3ffae086253c700">&#9670;&#160;</a></span>initial_refinement</h2>
+<a id="a81e90518c9c694ddbbf3c02f4c56bd26" name="a81e90518c9c694ddbbf3c02f4c56bd26"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a81e90518c9c694ddbbf3c02f4c56bd26">&#9670;&#160;</a></span>max_number_of_refinement_boxes</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">unsigned int Parameters::MeshBoxRefinement::initial_refinement</td>
+          <td class="memname">const unsigned int Parameters::MeshBoxRefinement::max_number_of_refinement_boxes = 5</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Maximum number of refinement boxes that can be defined by a user.</p>
+<dl class="section remark"><dt>Remarks</dt><dd>A maximal value has to be initialized to fill the vectors with parameter declarations. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01644">1644</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="af56f25ce3a27b97ce2f67f213fbc2550" name="af56f25ce3a27b97ce2f67f213fbc2550"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af56f25ce3a27b97ce2f67f213fbc2550">&#9670;&#160;</a></span>number_of_refinement_boxes</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int Parameters::MeshBoxRefinement::number_of_refinement_boxes</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01634">1634</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p>Number of boxes delimiting refinement regions. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01636">1636</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="a0d65c320cae985ff01b0d432a1914c6f" name="a0d65c320cae985ff01b0d432a1914c6f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0d65c320cae985ff01b0d432a1914c6f">&#9670;&#160;</a></span>refinement_boxes_meshes</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;std::vector&lt;<a class="el" href="structParameters_1_1Mesh.html">Mesh</a>&gt; &gt; Parameters::MeshBoxRefinement::refinement_boxes_meshes</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">=</div>
+<div class="line">      std::make_shared&lt;std::vector&lt;Mesh&gt;&gt;(<a class="code hl_variable" href="structParameters_1_1MeshBoxRefinement.html#a81e90518c9c694ddbbf3c02f4c56bd26">max_number_of_refinement_boxes</a>)</div>
+</div><!-- fragment --><p>Shared pointer of a vector of GMSH and deal.II meshes representing refinement areas. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01650">1650</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>

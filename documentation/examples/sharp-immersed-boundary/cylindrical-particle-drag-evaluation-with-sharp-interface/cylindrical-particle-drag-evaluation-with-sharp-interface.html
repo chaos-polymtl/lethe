@@ -473,8 +473,8 @@ compared to the expected results from the literature.</p>
 <section id="mesh">
 <h3>Mesh<a class="headerlink" href="#mesh" title="Link to this heading">#</a></h3>
 <p>As shown in the previous figure, the flow around the particle is modelled using a prismatic channel the size of which depends on the size of the particle. In this case, we consider a particle with a diameter of <span class="math notranslate nohighlight">\(D = 1\)</span>, therefore we have <span class="math notranslate nohighlight">\(L = 2\)</span>.
-The domain, of size <span class="math notranslate nohighlight">\(32 L \times 16 L \times 16 L\)</span>, was found to produce results independant of domain sizes with a low computational cost.</p>
-<p>The mesh is first defined coarsely away from the particle with elements of size <span class="math notranslate nohighlight">\(L \times L \times L\)</span>. The particle is positionned at <span class="math notranslate nohighlight">\(3/8\)</span> of the domain length to avoid boundary interactions and allow the flow to develop both behind and in front of the particle.
+The domain, of size <span class="math notranslate nohighlight">\(32 L \times 16 L \times 16 L\)</span>, was found to produce results independent of domain sizes with a low computational cost.</p>
+<p>The mesh is first defined coarsely away from the particle with elements of size <span class="math notranslate nohighlight">\(L \times L \times L\)</span>. The particle is positioned at <span class="math notranslate nohighlight">\(3/8\)</span> of the domain length to avoid boundary interactions and allow the flow to develop both behind and in front of the particle.
 We then make use of a <code class="docutils literal notranslate"><span class="pre">box</span> <span class="pre">refinement</span></code> to refine the mesh around the particle and properly evaluate the velocity field with elements of size <span class="math notranslate nohighlight">\(1/4 D \times 1/4 D \times 1/4 D\)</span>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh
   set type               = dealii
@@ -484,12 +484,14 @@ We then make use of a <code class="docutils literal notranslate"><span class="pr
 end
 
 subsection box refinement
-  set initial refinement = 3
-  subsection mesh
-    set type               = dealii
-    set grid type          = subdivided_hyper_rectangle
-    set grid arguments     = 2,1,1 : -6,-4,-4 : 10,4,4 : true
-    set initial refinement = 0
+  set number of refinement boxes = 1
+  subsection box 0
+    set additional refinement = 3
+    subsection mesh
+      set type           = dealii
+      set grid type      = subdivided_hyper_rectangle
+      set grid arguments = 2,1,1 : -6,-4,-4 : 10,4,4 : true
+    end
   end
 end
 </pre></div>
@@ -498,7 +500,7 @@ end
 <section id="immersed-boundary-particles">
 <h3>Immersed Boundary Particles<a class="headerlink" href="#immersed-boundary-particles" title="Link to this heading">#</a></h3>
 <p>We define the particle in flow using the sharp immersed boundary method. The particle is defined as a cylinder with a radius of <span class="math notranslate nohighlight">\(D/2 = 0.5\)</span> and a half-length of <span class="math notranslate nohighlight">\(L/2 = 1.0\)</span>. The particle is centered at <span class="math notranslate nohighlight">\((0,0,0)\)</span>
-and the cylider’s axis is oriented perpendicularly to direction of the flow.</p>
+and the cylinder’s axis is oriented perpendicularly to direction of the flow.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">local</span> <span class="pre">mesh</span> <span class="pre">refinement</span></code> is set to 3 to ensure we resolve the boundary layer flow around the particle with elements of size <span class="math notranslate nohighlight">\(1/32 D \times 1/32 D \times 1/32 D\)</span>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection particles
   set number of particles                     = 1

@@ -68,6 +68,6 @@ var searchData=
   ['bounding_5fbox_5fcenter_65',['bounding_box_center',['../classShape.html#a736b232acd7f88f4d84ad6a094b87ecc',1,'Shape']]],
   ['bounding_5fbox_5fhalf_5flength_66',['bounding_box_half_length',['../classShape.html#ab1080a0361811deb866dfbb51d9da340',1,'Shape']]],
   ['bounding_5fconstraints_67',['bounding_constraints',['../classVolumeOfFluid.html#a24e30e8df399275b379f24a54735156f',1,'VolumeOfFluid']]],
-  ['box_5fmesh_68',['box_mesh',['../structParameters_1_1MeshBoxRefinement.html#ab5fd71e00cfbcbd5b559ce6e390bf877',1,'Parameters::MeshBoxRefinement']]],
+  ['box_5fadditional_5frefinements_68',['box_additional_refinements',['../structParameters_1_1MeshBoxRefinement.html#a569c0550ea1d948dd680f21b08f085ab',1,'Parameters::MeshBoxRefinement']]],
   ['buoyancy_5fforce_69',['buoyancy_force',['../structParameters_1_1CFDDEM.html#a7199b79f866744d36b1001b7d3a56acf',1,'Parameters::CFDDEM']]]
 ];

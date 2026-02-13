@@ -445,31 +445,59 @@
         <article role="main">
           <section id="box-refinement">
 <h1>Box Refinement<a class="headerlink" href="#box-refinement" title="Link to this heading">#</a></h1>
-<p>The box refinement section allows for a specific region in the grid to be finer before the simulation starts. To do so, a box refinement can be added with the following example parameters:</p>
+<p>The box refinement section allows for a specific region in the grid to be finer before the simulation starts. To do so, a box refinement can be added with the following parameters and their appropriate values:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection box refinement
-  subsection mesh
-    set type               = dealii
-    set grid type          = subdivided_hyper_rectangle
-    set grid arguments     = 1,1,1 : -1,-1,-1 : 1,1,1 : true
-    set initial refinement = 0
+set number of refinement boxes = 0
+  subsection box 0
+    subsection mesh
+      set type                   = dealii
+      set grid type              = hyper_cube
+      set grid arguments         = -1 : 1 : true
+      set initial refinement     = 0
+      set scale                  = 1
+      set initial translation    = 0, 0, 0
+      set initial rotation axis  = 1, 0, 0
+      set initial rotation angle = 0
+    end
+    set additional refinement = 0
   end
-  set initial refinement = 3
 end
 </pre></div>
 </div>
-<ul class="simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">mesh</span></code> subsection allows to define the region in which the fluid mesh needs to be refined. A cell will be refined if at least one of its degrees of freedom (dofs) is located within the outer boundaries of the box specified in the <code class="docutils literal notranslate"><span class="pre">grid</span> <span class="pre">arguments</span></code>. Therefore, in this example, every cell of the fluid mesh that has at least one of its dofs located in the hexahedron located between (-1, -1, -1) and (1,1,1) will be refined. For more information on meshes, see <a class="reference internal" href="mesh.html"><span class="doc">Mesh</span></a>.</p></li>
-</ul>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> of the <code class="docutils literal notranslate"><span class="pre">subdivided_hyper_rectangle</span></code> should be as small as possible, since the initial refinement of the box mesh itself will not have any impact on the definition of the refinement zone.</p>
+<ul>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">refinement</span> <span class="pre">boxes</span></code> corresponds to the number of refinement boxes we want to introduce.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>At the moment, the software only supports up to <span class="math notranslate nohighlight">\(5\)</span> different boxes.</p>
 </div>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">box</span> <span class="pre">0</span></code> includes information regarding the 1st refinement box.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The used mesh can be of any <code class="docutils literal notranslate"><span class="pre">type</span></code> and any <code class="docutils literal notranslate"><span class="pre">grid</span> <span class="pre">type</span></code>.</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">refinement</span> <span class="pre">boxes</span> <span class="pre">=</span> <span class="pre">2</span></code>, the 2nd refinement box will be described in the <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">box</span> <span class="pre">1</span></code>. We increment the last digit of the subsection name to describe a new refinement box.</p>
 </div>
-<ul class="simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> parameter in the <code class="docutils literal notranslate"><span class="pre">box</span> <span class="pre">refinement</span></code> subsection will dictate the number of times the cells inside the box will be refined.</p></li>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">mesh</span></code> subsection allows to define the region in which the fluid mesh needs to be uniformly refined. A cell will be refined if at least one of its degrees of freedom (DoFs) is located within the outer boundaries of the box specified in the <code class="docutils literal notranslate"><span class="pre">grid</span> <span class="pre">arguments</span></code>. Therefore, in the 3D example above, every cell of the fluid mesh that has at least one of its DoFs located in the hexahedron defined by the corners (-1, -1, -1) and (1,1,1) will be refined.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The used mesh can be of any <code class="docutils literal notranslate"><span class="pre">type</span></code> and any <code class="docutils literal notranslate"><span class="pre">grid</span> <span class="pre">type</span></code>. Additionally, box refinement meshes support scaling, translation, and rotation, applied in the listed order.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>For more information on meshes, see <a class="reference internal" href="mesh.html"><span class="doc">the mesh documentation</span></a>.</p>
+</div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> of the <code class="docutils literal notranslate"><span class="pre">hyper_cube</span></code> should be as small as possible, since the initial refinement of the box mesh itself will not have any impact on the definition of the refinement zone.
+However, in the case of a curved shape such as a <code class="docutils literal notranslate"><span class="pre">hyper_sphere</span></code>, increasing the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> of the box refinement mesh improves the geometry resolution of the box boundary.</p>
+</div>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">additional</span> <span class="pre">refinement</span></code> parameter in the <code class="docutils literal notranslate"><span class="pre">box</span> <span class="pre">refinement</span></code> subsection indicates the number of times the cells inside the box will be refined in addition to the ones prescribed in the <a class="reference internal" href="mesh.html"><span class="doc">simulation mesh subsection</span></a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This number is not the level of refinement of the cell, but the number of additional refinements applied within the region defined by the box at the initial condition. For instance, let us consider a simulation mesh with an <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> of <span class="math notranslate nohighlight">\(1\)</span> and a box refinement mesh with an <code class="docutils literal notranslate"><span class="pre">additional</span> <span class="pre">refinement</span></code> of <span class="math notranslate nohighlight">\(2\)</span>. The level of refinement of cells within the box refinement region becomes: <span class="math notranslate nohighlight">\(1 + 2 = 3\)</span>. However, the mesh resolution within this region, may change dynamically if <a class="reference internal" href="mesh_adaptation_control.html"><span class="doc">adaptive mesh refinement</span></a> is enabled.</p>
+</div>
+</li>
 </ul>
 </section>
 
@@ -528,5 +556,6 @@ end
     <script src="../../_static/scripts/furo.js?v=32e29ea5"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=7cec7674"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

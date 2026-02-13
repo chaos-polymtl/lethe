@@ -96,7 +96,7 @@ var searchData=
   ['bounding_5fbox_5fcontact_93',['bounding_box_contact',['../classShape.html#ac3c78b7293a5994d557ab78e3a48df69',1,'Shape']]],
   ['bounding_5fbox_5fhalf_5flength_94',['bounding_box_half_length',['../classShape.html#ab1080a0361811deb866dfbb51d9da340',1,'Shape']]],
   ['bounding_5fconstraints_95',['bounding_constraints',['../classVolumeOfFluid.html#a24e30e8df399275b379f24a54735156f',1,'VolumeOfFluid']]],
-  ['box_5fmesh_96',['box_mesh',['../structParameters_1_1MeshBoxRefinement.html#ab5fd71e00cfbcbd5b559ce6e390bf877',1,'Parameters::MeshBoxRefinement']]],
+  ['box_5fadditional_5frefinements_96',['box_additional_refinements',['../structParameters_1_1MeshBoxRefinement.html#a569c0550ea1d948dd680f21b08f085ab',1,'Parameters::MeshBoxRefinement']]],
   ['box_5frefine_5fmesh_97',['box_refine_mesh',['../classNavierStokesBase.html#a035087ab1aa51daa4d7bcee2aeb6c16d',1,'NavierStokesBase']]],
   ['bufferrw_98',['bufferrw',['../classBufferRW.html#a2f5425aab11f6a768ae8def0bf8a0f85',1,'BufferRW::BufferRW()'],['../classBufferRW.html',1,'BufferRW&lt; T &gt;']]],
   ['build_99',['build',['../classBoundaryCellsInformation.html#a3ecae648fb75f5cc23a3d4b0458acceb',1,'BoundaryCellsInformation::build()'],['../classMGTransferMatrixFreeWrapper.html#a74828793a7e8f99cea5e172d40ddd991',1,'MGTransferMatrixFreeWrapper::build()'],['../classBoundaryCellsInformation.html#a532ac1be691e42d5e003e06b3c3c4a7c',1,'BoundaryCellsInformation::build()']]],

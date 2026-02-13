@@ -459,7 +459,7 @@
 <section id="files-used-in-this-example">
 <h2>Files Used in this Example<a class="headerlink" href="#files-used-in-this-example" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>Parameter file: <code class="docutils literal notranslate"><span class="pre">examples/sharp-immersed-boundary/sphere-carreau-with-sharp-inferface/sphere-carreau-with-sharp-interface.prm</span></code></p></li>
+<li><p>Parameter file: <code class="docutils literal notranslate"><span class="pre">examples/sharp-immersed-boundary/sphere-carreau-with-sharp-interface/sphere-carreau-with-sharp-interface.prm</span></code></p></li>
 </ul>
 </section>
 <section id="description-of-the-case">
@@ -483,12 +483,14 @@ end
 </div>
 <p>The dimensions of the used domain are <span class="math notranslate nohighlight">\((60 \times 30 \times 30)\)</span>, and the <code class="docutils literal notranslate"><span class="pre">subdivided_hyper_rectangle</span></code> is initially divided in <span class="math notranslate nohighlight">\((2 \times 1 \times 1)\)</span> cells, the cells are therefore cubic and of initial size <span class="math notranslate nohighlight">\((30 \times 30 \times 30)\)</span>. Using <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">=</span> <span class="pre">4</span></code>, the initial size of the cubic cells is <span class="math notranslate nohighlight">\(30/2^4 = 1.875\)</span>. Since the particle size is small in regards to the mesh size, a refinement zone is generated around the particle to better capture it (see <a class="reference internal" href="../../../parameters/cfd/box_refinement.html"><span class="doc">Box Refinement</span></a> for more details).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection box refinement
-  set initial refinement = 3
-  subsection mesh
-    set type               = dealii
-    set grid type          = subdivided_hyper_rectangle
-    set grid arguments     = 1,1,1: -2,-2,-2 : 6,2,2 : true
-    set initial refinement = 0
+  set number of refinement boxes = 1
+  subsection box 0
+    set additional refinement = 3
+    subsection mesh
+      set type           = dealii
+      set grid type      = subdivided_hyper_rectangle
+      set grid arguments = 1,1,1: -2,-2,-2 : 6,2,2 : true
+    end
   end
 end
 </pre></div>

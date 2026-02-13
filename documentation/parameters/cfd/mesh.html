@@ -497,7 +497,7 @@ end
 </div>
 <ul>
 <li><dl>
-<dt>The following choices for the mesh type are available:</dt><dd><ul class="simple">
+<dt>The following choices for the mesh <code class="docutils literal notranslate"><span class="pre">type</span></code> are available:</dt><dd><ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">gmsh</span></code>: if this type is chosen, a <code class="docutils literal notranslate"><span class="pre">.msh</span></code> file generated from GMSH can be used. In this case, the grid file name must be specified in the <code class="docutils literal notranslate"><span class="pre">file</span> <span class="pre">name</span></code> variable.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">dealii</span></code>: if this type is chosen, the deal.II grid generator class can be used. For additional documentation on these grids, you can consult the deal.II documentation for the <a class="reference external" href="https://www.dealii.org/current/doxygen/deal.II/namespaceGridGenerator.html">GridGenerator</a> . The type of grid is specified by the <code class="docutils literal notranslate"><span class="pre">grid</span> <span class="pre">type</span></code> parameter and the arguments used for grid generation by the <code class="docutils literal notranslate"><span class="pre">grid</span> <span class="pre">arguments</span></code> parameter.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">periodic_hills</span></code>: if this type is chosen a mesh for the periodic hills CFD benchmark is created. For more details on this type of mesh and its grid arguments refer to <a class="reference internal" href="../../examples/incompressible-flow/3d-flow-over-periodic-hills/3d-flow-over-periodic-hills.html"><span class="doc">Flow over Periodic Hills</span></a>.</p></li>
@@ -513,15 +513,25 @@ This type of mesh is available, but its usage is not recommended.</p>
 </li>
 </ul>
 <a class="reference internal image-reference" href="../../_images/cylindrical_meshes.png"><img alt="../../_images/cylindrical_meshes.png" class="align-center" src="../../_images/cylindrical_meshes.png" style="width: 600px;" /></a>
-<ul class="simple">
-<li><p>The <cite>initial refinement</cite> number determines the number of refinements the grid will undergo in the simulation before the simulation is run. This allows one to refine a coarse grid automatically. By default, most deal.II grids will be as coarse as possible and need to be refined. This is a desirable behavior for parallel simulations, since for quad/hex meshes, the coarsest level of the grid is shared amongst all cores. Consequently, using a coarse grid with too many cells will lead to a prohibitive memory consumption.</p></li>
-<li><p>The <cite>initial boundary refinement</cite> determines the number of refinements the grid will undergo in the simulation in the vicinities of the boundary specified by the <code class="docutils literal notranslate"><span class="pre">boundaries</span> <span class="pre">refined</span></code> parameter.</p></li>
-<li><p>The <cite>enable target size</cite> and <cite>target size</cite> respectively enable and provide a maximal target size that initial refinement cycles must lead towards, in contrast to the more common way of specifying the number of refinement cycles to apply.</p></li>
-<li><p>The <cite>check diamond cells</cite> and <cite>expand particle-wall contact search</cite> are parameters used in particles simulations. The former is used to verify the quality of the background mesh; detecting diamond cells is important as they should be avoided. The latter serves a purpose in contact detection when the background mesh is concave.</p></li>
-<li><p><cite>simplex</cite>. If simplex is set to true, it indicates that the mesh being read is made of only simplex elements. If the mesh is of <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">dealii</span></code> it will be converted from a quad/hex mesh to a simplex mesh. If the mesh is of <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">gsmh</span></code>, it will be read from a file as long as it is only made of simplices.</p></li>
-<li><p>The <cite>initial translation</cite> parameter provides a way to move the mesh in space prior to simulating the problem. It can be useful when space-dependent functions are used, but that generating a translated mesh is inconvenient or impossible.</p></li>
-<li><p>The <cite>initial rotation axis</cite> and <cite>initial rotation angle</cite> parameters provide another way to move the mesh prior to simulating the problem.</p></li>
-<li><p>The <cite>scale</cite> parameter is used to scale the mesh. This is useful when the mesh is made in a different set of unit than what is desired by the simulation.</p></li>
+<ul>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> number determines the number of refinements the grid will undergo in the simulation before the simulation is run. This allows one to refine a coarse grid automatically. By default, most deal.II grids will be as coarse as possible and need to be refined. This is a desirable behavior for parallel simulations, since for quad/hex meshes, the coarsest level of the grid is shared amongst all cores. Consequently, using a coarse grid with too many cells will lead to a prohibitive memory consumption.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">boundary</span> <span class="pre">refinement</span></code> determines the number of refinements the grid will undergo in the simulation in the vicinities of the boundary specified by the <code class="docutils literal notranslate"><span class="pre">boundaries</span> <span class="pre">refined</span></code> parameter.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">target</span> <span class="pre">size</span></code> and <code class="docutils literal notranslate"><span class="pre">target</span> <span class="pre">size</span></code> respectively enable and provide a maximal target size that initial refinement cycles must lead towards, in contrast to the more common way of specifying the number of refinement cycles to apply.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">check</span> <span class="pre">diamond</span> <span class="pre">cells</span></code> and <code class="docutils literal notranslate"><span class="pre">expand</span> <span class="pre">particle-wall</span> <span class="pre">contact</span> <span class="pre">search</span></code> are parameters used in particles simulations. The former is used to verify the quality of the background mesh; detecting diamond cells is important as they should be avoided. The latter serves a purpose in contact detection when the background mesh is concave.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">simplex</span></code>. If simplex is set to true, it indicates that the mesh being read is made of only simplex elements. If the mesh is of <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">dealii</span></code> it will be converted from a quad/hex mesh to a simplex mesh. If the mesh is of <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">gsmh</span></code>, it will be read from a file as long as it is only made of simplices.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">translation</span></code> parameter provides a way to move the mesh in space prior to simulating the problem. It can be useful when space-dependent functions are used, but that generating a translated mesh is inconvenient or impossible.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>If the mesh is defined in a 2D space, the third component of <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">translation</span></code> (<span class="math notranslate nohighlight">\(z\)</span>-component) is ignored and the mesh translates in <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> only.</p>
+</div>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">rotation</span> <span class="pre">axis</span></code> and <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">rotation</span> <span class="pre">angle</span></code> parameters provide another way to move the mesh prior to simulating the problem.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>If the mesh is defined in a 2D space, <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">rotation</span> <span class="pre">axis</span></code> is ignored and the mesh rotates counter-clockwise around the origin of the coordinate system.</p>
+</div>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">scale</span></code> parameter is used to scale the mesh. This is useful when the mesh is made in a different set of unit than what is desired by the simulation.</p></li>
 </ul>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -584,5 +594,6 @@ This type of mesh is available, but its usage is not recommended.</p>
     <script src="../../_static/scripts/furo.js?v=32e29ea5"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=7cec7674"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>

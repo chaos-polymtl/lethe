@@ -557,12 +557,15 @@ end
 end
 
 subsection box refinement
-  subsection mesh
-    set type           = dealii
-    set grid type      = subdivided_hyper_rectangle
-    set grid arguments = 8,1 : 0,0.3925: 0.6,0.4675: false
+  set number of refinement boxes = 1
+  subsection box 0
+    subsection mesh
+      set type           = dealii
+      set grid type      = subdivided_hyper_rectangle
+      set grid arguments = 8,1 : 0,0.3925: 0.6,0.4675: false
+    end
+    set additional refinement = 3
   end
-  set initial refinement = 3
 end
 </pre></div>
 </div>
@@ -769,7 +772,7 @@ end
 end
 </pre></div>
 </div>
-<p>The laser is static in the middle of the domain at the metal-gas interface <span class="math notranslate nohighlight">\(\vec{x} = [0.3, 0.43]\)</span>, hence its <code class="docutils literal notranslate"><span class="pre">path</span></code> is independent of the time. Note that the <span class="math notranslate nohighlight">\(y\)</span> component of the <code class="docutils literal notranslate"><span class="pre">path</span></code> is not relevant: the <code class="docutils literal notranslate"><span class="pre">gaussian_heat_flux_vof_interface</span></code> model applies the laser heat flux at the metal-gas interface no matter its postion along the <span class="math notranslate nohighlight">\(y\)</span> axis. This allows us to model the effect of the interface deformation on the surface heat flux.</p>
+<p>The laser is static in the middle of the domain at the metal-gas interface <span class="math notranslate nohighlight">\(\vec{x} = [0.3, 0.43]\)</span>, hence its <code class="docutils literal notranslate"><span class="pre">path</span></code> is independent of the time. Note that the <span class="math notranslate nohighlight">\(y\)</span> component of the <code class="docutils literal notranslate"><span class="pre">path</span></code> is not relevant: the <code class="docutils literal notranslate"><span class="pre">gaussian_heat_flux_vof_interface</span></code> model applies the laser heat flux at the metal-gas interface no matter its position along the <span class="math notranslate nohighlight">\(y\)</span> axis. This allows us to model the effect of the interface deformation on the surface heat flux.</p>
 </section>
 <section id="evaporation">
 <h3>Evaporation<a class="headerlink" href="#evaporation" title="Link to this heading">#</a></h3>
