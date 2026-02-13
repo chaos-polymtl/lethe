@@ -133,7 +133,7 @@
     };
 
     // ---------------------------------------------------------------------------
-    // DOM building / insertion
+    // Document Object Model (DOM) building / insertion
     // ---------------------------------------------------------------------------
 
     /**
@@ -290,7 +290,7 @@
     function start() {
         refresh();
 
-        // Debounce resize events to avoid excessive DOM manipulation
+        // Debounce window resize events to avoid excessive DOM manipulation
         let resizeTimeout;
         window.addEventListener("resize", () => {
             clearTimeout(resizeTimeout);
