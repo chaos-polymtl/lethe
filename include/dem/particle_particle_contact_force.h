@@ -16,6 +16,7 @@
 
 #include <boost/range/adaptor/map.hpp>
 
+#include <unordered_map>
 #include <vector>
 
 using namespace dealii;
@@ -71,13 +72,13 @@ public:
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) = 0;
 
   void
-  set_periodic_offset(const Tensor<1, dim> &periodic_offset)
+  set_periodic_offset(const Tensor<1, dim> &offset, const types::boundary_id boundary_id)
   {
-    this->periodic_offset = periodic_offset;
+    this->periodic_offsets[boundary_id] = offset;
   }
 
 protected:
-  Tensor<1, dim> periodic_offset;
+  std::unordered_map<types::boundary_id, Tensor<1, dim>> periodic_offsets;
 };
 
 /**
@@ -252,18 +253,20 @@ protected:
   }
 
   /**
-   * @brief Get the shifted location of the particle on the periodic boundary.
+   * @brief Get the shifted location of a particle on a periodic boundary.
    *
    * @param particle The particle to get the location from.
+   * @param[in] boundary_id The periodic boundary with which to shift the location.
    */
   inline Point<3>
-  get_periodic_location(const Particles::ParticleIterator<dim> &particle) &
+  get_periodic_location(const Particles::ParticleIterator<dim> &particle, const types::boundary_id boundary_id) &
   {
+    const auto it = this->periodic_offsets.find(boundary_id);
     if constexpr (dim == 3)
-      return (particle->get_location() - this->periodic_offset);
+      return (particle->get_location() - it->second);
 
     if constexpr (dim == 2)
-      return point_nd_to_3d(particle->get_location() - this->periodic_offset);
+      return point_nd_to_3d(particle->get_location() - it->second);
   }
 
   /**

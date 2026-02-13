@@ -12,8 +12,8 @@
 
 #include <deal.II/particles/particle_handler.h>
 
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
 using namespace dealii;
 
@@ -39,13 +39,15 @@ public:
   /**
    * @brief Sets the periodic boundaries parameters.
    *
-   * @param[in] periodic_boundary_ids_0 Map of IDs of the first boundary of each PB pair.
+   * @param[in] periodic_boundary_ids_0 Map of IDs of the first boundary of each
+   * PB pair.
    * @param[in] periodic_directions Map of perpendicular axes of each PB pair.
    */
   void
   set_periodic_boundaries_information(
-    const std::unordered_map<unsigned int, types::boundary_id> &periodic_boundary_ids_0,
-    const std::unordered_map<unsigned int, unsigned int>       &periodic_directions)
+    const std::unordered_map<unsigned int, types::boundary_id>
+      &periodic_boundary_ids_0,
+    const std::unordered_map<unsigned int, unsigned int> &periodic_directions)
   {
     // If function is reached and vectors are not empty
     if (!periodic_boundary_ids_0.empty())
@@ -53,7 +55,8 @@ public:
         periodic_boundaries_enabled = true;
 
         // Communicate to the action manager that there are periodic boundaries
-        DEMActionManager::get_action_manager()->set_periodic_boundaries_enabled();
+        DEMActionManager::get_action_manager()
+          ->set_periodic_boundaries_enabled();
 
         periodic_boundaries_ids = periodic_boundary_ids_0;
         directions              = periodic_directions;
@@ -68,8 +71,8 @@ public:
    * information in periodic_boundaries_cells_information.
    *
    * @param[in] triangulation Triangulation.
-   * @param[out] periodic_boundaries_cells_information Map (multimap) of information of the
-   * pair of cells on periodic boundaries.
+   * @param[out] periodic_boundaries_cells_information Map (multimap) of
+   * information of the pair of cells on periodic boundaries.
    */
   void
   map_periodic_cells(
@@ -98,8 +101,8 @@ public:
 
   /**
    * @brief Return the periodic offset distance for a specific boundary ID.
-   * It is calculated from the first pair of cells on periodic boundaries, 
-   * all pair of cells are assumed to have the same offset.
+   * It is calculated from the first pair of cells on periodic boundaries,
+   * all pairs of cells on that boundary are assumed to have the same offset.
    *
    * @param[in] boundary_id ID of the boundary to query
    * @return Offset distance between periodic boundaries.
@@ -107,8 +110,9 @@ public:
   inline Tensor<1, dim>
   get_periodic_offset_distance(const types::boundary_id boundary_id)
   {
-    if (periodic_offsets.find(boundary_id) != periodic_offsets.end())
-      return periodic_offsets[boundary_id];
+    auto it = periodic_offsets.find(boundary_id);
+    if (it != periodic_offsets.end())
+      return it->second;
     else
       return Tensor<1, dim>();
   }
@@ -157,9 +161,11 @@ private:
   bool periodic_boundaries_enabled;
 
   /**
-   * @brief ID of the first periodic boundary. No needs to store the second one
+   * @brief ID of the first periodic boundary for all PB pairs. No needs to store the second one
    * since they are linked on the triangulation, and accessible through
-   * functions on cells on the boundary condition 0.
+   * functions on cells on the boundary condition 0. 
+   * Map key: index of BC from .prm
+   * Map value: id of a primary periodic boundary
    */
   std::unordered_map<unsigned int, types::boundary_id> periodic_boundaries_ids;
 
@@ -171,8 +177,8 @@ private:
 
   /**
    * @brief Map storing offset distance between periodic boundaries, keyed by the
-   * boundary ID (pb0). It is calculated from the first pair of cells on periodic
-   * boundaries, all pair of cells are assumed to have the same offset.
+   * boundary ID (pb0). It is calculated from the first pair of cells on
+   * periodic boundaries, all pair of cells are assumed to have the same offset.
    */
   std::unordered_map<types::boundary_id, Tensor<1, dim>> periodic_offsets;
 };

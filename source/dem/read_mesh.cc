@@ -30,7 +30,7 @@ read_mesh(const Parameters::Mesh   &mesh_parameters,
           Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
         periodic_bc_indices.push_back(i_bc);
     }
-  
+
   if (!periodic_bc_indices.empty())
     match_periodic_boundaries(triangulation, bc_params, periodic_bc_indices);
 
@@ -63,7 +63,7 @@ template <int dim, int spacedim>
 void
 match_periodic_boundaries(Triangulation<dim, spacedim>        &triangulation,
                           const Parameters::Lagrangian::BCDEM &bc_param,
-                          const std::vector<unsigned int>     &periodic_bc_indices)
+                          const std::vector<unsigned int> &periodic_bc_indices)
 {
   std::vector<GridTools::PeriodicFacePair<
     typename Triangulation<dim, spacedim>::cell_iterator>>

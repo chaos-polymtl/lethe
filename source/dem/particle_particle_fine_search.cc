@@ -11,6 +11,8 @@
 
 #include <boost/range/adaptor/map.hpp>
 
+#include <unordered_map>
+
 using namespace dealii;
 
 template <int dim>
@@ -23,7 +25,7 @@ particle_particle_fine_search(
   const typename DEM::dem_data_structures<dim>::particle_particle_candidates
                       &contact_pair_candidates,
   const double         neighborhood_threshold,
-  const Tensor<1, dim> periodic_offset)
+  const std::unordered_map<types::boundary_id, Tensor<1, dim>> periodic_offsets)
 {
   // First iterating over adjacent_particles
   for (auto &&adjacent_particles_list :
@@ -49,7 +51,7 @@ particle_particle_fine_search(
 
           // Finding the properties of the particles in contact
           Point<dim, double> particle_two_location =
-            particle_two->get_location() - periodic_offset;
+            particle_two->get_location() - periodic_offsets;
 
           // Finding distance
           const double square_distance =
@@ -83,7 +85,7 @@ particle_particle_fine_search(
         {
           auto particle_two = particle_container.at(particle_two_id);
           Point<dim, double> particle_two_location =
-            particle_two->get_location() - periodic_offset;
+            particle_two->get_location() - periodic_offsets;
 
           // Finding distance
           const double square_distance =
@@ -114,7 +116,7 @@ particle_particle_fine_search<2>(
   const typename DEM::dem_data_structures<2>::particle_particle_candidates
                     &contact_pair_candidates,
   const double       neighborhood_threshold,
-  const Tensor<1, 2> periodic_offset = Tensor<1, 2>());
+  const Tensor<1, 2> periodic_offsets = Tensor<1, 2>());
 
 template void
 particle_particle_fine_search<3>(
@@ -125,4 +127,4 @@ particle_particle_fine_search<3>(
   const typename DEM::dem_data_structures<3>::particle_particle_candidates
                     &contact_pair_candidates,
   const double       neighborhood_threshold,
-  const Tensor<1, 3> periodic_offset = Tensor<1, 3>());
+  const Tensor<1, 3> periodic_offsets = Tensor<1, 3>());
