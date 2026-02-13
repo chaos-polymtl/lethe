@@ -2706,13 +2706,16 @@ namespace Parameters
         "initial translation",
         "0, 0, 0",
         Patterns::List(Patterns::Double()),
-        "Component of the desired translation of the mesh at initialization");
+        "Component of the desired translation of the mesh at initialization. \n"
+        "In 2D, the third value (z-component) is ignored.");
 
       prm.declare_entry(
         "initial rotation axis",
         "1, 0, 0",
         Patterns::List(Patterns::Double()),
-        "Component of the desired rotation of the mesh at initialization");
+        "Component of the desired rotation of the mesh at initialization.\n"
+        "In 2D, this has no effect, only a counter-clockwise rotation around the origin \n "
+        "of the coordinate system is applied.");
 
       prm.declare_entry(
         "initial rotation angle",
@@ -2722,7 +2725,7 @@ namespace Parameters
 
       prm.declare_entry("scale",
                         "1",
-                        Patterns::Double(),
+                        Patterns::Double(0),
                         "Scaling factor used for the mesh.");
     }
     prm.leave_subsection();
@@ -2786,13 +2789,27 @@ namespace Parameters
   {
     prm.enter_subsection("box refinement");
     {
-      box_mesh = std::make_shared<Mesh>();
-      box_mesh->declare_parameters(prm);
-
-      prm.declare_entry("initial refinement",
+      prm.declare_entry("number of refinement boxes",
                         "0",
-                        Patterns::Integer(),
-                        "Initial refinement of the principal mesh");
+                        Patterns::Integer(0),
+                        "Number of refinement boxes specified");
+      for (unsigned int i_box = 0; i_box < max_number_of_refinement_boxes;
+           ++i_box)
+        {
+          prm.enter_subsection("box " + Utilities::int_to_string(i_box, 1));
+          {
+            (*refinement_boxes_meshes)[i_box].declare_parameters(prm);
+            prm.declare_entry(
+              "additional refinement",
+              "0",
+              Patterns::Integer(0),
+              "Additional refinements of the principal mesh within the area delimited by the 'box' mesh.");
+            prm.declare_alias("additional refinement",
+                              "initial refinement",
+                              true);
+          }
+          prm.leave_subsection();
+        }
     }
     prm.leave_subsection();
   }
@@ -2802,9 +2819,27 @@ namespace Parameters
   {
     prm.enter_subsection("box refinement");
     {
-      box_mesh->parse_parameters(prm);
+      number_of_refinement_boxes =
+        prm.get_integer("number of refinement boxes");
+      AssertThrow(
+        number_of_refinement_boxes <= max_number_of_refinement_boxes,
+        ExcMessage(
+          "The current implementation limits the number of refinement boxes up to " +
+          Utilities::int_to_string(max_number_of_refinement_boxes) +
+          " refinement boxes.\n You have declared " +
+          Utilities::int_to_string(number_of_refinement_boxes) +
+          " refinement boxes.\n Please reduce the number of refinement boxes."));
 
-      initial_refinement = prm.get_integer("initial refinement");
+      for (unsigned int i_box = 0; i_box < number_of_refinement_boxes; ++i_box)
+        {
+          prm.enter_subsection("box " + Utilities::int_to_string(i_box, 1));
+          {
+            (*refinement_boxes_meshes)[i_box].parse_parameters(prm);
+            box_additional_refinements[i_box] =
+              prm.get_integer("additional refinement");
+          }
+          prm.leave_subsection();
+        }
     }
     prm.leave_subsection();
   }

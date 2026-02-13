@@ -1,0 +1,26 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       1024
+   Number of degrees of freedom: 3267
+   Volume of triangulation:      16
+Initial refinement in box 0 - Step  1 of 1
+   Number of active cells:       1816
+   Number of degrees of freedom: 5775
+   Volume of triangulation:      16
+Initial refinement in box 1 - Step  1 of 2
+   Number of active cells:       2242
+   Number of degrees of freedom: 7131
+   Volume of triangulation:      16
+Initial refinement in box 1 - Step  2 of 2
+   Number of active cells:       3976
+   Number of degrees of freedom: 12495
+   Volume of triangulation:      16
+Initial refinement in box 2 - Step  1 of 1
+   Number of active cells:       4234
+   Number of degrees of freedom: 13356
+   Volume of triangulation:      16
+
+*****************************
+Steady iteration:        1/1
+*****************************
+cells error_velocity error_pressure 
+ 4234 5.159242e-02 - 2.072664e-01 - 

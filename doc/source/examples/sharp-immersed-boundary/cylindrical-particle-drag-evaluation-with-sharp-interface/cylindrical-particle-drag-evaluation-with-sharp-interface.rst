@@ -1,3 +1,7 @@
+..
+  SPDX-FileCopyrightText: Copyright (c) 2024, 2026 The Lethe Authors
+  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 ==============================================================================
 Flow around a Finite Cylindrical Particle Using the Sharp Interface Method
 ==============================================================================
@@ -40,9 +44,9 @@ Mesh
 ~~~~
 
 As shown in the previous figure, the flow around the particle is modelled using a prismatic channel the size of which depends on the size of the particle. In this case, we consider a particle with a diameter of :math:`D = 1`, therefore we have :math:`L = 2`.
-The domain, of size :math:`32 L \times 16 L \times 16 L`, was found to produce results independant of domain sizes with a low computational cost.
+The domain, of size :math:`32 L \times 16 L \times 16 L`, was found to produce results independent of domain sizes with a low computational cost.
 
-The mesh is first defined coarsely away from the particle with elements of size :math:`L \times L \times L`. The particle is positionned at :math:`3/8` of the domain length to avoid boundary interactions and allow the flow to develop both behind and in front of the particle.
+The mesh is first defined coarsely away from the particle with elements of size :math:`L \times L \times L`. The particle is positioned at :math:`3/8` of the domain length to avoid boundary interactions and allow the flow to develop both behind and in front of the particle.
 We then make use of a ``box refinement`` to refine the mesh around the particle and properly evaluate the velocity field with elements of size :math:`1/4 D \times 1/4 D \times 1/4 D`.
 
 .. code-block:: text
@@ -55,12 +59,14 @@ We then make use of a ``box refinement`` to refine the mesh around the particle 
   end
 
   subsection box refinement
-    set initial refinement = 3
-    subsection mesh
-      set type               = dealii
-      set grid type          = subdivided_hyper_rectangle
-      set grid arguments     = 2,1,1 : -6,-4,-4 : 10,4,4 : true
-      set initial refinement = 0
+    set number of refinement boxes = 1
+    subsection box 0
+      set additional refinement = 3
+      subsection mesh
+        set type           = dealii
+        set grid type      = subdivided_hyper_rectangle
+        set grid arguments = 2,1,1 : -6,-4,-4 : 10,4,4 : true
+      end
     end
   end
 
@@ -68,7 +74,7 @@ Immersed Boundary Particles
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We define the particle in flow using the sharp immersed boundary method. The particle is defined as a cylinder with a radius of :math:`D/2 = 0.5` and a half-length of :math:`L/2 = 1.0`. The particle is centered at :math:`(0,0,0)`
-and the cylider's axis is oriented perpendicularly to direction of the flow.
+and the cylinder's axis is oriented perpendicularly to direction of the flow.
 
 The ``local mesh refinement`` is set to 3 to ensure we resolve the boundary layer flow around the particle with elements of size :math:`1/32 D \times 1/32 D \times 1/32 D`.
 

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/boundary_conditions.h>
@@ -123,18 +123,8 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
             mesh_parameters.grid_type,
             mesh_parameters.grid_arguments);
 
-          GridTools::scale(mesh_parameters.scale, triangulation);
-
-          if constexpr (dim == 3)
-            {
-              // Initial mesh translation
-              GridTools::shift(mesh_parameters.translation, triangulation);
-
-              // Initial mesh rotation
-              GridTools::rotate(mesh_parameters.rotation_axis,
-                                mesh_parameters.rotation_angle,
-                                triangulation);
-            }
+          // Scale, translate, and rotate mesh
+          apply_mesh_transformation(mesh_parameters, triangulation);
         }
     }
   // Customizable cylinder mesh
@@ -634,6 +624,47 @@ read_mesh_and_manifolds_for_stator_and_rotor(
       std::to_string(n_faces_stator_interface_total) + ")."));
 }
 
+template <int dim, int spacedim>
+void
+apply_mesh_transformation(const Parameters::Mesh       &mesh_parameters,
+                          Triangulation<dim, spacedim> &triangulation)
+{
+  // Mesh scaling
+  GridTools::scale(mesh_parameters.scale, triangulation);
+  if constexpr (dim == 2 && spacedim == 2)
+    {
+      // Box mesh translation
+      Tensor<1, 2> translation_vector;
+      translation_vector[0] = mesh_parameters.translation[0];
+      translation_vector[1] = mesh_parameters.translation[1];
+      GridTools::shift(translation_vector, triangulation);
+
+      // Box mesh rotation around the origin of the system coordinates
+      GridTools::rotate(mesh_parameters.rotation_angle, triangulation);
+    }
+  else if constexpr (dim == 2 && spacedim == 3)
+    {
+      // Box mesh translation
+      GridTools::shift(mesh_parameters.translation, triangulation);
+
+      // Box mesh rotation
+      GridTools::rotate(mesh_parameters.rotation_axis,
+                        mesh_parameters.rotation_angle,
+                        triangulation);
+    }
+  else if constexpr (dim == 3)
+    {
+      // Box mesh translation
+      GridTools::shift(mesh_parameters.translation, triangulation);
+
+      // Box mesh rotation
+      GridTools::rotate(mesh_parameters.rotation_axis,
+                        mesh_parameters.rotation_angle,
+                        triangulation);
+    }
+}
+
+
 template void
 attach_grid_to_triangulation(Triangulation<2>       &triangulation,
                              const Parameters::Mesh &mesh_parameters);
@@ -696,3 +727,13 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   const bool                                    restart,
   const BoundaryConditions::BoundaryConditions &boundary_conditions,
   const Parameters::Mortar<3>                  &mortar_parameters);
+
+template void
+apply_mesh_transformation(const Parameters::Mesh &mesh_parameters,
+                          Triangulation<2, 2>    &triangulation);
+template void
+apply_mesh_transformation(const Parameters::Mesh &mesh_parameters,
+                          Triangulation<2, 3>    &triangulation);
+template void
+apply_mesh_transformation(const Parameters::Mesh &mesh_parameters,
+                          Triangulation<3, 3>    &triangulation);

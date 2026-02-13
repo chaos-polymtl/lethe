@@ -1,0 +1,157 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+#-------------------------------------------------------------------------------
+# DESCRIPTION:
+# This test checks that box refinements at the initial condition are correctly
+# generated in 2D with a manufactured solution.
+# It also checks mesh scaling, translation and rotation in 2D.
+# The quantities of interest are the number of cells and the velocity &
+# pressure error values.
+# In 2D, the rotation convention is counter-clockwise around the origin of
+# the system of coordinates.
+#-------------------------------------------------------------------------------
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = steady
+  set output name      = multiple-box-refinement-2d
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_cube
+  set grid arguments     = -2 : 2 : false
+  set initial refinement = 5
+end
+
+#---------------------------------------------------
+# Box Refinement
+#---------------------------------------------------
+
+subsection box refinement
+  set number of refinement boxes = 3
+  subsection box 0
+    subsection mesh
+      set type                   = dealii
+      set grid type              = hyper_cube
+      set grid arguments         = -0.75 : 0.75 : false
+      set initial rotation angle = 0.78540 # pi/4
+      set scale                  = 1.25
+    end
+    set additional refinement = 1
+  end
+  subsection box 1
+    subsection mesh
+      set type                = dealii
+      set grid type           = hyper_rectangle
+      set grid arguments      = -0.35,-0.55 : 0.35,0.35 : false
+      set initial translation = 0, -1, 0
+    end
+    set additional refinement = 2
+  end
+  subsection box 2
+    subsection mesh
+      set type               = dealii
+      set grid type          = hyper_shell
+      set grid arguments     = -1.5,1.5 : 0.6 : 1 : 0 : false
+      set initial refinement = 2
+    end
+    set additional refinement = 1
+  end
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set fluid dynamics = true
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 1
+  subsection bc 0
+    set id   = 0
+    set type = noslip
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set kinematic viscosity = 1.0
+  end
+end
+
+#---------------------------------------------------
+# Source term
+#---------------------------------------------------
+
+subsection source term
+  subsection fluid dynamics
+    set Function expression = (2*pi*pi*(-sin(pi*x) * sin(pi*x) + cos(pi*x) * (cos(pi*x))) * sin(pi*y)*cos(pi*y) - 4*pi*pi*sin(pi*x)*sin(pi*x)*sin(pi*y)*cos(pi*y)-pi*cos(pi*x))*(-1.) + pi * (sin(pi * x)^3) * (sin(pi * y)^2) * cos(pi * x); (2*pi*pi*(sin(pi*y)*(sin(pi*y))-cos(pi*y)*cos(pi*y))*sin(pi*x)*cos(pi*x) + 4*pi*pi*sin(pi*x)*sin(pi*y)*sin(pi*y)*cos(pi*x) -  pi*cos(pi*y))*(-1) + pi*(sin(pi*x)^2)*(sin(pi*y)^3.)*cos(pi*y); 0
+  end
+end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set enable = true
+  subsection uvwp
+    set Function expression = sin(pi*x) * sin(pi*x) * cos(pi*y) * sin(pi*y); -cos(pi*x) * sin(pi*x) * sin(pi*y) * sin(pi*y); sin(pi*x)+sin(pi*y)
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set tolerance      = 1e-8
+    set max iterations = 10
+    set verbosity      = quiet
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set method                                = gmres
+    set max iters                             = 5000
+    set relative residual                     = 1e-4
+    set minimum residual                      = 1e-9
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-3
+    set ilu preconditioner relative tolerance = 1.00
+    set verbosity                             = quiet
+  end
+end
