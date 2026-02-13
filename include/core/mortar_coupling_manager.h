@@ -211,25 +211,37 @@ protected:
 };
 
 /**
- * @brief Compute parameters of the mortar interface: n_subdivisions, interface_dimensions,
- * and pre_rotation_angle
+ * @brief Compute the number of cells located at the mortar interface
+ *
+ * @param[in] triangulation The triangulation object
+ * @param[in] mortar_parameters The information about the mortar method
+ * control, including the rotor mesh parameters
+ *
+ * @return number_interface_cells Number of cells at the interface between inner
+ * and outer domains
+ */
+template <int dim>
+std::vector<unsigned int>
+compute_number_interface_cells(
+  const Triangulation<dim>      &triangulation,
+  const Parameters::Mortar<dim> &mortar_parameters);
+
+/**
+ * @brief Compute mortar interface dimension and the rotor mesh pre-rotation angle
  * @param[in] triangulation The triangulation object
  * @param[in] mapping Mapping associated to the domain
  * @param[in] mortar_parameters The information about the mortar method
  * control, including the rotor mesh parameters
  *
- * @return n_subdivisions Number of cells at the interface between inner
- * and outer domains
  * @return interface_dimensions Vector containing the radius at the mortar interface and the
  * domain length in the direction of the rotation axis
  * @return pre_rotation_angle Rotation angle of the initial mesh configuration
  */
 template <int dim>
-std::tuple<std::vector<unsigned int>, std::vector<double>, double>
-compute_n_subdivisions_and_radius(
-  const Triangulation<dim>      &triangulation,
-  const Mapping<dim>            &mapping,
-  const Parameters::Mortar<dim> &mortar_parameters);
+std::tuple<std::vector<double>, double>
+compute_interface_dimensions(const Triangulation<dim>      &triangulation,
+                             const Mapping<dim>            &mapping,
+                             const Parameters::Mortar<dim> &mortar_parameters);
 
 /**
  * @brief Construct oversampled quadrature
@@ -445,21 +457,17 @@ MortarManagerCircle<dim>::MortarManagerCircle(
   const DoFHandler<dim>         &dof_handler,
   const Parameters::Mortar<dim> &mortar_parameters)
   : MortarManagerCircle(
-      std::get<0>(
-        compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
-                                          mapping,
-                                          mortar_parameters)),
-      std::get<1>(
-        compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
-                                          mapping,
-                                          mortar_parameters)),
+      compute_number_interface_cells(dof_handler.get_triangulation(),
+                                     mortar_parameters),
+      std::get<0>(compute_interface_dimensions(dof_handler.get_triangulation(),
+                                               mapping,
+                                               mortar_parameters)),
       construct_quadrature(quadrature, mortar_parameters),
       mortar_parameters.rotor_rotation_angle->value(Point<dim>()),
       mortar_parameters.center_of_rotation,
-      std::get<2>(
-        compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
-                                          mapping,
-                                          mortar_parameters)))
+      std::get<1>(compute_interface_dimensions(dof_handler.get_triangulation(),
+                                               mapping,
+                                               mortar_parameters)))
 {}
 
 template <int dim>
