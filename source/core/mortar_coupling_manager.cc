@@ -738,6 +738,27 @@ MortarManagerCircle<dim>::get_normal(const Point<dim> &point) const
 }
 
 
+/*-------------- MortarManagerLinear -------------------------------*/
+template <int dim>
+Tensor<1, dim, double>
+MortarManagerLinear<dim>::get_normal(const Point<dim> &) const
+{
+  return Point<dim>(1.0, 0.0);
+}
+
+template <int dim>
+Point<dim>
+MortarManagerLinear<dim>::from_1D(const double rad) const
+{
+  return Point<dim>(0.5, rad / (2.0 * numbers::PI) * (right - left) + left);
+}
+
+template <int dim>
+double
+MortarManagerLinear<dim>::to_1D(const Point<dim> &face_center) const
+{
+  return (2.0 * numbers::PI) * (face_center[1] - left) / (right - left);
+}
 
 /*-------------- CouplingOperator -------------------------------*/
 template <int dim, typename Number>
@@ -1846,6 +1867,10 @@ template class MortarManagerBase<3>;
 template class MortarManagerCircle<1>;
 template class MortarManagerCircle<2>;
 template class MortarManagerCircle<3>;
+
+template class MortarManagerLinear<1>;
+template class MortarManagerLinear<2>;
+template class MortarManagerLinear<3>;
 
 template class CouplingOperator<1, double>;
 template class CouplingOperator<2, double>;
