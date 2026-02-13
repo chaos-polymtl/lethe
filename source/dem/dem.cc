@@ -301,11 +301,18 @@ DEMSolver<dim, PropertiesIndex>::setup_triangulation_dependent_parameters()
 
   // Set the periodic offset to contact managers and particles contact forces
   // for periodic contact detection (if PBC enabled)
-  contact_manager.set_periodic_offset(
-    periodic_boundaries_object.get_periodic_offset_distance());
-  particle_particle_contact_force_object->set_periodic_offset(
-    periodic_boundaries_object.get_periodic_offset_distance());
+  // TODO: pass PB_id to get_periodic_offset_distance
 
+  for (auto [bc_index, pb_id] : periodic_boundaries_object.periodic_boundaries_ids)
+    {
+      contact_manager.set_periodic_offset(
+        periodic_boundaries_object.get_periodic_offset_distance(pb_id),
+        pb_id);
+      particle_particle_contact_force_object->set_periodic_offset(
+        periodic_boundaries_object.get_periodic_offset_distance(pb_id),
+        pb_id);
+    }
+    
   // Set up the local and ghost cells (if ASC enabled)
   sparse_contacts_object.update_local_and_ghost_cell_set(background_dh);
 }

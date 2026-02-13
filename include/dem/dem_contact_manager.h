@@ -11,6 +11,7 @@
 #include <dem/particle_particle_broad_search.h>
 #include <dem/particle_wall_broad_search.h>
 
+#include <unordered_map>
 
 using namespace DEM;
 
@@ -186,16 +187,17 @@ public:
     const double                                      neighborhood_threshold);
 
   /**
-   * @brief Set the constant periodic offset for the periodic boundaries. If
+   * @brief Set the periodic offset for a given pair of periodic boundaries. If
    * they are no periodic boundaries, the default offset is zeros;
    *
-   * @param[in] periodic_offset Offset used for tuning particle locations in
-   * periodic boundaries.
+   * @param[in] offset Offset associated with a given pair of periodic boundaries, 
+   * used for tuning particle locations when using periodic boundaries.
+   * @param[in] boundary_id ID of principal boundary in a pair of periodic boundaries.
    */
   inline void
-  set_periodic_offset(const Tensor<1, dim> &offset)
+  set_periodic_offset(const Tensor<1, dim> &offset, const types::boundary_id boundary_id)
   {
-    this->periodic_offset = offset;
+    this->periodic_offsets[boundary_id] = offset;
   }
 
   /**
@@ -383,7 +385,7 @@ private:
   typename DEM::dem_data_structures<dim>::cell_vector periodic_cells_container;
 
 private:
-  Tensor<1, dim> periodic_offset = Tensor<1, dim>();
+  std::unordered_map<types::boundary_id, Tensor<1, dim>> periodic_offsets;
 };
 
 #endif

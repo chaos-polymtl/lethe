@@ -8,6 +8,8 @@
 
 #include <deal.II/base/tensor.h>
 
+#include <unordered_map>
+
 using namespace dealii;
 
 /**
@@ -30,9 +32,9 @@ using namespace dealii;
  * @param contact_pair_candidates The output of broad search which shows
  * contact pair candidates
  * @param neighborhood_threshold A value which defines the neighbor particles
- * @param periodic_offset A tensor of the periodic offset to change the
- * particle location of the particles on the periodic boundary 1 side,
- * the tensor as 0.0 values by default
+ * @param periodic_offsets A map of tensors of the periodic offsets to change the
+ * location of the particles crossing periodic boudnaries.
+ * TODO: default value of zeros
  */
 template <int dim>
 void
@@ -44,6 +46,6 @@ particle_particle_fine_search(
   const typename DEM::dem_data_structures<dim>::particle_particle_candidates
                       &contact_pair_candidates,
   const double         neighborhood_threshold,
-  const Tensor<1, dim> periodic_offset = Tensor<1, dim>());
+  const std::unordered_map<types::boundary_id, Tensor<1, dim> periodic_offsets);
 
 #endif
