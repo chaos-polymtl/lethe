@@ -7,7 +7,8 @@ The mortar section is used when simulating rotor-stator geometries, in which the
 .. code-block:: text
 
   subsection mortar
-    set enable = true
+    set enable          = true
+    set interface type  = circular 
     subsection mesh
       set type                   = dealii
       set grid type              = subdivided_hyper_rectangle
@@ -29,6 +30,8 @@ The mortar section is used when simulating rotor-stator geometries, in which the
     set radius tolerance    = 1e-8
     set verbosity           = quiet
   end
+
+* The available options for the mortar ``interface type`` are ``circular`` and ``linear``.
 
 * The mesh parameters in the :doc:`../cfd/mesh` subsection refer to the stator domain. The ``mesh`` subsection herein mentioned contains the parameters of the rotor domain; nonetheless, the input format is the same as in :doc:`../cfd/mesh`.
 
