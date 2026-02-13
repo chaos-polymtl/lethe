@@ -2213,17 +2213,23 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_rotor_mapping(
   this->mapping_cache =
     std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
 
-  LetheGridTools::rotate_mapping(
-    *this->dof_handler,
-    *this->mapping_cache,
-    *this->mapping,
-    std::get<1>(compute_n_subdivisions_and_radius(
-      *this->triangulation,
+  // Rotate mapping only in the case of a circular mortar interface
+  if (this->simulation_parameters.mortar_parameters.interface_type ==
+      Parameters::Mortar<dim>::InterfaceType::circular)
+    LetheGridTools::rotate_mapping(
+      *this->dof_handler,
+      *this->mapping_cache,
       *this->mapping,
-      this->simulation_parameters.mortar_parameters))[0],
-    rotation_angle,
-    this->simulation_parameters.mortar_parameters.center_of_rotation,
-    this->simulation_parameters.mortar_parameters.rotation_axis);
+      std::get<0>(compute_interface_dimensions(
+        *this->triangulation,
+        *this->mapping,
+        this->simulation_parameters.mortar_parameters))[0],
+      rotation_angle,
+      this->simulation_parameters.mortar_parameters.center_of_rotation,
+      this->simulation_parameters.mortar_parameters.rotation_axis);
+  else
+    this->mapping_cache->initialize(*this->mapping,
+                                    this->dof_handler->get_triangulation());
 }
 
 template <int dim, typename VectorType, typename DofsType>

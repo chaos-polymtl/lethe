@@ -1504,16 +1504,23 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               this->mappings[level] = std::make_shared<MappingQCache<dim>>(
                 this->dof_handlers[level].get_fe().degree);
 
-              LetheGridTools::rotate_mapping(
-                this->dof_handlers[level],
-                *this->mappings[level],
-                *mapping,
-                interface_radius,
-                this->simulation_parameters.mortar_parameters
-                  .rotor_rotation_angle->value(Point<dim>()),
-                this->simulation_parameters.mortar_parameters
-                  .center_of_rotation,
-                this->simulation_parameters.mortar_parameters.rotation_axis);
+              // Rotate mapping only in the case of a circular mortar interface
+              if (this->simulation_parameters.mortar_parameters
+                    .interface_type ==
+                  Parameters::Mortar<dim>::InterfaceType::circular)
+                LetheGridTools::rotate_mapping(
+                  this->dof_handlers[level],
+                  *this->mappings[level],
+                  *mapping,
+                  interface_radius,
+                  this->simulation_parameters.mortar_parameters
+                    .rotor_rotation_angle->value(Point<dim>()),
+                  this->simulation_parameters.mortar_parameters
+                    .center_of_rotation,
+                  this->simulation_parameters.mortar_parameters.rotation_axis);
+              else
+                this->mappings[level]->initialize(
+                  *mapping, this->dof_handlers[level].get_triangulation());
 
               level_mapping = this->mappings[level];
             }
