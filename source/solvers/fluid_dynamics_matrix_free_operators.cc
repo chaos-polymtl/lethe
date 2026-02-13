@@ -486,9 +486,11 @@ NavierStokesOperatorBase<dim, number>::vmult(VectorType       &dst,
   // If enabled, add mortar entries
   if (this->enable_mortar)
     {
+      this->timer.enter_subsection("operator::vmult_mortar");
       this->mortar_coupling_operator_mf->vmult_add(dst, src);
       dst.compress(VectorOperation::add);
       src.zero_out_ghost_values();
+      this->timer.leave_subsection("operator::vmult_mortar");
     }
 
   // copy constrained dofs from src to dst (corresponding to diagonal
@@ -762,9 +764,11 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
   // If mortar is enabled, add system matrix entries
   if (this->enable_mortar)
     {
+      this->timer.enter_subsection("operator::get_system_matrix_mortar");
       this->mortar_coupling_operator_mf->add_system_matrix_entries(
         system_matrix);
       system_matrix.compress(VectorOperation::add);
+      this->timer.leave_subsection("operator::get_system_matrix_mortar");
     }
 
   // make sure that diagonal entries related to constrained dofs
@@ -1259,7 +1263,11 @@ NavierStokesOperatorBase<dim, number>::compute_inverse_diagonal(
 
   // If mortar is enabled, add diagonal entries
   if (this->enable_mortar)
-    this->mortar_coupling_operator_mf->add_diagonal_entries(diagonal);
+    {
+      this->timer.enter_subsection("operator::compute_inverse_diagonal_mortar");
+      this->mortar_coupling_operator_mf->add_diagonal_entries(diagonal);
+      this->timer.leave_subsection("operator::compute_inverse_diagonal_mortar");
+    }
 
   for (const auto &i : edge_constrained_indices)
     diagonal.local_element(i) = 0.0;
