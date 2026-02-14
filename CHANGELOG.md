@@ -4,6 +4,22 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/02/16
+
+### Changed
+
+- MINOR This PR improves the Doxygen documentation interface. We integrate [Doxygen Awesome CSS](https://github.com/jothepro/doxygen-awesome-css) with dark/light mode support as the base theme and extend it with several enhancements:
+
+  - Add a GitHub widget with live repository statistics (stars and forks).
+  - Update the main page graph to include the latest applications, highlighted in blue.
+  - Implement responsive layout adjustments to improve content organization across window sizes.
+  - Fix the header (including the search bar) to the top of the page for persistent navigation (no more need to scroll back up the page).
+  - Dynamically display the current Lethe version in the project title (read from CMakeLists.txt).
+  - Add a CHAOS logo to the footer with copyright and auto-updating year.
+  - Add direct links to the Lethe project page and the CHAOS Laboratory website in the navigation bar.
+
+  All features are compatible with both dark and light modes. [#1908](https://github.com/chaos-polymtl/lethe/pull/1908)
+
 ## [Master] - 2026/02/13
 
 ### Fixed
@@ -18,21 +34,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
   This PR also adds a new function `apply_mesh_transformation` to scale, translate, and rotate the meshes in the listed order.
 
-  Finally, this PR updates all concerned examples, tests and documentation.[#1901](https://github.com/chaos-polymtl/lethe/pull/1901)
+  Finally, this PR updates all concerned examples, tests and documentation. [#1901](https://github.com/chaos-polymtl/lethe/pull/1901)
 
 ### Added/Fixed
 
-- MAJOR This PR introduces a sub simulation control structure that controls the DEM iterations within CFD-DEM iterations. This structure is fully implemented, but is not fully used yet in the solvers to prevent changing the test outcome in this PR. Essentially, the sub simulation control is responsible for calculating the dem time step in a unified fashion and monitoring the DEM iterations. It also enabled to find a bug which is that the DEM time-step was always wrongly calculated when BDF2 simulations were carried out because the value of the CFD time-step taken to calculate the DEM time-step was not the correct one in the first two iterations. This PR fixes this, which now leads to the adequate results. This is why the outcome of two tests has changed. A follow-up PR will be done to adequately integrate the sub simulation control everywhere in the CFD-DEM solver and ensure that no internal variables are used to store the dem time step, iteration and etc. [1900](https://github.com/chaos-polymtl/lethe/pull/1900)
+- MAJOR This PR introduces a sub simulation control structure that controls the DEM iterations within CFD-DEM iterations. This structure is fully implemented, but is not fully used yet in the solvers to prevent changing the test outcome in this PR. Essentially, the sub simulation control is responsible for calculating the dem time step in a unified fashion and monitoring the DEM iterations. It also enabled to find a bug which is that the DEM time-step was always wrongly calculated when BDF2 simulations were carried out because the value of the CFD time-step taken to calculate the DEM time-step was not the correct one in the first two iterations. This PR fixes this, which now leads to the adequate results. This is why the outcome of two tests has changed. A follow-up PR will be done to adequately integrate the sub simulation control everywhere in the CFD-DEM solver and ensure that no internal variables are used to store the dem time step, iteration, etc. [#1900](https://github.com/chaos-polymtl/lethe/pull/1900)
 
 ## [Master] - 2026/02/09
 
 ### Added
 
-- MINOR This PR adds the option to declare a ``custom distribution`` as ``volume`` or ``number`` weighted. In addition, an option was added to the "custom distribution" allowing the sampled diameter values to be interpolated between input data points. Finally, the ``custom distribution`` diameter values and probability values can be define using the probability density function (PDF) or the cummulative density function (CDF) of the particle size distribution (PSD). [#1892](https://github.com/chaos-polymtl/lethe/pull/1892)
+- MINOR This PR adds the option to declare a ``custom distribution`` as ``volume`` or ``number`` weighted. In addition, an option was added to the "custom distribution" allowing the sampled diameter values to be interpolated between input data points. Finally, the ``custom distribution`` diameter values and probability values can be defined using the probability density function (PDF) or the cumulative density function (CDF) of the particle size distribution (PSD). [#1892](https://github.com/chaos-polymtl/lethe/pull/1892)
 
 ### Changed 
 
-- MINOR Containers for the lagrangian particle properties are changed from ``std::unordered_map`` to ``std::vectors``.  [#1892](https://github.com/chaos-polymtl/lethe/pull/1892)
+- MINOR Containers for the Lagrangian particle properties are changed from ``std::unordered_map`` to ``std::vectors``.  [#1892](https://github.com/chaos-polymtl/lethe/pull/1892)
 
 ## [Master] - 2026/02/07
 
@@ -259,7 +275,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- MINOR The extract-slice-from-vtu.py tool was not working properly with --np > 1 because an argument (file path) was missing in the call of extract_slice. This PR fixes this bug and add 2 functionalities. 1) When the flag group files in the .prm (parallel output of Lethe) was set to a value larger than 1, the extract-slice-from-vtu.py would not slice all .vtus associated with a .pvtu. Since pyvista can read .pvtus correctly, the list of files to read is now based on .pvtus instead of .vtus. 2) There was no sliced .pvd file generated, so the slices could not be used easily in other post-processing tools using .pvds. The .pvd file of the slices is now generated. [#1848] (https://github.com/chaos-polymtl/lethe/pull/1848)
+- MINOR The extract-slice-from-vtu.py tool was not working properly with --np > 1 because an argument (file path) was missing in the call of extract_slice. This PR fixes this bug and add 2 functionalities. 1) When the flag group files in the .prm (parallel output of Lethe) was set to a value larger than 1, the extract-slice-from-vtu.py would not slice all .vtus associated with a .pvtu. Since pyvista can read .pvtus correctly, the list of files to read is now based on .pvtus instead of .vtus. 2) There was no sliced .pvd file generated, so the slices could not be used easily in other post-processing tools using .pvds. The .pvd file of the slices is now generated. [#1848](https://github.com/chaos-polymtl/lethe/pull/1848)
 
 ## [Sample] - YYYY/MM/DD
 
