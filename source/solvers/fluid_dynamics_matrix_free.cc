@@ -1458,7 +1458,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
       for (unsigned int level = this->minlevel; level <= this->maxlevel;
            ++level)
         {
-          this->mg_setup_timer.enter_subsection("Create mappings");
+          this->mg_setup_timer.enter_subsection("Create level mappings");
           std::shared_ptr<Mapping<dim>> level_mapping;
 
           // If mortar is enabled, one MappingQCache<dim> object is created for
@@ -1489,7 +1489,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
           else
             level_mapping = mapping;
 
-          this->mg_setup_timer.leave_subsection("Create mappings");
+          this->mg_setup_timer.leave_subsection("Create level mappings");
 
           const auto &level_dof_handler = this->dof_handlers[level];
           auto       &level_constraint  = constraints[level];
@@ -3231,9 +3231,11 @@ FluidDynamicsMatrixFree<dim>::assemble_system_rhs()
   // If mortar is enabled, add RHS entries
   if (this->simulation_parameters.mortar_parameters.enable)
     {
+      this->computing_timer.enter_subsection("Assemble RHS (mortar)");
       this->system_operator->mortar_coupling_operator_mf->vmult_add(
         this->system_rhs, this->evaluation_point);
       this->system_rhs.compress(VectorOperation::add);
+      this->computing_timer.leave_subsection("Assemble RHS (mortar)");
     }
 
   this->system_rhs *= -1.0;
@@ -3696,12 +3698,12 @@ FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const double absolute_residual,
     }
 
   this->computing_timer.enter_subsection(
-    "Distribute constraints after linear solve");
+    "Distribute constraints after linear solver");
 
   zero_constraints.distribute(this->newton_update);
 
   this->computing_timer.leave_subsection(
-    "Distribute constraints after linear solve");
+    "Distribute constraints after linear solver");
 }
 
 template <int dim>
@@ -3737,12 +3739,12 @@ FluidDynamicsMatrixFree<dim>::solve_system_direct(
   this->computing_timer.leave_subsection("Solve linear system");
 
   this->computing_timer.enter_subsection(
-    "Distribute constraints after linear solve");
+    "Distribute constraints after linear solver");
 
   zero_constraints.distribute(this->newton_update);
 
   this->computing_timer.leave_subsection(
-    "Distribute constraints after linear solve");
+    "Distribute constraints after linear solver");
 }
 
 template class FluidDynamicsMatrixFree<2>;
