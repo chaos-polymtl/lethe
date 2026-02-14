@@ -245,6 +245,7 @@ body {
     top: 12px;
     margin: 0;
     transform: none;
+    z-index: 10000;
 }
 
 /**
@@ -287,31 +288,32 @@ body {
  * Ensure all widget elements inherit the page foreground color
  * for consistent theming across light and dark modes.
  */
-#top .lethe-github-link,
-#top .lethe-github-counter,
-#top .lethe-github-widget .lgw-icon,
-#top .lethe-github-widget .lgw-item,
-#top .lethe-github-widget .lgw-name,
-#top .lethe-github-widget .lgw-text {
-    color: var(--page-foreground-color) !important;
+#lethe-github-widget,
+#lethe-github-widget:link,
+#lethe-github-widget:visited,
+#lethe-github-widget *{
+    color: var(--header-foreground) !important;
+    text-decoration: none !important;
 }
 
 /**
- * Hover state: turn everything to light gray color
- * These rules must come AFTER the general color rules to override them
+ * Apply same hover behavior as .sm-dox a:hover and keep underline off
  */
-#top .lethe-github-widget:hover .lgw-icon,
-#top .lethe-github-widget:hover .lgw-item,
-#top .lethe-github-widget:hover .lgw-name,
-#top .lethe-github-widget:hover .lgw-text,
-#top .lethe-github-widget:hover .lgw-row1,
-#top .lethe-github-widget:hover .lgw-row2 {
-    color: #DEDEDEFF !important;
+#lethe-github-widget:hover,
+#lethe-github-widget:active {
+    background: var(--menu-focus-background) !important;
+    color: var(--menu-focus-foreground) !important;
+    text-decoration: none !important;
 }
 
-#top .lethe-github-widget:hover .lgw-icon svg {
-    color: #DEDEDEFF !important;
+/**
+ * Ensure all inner spans/icons follow the link color
+ */
+#lethe-github-widget:hover *,
+#lethe-github-widget:active * {
+    color: var(--menu-focus-foreground) !important;
 }
+
 
 /* ============================================================================
    FOOTER LOGO AND COPYRIGHT
