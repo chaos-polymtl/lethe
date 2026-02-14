@@ -34,6 +34,7 @@ html {
 /**
  * Defines the height of the top navigation bar as a CSS custom property
  * for reuse throughout the stylesheet.
+ * JavaScript will update this dynamically based on actual header height.
  */
 :root {
     --topbar-h: 64px;
@@ -41,10 +42,40 @@ html {
 
 /**
  * Adds padding to the body to prevent content from being hidden behind
- * the fixed navigation bar. Matches the topbar height exactly.
+ * the fixed navigation bar. JavaScript will adjust this dynamically.
  */
 body {
-    padding-top: var(--topbar-h);
+    padding-top: var(--topbar-h) !important;
+}
+
+/**
+ * Responsive padding based on screen size
+ */
+@media (max-width: 1650px) {
+    :root {
+        --topbar-h: 120px;
+    }
+    body {
+        padding-top: 120px !important;
+    }
+}
+
+@media (max-width: 1040px) and (min-width: 801px){
+    :root {
+        --topbar-h: 140px;
+    }
+    body {
+        padding-top: 140px !important;
+    }
+}
+
+@media (max-width: 800px) {
+    :root {
+        --topbar-h: 120px;
+    }
+    body {
+        padding-top: 120px !important;
+    }
 }
 
 /* ============================================================================
@@ -327,7 +358,7 @@ body[data-theme="dark"] .chaos-logo-dark {
 }
 
 /**
- * Reduce CHAOS logo and copyright sizes on small screens (< 800px)
+ * Reduce footer element sizes on small screens (< 800px)
  * Makes logo and text smaller to fit better on mobile
  */
 @media (max-width: 800px) {
@@ -342,4 +373,18 @@ body[data-theme="dark"] .chaos-logo-dark {
         font-size: 0.75em;
     }
 
+    /* Smaller doxygen logo and text */
+    .footer img {
+        max-height: 20px !important;
+        width: auto !important;
+    }
+
+    address.footer small {
+        font-size: 0.7em;
+    }
+
+    /* Reduce footer padding */
+    address.footer {
+        padding: 5px 10px !important;
+    }
 }

@@ -303,6 +303,9 @@
     // Startup
     // ---------------------------------------------------------------------------
     function start() {
+        // Adjust body padding IMMEDIATELY before anything else
+        window.adjustBodyPadding?.();
+
         refresh();
 
         // Debounce window resize events to avoid excessive DOM manipulation
@@ -315,8 +318,8 @@
                 insertOrUpdate(cachedData);
 
                 // Adjust body padding after widget repositions
-                adjustBodyPadding();
-            }, 50); // Wait 50ms after resize stops before updating
+                window.adjustBodyPadding?.();
+            }, 100); // Wait 100ms after resize stops before updating
         });
     }
 
@@ -347,18 +350,23 @@
         }
     }
 
+    // Run IMMEDIATELY when script loads
+    window.adjustBodyPadding();
+
     // Run on DOM load
     window.addEventListener('DOMContentLoaded', adjustBodyPadding);
+
+    // Run after a very short delay to catch any late-loading elements
+    setTimeout(adjustBodyPadding, 10);
+    setTimeout(adjustBodyPadding, 100);
+    setTimeout(adjustBodyPadding, 250);
 
     // Run on window resize (debounced)
     let resizeTimeout;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(adjustBodyPadding, 50);
+        resizeTimeout = setTimeout(adjustBodyPadding, 100);
     });
-
-    // Run after a short delay to ensure everything is loaded
-    setTimeout(adjustBodyPadding, 50);
 
     // Observe header for changes (in case content is added dynamically)
     const header = document.getElementById('top');
@@ -368,6 +376,9 @@
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(adjustBodyPadding, 50);
         });
-        observer.observe(header, { childList: true, subtree: true });
+        observer.observe(header, { childList: true, subtree: true, attributes: true });
     }
+
+    // Run on page show (for back/forward navigation)
+    window.addEventListener('pageshow', adjustBodyPadding);
 })();
