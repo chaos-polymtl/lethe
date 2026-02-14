@@ -7,14 +7,15 @@
  * Doxygen header GitHub widget
  *
  * What it does:
- *  - Adds a small "OWNER/REPO + stars + forks" widget in the top bar (near search).
+ *  - Adds a small "OWNER/REPO + stars + forks" widget in the top bar.
  *  - Fetches live counts from the GitHub REST API.
  *  - Caches the counts in localStorage to reduce API calls / avoid rate limits.
  *  - Falls back gracefully if offline or blocked (shows cached values or placeholders).
  *
  * Placement:
- *  - Inserts the widget to the LEFT of the search box when #MSearchBox exists.
- *  - Otherwise, inserts into the main navigation menu (#main-menu).
+ *  - Above 1650px: Positioned absolutely at right: 280px
+ *  - Below 1650px: Positioned absolutely at right: 20px (aligned with title line)
+ *  - Respects screen size - hides between 1850-1650px and below 800px.
  */
 (function () {
     // ---------------------------------------------------------------------------
@@ -31,9 +32,34 @@
     const CACHE_KEY = `gh_widget:${OWNER}/${REPO}`;
     const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 
+    // Track if widget has been initialized to prevent flickering
+    let isInitialized = false;
+
     // ---------------------------------------------------------------------------
     // Helpers
     // ---------------------------------------------------------------------------
+
+    /**
+     * Check if screen is wide enough to show widget.
+     * Widget shows: > 1850px OR < 1650px (but not below 800px)
+     * Widget hides: between 1850-1650px OR below 800px
+     */
+    function isScreenWideEnough() {
+        const width = window.innerWidth;
+
+        // Hide below 800px
+        if (width <= 800) {
+            return false;
+        }
+
+        // Hide between 1850px and 1650px
+        if (width <= 1850 && width > 1650) {
+            return false;
+        }
+
+        // Show in all other cases
+        return true;
+    }
 
     /**
      * Format a number with locale separators (e.g., 12345 -> "12,345").
@@ -79,32 +105,16 @@
 
     /**
      * Find where to insert the widget.
-     * Priority order:
-     *  1. Before the search box (#MSearchBox) if it exists
-     *  2. Inside the main menu (#main-menu) as a list item
-     *  3. Inside #top header
-     *  4. Fallback to body
+     * Always inserts into #top header for absolute positioning via CSS.
      */
     function findInsertTarget() {
-        // Try to find search box first (preferred placement)
-        const search = document.getElementById("MSearchBox");
-        if (search?.parentNode) {
-            return { container: search.parentNode, before: search, type: 'search' };
-        }
-
-        // Try to find main menu (common on all Doxygen pages)
-        const mainMenu = document.getElementById("main-menu");
-        if (mainMenu) {
-            return { container: mainMenu, before: null, type: 'menu' };
-        }
-
-        // Fallback to top header
+        // Always use #top for consistent absolute positioning
         const top = document.getElementById("top");
         if (top) {
             return { container: top, before: null, type: 'header' };
         }
 
-        // Last resort: body
+        // Fallback to body
         return { container: document.body, before: null, type: 'body' };
     }
 
@@ -139,9 +149,8 @@
     /**
      * Build the widget DOM node from the latest data.
      * `data` shape: { stargazers_count?: number, forks_count?: number }
-     * `isMenuItem` determines if we wrap in <li> for menu insertion
      */
-    function buildWidget(data, isMenuItem = false) {
+    function buildWidget(data) {
         const repoName = `${OWNER}/${REPO}`;
         const stars    = formatCount(data?.stargazers_count);
         const forks    = formatCount(data?.forks_count);
@@ -164,84 +173,81 @@
       </div>
     `;
 
-        if (isMenuItem) {
-            // Wrap in <li> for menu insertion
-            const li = document.createElement("li");
-            const a = document.createElement("a");
-            a.className = "lethe-github-widget";
-            a.href = REPO_URL;
-            a.target = "_blank";
-            a.rel = "noopener noreferrer";
-            a.title = `${repoName} on GitHub`;
-            a.innerHTML = widgetHTML;
-            li.appendChild(a);
-            li.id = "lethe-github-widget-container";
-            return li;
-        } else {
-            // Direct anchor element
-            const root = document.createElement("a");
-            root.id = "lethe-github-widget";
-            root.className = "lethe-github-widget";
-            root.href = REPO_URL;
-            root.target = "_blank";
-            root.rel = "noopener noreferrer";
-            root.title = `${repoName} on GitHub`;
-            root.innerHTML = widgetHTML;
-            return root;
-        }
+        // Always create direct anchor element (CSS handles positioning)
+        const root = document.createElement("a");
+        root.id = "lethe-github-widget";
+        root.className = "lethe-github-widget";
+        root.href = REPO_URL;
+        root.target = "_blank";
+        root.rel = "noopener noreferrer";
+        root.title = `${repoName} on GitHub`;
+        root.innerHTML = widgetHTML;
+        return root;
+    }
+
+    /**
+     * Update only the counts in an existing widget (avoids full re-render).
+     */
+    function updateCounts(data) {
+        const widget = document.getElementById('lethe-github-widget');
+
+        if (!widget) return false;
+
+        const stars = formatCount(data?.stargazers_count);
+        const forks = formatCount(data?.forks_count);
+
+        // Update star count
+        const starText = widget.querySelector('.lgw-item[title="Stars"] .lgw-text');
+        if (starText) starText.textContent = stars;
+
+        // Update fork count
+        const forkText = widget.querySelector('.lgw-item[title="Forks"] .lgw-text');
+        if (forkText) forkText.textContent = forks;
+
+        return true;
+    }
+
+    /**
+     * Remove widget from DOM.
+     */
+    function removeWidget() {
+        const oldWidget = document.getElementById('lethe-github-widget');
+        if (oldWidget) oldWidget.remove();
+        isInitialized = false;
     }
 
     /**
      * Insert widget into the header, or update it if it already exists.
+     * Only inserts if screen is wide enough.
      */
-    function insertOrUpdate(data) {
+    function insertOrUpdate(data, forceRecreate = false) {
+        // Check screen size first
+        if (!isScreenWideEnough()) {
+            removeWidget();
+            return;
+        }
+
         const { container, before, type } = findInsertTarget();
         if (!container) return;
 
-        const isMenuItem = (type === 'menu');
-        const existingId = isMenuItem ? 'lethe-github-widget-container' : 'lethe-github-widget';
-        const existing = document.getElementById(existingId);
+        const existing = document.getElementById('lethe-github-widget');
 
-        // If widget exists and is in the correct container, just update content
-        if (existing && existing.parentNode === container) {
-            // Check if position is still correct
-            const shouldBeBefore = before && before.parentNode === container;
-            const isCorrectlyPositioned = shouldBeBefore
-                ? existing.nextSibling === before
-                : true;
-
-            if (isCorrectlyPositioned) {
-                // Update content without DOM manipulation
-                const newNode = buildWidget(data, isMenuItem);
-                if (isMenuItem) {
-                    existing.innerHTML = newNode.innerHTML;
-                } else {
-                    existing.innerHTML = newNode.innerHTML;
-                }
-                return;
-            }
+        // If widget exists and we don't need to recreate, just update counts
+        if (existing && !forceRecreate && isInitialized) {
+            updateCounts(data);
+            return;
         }
 
         // Build new widget
-        const node = buildWidget(data, isMenuItem);
+        const node = buildWidget(data);
 
-        // Remove old widget if it exists anywhere on the page
-        const oldWidget = document.getElementById('lethe-github-widget');
-        const oldContainer = document.getElementById('lethe-github-widget-container');
-        if (oldWidget) oldWidget.remove();
-        if (oldContainer) oldContainer.remove();
+        // Remove old widget if it exists
+        removeWidget();
 
-        // Insert at correct position
-        if (before && before.parentNode === container) {
-            container.insertBefore(node, before);
-        } else {
-            // For menu, prepend to show at the start
-            if (isMenuItem && container.firstChild) {
-                container.insertBefore(node, container.firstChild);
-            } else {
-                container.appendChild(node);
-            }
-        }
+        // Insert into container
+        container.appendChild(node);
+
+        isInitialized = true;
     }
 
     // ---------------------------------------------------------------------------
@@ -265,8 +271,15 @@
      *  2) then fetch live values and update + cache them.
      */
     async function refresh() {
+        // Don't do anything if screen is too narrow or in the hidden range
+        if (!isScreenWideEnough()) {
+            removeWidget();
+            return;
+        }
+
         // Paint quickly: cached values or placeholders
-        insertOrUpdate(loadCache() || {});
+        const cachedData = loadCache() || {};
+        insertOrUpdate(cachedData);
 
         try {
             const repo = await fetchJson(API_REPO);
@@ -278,7 +291,9 @@
             };
 
             saveCache(data);
-            insertOrUpdate(data);
+
+            // Only update counts, don't recreate widget
+            updateCounts(data);
         } catch {
             // If offline / blocked / rate-limited: keep cached or placeholder values
         }
@@ -295,10 +310,13 @@
         window.addEventListener("resize", () => {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(() => {
-                // Re-insert from cache, ensuring correct positioning
+                // Check if widget should be shown/hidden based on new size
                 const cachedData = loadCache() || {};
                 insertOrUpdate(cachedData);
-            }, 100); // Wait 100ms after resize stops before updating
+
+                // Adjust body padding after widget repositions
+                adjustBodyPadding();
+            }, 50); // Wait 50ms after resize stops before updating
         });
     }
 
@@ -307,5 +325,49 @@
         document.addEventListener("DOMContentLoaded", start);
     } else {
         start();
+    }
+})();
+
+// ---------------------------------------------------------------------------
+// Dynamic Body Padding Adjustment
+// ---------------------------------------------------------------------------
+
+/**
+ * Adjusts body padding dynamically based on the actual height of the fixed header.
+ * This ensures content is never hidden behind the header, even when it wraps
+ * to multiple lines on smaller screens.
+ */
+(function () {
+    function adjustBodyPadding() {
+        const header = document.getElementById('top');
+        if (header) {
+            const headerHeight = header.offsetHeight;
+            document.body.style.paddingTop = headerHeight + 'px';
+            document.documentElement.style.setProperty('--topbar-h', headerHeight + 'px');
+        }
+    }
+
+    // Run on DOM load
+    window.addEventListener('DOMContentLoaded', adjustBodyPadding);
+
+    // Run on window resize (debounced)
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(adjustBodyPadding, 50);
+    });
+
+    // Run after a short delay to ensure everything is loaded
+    setTimeout(adjustBodyPadding, 50);
+
+    // Observe header for changes (in case content is added dynamically)
+    const header = document.getElementById('top');
+    if (header) {
+        const observer = new MutationObserver(() => {
+            // Debounce the observer callback
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(adjustBodyPadding, 50);
+        });
+        observer.observe(header, { childList: true, subtree: true });
     }
 })();

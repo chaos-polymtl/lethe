@@ -89,7 +89,7 @@ body {
  * Additional spacing and layout for the widget in the top bar.
  */
 #top a.lethe-github-widget {
-    padding: 6px 10px !important;
+    padding: 4px 8px !important;
     display: inline-flex !important;
     align-items: flex-start !important;
 }
@@ -104,20 +104,23 @@ body {
 /**
  * Main GitHub widget container.
  * Two-row flexbox layout with rounded corners and hover effects.
+ * COMPACT SIZE at all screen widths.
  */
 .lethe-github-widget {
     display: inline-flex;
     align-items: flex-start;
     flex-direction: column;
-    gap: 2px;
+    gap: 1px;
     margin-right: 12px;
-    padding: 6px 10px;
+    padding: 4px 8px;
     border-radius: 10px;
     text-decoration: none;
     color: var(--page-foreground-color);
     background: transparent;
     line-height: 1;
     white-space: nowrap;
+    position: relative;
+    font-size: 0.85em;
 }
 
 .lethe-github-widget:hover {
@@ -135,15 +138,15 @@ body {
 }
 
 .lgw-row1 {
-    gap: 8px;
-    font-size: 1.05em;
+    gap: 6px;
+    font-size: 0.95em;
 }
 
 .lgw-row2 {
     justify-content: center;
     align-self: center;
-    gap: 10px;
-    font-size: 0.95em;
+    gap: 6px;
+    font-size: 0.85em;
     opacity: 0.9;
 }
 
@@ -169,20 +172,20 @@ body {
 }
 
 /**
- * Icon sizing: 16x16px for small icons (stars, forks).
+ * Icon sizing: smaller icons for compact widget
  */
 .lgw-icon svg {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
     display: block;
 }
 
 /**
- * Larger GitHub logo: 26x26px.
+ * GitHub logo: 20x20px (reduced from 26x26px)
  */
 .lgw-gh svg {
-    width: 26px;
-    height: 26px;
+    width: 20px;
+    height: 20px;
 }
 
 /**
@@ -201,6 +204,55 @@ body {
 }
 
 /**
+ * Keep GitHub widget in navigation row, prevent wrapping to breadcrumb area.
+ * Uses absolute positioning when widget is direct child of #top container.
+ * Default position: right: 280px (for screens > 1650px)
+ */
+#top > #lethe-github-widget {
+    position: absolute;
+    right: 280px;
+    top: 12px;
+    margin: 0;
+    transform: none;
+}
+
+/**
+ * Reposition widget to far right when screen is below 1650px
+ * Aligns with the title line on the right side
+ */
+@media (max-width: 1650px) {
+    #top > #lethe-github-widget {
+        right: 20px;
+    }
+}
+
+/**
+ * Hide widget between 1850px and 1650px to avoid overlap
+ * Widget shows: > 1850px and < 1650px
+ * Widget hides: between 1850px - 1650px
+ */
+@media (max-width: 1850px) and (min-width: 1651px) {
+    #lethe-github-widget,
+    #lethe-github-widget-container,
+    a.lethe-github-widget,
+    .lethe-github-widget {
+        display: none !important;
+    }
+}
+
+/**
+ * Hide widget on very small screens
+ */
+@media (max-width: 800px) {
+    #lethe-github-widget,
+    #lethe-github-widget-container,
+    a.lethe-github-widget,
+    .lethe-github-widget {
+        display: none !important;
+    }
+}
+
+/**
  * Ensure all widget elements inherit the page foreground color
  * for consistent theming across light and dark modes.
  */
@@ -214,7 +266,7 @@ body {
 }
 
 /**
- * Hover state: turn everything white
+ * Hover state: turn everything to light gray color
  * These rules must come AFTER the general color rules to override them
  */
 #top .lethe-github-widget:hover .lgw-icon,
@@ -234,12 +286,16 @@ body {
    FOOTER LOGO AND COPYRIGHT
    ============================================================================ */
 
-/* Show/hide logos based on theme */
+/**
+ * Show/hide logos based on theme with smooth transition
+ */
 .chaos-logo {
     transition: opacity 0.3s ease;
 }
 
-/* Light mode: show dark logo, hide light logo */
+/**
+ * Light mode: show dark logo, hide white logo
+ */
 .chaos-logo-light {
     display: inline-block;
 }
@@ -248,7 +304,9 @@ body {
     display: none;
 }
 
-/* Dark mode: hide dark logo, show light logo */
+/**
+ * Dark mode: hide dark logo, show white logo
+ */
 html.dark-mode .chaos-logo-light,
 body[data-theme="dark"] .chaos-logo-light {
     display: none;
@@ -259,8 +317,29 @@ body[data-theme="dark"] .chaos-logo-dark {
     display: inline-block;
 }
 
+/**
+ * Copyright text styling in footer
+ */
 .chaos-copyright {
     font-size: 0.9em;
     color: var(--page-foreground-color);
     opacity: 0.8;
+}
+
+/**
+ * Reduce CHAOS logo and copyright sizes on small screens (< 800px)
+ * Makes logo and text smaller to fit better on mobile
+ */
+@media (max-width: 800px) {
+    /* Smaller CHAOS logo */
+    .chaos-logo-light,
+    .chaos-logo-dark {
+        height: 28px !important;
+    }
+
+    /* Smaller copyright text */
+    .chaos-copyright {
+        font-size: 0.75em;
+    }
+
 }
