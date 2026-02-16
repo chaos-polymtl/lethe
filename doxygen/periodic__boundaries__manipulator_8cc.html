@@ -21,8 +21,12 @@ MathJax.Hub.Config({
 </script>
 <script type="text/javascript" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
-<link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="custom.css" rel="stylesheet" type="text/css"/>
 <link rel="icon" type="image/x-icon" href="lethe_favicon.ico"/>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript"> DoxygenAwesomeDarkModeToggle.init() </script>
+<script type="text/javascript" src="doxygen-github-widget.js"></script>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -32,7 +36,7 @@ MathJax.Hub.Config({
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="lethe-logo-with-bkgd.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Lethe Open-Source Library
+   <div id="projectname">Lethe Open-Source Library<span id="projectnumber">&#160;version 1.0.3</span>
    </div>
    <div id="projectbrief">Developer Guide</div>
   </td>
@@ -97,97 +101,42 @@ $(function() {
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for periodic_boundaries_manipulator.cc:</div>
 <div class="dyncontent">
-<div class="center"><img src="periodic__boundaries__manipulator_8cc__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2source_2dem_2periodic__boundaries__manipulator_8cc" alt=""/></div>
-<map name="a_2home_2runner_2work_2lethe_2lethe_2source_2dem_2periodic__boundaries__manipulator_8cc" id="a_2home_2runner_2work_2lethe_2lethe_2source_2dem_2periodic__boundaries__manipulator_8cc">
-<area shape="rect" title=" " alt="" coords="934,5,1138,60"/>
-<area shape="rect" href="tensors__and__points__dimension__manipulation_8h.html" title=" " alt="" coords="315,284,517,324"/>
-<area shape="poly" title=" " alt="" coords="981,63,861,122,725,198,699,219,671,238,601,265,531,285,530,279,600,260,668,234,696,215,723,194,859,117,978,58"/>
-<area shape="rect" href="periodic__boundaries__manipulator_8h.html" title=" " alt="" coords="368,108,555,148"/>
-<area shape="poly" title=" " alt="" coords="934,53,569,112,568,107,933,48"/>
-<area shape="rect" title=" " alt="" coords="5,372,141,412"/>
-<area shape="poly" title=" " alt="" coords="934,40,815,46,670,59,513,80,357,111,234,138,185,159,128,198,106,218,92,236,81,257,72,285,67,322,69,358,64,358,62,322,67,283,76,254,87,233,102,214,125,194,182,155,233,133,355,105,512,75,670,54,815,41,934,34"/>
-<area shape="rect" title=" " alt="" coords="2662,379,2821,405"/>
-<area shape="poly" title=" " alt="" coords="1112,58,1249,101,1407,145,1595,189,1754,221,2026,267,2300,308,2650,369,2674,374,2673,379,2649,375,2299,314,2025,273,1753,227,1593,194,1406,151,1247,107,1110,63"/>
-<area shape="rect" title=" " alt="" coords="1418,108,1590,148"/>
-<area shape="poly" title=" " alt="" coords="1139,52,1405,104,1404,110,1138,57"/>
-<area shape="rect" title=" " alt="" coords="1615,115,1737,141"/>
-<area shape="poly" title=" " alt="" coords="1139,41,1353,66,1479,84,1603,105,1623,110,1621,115,1602,111,1478,89,1353,71,1138,46"/>
-<area shape="rect" title=" " alt="" coords="456,379,603,405"/>
-<area shape="poly" title=" " alt="" coords="443,322,505,369,501,373,440,326"/>
-<area shape="rect" title=" " alt="" coords="278,379,431,405"/>
-<area shape="poly" title=" " alt="" coords="405,326,373,370,369,366,400,323"/>
-<area shape="rect" href="boundary__cells__info__struct_8h.html" title=" " alt="" coords="137,284,290,324"/>
-<area shape="poly" title=" " alt="" coords="368,139,335,147,301,159,269,175,242,198,230,214,223,233,216,271,211,270,218,231,226,211,238,194,266,171,299,154,333,142,367,134"/>
-<area shape="poly" title=" " alt="" coords="369,149,293,169,216,198,143,231,116,252,90,285,77,322,74,359,69,358,72,320,86,283,112,248,140,227,214,194,291,164,367,144"/>
-<area shape="rect" href="data__containers_8h.html" title=" " alt="" coords="736,203,907,229"/>
-<area shape="poly" title=" " alt="" coords="541,145,761,198,760,203,540,151"/>
-<area shape="rect" href="dem__action__manager_8h.html" title=" " alt="" coords="253,203,459,229"/>
-<area shape="poly" title=" " alt="" coords="440,150,383,197,379,192,436,146"/>
-<area shape="rect" title=" " alt="" coords="483,196,658,236"/>
-<area shape="poly" title=" " alt="" coords="487,146,537,185,534,189,484,150"/>
-<area shape="poly" title=" " alt="" coords="283,321,475,373,474,378,282,327"/>
-<area shape="poly" title=" " alt="" coords="246,322,326,370,323,375,243,326"/>
-<area shape="poly" title=" " alt="" coords="184,326,117,367,114,363,181,322"/>
-<area shape="poly" title=" " alt="" coords="753,231,669,252,624,268,581,286,556,306,531,326,468,356,408,378,406,373,466,351,528,322,553,301,579,282,622,263,667,247,752,226"/>
-<area shape="poly" title=" " alt="" coords="736,231,304,287,303,281,735,225"/>
-<area shape="poly" title=" " alt="" coords="736,231,670,239,547,242,389,241,309,244,235,252,172,265,146,275,126,286,110,301,97,320,82,360,77,358,93,317,105,298,122,282,144,270,170,260,234,246,308,239,389,236,547,236,669,233,735,226"/>
-<area shape="rect" href="utilities_8h.html" title=" " alt="" coords="1228,291,1343,317"/>
-<area shape="poly" title=" " alt="" coords="897,226,1042,250,1210,281,1228,285,1227,291,1209,287,1041,255,896,231"/>
-<area shape="rect" title=" " alt="" coords="627,372,802,412"/>
-<area shape="poly" title=" " alt="" coords="907,218,994,227,1075,245,1106,259,1126,277,1130,288,1131,300,1117,326,1095,342,1063,353,982,365,893,370,816,375,816,370,892,364,981,360,1062,348,1092,337,1113,322,1125,298,1125,289,1121,280,1103,264,1073,250,993,232,907,223"/>
-<area shape="rect" title=" " alt="" coords="826,379,889,405"/>
-<area shape="poly" title=" " alt="" coords="907,220,980,227,1055,239,1120,257,1144,268,1160,282,1199,321,1224,338,1231,341,1222,338,1188,331,1126,330,1032,342,902,375,895,377,894,372,901,369,1031,337,1126,325,1189,326,1224,333,1236,343,1222,343,1196,325,1157,286,1141,273,1118,262,1054,244,979,232,907,225"/>
-<area shape="rect" href="contact__info_8h.html" title=" " alt="" coords="592,291,739,317"/>
-<area shape="poly" title=" " alt="" coords="802,231,700,287,697,282,799,227"/>
-<area shape="rect" title=" " alt="" coords="763,291,887,317"/>
-<area shape="poly" title=" " alt="" coords="825,229,827,277,821,278,819,229"/>
-<area shape="rect" href="unordered__dense_8h.html" title=" " alt="" coords="911,291,1102,317"/>
-<area shape="poly" title=" " alt="" coords="847,226,970,283,968,288,845,231"/>
-<area shape="poly" title=" " alt="" coords="1228,314,1115,327,974,339,864,346,755,356,615,375,591,379,590,374,614,369,754,350,864,341,974,334,1114,321,1227,309"/>
-<area shape="poly" title=" " alt="" coords="1228,315,1115,327,926,340,779,345,632,354,444,375,417,379,416,374,444,369,632,348,779,340,926,334,1114,321,1227,310"/>
-<area shape="rect" href="output__struct_8h.html" title=" " alt="" coords="1209,379,1361,405"/>
-<area shape="poly" title=" " alt="" coords="1288,317,1288,365,1283,365,1283,317"/>
-<area shape="rect" title=" " alt="" coords="1105,460,1239,500"/>
-<area shape="poly" title=" " alt="" coords="1264,319,1230,341,1200,373,1184,410,1177,447,1171,446,1179,408,1195,371,1227,337,1261,315"/>
-<area shape="rect" title=" " alt="" coords="1385,372,1559,412"/>
-<area shape="poly" title=" " alt="" coords="1312,314,1419,364,1417,369,1309,319"/>
-<area shape="rect" title=" " alt="" coords="1583,372,1753,412"/>
-<area shape="poly" title=" " alt="" coords="1331,314,1362,321,1570,367,1569,373,1361,327,1330,319"/>
-<area shape="rect" title=" " alt="" coords="1777,379,1964,405"/>
-<area shape="poly" title=" " alt="" coords="1328,314,1362,321,1475,339,1563,348,1652,355,1766,369,1797,374,1796,380,1765,375,1651,361,1563,353,1474,344,1361,327,1327,319"/>
-<area shape="poly" title=" " alt="" coords="1326,314,1362,321,1556,343,1722,353,1868,354,2005,350,2141,345,2288,344,2454,351,2650,369,2680,374,2679,379,2649,375,2454,356,2288,350,2141,351,2005,355,1868,359,1722,358,1556,349,1361,327,1325,319"/>
-<area shape="poly" title=" " alt="" coords="1228,317,1159,327,989,349,816,375,815,369,989,344,1158,321,1228,311"/>
-<area shape="rect" title=" " alt="" coords="1989,372,2129,412"/>
-<area shape="poly" title=" " alt="" coords="1327,314,1362,321,1453,334,1531,341,1666,346,1802,351,1882,358,1975,369,1975,375,1881,363,1801,356,1666,352,1531,347,1453,339,1361,327,1326,319"/>
-<area shape="rect" title=" " alt="" coords="2153,372,2293,412"/>
-<area shape="poly" title=" " alt="" coords="1326,314,1362,321,1478,336,1578,344,1748,347,1920,349,2021,355,2139,369,2139,375,2020,361,1920,354,1748,352,1577,349,1478,342,1361,327,1325,319"/>
-<area shape="rect" title=" " alt="" coords="2317,372,2464,412"/>
-<area shape="poly" title=" " alt="" coords="1326,314,1362,321,1503,339,1623,347,1730,349,1830,348,2038,347,2160,354,2304,369,2303,375,2160,359,2038,353,1830,353,1730,354,1623,352,1503,344,1361,327,1325,319"/>
-<area shape="rect" title=" " alt="" coords="2489,379,2562,405"/>
-<area shape="poly" title=" " alt="" coords="1326,314,1362,321,1530,339,1674,344,1802,341,1920,334,2039,329,2166,330,2309,342,2477,369,2488,372,2486,377,2475,375,2308,347,2166,335,2039,334,1921,340,1802,346,1674,350,1530,345,1361,327,1325,319"/>
-<area shape="rect" title=" " alt="" coords="2587,379,2637,405"/>
-<area shape="poly" title=" " alt="" coords="1326,314,1362,321,1480,331,1627,335,1970,334,2146,335,2313,339,2459,350,2521,358,2575,369,2581,371,2580,376,2574,375,2520,363,2458,355,2312,344,2146,340,1970,340,1627,341,1479,337,1361,327,1325,319"/>
-<area shape="rect" title=" " alt="" coords="913,379,972,405"/>
-<area shape="poly" title=" " alt="" coords="1241,319,1210,327,1096,347,1047,357,985,375,979,377,977,372,983,369,1046,352,1095,342,1209,321,1239,314"/>
-<area shape="rect" title=" " alt="" coords="996,379,1055,405"/>
-<area shape="poly" title=" " alt="" coords="1244,319,1162,343,1069,375,1063,377,1061,372,1067,369,1161,338,1242,314"/>
-<area shape="rect" title=" " alt="" coords="1079,379,1134,405"/>
-<area shape="poly" title=" " alt="" coords="1262,319,1144,376,1142,371,1260,314"/>
-<area shape="poly" title=" " alt="" coords="1242,319,1210,327,1123,340,1055,347,987,355,902,375,895,377,893,372,901,369,986,350,1054,341,1122,335,1209,321,1241,314"/>
-<area shape="poly" title=" " alt="" coords="1272,407,1210,454,1206,449,1268,403"/>
-<area shape="rect" title=" " alt="" coords="1263,460,1422,500"/>
-<area shape="poly" title=" " alt="" coords="1295,403,1324,447,1320,450,1291,406"/>
-<area shape="poly" title=" " alt="" coords="648,319,561,374,558,370,646,315"/>
-<area shape="poly" title=" " alt="" coords="624,319,410,378,409,373,623,314"/>
-<area shape="poly" title=" " alt="" coords="674,316,699,358,694,361,670,318"/>
-</map>
+<div class="center"><iframe scrolling="no" frameborder="0" src="periodic__boundaries__manipulator_8cc__incl.svg" width="2827" height="506"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="periodic__boundaries__manipulator_8cc_source.html">Go to the source code of this file.</a></p>
 </div><!-- contents -->
-<!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+<!--
+SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+-->
+<!-- HTML footer for doxygen 1.9.8-->
+<!-- Start footer part -->
+<hr class="footer"/>
+<address class="footer"><small>
+  <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <a href="https://www.chaos-lab.ca/" target="_blank" rel="noopener noreferrer">
+        <img class="chaos-logo chaos-logo-light" src="chaos_logo_black_without_bkg.png" alt="CHAOS Laboratory" style="height: 40px;"/>
+        <img class="chaos-logo chaos-logo-dark" src="chaos_logo_white_without_bkg.png" alt="CHAOS Laboratory" style="height: 40px;"/>
+      </a>
+      <span style="display: flex; align-items: center; height: 40px;" class="chaos-copyright"></span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      Generated by &#160;<a href="https://www.doxygen.org/index.html">
+      <img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/>
+    </a> 1.9.8
+    </div>
+  </div>
 </small></address>
+  <!-- Update copyright year automatically -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const copyrightSpan = document.querySelector('.chaos-copyright');
+      if (copyrightSpan) {
+        copyrightSpan.textContent = `© 2019-${new Date().getFullYear()}, CHAOS Laboratory`;
+      }
+    });
+  </script>
 </body>
 </html>

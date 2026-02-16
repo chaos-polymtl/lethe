@@ -21,8 +21,12 @@ MathJax.Hub.Config({
 </script>
 <script type="text/javascript" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
-<link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="custom.css" rel="stylesheet" type="text/css"/>
 <link rel="icon" type="image/x-icon" href="lethe_favicon.ico"/>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript"> DoxygenAwesomeDarkModeToggle.init() </script>
+<script type="text/javascript" src="doxygen-github-widget.js"></script>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -32,7 +36,7 @@ MathJax.Hub.Config({
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="lethe-logo-with-bkgd.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Lethe Open-Source Library
+   <div id="projectname">Lethe Open-Source Library<span id="projectnumber">&#160;version 1.0.3</span>
    </div>
    <div id="projectbrief">Developer Guide</div>
   </td>
@@ -107,175 +111,12 @@ $(function() {
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for fluid_dynamics_matrix_free_operators.h:</div>
 <div class="dyncontent">
-<div class="center"><img src="fluid__dynamics__matrix__free__operators_8h__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2include_2solvers_2fluid__dynamics__matrix__free__operators_8h" alt=""/></div>
-<map name="a_2home_2runner_2work_2lethe_2lethe_2include_2solvers_2fluid__dynamics__matrix__free__operators_8h" id="a_2home_2runner_2work_2lethe_2lethe_2include_2solvers_2fluid__dynamics__matrix__free__operators_8h">
-<area shape="rect" title=" " alt="" coords="2566,5,2749,75"/>
-<area shape="rect" href="bdf_8h.html" title=" " alt="" coords="1161,218,1247,243"/>
-<area shape="poly" title=" " alt="" coords="2566,46,2319,54,1998,69,1682,92,1552,108,1454,125,1392,144,1333,167,1238,214,1235,209,1331,163,1391,139,1453,120,1551,102,1682,87,1997,64,2319,49,2566,41"/>
-<area shape="rect" href="mortar__coupling__manager_8h.html" title=" " alt="" coords="625,211,785,251"/>
-<area shape="poly" title=" " alt="" coords="2566,46,2348,54,2043,68,1692,92,1336,125,1189,145,1042,168,799,213,798,208,1041,163,1188,140,1336,120,1692,86,2043,63,2347,48,2566,41"/>
-<area shape="rect" href="sdirk__stage__data_8h.html" title=" " alt="" coords="1271,218,1449,243"/>
-<area shape="poly" title=" " alt="" coords="2566,45,2335,51,2039,65,1889,75,1751,89,1632,105,1543,125,1498,143,1455,166,1387,212,1384,207,1452,161,1496,138,1542,120,1631,100,1750,83,1889,70,2039,60,2335,46,2566,40"/>
-<area shape="rect" href="simulation__control_8h.html" title="Simulation control classes for managing time&#45;stepping and iteration control in Lethe." alt="" coords="1555,130,1741,155"/>
-<area shape="poly" title=" " alt="" coords="2566,53,1755,133,1754,128,2566,48"/>
-<area shape="rect" href="simulation__parameters_8h.html" title=" " alt="" coords="2246,123,2389,163"/>
-<area shape="poly" title=" " alt="" coords="2567,71,2395,121,2394,116,2565,66"/>
-<area shape="rect" title=" " alt="" coords="2413,130,2560,155"/>
-<area shape="poly" title=" " alt="" coords="2601,77,2519,125,2516,121,2599,73"/>
-<area shape="rect" title=" " alt="" coords="2584,123,2731,163"/>
-<area shape="poly" title=" " alt="" coords="2660,75,2660,108,2655,108,2655,75"/>
-<area shape="rect" title=" " alt="" coords="2755,123,2896,163"/>
-<area shape="poly" title=" " alt="" coords="2715,73,2783,113,2781,118,2712,77"/>
-<area shape="rect" title=" " alt="" coords="2921,123,3055,163"/>
-<area shape="poly" title=" " alt="" coords="2750,67,2913,116,2912,121,2748,72"/>
-<area shape="rect" title=" " alt="" coords="3079,123,3222,163"/>
-<area shape="poly" title=" " alt="" coords="2749,56,3066,120,3065,125,2748,61"/>
-<area shape="rect" title=" " alt="" coords="3246,123,3389,163"/>
-<area shape="poly" title=" " alt="" coords="2749,49,2966,77,3233,120,3232,125,2965,83,2748,54"/>
-<area shape="rect" title=" " alt="" coords="3413,123,3555,163"/>
-<area shape="poly" title=" " alt="" coords="2749,45,3036,72,3215,93,3400,120,3399,125,3215,98,3035,77,2749,51"/>
-<area shape="rect" title=" " alt="" coords="3579,123,3722,163"/>
-<area shape="poly" title=" " alt="" coords="2749,43,3104,67,3332,89,3566,120,3565,125,3332,94,3103,72,2749,48"/>
-<area shape="rect" href="parameters_8h.html" title=" " alt="" coords="1571,306,1712,331"/>
-<area shape="poly" title=" " alt="" coords="1236,241,1259,248,1417,282,1557,304,1556,309,1416,287,1258,253,1234,246"/>
-<area shape="rect" title=" " alt="" coords="950,482,1013,507"/>
-<area shape="poly" title=" " alt="" coords="1161,238,1093,245,1016,257,947,275,921,287,905,300,899,321,898,355,902,393,912,425,930,451,953,472,949,476,926,455,907,428,897,395,892,355,893,320,900,297,918,283,945,270,1015,252,1093,239,1160,232"/>
-<area shape="rect" title=" " alt="" coords="915,306,1056,331"/>
-<area shape="poly" title=" " alt="" coords="1175,246,1028,303,1026,298,1174,241"/>
-<area shape="rect" href="dimensionality_8h.html" title=" " alt="" coords="1831,394,1993,419"/>
-<area shape="poly" title=" " alt="" coords="1679,329,1864,387,1862,392,1677,334"/>
-<area shape="rect" title=" " alt="" coords="2289,475,2458,515"/>
-<area shape="poly" title=" " alt="" coords="1656,329,1716,377,1758,403,1804,424,1893,445,2018,462,2275,485,2274,490,2018,468,1892,450,1802,429,1756,408,1713,381,1652,334"/>
-<area shape="rect" href="ib__particle_8h.html" title=" " alt="" coords="966,394,1101,419"/>
-<area shape="poly" title=" " alt="" coords="1571,331,1328,359,1112,389,1092,394,1091,388,1112,384,1327,354,1570,325"/>
-<area shape="rect" title=" " alt="" coords="2538,475,2683,515"/>
-<area shape="poly" title=" " alt="" coords="1688,329,1726,336,1797,346,1858,350,1962,353,2066,359,2126,368,2197,384,2224,393,2245,403,2292,424,2413,456,2525,477,2524,483,2412,461,2290,429,2242,408,2222,398,2195,389,2125,374,2065,365,1962,358,1858,356,1797,351,1725,341,1687,334"/>
-<area shape="rect" href="multiphysics_8h.html" title="Identifiers for multiphysics modules and their solution fields." alt="" coords="1367,394,1516,419"/>
-<area shape="poly" title=" " alt="" coords="1615,334,1482,391,1480,386,1613,329"/>
-<area shape="rect" href="utilities_8h.html" title=" " alt="" coords="1540,394,1655,419"/>
-<area shape="poly" title=" " alt="" coords="1638,333,1612,383,1607,380,1633,330"/>
-<area shape="rect" title=" " alt="" coords="1125,387,1342,427"/>
-<area shape="poly" title=" " alt="" coords="1587,334,1337,386,1336,381,1586,329"/>
-<area shape="poly" title=" " alt="" coords="1969,417,2006,424,2275,473,2275,479,2005,429,1968,422"/>
-<area shape="poly" title=" " alt="" coords="1075,417,1112,424,1318,447,1492,458,1646,461,1790,459,2089,454,2264,459,2471,472,2525,478,2524,483,2470,477,2264,464,2089,460,1790,465,1646,467,1492,464,1317,453,1112,429,1074,422"/>
-<area shape="rect" title=" " alt="" coords="1155,482,1301,507"/>
-<area shape="poly" title=" " alt="" coords="1061,417,1190,474,1188,479,1059,422"/>
-<area shape="poly" title=" " alt="" coords="1029,421,998,471,994,468,1024,418"/>
-<area shape="poly" title=" " alt="" coords="1639,417,1674,424,1838,448,2003,466,2275,486,2274,491,2002,471,1838,453,1673,429,1638,422"/>
-<area shape="poly" title=" " alt="" coords="1557,422,1529,429,1297,482,1296,476,1527,424,1556,417"/>
-<area shape="poly" title=" " alt="" coords="1560,422,1528,429,1027,491,1026,485,1528,424,1558,417"/>
-<area shape="rect" title=" " alt="" coords="1373,482,1560,507"/>
-<area shape="poly" title=" " alt="" coords="1581,422,1497,477,1494,472,1578,417"/>
-<area shape="rect" title=" " alt="" coords="1684,482,1735,507"/>
-<area shape="poly" title=" " alt="" coords="1614,417,1685,471,1681,475,1611,422"/>
-<area shape="rect" title=" " alt="" coords="1584,482,1643,507"/>
-<area shape="poly" title=" " alt="" coords="1602,419,1611,468,1606,469,1597,420"/>
-<area shape="poly" title=" " alt="" coords="786,236,1458,296,1557,306,1557,311,1457,301,785,241"/>
-<area shape="poly" title=" " alt="" coords="733,249,808,295,854,318,903,336,996,359,1075,370,1146,373,1213,372,1352,368,1433,372,1528,384,1548,388,1547,393,1528,389,1433,377,1352,373,1213,377,1146,379,1074,375,995,364,902,341,852,323,805,299,730,253"/>
-<area shape="rect" title=" " alt="" coords="5,306,157,331"/>
-<area shape="poly" title=" " alt="" coords="625,242,418,266,170,301,146,306,145,301,169,296,418,260,625,237"/>
-<area shape="rect" title=" " alt="" coords="182,299,410,339"/>
-<area shape="poly" title=" " alt="" coords="625,251,400,298,399,293,624,246"/>
-<area shape="rect" title=" " alt="" coords="435,306,597,331"/>
-<area shape="poly" title=" " alt="" coords="665,253,555,303,552,298,663,248"/>
-<area shape="rect" title=" " alt="" coords="622,299,789,339"/>
-<area shape="poly" title=" " alt="" coords="708,251,708,285,703,285,703,251"/>
-<area shape="poly" title=" " alt="" coords="1399,241,1591,299,1590,304,1397,246"/>
-<area shape="poly" title=" " alt="" coords="1330,246,1109,327,1002,368,955,388,949,408,950,429,957,450,968,469,963,472,953,452,945,430,943,407,951,385,1000,363,1107,322,1328,241"/>
-<area shape="rect" title=" " alt="" coords="1274,306,1446,331"/>
-<area shape="poly" title=" " alt="" coords="1363,244,1363,292,1357,292,1357,244"/>
-<area shape="poly" title=" " alt="" coords="1558,158,1417,180,1259,213,1248,216,1247,211,1258,208,1416,175,1557,153"/>
-<area shape="poly" title=" " alt="" coords="1654,155,1662,198,1663,251,1653,293,1647,292,1657,250,1657,198,1649,156"/>
-<area shape="rect" title=" " alt="" coords="1473,211,1647,251"/>
-<area shape="poly" title=" " alt="" coords="1638,157,1591,203,1588,199,1634,154"/>
-<area shape="poly" title=" " alt="" coords="2246,152,2005,174,1883,192,1834,202,1797,213,1758,231,1722,254,1665,299,1662,295,1719,250,1756,227,1795,208,1833,197,1883,187,2005,169,2246,146"/>
-<area shape="poly" title=" " alt="" coords="2319,163,2312,205,2305,229,2294,252,2274,283,2254,305,2230,323,2197,341,2111,365,1981,394,1980,389,2110,360,2195,336,2227,318,2250,301,2270,280,2290,249,2300,227,2307,204,2314,163"/>
-<area shape="rect" href="ale_8h.html" title=" " alt="" coords="3494,394,3581,419"/>
-<area shape="poly" title=" " alt="" coords="2389,158,2402,160,2543,176,2655,181,2766,187,2831,195,2907,208,3081,250,3249,300,3394,349,3496,386,3494,391,3392,354,3248,305,3080,255,2906,213,2830,200,2765,192,2654,186,2543,182,2401,165,2388,163"/>
-<area shape="rect" href="boundary__conditions_8h.html" title=" " alt="" coords="1737,306,1938,331"/>
-<area shape="poly" title=" " alt="" coords="2246,151,2126,160,1990,173,1874,191,1834,202,1814,212,1806,231,1806,252,1814,273,1824,293,1819,295,1809,275,1801,253,1800,230,1810,209,1832,197,1872,186,1989,168,2126,155,2246,146"/>
-<area shape="rect" href="manifolds_8h.html" title=" " alt="" coords="2885,306,3016,331"/>
-<area shape="poly" title=" " alt="" coords="2389,158,2402,160,2505,167,2638,171,2770,182,2825,192,2868,208,2892,226,2913,248,2942,292,2937,295,2909,251,2889,230,2865,213,2824,197,2770,187,2638,177,2504,173,2401,165,2388,163"/>
-<area shape="rect" href="parameters__multiphysics_8h.html" title=" " alt="" coords="2049,218,2279,243"/>
-<area shape="poly" title=" " alt="" coords="2285,165,2197,214,2195,209,2282,160"/>
-<area shape="rect" href="solid__objects__parameters_8h.html" title="Parameter classes for solid objects used in Nitsche immersed boundary and DEM simulations." alt="" coords="2355,211,2493,251"/>
-<area shape="poly" title=" " alt="" coords="2343,161,2392,200,2388,204,2339,165"/>
-<area shape="rect" href="analytical__solutions_8h.html" title=" " alt="" coords="2609,211,2746,251"/>
-<area shape="poly" title=" " alt="" coords="2390,158,2596,207,2594,212,2388,164"/>
-<area shape="rect" href="initial__conditions_8h.html" title=" " alt="" coords="2513,394,2709,419"/>
-<area shape="poly" title=" " alt="" coords="2387,160,2457,183,2487,196,2507,209,2544,250,2573,297,2593,342,2606,380,2601,382,2588,344,2568,299,2540,253,2504,213,2484,201,2455,188,2385,165"/>
-<area shape="rect" href="physical__properties__manager_8h.html" title=" " alt="" coords="3665,211,3865,251"/>
-<area shape="poly" title=" " alt="" coords="2389,158,2402,160,2590,180,2750,190,2891,192,3023,190,3297,188,3458,193,3647,208,3652,209,3652,214,3646,213,3457,199,3297,193,3023,196,2891,198,2750,195,2590,186,2401,165,2388,163"/>
-<area shape="rect" href="source__terms_8h.html" title=" " alt="" coords="2784,394,2957,419"/>
-<area shape="poly" title=" " alt="" coords="2389,158,2402,160,2481,167,2585,172,2686,183,2728,194,2760,208,2790,237,2804,266,2814,299,2832,337,2858,381,2854,384,2827,340,2809,301,2799,268,2786,240,2757,213,2727,199,2686,189,2585,178,2481,172,2401,165,2388,163"/>
-<area shape="rect" href="tracer__drift__velocity_8h.html" title=" " alt="" coords="2981,387,3125,427"/>
-<area shape="poly" title=" " alt="" coords="2389,158,2402,160,2489,167,2603,172,2715,183,2761,193,2796,208,2814,223,2826,239,2838,271,2850,305,2860,321,2875,337,2917,358,2977,380,2975,385,2915,363,2872,341,2855,324,2845,307,2833,273,2821,241,2810,227,2793,213,2759,198,2714,188,2603,177,2489,172,2401,165,2388,163"/>
-<area shape="rect" href="vof__subequations_8h.html" title=" " alt="" coords="1824,218,2024,243"/>
-<area shape="poly" title=" " alt="" coords="2246,162,1990,218,1989,213,2245,157"/>
-<area shape="poly" title=" " alt="" coords="3509,422,3482,429,3338,452,3216,465,3107,469,3006,469,2796,466,2672,468,2527,477,2472,483,2472,478,2526,472,2672,463,2796,460,3006,464,3107,464,3215,460,3337,447,3481,424,3507,417"/>
-<area shape="poly" title=" " alt="" coords="3508,422,3482,429,3373,449,3262,464,3043,484,2847,494,2698,496,2697,491,2847,488,3042,479,3261,458,3373,443,3481,424,3507,417"/>
-<area shape="rect" title=" " alt="" coords="3454,482,3621,507"/>
-<area shape="poly" title=" " alt="" coords="3540,420,3540,468,3535,468,3535,420"/>
-<area shape="poly" title=" " alt="" coords="1833,333,1822,353,1814,378,1812,403,1816,415,1822,425,1843,436,1883,447,2002,464,2144,477,2275,486,2275,491,2144,483,2002,470,1882,452,1841,441,1818,429,1811,417,1807,404,1809,377,1818,351,1828,330"/>
-<area shape="poly" title=" " alt="" coords="1929,329,2127,356,2291,384,2349,403,2406,424,2540,468,2538,473,2404,429,2348,408,2290,389,2126,361,1928,334"/>
-<area shape="poly" title=" " alt="" coords="1806,334,1643,392,1641,387,1804,329"/>
-<area shape="poly" title=" " alt="" coords="1827,333,1777,388,1748,431,1724,471,1720,468,1743,428,1773,385,1823,330"/>
-<area shape="poly" title=" " alt="" coords="1930,329,2009,336,2285,337,2811,339,3088,343,3332,351,3512,364,3567,373,3595,385,3602,396,3605,408,3598,432,3583,455,3564,475,3560,471,3578,451,3593,429,3599,407,3598,398,3592,389,3566,378,3511,369,3332,356,3088,348,2811,344,2285,343,2009,341,1929,334"/>
-<area shape="rect" title=" " alt="" coords="2017,394,2183,419"/>
-<area shape="poly" title=" " alt="" coords="1874,329,2052,387,2051,392,1872,334"/>
-<area shape="poly" title=" " alt="" coords="2885,321,2805,324,2708,334,2603,355,2552,370,2502,389,2473,405,2446,425,2401,466,2397,462,2442,421,2470,401,2500,384,2550,365,2602,350,2707,329,2805,319,2885,316"/>
-<area shape="poly" title=" " alt="" coords="2885,326,2439,350,1820,389,1669,402,1668,396,1820,384,2439,345,2885,321"/>
-<area shape="rect" title=" " alt="" coords="3333,387,3469,427"/>
-<area shape="poly" title=" " alt="" coords="3017,328,3321,384,3320,389,3016,333"/>
-<area shape="rect" title=" " alt="" coords="3150,387,3309,427"/>
-<area shape="poly" title=" " alt="" coords="2989,329,3156,380,3154,385,2987,334"/>
-<area shape="poly" title=" " alt="" coords="2088,246,1726,301,1704,306,1703,300,1725,296,2087,241"/>
-<area shape="poly" title=" " alt="" coords="2175,242,2352,462,2348,466,2171,245"/>
-<area shape="rect" title=" " alt="" coords="2021,306,2184,331"/>
-<area shape="poly" title=" " alt="" coords="2158,245,2121,296,2117,293,2154,242"/>
-<area shape="poly" title=" " alt="" coords="2355,245,2292,253,2133,267,2008,274,1884,282,1726,301,1701,306,1700,300,1725,296,1884,276,2008,268,2132,262,2292,248,2354,240"/>
-<area shape="poly" title=" " alt="" coords="2421,252,2408,299,2391,387,2380,461,2375,461,2386,386,2403,298,2415,250"/>
-<area shape="poly" title=" " alt="" coords="2430,251,2438,286,2453,332,2474,381,2503,425,2528,448,2555,466,2552,470,2524,452,2499,428,2469,383,2448,334,2433,288,2425,252"/>
-<area shape="poly" title=" " alt="" coords="2609,243,2506,253,2286,266,2115,270,1944,278,1844,287,1726,301,1700,306,1699,301,1725,296,1843,281,1943,272,2114,265,2286,261,2505,248,2608,238"/>
-<area shape="poly" title=" " alt="" coords="2692,250,2711,284,2729,330,2734,355,2736,380,2733,405,2724,428,2704,452,2678,470,2675,466,2700,448,2719,425,2728,403,2731,380,2729,355,2724,331,2707,287,2688,252"/>
-<area shape="poly" title=" " alt="" coords="2746,230,2950,236,3079,245,3213,258,3344,278,3461,305,3512,321,3556,340,3591,361,3618,385,3625,397,3626,410,3616,435,3594,457,3570,476,3567,472,3591,453,3611,432,3621,409,3620,399,3614,388,3588,365,3553,345,3510,326,3460,310,3343,283,3213,264,3078,250,2949,242,2746,235"/>
-<area shape="poly" title=" " alt="" coords="2580,422,2440,472,2438,467,2578,417"/>
-<area shape="poly" title=" " alt="" coords="2613,420,2613,461,2608,461,2608,420"/>
-<area shape="poly" title=" " alt="" coords="2805,422,2472,479,2471,474,2804,417"/>
-<area shape="poly" title=" " alt="" coords="2836,422,2682,473,2680,468,2835,417"/>
-<area shape="poly" title=" " alt="" coords="2927,417,2970,424,3225,458,3441,481,3440,487,3224,463,2969,429,2926,422"/>
-<area shape="poly" title=" " alt="" coords="2982,427,2970,429,2846,447,2749,457,2527,477,2472,484,2471,479,2526,472,2748,452,2845,442,2969,424,2981,422"/>
-<area shape="poly" title=" " alt="" coords="2982,427,2970,429,2697,481,2696,476,2969,424,2980,422"/>
-<area shape="poly" title=" " alt="" coords="3126,421,3139,424,3449,477,3448,482,3138,429,3125,427"/>
-</map>
+<div class="center"><iframe scrolling="no" frameborder="0" src="fluid__dynamics__matrix__free__operators_8h__incl.svg" width="3871" height="520"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><img src="fluid__dynamics__matrix__free__operators_8h__dep__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2include_2solvers_2fluid__dynamics__matrix__free__operators_8hdep" alt=""/></div>
-<map name="a_2home_2runner_2work_2lethe_2lethe_2include_2solvers_2fluid__dynamics__matrix__free__operators_8hdep" id="a_2home_2runner_2work_2lethe_2lethe_2include_2solvers_2fluid__dynamics__matrix__free__operators_8hdep">
-<area shape="rect" title=" " alt="" coords="304,5,487,75"/>
-<area shape="rect" href="fluid__dynamics__vans__matrix__free__operators_8h.html" title=" " alt="" coords="31,240,243,309"/>
-<area shape="poly" title=" " alt="" coords="330,84,276,125,215,184,165,241,161,238,211,181,272,121,327,80"/>
-<area shape="rect" href="fluid__dynamics__matrix__free_8h.html" title=" " alt="" coords="286,130,505,185"/>
-<area shape="poly" title=" " alt="" coords="398,89,398,130,393,130,393,89"/>
-<area shape="rect" href="fluid__dynamics__matrix__free__operators_8cc.html" title=" " alt="" coords="529,123,712,192"/>
-<area shape="poly" title=" " alt="" coords="474,79,556,120,554,125,472,83"/>
-<area shape="rect" href="cfd__dem__coupling__matrix__free_8cc.html" title=" " alt="" coords="210,475,405,544"/>
-<area shape="poly" title=" " alt="" coords="55,319,35,337,20,359,12,377,8,393,11,408,20,425,31,436,49,446,96,464,152,479,210,491,209,496,151,484,94,469,46,451,28,440,16,428,6,410,3,393,7,375,16,356,31,334,51,316"/>
-<area shape="rect" href="fluid__dynamics__vans__matrix__free_8cc.html" title=" " alt="" coords="267,357,479,427"/>
-<area shape="poly" title=" " alt="" coords="219,313,305,355,302,360,217,318"/>
-<area shape="rect" href="fluid__dynamics__vans__matrix__free__operators_8cc.html" title=" " alt="" coords="31,357,243,427"/>
-<area shape="poly" title=" " alt="" coords="139,323,139,357,134,357,134,323"/>
-<area shape="rect" href="fluid__dynamics__vans__matrix__free_8h.html" title=" " alt="" coords="267,247,524,302"/>
-<area shape="poly" title=" " alt="" coords="398,198,398,247,393,247,393,198"/>
-<area shape="rect" href="fluid__dynamics__matrix__free_8cc.html" title=" " alt="" coords="548,240,731,309"/>
-<area shape="poly" title=" " alt="" coords="464,188,569,237,567,242,462,193"/>
-<area shape="poly" title=" " alt="" coords="390,316,382,357,377,356,385,315"/>
-<area shape="rect" href="cfd__dem__coupling__matrix__free_8h.html" title=" " alt="" coords="503,365,741,419"/>
-<area shape="poly" title=" " alt="" coords="460,306,572,362,569,367,458,311"/>
-<area shape="poly" title=" " alt="" coords="539,427,400,477,398,472,537,422"/>
-</map>
+<div class="center"><iframe scrolling="no" frameborder="0" src="fluid__dynamics__matrix__free__operators_8h__dep__incl.svg" width="747" height="550"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="fluid__dynamics__matrix__free__operators_8h_source.html">Go to the source code of this file.</a></p>
@@ -453,9 +294,37 @@ template&lt;int dim, typename Number &gt; </div>
 </div>
 </div>
 </div><!-- contents -->
-<!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+<!--
+SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+-->
+<!-- HTML footer for doxygen 1.9.8-->
+<!-- Start footer part -->
+<hr class="footer"/>
+<address class="footer"><small>
+  <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <a href="https://www.chaos-lab.ca/" target="_blank" rel="noopener noreferrer">
+        <img class="chaos-logo chaos-logo-light" src="chaos_logo_black_without_bkg.png" alt="CHAOS Laboratory" style="height: 40px;"/>
+        <img class="chaos-logo chaos-logo-dark" src="chaos_logo_white_without_bkg.png" alt="CHAOS Laboratory" style="height: 40px;"/>
+      </a>
+      <span style="display: flex; align-items: center; height: 40px;" class="chaos-copyright"></span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      Generated by &#160;<a href="https://www.doxygen.org/index.html">
+      <img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/>
+    </a> 1.9.8
+    </div>
+  </div>
 </small></address>
+  <!-- Update copyright year automatically -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const copyrightSpan = document.querySelector('.chaos-copyright');
+      if (copyrightSpan) {
+        copyrightSpan.textContent = `© 2019-${new Date().getFullYear()}, CHAOS Laboratory`;
+      }
+    });
+  </script>
 </body>
 </html>

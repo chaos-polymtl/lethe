@@ -21,8 +21,12 @@ MathJax.Hub.Config({
 </script>
 <script type="text/javascript" async="async" src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
-<link href="stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="custom.css" rel="stylesheet" type="text/css"/>
 <link rel="icon" type="image/x-icon" href="lethe_favicon.ico"/>
+<script type="text/javascript" src="doxygen-awesome-darkmode-toggle.js"></script>
+<script type="text/javascript"> DoxygenAwesomeDarkModeToggle.init() </script>
+<script type="text/javascript" src="doxygen-github-widget.js"></script>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -32,7 +36,7 @@ MathJax.Hub.Config({
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="lethe-logo-with-bkgd.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Lethe Open-Source Library
+   <div id="projectname">Lethe Open-Source Library<span id="projectnumber">&#160;version 1.0.3</span>
    </div>
    <div id="projectbrief">Developer Guide</div>
   </td>
@@ -92,154 +96,42 @@ $(function() {
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for simulation_parameters.cc:</div>
 <div class="dyncontent">
-<div class="center"><img src="simulation__parameters_8cc__incl.png" border="0" usemap="#a_2home_2runner_2work_2lethe_2lethe_2source_2solvers_2simulation__parameters_8cc" alt=""/></div>
-<map name="a_2home_2runner_2work_2lethe_2lethe_2source_2solvers_2simulation__parameters_8cc" id="a_2home_2runner_2work_2lethe_2lethe_2source_2solvers_2simulation__parameters_8cc">
-<area shape="rect" title=" " alt="" coords="2962,5,3157,60"/>
-<area shape="rect" href="simulation__parameters_8h.html" title=" " alt="" coords="2988,108,3131,148"/>
-<area shape="poly" title=" " alt="" coords="3062,60,3062,94,3057,94,3057,60"/>
-<area shape="rect" href="ale_8h.html" title=" " alt="" coords="2760,453,2847,478"/>
-<area shape="poly" title=" " alt="" coords="3125,146,3160,165,3175,179,3187,195,3215,249,3223,275,3227,300,3225,325,3218,349,3206,374,3187,399,3161,417,3125,428,3080,435,3032,438,2935,441,2861,448,2849,451,2848,446,2860,443,2934,436,3031,433,3080,430,3123,423,3159,412,3183,395,3201,371,3213,347,3220,324,3221,300,3218,276,3210,251,3182,197,3171,182,3157,170,3123,150"/>
-<area shape="rect" href="boundary__conditions_8h.html" title=" " alt="" coords="631,372,832,397"/>
-<area shape="poly" title=" " alt="" coords="2988,132,2463,135,1673,144,1269,152,909,164,628,179,529,188,464,199,403,210,354,221,332,230,313,242,294,260,275,285,267,305,269,313,275,322,290,331,318,339,405,354,617,374,617,379,405,359,317,344,288,336,271,326,264,315,262,304,270,283,290,257,309,238,330,225,352,216,402,205,463,193,528,183,628,174,909,158,1269,147,1673,138,2463,129,2988,127"/>
-<area shape="rect" href="dimensionality_8h.html" title=" " alt="" coords="1279,453,1440,478"/>
-<area shape="poly" title=" " alt="" coords="2988,133,1880,153,1247,173,1015,185,878,199,796,207,729,213,699,220,671,233,644,254,618,285,610,305,611,313,617,322,632,335,652,345,704,358,767,365,837,366,976,363,1036,364,1082,369,1149,386,1214,406,1320,445,1318,450,1212,411,1147,391,1082,375,1035,369,976,369,837,371,767,370,703,364,650,350,629,339,613,326,606,315,604,304,613,283,640,250,668,229,697,215,728,208,796,202,878,193,1015,180,1247,168,1879,148,2987,128"/>
-<area shape="rect" href="manifolds_8h.html" title=" " alt="" coords="275,372,406,397"/>
-<area shape="poly" title=" " alt="" coords="2988,132,2409,132,1536,139,1099,147,719,159,442,176,356,186,311,198,277,223,256,252,251,268,250,285,253,303,260,323,279,346,303,363,300,368,275,350,256,325,247,305,244,285,246,267,251,250,274,220,309,194,355,181,442,170,719,153,1098,141,1536,133,2409,127,2988,126"/>
-<area shape="rect" href="parameters_8h.html" title=" " alt="" coords="1443,372,1585,397"/>
-<area shape="poly" title=" " alt="" coords="2988,134,2466,150,1693,181,1309,202,978,227,845,240,739,255,666,270,644,278,632,286,626,295,624,304,626,313,632,322,664,332,736,341,959,358,1430,378,1429,383,959,363,736,347,663,337,628,326,621,315,618,304,621,293,628,282,642,273,665,265,738,250,844,235,978,221,1309,197,1692,175,2465,144,2988,128"/>
-<area shape="rect" href="parameters__multiphysics_8h.html" title=" " alt="" coords="284,291,515,317"/>
-<area shape="poly" title=" " alt="" coords="2988,133,2452,138,1655,151,911,171,657,184,577,191,535,199,500,215,469,238,420,283,416,279,465,233,498,211,533,193,576,186,657,178,911,165,1655,146,2452,133,2988,127"/>
-<area shape="rect" href="solid__objects__parameters_8h.html" title="Parameter classes for solid objects used in Nitsche immersed boundary and DEM simulations." alt="" coords="2990,284,3129,324"/>
-<area shape="poly" title=" " alt="" coords="3062,148,3062,270,3057,270,3057,148"/>
-<area shape="rect" href="analytical__solutions_8h.html" title=" " alt="" coords="3255,284,3392,324"/>
-<area shape="poly" title=" " alt="" coords="3132,145,3185,165,3237,194,3277,231,3307,271,3303,274,3273,235,3234,198,3183,170,3130,150"/>
-<area shape="rect" href="initial__conditions_8h.html" title=" " alt="" coords="2387,453,2583,478"/>
-<area shape="poly" title=" " alt="" coords="3081,147,3113,182,3143,228,3153,253,3158,278,3155,303,3143,326,3127,341,3106,355,3052,380,2984,401,2907,419,2744,444,2597,459,2596,454,2743,439,2906,414,2983,396,3050,375,3104,351,3124,337,3139,322,3150,301,3152,279,3148,255,3138,231,3108,185,3077,150"/>
-<area shape="rect" href="physical__properties__manager_8h.html" title=" " alt="" coords="1790,196,1990,236"/>
-<area shape="poly" title=" " alt="" coords="2988,137,2004,209,2003,204,2988,132"/>
-<area shape="rect" href="source__terms_8h.html" title=" " alt="" coords="2973,453,3146,478"/>
-<area shape="poly" title=" " alt="" coords="3132,137,3234,158,3289,174,3339,195,3381,220,3409,249,3417,266,3420,285,3416,304,3407,325,3389,345,3361,364,3285,399,3198,429,3119,452,3118,447,3196,424,3283,394,3359,359,3386,341,3402,323,3411,303,3414,285,3412,268,3405,252,3377,224,3336,200,3287,179,3233,163,3131,142"/>
-<area shape="rect" href="tracer__drift__velocity_8h.html" title=" " alt="" coords="3170,445,3314,485"/>
-<area shape="poly" title=" " alt="" coords="3131,134,3275,156,3341,173,3367,183,3386,194,3407,213,3418,233,3431,283,3436,305,3431,325,3405,363,3372,395,3336,421,3300,441,3298,437,3333,417,3369,391,3401,360,3426,323,3431,305,3426,285,3413,235,3403,217,3383,198,3365,188,3339,178,3274,161,3131,139"/>
-<area shape="rect" href="vof__subequations_8h.html" title=" " alt="" coords="3518,203,3718,229"/>
-<area shape="poly" title=" " alt="" coords="3131,137,3500,193,3533,199,3532,204,3499,199,3131,143"/>
-<area shape="rect" title=" " alt="" coords="2976,541,3143,566"/>
-<area shape="poly" title=" " alt="" coords="2839,476,3013,534,3011,539,2837,481"/>
-<area shape="rect" title=" " alt="" coords="1663,533,1832,573"/>
-<area shape="poly" title=" " alt="" coords="2760,473,2596,488,1846,547,1845,542,2595,483,2760,468"/>
-<area shape="rect" title=" " alt="" coords="2649,533,2795,573"/>
-<area shape="poly" title=" " alt="" coords="2794,480,2752,525,2748,521,2790,476"/>
-<area shape="poly" title=" " alt="" coords="832,391,895,395,1265,399,1880,402,2203,406,2494,413,2723,425,2805,433,2860,443,2911,460,2959,484,3034,530,3031,535,2956,488,2908,465,2859,448,2805,438,2723,430,2494,419,2203,411,1880,407,1264,404,895,400,832,396"/>
-<area shape="poly" title=" " alt="" coords="789,395,861,414,937,443,954,454,965,464,977,474,994,483,1053,498,1129,508,1310,518,1496,522,1649,531,1649,536,1496,528,1309,523,1128,513,1052,503,992,488,974,479,962,468,950,458,934,448,859,419,788,400"/>
-<area shape="poly" title=" " alt="" coords="832,391,895,395,1216,396,1750,396,2030,399,2282,407,2480,421,2550,431,2596,443,2611,451,2621,461,2641,483,2689,522,2685,527,2637,487,2617,464,2608,455,2594,448,2549,436,2479,426,2282,412,2030,404,1750,401,1216,401,895,400,832,396"/>
-<area shape="rect" href="utilities_8h.html" title=" " alt="" coords="566,453,681,478"/>
-<area shape="poly" title=" " alt="" coords="717,400,652,447,649,442,714,395"/>
-<area shape="rect" title=" " alt="" coords="57,541,107,566"/>
-<area shape="poly" title=" " alt="" coords="699,400,555,448,421,488,336,503,269,508,203,515,120,536,115,538,114,533,119,531,202,510,269,503,336,498,420,483,553,443,697,395"/>
-<area shape="rect" title=" " alt="" coords="756,453,923,478"/>
-<area shape="poly" title=" " alt="" coords="749,395,814,442,811,447,746,400"/>
-<area shape="poly" title=" " alt="" coords="664,475,700,483,842,500,963,509,1071,512,1171,511,1381,511,1504,517,1649,531,1648,536,1504,522,1381,516,1171,516,1071,517,963,514,841,505,699,488,663,481"/>
-<area shape="rect" href="output__struct_8h.html" title=" " alt="" coords="131,541,283,566"/>
-<area shape="poly" title=" " alt="" coords="568,481,276,541,275,535,567,475"/>
-<area shape="rect" title=" " alt="" coords="196,621,331,661"/>
-<area shape="poly" title=" " alt="" coords="566,479,444,503,386,519,347,536,327,552,309,571,282,611,277,608,305,568,324,548,345,531,385,514,442,498,565,473"/>
-<area shape="rect" title=" " alt="" coords="358,533,531,573"/>
-<area shape="poly" title=" " alt="" coords="600,481,497,530,495,525,598,476"/>
-<area shape="rect" title=" " alt="" coords="1491,541,1638,566"/>
-<area shape="poly" title=" " alt="" coords="664,475,700,483,818,498,918,505,1089,508,1261,510,1361,517,1480,531,1506,535,1505,540,1479,536,1361,522,1261,516,1089,514,918,511,817,503,699,488,663,481"/>
-<area shape="rect" title=" " alt="" coords="556,541,709,566"/>
-<area shape="poly" title=" " alt="" coords="627,478,633,527,627,527,622,478"/>
-<area shape="rect" title=" " alt="" coords="734,541,921,566"/>
-<area shape="poly" title=" " alt="" coords="652,476,788,533,786,538,650,481"/>
-<area shape="rect" title=" " alt="" coords="945,541,1104,566"/>
-<area shape="poly" title=" " alt="" coords="669,475,700,483,956,535,955,541,699,488,668,481"/>
-<area shape="rect" title=" " alt="" coords="1128,533,1303,573"/>
-<area shape="poly" title=" " alt="" coords="666,475,700,483,814,500,905,508,997,516,1115,530,1114,536,997,521,905,514,814,505,699,488,665,481"/>
-<area shape="rect" title=" " alt="" coords="1327,533,1467,573"/>
-<area shape="poly" title=" " alt="" coords="665,475,700,483,791,495,870,503,1004,508,1140,512,1220,519,1313,530,1312,536,1219,524,1140,517,1004,513,869,508,791,501,699,488,664,481"/>
-<area shape="poly" title=" " alt="" coords="566,477,120,536,115,538,113,533,119,531,566,471"/>
-<area shape="poly" title=" " alt="" coords="217,565,246,608,241,611,213,568"/>
-<area shape="rect" title=" " alt="" coords="5,621,164,661"/>
-<area shape="poly" title=" " alt="" coords="192,568,125,615,122,611,189,564"/>
-<area shape="poly" title=" " alt="" coords="1412,475,1650,528,1648,533,1411,481"/>
-<area shape="poly" title=" " alt="" coords="406,385,469,390,542,400,619,417,694,443,710,453,720,464,730,474,746,483,784,494,828,503,933,516,1054,522,1184,524,1441,523,1555,525,1649,531,1649,536,1554,530,1441,529,1184,529,1054,527,933,521,827,509,782,499,744,488,727,479,717,468,707,457,692,448,618,422,541,405,468,395,406,390"/>
-<area shape="poly" title=" " alt="" coords="382,395,570,447,569,452,381,400"/>
-<area shape="poly" title=" " alt="" coords="278,400,219,417,155,443,123,461,94,482,68,506,47,535,41,553,43,572,51,591,62,609,57,612,46,594,38,573,36,552,42,532,64,503,91,478,120,456,152,438,217,411,276,395"/>
-<area shape="rect" title=" " alt="" coords="273,445,409,485"/>
-<area shape="poly" title=" " alt="" coords="343,398,343,432,338,432,338,398"/>
-<area shape="poly" title=" " alt="" coords="1511,399,1498,440,1498,463,1507,484,1523,493,1557,505,1649,528,1648,533,1556,510,1521,498,1503,487,1493,464,1493,439,1506,397"/>
-<area shape="poly" title=" " alt="" coords="1585,384,1835,387,2165,395,2326,403,2468,413,2577,426,2615,434,2641,443,2663,459,2682,478,2710,520,2705,523,2678,482,2660,463,2638,448,2614,439,2576,432,2468,418,2326,408,2164,401,1835,392,1585,389"/>
-<area shape="poly" title=" " alt="" coords="1443,392,1139,412,943,428,745,448,695,455,694,449,744,443,943,423,1139,407,1443,387"/>
-<area shape="poly" title=" " alt="" coords="1492,400,1396,449,1393,444,1490,395"/>
-<area shape="rect" href="ib__particle_8h.html" title=" " alt="" coords="1516,453,1651,478"/>
-<area shape="poly" title=" " alt="" coords="1526,396,1566,441,1562,444,1522,399"/>
-<area shape="rect" href="multiphysics_8h.html" title="Identifiers for multiphysics modules and their solution fields." alt="" coords="1917,453,2066,478"/>
-<area shape="poly" title=" " alt="" coords="1585,393,1733,414,1905,443,1928,447,1927,452,1904,448,1732,419,1584,398"/>
-<area shape="rect" title=" " alt="" coords="1675,445,1892,485"/>
-<area shape="poly" title=" " alt="" coords="1554,395,1706,439,1705,444,1552,400"/>
-<area shape="poly" title=" " alt="" coords="1626,475,1664,483,1803,500,1921,509,2122,514,2324,515,2442,520,2582,531,2636,537,2635,542,2582,536,2442,525,2324,521,2122,519,1920,514,1802,505,1663,488,1625,481"/>
-<area shape="poly" title=" " alt="" coords="1583,479,1573,527,1568,526,1578,478"/>
-<area shape="poly" title=" " alt="" coords="480,314,702,346,845,369,871,382,896,395,1005,431,1100,457,1184,474,1264,486,1433,503,1650,531,1649,536,1433,509,1264,491,1183,480,1098,462,1004,437,894,400,869,387,844,375,702,352,479,319"/>
-<area shape="poly" title=" " alt="" coords="506,314,585,321,1062,355,1429,376,1429,382,1062,360,584,327,505,319"/>
-<area shape="rect" title=" " alt="" coords="907,372,1070,397"/>
-<area shape="poly" title=" " alt="" coords="481,314,534,321,894,369,893,374,534,327,480,319"/>
-<area shape="poly" title=" " alt="" coords="2990,324,2979,327,2654,391,2333,451,1846,538,1845,533,2332,446,2653,386,2977,321,2989,319"/>
-<area shape="poly" title=" " alt="" coords="3003,327,2859,382,2793,415,2768,432,2751,447,2740,464,2733,482,2725,520,2720,519,2728,481,2735,461,2747,444,2764,427,2790,411,2857,377,3002,322"/>
-<area shape="poly" title=" " alt="" coords="2990,325,2978,327,2853,339,2687,350,2288,367,1598,385,1598,379,2288,362,2687,345,2852,334,2978,321,2989,320"/>
-<area shape="poly" title=" " alt="" coords="3333,323,3343,357,3349,400,3347,446,3340,467,3328,487,3303,500,3255,515,3135,541,3134,535,3253,509,3301,496,3324,483,3335,465,3341,445,3344,400,3338,358,3328,325"/>
-<area shape="poly" title=" " alt="" coords="3313,326,3282,364,3260,384,3237,400,3198,417,3163,427,3102,432,3038,433,3002,438,2961,448,2876,483,2774,530,2772,525,2874,478,2960,443,3002,433,3038,428,3101,427,3162,422,3196,412,3234,395,3257,379,3278,360,3309,323"/>
-<area shape="poly" title=" " alt="" coords="3255,316,3141,327,2685,352,2239,370,1599,385,1598,380,2239,364,2685,347,3140,321,3254,311"/>
-<area shape="poly" title=" " alt="" coords="2387,481,1846,543,1845,538,2386,475"/>
-<area shape="poly" title=" " alt="" coords="2518,476,2657,526,2656,531,2516,481"/>
-<area shape="rect" title=" " alt="" coords="2400,533,2569,573"/>
-<area shape="poly" title=" " alt="" coords="2487,478,2487,519,2482,519,2482,478"/>
-<area shape="rect" href="density__model_8h.html" title=" " alt="" coords="1809,291,1971,317"/>
-<area shape="poly" title=" " alt="" coords="1893,236,1893,277,1887,277,1887,236"/>
-<area shape="rect" href="electric__conductivity__model_8h.html" title=" " alt="" coords="1419,284,1609,324"/>
-<area shape="poly" title=" " alt="" coords="1808,239,1610,284,1609,278,1807,233"/>
-<area shape="rect" href="electric__permittivity__model_8h.html" title=" " alt="" coords="1995,284,2182,324"/>
-<area shape="poly" title=" " alt="" coords="1935,234,2034,276,2032,281,1933,239"/>
-<area shape="rect" href="magnetic__permeability__model_8h.html" title=" " alt="" coords="2761,284,2966,324"/>
-<area shape="poly" title=" " alt="" coords="1990,220,2322,241,2532,259,2747,281,2747,287,2532,264,2322,246,1990,225"/>
-<area shape="rect" href="mobility__cahn__hilliard__model_8h.html" title=" " alt="" coords="2206,284,2353,324"/>
-<area shape="poly" title=" " alt="" coords="1976,233,2193,281,2192,286,1975,239"/>
-<area shape="rect" href="rheological__model_8h.html" title=" " alt="" coords="830,291,1017,317"/>
-<area shape="poly" title=" " alt="" coords="1790,225,1452,246,1241,263,1029,287,996,292,995,286,1028,281,1240,258,1451,240,1789,219"/>
-<area shape="rect" href="specific__heat__model_8h.html" title=" " alt="" coords="1041,284,1179,324"/>
-<area shape="poly" title=" " alt="" coords="1790,225,1524,246,1361,263,1194,287,1193,281,1360,258,1524,241,1790,220"/>
-<area shape="rect" href="surface__tension__model_8h.html" title=" " alt="" coords="2377,284,2534,324"/>
-<area shape="poly" title=" " alt="" coords="1991,227,2161,250,2363,281,2363,286,2160,255,1990,232"/>
-<area shape="rect" href="thermal__conductivity__model_8h.html" title=" " alt="" coords="1203,284,1395,324"/>
-<area shape="poly" title=" " alt="" coords="1790,233,1410,286,1409,281,1789,228"/>
-<area shape="rect" href="thermal__expansion__model_8h.html" title=" " alt="" coords="2558,284,2737,324"/>
-<area shape="poly" title=" " alt="" coords="1991,222,2238,245,2545,281,2544,287,2238,250,1990,228"/>
-<area shape="rect" href="tracer__diffusivity__model_8h.html" title=" " alt="" coords="641,284,805,324"/>
-<area shape="poly" title=" " alt="" coords="1790,222,1610,227,1371,239,1099,258,820,287,819,281,1098,252,1371,233,1610,222,1790,216"/>
-<area shape="rect" href="tracer__reaction__model_8h.html" title=" " alt="" coords="1633,284,1785,324"/>
-<area shape="poly" title=" " alt="" coords="1851,238,1762,281,1759,276,1849,234"/>
-<area shape="poly" title=" " alt="" coords="1517,324,1517,358,1511,358,1511,324"/>
-<area shape="poly" title=" " alt="" coords="1996,325,1984,327,1776,355,1599,377,1598,371,1775,350,1983,321,1995,320"/>
-<area shape="poly" title=" " alt="" coords="2761,325,2749,327,2416,355,2087,372,1802,381,1599,385,1599,380,1802,376,2087,367,2415,349,2748,321,2760,320"/>
-<area shape="poly" title=" " alt="" coords="985,314,1029,321,1245,350,1430,372,1429,377,1245,356,1028,327,984,319"/>
-<area shape="poly" title=" " alt="" coords="1180,319,1192,321,1434,367,1433,372,1191,327,1179,324"/>
-<area shape="poly" title=" " alt="" coords="1352,322,1471,365,1469,370,1350,327"/>
-<area shape="poly" title=" " alt="" coords="3062,478,3062,526,3057,526,3057,478"/>
-<area shape="poly" title=" " alt="" coords="2972,478,2860,488,2285,526,1846,550,1846,545,2285,521,2859,483,2972,473"/>
-<area shape="poly" title=" " alt="" coords="3015,481,2809,533,2808,528,3014,476"/>
-<area shape="rect" title=" " alt="" coords="3185,541,3262,566"/>
-<area shape="poly" title=" " alt="" coords="3083,476,3190,532,3188,537,3080,481"/>
-<area shape="poly" title=" " alt="" coords="3203,488,3097,537,3095,532,3201,483"/>
-<area shape="poly" title=" " alt="" coords="3170,486,3158,488,3040,500,2885,511,2511,530,1846,552,1846,547,2510,525,2885,506,3040,495,3158,483,3169,481"/>
-<area shape="poly" title=" " alt="" coords="3170,486,3158,488,2971,519,2809,543,2808,538,2971,514,3158,483,3169,480"/>
-<area shape="poly" title=" " alt="" coords="3240,486,3231,527,3226,526,3235,485"/>
-</map>
+<div class="center"><iframe scrolling="no" frameborder="0" src="simulation__parameters_8cc__incl.svg" width="3724" height="667"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="simulation__parameters_8cc_source.html">Go to the source code of this file.</a></p>
 </div><!-- contents -->
-<!-- start footer part -->
-<hr class="footer"/><address class="footer"><small>
-Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8
+<!--
+SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+-->
+<!-- HTML footer for doxygen 1.9.8-->
+<!-- Start footer part -->
+<hr class="footer"/>
+<address class="footer"><small>
+  <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <a href="https://www.chaos-lab.ca/" target="_blank" rel="noopener noreferrer">
+        <img class="chaos-logo chaos-logo-light" src="chaos_logo_black_without_bkg.png" alt="CHAOS Laboratory" style="height: 40px;"/>
+        <img class="chaos-logo chaos-logo-dark" src="chaos_logo_white_without_bkg.png" alt="CHAOS Laboratory" style="height: 40px;"/>
+      </a>
+      <span style="display: flex; align-items: center; height: 40px;" class="chaos-copyright"></span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      Generated by &#160;<a href="https://www.doxygen.org/index.html">
+      <img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/>
+    </a> 1.9.8
+    </div>
+  </div>
 </small></address>
+  <!-- Update copyright year automatically -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const copyrightSpan = document.querySelector('.chaos-copyright');
+      if (copyrightSpan) {
+        copyrightSpan.textContent = `© 2019-${new Date().getFullYear()}, CHAOS Laboratory`;
+      }
+    });
+  </script>
 </body>
 </html>

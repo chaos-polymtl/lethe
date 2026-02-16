@@ -236,4 +236,5 @@ var menudata={children:[
 {text:"Enumerations",url:"globals_enum.html"},
 {text:"Enumerator",url:"globals_eval.html"},
 {text:"Macros",url:"globals_defs.html"}]}]},
-{text:"Lethe GitHub",url:"^https://github.com/chaos-polymtl/lethe"}]}
+{text:"Lethe Project",url:"^https://chaos-polymtl.github.io/lethe/index.html"},
+{text:"About CHAOS Laboratory",url:"^https://www.chaos-lab.ca/"}]}
