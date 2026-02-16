@@ -42,8 +42,8 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type                                = cylinder
-  set grid type                           = balanced
+  set type                                = lethe
+  set grid type                           = cylinder_balanced
   set grid arguments                      = 45 : 0.042 : 0.5
   set initial refinement                  = 1
   set expand particle-wall contact search = true

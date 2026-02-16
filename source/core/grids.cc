@@ -13,6 +13,7 @@
 
 #include <fstream>
 #include <numbers>
+#include <string>
 
 
 template <int dim, int spacedim>
@@ -128,46 +129,57 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
           apply_mesh_transformation(mesh_parameters, triangulation);
         }
     }
-  // Customizable cylinder mesh
-  else if (mesh_parameters.type == Parameters::Mesh::Type::cylinder)
+
+  else if (mesh_parameters.type == Parameters::Mesh::Type::lethe)
     {
-      if (mesh_parameters.simplex)
+      std::string grid_type = mesh_parameters.grid_type;
+
+      // Customizable cylinder mesh
+      if (grid_type.starts_with("cylinder_"))
         {
-          throw std::runtime_error(
-            "Unsupported mesh type - custom cylinder mesh with simplex is not supported. Use a dealii cylinder to use simplex mesh.");
-        }
-      else
-        {
-          if constexpr (dim == 3 && spacedim == 3)
+          if (mesh_parameters.simplex)
             {
-              CylinderGrid<dim, spacedim> grid(mesh_parameters.grid_type,
-                                               mesh_parameters.grid_arguments);
+              throw std::runtime_error(
+                "Unsupported mesh type - custom cylinder mesh with simplex is not supported. Use a dealii cylinder to use simplex mesh.");
+            }
+          else
+            {
+              // We need to check the dimension and spacedim at compile time
+              // since the cylinder grid is only implemented for 3d space with
+              // 3d elements, and we want to throw an error if users try to use
+              // it in other dimensions. We cannot check this at runtime since
+              // the Triangulation class is templated on dim and spacedim.
+              if constexpr (dim == 3 && spacedim == 3)
+                {
+                  CylinderGrid<dim, spacedim> grid(
+                    grid_type, mesh_parameters.grid_arguments);
+                  grid.make_grid(triangulation);
+
+                  GridTools::scale(mesh_parameters.scale, triangulation);
+                }
+              else
+                {
+                  throw std::runtime_error(
+                    "Unsupported mesh type - custom cylinder mesh is only supported in 3d space with 3d elemtents.");
+                }
+            }
+        }
+      // Periodic Hills grid
+      else if (grid_type == "periodic_hills")
+        {
+          if (mesh_parameters.simplex)
+            {
+              throw std::runtime_error(
+                "Unsupported mesh type - periodic hills mesh with simplex is not supported");
+            }
+          else
+            {
+              PeriodicHillsGrid<dim, spacedim> grid(
+                mesh_parameters.grid_arguments);
               grid.make_grid(triangulation);
 
               GridTools::scale(mesh_parameters.scale, triangulation);
             }
-          else
-            {
-              throw std::runtime_error(
-                "Unsupported mesh type - custom cylinder mesh is only supported in 3d space with 3d elemtents.");
-            }
-        }
-    }
-  // Periodic Hills grid
-  else if (mesh_parameters.type == Parameters::Mesh::Type::periodic_hills &&
-           !mesh_parameters.simplex)
-    {
-      if (mesh_parameters.simplex)
-        {
-          throw std::runtime_error(
-            "Unsupported mesh type - periodic hills mesh with simplex is not supported");
-        }
-      else
-        {
-          PeriodicHillsGrid<dim, spacedim> grid(mesh_parameters.grid_arguments);
-          grid.make_grid(triangulation);
-
-          GridTools::scale(mesh_parameters.scale, triangulation);
         }
     }
   else

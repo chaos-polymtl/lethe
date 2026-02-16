@@ -56,14 +56,20 @@ template <int dim, int spacedim>
 CylinderGrid<dim, spacedim>::CylinderGrid(const std::string &grid_type,
                                           const std::string &grid_arguments)
 {
+  if constexpr (dim != 3 || spacedim != 3)
+    {
+      throw std::runtime_error(
+        "Custom cylinder mesh is only supported in 3d space with 3d elements.");
+    }
+
   this->grid_arguments = grid_arguments;
-  if (grid_type == "classic")
+  if (grid_type == "cylinder_classic")
     this->cylinder_type = CylinderType::classic;
-  else if (grid_type == "balanced")
+  else if (grid_type == "cylinder_balanced")
     this->cylinder_type = CylinderType::balanced;
-  else if (grid_type == "squared")
+  else if (grid_type == "cylinder_squared")
     this->cylinder_type = CylinderType::squared;
-  else if (grid_type == "regularized")
+  else if (grid_type == "cylinder_regularized")
     this->cylinder_type = CylinderType::regularized;
   else
     throw std::runtime_error(
@@ -158,11 +164,6 @@ CylinderGrid<dim, spacedim>::make_grid(
           GridGenerator::hyper_ball_balanced(temporary_triangulation,
                                              center,
                                              radius);
-        }
-      else
-        {
-          throw std::runtime_error(
-            "Unknown grid type. Choices are <classic|balanced|squared|regularized>.");
         }
 
       temporary_triangulation.reset_all_manifolds();

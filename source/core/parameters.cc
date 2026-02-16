@@ -2629,10 +2629,9 @@ namespace Parameters
     {
       prm.declare_entry("type",
                         "dealii",
-                        Patterns::Selection(
-                          "gmsh|dealii|periodic_hills|cylinder"),
+                        Patterns::Selection("gmsh|dealii|lethe"),
                         "Type of mesh "
-                        "Choices are <gmsh|dealii|periodic_hills|cylinder>.");
+                        "Choices are <gmsh|dealii|lethe>.");
 
       prm.declare_entry("file name",
                         "none",
@@ -2656,15 +2655,6 @@ namespace Parameters
         Patterns::List(Patterns::Integer()),
         "Boundary ids of the boundaries to be initially refined");
 
-      if (prm.get("type") == "periodic_hills")
-        {
-          prm.declare_entry("grid arguments", "1 ; 1 ; 1 ; 1 ; 1");
-        }
-      else
-        {
-          prm.declare_entry("grid type", "hyper_cube");
-          prm.declare_entry("grid arguments", "-1 : 1 : false");
-        }
       prm.declare_entry(
         "enable target size",
         "false",
@@ -2697,7 +2687,6 @@ namespace Parameters
                         "1",
                         Patterns::Double(),
                         "Target size of the initial refinement");
-
 
       prm.declare_entry("grid type", "hyper_cube");
       prm.declare_entry("grid arguments", "-1 : 1 : false");
@@ -2742,10 +2731,8 @@ namespace Parameters
           type = Type::gmsh;
         else if (op == "dealii")
           type = Type::dealii;
-        else if (op == "periodic_hills")
-          type = Type::periodic_hills;
-        else if (op == "cylinder")
-          type = Type::cylinder;
+        else if (op == "lethe")
+          type = Type::lethe;
         else
           throw std::logic_error(
             "Error, invalid mesh type. Choices are gmsh and dealii");

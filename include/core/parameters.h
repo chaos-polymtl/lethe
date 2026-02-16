@@ -1491,8 +1491,7 @@ namespace Parameters
     {
       gmsh,
       dealii,
-      periodic_hills,
-      cylinder
+      lethe
     };
     Type type;
 
