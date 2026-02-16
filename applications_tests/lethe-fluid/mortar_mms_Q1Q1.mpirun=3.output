@@ -1,4 +1,13 @@
 Running on 3 MPI rank(s)...
+-----------------
+Mortar Interface
+-----------------
+Workload imbalance: 1.21875
+Number of cells per process - Min.: 18
+                              Max.: 26
+Rotor grid angle:    0 rad 
+Rotor grid velocity: 0 rad/time 
+
    Number of active cells:       320
    Number of degrees of freedom: 1747
    Volume of triangulation:      4
@@ -6,10 +15,28 @@ Running on 3 MPI rank(s)...
 *****************************
 Steady iteration:        1/3
 *****************************
+-----------------
+Mortar Interface
+-----------------
+Workload imbalance: 1.21875
+Number of cells per process - Min.: 18
+                              Max.: 26
+Rotor grid angle:    0 rad 
+Rotor grid velocity: 0 rad/time 
+
 
 *****************************
 Steady iteration:        2/3
 *****************************
+-----------------
+Mortar Interface
+-----------------
+Workload imbalance: 1.17188
+Number of cells per process - Min.: 36
+                              Max.: 50
+Rotor grid angle:    0 rad 
+Rotor grid velocity: 0 rad/time 
+
    Number of active cells:       1280
    Number of degrees of freedom: 6691
    Volume of triangulation:      4
@@ -17,6 +44,15 @@ Steady iteration:        2/3
 *****************************
 Steady iteration:        3/3
 *****************************
+-----------------
+Mortar Interface
+-----------------
+Workload imbalance: 1.14844
+Number of cells per process - Min.: 72
+                              Max.: 98
+Rotor grid angle:    0 rad 
+Rotor grid velocity: 0 rad/time 
+
    Number of active cells:       5120
    Number of degrees of freedom: 26179
    Volume of triangulation:      4
