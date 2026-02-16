@@ -27,7 +27,7 @@ The mortar section is used when simulating rotor-stator geometries, in which the
     set penalty factor      = 1.0
     set oversampling factor = 2
     set radius tolerance    = 1e-8
-    set verbosity           = verbose
+    set verbosity           = quiet
   end
 
 * The mesh parameters in the :doc:`../cfd/mesh` subsection refer to the stator domain. The ``mesh`` subsection herein mentioned contains the parameters of the rotor domain; nonetheless, the input format is the same as in :doc:`../cfd/mesh`.
@@ -66,7 +66,7 @@ where :math:`r_{max}`, :math:`r_{min}` are the maximum and minimum values obtain
 .. note::
   The default value for ``radius tolerance`` is :math:`10^{-8}`, which should cover the precision range of deal.II-generated grids. The tolerance might need to be increased for some ``gmsh`` mesh type cases or for large simulations running in multiple cores, when the above verification fails even if the mesh discretization is coherent.
 
-* When enabling ``verbosity`` (``set verbosity = verbose``), the rotor rotation information is printed at every iteration.
+* When enabling ``verbosity`` (``set verbosity = verbose``), the rotor rotation information is printed at every iteration. The option ``extra verbose`` also prints the workload imbalance of mortar cells.
 
 Reference
 ---------
