@@ -810,9 +810,9 @@ MortarManagerLinear<dim>::to_1D(const Point<dim> &point) const
 
 template <int dim>
 Tensor<1, dim, double>
-MortarManagerLinear<dim>::get_normal(const Point<dim> &) const
+MortarManagerLinear<dim>::get_normal(const Point<dim> &point) const
 {
-  return Point<dim>(1.0, 0.0);
+  return point / point.norm();;
 }
 
 /*-------------- CouplingOperator -------------------------------*/
