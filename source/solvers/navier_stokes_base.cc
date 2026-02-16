@@ -2141,6 +2141,19 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_rotor_mapping(
   if (!this->simulation_parameters.mortar_parameters.enable)
     return;
 
+  if ((simulation_parameters.mortar_parameters.verbosity ==
+         Parameters::Verbosity::verbose ||
+       simulation_parameters.mortar_parameters.verbosity ==
+         Parameters::Verbosity::extra_verbose) &&
+      !is_first)
+    {
+      announce_string(this->pcout, "Mortar Interface");
+      if (simulation_parameters.mortar_parameters.verbosity ==
+          Parameters::Verbosity::extra_verbose)
+        mortar_workload_imbalance(*this->triangulation,
+                                  this->simulation_parameters.mortar_parameters,
+                                  this->pcout);
+    }
   TimerOutput::Scope t(this->computing_timer, "Rotate rotor mapping");
 
   // Get updated rotation angle (radians)
@@ -2157,13 +2170,14 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_rotor_mapping(
     simulation_parameters.mortar_parameters.rotor_angular_velocity->value(
       Point<dim>());
 
-  if (simulation_parameters.mortar_parameters.verbosity ==
-        Parameters::Verbosity::verbose &&
+  if ((simulation_parameters.mortar_parameters.verbosity ==
+         Parameters::Verbosity::verbose ||
+       simulation_parameters.mortar_parameters.verbosity ==
+         Parameters::Verbosity::extra_verbose) &&
       !is_first)
     {
-      this->pcout << "Mortar - Rotor grid angle is: " << rotation_angle
-                  << " rad \n"
-                  << "         Rotor grid velocity is: " << angular_velocity
+      this->pcout << "Rotor grid angle:    " << rotation_angle << " rad \n"
+                  << "Rotor grid velocity: " << angular_velocity
                   << " rad/time \n"
                   << std::endl;
     }
