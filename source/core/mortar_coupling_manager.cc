@@ -1933,3 +1933,13 @@ construct_quadrature(const Quadrature<2>         &quadrature,
 template Quadrature<3>
 construct_quadrature(const Quadrature<3>         &quadrature,
                      const Parameters::Mortar<3> &mortar_parameters);
+
+template void
+mortar_workload_imbalance(const Triangulation<2>      &triangulation,
+                          const Parameters::Mortar<2> &mortar_parameters,
+                          const ConditionalOStream    &pcout);
+
+template void
+mortar_workload_imbalance(const Triangulation<3>      &triangulation,
+                          const Parameters::Mortar<3> &mortar_parameters,
+                          const ConditionalOStream    &pcout);
