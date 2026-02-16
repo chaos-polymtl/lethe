@@ -226,6 +226,20 @@ Quadrature<dim>
 construct_quadrature(const Quadrature<dim>         &quadrature,
                      const Parameters::Mortar<dim> &mortar_parameters);
 
+/**
+ * @brief Compute workload imbalance of mortar cells
+ *
+ * @param[in] triangulation The triangulation object
+ * @param[in] mortar_parameters The information about the mortar method
+ * control, including the rotor mesh parameters
+ * @param[in] pcout Parallel conditional output stream used to print the
+ * information
+ */
+template <int dim>
+void
+mortar_workload_imbalance(const Triangulation<dim>      &triangulation,
+                          const Parameters::Mortar<dim> &mortar_parameters,
+                          const ConditionalOStream      &pcout);
 
 template <int dim>
 class MortarManagerCircle : public MortarManagerBase<dim>
