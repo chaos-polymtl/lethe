@@ -572,6 +572,37 @@ public:
  * communication article "An approximate expression for the shear lift force
  * on a spherical particle at finite Reynolds number" by Mei (1992).
  *
+ * The lift force is computed as:
+ * \f[
+ * \mathbf{F}_L = 1.61 \, C_s \, d_p^2 \, \rho_f
+ *   \frac{\sqrt{\nu}}{\sqrt{\|\boldsymbol{\omega}_f\|}}
+ *   \left(\mathbf{u}_r \times \boldsymbol{\omega}_f\right)
+ * \f]
+ *
+ * where the parameter \f$ \alpha \f$ is defined as:
+ * \f[
+ * \alpha = \frac{d_p}{2 \|\mathbf{u}_r\|} \|\boldsymbol{\omega}_f\|
+ * \f]
+ *
+ * and the Saffman-Mei correction coefficient \f$ C_s \f$ is:
+ *
+ * For \f$ \text{Re}_p \leq 40 \f$:
+ * \f[
+ * C_s = (1 - 0.3314\sqrt{\alpha}) \exp(-0.1\,\text{Re}_p)
+ *       + 0.3314\sqrt{\alpha}
+ * \f]
+ *
+ * For \f$ \text{Re}_p > 40 \f$:
+ * \f[
+ * C_s = 0.0524\sqrt{\alpha \, \text{Re}_p}
+ * \f]
+ *
+ * where \f$ d_p \f$ is the particle diameter, \f$ \rho_f \f$ is the fluid
+ * density, \f$ \nu \f$ is the kinematic viscosity, \f$ \boldsymbol{\omega}_f
+ * \f$ is the fluid vorticity, \f$ \mathbf{u}_r \f$ is the relative velocity
+ * between the fluid and the particle, and \f$ \text{Re}_p \f$ is the particle
+ * Reynolds number.
+ *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  *
  * @ingroup assemblers
@@ -602,6 +633,39 @@ public:
  * This implementation follows the formulation in the book "Multiphase Flows
  * with Droplets and Particles" by Crowe et al. (2011).
  *
+ * The Magnus lift force is computed as:
+ * \f[
+ * \mathbf{F}_L = \frac{\pi}{8} d_p^2 \, C_m \, \rho_f \,
+ *   \|\mathbf{u}_r\| \left(\hat{\boldsymbol{\omega}}_p \times
+ *   \mathbf{u}_r\right)
+ * \f]
+ *
+ * where \f$ \hat{\boldsymbol{\omega}}_p =
+ * \boldsymbol{\omega}_p / \|\boldsymbol{\omega}_p\| \f$ is the unit rotational
+ * vector. The spin parameter is defined as:
+ * \f[
+ * \Omega_s = \frac{d_p \|\boldsymbol{\omega}_p\|}{2 \|\mathbf{u}_r\|}
+ * \f]
+ *
+ * The Magnus lift coefficient \f$ C_m \f$ is computed as:
+ *
+ * For \f$ 1 < \Omega_s < 6 \f$ and \f$ 10 < \text{Re}_p < 140 \f$
+ * (Oesterle and Dinh, 1998):
+ * \f[
+ * C_m = 0.45 + (2\Omega_s - 0.45)
+ *       \exp\!\left(-0.075 \, \Omega_s^{0.4} \, \text{Re}_p^{0.7}\right)
+ * \f]
+ *
+ * Otherwise:
+ * \f[
+ * C_m = 2 \Omega_s
+ * \f]
+ *
+ * where \f$ d_p \f$ is the particle diameter, \f$ \rho_f \f$ is the fluid
+ * density, \f$ \mathbf{u}_r \f$ is the relative velocity between the fluid and
+ * the particle, \f$ \boldsymbol{\omega}_p \f$ is the particle angular velocity,
+ * and \f$ \text{Re}_p \f$ is the particle Reynolds number.
+ *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  *
  * @ingroup assemblers
@@ -630,14 +694,15 @@ public:
  * @brief Assembler for the viscous dissipative torque due to particle rotation
  * as defined by Derksen (2004).
  *
- * The viscous torque due to rotation is:
+ * The viscous torque due to particle rotation is:
  * \f[
- * \mathbf{M}_{\text{viscous}} = \pi d_p^3 \mu (-\boldsymbol{\omega}_p)
+ * \mathbf{M}_{\text{viscous}} = -\frac{\pi}{2} d_p^3 \mu
+ *   \boldsymbol{\omega}_p
  * \f]
  *
- * where \f$ d_p \f$ is the particle diameter, \f$ \mu \f$ is the dynamic
- * viscosity, and \f$ \boldsymbol{\omega}_p \f$ is the particle angular
- * velocity.
+ * where \f$ d_p \f$ is the particle diameter, \f$ \mu = \nu \rho_f \f$ is
+ * the dynamic viscosity, and \f$ \boldsymbol{\omega}_p \f$ is the particle
+ * angular velocity. This torque opposes the particle rotation.
  *
  * @note The complete model described by Derksen is composed of
  * VANSAssemblerViscousTorque + VANSAssemblerVorticalTorque.
@@ -670,14 +735,16 @@ public:
  * @brief Assembler for the viscous dissipative torque due to fluid vorticity
  * as defined by Derksen (2004).
  *
- * The viscous torque due to vorticity is:
+ * The viscous torque due to the fluid vorticity is:
  * \f[
- * \mathbf{M}_{\text{vorticity}} = \pi d_p^3 \mu
- *   \left(\frac{1}{2} \boldsymbol{\omega}_f\right)
+ * \mathbf{M}_{\text{vorticity}} = \frac{\pi}{2} d_p^3 \mu
+ *   \boldsymbol{\omega}_f
  * \f]
  *
- * where \f$ d_p \f$ is the particle diameter, \f$ \mu \f$ is the dynamic
- * viscosity, and \f$ \boldsymbol{\omega}_f \f$ is the fluid vorticity.
+ * where \f$ d_p \f$ is the particle diameter, \f$ \mu = \nu \rho_f \f$ is
+ * the dynamic viscosity, and \f$ \boldsymbol{\omega}_f \f$ is the fluid
+ * vorticity. This torque drives the particle rotation towards the local fluid
+ * vorticity.
  *
  * @note The complete model described by Derksen is composed of
  * VANSAssemblerViscousTorque + VANSAssemblerVorticalTorque.
@@ -709,14 +776,18 @@ public:
 /**
  * @brief Assembler for the buoyancy force on particles in the VANS equations.
  *
- * The buoyancy force is computed as:
+ * The buoyancy force applied to each particle is computed as:
  * \f[
- * \mathbf{F}_b = -\rho_f \mathbf{g} \frac{4}{3} \pi
- *   \left(\frac{d_p}{2}\right)^3
+ * \mathbf{F}_b = -\rho_f \mathbf{g} \frac{\pi}{6} d_p^3
  * \f]
  *
- * where \f$ \rho_f \f$ is the fluid density, \f$ \mathbf{g} \f$ is the
+ * which is equivalent to \f$ -\rho_f \mathbf{g} V_p \f$, where \f$ V_p =
+ * \frac{4}{3}\pi\left(\frac{d_p}{2}\right)^3 \f$ is the particle volume,
+ * \f$ \rho_f \f$ is the fluid density, \f$ \mathbf{g} \f$ is the
  * gravitational acceleration, and \f$ d_p \f$ is the particle diameter.
+ *
+ * @note The buoyancy force is stored as a one-way coupling force on the
+ * particle and does not generate a reaction force on the fluid.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  *
@@ -752,7 +823,19 @@ public:
 /**
  * @brief Assembler for the pressure force on particles.
  *
- * The computed force is added to the particle-fluid interactions.
+ * The undisturbed pressure force applied to each particle is computed as:
+ * \f[
+ * \mathbf{F}_p = -\rho_f V_p \nabla p
+ * \f]
+ *
+ * where \f$ \rho_f \f$ is the fluid density, \f$ V_p = \frac{\pi}{6} d_p^3
+ * \f$ is the particle volume, \f$ d_p \f$ is the particle diameter, and
+ * \f$ \nabla p \f$ is the fluid pressure gradient evaluated at the particle
+ * location.
+ *
+ * @note When using VANS Model A, the pressure force is applied only to the
+ * particle (one-way coupling). When using Model B, the pressure force is
+ * also applied back on the fluid as a reaction force (two-way coupling).
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  *
@@ -787,7 +870,20 @@ public:
 /**
  * @brief Assembler for the shear force on particles.
  *
- * The computed force is added to the particle-fluid interactions.
+ * The undisturbed shear (viscous stress) force applied to each particle is
+ * computed as:
+ * \f[
+ * \mathbf{F}_s = -V_p \mu \nabla^2 \mathbf{u}
+ * \f]
+ *
+ * where \f$ V_p = \frac{\pi}{6} d_p^3 \f$ is the particle volume, \f$ \mu =
+ * \nu \rho_f \f$ is the dynamic viscosity, \f$ d_p \f$ is the particle
+ * diameter, and \f$ \nabla^2 \mathbf{u} \f$ is the Laplacian of the fluid
+ * velocity evaluated at the particle location.
+ *
+ * @note When using VANS Model A, the shear force is applied only to the
+ * particle (one-way coupling). When using Model B, the shear force is also
+ * applied back on the fluid as a reaction force (two-way coupling).
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  *
