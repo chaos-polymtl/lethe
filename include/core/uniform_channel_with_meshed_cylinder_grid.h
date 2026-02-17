@@ -15,11 +15,24 @@
 using namespace dealii;
 
 /**
- * @brief Class that creates a custom uniform channel with meshed cylinder geometry. The size of the cylinder, of the transition region and of the channel can be specified in the constructor. the number of subdivisions in the x and y direction can be adjusted by the padding parameters. The height of the channel and the number of subdivisions in the z direction can also be specified for the extruded mesh.
- * The geometry manifold is constructed with SphericalManifold for the inner
- * circle and TransfiniteManifold for the rest of the domain.
+ * @brief Generates a rectangular channel mesh with a meshed cylinder obstacle.
+ *
+ * The mesh consists of three concentric regions around the cylinder:
+ * -# An inner balanced disk of radius @p inner_radius (hyper_ball_balanced).
+ * -# A transition shell between @p inner_radius and @p outer_radius, whose
+ *    diagonal vertices are adjusted to form a square.
+ * -# Rectangular padding regions that fill the gap between the transition
+ *    square and the channel boundary defined by @p bottom_left / @p top_right.
+ *
+ * The number of subdivisions in each padding direction (bottom, top, left,
+ * right) can be controlled independently. In 3D, the 2D cross-section is
+ * extruded along the z-axis with a configurable height and number of slices.
+ *
+ * Manifold objects attached for proper mesh refinement:
+ * - PolarManifold (2D) or CylindricalManifold (3D) on the inner cylinder
+ *   boundary faces (manifold_id = 1).
+ * - TransfiniteInterpolationManifold on the remaining domain (manifold_id = 0).
  */
-
 template <int dim, int spacedim>
 class UniformChannelWithMeshedCylinderGrid
 {
@@ -47,21 +60,33 @@ private:
 
 
 /**
- * @brief Constructor for the UniformChannelWithMeshedCylinderGrid.
+ * @brief Constructor that parses geometry parameters from a colon-separated
+ * string.
  *
- * @param grid_arguments. A string with 11 parameters
- * @param bottom_left : coordinates of the bottom left corner of the channel
- * @param top_right : coordinates of the top right corner of the channel
- * @param center : coordinates of the center of the cylinder
- * @param inner_radius : radius of the cylinder
- * @param outer_radius : radius of the transition region between the cylinder and the channel
- * @param pad_bottom : number of subdivisions in the bottom padding region
- * @param pad_top : number of subdivisions in the top padding region
- * @param pad_left : number of subdivisions in the left padding region
- * @param pad_right : number of subdivisions in the right padding region
- * @param height : height of the channel used for the extruded mesh
- * @param n_slices : number of subdivisions in the z direction for the extruded mesh
- * @param colorize : whether to set different boundary ids for the different sides of the channel (true/false)
+ * @param[in] grid_arguments A colon-separated string with the following fields
+ * (coordinates are comma-separated):
+ *
+ * | #  | Field        | Format     | Required | Description                                    |
+ * |----|--------------|------------|----------|------------------------------------------------|
+ * |  0 | bottom_left  | x,y[,z]   | yes      | Bottom-left corner of the channel              |
+ * |  1 | top_right    | x,y[,z]   | yes      | Top-right corner of the channel                |
+ * |  2 | center       | x,y[,z]   | yes      | Center of the cylinder                         |
+ * |  3 | inner_radius | double     | yes      | Radius of the cylinder                         |
+ * |  4 | outer_radius | double     | yes      | Radius of the transition region                |
+ * |  5 | pad_bottom   | int        | no       | Subdivisions below the transition (default: 0) |
+ * |  6 | pad_top      | int        | no       | Subdivisions above the transition (default: 0) |
+ * |  7 | pad_left     | int        | no       | Subdivisions left of the transition (default: 0)|
+ * |  8 | pad_right    | int        | no       | Subdivisions right of the transition (default: 0)|
+ * |  9 | height       | double     | no       | Extrusion height in z, 3D only (default: 1.0)  |
+ * | 10 | n_slices     | int        | no       | Number of z-layers, 3D only (default: 0)       |
+ * | 11 | colorize     | true/false | no       | Assign distinct boundary IDs (default: false)  |
+ *
+ * Example: @code "0,0 : 10,2 : 5,1 : 0.1 : 0.3 : 2 : 2 : 5 : 5 : 2. : 2 : True"
+ * @endcode
+ *
+ * When @p colorize is true, boundary IDs follow the
+ * subdivided_hyper_rectangle convention: 0 (-x), 1 (+x), 2 (-y), 3 (+y).
+ * In 3D, the extruded bottom (z=0) gets id 4 and top (z=height) gets id 5.
  */
 
 template <int dim, int spacedim>
@@ -168,21 +193,24 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::
   this->pad_left   = (arguments.size() > 7) ? std::stoi(arguments[7]) : 0;
   this->pad_right  = (arguments.size() > 8) ? std::stoi(arguments[8]) : 0;
 
-  // Check if the padding is required and consistent with the geometry.
-  AssertThrow(!((pad_bottom == 0) &&
-                (center[1] - outer_radius == bottom_left[1])),
-              ExcMessage("Padding at the bottom is required (the outer radius "
-                         "doesn't fill the whole channel bottom part)."));
-  AssertThrow(!((pad_top == 0) && (center[1] + outer_radius == top_right[1])),
-              ExcMessage("Padding at the top is required (the outer radius "
-                         "doesn't fill the whole channel top part)."));
-  AssertThrow(!((pad_left == 0) &&
-                (center[0] - outer_radius == bottom_left[0])),
-              ExcMessage("Padding at the left is required (the outer radius "
-                         "doesn't fill the whole channel left part)."));
-  AssertThrow(!((pad_right == 0) && (center[0] + outer_radius == top_right[0])),
-              ExcMessage("Padding at the right is required (the outer "
-                         "radius doesn't fill the whole channel right part)."));
+  // Padding is required in each direction where the transition square does not
+  // reach the channel boundary (i.e., there is a gap to fill with rectangles).
+  AssertThrow(!((pad_bottom == 0) && (std::abs((center[1] - outer_radius) -
+                                               bottom_left[1]) > 1e-12)),
+              ExcMessage("Bottom padding is required because the transition "
+                         "region does not reach the bottom channel boundary."));
+  AssertThrow(!((pad_top == 0) &&
+                (std::abs((center[1] + outer_radius) - top_right[1]) > 1e-12)),
+              ExcMessage("Top padding is required because the transition "
+                         "region does not reach the top channel boundary."));
+  AssertThrow(!((pad_left == 0) && (std::abs((center[0] - outer_radius) -
+                                             bottom_left[0]) > 1e-12)),
+              ExcMessage("Left padding is required because the transition "
+                         "region does not reach the left channel boundary."));
+  AssertThrow(!((pad_right == 0) &&
+                (std::abs((center[0] + outer_radius) - top_right[0]) > 1e-12)),
+              ExcMessage("Right padding is required because the transition "
+                         "region does not reach the right channel boundary."));
 
   this->height   = (arguments.size() > 9) ? std::stod(arguments[9]) : 1.0;
   this->n_slices = (arguments.size() > 10) ? std::stoi(arguments[10]) : 0;
@@ -190,26 +218,59 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::
     (arguments.size() > 11 && arguments[11] == "true") ? true : false;
 }
 
+
 /**
- * @brief make_grid. The make_grid function generates a balanced circle at position center and with radius inner_radius. The transition is obtained with an hyper_shell mesh between inner_radius and outer_radius which we redefine the corners to create a square. The rest of the domain is meshed with a hyper_rectangle to fit the channel size. The geometry manifold is constructed with SphericalManifold for the inner circle and TransfiniteManifold for the rest of the domain.
+ * @brief Generate the 2D channel mesh geometry with a meshed cylinder.
  *
- * @param triangulation. The triangulation object on which the grid is generated
+ * This inline helper creates the composite 2D triangulation by merging:
+ * - A balanced disk of radius @p inner_radius (the cylinder cross-section).
+ * - A hyper_shell transition region with squared diagonal vertices between
+ *   @p inner_radius and @p outer_radius.
+ * - Up to 8 rectangular padding sub-meshes filling the gap between the
+ *   transition square and the channel boundary.
+ *
+ * Manifold integer IDs are assigned (0 = TFI, 1 = polar) but no manifold
+ * objects are attached — the caller must do that after this function returns.
+ *
+ * If @p colorize is true, boundary IDs are set following the
+ * subdivided_hyper_rectangle convention: 0 (-x), 1 (+x), 2 (-y), 3 (+y).
+ *
+ * @param[out] triangulation  The triangulation to fill.
+ * @param[in]  bottom_left    Bottom-left corner of the channel.
+ * @param[in]  top_right      Top-right corner of the channel.
+ * @param[in]  center         Center of the cylinder.
+ * @param[in]  inner_radius   Radius of the inner cylinder.
+ * @param[in]  outer_radius   Radius of the transition region.
+ * @param[in]  pad_bottom     Number of subdivisions in the bottom padding.
+ * @param[in]  pad_top        Number of subdivisions in the top padding.
+ * @param[in]  pad_left       Number of subdivisions in the left padding.
+ * @param[in]  pad_right      Number of subdivisions in the right padding.
+ * @param[in]  colorize       Whether to assign distinct boundary IDs.
  */
-template <>
-void
-UniformChannelWithMeshedCylinderGrid<2, 2>::make_grid(
-  Triangulation<2, 2> &triangulation)
+inline void
+generate_2d_channel_mesh(Triangulation<2>  &triangulation,
+                         const Point<2>    &bottom_left,
+                         const Point<2>    &top_right,
+                         const Point<2>    &center,
+                         const double       inner_radius,
+                         const double       outer_radius,
+                         const unsigned int pad_bottom,
+                         const unsigned int pad_top,
+                         const unsigned int pad_left,
+                         const unsigned int pad_right,
+                         const bool         colorize)
 {
   const types::manifold_id tfi_manifold_id   = 0;
   const types::manifold_id polar_manifold_id = 1;
 
-  // Create the inner cylinder
+  // Create the inner cylinder (balanced disk)
   Triangulation<2> cylinder_tria;
   GridGenerator::hyper_ball_balanced(cylinder_tria, center, inner_radius);
 
-  // Create the outer box that will contain the cylinder. We use a hyper shell
-  // because it enables to have a center point offset of (0,0). We will need to
-  // adjust the vertices that lie on the diagonals to form a square.
+  // Create the transition region between the cylinder and the rectangular
+  // channel. A hyper_shell with 8 segments produces vertices at 45-degree
+  // intervals. The diagonal vertices are moved outward by a factor of sqrt(2)
+  // so that the outer boundary forms a square of half-side outer_radius.
   Triangulation<2> box_tria;
   GridGenerator::hyper_shell(box_tria, center, inner_radius, outer_radius, 8);
   for (const auto &cell : box_tria.active_cell_iterators())
@@ -218,11 +279,8 @@ UniformChannelWithMeshedCylinderGrid<2, 2>::make_grid(
         {
           Point<2>    &vertex = cell->vertex(v);
           const double dist   = vertex.distance(center);
-          if (/* is the vertex on the outer ring? */
-              (std::abs(dist - outer_radius) < 1e-12 * outer_radius)
-              /* and */
-              &&
-              /* is the vertex on one of the two diagonals? */
+          // Check if the vertex is on the outer ring AND on a diagonal
+          if ((std::abs(dist - outer_radius) < 1e-12 * outer_radius) &&
               (std::abs(std::abs(vertex[0] - center[0]) -
                         std::abs(vertex[1] - center[1]))) <
                 1e-12 * outer_radius)
@@ -232,109 +290,90 @@ UniformChannelWithMeshedCylinderGrid<2, 2>::make_grid(
         }
     }
 
-  // Create the the padding with 8 rectangles. The points used to generate the
-  // rectangles follow the convention that the lower left is always number 1 and
-  // the top right is number 2.
+  // Create the padding with up to 8 rectangles that fill the gap between the
+  // transition square and the channel boundary. The four sides and four
+  // corners are meshed independently.
   Triangulation<2> pad_bottom_tria;
   if (pad_bottom > 0)
     {
-      Point<2> pad_bottom_point_1(center[0] - outer_radius, bottom_left[1]);
-      Point<2> pad_bottom_point_2(center[0] + outer_radius,
-                                  center[1] - outer_radius);
-      GridGenerator::subdivided_hyper_rectangle(pad_bottom_tria,
-                                                {2, pad_bottom},
-                                                pad_bottom_point_1,
-                                                pad_bottom_point_2);
+      GridGenerator::subdivided_hyper_rectangle(
+        pad_bottom_tria,
+        {2, pad_bottom},
+        Point<2>(center[0] - outer_radius, bottom_left[1]),
+        Point<2>(center[0] + outer_radius, center[1] - outer_radius));
     }
 
   Triangulation<2> pad_top_tria;
   if (pad_top > 0)
     {
-      Point<2> pad_top_point_1(center[0] - outer_radius,
-                               center[1] + outer_radius);
-      Point<2> pad_top_point_2(center[0] + outer_radius, top_right[1]);
-      GridGenerator::subdivided_hyper_rectangle(pad_top_tria,
-                                                {2, pad_top},
-                                                pad_top_point_1,
-                                                pad_top_point_2);
+      GridGenerator::subdivided_hyper_rectangle(
+        pad_top_tria,
+        {2, pad_top},
+        Point<2>(center[0] - outer_radius, center[1] + outer_radius),
+        Point<2>(center[0] + outer_radius, top_right[1]));
     }
 
   Triangulation<2> pad_left_tria;
   if (pad_left > 0)
     {
-      Point<2> pad_left_point_1(bottom_left[0], center[1] - outer_radius);
-      Point<2> pad_left_point_2(center[0] - outer_radius,
-                                center[1] + outer_radius);
-      GridGenerator::subdivided_hyper_rectangle(pad_left_tria,
-                                                {pad_left, 2},
-                                                pad_left_point_1,
-                                                pad_left_point_2);
+      GridGenerator::subdivided_hyper_rectangle(
+        pad_left_tria,
+        {pad_left, 2},
+        Point<2>(bottom_left[0], center[1] - outer_radius),
+        Point<2>(center[0] - outer_radius, center[1] + outer_radius));
     }
 
   Triangulation<2> pad_right_tria;
   if (pad_right > 0)
     {
-      Point<2> pad_right_point_1(center[0] + outer_radius,
-                                 center[1] - outer_radius);
-      Point<2> pad_right_point_2(top_right[0], center[1] + outer_radius);
-      GridGenerator::subdivided_hyper_rectangle(pad_right_tria,
-                                                {pad_right, 2},
-                                                pad_right_point_1,
-                                                pad_right_point_2);
+      GridGenerator::subdivided_hyper_rectangle(
+        pad_right_tria,
+        {pad_right, 2},
+        Point<2>(center[0] + outer_radius, center[1] - outer_radius),
+        Point<2>(top_right[0], center[1] + outer_radius));
     }
 
   Triangulation<2> pad_bottom_left_corner_tria;
   if (pad_bottom > 0 && pad_left > 0)
     {
-      Point<2> pad_bottom_left_corner_point_1(bottom_left[0], bottom_left[1]);
-      Point<2> pad_bottom_left_corner_point_2(center[0] - outer_radius,
-                                              center[1] - outer_radius);
-      GridGenerator::subdivided_hyper_rectangle(pad_bottom_left_corner_tria,
-                                                {pad_left, pad_bottom},
-                                                pad_bottom_left_corner_point_1,
-                                                pad_bottom_left_corner_point_2);
+      GridGenerator::subdivided_hyper_rectangle(
+        pad_bottom_left_corner_tria,
+        {pad_left, pad_bottom},
+        bottom_left,
+        Point<2>(center[0] - outer_radius, center[1] - outer_radius));
     }
 
   Triangulation<2> pad_bottom_right_corner_tria;
   if (pad_bottom > 0 && pad_right > 0)
     {
-      Point<2> pad_bottom_right_corner_point_1(center[0] + outer_radius,
-                                               bottom_left[1]);
-      Point<2> pad_bottom_right_corner_point_2(top_right[0],
-                                               center[1] - outer_radius);
-      ;
       GridGenerator::subdivided_hyper_rectangle(
         pad_bottom_right_corner_tria,
         {pad_right, pad_bottom},
-        pad_bottom_right_corner_point_1,
-        pad_bottom_right_corner_point_2);
+        Point<2>(center[0] + outer_radius, bottom_left[1]),
+        Point<2>(top_right[0], center[1] - outer_radius));
     }
 
   Triangulation<2> pad_top_left_corner_tria;
   if (pad_top > 0 && pad_left > 0)
     {
-      Point<2> pad_top_left_corner_point_1(bottom_left[0],
-                                           center[1] + outer_radius);
-      Point<2> pad_top_left_corner_point_2(center[0] - outer_radius,
-                                           top_right[1]);
-      GridGenerator::subdivided_hyper_rectangle(pad_top_left_corner_tria,
-                                                {pad_left, pad_top},
-                                                pad_top_left_corner_point_1,
-                                                pad_top_left_corner_point_2);
+      GridGenerator::subdivided_hyper_rectangle(
+        pad_top_left_corner_tria,
+        {pad_left, pad_top},
+        Point<2>(bottom_left[0], center[1] + outer_radius),
+        Point<2>(center[0] - outer_radius, top_right[1]));
     }
 
   Triangulation<2> pad_top_right_corner_tria;
   if (pad_top > 0 && pad_right > 0)
     {
-      Point<2> pad_top_right_corner_point_1(center[0] + outer_radius,
-                                            center[1] + outer_radius);
-      Point<2> pad_top_right_corner_point_2(top_right[0], top_right[1]);
-      GridGenerator::subdivided_hyper_rectangle(pad_top_right_corner_tria,
-                                                {pad_right, pad_top},
-                                                pad_top_right_corner_point_1,
-                                                pad_top_right_corner_point_2);
+      GridGenerator::subdivided_hyper_rectangle(
+        pad_top_right_corner_tria,
+        {pad_right, pad_top},
+        Point<2>(center[0] + outer_radius, center[1] + outer_radius),
+        top_right);
     }
 
+  // Merge all sub-triangulations into the final channel mesh
   GridGenerator::merge_triangulations({&cylinder_tria,
                                        &box_tria,
                                        &pad_bottom_tria,
@@ -347,136 +386,148 @@ UniformChannelWithMeshedCylinderGrid<2, 2>::make_grid(
                                        &pad_top_right_corner_tria},
                                       triangulation);
 
+  // Assign manifold IDs:
+  //  - id 0 (TFI) on all cells and faces (default)
+  //  - id 1 (polar/cylindrical) on inner-cylinder boundary faces
   triangulation.reset_all_manifolds();
-  triangulation.set_all_manifold_ids(0);
+  triangulation.set_all_manifold_ids(tfi_manifold_id);
 
-  // Set the polar manifold for the inner cylinder
   for (const auto &cell : triangulation.active_cell_iterators())
     {
-      const Point<2> cell_center = cell->center();
-      const double   cell_dist   = cell_center.distance(center);
-
-      // Cells that are part of the inner disk
-      if (cell_dist < inner_radius)
+      if (cell->center().distance(center) < inner_radius)
         {
           for (const auto &face : cell->face_iterators())
             {
-              // Only set manifold on faces that are at the inner_radius
-              // boundary
               bool all_vertices_on_circle = true;
               for (unsigned int v = 0; v < GeometryInfo<2>::vertices_per_face;
                    ++v)
                 {
-                  const double vertex_dist = face->vertex(v).distance(center);
-                  if (std::abs(vertex_dist - inner_radius) >
-                      1e-10 * inner_radius)
+                  if (std::abs(face->vertex(v).distance(center) -
+                               inner_radius) > 1e-10 * inner_radius)
                     {
                       all_vertices_on_circle = false;
                       break;
                     }
                 }
               if (all_vertices_on_circle)
-                {
-                  face->set_all_manifold_ids(polar_manifold_id);
-                }
+                face->set_all_manifold_ids(polar_manifold_id);
             }
         }
     }
 
-  PolarManifold<2, 2> polar_manifold(center);
-  triangulation.set_manifold(polar_manifold_id, polar_manifold);
-
-  // Set the TFI manifold for the outer box
-  TransfiniteInterpolationManifold<2> tfi_manifold;
-  tfi_manifold.initialize(triangulation);
-  triangulation.set_manifold(tfi_manifold_id, tfi_manifold);
-
-  // Set the boundary ids. we follow the same convention as for the
-  // subdivided_hyper_rectangle
+  // Assign boundary IDs following the subdivided_hyper_rectangle convention:
+  //   0: left (-x),  1: right (+x),  2: bottom (-y),  3: top (+y)
   if (colorize)
     {
+      const double tol_x = 1e-10 * (top_right[0] - bottom_left[0]);
+      const double tol_y = 1e-10 * (top_right[1] - bottom_left[1]);
+
       for (const auto &face : triangulation.active_face_iterators())
         {
           if (!face->at_boundary())
             continue;
+
           const Point<2> face_center = face->center();
 
-          // Left boundary (-x direction)
-          if (std::abs(face_center[0] - bottom_left[0]) <
-              1e-10 * (top_right[0] - bottom_left[0]))
-            {
-              face->set_boundary_id(0);
-              continue;
-            }
-          // Right boundary (+ x direction)
-          if (std::abs(face_center[0] - top_right[0]) <
-              1e-10 * (top_right[0] - bottom_left[0]))
-            {
-              face->set_boundary_id(1);
-              continue;
-            }
-          // Bottom boundary (- y direction)
-          if (std::abs(face_center[1] - bottom_left[1]) <
-              1e-10 * (top_right[1] - bottom_left[1]))
-            {
-              face->set_boundary_id(2);
-              continue;
-            }
-          // Top boundary (+ y direction)
-          if (std::abs(face_center[1] - top_right[1]) <
-              1e-10 * (top_right[1] - bottom_left[1]))
-            {
-              face->set_boundary_id(3);
-              continue;
-            }
+          if (std::abs(face_center[0] - bottom_left[0]) < tol_x)
+            face->set_boundary_id(0);
+          else if (std::abs(face_center[0] - top_right[0]) < tol_x)
+            face->set_boundary_id(1);
+          else if (std::abs(face_center[1] - bottom_left[1]) < tol_y)
+            face->set_boundary_id(2);
+          else if (std::abs(face_center[1] - top_right[1]) < tol_y)
+            face->set_boundary_id(3);
         }
     }
 }
 
+
+/**
+ * @brief Generate the 2D channel mesh with a meshed cylinder and attach
+ * manifold objects for proper mesh refinement.
+ *
+ * Delegates geometry construction to generate_2d_channel_mesh(), then attaches:
+ * - PolarManifold on the inner-cylinder boundary faces (manifold_id = 1).
+ * - TransfiniteInterpolationManifold on the remaining domain (manifold_id = 0).
+ *
+ * @param[out] triangulation The triangulation to fill with the channel mesh.
+ */
+template <>
+void
+UniformChannelWithMeshedCylinderGrid<2, 2>::make_grid(
+  Triangulation<2, 2> &triangulation)
+{
+  generate_2d_channel_mesh(triangulation,
+                           bottom_left,
+                           top_right,
+                           center,
+                           inner_radius,
+                           outer_radius,
+                           pad_bottom,
+                           pad_top,
+                           pad_left,
+                           pad_right,
+                           colorize);
+
+  // Attach manifold objects for proper refinement behavior
+  PolarManifold<2, 2> polar_manifold(center);
+  triangulation.set_manifold(1, polar_manifold);
+
+  TransfiniteInterpolationManifold<2> tfi_manifold;
+  tfi_manifold.initialize(triangulation);
+  triangulation.set_manifold(0, tfi_manifold);
+}
+
+/**
+ * @brief Generate the 3D channel mesh by extruding the 2D cross-section and
+ * attaching manifold objects for proper mesh refinement.
+ *
+ * The 2D cross-section is generated by generate_2d_channel_mesh() and then
+ * extruded along the z-axis. Manifold IDs are inherited from the 2D mesh
+ * during extrusion (copy_manifold_ids = true). 3D manifold objects are then
+ * attached:
+ * - CylindricalManifold on the cylinder surface (manifold_id = 1).
+ * - TransfiniteInterpolationManifold on the remaining domain (manifold_id = 0).
+ *
+ * Lateral boundary IDs (0-3) are inherited from the 2D mesh when colorize is
+ * enabled. The extruded bottom (z = 0) gets boundary_id = 4 and the top
+ * (z = height) gets boundary_id = 5.
+ *
+ * @param[out] triangulation The triangulation to fill with the channel mesh.
+ */
 template <>
 void
 UniformChannelWithMeshedCylinderGrid<3, 3>::make_grid(
   Triangulation<3, 3> &triangulation)
 {
-  // Create the 2D domain
+  // Generate the 2D cross-section (geometry + manifold IDs + boundary IDs)
   Triangulation<2> tria_2d;
-  Point<2>         center_2d(center[0], center[1]);
-  Point<2>         bottom_left_2d(bottom_left[0], bottom_left[1]);
-  Point<2>         top_right_2d(top_right[0], top_right[1]);
-  channel_with_filled_cylinder<2>(tria_2d,
-                                  bottom_left_2d,
-                                  top_right_2d,
-                                  center_2d,
-                                  inner_radius,
-                                  outer_radius,
-                                  pad_bottom,
-                                  pad_top,
-                                  pad_left,
-                                  pad_right,
-                                  L,
-                                  n_slices,
-                                  colorize);
+  generate_2d_channel_mesh(tria_2d,
+                           Point<2>(bottom_left[0], bottom_left[1]),
+                           Point<2>(top_right[0], top_right[1]),
+                           Point<2>(center[0], center[1]),
+                           inner_radius,
+                           outer_radius,
+                           pad_bottom,
+                           pad_top,
+                           pad_left,
+                           pad_right,
+                           colorize);
 
-  // Extrude in the 3rd dimension
+  // Extrude the 2D cross-section along the z-axis. Manifold IDs from the
+  // 2D mesh are copied to the lateral faces of the 3D mesh.
   GridGenerator::extrude_triangulation(
-    tria_2d, n_slices, L, triangulation, true);
+    tria_2d, n_slices, height, triangulation, true);
 
-  // Set the 3D manifolds
-  const types::manifold_id tfi_manifold_id         = 0;
-  const types::manifold_id cylindrical_manifold_id = 1;
-  const Tensor<1, 3>       direction{{0.0, 0.0, 1.0}};
-
-  triangulation.set_manifold(cylindrical_manifold_id, FlatManifold<3>());
-  triangulation.set_manifold(tfi_manifold_id, FlatManifold<3>());
+  // Attach 3D manifold objects. The manifold IDs (0 for TFI, 1 for
+  // cylindrical) were inherited from the 2D mesh during extrusion.
+  const Tensor<1, 3>           direction{{0.0, 0.0, 1.0}};
   const CylindricalManifold<3> cylindrical_manifold(direction, center);
-  triangulation.set_manifold(cylindrical_manifold_id, cylindrical_manifold);
+  triangulation.set_manifold(1, cylindrical_manifold);
 
-  TransfiniteInterpolationManifold<3> inner_manifold;
-  inner_manifold.initialize(triangulation);
-  triangulation.set_manifold(tfi_manifold_id, inner_manifold);
-
-  // Set the boundary ids is not necessary since they are extruded from 2D and
-  // give automatically the id 4 for the new bottom and 5 for the new top.
+  TransfiniteInterpolationManifold<3> tfi_manifold;
+  tfi_manifold.initialize(triangulation);
+  triangulation.set_manifold(0, tfi_manifold);
 }
 
 #endif
