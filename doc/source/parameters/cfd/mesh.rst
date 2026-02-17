@@ -16,7 +16,7 @@ This subsection provides information of the simulation geometry and its mesh. Th
     # GMSH file name
     set file name = none
 
-    # Grid arguments for dealii, cylinder and periodic_hills
+    # Grid arguments for dealii and lethe grids. For lethe built-in meshes, the grid type and grid arguments are defined in the example of interest. For dealii grids, the grid type and grid arguments are defined in the deal.II documentation for the related grid generator class.
     set grid type      = hyper_cube
     set grid arguments = -1 : 1 : false
 
