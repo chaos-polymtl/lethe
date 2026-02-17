@@ -167,8 +167,9 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
       " is not a perfect rectangle (i.e., the vector created by the waveguide corners are not orthogonal). Please check the waveguide corners definition in the input prm file."));
 
 
-  // Also verify that those transverse vectors are perpendicular to the normal of the
-// face and form an orthogonal basis.
+  // Also verify that those transverse vectors are perpendicular to the normal
+  // of the
+  // face and form an orthogonal basis.
   if ((std::abs(normal * e_t1) > 1e-12) || (std::abs(normal * e_t2) > 1e-12))
     AssertThrow(
       false,
@@ -181,16 +182,17 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
   // Create a third vector to complete the right-handed coordinate system
   Tensor<1, dim> e_t3 = cross_product_3d(e_t1, e_t2);
 
-  // Determine if the system needs to be flipped so the e_t3 vector points in the direction
-  // opposite to the outward normal of the face boundary. For an incident wave at the inlet, the
-  // propagation direction should point into the domain (opposite to the outward
-  // normal). We use the sign of (normal · t3) to determine this:
+  // Determine if the system needs to be flipped so the e_t3 vector points in
+  // the direction opposite to the outward normal of the face boundary. For an
+  // incident wave at the inlet, the propagation direction should point into the
+  // domain (opposite to the outward normal). We use the sign of (normal · t3)
+  // to determine this:
   //   - If normal · t3 > 0: t3 points outward, need to flip entire system
   //   - If normal · t3 < 0: t3 points inward (correct for incident wave)
   // Note that by swapping the basis vectors e_t1 and e_t2, we change the parity
   // of the system since it is equivalent to a reflection. This means that
   // pseudo vectors (like the magnetic field) will not change sign while regular
-  // vectors (like the electric field) will. Eventhough this does not affect
+  // vectors (like the electric field) will. Even though this does not affect
   // the physics of the solution, it is important to be consistent with the
   // definition of the mode profiles that we use, which assume a specific parity
   // for the system. Therefore, we keep track of the status of the parity and
@@ -209,7 +211,7 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
       parity_factor = -1.0;
     }
 
-  // Compute the various wavenumber k in using this global coordinate system
+  // Compute the various wavenumbers k in using this global coordinate system
   double k_t1 = m * PI / length_t1;                   // Transverse wavenumber 1
   double k_t2 = n * PI / length_t2;                   // Transverse wavenumber 2
   double k_c  = std::sqrt(k_t1 * k_t1 + k_t2 * k_t2); // Cutoff wavenumber
@@ -219,7 +221,7 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
     k * k - std::complex<double>(k_c * k_c, 0)); // Longitudinal wavenumber
 
   // Verify that the mode is not evanescent, i.e. k_l is not purely imaginary
-  // (k_c^2 < k^2). Std::norm computes the squared magnitude of a complex
+  // (k_c^2 < k^2). std::norm computes the squared magnitude of a complex
   // number.
   AssertThrow(std::norm(k) > (k_c * k_c),
               ExcMessage(
