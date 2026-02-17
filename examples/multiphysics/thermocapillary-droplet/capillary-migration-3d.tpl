@@ -1,6 +1,3 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024-2026 The Lethe Authors
-# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
-
 #----------------------
 # Listing of Parameters
 #----------------------
@@ -12,14 +9,14 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set method                         = bdf2
-  set time end                       = 3.0
-  set time step                      = 0.001
-  set adapt time step to respect CFL = false
-  set max cfl                        = 0.5
-  set output name                    = thermocapillary_migration
-  set output frequency               = 50
-  set output path                    = ./output/
+  set method           = bdf2
+  set time end         = 3.0
+  set time step        = 0.0013
+  set max time step    = 0.0013
+  set output name      = CASE_NAME
+  set output frequency = 100
+  set group files       = 192
+  set output path      = ./output/
 end
 
 #---------------------------------------------------
@@ -37,9 +34,32 @@ end
 
 subsection VOF
   subsection phase filtration
-    set type      = tanh
-    set verbosity = quiet
-    set beta      = 20
+    set type = tanh
+    set beta = 20
+  end
+  subsection interface regularization method
+    set type      = REGULARIZATION_TYPE
+    set frequency = REGULARIZATION_FREQUENCY
+    set verbosity = verbose
+    subsection projection-based interface sharpening
+      set interface sharpness = 1.5
+      set type                = constant
+      set max iterations      = 50
+      set tolerance           = 1e-7
+    end
+    subsection algebraic interface reinitialization
+      set output reinitialization steps = false
+      set steady-state criterion        = 1e-4
+      set max steps number              = 10000
+      set diffusivity multiplier        = EPSILON
+      set diffusivity power             = 1.0
+      set reinitialization CFL          = 0.25
+    end
+    subsection geometric interface reinitialization
+      set max reinitialization distance = REGULARIZATION_DISTANCE
+      set transformation type = tanh
+      set tanh thickness = TANH_THICKNESS
+    end
   end
   subsection surface tension force
     set enable                                   = true
@@ -60,12 +80,11 @@ subsection initial conditions
     set Function expression = 0; 0; 0; 0
   end
   subsection VOF
-    set Function expression = if (x*x + y*y + z*z < 0.25 * 0.25 , 1, 0)
-    set smoothing type      = diffusive
-    set diffusion factor    = 1
+    set Function constants  = r=0.25
+    set Function expression = 0.5 - 0.5 * tanh((sqrt(x*x + y*y + z*z)-r) / TANH_THICKNESS)
   end
   subsection temperature
-    set Function expression = x+3
+    set Function expression = x+1.5
   end
 end
 
@@ -106,7 +125,7 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
-  set grid arguments     = 4, 4, 4: -3, -3, -3: 3, 3, 3: true
+  set grid arguments     = 3, 3, 3: -1.5, -1.5, -1.5: 1.5, 1.5, 1.5: true
   set initial refinement = 4
 end
 
@@ -118,20 +137,12 @@ subsection mesh adaptation
   set type                     = kelly
   set variable                 = phase
   set fraction type            = fraction
-  set max refinement level     = 6
+  set max refinement level     = 7
   set min refinement level     = 4
-  set frequency                = 1
-  set fraction refinement      = 0.999
-  set fraction coarsening      = 0.00
+  set frequency                = 20
+  set fraction refinement      = 0.99
+  set fraction coarsening      = 0.001
   set initial refinement steps = 4
-end
-
-#---------------------------------------------------
-# Timer
-#---------------------------------------------------
-
-subsection timer
-  set type = none
 end
 
 # --------------------------------------------------
@@ -233,7 +244,7 @@ subsection boundary conditions heat transfer
     set id   = 1
     set type = temperature
     subsection value
-      set Function expression = 6
+      set Function expression = 3
     end
   end
   subsection bc 2
@@ -254,17 +265,13 @@ subsection boundary conditions heat transfer
   end
 end
 
-subsection boundary conditions VOF
-  set number = 6
-end
-
 #---------------------------------------------------
 # Post-processing
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity            = quiet
-  set calculate barycenter = true
+  set calculate barycenter     = true
+  set calculate kinetic energy = true
 end
 
 #---------------------------------------------------
@@ -284,7 +291,7 @@ end
 
 subsection non-linear solver
   subsection VOF
-    set tolerance      = 1e-6
+    set tolerance      = 1e-8
     set max iterations = 20
     set verbosity      = verbose
   end
@@ -298,6 +305,19 @@ subsection non-linear solver
     set max iterations = 20
     set verbosity      = verbose
   end
+  subsection VOF algebraic interface reinitialization
+    set tolerance      = 1e-8
+    set max iterations = 20
+    set verbosity      = verbose
+  end
+end
+
+# --------------------------------------------------
+# Boundary Conditions VOF
+#---------------------------------------------------
+
+subsection boundary conditions VOF
+  set number = 6
 end
 
 # --------------------------------------------------
@@ -321,7 +341,7 @@ subsection linear solver
     set method                                = gmres
     set max iters                             = 8000
     set relative residual                     = 1e-8
-    set minimum residual                      = 1e-8
+    set minimum residual                      = 1e-11
     set ilu preconditioner fill               = 0
     set ilu preconditioner absolute tolerance = 1e-12
     set ilu preconditioner relative tolerance = 1.00
@@ -338,6 +358,17 @@ subsection linear solver
     set ilu preconditioner relative tolerance = 1.00
     set max krylov vectors                    = 200
   end
+  subsection VOF algebraic interface reinitialization
+    set verbosity                             = verbose
+    set method                                = gmres
+    set max iters                             = 8000
+    set relative residual                     = 1e-8
+    set minimum residual                      = 1e-11
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-12
+    set ilu preconditioner relative tolerance = 1.00
+    set max krylov vectors                    = 200
+  end
 end
 
 # --------------------------------------------------
@@ -345,13 +376,24 @@ end
 #---------------------------------------------------
 
 subsection restart
-  # Checkpointing parameters
   set checkpoint = true
-  set frequency  = 90
+  set frequency  = 100
+  set filename   = restart
+  set restart    = false
+end
 
-  # Output/input files
-  set filename = restart
+# --------------------------------------------------
+# Stabilization
+#---------------------------------------------------
 
-  # Restarting parameters
-  set restart = false
+subsection stabilization
+  set vof dcdd stabilization           = false
+end
+
+# --------------------------------------------------
+# Timer
+#---------------------------------------------------
+
+subsection timer
+  set type = iteration
 end
