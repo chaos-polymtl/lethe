@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #############################################################################
@@ -351,69 +351,68 @@ t_analytical = np.linspace(0.0,3.0, 25)
 
 vx_analytical = -2*radius*gamma_prime/(mu_ext*(2+3*lambda_ratio)*(2+beta_ratio))*np.ones(len(t_analytical))
 
-print(vx_analytical)
-# """
-#  Construct legends 
-# """
+"""
+ Construct legends 
+"""
 
-# ############################
-# # No Featflow
-# ############################
-# fig00 = plt.figure()
-# ax00 = fig00.add_subplot(111)
+############################
+# No Featflow
+############################
+fig00 = plt.figure()
+ax00 = fig00.add_subplot(111)
 
-# legend = []
-# labels = []
-# n_columns = 3
+legend = []
+labels = []
+n_columns = 3
 
-# header = [plt.plot([],marker="", ls="")[0]]
+header = [plt.plot([],marker="", ls="")[0]]
 
-# for i, f in enumerate(f_values):
-#   row = [] # clear row
+for i, f in enumerate(f_values):
+  row = [] # clear row
 
-#   pde = mlines.Line2D([], [], color=pde_colors[i])
-#   geo = mlines.Line2D([], [], color=geo_colors[i])
-#   pro = mlines.Line2D([], [], color=pro_colors[i])
-#   row = (pde, geo, pro)
+  pde = mlines.Line2D([], [], color=pde_colors[i])
+  geo = mlines.Line2D([], [], color=geo_colors[i])
+  pro = mlines.Line2D([], [], color=pro_colors[i])
+  row = (pde, geo, pro)
 
-#   legend.append(row)
-#   labels.append(f"$f$={1/f:<1.2f}")
+  legend.append(row)
+  labels.append(f"$f$={1/f:<1.2f}")
 
-# # Lethe
-# lethe_pde_lgd = mlines.Line2D([], [], ls=lethe_linestyle, c=pde_colors[1])
-# lethe_geo_lgd = mlines.Line2D([], [], ls=lethe_linestyle, c=geo_colors[1])
-# lethe_pro_lgd = mlines.Line2D([], [], ls=lethe_linestyle, c=pro_colors[1])
+# Lethe
+lethe_pde_lgd = mlines.Line2D([], [], ls=lethe_linestyle, c=pde_colors[1])
+lethe_geo_lgd = mlines.Line2D([], [], ls=lethe_linestyle, c=geo_colors[1])
+lethe_pro_lgd = mlines.Line2D([], [], ls=lethe_linestyle, c=pro_colors[1])
 
-# # Reference solutions
-# analytic_lgd = mlines.Line2D([], [], ls=c1_ref_linestyles[0], c='k', alpha=c1_alpha)
-# empty_lgd = mlines.Line2D([], [], ls=c1_ref_linestyles[0], c='k', alpha=0)
+# Reference solutions
+analytic_lgd = mlines.Line2D([], [], ls=c1_ref_linestyles[0], c='k', alpha=c1_alpha)
+empty_lgd = mlines.Line2D([], [], ls=c1_ref_linestyles[0], c='k', alpha=0)
 
-# leg_no_featflow = ax00.legend(handles= header + legend +
-#                                       header + [lethe_pde_lgd,lethe_geo_lgd,lethe_pro_lgd]+
-#                                       header + [analytic_lgd,empty_lgd,empty_lgd],
-#                              labels= [f"Reinitialization \n frequencies $(f)$"] + labels +
-#                                      [lethe_label] + ["PDE-based", "Geometric", "Projection"]+
-#                                      ["Reference"] + [c1_ref_label[0]," "," "],
-#                              ncol=n_columns,
-#                              loc="center",
-#                              frameon=True,
-#                              handler_map={tuple: HandlerTuple(ndivide=None)},
-#                              handletextpad=0.2)
+leg = ax00.legend(handles= header + legend +
+                                      header + [lethe_pde_lgd,lethe_geo_lgd,lethe_pro_lgd]+
+                                      header + [analytic_lgd,empty_lgd,empty_lgd],
+                             labels= [f"Reinitialization \n frequencies $(f)$"] + labels +
+                                     [lethe_label] + ["PDE-based", "Geometric", "Projection"]+
+                                     ["Reference"] + [c1_ref_label[0]," "," "],
+                             ncol=n_columns,
+                             loc="center",
+                             frameon=True,
+                             handler_map={tuple: HandlerTuple(ndivide=None)},
+                             handletextpad=0.2)
 
-# for vpack in leg_no_featflow._legend_handle_box.get_children():
-#   for hpack in vpack.get_children()[:1]:
-#     hpack.get_children()[0].set_width(0)
+for vpack in leg._legend_handle_box.get_children():
+  for hpack in vpack.get_children()[:1]:
+    hpack.get_children()[0].set_width(0)
 
-# ax00.axis('off')
+ax00.axis('off')
 
-# fig00.canvas.draw()
-# bbox = leg_no_featflow.get_window_extent()
-# bbox = bbox.transformed(fig00.dpi_scale_trans.inverted())
+fig00.canvas.draw()
+bbox = leg.get_window_extent()
+bbox = bbox.transformed(fig00.dpi_scale_trans.inverted())
 
-# fig00.savefig(f'{args.save_figure_path}/legend.png',
-#               dpi=300, bbox_inches=bbox)
-# fig00.savefig(f'{args.save_figure_path}/legend.svg',
-#               dpi=300, bbox_inches=bbox)   
+fig00.savefig(f'{args.save_figure_path}/legend.png',
+              dpi=300, bbox_inches=bbox)
+fig00.savefig(f'{args.save_figure_path}/legend.svg',
+              dpi=300, bbox_inches=bbox)   
                          
 #************************************************************
 # Plot the migation velocity
@@ -462,9 +461,7 @@ axins = inset_axes(
 )
 axins.set_xlim(2.8, 3.0)
 axins.set_ylim(0.0322, 0.0342)
-# axins.yaxis.set_major_locator(MultipleLocator(0.0005))   # dy = 0.05
 mark_inset(ax0, axins, loc1=2, loc2=4, fc="none", ec="0.45")
-# axins.yaxis.tick_right()
 
 if has_pde:
   if (args.frequency_sweep):
@@ -492,13 +489,11 @@ axins.plot(t_analytical, vx_analytical, ls=c1_ref_linestyles[0], c=c1_color, lw=
 
 ax0.set_ylabel(r'Migration velocity [LT$^{-1}$]')
 ax0.set_xlabel(r'Migration time [T]')
-# ax0.legend(loc="upper left")
 fig0.savefig(f'{args.save_figure_path}/migration_velocity.png',dpi=300)
 fig0.savefig(f'{args.save_figure_path}/migration_velocity.svg',dpi=300)
 
 ax0_proj.set_ylabel(r'Migration velocity [LT$^{-1}$]')
 ax0_proj.set_xlabel(r'Migration time [T]')
-# ax0_proj.legend(loc="upper left")
 fig0_proj.savefig(f'{args.save_figure_path}/migration_velocity_proj.png',dpi=300)
 fig0_proj.savefig(f'{args.save_figure_path}/migration_velocity_proj.svg',dpi=300)
 
@@ -515,36 +510,10 @@ ax5 = fig5.add_subplot(111)
 fig6 = plt.figure()
 ax6 = fig6.add_subplot(111)
 
-# inset axes
-# axins_geo = inset_axes(
-#   ax5, width="40%", height="40%",
-#   bbox_to_anchor=(0.8, -0.1, 0.8, 0.8),
-#   bbox_transform=fig5.transFigure,
-#   loc="center"
-# )
-# axins_geo.set_xlim(2.5, 3.0)
-# axins_geo.set_ylim(0.78,0.79)
-# mark_inset(ax5, axins_geo, loc1=2, loc2=3, fc="none", ec="0.45",zorder=3)
-# axins_geo.yaxis.set_major_locator(MultipleLocator(0.005))
-# axins_geo.yaxis.tick_right()
-
-# axins_pde = inset_axes(
-#   ax5, width="40%", height="40%",
-#   bbox_to_anchor=(0.8, 0.3, 0.8, 0.8),
-#   bbox_transform=fig5.transFigure,
-#   loc="center"
-# )
-# axins_pde.set_xlim(2.5, 3.0)
-# axins_pde.set_ylim(0.819, 0.822)
-# mark_inset(ax5, axins_pde, loc1=2, loc2=3, fc="none", ec="0.45",zorder=3)
-# axins_pde.yaxis.set_major_locator(MultipleLocator(0.005))
-# axins_pde.yaxis.tick_right()
-
 if has_pro:
   if (args.frequency_sweep):
     for i,freq in enumerate(f_values):
       df_mass_pro = pd.read_csv(pro_mass_geo_data[i], header=0, sep=r'\s+')
-      # equivalent_surface_area = np.pi**(1/3) * (6*df_mass_pro["geometric_volume_fluid_1"])**(2/3)
       equivalent_surface_area = df_mass_pro['surface_fluid_1'][0]
       ax6.plot(df_mass_pro['time'], df_mass_pro['surface_fluid_1'],
                "-", label=f'Projection ($f$ = {freq:03d})', linewidth=line_width, color=pro_colors[i])
@@ -559,12 +528,9 @@ if has_pde:
   if (args.frequency_sweep):
     for i,freq in enumerate(f_values):
       df_mass_pde = pd.read_csv(pde_mass_geo_data[i], header=0, sep=r'\s+')
-      # equivalent_surface_area = np.pi**(1/3) * (6*df_mass_pde["geometric_volume_fluid_1"])**(2/3)
       equivalent_surface_area = df_mass_pde['surface_fluid_1'][0]
       ax5.plot(df_mass_pde['time'], df_mass_pde['surface_fluid_1'],
                "-", label=f'PDE-based ($f$ = {freq:03d})', linewidth=line_width, color=pde_colors[i])
-      # axins_pde.plot(df_mass_pde['time'], df_mass_pde['surface_fluid_1'],
-              #  "-", label=f'PDE-based ($f$ = {freq:03d})', linewidth=line_width, color=pde_colors[i])
   else:
     equivalent_surface_area = np.pi**(1/3) * (6*df_mass_pde["geometric_volume_fluid_1"])**(2/3)
     ax5.plot(df_mass_pde['time'],
@@ -574,13 +540,10 @@ if has_geo:
   if (args.frequency_sweep):
     for i,freq in enumerate(f_values):
       df_mass_geo = pd.read_csv(geo_mass_geo_data[i], header=0, sep=r'\s+')
-      # equivalent_surface_area = np.pi**(1/3) * (6*df_mass_geo["geometric_volume_fluid_1"])**(2/3)
       equivalent_surface_area = df_mass_geo['surface_fluid_1'][0]
       
       ax5.plot(df_mass_geo['time'], df_mass_geo['surface_fluid_1'],
                "-", label=f'Geometric ($f$ = {freq:03d})', linewidth=line_width, color=geo_colors[i])
-      # axins_geo.plot(df_mass_geo['time'], df_mass_geo['surface_fluid_1'],
-              #  "-", label=f'Geometric ($f$ = {freq:03d})', linewidth=line_width, color=geo_colors[i],zorder=1)
   else:
     equivalent_surface_area = np.pi**(1/3) * (6*df_mass_geo["geometric_volume_fluid_1"])**(2/3)
     ax5.plot(df_mass_geo['time'],
@@ -591,22 +554,17 @@ if has_geo:
 ax5.set_ylabel(r'${A_\mathrm{droplet}} [L^2]$')
 ax5.set_xlabel(r'Migration time [T]')
 ax5.ticklabel_format(useOffset=False, style='plain', axis='y')
-# ax5.set_ylim(0.95,1.01)
-# ax5.legend(loc="upper left")
 fig5.savefig(f'{args.save_figure_path}/migration-sphericity.png',dpi=300)
 fig5.savefig(f'{args.save_figure_path}/migration-sphericity.svg',dpi=300)
 
-# plt.show()
 plt.close()
 
 ax6.set_ylabel(r'${A_\mathrm{droplet}} [L^2]$')
 ax6.set_xlabel(r'Migration time [T]')
 ax6.ticklabel_format(useOffset=False, style='plain', axis='y')
-# ax6.legend(loc="upper left")
 fig6.savefig(f'{args.save_figure_path}/migration-sphericity-proj.png',dpi=300)
 fig6.savefig(f'{args.save_figure_path}/migration-sphericity-proj.svg',dpi=300)
 
-# plt.show()
 plt.close()
 
 #************************************************************
@@ -731,8 +689,6 @@ if has_geo:
       list_vtu = [f
                   for f in os.listdir(output_dir_geo)
                   if (f.endswith('.pvtu') and "interface" not in f and "sliced" not in f)]
-      # latest_file = os.path.join(output_dir_geo,max(list_vtu, key=extract_number))
-      # latest_file = os.path.join(output_dir_geo,list_vtu[-1])
       latest_file = os.path.join(output_dir_geo, max(list_vtu, key=extract_number))
 
 
@@ -827,8 +783,6 @@ if has_pde:
       list_vtu = [f
                   for f in os.listdir(output_dir_pde)
                   if (f.endswith('.pvtu') and "interface" not in f and "sliced" not in f)]
-      # latest_file = os.path.join(output_dir_pde,max(list_vtu, key=extract_number))
-      # latest_file = os.path.join(output_dir_pde,list_vtu[-1])
       latest_file = os.path.join(output_dir_pde, max(list_vtu, key=extract_number))
 
 
@@ -903,89 +857,3 @@ ax_pde_radius.set_ylim(0.24, 0.26)
 fig_pde_radius.savefig(f'{args.save_figure_path}/radius_pde.png',dpi=300)
 fig_pde_radius.savefig(f'{args.save_figure_path}/radius_pde.svg',dpi=300)
 plt.close()
-
-# Get path to CFL evolution file
-base_dir_pde = os.path.dirname(args.pde.rstrip("/")) + "/"
-base_dir_geo = os.path.dirname(args.geo.rstrip("/")) + "/"
-base_dir_pro = os.path.dirname(args.pro.rstrip("/")) + "/"
-base_dir_pde = base_format(base_dir_pde)
-base_dir_geo = base_format(base_dir_geo)
-base_dir_pro = base_format(base_dir_pro)
-
-# Load CFL evolution data for each method
-cfl_pde = load_cfl_evolution(has_pde, base_dir_pde, f_values)
-cfl_geo = load_cfl_evolution(has_geo, base_dir_geo, f_values)
-cfl_pro = load_cfl_evolution(has_pro, base_dir_pro, f_values)
-
-# Plot CFL evolution
-plot_cfl_evolution(cfl_pde, cfl_geo, cfl_pro, args.save_figure_path, f_values, line_width, pde_colors, geo_colors, pro_colors)
-
-# Keep only the defined values
-# x, y, label, fig_name, color_list = [], [], [], [], []
-
-# if has_pde:
-#   if (args.frequency_sweep):
-#     for i,freq in enumerate(f_values):
-#       x.append(pde_contour_data[i]['x'])
-#       y.append(pde_contour_data[i]['y'])
-#       label.append(f'PDE-based ($f$ = {freq:03d})')
-#       fig_name.append(f'pde_f{freq:03d}')
-#       color_list.append(pde_colors[i])
-#   else:
-#     x.append(x_pde)
-#     y.append(y_pde)
-#     label.append('PDE-based')
-#     fig_name.append('pde')
-# if has_geo:
-#   if (args.frequency_sweep):
-#     for i,freq in enumerate(f_values):
-#       x.append(geo_contour_data[i]['x'])
-#       y.append(geo_contour_data[i]['y'])
-#       label.append(f'Geometric ($f$ = {freq:03d})')
-#       fig_name.append(f'geo_f{freq:03d}')
-#       color_list.append(geo_colors[i])
-#   else:
-#     x.append(x_geo)
-#     y.append(y_geo)
-#     label.append('Geometric')
-#     fig_name.append('geo')
-# if has_pro:
-#   if (args.frequency_sweep):
-#     for i,freq in enumerate(f_values):
-#       if (freq == 1):
-#         continue
-#       x.append(pro_contour_data[i]['x'])
-#       y.append(pro_contour_data[i]['y'])
-#       label.append(f'Projection ($f$ = {freq:03d})')
-#       fig_name.append(f'pro_f{freq:03d}')
-#       color_list.append(pro_colors[i])
-#   else:
-#     x.append(x_pro)
-#     y.append(y_pro)
-#     label.append('Projection')
-#     fig_name.append('pro')
-
-# # Plot bubble contour comparison between the three methods (only if more than 1 method)
-# if n > 1:
-#   str_method = ["pde", "geo", "pro"]
-#   method_id = 0
-#   i_start = 0
-#   while (i_start <= n-len(f_values)):
-#     fig2 = plt.figure()
-#     ax2= fig2.add_subplot(111)
-
-#     for i in range(i_start,i_start+len(f_values)):
-#       ax2.scatter(x[i], y[i], s=4, marker="s", color=color_list[i], label=label[i], linewidths=line_width)
-
-#     ax2.set_xlabel(r'x [L]')
-#     ax2.set_ylabel(r'y [L]')
-#     # ax2.legend(markerscale=2, scatterpoints=20)
-#     ax2.grid( which='major', color='grey', linestyle='--')
-#     # ax2.set_xlim([0.2,0.8])
-#     # ax2.set_ylim([1.15,1.75])
-#     i_start += len(f_values)
-#     fig2.savefig(f"{args.save_figure_path}/bubble-contour-" + str_method[method_id] + ".png",dpi=300)
-#     method_id += 1
-#     plt.close()
-#       # plt.show()
-

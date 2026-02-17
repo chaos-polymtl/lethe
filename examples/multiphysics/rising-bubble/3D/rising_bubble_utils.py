@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #############################################################################
@@ -122,16 +122,6 @@ def frequency_labels(f_values):
   :return:
   '''
   return [f"$f$=1/({f}" + r"$\Delta$t)" for f in f_values]
-
-# def extract_number(fname):
-#   '''
-#   Function to extract the relevant digit sequence from a vtu filename for ordering them chronologically.
-#   This is necessary since, when copying files from cluster the timestamps are modified.
-#   :param fname:
-#   :return:
-#   '''
-#   numbers = re.findall(r'\d+', fequname)
-#   return numbers[-2]
 
 def extract_number(filename):
     match = re.search(r'\.(\d+)\.pvtu$', filename)
