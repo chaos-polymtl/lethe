@@ -2742,6 +2742,14 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
     solution,
     divergence);
 
+  std::shared_ptr<GradientPostprocessor<dim>> gradient =
+    std::make_shared<GradientPostprocessor<dim>>();
+  solution_output_structs.emplace_back(
+    std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
+    *this->dof_handler,
+    solution,
+    gradient);
+
   std::shared_ptr<VorticityPostprocessor<dim>> vorticity =
     std::make_shared<VorticityPostprocessor<dim>>();
   solution_output_structs.emplace_back(
