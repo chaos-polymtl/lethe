@@ -197,25 +197,25 @@ def read_refs():
   sphericity_featflow           = pd.read_csv("./reference-data/case_1/FeatFlow_results/FeatFlow_results/feat_flow_extracted_data/02_bubble_sphericity.csv")
   sphericity_featflow_zoom      = pd.read_csv("./reference-data/case_1/FeatFlow_results/FeatFlow_results/feat_flow_extracted_data/02_bubble_sphericity_zoom.csv")
   # DROPS [2]
-  y_rise_velocity_drops = pd.read_csv("./reference-data/case_1/ref_rise_velocity/TC1_riseVelocity_DROPS.txt", delim_whitespace=True, header=None);
+  y_rise_velocity_drops = pd.read_csv("./reference-data/case_1/ref_rise_velocity/TC1_riseVelocity_DROPS.dat", delim_whitespace=True, header=None);
   y_rise_velocity_drops.columns=["time","y_rise_velocity"]
-  sphericity_drops      = pd.read_csv("./reference-data/case_1/ref_sphericity/TC1_sphericity_DROPS.txt", delim_whitespace=True, header=None);
+  sphericity_drops      = pd.read_csv("./reference-data/case_1/ref_sphericity/TC1_sphericity_DROPS.dat", delim_whitespace=True, header=None);
   sphericity_drops.columns=["time","sphericity"]
-  y_barycenter_drops    = pd.read_csv("./reference-data/case_1/ref_center_of_mass/TC1_centerOfMass_DROPS.txt", delim_whitespace=True, header=None);
+  y_barycenter_drops    = pd.read_csv("./reference-data/case_1/ref_center_of_mass/TC1_centerOfMass_DROPS.dat", delim_whitespace=True, header=None);
   y_barycenter_drops.columns=["time","y_barycenter"]
   # NaSt3DGPF [3]
-  y_rise_velocity_nast3dgpf = pd.read_csv("./reference-data/case_1/ref_rise_velocity/TC1_riseVelocity_NaSt3D.txt", delim_whitespace=True, header=None);
+  y_rise_velocity_nast3dgpf = pd.read_csv("./reference-data/case_1/ref_rise_velocity/TC1_riseVelocity_NaSt3D.dat", delim_whitespace=True, header=None);
   y_rise_velocity_nast3dgpf.columns=["time","y_rise_velocity"]
-  sphericity_nast3dgpf      = pd.read_csv("./reference-data/case_1/ref_sphericity/TC1_sphericity_NaSt3D.txt", delim_whitespace=True, header=None);
+  sphericity_nast3dgpf      = pd.read_csv("./reference-data/case_1/ref_sphericity/TC1_sphericity_NaSt3D.dat", delim_whitespace=True, header=None);
   sphericity_nast3dgpf.columns=["time","sphericity"]
-  y_barycenter_nast3dgpf    = pd.read_csv("./reference-data/case_1/ref_center_of_mass/TC1_centerOfMass_NaSt3D.txt", delim_whitespace=True, header=None);
+  y_barycenter_nast3dgpf    = pd.read_csv("./reference-data/case_1/ref_center_of_mass/TC1_centerOfMass_NaSt3D.dat", delim_whitespace=True, header=None);
   y_barycenter_nast3dgpf.columns=["time","y_barycenter"]
   # OpenFOAM [4]
-  y_rise_velocity_openfoam = pd.read_csv("./reference-data/case_1/ref_rise_velocity/TC1_riseVelocity_OpenFOAM.txt", delim_whitespace=True, header=None);
+  y_rise_velocity_openfoam = pd.read_csv("./reference-data/case_1/ref_rise_velocity/TC1_riseVelocity_OpenFOAM.dat", delim_whitespace=True, header=None);
   y_rise_velocity_openfoam.columns=["time","y_rise_velocity"]
-  sphericity_openfoam      = pd.read_csv("./reference-data/case_1/ref_sphericity/TC1_sphericity_OpenFOAM.txt", delim_whitespace=True, header=None);
+  sphericity_openfoam      = pd.read_csv("./reference-data/case_1/ref_sphericity/TC1_sphericity_OpenFOAM.dat", delim_whitespace=True, header=None);
   sphericity_openfoam.columns=["time","sphericity"]
-  y_barycenter_openfoam    = pd.read_csv("./reference-data/case_1/ref_center_of_mass/TC1_centerOfMass_OpenFOAM.txt", delim_whitespace=True, header=None);
+  y_barycenter_openfoam    = pd.read_csv("./reference-data/case_1/ref_center_of_mass/TC1_centerOfMass_OpenFOAM.dat", delim_whitespace=True, header=None);
   y_barycenter_openfoam.columns=["time","y_barycenter"]
   return dict(
       featflow_velocity=y_rise_velocity_featflow, featflow_velocity_zoom=y_rise_velocity_featflow_zoom,
