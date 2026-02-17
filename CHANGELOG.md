@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2026/02/16
 
+### Fixed
+
+- MINOR The store_candidates function of the broad search stores the potential contact candidates of a particle. It uses a pre-allocated vector to store them. However, this pre-allocated vector was allocated and then copied into the storage container. Furthermore, the hash function for the map was used twice, once for the search and then once for the emplace. This PR fixes this by using a different logic. First, we use try_emplace to insert an empty vector into the map. If the insertion has occured, we reserve the memory for that vector locally inside of the map. This prevents both the double usage of the hash function and the double vector allocation. The performance increase in some of the test cases I have tried is quite significant (approx. 10% faster than it used to be). This does not change anything to any of the results since the order of operations is preserved. [#1911](https://github.com/chaos-polymtl/lethe/pull/1911)
+
+## [Master] - 2026/02/16
+
 ### Changed
 
 - MINOR This PR improves the Doxygen documentation interface. We integrate [Doxygen Awesome CSS](https://github.com/jothepro/doxygen-awesome-css) with dark/light mode support as the base theme and extend it with several enhancements:
