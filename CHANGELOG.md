@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR Changed the way the waveguide inlet boundary conditions are computed for the time‑harmonic Maxwell solver: we now define an orthonormal local basis from the input quadrilateral, compute the excitation in that local frame, then map it back to the global frame. This fixes cases where the local basis is left‑handed by correctly accounting for the magnetic field's pseudovector behaviour.  [#1896](https://github.com/chaos-polymtl/lethe/pull/1896)
 
+### Added
+
+-MINOR This PR adds the velocity gradient field to the post-processor data structure. [#1913](https://github.com/chaos-polymtl/lethe/pull/1913)
+
 ## [Master] - 2026/02/16
 
 ### Fixed
