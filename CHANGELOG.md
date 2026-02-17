@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-This PR adds all the prms and scripts used to run the cases presented in the VOF article (rising bubble 3D, capillary migration, and Rayleigh-Plateau instability). The files are as they were used, so there is place for improvement (portability between simulation. The documentation of the examples will be added later. [#1912](https://github.com/chaos-polymtl/lethe/pull/1912)
+This PR adds all the parameter files and scripts used to run the cases presented in the CLS reinitialization methods article (rising bubble 3D, capillary migration, and Rayleigh-Plateau instability). The files are as they were used, so there is place for improvement (portability between simulation). The documentation of the examples will be added later. [#1912](https://github.com/chaos-polymtl/lethe/pull/1912)
 
 ## [Master] - 2026/02/16
 
