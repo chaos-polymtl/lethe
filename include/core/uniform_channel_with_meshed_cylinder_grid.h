@@ -27,6 +27,8 @@ using namespace dealii;
  * The number of subdivisions in each padding direction (bottom, top, left,
  * right) can be controlled independently. In 3D, the 2D cross-section is
  * extruded along the z-axis with a configurable height and number of slices.
+ * Note that it is always assumed that the channel bottom is at z=0 and the
+ * channel top is at z=height.
  *
  * Manifold objects attached for proper mesh refinement:
  * - PolarManifold (2D) or CylindricalManifold (3D) on the inner cylinder
@@ -66,22 +68,22 @@ private:
  * @param[in] grid_arguments A colon-separated string with the following fields
  * (coordinates are comma-separated):
  *
- * | #  | Field        | Format     | Required | Description                                    |
- * |----|--------------|------------|----------|------------------------------------------------|
- * |  0 | bottom_left  | x,y[,z]   | yes      | Bottom-left corner of the channel              |
- * |  1 | top_right    | x,y[,z]   | yes      | Top-right corner of the channel                |
- * |  2 | center       | x,y[,z]   | yes      | Center of the cylinder                         |
- * |  3 | inner_radius | double     | yes      | Radius of the cylinder                         |
- * |  4 | outer_radius | double     | yes      | Radius of the transition region                |
- * |  5 | pad_bottom   | int        | no       | Subdivisions below the transition (default: 0) |
- * |  6 | pad_top      | int        | no       | Subdivisions above the transition (default: 0) |
- * |  7 | pad_left     | int        | no       | Subdivisions left of the transition (default: 0)|
- * |  8 | pad_right    | int        | no       | Subdivisions right of the transition (default: 0)|
- * |  9 | height       | double     | no       | Extrusion height in z, 3D only (default: 1.0)  |
- * | 10 | n_slices     | int        | no       | Number of z-layers, 3D only (default: 0)       |
- * | 11 | colorize     | true/false | no       | Assign distinct boundary IDs (default: false)  |
+ * | #  | Field        | Format     | Required | Description                                        |
+ * |----|--------------|------------|----------|----------------------------------------------------|
+ * |  0 | bottom_left  | x,y        | yes      | Bottom-left corner of the channel before extrusion |
+ * |  1 | top_right    | x,y        | yes      | Top-right corner of the channel before extrusion   |
+ * |  2 | center       | x,y        | yes      | Center of the cylinder                             |
+ * |  3 | inner_radius | double     | yes      | Radius of the cylinder                             |
+ * |  4 | outer_radius | double     | yes      | Radius of the transition region                    |
+ * |  5 | pad_bottom   | int        | no       | Subdivisions below the transition (default: 0)     |
+ * |  6 | pad_top      | int        | no       | Subdivisions above the transition (default: 0)     |
+ * |  7 | pad_left     | int        | no       | Subdivisions left of the transition (default: 0)   |
+ * |  8 | pad_right    | int        | no       | Subdivisions right of the transition (default: 0)  |
+ * |  9 | height       | double     | no       | Extrusion height in z, 3D only (default: 1.0)      |
+ * | 10 | n_slices     | int        | no       | Number of z-layers, 3D only (default and min: 2)   |
+ * | 11 | colorize     | true/false | no       | Assign distinct boundary IDs (default: false)      |
  *
- * Example: @code "0,0 : 10,2 : 5,1 : 0.1 : 0.3 : 2 : 2 : 5 : 5 : 2. : 2 : True"
+ * Example: @code "0,0 : 10,2 : 5,1 : 0.1 : 0.3 : 2 : 2 : 5 : 5 : 2. : 2 : true"
  * @endcode
  *
  * When @p colorize is true, boundary IDs follow the
@@ -129,11 +131,12 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::
       bottom_left_coords.push_back(std::stod(coord_str));
     }
 
-  if (bottom_left_coords.size() != dim)
+  if (bottom_left_coords.size() != 2)
     {
-      AssertThrow(false,
-                  ExcMessage("The bottom left point should have " +
-                             std::to_string(dim) + " coordinates."));
+      AssertThrow(
+        false,
+        ExcMessage(
+          "The bottom left point should have 2 components coordinates (x,y format) because the channel is extruded in the z direction."));
     }
 
   this->bottom_left =
@@ -150,11 +153,12 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::
       top_right_coords.push_back(std::stod(coord_str));
     }
 
-  if (top_right_coords.size() != dim)
+  if (top_right_coords.size() != 2)
     {
-      AssertThrow(false,
-                  ExcMessage("The top right point should have " +
-                             std::to_string(dim) + " coordinates."));
+      AssertThrow(
+        false,
+        ExcMessage(
+          "The top right point should have 2 components coordinates (x,y format) because the channel is extruded in the z direction."));
     }
 
   this->top_right =
@@ -170,11 +174,12 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::
       center_coords.push_back(std::stod(coord_str));
     }
 
-  if (center_coords.size() != dim)
+  if (center_coords.size() != 2)
     {
-      AssertThrow(false,
-                  ExcMessage("The center point should have " +
-                             std::to_string(dim) + " coordinates."));
+      AssertThrow(
+        false,
+        ExcMessage(
+          "The center point should have 2 components coordinates (x,y format) because the channel is extruded in the z direction."));
     }
 
   this->center =
@@ -223,7 +228,7 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::
                          "region does not reach the right channel boundary."));
 
   this->height   = (arguments.size() > 9) ? std::stod(arguments[9]) : 1.0;
-  this->n_slices = (arguments.size() > 10) ? std::stoi(arguments[10]) : 0;
+  this->n_slices = (arguments.size() > 10) ? std::stoi(arguments[10]) : 2.;
   this->colorize =
     (arguments.size() > 11 && arguments[11] == "true") ? true : false;
 }
