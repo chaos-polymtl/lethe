@@ -47,9 +47,9 @@ private:
  * @brief Constructor for the CylinderGrid.
  *
  * @param grid_arguments. A string with 3 parameters
- *  x_subdivision : number of subdivisions in the x direction
- *  radius : radius of the cylinder
- *  half_height : half the height of the cylinder
+ * @param x_subdivision. The number of subdivisions in the x direction
+ * @param radius. The radius of the cylinder
+ * @param half_height. The half the height of the cylinder
  */
 
 template <int dim, int spacedim>
@@ -103,9 +103,8 @@ CylinderGrid<dim, spacedim>::CylinderGrid(const std::string &grid_type,
 }
 
 /**
- * @brief make_grid. The make_grid function generates a hyper rectangle of the size of the domain
- * and then transforms it to the hill geometry. It also constructs the
- * geometry manifold with FunctionManifold and finally sets the manifold.
+ * @brief make_grid. The make_grid function generates cylindrical meshes with different meshing strategies for the circular part of the geometry, depending on the cylinder type specified in the constructor. It also constructs the
+ * geometry manifold with SphericalManifold.
  *
  * @param triangulation. The triangulation object on which the grid is generated
  */

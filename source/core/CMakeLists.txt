@@ -47,6 +47,7 @@ add_library(lethe-core
   ../../include/core/bdf.h
   ../../include/core/boundary_conditions.h
   ../../include/core/checkpoint_control.h
+  ../../include/core/cylinder_grid.h
   ../../include/core/dem_properties.h
   ../../include/core/density_model.h
   ../../include/core/dimensionality.h
@@ -54,6 +55,7 @@ add_library(lethe-core
   ../../include/core/electric_permittivity_model.h
   ../../include/core/evaporation_model.h
   ../../include/core/exceptions.h
+  ../../include/core/fichera_oven_grid.h
   ../../include/core/grids.h
   ../../include/core/ib_particle.h
   ../../include/core/ib_stencil.h
@@ -98,6 +100,7 @@ add_library(lethe-core
   ../../include/core/time_integration_utilities.h
   ../../include/core/tracer_diffusivity_model.h
   ../../include/core/tracer_reaction_model.h
+  ../../include/core/uniform_channel_with_meshed_cylinder_grid.h
   ../../include/core/utilities.h)
 
 deal_ii_setup_target(lethe-core)
