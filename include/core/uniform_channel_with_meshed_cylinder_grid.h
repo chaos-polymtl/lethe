@@ -97,14 +97,14 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::
     {
       AssertThrow(
         false,
-        std::runtime_error(
+        ExcMessage(
           "The uniform channel with meshed cylinder mesh is only supported in 2d and 3d space with 2d and 3d elements."));
     }
   else if constexpr (dim == 2 && spacedim == 3)
     {
       AssertThrow(
         false,
-        std::runtime_error(
+        ExcMessage(
           "The uniform channel with meshed cylinder mesh is only supported in 3d space with 3d elements."));
     }
 
@@ -116,7 +116,7 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::
     {
       AssertThrow(
         false,
-        std::runtime_error(
+        ExcMessage(
           "Mandatory uniform channel with meshed cylinder parameters are (bottom left point : top right point : center of the cylinder : inner radius : outer radius). The points should be given as x,y and the radii should be given as a single number. The optional parameters are (pad bottom : pad top : pad left : pad right : height : n_slices : colorize). The padding parameters should be given as a single number, the height should be given as a single number, the n_slices should be given as a single integer and the colorize parameter should be given as true/false."));
     }
 
@@ -132,8 +132,8 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::
   if (bottom_left_coords.size() != dim)
     {
       AssertThrow(false,
-                  std::runtime_error("The bottom left point should have " +
-                                     std::to_string(dim) + " coordinates."));
+                  ExcMessage("The bottom left point should have " +
+                             std::to_string(dim) + " coordinates."));
     }
 
   this->bottom_left = Point<dim>(bottom_left_coords);
@@ -149,8 +149,8 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::
   if (top_right_coords.size() != dim)
     {
       AssertThrow(false,
-                  std::runtime_error("The top right point should have " +
-                                     std::to_string(dim) + " coordinates."));
+                  ExcMessage("The top right point should have " +
+                             std::to_string(dim) + " coordinates."));
     }
 
   this->top_right = Point<dim>(top_right_coords);
@@ -166,8 +166,8 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::
   if (center_coords.size() != dim)
     {
       AssertThrow(false,
-                  std::runtime_error("The center point should have " +
-                                     std::to_string(dim) + " coordinates."));
+                  ExcMessage("The center point should have " +
+                             std::to_string(dim) + " coordinates."));
     }
 
   this->center = Point<dim>(center_coords);

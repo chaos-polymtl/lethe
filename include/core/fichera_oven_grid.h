@@ -66,7 +66,7 @@ FicheraOvenGrid<dim, spacedim>::FicheraOvenGrid(
     {
       AssertThrow(
         false,
-        std::runtime_error(
+        ExcMessage(
           "The Fichera oven mesh is only supported in 3d space with 3d elements."));
     }
 
@@ -77,7 +77,7 @@ FicheraOvenGrid<dim, spacedim>::FicheraOvenGrid(
   if (arguments.size() < 2)
     {
       AssertThrow(false,
-                  std::runtime_error(
+                  ExcMessage(
                     "The Fichera oven grid requires at least 2 arguments: "
                     "(bottom_left : top_right [: colorize]). "
                     "Points are given as x,y,z and colorize as true/false."));

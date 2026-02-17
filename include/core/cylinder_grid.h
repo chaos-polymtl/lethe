@@ -60,7 +60,7 @@ CylinderGrid<dim, spacedim>::CylinderGrid(const std::string &grid_type,
     {
       AssertThrow(
         false,
-        std::runtime_error(
+        ExcMessage(
           "Custom cylinder mesh is only supported in 3d space with 3d elements."));
     }
 
@@ -76,7 +76,7 @@ CylinderGrid<dim, spacedim>::CylinderGrid(const std::string &grid_type,
   else
     AssertThrow(
       false,
-      std::runtime_error(
+      ExcMessage(
         "Unsupported custom cylinder, the choices are: cylinder_classic|cylinder_balanced|cylinder_squared|cylinder_regularized"));
 
 
@@ -95,7 +95,7 @@ CylinderGrid<dim, spacedim>::CylinderGrid(const std::string &grid_type,
     {
       AssertThrow(
         false,
-        std::runtime_error(
+        ExcMessage(
           "Mandatory cylinder parameters are (x subdivisions: radius : half height)"));
     }
   else
