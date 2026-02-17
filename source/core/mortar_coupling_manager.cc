@@ -674,7 +674,7 @@ mortar_workload_imbalance(const Triangulation<dim>      &triangulation,
 {
   unsigned int n_mortar_cells = 0;
 
-  // Identify number of cells in each process
+  // Identify number of cells in each process (local workload)
   for (const auto &cell : triangulation.active_cell_iterators())
     if (cell->is_locally_owned())
       for (const auto face_no : cell->face_indices())
@@ -688,12 +688,14 @@ mortar_workload_imbalance(const Triangulation<dim>      &triangulation,
         }
 
   // Compute minimum, maximum, and summation of cells over all processes
-  const auto n_mortar_cells_min =
-    Utilities::MPI::min(n_mortar_cells, triangulation.get_mpi_communicator());
-  const auto n_mortar_cells_max =
-    Utilities::MPI::max(n_mortar_cells, triangulation.get_mpi_communicator());
-  const auto n_mortar_cells_sum =
-    Utilities::MPI::sum(n_mortar_cells, triangulation.get_mpi_communicator());
+  const auto [n_mortar_cells_sum,
+              n_mortar_cells_min,
+              n_mortar_cells_max,
+              _,
+              __,
+              ___] =
+    Utilities::MPI::min_max_avg(n_mortar_cells,
+                                triangulation.get_mpi_communicator());
 
   const unsigned int n_proc =
     Utilities::MPI::n_mpi_processes(triangulation.get_mpi_communicator());
