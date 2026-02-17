@@ -475,9 +475,9 @@ public:
  * where \f$ \varepsilon \f$ is the cell void fraction and \f$ \text{Re}_p \f$
  * is the particle Reynolds number.
  *
- * Reference: L. Batista Ribeiro Correia, J.-F. Béland, and B. Blais,
- * "Complete liquid-solid momentum coupling for unresolved CFD-DEM
- * simulations," Int. J. Multiph. Flow, vol. 132, p. 103397, 2020.
+ * Reference: Beetstra, R., Martin Anton van der Hoef, and J. A. M. Kuipers.
+ * "Drag force of intermediate Reynolds number flow past mono‐and bidisperse
+ * arrays of spheres." AIChE journal 53.2 (2007): 489-501.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
  *
