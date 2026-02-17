@@ -94,7 +94,9 @@ FicheraOvenGrid<dim, spacedim>::FicheraOvenGrid(
               ExcMessage("The bottom_left point must have exactly " +
                          std::to_string(dim) + " coordinates (x,y,z format)."));
 
-  this->bottom_left = Point<dim>(bottom_left_coords);
+  this->bottom_left = Point<dim>(bottom_left_coords[0],
+                                 bottom_left_coords[1],
+                                 bottom_left_coords[2]);
 
   // Parse top_right point
   std::stringstream   top_right_stream(arguments[1]);
@@ -105,7 +107,8 @@ FicheraOvenGrid<dim, spacedim>::FicheraOvenGrid(
   AssertThrow(top_right_coords.size() == static_cast<unsigned int>(dim),
               ExcMessage("The top_right point must have exactly " +
                          std::to_string(dim) + " coordinates (x,y,z format)."));
-  this->top_right = Point<dim>(top_right_coords);
+  this->top_right =
+    Point<dim>(top_right_coords[0], top_right_coords[1], top_right_coords[2]);
 
   // Parse optional colorize flag (defaults to false)
   this->colorize =
@@ -135,10 +138,9 @@ FicheraOvenGrid<dim, spacedim>::FicheraOvenGrid(
  *
  * @param[out] triangulation The triangulation to fill with the oven mesh.
  */
-template <int dim, int spacedim>
+template <>
 void
-FicheraOvenGrid<dim, spacedim>::make_grid(
-  Triangulation<dim, spacedim> &triangulation)
+FicheraOvenGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
 {
   // Create the initial 2x2x3 subdivided rectangle to be carved
   Triangulation<3>          bulk_tria;
@@ -149,7 +151,7 @@ FicheraOvenGrid<dim, spacedim>::make_grid(
                                             top_right);
 
   // Compute the dimensions of the box for later use in cell removal
-  const Point<3> dimensions = top_right - bottom_left;
+  const Tensor<1, 3> dimensions = top_right - bottom_left;
 
   // Remove cells to create the staircase geometry
   std::set<Triangulation<3>::active_cell_iterator> cells_to_remove;

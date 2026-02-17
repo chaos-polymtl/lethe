@@ -136,7 +136,11 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::
                              std::to_string(dim) + " coordinates."));
     }
 
-  this->bottom_left = Point<dim>(bottom_left_coords);
+  this->bottom_left =
+    (dim == 2) ? Point<dim>(bottom_left_coords[0], bottom_left_coords[1]) :
+                 Point<dim>(bottom_left_coords[0],
+                            bottom_left_coords[1],
+                            bottom_left_coords[2]);
 
   // Parse top_right point
   std::stringstream   top_right_stream(arguments[1]);
@@ -153,7 +157,10 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::
                              std::to_string(dim) + " coordinates."));
     }
 
-  this->top_right = Point<dim>(top_right_coords);
+  this->top_right =
+    (dim == 2) ?
+      Point<dim>(top_right_coords[0], top_right_coords[1]) :
+      Point<dim>(top_right_coords[0], top_right_coords[1], top_right_coords[2]);
 
   // Parse center point
   std::stringstream   center_stream(arguments[2]);
@@ -170,7 +177,10 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::
                              std::to_string(dim) + " coordinates."));
     }
 
-  this->center = Point<dim>(center_coords);
+  this->center =
+    (dim == 2) ?
+      Point<dim>(center_coords[0], center_coords[1]) :
+      Point<dim>(center_coords[0], center_coords[1], center_coords[2]);
 
   // Parse inner_radius
   this->inner_radius = std::stod(arguments[3]);
