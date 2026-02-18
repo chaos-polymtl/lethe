@@ -50,7 +50,6 @@ time_list = reader.time_values
 
 #Define list of VTU files
 list_vtu = os.listdir(output_path)
-print (list_vtu)
 list_vtu = [x for x in list_vtu if "vtu" in x and "pvtu" not in x and "interface" not in x]
 
 # Sort VTU files to ensure they are in the same order as the time step
@@ -66,8 +65,6 @@ for i in range(0, len(list_vtu)):
 
     #Select a data to apply the slice   
     exec(f'df = df_{i}')
-
-    print ("Reading : ", list_vtu[i]) 
 
     #find max 'x' in which phase > 0
     points = pd.DataFrame(df.points[:, 0])
