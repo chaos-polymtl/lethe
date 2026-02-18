@@ -1567,6 +1567,13 @@ namespace Parameters
    */
   struct MultipleAdaptationParameters
   {
+    // Error estimator for the variable
+    enum class ErrorEstimator : std::int8_t
+    {
+      kelly,
+      dpg
+    } error_estimator;
+
     // Coarsening fraction
     double coarsening_fraction;
 
@@ -1589,7 +1596,7 @@ namespace Parameters
     {
       none,
       uniform,
-      kelly
+      adaptive
     } type;
 
     /// Fields on which the mesh adaptation can be based

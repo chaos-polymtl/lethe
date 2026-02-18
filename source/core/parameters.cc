@@ -3314,9 +3314,16 @@ namespace Parameters
 
       prm.declare_entry("type",
                         "none",
-                        Patterns::Selection("none|uniform|kelly"),
+                        Patterns::Selection("none|uniform|adaptive"),
                         "Type of mesh adaptation"
-                        "Choices are <none|uniform|kelly>.");
+                        "Choices are <none|uniform|adaptive>.");
+
+      prm.declare_entry(
+        "error estimator",
+        "kelly",
+        Patterns::Selection("kelly|dpg"),
+        "Error estimator for adaptive mesh refinement. For multi-variables refinement, separate the different strategies with a comma. They should follow the same order as what is specified in the variable parameter."
+        "Choices are <kelly|dpg>.");
 
       prm.declare_entry(
         "fraction refinement",
@@ -3396,12 +3403,18 @@ namespace Parameters
         type = Type::none;
       if (op == "uniform")
         type = Type::uniform;
-      if (op == "kelly")
-        type = Type::kelly;
+      if (op == "adaptive")
+        type = Type::adaptive;
+      else
+        throw std::logic_error(
+          "Error, invalid mesh adaptation type. Choices are <none|uniform|adaptive>.");
 
       // Getting multivariables refinement parameters
       const std::string        var_op   = prm.get("variable");
       std::vector<std::string> var_vec  = Utilities::split_string_list(var_op);
+      const std::string strategy_op = prm.get("error estimator");
+      std::vector<std::string> strategy_vec =
+        Utilities::split_string_list(strategy_op);
       const std::string        coars_op = prm.get("fraction coarsening");
       std::vector<std::string> coars_vec =
         Utilities::split_string_list(coars_op);
@@ -3410,6 +3423,10 @@ namespace Parameters
         Utilities::split_string_list(refin_op);
 
       // Checking that the sizes are coherent
+      Assert(strategy_vec.size() == var_vec.size(),
+             MultipleAdaptationSizeError("error estimator",
+                                         strategy_vec.size(),
+                                         var_vec.size()));
       Assert(coars_vec.size() == var_vec.size(),
              MultipleAdaptationSizeError("fraction coarsening",
                                          coars_vec.size(),
@@ -3440,6 +3457,15 @@ namespace Parameters
           else
             throw std::logic_error(
               "Error, invalid mesh adaptation variable. Choices are velocity, pressure, phase, temperature, phase_cahn_hilliard, chemical_potential_cahn_hilliard or tracer");
+
+          // Parsing strategy for this variable
+          if (strategy_vec[i] == "kelly")
+            var_adaptation_param.error_estimator = MultipleAdaptationParameters::ErrorEstimator::kelly;
+          else if (strategy_vec[i] == "dpg")
+            var_adaptation_param.error_estimator = MultipleAdaptationParameters::ErrorEstimator::dpg;
+          else
+            throw std::logic_error(
+              "Error, invalid mesh adaptation error estimator. Choices are kelly or dpg");
 
           var_adaptation_param.coarsening_fraction = std::stod(coars_vec[i]);
           var_adaptation_param.refinement_fraction = std::stod(refin_vec[i]);
