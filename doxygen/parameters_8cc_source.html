@@ -4701,9 +4701,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l04465" name="l04465"></a><span class="lineno"> 4465</span>      prm.declare_entry(</div>
 <div class="line"><a id="l04466" name="l04466"></a><span class="lineno"> 4466</span>        <span class="stringliteral">&quot;verbosity&quot;</span>,</div>
 <div class="line"><a id="l04467" name="l04467"></a><span class="lineno"> 4467</span>        <span class="stringliteral">&quot;quiet&quot;</span>,</div>
-<div class="line"><a id="l04468" name="l04468"></a><span class="lineno"> 4468</span>        Patterns::Selection(<span class="stringliteral">&quot;quiet|verbose&quot;</span>),</div>
+<div class="line"><a id="l04468" name="l04468"></a><span class="lineno"> 4468</span>        Patterns::Selection(<span class="stringliteral">&quot;quiet|verbose|extra verbose&quot;</span>),</div>
 <div class="line"><a id="l04469" name="l04469"></a><span class="lineno"> 4469</span>        <span class="stringliteral">&quot;State whether from the mortar information should be printed &quot;</span></div>
-<div class="line"><a id="l04470" name="l04470"></a><span class="lineno"> 4470</span>        <span class="stringliteral">&quot;Choices are &lt;quiet|verbose&gt;.&quot;</span>);</div>
+<div class="line"><a id="l04470" name="l04470"></a><span class="lineno"> 4470</span>        <span class="stringliteral">&quot;Choices are &lt;quiet|verbose|extra verbose&gt;.&quot;</span>);</div>
 <div class="line"><a id="l04471" name="l04471"></a><span class="lineno"> 4471</span>    }</div>
 <div class="line"><a id="l04472" name="l04472"></a><span class="lineno"> 4472</span>    prm.leave_subsection();</div>
 <div class="line"><a id="l04473" name="l04473"></a><span class="lineno"> 4473</span>  }</div>
@@ -4743,22 +4743,24 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l04505" name="l04505"></a><span class="lineno"> 4505</span>        verbosity = <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Verbosity::verbose</a>;</div>
 <div class="line"><a id="l04506" name="l04506"></a><span class="lineno"> 4506</span>      <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;quiet&quot;</span>)</div>
 <div class="line"><a id="l04507" name="l04507"></a><span class="lineno"> 4507</span>        verbosity = <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Verbosity::quiet</a>;</div>
-<div class="line"><a id="l04508" name="l04508"></a><span class="lineno"> 4508</span>    }</div>
-<div class="line"><a id="l04509" name="l04509"></a><span class="lineno"> 4509</span>    prm.leave_subsection();</div>
-<div class="line"><a id="l04510" name="l04510"></a><span class="lineno"> 4510</span>  }</div>
+<div class="line"><a id="l04508" name="l04508"></a><span class="lineno"> 4508</span>      <span class="keywordflow">if</span> (op == <span class="stringliteral">&quot;extra verbose&quot;</span>)</div>
+<div class="line"><a id="l04509" name="l04509"></a><span class="lineno"> 4509</span>        verbosity = <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919ae5cbb8171b496f26a4488b9e15a0fe52">Verbosity::extra_verbose</a>;</div>
+<div class="line"><a id="l04510" name="l04510"></a><span class="lineno"> 4510</span>    }</div>
+<div class="line"><a id="l04511" name="l04511"></a><span class="lineno"> 4511</span>    prm.leave_subsection();</div>
+<div class="line"><a id="l04512" name="l04512"></a><span class="lineno"> 4512</span>  }</div>
 </div>
-<div class="line"><a id="l04511" name="l04511"></a><span class="lineno"> 4511</span> </div>
-<div class="line"><a id="l04512" name="l04512"></a><span class="lineno"> 4512</span>  <span class="comment">// Explicitly instantiate template classes and structs</span></div>
-<div class="line"><a id="l04513" name="l04513"></a><span class="lineno"> 4513</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1Laser.html">Laser&lt;2&gt;</a>;</div>
-<div class="line"><a id="l04514" name="l04514"></a><span class="lineno"> 4514</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1Laser.html">Laser&lt;3&gt;</a>;</div>
-<div class="line"><a id="l04515" name="l04515"></a><span class="lineno"> 4515</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1IBParticles.html">IBParticles&lt;2&gt;</a>;</div>
-<div class="line"><a id="l04516" name="l04516"></a><span class="lineno"> 4516</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1IBParticles.html">IBParticles&lt;3&gt;</a>;</div>
-<div class="line"><a id="l04517" name="l04517"></a><span class="lineno"> 4517</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1ConstrainSolidDomain.html">ConstrainSolidDomain&lt;2&gt;</a>;</div>
-<div class="line"><a id="l04518" name="l04518"></a><span class="lineno"> 4518</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1ConstrainSolidDomain.html">ConstrainSolidDomain&lt;3&gt;</a>;</div>
-<div class="line"><a id="l04519" name="l04519"></a><span class="lineno"> 4519</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1Mortar.html">Mortar&lt;2&gt;</a>;</div>
-<div class="line"><a id="l04520" name="l04520"></a><span class="lineno"> 4520</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1Mortar.html">Mortar&lt;3&gt;</a>;</div>
-<div class="line"><a id="l04521" name="l04521"></a><span class="lineno"> 4521</span> </div>
-<div class="line"><a id="l04522" name="l04522"></a><span class="lineno"> 4522</span>} <span class="comment">// namespace Parameters</span></div>
+<div class="line"><a id="l04513" name="l04513"></a><span class="lineno"> 4513</span> </div>
+<div class="line"><a id="l04514" name="l04514"></a><span class="lineno"> 4514</span>  <span class="comment">// Explicitly instantiate template classes and structs</span></div>
+<div class="line"><a id="l04515" name="l04515"></a><span class="lineno"> 4515</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1Laser.html">Laser&lt;2&gt;</a>;</div>
+<div class="line"><a id="l04516" name="l04516"></a><span class="lineno"> 4516</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1Laser.html">Laser&lt;3&gt;</a>;</div>
+<div class="line"><a id="l04517" name="l04517"></a><span class="lineno"> 4517</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1IBParticles.html">IBParticles&lt;2&gt;</a>;</div>
+<div class="line"><a id="l04518" name="l04518"></a><span class="lineno"> 4518</span>  <span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classParameters_1_1IBParticles.html">IBParticles&lt;3&gt;</a>;</div>
+<div class="line"><a id="l04519" name="l04519"></a><span class="lineno"> 4519</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1ConstrainSolidDomain.html">ConstrainSolidDomain&lt;2&gt;</a>;</div>
+<div class="line"><a id="l04520" name="l04520"></a><span class="lineno"> 4520</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1ConstrainSolidDomain.html">ConstrainSolidDomain&lt;3&gt;</a>;</div>
+<div class="line"><a id="l04521" name="l04521"></a><span class="lineno"> 4521</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1Mortar.html">Mortar&lt;2&gt;</a>;</div>
+<div class="line"><a id="l04522" name="l04522"></a><span class="lineno"> 4522</span>  <span class="keyword">template</span> <span class="keyword">struct </span><a class="code hl_struct" href="structParameters_1_1Mortar.html">Mortar&lt;3&gt;</a>;</div>
+<div class="line"><a id="l04523" name="l04523"></a><span class="lineno"> 4523</span> </div>
+<div class="line"><a id="l04524" name="l04524"></a><span class="lineno"> 4524</span>} <span class="comment">// namespace Parameters</span></div>
 <div class="ttc" id="aclassParameters_1_1Dimensionality_html"><div class="ttname"><a href="classParameters_1_1Dimensionality.html">Parameters::Dimensionality</a></div><div class="ttdoc">Class used to rescale physical properties for cases where the main dimensions of the problems (Length...</div><div class="ttdef"><b>Definition</b> <a href="dimensionality_8h_source.html#l00023">dimensionality.h:24</a></div></div>
 <div class="ttc" id="aclassParameters_1_1Dimensionality_html_a1240b4f88b9058e5b5fc3ae8cf28cbb7"><div class="ttname"><a href="classParameters_1_1Dimensionality.html#a1240b4f88b9058e5b5fc3ae8cf28cbb7">Parameters::Dimensionality::specific_heat_scaling</a></div><div class="ttdeci">double specific_heat_scaling</div><div class="ttdef"><b>Definition</b> <a href="dimensionality_8h_source.html#l00087">dimensionality.h:87</a></div></div>
 <div class="ttc" id="aclassParameters_1_1Dimensionality_html_a320039afb290a0d41880ed9de5dd506b"><div class="ttname"><a href="classParameters_1_1Dimensionality.html#a320039afb290a0d41880ed9de5dd506b">Parameters::Dimensionality::viscosity_scaling</a></div><div class="ttdeci">double viscosity_scaling</div><div class="ttdef"><b>Definition</b> <a href="dimensionality_8h_source.html#l00086">dimensionality.h:86</a></div></div>

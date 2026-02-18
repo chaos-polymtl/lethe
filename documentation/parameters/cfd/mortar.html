@@ -467,7 +467,7 @@
   set penalty factor      = 1.0
   set oversampling factor = 2
   set radius tolerance    = 1e-8
-  set verbosity           = verbose
+  set verbosity           = quiet
 end
 </pre></div>
 </div>
@@ -511,8 +511,22 @@ To circumvent this, the rotor boundary IDs are shifted. The <code class="docutil
 <p>The default value for <code class="docutils literal notranslate"><span class="pre">radius</span> <span class="pre">tolerance</span></code> is <span class="math notranslate nohighlight">\(10^{-8}\)</span>, which should cover the precision range of deal.II-generated grids. The tolerance might need to be increased for some <code class="docutils literal notranslate"><span class="pre">gmsh</span></code> mesh type cases or for large simulations running in multiple cores, when the above verification fails even if the mesh discretization is coherent.</p>
 </div>
 <ul class="simple">
-<li><p>When enabling <code class="docutils literal notranslate"><span class="pre">verbosity</span></code> (<code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">verbosity</span> <span class="pre">=</span> <span class="pre">verbose</span></code>), the rotor rotation information is printed at every iteration.</p></li>
+<li><p>When enabling <code class="docutils literal notranslate"><span class="pre">verbosity</span></code> (<code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">verbosity</span> <span class="pre">=</span> <span class="pre">verbose</span></code>), the rotor rotation information is printed at every iteration. The option <code class="docutils literal notranslate"><span class="pre">extra</span> <span class="pre">verbose</span></code> also prints the workload imbalance of mortar cells. We consider that an ideal work imbalance is given by:</p></li>
 </ul>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\text{ideal} = \dfrac{\sum_i^{n_{proc}} cells_{(i)}}{n_{proc}}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(n_{proc}\)</span> is the total number of processes and <span class="math notranslate nohighlight">\(cells_{(i)}\)</span> is the number of cells at each process <span class="math notranslate nohighlight">\(i\)</span>. The actual workload imbalance is given by the ratio between the maximum number of cells in a processor, <span class="math notranslate nohighlight">\(cells_{(max)}\)</span>, and the ideal workload:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\text{workload} = \dfrac{cells_{(max)}}{\text{ideal}}\]</div>
+</div>
+<p>Ideally, this parallel distribution imbalance is equal to 1; values greater than 1 indicate a slowdown compared to a perfectly distributed scenario in which all processes would contain the same number of mortar cells.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>The workload imbalance computation used here follows the same idea as the deal.II <code class="docutils literal notranslate"><span class="pre">workload_imbalance()</span></code> function used in the <a class="reference external" href="https://dealii.org/current/doxygen/deal.II/namespaceMGTools.html">geometric multigrid setup</a>, enabled in the <a class="reference internal" href="linear_solver_control.html"><span class="doc">Linear Solver</span></a> when <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">preconditioner</span> <span class="pre">=</span> <span class="pre">gcmg</span></code> and <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">mg</span> <span class="pre">verbosity</span> <span class="pre">=</span> <span class="pre">extra</span> <span class="pre">verbose</span></code>.</p>
+</div>
 <section id="reference">
 <h2>Reference<a class="headerlink" href="#reference" title="Link to this heading">#</a></h2>
 <aside class="footnote-list brackets">
