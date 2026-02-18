@@ -43,7 +43,7 @@ subsection VOF
       set tanh thickness                = 0.08
       set transformation type           = tanh
     end
-  end  
+  end
 
   subsection phase filtration
     set type      = tanh
