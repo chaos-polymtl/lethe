@@ -4465,9 +4465,9 @@ namespace Parameters
       prm.declare_entry(
         "verbosity",
         "quiet",
-        Patterns::Selection("quiet|verbose"),
+        Patterns::Selection("quiet|verbose|extra verbose"),
         "State whether from the mortar information should be printed "
-        "Choices are <quiet|verbose>.");
+        "Choices are <quiet|verbose|extra verbose>.");
     }
     prm.leave_subsection();
   }
@@ -4505,6 +4505,8 @@ namespace Parameters
         verbosity = Verbosity::verbose;
       if (op == "quiet")
         verbosity = Verbosity::quiet;
+      if (op == "extra verbose")
+        verbosity = Verbosity::extra_verbose;
     }
     prm.leave_subsection();
   }

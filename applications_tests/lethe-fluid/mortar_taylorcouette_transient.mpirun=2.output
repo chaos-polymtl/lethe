@@ -1,6 +1,9 @@
 Running on 2 MPI rank(s)...
-Mortar - Rotor grid angle is: 0 rad 
-         Rotor grid velocity is: 2 rad/time 
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    0 rad 
+Rotor grid velocity: 2 rad/time 
 
    Number of active cells:       512
    Number of degrees of freedom: 4928
@@ -9,8 +12,11 @@ Mortar - Rotor grid angle is: 0 rad
 *******************************************************************************
 Transient iteration: 1        Time: 0.2      Time step: 0.2      CFL: 0       
 *******************************************************************************
-Mortar - Rotor grid angle is: 0.4 rad 
-         Rotor grid velocity is: 2 rad/time 
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    0.4 rad 
+Rotor grid velocity: 2 rad/time 
 
 
 +------------------------------------------+
@@ -25,8 +31,11 @@ Boundary ID      T_x          T_y           T_z
 *******************************************************************************
 Transient iteration: 2        Time: 0.4      Time step: 0.2      CFL: 2.14888 
 *******************************************************************************
-Mortar - Rotor grid angle is: 0.8 rad 
-         Rotor grid velocity is: 2 rad/time 
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    0.8 rad 
+Rotor grid velocity: 2 rad/time 
 
 
 +------------------------------------------+
@@ -41,8 +50,11 @@ Boundary ID      T_x          T_y           T_z
 *******************************************************************************
 Transient iteration: 3        Time: 0.6      Time step: 0.2      CFL: 2.15788 
 *******************************************************************************
-Mortar - Rotor grid angle is: 1.2 rad 
-         Rotor grid velocity is: 2 rad/time 
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    1.2 rad 
+Rotor grid velocity: 2 rad/time 
 
 
 +------------------------------------------+

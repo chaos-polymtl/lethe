@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2026/02/16
 
+### Added
+
+- MINOR This PR adds a function to compute the workload imbalance of mortar cells. When `verbosity` is set to `extra verbose` in the mortar subsection, the function `mortar_workload_imbalance` is called. Then, the computed workload imbalance is printed, as well as the minimum and maximum number of mortar cells per process. [#1910](https://github.com/chaos-polymtl/lethe/pull/1910)
+
 ### Fixed
 
 - MINOR The store_candidates function of the broad search stores the potential contact candidates of a particle. It uses a pre-allocated vector to store them. However, this pre-allocated vector was allocated and then copied into the storage container. Furthermore, the hash function for the map was used twice, once for the search and then once for the emplace. This PR fixes this by using a different logic. First, we use try_emplace to insert an empty vector into the map. If the insertion has occured, we reserve the memory for that vector locally inside of the map. This prevents both the double usage of the hash function and the double vector allocation. The performance increase in some of the test cases I have tried is quite significant (approx. 10% faster than it used to be). This does not change anything to any of the results since the order of operations is preserved. [#1911](https://github.com/chaos-polymtl/lethe/pull/1911)
@@ -22,7 +26,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 This PR adds all the parameter files and scripts used to run the cases presented in the CLS reinitialization methods article (rising bubble 3D, capillary migration, and Rayleigh-Plateau instability). The files are as they were used, so there is place for improvement (portability between simulation). The documentation of the examples will be added later. [#1912](https://github.com/chaos-polymtl/lethe/pull/1912)
 
-## [Master] - 2026/02/16
 
 ### Changed
 

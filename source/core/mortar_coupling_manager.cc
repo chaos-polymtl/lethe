@@ -666,6 +666,52 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
   return quadrature;
 }
 
+template <int dim>
+void
+mortar_workload_imbalance(const Triangulation<dim>      &triangulation,
+                          const Parameters::Mortar<dim> &mortar_parameters,
+                          const ConditionalOStream      &pcout)
+{
+  unsigned int n_mortar_cells = 0;
+
+  // Identify number of cells in each process (local workload)
+  for (const auto &cell : triangulation.active_cell_iterators())
+    if (cell->is_locally_owned())
+      for (const auto face_no : cell->face_indices())
+        {
+          const auto face = cell->face(face_no);
+
+          if (face->at_boundary() &&
+              (face->boundary_id() == mortar_parameters.rotor_boundary_id ||
+               face->boundary_id() == mortar_parameters.stator_boundary_id))
+            ++n_mortar_cells;
+        }
+
+  // Compute minimum, maximum, and summation of cells over all processes
+  const auto [n_mortar_cells_sum,
+              n_mortar_cells_min,
+              n_mortar_cells_max,
+              _,
+              __,
+              ___] =
+    Utilities::MPI::min_max_avg(n_mortar_cells,
+                                triangulation.get_mpi_communicator());
+
+  const unsigned int n_proc =
+    Utilities::MPI::n_mpi_processes(triangulation.get_mpi_communicator());
+
+  // Ideal work: same number of cells per process
+  const double ideal_work = n_mortar_cells_sum / static_cast<double>(n_proc);
+
+  // Workload imbalance (the closest to 1.0, the better)
+  const double workload_imbalance = n_mortar_cells_max / ideal_work;
+
+  pcout << "Workload imbalance: " << workload_imbalance << std::endl;
+  pcout << "Number of cells per process - Min.: " << n_mortar_cells_min
+        << std::endl;
+  pcout << "                              Max.: " << n_mortar_cells_max
+        << std::endl;
+}
 
 /*-------------- MortarManagerCircle -------------------------------*/
 template <int dim>
@@ -1889,3 +1935,13 @@ construct_quadrature(const Quadrature<2>         &quadrature,
 template Quadrature<3>
 construct_quadrature(const Quadrature<3>         &quadrature,
                      const Parameters::Mortar<3> &mortar_parameters);
+
+template void
+mortar_workload_imbalance(const Triangulation<2>      &triangulation,
+                          const Parameters::Mortar<2> &mortar_parameters,
+                          const ConditionalOStream    &pcout);
+
+template void
+mortar_workload_imbalance(const Triangulation<3>      &triangulation,
+                          const Parameters::Mortar<3> &mortar_parameters,
+                          const ConditionalOStream    &pcout);
