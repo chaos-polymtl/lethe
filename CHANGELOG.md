@@ -4,11 +4,17 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/02/18
+
+### Changed
+
+- MINOR Changed the 2D dam break example to use geometric redistanciation instead of the projection method. The results do not change, but we would rather users use this method instead of the projection method. The documentation was updated accordingly. [#1916](https://github.com/chaos-polymtl/lethe/pull/1916)
+
 ## [Master] - 2026/02/17
 
 ### Fixed
 
-- MINOR Changed the way the waveguide inlet boundary conditions are computed for the time‑harmonic Maxwell solver: we now define an orthonormal local basis from the input quadrilateral, compute the excitation in that local frame, then map it back to the global frame. This fixes cases where the local basis is left‑handed by correctly accounting for the magnetic field's pseudovector behaviour.  [#1896](https://github.com/chaos-polymtl/lethe/pull/1896)
+- MINOR Changed the way the waveguide inlet boundary conditions are computed for the time‑harmonic Maxwell solver: we now define an orthonormal local basis from the input quadrilateral, compute the excitation in that local frame, then map it back to the global frame. This fixes cases where the local basis is left‑handed by correctly accounting for the magnetic field's pseudovector behaviour. [#1896](https://github.com/chaos-polymtl/lethe/pull/1896)
 
 ## [Master] - 2026/02/16
 
