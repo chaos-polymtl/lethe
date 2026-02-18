@@ -287,7 +287,7 @@ Finally, the animation below displays the evolution of the liquid phase through 
 
 .. raw:: html
 
-    <iframe width="850" height="478" src="https://www.youtube.com/embed/VO09gtJxbSE?si=x7zKsTrLN7N4zi4u" title="Air bubble detachment in water shear flow" frameborder="0" allowfullscreen></iframe>
+    <iframe width="850" height="478" src="https://www.youtube.com/embed/VO09gtJxbSE?si=x7zKsTrLN7N4zi4u" title="2D Dam-break simulation" frameborder="0" allowfullscreen></iframe>
 
 
 ----------------------------
