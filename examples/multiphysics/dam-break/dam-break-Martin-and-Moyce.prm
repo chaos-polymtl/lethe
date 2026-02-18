@@ -36,7 +36,7 @@ end
 subsection VOF
   subsection interface regularization method
     set type      = geometric interface reinitialization
-    set frequency = 20
+    set frequency = 10
     set verbosity = verbose
     subsection geometric interface reinitialization
       set max reinitialization distance = 0.32

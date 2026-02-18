@@ -98,22 +98,26 @@ VOF
 ~~~
 
 
-To prevent the interface between phases from becoming blurry due to diffusion, the interface ``projection-based interface sharpening`` method is selected in the ``interface regularization method`` subsection. Furthermore, the ``phase filtration`` is enabled in this example. We refer the reader to the :doc:`../../../theory/multiphase/cfd/vof` documentation for more explanation on both methods.
+To prevent the interface between phases from becoming blurry due to diffusion, the interface ``geometric interface reinitialization`` method is selected in the ``interface regularization method`` subsection. The ``max reinitialization distance`` is set to ensure the interface thickness is at least 12 cells. Furthermore, the ``phase filtration`` is enabled in this example. We refer the reader to the :doc:`../../../theory/multiphase/cfd/vof` documentation for more explanation on both methods.
 
 .. code-block:: text
 
     subsection VOF
       subsection interface regularization method
-        set type      = projection-based interface sharpening
-        set frequency = 20
-        subsection projection-based interface sharpening
-          set threshold           = 0.5
-          set interface sharpness = 1.5
+        set type      = geometric interface reinitialization
+        set frequency = 10
+        set verbosity = verbose
+        subsection geometric interface reinitialization
+          set max reinitialization distance = 0.32
+          set tanh thickness                = 0.08
+          set transformation type           = tanh
         end
-      end
+      end  
+
       subsection phase filtration
-        set type            = tanh
-        set beta            = 10
+        set type      = tanh
+        set verbosity = quiet
+        set beta      = 10
       end
     end
 
