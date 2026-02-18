@@ -637,6 +637,11 @@ end
 <p class="admonition-title">Important</p>
 <p>Lethe saves the simulation results in the Paraview format. For every iteration, one or more <code class="docutils literal notranslate"><span class="pre">.vtu</span></code> are produced, which are indexed by a single <code class="docutils literal notranslate"><span class="pre">.pvtu</span></code> file. A single <code class="docutils literal notranslate"><span class="pre">.pvd</span></code> file linking all iterations together is also generated. Use the open-source software <a class="reference external" href="https://www.paraview.org/">Paraview</a> to visualize them.</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>One of the components in the output files is the velocity gradient. Note that the 9 gradient components are numbered in a way that the following correspondence is valid:
+0 = <span class="math notranslate nohighlight">\(xx\)</span>, 1 = <span class="math notranslate nohighlight">\(xy\)</span>, 2 = <span class="math notranslate nohighlight">\(xz\)</span>, 3 = <span class="math notranslate nohighlight">\(yx\)</span>, 4 = <span class="math notranslate nohighlight">\(yy\)</span>, 5 = <span class="math notranslate nohighlight">\(yz\)</span>, 6 = <span class="math notranslate nohighlight">\(zx\)</span>, 7 = <span class="math notranslate nohighlight">\(zy\)</span>, 8 = <span class="math notranslate nohighlight">\(zz\)</span></p>
+</div>
 </li>
 <li><dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">control</span></code>: control for the output of the simulation results. The available options are:</dt><dd><ul class="simple">

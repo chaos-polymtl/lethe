@@ -191,6 +191,10 @@ Paraview output file parameters
   .. important::
 	  Lethe saves the simulation results in the Paraview format. For every iteration, one or more ``.vtu`` are produced, which are indexed by a single ``.pvtu`` file. A single ``.pvd`` file linking all iterations together is also generated. Use the open-source software `Paraview <https://www.paraview.org/>`_ to visualize them.
 
+  .. note::
+    One of the components in the output files is the velocity gradient. Note that the 9 gradient components are numbered in a way that the following correspondence is valid:
+    0 = :math:`xx`, 1 = :math:`xy`, 2 = :math:`xz`, 3 = :math:`yx`, 4 = :math:`yy`, 5 = :math:`yz`, 6 = :math:`zx`, 7 = :math:`zy`, 8 = :math:`zz`
+
 * ``output control``: control for the output of the simulation results. The available options are: 
 	* ``iteration``: results will be outputted at constant iteration frequency. 
 	* ``time`` : results will be outputted based on time parameters (specific times or time frequency). The results can also be outputted for certain time interval.
