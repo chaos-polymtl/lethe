@@ -146,24 +146,11 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
             }
           else
             {
-              // We need to check the dimension and spacedim at compile time
-              // since the cylinder grid is only implemented for 3d space with
-              // 3d elements, and we want to throw an error if users try to use
-              // it in other dimensions. We cannot check this at runtime since
-              // the Triangulation class is templated on dim and spacedim.
-              if constexpr (dim == 3 && spacedim == 3)
-                {
-                  CylinderGrid<dim, spacedim> grid(
-                    grid_type, mesh_parameters.grid_arguments);
-                  grid.make_grid(triangulation);
+              CylinderGrid<dim, spacedim> grid(grid_type,
+                                               mesh_parameters.grid_arguments);
+              grid.make_grid(triangulation);
 
-                  GridTools::scale(mesh_parameters.scale, triangulation);
-                }
-              else
-                {
-                  throw std::runtime_error(
-                    "Unsupported mesh type - custom cylinder mesh is only supported in 3d space with 3d elemtents.");
-                }
+              GridTools::scale(mesh_parameters.scale, triangulation);
             }
         }
       // Periodic Hills grid

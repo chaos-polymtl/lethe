@@ -68,6 +68,7 @@ FicheraOvenGrid<dim, spacedim>::FicheraOvenGrid(
         false,
         ExcMessage(
           "The Fichera oven mesh is only supported in 3d space with 3d elements."));
+      return;
     }
 
   this->grid_arguments = grid_arguments;
@@ -198,6 +199,21 @@ FicheraOvenGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
               face->set_boundary_id(1);
           }
     }
+}
+
+// Fallback make_grid definition for unsupported template parameters. This
+// provides a linker-visible symbol and a clear runtime error when the
+// class is instantiated for dim/spacedim combinations that are not
+// specialized above.
+template <int dim, int spacedim>
+void
+FicheraOvenGrid<dim, spacedim>::make_grid(
+  Triangulation<dim, spacedim> & /*triangulation*/)
+{
+  AssertThrow(
+    false,
+    ExcMessage(
+      "FicheraOvenGrid is only supported for <3,3> <dim,spacedim> specializations."));
 }
 
 #endif

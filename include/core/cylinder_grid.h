@@ -56,12 +56,13 @@ template <int dim, int spacedim>
 CylinderGrid<dim, spacedim>::CylinderGrid(const std::string &grid_type,
                                           const std::string &grid_arguments)
 {
-  if constexpr (dim != 3 || spacedim != 3)
+  if constexpr (!(dim == 3 && spacedim == 3))
     {
       AssertThrow(
         false,
         ExcMessage(
           "Custom cylinder mesh is only supported in 3d space with 3d elements."));
+      return;
     }
 
   this->grid_arguments = grid_arguments;
@@ -114,10 +115,9 @@ CylinderGrid<dim, spacedim>::CylinderGrid(const std::string &grid_type,
  *
  * @param triangulation. The triangulation object on which the grid is generated
  */
-template <int dim, int spacedim>
+template <>
 void
-CylinderGrid<dim, spacedim>::make_grid(
-  Triangulation<dim, spacedim> &triangulation)
+CylinderGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
 {
   if (cylinder_type == CylinderType::classic)
     {
@@ -130,11 +130,11 @@ CylinderGrid<dim, spacedim>::make_grid(
   else
     {
       // Create a temporary 2d mesh
-      Triangulation<2, spacedim - 1> temporary_triangulation;
+      Triangulation<2, 2> temporary_triangulation;
 
       // Create a spherical manifold for 2d mesh
-      Point<2>                                 center(0.0, 0.0);
-      const SphericalManifold<2, spacedim - 1> m0(center);
+      Point<2>                      center(0.0, 0.0);
+      const SphericalManifold<2, 2> m0(center);
 
       if (cylinder_type == CylinderType::regularized ||
           cylinder_type == CylinderType::squared)
@@ -183,7 +183,7 @@ CylinderGrid<dim, spacedim>::make_grid(
           GridTools::regularize_corner_cells(temporary_triangulation);
 
           // Flatten the triangulation
-          Triangulation<2, spacedim - 1> flat_temporary_triangulation;
+          Triangulation<2, 2> flat_temporary_triangulation;
           flat_temporary_triangulation.copy_triangulation(
             temporary_triangulation);
           temporary_triangulation.clear();
@@ -200,9 +200,9 @@ CylinderGrid<dim, spacedim>::make_grid(
 
       // Rotate mesh in x-axis and set the (0,0,0) at the barycenter
       // to be comparable to dealii cylinder meshes
-      Tensor<1, spacedim> axis_vector({0.0, 1.0, 0.0});
+      Tensor<1, 3> axis_vector({0.0, 1.0, 0.0});
       GridTools::rotate(axis_vector, M_PI_2, triangulation);
-      Tensor<1, spacedim> shift_vector({-half_height, 0.0, 0.0});
+      Tensor<1, 3> shift_vector({-half_height, 0.0, 0.0});
       GridTools::shift(shift_vector, triangulation);
 
       // Force the manifold id to be zero in the case of the balanced
@@ -211,9 +211,23 @@ CylinderGrid<dim, spacedim>::make_grid(
         triangulation.reset_manifold(1);
 
       // Add a cylindrical manifold on the final unrefined mesh
-      const CylindricalManifold<3, spacedim> m1(0);
+      const CylindricalManifold<3, 3> m1(0);
       triangulation.set_manifold(0, m1);
     }
+}
+
+// Fallback make_grid definition for unsupported template parameters. This
+// provides a linker-visible symbol and a clear runtime error when the
+// class is instantiated for dim/spacedim combinations that are not
+// specialized above.
+template <int dim, int spacedim>
+void
+CylinderGrid<dim, spacedim>::make_grid(
+  Triangulation<dim, spacedim> & /*triangulation*/)
+{
+  AssertThrow(false,
+              ExcMessage(
+                "CylinderGrid is only implemented for dim=3 and spacedim=3."));
 }
 
 #endif

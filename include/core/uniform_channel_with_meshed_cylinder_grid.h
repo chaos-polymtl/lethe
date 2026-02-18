@@ -100,7 +100,8 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::
       AssertThrow(
         false,
         ExcMessage(
-          "The uniform channel with meshed cylinder mesh is only supported in 2d and 3d space with 2d and 3d elements."));
+          "The uniform channel with meshed cylinder mesh is only supported in 2d and 3d space."));
+      return;
     }
   else if constexpr (dim == 2 && spacedim == 3)
     {
@@ -108,6 +109,7 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::
         false,
         ExcMessage(
           "The uniform channel with meshed cylinder mesh is only supported in 3d space with 3d elements."));
+      return;
     }
 
   this->grid_arguments = grid_arguments;
@@ -543,6 +545,21 @@ UniformChannelWithMeshedCylinderGrid<3, 3>::make_grid(
   TransfiniteInterpolationManifold<3> tfi_manifold;
   tfi_manifold.initialize(triangulation);
   triangulation.set_manifold(0, tfi_manifold);
+}
+
+// Fallback make_grid definition for unsupported template parameters. This
+// provides a linker-visible symbol and a clear runtime error when the
+// class is instantiated for dim/spacedim combinations that are not
+// specialized above.
+template <int dim, int spacedim>
+void
+UniformChannelWithMeshedCylinderGrid<dim, spacedim>::make_grid(
+  Triangulation<dim, spacedim> & /*triangulation*/)
+{
+  AssertThrow(
+    false,
+    ExcMessage(
+      "UniformChannelWithMeshedCylinderGrid is only supported for <2,2> and <3,3> <dim,spacedim> specializations."));
 }
 
 #endif
