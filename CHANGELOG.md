@@ -4,6 +4,11 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/02/19
+
+### Fixed
+- MINOR This PR changes the outputted liquid fraction table in a scientific notation format and adds the missing post-processing parameters to the user documentation. [#1917](https://github.com/chaos-polymtl/lethe/pull/1917)
+
 ## [Master] - 2026/02/18
 
 ### Changed
@@ -18,7 +23,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
--MINOR This PR adds the velocity gradient field to the post-processor data structure. [#1913](https://github.com/chaos-polymtl/lethe/pull/1913)
+- MINOR This PR adds the velocity gradient field to the post-processor data structure. [#1913](https://github.com/chaos-polymtl/lethe/pull/1913)
 
 - MINOR This PR improves the Doxygen documentation and the comments for the VANS assemblers. The VANS assemblers were correctly documented, but the formulas of the assemblers were still written in C++ style instead of in LaTeX style which made their rendering on the doxygen very poor. This PR improves this by formatting in LaTeX. [#1909](https://github.com/chaos-polymtl/lethe/pull/1909)
 
