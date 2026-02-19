@@ -117,21 +117,35 @@ Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
-class VANSAssemblerBeetstra&lt; dim &gt;</div><p>Class that assembles the drag force using Beetstra model for the VANS equations where the normalized drag force = 10 * (1 - cell_void_fraction) / (pow(cell_void_fraction, 2)) + pow(cell_void_fraction, 2) * (1 + 1.5. </p>
-<ul>
-<li>pow((1 - cell_void_fraction), 0.5)) + 0.413 * re / (24 * pow(cell_void_fraction, 2)) * ((1 / cell_void_fraction) + 3 * (1 - cell_void_fraction) * cell_void_fraction<ul>
-<li>8.4 * pow(re, -0.343)) / (1 + pow(10, 3 * (1 - cell_void_fraction)) pow(re, -(1 + 4 * (1 - cell_void_fraction)) * 0.5)); the drag coefficient = normalized_drag_force * 24 / Re_p The reference for this formulation of the Beestra model is given in the article *Complete liquid-solid momentum coupling for unresolved CFD-DEM simulations: <a href="https://www.sciencedirect.com/science/article/pii/S0301932220305346">https://www.sciencedirect.com/science/article/pii/S0301932220305346</a></li>
-</ul>
-</li>
-</ul>
+class VANSAssemblerBeetstra&lt; dim &gt;</div><p>Assembler for the drag force using the Beetstra model. </p>
+<p>The normalized drag force is computed as:  </p><p class="formulaDsp">
+\[
+F_{\text{norm}} = \frac{10(1-\varepsilon)}{\varepsilon^2}
+  + \varepsilon^2 \left(1 + 1.5\sqrt{1-\varepsilon}\right)
+  + \frac{0.413\,\text{Re}_p}{24\varepsilon^2}
+    \frac{\frac{1}{\varepsilon}
+          + 3(1-\varepsilon)\varepsilon
+          + 8.4\,\text{Re}_p^{-0.343}}
+         {1 + 10^{3(1-\varepsilon)}
+          \text{Re}_p^{-0.5(1 + 4(1-\varepsilon))}}
+\]
+</p>
+<p>The drag coefficient is then:  </p><p class="formulaDsp">
+\[
+C_d = \frac{24\,F_{\text{norm}}}{\text{Re}_p}
+\]
+</p>
+<p>where \( \varepsilon \) is the cell void fraction and \( \text{Re}_p \) is the particle Reynolds number.</p>
+<p>Reference: Beetstra, R., Martin Anton van der Hoef, and J. A. M. Kuipers. "Drag force of intermediate Reynolds number flow past mono‐and bidisperse
+arrays of spheres." AIChE journal 53.2 (2007): 489-501.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions </td></tr>
+    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00357">357</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00487">487</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a48f2fe7a4c7e2e0abda9290f7ce39589" name="a48f2fe7a4c7e2e0abda9290f7ce39589"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a48f2fe7a4c7e2e0abda9290f7ce39589">&#9670;&#160;</a></span>VANSAssemblerBeetstra()</h2>
@@ -159,7 +173,15 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00360">360</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p>Construct a <a class="el" href="classVANSAssemblerBeetstra.html" title="Assembler for the drag force using the Beetstra model.">VANSAssemblerBeetstra</a> object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cfd_dem</td><td>CFD-DEM simulation parameters. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00495">495</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>
@@ -190,7 +212,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>calculate_particle_fluid_interactions calculates the solid_fluid interactions </p>
+<p>Calculate the particle-fluid interactions resulting from drag, using the Beetstra model.. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">scratch_data</td><td>(see base class) </td></tr>
@@ -221,7 +243,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00372">372</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p>CFD-DEM simulation parameters. </p>
+
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00510">510</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>

@@ -117,17 +117,30 @@ Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
-class VANSAssemblerGidaspow&lt; dim &gt;</div><p>Class that assembles the drag force using Gidaspow model for the VANS equations where the momentum_transfer_coefficient is calculated according to the following Marchelli et al. (2020): if (cell_void_fraction &gt; 0.8) { momentum_transfer_coefficient = (18 * pow(cell_void_fraction, -3.65) * (1 + 0.15 * pow(Re_p[particle_number], 0.687))) * (particle_properties[DEM::PropertiesIndex&lt;DEM::SolverType::cfd_dem&gt;::mass] viscosity / (pow(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp],
- 2) * particle_density)); } else { Assuming the sphericity of particles = 1 momentum_transfer_coefficient = (150 * (1 - cell_void_fraction) / pow(cell_void_fraction, 2) + 1.75 * Re_p[particle_number] / pow(cell_void_fraction, 2)) * (particle_properties[DEM::PropertiesIndex&lt;DEM::SolverType::cfd_dem&gt;::mass] viscosity / (pow(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp],
- 2) * particle_density)); }. </p>
+class VANSAssemblerGidaspow&lt; dim &gt;</div><p>Assembler for the drag force using the Gidaspow model. </p>
+<p>The momentum transfer coefficient is calculated following Marchelli et al. (2020). For \( \varepsilon &gt; 0.8 \):  </p><p class="formulaDsp">
+\[
+\beta = 18 \varepsilon^{-3.65}
+        \left(1 + 0.15\,\text{Re}_p^{0.687}\right)
+        \frac{m_p \mu}{d_p^2 \rho_p}
+\]
+</p>
+<p>For \( \varepsilon \leq 0.8 \) (assuming spherical particles):  </p><p class="formulaDsp">
+\[
+\beta = \left(\frac{150(1-\varepsilon)}{\varepsilon^2}
+        + \frac{1.75\,\text{Re}_p}{\varepsilon^2}\right)
+        \frac{m_p \mu}{d_p^2 \rho_p}
+\]
+</p>
+<p>where \( \varepsilon \) is the cell void fraction, \( \text{Re}_p \) is the particle Reynolds number, \( m_p \) is the particle mass, \( \mu \) is the dynamic viscosity, \( d_p \) is the particle diameter, and \( \rho_p \) is the particle density.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions </td></tr>
+    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00408">408</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00541">541</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ad4a938b0bc205cecc21f5644344dd083" name="ad4a938b0bc205cecc21f5644344dd083"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad4a938b0bc205cecc21f5644344dd083">&#9670;&#160;</a></span>VANSAssemblerGidaspow()</h2>
@@ -155,7 +168,15 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00411">411</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p>Construct a <a class="el" href="classVANSAssemblerGidaspow.html" title="Assembler for the drag force using the Gidaspow model.">VANSAssemblerGidaspow</a> object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cfd_dem</td><td>CFD-DEM simulation parameters. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00549">549</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>
@@ -186,7 +207,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>calculate_particle_fluid_interactions calculted the solid_fluid interactions </p>
+<p>Calculate the particle-fluid interactions resulting from drag, using the Gidaspow model. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">scratch_data</td><td>(see base class) </td></tr>
@@ -217,7 +238,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00424">424</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p>CFD-DEM simulation parameters. </p>
+
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00564">564</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>

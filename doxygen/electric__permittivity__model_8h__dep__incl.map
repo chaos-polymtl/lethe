@@ -43,7 +43,7 @@
 <area shape="poly" id="edge17_Node000014_Node000015" title=" " alt="" coords="1560,269,1613,302,1664,346,1686,372,1703,400,1715,431,1719,464,1719,584,1722,635,1730,686,1750,767,1744,768,1725,687,1717,636,1714,584,1714,464,1710,432,1699,402,1682,375,1661,350,1610,307,1557,274"/>
 <area shape="rect" id="Node000016" href="$particle__projector_8h.html" title=" " alt="" coords="2046,321,2229,375"/>
 <area shape="poly" id="edge19_Node000014_Node000016" title=" " alt="" coords="1612,248,1809,272,1920,289,2030,311,2059,318,2058,323,2029,316,1920,294,1808,277,1611,253"/>
-<area shape="rect" id="Node000025" href="$vans__assemblers_8h.html" title=" " alt="" coords="1989,438,2172,493"/>
+<area shape="rect" id="Node000025" href="$vans__assemblers_8h.html" title="Assemblers for the Volume&#45;Averaged Navier&#45;Stokes (VANS) equations." alt="" coords="1989,438,2172,493"/>
 <area shape="poly" id="edge28_Node000014_Node000025" title=" " alt="" coords="1612,264,1675,284,1736,311,1763,329,1781,346,1799,363,1824,380,1865,399,1899,408,1978,428,2001,435,1999,440,1977,433,1898,414,1863,404,1822,385,1795,367,1777,350,1759,333,1734,316,1673,289,1610,269"/>
 <area shape="rect" id="Node000027" href="$fluid__dynamics__matrix__based_8h.html" title=" " alt="" coords="1342,548,1525,617"/>
 <area shape="poly" id="edge32_Node000014_Node000027" title=" " alt="" coords="1485,279,1442,548,1436,547,1479,279"/>

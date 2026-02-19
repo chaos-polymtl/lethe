@@ -117,15 +117,23 @@ Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
-class VANSAssemblerShearForce&lt; dim &gt;</div><p>Class that assembles the particle shear force that will then be added to particle_fluid_interactions. </p>
+class VANSAssemblerShearForce&lt; dim &gt;</div><p>Assembler for the shear force on particles. </p>
+<p>The undisturbed shear (viscous stress) force applied to each particle is computed as:  </p><p class="formulaDsp">
+\[
+\mathbf{F}_s = -V_p \mu \nabla^2 \mathbf{u}
+\]
+</p>
+<p>where \( V_p = \frac{\pi}{6} d_p^3 \) is the particle volume, \( \mu =
+\nu \rho_f \) is the dynamic viscosity, \( d_p \) is the particle diameter, and \( \nabla^2 \mathbf{u} \) is the Laplacian of the fluid velocity evaluated at the particle location.</p>
+<dl class="section note"><dt>Note</dt><dd>When using VANS Model A, the shear force is applied only to the particle (one-way coupling). When using Model B, the shear force is also applied back on the fluid as a reaction force (two-way coupling).</dd></dl>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions </td></tr>
+    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00631">631</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00893">893</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a38b1162a0aa9eaaee314daf076a91dcd" name="a38b1162a0aa9eaaee314daf076a91dcd"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a38b1162a0aa9eaaee314daf076a91dcd">&#9670;&#160;</a></span>VANSAssemblerShearForce()</h2>
@@ -153,7 +161,15 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00634">634</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p>Construct a <a class="el" href="classVANSAssemblerShearForce.html" title="Assembler for the shear force on particles.">VANSAssemblerShearForce</a> object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cfd_dem</td><td>CFD-DEM simulation parameters. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00901">901</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>
@@ -184,7 +200,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>calculate_particle_fluid_interactions calculates the shear force. </p>
+<p>Calculate the shear force on particles. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">scratch_data</td><td>(see base class) </td></tr>
@@ -215,7 +231,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00647">647</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p>CFD-DEM simulation parameters. </p>
+
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00915">915</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>

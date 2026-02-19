@@ -111,16 +111,23 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
-class VANSAssemblerViscousTorque&lt; dim &gt;</div><p>Class that assembles the Viscous dissipative torque due to particle's rotation as defined by Derksen (2004). M_viscous_rotation = pi * pow(dp, 3) * mu * (- omega_p) </p>
-<p>The complete model described by Derksen is composed of <a class="el" href="classVANSAssemblerViscousTorque.html" title="Class that assembles the Viscous dissipative torque due to particle&#39;s rotation as defined by Derksen ...">VANSAssemblerViscousTorque</a> + <a class="el" href="classVANSAssemblerVorticalTorque.html" title="Class that assembles the Viscous dissipative torque due to fluid vorticity as defined by Derksen (200...">VANSAssemblerVorticalTorque</a></p>
+class VANSAssemblerViscousTorque&lt; dim &gt;</div><p>Assembler for the viscous dissipative torque due to particle rotation as defined by Derksen (2004). </p>
+<p>The viscous torque due to particle rotation is:  </p><p class="formulaDsp">
+\[
+\mathbf{M}_{\text{viscous}} = -\frac{\pi}{2} d_p^3 \mu
+  \boldsymbol{\omega}_p
+\]
+</p>
+<p>where \( d_p \) is the particle diameter, \( \mu = \nu \rho_f \) is the dynamic viscosity, and \( \boldsymbol{\omega}_p \) is the particle angular velocity. This torque opposes the particle rotation.</p>
+<dl class="section note"><dt>Note</dt><dd>The complete model described by Derksen is composed of <a class="el" href="classVANSAssemblerViscousTorque.html" title="Assembler for the viscous dissipative torque due to particle rotation as defined by Derksen (2004).">VANSAssemblerViscousTorque</a> + <a class="el" href="classVANSAssemblerVorticalTorque.html" title="Assembler for the viscous dissipative torque due to fluid vorticity as defined by Derksen (2004).">VANSAssemblerVorticalTorque</a>.</dd></dl>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions </td></tr>
+    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00504">504</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00715">715</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a35db98fc56d956a47fe3fdb1c8164a12" name="a35db98fc56d956a47fe3fdb1c8164a12"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a35db98fc56d956a47fe3fdb1c8164a12">&#9670;&#160;</a></span>VANSAssemblerViscousTorque()</h2>
@@ -147,9 +154,9 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Constructor. Does not do anything. </p>
+<p>Default constructor. </p>
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00510">510</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00721">721</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>
@@ -180,10 +187,10 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>calculate_particle_fluid_interactions calculates the viscous torque dissipation </p>
+<p>Calculate the viscous torque dissipation on particles. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">scratch_data</td><td>(see base class) </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">scratch_data</td><td>(see base class) </td></tr>
   </table>
   </dd>
 </dl>

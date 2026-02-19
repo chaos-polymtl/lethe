@@ -108,15 +108,15 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
-class ParticleFluidAssemblerBase&lt; dim &gt;</div><p>A pure virtual class that serves as an interface for all of the assemblers for the particle_fluid interactions of the VANS equations. </p>
+class ParticleFluidAssemblerBase&lt; dim &gt;</div><p>Interface for all assemblers of particle-fluid interactions in the VANS equations. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions </td></tr>
+    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00027">27</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00040">40</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a2be34034f9dbc8964ba19e966f3dc0f3" name="a2be34034f9dbc8964ba19e966f3dc0f3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2be34034f9dbc8964ba19e966f3dc0f3">&#9670;&#160;</a></span>~ParticleFluidAssemblerBase()</h2>
@@ -174,10 +174,11 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Calculates the particle-fluid interaction for all of the particles. The forces calculated on the particles is stored within the fem_force. The overall beta coefficient for the cell, which is defined as the drag coefficient divided by the cell volume, is also calculated within this function. </p>
+<p>Calculate the particle-fluid interaction for all particles in a cell. </p>
+<p>The forces calculated on the particles are stored within the <code>fem_force</code> field. The overall \( \beta \) coefficient for the cell, which is defined as the drag coefficient divided by the cell volume, is also calculated within this function.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">scratch_data</td><td>Scratch data containing the Navier-Stokes information. It is important to note that the scratch data has to have been re-inited before calling for matrix assembly. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">scratch_data</td><td>Scratch data containing the Navier-Stokes information. The scratch data must have been re-initialized before calling this function. </td></tr>
   </table>
   </dd>
 </dl>

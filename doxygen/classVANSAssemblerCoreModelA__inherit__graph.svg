@@ -11,7 +11,7 @@
 <!-- Node1 -->
 <g id="Node000001" class="node">
 <title>Node1</title>
-<g id="a_Node000001"><a xlink:title="Class that assembles the core of Model A of the Volume Averaged Navier&#45;Stokes equations.">
+<g id="a_Node000001"><a xlink:title="Assembler for the core of Model A of the Volume&#45;Averaged Navier&#45;Stokes (VANS) equations.">
 <polygon fill="#999999" stroke="#666666" points="156,-30 1,-30 1,0 156,0 156,-30"/>
 <text text-anchor="start" x="9" y="-18" font-family="Helvetica,sans-Serif" font-size="10.00">VANSAssemblerCoreModelA</text>
 <text text-anchor="middle" x="78.5" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>

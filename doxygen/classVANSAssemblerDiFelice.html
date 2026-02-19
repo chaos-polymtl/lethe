@@ -117,16 +117,28 @@ Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
-class VANSAssemblerDiFelice&lt; dim &gt;</div><p>Class that assembles the drag force using DiFelice model for the VANS equations where the drag coefficient c_d = pow((0.63 + 4.8 / sqrt(re)), 2) * pow(cell_void_fraction, -(3.7 - 0.65 * exp(-pow((1.5 - log10(re)), 2) / 2))) and the momentum exchange coefficient beta =(0.5 * c_d * M_PI * pow(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp],
-2) / 4) * relative_velocity.norm() </p>
+class VANSAssemblerDiFelice&lt; dim &gt;</div><p>Assembler for the drag force using the Di Felice model. </p>
+<p>The drag coefficient is computed as:  </p><p class="formulaDsp">
+\[
+C_d = \left(0.63 + \frac{4.8}{\sqrt{\text{Re}_p}}\right)^2
+      \varepsilon^{-(3.7 - 0.65
+      \exp(-(1.5 - \log_{10} \text{Re}_p)^2 / 2))}
+\]
+</p>
+<p>and the momentum exchange coefficient for each particle is:  </p><p class="formulaDsp">
+\[
+\beta = \frac{1}{2} C_d \frac{\pi d_p^2}{4} \|\mathbf{u}_r\|
+\]
+</p>
+<p>where \( \varepsilon \) is the cell void fraction, \( \text{Re}_p \) is the particle Reynolds number, \( d_p \) is the particle diameter, and \( \mathbf{u}_r \) is the relative velocity between the fluid and the particle.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions </td></tr>
+    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00196">196</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00262">262</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="af223b28fd0f2804b2f94a9646a13c622" name="af223b28fd0f2804b2f94a9646a13c622"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af223b28fd0f2804b2f94a9646a13c622">&#9670;&#160;</a></span>VANSAssemblerDiFelice()</h2>
@@ -154,7 +166,15 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00199">199</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p>Construct a <a class="el" href="classVANSAssemblerDiFelice.html" title="Assembler for the drag force using the Di Felice model.">VANSAssemblerDiFelice</a> object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cfd_dem</td><td>CFD-DEM simulation parameters. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00270">270</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>
@@ -185,7 +205,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Calculated the solid_fluid interactions. </p>
+<p>Calculate the particle-fluid interactions resulting from drag, using the Di Felice model. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">scratch_data</td><td>(see base class) </td></tr>
@@ -216,7 +236,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00211">211</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p>CFD-DEM simulation parameters. </p>
+
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00285">285</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>

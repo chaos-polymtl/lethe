@@ -127,15 +127,15 @@ Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
-class VANSAssemblerCoreModelB&lt; dim &gt;</div><p>Class that assembles the core of Model B of the Volume Averaged Navier-Stokes equations. </p>
+class VANSAssemblerCoreModelB&lt; dim &gt;</div><p>Assembler for the core of Model B of the Volume-Averaged Navier-Stokes (VANS) equations. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions </td></tr>
+    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00060">60</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00076">76</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ad6ec852adcf8c5ba980c0da9c3d6f096" name="ad6ec852adcf8c5ba980c0da9c3d6f096"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad6ec852adcf8c5ba980c0da9c3d6f096">&#9670;&#160;</a></span>VANSAssemblerCoreModelB()</h2>
@@ -173,7 +173,16 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00063">63</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p>Construct a <a class="el" href="classVANSAssemblerCoreModelB.html" title="Assembler for the core of Model B of the Volume-Averaged Navier-Stokes (VANS) equations.">VANSAssemblerCoreModelB</a> object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">simulation_control</td><td>Shared pointer to the simulation control object used to retrieve time-stepping information. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">cfd_dem</td><td>CFD-DEM simulation parameters. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00086">86</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>
@@ -214,7 +223,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>assemble_matrix Assembles the matrix </p>
+<p>Assemble the matrix. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">scratch_data</td><td>(see base class) </td></tr>
@@ -225,7 +234,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="vans__assemblers_8cc_source.html#l00016">16</a> of file <a class="el" href="vans__assemblers_8cc_source.html">vans_assemblers.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="vans__assemblers_8h_source.html#l00742">calculate_gamma()</a>, <a class="el" href="stabilization_8h_source.html#l00026">calculate_navier_stokes_gls_tau_steady()</a>, <a class="el" href="stabilization_8h_source.html#l00049">calculate_navier_stokes_gls_tau_transient()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01504">NavierStokesScratchData&lt; dim &gt;::cell_size</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01518">NavierStokesScratchData&lt; dim &gt;::components</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01537">NavierStokesScratchData&lt; dim &gt;::div_phi_u</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01510">NavierStokesScratchData&lt; dim &gt;::force</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01544">NavierStokesScratchData&lt; dim &gt;::grad_phi_p</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01542">NavierStokesScratchData&lt; dim &gt;::grad_phi_u</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01514">NavierStokesScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01450">NavierStokesScratchData&lt; dim &gt;::kinematic_viscosity</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01540">NavierStokesScratchData&lt; dim &gt;::laplacian_phi_u</a>, <a class="el" href="copy__data_8h_source.html#l00203">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_matrix</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01511">NavierStokesScratchData&lt; dim &gt;::mass_source</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01502">NavierStokesScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01503">NavierStokesScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01543">NavierStokesScratchData&lt; dim &gt;::phi_p</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01538">NavierStokesScratchData&lt; dim &gt;::phi_u</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01531">NavierStokesScratchData&lt; dim &gt;::pressure_gradients</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01464">NavierStokesScratchData&lt; dim &gt;::pressure_scaling_factor</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01533">NavierStokesScratchData&lt; dim &gt;::previous_velocity_values</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, <a class="el" href="copy__data_8h_source.html#l00207">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_jacobian</a>, <a class="el" href="copy__data_8h_source.html#l00206">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_residual</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01523">NavierStokesScratchData&lt; dim &gt;::velocity_gradients</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01524">NavierStokesScratchData&lt; dim &gt;::velocity_laplacians</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01521">NavierStokesScratchData&lt; dim &gt;::velocity_values</a>, <a class="el" href="multiphysics_8h_source.html#l00037">void_fraction</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01575">NavierStokesScratchData&lt; dim &gt;::void_fraction_gradient_values</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01573">NavierStokesScratchData&lt; dim &gt;::void_fraction_values</a>.</p>
+<p class="reference">References <a class="el" href="vans__assemblers_8h_source.html#l01029">calculate_gamma()</a>, <a class="el" href="stabilization_8h_source.html#l00026">calculate_navier_stokes_gls_tau_steady()</a>, <a class="el" href="stabilization_8h_source.html#l00049">calculate_navier_stokes_gls_tau_transient()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01504">NavierStokesScratchData&lt; dim &gt;::cell_size</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01518">NavierStokesScratchData&lt; dim &gt;::components</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01537">NavierStokesScratchData&lt; dim &gt;::div_phi_u</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01510">NavierStokesScratchData&lt; dim &gt;::force</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01544">NavierStokesScratchData&lt; dim &gt;::grad_phi_p</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01542">NavierStokesScratchData&lt; dim &gt;::grad_phi_u</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01514">NavierStokesScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01450">NavierStokesScratchData&lt; dim &gt;::kinematic_viscosity</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01540">NavierStokesScratchData&lt; dim &gt;::laplacian_phi_u</a>, <a class="el" href="copy__data_8h_source.html#l00203">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_matrix</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01511">NavierStokesScratchData&lt; dim &gt;::mass_source</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01502">NavierStokesScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01503">NavierStokesScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01543">NavierStokesScratchData&lt; dim &gt;::phi_p</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01538">NavierStokesScratchData&lt; dim &gt;::phi_u</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01531">NavierStokesScratchData&lt; dim &gt;::pressure_gradients</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01464">NavierStokesScratchData&lt; dim &gt;::pressure_scaling_factor</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01533">NavierStokesScratchData&lt; dim &gt;::previous_velocity_values</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, <a class="el" href="copy__data_8h_source.html#l00207">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_jacobian</a>, <a class="el" href="copy__data_8h_source.html#l00206">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_residual</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01523">NavierStokesScratchData&lt; dim &gt;::velocity_gradients</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01524">NavierStokesScratchData&lt; dim &gt;::velocity_laplacians</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01521">NavierStokesScratchData&lt; dim &gt;::velocity_values</a>, <a class="el" href="multiphysics_8h_source.html#l00037">void_fraction</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01575">NavierStokesScratchData&lt; dim &gt;::void_fraction_gradient_values</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01573">NavierStokesScratchData&lt; dim &gt;::void_fraction_values</a>.</p>
 
 </div>
 </div>
@@ -265,10 +274,10 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>assemble_rhs Assembles the rhs </p>
+<p>Assemble the right-hand side. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">scratch_data</td><td>(see base class)Particles::ParticleHandler </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">scratch_data</td><td>(see base class) </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">copy_data</td><td>(see base class) </td></tr>
   </table>
   </dd>
@@ -276,7 +285,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="vans__assemblers_8cc_source.html#l00221">221</a> of file <a class="el" href="vans__assemblers_8cc_source.html">vans_assemblers.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="vans__assemblers_8h_source.html#l00742">calculate_gamma()</a>, <a class="el" href="stabilization_8h_source.html#l00026">calculate_navier_stokes_gls_tau_steady()</a>, <a class="el" href="stabilization_8h_source.html#l00049">calculate_navier_stokes_gls_tau_transient()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01504">NavierStokesScratchData&lt; dim &gt;::cell_size</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01518">NavierStokesScratchData&lt; dim &gt;::components</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01537">NavierStokesScratchData&lt; dim &gt;::div_phi_u</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01510">NavierStokesScratchData&lt; dim &gt;::force</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01544">NavierStokesScratchData&lt; dim &gt;::grad_phi_p</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01542">NavierStokesScratchData&lt; dim &gt;::grad_phi_u</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01514">NavierStokesScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01450">NavierStokesScratchData&lt; dim &gt;::kinematic_viscosity</a>, <a class="el" href="copy__data_8h_source.html#l00204">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_rhs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01511">NavierStokesScratchData&lt; dim &gt;::mass_source</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01502">NavierStokesScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01503">NavierStokesScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01543">NavierStokesScratchData&lt; dim &gt;::phi_p</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01538">NavierStokesScratchData&lt; dim &gt;::phi_u</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01531">NavierStokesScratchData&lt; dim &gt;::pressure_gradients</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01530">NavierStokesScratchData&lt; dim &gt;::pressure_values</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01533">NavierStokesScratchData&lt; dim &gt;::previous_velocity_values</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, <a class="el" href="copy__data_8h_source.html#l00206">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_residual</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01522">NavierStokesScratchData&lt; dim &gt;::velocity_divergences</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01523">NavierStokesScratchData&lt; dim &gt;::velocity_gradients</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01524">NavierStokesScratchData&lt; dim &gt;::velocity_laplacians</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01521">NavierStokesScratchData&lt; dim &gt;::velocity_values</a>, <a class="el" href="multiphysics_8h_source.html#l00037">void_fraction</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01575">NavierStokesScratchData&lt; dim &gt;::void_fraction_gradient_values</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01573">NavierStokesScratchData&lt; dim &gt;::void_fraction_values</a>.</p>
+<p class="reference">References <a class="el" href="vans__assemblers_8h_source.html#l01029">calculate_gamma()</a>, <a class="el" href="stabilization_8h_source.html#l00026">calculate_navier_stokes_gls_tau_steady()</a>, <a class="el" href="stabilization_8h_source.html#l00049">calculate_navier_stokes_gls_tau_transient()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01504">NavierStokesScratchData&lt; dim &gt;::cell_size</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01518">NavierStokesScratchData&lt; dim &gt;::components</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01537">NavierStokesScratchData&lt; dim &gt;::div_phi_u</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01510">NavierStokesScratchData&lt; dim &gt;::force</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01544">NavierStokesScratchData&lt; dim &gt;::grad_phi_p</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01542">NavierStokesScratchData&lt; dim &gt;::grad_phi_u</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01514">NavierStokesScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01450">NavierStokesScratchData&lt; dim &gt;::kinematic_viscosity</a>, <a class="el" href="copy__data_8h_source.html#l00204">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_rhs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01511">NavierStokesScratchData&lt; dim &gt;::mass_source</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01502">NavierStokesScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01503">NavierStokesScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01543">NavierStokesScratchData&lt; dim &gt;::phi_p</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01538">NavierStokesScratchData&lt; dim &gt;::phi_u</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01531">NavierStokesScratchData&lt; dim &gt;::pressure_gradients</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01530">NavierStokesScratchData&lt; dim &gt;::pressure_values</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01533">NavierStokesScratchData&lt; dim &gt;::previous_velocity_values</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, <a class="el" href="copy__data_8h_source.html#l00206">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_residual</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01522">NavierStokesScratchData&lt; dim &gt;::velocity_divergences</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01523">NavierStokesScratchData&lt; dim &gt;::velocity_gradients</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01524">NavierStokesScratchData&lt; dim &gt;::velocity_laplacians</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01521">NavierStokesScratchData&lt; dim &gt;::velocity_values</a>, <a class="el" href="multiphysics_8h_source.html#l00037">void_fraction</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01575">NavierStokesScratchData&lt; dim &gt;::void_fraction_gradient_values</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01573">NavierStokesScratchData&lt; dim &gt;::void_fraction_values</a>.</p>
 
 </div>
 </div>
@@ -295,7 +304,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00091">91</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p>CFD-DEM simulation parameters. </p>
+
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00120">120</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>
@@ -313,7 +324,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00090">90</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p>Shared pointer to the simulation control object. </p>
+
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00117">117</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>
@@ -331,7 +344,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00088">88</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p>Flag indicating whether SUPG stabilization is used. </p>
+
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00114">114</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>

@@ -160,7 +160,12 @@ Functions</h2></td></tr>
 <tr class="memitem:ae801b45c8aa88b8de6787730af087b59" id="r_ae801b45c8aa88b8de6787730af087b59"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vans__assemblers_8h.html#ae801b45c8aa88b8de6787730af087b59">calculate_gamma</a> (double <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>, double kinematic_viscosity, double, double c_star)</td></tr>
 <tr class="separator:ae801b45c8aa88b8de6787730af087b59"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Assemblers for the Volume-Averaged Navier-Stokes (VANS) equations. </p>
+<p>This file contains the assemblers used to build the matrix and right-hand side contributions for the VANS equations in CFD-DEM simulations. It includes the core equation assemblers (Model A and Model B), various drag models (Di Felice, Rong, Dallavalle, Koch-Hill, Beetstra, Gidaspow), lift force models (Saffman-Mei, Magnus), torque models (viscous, vortical), buoyancy, pressure and shear force assemblers, and the fluid-particle interaction assemblers. </p>
+
+<p class="definition">Definition in file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+</div><h2 class="groupheader">Function Documentation</h2>
 <a id="ae801b45c8aa88b8de6787730af087b59" name="ae801b45c8aa88b8de6787730af087b59"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae801b45c8aa88b8de6787730af087b59">&#9670;&#160;</a></span>calculate_gamma()</h2>
 
@@ -207,18 +212,25 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Calculate gamma grad-div stabilization constant for the VANS equations. </p>
+<p>Calculate the grad-div stabilization constant \( \gamma \) for the VANS equations. </p>
+<p>The stabilization constant is computed as:  </p><p class="formulaDsp">
+\[
+\gamma = \nu + c^* \|\mathbf{u}\|
+\]
+</p>
+<p>where \( \nu \) is the kinematic viscosity, \( c^* \) is a scaling constant with units of length, and \( \|\mathbf{u}\| \) is the magnitude of the velocity at the quadrature point.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">velocity</td><td>Magnitude of the velocity at the quadrature point </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">kinematic_viscosity</td><td></td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">h</td><td>The element size </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">c_star</td><td>Scaling constant with units of length </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">velocity</td><td>Magnitude of the velocity at the quadrature point. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">kinematic_viscosity</td><td>Kinematic viscosity of the fluid. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">h</td><td>The element size (unused). </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">c_star</td><td>Scaling constant with units of length.</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The grad-div stabilization constant \( \gamma \). </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00742">742</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l01029">1029</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.</p>
 

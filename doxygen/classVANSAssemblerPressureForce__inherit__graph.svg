@@ -11,7 +11,7 @@
 <!-- Node1 -->
 <g id="Node000001" class="node">
 <title>Node1</title>
-<g id="a_Node000001"><a xlink:title="Class that assembles the particle pressure force that will then be added to particle_fluid_interactio...">
+<g id="a_Node000001"><a xlink:title="Assembler for the pressure force on particles.">
 <polygon fill="#999999" stroke="#666666" points="164,-30 0,-30 0,0 164,0 164,-30"/>
 <text text-anchor="start" x="8" y="-18" font-family="Helvetica,sans-Serif" font-size="10.00">VANSAssemblerPressureForce</text>
 <text text-anchor="middle" x="82" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>
@@ -21,7 +21,7 @@
 <!-- Node2 -->
 <g id="Node000002" class="node">
 <title>Node2</title>
-<g id="a_Node000002"><a xlink:href="classParticleFluidAssemblerBase.html" target="_top" xlink:title="A pure virtual class that serves as an interface for all of the assemblers for the particle_fluid int...">
+<g id="a_Node000002"><a xlink:href="classParticleFluidAssemblerBase.html" target="_top" xlink:title="Interface for all assemblers of particle&#45;fluid interactions in the VANS equations.">
 <polygon fill="white" stroke="#666666" points="158,-96 6,-96 6,-66 158,-66 158,-96"/>
 <text text-anchor="start" x="14" y="-84" font-family="Helvetica,sans-Serif" font-size="10.00">ParticleFluidAssemblerBase</text>
 <text text-anchor="middle" x="82" y="-73" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>

@@ -117,15 +117,44 @@ Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
-class VANSAssemblerKochHill&lt; dim &gt;</div><p>Class that assembles the drag force using the Koch and Hill drag model for the VANS equations where the momentum exchange coefficient beta = ((18 * mu * cell_void_fraction^2 * (1 - cell_void_fraction)) / pow(dp, 2)) * (f0 + 0.5 * f3 * cell_void_fraction * re) * Vp /(1 - cell_void_fraction) where f0 and f3 are functions given by: if ((1 - cell_void_fraction) &lt; 0.4) { f0 = (1 + 3 * sqrt((1 - cell_void_fraction) / 2) + (135.0 / 64) * (1 - cell_void_fraction) * log(1 - cell_void_fraction) + 16.14 * (1 - cell_void_fraction)) / (1 + 0.681 * (1 - cell_void_fraction) - 8.48 * (1 - cell_void_fraction)^2 + 8.14 * (1 - cell_void_fraction)^3); } else if ((1 - cell_void_fraction) &gt;= 0.4) { f0 = 10 * (1 - cell_void_fraction) / cell_void_fraction^3; } f3 = 0.0673 + 0.212 * (1 - cell_void_fraction) + 0.0232 / pow(cell_void_fraction, 5);. </p>
+class VANSAssemblerKochHill&lt; dim &gt;</div><p>Assembler for the drag force using the Koch and Hill drag model. </p>
+<p>The momentum exchange coefficient is computed as:  </p><p class="formulaDsp">
+\[
+\beta = \frac{18 \mu \varepsilon^2 (1 - \varepsilon)}{d_p^2}
+        \left(F_0 + \frac{1}{2} F_3 \varepsilon \text{Re}_p\right)
+        \frac{V_p}{1 - \varepsilon}
+\]
+</p>
+<p>where \( F_0 \) and \( F_3 \) are defined as:</p>
+<p>For \( (1 - \varepsilon) &lt; 0.4 \):  </p><p class="formulaDsp">
+\[
+F_0 = \frac{1 + 3\sqrt{(1-\varepsilon)/2}
+       + \frac{135}{64}(1-\varepsilon)\ln(1-\varepsilon)
+       + 16.14(1-\varepsilon)}
+      {1 + 0.681(1-\varepsilon)
+       - 8.48(1-\varepsilon)^2
+       + 8.14(1-\varepsilon)^3}
+\]
+</p>
+<p>For \( (1 - \varepsilon) \geq 0.4 \):  </p><p class="formulaDsp">
+\[
+F_0 = \frac{10(1-\varepsilon)}{\varepsilon^3}
+\]
+</p>
+<p>and:  </p><p class="formulaDsp">
+\[
+F_3 = 0.0673 + 0.212(1-\varepsilon) + \frac{0.0232}{\varepsilon^5}
+\]
+</p>
+<p>where \( \varepsilon \) is the cell void fraction, \( \mu \) is the dynamic viscosity, \( d_p \) is the particle diameter, \( V_p \) is the particle volume, and \( \text{Re}_p \) is the particle Reynolds number.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions </td></tr>
+    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00313">313</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00429">429</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a07bdde0208d8c07e08fd924ce43040d4" name="a07bdde0208d8c07e08fd924ce43040d4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a07bdde0208d8c07e08fd924ce43040d4">&#9670;&#160;</a></span>VANSAssemblerKochHill()</h2>
@@ -153,7 +182,15 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00316">316</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p>Construct a <a class="el" href="classVANSAssemblerKochHill.html" title="Assembler for the drag force using the Koch and Hill drag model.">VANSAssemblerKochHill</a> object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cfd_dem</td><td>CFD-DEM simulation parameters. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00437">437</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>
@@ -184,7 +221,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>calculate_particle_fluid_interactions calculates the solid-fluid interaction of the Koch-Hill drag model. </p>
+<p>Calculate the particle-fluid interactions resulting from drag, using the Koch-Hill model. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">scratch_data</td><td>(see base class) </td></tr>
@@ -215,7 +252,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00330">330</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p>CFD-DEM simulation parameters. </p>
+
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00452">452</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>

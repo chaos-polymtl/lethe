@@ -11,7 +11,7 @@
 <!-- Node1 -->
 <g id="Node000001" class="node">
 <title>Node1</title>
-<g id="a_Node000001"><a xlink:title="A pure virtual class that serves as an interface for all of the assemblers for the particle_fluid int...">
+<g id="a_Node000001"><a xlink:title="Interface for all assemblers of particle&#45;fluid interactions in the VANS equations.">
 <polygon fill="#999999" stroke="#666666" points="152,-318 0,-318 0,-288 152,-288 152,-318"/>
 <text text-anchor="start" x="8" y="-306" font-family="Helvetica,sans-Serif" font-size="10.00">ParticleFluidAssemblerBase</text>
 <text text-anchor="middle" x="76" y="-295" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>
@@ -21,7 +21,7 @@
 <!-- Node2 -->
 <g id="Node000002" class="node">
 <title>Node2</title>
-<g id="a_Node000002"><a xlink:href="classVANSAssemblerBeetstra.html" target="_top" xlink:title="Class that assembles the drag force using Beetstra model for the VANS equations where the normalized ...">
+<g id="a_Node000002"><a xlink:href="classVANSAssemblerBeetstra.html" target="_top" xlink:title="Assembler for the drag force using the Beetstra model.">
 <polygon fill="white" stroke="#666666" points="339,-606 202,-606 202,-576 339,-576 339,-606"/>
 <text text-anchor="start" x="210" y="-594" font-family="Helvetica,sans-Serif" font-size="10.00">VANSAssemblerBeetstra</text>
 <text text-anchor="middle" x="270.5" y="-583" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>
@@ -40,7 +40,7 @@
 <!-- Node3 -->
 <g id="Node000003" class="node">
 <title>Node3</title>
-<g id="a_Node000003"><a xlink:href="classVANSAssemblerBuoyancy.html" target="_top" xlink:title="Class that assembles the Buoyancy force for the VANS equations whe F_b = &#45;g * density * (4....">
+<g id="a_Node000003"><a xlink:href="classVANSAssemblerBuoyancy.html" target="_top" xlink:title="Assembler for the buoyancy force on particles in the VANS equations.">
 <polygon fill="white" stroke="#666666" points="342,-558 199,-558 199,-528 342,-528 342,-558"/>
 <text text-anchor="start" x="207" y="-546" font-family="Helvetica,sans-Serif" font-size="10.00">VANSAssemblerBuoyancy</text>
 <text text-anchor="middle" x="270.5" y="-535" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>
@@ -59,7 +59,7 @@
 <!-- Node4 -->
 <g id="Node000004" class="node">
 <title>Node4</title>
-<g id="a_Node000004"><a xlink:href="classVANSAssemblerDallavalle.html" target="_top" xlink:title="Class that assembles the drag force using Dallavalle model for the VANS equations where the drag coef...">
+<g id="a_Node000004"><a xlink:href="classVANSAssemblerDallavalle.html" target="_top" xlink:title="Assembler for the drag force using the Dallavalle model.">
 <polygon fill="white" stroke="#666666" points="343,-510 198,-510 198,-480 343,-480 343,-510"/>
 <text text-anchor="start" x="206" y="-498" font-family="Helvetica,sans-Serif" font-size="10.00">VANSAssemblerDallavalle</text>
 <text text-anchor="middle" x="270.5" y="-487" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>
@@ -78,7 +78,7 @@
 <!-- Node5 -->
 <g id="Node000005" class="node">
 <title>Node5</title>
-<g id="a_Node000005"><a xlink:href="classVANSAssemblerDiFelice.html" target="_top" xlink:title="Class that assembles the drag force using DiFelice model for the VANS equations where the drag coeffi...">
+<g id="a_Node000005"><a xlink:href="classVANSAssemblerDiFelice.html" target="_top" xlink:title="Assembler for the drag force using the Di Felice model.">
 <polygon fill="white" stroke="#666666" points="337.5,-462 203.5,-462 203.5,-432 337.5,-432 337.5,-462"/>
 <text text-anchor="start" x="211.5" y="-450" font-family="Helvetica,sans-Serif" font-size="10.00">VANSAssemblerDiFelice</text>
 <text text-anchor="middle" x="270.5" y="-439" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>
@@ -97,7 +97,7 @@
 <!-- Node6 -->
 <g id="Node000006" class="node">
 <title>Node6</title>
-<g id="a_Node000006"><a xlink:href="classVANSAssemblerGidaspow.html" target="_top" xlink:title="Class that assembles the drag force using Gidaspow model for the VANS equations where the momentum_tr...">
+<g id="a_Node000006"><a xlink:href="classVANSAssemblerGidaspow.html" target="_top" xlink:title="Assembler for the drag force using the Gidaspow model.">
 <polygon fill="white" stroke="#666666" points="342,-414 199,-414 199,-384 342,-384 342,-414"/>
 <text text-anchor="start" x="207" y="-402" font-family="Helvetica,sans-Serif" font-size="10.00">VANSAssemblerGidaspow</text>
 <text text-anchor="middle" x="270.5" y="-391" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>
@@ -116,7 +116,7 @@
 <!-- Node7 -->
 <g id="Node000007" class="node">
 <title>Node7</title>
-<g id="a_Node000007"><a xlink:href="classVANSAssemblerKochHill.html" target="_top" xlink:title="Class that assembles the drag force using the Koch and Hill drag model for the VANS equations where t...">
+<g id="a_Node000007"><a xlink:href="classVANSAssemblerKochHill.html" target="_top" xlink:title="Assembler for the drag force using the Koch and Hill drag model.">
 <polygon fill="white" stroke="#666666" points="338,-366 203,-366 203,-336 338,-336 338,-366"/>
 <text text-anchor="start" x="211" y="-354" font-family="Helvetica,sans-Serif" font-size="10.00">VANSAssemblerKochHill</text>
 <text text-anchor="middle" x="270.5" y="-343" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>
@@ -135,7 +135,7 @@
 <!-- Node8 -->
 <g id="Node000008" class="node">
 <title>Node8</title>
-<g id="a_Node000008"><a xlink:href="classVANSAssemblerMagnus.html" target="_top" xlink:title="Class that assembles the Lift force using Magnus model.">
+<g id="a_Node000008"><a xlink:href="classVANSAssemblerMagnus.html" target="_top" xlink:title="Assembler for the lift force using the Magnus model.">
 <polygon fill="white" stroke="#666666" points="337.5,-318 203.5,-318 203.5,-288 337.5,-288 337.5,-318"/>
 <text text-anchor="start" x="211.5" y="-306" font-family="Helvetica,sans-Serif" font-size="10.00">VANSAssemblerMagnus</text>
 <text text-anchor="middle" x="270.5" y="-295" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>
@@ -154,7 +154,7 @@
 <!-- Node9 -->
 <g id="Node000009" class="node">
 <title>Node9</title>
-<g id="a_Node000009"><a xlink:href="classVANSAssemblerPressureForce.html" target="_top" xlink:title="Class that assembles the particle pressure force that will then be added to particle_fluid_interactio...">
+<g id="a_Node000009"><a xlink:href="classVANSAssemblerPressureForce.html" target="_top" xlink:title="Assembler for the pressure force on particles.">
 <polygon fill="white" stroke="#666666" points="352.5,-270 188.5,-270 188.5,-240 352.5,-240 352.5,-270"/>
 <text text-anchor="start" x="196.5" y="-258" font-family="Helvetica,sans-Serif" font-size="10.00">VANSAssemblerPressureForce</text>
 <text text-anchor="middle" x="270.5" y="-247" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>
@@ -173,7 +173,7 @@
 <!-- Node10 -->
 <g id="Node000010" class="node">
 <title>Node10</title>
-<g id="a_Node000010"><a xlink:href="classVANSAssemblerRong.html" target="_top" xlink:title="Class that assembles the drag force using Rong model for the VANS equations where the drag coefficien...">
+<g id="a_Node000010"><a xlink:href="classVANSAssemblerRong.html" target="_top" xlink:title="Assembler for the drag force using the Rong model.">
 <polygon fill="white" stroke="#666666" points="334.5,-222 206.5,-222 206.5,-192 334.5,-192 334.5,-222"/>
 <text text-anchor="start" x="214.5" y="-210" font-family="Helvetica,sans-Serif" font-size="10.00">VANSAssemblerRong&lt;</text>
 <text text-anchor="middle" x="270.5" y="-199" font-family="Helvetica,sans-Serif" font-size="10.00"> dim &gt;</text>
@@ -192,7 +192,7 @@
 <!-- Node11 -->
 <g id="Node000011" class="node">
 <title>Node11</title>
-<g id="a_Node000011"><a xlink:href="classVANSAssemblerSaffmanMei.html" target="_top" xlink:title="Class that assembles the Lift force using Saffman&#45;Mei model.">
+<g id="a_Node000011"><a xlink:href="classVANSAssemblerSaffmanMei.html" target="_top" xlink:title="Assembler for the lift force using the Saffman&#45;Mei model.">
 <polygon fill="white" stroke="#666666" points="347.5,-174 193.5,-174 193.5,-144 347.5,-144 347.5,-174"/>
 <text text-anchor="start" x="201.5" y="-162" font-family="Helvetica,sans-Serif" font-size="10.00">VANSAssemblerSaffmanMei</text>
 <text text-anchor="middle" x="270.5" y="-151" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>
@@ -211,7 +211,7 @@
 <!-- Node12 -->
 <g id="Node000012" class="node">
 <title>Node12</title>
-<g id="a_Node000012"><a xlink:href="classVANSAssemblerShearForce.html" target="_top" xlink:title="Class that assembles the particle shear force that will then be added to particle_fluid_interactions.">
+<g id="a_Node000012"><a xlink:href="classVANSAssemblerShearForce.html" target="_top" xlink:title="Assembler for the shear force on particles.">
 <polygon fill="white" stroke="#666666" points="345,-126 196,-126 196,-96 345,-96 345,-126"/>
 <text text-anchor="start" x="204" y="-114" font-family="Helvetica,sans-Serif" font-size="10.00">VANSAssemblerShearForce</text>
 <text text-anchor="middle" x="270.5" y="-103" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>
@@ -230,7 +230,7 @@
 <!-- Node13 -->
 <g id="Node000013" class="node">
 <title>Node13</title>
-<g id="a_Node000013"><a xlink:href="classVANSAssemblerViscousTorque.html" target="_top" xlink:title="Class that assembles the Viscous dissipative torque due to particle&#39;s rotation as defined by Derksen ...">
+<g id="a_Node000013"><a xlink:href="classVANSAssemblerViscousTorque.html" target="_top" xlink:title="Assembler for the viscous dissipative torque due to particle rotation as defined by Derksen (2004).">
 <polygon fill="white" stroke="#666666" points="353,-78 188,-78 188,-48 353,-48 353,-78"/>
 <text text-anchor="start" x="196" y="-66" font-family="Helvetica,sans-Serif" font-size="10.00">VANSAssemblerViscousTorque</text>
 <text text-anchor="middle" x="270.5" y="-55" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>
@@ -249,7 +249,7 @@
 <!-- Node14 -->
 <g id="Node000014" class="node">
 <title>Node14</title>
-<g id="a_Node000014"><a xlink:href="classVANSAssemblerVorticalTorque.html" target="_top" xlink:title="Class that assembles the Viscous dissipative torque due to fluid vorticity as defined by Derksen (200...">
+<g id="a_Node000014"><a xlink:href="classVANSAssemblerVorticalTorque.html" target="_top" xlink:title="Assembler for the viscous dissipative torque due to fluid vorticity as defined by Derksen (2004).">
 <polygon fill="white" stroke="#666666" points="352.5,-30 188.5,-30 188.5,0 352.5,0 352.5,-30"/>
 <text text-anchor="start" x="196.5" y="-18" font-family="Helvetica,sans-Serif" font-size="10.00">VANSAssemblerVorticalTorque</text>
 <text text-anchor="middle" x="270.5" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>

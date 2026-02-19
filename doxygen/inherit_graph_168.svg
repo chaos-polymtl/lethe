@@ -744,7 +744,7 @@
 <!-- Node39 -->
 <g id="Node000039" class="node">
 <title>Node39</title>
-<g id="a_Node000039"><a xlink:href="classVANSAssemblerBDF.html" target="_top" xlink:title="Class that assembles the transient time arising from BDF time integration for the Navier&#45;Stokes equat...">
+<g id="a_Node000039"><a xlink:href="classVANSAssemblerBDF.html" target="_top" xlink:title="Assembler for the transient term arising from BDF time integration for the VANS equations.">
 <polygon fill="white" stroke="#666666" points="388.5,-372.5 231.5,-372.5 231.5,-353.5 388.5,-353.5 388.5,-372.5"/>
 <text text-anchor="middle" x="310" y="-360.5" font-family="Helvetica,sans-Serif" font-size="10.00">VANSAssemblerBDF&lt; dim &gt;</text>
 </a>
@@ -762,7 +762,7 @@
 <!-- Node40 -->
 <g id="Node000040" class="node">
 <title>Node40</title>
-<g id="a_Node000040"><a xlink:href="classVANSAssemblerCoreModelA.html" target="_top" xlink:title="Class that assembles the core of Model A of the Volume Averaged Navier&#45;Stokes equations.">
+<g id="a_Node000040"><a xlink:href="classVANSAssemblerCoreModelA.html" target="_top" xlink:title="Assembler for the core of Model A of the Volume&#45;Averaged Navier&#45;Stokes (VANS) equations.">
 <polygon fill="white" stroke="#666666" points="387.5,-335 232.5,-335 232.5,-305 387.5,-305 387.5,-335"/>
 <text text-anchor="start" x="240.5" y="-323" font-family="Helvetica,sans-Serif" font-size="10.00">VANSAssemblerCoreModelA</text>
 <text text-anchor="middle" x="310" y="-312" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>
@@ -781,7 +781,7 @@
 <!-- Node41 -->
 <g id="Node000041" class="node">
 <title>Node41</title>
-<g id="a_Node000041"><a xlink:href="classVANSAssemblerCoreModelB.html" target="_top" xlink:title="Class that assembles the core of Model B of the Volume Averaged Navier&#45;Stokes equations.">
+<g id="a_Node000041"><a xlink:href="classVANSAssemblerCoreModelB.html" target="_top" xlink:title="Assembler for the core of Model B of the Volume&#45;Averaged Navier&#45;Stokes (VANS) equations.">
 <polygon fill="white" stroke="#666666" points="387.5,-287 232.5,-287 232.5,-257 387.5,-257 387.5,-287"/>
 <text text-anchor="start" x="240.5" y="-275" font-family="Helvetica,sans-Serif" font-size="10.00">VANSAssemblerCoreModelB</text>
 <text text-anchor="middle" x="310" y="-264" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>
@@ -800,7 +800,7 @@
 <!-- Node42 -->
 <g id="Node000042" class="node">
 <title>Node42</title>
-<g id="a_Node000042"><a xlink:href="classVANSAssemblerFPI.html" target="_top" xlink:title="Class that assembles the fluid_particle interactions (FPI) for the VANS equations such as the drag fo...">
+<g id="a_Node000042"><a xlink:href="classVANSAssemblerFPI.html" target="_top" xlink:title="Assembler for the fluid&#45;particle interactions (FPI) in the VANS equations, such as the drag force.">
 <polygon fill="white" stroke="#666666" points="386,-238.5 234,-238.5 234,-219.5 386,-219.5 386,-238.5"/>
 <text text-anchor="middle" x="310" y="-226.5" font-family="Helvetica,sans-Serif" font-size="10.00">VANSAssemblerFPI&lt; dim &gt;</text>
 </a>
@@ -818,7 +818,7 @@
 <!-- Node43 -->
 <g id="Node000043" class="node">
 <title>Node43</title>
-<g id="a_Node000043"><a xlink:href="classVANSAssemblerFPIProjection.html" target="_top" xlink:title="Class that assembles the fluid_particle interactions (FPI) for the VANS equations such as the drag fo...">
+<g id="a_Node000043"><a xlink:href="classVANSAssemblerFPIProjection.html" target="_top" xlink:title="Assembler for the fluid&#45;particle interactions (FPI) in the VANS equations when the forces are project...">
 <polygon fill="white" stroke="#666666" points="389.5,-201 230.5,-201 230.5,-171 389.5,-171 389.5,-201"/>
 <text text-anchor="start" x="238.5" y="-189" font-family="Helvetica,sans-Serif" font-size="10.00">VANSAssemblerFPIProjection</text>
 <text text-anchor="middle" x="310" y="-178" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>

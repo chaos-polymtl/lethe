@@ -117,16 +117,26 @@ Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
-class VANSAssemblerDallavalle&lt; dim &gt;</div><p>Class that assembles the drag force using Dallavalle model for the VANS equations where the drag coefficient c_d = pow((0.63 + 4.8 / sqrt(re)), 2) and the momentum exchange coefficient beta =(0.5 * c_d * M_PI * pow(particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp],
-2) / 4) * relative_velocity.norm() </p>
+class VANSAssemblerDallavalle&lt; dim &gt;</div><p>Assembler for the drag force using the Dallavalle model. </p>
+<p>The drag coefficient is computed as:  </p><p class="formulaDsp">
+\[
+C_d = \left(0.63 + \frac{4.8}{\sqrt{\text{Re}_p}}\right)^2
+\]
+</p>
+<p>and the momentum exchange coefficient for each particle is:  </p><p class="formulaDsp">
+\[
+\beta = \frac{1}{2} C_d \frac{\pi d_p^2}{4} \|\mathbf{u}_r\|
+\]
+</p>
+<p>where \( \text{Re}_p \) is the particle Reynolds number, \( d_p \) is the particle diameter, and \( \mathbf{u}_r \) is the relative velocity between the fluid and the particle.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions </td></tr>
+    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00265">265</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00362">362</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="abe3a9163442222b1c24222ba19007558" name="abe3a9163442222b1c24222ba19007558"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abe3a9163442222b1c24222ba19007558">&#9670;&#160;</a></span>VANSAssemblerDallavalle()</h2>
@@ -154,7 +164,15 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00268">268</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p>Construct a <a class="el" href="classVANSAssemblerDallavalle.html" title="Assembler for the drag force using the Dallavalle model.">VANSAssemblerDallavalle</a> object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">cfd_dem</td><td>CFD-DEM simulation parameters. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00370">370</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>
@@ -185,7 +203,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Calculted the solid_fluid interactions. </p>
+<p>Calculate the particle-fluid interactions resulting from drag, using the Dallavalle model. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">scratch_data</td><td>(see base class) </td></tr>
@@ -216,7 +234,9 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00281">281</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p>CFD-DEM simulation parameters. </p>
+
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00385">385</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>

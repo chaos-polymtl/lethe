@@ -26,7 +26,7 @@
 <area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="631,400,607,421,587,447,574,478,566,511,561,570,556,569,560,510,569,476,583,444,603,418,628,396"/>
 <area shape="rect" id="Node000011" href="$fluid__dynamics__vans__matrix__free_8h.html" title=" " alt="" coords="855,570,1112,625"/>
 <area shape="poly" id="edge11_Node000002_Node000011" title=" " alt="" coords="758,394,799,417,837,443,871,477,902,513,958,568,954,572,898,516,867,480,834,447,796,421,756,399"/>
-<area shape="rect" id="Node000013" href="$vans__assemblers_8h.html" title=" " alt="" coords="55,453,238,507"/>
+<area shape="rect" id="Node000013" href="$vans__assemblers_8h.html" title="Assemblers for the Volume&#45;Averaged Navier&#45;Stokes (VANS) equations." alt="" coords="55,453,238,507"/>
 <area shape="poly" id="edge14_Node000002_Node000013" title=" " alt="" coords="548,388,404,414,251,448,225,455,223,450,250,443,403,409,547,383"/>
 <area shape="rect" id="Node000016" href="$cfd__dem__simulation__parameters_8cc.html" title=" " alt="" coords="262,453,521,507"/>
 <area shape="poly" id="edge18_Node000002_Node000016" title=" " alt="" coords="609,397,460,455,458,450,607,392"/>

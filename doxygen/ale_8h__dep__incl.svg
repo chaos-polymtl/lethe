@@ -81,7 +81,7 @@
 <!-- Node3 -->
 <g id="Node000003" class="node">
 <title>Node3</title>
-<g id="a_Node000003"><a xlink:href="vans__assemblers_8h.html" target="_top" xlink:title=" ">
+<g id="a_Node000003"><a xlink:href="vans__assemblers_8h.html" target="_top" xlink:title="Assemblers for the Volume&#45;Averaged Navier&#45;Stokes (VANS) equations.">
 <polygon fill="white" stroke="#666666" points="1886,-211.5 1749,-211.5 1749,-170.5 1886,-170.5 1886,-211.5"/>
 <text text-anchor="start" x="1757" y="-199.5" font-family="Helvetica,sans-Serif" font-size="10.00">/home/runner/work/lethe</text>
 <text text-anchor="start" x="1757" y="-188.5" font-family="Helvetica,sans-Serif" font-size="10.00">/lethe/include/fem&#45;dem</text>

@@ -1,5 +1,5 @@
 <map id="/home/runner/work/lethe/lethe/include/fem&#45;dem/vans_assemblers.h" name="/home/runner/work/lethe/lethe/include/fem&#45;dem/vans_assemblers.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="315,5,497,60"/>
+<area shape="rect" id="Node000001" title="Assemblers for the Volume&#45;Averaged Navier&#45;Stokes (VANS) equations." alt="" coords="315,5,497,60"/>
 <area shape="rect" id="Node000002" href="$fluid__dynamics__vans_8h.html" title=" " alt="" coords="108,108,291,163"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="341,68,254,110,252,106,339,63"/>
 <area shape="rect" id="Node000006" href="$particle__projector_8cc.html" title=" " alt="" coords="315,108,497,163"/>

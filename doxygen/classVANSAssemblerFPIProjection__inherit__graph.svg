@@ -11,7 +11,7 @@
 <!-- Node1 -->
 <g id="Node000001" class="node">
 <title>Node1</title>
-<g id="a_Node000001"><a xlink:title="Class that assembles the fluid_particle interactions (FPI) for the VANS equations such as the drag fo...">
+<g id="a_Node000001"><a xlink:title="Assembler for the fluid&#45;particle interactions (FPI) in the VANS equations when the forces are project...">
 <polygon fill="#999999" stroke="#666666" points="159,-30 0,-30 0,0 159,0 159,-30"/>
 <text text-anchor="start" x="8" y="-18" font-family="Helvetica,sans-Serif" font-size="10.00">VANSAssemblerFPIProjection</text>
 <text text-anchor="middle" x="79.5" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>

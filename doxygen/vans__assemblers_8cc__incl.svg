@@ -112,7 +112,7 @@
 <!-- Node55 -->
 <g id="Node000055" class="node">
 <title>Node55</title>
-<g id="a_Node000055"><a xlink:href="vans__assemblers_8h.html" target="_top" xlink:title=" ">
+<g id="a_Node000055"><a xlink:href="vans__assemblers_8h.html" target="_top" xlink:title="Assemblers for the Volume&#45;Averaged Navier&#45;Stokes (VANS) equations.">
 <polygon fill="white" stroke="#666666" points="2283,-602 2125,-602 2125,-583 2283,-583 2283,-602"/>
 <text text-anchor="middle" x="2204" y="-590" font-family="Helvetica,sans-Serif" font-size="10.00">fem&#45;dem/vans_assemblers.h</text>
 </a>

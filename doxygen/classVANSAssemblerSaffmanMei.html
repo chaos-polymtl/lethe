@@ -111,18 +111,44 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
-class VANSAssemblerSaffmanMei&lt; dim &gt;</div><p>Class that assembles the Lift force using Saffman-Mei model. </p>
+class VANSAssemblerSaffmanMei&lt; dim &gt;</div><p>Assembler for the lift force using the Saffman-Mei model. </p>
 <p>This implementation follows the formulation in the book "Multiphase Flows
 with Droplets and Particles" by Crowe et al. (2011) and the brief communication article "An approximate expression for the shear lift force
-on a spherical particle at finite reynolds number" by Mei (1992)</p>
+on a spherical particle at finite Reynolds number" by Mei (1992).</p>
+<p>The lift force is computed as:  </p><p class="formulaDsp">
+\[
+\mathbf{F}_L = 1.61 \, C_s \, d_p^2 \, \rho_f
+  \frac{\sqrt{\nu}}{\sqrt{\|\boldsymbol{\omega}_f\|}}
+  \left(\mathbf{u}_r \times \boldsymbol{\omega}_f\right)
+\]
+</p>
+<p>where the parameter \( \alpha \) is defined as:  </p><p class="formulaDsp">
+\[
+\alpha = \frac{d_p}{2 \|\mathbf{u}_r\|} \|\boldsymbol{\omega}_f\|
+\]
+</p>
+<p>and the Saffman-Mei correction coefficient \( C_s \) is:</p>
+<p>For \( \text{Re}_p \leq 40 \):  </p><p class="formulaDsp">
+\[
+C_s = (1 - 0.3314\sqrt{\alpha}) \exp(-0.1\,\text{Re}_p)
+      + 0.3314\sqrt{\alpha}
+\]
+</p>
+<p>For \( \text{Re}_p &gt; 40 \):  </p><p class="formulaDsp">
+\[
+C_s = 0.0524\sqrt{\alpha \, \text{Re}_p}
+\]
+</p>
+<p>where \( d_p \) is the particle diameter, \( \rho_f \) is the fluid density, \( \nu \) is the kinematic viscosity, \( \boldsymbol{\omega}_f
+\) is the fluid vorticity, \( \mathbf{u}_r \) is the relative velocity between the fluid and the particle, and \( \text{Re}_p \) is the particle Reynolds number.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions </td></tr>
+    <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00441">441</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00611">611</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ad8793ec675f1eae593427e4353b616b5" name="ad8793ec675f1eae593427e4353b616b5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad8793ec675f1eae593427e4353b616b5">&#9670;&#160;</a></span>VANSAssemblerSaffmanMei()</h2>
@@ -149,9 +175,9 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Constructor. Does not do anything. </p>
+<p>Default constructor. </p>
 
-<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00447">447</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vans__assemblers_8h_source.html#l00617">617</a> of file <a class="el" href="vans__assemblers_8h_source.html">vans_assemblers.h</a>.</p>
 
 </div>
 </div>
@@ -182,7 +208,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>calculate_particle_fluid_interactions calculates the Saffman force. </p>
+<p>Calculate the Saffman-Mei lift force on particles. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in,out]</td><td class="paramname">scratch_data</td><td>(see base class) </td></tr>
