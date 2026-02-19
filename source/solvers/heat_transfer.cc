@@ -2000,7 +2000,9 @@ HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_vof)
   // Fill table
   this->liquid_fraction_table.add_value(
     "time", this->simulation_control->get_current_time());
+  this->liquid_fraction_table.set_scientific("time", true);
   this->liquid_fraction_table.add_value("liquid fraction", liquid_fraction);
+  this->liquid_fraction_table.set_scientific("liquid fraction", true);
 }
 
 template <int dim>
