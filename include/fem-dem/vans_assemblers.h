@@ -272,8 +272,8 @@ public:
   {}
 
   /**
-   * @brief Calculate the particle-fluid interactions using the Di Felice drag
-   * model.
+   * @brief Calculate the particle-fluid interactions resulting from drag, using
+   * the Di Felice model.
    *
    * @param[in,out] scratch_data (see base class)
    */
