@@ -827,41 +827,11 @@ public:
   {
     for (auto &iphys : physics)
       {
-        MultipleAdaptationParameters::ErrorEstimator error_indicator_type =
-          ivar.second.error_indicator_type;
-        if (error_indicator_type ==
-            MultipleAdaptationParameters::ErrorEstimator::kelly)
-          {
-            iphys.second->compute_kelly(ivar, estimated_error_per_cell);
-          }
-        else if (error_indicator_type ==
-                 MultipleAdaptationParameters::ErrorEstimator::dpg)
-          {
-            AssertThrow(
-              iphys.first == Variable::electromagnetic_fields,
-              ExcMessage(
-                "DPG error estimator is only available for <electromagnetics_fields> variable since it is only implemented for the electromagnetics auxiliary physics and the error estimator relies on both fields"));
-            iphys.second->compute_dpg_error(ivar, estimated_error_per_cell);
-          }
+        iphys.second->compute_error_estimate(ivar, estimated_error_per_cell);
       }
     for (auto &iphys : block_physics)
       {
-        MultipleAdaptationParameters::ErrorEstimator error_indicator_type =
-          ivar.second.error_indicator_type;
-        if (error_indicator_type ==
-            MultipleAdaptationParameters::ErrorEstimator::kelly)
-          {
-            iphys.second->compute_kelly(ivar, estimated_error_per_cell);
-          }
-        else if (error_indicator_type ==
-                 MultipleAdaptationParameters::ErrorEstimator::dpg)
-          {
-            AssertThrow(
-              iphys.first == Variable::electromagnetic_fields,
-              ExcMessage(
-                "DPG error estimator is only available for <electromagnetic_fields> variable since it is only implemented for the electromagnetics auxiliary physics and the error estimator relies on both fields"));
-            iphys.second->compute_dpg_error(ivar, estimated_error_per_cell);
-          }
+        iphys.second->compute_error_estimate(ivar, estimated_error_per_cell);
       }
   };
 

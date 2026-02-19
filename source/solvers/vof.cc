@@ -2334,24 +2334,41 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::compute_kelly(
+VolumeOfFluid<dim>::compute_error_estimate(
   const std::pair<const Variable, Parameters::MultipleAdaptationParameters>
                         &ivar,
   dealii::Vector<float> &estimated_error_per_cell)
 {
   if (ivar.first == Variable::phase)
     {
-      const FEValuesExtractors::Scalar phase(0);
+      AssertThrow(
+        ivar.second.error_estimator ==
+          Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly,
+        ExcMessage(
+          "Only Kelly error estimator is currently implemented for the "
+          "<phase> VOF field."));
 
-      KellyErrorEstimator<dim>::estimate(
-        *this->mapping,
-        *this->dof_handler,
-        *this->face_quadrature,
-        typename std::map<types::boundary_id, const Function<dim, double> *>(),
-        *this->present_solution,
-        estimated_error_per_cell,
-        this->fe->component_mask(phase));
+
+      ComponentMask phase_mask =
+        fe->component_mask(FEValuesExtractors::Scalar(0));
+      compute_kelly(estimated_error_per_cell, phase_mask);
     }
+}
+
+template <int dim>
+void
+VolumeOfFluid<dim>::compute_kelly(
+  dealii::Vector<float> &estimated_error_per_cell,
+  const ComponentMask   &component_mask)
+{
+  KellyErrorEstimator<dim>::estimate(
+    *this->mapping,
+    *this->dof_handler,
+    *this->face_quadrature,
+    typename std::map<types::boundary_id, const Function<dim, double> *>(),
+    *this->present_solution,
+    estimated_error_per_cell,
+    component_mask);
 }
 
 template <int dim>

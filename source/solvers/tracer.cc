@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -1425,27 +1425,42 @@ Tracer<dim>::set_initial_conditions()
   percolate_time_vectors();
 }
 
-
 template <int dim>
 void
-Tracer<dim>::compute_kelly(
+Tracer<dim>::compute_error_estimate(
   const std::pair<const Variable, Parameters::MultipleAdaptationParameters>
                         &ivar,
   dealii::Vector<float> &estimated_error_per_cell)
 {
   if (ivar.first == Variable::tracer)
     {
-      const FEValuesExtractors::Scalar tracer(0);
+      AssertThrow(
+        ivar.second.error_estimator ==
+          Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly,
+        ExcMessage(
+          "Only Kelly error estimator is currently implemented for the "
+          "<tracer> field."));
 
-      KellyErrorEstimator<dim>::estimate(
-        *this->mapping,
-        *this->dof_handler,
-        *this->face_quadrature,
-        typename std::map<types::boundary_id, const Function<dim, double> *>(),
-        *this->present_solution,
-        estimated_error_per_cell,
-        this->fe->component_mask(tracer));
+
+      ComponentMask tracer_mask =
+        fe->component_mask(FEValuesExtractors::Scalar(0));
+      compute_kelly(estimated_error_per_cell, tracer_mask);
     }
+}
+
+template <int dim>
+void
+Tracer<dim>::compute_kelly(dealii::Vector<float> &estimated_error_per_cell,
+                           const ComponentMask   &component_mask)
+{
+  KellyErrorEstimator<dim>::estimate(
+    *this->mapping,
+    *this->dof_handler,
+    *this->face_quadrature,
+    typename std::map<types::boundary_id, const Function<dim, double> *>(),
+    *this->present_solution,
+    estimated_error_per_cell,
+    component_mask);
 }
 
 template <int dim>

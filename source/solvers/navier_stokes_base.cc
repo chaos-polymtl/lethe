@@ -1091,8 +1091,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_adaptive()
   for (const std::pair<const Variable, Parameters::MultipleAdaptationParameters>
          &ivar : this->simulation_parameters.mesh_adaptation.variables)
     {
-      MultipleAdaptationParameters::ErrorEstimator error_indicator_type =
-        ivar.second.error_indicator_type;
+      Parameters::MultipleAdaptationParameters::ErrorEstimator
+             error_indicator_type   = ivar.second.error_estimator;
       double ivar_coarsening_factor = ivar.second.coarsening_fraction;
       if (this->simulation_parameters.mesh_adaptation
             .mesh_controller_is_enabled)
@@ -1102,7 +1102,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_adaptive()
         {
           AssertThrow(
             error_indicator_type ==
-              MultipleAdaptationParameters::ErrorEstimator::kelly,
+              Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly,
             ExcMessage(
               "For the pressure variable, only the Kelly error estimator is "
               "available."));
@@ -1121,7 +1121,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_adaptive()
         {
           AssertThrow(
             error_indicator_type ==
-              MultipleAdaptationParameters::ErrorEstimator::kelly,
+              Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly,
             ExcMessage(
               "For the velocity variable, only the Kelly error estimator is "
               "available."));
