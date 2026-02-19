@@ -324,7 +324,7 @@ public:
   {}
 
   /**
-  * @brief Calculate the particle-fluid interactions resulting from drag, using
+   * @brief Calculate the particle-fluid interactions resulting from drag, using
    * the Rong model.
    *
    * @param[in,out] scratch_data (see base class)
