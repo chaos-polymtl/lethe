@@ -622,23 +622,83 @@ TimeHarmonicMaxwell<dim>::gather_tables()
 template <int dim>
 void
 TimeHarmonicMaxwell<dim>::compute_kelly(
-  [[maybe_unused]] const std::pair<const Variable,
-                                   Parameters::MultipleAdaptationParameters>
-                                         &ivar,
-  [[maybe_unused]] dealii::Vector<float> &estimated_error_per_cell)
+  const std::pair<const Variable, Parameters::MultipleAdaptationParameters>
+                        &ivar,
+  dealii::Vector<float> &estimated_error_per_cell)
 {
-  // TODO
+  if (ivar.first == Variable::electric_field)
+    {
+      // Create a component mask for both the real and imaginary part of the
+      // electric field
+      ComponentMask electric_field_mask =
+        this->fe_trial_interior->component_mask(extractor_E_real) |
+        this->fe_trial_interior->component_mask(extractor_E_imag);
+
+      KellyErrorEstimator<dim>::estimate(
+        *this->mapping,
+        *this->dof_handler_trial_interior,
+        *this->face_quadrature,
+        typename std::map<types::boundary_id, const Function<dim, double> *>(),
+        *this->present_solution,
+        estimated_error_per_cell,
+        electric_field_mask);
+    }
+  else if (ivar.first == Variable::magnetic_field)
+    {
+      // Create a component mask for both the real and imaginary part of the
+      // magnetic field
+      ComponentMask magnetic_field_mask =
+        this->fe_trial_interior->component_mask(extractor_H_real) |
+        this->fe_trial_interior->component_mask(extractor_H_imag);
+
+      KellyErrorEstimator<dim>::estimate(
+        *this->mapping,
+        *this->dof_handler_trial_interior,
+        *this->face_quadrature,
+        typename std::map<types::boundary_id, const Function<dim, double> *>(),
+        *this->present_solution,
+        estimated_error_per_cell,
+        magnetic_field_mask);
+    }
+  else if (ivar.first == Variable::electromagnetic_fields)
+    {
+      // If the user has selected to use the Kelly error estimator on the
+      // combined electromagnetic fields variable, we will compute the Kelly
+      // error estimator on all components of the solution.
+      KellyErrorEstimator<dim>::estimate(
+        *this->mapping,
+        *this->dof_handler_trial_interior,
+        *this->face_quadrature,
+        typename std::map<types::boundary_id, const Function<dim, double> *>(),
+        *this->present_solution,
+        estimated_error_per_cell);
+    }
 }
 
 template <int dim>
 void
-TimeHarmonicMaxwell<dim>::compute_energy_norm(
-  [[maybe_unused]] const std::pair<const Variable,
-                                   Parameters::MultipleAdaptationParameters>
-                                         &ivar,
-  [[maybe_unused]] dealii::Vector<float> &estimated_error_per_cell)
+TimeHarmonicMaxwell<dim>::compute_dpg_error(
+  const std::pair<const Variable, Parameters::MultipleAdaptationParameters>
+                        &ivar,
+  dealii::Vector<float> &estimated_error_per_cell)
 {
-  // TODO
+  // For efficiency, the DPG error estimator is computed in the same loop as the
+  // assembly of the system matrix and rhs, so we do not implement it here as a
+  // separate loop. The estimated error per cell is computed and stored in the
+  // member variable local_estimated_error_per_cell during the assembly, and
+  // then used for marking the cells for refinement.
+
+  // In the DPG method, the error is computed for the whole ultraweak form and
+  // we don't have separate error indicators for the electric and magnetic
+  // fields. Therefore, we will use the electromagnetic_fields variable as the
+  // one that triggers the use of the DPG error estimator, and we will ignore
+  // the electric_field and magnetic_field variables if they are selected by the
+  // user for the DPG error estimator (with a warning to inform the user about
+  // this).
+  if (ivar.first == Variable::electromagnetic_fields)
+    {
+      estimated_error_per_cell = this->local_estimated_error_per_cell;
+    }
 }
 
 template <int dim>
@@ -683,6 +743,7 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
   this->present_DPG_error_indicator->reinit(this->locally_owned_dofs_test,
                                             this->locally_relevant_dofs_test,
                                             mpi_communicator);
+  this->local_estimated_error_per_cell->reinit(triangulation->n_active_cells());
 
   // We reinitialize the system rhs with the skeleton dofs because we have
   // performed a static condensation of the interior dofs using the Schur
@@ -3074,6 +3135,18 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                                  cell_skeleton_solution);
           l_vector -= tmp_vector_error_indicator;
           G_matrix.vmult(cell_residual, l_vector);
+
+          // Compute the error indicator on the cell if the dpg error_indicator
+          // is activated
+          if (this->simulation_parameters.mesh_adaptation.var_adaptation_param
+                .error_estimator ==
+              Parameters::MultipleAdaptationParameters::ErrorEstimator::dpg)
+            {
+              local_estimated_error_per_cell(cell->active_cell_index()) =
+                std::sqrt(l_vector *
+                          cell_residual); // ||R||^2_V = R^T G^-1 R = R^T Psi
+            }
+
           cell_test->distribute_local_to_global(cell_residual,
                                                 locally_owned_error_indicator);
         }

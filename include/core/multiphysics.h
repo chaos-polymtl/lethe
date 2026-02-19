@@ -59,10 +59,12 @@ enum class Variable : unsigned int
   chemical_potential_cahn_hilliard = 5,
   /// Tracer scalar field
   tracer = 6,
-  /// Electromagnetics field. This is a single field since mesh adaptation
-  /// is carried out on the entire solution and not on the electric or magnetic
-  /// field separately.
-  electomagnetics = 7
+  /// Electric field vector field from electromagnetics
+  electric_field = 7,
+  /// Magnetic field vector field from electromagnetics
+  magnetic_field = 8,
+  /// Combinaison of both electric and magnetic fields from electromagnetics
+  electromagnetic_fields = 9
 };
 
 /**

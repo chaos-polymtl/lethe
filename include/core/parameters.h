@@ -1608,7 +1608,7 @@ namespace Parameters
     Variable                     vars;
     MultipleAdaptationParameters var_adaptation_param;
 
-    // Decision factor for Kelly refinement (number or fraction)
+    // Decision factor for adaptive refinement (number or fraction)
     enum class FractionType : std::int8_t
     {
       number,

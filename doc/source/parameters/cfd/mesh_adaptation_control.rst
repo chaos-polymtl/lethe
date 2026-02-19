@@ -7,12 +7,15 @@ This subsection controls the mesh adaptation method, with default values given b
 .. code-block:: text
 
   subsection mesh adaptation
-    # Type of mesh adaptation. Choices are  none, uniform or kelly.
+    # Type of mesh adaptation. Choices are  none, uniform or adaptive.
     set type                     = none
 
-    # Variable(s) for kelly estimation. Choices are velocity, pressure, phase or temperature.
-    # For multi-variables refinement, separate the different variables with a comma
+    # Variable(s) for adaptive refinement. 
+    # For multi-variables refinement, separate the different variables with a comma.
     set variable                 = velocity
+
+    # Choice of error estimator for adaptive refinement. Choices are <kelly|dpg>. For multi-variables refinement, separate the different error estimators with a comma. The order of the error estimators should be the same as the order of the variables defined in the "set variable" parameter.
+    set error estimator            = kelly
 
     # Frequency of the mesh refinement
     set frequency                = 1
@@ -52,9 +55,12 @@ This subsection controls the mesh adaptation method, with default values given b
   end
 
 
-* Two ``type`` of mesh adaptation are available. The ``uniform`` mesh adaptation refines the mesh at every cell, whereas the ``kelly`` uses a `kelly error estimator <https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html>`_ to decide which cell are refined, by estimating the error per cell for a given variable. 
-* The variable for kelly estimation should be specified with ``set variable``, and can be: velocity, pressure, phase (for multiphase flows), temperature
+* Two ``type`` of mesh adaptation are available. The ``uniform`` mesh adaptation refines the mesh at every cell, whereas the ``adaptive`` mesh adaptation refines the mesh only at cells where the error estimator (see below) indicates that the error is too high.
+* The variable for adaptive refinement should be specified with ``set variable``, and can be: velocity, pressure, phase (for multiphase flows), temperature, phase_cahn_hilliard, chemical_potential_cahn_hilliard, tracer, electric_field, magnetic_field or electromagnetic_fields. 
 	* Mesh adaptation can be defined on multiple variables, separated with a coma (e.g. ``set variable = velocity,temperature``, or ``set variable = velocity,phase,pressure`` etc.).
+
+  .. note::
+     Note that the ``electromagnetic_fields`` is used to compute the error estimator for both electric and magnetic fields simultaneously and is the only choice of variable when using the ``dpg`` error estimator. If the user wants to use the ``kelly`` error estimator for the electric and magnetic fields separately, they should specify ``set variable = electric_field,magnetic_field`` and ``set error estimator = kelly,kelly``. If fractions for refinement and coarsening are the same for both electric and magnetic fields, the user can also specify ``set variable = electromagnetic_fields``, ``set error estimator = kelly`` for the same result.
 
 	.. warning::
 		The different ``fraction refinement`` and ``fraction coarsening`` must be defined explicitly (see these parameters definition below).
@@ -63,6 +69,8 @@ This subsection controls the mesh adaptation method, with default values given b
 	In the case of multiple variable mesh adaptation, the cells are:
 		* refined if refinement is necessary for at least one variable
 		* coarsened if coarsening is necessary for *all* variables
+
+* The error estimator for adaptive refinement is specified with the ``set error estimator`` parameter. The main available error estimator at the moment is ``kelly`` which uses a `kelly error estimator <https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html>`_ to decide which cell are refined, by estimating the error per cell for a given variable. This estimator is available for all physics. The second error estimator is the ``dpg`` error estimator, which is only available for the electromagnetics physics, and uses the built-in error estimator of the `DPG method <https://www.cambridge.org/core/journals/acta-numerica/article/discontinuous-petrovgalerkin-method/71BCF32CDE92B0924051FA31E8F54DC2>`_ to decide which cell are refined. In case of multiple variables, the user can also choose to use different error estimators for each variables (e.g. ``set error estimator = kelly,dpg``). 
 
 * The frequency at which the mesh is refined is controlled with the ``frequency`` parameter. If ``set frequency = 1``, the mesh is refined at every iteration. 
 	* For transient simulation, this means at every time step.

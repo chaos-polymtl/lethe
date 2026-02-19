@@ -3345,9 +3345,9 @@ namespace Parameters
         "variable",
         "velocity",
         Patterns::List(Patterns::Selection(
-          "velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer")),
-        "Variable(s) for kelly estimation"
-        "Choices are <velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer>."
+          "velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer|electric_field|magnetic_field|electromagnetic_fields")),
+        "Variable(s) for error estimation"
+        "Choices are <velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer|electric_field|magnetic_field|electromagnetic_fields>."
         "For multi-variables refinement, separate the different variables with a comma "
         "(ex/ 'set variables = velocity,temperature')");
 
@@ -3410,9 +3410,9 @@ namespace Parameters
           "Error, invalid mesh adaptation type. Choices are <none|uniform|adaptive>.");
 
       // Getting multivariables refinement parameters
-      const std::string        var_op   = prm.get("variable");
-      std::vector<std::string> var_vec  = Utilities::split_string_list(var_op);
-      const std::string strategy_op = prm.get("error estimator");
+      const std::string        var_op  = prm.get("variable");
+      std::vector<std::string> var_vec = Utilities::split_string_list(var_op);
+      const std::string        strategy_op = prm.get("error estimator");
       std::vector<std::string> strategy_vec =
         Utilities::split_string_list(strategy_op);
       const std::string        coars_op = prm.get("fraction coarsening");
@@ -3454,15 +3454,23 @@ namespace Parameters
             vars = Variable::chemical_potential_cahn_hilliard;
           else if (var_vec[i] == "tracer")
             vars = Variable::tracer;
+          else if (var_vec[i] == "electric_field")
+            vars = Variable::electric_field;
+          else if (var_vec[i] == "magnetic_field")
+            vars = Variable::magnetic_field;
+          else if (var_vec[i] == "electromagnetic_fields")
+            vars = Variable::electromagnetic_fields;
           else
             throw std::logic_error(
-              "Error, invalid mesh adaptation variable. Choices are velocity, pressure, phase, temperature, phase_cahn_hilliard, chemical_potential_cahn_hilliard or tracer");
+              "Error, invalid mesh adaptation variable. Choices are velocity, pressure, phase, temperature, phase_cahn_hilliard, chemical_potential_cahn_hilliard, electric_field, magnetic_field or electromagnetic_fields. Note that <electric_field> or <magnetic_field> and <electromagnetic_fields> are mutually exclusive.");
 
           // Parsing strategy for this variable
           if (strategy_vec[i] == "kelly")
-            var_adaptation_param.error_estimator = MultipleAdaptationParameters::ErrorEstimator::kelly;
+            var_adaptation_param.error_estimator =
+              MultipleAdaptationParameters::ErrorEstimator::kelly;
           else if (strategy_vec[i] == "dpg")
-            var_adaptation_param.error_estimator = MultipleAdaptationParameters::ErrorEstimator::dpg;
+            var_adaptation_param.error_estimator =
+              MultipleAdaptationParameters::ErrorEstimator::dpg;
           else
             throw std::logic_error(
               "Error, invalid mesh adaptation error estimator. Choices are kelly or dpg");
@@ -3473,6 +3481,22 @@ namespace Parameters
           // defining adaptation map for this variable
           variables[vars] = var_adaptation_param;
         }
+      // Verify that the user did not specify both electric_field or
+      // magnetic_field with electromagnetic_fields
+      const bool has_em =
+        variables.find(Variable::electromagnetic_fields) != variables.end();
+
+      const bool has_e =
+        variables.find(Variable::electric_field) != variables.end();
+
+      const bool has_h =
+        variables.find(Variable::magnetic_field) != variables.end();
+
+      AssertThrow(!(has_em && (has_e || has_h)),
+                  ExcMessage(
+                    "Invalid mesh adaptation configuration: "
+                    "electromagnetic_fields is mutually exclusive with "
+                    "electric_field and magnetic_field."));
 
       const std::string fop = prm.get("fraction type");
       if (fop == "number")

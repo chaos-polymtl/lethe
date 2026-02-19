@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_navier_stokes_base_h
@@ -433,13 +433,10 @@ protected:
   refine_mesh();
 
   /**
-   * @brief Allow the refinement of the mesh based on the Kelly error estimator.
-   * See :
-   * https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html
-   * for more information on the Kelly error estimator.
+   * @brief Allow the refinement of the mesh based on an error estimator chosen in the input file.
    */
   void
-  refine_mesh_kelly();
+  refine_mesh_adaptive();
 
   /**
    * @brief Allow the uniform refinement of all the mesh.

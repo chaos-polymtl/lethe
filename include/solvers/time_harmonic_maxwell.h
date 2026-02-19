@@ -41,6 +41,7 @@
 #include <deal.II/lac/trilinos_vector.h>
 
 #include <deal.II/numerics/data_out.h>
+#include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/vector_tools.h>
 
 #include <memory.h>
@@ -81,7 +82,7 @@
 ///   [ ] read_checkpoint
 ///   [ ] gather_tables()
 ///   [ ] compute_kelly
-///   [ ] compute_energy_norm
+///   [ ] compute_dpg_error
 ///   [x] Setup_dofs
 ///   [x] set_initial_conditions
 ///   [x] setup_preconditioner
@@ -265,7 +266,7 @@ public:
    * @param estimated_error_per_cell The deal.II vector of estimated_error_per_cell
    */
   virtual void
-  compute_energy_norm(
+  compute_dpg_error(
     const std::pair<const Variable, Parameters::MultipleAdaptationParameters>
                           &ivar,
     dealii::Vector<float> &estimated_error_per_cell);
@@ -706,6 +707,11 @@ private:
    * @brief A vector containing all the values of the DPG built-in a-posteriori error indicator.
    */
   std::shared_ptr<GlobalVectorType> present_DPG_error_indicator;
+
+  /**
+   * @brief A vector containing the values of the dpg error estimator for each cell of the triangulation. This is used for mesh adaptation based on the DPG error estimator.
+   */
+  Vector<double> local_estimated_error_per_cell;
 
   /**
    * @brief The right hand side vector.
