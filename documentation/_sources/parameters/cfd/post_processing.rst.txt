@@ -1,3 +1,7 @@
+..
+  SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
+  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 ===============
 Post-processing
 ===============
@@ -74,6 +78,8 @@ This subsection controls the post-processing other than the forces and torque on
     set barycenter name                  = barycenter_information
     set calculate mass conservation      = true
     set mass conservation name           = mass_conservation_information
+    set calculate liquid fraction        = false
+    set liquid fraction name             = liquid_fraction
 
     # Other Cahn-Hilliard postprocessing
     set calculate phase statistics       = false
@@ -261,6 +267,10 @@ This subsection controls the post-processing other than the forces and torque on
 * ``calculate mass conservation``: calculates the mass and momentum of both fluids for VOF simulations.
 
 * ``mass conservation name``: name of the output file containing the mass of both fluids for VOF simulations. The default file name is ``mass_conservation_information``.
+
+* ``calculate liquid fraction``: calculates the liquid fraction in simulations with phase change. The liquid fraction corresponds to the volume (area) integral of the liquid divided by the volume (area) of the domain.
+
+* ``liquid fraction name``: name of the output file containing the time evolution of the liquid fraction.
   
 * ``calculate phase statistics``: outputs Cahn-Hilliard phase statistics, including minimum, maximum, average, integral of the phase order parameter, and the volume of each phase.
 
