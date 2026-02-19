@@ -182,7 +182,7 @@ public:
  *
  * For example, if a BDF1 scheme is chosen, the following is assembled:
  * \f[
- * \frac{(\rho \mathbf{u})^{t+\Delta t} - (\rho \mathbf{u})^{t}}{\Delta t}
+ * \frac{(\mathbf{u})^{t+\Delta t} - (\mathbf{u})^{t}}{\Delta t}
  * \f]
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
