@@ -324,8 +324,8 @@ public:
   {}
 
   /**
-   * @brief Calculate the particle-fluid interactions using the Rong drag
-   * model.
+  * @brief Calculate the particle-fluid interactions resulting from drag, using
+   * the Rong model.
    *
    * @param[in,out] scratch_data (see base class)
    */
@@ -372,8 +372,8 @@ public:
   {}
 
   /**
-   * @brief Calculate the particle-fluid interactions using the Dallavalle drag
-   * model.
+   * @brief Calculate the particle-fluid interactions resulting from drag, using
+   * the Dallavalle model.
    *
    * @param[in,out] scratch_data (see base class)
    */
@@ -439,8 +439,8 @@ public:
   {}
 
   /**
-   * @brief Calculate the particle-fluid interactions using the Koch-Hill drag
-   * model.
+   * @brief Calculate the particle-fluid interactions resulting from drag, using
+   * the Koch-Hill model.
    *
    * @param[in,out] scratch_data (see base class)
    */
@@ -497,8 +497,8 @@ public:
   {}
 
   /**
-   * @brief Calculate the particle-fluid interactions using the Beetstra drag
-   * model.
+   * @brief Calculate the particle-fluid interactions resulting from drag, using
+   * the Beetstra model..
    *
    * @param[in,out] scratch_data (see base class)
    */
@@ -551,8 +551,8 @@ public:
   {}
 
   /**
-   * @brief Calculate the particle-fluid interactions using the Gidaspow drag
-   * model.
+   * @brief Calculate the particle-fluid interactions resulting from drag, using
+   * the Gidaspow model.
    *
    * @param[in,out] scratch_data (see base class)
    */

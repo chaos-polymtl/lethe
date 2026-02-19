@@ -20,7 +20,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 -MINOR This PR adds the velocity gradient field to the post-processor data structure. [#1913](https://github.com/chaos-polymtl/lethe/pull/1913)
 
-- MINOR This PR improves the Doxygen documentation and the comments for the VANS assembler. The VANS assemblers were correctly documented, but the formulas of the assemblers were still written in C++ style instead of in LaTeX style which made their rendering on the doxygen very poor. This PR improves this by formatting in LaTeX. [#1909](https://github.com/chaos-polymtl/lethe/pull/1909)
+- MINOR This PR improves the Doxygen documentation and the comments for the VANS assemblers. The VANS assemblers were correctly documented, but the formulas of the assemblers were still written in C++ style instead of in LaTeX style which made their rendering on the doxygen very poor. This PR improves this by formatting in LaTeX. [#1909](https://github.com/chaos-polymtl/lethe/pull/1909)
 
 ## [Master] - 2026/02/16
 
