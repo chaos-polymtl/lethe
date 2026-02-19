@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2021-2023 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2021-2023, 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #############################################################################
@@ -50,7 +50,7 @@ time_list = reader.time_values
 
 #Define list of VTU files
 list_vtu = os.listdir(output_path)
-list_vtu = [x for x in list_vtu if  ("vtu" in x and "pvtu" not in x) ]
+list_vtu = [x for x in list_vtu if "vtu" in x and "pvtu" not in x and "interface" not in x]
 
 # Sort VTU files to ensure they are in the same order as the time step
 list_vtu = sorted(list_vtu)

@@ -35,11 +35,13 @@ end
 
 subsection VOF
   subsection interface regularization method
-    set type      = projection-based interface sharpening
-    set frequency = 20
-    subsection projection-based interface sharpening
-      set threshold           = 0.5
-      set interface sharpness = 1.5
+    set type      = geometric interface reinitialization
+    set frequency = 10
+    set verbosity = verbose
+    subsection geometric interface reinitialization
+      set max reinitialization distance = 0.32
+      set tanh thickness                = 0.08
+      set transformation type           = tanh
     end
   end
 
