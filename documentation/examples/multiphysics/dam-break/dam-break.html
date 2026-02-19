@@ -527,19 +527,23 @@ end
 </section>
 <section id="vof">
 <h3>VOF<a class="headerlink" href="#vof" title="Link to this heading">#</a></h3>
-<p>To prevent the interface between phases from becoming blurry due to diffusion, the interface <code class="docutils literal notranslate"><span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code> method is selected in the <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">regularization</span> <span class="pre">method</span></code> subsection. Furthermore, the <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">filtration</span></code> is enabled in this example. We refer the reader to the <a class="reference internal" href="../../../theory/multiphase/cfd/vof.html"><span class="doc">The Volume of Fluid (VOF) Method</span></a> documentation for more explanation on both methods.</p>
+<p>To prevent the interface between phases from becoming blurry due to diffusion, the interface <code class="docutils literal notranslate"><span class="pre">geometric</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code> method is selected in the <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">regularization</span> <span class="pre">method</span></code> subsection. The <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">reinitialization</span> <span class="pre">distance</span></code> is set to ensure the interface thickness is at least 12 cells. Furthermore, the <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">filtration</span></code> is enabled in this example. We refer the reader to the <a class="reference internal" href="../../../theory/multiphase/cfd/vof.html"><span class="doc">The Volume of Fluid (VOF) Method</span></a> documentation for more explanation on both methods.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection VOF
   subsection interface regularization method
-    set type      = projection-based interface sharpening
-    set frequency = 20
-    subsection projection-based interface sharpening
-      set threshold           = 0.5
-      set interface sharpness = 1.5
+    set type      = geometric interface reinitialization
+    set frequency = 10
+    set verbosity = verbose
+    subsection geometric interface reinitialization
+      set max reinitialization distance = 0.32
+      set tanh thickness                = 0.08
+      set transformation type           = tanh
     end
   end
+
   subsection phase filtration
-    set type            = tanh
-    set beta            = 10
+    set type      = tanh
+    set verbosity = quiet
+    set beta      = 10
   end
 end
 </pre></div>
@@ -668,8 +672,9 @@ refinement. The following image shows the mesh and the position of
 the interface at <span class="math notranslate nohighlight">\(4\)</span> s. The mesh refinement detects
 and refines the meshes on the interface.</p>
 <img alt="refinement" class="align-center" src="../../../_images/refinement.png" />
-</section>
 <hr class="docutils" />
+<p>Finally, the animation below displays the evolution of the liquid phase through time:</p>
+<iframe width="850" height="478" src="https://www.youtube.com/embed/VO09gtJxbSE?si=x7zKsTrLN7N4zi4u" title="2D Dam-break simulation" frameborder="0" allowfullscreen></iframe></section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
 <aside class="footnote-list brackets">
