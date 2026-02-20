@@ -188,7 +188,8 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set type                 = kelly
+  set type                 = adaptive
+  set error estimator      = kelly
   set fraction coarsening  = 0.1
   set fraction refinement  = 0.4
   set fraction type        = number

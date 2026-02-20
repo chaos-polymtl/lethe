@@ -225,7 +225,8 @@ To increase the accuracy of the drag coefficient, the mesh must be refined in ar
 .. code-block:: text
 
     subsection mesh adaptation
-      set type                 = kelly
+      set type                 = adaptive 
+      set error estimator      = kelly
       set fraction coarsening  = 0.05
       set fraction refinement  = 0.1
       set fraction type        = number

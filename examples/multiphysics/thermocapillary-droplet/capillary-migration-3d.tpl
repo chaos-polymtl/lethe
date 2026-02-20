@@ -137,7 +137,8 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set type                     = kelly
+  set type                     = adaptive 
+  set error estimator          = kelly
   set variable                 = phase
   set fraction type            = fraction
   set max refinement level     = 7

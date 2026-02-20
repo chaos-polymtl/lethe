@@ -153,8 +153,9 @@ subsection mesh adaptation
   set max refinement level = 8
   set min refinement level = 4
 
-  set type     = kelly
-  set variable = velocity
+  set type            = adaptive
+  set error estimator = kelly
+  set variable        = velocity
 end
 
 #---------------------------------------------------

@@ -32,7 +32,8 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set type                    = kelly
+  set type                    = adaptive
+  set error estimator         = kelly
   set variable                = velocity
   set frequency               = 1
   set fix boundary refinement = true

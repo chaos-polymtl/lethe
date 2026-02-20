@@ -3321,7 +3321,7 @@ namespace Parameters
       prm.declare_entry(
         "error estimator",
         "kelly",
-        Patterns::Selection("kelly|dpg"),
+        Patterns::List(Patterns::Selection("kelly|dpg")),
         "Error estimator for adaptive mesh refinement. For multi-variables refinement, separate the different strategies with a comma. They should follow the same order as what is specified in the variable parameter."
         "Choices are <kelly|dpg>.");
 
@@ -3401,9 +3401,9 @@ namespace Parameters
       const std::string op = prm.get("type");
       if (op == "none")
         type = Type::none;
-      if (op == "uniform")
+      else if (op == "uniform")
         type = Type::uniform;
-      if (op == "adaptive")
+      else if (op == "adaptive")
         type = Type::adaptive;
       else
         throw std::logic_error(

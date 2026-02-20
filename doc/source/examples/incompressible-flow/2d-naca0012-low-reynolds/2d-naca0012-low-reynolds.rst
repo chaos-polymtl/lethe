@@ -123,7 +123,8 @@ Mesh adaptation is used to get a higher resolution in areas of interest, that is
 .. code-block:: text
 	
     subsection mesh adaptation
-      set type                 = kelly
+      set type                 = adaptive 
+      set error estimator      = kelly
       set variable             = velocity
       set fraction type        = number
       set max number elements  = 700000

@@ -60,7 +60,8 @@ The mesh adaptation is identical to the mesh adaptation section used for the oth
 .. code-block:: text
 
     subsection mesh adaptation
-      set type                 = kelly
+      set type                 = adaptive 
+      set error estimator      = kelly
       set variable             = velocity
       set fraction type        = fraction
       set max number elements  = 1200000

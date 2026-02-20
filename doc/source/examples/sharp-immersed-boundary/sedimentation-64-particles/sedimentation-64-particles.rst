@@ -117,7 +117,8 @@ Mesh Adaptation
       set max number elements = 750000
       set max refinement level = 6
       set min refinement level = 4
-      set type = kelly
+      set type = adaptive 
+      set error estimator = kelly
       set variable = velocity
     end
 
@@ -129,7 +130,7 @@ Mesh Adaptation
 
 * The ``max refinement level`` is set to 6. This parameter limits how small the elements around the particle can get, limiting the total number of elements in the problem. Here we limit the mesh size to 8 elements per diameter of the particle. This should be sufficient to show the capabilities of the solver. However, the discretization error is not negligible in this case.
 
-* The ``type`` is set to ``kelly``. Since the particle is moving and we do not want a uniform refinement of all the cells, we use the kelly error estimator based on the ``velocity`` variable.
+* The ``type`` is set to ``adaptive``. Since the particle is moving and we do not want a uniform refinement of all the cells, we use the kelly error estimator based on the ``velocity`` variable.
 
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~

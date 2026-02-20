@@ -217,7 +217,8 @@ The ``mesh adaptation`` section controls the dynamic mesh adaptation. Here, we c
 .. code-block:: text
 
     subsection mesh adaptation
-      set type                     = kelly
+      set type                     = adaptive 
+      set error estimator          = kelly, kelly
       set variable                 = phase, pressure
       set fraction type            = fraction
       set max refinement level     = 4

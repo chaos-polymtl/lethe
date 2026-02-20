@@ -44,7 +44,8 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set type                       = kelly
+  set type                       = adaptive
+  set error estimator            = kelly
   set variable                   = temperature
   set fraction type              = fraction
   set mesh refinement controller = false

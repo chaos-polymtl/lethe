@@ -125,7 +125,8 @@ In this example, the mesh adaptation algorithm is based on the Kelly error estim
 
     subsection mesh adaptation
       set variable            = velocity
-      set type                = kelly
+      set type                = adaptive 
+      set error estimator     = kelly
       set fraction refinement = 0.2
     end
 	

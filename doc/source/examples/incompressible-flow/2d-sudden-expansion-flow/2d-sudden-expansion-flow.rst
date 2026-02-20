@@ -111,7 +111,8 @@ The mesh adaptation algorithm is based on the Kelly error estimator applied on t
 
     subsection mesh adaptation
       set variable             = velocity
-      set type                 = kelly
+      set type                 = adaptive 
+      set error estimator      = kelly
       set fraction refinement  = 0.2
       set fraction coarsening  = 0
       set frequency            = 1
@@ -132,7 +133,8 @@ The ``mesh refinement controller`` feature aims to maintain the total number of 
 
     subsection mesh adaptation
       set variable                    = velocity
-      set type                        = kelly
+      set type                        = adaptive 
+      set error estimator             = kelly
       set fraction refinement         = 0.05
       set fraction coarsening         = 0
       set frequency                   = 5
