@@ -194,7 +194,7 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::generate_2d_channel_mesh(
                         std::abs(vertex[1] - center[1]))) <
                 1e-12 * outer_radius)
             {
-              vertex = center + std::sqrt(2.) * (vertex - center);
+              vertex = center + std::numbers::sqrt2 * (vertex - center);
             }
         }
     }
