@@ -2,12 +2,14 @@ add_library(lethe-core
   # Sources
   bdf.cc
   boundary_conditions.cc
+  cylinder_grid.cc
   dem_properties.cc
   density_model.cc
   dimensionality.cc
   electric_conductivity_model.cc
   electric_permittivity_model.cc
   evaporation_model.cc
+  fichera_oven_grid.cc
   grids.cc
   ib_particle.cc
   ib_stencil.cc
@@ -23,6 +25,7 @@ add_library(lethe-core
   parameters_cfd_dem.cc
   parameters_lagrangian.cc
   parameters_multiphysics.cc
+  periodic_hills_grid.cc
   pvd_handler.cc
   rheological_model.cc
   sdirk_stage_data.cc
@@ -40,6 +43,7 @@ add_library(lethe-core
   thermal_expansion_model.cc
   tracer_diffusivity_model.cc
   tracer_reaction_model.cc
+  uniform_channel_with_meshed_cylinder_grid.cc
   utilities.cc
   # Headers
   ../../include/core/ale.h

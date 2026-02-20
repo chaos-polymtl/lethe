@@ -139,74 +139,61 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
       // Customizable cylinder mesh
       if (grid_type.starts_with("cylinder_"))
         {
-          if (mesh_parameters.simplex)
-            {
-              throw std::runtime_error(
-                "Unsupported mesh type - custom cylinder mesh with simplex is not supported. Use a dealii cylinder to use simplex mesh.");
-            }
-          else
-            {
-              CylinderGrid<dim, spacedim> grid(grid_type,
-                                               mesh_parameters.grid_arguments);
-              grid.make_grid(triangulation);
+          AssertThrow(
+            !mesh_parameters.simplex,
+            ExcMessage(
+              "Unsupported mesh type - custom cylinder mesh with simplex is not supported. Use a dealii cylinder to use simplex mesh."));
 
-              GridTools::scale(mesh_parameters.scale, triangulation);
-            }
+          CylinderGrid<dim, spacedim> grid(grid_type,
+                                           mesh_parameters.grid_arguments);
+          grid.make_grid(triangulation);
+
+          GridTools::scale(mesh_parameters.scale, triangulation);
         }
       // Periodic Hills grid
       else if (grid_type == "periodic_hills")
         {
-          if (mesh_parameters.simplex)
-            {
-              throw std::runtime_error(
-                "Unsupported mesh type - periodic hills mesh with simplex is not supported");
-            }
-          else
-            {
-              PeriodicHillsGrid<dim, spacedim> grid(
-                mesh_parameters.grid_arguments);
-              grid.make_grid(triangulation);
+          AssertThrow(
+            !mesh_parameters.simplex,
+            ExcMessage(
+              "Unsupported mesh type - periodic hills mesh with simplex is not supported"));
 
-              GridTools::scale(mesh_parameters.scale, triangulation);
-            }
+          PeriodicHillsGrid<dim, spacedim> grid(mesh_parameters.grid_arguments);
+          grid.make_grid(triangulation);
+
+          GridTools::scale(mesh_parameters.scale, triangulation);
         }
       else if (grid_type == "fichera_oven")
         {
-          if (mesh_parameters.simplex)
-            {
-              throw std::runtime_error(
-                "Unsupported mesh type - Fichera oven mesh with simplex is not supported");
-            }
-          else
-            {
-              FicheraOvenGrid<dim, spacedim> grid(
-                mesh_parameters.grid_arguments);
-              grid.make_grid(triangulation);
+          AssertThrow(
+            !mesh_parameters.simplex,
+            ExcMessage(
+              "Unsupported mesh type - Fichera oven mesh with simplex is not supported"));
 
-              GridTools::scale(mesh_parameters.scale, triangulation);
-            }
+          FicheraOvenGrid<dim, spacedim> grid(mesh_parameters.grid_arguments);
+          grid.make_grid(triangulation);
+
+          GridTools::scale(mesh_parameters.scale, triangulation);
         }
       else if (grid_type == "uniform_channel_with_meshed_cylinder")
         {
-          if (mesh_parameters.simplex)
-            {
-              throw std::runtime_error(
-                "Unsupported mesh type - uniform channel with meshed cylinder mesh with simplex is not supported");
-            }
-          else
-            {
-              UniformChannelWithMeshedCylinderGrid<dim, spacedim> grid(
-                mesh_parameters.grid_arguments);
-              grid.make_grid(triangulation);
+          AssertThrow(
+            !mesh_parameters.simplex,
+            ExcMessage(
+              "Unsupported mesh type - uniform channel with meshed cylinder mesh with simplex is not supported"));
 
-              GridTools::scale(mesh_parameters.scale, triangulation);
-            }
+          UniformChannelWithMeshedCylinderGrid<dim, spacedim> grid(
+            mesh_parameters.grid_arguments);
+          grid.make_grid(triangulation);
+
+          GridTools::scale(mesh_parameters.scale, triangulation);
         }
 
       else
         {
-          throw std::runtime_error(
-            "Unsupported mesh type - mesh will not be created");
+          AssertThrow(false,
+                      ExcMessage(
+                        "Unsupported mesh type - mesh will not be created"));
         }
     }
 }
