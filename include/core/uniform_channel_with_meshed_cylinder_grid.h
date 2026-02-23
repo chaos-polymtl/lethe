@@ -144,11 +144,11 @@ private:
   /// The original input string with the geometry parameters.
   std::string grid_arguments;
   /// Point that define the bottom-left of the channel in the xy-plane.
-  Point<2> bottom_left;
+  Point<dim> bottom_left;
   /// Point that define the top-right of the channel in the xy-plane.
-  Point<2> top_right;
+  Point<dim> top_right;
   /// Point that define the center of the cylinder in the xy-plane.
-  Point<2> center;
+  Point<dim> center;
   /// Radius of the cylinder.
   double inner_radius;
   /// Radius of the transition region between the cylinder and the channel.
