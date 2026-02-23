@@ -216,6 +216,18 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "Maximal number of vtu output files");
+      prm.declare_entry("output qcriterion",
+                        "true",
+                        Patterns::Bool(),
+                        "Output Q-criterion field <true|false>");
+      prm.declare_entry("output vorticity",
+                        "true",
+                        Patterns::Bool(),
+                        "Output vorticity field <true|false>");
+      prm.declare_entry("output velocity gradient",
+                        "true",
+                        Patterns::Bool(),
+                        "Output velocity gradient field <true|false>");
     }
     prm.leave_subsection();
   }
@@ -293,7 +305,10 @@ namespace Parameters
         convert_string_to_vector<double>(prm, "output times");
       output_time_interval =
         convert_string_to_vector<double>(prm, "output time interval");
-      output_boundaries = prm.get_bool("output boundaries");
+      output_boundaries        = prm.get_bool("output boundaries");
+      output_q_criterion       = prm.get_bool("output qcriterion");
+      output_vorticity         = prm.get_bool("output vorticity");
+      output_velocity_gradient = prm.get_bool("output velocity gradient");
 
       subdivision   = prm.get_integer("subdivision");
       group_files   = prm.get_integer("group files");

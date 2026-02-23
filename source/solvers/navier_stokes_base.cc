@@ -2740,13 +2740,16 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
   // that the objects still exist when the write output of DataOut is called
   // Regular discontinuous postprocessors
   // They are created as shared pointers to outlive the function
-  std::shared_ptr<QCriterionPostprocessor<dim>> qcriterion =
-    std::make_shared<QCriterionPostprocessor<dim>>();
-  solution_output_structs.emplace_back(
-    std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
-    *this->dof_handler,
-    solution,
-    qcriterion);
+  if (this->simulation_parameters.simulation_control.output_q_criterion)
+    {
+      std::shared_ptr<QCriterionPostprocessor<dim>> qcriterion =
+        std::make_shared<QCriterionPostprocessor<dim>>();
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
+        *this->dof_handler,
+        solution,
+        qcriterion);
+    }
 
   std::shared_ptr<DivergencePostprocessor<dim>> divergence =
     std::make_shared<DivergencePostprocessor<dim>>();
@@ -2756,21 +2759,27 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
     solution,
     divergence);
 
-  std::shared_ptr<GradientPostprocessor<dim>> gradient =
-    std::make_shared<GradientPostprocessor<dim>>();
-  solution_output_structs.emplace_back(
-    std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
-    *this->dof_handler,
-    solution,
-    gradient);
+  if (this->simulation_parameters.simulation_control.output_velocity_gradient)
+    {
+      std::shared_ptr<GradientPostprocessor<dim>> gradient =
+        std::make_shared<GradientPostprocessor<dim>>();
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
+        *this->dof_handler,
+        solution,
+        gradient);
+    }
 
-  std::shared_ptr<VorticityPostprocessor<dim>> vorticity =
-    std::make_shared<VorticityPostprocessor<dim>>();
-  solution_output_structs.emplace_back(
-    std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
-    *this->dof_handler,
-    solution,
-    vorticity);
+  if (this->simulation_parameters.simulation_control.output_vorticity)
+    {
+      std::shared_ptr<VorticityPostprocessor<dim>> vorticity =
+        std::make_shared<VorticityPostprocessor<dim>>();
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
+        *this->dof_handler,
+        solution,
+        vorticity);
+    }
 
   // Get physical properties models
   std::vector<std::shared_ptr<DensityModel>> density_models =
