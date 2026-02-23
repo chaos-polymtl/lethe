@@ -3345,9 +3345,9 @@ namespace Parameters
         "variable",
         "velocity",
         Patterns::List(Patterns::Selection(
-          "velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer|electric_field|magnetic_field|electromagnetic_fields")),
+          "velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer|electric field|magnetic field|electromagnetic fields")),
         "Variable(s) for error estimation"
-        "Choices are <velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer|electric_field|magnetic_field|electromagnetic_fields>."
+        "Choices are <velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer|electric field|magnetic field|electromagnetic_fields>."
         "For multi-variables refinement, separate the different variables with a comma "
         "(ex/ 'set variables = velocity,temperature')");
 
@@ -3454,15 +3454,15 @@ namespace Parameters
             vars = Variable::chemical_potential_cahn_hilliard;
           else if (var_vec[i] == "tracer")
             vars = Variable::tracer;
-          else if (var_vec[i] == "electric_field")
+          else if (var_vec[i] == "electric field")
             vars = Variable::electric_field;
-          else if (var_vec[i] == "magnetic_field")
+          else if (var_vec[i] == "magnetic field")
             vars = Variable::magnetic_field;
-          else if (var_vec[i] == "electromagnetic_fields")
+          else if (var_vec[i] == "electromagnetic fields")
             vars = Variable::electromagnetic_fields;
           else
             throw std::logic_error(
-              "Error, invalid mesh adaptation variable. Choices are velocity, pressure, phase, temperature, phase_cahn_hilliard, chemical_potential_cahn_hilliard, electric_field, magnetic_field or electromagnetic_fields. Note that <electric_field> or <magnetic_field> and <electromagnetic_fields> are mutually exclusive.");
+              "Error, invalid mesh adaptation variable. Choices are velocity, pressure, phase, temperature, phase_cahn_hilliard, chemical_potential_cahn_hilliard, electric field, magnetic field or electromagnetic fields. Note that <electric field> or <magnetic field> and <electromagnetic fields> are mutually exclusive.");
 
           // Parsing strategy for this variable
           if (strategy_vec[i] == "kelly")

@@ -657,7 +657,7 @@ TimeHarmonicMaxwell<dim>::compute_error_estimate(
           Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly,
         ExcMessage(
           "Only Kelly error estimator is currently implemented for the "
-          "<electric_field> field."));
+          "<electric field> field."));
 
       ComponentMask electric_field_mask =
         this->fe_trial_interior->component_mask(extractor_E_real) |
@@ -671,7 +671,7 @@ TimeHarmonicMaxwell<dim>::compute_error_estimate(
           Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly,
         ExcMessage(
           "Only Kelly error estimator is currently implemented for the "
-          "<magnetic_field> field."));
+          "<magnetic field> field."));
 
       ComponentMask magnetic_field_mask =
         this->fe_trial_interior->component_mask(extractor_H_real) |
@@ -701,7 +701,7 @@ TimeHarmonicMaxwell<dim>::compute_error_estimate(
           AssertThrow(
             false,
             ExcMessage(
-              "Unknown error estimator type for variable <electromagnetic_fields>."));
+              "Unknown error estimator type for variable <electromagnetic fields>."));
         }
     }
 }
@@ -1166,7 +1166,7 @@ TimeHarmonicMaxwell<dim>::solve_linear_system()
     std::max(relative_residual * rescaled_residual, absolute_residual);
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
-        .verbosity != Parameters::Verbosity::quiet)
+        .verbosity == Parameters::Verbosity::extra_verbose)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
@@ -1187,7 +1187,7 @@ TimeHarmonicMaxwell<dim>::solve_linear_system()
                *this->preconditioner);
 
   if (simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
-        .verbosity != Parameters::Verbosity::quiet)
+        .verbosity == Parameters::Verbosity::extra_verbose)
     {
       this->pcout << "  -CG iterative solver took : "
                   << solver_control.last_step()

@@ -60,7 +60,7 @@ This subsection controls the mesh adaptation method, with default values given b
 	* Mesh adaptation can be defined on multiple variables, separated with a coma (e.g. ``set variable = velocity,temperature``, or ``set variable = velocity,phase,pressure`` etc.).
 
   .. note::
-     Note that the ``electromagnetic_fields`` is used to compute the error estimator for both electric and magnetic fields simultaneously and is the only choice of ``variable`` when using the ``dpg`` error estimator. If the user wants to use the ``kelly`` error estimator for the electric and magnetic fields separately, they should specify ``set variable = electric_field,magnetic_field`` and ``set error estimator = kelly,kelly``. If fractions for refinement and coarsening are the same for both electric and magnetic fields, the user coudl also only specify ``set variable = electromagnetic_fields`` with ``set error estimator = kelly`` for the same result.
+     Note that the ``electromagnetic fields`` is used to compute the error estimator for both electric and magnetic fields simultaneously and is the only choice of ``variable`` when using the ``dpg`` error estimator. If the user wants to use the ``kelly`` error estimator for the electric and magnetic fields separately, they should specify ``set variable = electric field,magnetic field`` and ``set error estimator = kelly,kelly``. If fractions for refinement and coarsening are the same for both electric and magnetic fields, the user coudl also only specify ``set variable = electromagnetic fields`` with ``set error estimator = kelly`` for the same result.
 
 	.. warning::
 		The different ``fraction refinement`` and ``fraction coarsening`` must be defined explicitly (see these parameters definition below).
