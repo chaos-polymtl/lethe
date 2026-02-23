@@ -141,19 +141,38 @@ private:
                            const unsigned int pad_right,
                            const bool         colorize);
 
-  std::string  grid_arguments;
-  Point<dim>   bottom_left;
-  Point<dim>   top_right;
-  Point<dim>   center;
-  double       inner_radius;
-  double       outer_radius;
+  /// The original input string with the geometry parameters.
+  std::string grid_arguments;
+  /// Point that define the bottom-left of the channel in the xy-plane.
+  Point<2> bottom_left;
+  /// Point that define the top-right of the channel in the xy-plane.
+  Point<2> top_right;
+  /// Point that define the center of the cylinder in the xy-plane.
+  Point<2> center;
+  /// Radius of the cylinder.
+  double inner_radius;
+  /// Radius of the transition region between the cylinder and the channel.
+  double outer_radius;
+  /// Number of additional cells to be added to pad the channel from center -
+  /// inner_radius - outer_radius to the channel bottom boundary (-x direction).
   unsigned int pad_bottom;
+  /// Number of additional cells to be added to pad the channel from center +
+  /// inner_radius + outer_radius to the channel top boundary (+x direction).
   unsigned int pad_top;
+  /// Number of additional cells to be added to pad the channel from center -
+  /// inner_radius - outer_radius to the channel left boundary (-y direction).
   unsigned int pad_left;
+  /// Number of additional cells to be added to pad the channel from center +
+  /// inner_radius + outer_radius to the channel right boundary (+y direction).
   unsigned int pad_right;
-  double       height;
+  /// Extrusion height in the z direction, 3D only.
+  double height;
+  /// Number of layers in the z direction, 3D only. Minimum is 2, which
+  /// corresponds to a single layer of cells in the z direction.
   unsigned int n_slices;
-  bool         colorize;
+  /// Whether to assign distinct boundary IDs to the channel boundaries
+  /// following the subdivided_hyper_rectangle convention.
+  bool colorize;
 };
 
 
