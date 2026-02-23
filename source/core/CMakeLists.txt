@@ -2,12 +2,14 @@ add_library(lethe-core
   # Sources
   bdf.cc
   boundary_conditions.cc
+  cylinder_grid.cc
   dem_properties.cc
   density_model.cc
   dimensionality.cc
   electric_conductivity_model.cc
   electric_permittivity_model.cc
   evaporation_model.cc
+  fichera_oven_grid.cc
   grids.cc
   ib_particle.cc
   ib_stencil.cc
@@ -23,6 +25,7 @@ add_library(lethe-core
   parameters_cfd_dem.cc
   parameters_lagrangian.cc
   parameters_multiphysics.cc
+  periodic_hills_grid.cc
   pvd_handler.cc
   rheological_model.cc
   sdirk_stage_data.cc
@@ -40,6 +43,7 @@ add_library(lethe-core
   thermal_expansion_model.cc
   tracer_diffusivity_model.cc
   tracer_reaction_model.cc
+  uniform_channel_with_meshed_cylinder_grid.cc
   utilities.cc
   # Headers
   ../../include/core/ale.h
@@ -47,6 +51,7 @@ add_library(lethe-core
   ../../include/core/bdf.h
   ../../include/core/boundary_conditions.h
   ../../include/core/checkpoint_control.h
+  ../../include/core/cylinder_grid.h
   ../../include/core/dem_properties.h
   ../../include/core/density_model.h
   ../../include/core/dimensionality.h
@@ -54,6 +59,7 @@ add_library(lethe-core
   ../../include/core/electric_permittivity_model.h
   ../../include/core/evaporation_model.h
   ../../include/core/exceptions.h
+  ../../include/core/fichera_oven_grid.h
   ../../include/core/grids.h
   ../../include/core/ib_particle.h
   ../../include/core/ib_stencil.h
@@ -98,6 +104,7 @@ add_library(lethe-core
   ../../include/core/time_integration_utilities.h
   ../../include/core/tracer_diffusivity_model.h
   ../../include/core/tracer_reaction_model.h
+  ../../include/core/uniform_channel_with_meshed_cylinder_grid.h
   ../../include/core/utilities.h)
 
 deal_ii_setup_target(lethe-core)

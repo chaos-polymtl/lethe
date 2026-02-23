@@ -58,13 +58,13 @@ A DEM simulation is first run to insert the particles. The subsections in the DE
 Mesh
 ~~~~~
 
-The particles are packed inside a cylindrical column. For this reason, the mesh type is set to ``cylinder`` with a ``balanced`` grid. This mesh uses the same input arguments as the ``GridGenerator::subdivided_cylinder`` function of Deal.II, yet leads to more uniform cells across the domain. An initial refinement level of :math:`2` provides enough cells for the CFD solver while keeping the smallest cell size larger than the particle diameter. Finally, the particle–wall contact search expansion is enabled to ensure proper detection of particle–wall interactions in the curved convex geometry.
+The particles are packed inside a cylindrical column. For this reason, the mesh type is set to ``lethe`` with a ``cylinder_balanced`` grid type. This mesh uses the same input arguments as the ``GridGenerator::subdivided_cylinder`` function of Deal.II, yet leads to more uniform cells across the domain. An initial refinement level of :math:`2` provides enough cells for the CFD solver while keeping the smallest cell size larger than the particle diameter. Finally, the particle–wall contact search expansion is enabled to ensure proper detection of particle–wall interactions in the curved convex geometry.
 
 .. code-block:: text
 
     subsection mesh
-        set type                                = cylinder
-        set grid type                           = balanced
+        set type                                = lethe
+        set grid type                           = cylinder_balanced
         set grid arguments                      = 44:0.01:0.22
         set initial refinement                  = 2
         set expand particle-wall contact search = true
