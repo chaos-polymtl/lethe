@@ -732,9 +732,16 @@ TimeHarmonicMaxwell<dim>::compute_dpg_error(
   // separate loop. The estimated error per cell is computed and stored in the
   // member variable local_estimated_error_per_cell during the assembly, and
   // then used for marking the cells for refinement.
-
-
   estimated_error_per_cell = this->local_estimated_error_per_cell;
+
+  // If the user has chosen to have the linear solver in verbose mode, we print
+  // the DPG residual
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
+        .verbosity != Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  - Time-Harmonic Maxwell DPG residual : "
+                  << estimated_error_per_cell.l2_norm() << std::endl;
+    }
 }
 
 template <int dim>
