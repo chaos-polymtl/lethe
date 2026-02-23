@@ -154,16 +154,16 @@ private:
   /// Radius of the transition region between the cylinder and the channel.
   double outer_radius;
   /// Number of additional cells to be added to pad the channel from center -
-  /// inner_radius - outer_radius to the channel bottom boundary (-x direction).
+  /// inner_radius - outer_radius to the channel bottom boundary (-y direction).
   unsigned int pad_bottom;
   /// Number of additional cells to be added to pad the channel from center +
-  /// inner_radius + outer_radius to the channel top boundary (+x direction).
+  /// inner_radius + outer_radius to the channel top boundary (+y direction).
   unsigned int pad_top;
   /// Number of additional cells to be added to pad the channel from center -
-  /// inner_radius - outer_radius to the channel left boundary (-y direction).
+  /// inner_radius - outer_radius to the channel left boundary (-x direction).
   unsigned int pad_left;
   /// Number of additional cells to be added to pad the channel from center +
-  /// inner_radius + outer_radius to the channel right boundary (+y direction).
+  /// inner_radius + outer_radius to the channel right boundary (+x direction).
   unsigned int pad_right;
   /// Extrusion height in the z direction, 3D only.
   double height;
