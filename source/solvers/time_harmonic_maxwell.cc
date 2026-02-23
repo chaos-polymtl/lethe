@@ -318,6 +318,30 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
   return std::make_pair(excitation, surface_admittance);
 }
 
+template <int dim>
+void
+TimeHarmonicMaxwell<dim>::update_material_properties(
+  const PhysicalPropertiesManager &properties_manager,
+  std::complex<double>            &epsilon_r_eff,
+  std::complex<double>            &mu_r,
+  const unsigned int               material_id)
+{
+  std::map<field, double>
+    field_values; // Empty map since no field dependence for now
+  epsilon_r_eff = {
+    properties_manager.get_electric_permittivity_real(0, material_id)
+      ->value(field_values),
+    properties_manager.get_electric_permittivity_imag(0, material_id)
+        ->value(field_values) +
+      properties_manager.get_electric_conductivity(0, material_id)
+        ->value(field_values)};
+
+  mu_r = {properties_manager.get_magnetic_permeability_real(0, material_id)
+            ->value(field_values),
+          properties_manager.get_magnetic_permeability_imag(0, material_id)
+            ->value(field_values)};
+}
+
 
 template <int dim>
 std::vector<OutputStruct<dim, GlobalVectorType>>
@@ -1196,52 +1220,18 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
   static constexpr std::complex<double> imag{0., 1.};
   static constexpr int                  dim = 3;
 
-  // Get properties manager and extract the models for the physical properties
+  // Get properties manager and define model physical properties
   const auto &properties_manager =
     this->simulation_parameters.physical_properties_manager;
-
-  const auto electric_conductivity_model =
-    properties_manager.get_electric_conductivity();
-
-  const auto electric_permittivity_model_real =
-    properties_manager.get_electric_permittivity_real();
-
-  const auto electric_permittivity_model_imag =
-    properties_manager.get_electric_permittivity_imag();
-
-  const auto magnetic_permeability_model =
-    properties_manager.get_magnetic_permeability_real();
-
-  const auto magnetic_permeability_model_imag =
-    properties_manager.get_magnetic_permeability_imag();
-
-  // At the moment, we only support constant properties for time-harmonic
-  // Maxwell so we can get their values directly here.
-  std::map<field, double>
-    field_values; // Empty map since no field dependence for now
-  std::complex<double> epsilon_r_eff = {
-    electric_permittivity_model_real->value(field_values),
-    electric_permittivity_model_imag->value(field_values) +
-      electric_conductivity_model->value(field_values)};
-
-  std::complex<double> mu_r = {magnetic_permeability_model->value(field_values),
-                               magnetic_permeability_model_imag->value(
-                                 field_values)};
+  std::complex<double> epsilon_r_eff;
+  std::complex<double> mu_r;
+  unsigned int         material_id;
 
   /// Excitation properties
   const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters =
     this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
   const double omega =
     2.0 * PI * time_harmonic_maxwell_parameters.electromagnetic_frequency;
-
-  // We define some constants that will be used during the assembly. Those
-  // would change according to the material parameters, but here we only have
-  // one material.
-  const std::complex<double> iwmu_r       = imag * omega * mu_r;
-  const std::complex<double> conj_iwmu_r  = std::conj(iwmu_r);
-  const std::complex<double> iweps_r      = imag * omega * epsilon_r_eff;
-  const std::complex<double> conj_iweps_r = std::conj(iweps_r);
-
 
   TimerOutput::Scope t(this->computing_timer, "Assemble matrix and RHS");
 
@@ -1445,6 +1435,18 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
     {
       if (cell->is_locally_owned())
         {
+          // We update the material properties for the current cell and define
+          // some constants that will be used during the assembly.
+          material_id = cell->material_id();
+          update_material_properties(properties_manager,
+                                     epsilon_r_eff,
+                                     mu_r,
+                                     material_id);
+          const std::complex<double> iwmu_r      = imag * omega * mu_r;
+          const std::complex<double> conj_iwmu_r = std::conj(iwmu_r);
+          const std::complex<double> iweps_r     = imag * omega * epsilon_r_eff;
+          const std::complex<double> conj_iweps_r = std::conj(iweps_r);
+
           // We reinitialize the FEValues objects to the current cell.
           fe_values_trial_interior.reinit(cell);
 
@@ -2184,57 +2186,24 @@ void
 TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
 {
   // Constexpr values and used in the assembly. Since we are in the specialized
-  // 3D function we define dim=3 here. This makes easier to read the code below
-  // to see what are templated in dim and what are not.
+  // 3D function we define dim = 3 here. This makes easier to read the code
+  // below to see what are templated in dim and what are not.
   static constexpr double               PI = numbers::PI;
   static constexpr std::complex<double> imag{0., 1.};
   static constexpr int                  dim = 3;
 
-  // Get properties manager and extract the models for the physical properties
+  // Get properties manager and define model physical properties
   const auto &properties_manager =
     this->simulation_parameters.physical_properties_manager;
-
-  const auto electric_conductivity_model =
-    properties_manager.get_electric_conductivity();
-
-  const auto electric_permittivity_model_real =
-    properties_manager.get_electric_permittivity_real();
-
-  const auto electric_permittivity_model_imag =
-    properties_manager.get_electric_permittivity_imag();
-
-  const auto magnetic_permeability_model =
-    properties_manager.get_magnetic_permeability_real();
-
-  const auto magnetic_permeability_model_imag =
-    properties_manager.get_magnetic_permeability_imag();
-
-  // At the moment, we only support constant properties for time-harmonic
-  // Maxwell so we can get their values directly here.
-  std::map<field, double>
-    field_values; // Empty map since no field dependence for now
-  std::complex<double> epsilon_r_eff = {
-    electric_permittivity_model_real->value(field_values),
-    electric_permittivity_model_imag->value(field_values) +
-      electric_conductivity_model->value(field_values)};
-
-  std::complex<double> mu_r = {magnetic_permeability_model->value(field_values),
-                               magnetic_permeability_model_imag->value(
-                                 field_values)};
+  std::complex<double> epsilon_r_eff;
+  std::complex<double> mu_r;
+  unsigned int         material_id;
 
   /// Excitation properties
   const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters =
     this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
   const double omega =
     2.0 * PI * time_harmonic_maxwell_parameters.electromagnetic_frequency;
-
-  // We define some constants that will be used during the assembly. Those
-  // would change according to the material parameters, but here we only have
-  // one material.
-  const std::complex<double> iwmu_r       = imag * omega * mu_r;
-  const std::complex<double> conj_iwmu_r  = std::conj(iwmu_r);
-  const std::complex<double> iweps_r      = imag * omega * epsilon_r_eff;
-  const std::complex<double> conj_iweps_r = std::conj(iweps_r);
 
   // We then create the corresponding FEValues and FEFaceValues objects. Note
   // that only the test space needs gradients because of the ultraweak
@@ -2445,6 +2414,18 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
     {
       if (cell->is_locally_owned())
         {
+          // We update the material properties for the current cell and define
+          // some constants that will be used during the assembly.
+          material_id = cell->material_id();
+          update_material_properties(properties_manager,
+                                     epsilon_r_eff,
+                                     mu_r,
+                                     material_id);
+          const std::complex<double> iwmu_r      = imag * omega * mu_r;
+          const std::complex<double> conj_iwmu_r = std::conj(iwmu_r);
+          const std::complex<double> iweps_r     = imag * omega * epsilon_r_eff;
+          const std::complex<double> conj_iweps_r = std::conj(iweps_r);
+
           // We reinitialize the FEValues objects to the current cell.
           fe_values_trial_interior.reinit(cell);
 

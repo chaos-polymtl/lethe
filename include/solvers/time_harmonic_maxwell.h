@@ -563,6 +563,28 @@ private:
     const std::complex<double> &local_mu_r,
     const unsigned int          boundary_id_index = 0);
 
+
+  /**
+   * @brief Update the material properties during the assembly of the system matrix.
+   *
+   *  @param[in] physical_properties_manager The object that manages the
+   * physical properties of the problem and provides them at any given position
+   * of the domain.
+   *  @param[in,out] epsilon_r_eff Effective electric permittivity at the
+   * current position. This value is updated in place by the function.
+   *  @param[in,out] mu_r Effective magnetic permeability at the current
+   * position. This value is updated in place by the function.
+   *  @param[in] material_id The material id of the current position, used to
+   * determine the appropriate material properties from the input parameters.
+   */
+  void
+  update_material_properties(
+    const PhysicalPropertiesManager &physical_properties_manager,
+    std::complex<double>            &epsilon_r_eff,
+    std::complex<double>            &mu_r,
+    const unsigned int               material_id);
+
+
   /**
    * @brief Pointer to the multiphysics interface that manages the coupling
    * between the different physics solvers.
