@@ -15,7 +15,10 @@
 using namespace dealii;
 
 /**
- * @brief Generates a rectangular channel mesh with a meshed cylinder obstacle.
+ * @brief Generates a rectangular channel mesh with a meshed cylinder
+ * obstacle. By default, this geometry defines two material IDs. The
+ * obstacle is assigned the material_id = 1 and the remaining domain is
+ * assigned material_id = 0.
  *
  * The mesh consists of three concentric regions around the cylinder:
  * -# An inner balanced disk of radius @p inner_radius (hyper_ball_balanced).
