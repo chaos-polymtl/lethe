@@ -295,7 +295,9 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::generate_2d_channel_mesh(
                                        &pad_top_right_corner_tria},
                                       triangulation);
 
-  // Assign manifold IDs:
+
+
+  // Assign material and manifold IDs:
   //  - id 0 (TFI) on all cells and faces (default)
   //  - id 1 (polar/cylindrical) on inner-cylinder boundary faces
   triangulation.reset_all_manifolds();
@@ -305,6 +307,7 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::generate_2d_channel_mesh(
     {
       if (cell->center().distance(center) < inner_radius)
         {
+          cell->set_material_id(polar_manifold_id);
           for (const auto &face : cell->face_iterators())
             {
               bool all_vertices_on_circle = true;
@@ -321,6 +324,10 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::generate_2d_channel_mesh(
               if (all_vertices_on_circle)
                 face->set_all_manifold_ids(polar_manifold_id);
             }
+        }
+      else
+        {
+          cell->set_material_id(tfi_manifold_id);
         }
     }
 
@@ -398,8 +405,8 @@ UniformChannelWithMeshedCylinderGrid<3, 3>::make_grid(
                            pad_right,
                            colorize);
 
-  // Extrude the 2D cross-section along the z-axis. Manifold IDs from the
-  // 2D mesh are copied to the lateral faces of the 3D mesh.
+  // Extrude the 2D cross-section along the z-axis. Manifold  and material IDs
+  // from the 2D mesh are copied to the lateral faces of the 3D mesh.
   GridGenerator::extrude_triangulation(
     tria_D, n_slices, height, triangulation, true);
 
