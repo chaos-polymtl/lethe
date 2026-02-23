@@ -492,10 +492,10 @@
 <p>A DEM simulation is first run to insert the particles. The subsections in the DEM parameter file <code class="docutils literal notranslate"><span class="pre">packing-particles.prm</span></code> that are pertinent to this example are described below.</p>
 <section id="mesh">
 <h3>Mesh<a class="headerlink" href="#mesh" title="Link to this heading">#</a></h3>
-<p>The particles are packed inside a cylindrical column. For this reason, the mesh type is set to <code class="docutils literal notranslate"><span class="pre">cylinder</span></code> with a <code class="docutils literal notranslate"><span class="pre">balanced</span></code> grid. This mesh uses the same input arguments as the <code class="docutils literal notranslate"><span class="pre">GridGenerator::subdivided_cylinder</span></code> function of Deal.II, yet leads to more uniform cells across the domain. An initial refinement level of <span class="math notranslate nohighlight">\(2\)</span> provides enough cells for the CFD solver while keeping the smallest cell size larger than the particle diameter. Finally, the particle–wall contact search expansion is enabled to ensure proper detection of particle–wall interactions in the curved convex geometry.</p>
+<p>The particles are packed inside a cylindrical column. For this reason, the mesh type is set to <code class="docutils literal notranslate"><span class="pre">lethe</span></code> with a <code class="docutils literal notranslate"><span class="pre">cylinder_balanced</span></code> grid type. This mesh uses the same input arguments as the <code class="docutils literal notranslate"><span class="pre">GridGenerator::subdivided_cylinder</span></code> function of Deal.II, yet leads to more uniform cells across the domain. An initial refinement level of <span class="math notranslate nohighlight">\(2\)</span> provides enough cells for the CFD solver while keeping the smallest cell size larger than the particle diameter. Finally, the particle–wall contact search expansion is enabled to ensure proper detection of particle–wall interactions in the curved convex geometry.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh
-    set type                                = cylinder
-    set grid type                           = balanced
+    set type                                = lethe
+    set grid type                           = cylinder_balanced
     set grid arguments                      = 44:0.01:0.22
     set initial refinement                  = 2
     set expand particle-wall contact search = true

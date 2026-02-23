@@ -499,10 +499,10 @@ The geometry of the pipe and the particle properties are based on the work of La
 <p>In this section we introduce the different sections of the parameter file <code class="docutils literal notranslate"><span class="pre">loading-particles.prm</span></code>.</p>
 <section id="mesh">
 <h4>Mesh<a class="headerlink" href="#mesh" title="Link to this heading">#</a></h4>
-<p>In this example, we simulate the transport of particles in a 1 m wide long 0.084 m diameter pipe. The conveying is processed in the x-direction through periodic boundary conditions. We use the <a class="reference external" href="../../../parameters/cfd/mesh.html">custom cylinder</a> of type balanced, which is prefered over the regular deal.II option for having an uniform cell size distribution in the radial direction. Cells’ size are approximately 2 times the diameter of the particles in both longitudinal and radial directions.</p>
+<p>In this example, we simulate the transport of particles in a 1 m wide long 0.084 m diameter pipe. The conveying is processed in the x-direction through periodic boundary conditions. We use the lethe custom <a class="reference external" href="../../../parameters/cfd/mesh.html">cylinder_balanced</a> , which is prefered over the regular deal.II option for having an uniform cell size distribution in the radial direction. Cells’ size are approximately 2 times the diameter of the particles in both longitudinal and radial directions.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh
-  set type                                = cylinder
-  set grid type                           = balanced
+  set type                                = lethe
+  set grid type                           = cylinder_balanced
   set grid arguments                      = 45 : 0.042 : 0.5
   set initial refinement                  = 1
   set expand particle-wall contact search = true

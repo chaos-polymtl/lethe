@@ -36,13 +36,13 @@ Parameter File
 Mesh
 ~~~~~
 
-The mesh is a cylinder generated using the deal.II grid generator.
+The mesh is a cylinder generated using a custom Lethe grid generator based on deal.II.
 
 .. code-block:: text
 
   subsection mesh
-    set type               = cylinder
-    set grid type          = balanced
+    set type               = lethe
+    set grid type          = cylinder_balanced
     set grid arguments     = 6 : 0.10 : 0.25
     set initial refinement = 2
   end

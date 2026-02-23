@@ -472,10 +472,10 @@
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Link to this heading">#</a></h2>
 <section id="mesh">
 <h3>Mesh<a class="headerlink" href="#mesh" title="Link to this heading">#</a></h3>
-<p>The mesh is a cylinder generated using the deal.II grid generator.</p>
+<p>The mesh is a cylinder generated using a custom Lethe grid generator based on deal.II.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh
-  set type               = cylinder
-  set grid type          = balanced
+  set type               = lethe
+  set grid type          = cylinder_balanced
   set grid arguments     = 6 : 0.10 : 0.25
   set initial refinement = 2
 end
