@@ -206,15 +206,6 @@ namespace Parameters
     // Subdivisions of the results in the output
     unsigned int group_files;
 
-    // Enable output of Q-criterion field
-    bool output_q_criterion;
-
-    // Enable output of vorticity field
-    bool output_vorticity;
-
-    // Enable output of velocity gradient field
-    bool output_velocity_gradient;
-
     static void
     declare_parameters(ParameterHandler &prm);
     void
@@ -1174,6 +1165,15 @@ namespace Parameters
 
     /// prefix for the total volume output in cfd-dem simulation
     std::string phase_volumes_output_name;
+
+    /// Enable output of Q-criterion field
+    bool output_q_criterion;
+
+    /// Enable output of vorticity field
+    bool output_vorticity;
+
+    /// Enable output of velocity gradient field
+    bool output_velocity_gradient;
 
     static void
     declare_parameters(ParameterHandler &prm);

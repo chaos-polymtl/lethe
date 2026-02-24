@@ -2740,7 +2740,7 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
   // that the objects still exist when the write output of DataOut is called
   // Regular discontinuous postprocessors
   // They are created as shared pointers to outlive the function
-  if (this->simulation_parameters.simulation_control.output_q_criterion)
+  if (this->simulation_parameters.post_processing.output_q_criterion)
     {
       std::shared_ptr<QCriterionPostprocessor<dim>> qcriterion =
         std::make_shared<QCriterionPostprocessor<dim>>();
@@ -2759,7 +2759,7 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
     solution,
     divergence);
 
-  if (this->simulation_parameters.simulation_control.output_velocity_gradient)
+  if (this->simulation_parameters.post_processing.output_velocity_gradient)
     {
       std::shared_ptr<GradientPostprocessor<dim>> gradient =
         std::make_shared<GradientPostprocessor<dim>>();
@@ -2770,7 +2770,7 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
         gradient);
     }
 
-  if (this->simulation_parameters.simulation_control.output_vorticity)
+  if (this->simulation_parameters.post_processing.output_vorticity)
     {
       std::shared_ptr<VorticityPostprocessor<dim>> vorticity =
         std::make_shared<VorticityPostprocessor<dim>>();

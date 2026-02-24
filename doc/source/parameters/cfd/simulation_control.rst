@@ -100,15 +100,6 @@ This subsection is the most important in a simulation and therefore, the most co
     # Subdivision of mesh cell in postprocessing
     set subdivision = 1
 
-    # Output Q-criterion
-    set output qcriterion = true
-
-    # Output vorticity
-    set output vorticity = true
-
-    # Output velocity gradient
-    set output velocity gradient = true
-
     #---------------------------------------------------
     # Explicit coupling constraint parameters
     #---------------------------------------------------
@@ -241,11 +232,6 @@ Paraview output file parameters
 
   .. tip::
 	  Generally, we advise to use a subdivision level of :math:`(n)` for interpolation order of :math:`n`. For example, a Q2-Q1 interpolation could be visualized with ``set subdivision = 2``.
-
-* ``output qcriterion``, ``output vorticity``, ``output velocity gradient``: control whether the Q-criterion, vorticity, and velocity gradient fields, respectively, are included in the output files.
-
-  .. tip::
-    When the size of ``.pvd`` / ``.vtu`` files is a concern, consider disabling the output of some/all of these three fields if they are unnecessary in the analysis.
 
 ---------------------------------------
 Explicit coupling constraint parameters
