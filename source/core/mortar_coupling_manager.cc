@@ -848,7 +848,8 @@ Point<dim>
 MortarManagerLinear<dim>::from_1D(const double angle_rad) const
 {
   return Point<dim>(0.5,
-                    angle_rad / (2.0 * numbers::PI) * (coord_max - coord_min) + coord_min);
+                    angle_rad / (2.0 * numbers::PI) * (coord_max - coord_min) +
+                      coord_min);
 }
 
 template <int dim>

@@ -498,12 +498,14 @@ MortarManagerLinear<dim>::MortarManagerLinear(
   : MortarManagerBase<dim>(
       compute_number_interface_cells(dof_handler.get_triangulation(),
                                      mortar_parameters)[0],
-      (std::get<1>(compute_interface_dimensions_linear(dof_handler.get_triangulation(),
-                                           mapping,
-                                           mortar_parameters)) -
-       std::get<0>(compute_interface_dimensions_linear(dof_handler.get_triangulation(),
-                                           mapping,
-                                           mortar_parameters))) /
+      (std::get<1>(
+         compute_interface_dimensions_linear(dof_handler.get_triangulation(),
+                                             mapping,
+                                             mortar_parameters)) -
+       std::get<0>(
+         compute_interface_dimensions_linear(dof_handler.get_triangulation(),
+                                             mapping,
+                                             mortar_parameters))) /
         (2.0 * numbers::PI),
       quadrature,
       0.0)
