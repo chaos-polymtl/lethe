@@ -33,6 +33,9 @@ The mortar section is used when simulating rotor-stator geometries, in which the
 
 * The available options for the mortar ``interface type`` are ``circular`` and ``linear``.
 
+.. warning::
+  The ``linear`` interface type supports only two-dimensional problems. It assumes that the domain is rectangular, and that the mortar interface is parallel to the y axis.
+
 * The mesh parameters in the :doc:`../cfd/mesh` subsection refer to the stator domain. The ``mesh`` subsection herein mentioned contains the parameters of the rotor domain; nonetheless, the input format is the same as in :doc:`../cfd/mesh`.
 
 .. note::
