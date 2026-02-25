@@ -530,7 +530,7 @@ void SolidPhaseSolver<dim>::assemble_system()
             cell_rhs(i) += (phi_a[i] * a_k / dt) * JxW;
           }
 
-          // ---------- momentum equation rows ----------
+          // ---------- momentum equation rows 
           else if (comp_i < dim)
           {
             for (unsigned int j = 0; j < dofs_per_cell; ++j)
@@ -591,10 +591,10 @@ void SolidPhaseSolver<dim>::solve()
   if (parameters.solver_verbose)
     pcout << "Solving solid system... " << std::flush;
 
-  // Owned vector (no ghosts) used in solve:
+  
   TrilinosWrappers::MPI::BlockVector distributed_solution(owned_partitioning,
                                                           mpi_communicator);
-  distributed_solution = solution; // good initial guess
+  distributed_solution = solution; 
 
   for (auto it = locally_owned.begin(); it != locally_owned.end(); ++it)
     if (constraints.is_constrained(*it))
@@ -711,7 +711,7 @@ void SolidPhaseSolver<dim>::output_results(const double /*time*/)
   DataOut<dim> data_out;
   data_out.attach_dof_handler(dof_handler);
 
-  // ghosted for parallel output
+  
   data_out.add_data_vector(locally_relevant_solution,
                            names,
                            DataOut<dim>::type_dof_data,
@@ -736,65 +736,6 @@ void SolidPhaseSolver<dim>::output_results(const double /*time*/)
 
 
 
-// template <int dim>
-// void SolidPhaseSolver<dim>::print_u0_profile(
-//   const TrilinosWrappers::MPI::BlockVector &sol) const
-// {
-//   if (!parameters.print_profile)
-//     return;
-
-//   // sol must be ghosted (owned+relevant), i.e. locally_relevant_solution
-//   if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
-//     std::cout << "step=" << timestep_number << "\n  u0(x):\n";
-
-//   Vector<double> values(dim + 1);
-
-//   const unsigned int n_samples = parameters.profile_n_samples;
-//   const double y0 = parameters.profile_y; // e.g. 0.5
-//   const double z0 = parameters.profile_z; // e.g. 0.5
-
-//   for (unsigned int k = 1; k <= n_samples; ++k)
-//   {
-//     const double x = (double)k / (double)n_samples; // in (0,1]
-
-//     Point<dim> p;
-//     p[0] = x;
-//     if constexpr (dim >= 2) p[1] = y0;
-//     if constexpr (dim >= 3) p[2] = z0;
-
-//     double local_value = 0.0;
-//     int    local_found = 0;
-
-//     try
-//     {
-//       VectorTools::point_value(dof_handler, sol, p, values);
-//       local_value = values[0]; // u0
-//       local_found = 1;
-//     }
-//     catch (...)
-//     {
-//       local_value = 0.0;
-//       local_found = 0;
-//     }
-
-//     const int    found_any = Utilities::MPI::max(local_found, mpi_communicator);
-//     const double u0_sum    = Utilities::MPI::sum(local_value, mpi_communicator);
-
-//     if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
-//     {
-//       const double out = (found_any ? u0_sum
-//                                     : std::numeric_limits<double>::quiet_NaN());
-
-//       std::cout << std::fixed << std::setprecision(6)
-//                 << " " << x << ":" << out << ",\n";
-//     }
-//   }
-
-//   if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
-//     std::cout << "\n";
-// }
-
-
 
 
 template <int dim>
@@ -813,7 +754,7 @@ void SolidPhaseSolver<dim>::run()
   constraints.distribute(old_solution);
   old_solution.compress(VectorOperation::insert);
 
-  // Ghosted copy for FEValues/output/point queries
+  
   locally_relevant_old_solution = old_solution;
   locally_relevant_old_solution.update_ghost_values();
 
@@ -837,12 +778,9 @@ void SolidPhaseSolver<dim>::run()
     solve();
 
     
-    // Profile print must use ghosted vector
-    //print_u0_profile(locally_relevant_solution);
 
     output_results(time);
 
-    // advance
     old_solution = solution;
     old_solution.compress(VectorOperation::insert);
 
