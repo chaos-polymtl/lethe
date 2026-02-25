@@ -123,9 +123,7 @@ test()
     dof_handler, mapping_cache, mapping, radius[0] * 10, rotation_angle);
 
   const auto n_subdivisions1 =
-    compute_number_interface_cells(triangulation,
-                                   mapping_cache,
-                                   mortar_parameters);
+    compute_number_interface_cells(triangulation, mortar_parameters);
 
   const auto [radius1, prerotation1] =
     compute_interface_dimensions(triangulation,
