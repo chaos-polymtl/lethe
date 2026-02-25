@@ -1725,14 +1725,12 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                     this->simulation_parameters.mortar_parameters);
               else
                 {
-                  const double outer_radius = 1.0;
                   this->mg_operators[level]->mortar_manager_mf =
                     std::make_shared<MortarManagerLinear<dim>>(
-                      level_dof_handler,
-                      this->simulation_parameters.mortar_parameters,
                       quadrature_mg,
-                      -outer_radius,
-                      outer_radius);
+                      *level_mapping,
+                      level_dof_handler,
+                      this->simulation_parameters.mortar_parameters);
                 }
 
               // Coupling evaluator
@@ -3100,14 +3098,12 @@ FluidDynamicsMatrixFree<dim>::reinit_mortar_operators_mf()
         this->simulation_parameters.mortar_parameters);
   else
     {
-      const double outer_radius = 1.0;
       this->system_operator->mortar_manager_mf =
         std::make_shared<MortarManagerLinear<dim>>(
-          *this->dof_handler,
-          this->simulation_parameters.mortar_parameters,
           *this->cell_quadrature,
-          -outer_radius,
-          outer_radius);
+          *this->get_mapping(),
+          *this->dof_handler,
+          this->simulation_parameters.mortar_parameters);
     }
 
   // Create mortar coupling evaluator

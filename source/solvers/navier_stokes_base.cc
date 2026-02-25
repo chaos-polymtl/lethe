@@ -2131,13 +2131,11 @@ NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar_operators()
       this->simulation_parameters.mortar_parameters);
   else
     {
-      const double outer_radius = 1.0;
-      this->mortar_manager      = std::make_shared<MortarManagerLinear<dim>>(
-        *this->dof_handler,
-        this->simulation_parameters.mortar_parameters,
+      this->mortar_manager = std::make_shared<MortarManagerLinear<dim>>(
         *this->cell_quadrature,
-        -outer_radius,
-        outer_radius);
+        *this->get_mapping(),
+        *this->dof_handler,
+        this->simulation_parameters.mortar_parameters);
     }
 
 
