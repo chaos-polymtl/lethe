@@ -958,7 +958,6 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
                       << std::endl;
 
 
-          Vector<float> estimated_error_per_cell(tria.n_active_cells());
           auto         &present_solution = *this->present_solution;
 
           const auto &cell_iterator =

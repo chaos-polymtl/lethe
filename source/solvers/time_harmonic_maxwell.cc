@@ -61,22 +61,22 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
           simulation_parameters.fem_parameters.electromagnetics_trial_order) ^
           dim);
       fe_trial_skeleton = std::make_shared<FESystem<dim>>(
-        FE_NedelecSZ<dim>(
+        FE_Nedelec<dim>(
           simulation_parameters.fem_parameters.electromagnetics_trial_order),
-        FE_NedelecSZ<dim>(
+        FE_Nedelec<dim>(
           simulation_parameters.fem_parameters.electromagnetics_trial_order),
-        FE_NedelecSZ<dim>(
+        FE_Nedelec<dim>(
           simulation_parameters.fem_parameters.electromagnetics_trial_order),
-        FE_NedelecSZ<dim>(
+        FE_Nedelec<dim>(
           simulation_parameters.fem_parameters.electromagnetics_trial_order));
       fe_test = std::make_shared<FESystem<dim>>(
-        FE_NedelecSZ<dim>(
+        FE_Nedelec<dim>(
           simulation_parameters.fem_parameters.electromagnetics_test_order),
-        FE_NedelecSZ<dim>(
+        FE_Nedelec<dim>(
           simulation_parameters.fem_parameters.electromagnetics_test_order),
-        FE_NedelecSZ<dim>(
+        FE_Nedelec<dim>(
           simulation_parameters.fem_parameters.electromagnetics_test_order),
-        FE_NedelecSZ<dim>(
+        FE_Nedelec<dim>(
           simulation_parameters.fem_parameters.electromagnetics_test_order));
       mapping = std::make_shared<MappingQ<dim>>(fe_trial_interior->degree);
       cell_quadrature = std::make_shared<QGauss<dim>>(fe_test->degree + 1);
@@ -732,15 +732,35 @@ TimeHarmonicMaxwell<dim>::compute_dpg_error(
   // separate loop. The estimated error per cell is computed and stored in the
   // member variable local_estimated_error_per_cell during the assembly, and
   // then used for marking the cells for refinement.
-  estimated_error_per_cell = this->local_estimated_error_per_cell;
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
+
+  // Compute the local sum of squares for locally owned cells
+  double local_l2_squared = 0.0;
+  for (const auto &cell :
+       this->dof_handler_trial_interior->active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          const unsigned int cell_index = cell->active_cell_index();
+          estimated_error_per_cell[cell_index] =
+            this->local_estimated_error_per_cell[cell_index];
+          local_l2_squared +=
+            estimated_error_per_cell[cell_index] *
+            estimated_error_per_cell[cell_index];
+        }
+    }
+
+  // Sum across all processes to get the global L2 norm
+  const double global_l2_norm =
+    std::sqrt(Utilities::MPI::sum(local_l2_squared, mpi_communicator));
 
   // If the user has chosen to have the linear solver in verbose mode, we print
   // the DPG residual
   if (this->simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
         .verbosity != Parameters::Verbosity::quiet)
     {
-      this->pcout << "  - Time-Harmonic Maxwell DPG residual : "
-                  << estimated_error_per_cell.l2_norm() << std::endl;
+      this->pcout << "   Time-Harmonic Maxwell DPG residual before refinement : "
+                  << global_l2_norm << std::endl;
     }
 }
 

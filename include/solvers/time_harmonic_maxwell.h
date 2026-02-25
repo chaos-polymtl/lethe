@@ -25,7 +25,7 @@
 #include <deal.II/dofs/dof_renumbering.h>
 
 #include <deal.II/fe/fe_dgq.h>
-#include <deal.II/fe/fe_nedelec_sz.h>
+#include <deal.II/fe/fe_nedelec.h>
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/fe_values.h>
 
