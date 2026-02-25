@@ -487,6 +487,15 @@
   set calculate pressure power         = false
   set pressure power name              = pressure_power
 
+  # Output Q-criterion
+  set output qcriterion                = true
+
+  # Output vorticity
+  set output vorticity                 = true
+
+  # Output velocity gradient
+  set output velocity gradient         = true
+
   #---------------------------------------------------
   # Physical properties post-processing
   #---------------------------------------------------
@@ -639,6 +648,16 @@ end
 <p>with <span class="math notranslate nohighlight">\(\Omega\)</span> representing the volume of the domain, <span class="math notranslate nohighlight">\(\mathbf{u}\)</span> the velocity  and <span class="math notranslate nohighlight">\(p\)</span> the pressure.</p>
 </dd>
 </dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">qcriterion</span></code>, <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">vorticity</span></code>, <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">velocity</span> <span class="pre">gradient</span></code>: control whether the Q-criterion, vorticity, and velocity gradient fields, respectively, are included in the output files.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>When the size of <code class="docutils literal notranslate"><span class="pre">.pvd</span></code> / <code class="docutils literal notranslate"><span class="pre">.vtu</span></code> files is a concern, consider disabling the output of some/all of these three fields if they are unnecessary in the analysis.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">qcriterion</span></code>, <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">vorticity</span></code>, <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">velocity</span> <span class="pre">gradient</span></code> are only applicable to <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code> solvers.</p>
+</div>
 </li>
 <li><dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">calculate</span> <span class="pre">apparent</span> <span class="pre">viscosity</span></code>: controls if parameter calculation of an apparent viscosity is enabled, when using a non Newtonian flow (see section Physical properties - <a class="reference internal" href="physical_properties.html#rheological-models"><span class="std std-ref">Rheological Models</span></a>). This is mainly used to define the Reynolds number <cite>a posteriori</cite>.</dt><dd><ul class="simple">

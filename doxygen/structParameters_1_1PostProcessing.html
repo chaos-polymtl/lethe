@@ -200,6 +200,12 @@ Public Attributes</h2></td></tr>
 <tr class="separator:ab3469fb412db5557c33a2c2ec4c8fc38"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a58fe3960390f6809fbd5ba842969cbc8" id="r_a58fe3960390f6809fbd5ba842969cbc8"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1PostProcessing.html#a58fe3960390f6809fbd5ba842969cbc8">phase_volumes_output_name</a></td></tr>
 <tr class="separator:a58fe3960390f6809fbd5ba842969cbc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f79b71315098618bbdd3386c308c03f" id="r_a2f79b71315098618bbdd3386c308c03f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1PostProcessing.html#a2f79b71315098618bbdd3386c308c03f">output_q_criterion</a></td></tr>
+<tr class="separator:a2f79b71315098618bbdd3386c308c03f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad909cffd9fe234c3261e0060836a5263" id="r_ad909cffd9fe234c3261e0060836a5263"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1PostProcessing.html#ad909cffd9fe234c3261e0060836a5263">output_vorticity</a></td></tr>
+<tr class="separator:ad909cffd9fe234c3261e0060836a5263"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad3dbdf6d5ad3ecb738bb7c83c1702baf" id="r_ad3dbdf6d5ad3ecb738bb7c83c1702baf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1PostProcessing.html#ad3dbdf6d5ad3ecb738bb7c83c1702baf">output_velocity_gradient</a></td></tr>
+<tr class="separator:ad3dbdf6d5ad3ecb738bb7c83c1702baf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Postprocessing - Defines the parameters for the post-processing. In Lethe, post-processing implies the calculation of quantities derived from the principal variables. For example, the integral kinetic energy or the integral enstrophy. </p>
@@ -250,9 +256,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l02403">2403</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l02419">2419</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l01108">apparent_viscosity_output_name</a>, <a class="el" href="parameters_8h_source.html#l01142">barycenter_output_name</a>, <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2faf6cb3e816496528d4187db53bc66567f">Parameters::both</a>, <a class="el" href="parameters_8h_source.html#l01050">calculate_apparent_viscosity</a>, <a class="el" href="parameters_8h_source.html#l01056">calculate_average_temp_and_hf</a>, <a class="el" href="parameters_8h_source.html#l01053">calculate_average_velocities</a>, <a class="el" href="parameters_8h_source.html#l01139">calculate_barycenter</a>, <a class="el" href="parameters_8h_source.html#l01041">calculate_enstrophy</a>, <a class="el" href="parameters_8h_source.html#l01068">calculate_flow_rate</a>, <a class="el" href="parameters_8h_source.html#l01129">calculate_heat_flux</a>, <a class="el" href="parameters_8h_source.html#l01038">calculate_kinetic_energy</a>, <a class="el" href="parameters_8h_source.html#l01123">calculate_liquid_fraction</a>, <a class="el" href="parameters_8h_source.html#l01151">calculate_mass_conservation</a>, <a class="el" href="parameters_8h_source.html#l01157">calculate_phase_energy</a>, <a class="el" href="parameters_8h_source.html#l01145">calculate_phase_statistics</a>, <a class="el" href="parameters_8h_source.html#l01164">calculate_phase_volumes</a>, <a class="el" href="parameters_8h_source.html#l01059">calculate_pressure_drop</a>, <a class="el" href="parameters_8h_source.html#l01044">calculate_pressure_power</a>, <a class="el" href="parameters_8h_source.html#l01117">calculate_temperature_statistics</a>, <a class="el" href="parameters_8h_source.html#l01071">calculate_tracer_flow_rate</a>, <a class="el" href="parameters_8h_source.html#l01111">calculate_tracer_statistics</a>, <a class="el" href="parameters_8h_source.html#l01047">calculate_viscous_dissipation</a>, <a class="el" href="parameters_8h_source.html#l01099">enstrophy_output_name</a>, <a class="el" href="parameters_8h_source.html#l01093">flow_rate_output_name</a>, <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e86df18a83727e4a5dc8dc2859a097c">Parameters::fluid0</a>, <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e04d9b58aa70e6fb6501fde7608fd13">Parameters::fluid1</a>, <a class="el" href="parameters_8h_source.html#l01132">heat_flux_output_name</a>, <a class="el" href="parameters_8h_source.html#l01078">initial_time_for_average_temp_and_hf</a>, <a class="el" href="parameters_8h_source.html#l01074">initial_time_for_average_velocities</a>, <a class="el" href="parameters_8h_source.html#l01062">inlet_boundary_id</a>, <a class="el" href="parameters_8h_source.html#l01087">kinetic_energy_output_name</a>, <a class="el" href="parameters_8h_source.html#l01126">liquid_fraction_output_name</a>, <a class="el" href="parameters_8h_source.html#l01154">mass_conservation_output_name</a>, <a class="el" href="parameters_8h_source.html#l01065">outlet_boundary_id</a>, <a class="el" href="parameters_8h_source.html#l01084">output_frequency</a>, <a class="el" href="parameters_8h_source.html#l01160">phase_energy_output_name</a>, <a class="el" href="parameters_8h_source.html#l01148">phase_output_name</a>, <a class="el" href="parameters_8h_source.html#l01167">phase_volumes_output_name</a>, <a class="el" href="parameters_8h_source.html#l01135">postprocessed_fluid</a>, <a class="el" href="parameters_8h_source.html#l01090">pressure_drop_output_name</a>, <a class="el" href="parameters_8h_source.html#l01102">pressure_power_output_name</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, <a class="el" href="parameters_8h_source.html#l01120">temperature_output_name</a>, <a class="el" href="parameters_8h_source.html#l01096">tracer_flow_rate_output_name</a>, <a class="el" href="parameters_8h_source.html#l01114">tracer_output_name</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>, <a class="el" href="parameters_8h_source.html#l01035">verbosity</a>, and <a class="el" href="parameters_8h_source.html#l01105">viscous_dissipation_output_name</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l01108">apparent_viscosity_output_name</a>, <a class="el" href="parameters_8h_source.html#l01142">barycenter_output_name</a>, <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2faf6cb3e816496528d4187db53bc66567f">Parameters::both</a>, <a class="el" href="parameters_8h_source.html#l01050">calculate_apparent_viscosity</a>, <a class="el" href="parameters_8h_source.html#l01056">calculate_average_temp_and_hf</a>, <a class="el" href="parameters_8h_source.html#l01053">calculate_average_velocities</a>, <a class="el" href="parameters_8h_source.html#l01139">calculate_barycenter</a>, <a class="el" href="parameters_8h_source.html#l01041">calculate_enstrophy</a>, <a class="el" href="parameters_8h_source.html#l01068">calculate_flow_rate</a>, <a class="el" href="parameters_8h_source.html#l01129">calculate_heat_flux</a>, <a class="el" href="parameters_8h_source.html#l01038">calculate_kinetic_energy</a>, <a class="el" href="parameters_8h_source.html#l01123">calculate_liquid_fraction</a>, <a class="el" href="parameters_8h_source.html#l01151">calculate_mass_conservation</a>, <a class="el" href="parameters_8h_source.html#l01157">calculate_phase_energy</a>, <a class="el" href="parameters_8h_source.html#l01145">calculate_phase_statistics</a>, <a class="el" href="parameters_8h_source.html#l01164">calculate_phase_volumes</a>, <a class="el" href="parameters_8h_source.html#l01059">calculate_pressure_drop</a>, <a class="el" href="parameters_8h_source.html#l01044">calculate_pressure_power</a>, <a class="el" href="parameters_8h_source.html#l01117">calculate_temperature_statistics</a>, <a class="el" href="parameters_8h_source.html#l01071">calculate_tracer_flow_rate</a>, <a class="el" href="parameters_8h_source.html#l01111">calculate_tracer_statistics</a>, <a class="el" href="parameters_8h_source.html#l01047">calculate_viscous_dissipation</a>, <a class="el" href="parameters_8h_source.html#l01099">enstrophy_output_name</a>, <a class="el" href="parameters_8h_source.html#l01093">flow_rate_output_name</a>, <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e86df18a83727e4a5dc8dc2859a097c">Parameters::fluid0</a>, <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e04d9b58aa70e6fb6501fde7608fd13">Parameters::fluid1</a>, <a class="el" href="parameters_8h_source.html#l01132">heat_flux_output_name</a>, <a class="el" href="parameters_8h_source.html#l01078">initial_time_for_average_temp_and_hf</a>, <a class="el" href="parameters_8h_source.html#l01074">initial_time_for_average_velocities</a>, <a class="el" href="parameters_8h_source.html#l01062">inlet_boundary_id</a>, <a class="el" href="parameters_8h_source.html#l01087">kinetic_energy_output_name</a>, <a class="el" href="parameters_8h_source.html#l01126">liquid_fraction_output_name</a>, <a class="el" href="parameters_8h_source.html#l01154">mass_conservation_output_name</a>, <a class="el" href="parameters_8h_source.html#l01065">outlet_boundary_id</a>, <a class="el" href="parameters_8h_source.html#l01084">output_frequency</a>, <a class="el" href="parameters_8h_source.html#l01170">output_q_criterion</a>, <a class="el" href="parameters_8h_source.html#l01176">output_velocity_gradient</a>, <a class="el" href="parameters_8h_source.html#l01173">output_vorticity</a>, <a class="el" href="parameters_8h_source.html#l01160">phase_energy_output_name</a>, <a class="el" href="parameters_8h_source.html#l01148">phase_output_name</a>, <a class="el" href="parameters_8h_source.html#l01167">phase_volumes_output_name</a>, <a class="el" href="parameters_8h_source.html#l01135">postprocessed_fluid</a>, <a class="el" href="parameters_8h_source.html#l01090">pressure_drop_output_name</a>, <a class="el" href="parameters_8h_source.html#l01102">pressure_power_output_name</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, <a class="el" href="parameters_8h_source.html#l01120">temperature_output_name</a>, <a class="el" href="parameters_8h_source.html#l01096">tracer_flow_rate_output_name</a>, <a class="el" href="parameters_8h_source.html#l01114">tracer_output_name</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>, <a class="el" href="parameters_8h_source.html#l01035">verbosity</a>, and <a class="el" href="parameters_8h_source.html#l01105">viscous_dissipation_output_name</a>.</p>
 
 </div>
 </div>
@@ -845,6 +851,60 @@ Public Attributes</h2></td></tr>
 <p>Frequency of the output. </p>
 
 <p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01084">1084</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="a2f79b71315098618bbdd3386c308c03f" name="a2f79b71315098618bbdd3386c308c03f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f79b71315098618bbdd3386c308c03f">&#9670;&#160;</a></span>output_q_criterion</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Parameters::PostProcessing::output_q_criterion</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Enable output of Q-criterion field. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01170">1170</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="ad3dbdf6d5ad3ecb738bb7c83c1702baf" name="ad3dbdf6d5ad3ecb738bb7c83c1702baf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad3dbdf6d5ad3ecb738bb7c83c1702baf">&#9670;&#160;</a></span>output_velocity_gradient</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Parameters::PostProcessing::output_velocity_gradient</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Enable output of velocity gradient field. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01176">1176</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="ad909cffd9fe234c3261e0060836a5263" name="ad909cffd9fe234c3261e0060836a5263"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad909cffd9fe234c3261e0060836a5263">&#9670;&#160;</a></span>output_vorticity</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Parameters::PostProcessing::output_vorticity</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Enable output of vorticity field. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01173">1173</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
