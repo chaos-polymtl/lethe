@@ -704,6 +704,56 @@ compute_interface_dimensions(const Triangulation<dim>      &triangulation,
 }
 
 template <int dim>
+std::pair<double, double>
+compute_interface_dimensions_linear(
+  const Triangulation<dim>      &triangulation,
+  const Mapping<dim>            &mapping,
+  const Parameters::Mortar<dim> &mortar_parameters)
+{
+  // y coordinates of the interface limits
+  // We assume that the mortar interface is always parallel to the y axis
+  double coord_min = std::numeric_limits<double>::max();
+  double coord_max = 0;
+
+  for (const auto &cell : triangulation.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          for (const auto face_no : cell->face_indices())
+            {
+              const auto face = cell->face(face_no);
+
+              if (face->at_boundary())
+                {
+                  if (face->boundary_id() ==
+                      mortar_parameters.rotor_boundary_id)
+                    {
+                      const auto vertices = mapping.get_vertices(cell, face_no);
+
+                      for (unsigned int vertex_index = 0;
+                           vertex_index < face->n_vertices();
+                           vertex_index++)
+                        {
+                          const auto v = vertices[vertex_index];
+                          coord_min    = std::min(coord_min, v[1]);
+                          coord_max    = std::max(coord_max, v[1]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+  // Min and max values over all processes
+  coord_min =
+    Utilities::MPI::min(coord_min, triangulation.get_mpi_communicator());
+  coord_max =
+    Utilities::MPI::max(coord_max, triangulation.get_mpi_communicator());
+
+  return {coord_min, coord_max};
+}
+
+template <int dim>
 Quadrature<dim>
 construct_quadrature(const Quadrature<dim>         &quadrature,
                      const Parameters::Mortar<dim> &mortar_parameters)
@@ -798,21 +848,21 @@ Point<dim>
 MortarManagerLinear<dim>::from_1D(const double angle_rad) const
 {
   return Point<dim>(0.5,
-                    angle_rad / (2.0 * numbers::PI) * (right - left) + left);
+                    angle_rad / (2.0 * numbers::PI) * (coord_max - coord_min) + coord_min);
 }
 
 template <int dim>
 double
 MortarManagerLinear<dim>::to_1D(const Point<dim> &point) const
 {
-  return (2.0 * numbers::PI) * (point[1] - left) / (right - left);
+  return (2.0 * numbers::PI) * (point[1] - coord_min) / (coord_max - coord_min);
 }
 
 template <int dim>
 Tensor<1, dim, double>
-MortarManagerLinear<dim>::get_normal(const Point<dim> &point) const
+MortarManagerLinear<dim>::get_normal(const Point<dim> &) const
 {
-  return point / point.norm();;
+  return Point<dim>(1.0, 0.0);
 }
 
 /*-------------- CouplingOperator -------------------------------*/
@@ -2015,6 +2065,18 @@ template std::tuple<std::vector<double>, double>
 compute_interface_dimensions<3>(const Triangulation<3>      &triangulation,
                                 const Mapping<3>            &mapping,
                                 const Parameters::Mortar<3> &mortar_parameters);
+
+template std::pair<double, double>
+compute_interface_dimensions_linear<2>(
+  const Triangulation<2>      &triangulation,
+  const Mapping<2>            &mapping,
+  const Parameters::Mortar<2> &mortar_parameters);
+
+template std::pair<double, double>
+compute_interface_dimensions_linear<3>(
+  const Triangulation<3>      &triangulation,
+  const Mapping<3>            &mapping,
+  const Parameters::Mortar<3> &mortar_parameters);
 
 template Quadrature<2>
 construct_quadrature(const Quadrature<2>         &quadrature,

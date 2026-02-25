@@ -227,11 +227,11 @@ compute_number_interface_cells(
   const Parameters::Mortar<dim> &mortar_parameters);
 
 /**
- * @brief Compute mortar interface dimension and the rotor mesh pre-rotation angle
+ * @brief Compute circular mortar interface dimensions and the rotor mesh pre-rotation angle
  * @param[in] triangulation The triangulation object
  * @param[in] mapping Mapping associated to the domain
- * @param[in] mortar_parameters The information about the mortar method
- * control, including the rotor mesh parameters
+ * @param[in] mortar_parameters The information about the mortar method control,
+ * including the rotor mesh parameters
  *
  * @return interface_dimensions Vector containing the radius at the mortar interface and the
  * domain length in the direction of the rotation axis
@@ -242,6 +242,23 @@ std::tuple<std::vector<double>, double>
 compute_interface_dimensions(const Triangulation<dim>      &triangulation,
                              const Mapping<dim>            &mapping,
                              const Parameters::Mortar<dim> &mortar_parameters);
+
+/**
+ * @brief Compute linear mortar interface dimensions
+ * @param[in] triangulation The triangulation object
+ * @param[in] mapping Mapping associated to the domain
+ * @param[in] mortar_parameters The information about the mortar method control,
+ * including the rotor mesh parameters
+ *
+ * @return interface_dimensions Vector containing the minimum and maximum
+ * y coordinates of the vertices at the extremeties of the mortar interface
+ */
+template <int dim>
+std::pair<double, double>
+compute_interface_dimensions_linear(
+  const Triangulation<dim>      &triangulation,
+  const Mapping<dim>            &mapping,
+  const Parameters::Mortar<dim> &mortar_parameters);
 
 /**
  * @brief Construct oversampled quadrature
@@ -365,17 +382,17 @@ public:
   /**
    * @brief Class constructor
    *
-   * @param[in] n_subdivisions
-   * @param[in] quadrature
-   * @param[in] left
-   * @param[in] right
+   * @param[in] quadrature Quadrature for local cell operations
+   * @param[in] mapping Mapping associated to the domain
+   * @param[in] dof_handler DoFHandler associated to the triangulation
+   * @param[in] mortar_parameters The information about the mortar method
+   * control, including the rotor mesh parameters
    */
   template <int dim2>
-  MortarManagerLinear(const DoFHandler<dim>         &dof_handler,
-                      const Parameters::Mortar<dim> &mortar_parameters,
-                      const Quadrature<dim2>        &quadrature,
-                      const double                   left,
-                      const double                   right);
+  MortarManagerLinear(const Quadrature<dim2>        &quadrature,
+                      const Mapping<dim>            &mapping,
+                      const DoFHandler<dim>         &dof_handler,
+                      const Parameters::Mortar<dim> &mortar_parameters);
 
 protected:
   Point<dim>
@@ -385,12 +402,12 @@ protected:
   to_1D(const Point<dim> &point) const override;
 
   Tensor<1, dim, double>
-  get_normal(const Point<dim> &point) const override;
+  get_normal(const Point<dim> &) const override;
 
-  ///
-  const double left;
-  ///
-  const double right;
+  /// Minimum y coordinate of interface nodes
+  double coord_min;
+  /// Maximum  y coordinate of interface nodes
+  double coord_max;
 };
 
 template <int dim>
@@ -474,20 +491,28 @@ MortarManagerCircle<dim>::MortarManagerCircle(
 template <int dim>
 template <int dim2>
 MortarManagerLinear<dim>::MortarManagerLinear(
-  const DoFHandler<dim>         &dof_handler,
-  const Parameters::Mortar<dim> &mortar_parameters,
   const Quadrature<dim2>        &quadrature,
-  const double                   left,
-  const double                   right)
+  const Mapping<dim>            &mapping,
+  const DoFHandler<dim>         &dof_handler,
+  const Parameters::Mortar<dim> &mortar_parameters)
   : MortarManagerBase<dim>(
       compute_number_interface_cells(dof_handler.get_triangulation(),
                                      mortar_parameters)[0],
-      (right - left) / (2.0 * numbers::PI),
+      (std::get<1>(compute_interface_dimensions_linear(dof_handler.get_triangulation(),
+                                           mapping,
+                                           mortar_parameters)) -
+       std::get<0>(compute_interface_dimensions_linear(dof_handler.get_triangulation(),
+                                           mapping,
+                                           mortar_parameters))) /
+        (2.0 * numbers::PI),
       quadrature,
       0.0)
-  , left(left)
-  , right(right)
-{}
+{
+  std::tie(this->coord_min, this->coord_max) =
+    compute_interface_dimensions_linear(dof_handler.get_triangulation(),
+                                        mapping,
+                                        mortar_parameters);
+}
 
 /**
  * @brief Compute inner product
