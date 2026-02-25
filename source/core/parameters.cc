@@ -2395,6 +2395,22 @@ namespace Parameters
         "phase_volumes",
         Patterns::FileName(),
         "Name of phases volume output file in cfd-dem simulations. The file is stored in the output folder specified in the simulation control subsection");
+
+      prm.declare_entry("output qcriterion",
+                        "true",
+                        Patterns::Bool(),
+                        "Enable output of Q-criterion field <true|false>");
+
+      prm.declare_entry("output vorticity",
+                        "true",
+                        Patterns::Bool(),
+                        "Enable output of vorticity field <true|false>");
+
+      prm.declare_entry(
+        "output velocity gradient",
+        "true",
+        Patterns::Bool(),
+        "Enable output of velocity gradient field <true|false>");
     }
     prm.leave_subsection();
   }
@@ -2458,6 +2474,9 @@ namespace Parameters
       phase_energy_output_name      = prm.get("phase energy name");
       calculate_phase_volumes       = prm.get_bool("calculate phase volumes");
       phase_volumes_output_name     = prm.get("phase volumes name");
+      output_q_criterion            = prm.get_bool("output qcriterion");
+      output_vorticity              = prm.get_bool("output vorticity");
+      output_velocity_gradient      = prm.get_bool("output velocity gradient");
 
       // Viscous dissipative fluid
       const std::string op_fluid = prm.get("postprocessed fluid");

@@ -51,6 +51,15 @@ This subsection controls the post-processing other than the forces and torque on
     set calculate pressure power         = false
     set pressure power name              = pressure_power
 
+    # Output Q-criterion
+    set output qcriterion                = true
+
+    # Output vorticity
+    set output vorticity                 = true
+
+    # Output velocity gradient
+    set output velocity gradient         = true
+
     #---------------------------------------------------
     # Physical properties post-processing
     #---------------------------------------------------
@@ -166,6 +175,14 @@ This subsection controls the post-processing other than the forces and torque on
        \frac{1}{\Omega} \int_{\Omega}  \nabla p \cdot \mathbf{u} \mathrm{d} \Omega
 
     with :math:`\Omega` representing the volume of the domain, :math:`\mathbf{u}` the velocity  and :math:`p` the pressure.
+
+* ``output qcriterion``, ``output vorticity``, ``output velocity gradient``: control whether the Q-criterion, vorticity, and velocity gradient fields, respectively, are included in the output files.
+
+  .. tip::
+    When the size of ``.pvd`` / ``.vtu`` files is a concern, consider disabling the output of some/all of these three fields if they are unnecessary in the analysis.
+
+  .. warning::
+    ``output qcriterion``, ``output vorticity``, ``output velocity gradient`` are only applicable to ``lethe-fluid`` solvers.
 
 * ``calculate apparent viscosity``: controls if parameter calculation of an apparent viscosity is enabled, when using a non Newtonian flow (see section Physical properties - :ref:`rheological_models`). This is mainly used to define the Reynolds number `a posteriori`. 
     * ``apparent viscosity name``: output filename for apparent viscosity calculations.
