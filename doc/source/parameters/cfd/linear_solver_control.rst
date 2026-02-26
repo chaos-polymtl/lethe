@@ -286,12 +286,13 @@ Different parameters for the main components of the two geometric multigrid algo
 .. tip::
   The ``mg int level`` option only works for the ``gcmg`` preconditioner. It allows to choose an intermediate level as coarse grid solver where a GMRES preconditioned by several multigrid v-cycles is used. The following parameters: ``set mg gmres max iterations``, ``set mg gmres tolerance`` and ``set mg gmres reduce`` can be used to set the desired number of maximum iterations, the absolute tolerance and the relative tolerance. 
 
-In addition, Lethe supports `p-multigrid` through the ``gcmg`` preconditioner. It can be used by specifying two additional parameters:
+In addition, Lethe supports `p-multigrid` through the ``gcmg`` preconditioner. It can be used by specifying the following additional parameters:
 
 .. code-block:: text
 
     set mg coarsening type             = p
     set mg p coarsening type           = decrease by one
+    set mg p min coarsening degree     = 1
 
 This multigrid preconditioner creates the different multigrid levels by keeping the mesh constant but reducing the polynomial degree `p` of the shape functions. Three strategies to create the `p-multigrid` levels can be used by specifying the ``mg p coarsening type`` parameter:
 
@@ -300,6 +301,8 @@ This multigrid preconditioner creates the different multigrid levels by keeping 
 * ``decrease by one``: decrease the polynomial degree by one for every level.
 
 * ``go to one``: decrease the polynomial degree to one directly.
+
+When using ``mg p coarsening type = decrease by one``, the lowest level has a first order polynomial degree by default; this can be altered by modifying the parameter ``set mg p min coarsening degree``.
 
 In addition, Lethe supports hybrid strategies that combine h- and p-multigrid, and can be specified through the ``mg coarsening type`` parameter:
 
