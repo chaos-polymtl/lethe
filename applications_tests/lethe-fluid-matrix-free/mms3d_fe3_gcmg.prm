@@ -38,14 +38,6 @@ subsection FEM
 end
 
 #---------------------------------------------------
-# Timer
-#---------------------------------------------------
-
-subsection timer
-  set type = none
-end
-
-#---------------------------------------------------
 # Mesh
 #---------------------------------------------------
 
@@ -87,20 +79,6 @@ subsection analytical solution
   subsection uvwp
     set Function expression = sin(pi * x) * sin(pi * x) * cos(pi * y) * sin(pi * y) * cos(pi * z) * sin(pi * z);  cos(pi * x) * sin(pi * x) * sin(pi * y) * sin(pi * y) * cos(pi * z) * sin(pi * z);-2 * cos(pi * x) * sin(pi * x) * cos(pi * y) * sin(pi * y) * sin(pi * z) * sin(pi * z) ; 0
   end
-end
-
-#---------------------------------------------------
-# Mesh Adaptation Control
-#---------------------------------------------------
-
-subsection mesh adaptation
-  set type                 = uniform
-  set max number elements  = 20000
-  set max refinement level = 3
-  set min refinement level = 0
-  set frequency            = 1
-  set fraction refinement  = 0.1
-  set fraction coarsening  = 0.1
 end
 
 #---------------------------------------------------
