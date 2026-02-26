@@ -752,6 +752,15 @@ MFNavierStokesPreconditionGMGBase<dim>::MFNavierStokesPreconditionGMGBase(
   this->use_manifold_for_normal = true;
   if (this->simulation_parameters.mortar_parameters.enable)
     this->use_manifold_for_normal = false;
+
+  // Verify whether the minimum coarsening degree prescribed is lower than the
+  // problem's polynomial degree
+  AssertThrow(
+    this->dof_handler.get_fe().degree >=
+      this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .mg_p_min_coarsening_degree,
+    ExcMessage(
+      "The prescribed minimum polynomial degree for the p-multigrid needs to be lower than the velocity/pressure interpolation order."));
 }
 
 template <int dim>
