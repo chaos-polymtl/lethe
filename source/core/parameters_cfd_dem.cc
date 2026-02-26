@@ -240,7 +240,7 @@ namespace Parameters
     if (it_ctrl == "number of iterations")
       dem_iteration_control = SubSimulationControlDEM::DEMSubIterationLogic::
         fixed_number_of_iterations;
-    else if (it_ctrl == "fraction of rayleight time")
+    else if (it_ctrl == "fraction of rayleigh time")
       dem_iteration_control = SubSimulationControlDEM::DEMSubIterationLogic::
         fixed_fraction_of_rayleigh_time_step;
     else
