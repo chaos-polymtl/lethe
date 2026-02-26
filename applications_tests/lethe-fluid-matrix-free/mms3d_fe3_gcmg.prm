@@ -1,5 +1,7 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+# Tests the multigrid parameter 'mg p min coarsening degree' used for limiting 
+# the minimum polynomial degree on a p-coarsening type
 
 # Listing of Parameters
 #----------------------
