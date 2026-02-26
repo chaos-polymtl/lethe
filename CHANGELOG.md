@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2026/02/26
 
-### Added
+### Fixed
 
 - MAJOR The dynamic time-stepping functionality of the unresolved CFD-DEM did not work adequately because the set dem iteration control = fraction of rayleigh time could not be parsed adequately. This was due to a small spelling mistake. This PR fixes this and the mode works adequately.. [#1923](https://github.com/chaos-polymtl/lethe/pull/1923)
 
