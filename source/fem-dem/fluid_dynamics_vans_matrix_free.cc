@@ -44,6 +44,12 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
   const VectorType                         &time_derivative_void_fraction,
   const ParticleProjector<dim>             &particle_projector)
 {
+  AssertThrow(
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .enable_hessians_jacobian,
+    ExcMessage(
+      "The VANS always requires the Hessian for the assembly of the matrix. Please \"set enable hessian jacobian = true\""));
+
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
     {
