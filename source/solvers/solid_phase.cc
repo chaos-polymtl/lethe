@@ -376,11 +376,11 @@ void SolidPhaseSolver<dim>::setup_dofs()
   ComponentMask alpha_mask(fe.n_components(), false);
   alpha_mask.set(dim, true);
 
-  // Inlet id convention from make_grid(): 1
+  
   VectorTools::interpolate_boundary_values(dof_handler, 1, bc, constraints, vel_mask);
   VectorTools::interpolate_boundary_values(dof_handler, 1, bc, constraints, alpha_mask);
 
-  // Walls id convention from make_grid(): 0
+  
   std::set<types::boundary_id> no_normal_flux_boundaries;
   no_normal_flux_boundaries.insert(0);
 
@@ -493,7 +493,7 @@ void SolidPhaseSolver<dim>::assemble_system()
         const double         a_k     = a_old[q];
         const double         div_u_k = trace(grad_u_old[q]);
 
-        // Precompute shape values at this q
+        // shape values at q
         for (unsigned int k = 0; k < dofs_per_cell; ++k)
         {
           phi_u[k]      = fe_values[velocities].value(k, q);
