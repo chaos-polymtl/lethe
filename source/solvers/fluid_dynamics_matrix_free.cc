@@ -846,12 +846,20 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
           .mg_coarsening_type;
 
-      const auto polynomial_coarsening_sequence =
+      auto polynomial_coarsening_sequence =
         MGTransferGlobalCoarseningTools::create_polynomial_coarsening_sequence(
           this->dof_handler.get_fe().degree,
           this->simulation_parameters.linear_solver
             .at(PhysicsID::fluid_dynamics)
             .mg_p_coarsening_type);
+
+      // Remove terms of polynomial coarsening sequence by if the miminum
+      // coarsening degree pescribed is greater than 1
+      for (int p = 1; p < this->simulation_parameters.linear_solver
+                            .at(PhysicsID::fluid_dynamics)
+                            .mg_p_min_coarsening_degree;
+           p++)
+        std::erase(polynomial_coarsening_sequence, p);
 
       std::vector<std::pair<unsigned int, unsigned int>> levels;
 
@@ -1310,12 +1318,20 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
           .mg_coarsening_type;
 
-      const auto polynomial_coarsening_sequence =
+      auto polynomial_coarsening_sequence =
         MGTransferGlobalCoarseningTools::create_polynomial_coarsening_sequence(
           this->dof_handler.get_fe().degree,
           this->simulation_parameters.linear_solver
             .at(PhysicsID::fluid_dynamics)
             .mg_p_coarsening_type);
+
+      // Remove terms of polynomial coarsening sequence by if the miminum
+      // coarsening degree pescribed is greater than 1
+      for (int p = 1; p < this->simulation_parameters.linear_solver
+                            .at(PhysicsID::fluid_dynamics)
+                            .mg_p_min_coarsening_degree;
+           p++)
+        std::erase(polynomial_coarsening_sequence, p);
 
       std::vector<std::pair<unsigned int, unsigned int>> levels;
 
