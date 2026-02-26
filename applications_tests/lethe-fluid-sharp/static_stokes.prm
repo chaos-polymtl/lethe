@@ -246,7 +246,7 @@ subsection mesh adaptation
   set min refinement level = 0
 
   # Type of mesh adaptation Choices are <none|uniform|adaptive>.
-  set type = adaptive 
+  set type = adaptive
 
   # Type of error estimator
   set error estimator = kelly
