@@ -1425,7 +1425,7 @@ namespace Parameters
       mg_p_coarsening_type;
 
     /// Minimum polynomial degree for p coarsening sequence
-    int mg_p_min_coarsening_degree;
+    unsigned int mg_p_min_coarsening_degree;
 
     /// MG smoother number of iterations
     int mg_smoother_iterations;
