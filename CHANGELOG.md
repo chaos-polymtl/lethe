@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2026/02/26
 
+### Added
+
+- MINOR This PR adds a new parameter to the multigrid setup, named `set mg p min coarsening degree`. Combined with the p-multigrid coarsening type `decrease by one`, it allows the user to limit the lowest polynomial degree to a value greater than 1 (which was previously the default).[#1925](https://github.com/chaos-polymtl/lethe/pull/1925)
+
 ### Fixed
 
 - MINOR The matrix-free CFD-DEM solver (lethe-fluid-particles-matrix-free) requires the hesisan of the velocity field in both the matrix and the right-hand side. Without the hessian, the solver does not converge adequately. This PR adds a check that ensures that hessians are enabled when using this solver, otherwise the hessian of the velocity is used uninitialized and this leads to NaNs. [#1924](https://github.com/chaos-polymtl/lethe/pull/1924)
