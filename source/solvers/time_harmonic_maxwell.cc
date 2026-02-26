@@ -744,9 +744,8 @@ TimeHarmonicMaxwell<dim>::compute_dpg_error(
           const unsigned int cell_index = cell->active_cell_index();
           estimated_error_per_cell[cell_index] =
             this->local_estimated_error_per_cell[cell_index];
-          local_l2_squared +=
-            estimated_error_per_cell[cell_index] *
-            estimated_error_per_cell[cell_index];
+          local_l2_squared += estimated_error_per_cell[cell_index] *
+                              estimated_error_per_cell[cell_index];
         }
     }
 
@@ -759,8 +758,9 @@ TimeHarmonicMaxwell<dim>::compute_dpg_error(
   if (this->simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
         .verbosity != Parameters::Verbosity::quiet)
     {
-      this->pcout << "   Time-Harmonic Maxwell DPG residual before refinement : "
-                  << global_l2_norm << std::endl;
+      this->pcout
+        << "   Time-Harmonic Maxwell DPG residual before refinement : "
+        << global_l2_norm << std::endl;
     }
 }
 

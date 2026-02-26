@@ -958,7 +958,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
                       << std::endl;
 
 
-          auto         &present_solution = *this->present_solution;
+          auto &present_solution = *this->present_solution;
 
           const auto &cell_iterator =
             box_to_refine_dof_handler.active_cell_iterators();
