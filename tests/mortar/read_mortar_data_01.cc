@@ -73,7 +73,8 @@ test()
   mortar_parameters.rotor_mesh->simplex        = false;
   mortar_parameters.stator_boundary_id         = 0;
   mortar_parameters.rotor_boundary_id          = 3; // after shifting
-  mortar_parameters.interface_type             = "circular";
+  mortar_parameters.interface_type =
+    Parameters::Mortar<dim>::InterfaceType::circular;
 
   // Initialized merged triangulation
   parallel::distributed::Triangulation<dim> triangulation(comm);
