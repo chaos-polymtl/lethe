@@ -25,7 +25,7 @@ class MortarManagerBase
 {
 public:
   /**
-   * @brief Class constructor
+   * @brief Mortar manager base constructor
    *
    * @param[in] n_subdivisions Number of cells at the interface between inner
    * and outer domains
@@ -40,7 +40,7 @@ public:
                     const double            rotation_angle);
 
   /**
-   * @brief Class constructor
+   * @brief Mortar manager base constructor
    *
    * @param[in] n_subdivisions Number of cells at the interface between inner
    * and outer domains
@@ -56,7 +56,7 @@ public:
                     const double                     rotation_angle);
 
   /**
-   * @brief Default destructor.
+   * @brief Default destructor
    */
   virtual ~MortarManagerBase() = default;
 
@@ -169,8 +169,8 @@ protected:
    * @return id_in_plane Index of the cell in which lies the rotated cell center
    * @return id_out_plane Second index of the cell in which lies the rotated cell center.
    *
-   * Note that the id_out_plane corresponds to indexes along the rotation axis,
-   * and it is necessary only for 3D problems.
+   * The id_out_plane corresponds to indexes along the rotation axis, and it is
+   * necessary only for 3D problems
    */
   std::tuple<unsigned int, unsigned int, unsigned int>
   get_config(const Point<dim> &face_center, const bool is_inner) const;
@@ -239,9 +239,10 @@ compute_number_interface_cells(
  */
 template <int dim>
 std::tuple<std::vector<double>, double>
-compute_interface_dimensions(const Triangulation<dim>      &triangulation,
-                             const Mapping<dim>            &mapping,
-                             const Parameters::Mortar<dim> &mortar_parameters);
+compute_interface_dimensions_circular(
+  const Triangulation<dim>      &triangulation,
+  const Mapping<dim>            &mapping,
+  const Parameters::Mortar<dim> &mortar_parameters);
 
 /**
  * @brief Compute linear mortar interface dimensions
@@ -477,15 +478,17 @@ MortarManagerCircle<dim>::MortarManagerCircle(
   : MortarManagerCircle(
       compute_number_interface_cells(dof_handler.get_triangulation(),
                                      mortar_parameters),
-      std::get<0>(compute_interface_dimensions(dof_handler.get_triangulation(),
-                                               mapping,
-                                               mortar_parameters)),
+      std::get<0>(
+        compute_interface_dimensions_circular(dof_handler.get_triangulation(),
+                                              mapping,
+                                              mortar_parameters)),
       construct_quadrature(quadrature, mortar_parameters),
       mortar_parameters.rotor_rotation_angle->value(Point<dim>()),
       mortar_parameters.center_of_rotation,
-      std::get<1>(compute_interface_dimensions(dof_handler.get_triangulation(),
-                                               mapping,
-                                               mortar_parameters)))
+      std::get<1>(
+        compute_interface_dimensions_circular(dof_handler.get_triangulation(),
+                                              mapping,
+                                              mortar_parameters)))
 {}
 
 template <int dim>

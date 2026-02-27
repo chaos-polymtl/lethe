@@ -556,9 +556,10 @@ compute_number_interface_cells(const Triangulation<dim>      &triangulation,
 
 template <int dim>
 std::tuple<std::vector<double>, double>
-compute_interface_dimensions(const Triangulation<dim>      &triangulation,
-                             const Mapping<dim>            &mapping,
-                             const Parameters::Mortar<dim> &mortar_parameters)
+compute_interface_dimensions_circular(
+  const Triangulation<dim>      &triangulation,
+  const Mapping<dim>            &mapping,
+  const Parameters::Mortar<dim> &mortar_parameters)
 {
   // Tolerance for rotor radius computation
   const double radius_tolerance = mortar_parameters.radius_tolerance;
@@ -2058,14 +2059,16 @@ compute_number_interface_cells<3>(
   const Parameters::Mortar<3> &mortar_parameters);
 
 template std::tuple<std::vector<double>, double>
-compute_interface_dimensions<2>(const Triangulation<2>      &triangulation,
-                                const Mapping<2>            &mapping,
-                                const Parameters::Mortar<2> &mortar_parameters);
+compute_interface_dimensions_circular<2>(
+  const Triangulation<2>      &triangulation,
+  const Mapping<2>            &mapping,
+  const Parameters::Mortar<2> &mortar_parameters);
 
 template std::tuple<std::vector<double>, double>
-compute_interface_dimensions<3>(const Triangulation<3>      &triangulation,
-                                const Mapping<3>            &mapping,
-                                const Parameters::Mortar<3> &mortar_parameters);
+compute_interface_dimensions_circular<3>(
+  const Triangulation<3>      &triangulation,
+  const Mapping<3>            &mapping,
+  const Parameters::Mortar<3> &mortar_parameters);
 
 template std::pair<double, double>
 compute_interface_dimensions_linear<2>(
