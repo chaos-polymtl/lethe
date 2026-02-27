@@ -3051,6 +3051,11 @@ namespace Parameters
                             "decrease by one|bisect|go to one"),
                           "mg p coarsening type for gcmg");
 
+        prm.declare_entry("mg p min coarsening degree",
+                          "1",
+                          Patterns::Integer(),
+                          "mg p minimum coarsening degree for gcmg");
+
         prm.declare_entry("mg gmres max iterations",
                           "2000",
                           Patterns::Integer(),
@@ -3248,6 +3253,9 @@ namespace Parameters
             PolynomialCoarseningSequenceType::go_to_one;
         else
           AssertThrow(false, ExcNotImplemented());
+
+        mg_p_min_coarsening_degree =
+          prm.get_integer("mg p min coarsening degree");
 
         AssertThrow((!mg_use_fe_q_iso_q1) ||
                       (this->mg_coarsening_type ==

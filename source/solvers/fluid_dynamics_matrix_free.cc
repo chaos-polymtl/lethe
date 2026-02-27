@@ -752,6 +752,15 @@ MFNavierStokesPreconditionGMGBase<dim>::MFNavierStokesPreconditionGMGBase(
   this->use_manifold_for_normal = true;
   if (this->simulation_parameters.mortar_parameters.enable)
     this->use_manifold_for_normal = false;
+
+  // Verify whether the minimum coarsening degree prescribed is lower than the
+  // problem's polynomial degree
+  AssertThrow(
+    this->dof_handler.get_fe().degree >=
+      this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .mg_p_min_coarsening_degree,
+    ExcMessage(
+      "The prescribed minimum polynomial degree for the p-multigrid needs to be lower than the velocity/pressure interpolation order."));
 }
 
 template <int dim>
@@ -846,12 +855,20 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
           .mg_coarsening_type;
 
-      const auto polynomial_coarsening_sequence =
+      auto polynomial_coarsening_sequence =
         MGTransferGlobalCoarseningTools::create_polynomial_coarsening_sequence(
           this->dof_handler.get_fe().degree,
           this->simulation_parameters.linear_solver
             .at(PhysicsID::fluid_dynamics)
             .mg_p_coarsening_type);
+
+      // Remove terms of polynomial coarsening sequence that are below the
+      // minimum coarsening degree
+      for (unsigned int p = 1; p < this->simulation_parameters.linear_solver
+                                     .at(PhysicsID::fluid_dynamics)
+                                     .mg_p_min_coarsening_degree;
+           p++)
+        std::erase(polynomial_coarsening_sequence, p);
 
       std::vector<std::pair<unsigned int, unsigned int>> levels;
 
@@ -1310,12 +1327,20 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
           .mg_coarsening_type;
 
-      const auto polynomial_coarsening_sequence =
+      auto polynomial_coarsening_sequence =
         MGTransferGlobalCoarseningTools::create_polynomial_coarsening_sequence(
           this->dof_handler.get_fe().degree,
           this->simulation_parameters.linear_solver
             .at(PhysicsID::fluid_dynamics)
             .mg_p_coarsening_type);
+
+      // Remove terms of polynomial coarsening sequence that are below the
+      // minimum coarsening degree
+      for (unsigned int p = 1; p < this->simulation_parameters.linear_solver
+                                     .at(PhysicsID::fluid_dynamics)
+                                     .mg_p_min_coarsening_degree;
+           p++)
+        std::erase(polynomial_coarsening_sequence, p);
 
       std::vector<std::pair<unsigned int, unsigned int>> levels;
 
