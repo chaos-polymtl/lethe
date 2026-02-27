@@ -738,9 +738,10 @@ set ilu preconditioner relative tolerance = 1
 <p class="admonition-title">Tip</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">mg</span> <span class="pre">int</span> <span class="pre">level</span></code> option only works for the <code class="docutils literal notranslate"><span class="pre">gcmg</span></code> preconditioner. It allows to choose an intermediate level as coarse grid solver where a GMRES preconditioned by several multigrid v-cycles is used. The following parameters: <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">mg</span> <span class="pre">gmres</span> <span class="pre">max</span> <span class="pre">iterations</span></code>, <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">mg</span> <span class="pre">gmres</span> <span class="pre">tolerance</span></code> and <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">mg</span> <span class="pre">gmres</span> <span class="pre">reduce</span></code> can be used to set the desired number of maximum iterations, the absolute tolerance and the relative tolerance.</p>
 </div>
-<p>In addition, Lethe supports <cite>p-multigrid</cite> through the <code class="docutils literal notranslate"><span class="pre">gcmg</span></code> preconditioner. It can be used by specifying two additional parameters:</p>
+<p>In addition, Lethe supports <cite>p-multigrid</cite> through the <code class="docutils literal notranslate"><span class="pre">gcmg</span></code> preconditioner. It can be used by specifying the following additional parameters:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>set mg coarsening type             = p
 set mg p coarsening type           = decrease by one
+set mg p min coarsening degree     = 1
 </pre></div>
 </div>
 <p>This multigrid preconditioner creates the different multigrid levels by keeping the mesh constant but reducing the polynomial degree <cite>p</cite> of the shape functions. Three strategies to create the <cite>p-multigrid</cite> levels can be used by specifying the <code class="docutils literal notranslate"><span class="pre">mg</span> <span class="pre">p</span> <span class="pre">coarsening</span> <span class="pre">type</span></code> parameter:</p>
@@ -749,6 +750,7 @@ set mg p coarsening type           = decrease by one
 <li><p><code class="docutils literal notranslate"><span class="pre">decrease</span> <span class="pre">by</span> <span class="pre">one</span></code>: decrease the polynomial degree by one for every level.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">go</span> <span class="pre">to</span> <span class="pre">one</span></code>: decrease the polynomial degree to one directly.</p></li>
 </ul>
+<p>When using <code class="docutils literal notranslate"><span class="pre">mg</span> <span class="pre">p</span> <span class="pre">coarsening</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">decrease</span> <span class="pre">by</span> <span class="pre">one</span></code>, the lowest level has a first order polynomial degree by default; this can be altered by modifying the parameter <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">mg</span> <span class="pre">p</span> <span class="pre">min</span> <span class="pre">coarsening</span> <span class="pre">degree</span></code>.</p>
 <p>In addition, Lethe supports hybrid strategies that combine h- and p-multigrid, and can be specified through the <code class="docutils literal notranslate"><span class="pre">mg</span> <span class="pre">coarsening</span> <span class="pre">type</span></code> parameter:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">hp</span></code>: first levels with different mesh and then levels with different degree <cite>p</cite>.</p></li>
