@@ -862,8 +862,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             .at(PhysicsID::fluid_dynamics)
             .mg_p_coarsening_type);
 
-      // Remove terms of polynomial coarsening sequence by if the miminum
-      // coarsening degree pescribed is greater than 1
+      // Remove terms of polynomial coarsening sequence that are below the
+      // minimum coarsening degree
       for (unsigned int p = 1; p < this->simulation_parameters.linear_solver
                                      .at(PhysicsID::fluid_dynamics)
                                      .mg_p_min_coarsening_degree;
@@ -1334,8 +1334,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             .at(PhysicsID::fluid_dynamics)
             .mg_p_coarsening_type);
 
-      // Remove terms of polynomial coarsening sequence by if the miminum
-      // coarsening degree pescribed is greater than 1
+      // Remove terms of polynomial coarsening sequence that are below the
+      // minimum coarsening degree
       for (unsigned int p = 1; p < this->simulation_parameters.linear_solver
                                      .at(PhysicsID::fluid_dynamics)
                                      .mg_p_min_coarsening_degree;
