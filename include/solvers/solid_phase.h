@@ -23,6 +23,8 @@
 #include <fstream>
 #include <iostream>
 
+#include <solvers/fluid_dynamics_matrix_based.h>
+
 
 
 struct SolidPhaseParameters
@@ -60,7 +62,7 @@ struct SolidPhaseParameters
   
 
   bool verbose_assembly = true;
-  bool use_div_term_in_alpha = true;
+  
 
   bool solver_verbose = true;
   double solver_abs_tol = 1e-12;
@@ -144,7 +146,7 @@ struct SolidPhaseParameters
       prm.enter_subsection("Assembly");
       {
          prm.declare_entry("verbose", "true", Patterns::Bool());
-         prm.declare_entry("use div term in alpha", "true", Patterns::Bool());
+      
       }
       prm.leave_subsection();
 
@@ -243,8 +245,7 @@ struct SolidPhaseParameters
 
       prm.enter_subsection("Assembly");
       {
-         verbose_assembly      = prm.get_bool("verbose");
-         use_div_term_in_alpha = prm.get_bool("use div term in alpha");
+         verbose_assembly      = prm.get_bool("verbose");  
       }
       prm.leave_subsection();
 
@@ -280,7 +281,38 @@ struct SolidPhaseParameters
   }
 };
 
+template <int dim>
+class SolidPreconditioner : public Subscriptor
+{
+public:
+  std::shared_ptr<TrilinosWrappers::PreconditionAMG> amg_u;
+  std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_u;
+  std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_a;
 
+  enum class Mode { ilu, amg } mode = Mode::ilu;
+
+  void vmult(TrilinosWrappers::MPI::BlockVector       &dst,
+             const TrilinosWrappers::MPI::BlockVector &src) const
+  {
+    if (dst.block(0).size() > 0)
+    {
+      if (mode == Mode::amg && amg_u)
+        amg_u->vmult(dst.block(0), src.block(0));
+      else if (ilu_u)
+        ilu_u->vmult(dst.block(0), src.block(0));
+      else
+        dst.block(0) = src.block(0);
+    }
+
+    if (dst.block(1).size() > 0)
+    {
+      if (ilu_a)
+        ilu_a->vmult(dst.block(1), src.block(1));
+      else
+        dst.block(1) = src.block(1);
+    }
+  }
+};
 
 template <int dim>
 class SolidPhaseSolver
@@ -297,35 +329,39 @@ private:
   void assemble_system();
   void solve();
   void output_results(const double time);
-  void print_u0_profile(const TrilinosWrappers::MPI::BlockVector &sol) const;
-
-  static std::pair<double,double> minmax_of_vector(const Vector<double> &v);
+  
   void make_output_dir() const;
 
-  // parameters
+  void setup_preconditioner();
+  void setup_ILU();
+  void setup_AMG();
+
+  
+
+  
   const SolidPhaseParameters parameters;
 
-  // mpi
+  
   MPI_Comm mpi_communicator;
 
   // mesh
   std::vector<unsigned int> sub;
 
-  // fe
+
   const unsigned int degree;
   const FESystem<dim> fe;
 
   parallel::distributed::Triangulation<dim> triangulation;
   DoFHandler<dim> dof_handler;
 
-  // constraints
+  
   AffineConstraints<double> constraints;
 
-  // physics
+  
   const double rho_s;
   double beta; 
 
-  // linear system
+  
   TrilinosWrappers::BlockSparseMatrix system_matrix;
   TrilinosWrappers::MPI::BlockVector solution, old_solution, system_rhs;
 
@@ -336,6 +372,8 @@ private:
 
   TrilinosWrappers::MPI::BlockVector locally_relevant_solution;
   TrilinosWrappers::MPI::BlockVector locally_relevant_old_solution;
+
+  std::shared_ptr<SolidPreconditioner<dim>> preconditioner;
 
   // time
   double time_step;

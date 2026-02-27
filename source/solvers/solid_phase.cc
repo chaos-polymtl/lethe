@@ -73,6 +73,8 @@
 #include <deal.II/lac/trilinos_solver.h>
 #include <deal.II/lac/sparsity_tools.h>
 
+#include <solvers/fluid_dynamics_matrix_based.h>
+
 
 
 
@@ -91,52 +93,123 @@ using namespace dealii;
 
 
 
-template <int dim>
-class BlockAMGILU : public Subscriptor
-{
-public:
-  void initialize(const TrilinosWrappers::BlockSparseMatrix &A,
-                  const unsigned int                        fe_degree,
-                  const unsigned int                        ilu_overlap,
-                  const unsigned int                        amg_sweeps,
-                  const double                              amg_agg_threshold,
-                  const std::string                        &amg_smoother_type,
-                  const bool                                amg_elliptic)
-  {
-    // ---- AMG for velocity block 
-    TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
-    amg_data.elliptic              = amg_elliptic;
-    amg_data.higher_order_elements = (fe_degree > 1);
-    amg_data.smoother_type         = "ILU";
-    amg_data.smoother_sweeps       = amg_sweeps;
-    amg_data.aggregation_threshold = amg_agg_threshold;
-    amg_data.output_details        = false;
+// template <int dim>
+// class BlockAMGILU : public Subscriptor
+// {
+// public:
+//   void initialize(const TrilinosWrappers::BlockSparseMatrix &A,
+//                   const unsigned int                        fe_degree,
+//                   const unsigned int                        ilu_overlap,
+//                   const unsigned int                        amg_sweeps,
+//                   const double                              amg_agg_threshold,
+//                   const std::string                        &amg_smoother_type,
+//                   const bool                                amg_elliptic)
+//   {
+//     // ---- AMG for velocity block 
+//     TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
+//     amg_data.elliptic              = amg_elliptic;
+//     amg_data.higher_order_elements = (fe_degree > 1);
+//     amg_data.smoother_type         = "ILU";
+//     amg_data.smoother_sweeps       = amg_sweeps;
+//     amg_data.aggregation_threshold = amg_agg_threshold;
+//     amg_data.output_details        = false;
 
-    if (A.block(0,0).m() > 0)
-      amg_u.initialize(A.block(0,0), amg_data);
+//     if (A.block(0,0).m() > 0)
+//       amg_u.initialize(A.block(0,0), amg_data);
 
     
-    TrilinosWrappers::PreconditionILU::AdditionalData ilu_data;
-    ilu_data.overlap = ilu_overlap;
+//     TrilinosWrappers::PreconditionILU::AdditionalData ilu_data;
+//     ilu_data.overlap = ilu_overlap;
 
-    if (A.block(1,1).m() > 0)
-      ilu_a.initialize(A.block(1,1), ilu_data);
-  }
+//     if (A.block(1,1).m() > 0)
+//       ilu_a.initialize(A.block(1,1), ilu_data);
+//   }
 
-  void vmult(TrilinosWrappers::MPI::BlockVector       &dst,
-             const TrilinosWrappers::MPI::BlockVector &src) const
+//   void vmult(TrilinosWrappers::MPI::BlockVector       &dst,
+//              const TrilinosWrappers::MPI::BlockVector &src) const
+//   {
+//     if (dst.block(0).size() > 0)
+//       amg_u.vmult(dst.block(0), src.block(0));
+
+//     if (dst.block(1).size() > 0)
+//       ilu_a.vmult(dst.block(1), src.block(1));
+//   }
+
+// private:
+//   TrilinosWrappers::PreconditionAMG amg_u;
+//   TrilinosWrappers::PreconditionILU ilu_a;
+// };
+
+template <int dim>
+void SolidPhaseSolver<dim>::setup_preconditioner()
+{
+  
+  this->preconditioner = std::make_shared<SolidPreconditioner<dim>>();
+
+  
+  const bool use_amg = (parameters.amg_sweeps > 0); 
+
+  if (use_amg)
+    setup_AMG();
+  else
+    setup_ILU();
+}
+
+template <int dim>
+void SolidPhaseSolver<dim>::setup_ILU()
+{
+  
+
+  this->preconditioner->mode = SolidPreconditioner<dim>::Mode::ilu;
+
+  // velocity block ILU
+  preconditioner->ilu_u = std::make_shared<TrilinosWrappers::PreconditionILU>();
   {
-    if (dst.block(0).size() > 0)
-      amg_u.vmult(dst.block(0), src.block(0));
-
-    if (dst.block(1).size() > 0)
-      ilu_a.vmult(dst.block(1), src.block(1));
+    TrilinosWrappers::PreconditionILU::AdditionalData ilu_data;
+    ilu_data.overlap = parameters.ilu_overlap;
+    preconditioner->ilu_u->initialize(system_matrix.block(0,0), ilu_data);
   }
 
-private:
-  TrilinosWrappers::PreconditionAMG amg_u;
-  TrilinosWrappers::PreconditionILU ilu_a;
-};
+  // alpha block ILU
+  preconditioner->ilu_a = std::make_shared<TrilinosWrappers::PreconditionILU>();
+  {
+    TrilinosWrappers::PreconditionILU::AdditionalData ilu_data;
+    ilu_data.overlap = parameters.ilu_overlap;
+    preconditioner->ilu_a->initialize(system_matrix.block(1,1), ilu_data);
+  }
+}
+
+template <int dim>
+void SolidPhaseSolver<dim>::setup_AMG()
+{
+  
+
+  this->preconditioner->mode = SolidPreconditioner<dim>::Mode::amg;
+
+  // AMG on velocity block (0,0)
+  preconditioner->amg_u = std::make_shared<TrilinosWrappers::PreconditionAMG>();
+  {
+    TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
+    amg_data.elliptic              = parameters.amg_elliptic;
+    amg_data.higher_order_elements = (degree > 1);
+    amg_data.smoother_type         = "ILU";                   
+    amg_data.smoother_sweeps       = parameters.amg_sweeps;
+    amg_data.aggregation_threshold = parameters.amg_agg_threshold;
+    amg_data.output_details        = false;
+
+    preconditioner->amg_u->initialize(system_matrix.block(0,0), amg_data);
+  }
+
+  // ILU on alpha block (1,1)
+  preconditioner->ilu_a = std::make_shared<TrilinosWrappers::PreconditionILU>();
+  {
+    TrilinosWrappers::PreconditionILU::AdditionalData ilu_data;
+    ilu_data.overlap = parameters.ilu_overlap;
+    preconditioner->ilu_a->initialize(system_matrix.block(1,1), ilu_data);
+  }
+
+ 
+}
 
 
 template <int dim>
@@ -145,7 +218,7 @@ class SolidInitialValues : public Function<dim>
 public:
 SolidInitialValues(const double &alpha0,
                    const double &u0)
-  : Function<dim>(dim + 1)   // dim velocity components + 1 scalar
+  : Function<dim>(dim + 1)   
   , alpha_0(alpha0)
   , u_0(u0)
 {}
@@ -350,8 +423,8 @@ void SolidPhaseSolver<dim>::setup_dofs()
   pcout << "   Number of degrees of freedom: " << dof_handler.n_dofs()
         << " (" << n_u << "+" << n_a << ")" << std::endl;
 
-  const IndexSet locally_owned    = dof_handler.locally_owned_dofs();
-  const IndexSet locally_relevant = DoFTools::extract_locally_relevant_dofs(dof_handler);
+  locally_owned    = dof_handler.locally_owned_dofs();
+  locally_relevant = DoFTools::extract_locally_relevant_dofs(dof_handler);
 
   owned_partitioning.clear();
   relevant_partitioning.clear();
@@ -522,8 +595,8 @@ void SolidPhaseSolver<dim>::assemble_system()
               cell_matrix(i, j) += (phi_a[i] * (grad_phi_a[j] * u_k)) * JxW;
 
               // (w, alpha^{n+1} div(u_k))  
-              if (parameters.use_div_term_in_alpha)
-                cell_matrix(i, j) += (phi_a[i] * phi_a[j] * div_u_k) * JxW;
+              
+              cell_matrix(i, j) += (phi_a[i] * phi_a[j] * div_u_k) * JxW;
             }
 
             // RHS: (w, alpha^n)/dt
@@ -596,9 +669,9 @@ void SolidPhaseSolver<dim>::solve()
                                                           mpi_communicator);
   distributed_solution = solution; 
 
-  for (auto it = locally_owned.begin(); it != locally_owned.end(); ++it)
-    if (constraints.is_constrained(*it))
-      distributed_solution(*it) = 0.0;
+
+  constraints.distribute(distributed_solution);
+  distributed_solution.compress(VectorOperation::insert);
 
   PrimitiveVectorMemory<TrilinosWrappers::MPI::BlockVector> mem;
 
@@ -609,16 +682,8 @@ void SolidPhaseSolver<dim>::solve()
 
   SolverControl solver_control(parameters.solver_max_it, tol);
 
-  // Preconditioner
-  BlockAMGILU<dim> preconditioner;
   
-  preconditioner.initialize(system_matrix,
-                          degree,
-                          parameters.ilu_overlap,
-                          parameters.amg_sweeps,
-                          parameters.amg_agg_threshold,
-                          parameters.amg_smoother_type,
-                          parameters.amg_elliptic);
+  setup_preconditioner();
 
   SolverFGMRES<TrilinosWrappers::MPI::BlockVector> solver(
     solver_control,
@@ -631,7 +696,7 @@ void SolidPhaseSolver<dim>::solve()
     solver.solve(system_matrix,
                  distributed_solution,
                  system_rhs,
-                 preconditioner);
+                 *preconditioner);
   }
   catch (SolverControl::NoConvergence &)
   {
@@ -651,7 +716,7 @@ void SolidPhaseSolver<dim>::solve()
     solver_refined.solve(system_matrix,
                          distributed_solution,
                          system_rhs,
-                         preconditioner);
+                         *preconditioner);
 
     
   }

@@ -31,6 +31,8 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
+#include <solvers/fluid_dynamics_matrix_based.h>
+
 
 
 // Constructor for class FluidDynamicsMatrixBased
