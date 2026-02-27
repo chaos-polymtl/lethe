@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2026/03/04
 
+### Added
+
+- MINOR This PR adds a new mortar manager class that allows a linear (straight) interface, which is useful for debugging. At the moment, the implementation supports only two-dimensional cases, and it assumes that the mortar interface is parallel to the y axis.[#1926](https://github.com/chaos-polymtl/lethe/pull/1926)
+
 ### Fixed
 
 - MINOR The p-refinement in the multigrid preconditioner was not working with the mortar feature. When calling the function `compute_n_subdivisions_and_radius` to rotate the mapping at each level, the level triangulation was being passed as argument. This was not compatible with the p-refinement structure, since no new triangulation is created for levels with the same refinement but different p order. This PR fixes this by computing the `interface_radius` outside the levels loop, which is suitable because such variable is the same for all levels. [#1927](https://github.com/chaos-polymtl/lethe/pull/1927)
