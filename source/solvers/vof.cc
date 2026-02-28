@@ -2345,7 +2345,7 @@ VolumeOfFluid<dim>::compute_error_estimate(
         ivar.second.error_estimator ==
           Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly,
         ExcMessage(
-          "Only Kelly error estimator is currently implemented for the "
+          "Only the Kelly error estimator is currently implemented for the "
           "<phase> VOF field."));
 
 

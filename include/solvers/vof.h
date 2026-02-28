@@ -222,7 +222,7 @@ public:
 
 
   /**
-   * @brief Compute the chosen in parameter error estimator for mesh refinement.
+   * @brief Compute the error estimator for mesh refinement.
    *
    * @param ivar The current element of the map simulation_parameters.mesh_adaptation.variables
    *

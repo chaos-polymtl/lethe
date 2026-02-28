@@ -215,7 +215,7 @@ The mesh is a simple hyper rectangle, large enough to encompass the mixer with i
       set initial refinement = 3
     end
 
-Mesh adaptation ``type`` is set to ``adaptive``, to allow adaptive refinement at the solid surface using the . This is necessary for simulations of this type because of the prohibitive mesh size required when only uniform refinement is used. Setting ``max refinement level = 5`` allows for two levels of adaptive refinement from the uniform ``initial refinement = 3`` defined in the ``mesh`` section. The ``frequency = 0`` ensures that no refinement occurs between time steps, as it is not necessary here. The ``initial refinement steps = 0`` to highlight that no initial refinement is requested here; the initial refinements are requested from ``subsection particles`` because they are base on the solid geometry.
+Mesh adaptation ``type`` is set to ``adaptive``, to allow adaptive refinement at the solid surface using the ``kelly`` error estimator. This is necessary for simulations of this type because of the prohibitive mesh size required when only uniform refinement is used. Setting ``max refinement level = 5`` allows for two levels of adaptive refinement from the uniform ``initial refinement = 3`` defined in the ``mesh`` section. The ``frequency = 0`` ensures that no refinement occurs between time steps, as it is not necessary here. The ``initial refinement steps = 0`` to highlight that no initial refinement is requested here; the initial refinements are requested from ``subsection particles`` because they are base on the solid geometry.
 
 .. code-block:: text
 

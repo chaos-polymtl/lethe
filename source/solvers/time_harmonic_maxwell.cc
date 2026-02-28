@@ -656,7 +656,7 @@ TimeHarmonicMaxwell<dim>::compute_error_estimate(
         ivar.second.error_estimator ==
           Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly,
         ExcMessage(
-          "Only Kelly error estimator is currently implemented for the "
+          "Only the Kelly error estimator is currently implemented for the "
           "<electric field> field."));
 
       ComponentMask electric_field_mask =
@@ -670,7 +670,7 @@ TimeHarmonicMaxwell<dim>::compute_error_estimate(
         ivar.second.error_estimator ==
           Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly,
         ExcMessage(
-          "Only Kelly error estimator is currently implemented for the "
+          "Only the Kelly error estimator is currently implemented for the "
           "<magnetic field> field."));
 
       ComponentMask magnetic_field_mask =
@@ -734,6 +734,11 @@ TimeHarmonicMaxwell<dim>::compute_dpg_error(
   // then used for marking the cells for refinement.
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
+  // Here we add a flag to be sure if the local_estimated_error_per_cell has
+  // been computed before calling this function. If not, all entry of the
+  // local_estimated_error_per_cell vector will still be 0.
+  bool dpg_error_computed = false;
+
   // Compute the local sum of squares for locally owned cells
   double local_l2_squared = 0.0;
   for (const auto &cell :
@@ -741,6 +746,10 @@ TimeHarmonicMaxwell<dim>::compute_dpg_error(
     {
       if (cell->is_locally_owned())
         {
+          if (this->local_estimated_error_per_cell[cell->active_cell_index()] !=
+              0)
+            dpg_error_computed = true;
+
           const unsigned int cell_index = cell->active_cell_index();
           estimated_error_per_cell[cell_index] =
             this->local_estimated_error_per_cell[cell_index];
@@ -748,6 +757,11 @@ TimeHarmonicMaxwell<dim>::compute_dpg_error(
                               estimated_error_per_cell[cell_index];
         }
     }
+
+  AssertThrow(
+    dpg_error_computed,
+    ExcMessage(
+      "The DPG error estimator has not been computed before calling compute_dpg_error. Please make sure that the system assembly has been performed and the local_estimated_error_per_cell vector has been filled with the DPG error estimates for each cell before calling this function."));
 
   // Sum across all processes to get the global L2 norm
   const double global_l2_norm =

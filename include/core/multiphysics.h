@@ -63,7 +63,7 @@ enum class Variable : unsigned int
   electric_field = 7,
   /// Magnetic field vector field from electromagnetics
   magnetic_field = 8,
-  /// Combinaison of both electric and magnetic fields from electromagnetics
+  /// Combination of both electric and magnetic fields from electromagnetics
   electromagnetic_fields = 9
 };
 

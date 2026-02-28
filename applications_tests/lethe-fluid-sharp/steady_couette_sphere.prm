@@ -172,7 +172,7 @@ subsection mesh adaptation
   # minimum refinement level
   set min refinement level = 3
 
-  # Type of mesh adaptationChoices are <none|uniform|kelly>.
+  # Type of mesh adaptation. Choices are <none|uniform|adaptive>.
   set type            = adaptive
   set error estimator = kelly
 

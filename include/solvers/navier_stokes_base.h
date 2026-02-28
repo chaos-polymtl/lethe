@@ -433,7 +433,7 @@ protected:
   refine_mesh();
 
   /**
-   * @brief Allow the refinement of the mesh based on an error estimator chosen in the input file.
+   * @brief Allow the refinement of the mesh based on an error estimator.
    */
   void
   refine_mesh_adaptive();

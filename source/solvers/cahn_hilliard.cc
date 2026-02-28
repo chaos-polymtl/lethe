@@ -921,7 +921,7 @@ CahnHilliard<dim>::compute_error_estimate(
         ivar.second.error_estimator ==
           Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly,
         ExcMessage(
-          "Only Kelly error estimator is currently implemented for the "
+          "Only the Kelly error estimator is currently implemented for the "
           "<phase_cahn-hilliard> field."));
 
       ComponentMask phase_mask =
@@ -934,7 +934,7 @@ CahnHilliard<dim>::compute_error_estimate(
         ivar.second.error_estimator ==
           Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly,
         ExcMessage(
-          "Only Kelly error estimator is currently implemented for the "
+          "Only the Kelly error estimator is currently implemented for the "
           "<chemical_potential_cahn-hilliard> field."));
       ComponentMask chemical_potential_mask =
         fe->component_mask(FEValuesExtractors::Scalar(1));
