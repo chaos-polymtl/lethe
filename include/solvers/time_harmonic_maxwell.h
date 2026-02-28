@@ -247,7 +247,7 @@ public:
   gather_tables() override;
 
   /**
-   * @brief Compute the error estimator for mesh refinement.
+   * @brief Compute the chosen in parameter error estimator for mesh refinement.
    *
    * @param ivar The current element of the map simulation_parameters.mesh_adaptation.variables
    *
@@ -566,6 +566,11 @@ private:
 
   /**
    * @brief Update the material properties during the assembly of the system matrix.
+   * Note that the time-harmonic Maxwell equations do not support multiple fluids 
+   * so the fluid_id is not necessary to determine the material properties. The 
+   * material properties only depend on the material_id, which is used to identify 
+   * the different materials in the input file and assign them their corresponding 
+   * properties.
    *
    *  @param[in] physical_properties_manager The object that manages the
    * physical properties of the problem and provides them at any given position
