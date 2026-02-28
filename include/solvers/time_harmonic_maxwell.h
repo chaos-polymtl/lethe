@@ -566,11 +566,11 @@ private:
 
   /**
    * @brief Update the material properties during the assembly of the system matrix.
-   * Note that the time-harmonic Maxwell equations do not support multiple fluids 
-   * so the fluid_id is not necessary to determine the material properties. The 
-   * material properties only depend on the material_id, which is used to identify 
-   * the different materials in the input file and assign them their corresponding 
-   * properties.
+   * Note that the time-harmonic Maxwell equations do not support multiple
+   * fluids so the fluid_id is not necessary to determine the material
+   * properties. The material properties only depend on the material_id, which
+   * is used to identify the different materials in the input file and assign
+   * them their corresponding properties.
    *
    *  @param[in] physical_properties_manager The object that manages the
    * physical properties of the problem and provides them at any given position
