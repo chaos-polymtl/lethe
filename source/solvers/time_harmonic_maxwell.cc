@@ -375,6 +375,18 @@ TimeHarmonicMaxwell<dim>::gather_output_hook()
     solution_interior_names,
     solution_interior_data_component_interpretation);
 
+  // We also want to output the DPG estimator as a separate field for
+  // visualization and postprocessing purposes when computed.
+  if (this->simulation_parameters.mesh_adaptation.var_adaptation_param
+        .error_estimator ==
+      Parameters::MultipleAdaptationParameters::ErrorEstimator::dpg)
+    {
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructCellVector>,
+        this->local_estimated_error_per_cell,
+        std::string("dpg_error_norm"));
+    }
+
   // Skeleton output setup
   // TODO:  it will need its own writer probably because we need to use
   // DataOutFaces object, add the skeleton output to all physics when required?
@@ -739,8 +751,6 @@ TimeHarmonicMaxwell<dim>::compute_dpg_error(
   // local_estimated_error_per_cell vector will still be 0.
   bool dpg_error_computed = false;
 
-  // Compute the local sum of squares for locally owned cells
-  double local_l2_squared = 0.0;
   for (const auto &cell :
        this->dof_handler_trial_interior->active_cell_iterators())
     {
@@ -753,29 +763,21 @@ TimeHarmonicMaxwell<dim>::compute_dpg_error(
           const unsigned int cell_index = cell->active_cell_index();
           estimated_error_per_cell[cell_index] =
             this->local_estimated_error_per_cell[cell_index];
-          local_l2_squared += estimated_error_per_cell[cell_index] *
-                              estimated_error_per_cell[cell_index];
         }
     }
 
+  // Reduce the flag across all MPI ranks so that processes that don't own
+  // any cells don't falsely trigger the
+  // assertion.
+  const bool is_global_dpg_error_computed =
+    Utilities::MPI::max(static_cast<unsigned int>(dpg_error_computed),
+                        mpi_communicator) != 0;
+
   AssertThrow(
-    dpg_error_computed,
+    is_global_dpg_error_computed,
     ExcMessage(
       "The DPG error estimator has not been computed before calling compute_dpg_error. Please make sure that the system assembly has been performed and the local_estimated_error_per_cell vector has been filled with the DPG error estimates for each cell before calling this function."));
 
-  // Sum across all processes to get the global L2 norm
-  const double global_l2_norm =
-    std::sqrt(Utilities::MPI::sum(local_l2_squared, mpi_communicator));
-
-  // If the user has chosen to have the linear solver in verbose mode, we print
-  // the DPG residual
-  if (this->simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
-        .verbosity != Parameters::Verbosity::quiet)
-    {
-      this->pcout
-        << "   Time-Harmonic Maxwell DPG residual before refinement : "
-        << global_l2_norm << std::endl;
-    }
 }
 
 template <int dim>
@@ -2420,6 +2422,9 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
   std::complex<double>                 boundary_surface_admittance;
   std::complex<double>                 conj_boundary_surface_admittance;
 
+  // L2 norm of the residual for the dpg error indicator
+  double residual_L2_norm = 0.0;
+
   // The above declarations are the same as the ones in the assembly of the
   // skeleton system. Below we add new ones that are specific to the
   // reconstruction of the interior solution.
@@ -3176,9 +3181,11 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                 .error_estimator ==
               Parameters::MultipleAdaptationParameters::ErrorEstimator::dpg)
             {
+              double error_sqared = l_vector *
+                          cell_residual; // ||R||^2_V = R^T G^-1 R = R^T Psi
               local_estimated_error_per_cell(cell->active_cell_index()) =
-                std::sqrt(l_vector *
-                          cell_residual); // ||R||^2_V = R^T G^-1 R = R^T Psi
+                std::sqrt(error_sqared); // ||R||^2_V = R^T G^-1 R = R^T Psi
+              residual_L2_norm += error_sqared;
             }
 
           cell_test->distribute_local_to_global(cell_residual,
@@ -3193,6 +3200,16 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
 
   *this->present_solution            = locally_owned_solution_interior;
   *this->present_DPG_error_indicator = locally_owned_error_indicator;
+
+  //We also output the global error indicator if the dpg error estimator is activated and in verbose mode
+  if ((this->simulation_parameters.mesh_adaptation.var_adaptation_param.error_estimator ==
+      Parameters::MultipleAdaptationParameters::ErrorEstimator::dpg) && (this->simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
+        .verbosity != Parameters::Verbosity::quiet))
+    {
+      this->pcout
+        << "   Time-Harmonic Maxwell DPG residual: "
+        << std::sqrt(Utilities::MPI::sum(residual_L2_norm, mpi_communicator)) << std::endl;
+    }
 }
 
 
