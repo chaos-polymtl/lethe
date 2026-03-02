@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_data_containers_h
@@ -192,7 +192,8 @@ namespace DEM
 
     // <cell id, periodic cells info>
     typedef std::unordered_multimap<types::global_cell_index,
-      periodic_boundaries_cells_info_struct<dim>> periodic_boundaries_cells_info;
+                                    periodic_boundaries_cells_info_struct<dim>>
+      periodic_boundaries_cells_info;
 
     // <cell id, integer value>
     typedef ankerl::unordered_dense::map<types::global_cell_index, unsigned int>

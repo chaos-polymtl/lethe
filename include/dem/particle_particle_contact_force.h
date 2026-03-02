@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_particle_particle_contact_force_h
@@ -71,14 +71,22 @@ public:
     const double dt,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) = 0;
 
-  void
+  inline void
   set_periodic_offset(const Tensor<1, dim> &offset, const types::boundary_id boundary_id)
   {
     this->periodic_offsets[boundary_id] = offset;
   }
 
+  inline void
+  set_combined_offsets(const std::vector<Tensor<1, dim>> &offsets)
+  {
+    this->combined_offsets = offsets;
+  }
+
 protected:
   std::unordered_map<types::boundary_id, Tensor<1, dim>> periodic_offsets;
+
+  std::vector<Tensor<1, dim>> combined_offsets{Tensor<1, dim>()};
 };
 
 /**
@@ -256,10 +264,12 @@ protected:
    * @brief Get the shifted location of a particle on a periodic boundary.
    *
    * @param particle The particle to get the location from.
-   * @param[in] boundary_id The periodic boundary with which to shift the location.
+   * @param[in] boundary_id The periodic boundary with which to shift the
+   * location.
    */
   inline Point<3>
-  get_periodic_location(const Particles::ParticleIterator<dim> &particle, const types::boundary_id boundary_id) &
+  get_periodic_location(const Particles::ParticleIterator<dim> &particle,
+                        const types::boundary_id                boundary_id) &
   {
     const auto it = this->periodic_offsets.find(boundary_id);
     if constexpr (dim == 3)

@@ -24,6 +24,10 @@ struct particle_particle_contact_info
   Particles::ParticleIterator<dim> particle_two;
   Tensor<1, 3>                     tangential_displacement;
   Tensor<1, 3>                     rolling_resistance_spring_torque;
+
+  // Store the translation vector that brings particle_two into contact
+  // with particle_one (default to zero for non-periodic)
+  Tensor<1, 3>                     periodic_offset;
 };
 
 /**
