@@ -253,6 +253,8 @@ ParticleWallContactForce<dim,
                         contact_indicator,
                         contact_info);
                     }
+                  else
+                    clear_contact_info(contact_info);
                 }
             }
         }
