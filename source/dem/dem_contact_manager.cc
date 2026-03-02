@@ -463,9 +463,14 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_wall_fine_search(
   // Particle - floating mesh fine search
   if (DEMActionManager::get_action_manager()->check_solid_objects_enabled())
     {
+      // Save current contact history before fine search overwrites it
+      particle_floating_mesh_contact_history =
+        particle_floating_mesh_potentially_in_contact;
+
       particle_floating_mesh_fine_search<dim>(
         particle_floating_mesh_candidates,
-        particle_floating_mesh_potentially_in_contact);
+        particle_floating_mesh_potentially_in_contact,
+        particle_floating_mesh_contact_history);
     }
 
   particle_point_fine_search<dim, PropertiesIndex>(particle_point_candidates,

@@ -62,6 +62,9 @@ particle_floating_wall_fine_search(
  * broad search which shows contact pair candidates
  * @param particle_floating_mesh_potentially_in_contact A map of maps which stores
  * all the particle-floating mesh pairs which are potentially in contact
+ * @param particle_floating_mesh_contact_history The previous iteration's contact
+ * information used to restore contact history (tangential displacement and rolling
+ * resistance spring torque) for persistent contacts
  */
 template <int dim>
 void
@@ -71,6 +74,9 @@ particle_floating_mesh_fine_search(
     &particle_floating_mesh_contact_candidates,
   typename DEM::dem_data_structures<
     dim>::particle_floating_mesh_potentially_in_contact
-    &particle_floating_mesh_potentially_in_contact);
+    &particle_floating_mesh_potentially_in_contact,
+  const typename DEM::dem_data_structures<
+    dim>::particle_floating_mesh_potentially_in_contact
+    &particle_floating_mesh_contact_history);
 
 #endif

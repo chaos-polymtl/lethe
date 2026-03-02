@@ -172,7 +172,10 @@ particle_floating_mesh_fine_search(
     &particle_floating_mesh_contact_candidates,
   typename dem_data_structures<
     dim>::particle_floating_mesh_potentially_in_contact
-    &particle_floating_mesh_potentially_in_contact)
+    &particle_floating_mesh_potentially_in_contact,
+  const typename dem_data_structures<
+    dim>::particle_floating_mesh_potentially_in_contact
+    &particle_floating_mesh_contact_history)
 {
   particle_floating_mesh_potentially_in_contact.resize(
     particle_floating_mesh_contact_candidates.size());
@@ -187,6 +190,13 @@ particle_floating_mesh_fine_search(
       auto &candidates =
         particle_floating_mesh_contact_candidates[solid_counter];
 
+      // Get the previous iteration's contact history for this solid
+      const auto &history_element =
+        (solid_counter < particle_floating_mesh_contact_history.size()) ?
+          particle_floating_mesh_contact_history[solid_counter] :
+          typename dem_data_structures<
+            dim>::particle_triangle_cell_from_mesh_potentially_in_contact{};
+
       for (auto const &[cut_cell_key, candidate_particles] : candidates)
         {
           if (!candidate_particles.empty())
@@ -194,15 +204,42 @@ particle_floating_mesh_fine_search(
               for (auto &particle_floating_mesh_candidate_iterator :
                    candidate_particles)
                 {
+                  auto particle_id =
+                    particle_floating_mesh_candidate_iterator.first;
+
+                  // Initialize contact_info with empty history
+                  particle_wall_contact_info<dim> new_contact_info{
+                    particle_floating_mesh_candidate_iterator.second,
+                    Tensor<1, 3>(),
+                    Point<3>(),
+                    0,
+                    Tensor<1, 3>(),
+                    Tensor<1, 3>()};
+
+                  // Try to restore contact history from previous iteration
+                  // Look for this contact in the history
+                  auto history_cell_iter = history_element.find(cut_cell_key);
+                  if (history_cell_iter != history_element.end())
+                    {
+                      auto history_particle_iter =
+                        history_cell_iter->second.find(particle_id);
+                      if (history_particle_iter !=
+                          history_cell_iter->second.end())
+                        {
+                          // Restore the tangential displacement and rolling
+                          // resistance spring torque from the previous iteration
+                          const auto &history_contact_info =
+                            history_particle_iter->second;
+                          new_contact_info.tangential_displacement =
+                            history_contact_info.tangential_displacement;
+                          new_contact_info.rolling_resistance_spring_torque =
+                            history_contact_info.rolling_resistance_spring_torque;
+                        }
+                    }
+
                   particle_floating_mesh_element[cut_cell_key].emplace(
-                    particle_floating_mesh_candidate_iterator.first,
-                    particle_wall_contact_info<dim>{
-                      particle_floating_mesh_candidate_iterator.second,
-                      Tensor<1, 3>(),
-                      Point<3>(),
-                      0,
-                      Tensor<1, 3>(),
-                      Tensor<1, 3>()});
+                    particle_id,
+                    new_contact_info);
                 }
             }
         }
@@ -246,11 +283,15 @@ particle_floating_mesh_fine_search<2>(
   const typename dem_data_structures<2>::particle_floating_mesh_candidates
     &particle_floating_mesh_contact_candidates,
   typename dem_data_structures<2>::particle_floating_mesh_potentially_in_contact
-    &particle_floating_mesh_potentially_in_contact);
+    &particle_floating_mesh_potentially_in_contact,
+  const typename dem_data_structures<2>::particle_floating_mesh_potentially_in_contact
+    &particle_floating_mesh_contact_history);
 
 template void
 particle_floating_mesh_fine_search<3>(
   const typename dem_data_structures<3>::particle_floating_mesh_candidates
     &particle_floating_mesh_contact_candidates,
   typename dem_data_structures<3>::particle_floating_mesh_potentially_in_contact
-    &particle_floating_mesh_potentially_in_contact);
+    &particle_floating_mesh_potentially_in_contact,
+  const typename dem_data_structures<3>::particle_floating_mesh_potentially_in_contact
+    &particle_floating_mesh_contact_history);

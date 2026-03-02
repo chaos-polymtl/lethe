@@ -334,7 +334,7 @@ ParticleWallContactForce<dim,
                             }
                           // Otherwise, C2 is invalid and is erased from the
                           // current contact record.
-                          //clear_contact_info(contact_info_C2);
+                          clear_contact_info(contact_info_C2);
                           C2 = this_contact_record.erase(C2);
                           continue;
                         }
@@ -342,7 +342,7 @@ ParticleWallContactForce<dim,
                       // If C1 is a face contact and C2 is a vertex
                       // contact.
                       // C2 is always invalid.
-                      //clear_contact_info(contact_info_C2);
+                      clear_contact_info(contact_info_C2);
                       C2 = this_contact_record.erase(C2);
                       continue;
                     }
@@ -378,7 +378,7 @@ ParticleWallContactForce<dim,
                           if (std::ranges::find(T1_es_neighbors, T2_cell) !=
                               T1_es_neighbors.end())
                             {
-                              //clear_contact_info(contact_info_C2);
+                              clear_contact_info(contact_info_C2);
                               C2 = this_contact_record.erase(C2);
                               continue;
                             }
@@ -439,7 +439,7 @@ ParticleWallContactForce<dim,
                             vertex_contact)
                         {
                           // C2 is invalid
-                          //clear_contact_info(contact_info_C2);
+                          clear_contact_info(contact_info_C2);
                           C2 = this_contact_record.erase(C2);
                           continue;
                         }
@@ -450,7 +450,7 @@ ParticleWallContactForce<dim,
               // Erase C1 from the contact record is marked as true.
               if (erase_contact_1)
                 {
-                  //clear_contact_info(contact_info_C1);
+                  clear_contact_info(contact_info_C1);
                   C1 = this_contact_record.erase(C1);
                   continue; // skip increment; erase() already advanced
                 }

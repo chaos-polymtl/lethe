@@ -356,6 +356,10 @@ private:
   typename dem_data_structures<
     dim>::particle_floating_mesh_potentially_in_contact
     particle_floating_mesh_potentially_in_contact;
+  // Store previous iteration's floating mesh contacts for history restoration
+  typename dem_data_structures<
+    dim>::particle_floating_mesh_potentially_in_contact
+    particle_floating_mesh_contact_history;
   typename dem_data_structures<dim>::particle_wall_in_contact
     particle_floating_wall_in_contact;
   typename dem_data_structures<dim>::particle_wall_in_contact
