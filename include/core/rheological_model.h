@@ -875,9 +875,11 @@ private:
                           (param.T_liquidus - param.T_solidus),
                         0.),
                1.);
+    const double s_frac = 1.0 - l_frac;
+    // return param.kinematic_viscosity_l * l_frac +
+          //  param.kinematic_viscosity_s * (1. - l_frac);
 
-    return param.kinematic_viscosity_l * l_frac +
-           param.kinematic_viscosity_s * (1. - l_frac);
+    return (param.kinematic_viscosity_s-param.kinematic_viscosity_l)*exp(-7.0*l_frac)+param.kinematic_viscosity_l;
   }
 
   Parameters::PhaseChange param;

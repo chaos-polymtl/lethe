@@ -649,7 +649,7 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
 
       // Gather phase fraction gradient
       const Tensor<1, dim> &phase_gradient_value_q =
-        scratch_data.phase_gradient_values[q];
+        scratch_data.projected_phase_fraction_gradient_values[q];
 
       // Gather filtered phase fraction gradient
       const Tensor<1, dim> &filtered_phase_gradient_value_q =
@@ -726,7 +726,7 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
 
       // Gather phase fraction gradient
       const Tensor<1, dim> &phase_gradient_value_q =
-        scratch_data.phase_gradient_values[q];
+        scratch_data.projected_phase_fraction_gradient_values[q];
 
       // Gather filtered phase fraction gradient
       const Tensor<1, dim> &filtered_phase_gradient_value_q =
@@ -814,7 +814,7 @@ NavierStokesVOFAssemblerEvaporation<dim>::assemble_rhs(
 
       // Gather phase fraction gradient
       const Tensor<1, dim> &phase_gradient_value_q =
-        scratch_data.phase_gradient_values[q];
+        scratch_data.projected_phase_fraction_gradient_values[q];
 
       const Tensor<1, dim> &filtered_phase_gradient_value_q =
         scratch_data.filtered_phase_gradient_values[q];
