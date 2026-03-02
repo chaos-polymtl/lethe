@@ -1,0 +1,30 @@
+Running on 3 MPI rank(s)...
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    0.27 rad 
+Rotor grid velocity: 0 rad/time 
+
+   Number of active cells:       1280
+   Number of degrees of freedom: 35427
+   Volume of triangulation:      4
+
+*****************************
+Steady iteration:        1/1
+*****************************
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    0.27 rad 
+Rotor grid velocity: 0 rad/time 
+
+
+  -Levels of MG preconditioner:
+    Level 0: 315 DoFs, 20 cells
+    Level 1: 651 DoFs, 20 cells
+    Level 2: 2379 DoFs, 80 cells
+    Level 3: 9075 DoFs, 320 cells
+    Level 4: 35427 DoFs, 1280 cells
+
+cells error_velocity error_pressure 
+ 1280 7.160040e-05 - 2.312863e-03 - 
