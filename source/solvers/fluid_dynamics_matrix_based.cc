@@ -14,7 +14,6 @@
 #include <solvers/navier_stokes_cahn_hilliard_assemblers.h>
 #include <solvers/navier_stokes_vof_assemblers.h>
 
-
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -30,8 +29,6 @@
 #include <deal.II/lac/sparse_ilu.h>
 
 #include <deal.II/numerics/vector_tools.h>
-
-#include <solvers/fluid_dynamics_matrix_based.h>
 
 
 
@@ -145,7 +142,7 @@ FluidDynamicsMatrixBased<dim>::setup_dofs_fd()
               << this->dof_handler.n_dofs() << std::endl;
   this->pcout << "   Volume of triangulation:      " << global_volume
               << std::endl;
-  
+
 
 
   // Provide the fluid dynamics dof_handler and present solution to the
@@ -1679,10 +1676,6 @@ FluidDynamicsMatrixBased<dim>::solve()
 
 
   this->finish_simulation();
-
-  
-
-  
 }
 
 

@@ -527,7 +527,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
     return;
 
   scratch_data.reinit(
-    cell, 
+    cell,
     this->evaluation_point,
     this->previous_solutions,
     this->forcing_function,

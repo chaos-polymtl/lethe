@@ -1,8 +1,16 @@
+#include <core/pvd_handler.h>
+
+#include <solvers/fluid_dynamics_matrix_based.h>
+
 #include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/index_set.h>
+#include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/timer.h>
 
+#include <deal.II/distributed/tria.h>
+
 #include <deal.II/dofs/dof_handler.h>
+
 #include <deal.II/fe/fe_system.h>
 
 #include <deal.II/lac/affine_constraints.h>
@@ -10,20 +18,11 @@
 #include <deal.II/lac/trilinos_block_sparse_matrix.h>
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
 
-#include <deal.II/distributed/tria.h>
-
-#include <deal.II/base/parameter_handler.h>
-
-#include <vector>
-#include <utility>
-#include <string>
-
-#include <core/pvd_handler.h>
-  
 #include <fstream>
 #include <iostream>
-
-#include <solvers/fluid_dynamics_matrix_based.h>
+#include <string>
+#include <utility>
+#include <vector>
 
 
 
@@ -32,56 +31,57 @@ struct SolidPhaseParameters
   // Mesh
   unsigned int nx = 10, ny = 10, nz = 10;
   unsigned int global_refinement = 0;
-  std::string direction1 = "x";
-  std::string direction2 = "y";
+  std::string  direction1        = "x";
+  std::string  direction2        = "y";
 
   // FE
   unsigned int degree = 1;
 
   // Time
-  double time_step = 1e-3;
-  unsigned int n_steps = 2000;
+  double       time_step = 1e-3;
+  unsigned int n_steps   = 2000;
 
   // Physics
   double rho_s = 1.0;
   double beta  = 50.0;
 
   // IC/BC
-  double alpha0 = 0.1;
+  double alpha0      = 0.1;
   double alpha_inlet = 0.9;
-  double u_inlet_x = 1.0;
-  double u_inlet_y = 1.0;
-  double u_inlet_z = 0.0;
+  double u_inlet_x   = 1.0;
+  double u_inlet_y   = 1.0;
+  double u_inlet_z   = 0.0;
 
   // Output
-  unsigned int output_every = 10;
-  unsigned int digits = 4;
-  std::string output_folder = "output/";
-  std::string output_prefix = "solid_phase";
+  unsigned int output_every  = 10;
+  unsigned int digits        = 4;
+  std::string  output_folder = "output/";
+  std::string  output_prefix = "solid_phase";
 
-  
+
 
   bool verbose_assembly = true;
-  
-
-  bool solver_verbose = true;
-  double solver_abs_tol = 1e-12;
-  double solver_rel_tol = 1e-8;
-  unsigned int solver_max_it = 10000;
-  unsigned int solver_restart = 100;
-  bool output_verbose = true;
-  bool print_timer_each_step = true;
-  bool print_timer_at_end = true;
-  unsigned int ilu_overlap = 1;
-
-   bool         amg_elliptic = false;
-   unsigned int amg_sweeps   = 2;
-   double       amg_agg_threshold = 0.02;
-   std::string  amg_smoother_type = "ILU";
 
 
+  bool         solver_verbose        = true;
+  double       solver_abs_tol        = 1e-12;
+  double       solver_rel_tol        = 1e-8;
+  unsigned int solver_max_it         = 10000;
+  unsigned int solver_restart        = 100;
+  bool         output_verbose        = true;
+  bool         print_timer_each_step = true;
+  bool         print_timer_at_end    = true;
+  unsigned int ilu_overlap           = 1;
 
-  static void declare_parameters(ParameterHandler &prm)
+  bool         amg_elliptic      = false;
+  unsigned int amg_sweeps        = 2;
+  double       amg_agg_threshold = 0.02;
+  std::string  amg_smoother_type = "ILU";
+
+
+
+  static void
+  declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("Solid phase");
     {
@@ -112,7 +112,7 @@ struct SolidPhaseParameters
       prm.enter_subsection("Physics");
       {
         prm.declare_entry("rho_s", "1.0", Patterns::Double(0.0));
-        prm.declare_entry("beta",  "50.0", Patterns::Double(0.0));
+        prm.declare_entry("beta", "50.0", Patterns::Double(0.0));
       }
       prm.leave_subsection();
 
@@ -124,54 +124,53 @@ struct SolidPhaseParameters
 
       prm.enter_subsection("Preconditioner");
       {
-         prm.declare_entry("ilu overlap", "1", Patterns::Integer(0));
-         prm.declare_entry("amg elliptic", "false", Patterns::Bool());
-         prm.declare_entry("amg sweeps", "2", Patterns::Integer(1));
-         prm.declare_entry("amg aggregation threshold", "0.02", Patterns::Double(0.0));
-         prm.declare_entry("amg smoother type", "ILU", Patterns::Anything());
+        prm.declare_entry("ilu overlap", "1", Patterns::Integer(0));
+        prm.declare_entry("amg elliptic", "false", Patterns::Bool());
+        prm.declare_entry("amg sweeps", "2", Patterns::Integer(1));
+        prm.declare_entry("amg aggregation threshold",
+                          "0.02",
+                          Patterns::Double(0.0));
+        prm.declare_entry("amg smoother type", "ILU", Patterns::Anything());
       }
       prm.leave_subsection();
 
       prm.enter_subsection("Boundary conditions");
       {
-                 
-         prm.declare_entry("alpha inlet", "0.9", Patterns::Double(0.0, 1.0));
-         prm.declare_entry("u_inlet_x", "0.0");
-         prm.declare_entry("u_inlet_y", "0.0");
-         prm.declare_entry("u_inlet_z", "0.0");
-
+        prm.declare_entry("alpha inlet", "0.9", Patterns::Double(0.0, 1.0));
+        prm.declare_entry("u_inlet_x", "0.0");
+        prm.declare_entry("u_inlet_y", "0.0");
+        prm.declare_entry("u_inlet_z", "0.0");
       }
       prm.leave_subsection();
 
       prm.enter_subsection("Assembly");
       {
-         prm.declare_entry("verbose", "true", Patterns::Bool());
-      
+        prm.declare_entry("verbose", "true", Patterns::Bool());
       }
       prm.leave_subsection();
 
       prm.enter_subsection("Timers");
       {
-         prm.declare_entry("print each step", "true", Patterns::Bool());
-         prm.declare_entry("print at end", "true", Patterns::Bool());
+        prm.declare_entry("print each step", "true", Patterns::Bool());
+        prm.declare_entry("print at end", "true", Patterns::Bool());
       }
       prm.leave_subsection();
 
 
       prm.enter_subsection("Solver");
       {
-         prm.declare_entry("verbose", "true", Patterns::Bool());
-         prm.declare_entry("abs tol", "1e-12", Patterns::Double(0.0));
-         prm.declare_entry("rel tol", "1e-8", Patterns::Double(0.0));
-         prm.declare_entry("max it",  "10000", Patterns::Integer(1));
-         prm.declare_entry("restart", "100", Patterns::Integer(1));
+        prm.declare_entry("verbose", "true", Patterns::Bool());
+        prm.declare_entry("abs tol", "1e-12", Patterns::Double(0.0));
+        prm.declare_entry("rel tol", "1e-8", Patterns::Double(0.0));
+        prm.declare_entry("max it", "10000", Patterns::Integer(1));
+        prm.declare_entry("restart", "100", Patterns::Integer(1));
       }
       prm.leave_subsection();
 
       prm.enter_subsection("Output");
       {
-        prm.declare_entry("every",  "10", Patterns::Integer(1));
-        prm.declare_entry("digits", "4",  Patterns::Integer(1));
+        prm.declare_entry("every", "10", Patterns::Integer(1));
+        prm.declare_entry("digits", "4", Patterns::Integer(1));
         prm.declare_entry("folder", "output/", Patterns::Anything());
         prm.declare_entry("prefix", "solid_phase", Patterns::Anything());
       }
@@ -180,18 +179,19 @@ struct SolidPhaseParameters
     prm.leave_subsection();
   }
 
-  void parse_parameters(ParameterHandler &prm)
+  void
+  parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("Solid phase");
     {
       prm.enter_subsection("Mesh");
       {
-        nx = prm.get_integer("nx");
-        ny = prm.get_integer("ny");
-        nz = prm.get_integer("nz");
+        nx                = prm.get_integer("nx");
+        ny                = prm.get_integer("ny");
+        nz                = prm.get_integer("nz");
         global_refinement = prm.get_integer("global refinement");
-        direction1 = prm.get("direction1");
-        direction2 = prm.get("direction2");
+        direction1        = prm.get("direction1");
+        direction2        = prm.get("direction2");
       }
       prm.leave_subsection();
 
@@ -203,12 +203,12 @@ struct SolidPhaseParameters
 
       prm.enter_subsection("Preconditioner");
       {
-         ilu_overlap = prm.get_integer("ilu overlap");
+        ilu_overlap = prm.get_integer("ilu overlap");
 
-         amg_elliptic      = prm.get_bool("amg elliptic");
-         amg_sweeps        = prm.get_integer("amg sweeps");
-         amg_agg_threshold = prm.get_double("amg aggregation threshold");
-         amg_smoother_type = prm.get("amg smoother type");
+        amg_elliptic      = prm.get_bool("amg elliptic");
+        amg_sweeps        = prm.get_integer("amg sweeps");
+        amg_agg_threshold = prm.get_double("amg aggregation threshold");
+        amg_smoother_type = prm.get("amg smoother type");
       }
       prm.leave_subsection();
 
@@ -235,35 +235,34 @@ struct SolidPhaseParameters
 
       prm.enter_subsection("Boundary conditions");
       {
-         
-         alpha_inlet = prm.get_double("alpha inlet");
-         u_inlet_x     = prm.get_double("u_inlet_x");
-         u_inlet_y     = prm.get_double("u_inlet_y");
-         u_inlet_z     = prm.get_double("u_inlet_z");
+        alpha_inlet = prm.get_double("alpha inlet");
+        u_inlet_x   = prm.get_double("u_inlet_x");
+        u_inlet_y   = prm.get_double("u_inlet_y");
+        u_inlet_z   = prm.get_double("u_inlet_z");
       }
       prm.leave_subsection();
 
       prm.enter_subsection("Assembly");
       {
-         verbose_assembly      = prm.get_bool("verbose");  
+        verbose_assembly = prm.get_bool("verbose");
       }
       prm.leave_subsection();
 
       prm.enter_subsection("Timers");
       {
-         print_timer_each_step = prm.get_bool("print each step");
-         print_timer_at_end    = prm.get_bool("print at end");
+        print_timer_each_step = prm.get_bool("print each step");
+        print_timer_at_end    = prm.get_bool("print at end");
       }
       prm.leave_subsection();
 
 
       prm.enter_subsection("Solver");
       {
-         solver_verbose = prm.get_bool("verbose");
-         solver_abs_tol = prm.get_double("abs tol");
-         solver_rel_tol = prm.get_double("rel tol");
-         solver_max_it  = prm.get_integer("max it");
-         solver_restart = prm.get_integer("restart");
+        solver_verbose = prm.get_bool("verbose");
+        solver_abs_tol = prm.get_double("abs tol");
+        solver_rel_tol = prm.get_double("rel tol");
+        solver_max_it  = prm.get_integer("max it");
+        solver_restart = prm.get_integer("restart");
       }
       prm.leave_subsection();
 
@@ -289,28 +288,33 @@ public:
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_u;
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_a;
 
-  enum class Mode { ilu, amg } mode = Mode::ilu;
+  enum class Mode
+  {
+    ilu,
+    amg
+  } mode = Mode::ilu;
 
-  void vmult(TrilinosWrappers::MPI::BlockVector       &dst,
-             const TrilinosWrappers::MPI::BlockVector &src) const
+  void
+  vmult(TrilinosWrappers::MPI::BlockVector       &dst,
+        const TrilinosWrappers::MPI::BlockVector &src) const
   {
     if (dst.block(0).size() > 0)
-    {
-      if (mode == Mode::amg && amg_u)
-        amg_u->vmult(dst.block(0), src.block(0));
-      else if (ilu_u)
-        ilu_u->vmult(dst.block(0), src.block(0));
-      else
-        dst.block(0) = src.block(0);
-    }
+      {
+        if (mode == Mode::amg && amg_u)
+          amg_u->vmult(dst.block(0), src.block(0));
+        else if (ilu_u)
+          ilu_u->vmult(dst.block(0), src.block(0));
+        else
+          dst.block(0) = src.block(0);
+      }
 
     if (dst.block(1).size() > 0)
-    {
-      if (ilu_a)
-        ilu_a->vmult(dst.block(1), src.block(1));
-      else
-        dst.block(1) = src.block(1);
-    }
+      {
+        if (ilu_a)
+          ilu_a->vmult(dst.block(1), src.block(1));
+        else
+          dst.block(1) = src.block(1);
+      }
   }
 };
 
@@ -319,54 +323,63 @@ class SolidPhaseSolver
 {
 public:
   SolidPhaseSolver(const SolidPhaseParameters &parameters,
-                   MPI_Comm                   comm = MPI_COMM_WORLD);
+                   MPI_Comm                    comm = MPI_COMM_WORLD);
 
-  void run();
+  void
+  run();
 
 private:
-  void make_grid();
-  void setup_dofs();
-  void assemble_system();
-  void solve();
-  void output_results(const double time);
-  
-  void make_output_dir() const;
+  void
+  make_grid();
+  void
+  setup_dofs();
+  void
+  assemble_system();
+  void
+  solve();
+  void
+  output_results(const double time);
 
-  void setup_preconditioner();
-  void setup_ILU();
-  void setup_AMG();
+  void
+  make_output_dir() const;
 
-  
+  void
+  setup_preconditioner();
+  void
+  setup_ILU();
+  void
+  setup_AMG();
 
-  
+
+
   const SolidPhaseParameters parameters;
 
-  
+
   MPI_Comm mpi_communicator;
 
   // mesh
   std::vector<unsigned int> sub;
 
 
-  const unsigned int degree;
+  const unsigned int  degree;
   const FESystem<dim> fe;
 
   parallel::distributed::Triangulation<dim> triangulation;
-  DoFHandler<dim> dof_handler;
+  DoFHandler<dim>                           dof_handler;
 
-  
+
   AffineConstraints<double> constraints;
 
-  
+
   const double rho_s;
-  double beta; 
+  double       beta;
 
-  
+
   TrilinosWrappers::BlockSparseMatrix system_matrix;
-  TrilinosWrappers::MPI::BlockVector solution, old_solution, system_rhs;
+  TrilinosWrappers::MPI::BlockVector  solution, old_solution, system_rhs;
 
-  IndexSet locally_owned;
-  IndexSet locally_relevant;
+  IndexSet              locally_owned;
+  IndexSet              locally_relevant;
   std::vector<IndexSet> owned_partitioning;
   std::vector<IndexSet> relevant_partitioning;
 
@@ -376,22 +389,22 @@ private:
   std::shared_ptr<SolidPreconditioner<dim>> preconditioner;
 
   // time
-  double time_step;
-  double old_time_step;
+  double       time_step;
+  double       old_time_step;
   unsigned int timestep_number;
 
   // BC data
-  Tensor<1,dim> inlet_velocity;
+  Tensor<1, dim> inlet_velocity;
 
   // io/timers
   ConditionalOStream pcout;
-  TimerOutput computing_timer;
+  TimerOutput        computing_timer;
 
   // output
-  PVDHandler pvd_handler;
+  PVDHandler   pvd_handler;
   unsigned int output_every;
   unsigned int group_files;
   unsigned int digits;
-  std::string output_folder;
-  std::string output_prefix;
+  std::string  output_folder;
+  std::string  output_prefix;
 };

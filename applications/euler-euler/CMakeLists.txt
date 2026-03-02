@@ -6,4 +6,3 @@ add_executable(euler-euler
 
 deal_ii_setup_target(euler-euler)
 target_link_libraries(euler-euler lethe-solvers)
-
