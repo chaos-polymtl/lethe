@@ -138,10 +138,20 @@ find_cell_periodic_neighbors(
                                          coinciding_vertex_groups,
                                          vertex_to_coinciding_vertex_group);
 
+  // Keep track of cells already processed to avoid redundant corner handling, 
+  // since periodic_boundaries_cells_information is an unordered_multimap
+  std::set<typename Triangulation<dim>::active_cell_iterator> processed_cells;
+
   // Looping over cells struct at periodic boundaries 0
   for (const auto &pb_cell_struct : periodic_boundaries_cells_information)
     {
       auto &cell = pb_cell_struct.second.cell;
+
+      // Skip if we already mapped this cell's periodic neighbors
+      if (processed_cells.find(cell) != processed_cells.end())
+        continue;
+
+      processed_cells.insert(cell);
 
       // If the cell is owned by the processor
       if (cell->is_locally_owned())

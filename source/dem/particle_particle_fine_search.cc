@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/dem_properties.h>
@@ -23,9 +23,9 @@ particle_particle_fine_search(
   typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<dim>::particle_particle_candidates
-                      &contact_pair_candidates,
-  const double         neighborhood_threshold,
-  const std::unordered_map<types::boundary_id, Tensor<1, dim>> periodic_offsets)
+              &contact_pair_candidates,
+  const double neighborhood_threshold,
+  const std::vector<Tensor<1, dim>> &combined_offsets)
 {
   // First iterating over adjacent_particles
   for (auto &&adjacent_particles_list :
@@ -50,19 +50,43 @@ particle_particle_fine_search(
           auto &particle_two = adjacent_pair_information.particle_two;
 
           // Finding the properties of the particles in contact
-          Point<dim, double> particle_two_location =
-            particle_two->get_location() - periodic_offsets;
+          Point<dim, double> particle_two_base_location = particle_two->get_location();
 
-          // Finding distance
-          const double square_distance =
-            particle_one_location.distance_square(particle_two_location);
-          if (square_distance > neighborhood_threshold)
+          // Find minimum periodic distance squared
+          double min_square_distance = std::numeric_limits<double>::max();
+          Tensor<1, dim> nearest_translation;
+
+          for (const auto &translation : combined_offsets)
+            {
+              // Check particle 1 against every periodic image of particle 2
+              double current_square_distance = particle_one_location.distance_square(
+                particle_two_base_location + translation);
+
+              if (current_square_distance < min_square_distance)
+                {
+                  min_square_distance = current_square_distance;
+                  nearest_translation = translation;
+                }  
+                
+            }
+
+          // If simulation is well defined, there should be at most one 
+          // translation from combined_offsets that brings a periodic image
+          // within a neighborhood threshold
+          if (min_square_distance > neighborhood_threshold)
             {
               adjacent_particles_list_iterator =
                 adjacent_particles_list.erase(adjacent_particles_list_iterator);
             }
           else
             {
+              // Save a translation that falls within the threshold
+              Tensor<1, 3> offset_3d;
+              for (unsigned int d = 0; d < dim; ++d)
+                offset_3d[d] = nearest_translation[d];
+              
+              adjacent_pair_information.periodic_offsets = offset_3d;
+
               ++adjacent_particles_list_iterator;
             }
         }
@@ -84,24 +108,31 @@ particle_particle_fine_search(
            second_particle_container)
         {
           auto particle_two = particle_container.at(particle_two_id);
-          Point<dim, double> particle_two_location =
-            particle_two->get_location() - periodic_offsets;
+          Point<dim, double> particle_two_base_location =
+            particle_two->get_location();
 
           // Finding distance
-          const double square_distance =
-            particle_one_location.distance_square(particle_two_location);
-
-          // If the particles distance is less than the threshold
-          if (square_distance < neighborhood_threshold)
+          double min_square_distance = std::numeric_limits<double>::max();
+          for (const auto &translation : combined_offsets)
             {
-              // Getting the particle one contact list and particle two id
-              auto &particle_one_contact_list =
-                adjacent_particles[particle_one_id];
+              double current_square_distance = particle_one_location.distance_square(
+                particle_two_base_location + translation);
+
+              if (current_square_distance < min_square_distance)
+                min_square_distance = current_square_distance;
+            }
+
+          // If particles are within the threshold
+          if (min_square_distance < neighborhood_threshold)
+            {
+              auto &particle_one_contact_list adjacent_particles[particle_one_id];
 
               particle_one_contact_list.emplace(
                 particle_two_id,
                 particle_particle_contact_info<dim>{
-                  particle_one, particle_two, Tensor<1, 3>(), Tensor<1, 3>()});
+                  particle_one, particle_two, Tensor<1,3>(), Tensor<1,3>()});
+
+                  // TODO: save nearest_translation here as well
             }
         }
     }
@@ -116,7 +147,7 @@ particle_particle_fine_search<2>(
   const typename DEM::dem_data_structures<2>::particle_particle_candidates
                     &contact_pair_candidates,
   const double       neighborhood_threshold,
-  const Tensor<1, 2> periodic_offsets = Tensor<1, 2>());
+  const std::vector<Tensor<1, 2>> &combined_offsets = {Tensor<1, 2>()});
 
 template void
 particle_particle_fine_search<3>(
@@ -127,4 +158,4 @@ particle_particle_fine_search<3>(
   const typename DEM::dem_data_structures<3>::particle_particle_candidates
                     &contact_pair_candidates,
   const double       neighborhood_threshold,
-  const Tensor<1, 3> periodic_offsets = Tensor<1, 3>());
+  const std::vector<Tensor<1, 3>> &combined_offsets = {Tensor<1, 3>()});

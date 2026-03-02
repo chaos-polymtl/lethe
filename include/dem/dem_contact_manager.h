@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_dem_contact_manager_h
@@ -187,17 +187,16 @@ public:
     const double                                      neighborhood_threshold);
 
   /**
-   * @brief Set the periodic offset for a given pair of periodic boundaries. If
+   * @brief Set the combined offsets for periodic boundaries. If
    * they are no periodic boundaries, the default offset is zeros;
    *
-   * @param[in] offset Offset associated with a given pair of periodic boundaries, 
-   * used for tuning particle locations when using periodic boundaries.
-   * @param[in] boundary_id ID of principal boundary in a pair of periodic boundaries.
+   * @param[in] offsets Combined periodic offsets for periodic
+   * boundaries, used for determining periodic contacts
    */
   inline void
-  set_periodic_offset(const Tensor<1, dim> &offset, const types::boundary_id boundary_id)
+  set_combined_offsets(const std::vector<Tensor<1, dim>> &offsets)
   {
-    this->periodic_offsets[boundary_id] = offset;
+    this->combined_offsets = offsets;
   }
 
   /**
@@ -385,7 +384,11 @@ private:
   typename DEM::dem_data_structures<dim>::cell_vector periodic_cells_container;
 
 private:
-  std::unordered_map<types::boundary_id, Tensor<1, dim>> periodic_offsets;
+  /**
+   * @brief Storage for all precomputed periodic translation vectors.
+   * Initialized to identity (zero offset) for compatibility with non-periodic geometry
+  */
+  std::vector<Tensor<1, dim>> combined_offsets{Tensor<1, dim>()};
 };
 
 #endif

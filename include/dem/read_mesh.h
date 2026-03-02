@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_read_mesh_h
@@ -35,6 +35,6 @@ template <int dim, int spacedim>
 void
 match_periodic_boundaries(Triangulation<dim, spacedim>        &triangulation,
                           const Parameters::Lagrangian::BCDEM &bc_params,
-                          const std::vector<unsigned int>     &periodic_bc_indices);
+                          const std::vector<unsigned int> &periodic_bc_indices);
 
 #endif

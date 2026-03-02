@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_particle_particle_fine_search_h
@@ -44,8 +44,8 @@ particle_particle_fine_search(
   typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<dim>::particle_particle_candidates
-                      &contact_pair_candidates,
-  const double         neighborhood_threshold,
-  const std::unordered_map<types::boundary_id, Tensor<1, dim> periodic_offsets);
+              &contact_pair_candidates,
+  const double neighborhood_threshold,
+  const std::vector<Tensor<1, dim>> &combined_offsets = {Tensor<1, dim>()});
 
 #endif

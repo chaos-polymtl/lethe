@@ -116,7 +116,9 @@ DEMSolver<dim, PropertiesIndex>::setup_parameters()
   // Set up the solid objects
   setup_solid_objects();
 
-  // Check if there are periodic boundaries
+  // Check if there are any periodic boundaries. Break loop if any periodic
+  // boundary is found, because quantitites in parameters.boundary_conditions
+  // have information on all periodic boundaries.
   for (unsigned int i_bc = 0;
        i_bc < parameters.boundary_conditions.bc_types.size();
        ++i_bc)
@@ -299,20 +301,23 @@ DEMSolver<dim, PropertiesIndex>::setup_triangulation_dependent_parameters()
   periodic_boundaries_object.map_periodic_cells(
     triangulation, periodic_boundaries_cells_information);
 
-  // Set the periodic offset to contact managers and particles contact forces
+  // Set the combined_periodic_offsets to contact managers and particles contact forces
   // for periodic contact detection (if PBC enabled)
-  // TODO: pass PB_id to get_periodic_offset_distance
+  contact_manager.set_combined_offsets(
+    periodic_boundaries_object.get_combined_offsets());
+  particle_particle_contact_force_object->set_combined_offsets(
+    periodic_boundaries_object.get_combined_offsets());
 
-  for (auto [bc_index, pb_id] : periodic_boundaries_object.periodic_boundaries_ids)
+  // Set the periodic offsets of the periodic boundary pairs for other classes
+  for (auto [bc_index, pb_id] :
+       periodic_boundaries_object.get_periodic_boundaries_ids())
     {
-      contact_manager.set_periodic_offset(
-        periodic_boundaries_object.get_periodic_offset_distance(pb_id),
-        pb_id);
+      // contact_manager.set_periodic_offset(
+        // periodic_boundaries_object.get_periodic_offset_distance(pb_id), pb_id);
       particle_particle_contact_force_object->set_periodic_offset(
-        periodic_boundaries_object.get_periodic_offset_distance(pb_id),
-        pb_id);
+        periodic_boundaries_object.get_periodic_offset_distance(pb_id), pb_id);
     }
-    
+
   // Set up the local and ghost cells (if ASC enabled)
   sparse_contacts_object.update_local_and_ghost_cell_set(background_dh);
 }
@@ -340,12 +345,19 @@ DEMSolver<dim, PropertiesIndex>::setup_background_dofs()
       background_constraints.reinit(background_dh.locally_owned_dofs(),
                                     locally_relevant_dofs);
 
-      DoFTools::make_periodicity_constraints(
-        background_dh,
-        parameters.boundary_conditions.periodic_boundary_0,
-        parameters.boundary_conditions.periodic_boundary_1,
-        parameters.boundary_conditions.periodic_direction,
-        background_constraints);
+      // Loop over the unordered_map of periodic boundary conditions.
+      for (auto const & [bc_index, id0] : parameters.boundary_conditions.periodic_boundary_0)
+        {
+          const types::boundary_id id1 = parameters.boundary_conditions.periodic_boundary_1.at(bc_index);
+          const unsigned int direction = parameters.boundary_conditions.periodic_direction.at(bc_index);
+          
+          DoFTools::make_periodicity_constraints(
+            background_dh,
+            id0,
+            id1,
+            direction,
+            background_constraints);
+        }
 
       background_constraints.close();
 
