@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/auxiliary_math_functions.h>
@@ -271,7 +271,7 @@ ParticleWallContactForce<dim,
                C1 != this_contact_record.end();)
             {
               // Extract the information of C1
-              auto T1_cell = std::get<0>(*C1);
+              auto T1_cell              = std::get<0>(*C1);
               auto contact_indicator_C1 = std::get<2>(*C1);
               particle_wall_contact_info<dim> &contact_info_C1 =
                 *std::get<3>(*C1);
@@ -287,7 +287,7 @@ ParticleWallContactForce<dim,
               while (C2 != this_contact_record.end())
                 {
                   // Extract the information of C2
-                  auto T2_cell = std::get<0>(*C2);
+                  auto T2_cell              = std::get<0>(*C2);
                   auto contact_indicator_C2 = std::get<2>(*C2);
                   particle_wall_contact_info<dim> &contact_info_C2 =
                     *std::get<3>(*C2);
@@ -481,7 +481,8 @@ ParticleWallContactForce<dim,
             {
               //  Extract the information of the contact
               auto normal_overlap = std::get<1>(*contact);
-              particle_wall_contact_info<dim> &contact_info = *std::get<3>(*contact);
+              particle_wall_contact_info<dim> &contact_info =
+                *std::get<3>(*contact);
 
               // Defining local variables which will be used within the
               // contact calculation
