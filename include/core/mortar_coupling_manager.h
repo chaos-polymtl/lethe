@@ -25,7 +25,8 @@ class MortarManagerBase
 {
 public:
   /**
-   * @brief Mortar manager base constructor
+   * @brief Mortar manager base constructor used in 2D problems
+   * TODO: Combine both 2D and 3D constructors into one
    *
    * @param[in] n_subdivisions Number of cells at the interface between inner
    * and outer domains
@@ -40,7 +41,8 @@ public:
                     const double            rotation_angle);
 
   /**
-   * @brief Mortar manager base constructor
+   * @brief Mortar manager base constructor used in 3D problems
+   * TODO: Combine both 2D and 3D constructors into one
    *
    * @param[in] n_subdivisions Number of cells at the interface between inner
    * and outer domains
@@ -298,7 +300,9 @@ class MortarManagerCircle : public MortarManagerBase<dim>
 {
 public:
   /**
-   * @brief Class constructor
+   * @brief Class constructor for circular mortar interface used in 2D
+   * Poisson/Stokes test cases
+   * TODO: Move Poisson/Stokes tests to prototypes and remove this constructor
    *
    * @param[in] n_subdivisions Number of cells at the interface between inner
    * and outer domains
@@ -319,7 +323,9 @@ public:
                       const double            pre_rotation_angle = 0.0);
 
   /**
-   * @brief Class constructor
+   * @brief Class constructor for circular mortar interface used in 3D
+   * Poisson/Stokes test cases
+   * TODO: Move Poisson/Stokes tests to prototypes and remove this constructor
    *
    * @param[in] n_subdivisions Number of cells at the interface between inner
    * and outer domains
@@ -341,7 +347,8 @@ public:
                       const double      pre_rotation_angle = 0.0);
 
   /**
-   * @brief Class constructor
+   * @brief Class constructor for circular interface used within the Navier-Stokes
+   * base
    *
    * @param[in] quadrature Quadrature for local cell operations
    * @param[in] mapping Mapping associated to the domain
@@ -381,7 +388,8 @@ class MortarManagerLinear : public MortarManagerBase<dim>
 {
 public:
   /**
-   * @brief Class constructor
+   * @brief Class constructor for linear interface used within the Navier-Stokes
+   * base
    *
    * @param[in] quadrature Quadrature for local cell operations
    * @param[in] mapping Mapping associated to the domain
