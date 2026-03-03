@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MAJOR The double contact PR between solid surface and particle still had a problem. The contact_info was being passed by copy in the contact_record which caused the tangential displacement and the rolling resistance spring torque to be reset instead of properly updated. Another bug was that contact_info was not cleared when a particle was no longer in contact with a given triangle. As a result, during a subsequent contact with the same triangle, the particle could start with a non-zero tangential displacement and rolling resistance spring torque.
+- MAJOR The double contact PR between solid surface and particle still had a problem. The contact_info was being passed by copy in the contact_record which caused the tangential displacement and the rolling resistance spring torque to be reset instead of properly updated. Another bug was that contact_info was not cleared when a particle was no longer in contact with a given triangle. As a result, during a subsequent contact with the same triangle, the particle could start with a non-zero tangential displacement and rolling resistance spring torque. [#1928](https://github.com/chaos-polymtl/lethe/pull/1928s)
 
 ## [Master] - 2026/02/26
 
