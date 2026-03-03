@@ -251,7 +251,7 @@ ParticleWallContactForce<dim,
                         triangle_cell_iterator,
                         normal_overlap,
                         contact_indicator,
-                        contact_info);
+                        &contact_info);
                     }
                   else
                     clear_contact_info(contact_info);
@@ -271,10 +271,11 @@ ParticleWallContactForce<dim,
                C1 != this_contact_record.end();)
             {
               // Extract the information of C1
-              auto &[T1_cell,
-                     normal_overlap_C1,
-                     contact_indicator_C1,
-                     contact_info_C1] = *C1;
+              auto T1_cell = std::get<0>(*C1);
+              auto normal_overlap_C1 = std::get<1>(*C1);
+              auto contact_indicator_C1 = std::get<2>(*C1);
+              particle_wall_contact_info<dim> &contact_info_C1 =
+                *std::get<3>(*C1);
 
               // Assigning the triangle neighboring list of T1;
               const auto &T1_es_neighbors = this_solid_es_neighbors.at(T1_cell);
@@ -287,10 +288,11 @@ ParticleWallContactForce<dim,
               while (C2 != this_contact_record.end())
                 {
                   // Extract the information of C2
-                  auto &[T2_cell,
-                         normal_overlap_C2,
-                         contact_indicator_C2,
-                         contact_info_C2] = *C2;
+                  auto T2_cell = std::get<0>(*C2);
+                  auto normal_overlap_C2 = std::get<1>(*C2);
+                  auto contact_indicator_C2 = std::get<2>(*C2);
+                  particle_wall_contact_info<dim> &contact_info_C2 =
+                    *std::get<3>(*C2);
 
                   // First, we check if both triangle are neighbors. If they
                   // are not neighbors, C1 and C2 are automatically valid.
@@ -480,8 +482,10 @@ ParticleWallContactForce<dim,
                ++contact)
             {
               //  Extract the information of the contact
-              auto &[T_cell, normal_overlap, contact_indicator, contact_info] =
-                *contact;
+              auto T_cell = std::get<0>(*contact);
+              auto normal_overlap = std::get<1>(*contact);
+              auto contact_indicator = std::get<2>(*contact);
+              particle_wall_contact_info<dim> &contact_info = *std::get<3>(*contact);
 
               // Defining local variables which will be used within the
               // contact calculation
