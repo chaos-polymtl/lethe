@@ -1,5 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+# Verifies the implementation of the mortar linear interface for a linear velocity
+# profile in a rectangular domain.
 
 # Listing of Parameters
 #----------------------
