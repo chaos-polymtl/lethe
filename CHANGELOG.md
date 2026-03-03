@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MAJOR The double contact PR between solid surface and particle still had a problem. The contact_info was being passed by copy in he contact_record which caused the tangential displacement and the rolling resistance spring torque to be reset instead of properly updated.
+- MAJOR The double contact PR between solid surface and particle still had a problem. The contact_info was being passed by copy in the contact_record which caused the tangential displacement and the rolling resistance spring torque to be reset instead of properly updated.
 
 ## [Master] - 2026/02/26
 
