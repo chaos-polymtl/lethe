@@ -12,7 +12,7 @@ var searchData=
   ['particle_5fpoint_5fcandidates_9',['particle_point_candidates',['../structDEM_1_1dem__data__structures.html#a91aead48ba36b75a0fbf5360918becc5',1,'DEM::dem_data_structures']]],
   ['particle_5fpoint_5fin_5fcontact_10',['particle_point_in_contact',['../structDEM_1_1dem__data__structures.html#a4ce727ced98c9d77bb92949cd6b8bfdd',1,'DEM::dem_data_structures']]],
   ['particle_5ftriangle_5fcell_5ffrom_5fmesh_5fpotentially_5fin_5fcontact_11',['particle_triangle_cell_from_mesh_potentially_in_contact',['../structDEM_1_1dem__data__structures.html#a981e1bb6116c5f0a464f3267e63a4362',1,'DEM::dem_data_structures']]],
-  ['particle_5ftriangle_5fcontact_5fdescription_12',['particle_triangle_contact_description',['../classParticleWallContactForce.html#afa81cca0e3383c100472bdd99a76bf46',1,'ParticleWallContactForce']]],
+  ['particle_5ftriangle_5fcontact_5fdescription_12',['particle_triangle_contact_description',['../classParticleWallContactForce.html#a7576ee7648e059b2f349846b4c6b3a60',1,'ParticleWallContactForce']]],
   ['particle_5ftriangle_5fcontact_5frecord_13',['particle_triangle_contact_record',['../classParticleWallContactForce.html#ac9d8a8049ee53958a46f6a8cbefefa0b',1,'ParticleWallContactForce']]],
   ['particle_5fwall_5fcandidates_14',['particle_wall_candidates',['../structDEM_1_1dem__data__structures.html#aa6ee0ba8f43d17a376fa64027f3ab1fc',1,'DEM::dem_data_structures']]],
   ['particle_5fwall_5fin_5fcontact_15',['particle_wall_in_contact',['../structDEM_1_1dem__data__structures.html#a192e455bef047459cba3816cd0c4874b',1,'DEM::dem_data_structures']]],
