@@ -1089,7 +1089,7 @@ private:
     std::tuple<typename Triangulation<dim - 1, dim>::active_cell_iterator,
                double,
                LetheGridTools::ParticleTriangleContactIndicator,
-               particle_wall_contact_info<dim>>>
+               particle_wall_contact_info<dim> *>>
     particle_triangle_contact_description;
 
   typedef ankerl::unordered_dense::map<types::particle_index,
