@@ -127,6 +127,28 @@ public:
     return time_step;
   }
 
+  /**
+   * @brief Check if this is the first iteration. The first iteration is either before the sub simulation control has started iterating (thus iteration_number=0) or the first iteration it is actually carrying out (iteration_number=1)
+   *
+   * @return Returns true if this is the first iteration.
+   */
+  bool
+  is_first_iteration() const
+  {
+    return (iteration_number == 0 || iteration_number == 1);
+  }
+
+  /**
+   * @brief Check if this is the last sub iteration. This is true if the iteration_number=total_number_of_iterations
+   *
+   * @return Returns true if this is the last iteration.
+   */
+  bool
+  is_last_iteration() const
+  {
+    return (iteration_number == total_number_of_iterations);
+  }
+
 private:
   /// Logic used for the DEM iterations
   const DEMSubIterationLogic iteration_logic;

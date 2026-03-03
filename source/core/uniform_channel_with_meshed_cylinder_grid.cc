@@ -3,6 +3,8 @@
 
 #include <core/uniform_channel_with_meshed_cylinder_grid.h>
 
+#include <numbers>
+
 template <int dim, int spacedim>
 UniformChannelWithMeshedCylinderGrid<dim, spacedim>::
   UniformChannelWithMeshedCylinderGrid(const std::string &grid_arguments)
