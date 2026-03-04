@@ -1567,7 +1567,7 @@ namespace Parameters
    */
   struct MultipleAdaptationParameters
   {
-    // Error estimator for the variable
+    /// Error estimator for the variable
     enum class ErrorEstimator : std::int8_t
     {
       kelly,
@@ -1608,7 +1608,7 @@ namespace Parameters
     Variable                     vars;
     MultipleAdaptationParameters var_adaptation_param;
 
-    // Decision factor for adaptive refinement (number or fraction)
+    /// Decision factor for adaptive refinement (number or fraction)
     enum class FractionType : std::int8_t
     {
       number,

@@ -815,9 +815,9 @@ public:
   /**
    * @brief  Compute error estimator for mesh refinement according to the auxiliary physic parameters
    *
-   * @param ivar The current element of the map simulation_parameters.mesh_adaptation.variables
-   *
-   * @param estimated_error_per_cell The deal.II vector of estimated_error_per_cell
+  * @param[in] ivar The current element of the map simulation_parameters.mesh_adaptation.variables
+  *
+  * @param[in,out] estimated_error_per_cell The deal.II vector of estimated_error_per_cell
    */
   virtual void
   compute_error_estimate(

@@ -210,9 +210,9 @@ public:
   /**
    * @brief Compute the error estimator for mesh refinement.
    *
-   * @param ivar The current element of the map simulation_parameters.mesh_adaptation.variables
-   *
-   * @param estimated_error_per_cell The deal.II vector of estimated_error_per_cell
+  * @param[in] ivar The current element of the map simulation_parameters.mesh_adaptation.variables
+  *
+  * @param[in,out] estimated_error_per_cell The deal.II vector of estimated_error_per_cell
    */
   void
   compute_error_estimate(
@@ -221,12 +221,13 @@ public:
     dealii::Vector<float> &estimated_error_per_cell) override;
 
   /**
-   * @brief Compute the Kelly error estimator on the phase parameter for mesh refinement.
+   * @brief Compute the Kelly error estimator on the phase variable for mesh refinement.
    * See :
    * https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html
    * for more information on the Kelly error estimator.
    *
-   * @param estimated_error_per_cell The deal.II vector of estimated_error_per_cell
+   * @param[in,out] estimated_error_per_cell The deal.II vector of estimated_error_per_cell
+   * @param[in] component_mask The component mask corresponding to the phase variable
    */
   void
   compute_kelly(dealii::Vector<float> &estimated_error_per_cell,

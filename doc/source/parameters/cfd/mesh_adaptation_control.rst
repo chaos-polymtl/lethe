@@ -56,14 +56,14 @@ This subsection controls the mesh adaptation method, with default values given b
 
 
 * Two ``type`` of mesh adaptation are available. The ``uniform`` mesh adaptation refines the mesh at every cell, whereas the ``adaptive`` mesh adaptation refines the mesh only at cells where the error estimator (see below) indicates that the error is too high.
-* The variable for adaptive refinement should be specified with ``set variable``, and can be: velocity, pressure, phase (for multiphase flows), temperature, phase_cahn_hilliard, chemical_potential_cahn_hilliard, tracer, electric_field, magnetic_field or electromagnetic_fields. 
+* The variable for adaptive refinement should be specified with ``set variable``, and can be: velocity, pressure, phase (for VOF multiphase flows), temperature, phase_cahn_hilliard, chemical_potential_cahn_hilliard, tracer, electric_field, magnetic_field or electromagnetic_fields. 
 	* Mesh adaptation can be defined on multiple variables, separated with a coma (e.g. ``set variable = velocity,temperature``, or ``set variable = velocity,phase,pressure`` etc.).
 
-  .. note::
-     Note that the ``electromagnetic fields`` is used to compute the error estimator for both electric and magnetic fields simultaneously and is the only choice of ``variable`` when using the ``dpg`` error estimator. If the user wants to use the ``kelly`` error estimator for the electric and magnetic fields separately, they should specify ``set variable = electric field,magnetic field`` and ``set error estimator = kelly,kelly``. If fractions for refinement and coarsening are the same for both electric and magnetic fields, the user coudl also only specify ``set variable = electromagnetic fields`` with ``set error estimator = kelly`` for the same result.
+  .. note::  
+    Note that the ``electromagnetic fields`` is used to compute the error estimator for both electric and magnetic fields simultaneously and is the only choice of ``variable`` when using the ``dpg`` error estimator. If the user wants to use the ``kelly`` error estimator for the electric and magnetic fields separately, they should specify ``set variable = electric field,magnetic field`` and ``set error estimator = kelly,kelly``. If fractions for refinement and coarsening are the same for both electric and magnetic fields, the user could also only specify ``set variable = electromagnetic fields`` with ``set error estimator = kelly`` for the same result.  
 
-	.. warning::
-		The different ``fraction refinement`` and ``fraction coarsening`` must be defined explicitly (see these parameters definition below).
+    .. warning::  
+      The different ``fraction refinement`` and ``fraction coarsening`` must be defined explicitly (see these parameters definition below).  
 
 .. important::
 	In the case of multiple variable mesh adaptation, the cells are:
