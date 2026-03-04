@@ -170,9 +170,11 @@ public:
   /**
    * @brief Compute the Kelly error estimator used to refine mesh on a auxiliary physic parameter.
    *
-   * @param ivar The current element of the map simulation_parameters.mesh_adaptation.variables
+   * @param[in] ivar The current element of the map
+   * simulation_parameters.mesh_adaptation.variables
    *
-   * @param estimated_error_per_cell The deal.II vector of estimated_error_per_cell
+   * @param[in,out] estimated_error_per_cell The deal.II vector of
+   * estimated_error_per_cell
    */
   virtual void
   compute_error_estimate(

@@ -109,18 +109,18 @@ Mesh Adaptation
 ~~~~~~~~~~~~~~~
 .. code-block:: text
 
-    subsection mesh adaptation
-      set fraction coarsening = 0.2
-      set fraction refinement = 0.025
-      set fraction type = number
-      set frequency = 1
-      set max number elements = 750000
-      set max refinement level = 6
-      set min refinement level = 4
-      set type = adaptive 
-      set error estimator = kelly
-      set variable = velocity
-    end
+    subsection mesh adaptation  
+      set fraction coarsening  = 0.2  
+      set fraction refinement  = 0.025  
+      set fraction type        = number  
+      set frequency            = 1  
+      set max number elements  = [7500000](https://github.com/chaos-polymtl/lethe/commit/7500000)  
+      set max refinement level = 6  
+      set min refinement level = 4  
+      set type                 = adaptive  
+      set error estimator      = kelly  
+      set variable             = velocity  
+    end  
 
 * The ``fraction coarsening`` is set to 0.2. This limits the accumulation of elements when the particle is moving. It allows for cells far from the particle to be coarsened when the particles get further away.
 
