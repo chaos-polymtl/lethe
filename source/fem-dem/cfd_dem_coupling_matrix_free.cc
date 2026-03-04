@@ -105,16 +105,16 @@ CFDDEMMatrixFree<dim>::dem_setup_parameters()
        i < dem_parameters.lagrangian_physical_properties.particle_type_number;
        ++i)
     {
-      double youngs_modulus = dem_parameters.lagrangian_physical_properties
-                                .youngs_modulus_particle[i];
-      double poisson_ratio =
+      const double youngs_modulus =
+        dem_parameters.lagrangian_physical_properties
+          .youngs_modulus_particle[i];
+      const double poisson_ratio =
         dem_parameters.lagrangian_physical_properties.poisson_ratio_particle[i];
-      double density =
+      const double density =
         dem_parameters.lagrangian_physical_properties.density_particle[i];
-
-      double shear_modulus = youngs_modulus / (2.0 * (1.0 + poisson_ratio));
-
-      double min_diameter =
+      const double shear_modulus =
+        youngs_modulus / (2.0 * (1.0 + poisson_ratio));
+      const double min_diameter =
         size_distribution_object_container.at(i)->find_min_diameter();
 
       rayleigh_time_step =
@@ -123,8 +123,13 @@ CFDDEMMatrixFree<dim>::dem_setup_parameters()
                  rayleigh_time_step);
     }
 
-  // Give an initial estimation of the DEM time step that will be overwritten
-  // later on by the SubSimulationControlDEM
+  // Create a first instance of the DEM sub simulation control
+  dem_simulation_control = std::make_shared<SubSimulationControlDEM>(
+    this->cfd_dem_simulation_parameters.cfd_dem.dem_iteration_control,
+    this->simulation_control->get_time_step(),
+    this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency,
+    rayleigh_time_step,
+    this->cfd_dem_simulation_parameters.cfd_dem.fraction_of_rayleigh_time);
   report_rayleigh_time_ratio();
 
   // Check if there are periodic boundaries
@@ -252,13 +257,7 @@ CFDDEMMatrixFree<dim>::initialize_dem_parameters()
         this->particle_projector.void_fraction_constraints);
     }
 
-  // Create a first instance of the DEM sub simulation contorl
-  dem_simulation_control = std::make_shared<SubSimulationControlDEM>(
-    this->cfd_dem_simulation_parameters.cfd_dem.dem_iteration_control,
-    this->simulation_control->get_time_step(),
-    this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency,
-    rayleigh_time_step,
-    this->cfd_dem_simulation_parameters.cfd_dem.fraction_of_rayleigh_time);
+
 
   this->pcout << "Finished initializing DEM parameters" << std::endl
               << "DEM time step is "
@@ -1421,7 +1420,7 @@ CFDDEMMatrixFree<dim>::dem_contact_build()
   const unsigned int counter = this->dem_simulation_control->get_iteration();
   // If this is not the last DEM iteration before the next CFD iteration, check
   // if a contact detection step is necessary
-  if (this->dem_simulation_control->is_last_iteration())
+  if (!this->dem_simulation_control->is_last_iteration())
     check_contact_detection_method(counter);
 
   // Otherwise, force a contact search at the last DEM iteration before a CFD
