@@ -2129,14 +2129,15 @@ NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar_operators()
       *this->get_mapping(),
       *this->dof_handler,
       this->simulation_parameters.mortar_parameters);
+  else if (this->simulation_parameters.mortar_parameters.interface_type ==
+           Parameters::Mortar<dim>::InterfaceType::linear)
+    this->mortar_manager = std::make_shared<MortarManagerLinear<dim>>(
+      *this->cell_quadrature,
+      *this->get_mapping(),
+      *this->dof_handler,
+      this->simulation_parameters.mortar_parameters);
   else
-    {
-      this->mortar_manager = std::make_shared<MortarManagerLinear<dim>>(
-        *this->cell_quadrature,
-        *this->get_mapping(),
-        *this->dof_handler,
-        this->simulation_parameters.mortar_parameters);
-    }
+    AssertThrow(false, ExcMessage("Invalid mortar interface type."));
 
 
   // Create mortar coupling evaluator
@@ -2226,9 +2227,12 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_rotor_mapping(
       rotation_angle,
       this->simulation_parameters.mortar_parameters.center_of_rotation,
       this->simulation_parameters.mortar_parameters.rotation_axis);
-  else
+  else if (this->simulation_parameters.mortar_parameters.interface_type ==
+           Parameters::Mortar<dim>::InterfaceType::linear)
     this->mapping_cache->initialize(*this->mapping,
                                     this->dof_handler->get_triangulation());
+  else
+    AssertThrow(false, ExcMessage("Invalid mortar interface type."));
 }
 
 template <int dim, typename VectorType, typename DofsType>

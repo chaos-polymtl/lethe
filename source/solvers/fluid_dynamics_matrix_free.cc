@@ -1518,9 +1518,14 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                   this->simulation_parameters.mortar_parameters
                     .center_of_rotation,
                   this->simulation_parameters.mortar_parameters.rotation_axis);
-              else
+              else if (this->simulation_parameters.mortar_parameters
+                         .interface_type ==
+                       Parameters::Mortar<dim>::InterfaceType::linear)
                 this->mappings[level]->initialize(
                   *mapping, this->dof_handlers[level].get_triangulation());
+              else
+                AssertThrow(false,
+                            ExcMessage("Invalid mortar interface type."));
 
               level_mapping = this->mappings[level];
             }
@@ -1723,15 +1728,18 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                     *level_mapping,
                     level_dof_handler,
                     this->simulation_parameters.mortar_parameters);
+              else if (this->simulation_parameters.mortar_parameters
+                         .interface_type ==
+                       Parameters::Mortar<dim>::InterfaceType::linear)
+                this->mg_operators[level]->mortar_manager_mf =
+                  std::make_shared<MortarManagerLinear<dim>>(
+                    quadrature_mg,
+                    *level_mapping,
+                    level_dof_handler,
+                    this->simulation_parameters.mortar_parameters);
               else
-                {
-                  this->mg_operators[level]->mortar_manager_mf =
-                    std::make_shared<MortarManagerLinear<dim>>(
-                      quadrature_mg,
-                      *level_mapping,
-                      level_dof_handler,
-                      this->simulation_parameters.mortar_parameters);
-                }
+                AssertThrow(false,
+                            ExcMessage("Invalid mortar interface type."));
 
               // Coupling evaluator
               this->mg_operators[level]->mortar_coupling_evaluator_mf =
@@ -3096,15 +3104,16 @@ FluidDynamicsMatrixFree<dim>::reinit_mortar_operators_mf()
         *this->get_mapping(),
         *this->dof_handler,
         this->simulation_parameters.mortar_parameters);
+  else if (this->simulation_parameters.mortar_parameters.interface_type ==
+           Parameters::Mortar<dim>::InterfaceType::linear)
+    this->system_operator->mortar_manager_mf =
+      std::make_shared<MortarManagerLinear<dim>>(
+        *this->cell_quadrature,
+        *this->get_mapping(),
+        *this->dof_handler,
+        this->simulation_parameters.mortar_parameters);
   else
-    {
-      this->system_operator->mortar_manager_mf =
-        std::make_shared<MortarManagerLinear<dim>>(
-          *this->cell_quadrature,
-          *this->get_mapping(),
-          *this->dof_handler,
-          this->simulation_parameters.mortar_parameters);
-    }
+    AssertThrow(false, ExcMessage("Invalid mortar interface type."));
 
   // Create mortar coupling evaluator
   this->system_operator->mortar_coupling_evaluator_mf =
