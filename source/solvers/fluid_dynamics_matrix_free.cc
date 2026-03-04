@@ -1482,10 +1482,13 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
           // Create mappings for each level
           this->mappings.resize(this->minlevel, this->maxlevel);
           // Compute interface radius (same for all levels)
-          interface_radius = std::get<1>(compute_n_subdivisions_and_radius(
-            *this->coarse_grid_triangulations[0],
-            *mapping,
-            this->simulation_parameters.mortar_parameters))[0];
+          if (this->simulation_parameters.mortar_parameters.interface_type ==
+              Parameters::Mortar<dim>::InterfaceType::circular)
+            interface_radius =
+              std::get<0>(compute_interface_dimensions_circular(
+                *this->coarse_grid_triangulations[0],
+                *mapping,
+                this->simulation_parameters.mortar_parameters))[0];
         }
 
       // Apply constraints and create mg operators for each level
