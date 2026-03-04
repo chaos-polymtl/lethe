@@ -440,11 +440,9 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center,
 
 /*-------------- Auxiliary Functions -------------------------------*/
 template <int dim>
-std::tuple<std::vector<unsigned int>, std::vector<double>, double>
-compute_n_subdivisions_and_radius(
-  const Triangulation<dim>      &triangulation,
-  const Mapping<dim>            &mapping,
-  const Parameters::Mortar<dim> &mortar_parameters)
+std::vector<unsigned int>
+compute_number_interface_cells(const Triangulation<dim>      &triangulation,
+                               const Parameters::Mortar<dim> &mortar_parameters)
 {
   // Number of subdivisions per process
   unsigned int n_subdivisions_local = 0;
@@ -452,21 +450,12 @@ compute_n_subdivisions_and_radius(
   unsigned int n_subdivisions_plane_local = 0;
   // Tolerance for rotor radius computation
   const double radius_tolerance = mortar_parameters.radius_tolerance;
-  // Min and max values for rotor radius computation
-  double radius_min = std::numeric_limits<double>::max();
-  double radius_max = 0;
-  // Minimum rotation angle in initial mesh configuration
-  double pre_rotation_min = std::numeric_limits<double>::max();
 
   // Coordinate of the reference cell for computation of the number of
   // subdivisions in the radial direction. Used in 3D case
   double coord_ref_local = std::numeric_limits<double>::max();
   // Rotation axis direction. Used in 3D case
   unsigned int direction = 0;
-  // Min and max vertex coordinates for length computation in the axial
-  // direction. Used in 3D case
-  double vertex_min = std::numeric_limits<double>::max();
-  double vertex_max = 0;
 
   // Verify if rotation axis is a unit vector in x, y, or z
   if constexpr (dim == 3)
@@ -545,10 +534,88 @@ compute_n_subdivisions_and_radius(
                             n_subdivisions_plane_local++;
                         }
                       else
-                        {
-                          n_subdivisions_plane_local++;
-                        }
+                        n_subdivisions_plane_local++;
+                    }
+                }
+            }
+        }
+    }
 
+  // Total number of faces
+  const unsigned int n_subdivisions =
+    Utilities::MPI::sum(n_subdivisions_local,
+                        triangulation.get_mpi_communicator());
+
+  // Total number of faces at the radial direction
+  const unsigned int n_subdivisions_plane =
+    Utilities::MPI::sum(n_subdivisions_plane_local,
+                        triangulation.get_mpi_communicator());
+
+  return {n_subdivisions_plane, n_subdivisions / n_subdivisions_plane};
+}
+
+template <int dim>
+std::tuple<std::vector<double>, double>
+compute_interface_dimensions_circular(
+  const Triangulation<dim>      &triangulation,
+  const Mapping<dim>            &mapping,
+  const Parameters::Mortar<dim> &mortar_parameters)
+{
+  // Tolerance for rotor radius computation
+  const double radius_tolerance = mortar_parameters.radius_tolerance;
+  // Min and max values for rotor radius computation
+  double radius_min = std::numeric_limits<double>::max();
+  double radius_max = 0;
+  // Minimum rotation angle in initial mesh configuration
+  double pre_rotation_min = std::numeric_limits<double>::max();
+
+  // Rotation axis direction. Used in 3D case
+  unsigned int direction = 0;
+  // Min and max vertex coordinates for length computation in the axial
+  // direction. Used in 3D case
+  double vertex_min = std::numeric_limits<double>::max();
+  double vertex_max = 0;
+
+  // Verify if rotation axis is a unit vector in x, y, or z
+  if constexpr (dim == 3)
+    {
+      // First check if the vector has a unit norm
+      bool is_unit_axis =
+        mortar_parameters.rotation_axis.norm() == 1 ? true : false;
+
+      // Now check if the vector represents the x, y, or z directions
+      // specifically (we assume those are the only options for now)
+      for (int i = 0; i < dim; i++)
+        if (mortar_parameters.rotation_axis[i] != 0. &&
+            mortar_parameters.rotation_axis[i] != 1.)
+          is_unit_axis = false;
+
+      AssertThrow(
+        is_unit_axis,
+        ExcMessage(
+          " The rotation axis must be a unit vector in x, y, or z direction."));
+
+      // Find the direction of the rotation axis
+      for (int d = 0; d < dim; d++)
+        if (mortar_parameters.rotation_axis[d] != 0.0)
+          direction = d;
+    }
+
+
+  // Check number of faces and vertices at the rotor-stator interface
+  for (const auto &cell : triangulation.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          for (const auto face_no : cell->face_indices())
+            {
+              const auto face = cell->face(face_no);
+
+              if (face->at_boundary())
+                {
+                  if (face->boundary_id() ==
+                      mortar_parameters.rotor_boundary_id)
+                    {
                       const auto vertices = mapping.get_vertices(cell, face_no);
 
                       for (unsigned int vertex_index = 0;
@@ -608,16 +675,6 @@ compute_n_subdivisions_and_radius(
         }
     }
 
-  // Total number of faces
-  const unsigned int n_subdivisions =
-    Utilities::MPI::sum(n_subdivisions_local,
-                        triangulation.get_mpi_communicator());
-
-  // Total number of faces at the radial direction
-  const unsigned int n_subdivisions_plane =
-    Utilities::MPI::sum(n_subdivisions_plane_local,
-                        triangulation.get_mpi_communicator());
-
   // Min and max values over all processes
   radius_min =
     Utilities::MPI::min(radius_min, triangulation.get_mpi_communicator());
@@ -644,9 +701,57 @@ compute_n_subdivisions_and_radius(
   // Length along the axial direction
   const double length_rot_axis = dim == 3 ? vertex_max - vertex_min : 0;
 
-  return {{n_subdivisions_plane, n_subdivisions / n_subdivisions_plane},
-          {radius, length_rot_axis},
-          pre_rotation_min};
+  return {{radius, length_rot_axis}, pre_rotation_min};
+}
+
+template <int dim>
+std::pair<double, double>
+compute_interface_dimensions_linear(
+  const Triangulation<dim>      &triangulation,
+  const Mapping<dim>            &mapping,
+  const Parameters::Mortar<dim> &mortar_parameters)
+{
+  // y coordinates of the interface limits
+  // We assume that the mortar interface is always parallel to the y axis
+  double coord_min = std::numeric_limits<double>::max();
+  double coord_max = 0;
+
+  for (const auto &cell : triangulation.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          for (const auto face_no : cell->face_indices())
+            {
+              const auto face = cell->face(face_no);
+
+              if (face->at_boundary())
+                {
+                  if (face->boundary_id() ==
+                      mortar_parameters.rotor_boundary_id)
+                    {
+                      const auto vertices = mapping.get_vertices(cell, face_no);
+
+                      for (unsigned int vertex_index = 0;
+                           vertex_index < face->n_vertices();
+                           vertex_index++)
+                        {
+                          const auto v = vertices[vertex_index];
+                          coord_min    = std::min(coord_min, v[1]);
+                          coord_max    = std::max(coord_max, v[1]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+  // Min and max values over all processes
+  coord_min =
+    Utilities::MPI::min(coord_min, triangulation.get_mpi_communicator());
+  coord_max =
+    Utilities::MPI::max(coord_max, triangulation.get_mpi_communicator());
+
+  return {coord_min, coord_max};
 }
 
 template <int dim>
@@ -738,6 +843,29 @@ MortarManagerCircle<dim>::get_normal(const Point<dim> &point) const
 }
 
 
+/*-------------- MortarManagerLinear -------------------------------*/
+template <int dim>
+Point<dim>
+MortarManagerLinear<dim>::from_1D(const double angle_rad) const
+{
+  return Point<dim>(0.5,
+                    angle_rad / (2.0 * numbers::PI) * (coord_max - coord_min) +
+                      coord_min);
+}
+
+template <int dim>
+double
+MortarManagerLinear<dim>::to_1D(const Point<dim> &point) const
+{
+  return (2.0 * numbers::PI) * (point[1] - coord_min) / (coord_max - coord_min);
+}
+
+template <int dim>
+Tensor<1, dim, double>
+MortarManagerLinear<dim>::get_normal(const Point<dim> &) const
+{
+  return Point<dim>(1.0, 0.0);
+}
 
 /*-------------- CouplingOperator -------------------------------*/
 template <int dim, typename Number>
@@ -1847,6 +1975,10 @@ template class MortarManagerCircle<1>;
 template class MortarManagerCircle<2>;
 template class MortarManagerCircle<3>;
 
+template class MortarManagerLinear<1>;
+template class MortarManagerLinear<2>;
+template class MortarManagerLinear<3>;
+
 template class CouplingOperator<1, double>;
 template class CouplingOperator<2, double>;
 template class CouplingOperator<3, double>;
@@ -1916,14 +2048,36 @@ template class CouplingEvaluationSIPG<3, 4, double>;
 template class NavierStokesCouplingEvaluation<2, double>;
 template class NavierStokesCouplingEvaluation<3, double>;
 
-template std::tuple<std::vector<unsigned int>, std::vector<double>, double>
-compute_n_subdivisions_and_radius<2>(
+template std::vector<unsigned int>
+compute_number_interface_cells<2>(
+  const Triangulation<2>      &triangulation,
+  const Parameters::Mortar<2> &mortar_parameters);
+
+template std::vector<unsigned int>
+compute_number_interface_cells<3>(
+  const Triangulation<3>      &triangulation,
+  const Parameters::Mortar<3> &mortar_parameters);
+
+template std::tuple<std::vector<double>, double>
+compute_interface_dimensions_circular<2>(
   const Triangulation<2>      &triangulation,
   const Mapping<2>            &mapping,
   const Parameters::Mortar<2> &mortar_parameters);
 
-template std::tuple<std::vector<unsigned int>, std::vector<double>, double>
-compute_n_subdivisions_and_radius<3>(
+template std::tuple<std::vector<double>, double>
+compute_interface_dimensions_circular<3>(
+  const Triangulation<3>      &triangulation,
+  const Mapping<3>            &mapping,
+  const Parameters::Mortar<3> &mortar_parameters);
+
+template std::pair<double, double>
+compute_interface_dimensions_linear<2>(
+  const Triangulation<2>      &triangulation,
+  const Mapping<2>            &mapping,
+  const Parameters::Mortar<2> &mortar_parameters);
+
+template std::pair<double, double>
+compute_interface_dimensions_linear<3>(
   const Triangulation<3>      &triangulation,
   const Mapping<3>            &mapping,
   const Parameters::Mortar<3> &mortar_parameters);

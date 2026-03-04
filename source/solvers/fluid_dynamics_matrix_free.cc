@@ -1482,10 +1482,13 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
           // Create mappings for each level
           this->mappings.resize(this->minlevel, this->maxlevel);
           // Compute interface radius (same for all levels)
-          interface_radius = std::get<1>(compute_n_subdivisions_and_radius(
-            *this->coarse_grid_triangulations[0],
-            *mapping,
-            this->simulation_parameters.mortar_parameters))[0];
+          if (this->simulation_parameters.mortar_parameters.interface_type ==
+              Parameters::Mortar<dim>::InterfaceType::circular)
+            interface_radius =
+              std::get<0>(compute_interface_dimensions_circular(
+                *this->coarse_grid_triangulations[0],
+                *mapping,
+                this->simulation_parameters.mortar_parameters))[0];
         }
 
       // Apply constraints and create mg operators for each level
@@ -1504,16 +1507,28 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               this->mappings[level] = std::make_shared<MappingQCache<dim>>(
                 this->dof_handlers[level].get_fe().degree);
 
-              LetheGridTools::rotate_mapping(
-                this->dof_handlers[level],
-                *this->mappings[level],
-                *mapping,
-                interface_radius,
-                this->simulation_parameters.mortar_parameters
-                  .rotor_rotation_angle->value(Point<dim>()),
-                this->simulation_parameters.mortar_parameters
-                  .center_of_rotation,
-                this->simulation_parameters.mortar_parameters.rotation_axis);
+              // Rotate mapping only in the case of a circular mortar interface
+              if (this->simulation_parameters.mortar_parameters
+                    .interface_type ==
+                  Parameters::Mortar<dim>::InterfaceType::circular)
+                LetheGridTools::rotate_mapping(
+                  this->dof_handlers[level],
+                  *this->mappings[level],
+                  *mapping,
+                  interface_radius,
+                  this->simulation_parameters.mortar_parameters
+                    .rotor_rotation_angle->value(Point<dim>()),
+                  this->simulation_parameters.mortar_parameters
+                    .center_of_rotation,
+                  this->simulation_parameters.mortar_parameters.rotation_axis);
+              else if (this->simulation_parameters.mortar_parameters
+                         .interface_type ==
+                       Parameters::Mortar<dim>::InterfaceType::linear)
+                this->mappings[level]->initialize(
+                  *mapping, this->dof_handlers[level].get_triangulation());
+              else
+                AssertThrow(false,
+                            ExcMessage("Invalid mortar interface type."));
 
               level_mapping = this->mappings[level];
             }
@@ -1707,12 +1722,27 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               this->mg_setup_timer.enter_subsection("Set up mortar operators");
 
               // Manager
-              this->mg_operators[level]->mortar_manager_mf =
-                std::make_shared<MortarManagerCircle<dim>>(
-                  quadrature_mg,
-                  *level_mapping,
-                  level_dof_handler,
-                  this->simulation_parameters.mortar_parameters);
+              if (this->simulation_parameters.mortar_parameters
+                    .interface_type ==
+                  Parameters::Mortar<dim>::InterfaceType::circular)
+                this->mg_operators[level]->mortar_manager_mf =
+                  std::make_shared<MortarManagerCircle<dim>>(
+                    quadrature_mg,
+                    *level_mapping,
+                    level_dof_handler,
+                    this->simulation_parameters.mortar_parameters);
+              else if (this->simulation_parameters.mortar_parameters
+                         .interface_type ==
+                       Parameters::Mortar<dim>::InterfaceType::linear)
+                this->mg_operators[level]->mortar_manager_mf =
+                  std::make_shared<MortarManagerLinear<dim>>(
+                    quadrature_mg,
+                    *level_mapping,
+                    level_dof_handler,
+                    this->simulation_parameters.mortar_parameters);
+              else
+                AssertThrow(false,
+                            ExcMessage("Invalid mortar interface type."));
 
               // Coupling evaluator
               this->mg_operators[level]->mortar_coupling_evaluator_mf =
@@ -3069,12 +3099,24 @@ FluidDynamicsMatrixFree<dim>::reinit_mortar_operators_mf()
   TimerOutput::Scope t(this->computing_timer, "Reinit mortar operators");
 
   // Create mortar manager
-  this->system_operator->mortar_manager_mf =
-    std::make_shared<MortarManagerCircle<dim>>(
-      *this->cell_quadrature,
-      *this->get_mapping(),
-      *this->dof_handler,
-      this->simulation_parameters.mortar_parameters);
+  if (this->simulation_parameters.mortar_parameters.interface_type ==
+      Parameters::Mortar<dim>::InterfaceType::circular)
+    this->system_operator->mortar_manager_mf =
+      std::make_shared<MortarManagerCircle<dim>>(
+        *this->cell_quadrature,
+        *this->get_mapping(),
+        *this->dof_handler,
+        this->simulation_parameters.mortar_parameters);
+  else if (this->simulation_parameters.mortar_parameters.interface_type ==
+           Parameters::Mortar<dim>::InterfaceType::linear)
+    this->system_operator->mortar_manager_mf =
+      std::make_shared<MortarManagerLinear<dim>>(
+        *this->cell_quadrature,
+        *this->get_mapping(),
+        *this->dof_handler,
+        this->simulation_parameters.mortar_parameters);
+  else
+    AssertThrow(false, ExcMessage("Invalid mortar interface type."));
 
   // Create mortar coupling evaluator
   this->system_operator->mortar_coupling_evaluator_mf =

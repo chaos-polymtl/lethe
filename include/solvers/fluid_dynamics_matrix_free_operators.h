@@ -449,7 +449,7 @@ public:
    * base. Because we have a different system_operator here, we need to create
    * new pointers.
    */
-  std::shared_ptr<MortarManagerCircle<dim>>      mortar_manager_mf;
+  std::shared_ptr<MortarManagerBase<dim>>        mortar_manager_mf;
   std::shared_ptr<CouplingOperator<dim, double>> mortar_coupling_operator_mf;
   std::shared_ptr<NavierStokesCouplingEvaluation<dim, double>>
     mortar_coupling_evaluator_mf;

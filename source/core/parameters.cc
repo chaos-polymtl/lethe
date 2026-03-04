@@ -4480,6 +4480,11 @@ namespace Parameters
                         "false",
                         Patterns::Bool(),
                         "Enable mortar interface <true|false>");
+      prm.declare_entry("interface type",
+                        "circular",
+                        Patterns::Selection("circular|linear"),
+                        "Type of mortar interface"
+                        "Choices are <circular|linear>.");
       rotor_mesh = std::make_shared<Mesh>();
       rotor_mesh->declare_parameters(prm);
       prm.declare_entry("rotor boundary id",
@@ -4543,6 +4548,18 @@ namespace Parameters
     prm.enter_subsection("mortar");
     {
       enable = prm.get_bool("enable");
+      {
+        const std::string op = prm.get("interface type");
+        if (op == "circular")
+          interface_type = InterfaceType::circular;
+        else if (op == "linear")
+          interface_type = InterfaceType::linear;
+        else
+          AssertThrow(
+            false,
+            ExcMessage(
+              "Error, invalid mortar interface type. Current choices are <circular|linear>."));
+      }
       rotor_mesh->parse_parameters(prm);
       rotor_boundary_id  = prm.get_integer("rotor boundary id");
       stator_boundary_id = prm.get_integer("stator boundary id");

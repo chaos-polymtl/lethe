@@ -323,7 +323,16 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   const BoundaryConditions::BoundaryConditions          &boundary_conditions,
   const Parameters::Mortar<dim>                         &mortar_parameters)
 {
-  // First check if stator and rotor meshes are of the same type
+  // If linear mortar manager, only two-dimensional cases are supported
+  if (mortar_parameters.interface_type ==
+      Parameters::Mortar<dim>::InterfaceType::linear)
+    if constexpr (dim == 3)
+      AssertThrow(
+        false,
+        ExcMessage(
+          "The linear mortar interface type supports only two-dimensional cases at the moment."));
+
+  // Check if stator and rotor meshes are of the same type
   AssertThrow(
     mesh_parameters.type == mortar_parameters.rotor_mesh->type,
     ExcMessage(

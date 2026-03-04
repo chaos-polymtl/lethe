@@ -2122,11 +2122,23 @@ NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar_operators()
   TimerOutput::Scope t(this->computing_timer, "Reinit mortar operators");
 
   // Create mortar manager
-  this->mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
-    *this->cell_quadrature,
-    *this->get_mapping(),
-    *this->dof_handler,
-    this->simulation_parameters.mortar_parameters);
+  if (this->simulation_parameters.mortar_parameters.interface_type ==
+      Parameters::Mortar<dim>::InterfaceType::circular)
+    this->mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
+      *this->cell_quadrature,
+      *this->get_mapping(),
+      *this->dof_handler,
+      this->simulation_parameters.mortar_parameters);
+  else if (this->simulation_parameters.mortar_parameters.interface_type ==
+           Parameters::Mortar<dim>::InterfaceType::linear)
+    this->mortar_manager = std::make_shared<MortarManagerLinear<dim>>(
+      *this->cell_quadrature,
+      *this->get_mapping(),
+      *this->dof_handler,
+      this->simulation_parameters.mortar_parameters);
+  else
+    AssertThrow(false, ExcMessage("Invalid mortar interface type."));
+
 
   // Create mortar coupling evaluator
   this->mortar_coupling_evaluator =
@@ -2201,17 +2213,26 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_rotor_mapping(
   this->mapping_cache =
     std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
 
-  LetheGridTools::rotate_mapping(
-    *this->dof_handler,
-    *this->mapping_cache,
-    *this->mapping,
-    std::get<1>(compute_n_subdivisions_and_radius(
-      *this->triangulation,
+  // Rotate mapping only in the case of a circular mortar interface
+  if (this->simulation_parameters.mortar_parameters.interface_type ==
+      Parameters::Mortar<dim>::InterfaceType::circular)
+    LetheGridTools::rotate_mapping(
+      *this->dof_handler,
+      *this->mapping_cache,
       *this->mapping,
-      this->simulation_parameters.mortar_parameters))[0],
-    rotation_angle,
-    this->simulation_parameters.mortar_parameters.center_of_rotation,
-    this->simulation_parameters.mortar_parameters.rotation_axis);
+      std::get<0>(compute_interface_dimensions_circular(
+        *this->triangulation,
+        *this->mapping,
+        this->simulation_parameters.mortar_parameters))[0],
+      rotation_angle,
+      this->simulation_parameters.mortar_parameters.center_of_rotation,
+      this->simulation_parameters.mortar_parameters.rotation_axis);
+  else if (this->simulation_parameters.mortar_parameters.interface_type ==
+           Parameters::Mortar<dim>::InterfaceType::linear)
+    this->mapping_cache->initialize(*this->mapping,
+                                    this->dof_handler->get_triangulation());
+  else
+    AssertThrow(false, ExcMessage("Invalid mortar interface type."));
 }
 
 template <int dim, typename VectorType, typename DofsType>

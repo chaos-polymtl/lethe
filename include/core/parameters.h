@@ -1948,6 +1948,12 @@ namespace Parameters
   {
     /// Indicates whether mortar elements are enabled
     bool enable;
+    /// Type of mortar interface
+    enum class InterfaceType : std::int8_t
+    {
+      circular,
+      linear
+    } interface_type;
     /// Mesh parameters for the rotor part
     std::shared_ptr<Mesh> rotor_mesh;
     /// Boundary ID # of the rotor at the rotor-stator interface

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -105,10 +105,12 @@ test()
   dof_handler.distribute_dofs(fe);
 
   // Number of subdivisions and rotor radius
-  const auto [n_subdivisions, radius, _] =
-    compute_n_subdivisions_and_radius(triangulation,
-                                      mapping,
-                                      mortar_parameters);
+  const auto n_subdivisions =
+    compute_number_interface_cells(triangulation, mortar_parameters);
+  const auto [radius, _] =
+    compute_interface_dimensions_circular(triangulation,
+                                          mapping,
+                                          mortar_parameters);
 
   // Rotate mapping
   LetheGridTools::rotate_mapping(dof_handler,

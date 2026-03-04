@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -77,7 +77,8 @@ test()
   mortar_parameters.rotor_mesh->rotation_angle = 0.0;
   mortar_parameters.stator_boundary_id         = 0;
   mortar_parameters.rotor_boundary_id          = 5; // after shifting
-
+  mortar_parameters.interface_type =
+    Parameters::Mortar<dim>::InterfaceType::circular;
 
   // Initialized merged triangulation
   parallel::distributed::Triangulation<dim> triangulation(comm);
