@@ -836,7 +836,7 @@ SolidPhaseSolver<dim>::run()
       const double CFL = inlet_velocity[0] * time_step / h;
 
       pcout << "TimeStep " << timestep_number << " time = " << time
-            << " CFL = it works " << CFL << " ||rhs|| = " << system_rhs.l2_norm()
+            << " CFL = " << CFL << " ||rhs|| = " << system_rhs.l2_norm()
             << "\n ";
 
 
