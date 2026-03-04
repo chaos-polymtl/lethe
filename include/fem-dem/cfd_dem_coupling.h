@@ -322,7 +322,7 @@ private:
    *
    * Performs a full DEM time step including particle-particle and
    * particle-wall contact force calculations, time integration of
-   * particle motion, and updates to particle positions and velocities.
+   * particle motion, and updates the particles positions and velocities.
    *
    */
   void
