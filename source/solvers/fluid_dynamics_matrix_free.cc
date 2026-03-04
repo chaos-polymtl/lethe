@@ -1475,9 +1475,18 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                       << std::endl;
         }
 
-      // Create mappings for each level if mortar is enabled
+      // Initialize variable needed when mortar is enabled
+      double interface_radius = 0;
       if (this->simulation_parameters.mortar_parameters.enable)
-        this->mappings.resize(this->minlevel, this->maxlevel);
+        {
+          // Create mappings for each level
+          this->mappings.resize(this->minlevel, this->maxlevel);
+          // Compute interface radius (same for all levels)
+          interface_radius = std::get<1>(compute_n_subdivisions_and_radius(
+            *this->coarse_grid_triangulations[0],
+            *mapping,
+            this->simulation_parameters.mortar_parameters))[0];
+        }
 
       // Apply constraints and create mg operators for each level
       for (unsigned int level = this->minlevel; level <= this->maxlevel;
@@ -1499,10 +1508,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                 this->dof_handlers[level],
                 *this->mappings[level],
                 *mapping,
-                std::get<1>(compute_n_subdivisions_and_radius(
-                  *this->coarse_grid_triangulations[level],
-                  *mapping,
-                  this->simulation_parameters.mortar_parameters))[0],
+                interface_radius,
                 this->simulation_parameters.mortar_parameters
                   .rotor_rotation_angle->value(Point<dim>()),
                 this->simulation_parameters.mortar_parameters
