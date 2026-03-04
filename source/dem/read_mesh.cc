@@ -72,9 +72,9 @@ match_periodic_boundaries(Triangulation<dim, spacedim>        &triangulation,
   for (const auto &i_bc : periodic_bc_indices)
     {
       GridTools::collect_periodic_faces(triangulation,
-                                        bc_param.periodic_boundary_0[i_bc],
-                                        bc_param.periodic_boundary_1[i_bc],
-                                        bc_param.periodic_direction[i_bc],
+                                        bc_param.periodic_boundary_0.at(i_bc),
+                                        bc_param.periodic_boundary_1.at(i_bc),
+                                        bc_param.periodic_direction.at(i_bc),
                                         periodicity_vector);
     }
   triangulation.add_periodicity(periodicity_vector);

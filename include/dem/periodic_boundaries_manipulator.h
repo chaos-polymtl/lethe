@@ -120,7 +120,7 @@ public:
   /**
    * @brief Return the IDs of the periodic boundaries
    */
-  inline const std::unordered_map<unsigned int, types::boundary_id>&
+  inline const std::unordered_map<unsigned int, types::boundary_id> &
   get_periodic_boundaries_ids() const
   {
     return periodic_boundaries_ids;
@@ -129,7 +129,7 @@ public:
   /**
    * @brief Return the combined periodic offsets
    */
-  inline const std::vector<Tensor<1, dim>>&
+  inline const std::vector<Tensor<1, dim>> &
   get_combined_offsets() const
   {
     return combined_offsets;
@@ -173,7 +173,8 @@ private:
     bool &particle_has_been_moved);
 
   /**
-   * @brief Computes the combined periodic offsets and stores them in combined_offsets.
+   * @brief Computes the combined periodic offsets and stores them in 
+   * combined_offsets.
    */
   void
   compute_combined_offsets();
@@ -185,15 +186,15 @@ private:
   bool periodic_boundaries_enabled;
 
   /**
-   * @brief Direction of the periodic boundaries, it is the perpendicular axis of
-   * the periodic boundaries.
+   * @brief Direction of the periodic boundaries, it is the perpendicular axis 
+   * of the periodic boundaries.
    */
   std::unordered_map<unsigned int, unsigned int> directions;
 
   /**
-   * @brief ID of the first periodic boundary for all PB pairs. No needs to store the second one
-   * since they are linked on the triangulation, and accessible through
-   * functions on cells on the boundary condition 0.
+   * @brief ID of the first periodic boundary for all PB pairs. No needs to 
+   * store the second one since they are linked on the triangulation, and 
+   * accessible through functions on cells on the boundary condition 0.
    * Map key: index of BC from .prm
    * Map value: id of a primary periodic boundary
    */
@@ -201,16 +202,16 @@ private:
   std::unordered_map<unsigned int, types::boundary_id> periodic_boundaries_ids;
 
   /**
-   * @brief Map storing offset distance between periodic boundaries, keyed by the
-   * boundary ID (pb0). It is calculated from the first pair of cells on
+   * @brief Map storing offset distance between periodic boundaries, keyed by 
+   * the boundary ID (pb0). It is calculated from the first pair of cells on
    * periodic boundaries, all pair of cells are assumed to have the same offset.
    */
   std::unordered_map<types::boundary_id, Tensor<1, dim>> periodic_offsets;
 
   /**
-   * @brief Storage for all 9 (2D) or 27 (3D) precomputed periodic translation vectors.
-   * Calculated from periodic_offsets. Initialized to identity (zero offset)
-   * for compatibility with non-periodic geometry
+   * @brief Storage for all 9 (2D) or 27 (3D) precomputed periodic translation 
+   * vectors. Calculated from periodic_offsets. Initialized to identity (zero 
+   * offset) for compatibility with non-periodic geometry
    */
   std::vector<Tensor<1, dim>> combined_offsets{Tensor<1, dim>()};
 };

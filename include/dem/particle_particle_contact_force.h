@@ -29,7 +29,8 @@ using namespace dealii;
  * ParticleParticleContactForce class which is templated by the contact model
  * type.
  * @tparam dim An integer that denotes the number of spatial dimensions.
- * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
+ * @tparam PropertiesIndex Index of the properties used within the 
+ * ParticleHandler.
  */
 template <int dim, typename PropertiesIndex>
 class ParticleParticleContactForceBase
@@ -44,14 +45,14 @@ public:
    * @param ghost_adjacent_particles Container of the contact pair candidates
    * information for calculation of the local-ghost particle-particle contact
    * forces.
-   * @param local_local_periodic_adjacent_particles Container of the contact pair
-   * candidates information for calculation of the local periodic
+   * @param local_local_periodic_adjacent_particles Container of the contact 
+   * pair candidates information for calculation of the local periodic
    * particle-particle contact forces.
-   * @param local_ghost_periodic_adjacent_particles Container of the contact pair
-   * candidates information for calculation of the local-ghost periodic
+   * @param local_ghost_periodic_adjacent_particles Container of the contact 
+   * pair candidates information for calculation of the local-ghost periodic
    * particle-particle contact forces.
-   * @param ghost_local_periodic_adjacent_particles Container of the contact pair
-   * candidates information for calculation of the ghost-local periodic
+   * @param ghost_local_periodic_adjacent_particles Container of the contact 
+   * pair candidates information for calculation of the ghost-local periodic
    * particle-particle contact forces.
    * @param dt DEM time step.
    * @param contact_outcome Interaction outcomes.
@@ -72,7 +73,8 @@ public:
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) = 0;
 
   inline void
-  set_periodic_offset(const Tensor<1, dim> &offset, const types::boundary_id boundary_id)
+  set_periodic_offset(const Tensor<1, dim>    &offset,
+                      const types::boundary_id boundary_id)
   {
     this->periodic_offsets[boundary_id] = offset;
   }
@@ -125,14 +127,14 @@ public:
    * @param ghost_adjacent_particles Container of the contact pair candidates
    * information for calculation of the local-ghost particle-particle contact
    * forces.
-   * @param local_local_periodic_adjacent_particles Container of the contact pair
-   * candidates information for calculation of the local periodic
+   * @param local_local_periodic_adjacent_particles Container of the contact 
+   * pair candidates information for calculation of the local periodic
    * particle-particle contact forces.
-   * @param local_ghost_periodic_adjacent_particles Container of the contact pair
-   * candidates information for calculation of the local-ghost periodic
+   * @param local_ghost_periodic_adjacent_particles Container of the contact 
+   * pair candidates information for calculation of the local-ghost periodic
    * particle-particle contact forces.
-   * @param ghost_local_periodic_adjacent_particles Container of the contact pair
-   * candidates information for calculation of the ghost-local periodic
+   * @param ghost_local_periodic_adjacent_particles Container of the contact 
+   * pair candidates information for calculation of the ghost-local periodic
    * particle-particle contact forces.
    * @param dt DEM time step.
    * @param[out] contact_outcome Interaction outcomes.
@@ -237,8 +239,9 @@ protected:
     // dependent it needs the value at previous time step. This variable is the
     // main reason that we have iteration over  two different vectors :
     // tangential_displacement of the particles which were already in contact
-    // needs to modified using its history, while the tangential_displacements
-    // of new particles are equal to zero delta_t_new = delta_t_old + v_rt*dt
+    // needs to be modified using its history, while the
+    // tangential_displacements of new particles are equal to zero
+    // delta_t_new = delta_t_old + v_rt*dt
     contact_info.tangential_displacement += tangential_relative_velocity * dt;
     contact_info.tangential_displacement -=
       (contact_info.tangential_displacement * normal_unit_vector) *
@@ -269,14 +272,13 @@ protected:
    */
   inline Point<3>
   get_periodic_location(const Particles::ParticleIterator<dim> &particle,
-                        const types::boundary_id                boundary_id) &
+                        const Tensor<1, 3> &periodic_offset) &
   {
-    const auto it = this->periodic_offsets.find(boundary_id);
     if constexpr (dim == 3)
-      return (particle->get_location() - it->second);
+      return (particle->get_location() + periodic_offset);
 
     if constexpr (dim == 2)
-      return point_nd_to_3d(particle->get_location() - it->second);
+      return point_nd_to_3d(particle->get_location()) + periodic_offset;
   }
 
   /**
@@ -1750,7 +1752,8 @@ private:
                       contact_type ==
                         ContactType::ghost_local_periodic_particle_particle)
           {
-            particle_two_location = get_periodic_location(particle_two);
+            particle_two_location =
+              get_periodic_location(particle_two, contact_info.periodic_offset);
           }
 
         // Calculation of normal overlap

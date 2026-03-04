@@ -1563,7 +1563,7 @@ namespace Parameters
           prm.enter_subsection("boundary condition " +
                                Utilities::int_to_string(counter, 1));
           {
-            parse_boundary_conditions(prm);
+            parse_boundary_conditions(prm, counter);
           }
           prm.leave_subsection();
         }
@@ -1627,7 +1627,8 @@ namespace Parameters
     }
 
     void
-    BCDEM::parse_boundary_conditions(const ParameterHandler &prm)
+    BCDEM::parse_boundary_conditions(const ParameterHandler &prm,
+                                     const unsigned int      i_bc)
     {
       const unsigned int boundary_id   = prm.get_integer("boundary id");
       const std::string  boundary_type = prm.get("type");
@@ -1678,11 +1679,9 @@ namespace Parameters
       else if (boundary_type == "periodic")
         {
           bc_types.push_back(BoundaryType::periodic);
-          this->periodic_boundary_0.at(boundary_id) =
-            prm.get_integer("periodic id 0");
-          this->periodic_boundary_1.at(boundary_id) =
-            prm.get_integer("periodic id 1");
-          this->periodic_direction.at(boundary_id) =
+          this->periodic_boundary_0.at(i_bc) = prm.get_integer("periodic id 0");
+          this->periodic_boundary_1.at(i_bc) = prm.get_integer("periodic id 1");
+          this->periodic_direction.at(i_bc) =
             prm.get_integer("periodic direction");
         }
       else

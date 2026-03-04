@@ -247,12 +247,13 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
 }
 
 template <int dim>
-void PeriodicBoundariesManipulator<dim>::compute_combined_offsets()
+void
+PeriodicBoundariesManipulator<dim>::compute_combined_offsets()
 {
   this->combined_offsets.clear();
   this->combined_offsets.push_back(Tensor<1, dim>()); // Initialized as zeros
 
-  for (auto const& [id, offset] : this->periodic_offsets)
+  for (auto const &[id, offset] : this->periodic_offsets)
     {
       size_t current_size = this->combined_offsets.size();
 

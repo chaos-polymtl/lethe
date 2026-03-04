@@ -301,8 +301,8 @@ DEMSolver<dim, PropertiesIndex>::setup_triangulation_dependent_parameters()
   periodic_boundaries_object.map_periodic_cells(
     triangulation, periodic_boundaries_cells_information);
 
-  // Set the combined_periodic_offsets to contact managers and particles contact forces
-  // for periodic contact detection (if PBC enabled)
+  // Set the combined_periodic_offsets to contact managers and particles contact
+  // forces for periodic contact detection (if PBC enabled)
   contact_manager.set_combined_offsets(
     periodic_boundaries_object.get_combined_offsets());
   particle_particle_contact_force_object->set_combined_offsets(
@@ -313,7 +313,7 @@ DEMSolver<dim, PropertiesIndex>::setup_triangulation_dependent_parameters()
        periodic_boundaries_object.get_periodic_boundaries_ids())
     {
       // contact_manager.set_periodic_offset(
-        // periodic_boundaries_object.get_periodic_offset_distance(pb_id), pb_id);
+      // periodic_boundaries_object.get_periodic_offset_distance(pb_id), pb_id);
       particle_particle_contact_force_object->set_periodic_offset(
         periodic_boundaries_object.get_periodic_offset_distance(pb_id), pb_id);
     }
@@ -346,17 +346,16 @@ DEMSolver<dim, PropertiesIndex>::setup_background_dofs()
                                     locally_relevant_dofs);
 
       // Loop over the unordered_map of periodic boundary conditions.
-      for (auto const & [bc_index, id0] : parameters.boundary_conditions.periodic_boundary_0)
+      for (auto const &[bc_index, id0] :
+           parameters.boundary_conditions.periodic_boundary_0)
         {
-          const types::boundary_id id1 = parameters.boundary_conditions.periodic_boundary_1.at(bc_index);
-          const unsigned int direction = parameters.boundary_conditions.periodic_direction.at(bc_index);
-          
+          const types::boundary_id id1 =
+            parameters.boundary_conditions.periodic_boundary_1.at(bc_index);
+          const unsigned int direction =
+            parameters.boundary_conditions.periodic_direction.at(bc_index);
+
           DoFTools::make_periodicity_constraints(
-            background_dh,
-            id0,
-            id1,
-            direction,
-            background_constraints);
+            background_dh, id0, id1, direction, background_constraints);
         }
 
       background_constraints.close();
