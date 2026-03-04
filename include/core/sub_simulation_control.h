@@ -128,9 +128,13 @@ public:
   }
 
   /**
-   * @brief Check if this is the first iteration. The first iteration is either before the sub simulation control has started iterating (thus iteration_number=0) or the first iteration it is actually carrying out (iteration_number=1)
+   * @brief Check if this is the first DEM sub iteration
    *
-   * @return Returns true if this is the first iteration.
+   * The first iteration corresponds to either the state before the sub
+   * simulation control has started iterating (iteration_number == 0) or the
+   * first iteration it is actually carrying out (iteration_number == 1).
+   *
+   * @return true if this is the first iteration, false otherwise.
    */
   bool
   is_first_iteration() const
@@ -139,9 +143,13 @@ public:
   }
 
   /**
-   * @brief Check if this is the last sub iteration. This is true if the iteration_number=total_number_of_iterations
+   * @brief Check if this is the last DEM sub iteration
    *
-   * @return Returns true if this is the last iteration.
+   * The last iteration is reached when the iteration number equals the total
+   * number of iterations required to complete the DEM sub simulation within
+   * the current CFD time step.
+   *
+   * @return true if this is the last iteration, false otherwise.
    */
   bool
   is_last_iteration() const
