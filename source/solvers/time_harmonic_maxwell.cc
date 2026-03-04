@@ -105,8 +105,8 @@ std::pair<Tensor<1, 2, std::complex<double>>, std::complex<double>>
 TimeHarmonicMaxwell<2>::compute_waveguide_port_excitation(
   const Point<2> & /*p*/,
   const Tensor<1, 2> & /*normal*/,
-  const std::complex<double> & /*epsilon_r_eff*/,
-  const std::complex<double> & /*mu_r*/,
+  const std::complex<double> & /*effective_electric_permittivity*/,
+  const std::complex<double> & /*effective_magnetic_permeability*/,
   const unsigned int /*boundary_id_index*/)
 {
   // The waveguide port excitation would be completely different in 2D as curls
@@ -122,8 +122,8 @@ std::pair<Tensor<1, 3, std::complex<double>>, std::complex<double>>
 TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
   const Point<3>             &p,
   const Tensor<1, 3>         &normal,
-  const std::complex<double> &epsilon_r_eff,
-  const std::complex<double> &mu_r,
+  const std::complex<double> &effective_electric_permittivity,
+  const std::complex<double> &effective_magnetic_permeability,
   const unsigned int          boundary_id_index)
 {
   // Define some constexpr values for the computation
@@ -216,7 +216,9 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
   double k_t2 = n * PI / length_t2;                   // Transverse wavenumber 2
   double k_c  = std::sqrt(k_t1 * k_t1 + k_t2 * k_t2); // Cutoff wavenumber
   std::complex<double> k =
-    omega * std::sqrt(epsilon_r_eff * mu_r); // Wavenumber in the medium
+    omega *
+    std::sqrt(effective_electric_permittivity *
+              effective_magnetic_permeability); // Wavenumber in the medium
   std::complex<double> k_l = std::sqrt(
     k * k - std::complex<double>(k_c * k_c, 0)); // Longitudinal wavenumber
 
@@ -254,7 +256,8 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
 
   if (mode == Parameters::WaveguideMode::TE)
     {
-      std::complex<double> factor = imag * omega * mu_r / (k_c * k_c);
+      std::complex<double> factor =
+        imag * omega * effective_magnetic_permeability / (k_c * k_c);
 
       E_inc_local[0] = -factor * k_t2 *
                        std::cos(k_t1 * (x_local + length_t1 / 2)) *
@@ -275,7 +278,8 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
     }
   else if (mode == Parameters::WaveguideMode::TM)
     {
-      std::complex<double> factor = imag * omega * epsilon_r_eff / (k_c * k_c);
+      std::complex<double> factor =
+        imag * omega * effective_electric_permittivity / (k_c * k_c);
 
       H_inc_local[0] = factor * k_t2 *
                        std::sin(k_t1 * (x_local + length_t1 / 2)) *
@@ -309,8 +313,8 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
   std::complex<double>                 surface_admittance;
 
   surface_admittance = (mode == Parameters::WaveguideMode::TE) ?
-                         k_l / (omega * mu_r) :
-                         omega * epsilon_r_eff / k_l;
+                         k_l / (omega * effective_magnetic_permeability) :
+                         omega * effective_electric_permittivity / k_l;
 
   excitation = parity_factor * cross_product_3d(normal, H_inc) +
                map_H12(surface_admittance * E_inc, normal);
@@ -322,13 +326,13 @@ template <int dim>
 void
 TimeHarmonicMaxwell<dim>::update_material_properties(
   const PhysicalPropertiesManager &properties_manager,
-  std::complex<double>            &epsilon_r_eff,
-  std::complex<double>            &mu_r,
+  std::complex<double>            &effective_electric_permittivity,
+  std::complex<double>            &effective_magnetic_permeability,
   const unsigned int               material_id)
 {
   std::map<field, double>
     field_values; // Empty map since no field dependence for now
-  epsilon_r_eff = {
+  effective_electric_permittivity = {
     properties_manager.get_electric_permittivity_real(0, material_id)
       ->value(field_values),
     properties_manager.get_electric_permittivity_imag(0, material_id)
@@ -336,10 +340,11 @@ TimeHarmonicMaxwell<dim>::update_material_properties(
       properties_manager.get_electric_conductivity(0, material_id)
         ->value(field_values)};
 
-  mu_r = {properties_manager.get_magnetic_permeability_real(0, material_id)
-            ->value(field_values),
-          properties_manager.get_magnetic_permeability_imag(0, material_id)
-            ->value(field_values)};
+  effective_magnetic_permeability = {
+    properties_manager.get_magnetic_permeability_real(0, material_id)
+      ->value(field_values),
+    properties_manager.get_magnetic_permeability_imag(0, material_id)
+      ->value(field_values)};
 }
 
 
@@ -1264,8 +1269,8 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
   // Get properties manager and define model physical properties
   const auto &properties_manager =
     this->simulation_parameters.physical_properties_manager;
-  std::complex<double> epsilon_r_eff;
-  std::complex<double> mu_r;
+  std::complex<double> effective_electric_permittivity;
+  std::complex<double> effective_magnetic_permeability;
   unsigned int         material_id;
 
   /// Excitation properties
@@ -1480,12 +1485,15 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
           // some constants that will be used during the assembly.
           material_id = cell->material_id();
           update_material_properties(properties_manager,
-                                     epsilon_r_eff,
-                                     mu_r,
+                                     effective_electric_permittivity,
+                                     effective_magnetic_permeability,
                                      material_id);
-          const std::complex<double> iwmu_r      = imag * omega * mu_r;
-          const std::complex<double> conj_iwmu_r = std::conj(iwmu_r);
-          const std::complex<double> iweps_r     = imag * omega * epsilon_r_eff;
+          const std::complex<double> iweffective_magnetic_permeability =
+            imag * omega * effective_magnetic_permeability;
+          const std::complex<double> conj_iweffective_magnetic_permeability =
+            std::conj(iweffective_magnetic_permeability);
+          const std::complex<double> iweps_r =
+            imag * omega * effective_electric_permittivity;
           const std::complex<double> conj_iweps_r = std::conj(iweps_r);
 
           // We reinitialize the FEValues objects to the current cell.
@@ -1710,24 +1718,28 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
               for (const auto &[i, j] : G_FI)
                 {
                   G_matrix(i, j) += (((curl_I[j] * iweps_r * F_conj[i]) -
-                                      (conj_iwmu_r * I[j] * curl_F_conj[i])) *
+                                      (conj_iweffective_magnetic_permeability *
+                                       I[j] * curl_F_conj[i])) *
                                      JxW)
                                       .real();
                 }
 
               for (const auto &[i, j] : G_IF)
                 {
-                  G_matrix(i, j) += (((conj_iweps_r * F[j] * curl_I_conj[i]) -
-                                      (curl_F[j] * iwmu_r * I_conj[i])) *
-                                     JxW)
-                                      .real();
+                  G_matrix(i, j) +=
+                    (((conj_iweps_r * F[j] * curl_I_conj[i]) -
+                      (curl_F[j] * iweffective_magnetic_permeability *
+                       I_conj[i])) *
+                     JxW)
+                      .real();
                 }
 
               for (const auto &[i, j] : G_II)
                 {
                   G_matrix(i, j) +=
                     (((I[j] * I_conj[i]) + (curl_I[j] * curl_I_conj[i]) +
-                      (conj_iwmu_r * I[j] * iwmu_r * I_conj[i])) *
+                      (conj_iweffective_magnetic_permeability * I[j] *
+                       iweffective_magnetic_permeability * I_conj[i])) *
                      JxW)
                       .real();
                 }
@@ -1749,7 +1761,9 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
 
               for (const auto &[i, j] : B_IH)
                 {
-                  B_matrix(i, j) -= (iwmu_r * H[j] * I_conj[i] * JxW).real();
+                  B_matrix(i, j) -=
+                    (iweffective_magnetic_permeability * H[j] * I_conj[i] * JxW)
+                      .real();
                 }
 
               for (const auto &i : l_F)
@@ -1999,7 +2013,9 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                   if (bc_type ==
                       BoundaryConditions::BoundaryType::silver_muller)
                     {
-                      boundary_surface_admittance = sqrt(epsilon_r_eff / mu_r);
+                      boundary_surface_admittance =
+                        sqrt(effective_electric_permittivity /
+                             effective_magnetic_permeability);
                       conj_boundary_surface_admittance =
                         std::conj(boundary_surface_admittance);
                       g_inc = 0.;
@@ -2068,11 +2084,12 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
                                           face->boundary_id()));
 
                       std::tie(g_inc, boundary_surface_admittance) =
-                        compute_waveguide_port_excitation(position,
-                                                          normal,
-                                                          epsilon_r_eff,
-                                                          mu_r,
-                                                          boundary_index);
+                        compute_waveguide_port_excitation(
+                          position,
+                          normal,
+                          effective_electric_permittivity,
+                          effective_magnetic_permeability,
+                          boundary_index);
 
                       conj_boundary_surface_admittance =
                         std::conj(boundary_surface_admittance);
@@ -2236,8 +2253,8 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
   // Get properties manager and define model physical properties
   const auto &properties_manager =
     this->simulation_parameters.physical_properties_manager;
-  std::complex<double> epsilon_r_eff;
-  std::complex<double> mu_r;
+  std::complex<double> effective_electric_permittivity;
+  std::complex<double> effective_magnetic_permeability;
   unsigned int         material_id;
 
   /// Excitation properties
@@ -2462,12 +2479,15 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
           // some constants that will be used during the assembly.
           material_id = cell->material_id();
           update_material_properties(properties_manager,
-                                     epsilon_r_eff,
-                                     mu_r,
+                                     effective_electric_permittivity,
+                                     effective_magnetic_permeability,
                                      material_id);
-          const std::complex<double> iwmu_r      = imag * omega * mu_r;
-          const std::complex<double> conj_iwmu_r = std::conj(iwmu_r);
-          const std::complex<double> iweps_r     = imag * omega * epsilon_r_eff;
+          const std::complex<double> iweffective_magnetic_permeability =
+            imag * omega * effective_magnetic_permeability;
+          const std::complex<double> conj_iweffective_magnetic_permeability =
+            std::conj(iweffective_magnetic_permeability);
+          const std::complex<double> iweps_r =
+            imag * omega * effective_electric_permittivity;
           const std::complex<double> conj_iweps_r = std::conj(iweps_r);
 
           // We reinitialize the FEValues objects to the current cell.
@@ -2690,24 +2710,28 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
               for (const auto &[i, j] : G_FI)
                 {
                   G_matrix(i, j) += (((curl_I[j] * iweps_r * F_conj[i]) -
-                                      (conj_iwmu_r * I[j] * curl_F_conj[i])) *
+                                      (conj_iweffective_magnetic_permeability *
+                                       I[j] * curl_F_conj[i])) *
                                      JxW)
                                       .real();
                 }
 
               for (const auto &[i, j] : G_IF)
                 {
-                  G_matrix(i, j) += (((conj_iweps_r * F[j] * curl_I_conj[i]) -
-                                      (curl_F[j] * iwmu_r * I_conj[i])) *
-                                     JxW)
-                                      .real();
+                  G_matrix(i, j) +=
+                    (((conj_iweps_r * F[j] * curl_I_conj[i]) -
+                      (curl_F[j] * iweffective_magnetic_permeability *
+                       I_conj[i])) *
+                     JxW)
+                      .real();
                 }
 
               for (const auto &[i, j] : G_II)
                 {
                   G_matrix(i, j) +=
                     (((I[j] * I_conj[i]) + (curl_I[j] * curl_I_conj[i]) +
-                      (conj_iwmu_r * I[j] * iwmu_r * I_conj[i])) *
+                      (conj_iweffective_magnetic_permeability * I[j] *
+                       iweffective_magnetic_permeability * I_conj[i])) *
                      JxW)
                       .real();
                 }
@@ -2729,7 +2753,9 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
 
               for (const auto &[i, j] : B_IH)
                 {
-                  B_matrix(i, j) -= (iwmu_r * H[j] * I_conj[i] * JxW).real();
+                  B_matrix(i, j) -=
+                    (iweffective_magnetic_permeability * H[j] * I_conj[i] * JxW)
+                      .real();
                 }
 
               for (const auto &i : l_F)
@@ -2979,7 +3005,9 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                   if (bc_type ==
                       BoundaryConditions::BoundaryType::silver_muller)
                     {
-                      boundary_surface_admittance = sqrt(epsilon_r_eff / mu_r);
+                      boundary_surface_admittance =
+                        sqrt(effective_electric_permittivity /
+                             effective_magnetic_permeability);
                       conj_boundary_surface_admittance =
                         std::conj(boundary_surface_admittance);
                       g_inc = 0.;
@@ -3048,11 +3076,12 @@ TimeHarmonicMaxwell<3>::reconstruct_interior_solution()
                                           face->boundary_id()));
 
                       std::tie(g_inc, boundary_surface_admittance) =
-                        compute_waveguide_port_excitation(position,
-                                                          normal,
-                                                          epsilon_r_eff,
-                                                          mu_r,
-                                                          boundary_index);
+                        compute_waveguide_port_excitation(
+                          position,
+                          normal,
+                          effective_electric_permittivity,
+                          effective_magnetic_permeability,
+                          boundary_index);
 
                       conj_boundary_surface_admittance =
                         std::conj(boundary_surface_admittance);

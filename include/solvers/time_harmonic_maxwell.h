@@ -557,8 +557,8 @@ private:
    * @tparam dim Spatial dimension.
    * @param p Input position where to compute the electromagnetic excitation amplitude.
    * @param normal Unit normal vector defining the face orientation of the waveguide port.
-   * @param epsilon_r_eff Effective electric permittivity at the point p.
-   * @param mu_r Effective magnetic permeability at the point p.
+   * @param effective_electric_permittivity Effective electric permittivity at the point p.
+   * @param effective_magnetic_permeability Effective magnetic permeability at the point p.
    * @param boundary_id_index Index to identify to which waveguide port condition we are applying the excitation. The default value is 0, which can be used when there is only one waveguide port defined in the input file.
    * @return The value of the waveguide excitation boundary condition Tensor<1, dim, std::complex<double>> and the surface admittance at the given position in a std::pair format.
    */
@@ -566,8 +566,8 @@ private:
   compute_waveguide_port_excitation(
     const Point<dim>           &p,
     const Tensor<1, dim>       &normal,
-    const std::complex<double> &local_epsilon_r_eff,
-    const std::complex<double> &local_mu_r,
+    const std::complex<double> &local_effective_electric_permittivity,
+    const std::complex<double> &local_effective_magnetic_permeability,
     const unsigned int          boundary_id_index = 0);
 
 
@@ -582,18 +582,20 @@ private:
    *  @param[in] physical_properties_manager The object that manages the
    * physical properties of the problem and provides them at any given position
    * of the domain.
-   *  @param[in,out] epsilon_r_eff Effective electric permittivity at the
-   * current position. This value is updated in place by the function.
-   *  @param[in,out] mu_r Effective magnetic permeability at the current
-   * position. This value is updated in place by the function.
+   *  @param[in,out] effective_electric_permittivity Effective electric
+   * permittivity at the current position. This value is updated in place by the
+   * function.
+   *  @param[in,out] effective_magnetic_permeability Effective magnetic
+   * permeability at the current position. This value is updated in place by the
+   * function.
    *  @param[in] material_id The material id of the current position, used to
    * determine the appropriate material properties from the input parameters.
    */
   void
   update_material_properties(
     const PhysicalPropertiesManager &physical_properties_manager,
-    std::complex<double>            &epsilon_r_eff,
-    std::complex<double>            &mu_r,
+    std::complex<double>            &effective_electric_permittivity,
+    std::complex<double>            &effective_magnetic_permeability,
     const unsigned int               material_id);
 
 
