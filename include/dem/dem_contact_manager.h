@@ -22,7 +22,8 @@ using namespace DEM;
  * the contact detection and updates of data containers.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
- * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
+ * @tparam PropertiesIndex Index of the properties used within the 
+ * ParticleHandler.
  */
 template <int dim, typename PropertiesIndex>
 class DEMContactManager
@@ -386,8 +387,9 @@ private:
 private:
   /**
    * @brief Storage for all precomputed periodic translation vectors.
-   * Initialized to identity (zero offset) for compatibility with non-periodic geometry
-  */
+   * Initialized to identity (zero offset) for compatibility with non-periodic
+   * geometry
+   */
   std::vector<Tensor<1, dim>> combined_offsets{Tensor<1, dim>()};
 };
 

@@ -570,7 +570,8 @@ namespace Parameters
       static void
       declareDefaultEntry(ParameterHandler &prm);
       void
-      parse_boundary_conditions(const ParameterHandler &prm);
+      parse_boundary_conditions(const ParameterHandler &prm,
+                                const unsigned int      i_bc);
 
     private:
       unsigned int DEM_BC_number_max = 10;

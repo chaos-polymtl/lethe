@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_contact_info_h
@@ -27,7 +27,7 @@ struct particle_particle_contact_info
 
   // Store the translation vector that brings particle_two into contact
   // with particle_one (default to zero for non-periodic)
-  Tensor<1, 3>                     periodic_offset;
+  Tensor<1, 3> periodic_offset;
 };
 
 /**

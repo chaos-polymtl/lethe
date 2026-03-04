@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <dem/find_cell_neighbors.h>
@@ -138,7 +138,7 @@ find_cell_periodic_neighbors(
                                          coinciding_vertex_groups,
                                          vertex_to_coinciding_vertex_group);
 
-  // Keep track of cells already processed to avoid redundant corner handling, 
+  // Keep track of cells already processed to avoid redundant corner handling,
   // since periodic_boundaries_cells_information is an unordered_multimap
   std::set<typename Triangulation<dim>::active_cell_iterator> processed_cells;
 
