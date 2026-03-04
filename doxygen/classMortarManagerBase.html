@@ -99,7 +99,7 @@ $(function() {
 <div class="dynheader">
 Inheritance diagram for MortarManagerBase&lt; dim &gt;:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classMortarManagerBase__inherit__graph.svg" width="176" height="139"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classMortarManagerBase__inherit__graph.svg" width="358" height="139"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
@@ -208,9 +208,20 @@ template&lt;int dim2&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00291">291</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p>Mortar manager base constructor used in 2D problems TODO: Combine both 2D and 3D constructors into one. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">n_subdivisions</td><td>Number of cells at the interface between inner and outer domains </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">radius</td><td>Radius at the mortar interface </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">quadrature</td><td>Quadrature for local cell operations </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rotation_angle</td><td>Rotation angle for the inner domain </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p class="reference">References <a class="el" href="mortar__coupling__manager_8h_source.html#l00133">MortarManagerBase&lt; dim &gt;::n_subdivisions</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00424">424</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+
+<p class="reference">References <a class="el" href="mortar__coupling__manager_8h_source.html#l00154">MortarManagerBase&lt; dim &gt;::n_subdivisions</a>.</p>
 
 </div>
 </div>
@@ -256,7 +267,18 @@ template&lt;int dim2&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00304">304</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p>Mortar manager base constructor used in 3D problems TODO: Combine both 2D and 3D constructors into one. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">n_subdivisions</td><td>Number of cells at the interface between inner and outer domains </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">radius</td><td>Vector containing the radius at the mortar interface and the domain length in the direction of the rotation axis </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">quadrature</td><td>Quadrature for local cell operations </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rotation_angle</td><td>Rotation angle for the inner domain </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00437">437</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -325,7 +347,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Point in cartesian coordinates </dd></dl>
 
-<p>Implemented in <a class="el" href="classMortarManagerCircle.html#a3f472445542f7a1837ceab451fb22dee">MortarManagerCircle&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classMortarManagerCircle.html#a3f472445542f7a1837ceab451fb22dee">MortarManagerCircle&lt; dim &gt;</a>, and <a class="el" href="classMortarManagerLinear.html#abc1df7713d73fa4840b54beda0f14d6d">MortarManagerLinear&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
@@ -378,7 +400,7 @@ template&lt;int dim&gt; </div>
 id_in_plane Index of the cell in which lies the rotated cell center </dd>
 <dd>
 id_out_plane Second index of the cell in which lies the rotated cell center.</dd></dl>
-<p>Note that the id_out_plane corresponds to indexes along the rotation axis, and it is necessary only for 3D problems. </p>
+<p>The id_out_plane corresponds to indexes along the rotation axis, and it is necessary only for 3D problems </p>
 
 <p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l00389">389</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
@@ -552,7 +574,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Corresponding outward normal vector </dd></dl>
 
-<p>Implemented in <a class="el" href="classMortarManagerCircle.html#acf76f76ce16a140e187a28a8fa04d51a">MortarManagerCircle&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classMortarManagerLinear.html#aa2950b0bca0996d101e711c665c69b6b">MortarManagerLinear&lt; dim &gt;</a>, and <a class="el" href="classMortarManagerCircle.html#acf76f76ce16a140e187a28a8fa04d51a">MortarManagerCircle&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
@@ -782,7 +804,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Angle (in radians) </dd></dl>
 
-<p>Implemented in <a class="el" href="classMortarManagerCircle.html#a5f53fe21509f1aeb5e1a86f17bb21b9f">MortarManagerCircle&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classMortarManagerCircle.html#a5f53fe21509f1aeb5e1a86f17bb21b9f">MortarManagerCircle&lt; dim &gt;</a>, and <a class="el" href="classMortarManagerLinear.html#a215f88124f26d58d2c970c810c823cfa">MortarManagerLinear&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
@@ -811,7 +833,7 @@ template&lt;int dim&gt; </div>
 
 <p>Number of quadrature points per cell. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00189">189</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00210">210</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -831,7 +853,7 @@ template&lt;int dim&gt; </div>
 
 <p>Number of cells at the interface between inner and outer domains. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00133">133</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00154">154</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -859,7 +881,7 @@ template&lt;int dim&gt; </div>
 
 <p>Mortar quadrature. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00187">187</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00208">208</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -878,7 +900,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Vector containing the radius at the mortar interface and the domain length in the direction of the rotation axis </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00136">136</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00157">157</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -906,7 +928,7 @@ template&lt;int dim&gt; </div>
 
 <p>Rotation angle for the inner domain. </p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00191">191</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00212">212</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>

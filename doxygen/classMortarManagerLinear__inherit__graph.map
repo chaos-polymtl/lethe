@@ -1,5 +1,5 @@
-<map id="MortarManagerCircle&lt; dim &gt;" name="MortarManagerCircle&lt; dim &gt;">
-<area shape="rect" id="Node000001" title="Mortar manager class for circular interface." alt="" coords="9,93,167,133"/>
+<map id="MortarManagerLinear&lt; dim &gt;" name="MortarManagerLinear&lt; dim &gt;">
+<area shape="rect" id="Node000001" title="Mortar manager class for linear interface." alt="" coords="7,93,169,133"/>
 <area shape="rect" id="Node000002" href="$classMortarManagerBase.html" title="Base class for the mortar manager." alt="" coords="5,5,171,45"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="91,59,91,93,85,93,85,59"/>
 </map>

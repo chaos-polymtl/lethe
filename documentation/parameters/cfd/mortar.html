@@ -447,7 +447,8 @@
 <h1>Mortar<a class="headerlink" href="#mortar" title="Link to this heading">#</a></h1>
 <p>The mortar section is used when simulating rotor-stator geometries, in which the rotor mesh is attached to the stator by mortar elements.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mortar
-  set enable = true
+  set enable          = true
+  set interface type  = circular
   subsection mesh
     set type                   = dealii
     set grid type              = subdivided_hyper_rectangle
@@ -470,6 +471,13 @@
   set verbosity           = quiet
 end
 </pre></div>
+</div>
+<ul class="simple">
+<li><p>The available options for the mortar <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">type</span></code> are <code class="docutils literal notranslate"><span class="pre">circular</span></code> and <code class="docutils literal notranslate"><span class="pre">linear</span></code>.</p></li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">linear</span></code> interface type supports only two-dimensional problems. It assumes that the domain is rectangular, and that the mortar interface is parallel to the y axis.</p>
 </div>
 <ul class="simple">
 <li><p>The mesh parameters in the <a class="reference internal" href="mesh.html"><span class="doc">Mesh</span></a> subsection refer to the stator domain. The <code class="docutils literal notranslate"><span class="pre">mesh</span></code> subsection herein mentioned contains the parameters of the rotor domain; nonetheless, the input format is the same as in <a class="reference internal" href="mesh.html"><span class="doc">Mesh</span></a>.</p></li>

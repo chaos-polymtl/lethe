@@ -21,8 +21,9 @@ var searchData=
   ['mortar_18',['Mortar',['../structParameters_1_1Mortar.html',1,'Parameters']]],
   ['mortarmanagerbase_19',['MortarManagerBase',['../classMortarManagerBase.html',1,'']]],
   ['mortarmanagercircle_20',['MortarManagerCircle',['../classMortarManagerCircle.html',1,'']]],
-  ['multiphysics_21',['Multiphysics',['../structParameters_1_1Multiphysics.html',1,'Parameters']]],
-  ['multiphysicsinterface_22',['MultiphysicsInterface',['../classMultiphysicsInterface.html',1,'']]],
-  ['multipleadaptationparameters_23',['MultipleAdaptationParameters',['../structParameters_1_1MultipleAdaptationParameters.html',1,'Parameters']]],
-  ['mydiagonalmatrix_24',['MyDiagonalMatrix',['../classMyDiagonalMatrix.html',1,'']]]
+  ['mortarmanagerlinear_21',['MortarManagerLinear',['../classMortarManagerLinear.html',1,'']]],
+  ['multiphysics_22',['Multiphysics',['../structParameters_1_1Multiphysics.html',1,'Parameters']]],
+  ['multiphysicsinterface_23',['MultiphysicsInterface',['../classMultiphysicsInterface.html',1,'']]],
+  ['multipleadaptationparameters_24',['MultipleAdaptationParameters',['../structParameters_1_1MultipleAdaptationParameters.html',1,'Parameters']]],
+  ['mydiagonalmatrix_25',['MyDiagonalMatrix',['../classMyDiagonalMatrix.html',1,'']]]
 ];

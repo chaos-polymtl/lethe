@@ -90,6 +90,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="structParameters_1_1Mortar-members.html">List of all members</a>  </div>
@@ -99,6 +100,13 @@ $(function() {
 
 <p><code>#include &lt;<a class="el" href="parameters_8h_source.html">parameters.h</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:ad44086027b128bdfa523528aa17807df" id="r_ad44086027b128bdfa523528aa17807df"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Mortar.html#ad44086027b128bdfa523528aa17807df">InterfaceType</a> : std::int8_t { <a class="el" href="structParameters_1_1Mortar.html#ad44086027b128bdfa523528aa17807dfad5a124c9445ae5eeadb48b050b9cff72">circular</a>
+, <a class="el" href="structParameters_1_1Mortar.html#ad44086027b128bdfa523528aa17807dfa9a932b3cb396238423eb2f33ec17d6aa">linear</a>
+ }</td></tr>
+<tr class="separator:ad44086027b128bdfa523528aa17807df"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a1f56c32ef7a5b9c83d87cdfa6a53b88f" id="r_a1f56c32ef7a5b9c83d87cdfa6a53b88f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Mortar.html#a1f56c32ef7a5b9c83d87cdfa6a53b88f">declare_parameters</a> (ParameterHandler &amp;prm)</td></tr>
@@ -110,6 +118,8 @@ Public Member Functions</h2></td></tr>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a06071aca4576cdeab898ae6e7a0744af" id="r_a06071aca4576cdeab898ae6e7a0744af"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Mortar.html#a06071aca4576cdeab898ae6e7a0744af">enable</a></td></tr>
 <tr class="separator:a06071aca4576cdeab898ae6e7a0744af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac5c4e93a8149627f5e4135bebc920c8f" id="r_ac5c4e93a8149627f5e4135bebc920c8f"><td class="memItemLeft" align="right" valign="top">enum <a class="el" href="structParameters_1_1Mortar.html#ad44086027b128bdfa523528aa17807df">Parameters::Mortar::InterfaceType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Mortar.html#ac5c4e93a8149627f5e4135bebc920c8f">interface_type</a></td></tr>
+<tr class="separator:ac5c4e93a8149627f5e4135bebc920c8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac50e0ff932d627dfe1c6c1e5ca8ef4d0" id="r_ac50e0ff932d627dfe1c6c1e5ca8ef4d0"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="structParameters_1_1Mesh.html">Mesh</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Mortar.html#ac50e0ff932d627dfe1c6c1e5ca8ef4d0">rotor_mesh</a></td></tr>
 <tr class="separator:ac50e0ff932d627dfe1c6c1e5ca8ef4d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a50d08d147ecc318dda278724af26910a" id="r_a50d08d147ecc318dda278724af26910a"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Mortar.html#a50d08d147ecc318dda278724af26910a">rotor_boundary_id</a></td></tr>
@@ -138,7 +148,40 @@ Public Attributes</h2></td></tr>
 struct Parameters::Mortar&lt; dim &gt;</div><p><a class="el" href="structParameters_1_1Mortar.html" title="Mortar - Defines parameters used to construct mortar elements.">Mortar</a> - Defines parameters used to construct mortar elements. </p>
 
 <p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01947">1947</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+</div><h2 class="groupheader">Member Enumeration Documentation</h2>
+<a id="ad44086027b128bdfa523528aa17807df" name="ad44086027b128bdfa523528aa17807df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad44086027b128bdfa523528aa17807df">&#9670;&#160;</a></span>InterfaceType</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="structParameters_1_1Mortar.html#ad44086027b128bdfa523528aa17807df">Parameters::Mortar::InterfaceType</a> : std::int8_t</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Type of mortar interface. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ad44086027b128bdfa523528aa17807dfad5a124c9445ae5eeadb48b050b9cff72" name="ad44086027b128bdfa523528aa17807dfad5a124c9445ae5eeadb48b050b9cff72"></a>circular&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="ad44086027b128bdfa523528aa17807dfa9a932b3cb396238423eb2f33ec17d6aa" name="ad44086027b128bdfa523528aa17807dfa9a932b3cb396238423eb2f33ec17d6aa"></a>linear&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01952">1952</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
 <a id="a1f56c32ef7a5b9c83d87cdfa6a53b88f" name="a1f56c32ef7a5b9c83d87cdfa6a53b88f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1f56c32ef7a5b9c83d87cdfa6a53b88f">&#9670;&#160;</a></span>declare_parameters()</h2>
 
@@ -179,7 +222,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l04541">4541</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l04546">4546</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919ae5cbb8171b496f26a4488b9e15a0fe52">Parameters::extra_verbose</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
@@ -202,7 +245,7 @@ template&lt;int dim&gt; </div>
 
 <p>Center of rotation of the rotor domain. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01958">1958</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01964">1964</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -226,6 +269,22 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
+<a id="ac5c4e93a8149627f5e4135bebc920c8f" name="ac5c4e93a8149627f5e4135bebc920c8f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac5c4e93a8149627f5e4135bebc920c8f">&#9670;&#160;</a></span>interface_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="structParameters_1_1Mortar.html#ad44086027b128bdfa523528aa17807df">Parameters::Mortar::InterfaceType</a> <a class="el" href="structParameters_1_1Mortar.html">Parameters::Mortar</a>&lt; dim &gt;::interface_type</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ab1f0aeedf52050e9420a14c5894a094b" name="ab1f0aeedf52050e9420a14c5894a094b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab1f0aeedf52050e9420a14c5894a094b">&#9670;&#160;</a></span>oversampling_factor</h2>
 
@@ -242,7 +301,7 @@ template&lt;int dim&gt; </div>
 
 <p>Oversampling factor for quadrature points. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01968">1968</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01974">1974</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -262,7 +321,7 @@ template&lt;int dim&gt; </div>
 
 <p>Tolerance used for rotor-stator interface radius computation. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01970">1970</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01976">1976</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -282,7 +341,7 @@ template&lt;int dim&gt; </div>
 
 <p>Rotation axis of the rotor domain. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01960">1960</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01966">1966</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -302,7 +361,7 @@ template&lt;int dim&gt; </div>
 
 <p>Angular velocity of the rotor domain. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01964">1964</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01970">1970</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -322,7 +381,7 @@ template&lt;int dim&gt; </div>
 
 <p>Boundary ID # of the rotor at the rotor-stator interface. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01954">1954</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01960">1960</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -342,7 +401,7 @@ template&lt;int dim&gt; </div>
 
 <p><a class="el" href="structParameters_1_1Mesh.html" title="Mesh - Parameters that control mesh reading and mesh generation.">Mesh</a> parameters for the rotor part. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01952">1952</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01958">1958</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -362,7 +421,7 @@ template&lt;int dim&gt; </div>
 
 <p>Rotation angle of the rotor domain in radians. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01962">1962</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01968">1968</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -382,7 +441,7 @@ template&lt;int dim&gt; </div>
 
 <p>Penalty factor for mortar elements. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01966">1966</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01972">1972</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -402,7 +461,7 @@ template&lt;int dim&gt; </div>
 
 <p>Boundary ID # of the stator at the rotor-stator interface. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01956">1956</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01962">1962</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -422,7 +481,7 @@ template&lt;int dim&gt; </div>
 
 <p>Type of verbosity for mortar. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01972">1972</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01978">1978</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
