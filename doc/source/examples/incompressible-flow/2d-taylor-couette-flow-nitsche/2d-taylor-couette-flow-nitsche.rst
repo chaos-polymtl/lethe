@@ -247,7 +247,8 @@ The mesh can be dynamically adapted using Kelly error estimates on the velocity,
 .. code-block:: text
 
     subsection mesh adaptation
-      set type                 = kelly
+      set type                 = adaptive 
+      set error estimator      = kelly
       set variable             = velocity
       set fraction type        = number
       set max number elements  = 500000

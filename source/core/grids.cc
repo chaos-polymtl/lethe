@@ -130,6 +130,13 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
           // Scale, translate, and rotate mesh
           apply_mesh_transformation(mesh_parameters, triangulation);
         }
+
+      // deal.II colorize some meshes material ID in a way that is not
+      // compatible with the way we use material ID and boundary ID in Lethe
+      // (e.g. GridGenerator ::subdivided_hyper_rectangle). Therefore, we reset
+      // all material IDs to zero for dealii meshes.
+      for (const auto &cell : triangulation.active_cell_iterators())
+        cell->set_material_id(0);
     }
 
   else if (mesh_parameters.type == Parameters::Mesh::Type::lethe)

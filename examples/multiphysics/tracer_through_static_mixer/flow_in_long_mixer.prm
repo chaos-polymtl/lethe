@@ -64,7 +64,8 @@ subsection mesh
 end
 
 subsection mesh adaptation
-  set type                 = kelly
+  set type                 = adaptive
+  set error estimator      = kelly
   set fraction type        = number
   set max number elements  = 2000000
   set max refinement level = 5

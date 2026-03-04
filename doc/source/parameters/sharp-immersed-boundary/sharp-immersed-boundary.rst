@@ -141,7 +141,7 @@ This subsection contains the parameters related to the sharp immersed boundary s
 	    :align: center
 
     .. warning::
-	    The ``mesh adaptation type`` must be ``kelly`` to use the near-particle refinement around particles; otherwise, no near-particle refinement will happen. See :doc:`../cfd/mesh_adaptation_control` for more details on adaptative mesh refinement.
+	    The mesh adaptation ``type`` must be ``adaptive`` with the error estimator set to ``kelly`` to use the near-particle refinement around particles; otherwise, no near-particle refinement will happen. See :doc:`../cfd/mesh_adaptation_control` for more details on adaptative mesh refinement.
 
     .. note::
 	    The refined cells are all those for which at least one of the degrees of freedom (dof) location satisfies both the ``refine mesh inside radius factor`` and the ``refine mesh outside radius factor`` thresholds. Each cycle of refinement reduces the length of the elements by a factor two.

@@ -156,8 +156,9 @@ subsection mesh adaptation
   set max refinement level = 5
   # minimum refinement level
   set min refinement level = 0
-  # Type of mesh adaptationChoices are <none|uniform|kelly>.
-  set type = kelly
+  # Type of mesh adaptation. Choices are <none|uniform|adaptive>.
+  set type            = adaptive
+  set error estimator = kelly
   # Variable for kelly estimationChoices are <velocity|pressure>.
   set variable = velocity
 end

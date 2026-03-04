@@ -206,7 +206,7 @@ subsection mesh adaptation
   # Maximum number of elements
   set max number elements = 100000
 
-  # Type of mesh adaptationChoices are <none|uniform|kelly>.
+  # Type of mesh adaptation. Choices are <none|uniform|adaptive>.
   set type = none
 
   # Variable for kelly estimationChoices are <velocity|pressure>.

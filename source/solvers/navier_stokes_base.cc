@@ -787,8 +787,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh()
   if (refinement_step)
     {
       if (this->simulation_parameters.mesh_adaptation.type ==
-          Parameters::MeshAdaptation::Type::kelly)
-        refine_mesh_kelly();
+          Parameters::MeshAdaptation::Type::adaptive)
+        refine_mesh_adaptive();
 
       else if (this->simulation_parameters.mesh_adaptation.type ==
                Parameters::MeshAdaptation::Type::uniform)
@@ -958,8 +958,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
                       << std::endl;
 
 
-          Vector<float> estimated_error_per_cell(tria.n_active_cells());
-          auto         &present_solution = *this->present_solution;
+          auto &present_solution = *this->present_solution;
 
           const auto &cell_iterator =
             box_to_refine_dof_handler.active_cell_iterators();
@@ -1047,7 +1046,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
+NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_adaptive()
 {
   if (dynamic_cast<parallel::distributed::Triangulation<dim> *>(
         this->triangulation.get()) == nullptr)
@@ -1091,6 +1090,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   for (const std::pair<const Variable, Parameters::MultipleAdaptationParameters>
          &ivar : this->simulation_parameters.mesh_adaptation.variables)
     {
+      Parameters::MultipleAdaptationParameters::ErrorEstimator
+             error_indicator_type   = ivar.second.error_estimator;
       double ivar_coarsening_factor = ivar.second.coarsening_fraction;
       if (this->simulation_parameters.mesh_adaptation
             .mesh_controller_is_enabled)
@@ -1098,6 +1099,13 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
 
       if (ivar.first == Variable::pressure)
         {
+          AssertThrow(
+            error_indicator_type ==
+              Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly,
+            ExcMessage(
+              "For the pressure variable, only the Kelly error estimator is "
+              "available."));
+
           KellyErrorEstimator<dim>::estimate(
             *this->get_mapping(),
             *this->dof_handler,
@@ -1110,6 +1118,13 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
         }
       else if (ivar.first == Variable::velocity)
         {
+          AssertThrow(
+            error_indicator_type ==
+              Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly,
+            ExcMessage(
+              "For the velocity variable, only the Kelly error estimator is "
+              "available."));
+
           KellyErrorEstimator<dim>::estimate(
             *this->get_mapping(),
             *this->dof_handler,
@@ -1123,7 +1138,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
       else
         {
           // refine_mesh on an auxiliary physic parameter
-          multiphysics->compute_kelly(ivar, estimated_error_per_cell);
+          multiphysics->compute_error_estimate(ivar, estimated_error_per_cell);
         }
 
       if (this->simulation_parameters.mesh_adaptation.fractionType ==

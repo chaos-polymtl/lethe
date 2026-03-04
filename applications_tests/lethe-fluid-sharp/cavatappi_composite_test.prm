@@ -120,7 +120,8 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set type = kelly
+  set type            = adaptive
+  set error estimator = kelly
 end
 
 #---------------------------------------------------

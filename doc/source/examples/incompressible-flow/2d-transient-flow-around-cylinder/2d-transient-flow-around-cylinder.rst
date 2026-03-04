@@ -95,7 +95,8 @@ While the discretization in the wake of the cylinder has less impact on the forc
 .. code-block:: text
 
     subsection mesh adaptation
-      set type                 = kelly
+      set type                 = adaptive 
+      set error estimator      = kelly
       set variable             = pressure
       set fraction type        = number
       set max number elements  = 70000

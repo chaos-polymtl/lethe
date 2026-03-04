@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The p-refinement in the multigrid preconditioner was not working with the mortar feature. When calling the function `compute_n_subdivisions_and_radius` to rotate the mapping at each level, the level triangulation was being passed as argument. This was not compatible with the p-refinement structure, since no new triangulation is created for levels with the same refinement but different p order. This PR fixes this by computing the `interface_radius` outside the levels loop, which is suitable because such variable is the same for all levels. [#1927](https://github.com/chaos-polymtl/lethe/pull/1927)
 
+### Fixed
+
+- MAJOR This refactoring changes the way the h-adaptivity is decided for the .prm by changing the `kelly` `type` to `adaptive` and adding a new parameter in the mesh adaptation subsection : `error estimator`. This new parameter follow the same logic as the variable parameter and therefore enable the use of different types of error estimators for different physics. This refactor was necessary for the Time-harmonic Maxwell solver that has a DPG built-in error indicator. This new error indicator is also introduced in the PR along with h-adaptivity for the time-harmonic auxiliary physics. Note that I also needed to change the type of element from FE_NedelecSZ to FE_Nedelec, because there is a bug with the SZ version when using multiple core in deal.ii library currently.[#1922](https://github.com/chaos-polymtl/lethe/pull/1922)
+
 ## [Master] - 2026/03/03
 
 ### Added

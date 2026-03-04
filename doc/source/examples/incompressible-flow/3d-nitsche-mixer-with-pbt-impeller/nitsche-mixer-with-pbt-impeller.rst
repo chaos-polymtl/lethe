@@ -259,7 +259,8 @@ We use :doc:`../../../parameters/cfd/mesh_adaptation_control` on the fluid veloc
 .. code-block:: text
 
     subsection mesh adaptation
-      set type                 = kelly
+      set type                 = adaptive 
+      set error estimator      = kelly
       set variable             = velocity
       set fraction type        = fraction
       set max number elements  = 1200000

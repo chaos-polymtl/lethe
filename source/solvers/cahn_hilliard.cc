@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -910,36 +910,53 @@ CahnHilliard<dim>::post_mesh_adaptation()
 
 template <int dim>
 void
-CahnHilliard<dim>::compute_kelly(
+CahnHilliard<dim>::compute_error_estimate(
   const std::pair<const Variable, Parameters::MultipleAdaptationParameters>
                         &ivar,
   dealii::Vector<float> &estimated_error_per_cell)
 {
-  const FEValuesExtractors::Scalar phase_order(0);
-  const FEValuesExtractors::Scalar chemical_potential(1);
-
   if (ivar.first == Variable::phase_cahn_hilliard)
     {
-      KellyErrorEstimator<dim>::estimate(
-        *this->mapping,
-        *this->dof_handler,
-        *this->face_quadrature,
-        typename std::map<types::boundary_id, const Function<dim, double> *>(),
-        *present_solution,
-        estimated_error_per_cell,
-        this->fe->component_mask(phase_order));
+      AssertThrow(
+        ivar.second.error_estimator ==
+          Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly,
+        ExcMessage(
+          "Only the Kelly error estimator is currently implemented for the "
+          "<phase_cahn-hilliard> field."));
+
+      ComponentMask phase_mask =
+        fe->component_mask(FEValuesExtractors::Scalar(0));
+      compute_kelly(estimated_error_per_cell, phase_mask);
     }
   else if (ivar.first == Variable::chemical_potential_cahn_hilliard)
     {
-      KellyErrorEstimator<dim>::estimate(
-        *this->mapping,
-        *this->dof_handler,
-        *this->face_quadrature,
-        typename std::map<types::boundary_id, const Function<dim, double> *>(),
-        *present_solution,
-        estimated_error_per_cell,
-        this->fe->component_mask(chemical_potential));
+      AssertThrow(
+        ivar.second.error_estimator ==
+          Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly,
+        ExcMessage(
+          "Only the Kelly error estimator is currently implemented for the "
+          "<chemical_potential_cahn-hilliard> field."));
+      ComponentMask chemical_potential_mask =
+        fe->component_mask(FEValuesExtractors::Scalar(1));
+      compute_kelly(estimated_error_per_cell, chemical_potential_mask);
     }
+}
+
+
+template <int dim>
+void
+CahnHilliard<dim>::compute_kelly(
+  dealii::Vector<float> &estimated_error_per_cell,
+  const ComponentMask   &component_mask)
+{
+  KellyErrorEstimator<dim>::estimate(
+    *this->mapping,
+    *this->dof_handler,
+    *this->face_quadrature,
+    typename std::map<types::boundary_id, const Function<dim, double> *>(),
+    *present_solution,
+    estimated_error_per_cell,
+    component_mask);
 }
 
 template <int dim>

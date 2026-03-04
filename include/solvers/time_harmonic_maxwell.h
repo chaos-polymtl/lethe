@@ -25,7 +25,7 @@
 #include <deal.II/dofs/dof_renumbering.h>
 
 #include <deal.II/fe/fe_dgq.h>
-#include <deal.II/fe/fe_nedelec_sz.h>
+#include <deal.II/fe/fe_nedelec.h>
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/fe_values.h>
 
@@ -41,6 +41,7 @@
 #include <deal.II/lac/trilinos_vector.h>
 
 #include <deal.II/numerics/data_out.h>
+#include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/vector_tools.h>
 
 #include <memory.h>
@@ -80,8 +81,8 @@
 ///   [ ] write_checkpoint
 ///   [ ] read_checkpoint
 ///   [ ] gather_tables()
-///   [ ] compute_kelly
-///   [ ] compute_energy_norm
+///   [x] compute_kelly
+///   [x] compute_dpg_error
 ///   [x] Setup_dofs
 ///   [x] set_initial_conditions
 ///   [x] setup_preconditioner
@@ -111,7 +112,7 @@
 ///   [x] Permittivity
 ///   [x] Permeability
 /// [X] FEM section for DPG
-/// [ ] Mesh adaptation
+/// [x] Mesh adaptation
 
 using VectorType = GlobalVectorType;
 
@@ -246,29 +247,46 @@ public:
   gather_tables() override;
 
   /**
-   * @brief Compute the Kelly error estimator used to refine mesh on an auxiliary physics parameter.
+   * @brief Compute the error estimator selected in the parameters for adaptive mesh refinement.
    *
-   * @param ivar The current element of the map simulation_parameters.mesh_adaptation.variables
+   * @param[in] ivar The current element of the map
+   * simulation_parameters.mesh_adaptation.variables
    *
-   * @param estimated_error_per_cell The deal.II vector of estimated_error_per_cell
+   * @param[in,out] estimated_error_per_cell The deal.II vector of
+   * estimated_error_per_cell
    */
-  virtual void
-  compute_kelly(const std::pair<const Variable,
-                                Parameters::MultipleAdaptationParameters> &ivar,
-                dealii::Vector<float> &estimated_error_per_cell) override;
+  void
+  compute_error_estimate(
+    const std::pair<const Variable, Parameters::MultipleAdaptationParameters>
+                          &ivar,
+    dealii::Vector<float> &estimated_error_per_cell) override;
+
+  /**
+   * @brief Compute the Kelly error estimator on the electromanetic variable for mesh refinement.
+   * See :
+   * https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html
+   * for more information on the Kelly error estimator.
+   *
+   * @param[in,out] estimated_error_per_cell The deal.II vector of
+   * estimated_error_per_cell
+   * @param[in] component_mask The component mask corresponding to the
+   * electromagnetic variable
+   */
+  void
+  compute_kelly(dealii::Vector<float> &estimated_error_per_cell,
+                const ComponentMask   &component_mask);
 
   /**
    * @brief Compute the DPG error estimator based on the energy norm residual used to refine mesh of the TimeHarmonicMaxwell physics.
    *
-   * @param ivar The current element of the map simulation_parameters.mesh_adaptation.variables
+   * @param[in] ivar The current element of the map
+   * simulation_parameters.mesh_adaptation.variables
    *
-   * @param estimated_error_per_cell The deal.II vector of estimated_error_per_cell
+   * @param[in,out] estimated_error_per_cell The deal.II vector of
+   * estimated_error_per_cell
    */
   virtual void
-  compute_energy_norm(
-    const std::pair<const Variable, Parameters::MultipleAdaptationParameters>
-                          &ivar,
-    dealii::Vector<float> &estimated_error_per_cell);
+  compute_dpg_error(dealii::Vector<float> &estimated_error_per_cell);
 
   /**
    * @brief Sets up the DofHandler and the degree of freedom associated with the physics.
@@ -539,8 +557,8 @@ private:
    * @tparam dim Spatial dimension.
    * @param p Input position where to compute the electromagnetic excitation amplitude.
    * @param normal Unit normal vector defining the face orientation of the waveguide port.
-   * @param epsilon_r_eff Effective electric permittivity at the point p.
-   * @param mu_r Effective magnetic permeability at the point p.
+   * @param effective_electric_permittivity Effective electric permittivity at the point p.
+   * @param effective_magnetic_permeability Effective magnetic permeability at the point p.
    * @param boundary_id_index Index to identify to which waveguide port condition we are applying the excitation. The default value is 0, which can be used when there is only one waveguide port defined in the input file.
    * @return The value of the waveguide excitation boundary condition Tensor<1, dim, std::complex<double>> and the surface admittance at the given position in a std::pair format.
    */
@@ -548,9 +566,38 @@ private:
   compute_waveguide_port_excitation(
     const Point<dim>           &p,
     const Tensor<1, dim>       &normal,
-    const std::complex<double> &local_epsilon_r_eff,
-    const std::complex<double> &local_mu_r,
+    const std::complex<double> &local_effective_electric_permittivity,
+    const std::complex<double> &local_effective_magnetic_permeability,
     const unsigned int          boundary_id_index = 0);
+
+
+  /**
+   * @brief Update the material properties during the assembly of the system matrix.
+   * @note The time-harmonic Maxwell equations do not support multiple
+   * fluids so the fluid_id is not necessary to determine the material
+   * properties. The material properties only depend on the material_id, which
+   * is used to identify the different materials in the input file and assign
+   * them their corresponding properties.
+   *
+   *  @param[in] physical_properties_manager The object that manages the
+   * physical properties of the problem and provides them at any given position
+   * of the domain.
+   *  @param[in,out] effective_electric_permittivity Effective electric
+   * permittivity at the current position. This value is updated in place by the
+   * function.
+   *  @param[in,out] effective_magnetic_permeability Effective magnetic
+   * permeability at the current position. This value is updated in place by the
+   * function.
+   *  @param[in] material_id The material id of the current position, used to
+   * determine the appropriate material properties from the input parameters.
+   */
+  void
+  update_material_properties(
+    const PhysicalPropertiesManager &physical_properties_manager,
+    std::complex<double>            &effective_electric_permittivity,
+    std::complex<double>            &effective_magnetic_permeability,
+    const unsigned int               material_id);
+
 
   /**
    * @brief Pointer to the multiphysics interface that manages the coupling
@@ -706,6 +753,11 @@ private:
    * @brief A vector containing all the values of the DPG built-in a-posteriori error indicator.
    */
   std::shared_ptr<GlobalVectorType> present_DPG_error_indicator;
+
+  /**
+   * @brief A vector containing the values of the dpg error estimator for each cell of the triangulation. This is used for mesh adaptation based on the DPG error estimator.
+   */
+  Vector<float> local_estimated_error_per_cell;
 
   /**
    * @brief The right hand side vector.

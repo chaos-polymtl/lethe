@@ -3314,9 +3314,16 @@ namespace Parameters
 
       prm.declare_entry("type",
                         "none",
-                        Patterns::Selection("none|uniform|kelly"),
+                        Patterns::Selection("none|uniform|adaptive"),
                         "Type of mesh adaptation"
-                        "Choices are <none|uniform|kelly>.");
+                        "Choices are <none|uniform|adaptive>.");
+
+      prm.declare_entry(
+        "error estimator",
+        "kelly",
+        Patterns::List(Patterns::Selection("kelly|dpg")),
+        "Error estimator for adaptive mesh refinement. For multi-variables refinement, separate the different strategies with a comma. They should follow the same order as what is specified in the variable parameter."
+        "Choices are <kelly|dpg>.");
 
       prm.declare_entry(
         "fraction refinement",
@@ -3338,9 +3345,9 @@ namespace Parameters
         "variable",
         "velocity",
         Patterns::List(Patterns::Selection(
-          "velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer")),
-        "Variable(s) for kelly estimation"
-        "Choices are <velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer>."
+          "velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer|electric field|magnetic field|electromagnetic fields")),
+        "Variable(s) for error estimation"
+        "Choices are <velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer|electric field|magnetic field|electromagnetic_fields>."
         "For multi-variables refinement, separate the different variables with a comma "
         "(ex/ 'set variables = velocity,temperature')");
 
@@ -3394,14 +3401,20 @@ namespace Parameters
       const std::string op = prm.get("type");
       if (op == "none")
         type = Type::none;
-      if (op == "uniform")
+      else if (op == "uniform")
         type = Type::uniform;
-      if (op == "kelly")
-        type = Type::kelly;
+      else if (op == "adaptive")
+        type = Type::adaptive;
+      else
+        throw std::logic_error(
+          "Error, invalid mesh adaptation type. Choices are <none|uniform|adaptive>.");
 
       // Getting multivariables refinement parameters
-      const std::string        var_op   = prm.get("variable");
-      std::vector<std::string> var_vec  = Utilities::split_string_list(var_op);
+      const std::string        var_op  = prm.get("variable");
+      std::vector<std::string> var_vec = Utilities::split_string_list(var_op);
+      const std::string        strategy_op = prm.get("error estimator");
+      std::vector<std::string> strategy_vec =
+        Utilities::split_string_list(strategy_op);
       const std::string        coars_op = prm.get("fraction coarsening");
       std::vector<std::string> coars_vec =
         Utilities::split_string_list(coars_op);
@@ -3410,6 +3423,10 @@ namespace Parameters
         Utilities::split_string_list(refin_op);
 
       // Checking that the sizes are coherent
+      Assert(strategy_vec.size() == var_vec.size(),
+             MultipleAdaptationSizeError("error estimator",
+                                         strategy_vec.size(),
+                                         var_vec.size()));
       Assert(coars_vec.size() == var_vec.size(),
              MultipleAdaptationSizeError("fraction coarsening",
                                          coars_vec.size(),
@@ -3437,9 +3454,26 @@ namespace Parameters
             vars = Variable::chemical_potential_cahn_hilliard;
           else if (var_vec[i] == "tracer")
             vars = Variable::tracer;
+          else if (var_vec[i] == "electric field")
+            vars = Variable::electric_field;
+          else if (var_vec[i] == "magnetic field")
+            vars = Variable::magnetic_field;
+          else if (var_vec[i] == "electromagnetic fields")
+            vars = Variable::electromagnetic_fields;
           else
             throw std::logic_error(
-              "Error, invalid mesh adaptation variable. Choices are velocity, pressure, phase, temperature, phase_cahn_hilliard, chemical_potential_cahn_hilliard or tracer");
+              "Error, invalid mesh adaptation variable. Choices are velocity, pressure, phase, temperature, phase_cahn_hilliard, chemical_potential_cahn_hilliard, electric field, magnetic field or electromagnetic fields. Note that <electric field> or <magnetic field> and <electromagnetic fields> are mutually exclusive.");
+
+          // Parsing strategy for this variable
+          if (strategy_vec[i] == "kelly")
+            var_adaptation_param.error_estimator =
+              MultipleAdaptationParameters::ErrorEstimator::kelly;
+          else if (strategy_vec[i] == "dpg")
+            var_adaptation_param.error_estimator =
+              MultipleAdaptationParameters::ErrorEstimator::dpg;
+          else
+            throw std::logic_error(
+              "Error, invalid mesh adaptation error estimator. Choices are kelly or dpg");
 
           var_adaptation_param.coarsening_fraction = std::stod(coars_vec[i]);
           var_adaptation_param.refinement_fraction = std::stod(refin_vec[i]);
@@ -3447,6 +3481,22 @@ namespace Parameters
           // defining adaptation map for this variable
           variables[vars] = var_adaptation_param;
         }
+      // Verify that the user did not specify both electric_field or
+      // magnetic_field with electromagnetic_fields
+      const bool has_em =
+        variables.find(Variable::electromagnetic_fields) != variables.end();
+
+      const bool has_e =
+        variables.find(Variable::electric_field) != variables.end();
+
+      const bool has_h =
+        variables.find(Variable::magnetic_field) != variables.end();
+
+      AssertThrow(!(has_em && (has_e || has_h)),
+                  ExcMessage(
+                    "Invalid mesh adaptation configuration: "
+                    "electromagnetic_fields is mutually exclusive with "
+                    "electric_field and magnetic_field."));
 
       const std::string fop = prm.get("fraction type");
       if (fop == "number")

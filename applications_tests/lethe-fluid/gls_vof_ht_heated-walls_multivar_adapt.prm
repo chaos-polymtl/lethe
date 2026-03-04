@@ -160,7 +160,8 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set type                     = kelly
+  set type                     = adaptive
+  set error estimator          = kelly, kelly
   set initial refinement steps = 1
   set variable                 = temperature,phase
   set fraction type            = fraction

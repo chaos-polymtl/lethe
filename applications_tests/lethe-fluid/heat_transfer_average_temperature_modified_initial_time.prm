@@ -73,9 +73,10 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set type      = kelly
-  set variable  = temperature
-  set frequency = 2
+  set type            = adaptive
+  set error estimator = kelly
+  set variable        = temperature
+  set frequency       = 2
 end
 
 #---------------------------------------------------

@@ -228,12 +228,13 @@ The simulation is solved at steady-state with 2 mesh adaptations.
 Mesh Adaptation
 ~~~~~~~~~~~~~~~
 
-To generate an additional refinement zone around the immersed boundary, the ``mesh adaptation`` ``type`` must be set to ``kelly``. During both of the mesh refinement steps, :math:`40\%` of the cells with be split in :math:`8` (``fraction refinement = 0.4``) using a velocity-gradient Kelly operator.
+To generate an additional refinement zone around the immersed boundary, the mesh adaptation ``type`` must be set to ``adaptive``. During both of the mesh refinement steps, :math:`40\%` of the cells with be split in :math:`8` (``fraction refinement = 0.4``) using a velocity-gradient Kelly operator.
 
 .. code-block:: text
 
     subsection mesh adaptation
-      set type                 = kelly
+      set type                 = adaptive 
+      set error estimator      = kelly
       set fraction coarsening  = 0.1
       set fraction refinement  = 0.4
       set fraction type        = number
