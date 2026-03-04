@@ -136,8 +136,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:adac10018ee53525cce69597ea7778a04"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a905b7c8067a996b4cb42522610f12ae3" id="r_a905b7c8067a996b4cb42522610f12ae3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVolumeOfFluid.html#a905b7c8067a996b4cb42522610f12ae3">post_mesh_adaptation</a> () override</td></tr>
 <tr class="separator:a905b7c8067a996b4cb42522610f12ae3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad4bf3d39a169ad2406ddabed0d2a63bf" id="r_ad4bf3d39a169ad2406ddabed0d2a63bf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVolumeOfFluid.html#ad4bf3d39a169ad2406ddabed0d2a63bf">compute_kelly</a> (const std::pair&lt; const <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdd">Variable</a>, <a class="el" href="structParameters_1_1MultipleAdaptationParameters.html">Parameters::MultipleAdaptationParameters</a> &gt; &amp;ivar, dealii::Vector&lt; float &gt; &amp;estimated_error_per_cell) override</td></tr>
-<tr class="separator:ad4bf3d39a169ad2406ddabed0d2a63bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab1a7daf16634ec039bfab931e5d2b4d7" id="r_ab1a7daf16634ec039bfab931e5d2b4d7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVolumeOfFluid.html#ab1a7daf16634ec039bfab931e5d2b4d7">compute_error_estimate</a> (const std::pair&lt; const <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdd">Variable</a>, <a class="el" href="structParameters_1_1MultipleAdaptationParameters.html">Parameters::MultipleAdaptationParameters</a> &gt; &amp;ivar, dealii::Vector&lt; float &gt; &amp;estimated_error_per_cell) override</td></tr>
+<tr class="separator:ab1a7daf16634ec039bfab931e5d2b4d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a693aaf962820bd6f464093195d7a2c28" id="r_a693aaf962820bd6f464093195d7a2c28"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVolumeOfFluid.html#a693aaf962820bd6f464093195d7a2c28">compute_kelly</a> (dealii::Vector&lt; float &gt; &amp;estimated_error_per_cell, const ComponentMask &amp;component_mask)</td></tr>
+<tr class="separator:a693aaf962820bd6f464093195d7a2c28"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae4e1fd51b66f71b532cc5d5db30788f9" id="r_ae4e1fd51b66f71b532cc5d5db30788f9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVolumeOfFluid.html#ae4e1fd51b66f71b532cc5d5db30788f9">write_checkpoint</a> () override</td></tr>
 <tr class="separator:ae4e1fd51b66f71b532cc5d5db30788f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a188df7785423f0182e5f1882426dfc71" id="r_a188df7785423f0182e5f1882426dfc71"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVolumeOfFluid.html#a188df7785423f0182e5f1882426dfc71">read_checkpoint</a> () override</td></tr>
@@ -424,7 +426,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l00021">21</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="vof_8h_source.html#l00760">VolumeOfFluid&lt; dim &gt;::cell_quadrature</a>, <a class="el" href="vof_8h_source.html#l00747">VolumeOfFluid&lt; dim &gt;::computing_timer</a>, <a class="el" href="vof_8h_source.html#l00761">VolumeOfFluid&lt; dim &gt;::face_quadrature</a>, <a class="el" href="vof_8h_source.html#l00755">VolumeOfFluid&lt; dim &gt;::fe</a>, <a class="el" href="vof_8h_source.html#l00776">VolumeOfFluid&lt; dim &gt;::filtered_solution</a>, <a class="el" href="namespaceParameters.html#a4b8b20935ce059c0194e32df6a2c76e7a65a383f3960a0cb2b8b0ace54817d575">Parameters::geometric</a>, <a class="el" href="vof_8h_source.html#l00759">VolumeOfFluid&lt; dim &gt;::mapping</a>, <a class="el" href="bdf_8h_source.html#l00084">maximum_number_of_previous_solutions()</a>, <a class="el" href="signed__distance__transformation_8cc_source.html#l00007">SignedDistanceTransformationBase::model_cast()</a>, <a class="el" href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::Timer::none</a>, <a class="el" href="namespaceParameters.html#a4b8b20935ce059c0194e32df6a2c76e7a334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::none</a>, <a class="el" href="physics__solver_8h_source.html#l00157">PhysicsSolver&lt; VectorType &gt;::pcout</a>, <a class="el" href="vof_8h_source.html#l00770">VolumeOfFluid&lt; dim &gt;::present_solution</a>, <a class="el" href="vof_8h_source.html#l00783">VolumeOfFluid&lt; dim &gt;::previous_solutions</a>, <a class="el" href="vof_8h_source.html#l00788">VolumeOfFluid&lt; dim &gt;::previous_solutions_transfer</a>, <a class="el" href="vof_8h_source.html#l00828">VolumeOfFluid&lt; dim &gt;::signed_distance_solver</a>, <a class="el" href="vof_8h_source.html#l00832">VolumeOfFluid&lt; dim &gt;::signed_distance_transformation</a>, <a class="el" href="vof_8h_source.html#l00753">VolumeOfFluid&lt; dim &gt;::simulation_control</a>, <a class="el" href="vof_8h_source.html#l00749">VolumeOfFluid&lt; dim &gt;::simulation_parameters</a>, <a class="el" href="vof_8h_source.html#l00786">VolumeOfFluid&lt; dim &gt;::solution_transfer</a>, <a class="el" href="vof_8h_source.html#l00752">VolumeOfFluid&lt; dim &gt;::triangulation</a>, and <a class="el" href="vof_8h_source.html#l00799">VolumeOfFluid&lt; dim &gt;::vof_subequations_interface</a>.</p>
+<p class="reference">References <a class="el" href="vof_8h_source.html#l00776">VolumeOfFluid&lt; dim &gt;::cell_quadrature</a>, <a class="el" href="vof_8h_source.html#l00763">VolumeOfFluid&lt; dim &gt;::computing_timer</a>, <a class="el" href="vof_8h_source.html#l00777">VolumeOfFluid&lt; dim &gt;::face_quadrature</a>, <a class="el" href="vof_8h_source.html#l00771">VolumeOfFluid&lt; dim &gt;::fe</a>, <a class="el" href="vof_8h_source.html#l00792">VolumeOfFluid&lt; dim &gt;::filtered_solution</a>, <a class="el" href="namespaceParameters.html#a4b8b20935ce059c0194e32df6a2c76e7a65a383f3960a0cb2b8b0ace54817d575">Parameters::geometric</a>, <a class="el" href="vof_8h_source.html#l00775">VolumeOfFluid&lt; dim &gt;::mapping</a>, <a class="el" href="bdf_8h_source.html#l00084">maximum_number_of_previous_solutions()</a>, <a class="el" href="signed__distance__transformation_8cc_source.html#l00007">SignedDistanceTransformationBase::model_cast()</a>, <a class="el" href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::Timer::none</a>, <a class="el" href="namespaceParameters.html#a4b8b20935ce059c0194e32df6a2c76e7a334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::none</a>, <a class="el" href="physics__solver_8h_source.html#l00157">PhysicsSolver&lt; VectorType &gt;::pcout</a>, <a class="el" href="vof_8h_source.html#l00786">VolumeOfFluid&lt; dim &gt;::present_solution</a>, <a class="el" href="vof_8h_source.html#l00799">VolumeOfFluid&lt; dim &gt;::previous_solutions</a>, <a class="el" href="vof_8h_source.html#l00804">VolumeOfFluid&lt; dim &gt;::previous_solutions_transfer</a>, <a class="el" href="vof_8h_source.html#l00844">VolumeOfFluid&lt; dim &gt;::signed_distance_solver</a>, <a class="el" href="vof_8h_source.html#l00848">VolumeOfFluid&lt; dim &gt;::signed_distance_transformation</a>, <a class="el" href="vof_8h_source.html#l00769">VolumeOfFluid&lt; dim &gt;::simulation_control</a>, <a class="el" href="vof_8h_source.html#l00765">VolumeOfFluid&lt; dim &gt;::simulation_parameters</a>, <a class="el" href="vof_8h_source.html#l00802">VolumeOfFluid&lt; dim &gt;::solution_transfer</a>, <a class="el" href="vof_8h_source.html#l00768">VolumeOfFluid&lt; dim &gt;::triangulation</a>, and <a class="el" href="vof_8h_source.html#l00815">VolumeOfFluid&lt; dim &gt;::vof_subequations_interface</a>.</p>
 
 </div>
 </div>
@@ -503,7 +505,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l03164">3164</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l03181">3181</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="vof__filter_8cc_source.html#l00007">VolumeOfFluidFilterBase::model_cast()</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
@@ -559,7 +561,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02969">2969</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02986">2986</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
 </div>
 </div>
@@ -714,7 +716,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l03129">3129</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l03146">3146</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
 </div>
 </div>
@@ -1255,8 +1257,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="ad4bf3d39a169ad2406ddabed0d2a63bf" name="ad4bf3d39a169ad2406ddabed0d2a63bf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad4bf3d39a169ad2406ddabed0d2a63bf">&#9670;&#160;</a></span>compute_kelly()</h2>
+<a id="ab1a7daf16634ec039bfab931e5d2b4d7" name="ab1a7daf16634ec039bfab931e5d2b4d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab1a7daf16634ec039bfab931e5d2b4d7">&#9670;&#160;</a></span>compute_error_estimate()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1267,7 +1269,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classVolumeOfFluid.html">VolumeOfFluid</a>&lt; dim &gt;::compute_kelly </td>
+          <td class="memname">void <a class="el" href="classVolumeOfFluid.html">VolumeOfFluid</a>&lt; dim &gt;::compute_error_estimate </td>
           <td>(</td>
           <td class="paramtype">const std::pair&lt; const <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdd">Variable</a>, <a class="el" href="structParameters_1_1MultipleAdaptationParameters.html">Parameters::MultipleAdaptationParameters</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>ivar</em>, </td>
@@ -1291,20 +1293,61 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Compute the Kelly error estimator on the phase parameter for mesh refinement. See : <a href="https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html">https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html</a> for more information on the Kelly error estimator. </p>
+<p>Compute the error estimator for mesh refinement. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">ivar</td><td>The current element of the map simulation_parameters.mesh_adaptation.variables</td></tr>
-    <tr><td class="paramname">estimated_error_per_cell</td><td>The deal.II vector of estimated_error_per_cell </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ivar</td><td>The current element of the map simulation_parameters.mesh_adaptation.variables</td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">estimated_error_per_cell</td><td>The deal.II vector of estimated_error_per_cell </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classAuxiliaryPhysics.html#a8f6a9984eba0d0dcf53468843eb39e45">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
+<p>Implements <a class="el" href="classAuxiliaryPhysics.html#a4fd20b9411d6ac816873465deae02530">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02337">2337</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>.</p>
+<p class="reference">References <a class="el" href="structParameters_1_1MultipleAdaptationParameters.html#a0415d48307e584ae60c4c4fc9ee053c0aae074a5692dfb7c26aae5147e52ceb40">Parameters::MultipleAdaptationParameters::kelly</a>, and <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>.</p>
+
+</div>
+</div>
+<a id="a693aaf962820bd6f464093195d7a2c28" name="a693aaf962820bd6f464093195d7a2c28"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a693aaf962820bd6f464093195d7a2c28">&#9670;&#160;</a></span>compute_kelly()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classVolumeOfFluid.html">VolumeOfFluid</a>&lt; dim &gt;::compute_kelly </td>
+          <td>(</td>
+          <td class="paramtype">dealii::Vector&lt; float &gt; &amp;&#160;</td>
+          <td class="paramname"><em>estimated_error_per_cell</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const ComponentMask &amp;&#160;</td>
+          <td class="paramname"><em>component_mask</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compute the Kelly error estimator on the phase variable for mesh refinement. See : <a href="https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html">https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html</a> for more information on the Kelly error estimator. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">estimated_error_per_cell</td><td>The deal.II vector of estimated_error_per_cell </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">component_mask</td><td>The component mask corresponding to the phase variable </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02360">2360</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
 </div>
 </div>
@@ -1353,7 +1396,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l03262">3262</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l03279">3279</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>.</p>
 
@@ -1404,7 +1447,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l03283">3283</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l03300">3300</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
 </div>
 </div>
@@ -1495,7 +1538,7 @@ template&lt;int dim&gt; </div>
 
 <p>defined the non zero constraints used to solve the problem. </p>
 
-<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02671">2671</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02688">2688</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::periodic</a>, and <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a5a19e60e01f033270d00a46bd121b3c5">BoundaryConditions::vof_dirichlet</a>.</p>
 
@@ -1520,7 +1563,7 @@ template&lt;int dim&gt; </div>
 
 <p>defined the zero constraints used to solve the problem. </p>
 
-<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02632">2632</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02649">2649</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::periodic</a>, and <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a5a19e60e01f033270d00a46bd121b3c5">BoundaryConditions::vof_dirichlet</a>.</p>
 
@@ -1660,7 +1703,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#a764abbac51050515970d14a13b5e8aad">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02359">2359</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02376">2376</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
 </div>
 </div>
@@ -1689,9 +1732,9 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00357">357</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00373">373</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a039fcc8d0c5faa96965d91e8d069958f">curvature_projection</a>, and <a class="el" href="vof_8h_source.html#l00799">VolumeOfFluid&lt; dim &gt;::vof_subequations_interface</a>.</p>
+<p class="reference">References <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a039fcc8d0c5faa96965d91e8d069958f">curvature_projection</a>, and <a class="el" href="vof_8h_source.html#l00815">VolumeOfFluid&lt; dim &gt;::vof_subequations_interface</a>.</p>
 
 </div>
 </div>
@@ -1720,9 +1763,9 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00371">371</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00387">387</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a039fcc8d0c5faa96965d91e8d069958f">curvature_projection</a>, and <a class="el" href="vof_8h_source.html#l00799">VolumeOfFluid&lt; dim &gt;::vof_subequations_interface</a>.</p>
+<p class="reference">References <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a039fcc8d0c5faa96965d91e8d069958f">curvature_projection</a>, and <a class="el" href="vof_8h_source.html#l00815">VolumeOfFluid&lt; dim &gt;::vof_subequations_interface</a>.</p>
 
 </div>
 </div>
@@ -1755,9 +1798,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#af12247ba26a29f99e637d62ed93d1e92">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00308">308</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00324">324</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof_8h_source.html#l00754">VolumeOfFluid&lt; dim &gt;::dof_handler</a>.</p>
+<p class="reference">References <a class="el" href="vof_8h_source.html#l00770">VolumeOfFluid&lt; dim &gt;::dof_handler</a>.</p>
 
 </div>
 </div>
@@ -1790,9 +1833,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#afb198eb8763f9770a48edccd21073731">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00314">314</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00330">330</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof_8h_source.html#l00767">VolumeOfFluid&lt; dim &gt;::evaluation_point</a>.</p>
+<p class="reference">References <a class="el" href="vof_8h_source.html#l00783">VolumeOfFluid&lt; dim &gt;::evaluation_point</a>.</p>
 
 </div>
 </div>
@@ -1823,9 +1866,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#ae6cc2bfa320526e438a44bd6dc8ee804">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00320">320</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00336">336</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof_8h_source.html#l00768">VolumeOfFluid&lt; dim &gt;::local_evaluation_point</a>.</p>
+<p class="reference">References <a class="el" href="vof_8h_source.html#l00784">VolumeOfFluid&lt; dim &gt;::local_evaluation_point</a>.</p>
 
 </div>
 </div>
@@ -1856,9 +1899,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#afb66d0340d77e712bca30814eef04e5d">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00326">326</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00342">342</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof_8h_source.html#l00769">VolumeOfFluid&lt; dim &gt;::newton_update</a>.</p>
+<p class="reference">References <a class="el" href="vof_8h_source.html#l00785">VolumeOfFluid&lt; dim &gt;::newton_update</a>.</p>
 
 </div>
 </div>
@@ -1889,9 +1932,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#abf527a264ed49a5327db8f48e16ee182">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00344">344</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00360">360</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof_8h_source.html#l00772">VolumeOfFluid&lt; dim &gt;::nonzero_constraints</a>.</p>
+<p class="reference">References <a class="el" href="vof_8h_source.html#l00788">VolumeOfFluid&lt; dim &gt;::nonzero_constraints</a>.</p>
 
 </div>
 </div>
@@ -1922,9 +1965,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a0a64669b4bbd93475dc816a8291a588f">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00332">332</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00348">348</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof_8h_source.html#l00770">VolumeOfFluid&lt; dim &gt;::present_solution</a>.</p>
+<p class="reference">References <a class="el" href="vof_8h_source.html#l00786">VolumeOfFluid&lt; dim &gt;::present_solution</a>.</p>
 
 </div>
 </div>
@@ -1953,9 +1996,9 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00350">350</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00366">366</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a9940c4a3bfe89c505b3e4b825d8ef89b">phase_gradient_projection</a>, and <a class="el" href="vof_8h_source.html#l00799">VolumeOfFluid&lt; dim &gt;::vof_subequations_interface</a>.</p>
+<p class="reference">References <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a9940c4a3bfe89c505b3e4b825d8ef89b">phase_gradient_projection</a>, and <a class="el" href="vof_8h_source.html#l00815">VolumeOfFluid&lt; dim &gt;::vof_subequations_interface</a>.</p>
 
 </div>
 </div>
@@ -1984,9 +2027,9 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00364">364</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00380">380</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a9940c4a3bfe89c505b3e4b825d8ef89b">phase_gradient_projection</a>, and <a class="el" href="vof_8h_source.html#l00799">VolumeOfFluid&lt; dim &gt;::vof_subequations_interface</a>.</p>
+<p class="reference">References <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a9940c4a3bfe89c505b3e4b825d8ef89b">phase_gradient_projection</a>, and <a class="el" href="vof_8h_source.html#l00815">VolumeOfFluid&lt; dim &gt;::vof_subequations_interface</a>.</p>
 
 </div>
 </div>
@@ -2020,9 +2063,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a365035283c1495135aaee11de8abaa19">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00399">399</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00415">415</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof_8h_source.html#l00759">VolumeOfFluid&lt; dim &gt;::mapping</a>, <a class="el" href="vof_8h_source.html#l00749">VolumeOfFluid&lt; dim &gt;::simulation_parameters</a>, <a class="el" href="vof_8h_source.html#l00752">VolumeOfFluid&lt; dim &gt;::triangulation</a>, and <a class="el" href="multiphysics_8h_source.html#l00033">VOF</a>.</p>
+<p class="reference">References <a class="el" href="vof_8h_source.html#l00775">VolumeOfFluid&lt; dim &gt;::mapping</a>, <a class="el" href="vof_8h_source.html#l00765">VolumeOfFluid&lt; dim &gt;::simulation_parameters</a>, <a class="el" href="vof_8h_source.html#l00768">VolumeOfFluid&lt; dim &gt;::triangulation</a>, and <a class="el" href="multiphysics_8h_source.html#l00033">VOF</a>.</p>
 
 </div>
 </div>
@@ -2053,9 +2096,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#aaadb8be69e716aaa9541f4984a20508f">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00338">338</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00354">354</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof_8h_source.html#l00771">VolumeOfFluid&lt; dim &gt;::system_rhs</a>.</p>
+<p class="reference">References <a class="el" href="vof_8h_source.html#l00787">VolumeOfFluid&lt; dim &gt;::system_rhs</a>.</p>
 
 </div>
 </div>
@@ -2163,9 +2206,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a33c67d4913c1e92d0404cc67f70caca4">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00382">382</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00398">398</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof_8h_source.html#l00769">VolumeOfFluid&lt; dim &gt;::newton_update</a>, and <a class="el" href="physics__solver_8h_source.html#l00157">PhysicsSolver&lt; VectorType &gt;::pcout</a>.</p>
+<p class="reference">References <a class="el" href="vof_8h_source.html#l00785">VolumeOfFluid&lt; dim &gt;::newton_update</a>, and <a class="el" href="physics__solver_8h_source.html#l00157">PhysicsSolver&lt; VectorType &gt;::pcout</a>.</p>
 
 </div>
 </div>
@@ -2333,7 +2376,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#ab68fa8d211549189803ddd8ba1fcc4ff">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02418">2418</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02435">2435</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceParameters.html#a18e7a3c8a6fc1a1320cca7af11b021d1a8cb043b2dace9afc0680e6bae5cd316f">Parameters::adaptive</a>, <a class="el" href="utilities_8h_source.html#l00592">deserialize_tables_vector()</a>, and <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>.</p>
 
@@ -2391,9 +2434,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00719">719</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00735">735</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, <a class="el" href="vof_8h_source.html#l00745">VolumeOfFluid&lt; dim &gt;::multiphysics</a>, and <a class="el" href="vof__scratch__data_8h_source.html#l00349">VOFScratchData&lt; dim &gt;::reinit_face_velocity()</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, <a class="el" href="vof_8h_source.html#l00761">VolumeOfFluid&lt; dim &gt;::multiphysics</a>, and <a class="el" href="vof__scratch__data_8h_source.html#l00349">VOFScratchData&lt; dim &gt;::reinit_face_velocity()</a>.</p>
 
 </div>
 </div>
@@ -2424,7 +2467,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reinitialize the interface between fluids using the algebraic approach. </p>
 
-<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l03200">3200</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l03217">3217</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a95a3deae4fb177241e3f65f1193835cd">algebraic_interface_reinitialization</a>, and <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a9940c4a3bfe89c505b3e4b825d8ef89b">phase_gradient_projection</a>.</p>
 
@@ -2457,7 +2500,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reinitialize the interface between fluids using the geometric approach. </p>
 
-<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l03304">3304</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l03321">3321</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="utilities_8h_source.html#l00468">announce_string()</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>.</p>
 
@@ -2492,7 +2535,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#aeecb470de43133aa878a5e9499509b31">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02712">2712</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02729">2729</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceParameters.html#a18e7a3c8a6fc1a1320cca7af11b021d1a8cb043b2dace9afc0680e6bae5cd316f">Parameters::adaptive</a>, <a class="el" href="utilities_8cc_source.html#l00358">create_output_folder()</a>, <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a039fcc8d0c5faa96965d91e8d069958f">curvature_projection</a>, <a class="el" href="utilities_8cc_source.html#l00369">delete_output_folder()</a>, <a class="el" href="namespaceParameters.html#aca60e44f749baf07d4d93e3751eb1d8ca142a3e0f4cf6590eb56586a5187666c0">Parameters::diffusive</a>, <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, <a class="el" href="namespaceParameters.html#aca60e44f749baf07d4d93e3751eb1d8ca65a383f3960a0cb2b8b0ace54817d575">Parameters::geometric</a>, <a class="el" href="vof__subequations_8h.html#a24bad343f5052b85d1cc3dbd877b3a12a9940c4a3bfe89c505b3e4b825d8ef89b">phase_gradient_projection</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, and <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>.</p>
 
@@ -2560,7 +2603,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#a3d0c0d037152ce2e8552227c3dda383e">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02475">2475</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02492">2492</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00033">VOF</a>.</p>
 
@@ -2688,7 +2731,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l03062">3062</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l03079">3079</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919ae5cbb8171b496f26a4488b9e15a0fe52">Parameters::extra_verbose</a>, and <a class="el" href="multiphysics_8h_source.html#l00033">VOF</a>.</p>
 
@@ -2723,7 +2766,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a375f91bc1e5a05dac2c71f5ae5575f84">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02819">2819</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02836">2836</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, and <a class="el" href="multiphysics_8h_source.html#l00033">VOF</a>.</p>
 
@@ -2798,7 +2841,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classAuxiliaryPhysics.html#aa4eb967dee8229dc43ff95182df011fe">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02610">2610</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02627">2627</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a5a19e60e01f033270d00a46bd121b3c5">BoundaryConditions::vof_dirichlet</a>.</p>
 
@@ -2832,7 +2875,7 @@ template&lt;int dim&gt; </div>
 
 <p>Limit the phase fractions between 0 and 1. This is necessary before interface sharpening. More information can be found in step_41 of deal.II tutorials: <a href="https://www.dealii.org/current/doxygen/deal.II/step_41.html">https://www.dealii.org/current/doxygen/deal.II/step_41.html</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02895">2895</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02912">2912</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
 </div>
 </div>
@@ -2863,9 +2906,9 @@ template&lt;int dim&gt; </div>
 
 <p>Verify consistency of the input parameters for boundary conditions to ensure that for every boundary condition within the triangulation, a boundary condition has been specified in the input file. </p>
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00415">415</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00431">431</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
-<p class="reference">References <a class="el" href="vof_8h_source.html#l00749">VolumeOfFluid&lt; dim &gt;::simulation_parameters</a>, and <a class="el" href="vof_8h_source.html#l00752">VolumeOfFluid&lt; dim &gt;::triangulation</a>.</p>
+<p class="reference">References <a class="el" href="vof_8h_source.html#l00765">VolumeOfFluid&lt; dim &gt;::simulation_parameters</a>, and <a class="el" href="vof_8h_source.html#l00768">VolumeOfFluid&lt; dim &gt;::triangulation</a>.</p>
 
 </div>
 </div>
@@ -2898,7 +2941,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#aac6b380b7f28d81bef3a7d33eb13ec34">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02393">2393</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8cc_source.html#l02410">2410</a> of file <a class="el" href="vof_8cc_source.html">vof.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="utilities_8h_source.html#l00570">serialize_tables_vector()</a>.</p>
 
@@ -2927,7 +2970,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00818">818</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00834">834</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -2953,7 +2996,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00773">773</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00789">789</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -2979,7 +3022,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00760">760</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00776">776</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3005,7 +3048,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00792">792</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00808">808</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3031,7 +3074,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00794">794</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00810">810</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3057,7 +3100,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00747">747</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00763">763</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3083,7 +3126,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00754">754</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00770">770</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3109,7 +3152,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00756">756</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00772">772</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3135,7 +3178,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00767">767</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00783">783</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3161,7 +3204,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00761">761</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00777">777</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3187,7 +3230,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00755">755</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00771">771</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3213,7 +3256,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00824">824</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00840">840</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3239,7 +3282,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00776">776</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00792">792</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3265,7 +3308,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00801">801</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00817">817</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3291,7 +3334,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00821">821</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00837">837</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3318,7 +3361,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Level-set field obtained from the phase fraction field using a tanh-based transformation </p>
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00780">780</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00796">796</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3344,7 +3387,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00768">768</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00784">784</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3370,7 +3413,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00764">764</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00780">780</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3396,7 +3439,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00765">765</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00781">781</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3422,7 +3465,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00759">759</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00775">775</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3448,7 +3491,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00811">811</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00827">827</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3474,7 +3517,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00795">795</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00811">811</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3500,7 +3543,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00810">810</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00826">826</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3526,7 +3569,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00745">745</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00761">761</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3552,7 +3595,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00769">769</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00785">785</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3578,7 +3621,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00743">743</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00759">759</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3604,7 +3647,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00772">772</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00788">788</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3630,7 +3673,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00805">805</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00821">821</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3656,7 +3699,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00804">804</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00820">820</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3682,7 +3725,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00770">770</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00786">786</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3708,7 +3751,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00783">783</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00799">799</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3734,7 +3777,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00788">788</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00804">804</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3760,7 +3803,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00812">812</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00828">828</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3786,7 +3829,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00828">828</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00844">844</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3812,7 +3855,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00832">832</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00848">848</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3838,7 +3881,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00753">753</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00769">769</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3864,7 +3907,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00749">749</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00765">765</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3890,7 +3933,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00786">786</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00802">802</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3916,7 +3959,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00775">775</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00791">791</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3942,7 +3985,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00791">791</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00807">807</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3968,7 +4011,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00771">771</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00787">787</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -3994,7 +4037,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00793">793</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00809">809</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -4020,7 +4063,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00815">815</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00831">831</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -4046,7 +4089,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00808">808</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00824">824</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -4072,7 +4115,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00752">752</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00768">768</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -4098,7 +4141,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00799">799</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00815">815</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -4124,7 +4167,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00809">809</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00825">825</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>
@@ -4150,7 +4193,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00774">774</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="vof_8h_source.html#l00790">790</a> of file <a class="el" href="vof_8h_source.html">vof.h</a>.</p>
 
 </div>
 </div>

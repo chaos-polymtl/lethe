@@ -639,7 +639,8 @@ end
 <h3>Mesh Adaptation<a class="headerlink" href="#mesh-adaptation" title="Link to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">mesh</span> <span class="pre">adaptation</span></code> section controls the dynamic mesh adaptation. Here, we choose <code class="docutils literal notranslate"><span class="pre">phase</span></code> and <code class="docutils literal notranslate"><span class="pre">pressure</span></code> as the <code class="docutils literal notranslate"><span class="pre">refinement</span> <span class="pre">variables</span></code>. The maximum and minimum refinement levels are respectively set to <span class="math notranslate nohighlight">\(4\)</span> and <span class="math notranslate nohighlight">\(2\)</span>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh adaptation
-  set type                     = kelly
+  set type                     = adaptive
+  set error estimator          = kelly, kelly
   set variable                 = phase, pressure
   set fraction type            = fraction
   set max refinement level     = 4

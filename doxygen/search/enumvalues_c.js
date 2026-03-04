@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['magnetic_5ffield_0',['magnetic_field',['../namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a8732c340b849ed4f600a10f719097755',1,'BoundaryConditions']]],
+  ['magnetic_5ffield_0',['magnetic_field',['../namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a8732c340b849ed4f600a10f719097755',1,'BoundaryConditions::magnetic_field'],['../multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda8732c340b849ed4f600a10f719097755',1,'magnetic_field:&#160;multiphysics.h']]],
   ['manual_1',['manual',['../namespaceParameters.html#aea64bd5414c051b692d8df44e5ccd369a3c78b35502b2693fefdfc51cba3a53a5',1,'Parameters']]],
   ['mass_2',['mass',['../namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987a46b35361355f5d09246f5c232dd922b5',1,'DEM::DEMProperties::mass'],['../namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2fac533f124c36197d6291a5145cff179f6',1,'DEM::CFDDEMProperties::mass'],['../namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8a350708db287c03473fa23b181abd447b',1,'DEM::DEMMPProperties::mass']]],
   ['mobile_3',['mobile',['../classAdaptiveSparseContacts.html#a9cf65bd3e1a790313fcf3f6b708ab230a845f62dcad807a5258e4c5ed41e1d12e',1,'AdaptiveSparseContacts']]],

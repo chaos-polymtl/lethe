@@ -17,7 +17,7 @@ var searchData=
   ['reconstruct_5finterior_5fsolution_14',['reconstruct_interior_solution',['../classTimeHarmonicMaxwell.html#af7f6d3ed399c13f8de77de93e192f30b',1,'TimeHarmonicMaxwell::reconstruct_interior_solution()'],['../classTimeHarmonicMaxwell.html#aa96f28ca089c3be6118537041497d6cd',1,'TimeHarmonicMaxwell::reconstruct_interior_solution()'],['../classTimeHarmonicMaxwell.html#a20bb4a64637ad5c8ecb51ccdac7b8676',1,'TimeHarmonicMaxwell::reconstruct_interior_solution()']]],
   ['refine_5fib_15',['refine_ib',['../classFluidDynamicsSharp.html#a7dac9eeecfc4ea454d12e0a6ce3813a9',1,'FluidDynamicsSharp']]],
   ['refine_5fmesh_16',['refine_mesh',['../classFluidDynamicsNitsche.html#abe7213b302258dcf1f654597d971a745',1,'FluidDynamicsNitsche::refine_mesh()'],['../classNavierStokesBase.html#a57ffa198f9fabb15e3af4c9fa2921e18',1,'NavierStokesBase::refine_mesh()']]],
-  ['refine_5fmesh_5fkelly_17',['refine_mesh_kelly',['../classNavierStokesBase.html#a050bce04127b14f96659bfa4627892e0',1,'NavierStokesBase']]],
+  ['refine_5fmesh_5fadaptive_17',['refine_mesh_adaptive',['../classNavierStokesBase.html#a18fd21d1aa9a731b2358d9def796ba2c',1,'NavierStokesBase']]],
   ['refine_5fmesh_5funiform_18',['refine_mesh_uniform',['../classNavierStokesBase.html#ac8a90a05bdef648307a900513585bd86',1,'NavierStokesBase']]],
   ['refine_5ftriangulation_5fat_5fboundaries_19',['refine_triangulation_at_boundaries',['../grids_8h.html#ab0bc70021b257d066eeef9e6f2a9f77d',1,'grids.h']]],
   ['refinement_5fcontrol_20',['refinement_control',['../classFluidDynamicsSharp.html#a8fdb2b2a4ce648466388f06d721d87b9',1,'FluidDynamicsSharp']]],

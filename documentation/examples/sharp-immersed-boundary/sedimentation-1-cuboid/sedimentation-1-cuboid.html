@@ -525,15 +525,16 @@ end
 <section id="mesh-adaptation">
 <h3>Mesh Adaptation<a class="headerlink" href="#mesh-adaptation" title="Link to this heading">#</a></h3>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh adaptation
-  set fraction coarsening = 0.3
-  set fraction refinement = 0.05
-  set max number elements = 750000
+  set fraction coarsening  = 0.3
+  set fraction refinement  = 0.05
+  set max number elements  = 750000
 
   set max refinement level = 8
   set min refinement level = 4
 
-  set type = kelly
-  set variable = velocity
+  set type                 = adaptive
+  set error estimator      = kelly
+  set variable             = velocity
 end
 </pre></div>
 </div>
@@ -541,7 +542,7 @@ end
 <li><p>The <code class="docutils literal notranslate"><span class="pre">fraction</span> <span class="pre">coarsening</span></code> is set to <code class="docutils literal notranslate"><span class="pre">0.3</span></code>.The results are shown in the animation below.  This limits the accumulation of elements when the particle is moving. It allows for cells far from the particle to be coarsened when the particles get further away.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">fraction</span> <span class="pre">refinement</span></code> is set to <code class="docutils literal notranslate"><span class="pre">0.05</span></code>. The objective here is to refine elements that become close to the particle when it’s moving. This will mostly refine elements around the particle that are not already included in the refinement zone around the particle.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">refinement</span> <span class="pre">level</span></code> is set to <code class="docutils literal notranslate"><span class="pre">8</span></code>. This parameter limits how small the elements around the particle can get limiting the total number of elements in the problem. Here we limit the mesh size to ~ <span class="math notranslate nohighlight">\(10\)</span> elements per sides of the cuboid. An initial mesh sensitivity study showed this resulted in close to mesh independent results sufficient for demonstration purposes, although a more refined mesh would be required for a rigorous study</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">type</span></code> is set to <code class="docutils literal notranslate"><span class="pre">kelly</span></code>. Since the particle is moving and we do not want a uniform refinement of all the cells, we use the kelly error estimator based on the <code class="docutils literal notranslate"><span class="pre">velocity</span></code> variable.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">type</span></code> is set to <code class="docutils literal notranslate"><span class="pre">adaptive</span></code>. Since the particle is moving and we do not want a uniform refinement of all the cells, we use the <code class="docutils literal notranslate"><span class="pre">kelly</span></code> error estimator based on the <code class="docutils literal notranslate"><span class="pre">velocity</span></code> variable.</p></li>
 </ul>
 </section>
 <section id="boundary-conditions">

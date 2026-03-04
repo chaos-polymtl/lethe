@@ -105,7 +105,7 @@ $(function() {
 Public Types</h2></td></tr>
 <tr class="memitem:a0dae814a46649ee467996963ded2be83" id="r_a0dae814a46649ee467996963ded2be83"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1MeshAdaptation.html#a0dae814a46649ee467996963ded2be83">Type</a> : std::int8_t { <a class="el" href="structParameters_1_1MeshAdaptation.html#a0dae814a46649ee467996963ded2be83a334c4a4c42fdb79d7ebc3e73b517e6f8">none</a>
 , <a class="el" href="structParameters_1_1MeshAdaptation.html#a0dae814a46649ee467996963ded2be83aa489ffed938ef1b9e86889bc413501ee">uniform</a>
-, <a class="el" href="structParameters_1_1MeshAdaptation.html#a0dae814a46649ee467996963ded2be83aae074a5692dfb7c26aae5147e52ceb40">kelly</a>
+, <a class="el" href="structParameters_1_1MeshAdaptation.html#a0dae814a46649ee467996963ded2be83a8cb043b2dace9afc0680e6bae5cd316f">adaptive</a>
  }</td></tr>
 <tr class="separator:a0dae814a46649ee467996963ded2be83"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1fa9f6181e03ea0f83ec0dbcac755a45" id="r_a1fa9f6181e03ea0f83ec0dbcac755a45"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1MeshAdaptation.html#a1fa9f6181e03ea0f83ec0dbcac755a45">FractionType</a> : std::int8_t { <a class="el" href="structParameters_1_1MeshAdaptation.html#a1fa9f6181e03ea0f83ec0dbcac755a45ab1bc248a7ff2b2e95569f56de68615df">number</a>
@@ -159,7 +159,7 @@ Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>MeshAdaption - <a class="el" href="namespaceParameters.html">Parameters</a> that control dynamic mesh adaptation. Dynamic mesh adaptation in Lethe is very flexible and can be both local and global. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01582">1582</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01589">1589</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="a1fa9f6181e03ea0f83ec0dbcac755a45" name="a1fa9f6181e03ea0f83ec0dbcac755a45"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1fa9f6181e03ea0f83ec0dbcac755a45">&#9670;&#160;</a></span>FractionType</h2>
@@ -180,12 +180,14 @@ Public Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Decision factor for adaptive refinement (number or fraction) </p>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a1fa9f6181e03ea0f83ec0dbcac755a45ab1bc248a7ff2b2e95569f56de68615df" name="a1fa9f6181e03ea0f83ec0dbcac755a45ab1bc248a7ff2b2e95569f56de68615df"></a>number&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a1fa9f6181e03ea0f83ec0dbcac755a45a03f0356d2d1c334d3567c9d67818f5d0" name="a1fa9f6181e03ea0f83ec0dbcac755a45a03f0356d2d1c334d3567c9d67818f5d0"></a>fraction&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01605">1605</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01612">1612</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -211,10 +213,10 @@ Public Attributes</h2></td></tr>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a0dae814a46649ee467996963ded2be83a334c4a4c42fdb79d7ebc3e73b517e6f8" name="a0dae814a46649ee467996963ded2be83a334c4a4c42fdb79d7ebc3e73b517e6f8"></a>none&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a0dae814a46649ee467996963ded2be83aa489ffed938ef1b9e86889bc413501ee" name="a0dae814a46649ee467996963ded2be83aa489ffed938ef1b9e86889bc413501ee"></a>uniform&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a0dae814a46649ee467996963ded2be83aae074a5692dfb7c26aae5147e52ceb40" name="a0dae814a46649ee467996963ded2be83aae074a5692dfb7c26aae5147e52ceb40"></a>kelly&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a0dae814a46649ee467996963ded2be83a8cb043b2dace9afc0680e6bae5cd316f" name="a0dae814a46649ee467996963ded2be83a8cb043b2dace9afc0680e6bae5cd316f"></a>adaptive&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01588">1588</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01595">1595</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -263,9 +265,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l03388">3388</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l03395">3395</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l01632">boundaries_to_fix</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda00c53276617bee8b9d1ea3ed7edc0ff3">chemical_potential_cahn_hilliard</a>, <a class="el" href="parameters_8h_source.html#l01571">Parameters::MultipleAdaptationParameters::coarsening_fraction</a>, <a class="el" href="structParameters_1_1MeshAdaptation.html#a1fa9f6181e03ea0f83ec0dbcac755a45a03f0356d2d1c334d3567c9d67818f5d0">fraction</a>, <a class="el" href="structParameters_1_1MeshAdaptation.html#aa56d4d71eb38f6d12483c64dc54ae074">fractionType</a>, <a class="el" href="parameters_8h_source.html#l01621">frequency</a>, <a class="el" href="parameters_8h_source.html#l01585">initial_refinement</a>, <a class="el" href="parameters_8h_source.html#l01629">is_boundary_refinement_fixed</a>, <a class="el" href="structParameters_1_1MeshAdaptation.html#a0dae814a46649ee467996963ded2be83aae074a5692dfb7c26aae5147e52ceb40">kelly</a>, <a class="el" href="parameters_8h_source.html#l01612">maximum_number_elements</a>, <a class="el" href="parameters_8h_source.html#l01615">maximum_refinement_level</a>, <a class="el" href="parameters_8h_source.html#l01626">mesh_controller_is_enabled</a>, <a class="el" href="parameters_8h_source.html#l01618">minimum_refinement_level</a>, <a class="el" href="structParameters_1_1MeshAdaptation.html#a0dae814a46649ee467996963ded2be83a334c4a4c42fdb79d7ebc3e73b517e6f8">none</a>, <a class="el" href="structParameters_1_1MeshAdaptation.html#a1fa9f6181e03ea0f83ec0dbcac755a45ab1bc248a7ff2b2e95569f56de68615df">number</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda680362fee5d2ef1fb4a224fec18cfc36">phase_cahn_hilliard</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddad99fad96a5d0a7cb2eb41341ea556093">pressure</a>, <a class="el" href="parameters_8h_source.html#l01622">refinement_at_frequency</a>, <a class="el" href="parameters_8h_source.html#l01574">Parameters::MultipleAdaptationParameters::refinement_fraction</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaeef438f7e448aa48c1f8db568d27b591">temperature</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda6f6b56ea71cef5ab6dc92666a9a31ffa">tracer</a>, <a class="el" href="structParameters_1_1MeshAdaptation.html#a3d3887253d40863c0fc67c9c4bd0dcb0">type</a>, <a class="el" href="structParameters_1_1MeshAdaptation.html#a0dae814a46649ee467996963ded2be83aa489ffed938ef1b9e86889bc413501ee">uniform</a>, <a class="el" href="parameters_8h_source.html#l01602">var_adaptation_param</a>, <a class="el" href="parameters_8h_source.html#l01599">variables</a>, <a class="el" href="parameters_8h_source.html#l01601">vars</a>, and <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.</p>
+<p class="reference">References <a class="el" href="structParameters_1_1MeshAdaptation.html#a0dae814a46649ee467996963ded2be83a8cb043b2dace9afc0680e6bae5cd316f">adaptive</a>, <a class="el" href="parameters_8h_source.html#l01639">boundaries_to_fix</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda00c53276617bee8b9d1ea3ed7edc0ff3">chemical_potential_cahn_hilliard</a>, <a class="el" href="parameters_8h_source.html#l01578">Parameters::MultipleAdaptationParameters::coarsening_fraction</a>, <a class="el" href="structParameters_1_1MultipleAdaptationParameters.html#a0415d48307e584ae60c4c4fc9ee053c0a6623bdf78746d87e7c6c2888a5c70c9f">Parameters::MultipleAdaptationParameters::dpg</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaa79864cf485f38be6b1076d4b73e51b2">electric_field</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda2b10330fe7e35354ff14a91b5af1c176">electromagnetic_fields</a>, <a class="el" href="structParameters_1_1MultipleAdaptationParameters.html#a9fbbca2b9813a1e4d64bfc490173ca6c">Parameters::MultipleAdaptationParameters::error_estimator</a>, <a class="el" href="structParameters_1_1MeshAdaptation.html#a1fa9f6181e03ea0f83ec0dbcac755a45a03f0356d2d1c334d3567c9d67818f5d0">fraction</a>, <a class="el" href="structParameters_1_1MeshAdaptation.html#aa56d4d71eb38f6d12483c64dc54ae074">fractionType</a>, <a class="el" href="parameters_8h_source.html#l01628">frequency</a>, <a class="el" href="parameters_8h_source.html#l01592">initial_refinement</a>, <a class="el" href="parameters_8h_source.html#l01636">is_boundary_refinement_fixed</a>, <a class="el" href="structParameters_1_1MultipleAdaptationParameters.html#a0415d48307e584ae60c4c4fc9ee053c0aae074a5692dfb7c26aae5147e52ceb40">Parameters::MultipleAdaptationParameters::kelly</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda8732c340b849ed4f600a10f719097755">magnetic_field</a>, <a class="el" href="parameters_8h_source.html#l01619">maximum_number_elements</a>, <a class="el" href="parameters_8h_source.html#l01622">maximum_refinement_level</a>, <a class="el" href="parameters_8h_source.html#l01633">mesh_controller_is_enabled</a>, <a class="el" href="parameters_8h_source.html#l01625">minimum_refinement_level</a>, <a class="el" href="structParameters_1_1MeshAdaptation.html#a0dae814a46649ee467996963ded2be83a334c4a4c42fdb79d7ebc3e73b517e6f8">none</a>, <a class="el" href="structParameters_1_1MeshAdaptation.html#a1fa9f6181e03ea0f83ec0dbcac755a45ab1bc248a7ff2b2e95569f56de68615df">number</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda680362fee5d2ef1fb4a224fec18cfc36">phase_cahn_hilliard</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddad99fad96a5d0a7cb2eb41341ea556093">pressure</a>, <a class="el" href="parameters_8h_source.html#l01629">refinement_at_frequency</a>, <a class="el" href="parameters_8h_source.html#l01581">Parameters::MultipleAdaptationParameters::refinement_fraction</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaeef438f7e448aa48c1f8db568d27b591">temperature</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda6f6b56ea71cef5ab6dc92666a9a31ffa">tracer</a>, <a class="el" href="structParameters_1_1MeshAdaptation.html#a3d3887253d40863c0fc67c9c4bd0dcb0">type</a>, <a class="el" href="structParameters_1_1MeshAdaptation.html#a0dae814a46649ee467996963ded2be83aa489ffed938ef1b9e86889bc413501ee">uniform</a>, <a class="el" href="parameters_8h_source.html#l01609">var_adaptation_param</a>, <a class="el" href="parameters_8h_source.html#l01606">variables</a>, <a class="el" href="parameters_8h_source.html#l01608">vars</a>, and <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.</p>
 
 </div>
 </div>
@@ -282,7 +284,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01632">1632</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01639">1639</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -312,7 +314,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01621">1621</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01628">1628</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -328,7 +330,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01585">1585</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01592">1592</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -344,7 +346,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01629">1629</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01636">1636</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -360,7 +362,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01612">1612</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01619">1619</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -376,7 +378,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01615">1615</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01622">1622</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -392,7 +394,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01626">1626</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01633">1633</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -408,7 +410,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01618">1618</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01625">1625</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -424,7 +426,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01622">1622</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01629">1629</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -454,7 +456,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01602">1602</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01609">1609</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -472,7 +474,7 @@ Public Attributes</h2></td></tr>
 
 <p>Fields on which the mesh adaptation can be based. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01596">1596</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01603">1603</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -488,7 +490,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01599">1599</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01606">1606</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -504,7 +506,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01601">1601</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01608">1608</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>

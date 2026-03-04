@@ -131,8 +131,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ab68fa8d211549189803ddd8ba1fcc4ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a764abbac51050515970d14a13b5e8aad" id="r_a764abbac51050515970d14a13b5e8aad"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; <a class="el" href="structOutputStructTableHandler.html">OutputStructTableHandler</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAuxiliaryPhysics.html#a764abbac51050515970d14a13b5e8aad">gather_tables</a> ()=0</td></tr>
 <tr class="separator:a764abbac51050515970d14a13b5e8aad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f6a9984eba0d0dcf53468843eb39e45" id="r_a8f6a9984eba0d0dcf53468843eb39e45"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAuxiliaryPhysics.html#a8f6a9984eba0d0dcf53468843eb39e45">compute_kelly</a> (const std::pair&lt; const <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdd">Variable</a>, <a class="el" href="structParameters_1_1MultipleAdaptationParameters.html">Parameters::MultipleAdaptationParameters</a> &gt; &amp;ivar, dealii::Vector&lt; float &gt; &amp;estimated_error_per_cell)=0</td></tr>
-<tr class="separator:a8f6a9984eba0d0dcf53468843eb39e45"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4fd20b9411d6ac816873465deae02530" id="r_a4fd20b9411d6ac816873465deae02530"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAuxiliaryPhysics.html#a4fd20b9411d6ac816873465deae02530">compute_error_estimate</a> (const std::pair&lt; const <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdd">Variable</a>, <a class="el" href="structParameters_1_1MultipleAdaptationParameters.html">Parameters::MultipleAdaptationParameters</a> &gt; &amp;ivar, dealii::Vector&lt; float &gt; &amp;estimated_error_per_cell)=0</td></tr>
+<tr class="separator:a4fd20b9411d6ac816873465deae02530"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d0c0d037152ce2e8552227c3dda383e" id="r_a3d0c0d037152ce2e8552227c3dda383e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAuxiliaryPhysics.html#a3d0c0d037152ce2e8552227c3dda383e">setup_dofs</a> ()=0</td></tr>
 <tr class="separator:a3d0c0d037152ce2e8552227c3dda383e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeecb470de43133aa878a5e9499509b31" id="r_aeecb470de43133aa878a5e9499509b31"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAuxiliaryPhysics.html#aeecb470de43133aa878a5e9499509b31">set_initial_conditions</a> ()=0</td></tr>
@@ -301,8 +301,8 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a8f6a9984eba0d0dcf53468843eb39e45" name="a8f6a9984eba0d0dcf53468843eb39e45"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8f6a9984eba0d0dcf53468843eb39e45">&#9670;&#160;</a></span>compute_kelly()</h2>
+<a id="a4fd20b9411d6ac816873465deae02530" name="a4fd20b9411d6ac816873465deae02530"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4fd20b9411d6ac816873465deae02530">&#9670;&#160;</a></span>compute_error_estimate()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -313,7 +313,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::compute_kelly </td>
+          <td class="memname">virtual void <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::compute_error_estimate </td>
           <td>(</td>
           <td class="paramtype">const std::pair&lt; const <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdd">Variable</a>, <a class="el" href="structParameters_1_1MultipleAdaptationParameters.html">Parameters::MultipleAdaptationParameters</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>ivar</em>, </td>
@@ -340,13 +340,13 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 <p>Compute the Kelly error estimator used to refine mesh on a auxiliary physic parameter. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">ivar</td><td>The current element of the map simulation_parameters.mesh_adaptation.variables</td></tr>
-    <tr><td class="paramname">estimated_error_per_cell</td><td>The deal.II vector of estimated_error_per_cell </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ivar</td><td>The current element of the map simulation_parameters.mesh_adaptation.variables</td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">estimated_error_per_cell</td><td>The deal.II vector of estimated_error_per_cell </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="classTracer.html#ae37db3727824079215f6379e56fd7f60">Tracer&lt; dim &gt;</a>, <a class="el" href="classCahnHilliard.html#a7256cf0d8415b8a20750fa7895940d1c">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#a17ef0b6ef66ea797dec821c826e06fa1">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTimeHarmonicMaxwell.html#aabe74e59a7ac67afe4f3f28e486d9e11">TimeHarmonicMaxwell&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#ad4bf3d39a169ad2406ddabed0d2a63bf">VolumeOfFluid&lt; dim &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classCahnHilliard.html#afaf941bc4f473e25837052726ebbc600">CahnHilliard&lt; dim &gt;</a>, <a class="el" href="classHeatTransfer.html#aa6ea50a26cfc0edd3ed18276e0793053">HeatTransfer&lt; dim &gt;</a>, <a class="el" href="classTimeHarmonicMaxwell.html#a483d803a4ab2b6076a8752139de9ccc5">TimeHarmonicMaxwell&lt; dim &gt;</a>, <a class="el" href="classTracer.html#ac43b71a2da0101fa9e796e9715bfc384">Tracer&lt; dim &gt;</a>, and <a class="el" href="classVolumeOfFluid.html#ab1a7daf16634ec039bfab931e5d2b4d7">VolumeOfFluid&lt; dim &gt;</a>.</p>
 
 </div>
 </div>
@@ -760,7 +760,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 
 <p>Reimplemented in <a class="el" href="classTimeHarmonicMaxwell.html#a19bce29a7b265f24d66bbead2898be6b">TimeHarmonicMaxwell&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00201">201</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00205">205</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
 
 </div>
 </div>

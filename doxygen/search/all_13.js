@@ -51,7 +51,7 @@ var searchData=
   ['reference_5ftemperature_48',['reference_temperature',['../classPhysicalPropertiesManager.html#aa871ae374af570d8f8fd34b69ad87546',1,'PhysicalPropertiesManager::reference_temperature'],['../classThermalBuoyancyAssemblyVOF.html#a32b5032bae25e3330795cdbcc2f09471',1,'ThermalBuoyancyAssemblyVOF::reference_temperature'],['../classParameters_1_1PhysicalProperties.html#a0f42fb91f8a7e229684d5bb11e3d240a',1,'Parameters::PhysicalProperties::reference_temperature']]],
   ['refine_5fib_49',['refine_ib',['../classFluidDynamicsSharp.html#a7dac9eeecfc4ea454d12e0a6ce3813a9',1,'FluidDynamicsSharp']]],
   ['refine_5fmesh_50',['refine_mesh',['../classFluidDynamicsNitsche.html#abe7213b302258dcf1f654597d971a745',1,'FluidDynamicsNitsche::refine_mesh()'],['../classNavierStokesBase.html#a57ffa198f9fabb15e3af4c9fa2921e18',1,'NavierStokesBase::refine_mesh()']]],
-  ['refine_5fmesh_5fkelly_51',['refine_mesh_kelly',['../classNavierStokesBase.html#a050bce04127b14f96659bfa4627892e0',1,'NavierStokesBase']]],
+  ['refine_5fmesh_5fadaptive_51',['refine_mesh_adaptive',['../classNavierStokesBase.html#a18fd21d1aa9a731b2358d9def796ba2c',1,'NavierStokesBase']]],
   ['refine_5fmesh_5funiform_52',['refine_mesh_uniform',['../classNavierStokesBase.html#ac8a90a05bdef648307a900513585bd86',1,'NavierStokesBase']]],
   ['refine_5ftriangulation_5fat_5fboundaries_53',['refine_triangulation_at_boundaries',['../grids_8h.html#ab0bc70021b257d066eeef9e6f2a9f77d',1,'grids.h']]],
   ['refine_5funtil_5ftarget_5fsize_54',['refine_until_target_size',['../structParameters_1_1Mesh.html#afab6627aa65eb4296cf15d2c4c3c124a',1,'Parameters::Mesh']]],

@@ -111,7 +111,8 @@ The mesh adaptation algorithm is based on the Kelly error estimator applied on t
 
     subsection mesh adaptation
       set variable             = velocity
-      set type                 = kelly
+      set type                 = adaptive 
+      set error estimator      = kelly
       set fraction refinement  = 0.2
       set fraction coarsening  = 0
       set frequency            = 1
@@ -125,14 +126,15 @@ In this case, the algorithm thoroughly discretizes the mesh around the expansion
 
 For :math:`\textrm{Re} = 610`, mesh adaptation was limited by the maximum refinement level, the fraction refinement, and the number of cells, so that the mesh discretization did not become too computationally expensive at the final simulation time. 
 
-Also, it is useful not to have a very refined mesh at the beginning of the simulation (when the flow is still being developed at the inlet channel) and rather allow the algorithm to allocate more cells as the flow becomes turlent at the outlet section. 
+Also, it is useful not to have a very refined mesh at the beginning of the simulation (when the flow is still being developed at the inlet channel) and rather allow the algorithm to allocate more cells as the flow becomes turbulent at the outlet section. 
 The ``mesh refinement controller`` feature aims to maintain the total number of elements constant by changing coarsening and refinement ratios.
 
 .. code-block:: text
 
     subsection mesh adaptation
       set variable                    = velocity
-      set type                        = kelly
+      set type                        = adaptive 
+      set error estimator             = kelly
       set fraction refinement         = 0.05
       set fraction coarsening         = 0
       set frequency                   = 5

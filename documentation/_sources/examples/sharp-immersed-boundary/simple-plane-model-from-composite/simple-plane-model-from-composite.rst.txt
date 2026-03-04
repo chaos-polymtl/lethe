@@ -304,7 +304,8 @@ The parameter file for this case simply produces an output to visualize the shap
     #---------------------------------------------------
 
     subsection mesh adaptation
-      set type                 = kelly
+      set type                 = adaptive 
+      set error estimator      = kelly
       set fraction type        = number
     end
 

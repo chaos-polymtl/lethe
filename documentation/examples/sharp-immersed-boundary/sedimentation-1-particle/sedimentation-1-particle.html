@@ -561,8 +561,11 @@ end
   # minimum refinement level
   set min refinement level = 0
 
-  # Type of mesh adaptationChoices are &lt;none|uniform|kelly&gt;.
-  set type = kelly
+  # Type of mesh adaptationChoices are &lt;none|uniform|adaptive&gt;.
+  set type = adaptive
+
+  # Type of error estimatorChoices are &lt;kelly|dpg&gt;.
+  set error estimator = kelly
 
   # Variable for kelly estimationChoices are &lt;velocity|pressure&gt;.
   set variable = velocity
@@ -574,7 +577,7 @@ end
 <li><p>The <code class="docutils literal notranslate"><span class="pre">fraction</span> <span class="pre">refinement</span></code> is set to 0.05. The objective here is to refine elements that become close to the particle when it’s moving. This will mostly refine elements around the particle that are not included in the refinement zone around the particle. The refinement zone around the particle will be discussed in more detail in the IB particle section.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">frequency</span></code> is set to 1. Since the particle is moving at each time step, the refinement zone around it should be reevaluated at each time step.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">refinement</span> <span class="pre">level</span></code> is set to 6. This parameter limits how small the elements around the particle can get limiting the total number of elements in the problem. Here we limit the mesh size to 48 elements per diameter of the particle. This should be sufficient to get accurate results.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">type</span></code> is set to <code class="docutils literal notranslate"><span class="pre">kelly</span></code>. Since the particle is moving and we do not want a uniform refinement of all the cells, we use the kelly error estimator based on the <code class="docutils literal notranslate"><span class="pre">velocity</span></code> variable.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">type</span></code> is set to <code class="docutils literal notranslate"><span class="pre">adaptive</span></code>. Since the particle is moving and we do not want a uniform refinement of all the cells, we use the <code class="docutils literal notranslate"><span class="pre">kelly</span></code> error estimator based on the <code class="docutils literal notranslate"><span class="pre">velocity</span></code> variable.</p></li>
 </ul>
 </section>
 <section id="boundary-conditions">

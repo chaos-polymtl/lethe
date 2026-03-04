@@ -541,7 +541,8 @@ end
 <p>In this example, the mesh adaptation algorithm is based on the Kelly error estimator applied on the velocity variable. This strategy is suitable here, since a fine mesh is required in the vicinity of the step while a coarser mesh is acceptable far way from it.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh adaptation
   set variable            = velocity
-  set type                = kelly
+  set type                = adaptive
+  set error estimator     = kelly
   set fraction refinement = 0.2
 end
 </pre></div>

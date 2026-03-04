@@ -515,7 +515,8 @@ end
 <h3>Mesh Adaptation<a class="headerlink" href="#mesh-adaptation" title="Link to this heading">#</a></h3>
 <p>While the discretization in the wake of the cylinder has less impact on the forces acting on the cylinder wall than the boundary layer discretization, it is interesting to well resolve the wake to capture the von Kármán vortex street pattern. Therefore, to adapt the mesh in the boundary layer and the wake as the vortices are shed, a non-uniform mesh adaptation is performed at each time step and the parameters are specified using the <code class="docutils literal notranslate"><span class="pre">Mesh</span> <span class="pre">Adaptation</span></code> subsection:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh adaptation
-  set type                 = kelly
+  set type                 = adaptive
+  set error estimator      = kelly
   set variable             = pressure
   set fraction type        = number
   set max number elements  = 70000

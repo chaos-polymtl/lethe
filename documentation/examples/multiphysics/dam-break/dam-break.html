@@ -620,7 +620,8 @@ appropriate for VOF simulations since the error for the VOF field is highly loca
 vicinity of the interface. We set <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">steps=4</span></code> to ensure that the initial mesh
 is adapted to the initial condition for the phase.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh adaptation
-  set type                     = kelly
+  set type                     = adaptive
+  set error estimator          = kelly
   set variable                 = phase
   set fraction type            = fraction
   set max refinement level     = 5

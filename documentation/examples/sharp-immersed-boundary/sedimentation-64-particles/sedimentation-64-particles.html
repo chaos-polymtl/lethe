@@ -538,15 +538,16 @@ end
 <section id="mesh-adaptation">
 <h3>Mesh Adaptation<a class="headerlink" href="#mesh-adaptation" title="Link to this heading">#</a></h3>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh adaptation
-  set fraction coarsening = 0.2
-  set fraction refinement = 0.025
-  set fraction type = number
-  set frequency = 1
-  set max number elements = 750000
+  set fraction coarsening  = 0.2
+  set fraction refinement  = 0.025
+  set fraction type        = number
+  set frequency            = 1
+  set max number elements  = [7500000](https://github.com/chaos-polymtl/lethe/commit/7500000)
   set max refinement level = 6
   set min refinement level = 4
-  set type = kelly
-  set variable = velocity
+  set type                 = adaptive
+  set error estimator      = kelly
+  set variable             = velocity
 end
 </pre></div>
 </div>
@@ -555,7 +556,7 @@ end
 <li><p>The <code class="docutils literal notranslate"><span class="pre">fraction</span> <span class="pre">refinement</span></code> is set to 0.025. The objective here is to refine elements that become close to the particle when it’s moving. This will mostly refine elements around the particle that are not included in the refinement zone around the particle. The refinement zone around the particle will be discussed in more detail in the IB particle section.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">frequency</span></code> is set to 1. Since the particle is moving at each time step, the refinement zone around it should be reevaluated at each time step.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">refinement</span> <span class="pre">level</span></code> is set to 6. This parameter limits how small the elements around the particle can get, limiting the total number of elements in the problem. Here we limit the mesh size to 8 elements per diameter of the particle. This should be sufficient to show the capabilities of the solver. However, the discretization error is not negligible in this case.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">type</span></code> is set to <code class="docutils literal notranslate"><span class="pre">kelly</span></code>. Since the particle is moving and we do not want a uniform refinement of all the cells, we use the kelly error estimator based on the <code class="docutils literal notranslate"><span class="pre">velocity</span></code> variable.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">type</span></code> is set to <code class="docutils literal notranslate"><span class="pre">adaptive</span></code>. Since the particle is moving and we do not want a uniform refinement of all the cells, we use the <code class="docutils literal notranslate"><span class="pre">kelly</span></code> error estimator based on the <code class="docutils literal notranslate"><span class="pre">velocity</span></code> variable.</p></li>
 </ul>
 </section>
 <section id="boundary-conditions">

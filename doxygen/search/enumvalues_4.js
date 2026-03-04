@@ -1,8 +1,8 @@
 var searchData=
 [
   ['edge_5fcontact_0',['edge_contact',['../namespaceLetheGridTools.html#aa73fd4047286eeafd3b77323f913b364a875320c330c016a8b0c1f9428a60808a',1,'LetheGridTools']]],
-  ['electomagnetics_1',['electomagnetics',['../multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddab9dc29cec752b2426ea14f1cb0e0317e',1,'multiphysics.h']]],
-  ['electric_5ffield_2',['electric_field',['../namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8aa79864cf485f38be6b1076d4b73e51b2',1,'BoundaryConditions']]],
+  ['electric_5ffield_1',['electric_field',['../namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8aa79864cf485f38be6b1076d4b73e51b2',1,'BoundaryConditions::electric_field'],['../multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaa79864cf485f38be6b1076d4b73e51b2',1,'electric_field:&#160;multiphysics.h']]],
+  ['electromagnetic_5ffields_2',['electromagnetic_fields',['../multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda2b10330fe7e35354ff14a91b5af1c176',1,'multiphysics.h']]],
   ['electromagnetics_3',['electromagnetics',['../multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a9ef5b8e8c97fff3ce7f675ca8d82ef3a',1,'multiphysics.h']]],
   ['ellipsoid_4',['ellipsoid',['../classShape.html#a394819ce751267dc955abe4ad18ebdeba4bffc1780b0728178be01297b30d7568',1,'Shape']]],
   ['empty_5',['empty',['../classAdaptiveSparseContacts.html#a9cf65bd3e1a790313fcf3f6b708ab230a3eda417d81f41b3d282e2995f2daa8c9',1,'AdaptiveSparseContacts']]],

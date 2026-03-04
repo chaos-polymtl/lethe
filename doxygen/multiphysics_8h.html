@@ -126,7 +126,10 @@ Enumerations</h2></td></tr>
 &#160;&#160;<a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda680362fee5d2ef1fb4a224fec18cfc36">phase_cahn_hilliard</a> = 4
 , <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda00c53276617bee8b9d1ea3ed7edc0ff3">chemical_potential_cahn_hilliard</a> = 5
 , <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda6f6b56ea71cef5ab6dc92666a9a31ffa">tracer</a> = 6
-, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddab9dc29cec752b2426ea14f1cb0e0317e">electomagnetics</a> = 7
+, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaa79864cf485f38be6b1076d4b73e51b2">electric_field</a> = 7
+, <br />
+&#160;&#160;<a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda8732c340b849ed4f600a10f719097755">magnetic_field</a> = 8
+, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda2b10330fe7e35354ff14a91b5af1c176">electromagnetic_fields</a> = 9
 <br />
  }</td></tr>
 <tr class="separator:a2cbb04ef215561a69b48772159577fdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -213,7 +216,11 @@ Functions</h2></td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="a2cbb04ef215561a69b48772159577fdda6f6b56ea71cef5ab6dc92666a9a31ffa" name="a2cbb04ef215561a69b48772159577fdda6f6b56ea71cef5ab6dc92666a9a31ffa"></a>tracer&#160;</td><td class="fielddoc"><p><a class="el" href="classTracer.html">Tracer</a> scalar field. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a2cbb04ef215561a69b48772159577fddab9dc29cec752b2426ea14f1cb0e0317e" name="a2cbb04ef215561a69b48772159577fddab9dc29cec752b2426ea14f1cb0e0317e"></a>electomagnetics&#160;</td><td class="fielddoc"><p>Electromagnetics field. This is a single field since mesh adaptation is carried out on the entire solution and not on the electric or magnetic field separately. </p>
+<tr><td class="fieldname"><a id="a2cbb04ef215561a69b48772159577fddaa79864cf485f38be6b1076d4b73e51b2" name="a2cbb04ef215561a69b48772159577fddaa79864cf485f38be6b1076d4b73e51b2"></a>electric_field&#160;</td><td class="fielddoc"><p>Electric field vector field from electromagnetics. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a2cbb04ef215561a69b48772159577fdda8732c340b849ed4f600a10f719097755" name="a2cbb04ef215561a69b48772159577fdda8732c340b849ed4f600a10f719097755"></a>magnetic_field&#160;</td><td class="fielddoc"><p>Magnetic field vector field from electromagnetics. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a2cbb04ef215561a69b48772159577fdda2b10330fe7e35354ff14a91b5af1c176" name="a2cbb04ef215561a69b48772159577fdda2b10330fe7e35354ff14a91b5af1c176"></a>electromagnetic_fields&#160;</td><td class="fielddoc"><p>Combination of both electric and magnetic fields from electromagnetics. </p>
 </td></tr>
 </table>
 
@@ -248,7 +255,7 @@ Functions</h2></td></tr>
 
 <p>Utility function used for parsing physics-based parameters. </p>
 
-<p class="definition">Definition at line <a class="el" href="multiphysics_8h_source.html#l00074">74</a> of file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="multiphysics_8h_source.html#l00076">76</a> of file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00035">cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00039">electromagnetics</a>, <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, <a class="el" href="multiphysics_8h_source.html#l00028">heat_transfer</a>, <a class="el" href="multiphysics_8h_source.html#l00030">tracer</a>, <a class="el" href="multiphysics_8h_source.html#l00033">VOF</a>, and <a class="el" href="multiphysics_8h_source.html#l00037">void_fraction</a>.</p>
 

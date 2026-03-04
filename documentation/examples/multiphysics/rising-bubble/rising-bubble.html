@@ -644,7 +644,8 @@ end
 defined for <code class="docutils literal notranslate"><span class="pre">phase</span></code>. <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">refinement</span> <span class="pre">level</span></code> and <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">refinement</span> <span class="pre">level</span></code> are <span class="math notranslate nohighlight">\(6\)</span> and <span class="math notranslate nohighlight">\(9\)</span>, respectively. Since the bubble rises and changes its location, we choose a rather large <code class="docutils literal notranslate"><span class="pre">fraction</span> <span class="pre">refinement</span></code> (<span class="math notranslate nohighlight">\(0.99\)</span>) and moderate <code class="docutils literal notranslate"><span class="pre">fraction</span> <span class="pre">coarsening</span></code> (<span class="math notranslate nohighlight">\(0.01\)</span>).
 To capture the bubble adequately, we set <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">steps</span> <span class="pre">=</span> <span class="pre">5</span></code> so that the initial mesh is adapted to ensure that the initial condition is imposed for the VOF phase with maximal accuracy.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh adaptation
-  set type                     = kelly
+  set type                     = adaptive
+  set error estimator          = kelly
   set variable                 = phase
   set fraction type            = fraction
   set max refinement level     = 9

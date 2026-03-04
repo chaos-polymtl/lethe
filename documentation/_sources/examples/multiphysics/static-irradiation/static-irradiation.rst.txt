@@ -136,7 +136,8 @@ As the laser heats the metal-gas interface, a vapor depression forms and deepens
 .. code-block:: text
 
     subsection mesh adaptation
-      set type                 = kelly
+      set type                 = adaptive 
+      set error estimator      = kelly
       set variable             = temperature
       set fraction type        = fraction
       set max refinement level = 7

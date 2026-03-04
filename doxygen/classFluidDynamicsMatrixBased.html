@@ -220,8 +220,8 @@ Protected Member Functions</h2></td></tr>
 <tr class="separator:a035087ab1aa51daa4d7bcee2aeb6c16d inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a57ffa198f9fabb15e3af4c9fa2921e18 inherit pro_methods_classNavierStokesBase" id="r_a57ffa198f9fabb15e3af4c9fa2921e18"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a57ffa198f9fabb15e3af4c9fa2921e18">refine_mesh</a> ()</td></tr>
 <tr class="separator:a57ffa198f9fabb15e3af4c9fa2921e18 inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a050bce04127b14f96659bfa4627892e0 inherit pro_methods_classNavierStokesBase" id="r_a050bce04127b14f96659bfa4627892e0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a050bce04127b14f96659bfa4627892e0">refine_mesh_kelly</a> ()</td></tr>
-<tr class="separator:a050bce04127b14f96659bfa4627892e0 inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18fd21d1aa9a731b2358d9def796ba2c inherit pro_methods_classNavierStokesBase" id="r_a18fd21d1aa9a731b2358d9def796ba2c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a18fd21d1aa9a731b2358d9def796ba2c">refine_mesh_adaptive</a> ()</td></tr>
+<tr class="separator:a18fd21d1aa9a731b2358d9def796ba2c inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac8a90a05bdef648307a900513585bd86 inherit pro_methods_classNavierStokesBase" id="r_ac8a90a05bdef648307a900513585bd86"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#ac8a90a05bdef648307a900513585bd86">refine_mesh_uniform</a> ()</td></tr>
 <tr class="separator:ac8a90a05bdef648307a900513585bd86 inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4ee71a3ce475f7e264274eae9b2e57f8 inherit pro_methods_classNavierStokesBase" id="r_a4ee71a3ce475f7e264274eae9b2e57f8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a4ee71a3ce475f7e264274eae9b2e57f8">transfer_solution</a> (SolutionTransfer&lt; dim, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; &amp;solution_transfer, std::vector&lt; SolutionTransfer&lt; dim, <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &gt; &gt; &amp;previous_solutions_transfer)</td></tr>
@@ -479,7 +479,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html#l00037">37</a> of file <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html">fluid_dynamics_matrix_based.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="structParameters_1_1LinearSolver.html#abcc346895a204b69b5fa4edabd810834a0b65af7f2357d3fa0ee8d8972d7e0646">Parameters::LinearSolver::amg</a>, <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, <a class="el" href="fluid__dynamics__matrix__based_8h_source.html#l00309">FluidDynamicsMatrixBased&lt; dim &gt;::initial_preconditioner_fill_level</a>, and <a class="el" href="navier__stokes__base_8h_source.html#l00982">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>.</p>
+<p class="reference">References <a class="el" href="structParameters_1_1LinearSolver.html#abcc346895a204b69b5fa4edabd810834a0b65af7f2357d3fa0ee8d8972d7e0646">Parameters::LinearSolver::amg</a>, <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, <a class="el" href="fluid__dynamics__matrix__based_8h_source.html#l00309">FluidDynamicsMatrixBased&lt; dim &gt;::initial_preconditioner_fill_level</a>, and <a class="el" href="navier__stokes__base_8h_source.html#l00979">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>.</p>
 
 </div>
 </div>
@@ -1240,7 +1240,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html#l02104">2104</a> of file <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html">fluid_dynamics_matrix_based.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="grids_8cc_source.html#l00233">read_mesh_and_manifolds()</a>, <a class="el" href="grids_8cc_source.html#l00311">read_mesh_and_manifolds_for_stator_and_rotor()</a>, and <a class="el" href="navier__stokes__base_8cc_source.html#l00778">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::refine_mesh()</a>.</p>
+<p class="reference">References <a class="el" href="grids_8cc_source.html#l00240">read_mesh_and_manifolds()</a>, <a class="el" href="grids_8cc_source.html#l00318">read_mesh_and_manifolds_for_stator_and_rotor()</a>, and <a class="el" href="navier__stokes__base_8cc_source.html#l00778">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::refine_mesh()</a>.</p>
 
 </div>
 </div>

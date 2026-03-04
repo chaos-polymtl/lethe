@@ -676,7 +676,8 @@ end
 <h3>Mesh Adaptation<a class="headerlink" href="#mesh-adaptation" title="Link to this heading">#</a></h3>
 <p>In the <code class="docutils literal notranslate"><span class="pre">mesh</span> <span class="pre">adaptation</span></code> subsection, adaptive mesh refinement is defined for the <code class="docutils literal notranslate"><span class="pre">phase</span></code>. <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">refinement</span> <span class="pre">level</span></code> and <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">refinement</span> <span class="pre">level</span></code> are <span class="math notranslate nohighlight">\(7\)</span> and <span class="math notranslate nohighlight">\(9\)</span>, respectively. Since the size of the bubble changes, we choose a rather large <code class="docutils literal notranslate"><span class="pre">fraction</span> <span class="pre">refinement</span></code> (<span class="math notranslate nohighlight">\(0.99\)</span>) and moderate <code class="docutils literal notranslate"><span class="pre">fraction</span> <span class="pre">coarsening</span></code> (<span class="math notranslate nohighlight">\(0.01\)</span>).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh adaptation
-  set type                     = kelly
+  set type                     = adaptive
+  set error estimator          = kelly
   set variable                 = phase
   set fraction type            = fraction
   set max refinement level     = 9

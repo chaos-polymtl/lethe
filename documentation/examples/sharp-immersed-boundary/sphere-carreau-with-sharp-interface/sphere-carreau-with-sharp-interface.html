@@ -639,9 +639,10 @@ end
 </section>
 <section id="mesh-adaptation">
 <h3>Mesh Adaptation<a class="headerlink" href="#mesh-adaptation" title="Link to this heading">#</a></h3>
-<p>To generate an additional refinement zone around the immersed boundary, the <code class="docutils literal notranslate"><span class="pre">mesh</span> <span class="pre">adaptation</span></code> <code class="docutils literal notranslate"><span class="pre">type</span></code> must be set to <code class="docutils literal notranslate"><span class="pre">kelly</span></code>. During both of the mesh refinement steps, <span class="math notranslate nohighlight">\(40\%\)</span> of the cells with be split in <span class="math notranslate nohighlight">\(8\)</span> (<code class="docutils literal notranslate"><span class="pre">fraction</span> <span class="pre">refinement</span> <span class="pre">=</span> <span class="pre">0.4</span></code>) using a velocity-gradient Kelly operator.</p>
+<p>To generate an additional refinement zone around the immersed boundary, the mesh adaptation <code class="docutils literal notranslate"><span class="pre">type</span></code> must be set to <code class="docutils literal notranslate"><span class="pre">adaptive</span></code>. During both of the mesh refinement steps, <span class="math notranslate nohighlight">\(40\%\)</span> of the cells with be split in <span class="math notranslate nohighlight">\(8\)</span> (<code class="docutils literal notranslate"><span class="pre">fraction</span> <span class="pre">refinement</span> <span class="pre">=</span> <span class="pre">0.4</span></code>) using a velocity-gradient Kelly operator.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh adaptation
-  set type                 = kelly
+  set type                 = adaptive
+  set error estimator      = kelly
   set fraction coarsening  = 0.1
   set fraction refinement  = 0.4
   set fraction type        = number

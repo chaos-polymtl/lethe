@@ -532,7 +532,8 @@ end
 <p>The mesh adaptation algorithm is based on the Kelly error estimator applied on the velocity variable. For <span class="math notranslate nohighlight">\(\textrm{Re} = 70\)</span> the correspondent code section looks as follows:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh adaptation
   set variable             = velocity
-  set type                 = kelly
+  set type                 = adaptive
+  set error estimator      = kelly
   set fraction refinement  = 0.2
   set fraction coarsening  = 0
   set frequency            = 1
@@ -544,11 +545,12 @@ end
 <p>In this case, the algorithm thoroughly discretizes the mesh around the expansion section, where the recirculation zones appear:</p>
 <img alt="../../../_images/mesh-adaptation-Re70.png" src="../../../_images/mesh-adaptation-Re70.png" />
 <p>For <span class="math notranslate nohighlight">\(\textrm{Re} = 610\)</span>, mesh adaptation was limited by the maximum refinement level, the fraction refinement, and the number of cells, so that the mesh discretization did not become too computationally expensive at the final simulation time.</p>
-<p>Also, it is useful not to have a very refined mesh at the beginning of the simulation (when the flow is still being developed at the inlet channel) and rather allow the algorithm to allocate more cells as the flow becomes turlent at the outlet section.
+<p>Also, it is useful not to have a very refined mesh at the beginning of the simulation (when the flow is still being developed at the inlet channel) and rather allow the algorithm to allocate more cells as the flow becomes turbulent at the outlet section.
 The <code class="docutils literal notranslate"><span class="pre">mesh</span> <span class="pre">refinement</span> <span class="pre">controller</span></code> feature aims to maintain the total number of elements constant by changing coarsening and refinement ratios.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh adaptation
   set variable                    = velocity
-  set type                        = kelly
+  set type                        = adaptive
+  set error estimator             = kelly
   set fraction refinement         = 0.05
   set fraction coarsening         = 0
   set frequency                   = 5

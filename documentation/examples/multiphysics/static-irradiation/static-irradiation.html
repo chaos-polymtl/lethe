@@ -574,7 +574,8 @@ end
 <h3>Mesh Adaptation<a class="headerlink" href="#mesh-adaptation" title="Link to this heading">#</a></h3>
 <p>As the laser heats the metal-gas interface, a vapor depression forms and deepens, and the liquid-gas interface reaches the bottom boundary of the box refinement. Hence, we dynamically adapt the mesh using the <code class="docutils literal notranslate"><span class="pre">temperature</span></code> as the refinement <code class="docutils literal notranslate"><span class="pre">variable</span></code> to keep a well discretized interface. We choose <span class="math notranslate nohighlight">\(7\)</span> as the <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">refinement</span> <span class="pre">level</span></code> and <span class="math notranslate nohighlight">\(4\)</span> as the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">refinement</span> <span class="pre">level</span></code>. The mesh is adapted each <span class="math notranslate nohighlight">\(20\)</span> iterations to reduce the computational cost by setting <code class="docutils literal notranslate"><span class="pre">frequency</span> <span class="pre">=</span> <span class="pre">20</span></code>. Note that the <code class="docutils literal notranslate"><span class="pre">fraction</span> <span class="pre">coarsening</span></code> is set to <span class="math notranslate nohighlight">\(0.0\)</span> to avoid coarsening in the center of the melt pool, where the temperature gradient, used by the Kelly error estimator, is less important than at the liquid-gas interface.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh adaptation
-  set type                 = kelly
+  set type                 = adaptive
+  set error estimator      = kelly
   set variable             = temperature
   set fraction type        = fraction
   set max refinement level = 7

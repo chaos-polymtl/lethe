@@ -591,7 +591,8 @@ end
 <h3>Mesh Adaptation<a class="headerlink" href="#mesh-adaptation" title="Link to this heading">#</a></h3>
 <p>In the <code class="docutils literal notranslate"><span class="pre">mesh</span> <span class="pre">adaptation</span></code> subsection, we dynamically adapt the mesh using the <code class="docutils literal notranslate"><span class="pre">phase</span></code> as refinement <code class="docutils literal notranslate"><span class="pre">variable</span></code>. We choose <span class="math notranslate nohighlight">\(3\)</span> as the <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">refinement</span> <span class="pre">level</span></code> and <span class="math notranslate nohighlight">\(5\)</span> as the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">refinement</span> <span class="pre">level</span></code>. We set <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">steps</span> <span class="pre">=</span> <span class="pre">4</span></code> to adapt the mesh to the initial value of the VOF field.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh adaptation
-  set type                     = kelly
+  set type                     = adaptive
+  set error estimator          = kelly
   set variable                 = phase
   set fraction type            = fraction
   set max refinement level     = 5
