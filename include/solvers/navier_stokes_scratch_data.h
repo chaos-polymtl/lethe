@@ -1437,6 +1437,24 @@ public:
       }
   }
 
+  /**
+   * @brief Compute local density average inverse values for density weighted
+   * surface tension force.
+   */
+  inline void
+  compute_density_average_inverse()
+  {
+    // Check that all density vectors are of the same size
+    AssertDimension(density_0.size(), density_1.size());
+    AssertDimension(density_0.size(), density_average_inverse.size());
+
+    for (unsigned int q = 0; q < density_0.size(); ++q)
+      {
+        double density_sum_inverse = 1. / (density_0[q] + density_1[q]);
+        density_average_inverse[q] = 2 * density_sum_inverse;
+      }
+  }
+
   // For auxiliary physics solution extrapolation
   const std::shared_ptr<SimulationControl> simulation_control;
 
@@ -1466,6 +1484,7 @@ public:
   // For VOF and CH simulations. Present properties for fluid 0 and 1.
   std::vector<double> density_0;
   std::vector<double> density_1;
+  std::vector<double> density_average_inverse;
   double              density_ref_0;
   double              density_ref_1;
   double              density_psi_0;
