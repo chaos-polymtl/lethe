@@ -113,6 +113,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a146bf21dae49bece7649856d3d172e8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1491c32ed406b6fe2ee1dde9a669b142" id="r_a1491c32ed406b6fe2ee1dde9a669b142"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSubSimulationControlDEM.html#a1491c32ed406b6fe2ee1dde9a669b142">get_time_step</a> () const</td></tr>
 <tr class="separator:a1491c32ed406b6fe2ee1dde9a669b142"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66da59ae1fdde25bc6b56332854c0965" id="r_a66da59ae1fdde25bc6b56332854c0965"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSubSimulationControlDEM.html#a66da59ae1fdde25bc6b56332854c0965">is_first_iteration</a> () const</td></tr>
+<tr class="separator:a66da59ae1fdde25bc6b56332854c0965"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae787d0fe449ac2fd98311026544a0871" id="r_ae787d0fe449ac2fd98311026544a0871"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSubSimulationControlDEM.html#ae787d0fe449ac2fd98311026544a0871">is_last_iteration</a> () const</td></tr>
+<tr class="separator:ae787d0fe449ac2fd98311026544a0871"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -236,7 +240,7 @@ Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="sub__simulation__control_8cc_source.html#l00007">7</a> of file <a class="el" href="sub__simulation__control_8cc_source.html">sub_simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="sub__simulation__control_8h_source.html#l00139">coupling_frequency</a>, <a class="el" href="classSubSimulationControlDEM.html#a779f3e8fea85594fecbda36bd89ec7aeab4ea9a273afa37493fd9abb43cacc97d">fixed_number_of_iterations</a>, <a class="el" href="sub__simulation__control_8h_source.html#l00146">fraction_of_rayleigh_characteristic_time</a>, <a class="el" href="sub__simulation__control_8h_source.html#l00132">iteration_logic</a>, <a class="el" href="sub__simulation__control_8h_source.html#l00142">rayleigh_characteristic_time</a>, <a class="el" href="sub__simulation__control_8h_source.html#l00135">time_interval</a>, <a class="el" href="sub__simulation__control_8h_source.html#l00156">time_step</a>, and <a class="el" href="sub__simulation__control_8h_source.html#l00153">total_number_of_iterations</a>.</p>
+<p class="reference">References <a class="el" href="sub__simulation__control_8h_source.html#l00169">coupling_frequency</a>, <a class="el" href="classSubSimulationControlDEM.html#a779f3e8fea85594fecbda36bd89ec7aeab4ea9a273afa37493fd9abb43cacc97d">fixed_number_of_iterations</a>, <a class="el" href="sub__simulation__control_8h_source.html#l00176">fraction_of_rayleigh_characteristic_time</a>, <a class="el" href="sub__simulation__control_8h_source.html#l00162">iteration_logic</a>, <a class="el" href="sub__simulation__control_8h_source.html#l00172">rayleigh_characteristic_time</a>, <a class="el" href="sub__simulation__control_8h_source.html#l00165">time_interval</a>, <a class="el" href="sub__simulation__control_8h_source.html#l00186">time_step</a>, and <a class="el" href="sub__simulation__control_8h_source.html#l00183">total_number_of_iterations</a>.</p>
 
 </div>
 </div>
@@ -269,7 +273,7 @@ Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="sub__simulation__control_8h_source.html#l00114">114</a> of file <a class="el" href="sub__simulation__control_8h_source.html">sub_simulation_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="sub__simulation__control_8h_source.html#l00149">iteration_number</a>.</p>
+<p class="reference">References <a class="el" href="sub__simulation__control_8h_source.html#l00179">iteration_number</a>.</p>
 
 </div>
 </div>
@@ -301,7 +305,73 @@ Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="sub__simulation__control_8h_source.html#l00125">125</a> of file <a class="el" href="sub__simulation__control_8h_source.html">sub_simulation_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="sub__simulation__control_8h_source.html#l00156">time_step</a>.</p>
+<p class="reference">References <a class="el" href="sub__simulation__control_8h_source.html#l00186">time_step</a>.</p>
+
+</div>
+</div>
+<a id="a66da59ae1fdde25bc6b56332854c0965" name="a66da59ae1fdde25bc6b56332854c0965"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a66da59ae1fdde25bc6b56332854c0965">&#9670;&#160;</a></span>is_first_iteration()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool SubSimulationControlDEM::is_first_iteration </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Check if this is the first <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> sub iteration. </p>
+<p>The first iteration corresponds to either the state before the sub simulation control has started iterating (iteration_number == 0) or the first iteration it is actually carrying out (iteration_number == 1).</p>
+<dl class="section return"><dt>Returns</dt><dd>true if this is the first iteration, false otherwise. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="sub__simulation__control_8h_source.html#l00140">140</a> of file <a class="el" href="sub__simulation__control_8h_source.html">sub_simulation_control.h</a>.</p>
+
+<p class="reference">References <a class="el" href="sub__simulation__control_8h_source.html#l00179">iteration_number</a>.</p>
+
+</div>
+</div>
+<a id="ae787d0fe449ac2fd98311026544a0871" name="ae787d0fe449ac2fd98311026544a0871"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae787d0fe449ac2fd98311026544a0871">&#9670;&#160;</a></span>is_last_iteration()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool SubSimulationControlDEM::is_last_iteration </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Check if this is the last <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> sub iteration. </p>
+<p>The last iteration is reached when the iteration number equals the total number of iterations required to complete the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> sub simulation within the current CFD time step.</p>
+<dl class="section return"><dt>Returns</dt><dd>true if this is the last iteration, false otherwise. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="sub__simulation__control_8h_source.html#l00155">155</a> of file <a class="el" href="sub__simulation__control_8h_source.html">sub_simulation_control.h</a>.</p>
+
+<p class="reference">References <a class="el" href="sub__simulation__control_8h_source.html#l00179">iteration_number</a>, and <a class="el" href="sub__simulation__control_8h_source.html#l00183">total_number_of_iterations</a>.</p>
 
 </div>
 </div>
@@ -326,7 +396,7 @@ Private Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="sub__simulation__control_8cc_source.html#l00072">72</a> of file <a class="el" href="sub__simulation__control_8cc_source.html">sub_simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="sub__simulation__control_8h_source.html#l00149">iteration_number</a>, and <a class="el" href="sub__simulation__control_8h_source.html#l00153">total_number_of_iterations</a>.</p>
+<p class="reference">References <a class="el" href="sub__simulation__control_8h_source.html#l00179">iteration_number</a>, and <a class="el" href="sub__simulation__control_8h_source.html#l00183">total_number_of_iterations</a>.</p>
 
 </div>
 </div>
@@ -352,7 +422,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Coupling frequency. This is only used when iteration_logic=fixed_number_of_iterations </p>
 
-<p class="definition">Definition at line <a class="el" href="sub__simulation__control_8h_source.html#l00139">139</a> of file <a class="el" href="sub__simulation__control_8h_source.html">sub_simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="sub__simulation__control_8h_source.html#l00169">169</a> of file <a class="el" href="sub__simulation__control_8h_source.html">sub_simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -377,7 +447,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Targeted fraction of the Rayleigh characteristic time. This is only used when iteration_logic=fixed_fraction_of_rayleigh_time_step </p>
 
-<p class="definition">Definition at line <a class="el" href="sub__simulation__control_8h_source.html#l00146">146</a> of file <a class="el" href="sub__simulation__control_8h_source.html">sub_simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="sub__simulation__control_8h_source.html#l00176">176</a> of file <a class="el" href="sub__simulation__control_8h_source.html">sub_simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -403,7 +473,7 @@ Private Attributes</h2></td></tr>
 
 <p>Logic used for the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> iterations. </p>
 
-<p class="definition">Definition at line <a class="el" href="sub__simulation__control_8h_source.html#l00132">132</a> of file <a class="el" href="sub__simulation__control_8h_source.html">sub_simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="sub__simulation__control_8h_source.html#l00162">162</a> of file <a class="el" href="sub__simulation__control_8h_source.html">sub_simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -429,7 +499,7 @@ Private Attributes</h2></td></tr>
 
 <p>Current value of the sub iteration number. This is initialized to zero. </p>
 
-<p class="definition">Definition at line <a class="el" href="sub__simulation__control_8h_source.html#l00149">149</a> of file <a class="el" href="sub__simulation__control_8h_source.html">sub_simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="sub__simulation__control_8h_source.html#l00179">179</a> of file <a class="el" href="sub__simulation__control_8h_source.html">sub_simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -455,7 +525,7 @@ Private Attributes</h2></td></tr>
 
 <p>Rayleigh characteristic time for the particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="sub__simulation__control_8h_source.html#l00142">142</a> of file <a class="el" href="sub__simulation__control_8h_source.html">sub_simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="sub__simulation__control_8h_source.html#l00172">172</a> of file <a class="el" href="sub__simulation__control_8h_source.html">sub_simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -481,7 +551,7 @@ Private Attributes</h2></td></tr>
 
 <p>Time interval over which the time integration is to be carried out. </p>
 
-<p class="definition">Definition at line <a class="el" href="sub__simulation__control_8h_source.html#l00135">135</a> of file <a class="el" href="sub__simulation__control_8h_source.html">sub_simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="sub__simulation__control_8h_source.html#l00165">165</a> of file <a class="el" href="sub__simulation__control_8h_source.html">sub_simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -507,7 +577,7 @@ Private Attributes</h2></td></tr>
 
 <p>Time step value of the sub time stepping. </p>
 
-<p class="definition">Definition at line <a class="el" href="sub__simulation__control_8h_source.html#l00156">156</a> of file <a class="el" href="sub__simulation__control_8h_source.html">sub_simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="sub__simulation__control_8h_source.html#l00186">186</a> of file <a class="el" href="sub__simulation__control_8h_source.html">sub_simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -532,7 +602,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Total number of iterations. This is the number of iterations that is required until the completion of the sub simulation control </p>
 
-<p class="definition">Definition at line <a class="el" href="sub__simulation__control_8h_source.html#l00153">153</a> of file <a class="el" href="sub__simulation__control_8h_source.html">sub_simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="sub__simulation__control_8h_source.html#l00183">183</a> of file <a class="el" href="sub__simulation__control_8h_source.html">sub_simulation_control.h</a>.</p>
 
 </div>
 </div>
