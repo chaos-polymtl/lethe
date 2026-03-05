@@ -36,25 +36,7 @@ CFDDEMSolver<dim>::dem_setup_parameters()
   dem_action_manager = DEMActionManager::get_action_manager();
 
   // Initialize DEM Parameters
-  dem_parameters.lagrangian_physical_properties =
-    this->cfd_dem_simulation_parameters.dem_parameters
-      .lagrangian_physical_properties;
-  g = dem_parameters.lagrangian_physical_properties.g;
-  dem_parameters.boundary_conditions =
-    this->cfd_dem_simulation_parameters.dem_parameters.boundary_conditions;
-  dem_parameters.insertion_info =
-    this->cfd_dem_simulation_parameters.dem_parameters.insertion_info;
-  dem_parameters.floating_walls =
-    this->cfd_dem_simulation_parameters.dem_parameters.floating_walls;
-  dem_parameters.model_parameters =
-    this->cfd_dem_simulation_parameters.dem_parameters.model_parameters;
-  dem_parameters.simulation_control =
-    this->cfd_dem_simulation_parameters.dem_parameters.simulation_control;
-  dem_parameters.post_processing =
-    this->cfd_dem_simulation_parameters.dem_parameters.post_processing;
-  dem_parameters.mesh = this->cfd_dem_simulation_parameters.dem_parameters.mesh;
-  dem_parameters.restart =
-    this->cfd_dem_simulation_parameters.dem_parameters.restart;
+  dem_parameters = this->cfd_dem_simulation_parameters.dem_parameters;
   size_distribution_object_container.resize(
     dem_parameters.lagrangian_physical_properties.particle_type_number);
 
@@ -91,16 +73,18 @@ CFDDEMSolver<dim>::dem_setup_parameters()
        i < dem_parameters.lagrangian_physical_properties.particle_type_number;
        ++i)
     {
-      double youngs_modulus = dem_parameters.lagrangian_physical_properties
-                                .youngs_modulus_particle[i];
-      double poisson_ratio =
+      const double youngs_modulus =
+        dem_parameters.lagrangian_physical_properties
+          .youngs_modulus_particle[i];
+      const double poisson_ratio =
         dem_parameters.lagrangian_physical_properties.poisson_ratio_particle[i];
-      double density =
+      const double density =
         dem_parameters.lagrangian_physical_properties.density_particle[i];
 
-      double shear_modulus = youngs_modulus / (2.0 * (1.0 + poisson_ratio));
+      const double shear_modulus =
+        youngs_modulus / (2.0 * (1.0 + poisson_ratio));
 
-      double min_diameter =
+      const double min_diameter =
         size_distribution_object_container.at(i)->find_min_diameter();
 
       rayleigh_time_step =
@@ -1691,7 +1675,7 @@ CFDDEMSolver<dim>::solve()
         contact_search_counter = 0;
         while (dem_simulation_control->iterate())
           {
-            // dem_iterator carries out the particle-particle and
+            // dem_iterator carries out< the particle-particle and
             // particle_wall force calculations, integration and
             // update_ghost
             dem_iterator();
