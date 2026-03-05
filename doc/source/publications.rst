@@ -4,6 +4,15 @@ Publications
 
 This section regroups the peer-reviewed journal articles that **describe** core functionalities of Lethe or that **use** Lethe. The publications are grouped by the year of the publications and displayed in the IEEE format.
 
+Preprints
+---------
+
+This section regroups preprints of journal articles already submitted, but which are still under review.
+
+* `Papillon-Laroche, Helene, Alphonius, Amishga, Schreter-Fleischhacker, Magdalena, Harvey, Jean-Philippe, Blais, Bruno. "Geometric Reinitialization for Capillary Flows: a Comparative Study with State-of-the-Art Conservative Level-Set Methods." arXiv preprint arXiv:2602.00275, 2026. <https://doi.org/10.48550/arXiv.2602.00275>`_
+
+* `O. Gaboriault, A. Timercan, R. Pelletier, L.-P. Lefebvre, D. Melançon, and B. Blais, “Increase in packing density during multi-layer powder spreading: An experimental and numerical study,” arXiv preprint arXiv:2509.26402, 2025. <https://arxiv.org/abs/2509.26402>`_
+
 2025
 ----
 
@@ -62,10 +71,3 @@ This section regroups the peer-reviewed journal articles that **describe** core 
 ----
 
 * `B. Blais, L. Barbeau, V. Bibeau, S. Gauvin, T. E. Geitani, S. Golshan, R. Kamble, G. Mirakhori, and J. Chaouki, “Lethe: An open-source parallel high-order adaptative CFD solver for Incompressible flows”, SoftwareX, 12, 100579, 2020 <https://www.sciencedirect.com/science/article/pii/S2352711020302922?via%3Dihub>`_.
-
-Preprints
----------
-
-This section regroups preprints of journal articles already submitted, but which are still under review.
-
-* `O. Gaboriault, A. Timercan, R. Pelletier, L.-P. Lefebvre, D. Melançon, and B. Blais, “Increase in packing density during multi-layer powder spreading: An experimental and numerical study,” arXiv preprint arXiv:2509.26402, 2025. <https://arxiv.org/abs/2509.26402>`_
