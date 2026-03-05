@@ -407,11 +407,16 @@ Parameters::VOF_SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
       "State whether the output from the surface tension force calculations should be printed "
       "Choices are <quiet|verbose>.");
 
-
     prm.declare_entry("enable marangoni effect",
                       "false",
                       Patterns::Bool(),
                       "Enable marangoni effect calculation <true|false>");
+
+    prm.declare_entry(
+      "enable density weighting",
+      "false",
+      Patterns::Bool(),
+      "Enable the weighting of the surface tension force with the local relative density <true|false>");
   }
   prm.leave_subsection();
 }
@@ -436,7 +441,8 @@ Parameters::VOF_SurfaceTensionForce::parse_parameters(ParameterHandler &prm)
     else
       throw(std::runtime_error("Invalid verbosity level"));
 
-    enable_marangoni_effect = prm.get_bool("enable marangoni effect");
+    enable_marangoni_effect  = prm.get_bool("enable marangoni effect");
+    enable_density_weighting = prm.get_bool("enable density weighting");
   }
   prm.leave_subsection();
 }

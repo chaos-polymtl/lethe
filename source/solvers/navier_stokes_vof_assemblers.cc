@@ -638,6 +638,12 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
   auto &strong_residual = copy_data.strong_residual;
   auto &local_rhs       = copy_data.local_rhs;
 
+  // Get density weighting values of interest
+  const bool apply_density_weighting =
+    this->STF_parameters.enable_density_weighting;
+  const auto &density_average_inverse = scratch_data.density_average_inverse;
+  const auto &density_values          = scratch_data.density;
+
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -665,9 +671,18 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
 
       const double JxW_value = JxW[q];
 
+      const double density_weight =
+        (apply_density_weighting) ?
+          density_values[q] * density_average_inverse[q] :
+          1;
+
       const Tensor<1, dim> surface_tension_force =
         -surface_tension_coef * curvature_value *
-        normalized_phase_fraction_gradient * filtered_phase_gradient_norm;
+        normalized_phase_fraction_gradient *
+        filtered_phase_gradient_norm
+        // Apply density weighting when enabled. Otherwise, this multiplies by
+        // one and therefore the force term remains unaffected.
+        * density_weight;
 
       strong_residual[q] += surface_tension_force;
 

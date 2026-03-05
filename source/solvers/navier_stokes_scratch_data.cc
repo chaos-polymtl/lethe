@@ -120,6 +120,7 @@ NavierStokesScratchData<dim>::enable_vof(
   // Allocate physical properties
   density_0                             = std::vector<double>(n_q_points);
   density_1                             = std::vector<double>(n_q_points);
+  density_average_inverse               = std::vector<double>(n_q_points);
   dynamic_viscosity_0                   = std::vector<double>(n_q_points);
   dynamic_viscosity_1                   = std::vector<double>(n_q_points);
   dynamic_viscosity_for_stabilization_0 = std::vector<double>(n_q_points);
@@ -161,6 +162,7 @@ NavierStokesScratchData<dim>::enable_vof(
   // Allocate physical properties
   density_0                             = std::vector<double>(n_q_points);
   density_1                             = std::vector<double>(n_q_points);
+  density_average_inverse               = std::vector<double>(n_q_points);
   dynamic_viscosity_0                   = std::vector<double>(n_q_points);
   dynamic_viscosity_1                   = std::vector<double>(n_q_points);
   dynamic_viscosity_for_stabilization_0 = std::vector<double>(n_q_points);
@@ -617,6 +619,9 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
 
           if (gather_vof && !gather_cahn_hilliard)
             {
+              // For density weighted surface tension force
+              compute_density_average_inverse();
+
               for (unsigned int q = 0; q < this->n_q_points; ++q)
                 {
                   double filtered_phase_value = this->filtered_phase_values[q];
