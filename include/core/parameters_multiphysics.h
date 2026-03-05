@@ -229,18 +229,38 @@ namespace Parameters
    */
   struct CLS_SurfaceTensionForce
   {
+    /// Enable surface tension force computation
     bool enable;
 
+    /// Diffusion coefficient of the phase gradient projection
     double phase_indicator_gradient_diffusion_factor;
+
+    /// Diffusion coefficient of the curvature projection
     double curvature_diffusion_factor;
 
+    /// Enable writing of CLS auxiliary fields in VTK output files
     bool output_cls_auxiliary_fields;
 
-    // Type of verbosity for the surface tension force calculation
+    /// Type of verbosity for the surface tension force calculation
     Parameters::Verbosity verbosity;
 
-    // Enable marangoni effect
+    /// Enable computation of Marangoni effect
     bool enable_marangoni_effect;
+
+    /**
+     * Enable density weighting of the surface tension force
+     * (\f$\vec{F}_\sigma\f$) with the local relative density.
+     *
+     * \f[
+     * \vec{F}_{\sigma, \text{weighted}} = \frac{2\tilde{\rho}}{\rho_0 + \rho_1}
+     * \vec{F}_\sigma \f]
+     *
+     * with \f$\vec{F}_{\sigma, \text{weighted}}\f$ the density weighted surface
+     * tension force, \f$\tilde{\rho}\f$ the phase indicator weighted fluid
+     * density, \f$\rho_0\f$ and \f$\rho_1\f$ the densities of the fluids 0 and
+     * 1 respectively.
+     */
+    bool enable_density_weighting;
 
     static void
     declare_parameters(ParameterHandler &prm);
