@@ -33,9 +33,6 @@ template <int dim>
 void
 CFDDEMSolver<dim>::dem_setup_parameters()
 {
-  coupling_frequency =
-    this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency;
-
   dem_action_manager = DEMActionManager::get_action_manager();
 
   // Initialize DEM Parameters
@@ -94,16 +91,18 @@ CFDDEMSolver<dim>::dem_setup_parameters()
        i < dem_parameters.lagrangian_physical_properties.particle_type_number;
        ++i)
     {
-      double youngs_modulus = dem_parameters.lagrangian_physical_properties
-                                .youngs_modulus_particle[i];
-      double poisson_ratio =
+      const double youngs_modulus =
+        dem_parameters.lagrangian_physical_properties
+          .youngs_modulus_particle[i];
+      const double poisson_ratio =
         dem_parameters.lagrangian_physical_properties.poisson_ratio_particle[i];
-      double density =
+      const double density =
         dem_parameters.lagrangian_physical_properties.density_particle[i];
 
-      double shear_modulus = youngs_modulus / (2.0 * (1.0 + poisson_ratio));
+      const double shear_modulus =
+        youngs_modulus / (2.0 * (1.0 + poisson_ratio));
 
-      double min_diameter =
+      const double min_diameter =
         size_distribution_object_container.at(i)->find_min_diameter();
 
       rayleigh_time_step =
@@ -114,10 +113,13 @@ CFDDEMSolver<dim>::dem_setup_parameters()
 
   // Give an initial estimation of the DEM time step that will be overwritten
   // later on by the SubSimulationControlDEM
-  // TODO Refactor this when everything is in the sub time stepping
-  dem_time_step =
-    this->simulation_control->get_time_step() /
-    this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency;
+  dem_simulation_control = std::make_shared<SubSimulationControlDEM>(
+    this->cfd_dem_simulation_parameters.cfd_dem.dem_iteration_control,
+    this->simulation_control->get_time_step(),
+    this->cfd_dem_simulation_parameters.cfd_dem.coupling_frequency,
+    rayleigh_time_step,
+    this->cfd_dem_simulation_parameters.cfd_dem.fraction_of_rayleigh_time);
+
   report_rayleigh_time_ratio();
 
   // Check if there are periodic boundaries
@@ -263,7 +265,8 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
     }
 
   this->pcout << "Finished initializing DEM parameters" << std::endl
-              << "DEM time step is " << dem_time_step << " s" << std::endl;
+              << "DEM time step is " << dem_simulation_control->get_time_step()
+              << " s" << std::endl;
 }
 
 template <int dim>
@@ -943,6 +946,7 @@ template <int dim>
 void
 CFDDEMSolver<dim>::particle_wall_contact_force()
 {
+  const double dem_time_step = dem_simulation_control->get_time_step();
   // Particle-wall contact force
   particle_wall_contact_force_object->calculate_particle_wall_contact(
     contact_manager.get_particle_wall_in_contact(),
@@ -1352,12 +1356,14 @@ CFDDEMSolver<dim>::sort_particles_into_subdomains_and_cells()
 
 template <int dim>
 void
-CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
+CFDDEMSolver<dim>::dem_iterator()
 {
+  const double dem_time_step = dem_simulation_control->get_time_step();
+
   // dem_contact_build carries out the particle-particle and particle-wall
   // broad and fine searches, sort_particles_into_subdomains_and_cells, and
   // exchange_ghost
-  dem_contact_build(counter);
+  dem_contact_build();
 
   // Particle-particle contact force
   particle_particle_contact_force_object->calculate_particle_particle_contact(
@@ -1415,12 +1421,13 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
                                    sparse_contacts_object);
     }
 
-  auto dem_current_time =
-    (this->simulation_control->get_current_time()) + (dem_time_step * counter);
-
   // Log the contact statistics if the parameter is enabled
   if (dem_parameters.post_processing.particle_wall_collision_statistics)
     {
+      const double dem_current_time =
+        (this->simulation_control->get_current_time()) +
+        (dem_time_step * dem_simulation_control->get_iteration());
+
       log_collision_data<dim, DEM::CFDDEMProperties::PropertiesIndex>(
         dem_parameters,
         contact_manager.get_particle_wall_in_contact(),
@@ -1434,14 +1441,20 @@ CFDDEMSolver<dim>::dem_iterator(unsigned int counter)
 
 template <int dim>
 void
-CFDDEMSolver<dim>::dem_contact_build(unsigned int counter)
+CFDDEMSolver<dim>::dem_contact_build()
 {
-  // For the contact search at the last CFD iteration
-  if (counter == (coupling_frequency - 1))
-    dem_action_manager->last_dem_of_cfddem_iteration_step();
+  const unsigned int counter = dem_simulation_control->get_iteration();
 
-  // Check contact detection step by detection method
-  check_contact_detection_method(counter);
+  // If this is not the last DEM iteration before the next CFD iteration, check
+  // if a contact detection step is necessary
+  if (!this->dem_simulation_control->is_last_iteration())
+    check_contact_detection_method(counter);
+
+  // Otherwise, force a contact search at the last DEM iteration before a CFD
+  // iteration to ensure that the particles are adequately located before
+  // calculating the coupling between particle and fluid.
+  else
+    dem_action_manager->last_dem_of_cfddem_iteration_step();
 
   // Sort particles in cells
   if (dem_action_manager->check_contact_search())
@@ -1660,7 +1673,7 @@ CFDDEMSolver<dim>::solve()
         const auto &cfd_dem_prm = this->cfd_dem_simulation_parameters.cfd_dem;
 
         // Create a simulation control object for the dem iterations
-        SubSimulationControlDEM dem_simulation_control(
+        dem_simulation_control = std::make_shared<SubSimulationControlDEM>(
           cfd_dem_prm.dem_iteration_control,
           this->simulation_control->get_time_step(),
           cfd_dem_prm.coupling_frequency,
@@ -1673,24 +1686,19 @@ CFDDEMSolver<dim>::solve()
         // Load balancing if needed
         load_balance();
 
-        // Update DEM time step
-        // TODO, refactor this so in the future everything is passed through the
-        // simulation control instead of internal variables
-        dem_time_step = dem_simulation_control.get_time_step();
-
         // Update DEM time step when the simulation uses adaptive time-stepping
         if (this->simulation_control->is_adaptive_time_stepping())
           report_rayleigh_time_ratio();
 
         contact_search_counter = 0;
-        while (dem_simulation_control.iterate())
+        while (dem_simulation_control->iterate())
           {
             // dem_iterator carries out the particle-particle and
             // particle_wall force calculations, integration and
             // update_ghost
-            dem_iterator(dem_simulation_control.get_iteration() - 1);
+            dem_iterator();
           }
-        this->pcout << "Finished " << dem_simulation_control.get_iteration()
+        this->pcout << "Finished " << dem_simulation_control->get_iteration()
                     << " DEM iterations" << std::endl;
       }
 

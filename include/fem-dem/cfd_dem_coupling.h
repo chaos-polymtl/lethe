@@ -322,12 +322,11 @@ private:
    *
    * Performs a full DEM time step including particle-particle and
    * particle-wall contact force calculations, time integration of
-   * particle motion, and updates to particle positions and velocities.
+   * particle motion, and updates the particles positions and velocities.
    *
-   * @param[in] counter Current DEM iteration number
    */
   void
-  dem_iterator(unsigned int counter);
+  dem_iterator();
 
   /**
    * @brief Reports the ratio between the DEM time step and the Rayleigh time
@@ -336,7 +335,13 @@ private:
   void
   report_rayleigh_time_ratio()
   {
-    const double time_step_rayleigh_ratio = dem_time_step / rayleigh_time_step;
+    Assert(
+      dem_simulation_control.use_count() > 0,
+      ExcMessage(
+        "You are trying to use the DEMSubSimulationControl when it has not been allocated yet."));
+
+    const double time_step_rayleigh_ratio =
+      dem_simulation_control->get_time_step() / rayleigh_time_step;
     this->pcout << "DEM time step is " << time_step_rayleigh_ratio * 100
                 << "% of Rayleigh time step" << std::endl;
   }
@@ -350,14 +355,13 @@ private:
    * detection frequency and executes the appropriate contact detection
    * algorithm to identify particle-particle and particle-wall contacts.
    *
-   * @param[in] counter Current DEM iteration number
    */
   void
-  dem_contact_build(unsigned int counter);
+  dem_contact_build();
 
-
-  /// Frequency of coupling between CFD and DEM solvers (in DEM time steps)
-  unsigned int coupling_frequency;
+  /// Sub simulation control object used to control the DEM sub iterations for
+  /// each CFD time step.
+  std::shared_ptr<SubSimulationControlDEM> dem_simulation_control;
 
   /// Gravitational acceleration vector
   Tensor<1, 3> g;
@@ -493,9 +497,6 @@ private:
 
   /// DEM simulation parameters container
   DEMSolverParameters<dim> dem_parameters;
-
-  /// Time step size for DEM integration
-  double dem_time_step;
 
   /// Rayleigh time step
   double rayleigh_time_step;

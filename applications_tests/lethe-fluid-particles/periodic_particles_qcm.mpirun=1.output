@@ -39,8 +39,8 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 99
+DEM contact search at dem step 1
+DEM contact search at dem step 100
 Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -2.2582e-22 s^-1
@@ -68,8 +68,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 99
+DEM contact search at dem step 100
 Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.27286e-21 s^-1
@@ -97,8 +96,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 99
+DEM contact search at dem step 100
 Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -1.38363e-20 s^-1
@@ -126,8 +124,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 99
+DEM contact search at dem step 100
 Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.78985e-20 s^-1
@@ -155,8 +152,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 99
+DEM contact search at dem step 100
 Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -7.59451e-20 s^-1
@@ -184,8 +180,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 99
+DEM contact search at dem step 100
 Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.1219e-21 s^-1
@@ -213,8 +208,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 99
+DEM contact search at dem step 100
 Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 8.83958e-20 s^-1
@@ -242,8 +236,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 99
+DEM contact search at dem step 100
 Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -2.82366e-20 s^-1
@@ -271,8 +264,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 99
+DEM contact search at dem step 100
 Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.36807e-20 s^-1
@@ -300,8 +292,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 99
+DEM contact search at dem step 100
 Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 8.94943e-20 s^-1
@@ -329,8 +320,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 99
+DEM contact search at dem step 100
 Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -2.46434e-20 s^-1
@@ -358,8 +348,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 99
+DEM contact search at dem step 100
 Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.53128e-20 s^-1
@@ -387,8 +376,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 99
+DEM contact search at dem step 100
 Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.19149e-20 s^-1
@@ -416,8 +404,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 99
+DEM contact search at dem step 100
 Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.87594e-20 s^-1
@@ -445,8 +432,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 99
+DEM contact search at dem step 100
 Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 7.72388e-20 s^-1
@@ -474,8 +460,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 99
+DEM contact search at dem step 100
 Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -8.27181e-21 s^-1
@@ -503,8 +488,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 99
+DEM contact search at dem step 100
 Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.36751e-20 s^-1
@@ -532,8 +516,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 99
+DEM contact search at dem step 100
 Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -1.0126e-19 s^-1
@@ -561,8 +544,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 99
+DEM contact search at dem step 100
 Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -2.24464e-20 s^-1
@@ -590,8 +572,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 99
+DEM contact search at dem step 100
 Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.1918e-19 s^-1
@@ -619,8 +600,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 99
+DEM contact search at dem step 100
 Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -2.66418e-20 s^-1
@@ -648,8 +628,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 99
+DEM contact search at dem step 100
 Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.02504e-19 s^-1
@@ -677,8 +656,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 99
+DEM contact search at dem step 100
 Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.54772e-20 s^-1
@@ -706,8 +684,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 99
+DEM contact search at dem step 100
 Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.37734e-20 s^-1
@@ -735,8 +712,7 @@ id,           x,            y,            z,            v_x,          v_y,      
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 99
+DEM contact search at dem step 100
 Finished 100 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.60992e-20 s^-1

@@ -29,7 +29,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 0 s^-1
@@ -56,7 +56,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -3.50728e-27 s^-1
@@ -83,7 +83,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.26612e-26 s^-1
@@ -110,7 +110,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 6.05845e-27 s^-1
@@ -137,7 +137,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 8.88573e-27 s^-1
@@ -164,7 +164,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -5.00832e-26 s^-1
@@ -191,7 +191,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -2.37491e-25 s^-1
@@ -218,7 +218,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -1.37325e-25 s^-1
@@ -245,7 +245,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -6.54313e-26 s^-1
@@ -272,7 +272,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 3.15039e-25 s^-1
@@ -299,7 +299,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -2.73842e-25 s^-1
@@ -326,7 +326,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.96294e-25 s^-1
@@ -353,7 +353,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -3.01307e-25 s^-1
@@ -380,7 +380,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -2.85959e-25 s^-1
@@ -407,7 +407,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.41041e-24 s^-1
@@ -434,7 +434,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -3.00499e-25 s^-1
@@ -461,7 +461,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 3.74816e-25 s^-1
@@ -488,7 +488,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.50896e-24 s^-1
@@ -515,7 +515,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 8.01331e-25 s^-1
@@ -542,7 +542,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 8.40105e-25 s^-1
@@ -569,7 +569,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -2.00979e-24 s^-1
@@ -596,7 +596,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.39587e-24 s^-1
@@ -623,7 +623,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.26182e-25 s^-1
@@ -650,7 +650,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -1.52511e-24 s^-1
@@ -677,7 +677,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 8.23949e-25 s^-1
@@ -704,7 +704,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.57681e-24 s^-1
@@ -731,7 +731,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.11799e-24 s^-1
@@ -758,7 +758,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.31186e-24 s^-1
@@ -785,7 +785,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.11319e-24 s^-1
@@ -812,7 +812,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -4.01635e-24 s^-1
@@ -839,7 +839,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -2.90806e-26 s^-1
@@ -866,7 +866,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 3.28934e-24 s^-1
@@ -893,7 +893,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -9.43503e-25 s^-1
@@ -920,7 +920,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -9.56428e-25 s^-1
@@ -947,7 +947,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -5.07941e-24 s^-1
@@ -974,7 +974,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.24243e-24 s^-1
@@ -1001,7 +1001,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -1.23108e-24 s^-1
@@ -1028,7 +1028,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -4.45902e-25 s^-1
@@ -1055,7 +1055,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.52511e-24 s^-1
@@ -1082,7 +1082,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.7369e-24 s^-1
@@ -1109,7 +1109,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -5.36698e-24 s^-1
@@ -1136,7 +1136,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -1.10991e-24 s^-1
@@ -1163,7 +1163,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -1.01055e-23 s^-1
@@ -1190,7 +1190,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.76261e-24 s^-1
@@ -1217,7 +1217,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 3.55268e-24 s^-1
@@ -1244,7 +1244,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -3.9905e-25 s^-1
@@ -1271,7 +1271,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -8.5303e-25 s^-1
@@ -1298,7 +1298,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.1923e-24 s^-1
@@ -1325,7 +1325,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 8.48991e-24 s^-1
@@ -1352,7 +1352,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -4.54949e-24 s^-1
@@ -1379,7 +1379,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -1.0301e-23 s^-1
@@ -1406,7 +1406,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.10202e-24 s^-1
@@ -1433,7 +1433,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -1.46211e-24 s^-1
@@ -1460,7 +1460,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -3.73039e-24 s^-1
@@ -1487,7 +1487,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -3.68192e-24 s^-1
@@ -1514,7 +1514,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -1.29699e-23 s^-1
@@ -1541,7 +1541,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -6.43811e-24 s^-1
@@ -1568,7 +1568,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 3.98404e-24 s^-1
@@ -1595,7 +1595,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -1.46663e-23 s^-1
@@ -1622,7 +1622,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -4.76598e-24 s^-1
@@ -1649,7 +1649,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -2.43792e-24 s^-1
@@ -1676,7 +1676,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.15842e-24 s^-1
@@ -1703,7 +1703,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -1.38133e-24 s^-1
@@ -1730,7 +1730,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.63821e-24 s^-1
@@ -1757,7 +1757,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -8.71932e-24 s^-1
@@ -1784,7 +1784,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -1.19715e-24 s^-1
@@ -1811,7 +1811,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -7.65465e-24 s^-1
@@ -1838,7 +1838,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.0944e-23 s^-1
@@ -1865,7 +1865,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -1.21007e-24 s^-1
@@ -1892,7 +1892,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.00328e-24 s^-1
@@ -1919,7 +1919,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.80319e-24 s^-1
@@ -1946,7 +1946,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -1.20652e-23 s^-1
@@ -1973,7 +1973,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -3.57691e-24 s^-1
@@ -2000,7 +2000,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.92352e-23 s^-1
@@ -2027,7 +2027,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.94536e-24 s^-1
@@ -2054,7 +2054,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -1.16484e-23 s^-1
@@ -2081,7 +2081,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -1.22591e-23 s^-1
@@ -2108,7 +2108,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -1.33674e-23 s^-1
@@ -2135,7 +2135,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -3.07285e-24 s^-1
@@ -2162,7 +2162,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -5.16988e-25 s^-1
@@ -2189,7 +2189,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.65289e-24 s^-1
@@ -2216,7 +2216,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 3.58337e-24 s^-1
@@ -2243,7 +2243,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -9.12484e-24 s^-1
@@ -2270,7 +2270,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -2.39107e-24 s^-1
@@ -2297,7 +2297,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.68667e-23 s^-1
@@ -2324,7 +2324,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -9.24762e-24 s^-1
@@ -2351,7 +2351,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -2.05503e-24 s^-1
@@ -2378,7 +2378,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.22785e-25 s^-1
@@ -2405,7 +2405,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 2.45569e-24 s^-1
@@ -2432,7 +2432,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -1.30539e-23 s^-1
@@ -2459,7 +2459,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.47018e-23 s^-1
@@ -2486,7 +2486,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -3.10193e-25 s^-1
@@ -2513,7 +2513,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.27567e-23 s^-1
@@ -2540,7 +2540,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 1.29312e-23 s^-1
@@ -2567,7 +2567,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -8.46568e-25 s^-1
@@ -2594,7 +2594,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -1.73579e-23 s^-1
@@ -2621,7 +2621,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 9.33163e-24 s^-1
@@ -2648,7 +2648,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 7.94223e-24 s^-1
@@ -2675,7 +2675,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -4.32977e-25 s^-1
@@ -2702,7 +2702,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
+DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 5.09233e-24 s^-1

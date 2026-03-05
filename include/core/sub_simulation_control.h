@@ -127,6 +127,36 @@ public:
     return time_step;
   }
 
+  /**
+   * @brief Check if this is the first DEM sub iteration
+   *
+   * The first iteration corresponds to either the state before the sub
+   * simulation control has started iterating (iteration_number == 0) or the
+   * first iteration it is actually carrying out (iteration_number == 1).
+   *
+   * @return true if this is the first iteration, false otherwise.
+   */
+  bool
+  is_first_iteration() const
+  {
+    return (iteration_number == 0 || iteration_number == 1);
+  }
+
+  /**
+   * @brief Check if this is the last DEM sub iteration
+   *
+   * The last iteration is reached when the iteration number equals the total
+   * number of iterations required to complete the DEM sub simulation within
+   * the current CFD time step.
+   *
+   * @return true if this is the last iteration, false otherwise.
+   */
+  bool
+  is_last_iteration() const
+  {
+    return (iteration_number == total_number_of_iterations);
+  }
+
 private:
   /// Logic used for the DEM iterations
   const DEMSubIterationLogic iteration_logic;
