@@ -91,16 +91,18 @@ CFDDEMSolver<dim>::dem_setup_parameters()
        i < dem_parameters.lagrangian_physical_properties.particle_type_number;
        ++i)
     {
-      double youngs_modulus = dem_parameters.lagrangian_physical_properties
-                                .youngs_modulus_particle[i];
-      double poisson_ratio =
+      const double youngs_modulus =
+        dem_parameters.lagrangian_physical_properties
+          .youngs_modulus_particle[i];
+      const double poisson_ratio =
         dem_parameters.lagrangian_physical_properties.poisson_ratio_particle[i];
-      double density =
+      const double density =
         dem_parameters.lagrangian_physical_properties.density_particle[i];
 
-      double shear_modulus = youngs_modulus / (2.0 * (1.0 + poisson_ratio));
+      const double shear_modulus =
+        youngs_modulus / (2.0 * (1.0 + poisson_ratio));
 
-      double min_diameter =
+      const double min_diameter =
         size_distribution_object_container.at(i)->find_min_diameter();
 
       rayleigh_time_step =
