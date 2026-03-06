@@ -66,9 +66,14 @@ main(int argc, char *argv[])
                                    "lethe-fluid-block",
                                    "lethe-fluid-nitsche"));
 
-          // Print parameters if needed
           if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
-            print_parameters_to_output_file(pcout, prm, file_name);
+            {
+              // Print comment if there is one
+              print_comment_to_output_file(pcout, file_name);
+
+              // Print parameters if needed
+              print_parameters_to_output_file(pcout, prm, file_name);
+            }
 
           FluidDynamicsBlock<2> problem(NSparam);
           problem.solve();
@@ -97,9 +102,14 @@ main(int argc, char *argv[])
                                    "lethe-fluid-block",
                                    "lethe-fluid-nitsche"));
 
-          // Print parameters if needed
           if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
-            print_parameters_to_output_file(pcout, prm, file_name);
+            {
+              // Print comment if there is one
+              print_comment_to_output_file(pcout, file_name);
+
+              // Print parameters if needed
+              print_parameters_to_output_file(pcout, prm, file_name);
+            }
 
           FluidDynamicsBlock<3> problem(NSparam);
           problem.solve();

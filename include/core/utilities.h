@@ -953,6 +953,30 @@ print_parameters_to_output_file(const ConditionalOStream &pcout,
                                 const std::string        &file_name);
 
 /**
+ * @brief Identify ecape sequences listed below and apply them to the string.
+ *  - "\n": Newline
+ *  - "\t": Horizontal tab
+ *  - "\r": Carriage return
+ *  - "\b": Backspace
+ *  - "\v": Vertical tab
+ *
+ * @param[in, out] s String to be modified if escape sequences are specified.
+ */
+void
+interpret_escape_sequences(std::string &s);
+
+/**
+ * @brief Print a user comment at the beginning of the simulation on the consol
+ * output.
+ *
+ * @param[in] pcout Parallel consol output stream
+ * @param[in] filename Name of the file where the comment will be written.
+ */
+void
+print_comment_to_output_file(const ConditionalOStream &pcout,
+                             const std::string        &filename);
+
+/**
  * @brief Delete vtu and pvd files
  */
 void
