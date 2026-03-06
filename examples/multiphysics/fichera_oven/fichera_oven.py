@@ -162,7 +162,8 @@ if args.validate:
     solution_data = np.column_stack([
         iterations, n_cells_arr, n_dofs_arr, l2_error_arr, max_error_arr
     ])
-    header = "iteration n_cells n_dofs l2_error max_error"
+    #The number of dofs is for the interior solution and is only for one field component. This is not the number of dofs in the linear system, which only involves the trace dofs which are not outputed.
+    header = "iteration n_cells n_dofs_per_component l2_error max_error"
     np.savetxt("solution-fichera-oven.dat", solution_data, header=header)
 
 

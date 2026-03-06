@@ -20,7 +20,7 @@ subsection simulation control
   set method            = steady
   set output path       = ./output/
   set output frequency  = 1
-  set number mesh adapt = 1
+  set number mesh adapt = 6
 end
 
 #---------------------------------------------------
@@ -40,8 +40,8 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set electromagnetics trial order = 1
-  set electromagnetics test order  = 2
+  set electromagnetics trial order = 3
+  set electromagnetics test order  = 4
 end
 
 #---------------------------------------------------
@@ -72,7 +72,6 @@ subsection mesh
   set type           = lethe
   set grid type      = fichera_oven
   set grid arguments = 0, 0, 0 : 2, 2, 3 : true
-  set initial refinement = 1
 end
 
 #---------------------------------------------------

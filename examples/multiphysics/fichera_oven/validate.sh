@@ -28,7 +28,7 @@ recreate_folder "$folder"
 { time $action_fichera ; } &> "$folder/log-fichera"
 
 # Process the simulation
-python3 ./fichera_oven.py -f "$folder" --validate
+python3 ./fichera_oven.py --validate
 
 # Copy the information to the log folder
 cp $plots $folder
