@@ -58,9 +58,14 @@ main(int argc, char *argv[])
               delete_vtu_and_pvd_files(output_path);
             }
 
-          // Print parameters if needed
           if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
-            print_parameters_to_output_file(pcout, prm, file_name);
+            {
+              // Print comment if there is one
+              print_comment_to_output_file(pcout, file_name);
+
+              // Print parameters if needed
+              print_parameters_to_output_file(pcout, prm, file_name);
+            }
 
           const DEM::SolverType solver_type =
             dem_parameters.model_parameters.solver_type;
@@ -106,9 +111,14 @@ main(int argc, char *argv[])
               delete_vtu_and_pvd_files(output_path);
             }
 
-          // Print parameters if needed
           if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
-            print_parameters_to_output_file(pcout, prm, file_name);
+            {
+              // Print comment if there is one
+              print_comment_to_output_file(pcout, file_name);
+
+              // Print parameters if needed
+              print_parameters_to_output_file(pcout, prm, file_name);
+            }
 
           const DEM::SolverType solver_type =
             dem_parameters.model_parameters.solver_type;
