@@ -40,10 +40,11 @@ public:
                       "Print all the parameters, or only"
                       "the changed parameters or none");
 
-    prm.declare_entry("comment",
-                      "",
-                      Patterns::Anything(),
-                      "Print a comment at the beginning of the consol output.");
+    prm.declare_entry(
+      "comment",
+      "",
+      Patterns::Anything(),
+      "Print a comment at the beginning of the console output.");
 
     Parameters::Mesh::declare_parameters(prm);
     Parameters::Testing::declare_parameters(prm);
