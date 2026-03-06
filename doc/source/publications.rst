@@ -16,7 +16,7 @@ This section regroups preprints of journal articles already submitted, but which
 2025
 ----
 
-* `A. Alphonius, L. Barbeau, B. Blais, O. Gaboriault, O. Guévremont, J. Lamouche, P. Laurentin, O. Marquis, P. Munch, V. Oliveira Ferreira, H. Papillon-Laroche, P. A. Patience, L. Prieto Saavedra, M. Vaillant, Lethe 1.0: An Open-Source High-Performance and High-Order Computational Fluid Dynamics Software for Single and Multiphase Flows. Computer Physics Communications 109880. <https://doi.org/10.1016/j.cpc.2025.109880>`_
+* `A. Alphonius, L. Barbeau, B. Blais, O. Gaboriault, O. Guévremont, J. Lamouche, P. Laurentin, O. Marquis, P. Munch, V. Oliveira Ferreira, H. Papillon-Laroche, P. A. Patience, L. Prieto Saavedra, M. Vaillant, "Lethe 1.0: An Open-Source High-Performance and High-Order Computational Fluid Dynamics Software for Single and Multiphase Flows," Computer Physics Communications 109880. <https://doi.org/10.1016/j.cpc.2025.109880>`_.
 
 * `G. Mirakhori, J. Doucet, S. Chidami, B. Blais, and J. Chaouki, "AI-enhanced radioactive particle tracking: A practical methodology for accelerating industrial process development", Chemical Engineering Science, 2025 <https://doi.org/10.1016/j.ces.2025.122173>`_.
 
