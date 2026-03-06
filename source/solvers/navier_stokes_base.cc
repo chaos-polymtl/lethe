@@ -1055,6 +1055,9 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_adaptive()
   auto &tria = *dynamic_cast<parallel::distributed::Triangulation<dim> *>(
     this->triangulation.get());
 
+  // Connect mortar cell weight signals for load balancing
+  connect_mortar_weight_signals();
+
   // Time monitoring
   TimerOutput::Scope t(this->computing_timer, "Refine");
 
@@ -1297,6 +1300,9 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
               ExcMessage("Uniform refinement is not supported for "
                          "simplex meshes."));
   TimerOutput::Scope t(this->computing_timer, "Refine");
+
+  // Connect mortar cell weight signals for load balancing
+  connect_mortar_weight_signals();
 
   // Solution transfer objects for all the solutions
   SolutionTransfer<dim, VectorType> solution_transfer(*this->dof_handler, true);
@@ -3415,6 +3421,52 @@ NavierStokesBase<dim, VectorType, DofsType>::init_temporary_vector()
                this->mpi_communicator);
 
   return tmp;
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::connect_mortar_weight_signals()
+{
+  if (dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+        this->triangulation.get()) == nullptr)
+    return;
+
+  auto &tria = *dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+    this->triangulation.get());
+
+  if (!simulation_parameters.mortar_parameters.enable)
+    return;
+
+  tria.signals.weight.connect(
+    [this](const typename parallel::distributed::Triangulation<dim>::cell_iterator
+             &cell,
+           const CellStatus status) -> unsigned int {
+
+      unsigned int base_weight = 1000;
+
+      // Check if this cell touches a mortar boundary
+      const unsigned int rotor_bid =
+        simulation_parameters.mortar_parameters.rotor_boundary_id;
+      const unsigned int stator_bid =
+        simulation_parameters.mortar_parameters.stator_boundary_id;
+
+      if (cell->is_locally_owned())
+        {
+          for (const auto face_no : cell->face_indices())
+            {
+              const auto face = cell->face(face_no);
+              if (face->at_boundary() &&
+                  (face->boundary_id() == rotor_bid ||
+                   face->boundary_id() == stator_bid))
+                {
+                  // Return higher weight for mortar cells
+                  return simulation_parameters.mortar_parameters.cell_weight;
+                }
+            }
+        }
+
+      return base_weight;
+    });
 }
 
 // Pre-compile the 2D and 3D version with the types that can occur

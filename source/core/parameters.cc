@@ -4537,6 +4537,10 @@ namespace Parameters
         Patterns::Selection("quiet|verbose|extra verbose"),
         "State whether from the mortar information should be printed "
         "Choices are <quiet|verbose|extra verbose>.");
+      prm.declare_entry("cell weight",
+                        "2000",
+                        Patterns::Integer(),
+                        "Cell weight for load balancing of mortar cells");
     }
     prm.leave_subsection();
   }
@@ -4579,6 +4583,7 @@ namespace Parameters
       sip_factor          = prm.get_double("penalty factor");
       oversampling_factor = prm.get_integer("oversampling factor");
       radius_tolerance    = prm.get_double("radius tolerance");
+      cell_weight         = prm.get_integer("cell weight");
 
       // Enable printing of mortar information
       const std::string op = prm.get("verbosity");
