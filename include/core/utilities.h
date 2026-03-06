@@ -966,7 +966,7 @@ void
 interpret_escape_sequences(std::string &s);
 
 /**
- * @brief Print a user comment at the beginning of the simulation on the consol
+ * @brief Print a user comment at the beginning of the simulation on the console
  * output.
  *
  * @param[in] pcout Parallel consol output stream
