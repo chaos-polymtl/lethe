@@ -960,6 +960,14 @@ protected:
       }
   }
 
+  /**
+   * @brief Connect weight signals for load balancing of mortar cells.
+   * Cells touching mortar boundaries are assigned higher weight for better
+   * load distribution across processors.
+   */
+  void
+  connect_mortar_weight_signals();
+
 
   DofsType locally_owned_dofs;
   DofsType locally_relevant_dofs;
