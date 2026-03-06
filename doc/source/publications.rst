@@ -9,7 +9,7 @@ Preprints
 
 This section regroups preprints of journal articles already submitted, but which are still under review.
 
-* `Papillon-Laroche, Helene, Alphonius, Amishga, Schreter-Fleischhacker, Magdalena, Harvey, Jean-Philippe, Blais, Bruno. "Geometric Reinitialization for Capillary Flows: a Comparative Study with State-of-the-Art Conservative Level-Set Methods." arXiv preprint arXiv:2602.00275, 2026. <https://doi.org/10.48550/arXiv.2602.00275>`_
+* `H. Papillon-Laroche, A. Alphonius, M. Schreter-Fleischhacker, J.-P. Harvey and B. Blais. "Geometric Reinitialization for Capillary Flows: a Comparative Study with State-of-the-Art Conservative Level-Set Methods," arXiv preprint arXiv:2602.00275, 2026. <https://doi.org/10.48550/arXiv.2602.00275>`_.
 
 * `O. Gaboriault, A. Timercan, R. Pelletier, L.-P. Lefebvre, D. Melançon, and B. Blais, “Increase in packing density during multi-layer powder spreading: An experimental and numerical study,” arXiv preprint arXiv:2509.26402, 2025. <https://arxiv.org/abs/2509.26402>`_
 
