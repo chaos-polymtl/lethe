@@ -71,8 +71,9 @@ main(int argc, char *argv[])
 
 
       if (rank == 0)
-        std::cout << "Reading parameters from: " << prm_file << std::endl;
-
+        {
+          std::cout << "Reading parameters from: " << prm_file << std::endl;
+        }
       prm.parse_input(prm_file);
 
       SolidPhaseParameters parameters;

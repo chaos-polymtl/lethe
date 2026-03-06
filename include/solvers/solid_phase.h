@@ -301,19 +301,29 @@ public:
     if (dst.block(0).size() > 0)
       {
         if (mode == Mode::amg && amg_u)
-          amg_u->vmult(dst.block(0), src.block(0));
+          {
+            amg_u->vmult(dst.block(0), src.block(0));
+          }
         else if (ilu_u)
-          ilu_u->vmult(dst.block(0), src.block(0));
+          {
+            ilu_u->vmult(dst.block(0), src.block(0));
+          }
         else
-          dst.block(0) = src.block(0);
+          {
+            dst.block(0) = src.block(0);
+          }
       }
 
     if (dst.block(1).size() > 0)
       {
         if (ilu_a)
-          ilu_a->vmult(dst.block(1), src.block(1));
+          {
+            ilu_a->vmult(dst.block(1), src.block(1));
+          }
         else
-          dst.block(1) = src.block(1);
+          {
+            dst.block(1) = src.block(1);
+          }
       }
   }
 };

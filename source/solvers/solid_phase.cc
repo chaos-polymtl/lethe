@@ -57,55 +57,9 @@
 #include <limits>
 
 
-using namespace dealii;
+// using namespace dealii;
 
 
-
-// template <int dim>
-// class BlockAMGILU : public Subscriptor
-// {
-// public:
-//   void initialize(const TrilinosWrappers::BlockSparseMatrix &A,
-//                   const unsigned int                        fe_degree,
-//                   const unsigned int                        ilu_overlap,
-//                   const unsigned int                        amg_sweeps,
-//                   const double amg_agg_threshold, const std::string
-//                   &amg_smoother_type, const bool amg_elliptic)
-//   {
-//     // ---- AMG for velocity block
-//     TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
-//     amg_data.elliptic              = amg_elliptic;
-//     amg_data.higher_order_elements = (fe_degree > 1);
-//     amg_data.smoother_type         = "ILU";
-//     amg_data.smoother_sweeps       = amg_sweeps;
-//     amg_data.aggregation_threshold = amg_agg_threshold;
-//     amg_data.output_details        = false;
-
-//     if (A.block(0,0).m() > 0)
-//       amg_u.initialize(A.block(0,0), amg_data);
-
-
-//     TrilinosWrappers::PreconditionILU::AdditionalData ilu_data;
-//     ilu_data.overlap = ilu_overlap;
-
-//     if (A.block(1,1).m() > 0)
-//       ilu_a.initialize(A.block(1,1), ilu_data);
-//   }
-
-//   void vmult(TrilinosWrappers::MPI::BlockVector       &dst,
-//              const TrilinosWrappers::MPI::BlockVector &src) const
-//   {
-//     if (dst.block(0).size() > 0)
-//       amg_u.vmult(dst.block(0), src.block(0));
-
-//     if (dst.block(1).size() > 0)
-//       ilu_a.vmult(dst.block(1), src.block(1));
-//   }
-
-// private:
-//   TrilinosWrappers::PreconditionAMG amg_u;
-//   TrilinosWrappers::PreconditionILU ilu_a;
-// };
 
 template <int dim>
 void
@@ -117,9 +71,13 @@ SolidPhaseSolver<dim>::setup_preconditioner()
   const bool use_amg = (parameters.amg_sweeps > 0);
 
   if (use_amg)
-    setup_AMG();
+    {
+      setup_AMG();
+    }
   else
-    setup_ILU();
+    {
+      setup_ILU();
+    }
 }
 
 template <int dim>
@@ -223,9 +181,13 @@ public:
   value(const Point<dim> &, const unsigned int component) const override
   {
     if (component < dim)
-      return u_in[component];
+      {
+        return u_in[component];
+      }
     else
-      return alpha_in;
+      {
+        return alpha_in;
+      }
   }
 
 private:
@@ -264,18 +226,25 @@ SolidPhaseSolver<dim>::SolidPhaseSolver(const SolidPhaseParameters &p,
   sub.assign(dim, 1);
   sub[0] = parameters.nx;
   if (dim > 1)
-    sub[1] = parameters.ny;
+    {
+      sub[1] = parameters.ny;
+    }
   if (dim > 2)
-    sub[2] = parameters.nz;
+    {
+      sub[2] = parameters.nz;
+    }
 
   inlet_velocity    = Tensor<1, dim>();
   inlet_velocity[0] = parameters.u_inlet_x;
   if constexpr (dim >= 2)
-    inlet_velocity[1] = parameters.u_inlet_y;
+    {
+      inlet_velocity[1] = parameters.u_inlet_y;
+    }
   if constexpr (dim >= 3)
-    inlet_velocity[2] = parameters.u_inlet_z;
+    {
+      inlet_velocity[2] = parameters.u_inlet_z;
+    }
 }
-
 
 
 template <int dim>
@@ -326,34 +295,37 @@ SolidPhaseSolver<dim>::make_grid()
   pcout << "dim = " << dim << std::endl;
 
   for (const auto &cell : triangulation.active_cell_iterators())
-    for (unsigned int f = 0; f < GeometryInfo<dim>::faces_per_cell; ++f)
-      if (cell->face(f)->at_boundary())
+    {
+      for (unsigned int f = 0; f < GeometryInfo<dim>::faces_per_cell; ++f)
         {
-          const Point<dim> fc = cell->face(f)->center();
-
-          cell->face(f)->set_boundary_id(0);
-
-          if (std::fabs(fc[axis1]) < tol)
+          if (cell->face(f)->at_boundary())
             {
-              cell->face(f)->set_boundary_id(1);
-            }
+              const Point<dim> fc = cell->face(f)->center();
 
-          else if (std::fabs(fc[axis1] - 1.0) < tol)
-            {
-              cell->face(f)->set_boundary_id(2);
-            }
+              cell->face(f)->set_boundary_id(0);
 
-          else if (std::fabs(fc[axis2]) < tol)
-            {
-              cell->face(f)->set_boundary_id(1);
-            }
+              if (std::fabs(fc[axis1]) < tol)
+                {
+                  cell->face(f)->set_boundary_id(1);
+                }
 
-          else if (std::fabs(fc[axis2] - 1.0) < tol)
-            {
-              cell->face(f)->set_boundary_id(2);
+              else if (std::fabs(fc[axis1] - 1.0) < tol)
+                {
+                  cell->face(f)->set_boundary_id(2);
+                }
+
+              else if (std::fabs(fc[axis2]) < tol)
+                {
+                  cell->face(f)->set_boundary_id(1);
+                }
+
+              else if (std::fabs(fc[axis2] - 1.0) < tol)
+                {
+                  cell->face(f)->set_boundary_id(2);
+                }
             }
         }
-
+    }
 
   //  if (std::fabs(fc[0]) < tol || (dim >= 2 && std::fabs(fc[1]) < tol))
   //    cell->face(f)->set_boundary_id(1);      // inlet
@@ -412,7 +384,9 @@ SolidPhaseSolver<dim>::setup_dofs()
 
   ComponentMask vel_mask(fe.n_components(), false);
   for (unsigned int c = 0; c < dim; ++c)
-    vel_mask.set(c, true);
+    {
+      vel_mask.set(c, true);
+    }
 
   ComponentMask alpha_mask(fe.n_components(), false);
   alpha_mask.set(dim, true);
@@ -451,7 +425,6 @@ SolidPhaseSolver<dim>::setup_dofs()
   sp.compress();
   system_matrix.reinit(sp);
 
-  solution.reinit(owned_partitioning, mpi_communicator);
   old_solution.reinit(owned_partitioning, mpi_communicator);
   system_rhs.reinit(owned_partitioning, mpi_communicator);
 
@@ -470,7 +443,9 @@ void
 SolidPhaseSolver<dim>::assemble_system()
 {
   if (parameters.verbose_assembly)
-    pcout << "Assembling...\n" << std::endl;
+    {
+      pcout << "Assembling...\n" << std::endl;
+    }
 
   TimerOutput::Scope t(computing_timer, "assembly");
 
@@ -521,121 +496,130 @@ SolidPhaseSolver<dim>::assemble_system()
   locally_relevant_old_solution.update_ghost_values();
 
   for (const auto &cell : dof_handler.active_cell_iterators())
-    if (cell->is_locally_owned())
-      {
-        fe_values.reinit(cell);
-        cell_matrix = 0.0;
-        cell_rhs    = 0.0;
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values.reinit(cell);
+          cell_matrix = 0.0;
+          cell_rhs    = 0.0;
 
-        fe_values[velocities].get_function_values(locally_relevant_old_solution,
-                                                  u_old);
-        fe_values[velocities].get_function_gradients(
-          locally_relevant_old_solution, grad_u_old);
-        fe_values[alpha].get_function_values(locally_relevant_old_solution,
-                                             a_old);
-        fe_values[alpha].get_function_gradients(locally_relevant_old_solution,
-                                                grad_a_old);
+          fe_values[velocities].get_function_values(
+            locally_relevant_old_solution, u_old);
+          fe_values[velocities].get_function_gradients(
+            locally_relevant_old_solution, grad_u_old);
+          fe_values[alpha].get_function_values(locally_relevant_old_solution,
+                                               a_old);
+          fe_values[alpha].get_function_gradients(locally_relevant_old_solution,
+                                                  grad_a_old);
 
-        for (unsigned int q = 0; q < n_q; ++q)
-          {
-            const double         JxW     = fe_values.JxW(q);
-            const Tensor<1, dim> u_k     = u_old[q];
-            const double         a_k     = a_old[q];
-            const double         div_u_k = trace(grad_u_old[q]);
+          for (unsigned int q = 0; q < n_q; ++q)
+            {
+              const double         JxW     = fe_values.JxW(q);
+              const Tensor<1, dim> u_k     = u_old[q];
+              const double         a_k     = a_old[q];
+              const double         div_u_k = trace(grad_u_old[q]);
 
-            // shape values at q
-            for (unsigned int k = 0; k < dofs_per_cell; ++k)
-              {
-                phi_u[k]      = fe_values[velocities].value(k, q);
-                grad_phi_u[k] = fe_values[velocities].gradient(k, q);
-                phi_a[k]      = fe_values[alpha].value(k, q);
-                grad_phi_a[k] = fe_values[alpha].gradient(k, q);
-              }
+              // shape values at q
+              for (unsigned int k = 0; k < dofs_per_cell; ++k)
+                {
+                  phi_u[k]      = fe_values[velocities].value(k, q);
+                  grad_phi_u[k] = fe_values[velocities].gradient(k, q);
+                  phi_a[k]      = fe_values[alpha].value(k, q);
+                  grad_phi_a[k] = fe_values[alpha].gradient(k, q);
+                }
 
-            for (unsigned int i = 0; i < dofs_per_cell; ++i)
-              {
-                const unsigned int comp_i =
-                  fe.system_to_component_index(i).first;
+              for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                {
+                  const unsigned int comp_i =
+                    fe.system_to_component_index(i).first;
 
-                // ---------- alpha equation row ----------
-                if (comp_i == dim)
-                  {
-                    for (unsigned int j = 0; j < dofs_per_cell; ++j)
-                      {
-                        const unsigned int comp_j =
-                          fe.system_to_component_index(j).first;
-                        if (comp_j != dim)
-                          continue;
+                  // ---------- alpha equation row ----------
+                  if (comp_i == dim)
+                    {
+                      for (unsigned int j = 0; j < dofs_per_cell; ++j)
+                        {
+                          const unsigned int comp_j =
+                            fe.system_to_component_index(j).first;
+                          if (comp_j != dim)
+                            continue;
 
-                        // (w, alpha^{n+1})/dt
-                        cell_matrix(i, j) += (phi_a[i] * phi_a[j] / dt) * JxW;
+                          // (w, alpha^{n+1})/dt
+                          cell_matrix(i, j) += (phi_a[i] * phi_a[j] / dt) * JxW;
 
-                        // (w, u_k · ∇alpha^{n+1})
-                        cell_matrix(i, j) +=
-                          (phi_a[i] * (grad_phi_a[j] * u_k)) * JxW;
+                          // (w, u_k · ∇alpha^{n+1})
+                          cell_matrix(i, j) +=
+                            (phi_a[i] * (grad_phi_a[j] * u_k)) * JxW;
 
-                        // (w, alpha^{n+1} div(u_k))
+                          // (w, alpha^{n+1} div(u_k))
 
-                        cell_matrix(i, j) +=
-                          (phi_a[i] * phi_a[j] * div_u_k) * JxW;
-                      }
+                          cell_matrix(i, j) +=
+                            (phi_a[i] * phi_a[j] * div_u_k) * JxW;
+                        }
 
-                    // RHS: (w, alpha^n)/dt
-                    cell_rhs(i) += (phi_a[i] * a_k / dt) * JxW;
-                  }
+                      // RHS: (w, alpha^n)/dt
+                      cell_rhs(i) += (phi_a[i] * a_k / dt) * JxW;
+                    }
 
-                // ---------- momentum equation rows
-                else if (comp_i < dim)
-                  {
-                    for (unsigned int j = 0; j < dofs_per_cell; ++j)
-                      {
-                        const unsigned int comp_j =
-                          fe.system_to_component_index(j).first;
-                        if (comp_j != comp_i)
-                          continue;
+                  // ---------- momentum equation rows
+                  else if (comp_i < dim)
+                    {
+                      for (unsigned int j = 0; j < dofs_per_cell; ++j)
+                        {
+                          const unsigned int comp_j =
+                            fe.system_to_component_index(j).first;
+                          if (comp_j != comp_i)
+                            continue;
 
-                        const double v_i =
-                          fe_values[velocities].value(i, q)[comp_i];
-                        const double u_j =
-                          fe_values[velocities].value(j, q)[comp_i];
+                          const double v_i =
+                            fe_values[velocities].value(i, q)[comp_i];
+                          const double u_j =
+                            fe_values[velocities].value(j, q)[comp_i];
 
-                        const Tensor<1, dim> grad_u_j =
-                          fe_values[velocities].gradient(j, q)[comp_i];
+                          const Tensor<1, dim> grad_u_j =
+                            fe_values[velocities].gradient(j, q)[comp_i];
 
-                        const double adv = u_k * grad_u_j;
+                          const double adv = u_k * grad_u_j;
 
-                        // mass
-                        cell_matrix(i, j) +=
-                          (rho_s * a_k / dt) * (v_i * u_j) * JxW;
+                          // mass
+                          cell_matrix(i, j) +=
+                            (rho_s * a_k / dt) * (v_i * u_j) * JxW;
 
-                        // convection
-                        cell_matrix(i, j) += (rho_s * a_k) * (v_i * adv) * JxW;
+                          // convection
+                          cell_matrix(i, j) +=
+                            (rho_s * a_k) * (v_i * adv) * JxW;
 
-                        // drag
-                        cell_matrix(i, j) += (beta * a_k) * (v_i * u_j) * JxW;
-                      }
+                          // drag
+                          cell_matrix(i, j) += (beta * a_k) * (v_i * u_j) * JxW;
+                        }
 
-                    const double v_i =
-                      fe_values[velocities].value(i, q)[comp_i];
+                      const double v_i =
+                        fe_values[velocities].value(i, q)[comp_i];
 
-                    // RHS
-                    cell_rhs(i) +=
-                      (rho_s * a_k / dt) * (v_i * u_k[comp_i]) * JxW;
-                    cell_rhs(i) += (beta * a_k) * (v_i * u_f[comp_i]) * JxW;
-                  }
-              }
-          }
+                      // RHS
+                      cell_rhs(i) +=
+                        (rho_s * a_k / dt) * (v_i * u_k[comp_i]) * JxW;
+                      cell_rhs(i) += (beta * a_k) * (v_i * u_f[comp_i]) * JxW;
+                    }
+                }
+            }
 
-        cell->get_dof_indices(local_dof_indices);
-        constraints.distribute_local_to_global(
-          cell_matrix, cell_rhs, local_dof_indices, system_matrix, system_rhs);
-      }
+
+          cell->get_dof_indices(local_dof_indices);
+          constraints.distribute_local_to_global(cell_matrix,
+                                                 cell_rhs,
+                                                 local_dof_indices,
+                                                 system_matrix,
+                                                 system_rhs);
+        }
+    }
 
   system_matrix.compress(VectorOperation::add);
   system_rhs.compress(VectorOperation::add);
 
   if (parameters.verbose_assembly)
-    pcout << "Done assembling.\n" << std::endl;
+    {
+      pcout << "Done assembling.\n" << std::endl;
+    }
 }
 
 
@@ -647,8 +631,9 @@ SolidPhaseSolver<dim>::solve()
   TimerOutput::Scope t(computing_timer, "solve");
 
   if (parameters.solver_verbose)
-    pcout << "Solving solid system... " << std::flush;
-
+    {
+      pcout << "Solving solid system... " << std::flush;
+    }
 
   TrilinosWrappers::MPI::BlockVector distributed_solution(owned_partitioning,
                                                           mpi_communicator);
@@ -685,8 +670,9 @@ SolidPhaseSolver<dim>::solve()
   catch (SolverControl::NoConvergence &)
     {
       if (parameters.solver_verbose)
-        pcout << "\nNoConvergence: retrying with relaxed settings...\n";
-
+        {
+          pcout << "\nNoConvergence: retrying with relaxed settings...\n";
+        }
       SolverControl solver_control_refined(system_matrix.m(), tol);
 
       SolverFGMRES<TrilinosWrappers::MPI::BlockVector> solver_refined(
@@ -713,9 +699,11 @@ SolidPhaseSolver<dim>::solve()
   locally_relevant_solution.update_ghost_values();
 
   if (parameters.solver_verbose)
-    pcout << solver_control.last_step()
-          << " iterations. residual=" << solver_control.last_value()
-          << std::endl;
+    {
+      pcout << solver_control.last_step()
+            << " iterations. residual=" << solver_control.last_value()
+            << std::endl;
+    }
 }
 
 
@@ -725,8 +713,9 @@ void
 SolidPhaseSolver<dim>::make_output_dir() const
 {
   if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
-    mkdir(parameters.output_folder.c_str(), 0777);
-
+    {
+      mkdir(parameters.output_folder.c_str(), 0777);
+    }
   MPI_Barrier(mpi_communicator);
 }
 
@@ -742,17 +731,19 @@ SolidPhaseSolver<dim>::output_results(const double /*time*/)
     return;
 
   if (parameters.output_verbose)
-    pcout << "Writing output..." << std::endl;
-
+    {
+      pcout << "Writing output..." << std::endl;
+    }
   std::vector<std::string> names(dim, "u");
   names.emplace_back("alpha");
 
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     interpretation(dim + 1, DataComponentInterpretation::component_is_scalar);
   for (unsigned int d = 0; d < dim; ++d)
-    interpretation[d] =
-      DataComponentInterpretation::component_is_part_of_vector;
-
+    {
+      interpretation[d] =
+        DataComponentInterpretation::component_is_part_of_vector;
+    }
   DataOut<dim> data_out;
   data_out.attach_dof_handler(dof_handler);
 
@@ -765,8 +756,10 @@ SolidPhaseSolver<dim>::output_results(const double /*time*/)
 
   Vector<float> subdomain(triangulation.n_active_cells());
   for (unsigned int i = 0; i < subdomain.size(); ++i)
-    subdomain(i) = static_cast<float>(triangulation.locally_owned_subdomain());
-
+    {
+      subdomain(i) =
+        static_cast<float>(triangulation.locally_owned_subdomain());
+    }
   data_out.add_data_vector(subdomain,
                            "subdomain",
                            DataOut<dim>::type_cell_data);
@@ -845,7 +838,9 @@ SolidPhaseSolver<dim>::run()
     }
 
   if (parameters.print_timer_at_end)
-    computing_timer.print_summary();
+    {
+      computing_timer.print_summary();
+    }
 }
 
 
