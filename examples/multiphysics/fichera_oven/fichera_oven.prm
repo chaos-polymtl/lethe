@@ -28,9 +28,9 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set type            = adaptive
-  set variable        = electromagnetic fields
-  set error estimator = dpg
+  set type                = adaptive
+  set variable            = electromagnetic fields
+  set error estimator     = dpg
   set fraction refinement = 0.2
   set fraction coarsening = 0.03
 end
