@@ -3391,15 +3391,15 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::connect_mortar_weight_signals()
 {
+  if (!this->simulation_parameters.mortar_parameters.enable)
+    return;
+
   if (dynamic_cast<parallel::distributed::Triangulation<dim> *>(
         this->triangulation.get()) == nullptr)
     return;
 
   auto &tria = *dynamic_cast<parallel::distributed::Triangulation<dim> *>(
     this->triangulation.get());
-
-  if (!simulation_parameters.mortar_parameters.enable)
-    return;
 
   tria.signals.weight.connect(
     [this](const typename parallel::distributed::Triangulation<dim>::cell_iterator
