@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# This test case runs the time-harmonic electromagnetic solver for the Fichera Oven
-# benchmark problem. This problem consist of a waveguide inlet impose as a Dirichlet
-# boundary on the top of the oven and perfectly conducting walls everywhere else.
+# This example runs the time-harmonic electromagnetic solver for the Fichera Oven
+# benchmark problem. This problem consist of a waveguide inlet imposed as a Dirichlet
+# boundary condition on the top of the oven and perfectly conducting walls everywhere else.
 # This example verifies the implementation of the DPG built-in residual error estimator
-# and the h-adaptivity of this auxiliaty physics.
+# and the h-adaptivity of this auxiliary physics.
 
 # Listing of Parameters
 #----------------------
