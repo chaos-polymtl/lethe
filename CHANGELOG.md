@@ -3,7 +3,11 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Master] - 2026/03/04
+## [Master] - 2026/03/06
+
+### Added
+
+- MINOR This PR adds the Fichera oven validation test for the time-harmonic Maxwell solver. The test keep track of the DPG error norm at each h-refinement step and also output a .dat that contains the number of cell, interior dofs (even if its not the number of dofs in the linear system) the maximum error and the L2 error.[#1931](https://github.com/chaos-polymtl/lethe/pull/1931)
 
 ### Added
 
