@@ -9,6 +9,7 @@
 examples/incompressible-flow/2d-lid-driven-cavity 1
 examples/incompressible-flow/2d-taylor-couette 1
 examples/incompressible-flow/3d-taylor-green-vortex 128
+examples/multiphysics/fichera_oven 128
 examples/multiphysics/rising-bubble 128
 examples/dem/3d-rectangular-hopper 64
 examples/dem/3d-rotating-drum 128

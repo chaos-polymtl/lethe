@@ -1,0 +1,156 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# This example runs the time-harmonic electromagnetic solver for the Fichera Oven
+# benchmark problem. This problem consist of a waveguide inlet imposed as a Dirichlet
+# boundary condition on the top of the oven and perfectly conducting walls everywhere else.
+# This example verifies the implementation of the DPG built-in residual error estimator
+# and the h-adaptivity of this auxiliary physics.
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method            = steady
+  set output path       = ./output/
+  set output frequency  = 1
+  set number mesh adapt = 5
+end
+
+#---------------------------------------------------
+# Mesh Adaptation
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type                = adaptive
+  set variable            = electromagnetic fields
+  set error estimator     = dpg
+  set fraction refinement = 0.2
+  set fraction coarsening = 0.03
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set electromagnetics trial order = 3
+  set electromagnetics test order  = 4
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set electric conductivity model = constant
+    set electric conductivity       = 0.
+
+    set electric permittivity model     = constant
+    set electric permittivity real part = 1.
+    set electric permittivity imag part = 0.
+
+    set magnetic permeability model     = constant
+    set magnetic permeability real part = 1.
+    set magnetic permeability imag part = 0.
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type           = lethe
+  set grid type      = fichera_oven
+  set grid arguments = 0, 0, 0 : 2, 2, 3 : true
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set fluid dynamics   = false
+  set electromagnetics = true
+end
+
+#---------------------------------------------------
+# Time Harmonic Maxwell
+#---------------------------------------------------
+
+subsection time harmonic maxwell
+  set electromagnetic frequency = 2.38567258e8
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 1
+  subsection bc 0
+    set id   = 0, 1
+    set type = noslip
+  end
+end
+
+subsection boundary conditions time harmonic maxwell
+  set number = 2
+  subsection bc 0
+    set id   = 0
+    set type = pec
+  end
+  subsection bc 1
+    set id   = 1
+    set type = electric field
+    subsection E x real part
+      set Function expression = sin(pi*y)
+    end
+    subsection E x imag part
+      set Function expression = 0
+    end
+    subsection E y real part
+      set Function expression = 0
+    end
+    subsection E y imag part
+      set Function expression = 0
+    end
+    subsection E z real part
+      set Function expression = 0
+    end
+    subsection E z imag part
+      set Function expression = 0
+    end
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection electromagnetics
+    set verbosity         = verbose
+    set relative residual = 1e-8
+    set minimum residual  = 1e-12
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity = quiet
+  end
+end
