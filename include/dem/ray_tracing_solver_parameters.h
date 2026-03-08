@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_ray_tracing_solver_parameters_h
@@ -39,6 +39,12 @@ public:
                       Patterns::Selection("none|only changed|all"),
                       "Print all the parameters, or only"
                       "the changed parameters or none");
+
+    prm.declare_entry(
+      "comment",
+      "",
+      Patterns::Anything(),
+      "Print a comment at the beginning of the console output.");
 
     Parameters::Mesh::declare_parameters(prm);
     Parameters::Testing::declare_parameters(prm);

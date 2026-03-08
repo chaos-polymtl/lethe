@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/03/06
+
+### Added
+
+- MINOR This PR add a new parameter to the .prm file: `comment`. It belongs to the main level of parameters just like `dimension` and `print parameters`. It allows users to comment a message on the consol at the very beginning of the simulation. When combined with `print parameters`, it helps to dissociate consol outputs from the parameter file (if it were to ever be lost). Indeed, it allows user to describe more explicitly what they are simulating/studying/analyzing. This can be specially useful when looking back at older simulations after a while.[#1932](https://github.com/chaos-polymtl/lethe/pull/1932)
+
 ## [Master] - 2026/03/04
 
 ### Added

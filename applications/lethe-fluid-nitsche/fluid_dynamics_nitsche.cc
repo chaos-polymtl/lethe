@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020, 2022-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020, 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include "solvers/fluid_dynamics_nitsche.h"
@@ -58,9 +58,14 @@ main(int argc, char *argv[])
               delete_vtu_and_pvd_files(output_path);
             }
 
-          // Print parameters if needed
           if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
-            print_parameters_to_output_file(pcout, prm, file_name);
+            {
+              // Print comment if there is one
+              print_comment_to_output_file(pcout, file_name);
+
+              // Print parameters if needed
+              print_parameters_to_output_file(pcout, prm, file_name);
+            }
 
           FluidDynamicsNitsche<2> problem_22(NSparam);
           problem_22.solve();
@@ -84,9 +89,14 @@ main(int argc, char *argv[])
               delete_vtu_and_pvd_files(output_path);
             }
 
-          // Print parameters if needed
           if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
-            print_parameters_to_output_file(pcout, prm, file_name);
+            {
+              // Print comment if there is one
+              print_comment_to_output_file(pcout, file_name);
+
+              // Print parameters if needed
+              print_parameters_to_output_file(pcout, prm, file_name);
+            }
 
           FluidDynamicsNitsche<3> problem_33(NSparam);
           problem_33.solve();

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020, 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020, 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include "fem-dem/fluid_dynamics_sharp.h"
@@ -58,9 +58,14 @@ main(int argc, char *argv[])
               delete_vtu_and_pvd_files(output_path);
             }
 
-          // Print parameters if needed
           if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
-            print_parameters_to_output_file(pcout, prm, file_name);
+            {
+              // Print comment if there is one
+              print_comment_to_output_file(pcout, file_name);
+
+              // Print parameters if needed
+              print_parameters_to_output_file(pcout, prm, file_name);
+            }
 
           FluidDynamicsSharp<2> problem(NSparam);
           problem.solve();
@@ -84,9 +89,14 @@ main(int argc, char *argv[])
               delete_vtu_and_pvd_files(output_path);
             }
 
-          // Print parameters if needed
           if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
-            print_parameters_to_output_file(pcout, prm, file_name);
+            {
+              // Print comment if there is one
+              print_comment_to_output_file(pcout, file_name);
+
+              // Print parameters if needed
+              print_parameters_to_output_file(pcout, prm, file_name);
+            }
 
           FluidDynamicsSharp<3> problem(NSparam);
           problem.solve();
