@@ -808,6 +808,12 @@ SolidPhaseSolver<dim>::run()
   const double L = 1.0;
   const double h = L / static_cast<double>(sub[0]);
 
+
+  double max_velocity = 0.0;
+  for (unsigned int d = 0; d < dim; ++d)
+    {
+      max_velocity = std::max(max_velocity, std::abs(inlet_velocity[d]));
+    }
   for (timestep_number = 1; timestep_number <= parameters.n_steps;
        ++timestep_number)
     {
@@ -826,7 +832,7 @@ SolidPhaseSolver<dim>::run()
       locally_relevant_old_solution = old_solution;
       locally_relevant_old_solution.update_ghost_values();
 
-      const double CFL = inlet_velocity[0] * time_step / h;
+      const double CFL = max_velocity * time_step / h;
 
       pcout << "TimeStep " << timestep_number << " time = " << time
             << " CFL = " << CFL << " ||rhs|| = " << system_rhs.l2_norm()
