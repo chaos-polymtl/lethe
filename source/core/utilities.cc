@@ -847,7 +847,8 @@ void
 print_comment_to_output_file(const ConditionalOStream &pcout,
                              const std::string        &filename)
 {
-  std::string comment_sting = get_last_value_of_parameter(filename, "comment");
+  std::string comment_sting =
+    get_last_value_of_parameter(filename, "comment message");
   interpret_escape_sequences(comment_sting);
 
   if (!comment_sting.empty())

@@ -84,7 +84,7 @@ public:
                       "the changed parameters or none");
 
     prm.declare_entry(
-      "comment",
+      "comment message",
       "",
       Patterns::Anything(),
       "Print a comment at the beginning of the console output.");
