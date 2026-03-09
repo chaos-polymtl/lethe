@@ -953,7 +953,7 @@ print_parameters_to_output_file(const ConditionalOStream &pcout,
                                 const std::string        &file_name);
 
 /**
- * @brief Identify ecape sequences listed below and apply them to the string.
+ * @brief Identify escape sequences listed below and apply them to the string.
  *  - "\n": Newline
  *  - "\t": Horizontal tab
  *  - "\r": Carriage return

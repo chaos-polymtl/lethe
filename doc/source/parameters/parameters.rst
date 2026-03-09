@@ -26,7 +26,7 @@ Lethe also has a few head level parameters that are compatible with all applicat
   set print parameters = none
   set comment message  =
 
-- ``dimension``: Dimension of the simulated problem. Lethe only supports 2D (``dimension = 2``) and 3D (``dimension = 3``) simulations at the moment.
+- ``dimension``: Dimension of the simulated problem. Lethe supports 2D (``dimension = 2``) and 3D (``dimension = 3``) simulations.
 
   .. attention::
     This parameter must be defined in the parameters file. Otherwise, an error message will be printed:
@@ -39,7 +39,7 @@ Lethe also has a few head level parameters that are compatible with all applicat
       achieved by adding set dimension = 2 or set dimension = 3 within the parameter
       file.
 
-- ``print parameters``: Prints the parameters of the simulation on the console before starting the simulation when set to ``changed only`` or ``all``. The latter (``all``) prints the values of all the parameters declared and parsed by the application, while the former (``changed only``) prints only the values of the parameters that have been modified (non-default values). By default, ``print parameters`` is set to ``none``, therefore no parameters are printed.
+- ``print parameters``: Prints the parameters of the simulation on the console before starting the simulation when set to ``changed only`` or ``all``. The latter (``all``) prints the values of all the parameters declared and parsed by the application, while the former (``changed only``) prints only the values of the parameters that have been modified (non-default values). By default, ``print parameters`` is set to ``none`` resulting in no parameters being printed.
 
 - ``comment message``: Prints a message on the console before starting the simulation when specified. On the console, the message is preceded by a line with ``User comment:`` .
 
