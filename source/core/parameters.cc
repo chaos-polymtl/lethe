@@ -4566,7 +4566,7 @@ namespace Parameters
         "State whether from the mortar information should be printed "
         "Choices are <quiet|verbose|extra verbose>.");
       prm.declare_entry("cell weight",
-                        "2000",
+                        "1000",
                         Patterns::Integer(),
                         "Cell weight for load balancing of mortar cells");
     }
