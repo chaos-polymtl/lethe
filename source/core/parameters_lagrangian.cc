@@ -1704,7 +1704,7 @@ namespace Parameters
     {
       Tensor<1, 3> zero_tensor({0.0, 0.0, 0.0});
 
-      for (unsigned int counter = 0; counter < DEM_BC_number_max; ++counter)
+      for (unsigned int counter = 0; counter < DEM_BC_number; ++counter)
         {
           boundary_trans_velocity.insert({counter, zero_tensor});
           boundary_rot_speed.insert({counter, 0});
