@@ -969,8 +969,9 @@ interpret_escape_sequences(std::string &s);
  * @brief Print a user comment at the beginning of the simulation on the console
  * output.
  *
- * @param[in] pcout Parallel consol output stream
- * @param[in] filename Name of the file where the comment will be written.
+ * @param[in] pcout Parallel console output stream.
+ * @param[in] filename Name of the parameters file where the comment message is
+ * specified.
  */
 void
 print_comment_to_output_file(const ConditionalOStream &pcout,
