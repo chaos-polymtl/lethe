@@ -1054,10 +1054,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             }
           else if (type == BoundaryConditions::BoundaryType::pressure)
             {
-              Assert(
-                false,
-                ExcMessage(
-                  "Pressure boundary conditions are not supported by the matrix free application."));
+              /*The pressure boundary condition is implemented in the
+               * operators*/
             }
           else if (type == BoundaryConditions::BoundaryType::function_weak)
             {
@@ -1066,7 +1064,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             }
           else if (type == BoundaryConditions::BoundaryType::partial_slip)
             {
-              Assert(
+              AssertThrow(
                 false,
                 ExcMessage(
                   "Partial slip boundary conditions are not supported by the matrix free application."));

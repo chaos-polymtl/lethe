@@ -148,7 +148,8 @@ NavierStokesOperatorBase<dim, number>::reinit(
   // additional data
   for (auto const &[id, type] : boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::function_weak)
+      if (type == BoundaryConditions::BoundaryType::function_weak ||
+          type == BoundaryConditions::BoundaryType::pressure)
         {
           this->enable_face_terms = true;
           additional_data.mapping_update_flags_boundary_faces =
@@ -1015,6 +1016,8 @@ NavierStokesOperatorBase<dim, number>::
     {
       effective_beta_face.reinit(n_boundary_faces);
       face_target_velocity.reinit(n_boundary_faces, face_integrator.n_q_points);
+      face_target_pressure.reinit(n_boundary_faces, face_integrator.n_q_points);
+
       face_nonlinear_previous_values.reinit(n_boundary_faces,
                                             face_integrator.n_q_points);
 
@@ -1031,12 +1034,9 @@ NavierStokesOperatorBase<dim, number>::
           // Check if the boundary condition is a weak Dirichlet boundary
           // condition or an outlet boundary condition, otherwise, no terms
           // need to be precomputed for faces
-          if (this->boundary_conditions.type.at(
-                face_integrator.boundary_id()) !=
-                BoundaryConditions::BoundaryType::function_weak &&
-              this->boundary_conditions.type.at(
-                face_integrator.boundary_id()) !=
-                BoundaryConditions::BoundaryType::outlet)
+          if (boundary_condition_requires_face_assembly(
+                this->boundary_conditions.type.at(
+                  face_integrator.boundary_id())) == false)
             continue;
 
           // We need to read the values for the outlet boundary condition
@@ -1088,6 +1088,23 @@ NavierStokesOperatorBase<dim, number>::
                 {
                   face_nonlinear_previous_values[face - n_inner_faces][q] =
                     face_integrator.get_value(q);
+                }
+
+              else if (this->boundary_conditions.type.at(
+                         face_integrator.boundary_id()) ==
+                       BoundaryConditions::BoundaryType::pressure)
+                {
+                  // Gather the quadrature points
+                  Point<dim, VectorizedArray<number>> point_batch =
+                    face_integrator.quadrature_point(q);
+
+                  // Evaluate the face target pressure
+                  face_target_pressure(face - n_inner_faces, q) =
+                    evaluate_function<dim, number>(
+                      boundary_conditions.navier_stokes_functions
+                        .at(face_integrator.boundary_id())
+                        ->p,
+                      point_batch);
                 }
             }
 
@@ -1361,12 +1378,11 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
 
   // If the boundary condition is not in our list of boundary
   // conditions or the boundary condition that is set in the list is
-  // not a weak function or outlet BC, there is nothing to do, so we set the
+  // not a boundary condition that requires face asssembly (for example
+  // pressure, weak dirichlet or outlet), there is nothing to do, so we set the
   // values to zero and return
-  if (this->boundary_conditions.type.at(integrator.boundary_id()) !=
-        BoundaryConditions::BoundaryType::function_weak &&
-      this->boundary_conditions.type.at(integrator.boundary_id()) !=
-        BoundaryConditions::BoundaryType::outlet)
+  if (boundary_condition_requires_face_assembly(
+        this->boundary_conditions.type.at(integrator.boundary_id())) == false)
     {
       const VectorizedArray<number> zero = 0.0;
 
@@ -1464,6 +1480,49 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
           for (int d = 0; d < dim; ++d)
             value_result[d] -= penalty_parameter * normal_outflux * value[d];
 
+          integrator.submit_value(value_result, q);
+        }
+
+      integrator.integrate(EvaluationFlags::EvaluationFlags::values);
+    }
+
+  else if (this->boundary_conditions.type.at(integrator.boundary_id()) ==
+           BoundaryConditions::BoundaryType::pressure)
+    {
+      integrator.evaluate(EvaluationFlags::EvaluationFlags::values |
+                          EvaluationFlags::EvaluationFlags::gradients);
+
+      for (const auto q : integrator.quadrature_point_indices())
+        {
+          typename FEFaceIntegrator::value_type value_result = {};
+
+          const auto normal_vector = integrator.normal_vector(q);
+          auto       gradient      = integrator.get_gradient(q);
+
+          for (int d = 0; d < dim; ++d)
+            {
+              // We are assembling the residual, so we need to impose the
+              // target pressure
+              if constexpr (assemble_residual)
+                {
+                  // Assemble ν(v,-∇δu·n - p )
+                  for (int i = 0; i < dim; ++i)
+                    value_result[d] +=
+                      kinematic_viscosity * gradient[d][i] * normal_vector[i];
+
+                  value_result[d] += this->face_target_pressure[face_index][q] *
+                                     normal_vector[d];
+                }
+              // We are just assembling the matrix, the face target pressure
+              // is not part of the assembly process.
+              else
+                {
+                  // Assemble ν(v,-∇δu·n )
+                  for (int i = 0; i < dim; ++i)
+                    value_result[d] -=
+                      kinematic_viscosity * gradient[d][i] * normal_vector[i];
+                }
+            }
           integrator.submit_value(value_result, q);
         }
 
