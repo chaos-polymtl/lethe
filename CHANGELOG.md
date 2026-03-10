@@ -17,6 +17,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR This PR adds a new parameter to the .prm file: `comment message`. It belongs to the head level of parameters just like `dimension` and `print parameters`. It allows users to comment a message on the console at the very beginning of the simulation. When combined with `print parameters`, it helps to dissociate console outputs from the parameters file (if it were to ever be lost). Indeed, it allows user to describe more explicitly what they are simulating/studying/analyzing. This can be especially useful when looking back at older simulations after a while. This PR also adds Sphinx documentation for the head level parameters. [#1932](https://github.com/chaos-polymtl/lethe/pull/1932)
 
+- MAJOR Added support to pressure boundary conditions in the matrix-free solvers including two application tests. Improved the documentation on the pressure boundary conditions.[#1933](https://github.com/chaos-polymtl/lethe/pull/1933)
+
 ## [Master] - 2026/03/06
 
 ### Added
