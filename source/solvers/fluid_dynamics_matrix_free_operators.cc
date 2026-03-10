@@ -1505,7 +1505,7 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
               // target pressure
               if constexpr (assemble_residual)
                 {
-                  // Assemble ν(v,-∇δu·n - p )
+                  // Assemble ν(v,-∇δu·n - p n )
                   for (int i = 0; i < dim; ++i)
                     value_result[d] +=
                       kinematic_viscosity * gradient[d][i] * normal_vector[i];
