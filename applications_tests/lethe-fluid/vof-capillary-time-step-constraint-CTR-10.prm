@@ -11,7 +11,8 @@
 # Listing of Parameters
 #----------------------
 
-set dimension = 2
+set dimension       = 2
+set comment message = This test checks that the adaptive capillary time-step constraint is well \napplied for cases with a maximum capillary time-step ratio set to 10 (Δt/Δt_σ). \nThe mesh, the densities and the surface tension considered here remain constant.
 
 #---------------------------------------------------
 # Simulation Control

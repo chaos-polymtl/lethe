@@ -6,6 +6,8 @@
 
 #include <deal.II/base/revision.h>
 
+#include <boost/algorithm/string/replace.hpp>
+
 #if __GNUC__ > 7
 #  include <filesystem>
 #endif
@@ -827,6 +829,31 @@ print_parameters_to_output_file(const ConditionalOStream &pcout,
                            ParameterHandler::OutputStyle::PRM |
                              ParameterHandler::OutputStyle::Short |
                              ParameterHandler::KeepDeclarationOrder);
+      pcout << std::endl << std::endl;
+    }
+}
+
+void
+interpret_escape_sequences(std::string &s)
+{
+  boost::replace_all(s, "\\n", "\n");
+  boost::replace_all(s, "\\t", "\t");
+  boost::replace_all(s, "\\r", "\r");
+  boost::replace_all(s, "\\b", "\b");
+  boost::replace_all(s, "\\v", "\v");
+}
+
+void
+print_comment_to_output_file(const ConditionalOStream &pcout,
+                             ParameterHandler         &prm)
+{
+  std::string comment_string = prm.get("comment message");
+  interpret_escape_sequences(comment_string);
+
+  if (!comment_string.empty())
+    {
+      pcout << "Comment message: " << std::endl;
+      pcout << comment_string << std::endl;
       pcout << std::endl << std::endl;
     }
 }
