@@ -454,9 +454,58 @@
 <li class="toctree-l1"><a class="reference internal" href="sharp-immersed-boundary/sharp-immersed-boundary.html">Sharp-Immersed-Boundary</a></li>
 </ul>
 </div>
+<p>Lethe also has a few head level parameters that are compatible with all applications:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>set dimension        = 0
+set print parameters = none
+set comment message  =
+</pre></div>
+</div>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">dimension</span></code>: Dimension of the simulated problem. Lethe supports 2D (<code class="docutils literal notranslate"><span class="pre">dimension</span> <span class="pre">=</span> <span class="pre">2</span></code>) and 3D (<code class="docutils literal notranslate"><span class="pre">dimension</span> <span class="pre">=</span> <span class="pre">3</span></code>) simulations.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>This parameter must be defined in the parameters file. Otherwise, an error message will be printed:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>While reading the dimension from the input file, Lethe found a value that is
+neither 2 or 3. Since August 2023, Lethe requires that the user explicitly
+specify the dimension of the problem within the parameter file. This can be
+achieved by adding set dimension = 2 or set dimension = 3 within the parameter
+file.
+</pre></div>
+</div>
+</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">print</span> <span class="pre">parameters</span></code>: Prints the parameters of the simulation on the console before starting the simulation when set to <code class="docutils literal notranslate"><span class="pre">changed</span> <span class="pre">only</span></code> or <code class="docutils literal notranslate"><span class="pre">all</span></code>. The latter (<code class="docutils literal notranslate"><span class="pre">all</span></code>) prints the values of all the parameters declared and parsed by the application, while the former (<code class="docutils literal notranslate"><span class="pre">changed</span> <span class="pre">only</span></code>) prints only the values of the parameters that have been modified (non-default values). By default, <code class="docutils literal notranslate"><span class="pre">print</span> <span class="pre">parameters</span></code> is set to <code class="docutils literal notranslate"><span class="pre">none</span></code> resulting in no parameters being printed.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">comment</span> <span class="pre">message</span></code>: Prints a message on the console before starting the simulation when specified. On the console, the message is preceded by a line with <code class="docutils literal notranslate"><span class="pre">Comment</span> <span class="pre">message:</span></code> .</p>
+<div class="admonition-example admonition">
+<p class="admonition-title">Example</p>
+<p>In the parameters file, when</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>set comment message = This test checks that the adaptive capillary time-step constraint is well \napplied for cases with a maximum capillary time-step ratio set to 10 (Δt/Δt_σ). \nThe mesh, the densities and the surface tension considered here remain constant.
+</pre></div>
+</div>
+<p>On the console, the following is displayed:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Comment message:
+This test checks that the adaptive capillary time-step constraint is well
+applied for cases with a maximum capillary time-step ratio set to 10 (Δt/Δt_σ).
+The mesh, the densities and the surface tension considered here remain constant.
+</pre></div>
+</div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>The complete options for the parameter file, with information regarding the parameters that can be used, can be obtained by doing the following:</p>
+<p>A few escape sequences are supported by the <code class="docutils literal notranslate"><span class="pre">comment</span> <span class="pre">message</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">\n</span></code>: Newline</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">\t</span></code>: Horizontal tab</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">\r</span></code>: Carriage return</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">\b</span></code>: Backspace</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">\v</span></code>: Vertical tab</p></li>
+</ul>
+</div>
+</div>
+</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>The complete options for the parameters file, with information regarding the parameters that can be used, can be obtained by doing the following:</p>
 <ul class="simple">
 <li><p>Go to <code class="docutils literal notranslate"><span class="pre">/lethe/build/applications/navier_stokes_parameter_template/</span></code></p></li>
 <li><p>Run the <code class="docutils literal notranslate"><span class="pre">navier_stokes_parameter_template</span></code> using the command <code class="docutils literal notranslate"><span class="pre">./navier_stokes_parameter_template</span></code></p></li>

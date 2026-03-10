@@ -97,10 +97,11 @@ $(function() {
 <div class="textblock"><code>#include &lt;core/revision.h&gt;</code><br />
 <code>#include &lt;<a class="el" href="utilities_8h_source.html">core/utilities.h</a>&gt;</code><br />
 <code>#include &lt;deal.II/base/revision.h&gt;</code><br />
+<code>#include &lt;boost/algorithm/string/replace.hpp&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for utilities.cc:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="utilities_8cc__incl.svg" width="2606" height="300"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="utilities_8cc__incl.svg" width="2606" height="315"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="utilities_8cc_source.html">Go to the source code of this file.</a></p>
@@ -186,6 +187,10 @@ Functions</h2></td></tr>
 <tr class="separator:a3badf505e17c1f77892888491dd53f5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f8e2b4fdf7a2b6eceab3461c4edd221" id="r_a5f8e2b4fdf7a2b6eceab3461c4edd221"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#a5f8e2b4fdf7a2b6eceab3461c4edd221">print_parameters_to_output_file</a> (const ConditionalOStream &amp;pcout, const ParameterHandler &amp;prm, const std::string &amp;file_name)</td></tr>
 <tr class="separator:a5f8e2b4fdf7a2b6eceab3461c4edd221"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad051c09424365f2fdcc138dcee034569" id="r_ad051c09424365f2fdcc138dcee034569"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#ad051c09424365f2fdcc138dcee034569">interpret_escape_sequences</a> (std::string &amp;s)</td></tr>
+<tr class="separator:ad051c09424365f2fdcc138dcee034569"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2e85bc56c84564999daa889908507c8" id="r_ae2e85bc56c84564999daa889908507c8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#ae2e85bc56c84564999daa889908507c8">print_comment_to_output_file</a> (const ConditionalOStream &amp;pcout, ParameterHandler &amp;prm)</td></tr>
+<tr class="separator:ae2e85bc56c84564999daa889908507c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6bff1c25176117effa0161cb4ebfc520" id="r_a6bff1c25176117effa0161cb4ebfc520"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="utilities_8cc.html#a6bff1c25176117effa0161cb4ebfc520">delete_vtu_and_pvd_files</a> (const std::string &amp;output_path)</td></tr>
 <tr class="separator:a6bff1c25176117effa0161cb4ebfc520"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -225,7 +230,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00720">720</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00722">722</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -253,7 +258,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00358">358</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00360">360</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -281,7 +286,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00369">369</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00371">371</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -303,7 +308,7 @@ Functions</h2></td></tr>
 
 <p>Delete vtu and pvd files. </p>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00835">835</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00862">862</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -349,7 +354,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00309">309</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00311">311</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -396,7 +401,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00210">210</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00212">212</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -442,7 +447,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00256">256</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00258">258</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -470,9 +475,9 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00632">632</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00634">634</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00549">get_last_value_of_parameter()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00551">get_last_value_of_parameter()</a>.</p>
 
 </div>
 </div>
@@ -512,7 +517,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>std::string Value of the parameter, or an empty string if not found. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00549">549</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00551">551</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -541,9 +546,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The maximum number of boundary conditions or manifolds. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00698">698</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00700">700</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00588">get_max_value_of_parameter()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00590">get_max_value_of_parameter()</a>.</p>
 
 </div>
 </div>
@@ -573,7 +578,42 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00588">588</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00590">590</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+
+</div>
+</div>
+<a id="ad051c09424365f2fdcc138dcee034569" name="ad051c09424365f2fdcc138dcee034569"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad051c09424365f2fdcc138dcee034569">&#9670;&#160;</a></span>interpret_escape_sequences()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void interpret_escape_sequences </td>
+          <td>(</td>
+          <td class="paramtype">std::string &amp;&#160;</td>
+          <td class="paramname"><em>s</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Identify escape sequences listed below and apply them to the string. </p>
+<ul>
+<li>"\n": Newline</li>
+<li>"\t": Horizontal tab</li>
+<li>"\r": Carriage return</li>
+<li>"\b": Backspace</li>
+<li>"\v": Vertical tab</li>
+</ul>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">s</td><td>String to be modified if escape sequences are specified. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00837">837</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1066,7 +1106,7 @@ template&lt;int dim, typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Table with the independent variable values followed by the dependent variables values. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00086">86</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00088">88</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1143,7 +1183,7 @@ template&lt;int dim, typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Table with the independent variable values followed by the dependent variables values. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00050">50</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00052">52</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1531,7 +1571,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Table with the independent variable values followed by the dependent variables values. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00015">15</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00017">17</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1763,7 +1803,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Table with the independent variables values followed by the dependent variable values. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00174">174</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00176">176</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1943,7 +1983,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Table with the independent variables values followed by the dependent variables values. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00132">132</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00134">134</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1983,7 +2023,48 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Tuple containing a map with the command line flags and a boolean set to 1 for the specific flag; and a vector of strings with the rest of the arguments that are not flags; in Lethe, this corresponds to the parameter file given to the application. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00762">762</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00764">764</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+
+</div>
+</div>
+<a id="ae2e85bc56c84564999daa889908507c8" name="ae2e85bc56c84564999daa889908507c8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2e85bc56c84564999daa889908507c8">&#9670;&#160;</a></span>print_comment_to_output_file()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void print_comment_to_output_file </td>
+          <td>(</td>
+          <td class="paramtype">const ConditionalOStream &amp;&#160;</td>
+          <td class="paramname"><em>pcout</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ParameterHandler &amp;&#160;</td>
+          <td class="paramname"><em>prm</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Print a user comment at the beginning of the simulation on the console output. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">pcout</td><td>Parallel console output stream. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">prm</td><td>ParameterHandler. specified. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00847">847</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00837">interpret_escape_sequences()</a>.</p>
 
 </div>
 </div>
@@ -2028,9 +2109,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00808">808</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00810">810</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00549">get_last_value_of_parameter()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00551">get_last_value_of_parameter()</a>.</p>
 
 </div>
 </div>
@@ -2058,7 +2139,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00737">737</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00739">739</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
