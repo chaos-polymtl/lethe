@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR To avoid division by zero in navier_stokes_vof_assembler, a tolerance of DBL_MIN was used. However, since DBL_MIN is approx. 1e-300, it didn't really avoid a division by zero. It led to issues for fine meshes. This PR fixes this issue by changing DBL_MIN for 1e-14. [#1934](https://github.com/chaos-polymtl/lethe/pull/1934)
 
+- MINOR This PR adds a new parameter to the .prm file: `comment message`. It belongs to the head level of parameters just like `dimension` and `print parameters`. It allows users to comment a message on the console at the very beginning of the simulation. When combined with `print parameters`, it helps to dissociate console outputs from the parameters file (if it were to ever be lost). Indeed, it allows user to describe more explicitly what they are simulating/studying/analyzing. This can be especially useful when looking back at older simulations after a while. This PR also adds Sphinx documentation for the head level parameters. [#1932](https://github.com/chaos-polymtl/lethe/pull/1932)
+
 ## [Master] - 2026/03/06
 
 ### Added
