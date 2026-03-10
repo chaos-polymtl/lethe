@@ -105,6 +105,8 @@ create_mesh(Triangulation<dim> &tria,
   tria.create_triangulation(description);
 }
 
+// mpirun -np 8 ./tests/mortar/performance_01.debug/performance_01.debug 128 2
+// 0.0
 int
 main(int argc, char **argv)
 {
