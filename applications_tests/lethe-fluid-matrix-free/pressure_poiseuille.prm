@@ -18,8 +18,8 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = steady
-  set output frequency  = 0
+  set method           = steady
+  set output frequency = 0
 end
 
 #---------------------------------------------------
@@ -98,8 +98,8 @@ end
 
 subsection non-linear solver
   subsection fluid dynamics
-    set verbosity      = verbose
-    set tolerance      = 1e-6
+    set verbosity = verbose
+    set tolerance = 1e-6
   end
 end
 
