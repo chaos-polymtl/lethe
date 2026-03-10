@@ -661,7 +661,7 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
         filtered_phase_gradient_value_q.norm();
 
       const Tensor<1, dim> normalized_phase_fraction_gradient =
-        phase_gradient_value_q / (phase_gradient_norm + DBL_MIN);
+        phase_gradient_value_q / (phase_gradient_norm + 1e-14);
 
       const double JxW_value = JxW[q];
 
@@ -738,7 +738,7 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
         filtered_phase_gradient_value_q.norm();
 
       const Tensor<1, dim> normalized_phase_fraction_gradient =
-        phase_gradient_value_q / (phase_gradient_norm + DBL_MIN);
+        phase_gradient_value_q / (phase_gradient_norm + 1e-14);
 
       // Gather temperature gradient
       const Tensor<1, dim> temperature_gradient =
@@ -825,7 +825,7 @@ NavierStokesVOFAssemblerEvaporation<dim>::assemble_rhs(
         filtered_phase_gradient_value_q.norm();
 
       const Tensor<1, dim> normalized_phase_fraction_gradient =
-        phase_gradient_value_q / (phase_gradient_norm + DBL_MIN);
+        phase_gradient_value_q / (phase_gradient_norm + 1e-14);
 
 
       const double JxW_value = JxW[q];
