@@ -845,16 +845,15 @@ interpret_escape_sequences(std::string &s)
 
 void
 print_comment_to_output_file(const ConditionalOStream &pcout,
-                             const std::string        &filename)
+                             ParameterHandler         &prm)
 {
-  std::string comment_sting =
-    get_last_value_of_parameter(filename, "comment message");
-  interpret_escape_sequences(comment_sting);
+  std::string comment_string = prm.get("comment message");
+  interpret_escape_sequences(comment_string);
 
-  if (!comment_sting.empty())
+  if (!comment_string.empty())
     {
-      pcout << "User comment: " << std::endl;
-      pcout << comment_sting << std::endl;
+      pcout << "Comment message: " << std::endl;
+      pcout << comment_string << std::endl;
       pcout << std::endl << std::endl;
     }
 }

@@ -970,12 +970,12 @@ interpret_escape_sequences(std::string &s);
  * output.
  *
  * @param[in] pcout Parallel console output stream.
- * @param[in] filename Name of the parameters file where the comment message is
+ * @param[in,out] prm ParameterHandler.
  * specified.
  */
 void
 print_comment_to_output_file(const ConditionalOStream &pcout,
-                             const std::string        &filename);
+                             ParameterHandler         &prm);
 
 /**
  * @brief Delete vtu and pvd files

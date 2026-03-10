@@ -65,8 +65,8 @@ main(int argc, char *argv[])
 
           if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
             {
-              // Print comment if there is one
-              print_comment_to_output_file(pcout, file_name);
+              // Print comment message if there is one
+              print_comment_to_output_file(pcout, prm);
 
               // Print parameters if needed
               print_parameters_to_output_file(pcout, prm, file_name);
@@ -100,8 +100,8 @@ main(int argc, char *argv[])
 
           if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
             {
-              // Print comment if there is one
-              print_comment_to_output_file(pcout, file_name);
+              // Print comment message if there is one
+              print_comment_to_output_file(pcout, prm);
 
               // Print parameters if needed
               print_parameters_to_output_file(pcout, prm, file_name);

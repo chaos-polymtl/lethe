@@ -41,7 +41,7 @@ Lethe also has a few head level parameters that are compatible with all applicat
 
 - ``print parameters``: Prints the parameters of the simulation on the console before starting the simulation when set to ``changed only`` or ``all``. The latter (``all``) prints the values of all the parameters declared and parsed by the application, while the former (``changed only``) prints only the values of the parameters that have been modified (non-default values). By default, ``print parameters`` is set to ``none`` resulting in no parameters being printed.
 
-- ``comment message``: Prints a message on the console before starting the simulation when specified. On the console, the message is preceded by a line with ``User comment:`` .
+- ``comment message``: Prints a message on the console before starting the simulation when specified. On the console, the message is preceded by a line with ``Comment message:`` .
 
   .. admonition:: Example
 
@@ -55,7 +55,7 @@ Lethe also has a few head level parameters that are compatible with all applicat
 
     .. code-block:: text
 
-      User comment:
+      Comment message:
       This test checks that the adaptive capillary time-step constraint is well
       applied for cases with a maximum capillary time-step ratio set to 10 (Δt/Δt_σ).
       The mesh, the densities and the surface tension considered here remain constant.

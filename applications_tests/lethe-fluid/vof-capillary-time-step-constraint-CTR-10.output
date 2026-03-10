@@ -1,4 +1,4 @@
-User comment:
+Comment message:
 This test checks that the adaptive capillary time-step constraint is well
 applied for cases with a maximum capillary time-step ratio set to 10 (Δt/Δt_σ).
 The mesh, the densities and the surface tension considered here remain constant.
