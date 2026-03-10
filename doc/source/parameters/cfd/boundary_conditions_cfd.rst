@@ -4,7 +4,7 @@ Boundary Conditions - CFD
 
 This subsection defines the boundary conditions associated with fluid dynamics physics. Lethe supports the following boundary conditions:
 
-* ``none`` boundary condition (default).
+* ``none`` boundary condition imposes a *do nothing*, equivalent to a zero normal traction, on the boundary. Essentially, this can be interpreted as a combination of a zero value of the normal velocity gradient and a zero value of the pressure. In general, it is better to use the ``outlet`` boundary condition for outlets.
 * ``noslip`` boundary conditions strongly impose the velocity on a boundary to be :math:`\mathbf{u}=[0,0]^T` and :math:`\mathbf{u}=[0,0,0]^T` in 2D and 3D respectively.
 * ``slip`` boundary conditions impose :math:`\mathbf{u} \cdot \mathbf{n}=0`, with :math:`\mathbf{n}` the normal vector of the boundary. Imposing slip boundary conditions strongly is not trivial in FEM. We refer the reader to the deal.II `documentation <https://www.dealii.org/current/doxygen/deal.II/group__constraints.html>`_ for explanations on how this is achieved.
 * ``periodic`` boundary conditions, in which fluid exiting the domain will reenter on the opposite side. 
