@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # This test solves a 2D Poiseuille flow driven by pressure boundary conditions
-# using Q2Q2 (equal-order) elements with default stabilization and the matrix-based. A pressure of 10
+# using Q2Q2 (equal-order) elements with default stabilization and the matrix-based solver. A pressure of 10
 # is imposed at the inlet (boundary 0) and 5 at the outlet (boundary 1), with
 # no-slip walls (boundary 2). Since the Q2Q2 element pair can represent the
 # analytical solution exactly, the L2 error should be limited only by the
