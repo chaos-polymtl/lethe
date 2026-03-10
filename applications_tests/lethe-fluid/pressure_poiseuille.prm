@@ -88,7 +88,6 @@ subsection mesh
   set initial refinement = 0
 end
 
-
 #---------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
@@ -110,16 +109,16 @@ end
 subsection boundary conditions
   set number = 3
   subsection bc 0
-    set type               = pressure
-    set id                 = 0
+    set type = pressure
+    set id   = 0
     subsection p
       set Function expression = 10
     end
   end
 
   subsection bc 1
-    set type               = pressure
-    set id                 = 1
+    set type = pressure
+    set id   = 1
     subsection p
       set Function expression = 5
     end
@@ -129,7 +128,6 @@ subsection boundary conditions
     set id   = 2,3
   end
 end
-
 
 #---------------------------------------------------
 # Non-Linear Solver Control
