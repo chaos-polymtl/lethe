@@ -103,7 +103,7 @@ end
 #---------------------------------------------------
 
 subsection CLS
-  subsection interface regularization method
+  subsection interface reinitialization method
     set type      = geometric interface reinitialization
     set frequency = 20
     set verbosity = verbose

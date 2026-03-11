@@ -35,11 +35,11 @@ end
 #---------------------------------------------------
 
 subsection CLS
-  subsection interface regularization method
-    set type      = algebraic interface reinitialization
+  subsection interface reinitialization method
+    set type      = pde-based interface reinitialization
     set frequency = 20
     set verbosity = verbose
-    subsection algebraic interface reinitialization
+    subsection pde-based interface reinitialization
       set diffusivity multiplier = 2
     end
   end

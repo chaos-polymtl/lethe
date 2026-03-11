@@ -24,9 +24,9 @@ DeclException1(
 DeclException1(
   RegularizationMethodFrequencyError,
   int,
-  << "Regularization method frequency : " << arg1
+  << "Reinitialization method frequency : " << arg1
   << " is equal or smaller than 0." << std::endl
-  << "Interface regularization method requires an frequency larger than 0.");
+  << "Interface reinitialization method requires an frequency larger than 0.");
 
 template <int dim>
 void
@@ -176,27 +176,27 @@ void
 Parameters::VOF_RegularizationMethod::declare_parameters(
   ParameterHandler &prm) const
 {
-  prm.enter_subsection("interface regularization method");
+  prm.enter_subsection("interface reinitialization method");
   {
     prm.declare_entry(
       "type",
       "none",
       Patterns::Selection(
-        "none|projection-based interface sharpening|algebraic interface reinitialization|geometric interface reinitialization"),
-      "VOF interface regularization method");
+        "none|projection-based interface sharpening|pde-based interface reinitialization|geometric interface reinitialization"),
+      "VOF interface reinitialization method");
 
     prm.declare_entry(
       "frequency",
       "10",
       Patterns::Integer(),
       "Reinitialization frequency (number of time steps) at which the "
-      "interface regularization process will be applied to the VOF "
+      "interface reinitialization process will be applied to the VOF "
       "phase fraction field.");
     prm.declare_entry(
       "verbosity",
       "quiet",
       Patterns::Selection("quiet|verbose|extra verbose"),
-      "States whether the output from the interface regularization method "
+      "States whether the output from the interface reinitialization method "
       "should be printed."
       "Choices are <quiet|verbose|extra verbose>.");
 
@@ -210,7 +210,7 @@ Parameters::VOF_RegularizationMethod::declare_parameters(
 void
 Parameters::VOF_RegularizationMethod::parse_parameters(ParameterHandler &prm)
 {
-  prm.enter_subsection("interface regularization method");
+  prm.enter_subsection("interface reinitialization method");
   {
     const std::string t = prm.get("type");
     if (t == "none")
@@ -222,7 +222,7 @@ Parameters::VOF_RegularizationMethod::parse_parameters(ParameterHandler &prm)
           Parameters::RegularizationMethodType::sharpening;
         sharpening.enable = true;
       }
-    else if (t == "algebraic interface reinitialization")
+    else if (t == "pde-based interface reinitialization")
       {
         this->regularization_method_type =
           Parameters::RegularizationMethodType::algebraic;
@@ -236,7 +236,7 @@ Parameters::VOF_RegularizationMethod::parse_parameters(ParameterHandler &prm)
       }
     else
       throw(
-        std::runtime_error("Invalid interface regularization method type!"));
+        std::runtime_error("Invalid interface reinitialization method type!"));
 
     this->frequency = prm.get_integer("frequency");
     Assert(this->frequency > 0,
@@ -503,26 +503,26 @@ void
 Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
   dealii::ParameterHandler &prm)
 {
-  prm.enter_subsection("algebraic interface reinitialization");
+  prm.enter_subsection("pde-based interface reinitialization");
   {
     prm.declare_entry(
       "output reinitialization steps",
       "false",
       Patterns::Bool(),
-      "Enables pvtu format outputs of the algebraic interface reinitialization "
+      "Enables pvtu format outputs of the pde-based interface reinitialization "
       "steps <true|false>");
     prm.declare_entry(
       "diffusivity multiplier",
       "1.",
       Patterns::Double(),
       "Factor that multiplies the mesh-size in the mesh-dependant diffusion "
-      "coefficient of the algebraic interface reinitialization.");
+      "coefficient of the pde-based interface reinitialization.");
     prm.declare_entry(
       "diffusivity power",
       "1.",
       Patterns::Double(),
       "Power value applied to the mesh-size in the mesh-dependant diffusion "
-      "coefficient of the algebraic interface reinitialization.");
+      "coefficient of the pde-based interface reinitialization.");
     prm.declare_entry("steady-state criterion",
                       "1e-4",
                       Patterns::Double(),
@@ -535,7 +535,7 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
       "artificial time-step factor",
       "0.25",
       Patterns::Double(),
-      "Factor multiplying the artificial time step in the algebraic "
+      "Factor multiplying the artificial time step in the PDE-based "
       "interface reinitialization.");
     prm.declare_alias("artificial time-step factor",
                       "reinitialization CFL",
@@ -548,7 +548,7 @@ void
 Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters(
   dealii::ParameterHandler &prm)
 {
-  prm.enter_subsection("algebraic interface reinitialization");
+  prm.enter_subsection("pde-based interface reinitialization");
   {
     this->output_reinitialization_steps =
       prm.get_bool("output reinitialization steps");

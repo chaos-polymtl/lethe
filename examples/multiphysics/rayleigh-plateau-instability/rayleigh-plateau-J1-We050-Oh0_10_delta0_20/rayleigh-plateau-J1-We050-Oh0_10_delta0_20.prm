@@ -39,7 +39,7 @@ subsection CLS
     set enable                  = true
     set output auxiliary fields = true
   end
-  subsection interface regularization method
+  subsection interface reinitialization method
     set type      = projection-based interface sharpening
     set frequency = 20
     subsection projection-based interface sharpening

@@ -2789,7 +2789,7 @@ VolumeOfFluid<dim>::set_initial_conditions()
       auto mpi_communicator = this->triangulation->get_mpi_communicator();
       const std::string folder =
         this->simulation_parameters.simulation_control.output_folder +
-        "/algebraic-reinitialization-steps-output/";
+        "/pde-based-reinitialization-steps-output/";
 
       struct stat buffer;
 
@@ -3216,7 +3216,7 @@ template <int dim>
 void
 VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
 {
-  TimerOutput::Scope t(this->computing_timer, "Algebraic reinitialization");
+  TimerOutput::Scope t(this->computing_timer, "PDE-based reinitialization");
 
   // Reinitialize previous VOF solution
   // (this is only coherent with BDF1 and BDF2)

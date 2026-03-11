@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# This application-test tests the algebraic interface reinitialization of
+# This application-test tests the pde-based interface reinitialization of
 # previous solutions for a BDF2 time integration scheme. A regularization
 # frequency higher than 1 is used to ensure that the mechanism for regularizing
 # previous solutions is used. The test simulates a circle advected to the left
@@ -65,10 +65,10 @@ end
 #---------------------------------------------------
 
 subsection CLS
-  subsection interface regularization method
-    set type      = algebraic interface reinitialization
+  subsection interface reinitialization method
+    set type      = pde-based interface reinitialization
     set frequency = 4
-    subsection algebraic interface reinitialization
+    subsection pde-based interface reinitialization
       set diffusivity multiplier = 0.6
     end
   end
