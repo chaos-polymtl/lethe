@@ -22,8 +22,7 @@ BirminghamFluidizedBedGrid<dim, spacedim>::BirminghamFluidizedBedGrid(
   const std::vector<std::string> arguments =
     Utilities::split_string_list(grid_arguments, ':');
 
-  this->enable_chimney =
-    !(arguments.size() > 0 && arguments[0] == "false");
+  this->enable_chimney = !(arguments.size() > 0 && arguments[0] == "false");
 }
 
 
@@ -96,8 +95,7 @@ BirminghamFluidizedBedGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
                 continue;
 
               bool is_end_cap = true;
-              for (unsigned int v = 0;
-                   v < GeometryInfo<3>::vertices_per_face;
+              for (unsigned int v = 0; v < GeometryInfo<3>::vertices_per_face;
                    ++v)
                 {
                   const double x = cell->face(f)->vertex(v)[0];
@@ -110,8 +108,7 @@ BirminghamFluidizedBedGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
               if (!is_end_cap)
                 {
                   cell->face(f)->set_manifold_id(1);
-                  for (unsigned int l = 0;
-                       l < GeometryInfo<3>::lines_per_face;
+                  for (unsigned int l = 0; l < GeometryInfo<3>::lines_per_face;
                        ++l)
                     cell->face(f)->line(l)->set_manifold_id(1);
                 }
@@ -147,8 +144,7 @@ BirminghamFluidizedBedGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
 
             // Only consider faces on the top end cap (x ≈ base_length)
             bool on_top_cap = true;
-            for (unsigned int v = 0;
-                 v < GeometryInfo<3>::vertices_per_face;
+            for (unsigned int v = 0; v < GeometryInfo<3>::vertices_per_face;
                  ++v)
               if (std::abs(face->vertex(v)[0] - base_length) > tol)
                 {
@@ -169,10 +165,10 @@ BirminghamFluidizedBedGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
               }
           }
 
-      AssertThrow(
-        best_dist_sq < r_large * r_large,
-        ExcMessage("Could not find a suitable face on the top end cap "
-                   "for the chimney placement."));
+      AssertThrow(best_dist_sq < r_large * r_large,
+                  ExcMessage(
+                    "Could not find a suitable face on the top end cap "
+                    "for the chimney placement."));
 
       // ---- 5. Build the chimney triangulation ----
 
@@ -204,7 +200,7 @@ BirminghamFluidizedBedGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
           const double dx = chimney_length * layer / n_layers;
           for (unsigned int v = 0; v < 4; ++v)
             {
-              chimney_vertices[layer * 4 + v]    = sorted_fv[v];
+              chimney_vertices[layer * 4 + v] = sorted_fv[v];
               chimney_vertices[layer * 4 + v][0] += dx;
             }
         }
@@ -217,10 +213,14 @@ BirminghamFluidizedBedGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
         {
           const unsigned int L = layer * 4;       // left  layer base index
           const unsigned int R = (layer + 1) * 4; // right layer base index
-          chimney_cells[layer].vertices = {L + 0, R + 0,   // hex 0, 1
-                                           L + 1, R + 1,   // hex 2, 3
-                                           L + 2, R + 2,   // hex 4, 5
-                                           L + 3, R + 3};  // hex 6, 7
+          chimney_cells[layer].vertices = {L + 0,
+                                           R + 0, // hex 0, 1
+                                           L + 1,
+                                           R + 1, // hex 2, 3
+                                           L + 2,
+                                           R + 2, // hex 4, 5
+                                           L + 3,
+                                           R + 3}; // hex 6, 7
         }
 
       Triangulation<3> tria_chimney;
@@ -253,8 +253,7 @@ BirminghamFluidizedBedGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
               bool is_outlet         = true;
               bool at_or_beyond_base = true;
 
-              for (unsigned int v = 0;
-                   v < GeometryInfo<3>::vertices_per_face;
+              for (unsigned int v = 0; v < GeometryInfo<3>::vertices_per_face;
                    ++v)
                 {
                   const double x = cell->face(f)->vertex(v)[0];
@@ -284,8 +283,7 @@ BirminghamFluidizedBedGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
                 {
                   // Curved lateral surfaces of cylinders and cone
                   cell->face(f)->set_manifold_id(1);
-                  for (unsigned int l = 0;
-                       l < GeometryInfo<3>::lines_per_face;
+                  for (unsigned int l = 0; l < GeometryInfo<3>::lines_per_face;
                        ++l)
                     cell->face(f)->line(l)->set_manifold_id(1);
                   cell->face(f)->set_boundary_id(0);
@@ -311,8 +309,7 @@ BirminghamFluidizedBedGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
                 continue;
 
               bool is_end_cap = true;
-              for (unsigned int v = 0;
-                   v < GeometryInfo<3>::vertices_per_face;
+              for (unsigned int v = 0; v < GeometryInfo<3>::vertices_per_face;
                    ++v)
                 {
                   const double x = cell->face(f)->vertex(v)[0];
@@ -326,8 +323,7 @@ BirminghamFluidizedBedGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
               if (!is_end_cap)
                 {
                   cell->face(f)->set_manifold_id(1);
-                  for (unsigned int l = 0;
-                       l < GeometryInfo<3>::lines_per_face;
+                  for (unsigned int l = 0; l < GeometryInfo<3>::lines_per_face;
                        ++l)
                     cell->face(f)->line(l)->set_manifold_id(1);
                   cell->face(f)->set_boundary_id(0);

@@ -87,8 +87,11 @@ public:
   make_grid(Triangulation<dim, spacedim> &triangulation);
 
 private:
+  /// Arguments used to generate the grid
   std::string grid_arguments;
-  bool        enable_chimney;
+
+  /// Flag used to indicate if the chimney is added or not to the mesh
+  bool enable_chimney;
 };
 
 
