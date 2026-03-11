@@ -10,6 +10,7 @@
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/manifold_lib.h>
 
+#include <array>
 #include <sstream>
 
 using namespace dealii;
@@ -24,18 +25,22 @@ using namespace dealii;
  * conditions," Chemical Engineering Science, vol. 142, pp. 215-235, 2016.
  * DOI: 10.1016/j.ces.2015.11.016
  *
- * The geometry consists of three sections joined along the x-axis:
+ * The geometry consists of four sections joined along the x-axis:
  * - A bottom cylinder of small radius (0.077 m),
  * - A truncated cone expanding from the small to a larger radius (0.127 m),
- * - A top cylinder of the larger radius.
+ * - A top cylinder of the larger radius,
+ * - A rectangular chimney pipe extending from the central cell of the top
+ *   end cap, serving as the outlet.
  *
  * Boundary IDs are assigned as follows:
- * - 0: lateral (curved) surfaces,
+ * - 0: wall surfaces (curved cylinder/cone laterals, chimney walls, and the
+ *   annular top wall around the chimney opening),
  * - 1: inlet end cap (x = 0),
- * - 2: outlet end cap (x = total length).
+ * - 2: outlet (chimney top face).
  *
- * A CylindricalManifold is attached to the lateral surfaces so that mesh
- * refinement preserves the circular cross-sections and the cone taper.
+ * A CylindricalManifold is attached to the curved lateral surfaces so that
+ * mesh refinement preserves the circular cross-sections and the cone taper.
+ * The chimney walls and annular top wall remain flat.
  *
  * @tparam dim The dimension of the mesh, must be 3.
  * @tparam spacedim The dimension of the space, must be 3.
@@ -57,11 +62,14 @@ public:
   /**
    * @brief Generate the Birmingham fluidized bed mesh.
    *
-   * Three sub-triangulations (bottom cylinder, truncated cone, top cylinder)
-   * are created and merged. Manifold IDs and boundary IDs are then reassigned
-   * so that the curved surfaces receive a CylindricalManifold along the
-   * x-axis and the flat end caps are identified as inlet (boundary 1) and
-   * outlet (boundary 2).
+   * The cylindrical geometry (bottom cylinder, truncated cone, top cylinder)
+   * is first merged and refined with a CylindricalManifold to obtain a
+   * finer mesh on the top end cap. The refined mesh is then flattened and
+   * an off-center face on the top end cap is selected for the chimney
+   * attachment. A hexahedral chimney pipe is built from that face's exact
+   * vertices and merged with the flattened mesh. The number of pre-chimney
+   * refinements is controlled by the hardcoded parameter
+   * @p n_chimney_refinements.
    *
    * @param[out] triangulation The triangulation to fill with the mesh.
    */
