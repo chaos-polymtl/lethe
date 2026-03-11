@@ -42,7 +42,7 @@ The subsection with default parameters goes as follows:
 
   * The ``fluid id`` parameter is an integer representing the fluid on which the current constraint should be applied.
 
-  * The ``phase fraction tolerance`` parameter is an absolute tolerance on the filtered phase fraction :math:`(\phi')` used in conjunction with CLS simulations (see :doc:`volume_of_fluid` subsection) to select the cells on which the constraint is applied. For example, if a ``phase fraction tolerance`` of :math:`10^{-4}` is specified for a constraint on a fluid of ``fluid id = 1``, cells with :math:`\phi' \in [0.9999,1.0001]` are considered as the cells of interest. Note that if the phase fraction filter is disabled, the tolerance will be applied on the solved phase fraction field :math:`(\phi)`.
+  * The ``phase fraction tolerance`` parameter is an absolute tolerance on the filtered phase fraction :math:`(\phi')` used in conjunction with CLS simulations (see :doc:`conservative_level_set` subsection) to select the cells on which the constraint is applied. For example, if a ``phase fraction tolerance`` of :math:`10^{-4}` is specified for a constraint on a fluid of ``fluid id = 1``, cells with :math:`\phi' \in [0.9999,1.0001]` are considered as the cells of interest. Note that if the phase fraction filter is disabled, the tolerance will be applied on the solved phase fraction field :math:`(\phi)`.
 
   * The ``min temperature`` parameter is a double representing the minimum temperature value for a cell to be considered a solid :math:`[\Theta]`.
 

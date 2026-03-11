@@ -212,7 +212,7 @@ For two phases, the properties are defined for each fluid. Default values are:
   end
 
 * ``number of fluids = 2`` is required for a free surface simulation, otherwise an error will be thrown in the terminal.
-* ``subsection fluid 0`` indicates the properties of fluid where the phase indicator = 0 (Volume of Fluid method), as defined when initializing the free surface (see the :doc:`initial_conditions` subsection), and correspondingly ``fluid 1`` is located where the phase indicator = 1.
+* ``subsection fluid 0`` indicates the properties of fluid where the phase indicator = 0 (Conservative Level-Set method), as defined when initializing the free surface (see the :doc:`initial_conditions` subsection), and correspondingly ``fluid 1`` is located where the phase indicator = 1.
 
 .. warning::
   Lethe now supports the use of physical properties models that are different for both phases. For example, the liquid could have a carreau rheological model and the air could have a newtonian rheological model. However, this feature has not been fully tested and could lead to unpredictable results. Use with caution.
