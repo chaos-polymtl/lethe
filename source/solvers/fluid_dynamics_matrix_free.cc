@@ -1054,10 +1054,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             }
           else if (type == BoundaryConditions::BoundaryType::pressure)
             {
-              Assert(
-                false,
-                ExcMessage(
-                  "Pressure boundary conditions are not supported by the matrix free application."));
+              /*The pressure boundary condition is implemented in the
+               * operators*/
             }
           else if (type == BoundaryConditions::BoundaryType::function_weak)
             {
@@ -1066,7 +1064,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             }
           else if (type == BoundaryConditions::BoundaryType::partial_slip)
             {
-              Assert(
+              AssertThrow(
                 false,
                 ExcMessage(
                   "Partial slip boundary conditions are not supported by the matrix free application."));
@@ -1590,10 +1588,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                 }
               else if (type == BoundaryConditions::BoundaryType::pressure)
                 {
-                  Assert(
-                    false,
-                    ExcMessage(
-                      "Pressure boundary conditions are not supported by the matrix free application."));
+                  /*The pressure boundary condition is implemented in
+                   * the operators*/
                 }
               else if (type == BoundaryConditions::BoundaryType::function_weak)
                 {
@@ -1602,7 +1598,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                 }
               else if (type == BoundaryConditions::BoundaryType::partial_slip)
                 {
-                  Assert(
+                  AssertThrow(
                     false,
                     ExcMessage(
                       "Partial slip boundary conditions are not supported by the matrix free application."));
@@ -2936,13 +2932,12 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
   for (auto const &[id, type] :
        this->simulation_parameters.boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::pressure ||
-          type == BoundaryConditions::BoundaryType::partial_slip)
+      if (type == BoundaryConditions::BoundaryType::partial_slip)
         {
-          Assert(
+          AssertThrow(
             false,
             ExcMessage(
-              "The following boundary conditions are not supported by the lethe-fluid-matrix-free application: pressure and partial slip."));
+              "The following boundary conditions are not supported by the lethe-fluid-matrix-free application: partial slip."));
         }
     }
 

@@ -130,6 +130,25 @@ evaluate_function(const Function<dim>                       &function,
 }
 
 /**
+ * @brief Check if a boundary condition type requires face assembly in the
+ * matrix-free operator.
+ *
+ * @param boundary_type Type of the boundary condition.
+ * @return true if the boundary condition requires face assembly.
+ */
+inline bool
+boundary_condition_requires_face_assembly(
+  BoundaryConditions::BoundaryType boundary_type)
+{
+  if (boundary_type == BoundaryConditions::BoundaryType::function_weak ||
+      boundary_type == BoundaryConditions::BoundaryType::outlet ||
+      boundary_type == BoundaryConditions::BoundaryType::pressure)
+    return true;
+  else
+    return false;
+}
+
+/**
  * @brief A class that serves as base for all the matrix-free
  * Navier-Stokes operators.
  *
@@ -740,6 +759,13 @@ protected:
    *
    */
   Table<2, Tensor<1, dim, VectorizedArray<number>>> face_target_velocity;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the target pressure of a pressure boundary condition.
+   *
+   */
+  Table<2, VectorizedArray<number>> face_target_pressure;
 
 
   /**
