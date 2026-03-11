@@ -132,7 +132,7 @@ subsection non-linear solver
     set max iterations = 30
     set verbosity      = quiet
   end
-  subsection CLS algebraic interface reinitialization
+  subsection CLS pde-based interface reinitialization
     set tolerance      = 1e-9
     set max iterations = 30
     set verbosity      = quiet
@@ -163,7 +163,7 @@ subsection linear solver
     set minimum residual  = 1e-10
     set preconditioner    = ilu
   end
-  subsection CLS algebraic interface reinitialization
+  subsection CLS pde-based interface reinitialization
     set verbosity         = quiet
     set method            = gmres
     set relative residual = 1e-3

@@ -545,7 +545,7 @@ private:
   std::vector<std::string> linear_physics_names    = {"electromagnetics"};
   // Names of subequations within VOF that inherits from PhysicsSolver
   std::vector<std::string> vof_subequations_names = {
-    "CLS algebraic interface reinitialization"};
+    "CLS pde-based interface reinitialization"};
 };
 
 #endif

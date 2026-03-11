@@ -267,12 +267,12 @@ public:
     std::string subequation_string;
 
     if (subequation_id == VOFSubequationsID::phase_gradient_projection)
-      subequation_string = "VOF phase fraction gradient L2 projection";
+      subequation_string = "CLS phase fraction gradient L2 projection";
     else if (subequation_id == VOFSubequationsID::curvature_projection)
-      subequation_string = "VOF curvature L2 projection";
+      subequation_string = "CLS curvature L2 projection";
     else if (subequation_id ==
              VOFSubequationsID::algebraic_interface_reinitialization)
-      subequation_string = "VOF algebraic interface reinitialization";
+      subequation_string = "CLS pde-based interface reinitialization";
     else
       throw(std::invalid_argument("Invalid VOFSubequationID. Options are: \n"
                                   " <phase_gradient_projection>\n"
