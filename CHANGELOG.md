@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/03/11
+
+### Added
+
+- MINOR Added the `birmingham_fluidized_bed` Lethe grid type. This custom mesh generates the Birmingham fluidized bed geometry, composed of a bottom cylinder, a truncated cone, and a top cylinder merged along the x-axis with appropriate manifold and boundary IDs.
+
 ## [Master] - 2026/03/10
 
 ### Added
