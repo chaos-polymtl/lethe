@@ -4,12 +4,13 @@ Boundary Conditions - CFD
 
 This subsection defines the boundary conditions associated with fluid dynamics physics. Lethe supports the following boundary conditions:
 
-* ``none`` boundary condition (default).
+* ``none`` boundary condition imposes a *do nothing*, equivalent to a zero normal traction, on the boundary. Essentially, this can be interpreted as a combination of a zero value of the normal velocity gradient and a zero value of the pressure. In general, it is better to use the ``outlet`` boundary condition for outlets.
 * ``noslip`` boundary conditions strongly impose the velocity on a boundary to be :math:`\mathbf{u}=[0,0]^T` and :math:`\mathbf{u}=[0,0,0]^T` in 2D and 3D respectively.
 * ``slip`` boundary conditions impose :math:`\mathbf{u} \cdot \mathbf{n}=0`, with :math:`\mathbf{n}` the normal vector of the boundary. Imposing slip boundary conditions strongly is not trivial in FEM. We refer the reader to the deal.II `documentation <https://www.dealii.org/current/doxygen/deal.II/group__constraints.html>`_ for explanations on how this is achieved.
-* ``partial slip`` boundary condition simulates an intermediary between ``slip`` and ``noslip`` boundary conditions, in which the fluid feels an attenuated stress due to the walls. The attenuation is controlled by the  boundary layer thickness (m). The ``partial slip`` boundary condition introduces the "penalization factor" ``beta`` to the :math:`\mathbf{n}` normal vector of the boundary, and the ``boundary layer thickness`` (m) as a parameter to calculate the shear stress at the boundaries.
 * ``periodic`` boundary conditions, in which fluid exiting the domain will reenter on the opposite side. 
 * ``function`` where a Dirichlet boundary condition is set from an arbitrary function. These functions can be used to define all sorts of steady-state and transient velocity boundary conditions such as rotating walls. It is also possible to weakly impose a Dirichlet boundary condition. In this case, the type should be set to ``function weak``. This will result in Nitsche method being used to weakly impose the boundary condition instead of it being strongly imposed by overwriting the values of the degrees of freedom. The ``function weak`` boundary type should only be used in very specific cases where the problem is very stiff, for example when it is fully enclosed and a non-trivial velocity profile is imposed. It can also be used to impose an outbound dirichlet boundary condition.
+* ``pressure`` where the pressure value at the boundary condition is weakly imposed. This is equivalent to a non-zero traction boundary condition.
+* ``partial slip`` boundary condition simulates an intermediary between ``slip`` and ``noslip`` boundary conditions, in which the fluid feels an attenuated stress due to the walls. The attenuation is controlled by the  boundary layer thickness (m). The ``partial slip`` boundary condition introduces the "penalization factor" ``beta`` to the :math:`\mathbf{n}` normal vector of the boundary, and the ``boundary layer thickness`` (m) as a parameter to calculate the shear stress at the boundaries.
 * ``outlet`` where a *do nothing* boundary condition (equivalent to ``none``), which is a zero traction, is imposed when the fluid is leaving the domain (:math:`\mathbf{u} \cdot \mathbf{n}>0`) and a penalization is imposed when the fluid is inbound. This is useful when turbulent structures or vortices are leaving the domain since it prevents the re-entry of the fluid. The boundary condition imposed is thus:
 
 .. math::
@@ -40,6 +41,9 @@ where :math:`\beta` is a constant  and :math:`(\mathbf{u}\cdot \mathbf{n})_{-}` 
         set Function expression = x
       end
       subsection w
+        set Function expression = 0
+      end
+      subsection p
         set Function expression = 0
       end
 
@@ -97,4 +101,4 @@ where :math:`\beta` is a constant  and :math:`(\mathbf{u}\cdot \mathbf{n})_{-}` 
 	While using the ``lethe-fluid-sharp`` solver, it is wise to assign a weak type of boundary (``outlet``, ``partial slip``, or ``function weak``) to at least one boundary. The presence of particle(s) has a non-null contribution to the divergence of the problem, making it much harder for the linear solver to converge unless it is given some flexibility through of boundaries.
 
 .. caution::
-  The ``lethe-fluid-matrix-free`` application does not support the ``pressure`` and ``partial slip`` boundary conditions. 
+  The ``lethe-fluid-matrix-free`` application does not support the ``partial slip`` boundary conditions. 

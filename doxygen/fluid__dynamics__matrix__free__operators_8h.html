@@ -143,8 +143,49 @@ Functions</h2></td></tr>
 <tr class="memitem:a0f8b31da5ab353ea716a093f929d8b1f" id="r_a0f8b31da5ab353ea716a093f929d8b1f"><td class="memTemplParams" colspan="2">template&lt;int dim, typename Number , int components&gt; </td></tr>
 <tr class="memitem:a0f8b31da5ab353ea716a093f929d8b1f"><td class="memTemplItemLeft" align="right" valign="top">Tensor&lt; 1, components, VectorizedArray&lt; Number &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="fluid__dynamics__matrix__free__operators_8h.html#a0f8b31da5ab353ea716a093f929d8b1f">evaluate_function</a> (const Function&lt; dim &gt; &amp;function, const Point&lt; dim, VectorizedArray&lt; Number &gt; &gt; &amp;p_vectorized)</td></tr>
 <tr class="separator:a0f8b31da5ab353ea716a093f929d8b1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7513f3dd8c11f7d78ad5f1d4d926bfc" id="r_ac7513f3dd8c11f7d78ad5f1d4d926bfc"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="fluid__dynamics__matrix__free__operators_8h.html#ac7513f3dd8c11f7d78ad5f1d4d926bfc">boundary_condition_requires_face_assembly</a> (<a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryConditions::BoundaryType</a> boundary_type)</td></tr>
+<tr class="separator:ac7513f3dd8c11f7d78ad5f1d4d926bfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="ac7513f3dd8c11f7d78ad5f1d4d926bfc" name="ac7513f3dd8c11f7d78ad5f1d4d926bfc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac7513f3dd8c11f7d78ad5f1d4d926bfc">&#9670;&#160;</a></span>boundary_condition_requires_face_assembly()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool boundary_condition_requires_face_assembly </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryConditions::BoundaryType</a>&#160;</td>
+          <td class="paramname"><em>boundary_type</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Check if a boundary condition type requires face assembly in the matrix-free operator. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">boundary_type</td><td>Type of the boundary condition. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the boundary condition requires face assembly. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html#l00140">140</a> of file <a class="el" href="fluid__dynamics__matrix__free__operators_8h_source.html">fluid_dynamics_matrix_free_operators.h</a>.</p>
+
+<p class="reference">References <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8add95ffdcea64b1eaaa9244611678ed38">BoundaryConditions::function_weak</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab0ba1623558e169131cb513037504286">BoundaryConditions::outlet</a>, and <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ad99fad96a5d0a7cb2eb41341ea556093">BoundaryConditions::pressure</a>.</p>
+
+</div>
+</div>
 <a id="a790efed26ee8f5a3267811ca3a205357" name="a790efed26ee8f5a3267811ca3a205357"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a790efed26ee8f5a3267811ca3a205357">&#9670;&#160;</a></span>evaluate_function() <span class="overload">[1/2]</span></h2>
 
