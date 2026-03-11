@@ -25,22 +25,27 @@ using namespace dealii;
  * conditions," Chemical Engineering Science, vol. 142, pp. 215-235, 2016.
  * DOI: 10.1016/j.ces.2015.11.016
  *
- * The geometry consists of four sections joined along the x-axis:
+ * The geometry consists of three or four sections joined along the x-axis:
  * - A bottom cylinder of small radius (0.077 m),
  * - A truncated cone expanding from the small to a larger radius (0.127 m),
  * - A top cylinder of the larger radius,
- * - A rectangular chimney pipe extending from the central cell of the top
- *   end cap, serving as the outlet.
+ * - (optional) A rectangular chimney pipe extending from an off-center cell
+ *   of the top end cap, serving as the outlet.
+ *
+ * The chimney is controlled by the @p enable_chimney constructor argument.
  *
  * Boundary IDs are assigned as follows:
- * - 0: wall surfaces (curved cylinder/cone laterals, chimney walls, and the
- *   annular top wall around the chimney opening),
+ * - 0: wall surfaces (curved cylinder/cone laterals; when the chimney is
+ *   enabled this also includes the chimney walls and the annular top wall
+ *   around the chimney opening),
  * - 1: inlet end cap (x = 0),
- * - 2: outlet (chimney top face).
+ * - 2: outlet end cap (x = total length), or chimney top face when the
+ *   chimney is enabled.
  *
  * A CylindricalManifold is attached to the curved lateral surfaces so that
  * mesh refinement preserves the circular cross-sections and the cone taper.
- * The chimney walls and annular top wall remain flat.
+ * When the chimney is enabled, its walls and the annular top wall remain
+ * flat.
  *
  * @tparam dim The dimension of the mesh, must be 3.
  * @tparam spacedim The dimension of the space, must be 3.
@@ -50,12 +55,17 @@ class BirminghamFluidizedBedGrid
 {
 public:
   /**
-   * @brief Constructor for BirminghamFluidizedBedGrid.
+   * @brief Constructor that parses the chimney flag from a colon-separated
+   * string.
    *
-   * @param[in] grid_arguments A colon-separated string of optional
-   * arguments. Currently unused because the geometry is fully defined by
-   * fixed physical dimensions, but accepted for interface consistency with
-   * other Lethe grid classes.
+   * @param[in] grid_arguments A string with the following format:
+   * @code "enable_chimney" @endcode
+   *
+   * | #  | Field          | Format     | Required | Description                          |
+   * |----|----------------|------------|----------|--------------------------------------|
+   * |  0 | enable_chimney | true/false | no       | Add chimney outlet (default: true)   |
+   *
+   * Example: @code "true" @endcode
    */
   BirminghamFluidizedBedGrid(const std::string &grid_arguments);
 
@@ -78,6 +88,7 @@ public:
 
 private:
   std::string grid_arguments;
+  bool        enable_chimney;
 };
 
 

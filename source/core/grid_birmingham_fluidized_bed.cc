@@ -17,6 +17,13 @@ BirminghamFluidizedBedGrid<dim, spacedim>::BirminghamFluidizedBedGrid(
     }
 
   this->grid_arguments = grid_arguments;
+
+  // Parse optional enable_chimney flag (defaults to true)
+  const std::vector<std::string> arguments =
+    Utilities::split_string_list(grid_arguments, ':');
+
+  this->enable_chimney =
+    !(arguments.size() > 0 && arguments[0] == "false");
 }
 
 
@@ -29,7 +36,6 @@ BirminghamFluidizedBedGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
   const double       half_len_bot          = 0.924 / 2;
   const double       half_len_cone         = 0.285 / 2;
   const double       half_len_top          = 0.5 / 2;
-  const bool         enable_chimney        = true;
   const double       chimney_length        = 0.1;
   const unsigned int n_chimney_refinements = 1;
   const unsigned int n_axial_bot           = 10;
