@@ -114,7 +114,7 @@ subsection boundary conditions
   end
 end
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number = 3
   subsection bc 0
     set id                 = 0

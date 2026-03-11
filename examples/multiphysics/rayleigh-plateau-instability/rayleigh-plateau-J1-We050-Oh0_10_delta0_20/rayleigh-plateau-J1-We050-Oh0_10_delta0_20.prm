@@ -146,10 +146,10 @@ subsection boundary conditions
 end
 
 # --------------------------------------------------
-# Boundary Conditions VOF
+# boundary conditions CLS
 #---------------------------------------------------
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number = 3
   subsection bc 0
     set id   = 0

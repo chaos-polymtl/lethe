@@ -167,7 +167,7 @@ end
 # Boundary Conditions
 #---------------------------------------------------
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number = 4
 end
 

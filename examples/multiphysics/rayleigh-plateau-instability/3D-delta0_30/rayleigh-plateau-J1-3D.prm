@@ -145,10 +145,10 @@ subsection boundary conditions
 end
 
 # --------------------------------------------------
-# Boundary Conditions VOF
+# boundary conditions CLS
 #---------------------------------------------------
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number         = 3
   set time dependent = true
   subsection bc 0

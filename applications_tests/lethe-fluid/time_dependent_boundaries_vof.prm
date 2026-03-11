@@ -15,7 +15,7 @@ subsection initial conditions
   set type = nodal
 end
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number         = 4
   set time dependent = true
   subsection bc 0

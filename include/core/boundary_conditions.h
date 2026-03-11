@@ -1375,7 +1375,7 @@ namespace BoundaryConditions
     ParameterHandler  &prm,
     const unsigned int number_of_boundary_conditions)
   {
-    prm.enter_subsection("boundary conditions VOF");
+    prm.enter_subsection("boundary conditions CLS");
     {
       prm.declare_entry("number",
                         "0",
@@ -1471,7 +1471,7 @@ namespace BoundaryConditions
   void
   VOFBoundaryConditions<dim>::parse_parameters(ParameterHandler &prm)
   {
-    prm.enter_subsection("boundary conditions VOF");
+    prm.enter_subsection("boundary conditions CLS");
     {
       this->number_of_boundary_conditions = prm.get_integer("number");
       this->time_dependent                = prm.get_bool("time dependent");

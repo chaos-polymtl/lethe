@@ -125,7 +125,7 @@ subsection boundary conditions heat transfer
   end
 end
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number = 6
   subsection bc 0
     set id = 2
