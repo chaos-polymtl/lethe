@@ -49,10 +49,11 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
                       Patterns::Bool(),
                       "Passive tracer calculation <true|false>");
 
-    prm.declare_entry("VOF",
+    prm.declare_entry("CLS",
                       "false",
                       Patterns::Bool(),
                       "VOF calculation <true|false>");
+    prm.declare_alias("CLS", "VOF", true);
 
     prm.declare_entry("cahn hilliard",
                       "false",
@@ -97,7 +98,7 @@ Parameters::Multiphysics<dim>::parse_parameters(
     fluid_dynamics   = prm.get_bool("fluid dynamics");
     heat_transfer    = prm.get_bool("heat transfer");
     tracer           = prm.get_bool("tracer");
-    VOF              = prm.get_bool("VOF");
+    VOF              = prm.get_bool("CLS");
     cahn_hilliard    = prm.get_bool("cahn hilliard");
     electromagnetics = prm.get_bool("electromagnetics");
 

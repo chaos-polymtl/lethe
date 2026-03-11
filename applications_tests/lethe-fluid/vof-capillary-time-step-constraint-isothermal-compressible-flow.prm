@@ -32,7 +32,7 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF = true
+  set CLS = true
 end
 
 #---------------------------------------------------
@@ -62,7 +62,7 @@ subsection mesh
 end
 
 #---------------------------------------------------
-# VOF
+# CLS
 #---------------------------------------------------
 
 subsection CLS
@@ -150,7 +150,7 @@ end
 #---------------------------------------------------
 
 subsection stabilization
-  set vof dcdd stabilization = false
+  set cls dcdd stabilization = false
 end
 
 #---------------------------------------------------
@@ -168,7 +168,7 @@ end
 subsection FEM
   set velocity order = 2
   set pressure order = 1
-  set VOF order      = 1
+  set CLS order      = 1
 end
 
 #---------------------------------------------------

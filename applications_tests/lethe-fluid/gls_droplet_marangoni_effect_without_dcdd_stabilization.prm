@@ -27,7 +27,7 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF                    = true
+  set CLS                    = true
   set heat transfer          = true
   set thermal buoyancy force = true
   set fluid dynamics         = true
@@ -38,11 +38,11 @@ end
 #---------------------------------------------------
 
 subsection stabilization
-  set vof dcdd stabilization = false
+  set cls dcdd stabilization = false
 end
 
 #---------------------------------------------------
-# VOF
+# CLS
 #---------------------------------------------------
 
 subsection CLS

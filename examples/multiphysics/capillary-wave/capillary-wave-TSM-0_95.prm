@@ -24,11 +24,11 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF = true
+  set CLS = true
 end
 
 #---------------------------------------------------
-# VOF
+# CLS
 #---------------------------------------------------
 
 subsection CLS
@@ -147,7 +147,7 @@ end
 subsection FEM
   set velocity order = 1
   set pressure order = 1
-  set VOF order      = 1
+  set CLS order      = 1
 end
 
 # --------------------------------------------------

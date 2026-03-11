@@ -1,13 +1,13 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# This test checks the geometric interface reinitialization in the VOF solver.
+# This test checks the geometric interface reinitialization in the CLS solver.
 # It simulates a swirling flow: a disk of radius 0.15, initially at the position
 # (0.5,0.75), is advected with a periodic, divergence-free velocity field. The
 # geometric redistanciation is apply each 10 iterations, and the test output the
 # conservation of the mass and the volume as well as the progression of the
 # redistanciation method. The velocity field  is imposed, hence, the fluid
-# dynamics is not resolve, only the VOF.
+# dynamics is not resolve, only the CLS.
 
 # Listing of Parameters
 #----------------------
@@ -31,11 +31,11 @@ end
 
 subsection multiphysics
   set fluid dynamics = false
-  set VOF            = true
+  set CLS            = true
 end
 
 #---------------------------------------------------
-# VOF
+# CLS
 #---------------------------------------------------
 
 subsection CLS
@@ -128,7 +128,7 @@ subsection mesh adaptation
 end
 
 subsection stabilization
-  set vof dcdd stabilization = false
+  set cls dcdd stabilization = false
 end
 
 #---------------------------------------------------

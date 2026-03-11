@@ -835,18 +835,24 @@ namespace Parameters
         "stabilization term on heat transfer <true|false>");
 
       prm.declare_entry(
-        "vof dcdd stabilization",
+        "cls dcdd stabilization",
         "true",
         Patterns::Bool(),
         "Apply Discontinuity-Capturing Directional Dissipation (DCDD) "
         "stabilization term on the VOF phase fraction <true|false>");
+      prm.declare_alias("cls dcdd stabilization",
+                        "vof dcdd stabilization",
+                        true);
 
       prm.declare_entry(
-        "vof dcdd diffusion factor",
+        "cls dcdd diffusion factor",
         "0.5",
         Patterns::Double(),
         "Diffusion factor scaling the DCDD stabilization term in the VOF "
         "equation");
+      prm.declare_alias("cls dcdd diffusion factor",
+                        "vof dcdd diffusion factor",
+                        true);
 
       prm.declare_entry(
         "pressure scaling factor",
@@ -896,8 +902,8 @@ namespace Parameters
       // DCDD stabilization activation parameters
       heat_transfer_dcdd_stabilization =
         prm.get_bool("heat transfer dcdd stabilization");
-      vof_dcdd_stabilization = prm.get_bool("vof dcdd stabilization");
-      dcdd_diffusion_coeff   = prm.get_double("vof dcdd diffusion factor");
+      vof_dcdd_stabilization = prm.get_bool("cls dcdd stabilization");
+      dcdd_diffusion_coeff   = prm.get_double("cls dcdd diffusion factor");
 
       pressure_scaling_factor = prm.get_double("pressure scaling factor");
     }
@@ -1738,10 +1744,11 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "interpolation order tracer");
-      prm.declare_entry("VOF order",
+      prm.declare_entry("CLS order",
                         "1",
                         Patterns::Integer(),
                         "interpolation order tracer");
+      prm.declare_alias("CLS order", "VOF order", true);
       prm.declare_entry(
         "phase cahn hilliard order",
         "1",
@@ -1770,10 +1777,11 @@ namespace Parameters
         "Switch tracer to Discontinuous Galerkin (DG) formulation");
 
       prm.declare_entry(
-        "VOF uses dg",
+        "CLS uses dg",
         "false",
         Patterns::Bool(),
         "Switch VOF to Discontinuous Galerkin (DG) formulation");
+      prm.declare_alias("CLS uses dg", "VOF uses dg", true);
 
       prm.declare_entry("enable bubble function velocity",
                         "false",
@@ -1799,8 +1807,8 @@ namespace Parameters
       temperature_order         = prm.get_integer("temperature order");
       tracer_order              = prm.get_integer("tracer order");
       tracer_uses_dg            = prm.get_bool("tracer uses dg");
-      VOF_order                 = prm.get_integer("VOF order");
-      VOF_uses_dg               = prm.get_bool("VOF uses dg");
+      VOF_order                 = prm.get_integer("CLS order");
+      VOF_uses_dg               = prm.get_bool("CLS uses dg");
       phase_cahn_hilliard_order = prm.get_integer("phase cahn hilliard order");
       potential_cahn_hilliard_order =
         prm.get_integer("potential cahn hilliard order");

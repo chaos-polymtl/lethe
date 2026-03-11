@@ -26,7 +26,7 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF = true
+  set CLS = true
 end
 
 subsection CLS

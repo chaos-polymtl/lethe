@@ -91,7 +91,7 @@ end
 
 subsection multiphysics
   set fluid dynamics = true
-  set VOF            = true
+  set CLS            = true
 end
 
 subsection post-processing
@@ -109,7 +109,7 @@ end
 subsection FEM
   set velocity order = 1
   set pressure order = 1
-  set VOF order      = 1
+  set CLS order      = 1
 end
 
 subsection non-linear solver

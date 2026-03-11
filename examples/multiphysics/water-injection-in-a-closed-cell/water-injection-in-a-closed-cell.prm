@@ -26,11 +26,11 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF = true
+  set CLS = true
 end
 
 #---------------------------------------------------
-# VOF
+# CLS
 #---------------------------------------------------
 
 subsection CLS
@@ -140,7 +140,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# VOF Boundary Conditions
+# CLS Boundary Conditions
 #---------------------------------------------------
 
 subsection boundary conditions CLS
@@ -170,7 +170,7 @@ end
 subsection FEM
   set velocity order = 1
   set pressure order = 1
-  set VOF order      = 1
+  set CLS order      = 1
 end
 
 #---------------------------------------------------

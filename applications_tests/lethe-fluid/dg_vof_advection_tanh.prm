@@ -13,8 +13,8 @@ end
 subsection FEM
   set velocity order = 1
   set pressure order = 1
-  set VOF order      = 1
-  set VOF uses dg    = true
+  set CLS order      = 1
+  set CLS uses dg    = true
 end
 
 subsection initial conditions
@@ -45,7 +45,7 @@ subsection mesh
 end
 
 subsection multiphysics
-  set VOF = true
+  set CLS = true
 end
 
 subsection analytical solution

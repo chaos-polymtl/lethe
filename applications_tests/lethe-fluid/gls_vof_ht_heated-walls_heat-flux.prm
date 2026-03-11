@@ -25,11 +25,11 @@ end
 
 subsection multiphysics
   set heat transfer = true
-  set VOF           = true
+  set CLS           = true
 end
 
 #---------------------------------------------------
-# VOF
+# CLS
 #---------------------------------------------------
 
 subsection CLS

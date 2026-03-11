@@ -23,7 +23,7 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF           = true
+  set CLS           = true
   set heat transfer = true
 end
 

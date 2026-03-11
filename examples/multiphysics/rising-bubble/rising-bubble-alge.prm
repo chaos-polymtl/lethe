@@ -27,11 +27,11 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF = true
+  set CLS = true
 end
 
 #---------------------------------------------------
-# VOF
+# CLS
 #---------------------------------------------------
 
 subsection CLS
@@ -57,7 +57,7 @@ subsection CLS
 end
 
 subsection stabilization
-  set vof dcdd stabilization = false
+  set cls dcdd stabilization = false
 end
 
 #---------------------------------------------------

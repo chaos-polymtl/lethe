@@ -25,7 +25,7 @@ end
 subsection multiphysics
   set fluid dynamics = true
   set heat transfer  = true
-  set VOF            = true
+  set CLS            = true
 end
 
 #---------------------------------------------------
