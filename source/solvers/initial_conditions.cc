@@ -132,7 +132,7 @@ namespace Parameters
       tracer.declare_parameters(prm);
       prm.leave_subsection();
 
-      prm.enter_subsection("VOF");
+      prm.enter_subsection("CLS");
       VOF.declare_parameters(prm);
       prm.declare_entry(
         "smoothing type",
@@ -203,7 +203,7 @@ namespace Parameters
       tracer.parse_parameters(prm);
       prm.leave_subsection();
 
-      prm.enter_subsection("VOF");
+      prm.enter_subsection("CLS");
       {
         VOF.parse_parameters(prm);
         const std::string op = prm.get("smoothing type");

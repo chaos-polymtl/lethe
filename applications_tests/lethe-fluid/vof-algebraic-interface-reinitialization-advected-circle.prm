@@ -46,7 +46,7 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0.025; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function expression = if(((x*x+y*y)<=0.75^2), 1, 0)
     set smoothing type      = diffusive
     set diffusion factor    = 2
@@ -127,12 +127,12 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-9
     set max iterations = 30
     set verbosity      = quiet
   end
-  subsection VOF algebraic interface reinitialization
+  subsection CLS algebraic interface reinitialization
     set tolerance      = 1e-9
     set max iterations = 30
     set verbosity      = quiet
@@ -156,14 +156,14 @@ subsection linear solver
     set minimum residual  = 1e-10
     set preconditioner    = ilu
   end
-  subsection VOF
+  subsection CLS
     set verbosity         = quiet
     set method            = gmres
     set relative residual = 1e-3
     set minimum residual  = 1e-10
     set preconditioner    = ilu
   end
-  subsection VOF algebraic interface reinitialization
+  subsection CLS algebraic interface reinitialization
     set verbosity         = quiet
     set method            = gmres
     set relative residual = 1e-3

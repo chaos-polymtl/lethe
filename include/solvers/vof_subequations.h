@@ -33,13 +33,13 @@ get_vof_subequation_id(const std::string &vof_subequation_name)
     return VOFSubequationsID::phase_gradient_projection;
   else if (vof_subequation_name == "VOF curvature L2 projection")
     return VOFSubequationsID::curvature_projection;
-  else if (vof_subequation_name == "VOF algebraic interface reinitialization")
+  else if (vof_subequation_name == "CLS algebraic interface reinitialization")
     return VOFSubequationsID::algebraic_interface_reinitialization;
   else
     throw(std::invalid_argument("Invalid VOF subequation name. Options are: \n"
                                 " <VOF phase gradient L2 projection>\n"
                                 " <VOF curvature L2 projection>\n"
-                                " <VOF algebraic interface reinitialization>"));
+                                " <CLS algebraic interface reinitialization>"));
 }
 
 #endif

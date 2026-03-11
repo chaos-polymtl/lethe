@@ -539,13 +539,13 @@ private:
   std::vector<std::string> nonlinear_physics_names = {"fluid dynamics",
                                                       "heat transfer",
                                                       "tracer",
-                                                      "VOF",
+                                                      "CLS",
                                                       "cahn hilliard",
                                                       "void fraction"};
   std::vector<std::string> linear_physics_names    = {"electromagnetics"};
   // Names of subequations within VOF that inherits from PhysicsSolver
   std::vector<std::string> vof_subequations_names = {
-    "VOF algebraic interface reinitialization"};
+    "CLS algebraic interface reinitialization"};
 };
 
 #endif

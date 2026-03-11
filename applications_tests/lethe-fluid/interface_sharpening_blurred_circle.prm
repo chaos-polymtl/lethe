@@ -45,7 +45,7 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function constants  = eta=5, ri=0.8, ro=2.5
     set Function expression = if((x-eta)*(x-eta)+(y-eta)*(y-eta) <ro*ro , (if ((x-eta)*(x-eta)+(y-eta)*(y-eta)<ri*ri , 1 , -(1/(ro-ri)) * sqrt((x-eta)*(x-eta)+(y-eta)*(y-eta)) + (ro/(ro-ri)))) , 0)
   end
@@ -150,7 +150,7 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-4
     set max iterations = 100
     set verbosity      = quiet
@@ -179,7 +179,7 @@ subsection linear solver
     set ilu preconditioner relative tolerance = 1.00
     set max krylov vectors                    = 200
   end
-  subsection VOF
+  subsection CLS
     set verbosity                             = quiet
     set method                                = gmres
     set max iters                             = 8000
@@ -203,7 +203,7 @@ subsection analytical solution
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function constants  = eta=5, ro=1.65
     set Function expression = if((x-eta)*(x-eta)+(y-eta)*(y-eta) <ro*ro , 1 , 0)
   end

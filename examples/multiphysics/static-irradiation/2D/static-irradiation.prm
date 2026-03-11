@@ -179,7 +179,7 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function expression = if (y<0.43 , 1, 0)
     set smoothing type      = diffusive
     set diffusion factor    = 1
@@ -332,7 +332,7 @@ subsection non-linear solver
     set max iterations = 20
     set verbosity      = verbose
   end
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-4
     set max iterations = 20
     set verbosity      = verbose
@@ -359,7 +359,7 @@ subsection linear solver
     set preconditioner          = ilu
     set ilu preconditioner fill = 1
   end
-  subsection VOF
+  subsection CLS
     set verbosity               = verbose
     set method                  = gmres
     set relative residual       = 1e-3

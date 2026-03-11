@@ -48,7 +48,7 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function expression = if (x^2 + y^2 < 0.5^2 , 1, 0)
     set smoothing type      = diffusive
     set diffusion factor    = 1
@@ -158,7 +158,7 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-9
     set max iterations = 20
     set verbosity      = verbose
@@ -182,7 +182,7 @@ subsection linear solver
     set minimum residual  = 1e-10
     set preconditioner    = ilu
   end
-  subsection VOF
+  subsection CLS
     set verbosity         = verbose
     set method            = gmres
     set relative residual = 1e-3

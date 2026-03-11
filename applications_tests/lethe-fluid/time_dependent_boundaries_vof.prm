@@ -116,7 +116,7 @@ subsection non-linear solver
   subsection fluid dynamics
     set verbosity = quiet
   end
-  subsection VOF
+  subsection CLS
     set verbosity = quiet
   end
 end
@@ -125,7 +125,7 @@ subsection linear solver
   subsection fluid dynamics
     set verbosity = quiet
   end
-  subsection VOF
+  subsection CLS
     set verbosity = quiet
   end
 end

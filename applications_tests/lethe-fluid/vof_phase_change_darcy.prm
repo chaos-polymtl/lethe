@@ -36,7 +36,7 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0; 0; 0;
   end
-  subsection VOF
+  subsection CLS
     set Function expression = if(x*x<=0.000625, 1, 0)
   end
 end
@@ -267,7 +267,7 @@ subsection non-linear solver
     set tolerance      = 1e-8
     set max iterations = 5
   end
-  subsection VOF
+  subsection CLS
     set verbosity      = quiet
     set tolerance      = 1e-8
     set max iterations = 5
@@ -301,7 +301,7 @@ subsection linear solver
     set ilu preconditioner absolute tolerance = 1e-12
     set ilu preconditioner relative tolerance = 1.00
   end
-  subsection VOF
+  subsection CLS
     set verbosity                             = quiet
     set method                                = gmres
     set max iters                             = 5000

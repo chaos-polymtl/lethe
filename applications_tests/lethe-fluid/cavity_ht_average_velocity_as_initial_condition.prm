@@ -25,7 +25,7 @@ end
 subsection initial conditions
   set type = average_velocity_profile
 
-  subsection VOF
+  subsection CLS
     set Function expression = if (x<0.5, 1, 0)
     set smoothing type      = diffusive
     set diffusion factor    = 1
@@ -180,7 +180,7 @@ subsection non-linear solver
     set tolerance = 1e-8
     set verbosity = quiet
   end
-  subsection VOF
+  subsection CLS
     set tolerance = 1e-8
     set verbosity = quiet
   end
@@ -201,7 +201,7 @@ subsection linear solver
   subsection heat transfer
     set verbosity = quiet
   end
-  subsection VOF
+  subsection CLS
     set verbosity = quiet
   end
 end

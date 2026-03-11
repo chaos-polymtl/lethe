@@ -35,7 +35,7 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function expression = if (y<0.4, 1, 0)
   end
 end
@@ -86,7 +86,7 @@ subsection analytical solution
     set Function constants  = rho1=2., g=9.81, h=0.4, rho2=0.5,l=1
     set Function expression = 0 ; 0 ; if (y<h, rho2*g*(l-h) + rho1*g*(h-y), rho2*g*(l-y))
   end
-  subsection VOF
+  subsection CLS
     set Function constants  = h=0.4
     set Function expression = if (y<h, 1, 0)
   end
@@ -156,7 +156,7 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  subsection VOF
+  subsection CLS
     set verbosity          = quiet
     set tolerance          = 1e-9
     set max iterations     = 10
@@ -186,7 +186,7 @@ subsection linear solver
     set ilu preconditioner relative tolerance = 1.00
     set max krylov vectors                    = 200
   end
-  subsection VOF
+  subsection CLS
     set verbosity                             = quiet
     set method                                = gmres
     set relative residual                     = 1e-10

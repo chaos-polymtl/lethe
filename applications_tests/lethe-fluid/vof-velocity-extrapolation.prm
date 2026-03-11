@@ -25,7 +25,7 @@ end
 #---------------------------------------------------
 
 subsection initial conditions
-  subsection VOF
+  subsection CLS
     set Function expression = if (y<=(0.01*sin(3.1416*(x+0.5))), min(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,1), max(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,0))
   end
 end
@@ -161,7 +161,7 @@ subsection non-linear solver
     set tolerance      = 1e-8
     set max iterations = 10
   end
-  subsection VOF
+  subsection CLS
     set verbosity      = quiet
     set tolerance      = 1e-8
     set max iterations = 10
@@ -179,7 +179,7 @@ subsection linear solver
     set minimum residual  = 1e-9
     set preconditioner    = amg
   end
-  subsection VOF
+  subsection CLS
     set verbosity         = quiet
     set relative residual = 1e-5
     set minimum residual  = 1e-9

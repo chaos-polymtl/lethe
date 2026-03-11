@@ -34,7 +34,7 @@ subsection initial conditions
   subsection temperature
     set Function expression = (40-25)*(0.25-x)*4+25
   end
-  subsection VOF
+  subsection CLS
     set Function expression = if(y>=0.125, 0, 1)
   end
 end
@@ -171,7 +171,7 @@ subsection non-linear solver
     set max iterations = 5
     set verbosity      = quiet
   end
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-9
     set max iterations = 20
     set verbosity      = quiet
@@ -206,7 +206,7 @@ subsection linear solver
     set ilu preconditioner absolute tolerance = 1e-12
     set ilu preconditioner relative tolerance = 1.00
   end
-  subsection VOF
+  subsection CLS
     set verbosity                             = quiet
     set method                                = gmres
     set max iters                             = 1000

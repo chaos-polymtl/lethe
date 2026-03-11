@@ -46,7 +46,7 @@ namespace AnalyticalSolutions
       prm.leave_subsection();
     }
     {
-      prm.enter_subsection("VOF");
+      prm.enter_subsection("CLS");
       phase.declare_parameters(prm);
       prm.leave_subsection();
     }
@@ -98,7 +98,7 @@ namespace AnalyticalSolutions
     }
 
     {
-      prm.enter_subsection("VOF");
+      prm.enter_subsection("CLS");
       phase.parse_parameters(prm);
       prm.leave_subsection();
     }

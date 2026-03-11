@@ -47,7 +47,7 @@ end
 #---------------------------------------------------
 
 subsection initial conditions
-  subsection VOF
+  subsection CLS
     set Function expression = if (x<=0,1,0)
   end
 end
@@ -110,7 +110,7 @@ subsection analytical solution
     set Function expression = if(x<=0, k0*(T0-T1)/(L*(k1+k0)) * x + T1+(T0-T1)*k0/(k1+k0), k1*(T0-T1)/(L*(k1+k0)) * x + T1+(T0-T1)*k0/(k1+k0) )
   end
   # heat flux BC0 (-k1*(dT1/dx)*Ly) = heat flux BC1 (-k0*(dT0/dx)*Ly) ~ -0.15
-  subsection VOF
+  subsection CLS
     set Function expression = if(x<=0,1,0)
   end
 end
@@ -177,7 +177,7 @@ subsection non-linear solver
   subsection heat transfer
     set verbosity = quiet
   end
-  subsection VOF
+  subsection CLS
     set verbosity = quiet
   end
   subsection fluid dynamics
@@ -193,7 +193,7 @@ subsection linear solver
   subsection fluid dynamics
     set verbosity = quiet
   end
-  subsection VOF
+  subsection CLS
     set verbosity = quiet
   end
   subsection heat transfer

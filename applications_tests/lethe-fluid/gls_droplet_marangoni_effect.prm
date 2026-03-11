@@ -67,7 +67,7 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function expression = if ((x-0.04) * (x-0.04) + (y-0.04) * (y-0.04) < 0.02 * 0.02 , 1, if ((x-0.04) * (x-0.04) + (y-0.04) * (y-0.04) < 0.023 * 0.023 , 7.67 - 333.33 * sqrt((x-0.04) * (x-0.04) + (y-0.04) * (y-0.04)) , 0))
   end
 end
@@ -191,7 +191,7 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-9
     set max iterations = 100
     set verbosity      = quiet
@@ -225,7 +225,7 @@ subsection linear solver
     set ilu preconditioner relative tolerance = 1.00
     set max krylov vectors                    = 4000
   end
-  subsection VOF
+  subsection CLS
     set verbosity                             = quiet
     set method                                = gmres
     set max iters                             = 2000

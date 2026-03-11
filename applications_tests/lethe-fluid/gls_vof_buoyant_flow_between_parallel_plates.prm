@@ -45,7 +45,7 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function expression = 0
   end
 end
@@ -108,7 +108,7 @@ subsection analytical solution
     set Function constants  = Tbar=50, deltaT=100, B=0.025
     set Function expression = Tbar-0.5*deltaT*((x-B)/B)
   end
-  subsection VOF
+  subsection CLS
     set Function expression = 0
   end
 end
@@ -180,7 +180,7 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  subsection VOF
+  subsection CLS
     set verbosity      = quiet
     set tolerance      = 1e-10
     set max iterations = 20
@@ -212,7 +212,7 @@ subsection linear solver
     set ilu preconditioner absolute tolerance = 1e-14
     set ilu preconditioner relative tolerance = 1.00
   end
-  subsection VOF
+  subsection CLS
     set verbosity                             = quiet
     set method                                = gmres
     set relative residual                     = 1e-13

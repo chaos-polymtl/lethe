@@ -51,7 +51,7 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function expression = if (x*x + y*y < 1.0*1.0 , 1, 0)
     set smoothing type      = diffusive
     set diffusion factor    = 1
@@ -174,7 +174,7 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-5
     set max iterations = 100
     set verbosity      = quiet
@@ -208,7 +208,7 @@ subsection linear solver
     set ilu preconditioner relative tolerance = 1.00
     set max krylov vectors                    = 200
   end
-  subsection VOF
+  subsection CLS
     set verbosity                             = quiet
     set method                                = gmres
     set max iters                             = 8000

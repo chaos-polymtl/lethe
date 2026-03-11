@@ -35,7 +35,7 @@ subsection initial conditions
   subsection temperature
     set Function expression = 28
   end
-  subsection VOF
+  subsection CLS
     set Function expression = if(y>=0.125, 0, 1)
   end
 end
@@ -198,7 +198,7 @@ subsection non-linear solver
     set max iterations = 5
     set verbosity      = quiet
   end
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-9
     set max iterations = 20
     set verbosity      = quiet
@@ -219,7 +219,7 @@ subsection linear solver
     set verbosity        = quiet
     set minimum residual = 1e-8
   end
-  subsection VOF
+  subsection CLS
     set verbosity        = quiet
     set minimum residual = 1e-10
   end
