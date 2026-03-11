@@ -56,7 +56,7 @@ This subsection controls the mesh adaptation method, with default values given b
 
 
 * Two ``type`` of mesh adaptation are available. The ``uniform`` mesh adaptation refines the mesh at every cell, whereas the ``adaptive`` mesh adaptation refines the mesh only at cells where the error estimator (see below) indicates that the error is too high.
-* The variable for adaptive refinement should be specified with ``set variable``, and can be: velocity, pressure, phase (for VOF multiphase flows), temperature, phase_cahn_hilliard, chemical_potential_cahn_hilliard, tracer, electric_field, magnetic_field or electromagnetic_fields. 
+* The variable for adaptive refinement should be specified with ``set variable``, and can be: velocity, pressure, phase (for CLS multiphase flows), temperature, phase_cahn_hilliard, chemical_potential_cahn_hilliard, tracer, electric_field, magnetic_field or electromagnetic_fields. 
 	* Mesh adaptation can be defined on multiple variables, separated with a coma (e.g. ``set variable = velocity,temperature``, or ``set variable = velocity,phase,pressure`` etc.).
 
   .. note::  
@@ -115,6 +115,6 @@ This subsection controls the mesh adaptation method, with default values given b
 .. warning::
 	If ``mesh refinement controller`` is set to ``false``, the ``max number elements`` parameter puts a hard limit on the number of cells in the domain, even if the ``fraction refinement`` is increased. 
 
-* The number of initial (before solving) adaptive refinement steps is controlled by the ``initial refinement steps`` parameter. With an ``initial refinement steps`` larger than 0, the triangulation is refined adaptively before the solver starts solving the problem. This enables the user to adapt the initial mesh to the initial condition. For example, if the simulation is a VOF simulation, it is ideal to have an initial mesh that captures the interface between the fluids accurately. This is achieved by refining the mesh using the dynamic mesh adaptation parameters and reapplying the initial condition after each adaptation. This process will be repeated ``initial refinement steps`` times.
+* The number of initial (before solving) adaptive refinement steps is controlled by the ``initial refinement steps`` parameter. With an ``initial refinement steps`` larger than 0, the triangulation is refined adaptively before the solver starts solving the problem. This enables the user to adapt the initial mesh to the initial condition. For example, if the simulation is a CLS simulation, it is ideal to have an initial mesh that captures the interface between the fluids accurately. This is achieved by refining the mesh using the dynamic mesh adaptation parameters and reapplying the initial condition after each adaptation. This process will be repeated ``initial refinement steps`` times.
 
 * The ``fix boundary refinement`` parameter is used to fix the boundary mesh size at the defined initial refinement level. ``boundaries fixed`` can be used to specify which boundary ids will not be refined or coarsened when the kelly mesh adaptation is used. Cells on the boundary will still be refined when global refinement is active or when neighbouring cells force the refinement of a boundary mesh cell.

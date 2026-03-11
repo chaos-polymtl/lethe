@@ -8,7 +8,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
   subsection laser parameters
     set enable               = false
-    set type                 = gaussian_heat_flux_vof_interface
+    set type                 = gaussian_heat_flux_cls_interface
     set concentration factor = 2.0
     set power                = 0.0
     set absorptivity         = 0.5
@@ -35,7 +35,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
 * The ``enable`` parameter is set to ``true`` if the problem has a laser heat source term and enables its calculation.
 
-* The ``type`` parameter is set to ``gaussian_heat_flux_vof_interface`` (default) if we assume that the laser behaves as a surface heat flux with a normal irradiation distribution.  If the laser is assumed to have a uniform surface heat flux, the ``type`` can be set at ``uniform_heat_flux_vof_interface``. In both cases, the laser model must be used in conjunction with the :doc:`VOF auxiliary physic <./volume_of_fluid>`. The third available laser model is the  ``exponential_decay`` and considers that the laser behaves as a volumetric source. The different models are detailed :ref:`below <LaserTypes>`.
+* The ``type`` parameter is set to ``gaussian_heat_flux_cls_interface`` (default) if we assume that the laser behaves as a surface heat flux with a normal irradiation distribution.  If the laser is assumed to have a uniform surface heat flux, the ``type`` can be set at ``uniform_heat_flux_cls_interface``. In both cases, the laser model must be used in conjunction with the :doc:`CLS auxiliary physic <./volume_of_fluid>`. The third available laser model is the  ``exponential_decay`` and considers that the laser behaves as a volumetric source. The different models are detailed :ref:`below <LaserTypes>`.
 
 * Laser ``concentration factor`` parameter indicates the definition of the beam radius. In almost all the articles, it is assumed equal to :math:`2.0`.
 
@@ -57,7 +57,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
   .. attention::
       In two-dimensional simulations, the laser beam orientation cannot be in the z-direction.
 
-* The ``beam rotation angle`` and ``beam rotation axis`` parameters allow to rotate the beam axis (given by ``beam orientation``) of an angle :math:`\theta` in radians around the specified rotation axis, described by its tangent vector :math:`\vec{t}_\text{rot}`. It is only available for the ``gaussian_heat_flux_vof_interface`` model, and the ``beam rotation axis`` is only used in 3D simulations. The rotation is performed using the matrix for rotation :math:`R(\vec{t}_\text{rot}, \theta)` following:
+* The ``beam rotation angle`` and ``beam rotation axis`` parameters allow to rotate the beam axis (given by ``beam orientation``) of an angle :math:`\theta` in radians around the specified rotation axis, described by its tangent vector :math:`\vec{t}_\text{rot}`. It is only available for the ``gaussian_heat_flux_cls_interface`` model, and the ``beam rotation axis`` is only used in 3D simulations. The rotation is performed using the matrix for rotation :math:`R(\vec{t}_\text{rot}, \theta)` following:
 
   .. math::
     \vec{t}_\text{laser,rot} = R(\vec{t}_\text{rot}, \theta)\vec{t}_\text{laser}
@@ -74,7 +74,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
   * ``enable``: controls if the radiation cooling is enabled. The radiation sink is modulated by the filtered phase fraction gradient norm, :math:`|\nabla \psi|`, in such way that the flux is applied at the interface between the fluids.
 
     .. warning::
-        To apply this radiation cooling, the ``VOF`` parameter must be set to ``true`` in the :doc:`multiphysics` subsection.
+        To apply this radiation cooling, the ``CLS`` parameter must be set to ``true`` in the :doc:`multiphysics` subsection.
 
   * ``emissivity``, ``Tinf``, and ``Stefan-Boltzmann constant`` are respectively the emissivity :math:`\epsilon` of the surface, the environment temperature :math:`T_\text{inf}`, and the Stefan-Boltzmann constant :math:`\sigma`.
 
@@ -83,9 +83,9 @@ If a laser heat source is present in a simulation, it can be added in this secti
 Laser types
 ^^^^^^^^^^^^^
 
-* When the ``type`` is set to ``gaussian_heat_flux_vof_interface`` or ``uniform_heat_flux_vof_interface``, it **must be used in conjunction with the** :doc:`VOF auxiliary physic <./volume_of_fluid>`.
+* When the ``type`` is set to ``gaussian_heat_flux_cls_interface`` or ``uniform_heat_flux_cls_interface``, it **must be used in conjunction with the** :doc:`CLS auxiliary physic <./volume_of_fluid>`.
 
-  * The ``gaussian_heat_flux_vof_interface`` model is used to apply a gaussian heat flux only at the interface. In 3D, this heat flux is given by:
+  * The ``gaussian_heat_flux_cls_interface`` model is used to apply a gaussian heat flux only at the interface. In 3D, this heat flux is given by:
   
     .. math::
       
@@ -98,7 +98,7 @@ Laser types
         q(x,y,z) = \frac{2|\nabla \psi| \sqrt{\eta\;} \alpha P}{\sqrt{\pi^3} R^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}
         
     
-  * The ``uniform_heat_flux_vof_interface`` model is used to apply a uniform heat flux, given by the expression below, only at the interface.
+  * The ``uniform_heat_flux_cls_interface`` model is used to apply a uniform heat flux, given by the expression below, only at the interface.
   
     .. math::
       
@@ -112,7 +112,7 @@ Laser types
 
   where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`, and :math:`z` denote the concentration factor, absorptivity, laser power, beam radius, penetration depth, radial distance from the laser focal point, and axial distance from the laser focal point, respectively.
 
-  When the ``exponential_decay`` is used in conjunction with the :doc:`VOF auxiliary physic <./volume_of_fluid>` the equation takes the following form:
+  When the ``exponential_decay`` is used in conjunction with the :doc:`CLS auxiliary physic <./volume_of_fluid>` the equation takes the following form:
 
   .. math::
       q(x,y,z) = \frac{\psi \eta \alpha P}{\pi R^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}

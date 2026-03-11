@@ -19,7 +19,7 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 
     # Multiphase flow
     # Volume of Fluid method
-    set VOF                             = false
+    set CLS                             = false
     # Cahn-Hilliard equations
     set cahn hilliard                   = false
   end
@@ -49,13 +49,13 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 
   The tracer solver is used in the example :doc:`../../examples/multiphysics/tracer-in-static-mixer/tracer-in-static-mixer`.
 
-* ``VOF``: enables multiphase flow simulations, with two fluids separated by a free surface, using the Volume-of-Fluid method. 
+* ``CLS``: enables multiphase flow simulations, with two fluids separated by a free surface, using the Volume-of-Fluid method. 
 
-  See :doc:`volume_of_fluid` for advanced VOF parameters, :doc:`initial_conditions` for the definition of the VOF conditions and `Physical properties - two phase simulations <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/physical_properties.html#two-phase-simulations>`_ for the definition of the physical properties of both fluids.
+  See :doc:`volume_of_fluid` for advanced CLS parameters, :doc:`initial_conditions` for the definition of the CLS conditions and `Physical properties - two phase simulations <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/physical_properties.html#two-phase-simulations>`_ for the definition of the physical properties of both fluids.
 
 .. seealso::
 
-  The VOF solver is used in the example :doc:`../../examples/multiphysics/dam-break/dam-break`.
+  The CLS solver is used in the example :doc:`../../examples/multiphysics/dam-break/dam-break`.
 
 
 

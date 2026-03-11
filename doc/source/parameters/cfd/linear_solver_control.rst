@@ -2,7 +2,7 @@
 Linear Solver
 =============
 
-In this subsection, the control options of the linear solvers are specified. The default values for the linear solver parameters are given in the text box below. Lethe supports different physics (``fluid dynamics``, ``VOF``, ``heat transfer``, ``cahn hilliard``, ``tracer`` and ``void fraction``) and it is possible to specify linear solver parameters for each of them. The ``VOF algebraic interface reinitialization`` subequation has also its own subsection.
+In this subsection, the control options of the linear solvers are specified. The default values for the linear solver parameters are given in the text box below. Lethe supports different physics (``fluid dynamics``, ``CLS``, ``heat transfer``, ``cahn hilliard``, ``tracer`` and ``void fraction``) and it is possible to specify linear solver parameters for each of them. The ``CLS algebraic interface reinitialization`` subequation has also its own subsection.
 
 In the example below, only ``fluid dynamics`` is used, however, the same block can be used for other physics.
 
@@ -129,7 +129,7 @@ where :math:`R` is the residual vector and :math:`V` is the volume of the entire
 * ``preconditioner`` sets the type of preconditioning used for the linear solver. It can be either ``ilu`` for an Incomplete LU decomposition, ``amg`` for an Algebraic Multigrid, ``lsmg`` for a Local Smoothing Multigrid, or ``gcmg`` for a Global Coarsening Multigrid.
 
 .. warning::
-    Currently, the ``lethe-fluid-sharp`` solver makes it almost impossible to reach convergence with the ``amg`` preconditioner. Therefore, it is recommended to use ``ilu`` instead, even for fine meshes. In addition, the ``VOF``, ``heat transfer``, ``cahn hilliard`` and ``tracer`` physics only support ``ilu``.
+    Currently, the ``lethe-fluid-sharp`` solver makes it almost impossible to reach convergence with the ``amg`` preconditioner. Therefore, it is recommended to use ``ilu`` instead, even for fine meshes. In addition, the ``CLS``, ``heat transfer``, ``cahn hilliard`` and ``tracer`` physics only support ``ilu``.
 
 .. warning::
     Currently, the ``lsmg`` and ``gcmg`` preconditioners can only be used within the ``lethe-fluid-matrix-free`` application.

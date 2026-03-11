@@ -2,20 +2,20 @@
 Volume of Fluid (Multiphase Flow)
 =================================
 
-In this subsection, the parameters for multiphase flow simulation using the volume of fluid method (VOF) are specified. 
+In this subsection, the parameters for multiphase flow simulation using the volume of fluid method (CLS) are specified. 
 
 In this method, the two fluids considered are given index of :math:`0` and :math:`1` respectively. The amount of fluid at any given quadrature point is represented by a phase fraction between :math:`0` and :math:`1`. The interface is therefore considered located where the phase fraction :math:`= 0.5`. The interface between the two fluids is moved by a transport equation on the phase fraction.
 
 .. note::
 
-  At the moment, a maximum of two fluids is supported. By convention, air is usually the ``fluid 0`` and the other fluid of interest is the ``fluid 1``.    See :doc:`initial_conditions` for the definition of the VOF initial conditions and :ref:`Physical properties - Two Phase Simulations<two phase simulations>` for the definition of the physical properties of both fluids.  Do not forget to ``set VOF = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
+  At the moment, a maximum of two fluids is supported. By convention, air is usually the ``fluid 0`` and the other fluid of interest is the ``fluid 1``.    See :doc:`initial_conditions` for the definition of the CLS initial conditions and :ref:`Physical properties - Two Phase Simulations<two phase simulations>` for the definition of the physical properties of both fluids.  Do not forget to ``set CLS = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
 
 
-The default values of the VOF parameters are given in the text box below.
+The default values of the CLS parameters are given in the text box below.
 
 .. code-block:: text
 
-  subsection VOF
+  subsection CLS
 
     set viscous dissipative fluid = fluid 1
     set diffusivity               = 0
@@ -83,15 +83,15 @@ The default values of the VOF parameters are given in the text box below.
     Applying viscous dissipation in one of the fluids instead of both is particularly useful when one of the fluids is air. For numerical stability, the ``kinematic viscosity`` of the air is usually increased. However, we do not want to have viscous dissipation in the air, because it would result in an unrealistic increase in its temperature. This parameter is used only if ``set heat transfer = true`` and ``set viscous dissipation = true`` in :doc:`./multiphysics`.
 
 * ``diffusivity``: value of the diffusivity (diffusion coefficient) in the transport equation of the phase fraction. Default value is ``0`` to have pure advection. 
-* ``compressible``: enables interface compression (:math:`\phi \nabla \cdot \mathbf{u}`) in the VOF equation.  This term should be kept to its default value of ``false`` except when compressible equations of state are used.
+* ``compressible``: enables interface compression (:math:`\phi \nabla \cdot \mathbf{u}`) in the CLS equation.  This term should be kept to its default value of ``false`` except when compressible equations of state are used.
 
 Interface Regularization Method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``subsection interface regularization method`` defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step.
+The ``subsection interface regularization method`` defines parameters to counter numerical diffusion of the CLS method and to avoid the interface between the two fluids becoming more and more blurry after each time step.
 
 * ``type``: sets the method of regularization. There are four methods available:``none``, ``projection-based interface sharpening``, ``geometric interface reinitialization``, and ``algebraic interface reinitialization``. If ``none`` is selected, the interface is not regularized. The three other types are described bellow along with their corresponding subsection.
-* ``frequency``: indicates the frequency at which the regularization process is applied to the VOF phase fraction field. For instance, if the user specifies ``frequency = 2``, the interface will be regularized once every :math:`2` time steps.
+* ``frequency``: indicates the frequency at which the regularization process is applied to the CLS phase fraction field. For instance, if the user specifies ``frequency = 2``, the interface will be regularized once every :math:`2` time steps.
 
 * ``verbosity``: displays the solution process of the regularization method. The different levels of verbosity are:
 
@@ -169,15 +169,15 @@ The ``type = geometric interface reinitialization`` reinitializes the phase frac
 Algebraic Interface Reinitialization
 ++++++++++++++++++++++++++++++++++++
 
-The ``type = algebraic interface reinitialization`` corresponds to a PDE-based reinitialization method. Alike the projection-based interface sharpening, this aims to reduce numerical diffusion of the phase fraction and redefine the interface sharply by resolving a PDE.  The reader is referred to the *Algebraic Interface Reinitialization* section of the :doc:`Volume of Fluid method theory guide<../../../theory/multiphase/cfd/vof>` for additional details on this method. The ``subsection algebraic interface reinitialization`` defines parameters used to reinitialize the interface in VOF simulations. 
+The ``type = algebraic interface reinitialization`` corresponds to a PDE-based reinitialization method. Alike the projection-based interface sharpening, this aims to reduce numerical diffusion of the phase fraction and redefine the interface sharply by resolving a PDE.  The reader is referred to the *Algebraic Interface Reinitialization* section of the :doc:`Volume of Fluid method theory guide<../../../theory/multiphase/cfd/vof>` for additional details on this method. The ``subsection algebraic interface reinitialization`` defines parameters used to reinitialize the interface in CLS simulations. 
 
 * ``output reinitialization steps``: when set to ``true``, it enables outputs in parallel vtu format of the algebraic reinitialization steps. The files are stored in a folder named ``algebraic-reinitialization-steps-output`` located inside the ``output path`` directory specified in the :doc:`simulation control<./simulation_control>` subsection.
 
   Outputted quantities of interest are:
     * Reinitialized phase fraction scalar-field (``reinit_phase_fraction``);
-    * VOF phase fraction scalar-field (``vof_phase_fraction``);
-    * VOF projected phase gradient vector-field (``vof_phase_gradient``) and;
-    * VOF projected curvature scalar-field (``vof_curvature``).
+    * CLS phase fraction scalar-field (``cls_phase_fraction``);
+    * CLS projected phase gradient vector-field (``cls_phase_gradient``) and;
+    * CLS projected curvature scalar-field (``cls_curvature``).
 
   .. tip::
     This feature can be used for debugging purposes by observing how the reinitialization steps affect the phase fraction field.
