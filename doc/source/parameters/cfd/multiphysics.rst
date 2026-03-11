@@ -18,7 +18,7 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
     set tracer                          = false
 
     # Multiphase flow
-    # Volume of Fluid method
+    # Conservative Level-Set method
     set CLS                             = false
     # Cahn-Hilliard equations
     set cahn hilliard                   = false
@@ -51,7 +51,7 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 
 * ``CLS``: enables multiphase flow simulations, with two fluids separated by a free surface, using the Volume-of-Fluid method. 
 
-  See :doc:`volume_of_fluid` for advanced CLS parameters, :doc:`initial_conditions` for the definition of the CLS conditions and `Physical properties - two phase simulations <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/physical_properties.html#two-phase-simulations>`_ for the definition of the physical properties of both fluids.
+  See :doc:`conservative_level_set` for advanced CLS parameters, :doc:`initial_conditions` for the definition of the CLS conditions and `Physical properties - two phase simulations <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/physical_properties.html#two-phase-simulations>`_ for the definition of the physical properties of both fluids.
 
 .. seealso::
 

@@ -388,7 +388,7 @@ where :math:`\phi_\text{evap}=0.82` and :math:`\psi_\text{evap}=0.56` are the ``
 
 where :math:`p_\text{atm}=101.325\;\text{kPa}` is the ``ambient pressure``, and :math:`T_\text{boil}=3550\;\text{K}` is the ``boiling temperature``.
 
-Both terms are then applied at the liquid-gas interface using the Continuous Surface Force (CSF) model, as described for the surface tension in :doc:`../../../theory/multiphase/cfd/vof` theory guide.
+Both terms are then applied at the liquid-gas interface using the Continuous Surface Force (CSF) model, as described for the surface tension in :doc:`../../../theory/multiphase/cfd/cls` theory guide.
 
     
 Non-Linear Solver

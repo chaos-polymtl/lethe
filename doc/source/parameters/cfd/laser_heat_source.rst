@@ -35,7 +35,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
 * The ``enable`` parameter is set to ``true`` if the problem has a laser heat source term and enables its calculation.
 
-* The ``type`` parameter is set to ``gaussian_heat_flux_cls_interface`` (default) if we assume that the laser behaves as a surface heat flux with a normal irradiation distribution.  If the laser is assumed to have a uniform surface heat flux, the ``type`` can be set at ``uniform_heat_flux_cls_interface``. In both cases, the laser model must be used in conjunction with the :doc:`CLS auxiliary physic <./volume_of_fluid>`. The third available laser model is the  ``exponential_decay`` and considers that the laser behaves as a volumetric source. The different models are detailed :ref:`below <LaserTypes>`.
+* The ``type`` parameter is set to ``gaussian_heat_flux_cls_interface`` (default) if we assume that the laser behaves as a surface heat flux with a normal irradiation distribution.  If the laser is assumed to have a uniform surface heat flux, the ``type`` can be set at ``uniform_heat_flux_cls_interface``. In both cases, the laser model must be used in conjunction with the :doc:`CLS auxiliary physic <./conservative_level_set>`. The third available laser model is the  ``exponential_decay`` and considers that the laser behaves as a volumetric source. The different models are detailed :ref:`below <LaserTypes>`.
 
 * Laser ``concentration factor`` parameter indicates the definition of the beam radius. In almost all the articles, it is assumed equal to :math:`2.0`.
 
@@ -66,7 +66,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
 
 * In the ``path`` subsection, the laser scanning path is defined using a ``Function expression``.
 
-* ``subsection free surface radiation``: In additive manufacturing simulations, radiation at the interface between the air and the metal is a significant cooling mechanism. When this interface (i.e., free surface) is resolved by the :doc:`volume_of_fluid` solver, the ``free surface radiation`` subsection defines the parameters to impose this radiation cooling following the Stefan-Boltzmann law of radiation:
+* ``subsection free surface radiation``: In additive manufacturing simulations, radiation at the interface between the air and the metal is a significant cooling mechanism. When this interface (i.e., free surface) is resolved by the :doc:`conservative_level_set` solver, the ``free surface radiation`` subsection defines the parameters to impose this radiation cooling following the Stefan-Boltzmann law of radiation:
 
   .. math::
       q_\text{rad} = \epsilon \sigma (T^4 - T_\text{inf}^4)
@@ -83,7 +83,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
 Laser types
 ^^^^^^^^^^^^^
 
-* When the ``type`` is set to ``gaussian_heat_flux_cls_interface`` or ``uniform_heat_flux_cls_interface``, it **must be used in conjunction with the** :doc:`CLS auxiliary physic <./volume_of_fluid>`.
+* When the ``type`` is set to ``gaussian_heat_flux_cls_interface`` or ``uniform_heat_flux_cls_interface``, it **must be used in conjunction with the** :doc:`CLS auxiliary physic <./conservative_level_set>`.
 
   * The ``gaussian_heat_flux_cls_interface`` model is used to apply a gaussian heat flux only at the interface. In 3D, this heat flux is given by:
   
@@ -112,7 +112,7 @@ Laser types
 
   where :math:`\eta`, :math:`\alpha`, :math:`P`, :math:`R`, :math:`\mu`, :math:`r`, and :math:`z` denote the concentration factor, absorptivity, laser power, beam radius, penetration depth, radial distance from the laser focal point, and axial distance from the laser focal point, respectively.
 
-  When the ``exponential_decay`` is used in conjunction with the :doc:`CLS auxiliary physic <./volume_of_fluid>` the equation takes the following form:
+  When the ``exponential_decay`` is used in conjunction with the :doc:`CLS auxiliary physic <./conservative_level_set>` the equation takes the following form:
 
   .. math::
       q(x,y,z) = \frac{\psi \eta \alpha P}{\pi R^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}

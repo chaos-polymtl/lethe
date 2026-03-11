@@ -85,7 +85,7 @@ VOF
 In the ``VOF`` subsection, the ``compressible`` and the ``phase filtration`` features are enabled.
 The enabled ``compressible`` parameter allows interface compression by adding the term :math:`\phi (\nabla \cdot \mathbf{u})` to the VOF equation.
 The ``phase filtration`` filters the phase field used for the calculation of physical properties by stiffening the value of the phase fraction.
-We refer the reader to :doc:`../../../../theory/multiphase/cfd/vof` theory guide for further explanation on the ``phase filtration``.
+We refer the reader to :doc:`../../../../theory/multiphase/cfd/cls` theory guide for further explanation on the ``phase filtration``.
 The ``projection-based interface sharpening`` method is selected as the ``interface regularization method`` and its parameters, defined in the ``subsection projection-based interface sharpening``, are explained in the :doc:`../dam-break/dam-break` example.
 
 .. code-block:: text

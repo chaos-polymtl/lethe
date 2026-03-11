@@ -1,8 +1,8 @@
-=================================
-Volume of Fluid (Multiphase Flow)
-=================================
+========================================
+Conservative Level-Set (Multiphase Flow)
+========================================
 
-In this subsection, the parameters for multiphase flow simulation using the volume of fluid method (CLS) are specified. 
+In this subsection, the parameters for multiphase flow simulation using the Conservative Level-Set method (CLS) are specified. 
 
 In this method, the two fluids considered are given index of :math:`0` and :math:`1` respectively. The amount of fluid at any given quadrature point is represented by a phase fraction between :math:`0` and :math:`1`. The interface is therefore considered located where the phase fraction :math:`= 0.5`. The interface between the two fluids is moved by a transport equation on the phase fraction.
 
@@ -107,9 +107,9 @@ The ``subsection interface regularization method`` defines parameters to counter
 Projection-Based Interface Sharpening
 +++++++++++++++++++++++++++++++++++++
 
-The ``type = projection-based interface sharpening`` corresponds to a projection-based regularization method in which the phase indicator is projected into a sharper space. The reader is referred to the Projection-Based Interface Sharpening section of :doc:`../../../theory/multiphase/cfd/vof` theory guide for additional details on this regularization method. The ``subsection projection-based interface sharpening`` defines the relevant parameters.
+The ``type = projection-based interface sharpening`` corresponds to a projection-based regularization method in which the phase indicator is projected into a sharper space. The reader is referred to the Projection-Based Interface Sharpening section of :doc:`../../../theory/multiphase/cfd/cls` theory guide for additional details on this regularization method. The ``subsection projection-based interface sharpening`` defines the relevant parameters.
 
-* ``interface sharpness``: sharpness of the moving interface, denoted :math:`\alpha` in the Interface Sharpening section of :doc:`../../../theory/multiphase/cfd/vof` and :math:`a` in the `interface sharpening model <https://www.researchgate.net/publication/287118331_Development_of_efficient_interface_sharpening_procedure_for_viscous_incompressible_flows>`_ paper. This parameter must be larger than 1 for interface sharpening. Choosing values less than 1 leads to interface smoothing instead of sharpening. A good value would be around 1.5.
+* ``interface sharpness``: sharpness of the moving interface, denoted :math:`\alpha` in the Interface Sharpening section of :doc:`../../../theory/multiphase/cfd/cls` and :math:`a` in the `interface sharpening model <https://www.researchgate.net/publication/287118331_Development_of_efficient_interface_sharpening_procedure_for_viscous_incompressible_flows>`_ paper. This parameter must be larger than 1 for interface sharpening. Choosing values less than 1 leads to interface smoothing instead of sharpening. A good value would be around 1.5.
 
 * ``type``: defines the projection-based interface sharpening type, either ``constant`` or ``adaptive``
 
@@ -147,7 +147,7 @@ The ``type = projection-based interface sharpening`` corresponds to a projection
 Geometric Interface Reinitialization
 ++++++++++++++++++++++++++++++++++++
 
-The ``type = geometric interface reinitialization`` reinitializes the phase fraction field by computing the signed distance from the interface. The latter is then converted back to a phase fraction using a transformation function. The reader is referred to the *Geometric Interface Reinitialization* section of the :doc:`Volume of Fluid method theory guide<../../../theory/multiphase/cfd/vof>` for additional details on this method. The ``geometric interface reinitialization`` sunsection defines the relevant parameters.
+The ``type = geometric interface reinitialization`` reinitializes the phase fraction field by computing the signed distance from the interface. The latter is then converted back to a phase fraction using a transformation function. The reader is referred to the *Geometric Interface Reinitialization* section of the :doc:`Conservative Level-Set method theory guide<../../../theory/multiphase/cfd/cls>` for additional details on this method. The ``geometric interface reinitialization`` sunsection defines the relevant parameters.
 
 * ``max reinitialization distance``: the maximum distance to the interface up to which the signed distance is computed. Above this value, the signed distance is set to the ``max reinitialization distance``.
 
@@ -169,7 +169,7 @@ The ``type = geometric interface reinitialization`` reinitializes the phase frac
 Algebraic Interface Reinitialization
 ++++++++++++++++++++++++++++++++++++
 
-The ``type = algebraic interface reinitialization`` corresponds to a PDE-based reinitialization method. Alike the projection-based interface sharpening, this aims to reduce numerical diffusion of the phase fraction and redefine the interface sharply by resolving a PDE.  The reader is referred to the *Algebraic Interface Reinitialization* section of the :doc:`Volume of Fluid method theory guide<../../../theory/multiphase/cfd/vof>` for additional details on this method. The ``subsection algebraic interface reinitialization`` defines parameters used to reinitialize the interface in CLS simulations. 
+The ``type = algebraic interface reinitialization`` corresponds to a PDE-based reinitialization method. Alike the projection-based interface sharpening, this aims to reduce numerical diffusion of the phase fraction and redefine the interface sharply by resolving a PDE.  The reader is referred to the *Algebraic Interface Reinitialization* section of the :doc:`Conservative level set method theory guide<../../../theory/multiphase/cfd/cls>` for additional details on this method. The ``subsection algebraic interface reinitialization`` defines parameters used to reinitialize the interface in CLS simulations. 
 
 * ``output reinitialization steps``: when set to ``true``, it enables outputs in parallel vtu format of the algebraic reinitialization steps. The files are stored in a folder named ``algebraic-reinitialization-steps-output`` located inside the ``output path`` directory specified in the :doc:`simulation control<./simulation_control>` subsection.
 
@@ -225,7 +225,7 @@ Phase Filtration
 * ``type``: defines the filter type, either ``none`` or ``tanh``
 
   * ``set type = none``: the phase fraction is not filtered
-  * ``set type = tanh``: the filter function described in the Interface filtration section of :doc:`../../../theory/multiphase/cfd/vof` theory guide is applied.
+  * ``set type = tanh``: the filter function described in the Interface filtration section of :doc:`../../../theory/multiphase/cfd/cls` theory guide is applied.
 * ``beta``: value of the :math:`\beta` parameter of the ``tanh`` filter
 * ``verbosity``: enables the display of filtered phase fraction values. Choices are ``quiet`` (no output) and ``verbose`` (displays values)
 

@@ -262,7 +262,7 @@ In the ``VOF`` subsection, we select the ``geometric interface reinitialization`
   end
 
 The ``phase filtration`` is enabled in this example.
-We refer the reader to the :doc:`../../../../parameters/cfd/volume_of_fluid` documentation for more explanation on the phase filtration.
+We refer the reader to the :doc:`../../../../parameters/cfd/conservative_level_set` documentation for more explanation on the phase filtration.
 
 Post-processing
 ~~~~~~~~~~~~~~~

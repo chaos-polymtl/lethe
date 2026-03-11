@@ -23,7 +23,7 @@ Multiphysics
 
       multiphysics [label="Multiphysics", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/multiphysics.html"];
 
-      multiphysics_1 [label="VOF", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/vof.html"];  
+      multiphysics_1 [label="VOF", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysicscls.html"];  
 
       multiphysics_1_1 [label="Dam-Break", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/dam-break/dam-break.html"];
 

@@ -1,10 +1,10 @@
-================================
-The Volume of Fluid (VOF) Method
-================================
+=======================================
+The Conservative Level-Set (CLS) Method
+=======================================
 
 Numerous examples of flow encountered in engineering involve multiple fluids: sloshing of fuel in aircraft tanks, mixing of bread dough, and motion of droplets and bubbles to name a few. In these cases, the involved fluids can be immiscible, and we are interested in the evolution of the interfaces between those fluids.
 
-Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, namely fluid :math:`0` and :math:`1`, with :math:`\Gamma` denoting their interface and :math:`\partial \Omega`, the remaining boundaries, as illustrated in the figure below. In the VOF method [#hirt1981]_, we define the scalar function :math:`\phi` as a phase indicator such that:
+Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, namely fluid :math:`0` and :math:`1`, with :math:`\Gamma` denoting their interface and :math:`\partial \Omega`, the remaining boundaries, as illustrated in the figure below. In the CLS method [#hirt1981]_, we define the scalar function :math:`\phi` as a phase indicator such that:
 
 .. math::
   \phi =
@@ -15,7 +15,7 @@ Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, 
 
 This phase indicator (or phase fraction) changes rapidly but smoothly from :math:`0` to :math:`1` at the interface such that :math:`\Gamma` is located at the iso-contour :math:`\phi=0.5`, as illustrated below.
 
-.. image:: images/vof.png
+.. image:: images/cls.png
     :alt: Schematic
     :align: center
     :width: 600
@@ -109,7 +109,7 @@ To avoid a non-linear finite element formulation, the phase gradient of the prev
 Interface Diffusion and Regularization
 --------------------------------------
 
-The VOF method tends to diffuse the interface, i.e., over time, the interface becomes blurry instead of a sharp definition, and the change from :math:`\phi = 0` to :math:`1` occurs on a larger distance.
+The CLS method tends to diffuse the interface, i.e., over time, the interface becomes blurry instead of a sharp definition, and the change from :math:`\phi = 0` to :math:`1` occurs on a larger distance.
 
 Thus, we use regularization methods to keep the change in :math:`\phi` sharp at the interface. Three methods are currently available: projection-based interface sharpening, algebraic interface reinitialization and interface filtration.
 
@@ -203,13 +203,13 @@ where:
 
 - :math:`\tau` is the artificial time independent variable. It is different from the time independent variable :math:`t` of the actual simulation.
 
-- :math:`\mathbf{n} = \frac{\nabla \psi}{\lVert \nabla \psi \rVert}` is the normal vector of the interface with :math:`\nabla \psi` the :ref:`projected VOF phase gradient<Normal and curvature computations>`, and;
+- :math:`\mathbf{n} = \frac{\nabla \psi}{\lVert \nabla \psi \rVert}` is the normal vector of the interface with :math:`\nabla \psi` the :ref:`projected CLS phase gradient<Normal and curvature computations>`, and;
 
 - :math:`\varepsilon = C \, h_\text{min}^d` is the diffusion coefficient with  :math:`h_\text{min}` the smallest cell-size, :math:`C` a constant factor multiplying :math:`h_\text{min}`, and :math:`d` a constant power to which :math:`h_\text{min}` is elevated. As default, :math:`C` and :math:`d` are set to :math:`1`.
 
 .. note::
 
-    :math:`\nabla \psi` is computed with the VOF phase fraction gradient field and remains constant through the interface reinitialization process of a same global time iteration.
+    :math:`\nabla \psi` is computed with the CLS phase fraction gradient field and remains constant through the interface reinitialization process of a same global time iteration.
 
 .. note::
 
@@ -348,7 +348,7 @@ where :math:`\alpha` and :math:`\beta` are user-defined factors, and :math:`h` i
 References
 -----------
 
-.. [#hirt1981] \C. W. Hirt and B. D. Nichols, “Volume of fluid (VOF) method for the dynamics of free boundaries,” *J. Comput. Phys.*, vol. 39, no. 1, pp. 201–225, Jan. 1981, doi: `10.1016/0021-9991(81)90145-5 <https://doi.org/10.1016/0021-9991(81)90145-5>`_\.
+.. [#hirt1981] \C. W. Hirt and B. D. Nichols, “Volume of fluid (CLS) method for the dynamics of free boundaries,” *J. Comput. Phys.*, vol. 39, no. 1, pp. 201–225, Jan. 1981, doi: `10.1016/0021-9991(81)90145-5 <https://doi.org/10.1016/0021-9991(81)90145-5>`_\.
 
 .. [#tezduyar2003] \T. E. Tezduyar, “Computation of moving boundaries and interfaces and stabilization parameters,” *Int. J. Numer. Methods Fluids*, vol. 43, no. 5, pp. 555–575, 2003, doi: `10.1002/fld.505 <https://doi.org/10.1002/fld.505>`_\.
 
