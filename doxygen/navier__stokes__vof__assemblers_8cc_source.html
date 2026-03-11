@@ -775,7 +775,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span>        filtered_phase_gradient_value_q.norm();</div>
 <div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span> </div>
 <div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>      <span class="keyword">const</span> Tensor&lt;1, dim&gt; normalized_phase_fraction_gradient =</div>
-<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>        phase_gradient_value_q / (phase_gradient_norm + DBL_MIN);</div>
+<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>        phase_gradient_value_q / (phase_gradient_norm + 1e-15);</div>
 <div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span> </div>
 <div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>      <span class="keyword">const</span> <span class="keywordtype">double</span> JxW_value = JxW[q];</div>
 <div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span> </div>
@@ -856,7 +856,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>        filtered_phase_gradient_value_q.norm();</div>
 <div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span> </div>
 <div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>      <span class="keyword">const</span> Tensor&lt;1, dim&gt; normalized_phase_fraction_gradient =</div>
-<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>        phase_gradient_value_q / (phase_gradient_norm + DBL_MIN);</div>
+<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>        phase_gradient_value_q / (phase_gradient_norm + 1e-15);</div>
 <div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span> </div>
 <div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>      <span class="comment">// Gather temperature gradient</span></div>
 <div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>      <span class="keyword">const</span> Tensor&lt;1, dim&gt; temperature_gradient =</div>
@@ -947,7 +947,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>        filtered_phase_gradient_value_q.norm();</div>
 <div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span> </div>
 <div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>      <span class="keyword">const</span> Tensor&lt;1, dim&gt; normalized_phase_fraction_gradient =</div>
-<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>        phase_gradient_value_q / (phase_gradient_norm + DBL_MIN);</div>
+<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>        phase_gradient_value_q / (phase_gradient_norm + 1e-15);</div>
 <div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span> </div>
 <div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span> </div>
 <div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>      <span class="keyword">const</span> <span class="keywordtype">double</span> JxW_value = JxW[q];</div>
