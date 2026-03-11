@@ -17,6 +17,13 @@ using namespace dealii;
 /**
  * @brief Generates a 3D mesh for the Birmingham fluidized bed geometry.
  *
+ * The geometry is taken from:
+ * P. Fede, O. Simonin, and A. Ingram, "3D numerical simulation of a
+ * lab-scale pressurized dense fluidized bed focussing on the effect of
+ * the particle-particle restitution coefficient and particle-wall boundary
+ * conditions," Chemical Engineering Science, vol. 142, pp. 215-235, 2016.
+ * DOI: 10.1016/j.ces.2015.11.016
+ *
  * The geometry consists of three sections joined along the x-axis:
  * - A bottom cylinder of small radius (0.077 m),
  * - A truncated cone expanding from the small to a larger radius (0.127 m),
