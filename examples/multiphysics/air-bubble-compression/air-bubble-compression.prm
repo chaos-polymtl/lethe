@@ -33,7 +33,7 @@ end
 # VOF
 #---------------------------------------------------
 
-subsection VOF
+subsection CLS
   set compressible = true
   subsection phase filtration
     set type = tanh

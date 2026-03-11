@@ -35,7 +35,7 @@ end
 # VOF
 #---------------------------------------------------
 
-subsection VOF
+subsection CLS
   subsection surface tension force
     set enable                  = true
     set output auxiliary fields = true

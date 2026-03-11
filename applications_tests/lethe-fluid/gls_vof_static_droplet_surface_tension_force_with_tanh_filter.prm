@@ -29,7 +29,7 @@ subsection multiphysics
   set VOF = true
 end
 
-subsection VOF
+subsection CLS
   subsection surface tension force
     set enable                                   = true
     set phase fraction gradient diffusion factor = 4

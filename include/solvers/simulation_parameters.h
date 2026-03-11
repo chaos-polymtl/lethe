@@ -290,7 +290,7 @@ public:
               {
                 throw std::logic_error(
                   "Inconsistency in .prm!\n "
-                  "In subsection VOF, with surface tension force enabled,\n "
+                  "In subsection CLS, with surface tension force enabled,\n "
                   "but no material interactions specified in\n "
                   "subsection physical properties.\n "
                   "Use:\n\n"
@@ -311,8 +311,8 @@ public:
                       "In subsection multiphysics, VOF and heat transfer enabled,\n "
                       "and in subsection physical properties, a non-constant surface\n "
                       "tension model, but Marangoni effect disabled in subsection\n "
-                      "surface tension force of subsection VOF. This is necessary to account\n "
-                      "for Marangoni effect. In subsection VOF, use:\n\n "
+                      "surface tension force of subsection CLS. This is necessary to account\n "
+                      "for Marangoni effect. In subsection CLS, use:\n\n "
                       "  subsection surface tension force\n"
                       "    set enable                  = true\n"
                       "    set enable marangoni effect = true\n"
@@ -326,7 +326,7 @@ public:
                   {
                     throw std::logic_error(
                       "Inconsistency in .prm!\n "
-                      "in subsection VOF, surface tension force enabled,\n "
+                      "in subsection CLS, surface tension force enabled,\n "
                       "but no fluid-fluid material interactions specified in \n "
                       "subsection physical properties\n "
                       "Use:\n\n"
@@ -342,7 +342,7 @@ public:
               {
                 throw std::logic_error(
                   "Inconsistency in .prm!\n "
-                  "In subsection VOF, marangoni effect enabled,\n "
+                  "In subsection CLS, marangoni effect enabled,\n "
                   "but no material interactions specified in subsection physical\n "
                   "properties. This is necessary to account for Marangoni \n "
                   "effect. In subsection physical properties, use:\n\n"
@@ -364,7 +364,7 @@ public:
                   {
                     throw std::logic_error(
                       "Inconsistency in .prm!\n "
-                      "In subsection VOF, Marangoni effect enabled,\n "
+                      "In subsection CLS, Marangoni effect enabled,\n "
                       "but no fluid-fluid material interactions specified in subsection\n "
                       "physical properties. This is necessary to account for Marangoni\n "
                       "effect. In subsection physical properties, use:\n\n"
@@ -383,7 +383,7 @@ public:
                   {
                     throw std::logic_error(
                       "Inconsistency in .prm!\n "
-                      "In subsection VOF, Marangoni effect enabled,\n "
+                      "In subsection CLS, Marangoni effect enabled,\n "
                       "but a constant surface tension model is specified in subsection\n "
                       "physical properties. This is necessary to account for Marangoni \n "
                       "effect. In subsection physical properties, use:\n\n"

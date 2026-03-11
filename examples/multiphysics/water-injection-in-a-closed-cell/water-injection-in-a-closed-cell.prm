@@ -33,7 +33,7 @@ end
 # VOF
 #---------------------------------------------------
 
-subsection VOF
+subsection CLS
   set compressible = true
   subsection interface regularization method
     set type      = projection-based interface sharpening

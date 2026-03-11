@@ -31,7 +31,7 @@ end
 # VOF
 #---------------------------------------------------
 
-subsection VOF
+subsection CLS
   subsection phase filtration
     set type      = tanh
     set beta      = 8

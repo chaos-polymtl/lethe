@@ -1331,7 +1331,7 @@ namespace BoundaryConditions
     prm.declare_entry("type",
                       "none",
                       Patterns::Selection("none|dirichlet|periodic"),
-                      "Type of boundary condition for VOF"
+                      "Type of boundary condition for CLS"
                       "Choices are <none|dirichlet|periodic>.");
 
     prm.declare_entry("id",

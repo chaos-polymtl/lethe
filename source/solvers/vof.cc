@@ -1822,7 +1822,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
   if (this->simulation_parameters.timer.type ==
       Parameters::Timer::Type::iteration)
     {
-      announce_string(this->pcout, "VOF");
+      announce_string(this->pcout, "CLS");
       this->computing_timer.print_summary();
       this->computing_timer.reset();
     }

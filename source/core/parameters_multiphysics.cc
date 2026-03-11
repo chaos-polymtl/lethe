@@ -114,7 +114,7 @@ Parameters::Multiphysics<dim>::parse_parameters(
 void
 Parameters::VOF::declare_parameters(ParameterHandler &prm) const
 {
-  prm.enter_subsection("VOF");
+  prm.enter_subsection("CLS");
   {
     regularization_method.declare_parameters(prm);
     surface_tension_force.declare_parameters(prm);
@@ -146,7 +146,7 @@ Parameters::VOF::declare_parameters(ParameterHandler &prm) const
 void
 Parameters::VOF::parse_parameters(ParameterHandler &prm)
 {
-  prm.enter_subsection("VOF");
+  prm.enter_subsection("CLS");
   {
     regularization_method.parse_parameters(prm);
     surface_tension_force.parse_parameters(prm);

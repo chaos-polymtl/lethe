@@ -34,7 +34,7 @@ end
 # VOF
 #---------------------------------------------------
 
-subsection VOF
+subsection CLS
   subsection interface regularization method
     set type      = algebraic interface reinitialization
     set frequency = 20

@@ -215,7 +215,7 @@ end
 # VOF
 #---------------------------------------------------
 
-subsection VOF
+subsection CLS
   subsection phase filtration
     set type = tanh
   end

@@ -66,7 +66,7 @@ end
 # VOF
 #---------------------------------------------------
 
-subsection VOF
+subsection CLS
   subsection interface regularization method
     set type      = geometric interface reinitialization
     set frequency = 1

@@ -32,7 +32,7 @@ end
 # VOF
 #---------------------------------------------------
 
-subsection VOF
+subsection CLS
   subsection interface regularization method
     set type      = projection-based interface sharpening
     set frequency = 1

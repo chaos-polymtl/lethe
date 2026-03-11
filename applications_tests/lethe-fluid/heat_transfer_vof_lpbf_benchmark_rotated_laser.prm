@@ -311,7 +311,7 @@ end
 # VOF
 #---------------------------------------------------
 
-subsection VOF
+subsection CLS
   subsection phase filtration
     set type      = tanh
     set verbosity = quiet

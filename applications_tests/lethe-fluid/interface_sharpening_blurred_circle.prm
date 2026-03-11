@@ -25,7 +25,7 @@ subsection multiphysics
   set VOF = true
 end
 
-subsection VOF
+subsection CLS
   subsection interface regularization method
     set type      = projection-based interface sharpening
     set frequency = 2
