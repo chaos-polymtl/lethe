@@ -43,7 +43,7 @@ DeclException1(CahnHilliardBoundaryDuplicated,
 
 DeclException1(VOFBoundaryDuplicated,
                types::boundary_id,
-               << "VOF boundary id: " << arg1
+               << "CLS boundary id: " << arg1
                << " has already been declared as a boundary condition");
 
 DeclException1(TimeHarmonicMaxwellDuplicated,
@@ -1417,7 +1417,7 @@ namespace BoundaryConditions
     AssertThrow(
       boundary_ids.size() > 0,
       ExcMessage(
-        "A boundary id has not been set for one of the VOF boundary conditions. Please ensure that the id is set for every boundary condition."));
+        "A boundary id has not been set for one of the CLS boundary conditions. Please ensure that the id is set for every boundary condition."));
 
     // Loop through all boundary ids to ensure that they are all non-negative
     // and unique

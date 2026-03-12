@@ -35,26 +35,26 @@
 DeclException1(
   InvalidNumberOfFluid,
   int,
-  << "The VOF physics is enabled, but the number of fluids is set to " << arg1
-  << ". The VOF solver only supports 2 fluids.");
+  << "The CLS physics is enabled, but the number of fluids is set to " << arg1
+  << ". The CLS solver only supports 2 fluids.");
 
 DeclException1(
   VOFBoundaryConditionMissing,
   types::boundary_id,
   << "The boundary id: " << arg1
-  << " is defined in the triangulation, but not as a boundary condition for the VOF physics. Lethe does not assign a default boundary condition to boundary ids. Every boundary id defined within the triangulation must have a corresponding boundary condition defined in the input file.");
+  << " is defined in the triangulation, but not as a boundary condition for the CLS physics. Lethe does not assign a default boundary condition to boundary ids. Every boundary id defined within the triangulation must have a corresponding boundary condition defined in the input file.");
 
 DeclExceptionMsg(
   UnsupportedRegularization,
-  "The VOF physics has been set to use DG and the latter implementation currently does not support any interface reinitialization mechanism.");
+  "The CLS physics has been set to use DG and the latter implementation currently does not support any interface reinitialization mechanism.");
 
 DeclExceptionMsg(
   UnsupportedRegularizationWithSimplex,
-  "The VOF physics has been set to use simplex and the latter implementation currently does not support the geometric interface reinitialization mechanism.");
+  "The CLS physics has been set to use simplex and the latter implementation currently does not support the geometric interface reinitialization mechanism.");
 
 DeclExceptionMsg(
   UnsupportedInitialProjection,
-  "The VOF physics has been set to use DG and the latter implementation currently does not support defining an initial condition with a projection.");
+  "The CLS physics has been set to use DG and the latter implementation currently does not support defining an initial condition with a projection.");
 
 template <int dim>
 class VolumeOfFluid : public AuxiliaryPhysics<dim, GlobalVectorType>

@@ -61,7 +61,7 @@ VolumeOfFluid<dim>::VolumeOfFluid(
       this->simulation_parameters.post_processing.calculate_mass_conservation)
     {
       this->pcout
-        << "Warning: DG-VOF and the geometric surface and volume computations are not compatible. Only the global volume will be monitored."
+        << "Warning: DG-CLS and the geometric surface and volume computations are not compatible. Only the global volume will be monitored."
         << std::endl;
     }
 
@@ -2275,7 +2275,7 @@ VolumeOfFluid<dim>::solve_projection_phase_fraction(GlobalVectorType &solution)
   if (this->simulation_parameters.multiphysics.vof_parameters
         .surface_tension_force.verbosity != Parameters::Verbosity::quiet)
     {
-      this->pcout << "  -Iterative solver (phase fraction) took : "
+      this->pcout << "  -Iterative solver (phase indicator) took : "
                   << solver_control.last_step() << " steps " << std::endl;
     }
 

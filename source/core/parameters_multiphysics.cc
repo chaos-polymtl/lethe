@@ -52,7 +52,7 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
     prm.declare_entry("CLS",
                       "false",
                       Patterns::Bool(),
-                      "VOF calculation <true|false>");
+                      "CLS calculation <true|false>");
     prm.declare_alias("CLS", "VOF", true);
 
     prm.declare_entry("cahn hilliard",
@@ -131,14 +131,14 @@ Parameters::VOF::declare_parameters(ParameterHandler &prm) const
       "diffusivity",
       "0",
       Patterns::Double(),
-      "Diffusivity (diffusion coefficient in L^2/s) in the VOF transport equation. "
+      "Diffusivity (diffusion coefficient in L^2/s) in the phase indicator transport equation. "
       "Default value is 0 to have pure advection.");
 
     prm.declare_entry(
       "compressible",
       "false",
       Patterns::Bool(),
-      "Enable phase compressibility in the VOF equation. This leads to the inclusion of the phase * div(u) term in the VOF conservation equation. "
+      "Enable phase compressibility in the CLS equation. This leads to the inclusion of the phase * div(u) term in the CLS equation. "
       "It should be set to false when the phases are incompressible");
   }
   prm.leave_subsection();
@@ -183,15 +183,15 @@ Parameters::VOF_RegularizationMethod::declare_parameters(
       "none",
       Patterns::Selection(
         "none|projection-based interface sharpening|pde-based interface reinitialization|geometric interface reinitialization"),
-      "VOF interface reinitialization method");
+      "CLS interface reinitialization method");
 
     prm.declare_entry(
       "frequency",
       "10",
       Patterns::Integer(),
       "Reinitialization frequency (number of time steps) at which the "
-      "interface reinitialization process will be applied to the VOF "
-      "phase fraction field.");
+      "interface reinitialization process will be applied to the CLS "
+      "phase indicator field.");
     prm.declare_entry(
       "verbosity",
       "quiet",
@@ -270,7 +270,7 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
       "type",
       "constant",
       Patterns::Selection("constant|adaptive"),
-      "VOF interface sharpening type, "
+      "CLS interface sharpening type, "
       "if constant the sharpening threshold is the same throughout the simulation, "
       "if adaptive the sharpening threshold is determined by binary search, "
       "to ensure mass conservation of the monitored phase");
@@ -280,7 +280,7 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
       "threshold",
       "0.5",
       Patterns::Double(),
-      "Interface sharpening threshold that represents the phase fraction at which "
+      "Interface sharpening threshold that represents the phase indicator at which "
       "the interphase is considered located");
 
     // Parameters for adaptive sharpening
@@ -383,13 +383,16 @@ Parameters::VOF_SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
     prm.declare_entry("output auxiliary fields",
                       "false",
                       Patterns::Bool(),
-                      "Output the phase fraction gradient and curvature");
+                      "Output the phase indicator gradient and curvature");
 
     prm.declare_entry(
-      "phase fraction gradient diffusion factor",
+      "phase indicator gradient diffusion factor",
       "4",
       Patterns::Double(),
-      "Factor applied to the filter for phase fraction gradient calculations to damp high-frequency errors");
+      "Factor applied to the filter for phase indicator gradient calculations to damp high-frequency errors");
+    prm.declare_alias("phase indicator gradient diffusion factor",
+                      "phase fraction gradient diffusion factor",
+                      true);
 
     prm.declare_entry(
       "curvature diffusion factor",
@@ -420,7 +423,7 @@ Parameters::VOF_SurfaceTensionForce::parse_parameters(ParameterHandler &prm)
   {
     enable = prm.get_bool("enable");
     phase_fraction_gradient_diffusion_factor =
-      prm.get_double("phase fraction gradient diffusion factor");
+      prm.get_double("phase indicator gradient diffusion factor");
     curvature_diffusion_factor = prm.get_double("curvature diffusion factor");
 
     output_vof_auxiliary_fields = prm.get_bool("output auxiliary fields");
@@ -447,7 +450,7 @@ Parameters::VOF_PhaseFilter::declare_parameters(ParameterHandler &prm)
       "type",
       "none",
       Patterns::Selection("none|tanh"),
-      "VOF phase filtration type, "
+      "CLS phase indicator filtration type, "
       "if <none> is selected, the phase won't be filtered"
       "if <tanh> is selected, the filtered phase will be a result of the "
       "following function: \\alpha_f = 0.5 \\tanh(\\beta(\\alpha-0.5)) + 0.5; "

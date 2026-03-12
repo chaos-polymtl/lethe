@@ -232,14 +232,14 @@ public:
     if (multiphysics.VOF && physical_properties.number_of_fluids != 2)
       {
         throw std::logic_error(
-          "Inconsistency in .prm!\n with VOF = true\n use: number of fluids = 2");
+          "Inconsistency in .prm!\n with CLS = true\n use: number of fluids = 2");
       }
 
     if (not(multiphysics.VOF) && post_processing.postprocessed_fluid ==
                                    Parameters::FluidIndicator::fluid1)
       {
         throw std::logic_error(
-          "Inconsistency in .prm!\n when VOF = false"
+          "Inconsistency in .prm!\n when CLS = false"
           "\n use (default value): set postprocessed fluid = both"
           "\n or: set postprocessed fluid = fluid 0");
       }
@@ -250,7 +250,7 @@ public:
         throw std::logic_error(
           "Inconsistency in .prm!\n "
           "Number of fluids in 'physical properties' was set to 2,\n "
-          "but neither VOF or cahn hilliard is enabled in the 'multiphysics'.\n ");
+          "but neither CLS or cahn hilliard is enabled in the 'multiphysics'.\n ");
       }
 
     // Interface physical property models consistency check
@@ -308,7 +308,7 @@ public:
                   {
                     throw std::logic_error(
                       "Inconsistency in .prm!\n "
-                      "In subsection multiphysics, VOF and heat transfer enabled,\n "
+                      "In subsection multiphysics, CLS and heat transfer enabled,\n "
                       "and in subsection physical properties, a non-constant surface\n "
                       "tension model, but Marangoni effect disabled in subsection\n "
                       "surface tension force of subsection CLS. This is necessary to account\n "
@@ -404,7 +404,7 @@ public:
     if (multiphysics.cahn_hilliard && multiphysics.VOF)
       {
         throw std::runtime_error(
-          "Cannot solve a multiphase problem using VOF and Cahn-Hilliard at the same time");
+          "Cannot solve a multiphase problem using CLS and Cahn-Hilliard at the same time");
       }
 
     if (multiphysics.cahn_hilliard &&
@@ -437,7 +437,7 @@ public:
       {
         throw std::logic_error(
           "At the moment, the laser surface heat flux is not implemented for 1 fluid simulations."
-          "Please enable the VOF auxiliary physic in the 'multiphysics' subsection, \n"
+          "Please enable the CLS auxiliary physic in the 'multiphysics' subsection, \n"
           "specify a 2nd fluid in the 'physical properties' subsection,\n"
           "and define appropriate initial conditions in the 'initial conditions' subsection.");
       }
@@ -497,7 +497,7 @@ public:
          multiphysics.VOF),
         ExcMessage(
           "The current implementation only allows the capillary time-step constraint \n "
-          "to be respected for VOF multiphase flows with surface tension.\n "));
+          "to be respected for CLS multiphase flows with surface tension.\n "));
   }
 
   inline bool

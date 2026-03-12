@@ -138,7 +138,7 @@ namespace Parameters
         "smoothing type",
         "none",
         Patterns::Selection("none|diffusive|geometric"),
-        "Apply a projection step with diffusion to smooth the VOF initial condition");
+        "Apply a projection step with diffusion to smooth the CLS initial condition");
 
       prm.declare_entry(
         "diffusion factor",
@@ -215,7 +215,7 @@ namespace Parameters
           vof_initial_condition_smoothing = VOFInitialConditionType::geometric;
         else
           throw(
-            std::runtime_error("Unknown VOF initial condition smoothing type"));
+            std::runtime_error("Unknown CLS initial condition smoothing type"));
 
         projection_step_diffusion_factor = prm.get_double("diffusion factor");
       }

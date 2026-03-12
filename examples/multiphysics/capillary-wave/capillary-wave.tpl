@@ -24,23 +24,23 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF = true
+  set CLS = true
 end
 
 #---------------------------------------------------
-# VOF
+# CLS
 #---------------------------------------------------
 
-subsection VOF
+subsection CLS
   subsection surface tension force
-    set enable                                   = true
-    set phase fraction gradient diffusion factor = 4
-    set curvature diffusion factor               = 1
-    set output auxiliary fields                  = true
+    set enable                                    = true
+    set phase indicator gradient diffusion factor = 4
+    set curvature diffusion factor                = 1
+    set output auxiliary fields                   = true
   end
   subsection phase filtration
-    set type      = tanh
-    set beta      = 10
+    set type = tanh
+    set beta = 10
   end
 end
 
@@ -53,7 +53,7 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function expression = if (y<=1e-6*cos(2*3.14159/1e-4*x), min(0.5-(y-1e-6*cos(2*3.14159/1e-4*x))/1e-6,1), max(0.5-(y-1e-6*cos(2*3.14159/1e-4*x))/1e-6,0))
     set smoothing type      = diffusive
     set diffusion factor    = 1
@@ -102,7 +102,7 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set type                     = adaptive 
+  set type                     = adaptive
   set error estimator          = kelly
   set variable                 = phase
   set fraction type            = fraction
@@ -136,7 +136,7 @@ subsection boundary conditions
   end
 end
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number = 4
 end
 
@@ -147,7 +147,7 @@ end
 subsection FEM
   set velocity order = 1
   set pressure order = 1
-  set VOF order      = 1
+  set CLS order      = 1
 end
 
 # --------------------------------------------------
@@ -160,7 +160,7 @@ subsection non-linear solver
     set max iterations = 20
     set verbosity      = quiet
   end
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-10
     set max iterations = 2
     set verbosity      = quiet
@@ -178,7 +178,7 @@ subsection linear solver
     set minimum residual  = 1e-10
     set preconditioner    = ilu
   end
-  subsection VOF
+  subsection CLS
     set method            = gmres
     set relative residual = 1e-4
     set minimum residual  = 1e-12

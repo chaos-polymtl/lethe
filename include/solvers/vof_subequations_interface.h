@@ -21,7 +21,7 @@ DeclException1(
   "The current solution of the "
     << arg1
     << " is invalid. \n"
-       "A new VOF solution has been set but the subequation was not solved "
+       "A new CLS solution has been set but the subequation was not solved "
        "afterwards.");
 
 DeclException2(PhaseGradientProjectionIsInvalid,
@@ -267,7 +267,7 @@ public:
     std::string subequation_string;
 
     if (subequation_id == VOFSubequationsID::phase_gradient_projection)
-      subequation_string = "CLS phase fraction gradient L2 projection";
+      subequation_string = "CLS phase indicator gradient L2 projection";
     else if (subequation_id == VOFSubequationsID::curvature_projection)
       subequation_string = "CLS curvature L2 projection";
     else if (subequation_id ==

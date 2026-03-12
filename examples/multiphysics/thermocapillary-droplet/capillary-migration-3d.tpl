@@ -18,7 +18,7 @@ subsection simulation control
   set max time step    = 0.0013
   set output name      = CASE_NAME
   set output frequency = 100
-  set group files       = 192
+  set group files      = 192
   set output path      = ./output/
 end
 
@@ -27,15 +27,15 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF           = true
+  set CLS           = true
   set heat transfer = true
 end
 
 #---------------------------------------------------
-# VOF
+# CLS
 #---------------------------------------------------
 
-subsection VOF
+subsection CLS
   subsection phase filtration
     set type = tanh
     set beta = 20
@@ -50,7 +50,7 @@ subsection VOF
       set max iterations      = 50
       set tolerance           = 1e-7
     end
-    subsection algebraic interface reinitialization
+    subsection pde-based interface reinitialization
       set output reinitialization steps = false
       set steady-state criterion        = 1e-4
       set max steps number              = 10000
@@ -60,16 +60,16 @@ subsection VOF
     end
     subsection geometric interface reinitialization
       set max reinitialization distance = REGULARIZATION_DISTANCE
-      set transformation type = tanh
-      set tanh thickness = TANH_THICKNESS
+      set transformation type           = tanh
+      set tanh thickness                = TANH_THICKNESS
     end
   end
   subsection surface tension force
-    set enable                                   = true
-    set phase fraction gradient diffusion factor = 4
-    set curvature diffusion factor               = 1
-    set output auxiliary fields                  = true
-    set enable marangoni effect                  = true
+    set enable                                    = true
+    set phase indicator gradient diffusion factor = 4
+    set curvature diffusion factor                = 1
+    set output auxiliary fields                   = true
+    set enable marangoni effect                   = true
   end
 end
 
@@ -82,7 +82,7 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0; 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function constants  = r=0.25
     set Function expression = 0.5 - 0.5 * tanh((sqrt(x*x + y*y + z*z)-r) / TANH_THICKNESS)
   end
@@ -137,7 +137,7 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set type                     = adaptive 
+  set type                     = adaptive
   set error estimator          = kelly
   set variable                 = phase
   set fraction type            = fraction
@@ -285,7 +285,7 @@ end
 subsection FEM
   set velocity order    = 1
   set pressure order    = 1
-  set VOF order         = 1
+  set CLS order         = 1
   set temperature order = 1
 end
 
@@ -294,7 +294,7 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-8
     set max iterations = 20
     set verbosity      = verbose
@@ -309,7 +309,7 @@ subsection non-linear solver
     set max iterations = 20
     set verbosity      = verbose
   end
-  subsection VOF algebraic interface reinitialization
+  subsection CLS pde-based interface reinitialization
     set tolerance      = 1e-8
     set max iterations = 20
     set verbosity      = verbose
@@ -317,10 +317,10 @@ subsection non-linear solver
 end
 
 # --------------------------------------------------
-# Boundary Conditions VOF
+# Boundary Conditions CLS
 #---------------------------------------------------
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number = 6
 end
 
@@ -340,7 +340,7 @@ subsection linear solver
     set ilu preconditioner relative tolerance = 1.00
     set max krylov vectors                    = 200
   end
-  subsection VOF
+  subsection CLS
     set verbosity                             = verbose
     set method                                = gmres
     set max iters                             = 8000
@@ -362,7 +362,7 @@ subsection linear solver
     set ilu preconditioner relative tolerance = 1.00
     set max krylov vectors                    = 200
   end
-  subsection VOF algebraic interface reinitialization
+  subsection CLS pde-based interface reinitialization
     set verbosity                             = verbose
     set method                                = gmres
     set max iters                             = 8000
@@ -391,7 +391,7 @@ end
 #---------------------------------------------------
 
 subsection stabilization
-  set vof dcdd stabilization           = false
+  set cls dcdd stabilization = false
 end
 
 # --------------------------------------------------

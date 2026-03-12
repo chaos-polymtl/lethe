@@ -214,7 +214,7 @@ end
 
 subsection laser parameters
   set enable               = true
-  set type                 = gaussian_heat_flux_vof_interface
+  set type                 = gaussian_heat_flux_cls_interface
   set concentration factor = 2
   set power                = 156e6 # M*L^2*T^-3
   set absorptivity         = 0.35
@@ -254,7 +254,7 @@ subsection CLS
   end
   subsection surface tension force
     set enable                                   = true
-    set phase fraction gradient diffusion factor = 4
+    set phase indicator gradient diffusion factor = 4
     set curvature diffusion factor               = 1
     set output auxiliary fields                  = true
     set enable marangoni effect                  = true

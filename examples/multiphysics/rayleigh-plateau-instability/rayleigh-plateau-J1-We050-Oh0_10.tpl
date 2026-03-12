@@ -27,14 +27,14 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF = true
+  set CLS = true
 end
 
 #---------------------------------------------------
-# VOF
+# CLS
 #---------------------------------------------------
 
-subsection VOF
+subsection CLS
   subsection surface tension force
     set enable                  = true
     set output auxiliary fields = true
@@ -62,7 +62,7 @@ subsection initial conditions
     set Function constants  = U=1.569
     set Function expression = if(y^2 <= 1.3110e-6, U, 0); 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function expression = if(y^2 <= 1.3110e-6, 1, 0)
     set smoothing type      = diffusive
   end
@@ -107,7 +107,7 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set type                     = adaptive 
+  set type                     = adaptive
   set error estimator          = kelly
   set variable                 = phase
   set fraction type            = fraction
@@ -146,10 +146,10 @@ subsection boundary conditions
 end
 
 # --------------------------------------------------
-# Boundary Conditions VOF
+# Boundary Conditions CLS
 #---------------------------------------------------
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number = 4
   subsection bc 0
     set id   = 0
@@ -169,7 +169,7 @@ subsection non-linear solver
     set tolerance      = 1e-6
     set max iterations = 20
   end
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-10
     set max iterations = 2
   end
@@ -185,7 +185,7 @@ subsection linear solver
     set minimum residual  = 1e-9
     set preconditioner    = amg
   end
-  subsection VOF
+  subsection CLS
     set relative residual = 1e-8
     set minimum residual  = 1e-11
   end

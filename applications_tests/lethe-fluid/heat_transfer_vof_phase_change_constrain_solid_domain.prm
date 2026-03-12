@@ -159,16 +159,16 @@ subsection constrain stasis
   set enable                = true
   set number of constraints = 2
   subsection constraint 0
-    set fluid id                 = 0
-    set phase fraction tolerance = 1e-4
-    set min temperature          = 0
-    set max temperature          = 28
+    set fluid id                  = 0
+    set phase indicator tolerance = 1e-4
+    set min temperature           = 0
+    set max temperature           = 28
   end
   subsection constraint 1
-    set fluid id                 = 1
-    set phase fraction tolerance = 1e-4
-    set min temperature          = 0
-    set max temperature          = 33
+    set fluid id                  = 1
+    set phase indicator tolerance = 1e-4
+    set min temperature           = 0
+    set max temperature           = 33
   end
 end
 
