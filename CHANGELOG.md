@@ -3,6 +3,25 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/03/11
+
+### Changed
+
+- MAJOR This PR renames all occurrences of "VOF", "interface regularization", "algebraic interface reinitialization", and "phase fraction" with "CLS", "interface reinitialization", "pde-based interface reinitialization", and "phase indicator" respectively in:
+  - parameter names, values and descriptions;
+  - parameter subsection names;
+  - console output strings (including warning and exception messages) that are not related to in-code variables or classes names, and
+  - .prm, .tpl, .output files in the code (application tests and examples).
+  
+  All modified parameter names have an alias with their previous names.
+  The objective of this PR is to update all in-code user-seen aspects when running the code that refer to VOF with CLS. All related documentation will be updated in a subsequent PR. In the same mindset, all the changes in the following:
+  - Filenames;
+  - Classes, Structs, variables, and functions names;
+  - VTK output fields, and
+  - post-processing data
+    
+  will also be done in subsequent PRs. [#1937](https://github.com/chaos-polymtl/lethe/pull/1937)
+
 ## [Master] - 2026/03/10
 
 ### Added
