@@ -237,8 +237,9 @@ BirminghamFluidizedBedGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
       // ---- 7. Reassign manifold and boundary IDs ----
 
       // Faces with all vertices at x >= base_length are chimney walls or
-      // the annular top wall; they stay flat.  All other non-end-cap faces
-      // are curved and receive manifold_id 1 (CylindricalManifold).
+      // the annular top wall; they stay flat. The inlet end cap (x ≈ 0) is
+      // also flat. All other non-end-cap faces are curved and receive
+      // manifold_id 1 (CylindricalManifold).
       const double total_length = base_length + chimney_length;
 
       for (auto &cell : triangulation.active_cell_iterators())
