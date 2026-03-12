@@ -1,0 +1,17 @@
+<map id="/home/runner/work/lethe/lethe/source/core/grid_birmingham_fluidized_bed.cc" name="/home/runner/work/lethe/lethe/source/core/grid_birmingham_fluidized_bed.cc">
+<area shape="rect" id="Node000001" title=" " alt="" coords="488,5,707,60"/>
+<area shape="rect" id="Node000002" href="$grid__birmingham__fluidized__bed_8h.html" title=" " alt="" coords="515,108,680,148"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="600,60,600,94,595,94,595,60"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,203,168,229"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="515,144,180,199,155,203,154,198,180,193,514,139"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="193,203,394,229"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="531,151,348,202,346,197,530,145"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="419,203,589,229"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="578,150,529,196,525,192,575,146"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="614,196,767,236"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="620,146,662,185,658,189,616,150"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="792,203,848,229"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="654,146,781,194,785,195,783,200,779,198,652,151"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="872,203,947,229"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="681,145,768,167,861,193,869,196,867,201,859,199,767,172,680,150"/>
+</map>
