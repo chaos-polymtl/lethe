@@ -1,17 +1,25 @@
 #############################################################################
 """
-Extraction particles properties and write them an particles.input file for
-"file" insertion method.
+SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
+This script extracts particles properties and writes them to a particles.input
+file for "file" insertion method.
 """
 #############################################################################
 '''Importing Libraries'''
+import argparse
 import sys
 import numpy as np
 from lethe_pyvista_tools import *
 #############################################################################
 
 # Create the particle object
-prm_file_name = "01-01-00.prm"
+# Argument parser
+parser = argparse.ArgumentParser(description="Extract particle data from Lethe output")
+parser.add_argument("prm_file_name", help="Name of the .prm file")
+args = parser.parse_args()
+
+prm_file_name = args.prm_file_name
+
 pvd_name = 'out.pvd'
 output_file_name = "particles.input"
 particle = lethe_pyvista_tools("./", prm_file_name, pvd_name)
@@ -47,4 +55,4 @@ with open(output_file_name, 'w') as file:
         file.write(
             f"{px}; {py}; {pz}; {vx}; {vy}; {vz}; {wx}; {wy}; {wz}; {d}; \n")
 
-print("Job is finish")
+print("Job is finished, the particle properties are saved in the file: " + output_file_name)
