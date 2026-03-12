@@ -47,8 +47,8 @@ end
 
 subsection post-processing
   set verbosity                = verbose
-  set calculate enstrophy      = true
-  set calculate kinetic energy = true
+  set calculate enstrophy      = false
+  set calculate kinetic energy = false
 end
 
 #---------------------------------------------------
