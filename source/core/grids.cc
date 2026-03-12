@@ -4,6 +4,7 @@
 #include <core/boundary_conditions.h>
 #include <core/cylinder_grid.h>
 #include <core/fichera_oven_grid.h>
+#include <core/grid_birmingham_fluidized_bed.h>
 #include <core/grids.h>
 #include <core/periodic_hills_grid.h>
 #include <core/uniform_channel_with_meshed_cylinder_grid.h>
@@ -178,6 +179,19 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
               "Unsupported mesh type - Fichera oven mesh with simplex is not supported"));
 
           FicheraOvenGrid<dim, spacedim> grid(mesh_parameters.grid_arguments);
+          grid.make_grid(triangulation);
+
+          GridTools::scale(mesh_parameters.scale, triangulation);
+        }
+      else if (grid_type == "birmingham_fluidized_bed")
+        {
+          AssertThrow(
+            !mesh_parameters.simplex,
+            ExcMessage(
+              "Unsupported mesh type - Birmingham fluidized bed mesh with simplex is not supported"));
+
+          BirminghamFluidizedBedGrid<dim, spacedim> grid(
+            mesh_parameters.grid_arguments);
           grid.make_grid(triangulation);
 
           GridTools::scale(mesh_parameters.scale, triangulation);

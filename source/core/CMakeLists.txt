@@ -11,6 +11,7 @@ add_library(lethe-core
   evaporation_model.cc
   fichera_oven_grid.cc
   grids.cc
+  grid_birmingham_fluidized_bed.cc
   ib_particle.cc
   ib_stencil.cc
   interface_tools.cc
@@ -61,6 +62,7 @@ add_library(lethe-core
   ../../include/core/exceptions.h
   ../../include/core/fichera_oven_grid.h
   ../../include/core/grids.h
+  ../../include/core/grid_birmingham_fluidized_bed.h
   ../../include/core/ib_particle.h
   ../../include/core/ib_stencil.h
   ../../include/core/inexact_newton_non_linear_solver_strategy.h
