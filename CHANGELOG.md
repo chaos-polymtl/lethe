@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/03/12
+		
+### Changed
+
+- MAJOR Following PR [#1937](https://github.com/chaos-polymtl/7lethe/pull/1937), this PR renames all occurrences of "VOF", "interface regularization", "algebraic interface reinitialization", and "phase fraction" with "CLS", "interface reinitialization", "pde-based interface reinitialization", and "phase indicator" respectively in the parameters and theory sections of the documentation. [#1938](https://github.com/chaos-polymtl/7lethe/pull/1938).
+
 ## [Master] - 2026/03/11
 
 ### Added
