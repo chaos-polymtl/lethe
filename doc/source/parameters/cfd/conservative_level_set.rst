@@ -21,7 +21,7 @@ The default values of the CLS parameters are given in the text box below.
     set diffusivity               = 0
     set compressible              = false
     
-    subsection interface regularization method
+    subsection interface reinitialization method
       set type       = none
       set frequency  = 10
       set verbosity  = quiet
@@ -46,7 +46,7 @@ The default values of the CLS parameters are given in the text box below.
         set tanh thickness                = 1.0
       end
 
-      subsection algebraic interface reinitialization
+      subsection pde-based interface reinitialization
         set output reinitialization steps = false
         set steady-state criterion        = 1e-4
         set max steps number              = 10000
@@ -85,29 +85,29 @@ The default values of the CLS parameters are given in the text box below.
 * ``diffusivity``: value of the diffusivity (diffusion coefficient) in the transport equation of the phase fraction. Default value is ``0`` to have pure advection. 
 * ``compressible``: enables interface compression (:math:`\phi \nabla \cdot \mathbf{u}`) in the CLS equation.  This term should be kept to its default value of ``false`` except when compressible equations of state are used.
 
-Interface Regularization Method
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Interface Reinitialization Method
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``subsection interface regularization method`` defines parameters to counter numerical diffusion of the CLS method and to avoid the interface between the two fluids becoming more and more blurry after each time step.
+The ``subsection interface reinitialization method`` defines parameters to counter numerical diffusion of the CLS method and to avoid the interface between the two fluids becoming more and more blurry after each time step.
 
-* ``type``: sets the method of regularization. There are four methods available:``none``, ``projection-based interface sharpening``, ``geometric interface reinitialization``, and ``algebraic interface reinitialization``. If ``none`` is selected, the interface is not regularized. The three other types are described bellow along with their corresponding subsection.
-* ``frequency``: indicates the frequency at which the regularization process is applied to the CLS phase fraction field. For instance, if the user specifies ``frequency = 2``, the interface will be regularized once every :math:`2` time steps.
+* ``type``: sets the method of reinitialization. There are four methods available:``none``, ``projection-based interface sharpening``, ``geometric interface reinitialization``, and ``pde-based interface reinitialization``. If ``none`` is selected, the interface is not regularized. The three other types are described bellow along with their corresponding subsection.
+* ``frequency``: indicates the frequency at which the reinitialization process is applied to the CLS phase fraction field. For instance, if the user specifies ``frequency = 2``, the interface will be regularized once every :math:`2` time steps.
 
-* ``verbosity``: displays the solution process of the regularization method. The different levels of verbosity are:
+* ``verbosity``: displays the solution process of the reinitialization method. The different levels of verbosity are:
 
   * ``quiet``: default verbosity level; no information on the process is displayed.
 
     .. warning::
-      The verbosity of the algebraic interface reinitialization (``type = algebraic``) depends also on the verbosity level of the non-linear and linear solvers. If they are set to ``verbose``, the console outputs of the iteration progress (e.g., norms of the residual and Newton update) may remain.
+      The verbosity of the pde-based interface reinitialization (``type = pde-based``) depends also on the verbosity level of the non-linear and linear solvers. If they are set to ``verbose``, the console outputs of the iteration progress (e.g., norms of the residual and Newton update) may remain.
 
-  * ``verbose``: displays regularization steps progression. For the ``algebraic interface reinitialization``, it only indicates the details of the non-linear and linear iterations if the corresponding solvers are also set to ``verbose``.
+  * ``verbose``: displays reinitialization steps progression. For the ``pde-based interface reinitialization``, it only indicates the details of the non-linear and linear iterations if the corresponding solvers are also set to ``verbose``.
 
-  * ``extra verbose``: for the ``projection-based interface sharpening``, indicates the details of the linear iterations. For the ``algebraic interface reinitialization``, in addition to what is displayed at the ``verbose`` level, it displays the steady-state criterion progression through reinitialization steps. This may be used for debugging purposes.
+  * ``extra verbose``: for the ``projection-based interface sharpening``, indicates the details of the linear iterations. For the ``pde-based interface reinitialization``, in addition to what is displayed at the ``verbose`` level, it displays the steady-state criterion progression through reinitialization steps. This may be used for debugging purposes.
   
 Projection-Based Interface Sharpening
 +++++++++++++++++++++++++++++++++++++
 
-The ``type = projection-based interface sharpening`` corresponds to a projection-based regularization method in which the phase indicator is projected into a sharper space. The reader is referred to the Projection-Based Interface Sharpening section of :doc:`../../../theory/multiphase/cfd/cls` theory guide for additional details on this regularization method. The ``subsection projection-based interface sharpening`` defines the relevant parameters.
+The ``type = projection-based interface sharpening`` corresponds to a projection-based reinitialization method in which the phase indicator is projected into a sharper space. The reader is referred to the Projection-Based Interface Sharpening section of :doc:`../../../theory/multiphase/cfd/cls` theory guide for additional details on this reinitialization method. The ``subsection projection-based interface sharpening`` defines the relevant parameters.
 
 * ``interface sharpness``: sharpness of the moving interface, denoted :math:`\alpha` in the Interface Sharpening section of :doc:`../../../theory/multiphase/cfd/cls` and :math:`a` in the `interface sharpening model <https://www.researchgate.net/publication/287118331_Development_of_efficient_interface_sharpening_procedure_for_viscous_incompressible_flows>`_ paper. This parameter must be larger than 1 for interface sharpening. Choosing values less than 1 leads to interface smoothing instead of sharpening. A good value would be around 1.5.
 
@@ -166,12 +166,12 @@ The ``type = geometric interface reinitialization`` reinitializes the phase frac
     
     where :math:`d' = d/d_\mathrm{max}` is the dimensionless distance to the interface and :math:`d_\mathrm{max}` is the ``max reinitialization distance``.
   
-Algebraic Interface Reinitialization
+PDE-based Interface Reinitialization
 ++++++++++++++++++++++++++++++++++++
 
-The ``type = algebraic interface reinitialization`` corresponds to a PDE-based reinitialization method. Alike the projection-based interface sharpening, this aims to reduce numerical diffusion of the phase fraction and redefine the interface sharply by resolving a PDE.  The reader is referred to the *Algebraic Interface Reinitialization* section of the :doc:`Conservative level set method theory guide<../../../theory/multiphase/cfd/cls>` for additional details on this method. The ``subsection algebraic interface reinitialization`` defines parameters used to reinitialize the interface in CLS simulations. 
+The ``type = pde-based interface reinitialization`` corresponds to a PDE-based reinitialization method. Alike the projection-based interface sharpening, this aims to reduce numerical diffusion of the phase fraction and redefine the interface sharply by resolving a PDE.  The reader is referred to the *PDE-based Interface Reinitialization* section of the :doc:`Conservative level set method theory guide<../../../theory/multiphase/cfd/cls>` for additional details on this method. The ``subsection pde-based interface reinitialization`` defines parameters used to reinitialize the interface in CLS simulations. 
 
-* ``output reinitialization steps``: when set to ``true``, it enables outputs in parallel vtu format of the algebraic reinitialization steps. The files are stored in a folder named ``algebraic-reinitialization-steps-output`` located inside the ``output path`` directory specified in the :doc:`simulation control<./simulation_control>` subsection.
+* ``output reinitialization steps``: when set to ``true``, it enables outputs in parallel vtu format of the pde-based reinitialization steps. The files are stored in a folder named ``pde-based-reinitialization-steps-output`` located inside the ``output path`` directory specified in the :doc:`simulation control<./simulation_control>` subsection.
 
   Outputted quantities of interest are:
     * Reinitialized phase fraction scalar-field (``reinit_phase_fraction``);
@@ -184,7 +184,7 @@ The ``type = algebraic interface reinitialization`` corresponds to a PDE-based r
 
 The interface reinitialization process ends either when steady-state (``steady-state criterion``) is reached or when an imposed maximum number of steps (``max steps number``) is reached.
 
-* ``steady-state criterion``: one of the two stop criteria of the interface reinitialization process. This parameter :math:`(\alpha_\text{ss})` acts as a tolerance for reaching steady-state when solving the algebraic interface reinitialization partial differential equation (PDE).
+* ``steady-state criterion``: one of the two stop criteria of the interface reinitialization process. This parameter :math:`(\alpha_\text{ss})` acts as a tolerance for reaching steady-state when solving the pde-based interface reinitialization partial differential equation (PDE).
 
   .. math::
    \alpha_\text{ss} \geq \frac{ \lVert \phi_\text{reinit}^{\iota + 1} - \phi_\text{reinit}^{\iota} \rVert_2}{\lVert \phi_\text{reinit}^{\iota} \rVert_2}
@@ -194,7 +194,7 @@ The interface reinitialization process ends either when steady-state (``steady-s
 
 * ``max steps number``: indicates the maximum number of interface reinitialization steps that can be applied before the process ends.
 
-The algebraic interface reinitialization PDE contains a diffusion term. This term contains a diffusion coefficient :math:`(\varepsilon)` given by:
+The pde-based interface reinitialization PDE contains a diffusion term. This term contains a diffusion coefficient :math:`(\varepsilon)` given by:
 
 .. math::
   \varepsilon = C h_\text{min}^d

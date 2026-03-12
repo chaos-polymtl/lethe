@@ -106,12 +106,12 @@ where :math:`D_\mathrm{DCDD}` is a user-defined diffusion coefficient. The term 
 
 To avoid a non-linear finite element formulation, the phase gradient of the previous time step :math:`(\phi^h_\mathrm{old})` is used.
 
-Interface Diffusion and Regularization
+Interface Diffusion and Reinitialization
 --------------------------------------
 
 The CLS method tends to diffuse the interface, i.e., over time, the interface becomes blurry instead of a sharp definition, and the change from :math:`\phi = 0` to :math:`1` occurs on a larger distance.
 
-Thus, we use regularization methods to keep the change in :math:`\phi` sharp at the interface. Three methods are currently available: projection-based interface sharpening, algebraic interface reinitialization and interface filtration.
+Thus, we use reinitialization methods to keep the change in :math:`\phi` sharp at the interface. Three methods are currently available: projection-based interface sharpening, PDE-based interface reinitialization and interface filtration.
 
 """"""""""""""""""""""""""""""""""""""
 Projection-Based Interface Sharpening
@@ -185,10 +185,10 @@ In Lethe, two functions are available to achieve that: a hyperbolic tangent func
   where :math:`d' = d/d_\mathrm{max}` is the dimensionless distance. Contrary to the hyperbolic tangent function, it ensures that :math:`\phi=0` or :math:`1` when :math:`d = \pm d_\mathrm{max}`.
 
 """"""""""""""""""""""""""""""""""""""""
-Algebraic Interface Reinitialization
+PDE-based Interface Reinitialization
 """"""""""""""""""""""""""""""""""""""""
 
-The algebraic interface reinitialization method consists of compressing and diffusing the interface in its normal direction. This is done by solving the following transient Partial Differential Equation (PDE) until steady-state is reached using an artificial time-stepping scheme as proposed by Olsson and coworkers (2007) [#olsson2007]_:
+The PDE-based interface reinitialization method consists of compressing and diffusing the interface in its normal direction. This is done by solving the following transient Partial Differential Equation (PDE) until steady-state is reached using an artificial time-stepping scheme as proposed by Olsson and coworkers (2007) [#olsson2007]_:
 
 .. math::
 
