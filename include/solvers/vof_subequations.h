@@ -36,7 +36,7 @@ get_vof_subequation_id(const std::string &vof_subequation_name)
   else if (vof_subequation_name == "CLS pde-based interface reinitialization")
     return VOFSubequationsID::algebraic_interface_reinitialization;
   else
-    throw(std::invalid_argument("Invalid VOF subequation name. Options are: \n"
+    throw(std::invalid_argument("Invalid CLS subequation name. Options are: \n"
                                 " <CLS phase gradient L2 projection>\n"
                                 " <CLS curvature L2 projection>\n"
                                 " <CLS pde-based interface reinitialization>"));

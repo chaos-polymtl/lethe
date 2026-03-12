@@ -77,7 +77,7 @@ public:
       }
     else if (physics_id == PhysicsID::VOF)
       {
-        announce_string(pcout, "VOF");
+        announce_string(pcout, "CLS");
       }
     else if (physics_id == PhysicsID::cahn_hilliard)
       {

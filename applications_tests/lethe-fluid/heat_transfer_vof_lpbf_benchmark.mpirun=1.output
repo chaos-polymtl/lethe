@@ -3,7 +3,7 @@ Running on 1 MPI rank(s)...
    Number of degrees of freedom: 75
    Volume of triangulation:      0.36
    Number of thermal degrees of freedom: 25
-   Number of VOF degrees of freedom: 25
+   Number of CLS degrees of freedom: 25
 ************************
 ---> Simulation Restart 
 ************************
@@ -11,9 +11,9 @@ Running on 1 MPI rank(s)...
    Number of degrees of freedom: 3267
    Volume of triangulation:      0.36
    Number of thermal degrees of freedom: 1089
-   Number of VOF degrees of freedom: 1089
+   Number of CLS degrees of freedom: 1089
 Reading heat transfer checkpoint
-Reading VOF checkpoint
+Reading CLS checkpoint
 
 ***********************************************************************************
 Transient iteration: 31       Time: 6.012e-06 Time step: 2e-07    CFL: 1.00174e-06
@@ -25,7 +25,7 @@ Temperature statistics on fluid:
 	 Std-Dev: 72.4407
 
 ----------------------
-VOF Mass Conservation
+CLS Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
 6.012000e-06    1.068750e-01              1.070024e-01            1.906650e-10   6.000000e-01       1.499019e-11       2.775805e-14    2.531250e-01              2.529976e-01            1.118812e-06   6.000000e-01       5.049639e-11      -6.311386e-13         5.000000e-01 
@@ -40,7 +40,7 @@ Temperature statistics on fluid:
 	 Std-Dev: 74.5852
 
 ----------------------
-VOF Mass Conservation
+CLS Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
 6.212000e-06    1.068750e-01              1.070024e-01            1.906650e-10   6.000000e-01       1.491929e-11       3.311475e-14    2.531250e-01              2.529976e-01            1.118812e-06   6.000000e-01       4.991163e-11      -1.102740e-12         5.000000e-01 
@@ -55,7 +55,7 @@ Temperature statistics on fluid:
 	 Std-Dev: 76.7152
 
 ----------------------
-VOF Mass Conservation
+CLS Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
 6.412000e-06    1.068750e-01              1.070024e-01            1.906650e-10   6.000000e-01       1.493979e-11       3.654251e-14    2.531250e-01              2.529976e-01            1.118812e-06   6.000000e-01       5.063419e-11      -5.709350e-13         5.000000e-01 
@@ -70,7 +70,7 @@ Temperature statistics on fluid:
 	 Std-Dev: 78.8307
 
 ----------------------
-VOF Mass Conservation
+CLS Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
 6.612000e-06    1.068750e-01              1.070024e-01            1.906650e-10   6.000000e-01       1.499280e-11       3.803088e-14    2.531250e-01              2.529976e-01            1.118812e-06   6.000000e-01       5.073913e-11      -3.301725e-13         5.000000e-01 
@@ -85,7 +85,7 @@ Temperature statistics on fluid:
 	 Std-Dev: 80.932
 
 ----------------------
-VOF Mass Conservation
+CLS Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
 6.812000e-06    1.068750e-01              1.070024e-01            1.906650e-10   6.000000e-01       1.503812e-11       4.255058e-14    2.531250e-01              2.529976e-01            1.118812e-06   6.000000e-01       5.085904e-11       3.388782e-13         5.000000e-01 
@@ -100,7 +100,7 @@ Temperature statistics on fluid:
 	 Std-Dev: 83.0192
 
 ----------------------
-VOF Mass Conservation
+CLS Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
 7.012000e-06    1.068750e-01              1.070024e-01            1.906650e-10   6.000000e-01       1.507797e-11       4.699961e-14    2.531250e-01              2.529976e-01            1.118812e-06   6.000000e-01       5.066961e-11       5.726447e-13         5.000000e-01 
@@ -115,7 +115,7 @@ Temperature statistics on fluid:
 	 Std-Dev: 85.0926
 
 ----------------------
-VOF Mass Conservation
+CLS Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
 7.212000e-06    1.068750e-01              1.070024e-01            1.906650e-10   6.000000e-01       1.509534e-11       5.055428e-14    2.531250e-01              2.529976e-01            1.118812e-06   6.000000e-01       5.018604e-11       6.181659e-13         5.000000e-01 
@@ -130,7 +130,7 @@ Temperature statistics on fluid:
 	 Std-Dev: 87.1524
 
 ----------------------
-VOF Mass Conservation
+CLS Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
 7.412000e-06    1.068750e-01              1.070024e-01            1.906650e-10   6.000000e-01       1.508543e-11       5.219817e-14    2.531250e-01              2.529976e-01            1.118812e-06   6.000000e-01       4.961111e-11       4.707635e-13         5.000000e-01 
@@ -145,7 +145,7 @@ Temperature statistics on fluid:
 	 Std-Dev: 89.1986
 
 ----------------------
-VOF Mass Conservation
+CLS Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
 7.612000e-06    1.068750e-01              1.070024e-01            1.906650e-10   6.000000e-01       1.506457e-11       5.434590e-14    2.531250e-01              2.529976e-01            1.118812e-06   6.000000e-01       4.913436e-11       4.304867e-13         5.000000e-01 
@@ -160,7 +160,7 @@ Temperature statistics on fluid:
 	 Std-Dev: 91.2316
 
 ----------------------
-VOF Mass Conservation
+CLS Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
 7.812000e-06    1.068750e-01              1.070029e-01            1.906650e-10   6.000000e-01       1.504041e-11       5.716677e-14    2.531250e-01              2.529971e-01            1.118812e-06   6.000000e-01       4.886027e-11       4.091202e-13         7.969647e-01 
@@ -175,7 +175,7 @@ Temperature statistics on fluid:
 	 Std-Dev: 93.2514
 
 ----------------------
-VOF Mass Conservation
+CLS Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
 8.012000e-06    1.068750e-01              1.070029e-01            1.906650e-10   6.000000e-01       1.501533e-11       5.943337e-14    2.531250e-01              2.529971e-01            1.118812e-06   6.000000e-01       4.840943e-11       3.840301e-13         7.969647e-01 

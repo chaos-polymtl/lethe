@@ -3,7 +3,7 @@ Running on 1 MPI rank(s)...
    Number of degrees of freedom: 19652
    Volume of triangulation:      0.216
    Number of thermal degrees of freedom: 4913
-   Number of VOF degrees of freedom: 4913
+   Number of CLS degrees of freedom: 4913
 Temperature statistics on fluid: 
 	     Min: 298
 	     Max: 298

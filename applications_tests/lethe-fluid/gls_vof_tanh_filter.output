@@ -2,7 +2,7 @@ Running on 1 MPI rank(s)...
    Number of active cells:       50
    Number of degrees of freedom: 198
    Volume of triangulation:      100
-   Number of VOF degrees of freedom: 66
+   Number of CLS degrees of freedom: 66
 Filtered phase values: 
 0.999665
 0.999665

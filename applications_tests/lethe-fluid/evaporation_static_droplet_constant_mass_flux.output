@@ -2,7 +2,7 @@ Running on 1 MPI rank(s)...
    Number of active cells:       16384
    Number of degrees of freedom: 49923
    Volume of triangulation:      25
-   Number of VOF degrees of freedom: 16641
+   Number of CLS degrees of freedom: 16641
 
 *******************************************************************************
 Transient iteration: 1        Time: 0.005    Time step: 0.005    CFL: 0       

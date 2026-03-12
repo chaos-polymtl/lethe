@@ -1648,7 +1648,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
 
 
 
-              announce_string(this->pcout, "VOF Mass Conservation");
+              announce_string(this->pcout, "CLS Mass Conservation");
               table.write_text(std::cout);
             }
         }
@@ -1746,7 +1746,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                 this->simulation_parameters.simulation_control.log_precision,
                 true);
 
-              announce_string(this->pcout, "VOF Barycenter");
+              announce_string(this->pcout, "CLS Barycenter");
               table.write_text(std::cout);
             }
 
@@ -2346,7 +2346,7 @@ VolumeOfFluid<dim>::compute_error_estimate(
           Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly,
         ExcMessage(
           "Only the Kelly error estimator is currently implemented for the "
-          "<phase> VOF field."));
+          "<phase> CLS field."));
 
 
       ComponentMask phase_mask =
@@ -2437,7 +2437,7 @@ VolumeOfFluid<dim>::read_checkpoint()
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
   auto previous_solutions_size = this->previous_solutions->size();
-  this->pcout << "Reading VOF checkpoint" << std::endl;
+  this->pcout << "Reading CLS checkpoint" << std::endl;
 
   std::vector<GlobalVectorType *> input_vectors(1 + previous_solutions_size);
   GlobalVectorType                distributed_system(this->locally_owned_dofs,
@@ -2596,7 +2596,7 @@ VolumeOfFluid<dim>::setup_dofs()
                              dsp,
                              mpi_communicator);
 
-  this->pcout << "   Number of VOF degrees of freedom: "
+  this->pcout << "   Number of CLS degrees of freedom: "
               << this->dof_handler->n_dofs() << std::endl;
 
   // Provide the VOF dof_handler and solution pointers to the
@@ -3325,7 +3325,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method
         .verbosity != Parameters::Verbosity::quiet)
     {
-      announce_string(this->pcout, "VOF geometric interface reinitialization");
+      announce_string(this->pcout, "CLS geometric interface reinitialization");
       this->pcout << "In redistanciation of the previous solution ..."
                   << std::endl;
     }
