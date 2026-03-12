@@ -107,7 +107,7 @@ where :math:`D_\mathrm{DCDD}` is a user-defined diffusion coefficient. The term 
 To avoid a non-linear finite element formulation, the phase gradient of the previous time step :math:`(\phi^h_\mathrm{old})` is used.
 
 Interface Diffusion and Reinitialization
---------------------------------------
+----------------------------------------
 
 The CLS method tends to diffuse the interface, i.e., over time, the interface becomes blurry instead of a sharp definition, and the change from :math:`\phi = 0` to :math:`1` occurs on a larger distance.
 
