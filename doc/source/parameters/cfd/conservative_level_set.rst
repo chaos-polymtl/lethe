@@ -4,7 +4,7 @@ Conservative Level-Set (Multiphase Flow)
 
 In this subsection, the parameters for multiphase flow simulation using the Conservative Level-Set method (CLS) are specified. 
 
-In this method, the two fluids considered are given index of :math:`0` and :math:`1` respectively. The amount of fluid at any given quadrature point is represented by a phase fraction between :math:`0` and :math:`1`. The interface is therefore considered located where the phase fraction :math:`= 0.5`. The interface between the two fluids is moved by a transport equation on the phase fraction.
+In this method, the two fluids considered are given index of :math:`0` and :math:`1` respectively. The amount of fluid at any given quadrature point is represented by a phase indicator between :math:`0` and :math:`1`. The interface is therefore considered located where the phase indicator :math:`= 0.5`. The interface between the two fluids is moved by a transport equation on the phase indicator.
 
 .. note::
 
@@ -65,12 +65,12 @@ The default values of the CLS parameters are given in the text box below.
     end
 
     subsection surface tension force
-      set enable                                   = false
-      set verbosity                                = quiet
-      set output auxiliary fields                  = false
-      set phase fraction gradient diffusion factor = 4
-      set curvature diffusion factor               = 1
-      set enable marangoni effect                  = false
+      set enable                                    = false
+      set verbosity                                 = quiet
+      set output auxiliary fields                   = false
+      set phase indicator gradient diffusion factor = 4
+      set curvature diffusion factor                = 1
+      set enable marangoni effect                   = false
     end
 
   end
@@ -82,7 +82,7 @@ The default values of the CLS parameters are given in the text box below.
   .. tip::
     Applying viscous dissipation in one of the fluids instead of both is particularly useful when one of the fluids is air. For numerical stability, the ``kinematic viscosity`` of the air is usually increased. However, we do not want to have viscous dissipation in the air, because it would result in an unrealistic increase in its temperature. This parameter is used only if ``set heat transfer = true`` and ``set viscous dissipation = true`` in :doc:`./multiphysics`.
 
-* ``diffusivity``: value of the diffusivity (diffusion coefficient) in the transport equation of the phase fraction. Default value is ``0`` to have pure advection. 
+* ``diffusivity``: value of the diffusivity (diffusion coefficient) in the transport equation of the phase indicator. Default value is ``0`` to have pure advection. 
 * ``compressible``: enables interface compression (:math:`\phi \nabla \cdot \mathbf{u}`) in the CLS equation.  This term should be kept to its default value of ``false`` except when compressible equations of state are used.
 
 Interface Reinitialization Method
@@ -91,7 +91,7 @@ Interface Reinitialization Method
 The ``subsection interface reinitialization method`` defines parameters to counter numerical diffusion of the CLS method and to avoid the interface between the two fluids becoming more and more blurry after each time step.
 
 * ``type``: sets the method of reinitialization. There are four methods available:``none``, ``projection-based interface sharpening``, ``geometric interface reinitialization``, and ``pde-based interface reinitialization``. If ``none`` is selected, the interface is not regularized. The three other types are described bellow along with their corresponding subsection.
-* ``frequency``: indicates the frequency at which the reinitialization process is applied to the CLS phase fraction field. For instance, if the user specifies ``frequency = 2``, the interface will be regularized once every :math:`2` time steps.
+* ``frequency``: indicates the frequency at which the reinitialization process is applied to the CLS phase indicator field. For instance, if the user specifies ``frequency = 2``, the interface will be regularized once every :math:`2` time steps.
 
 * ``verbosity``: displays the solution process of the reinitialization method. The different levels of verbosity are:
 
@@ -113,7 +113,7 @@ The ``type = projection-based interface sharpening`` corresponds to a projection
 
 * ``type``: defines the projection-based interface sharpening type, either ``constant`` or ``adaptive``
 
-  * ``set type = constant``: the sharpening ``threshold`` is the same throughout the simulation. This ``threshold``, between ``0`` and ``1`` (``0.5`` by default), corresponds to the phase fraction at which the interface is located.
+  * ``set type = constant``: the sharpening ``threshold`` is the same throughout the simulation. This ``threshold``, between ``0`` and ``1`` (``0.5`` by default), corresponds to the phase indicator at which the interface is located.
   * ``set type = adaptive``: the sharpening threshold is searched in the range :math:`\left[0.5-c_\text{dev} \; ; 0.5+c_\text{dev}\right]`, with :math:`c_\text{dev}` the ``threshold max deviation`` (``0.2`` by default), to ensure mass conservation. The search algorithm will stop either if the mass conservation ``tolerance`` is reached, or if the number of search steps reaches the number of ``max iterations``. If the ``tolerance`` is not reached, a warning message will be printed.
 
   .. admonition:: Example of a warning message if the sharpening is adaptive but the mass conservation tolerance is not reached:
@@ -147,13 +147,13 @@ The ``type = projection-based interface sharpening`` corresponds to a projection
 Geometric Interface Reinitialization
 ++++++++++++++++++++++++++++++++++++
 
-The ``type = geometric interface reinitialization`` reinitializes the phase fraction field by computing the signed distance from the interface. The latter is then converted back to a phase fraction using a transformation function. The reader is referred to the *Geometric Interface Reinitialization* section of the :doc:`Conservative Level-Set method theory guide<../../../theory/multiphase/cfd/cls>` for additional details on this method. The ``geometric interface reinitialization`` sunsection defines the relevant parameters.
+The ``type = geometric interface reinitialization`` reinitializes the phase indicator field by computing the signed distance from the interface. The latter is then converted back to a phase indicator using a transformation function. The reader is referred to the *Geometric Interface Reinitialization* section of the :doc:`Conservative Level-Set method theory guide<../../../theory/multiphase/cfd/cls>` for additional details on this method. The ``geometric interface reinitialization`` sunsection defines the relevant parameters.
 
 * ``max reinitialization distance``: the maximum distance to the interface up to which the signed distance is computed. Above this value, the signed distance is set to the ``max reinitialization distance``.
 
-* ``transformation type``: type of the transformation function used to convert the signed distance to a phase fraction. The choices are: ``tanh`` and ``piecewise polynomial``.
+* ``transformation type``: type of the transformation function used to convert the signed distance to a phase indicator. The choices are: ``tanh`` and ``piecewise polynomial``.
   
-  * ``tanh``: the regularized phase fraction is given by :math:`\phi = 0.5-0.5\tanh(d/\varepsilon)`, where :math:`d` is the signed distance to the interface and :math:`\varepsilon` is a measure of the interface thickness and is set by the parameter ``tanh thickness``.
+  * ``tanh``: the regularized phase indicator is given by :math:`\phi = 0.5-0.5\tanh(d/\varepsilon)`, where :math:`d` is the signed distance to the interface and :math:`\varepsilon` is a measure of the interface thickness and is set by the parameter ``tanh thickness``.
   
   * ``piecewise polynomial``: this transformation uses a piecewise polynomial function of degree 4. It takes the form:
   
@@ -169,18 +169,18 @@ The ``type = geometric interface reinitialization`` reinitializes the phase frac
 PDE-based Interface Reinitialization
 ++++++++++++++++++++++++++++++++++++
 
-The ``type = pde-based interface reinitialization`` corresponds to a PDE-based reinitialization method. Alike the projection-based interface sharpening, this aims to reduce numerical diffusion of the phase fraction and redefine the interface sharply by resolving a PDE.  The reader is referred to the *PDE-based Interface Reinitialization* section of the :doc:`Conservative level set method theory guide<../../../theory/multiphase/cfd/cls>` for additional details on this method. The ``subsection pde-based interface reinitialization`` defines parameters used to reinitialize the interface in CLS simulations. 
+The ``type = pde-based interface reinitialization`` corresponds to a PDE-based reinitialization method. Alike the projection-based interface sharpening, this aims to reduce numerical diffusion of the phase indicator and redefine the interface sharply by resolving a PDE.  The reader is referred to the *PDE-based Interface Reinitialization* section of the :doc:`Conservative level set method theory guide<../../../theory/multiphase/cfd/cls>` for additional details on this method. The ``subsection pde-based interface reinitialization`` defines parameters used to reinitialize the interface in CLS simulations. 
 
 * ``output reinitialization steps``: when set to ``true``, it enables outputs in parallel vtu format of the pde-based reinitialization steps. The files are stored in a folder named ``pde-based-reinitialization-steps-output`` located inside the ``output path`` directory specified in the :doc:`simulation control<./simulation_control>` subsection.
 
   Outputted quantities of interest are:
-    * Reinitialized phase fraction scalar-field (``reinit_phase_fraction``);
-    * CLS phase fraction scalar-field (``cls_phase_fraction``);
+    * Reinitialized phase indicator scalar-field (``reinit_phase_indicator``);
+    * CLS phase indicator scalar-field (``cls_phase_indicator``);
     * CLS projected phase gradient vector-field (``cls_phase_gradient``) and;
     * CLS projected curvature scalar-field (``cls_curvature``).
 
   .. tip::
-    This feature can be used for debugging purposes by observing how the reinitialization steps affect the phase fraction field.
+    This feature can be used for debugging purposes by observing how the reinitialization steps affect the phase indicator field.
 
 The interface reinitialization process ends either when steady-state (``steady-state criterion``) is reached or when an imposed maximum number of steps (``max steps number``) is reached.
 
@@ -220,14 +220,14 @@ The pde-based interface reinitialization PDE contains a diffusion term. This ter
 Phase Filtration
 ~~~~~~~~~~~~~~~~~~
 
-* ``subsection phase filtration``: defines the filter applied to the phase fraction. This affects the definition of the interface.
+* ``subsection phase filtration``: defines the filter applied to the phase indicator. This affects the definition of the interface.
 
 * ``type``: defines the filter type, either ``none`` or ``tanh``
 
-  * ``set type = none``: the phase fraction is not filtered
+  * ``set type = none``: the phase indicator is not filtered
   * ``set type = tanh``: the filter function described in the Interface filtration section of :doc:`../../../theory/multiphase/cfd/cls` theory guide is applied.
 * ``beta``: value of the :math:`\beta` parameter of the ``tanh`` filter
-* ``verbosity``: enables the display of filtered phase fraction values. Choices are ``quiet`` (no output) and ``verbose`` (displays values)
+* ``verbosity``: enables the display of filtered phase indicator values. Choices are ``quiet`` (no output) and ``verbose`` (displays values)
 
 
 Surface Tension Force
@@ -242,14 +242,14 @@ Surface Tension Force
       When the surface tension force is enabled, a ``fluid-fluid`` material interaction and a ``surface tension model`` with its parameters must be specified in the :doc:`physical_properties` subsection.
 
   * ``verbosity``: enables the display of the output from the surface tension force calculations. Choices are: ``quiet`` (default, no output) and ``verbose``.
-  * ``output auxiliary fields``: enables the display of the projected ``phase fraction gradient`` and projected ``curvature``. Used for debugging purposes.
+  * ``output auxiliary fields``: enables the display of the projected ``phase indicator gradient`` and projected ``curvature``. Used for debugging purposes.
 
-  * ``phase fraction gradient diffusion factor``: value of the factor :math:`\alpha` in :math:`\eta_n = \alpha h^2`, where :math:`h` is the cell size. This diffusion coefficient (:math:`\eta_n`) is used in a `projection step <https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643>`_ to damp high frequency errors, that are magnified by differentiation, in the phase fraction gradient (:math:`\bf{\psi}`), following the equation:
+  * ``phase indicator gradient diffusion factor``: value of the factor :math:`\alpha` in :math:`\eta_n = \alpha h^2`, where :math:`h` is the cell size. This diffusion coefficient (:math:`\eta_n`) is used in a `projection step <https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643>`_ to damp high frequency errors, that are magnified by differentiation, in the phase indicator gradient (:math:`\bf{\psi}`), following the equation:
 
     .. math::
         \int_\Omega \left( {\bf{v}} \cdot {\bf{\psi}} + \eta_n \nabla {\bf{v}} \cdot \nabla {\bf{\psi}} \right) d\Omega = \int_\Omega \left( {\bf{v}} \cdot \nabla {\phi} \right) d\Omega
 
-    where :math:`\bf{v}` is a piecewise continuous vector-valued test function, :math:`\bf{\psi}` is the projected phase fraction gradient, and :math:`\phi` is the phase fraction.
+    where :math:`\bf{v}` is a piecewise continuous vector-valued test function, :math:`\bf{\psi}` is the projected phase indicator gradient, and :math:`\phi` is the phase indicator.
 
 
   * ``curvature diffusion factor``: value of the factor :math:`\beta` in  :math:`\eta_\kappa = \beta h^2`, where :math:`h` is the cell size. This diffusion coefficient (:math:`\eta_\kappa`) is used in a `projection step <https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643>`_ to damp high frequency errors, that are magnified by differentiation, in the curvature :math:`\kappa`, following the equation:
@@ -257,7 +257,7 @@ Surface Tension Force
     .. math:: 
         \int_\Omega \left( v \kappa + \eta_\kappa \nabla v \cdot \nabla \kappa \right) d\Omega = \int_\Omega \left( \nabla v \cdot \frac{\bf{\psi}}{|\bf{\psi}|} \right) d\Omega
 
-    where :math:`v` is a test function, :math:`\kappa` is the projected curvature, and :math:`\bf{\psi}` is the projected phase fraction gradient.
+    where :math:`v` is a test function, :math:`\kappa` is the projected curvature, and :math:`\bf{\psi}` is the projected phase indicator gradient.
 
   .. tip::
 
@@ -274,9 +274,9 @@ Surface Tension Force
 Choosing Values for the Surface Tension Force Diffusion Factors
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The following procedure is recommended to choose proper values for the ``phase fraction gradient diffusion factor`` and ``curvature diffusion factor``:
+The following procedure is recommended to choose proper values for the ``phase indicator gradient diffusion factor`` and ``curvature diffusion factor``:
 
-1. Use ``set output auxiliary fields = true`` to write projected phase fraction gradient and projected curvature fields.
+1. Use ``set output auxiliary fields = true`` to write projected phase indicator gradient and projected curvature fields.
 2. Choose a value close to 1, for example, :math:`\alpha = 4` and :math:`\beta = 1`.
-3. Run the simulation and check whether the projected phase fraction gradient field is smooth and without oscillation.
-4.  If the projected phase fraction gradient and projected curvature fields show oscillations, increase the value :math:`\alpha` and :math:`\beta`, and repeat this process until reaching smooth projected phase fraction gradient and projected curvature fields without oscillations.
+3. Run the simulation and check whether the projected phase indicator gradient field is smooth and without oscillation.
+4.  If the projected phase indicator gradient and projected curvature fields show oscillations, increase the value :math:`\alpha` and :math:`\beta`, and repeat this process until reaching smooth projected phase indicator gradient and projected curvature fields without oscillations.

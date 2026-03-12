@@ -72,7 +72,7 @@ It is often necessary to set-up complex initial conditions when simulating trans
     .. math::
       \int_\Omega \left( \psi^* v + \eta_\psi \nabla \psi^* \cdot \nabla v  \right) d\Omega = \int_\Omega \psi v  d\Omega
 
-    where :math:`\psi(\Omega_K)` corresponds to a color function value on the Kth element, :math:`\phi` is the phase fraction, :math:`\psi^*` is the smoothed phase fraction, :math:`\eta_\psi = \alpha h^2` with :math:`\alpha` corresponding to the ``diffusion factor`` and :math:`h` to the cell size, and :math:`v` is a test function.
+    where :math:`\psi(\Omega_K)` corresponds to a color function value on the Kth element, :math:`\phi` is the phase indicator, :math:`\psi^*` is the smoothed phase indicator, :math:`\eta_\psi = \alpha h^2` with :math:`\alpha` corresponding to the ``diffusion factor`` and :math:`h` to the cell size, and :math:`v` is a test function.
     
     * When the parameter ``smoothing type = geometric``, the initial condition is smoothed using a geometric redistanciation method. In that case, the parameters for the geometric redistanciation method are declared in the :ref:`Geometric Interface Reinitialization <geometric-interface-reinitialization>` subsection such as described in the :doc:`Conservative Level-Set (Multiphase Flow)<./conservative_level_set>` documentation.
 
