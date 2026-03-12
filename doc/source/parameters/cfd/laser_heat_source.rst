@@ -71,7 +71,7 @@ If a laser heat source is present in a simulation, it can be added in this secti
   .. math::
       q_\text{rad} = \epsilon \sigma (T^4 - T_\text{inf}^4)
 
-  * ``enable``: controls if the radiation cooling is enabled. The radiation sink is modulated by the filtered phase fraction gradient norm, :math:`|\nabla \psi|`, in such way that the flux is applied at the interface between the fluids.
+  * ``enable``: controls if the radiation cooling is enabled. The radiation sink is modulated by the filtered phase indicator gradient norm, :math:`|\nabla \psi|`, in such way that the flux is applied at the interface between the fluids.
 
     .. warning::
         To apply this radiation cooling, the ``CLS`` parameter must be set to ``true`` in the :doc:`multiphysics` subsection.
@@ -91,7 +91,7 @@ Laser types
       
         q(x,y,z) = \frac{|\nabla \psi| \eta \alpha P}{\pi R^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}
         
-    where :math:`r` is the radial distance from the laser's axis and :math:`|\nabla \psi|` is the :math:`L^2` norm of the filtered phase fraction gradient. In 2D, the pre-exponential factor accounts for the change in the receiving area (going from a disk of radius :math:`R` in 3D to a line segment of length :math:`2R` in 2D): 
+    where :math:`r` is the radial distance from the laser's axis and :math:`|\nabla \psi|` is the :math:`L^2` norm of the filtered phase indicator gradient. In 2D, the pre-exponential factor accounts for the change in the receiving area (going from a disk of radius :math:`R` in 3D to a line segment of length :math:`2R` in 2D): 
     
     .. math::
 
@@ -117,7 +117,7 @@ Laser types
   .. math::
       q(x,y,z) = \frac{\psi \eta \alpha P}{\pi R^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}
 
-  where :math:`\psi` is the filtered phase fraction.
+  where :math:`\psi` is the filtered phase indicator.
 
   .. attention::
     In this case, the heat affects the fluid initialized as ``fluid 1``.
