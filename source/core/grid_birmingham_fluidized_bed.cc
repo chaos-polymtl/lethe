@@ -86,7 +86,7 @@ BirminghamFluidizedBedGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
 
       // Assign manifold IDs to curved surfaces before refining so that new
       // vertices are placed on the cylindrical/conical surface.
-      for (auto &cell : tria_merged.active_cell_iterators())
+      for (const auto &cell : tria_merged.active_cell_iterators())
         {
           cell->set_manifold_id(0);
           for (unsigned int f = 0; f < GeometryInfo<3>::faces_per_cell; ++f)
@@ -242,7 +242,7 @@ BirminghamFluidizedBedGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
       // manifold_id 1 (CylindricalManifold).
       const double total_length = base_length + chimney_length;
 
-      for (auto &cell : triangulation.active_cell_iterators())
+      for (const auto &cell : triangulation.active_cell_iterators())
         {
           cell->set_manifold_id(0);
           for (unsigned int f = 0; f < GeometryInfo<3>::faces_per_cell; ++f)
@@ -301,7 +301,7 @@ BirminghamFluidizedBedGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
 
       triangulation.copy_triangulation(tria_merged);
 
-      for (auto &cell : triangulation.active_cell_iterators())
+      for (const auto &cell : triangulation.active_cell_iterators())
         {
           cell->set_manifold_id(0);
           for (unsigned int f = 0; f < GeometryInfo<3>::faces_per_cell; ++f)
