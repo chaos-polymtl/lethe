@@ -1942,9 +1942,9 @@ namespace Parameters
         "type",
         "gaussian_heat_flux_cls_interface",
         Patterns::Selection(
-          "exponential_decay|gaussian_heat_flux_cls_interface|uniform_heat_flux_vof_interface"),
+          "exponential_decay|gaussian_heat_flux_cls_interface|uniform_heat_flux_cls_interface"),
         "Type of laser model used."
-        "Choices are <exponential_decay|gaussian_heat_flux_cls_interface|uniform_heat_flux_vof_interface>.");
+        "Choices are <exponential_decay|gaussian_heat_flux_cls_interface|uniform_heat_flux_cls_interface>.");
       prm.declare_entry("concentration factor",
                         "2.0",
                         Patterns::Double(),

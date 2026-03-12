@@ -132,7 +132,7 @@ end
 
 subsection laser parameters
   set enable           = true
-  set type             = uniform_heat_flux_vof_interface
+  set type             = uniform_heat_flux_cls_interface
   set power            = 156e6
   set absorptivity     = 0.35
   set beam radius      = 0.5
