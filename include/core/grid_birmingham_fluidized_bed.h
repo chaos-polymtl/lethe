@@ -38,7 +38,7 @@ using namespace dealii;
  * - 0: wall surfaces (curved cylinder/cone laterals; when the chimney is
  *   enabled this also includes the chimney walls and the annular top wall
  *   around the chimney opening),
- * - 1: inlet end cap (x = 0),
+ * - 1: inlet end cap (x = -inlet_offset),
  * - 2: outlet end cap (x = total length), or chimney top face when the
  *   chimney is enabled.
  *
@@ -55,17 +55,18 @@ class BirminghamFluidizedBedGrid
 {
 public:
   /**
-   * @brief Constructor that parses the chimney flag from a colon-separated
+   * @brief Constructor that parses grid parameters from a colon-separated
    * string.
    *
    * @param[in] grid_arguments A string with the following format:
-   * @code "enable_chimney" @endcode
+   * @code "enable_chimney : inlet_offset" @endcode
    *
-   * | #  | Field          | Format     | Required | Description                          |
-   * |----|----------------|------------|----------|--------------------------------------|
-   * |  0 | enable_chimney | true/false | no       | Add chimney outlet (default: true)   |
+   * | #  | Field          | Format     | Required | Description                                  |
+   * |----|----------------|------------|----------|----------------------------------------------|
+   * |  0 | enable_chimney | true/false | no       | Add chimney outlet (default: true)            |
+   * |  1 | inlet_offset   | double     | no       | Extend bottom cylinder into -x (default: 0.0) |
    *
-   * Example: @code "true" @endcode
+   * Example: @code "true : 0.1" @endcode
    */
   BirminghamFluidizedBedGrid(const std::string &grid_arguments);
 
@@ -92,6 +93,9 @@ private:
 
   /// Flag used to indicate if the chimney is added or not to the mesh
   bool enable_chimney;
+
+  /// Length by which the bottom cylinder extends into negative x
+  double inlet_offset;
 };
 
 

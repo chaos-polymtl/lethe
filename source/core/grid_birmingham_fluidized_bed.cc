@@ -18,11 +18,18 @@ BirminghamFluidizedBedGrid<dim, spacedim>::BirminghamFluidizedBedGrid(
 
   this->grid_arguments = grid_arguments;
 
+  AssertThrow(grid_arguments.find(';') == std::string::npos,
+              ExcMessage("The Birmingham fluidized bed grid arguments must be "
+                         "separated by colons (:), not semicolons (;)."));
+
   // Parse optional enable_chimney flag (defaults to true)
   const std::vector<std::string> arguments =
     Utilities::split_string_list(grid_arguments, ':');
 
   this->enable_chimney = !(arguments.size() > 0 && arguments[0] == "false");
+
+  // Parse optional inlet_offset (defaults to 0.0)
+  this->inlet_offset = (arguments.size() > 1) ? std::stod(arguments[1]) : 0.0;
 }
 
 
@@ -44,13 +51,23 @@ BirminghamFluidizedBedGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
 
   // ---- 1. Build the cylindrical geometry ----
 
-  // Bottom cylinder (small radius), shifted to [0, 2*half_len_bot]
+  // Bottom cylinder (small radius), shifted to [-inlet_offset, 2*half_len_bot].
+  // The offset extends the cylinder into negative x while keeping x = 0 at
+  // the original start of the geometry.
+  const double       extended_half_len_bot = half_len_bot + inlet_offset / 2.0;
+  const unsigned int n_axial_bot_total =
+    std::max(1u,
+             static_cast<unsigned int>(
+               std::round(n_axial_bot * (2.0 * half_len_bot + inlet_offset) /
+                          (2.0 * half_len_bot))));
+
   Triangulation<3> tria_bottom;
   GridGenerator::subdivided_cylinder(tria_bottom,
-                                     n_axial_bot,
+                                     n_axial_bot_total,
                                      r_small,
-                                     half_len_bot);
-  GridTools::shift(Point<3>(half_len_bot, 0, 0), tria_bottom);
+                                     extended_half_len_bot);
+  GridTools::shift(Point<3>(half_len_bot - inlet_offset / 2.0, 0, 0),
+                   tria_bottom);
 
   // Truncated cone from r_small to r_large,
   // shifted to [2*half_len_bot, 2*half_len_bot + 2*half_len_cone]
@@ -99,7 +116,8 @@ BirminghamFluidizedBedGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
                    ++v)
                 {
                   const double x = cell->face(f)->vertex(v)[0];
-                  if (std::abs(x) > tol && std::abs(x - base_length) > tol)
+                  if (std::abs(x + inlet_offset) > tol &&
+                      std::abs(x - base_length) > tol)
                     {
                       is_end_cap = false;
                       break;
@@ -258,7 +276,7 @@ BirminghamFluidizedBedGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
                    ++v)
                 {
                   const double x = cell->face(f)->vertex(v)[0];
-                  if (std::abs(x) > tol)
+                  if (std::abs(x + inlet_offset) > tol)
                     is_inlet = false;
                   if (std::abs(x - total_length) > tol)
                     is_outlet = false;
@@ -314,7 +332,8 @@ BirminghamFluidizedBedGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
                    ++v)
                 {
                   const double x = cell->face(f)->vertex(v)[0];
-                  if (std::abs(x) > tol && std::abs(x - base_length) > tol)
+                  if (std::abs(x + inlet_offset) > tol &&
+                      std::abs(x - base_length) > tol)
                     {
                       is_end_cap = false;
                       break;
@@ -332,7 +351,7 @@ BirminghamFluidizedBedGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
               else
                 {
                   const double x = cell->face(f)->center()[0];
-                  if (std::abs(x) < tol)
+                  if (std::abs(x + inlet_offset) < tol)
                     cell->face(f)->set_boundary_id(1);
                   else
                     cell->face(f)->set_boundary_id(2);
