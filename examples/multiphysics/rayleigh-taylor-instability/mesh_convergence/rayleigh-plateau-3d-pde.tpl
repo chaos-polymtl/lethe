@@ -31,7 +31,7 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set CLS = true
+  set cls = true
 end
 
 #---------------------------------------------------
@@ -50,7 +50,7 @@ subsection CLS
     subsection projection-based interface sharpening
       set interface sharpness = 1.5
     end
-    subsection pde-based interface reinitialization
+    subsection PDE-based interface reinitialization
       set steady-state criterion = 1e-4
       set max steps number       = 10000
       set diffusivity multiplier = DIFFUSIVITY_MULT

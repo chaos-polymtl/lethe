@@ -272,7 +272,7 @@ public:
       subequation_string = "CLS curvature L2 projection";
     else if (subequation_id ==
              VOFSubequationsID::algebraic_interface_reinitialization)
-      subequation_string = "CLS pde-based interface reinitialization";
+      subequation_string = "CLS PDE-based interface reinitialization";
     else
       throw(std::invalid_argument("Invalid VOFSubequationID. Options are: \n"
                                   " <phase_gradient_projection>\n"

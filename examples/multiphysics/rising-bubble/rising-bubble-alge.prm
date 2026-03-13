@@ -27,7 +27,7 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set CLS = true
+  set cls = true
 end
 
 #---------------------------------------------------
@@ -39,7 +39,7 @@ subsection CLS
     set type      = pde-based interface reinitialization
     set frequency = 20
     set verbosity = verbose
-    subsection pde-based interface reinitialization
+    subsection PDE-based interface reinitialization
       set diffusivity multiplier = 2
     end
   end

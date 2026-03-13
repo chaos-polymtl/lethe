@@ -25,7 +25,7 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set CLS = true
+  set cls = true
 end
 
 #---------------------------------------------------
@@ -47,7 +47,7 @@ subsection CLS
       set tanh thickness                = TANH_THICKNESS
       set transformation type           = tanh
     end
-    subsection pde-based interface reinitialization
+    subsection PDE-based interface reinitialization
       set output reinitialization steps = false
       set steady-state criterion        = 1e-4
       set max steps number              = 10000
@@ -225,7 +225,7 @@ subsection non-linear solver
     set max iterations = 20
     set verbosity      = verbose
   end
-  subsection CLS pde-based interface reinitialization
+  subsection CLS PDE-based interface reinitialization
     set tolerance      = 1e-11
     set max iterations = 20
     set verbosity      = verbose
@@ -261,7 +261,7 @@ subsection linear solver
     set ilu preconditioner relative tolerance = 1.00
     set max krylov vectors                    = 200
   end
-  subsection CLS pde-based interface reinitialization
+  subsection CLS PDE-based interface reinitialization
     set verbosity                             = verbose
     set method                                = gmres
     set max iters                             = 8000

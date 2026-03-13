@@ -49,11 +49,11 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
                       Patterns::Bool(),
                       "Passive tracer calculation <true|false>");
 
-    prm.declare_entry("CLS",
+    prm.declare_entry("cls",
                       "false",
                       Patterns::Bool(),
                       "CLS calculation <true|false>");
-    prm.declare_alias("CLS", "VOF", true);
+    prm.declare_alias("cls", "VOF", true);
 
     prm.declare_entry("cahn hilliard",
                       "false",
@@ -98,7 +98,7 @@ Parameters::Multiphysics<dim>::parse_parameters(
     fluid_dynamics   = prm.get_bool("fluid dynamics");
     heat_transfer    = prm.get_bool("heat transfer");
     tracer           = prm.get_bool("tracer");
-    VOF              = prm.get_bool("CLS");
+    VOF              = prm.get_bool("cls");
     cahn_hilliard    = prm.get_bool("cahn hilliard");
     electromagnetics = prm.get_bool("electromagnetics");
 
@@ -506,26 +506,26 @@ void
 Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
   dealii::ParameterHandler &prm)
 {
-  prm.enter_subsection("pde-based interface reinitialization");
+  prm.enter_subsection("PDE-based interface reinitialization");
   {
     prm.declare_entry(
       "output reinitialization steps",
       "false",
       Patterns::Bool(),
-      "Enables pvtu format outputs of the pde-based interface reinitialization "
+      "Enables pvtu format outputs of the PDE-based interface reinitialization "
       "steps <true|false>");
     prm.declare_entry(
       "diffusivity multiplier",
       "1.",
       Patterns::Double(),
       "Factor that multiplies the mesh-size in the mesh-dependant diffusion "
-      "coefficient of the pde-based interface reinitialization.");
+      "coefficient of the PDE-based interface reinitialization.");
     prm.declare_entry(
       "diffusivity power",
       "1.",
       Patterns::Double(),
       "Power value applied to the mesh-size in the mesh-dependant diffusion "
-      "coefficient of the pde-based interface reinitialization.");
+      "coefficient of the PDE-based interface reinitialization.");
     prm.declare_entry("steady-state criterion",
                       "1e-4",
                       Patterns::Double(),
@@ -551,7 +551,7 @@ void
 Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters(
   dealii::ParameterHandler &prm)
 {
-  prm.enter_subsection("pde-based interface reinitialization");
+  prm.enter_subsection("PDE-based interface reinitialization");
   {
     this->output_reinitialization_steps =
       prm.get_bool("output reinitialization steps");

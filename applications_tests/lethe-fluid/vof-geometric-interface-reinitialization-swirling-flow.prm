@@ -31,7 +31,7 @@ end
 
 subsection multiphysics
   set fluid dynamics = false
-  set CLS            = true
+  set cls            = true
 end
 
 #---------------------------------------------------

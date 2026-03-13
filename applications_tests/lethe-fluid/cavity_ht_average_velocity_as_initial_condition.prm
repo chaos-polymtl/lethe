@@ -60,7 +60,7 @@ end
 subsection multiphysics
   set fluid dynamics = false
   set heat transfer  = true
-  set CLS            = true
+  set cls            = true
 end
 
 #---------------------------------------------------

@@ -27,7 +27,7 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set CLS           = true
+  set cls           = true
   set heat transfer = true
 end
 

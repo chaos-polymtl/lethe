@@ -1747,11 +1747,11 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "interpolation order tracer");
-      prm.declare_entry("CLS order",
+      prm.declare_entry("cls order",
                         "1",
                         Patterns::Integer(),
                         "interpolation order tracer");
-      prm.declare_alias("CLS order", "VOF order", true);
+      prm.declare_alias("cls order", "VOF order", true);
       prm.declare_entry(
         "phase cahn hilliard order",
         "1",
@@ -1780,11 +1780,11 @@ namespace Parameters
         "Switch tracer to Discontinuous Galerkin (DG) formulation");
 
       prm.declare_entry(
-        "CLS uses dg",
+        "cls uses dg",
         "false",
         Patterns::Bool(),
         "Switch CLS to Discontinuous Galerkin (DG) formulation");
-      prm.declare_alias("CLS uses dg", "VOF uses dg", true);
+      prm.declare_alias("cls uses dg", "VOF uses dg", true);
 
       prm.declare_entry("enable bubble function velocity",
                         "false",
@@ -1810,8 +1810,8 @@ namespace Parameters
       temperature_order         = prm.get_integer("temperature order");
       tracer_order              = prm.get_integer("tracer order");
       tracer_uses_dg            = prm.get_bool("tracer uses dg");
-      VOF_order                 = prm.get_integer("CLS order");
-      VOF_uses_dg               = prm.get_bool("CLS uses dg");
+      VOF_order                 = prm.get_integer("cls order");
+      VOF_uses_dg               = prm.get_bool("cls uses dg");
       phase_cahn_hilliard_order = prm.get_integer("phase cahn hilliard order");
       potential_cahn_hilliard_order =
         prm.get_integer("potential cahn hilliard order");

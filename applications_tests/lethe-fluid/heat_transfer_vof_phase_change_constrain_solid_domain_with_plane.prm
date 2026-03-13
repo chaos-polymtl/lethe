@@ -24,7 +24,7 @@ end
 subsection multiphysics
   set heat transfer          = true
   set thermal buoyancy force = true
-  set CLS                    = true
+  set cls                    = true
 end
 
 #---------------------------------------------------

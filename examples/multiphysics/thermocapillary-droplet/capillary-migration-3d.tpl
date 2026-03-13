@@ -27,7 +27,7 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set CLS           = true
+  set cls           = true
   set heat transfer = true
 end
 
@@ -50,7 +50,7 @@ subsection CLS
       set max iterations      = 50
       set tolerance           = 1e-7
     end
-    subsection pde-based interface reinitialization
+    subsection PDE-based interface reinitialization
       set output reinitialization steps = false
       set steady-state criterion        = 1e-4
       set max steps number              = 10000
@@ -285,7 +285,7 @@ end
 subsection FEM
   set velocity order    = 1
   set pressure order    = 1
-  set CLS order         = 1
+  set cls order         = 1
   set temperature order = 1
 end
 
@@ -309,7 +309,7 @@ subsection non-linear solver
     set max iterations = 20
     set verbosity      = verbose
   end
-  subsection CLS pde-based interface reinitialization
+  subsection CLS PDE-based interface reinitialization
     set tolerance      = 1e-8
     set max iterations = 20
     set verbosity      = verbose
@@ -362,7 +362,7 @@ subsection linear solver
     set ilu preconditioner relative tolerance = 1.00
     set max krylov vectors                    = 200
   end
-  subsection CLS pde-based interface reinitialization
+  subsection CLS PDE-based interface reinitialization
     set verbosity                             = verbose
     set method                                = gmres
     set max iters                             = 8000

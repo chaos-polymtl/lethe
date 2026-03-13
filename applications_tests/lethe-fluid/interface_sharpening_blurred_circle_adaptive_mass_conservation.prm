@@ -22,7 +22,7 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set CLS = true
+  set cls = true
 end
 
 subsection CLS

@@ -250,7 +250,7 @@ public:
         throw std::logic_error(
           "Inconsistency in .prm!\n "
           "Number of fluids in 'physical properties' was set to 2,\n "
-          "but neither CLS or cahn hilliard is enabled in the 'multiphysics'.\n ");
+          "but neither 'cls' or 'cahn hilliard' is enabled in the 'multiphysics'.\n ");
       }
 
     // Interface physical property models consistency check
@@ -308,7 +308,7 @@ public:
                   {
                     throw std::logic_error(
                       "Inconsistency in .prm!\n "
-                      "In subsection multiphysics, CLS and heat transfer enabled,\n "
+                      "In subsection multiphysics, 'cls' and 'heat transfer' enabled,\n "
                       "and in subsection physical properties, a non-constant surface\n "
                       "tension model, but Marangoni effect disabled in subsection\n "
                       "surface tension force of subsection CLS. This is necessary to account\n "
@@ -545,7 +545,7 @@ private:
   std::vector<std::string> linear_physics_names    = {"electromagnetics"};
   // Names of subequations within VOF that inherits from PhysicsSolver
   std::vector<std::string> vof_subequations_names = {
-    "CLS pde-based interface reinitialization"};
+    "CLS PDE-based interface reinitialization"};
 };
 
 #endif

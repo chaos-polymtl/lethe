@@ -35,7 +35,7 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set CLS = true
+  set cls = true
 end
 
 #---------------------------------------------------
@@ -171,7 +171,7 @@ end
 subsection FEM
   set velocity order = 2
   set pressure order = 1
-  set CLS order      = 1
+  set cls order      = 1
 end
 
 #---------------------------------------------------
