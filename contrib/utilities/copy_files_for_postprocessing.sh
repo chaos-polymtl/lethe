@@ -9,13 +9,14 @@
 USAGE="
  Bash script for copying files of interest in a specific folder.
 
- This script can be used for identifying and copying file of importance before
+ This script can be used for identifying and copying files of importance before
  transferring to another machine or simply to cleanup irrelevant files. This
  can be especially useful for parametric studies with more than necessary
  outputs for postprocessing.
 
- This script identifies the last time step and copies .vtu and .pvtu files
- associated with that time step.
+ This script identifies .vtu and .pvtu files corresponding to requested
+ time-step indices a and copies them. If none is requested, by default, it
+ copies the last time-step files.
  This script also copies files of the output folder with the following
  extensions: .dat and .pvd
  This script copies files from the simulation folder with the following
@@ -48,7 +49,8 @@ USAGE="
 
  Optional arguments:
  -si, --step-index <list>
- Specify which VTU time-step indices to copy.
+ Specify which VTU time-step indices to copy. This corresponds to the digits
+ that appear at the end of the .pvtu filename (before the extension).
  
   Supported formats with examples:
     2309            → single step
@@ -246,18 +248,18 @@ process_simulation() {
     echo " Found PVD file: $pvd_file"
 
     #--------------------------------
-    # DETERMINE LAST TIME STEP INDEX
+    # DETERMINE LAST TIME-STEP INDEX
     #--------------------------------
     # Extract last time step and corresponding pvtu file from the .pvd
     last_line=$(grep "<DataSet " "$pvd_file" | tail -n1)
     last_file=$(echo "$last_line" | grep -oP '(?<=file=")[^"]+')
     last_step=$(echo "$last_file" | awk -F. '{print $(NF-1)}')
 
-    echo " Last time step index: $last_step"
+    echo " Last time-step index: $last_step"
     echo " Corresponding pvtu file: $last_file"
 
     #----------------------------
-    # BUILD TIME STEP INDEX LIST
+    # BUILD TIME-STEP INDEX LIST
     #----------------------------
     local step_list=()
 
@@ -275,11 +277,11 @@ process_simulation() {
           elif [[ "$step_index" =~ ^[0-9]+$ ]]; then
             step_list+=("$step_index")
           else
-            echo " Warning: invalid time step index '$step_index'"
+            echo " Warning: invalid time-step index '$step_index'"
           fi
         done
       else
-        # If not specified, get last time step index
+        # If not specified, get last-time step index
         step_list=("$last_step")
     fi
 
@@ -312,10 +314,12 @@ process_simulation() {
     done
 
     #-----------------------------------------------------
-    # COPY OTHER OUTPUT FILES OF INTEREST (.dat)
+    # COPY OTHER OUTPUT FILES OF INTEREST (.dat and .pvd)
     #-----------------------------------------------------
     if [[ -d "$dir/${output_file_name}" ]]; then
         cp "$dir/${output_file_name}"/*.dat \
+           "${dst}/${sim_name}/${output_file_name}/" 2>/dev/null || true
+        cp "$dir/${output_file_name}"/*.pvd \
            "${dst}/${sim_name}/${output_file_name}/" 2>/dev/null || true
     fi
 
