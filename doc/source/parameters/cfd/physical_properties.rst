@@ -3,7 +3,7 @@ Physical Properties
 ===================
 
 .. note:: 
-    Lethe supports single phase, two phase (using CLS) and conjugate simulations. This is managed using the fluid and solid subsections.
+    Lethe supports single phase, two phase (using CLS or Cahn-Hilliard) and conjugate simulations. This is managed using the fluid and solid subsections.
 
 .. code-block:: text
 

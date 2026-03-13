@@ -49,7 +49,7 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 
   The tracer solver is used in the example :doc:`../../examples/multiphysics/tracer-in-static-mixer/tracer-in-static-mixer`.
 
-* ``CLS``: enables multiphase flow simulations, with two fluids separated by a free surface, using the Volume-of-Fluid method. 
+* ``CLS``: enables multiphase flow simulations, with two fluids separated by a free surface, using the Conservative Level-Set method. 
 
   See :doc:`conservative_level_set` for advanced CLS parameters, :doc:`initial_conditions` for the definition of the CLS conditions and `Physical properties - two phase simulations <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/physical_properties.html#two-phase-simulations>`_ for the definition of the physical properties of both fluids.
 

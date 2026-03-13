@@ -281,4 +281,4 @@ Explicit coupling constraint parameters
 References
 ----------
 
-.. [#denner2022] \F. Denner, F. Evrard, and B. van Wachem, “Breaching the capillary time-step constraint using a coupled CLS method with implicit surface tension,” *J. Comput. Phys.*, vol. 459, p. 111128, Jun. 2022, doi: `10.1016/j.jcp.2022.111128 <https://doi.org/10.1016/j.jcp.2022.111128>`_\.
+.. [#denner2022] \F. Denner, F. Evrard, and B. van Wachem, “Breaching the capillary time-step constraint using a coupled VOF method with implicit surface tension,” *J. Comput. Phys.*, vol. 459, p. 111128, Jun. 2022, doi: `10.1016/j.jcp.2022.111128 <https://doi.org/10.1016/j.jcp.2022.111128>`_\.

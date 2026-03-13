@@ -23,10 +23,10 @@ The subsection with default parameters goes as follows:
       set restriction plane normal vector      = 0.0, 0.0, 0.0
       set number of constraints                = 0
       subsection constraint 0
-        set fluid id                 = 0
+        set fluid id                  = 0
         set phase indicator tolerance = 1e-4
-        set min temperature          = -999.0
-        set max temperature          = 0.0
+        set min temperature           = -999.0
+        set max temperature           = 0.0
       end
     end
 

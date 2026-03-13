@@ -12,6 +12,7 @@ General, CFD and Multiphysics
    boundary_conditions_multiphysics
    box_refinement
    cahn_hilliard
+   conservative_level_set
    constrain_stasis
    dimensionality
    dynamic_flow_control
@@ -36,4 +37,3 @@ General, CFD and Multiphysics
    timer
    tracer_drift_velocity
    velocity_source
-   conservative_level_set
