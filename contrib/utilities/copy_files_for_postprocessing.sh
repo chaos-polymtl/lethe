@@ -27,7 +27,8 @@ USAGE="
  * IMPORTANT *
   - When specifying \$base and \$destination use absolute paths to avoid path
     issues.
-  - The parameter files must contain the 'output path'.
+  - The parameter files associated with each simulation must be present in their
+    respective simulation folders.
 
 
  How to call the script:
@@ -226,9 +227,19 @@ process_simulation() {
     prm_file=$(find "$dir" -maxdepth 1 -name "*.prm" -print -quit)
 
     if [[ -n "$prm_file" ]]; then
-        local output_file_name
+        local output_file_name pvd_base_name
         output_file_name=$(grep -i "set output path" "$prm_file" | awk -F= '{print $2}' | xargs)
         output_file_name=$(basename "$output_file_name")
+        # If "output path" not set in prm, give default value
+        if [[ -z "$output_file_name" ]]; then
+          output_file_name="./"
+        fi
+        pvd_base_name=$(grep -i "set output name" "$prm_file" | awk -F= '{print $2}' | xargs)
+        pvd_base_name=$(basename "$pvd_base_name")
+        # If "output name" not set in prm, give default value
+        if [[ -z "$pvd_base_name" ]]; then
+          pvd_base_name="out"
+        fi
     else
         echo " Warning: Cannot find output path. Skipping to next simulation folder."
         return 0
@@ -239,10 +250,9 @@ process_simulation() {
     # FIND PVD FILE
     #---------------
     # Find the .pvd file in the simulation output directory
-    local pvd_file
-    pvd_file=$(find "$dir/$output_file_name" -maxdepth 1 -name "*.pvd" -print -quit)
+    local pvd_file=$(echo "$dir/$output_file_name/$pvd_base_name.pvd")
 
-    if [[ -z "$pvd_file" ]]; then
+    if [[ ! -f "$pvd_file" ]]; then
         echo "Error: No PVD file found in $dir/$output_file_name"
         return 1
     fi
