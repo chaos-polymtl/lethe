@@ -11,21 +11,21 @@
 DeclException1(
   SameVOFSolution,
   std::string,
-  "A new VOF phase fraction solution has not been set. There is no need "
+  "A new CLS phase indicator solution has not been set. There is no need "
   "to solve once more the following equation: "
     << arg1
-    << ". If you wish to solve the subequation for a new phase fraction field, "
-       "please set a new VOF solution field with "
+    << ". If you wish to solve the subequation for a new phase indicator field, "
+       "please set a new CLS solution field with "
        "VOFSubequationsInterface<dim>::set_vof_solution_and_dof_handler() "
        "before solving the subequation.");
 
 DeclException1(
   NoVOFSolution,
   std::string,
-  "No VOF phase fraction solution has been set. A valid VOF phase fraction "
+  "No CLS phase indicator solution has been set. A valid CLS phase indicator "
   "solution is required to solve the "
     << arg1
-    << ". Please set a new VOF phase fraction solution field with "
+    << ". Please set a new CLS phase indicator solution field with "
        "VOFSubequationsInterface<dim>::set_vof_solution_and_dof_handler() "
        "before solving the subequation.");
 

@@ -21,7 +21,7 @@ DeclException1(
   NumberOfFluidsError,
   int,
   << "Number of fluids: " << arg1
-  << " is not 1 (single phase simulation) or 2 (VOF simulation). This is currently not supported.");
+  << " is not 1 (single phase simulation) or 2 (CLS/Cahn-Hilliard simulations). This is currently not supported.");
 
 DeclException1(NumberOfSolidsError,
                int,
@@ -740,12 +740,15 @@ namespace Parameters
                       "0",
                       Patterns::Integer(),
                       "Identifier of the fluid material that is constrained.");
-    prm.declare_entry("phase fraction tolerance",
+    prm.declare_entry("phase indicator tolerance",
                       "1e-4",
                       Patterns::Double(),
-                      "Absolute filtered phase fraction tolerance used in "
-                      "conjunction with VOF simulations to select the cells "
+                      "Absolute filtered phase indicator tolerance used in "
+                      "conjunction with CLS simulations to select the cells "
                       "on which the constraint is applied.");
+    prm.declare_alias("phase indicator tolerance",
+                      "phase fraction tolerance",
+                      true);
     prm.declare_entry("min temperature",
                       "-999",
                       Patterns::Double(),
@@ -803,7 +806,7 @@ namespace Parameters
   {
     this->fluid_ids[constraint_id] = prm.get_integer("fluid id");
     this->filtered_phase_fraction_tolerance[constraint_id] =
-      prm.get_double("phase fraction tolerance");
+      prm.get_double("phase indicator tolerance");
     this->temperature_min_values[constraint_id] =
       prm.get_double("min temperature");
     this->temperature_max_values[constraint_id] =
@@ -835,18 +838,24 @@ namespace Parameters
         "stabilization term on heat transfer <true|false>");
 
       prm.declare_entry(
-        "vof dcdd stabilization",
+        "cls dcdd stabilization",
         "true",
         Patterns::Bool(),
         "Apply Discontinuity-Capturing Directional Dissipation (DCDD) "
-        "stabilization term on the VOF phase fraction <true|false>");
+        "stabilization term on the CLS phase indicator <true|false>");
+      prm.declare_alias("cls dcdd stabilization",
+                        "vof dcdd stabilization",
+                        true);
 
       prm.declare_entry(
-        "vof dcdd diffusion factor",
+        "cls dcdd diffusion factor",
         "0.5",
         Patterns::Double(),
-        "Diffusion factor scaling the DCDD stabilization term in the VOF "
+        "Diffusion factor scaling the DCDD stabilization term in the CLS "
         "equation");
+      prm.declare_alias("cls dcdd diffusion factor",
+                        "vof dcdd diffusion factor",
+                        true);
 
       prm.declare_entry(
         "pressure scaling factor",
@@ -896,8 +905,8 @@ namespace Parameters
       // DCDD stabilization activation parameters
       heat_transfer_dcdd_stabilization =
         prm.get_bool("heat transfer dcdd stabilization");
-      vof_dcdd_stabilization = prm.get_bool("vof dcdd stabilization");
-      dcdd_diffusion_coeff   = prm.get_double("vof dcdd diffusion factor");
+      vof_dcdd_stabilization = prm.get_bool("cls dcdd stabilization");
+      dcdd_diffusion_coeff   = prm.get_double("cls dcdd diffusion factor");
 
       pressure_scaling_factor = prm.get_double("pressure scaling factor");
     }
@@ -1738,10 +1747,11 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "interpolation order tracer");
-      prm.declare_entry("VOF order",
+      prm.declare_entry("cls order",
                         "1",
                         Patterns::Integer(),
                         "interpolation order tracer");
+      prm.declare_alias("cls order", "VOF order", true);
       prm.declare_entry(
         "phase cahn hilliard order",
         "1",
@@ -1770,10 +1780,11 @@ namespace Parameters
         "Switch tracer to Discontinuous Galerkin (DG) formulation");
 
       prm.declare_entry(
-        "VOF uses dg",
+        "cls uses dg",
         "false",
         Patterns::Bool(),
-        "Switch VOF to Discontinuous Galerkin (DG) formulation");
+        "Switch CLS to Discontinuous Galerkin (DG) formulation");
+      prm.declare_alias("cls uses dg", "VOF uses dg", true);
 
       prm.declare_entry("enable bubble function velocity",
                         "false",
@@ -1799,8 +1810,8 @@ namespace Parameters
       temperature_order         = prm.get_integer("temperature order");
       tracer_order              = prm.get_integer("tracer order");
       tracer_uses_dg            = prm.get_bool("tracer uses dg");
-      VOF_order                 = prm.get_integer("VOF order");
-      VOF_uses_dg               = prm.get_bool("VOF uses dg");
+      VOF_order                 = prm.get_integer("cls order");
+      VOF_uses_dg               = prm.get_bool("cls uses dg");
       phase_cahn_hilliard_order = prm.get_integer("phase cahn hilliard order");
       potential_cahn_hilliard_order =
         prm.get_integer("potential cahn hilliard order");
@@ -1929,11 +1940,11 @@ namespace Parameters
       prm.declare_entry("enable", "false", Patterns::Bool(), "Activate laser");
       prm.declare_entry(
         "type",
-        "gaussian_heat_flux_vof_interface",
+        "gaussian_heat_flux_cls_interface",
         Patterns::Selection(
-          "exponential_decay|gaussian_heat_flux_vof_interface|uniform_heat_flux_vof_interface"),
+          "exponential_decay|gaussian_heat_flux_cls_interface|uniform_heat_flux_cls_interface"),
         "Type of laser model used."
-        "Choices are <exponential_decay|gaussian_heat_flux_vof_interface|uniform_heat_flux_vof_interface>.");
+        "Choices are <exponential_decay|gaussian_heat_flux_cls_interface|uniform_heat_flux_cls_interface>.");
       prm.declare_entry("concentration factor",
                         "2.0",
                         Patterns::Double(),
@@ -1998,7 +2009,7 @@ namespace Parameters
       const std::string type_string = prm.get("type");
       if (type_string == "exponential_decay")
         laser_type = LaserType::exponential_decay;
-      else if (type_string == "gaussian_heat_flux_vof_interface")
+      else if (type_string == "gaussian_heat_flux_cls_interface")
         laser_type = LaserType::gaussian_heat_flux_vof_interface;
       else
         laser_type = LaserType::uniform_heat_flux_vof_interface;
@@ -2352,25 +2363,25 @@ namespace Parameters
         "calculate barycenter",
         "false",
         Patterns::Bool(),
-        "Enable calculation of the barycenter location and velocity of fluid 1 in VOF and Cahn-Hilliard simulations.");
+        "Enable calculation of the barycenter location and velocity of fluid 1 in CLS and Cahn-Hilliard simulations.");
 
       prm.declare_entry(
         "barycenter name",
         "barycenter_information",
         Patterns::FileName(),
-        "Name of barycenter information output file in VOF or Cahn-Hilliard simulations");
+        "Name of barycenter information output file in CLS or Cahn-Hilliard simulations");
 
       prm.declare_entry(
         "calculate mass conservation",
         "true",
         Patterns::Bool(),
-        "Enable calculation of the mass and momentum of both fluids in VOF simulations.");
+        "Enable calculation of the mass and momentum of both fluids in CLS simulations.");
 
       prm.declare_entry(
         "mass conservation name",
         "mass_conservation_information",
         Patterns::FileName(),
-        "Name of mass conservation output file in VOF simulations");
+        "Name of mass conservation output file in CLS simulations");
 
       prm.declare_entry(
         "calculate phase energy",

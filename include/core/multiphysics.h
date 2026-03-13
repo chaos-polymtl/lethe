@@ -81,7 +81,7 @@ get_physics_id(std::string physics_name)
     return PhysicsID::heat_transfer;
   else if (physics_name == "tracer")
     return PhysicsID::tracer;
-  else if (physics_name == "VOF")
+  else if (physics_name == "CLS")
     return PhysicsID::VOF;
   else if (physics_name == "cahn hilliard")
     return PhysicsID::cahn_hilliard;

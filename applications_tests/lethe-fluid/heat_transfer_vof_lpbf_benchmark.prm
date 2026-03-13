@@ -25,7 +25,7 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF           = true
+  set cls           = true
   set heat transfer = true
 end
 
@@ -111,7 +111,7 @@ subsection boundary conditions heat transfer
   end
 end
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number = 6
   subsection bc 0
     set id = 2
@@ -138,7 +138,7 @@ end
 #---------------------------------------------------
 
 subsection initial conditions
-  subsection VOF
+  subsection CLS
     set Function expression = if (y<0.43 , 1, 0)
   end
   subsection temperature
@@ -212,14 +212,14 @@ subsection laser parameters
 end
 
 #---------------------------------------------------
-# VOF
+# CLS
 #---------------------------------------------------
 
-subsection VOF
+subsection CLS
   subsection phase filtration
     set type = tanh
   end
-  subsection interface regularization method
+  subsection interface reinitialization method
     set type = projection-based interface sharpening
     subsection projection-based interface sharpening
       set interface sharpness     = 1.5
@@ -277,7 +277,7 @@ subsection non-linear solver
     set max iterations = 20
     set verbosity      = quiet
   end
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-4
     set max iterations = 20
     set verbosity      = quiet
@@ -300,7 +300,7 @@ subsection linear solver
     set minimum residual        = 1e-1
     set ilu preconditioner fill = 1
   end
-  subsection VOF
+  subsection CLS
     set verbosity               = quiet
     set minimum residual        = 1e-5
     set ilu preconditioner fill = 1

@@ -364,13 +364,13 @@ private:
         if (this->subequation_verbosity == Parameters::Verbosity::extra_verbose)
           {
             this->pcout
-              << "Algebraic reinitialization solution norm difference = "
+              << "PDE-based reinitialization solution norm difference = "
               << solution_diff.l2_norm() << std::endl;
             this->pcout
-              << "Algebraic reinitialization steady-state criterion value = "
+              << "PDE-based reinitialization steady-state criterion value = "
               << stop_criterion << std::endl;
             this->pcout
-              << "Algebraic reinitialization fixed steady-state criterion = "
+              << "PDE-based reinitialization fixed steady-state criterion = "
               << steady_state_criterion << std::endl;
           }
 

@@ -26,15 +26,15 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF = true
+  set cls = true
 end
 
 #---------------------------------------------------
-# VOF
+# CLS
 #---------------------------------------------------
 
-subsection VOF
-  subsection interface regularization method
+subsection CLS
+  subsection interface reinitialization method
     set type      = geometric interface reinitialization
     set frequency = 10
     set verbosity = verbose
@@ -61,7 +61,7 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function expression = if (x<3.5 & y<7 , 1, 0)
   end
 end
@@ -144,7 +144,7 @@ subsection boundary conditions
   end
 end
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number = 4
 end
 
@@ -167,7 +167,7 @@ subsection non-linear solver
     set max iterations = 20
     set verbosity      = verbose
   end
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-7
     set max iterations = 20
     set verbosity      = verbose
@@ -191,7 +191,7 @@ subsection linear solver
     set ilu preconditioner relative tolerance = 1.00
     set max krylov vectors                    = 200
   end
-  subsection VOF
+  subsection CLS
     set verbosity                             = verbose
     set method                                = gmres
     set max iters                             = 1000

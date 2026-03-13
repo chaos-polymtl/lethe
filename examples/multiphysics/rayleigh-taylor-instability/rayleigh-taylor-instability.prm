@@ -40,7 +40,7 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function expression = y - (0.5 + 0.1 * 0.25 * cos(2 *3.1415 * x / 0.25)) + 0.5
     set smoothing type      = geometric
   end
@@ -95,15 +95,15 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF = true
+  set cls = true
 end
 
 #---------------------------------------------------
-# VOF
+# CLS
 #---------------------------------------------------
 
-subsection VOF
-  subsection interface regularization method
+subsection CLS
+  subsection interface reinitialization method
     set type      = geometric interface reinitialization
     set frequency = 20
     set verbosity = verbose
@@ -134,7 +134,7 @@ end
 #---------------------------------------------------
 
 subsection stabilization
-  set vof dcdd stabilization = false
+  set cls dcdd stabilization = false
 end
 
 #---------------------------------------------------
@@ -159,7 +159,7 @@ subsection boundary conditions
   end
 end
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number = 3
   subsection bc 0
     set id                 = 0
@@ -204,7 +204,7 @@ subsection non-linear solver
     set verbosity = verbose
     set tolerance = 1e-6
   end
-  subsection VOF
+  subsection CLS
     set verbosity = verbose
     set tolerance = 1e-10
   end
@@ -227,7 +227,7 @@ subsection linear solver
     set ilu preconditioner absolute tolerance = 1e-12
     set ilu preconditioner relative tolerance = 1.00
   end
-  subsection VOF
+  subsection CLS
     set verbosity                             = verbose
     set method                                = gmres
     set max krylov vectors                    = 200

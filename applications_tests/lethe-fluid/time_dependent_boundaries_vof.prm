@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2023, 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 set dimension = 2
@@ -15,7 +15,7 @@ subsection initial conditions
   set type = nodal
 end
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number         = 4
   set time dependent = true
   subsection bc 0
@@ -91,7 +91,7 @@ end
 
 subsection multiphysics
   set fluid dynamics = true
-  set VOF            = true
+  set cls            = true
 end
 
 subsection post-processing
@@ -109,14 +109,14 @@ end
 subsection FEM
   set velocity order = 1
   set pressure order = 1
-  set VOF order      = 1
+  set cls order      = 1
 end
 
 subsection non-linear solver
   subsection fluid dynamics
     set verbosity = quiet
   end
-  subsection VOF
+  subsection CLS
     set verbosity = quiet
   end
 end
@@ -125,7 +125,7 @@ subsection linear solver
   subsection fluid dynamics
     set verbosity = quiet
   end
-  subsection VOF
+  subsection CLS
     set verbosity = quiet
   end
 end

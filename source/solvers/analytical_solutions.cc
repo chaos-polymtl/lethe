@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019, 2021-2023 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019, 2021-2023, 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <solvers/analytical_solutions.h>
@@ -46,7 +46,7 @@ namespace AnalyticalSolutions
       prm.leave_subsection();
     }
     {
-      prm.enter_subsection("VOF");
+      prm.enter_subsection("CLS");
       phase.declare_parameters(prm);
       prm.leave_subsection();
     }
@@ -98,7 +98,7 @@ namespace AnalyticalSolutions
     }
 
     {
-      prm.enter_subsection("VOF");
+      prm.enter_subsection("CLS");
       phase.parse_parameters(prm);
       prm.leave_subsection();
     }

@@ -50,22 +50,22 @@ DeclException1(
   SurfaceTensionForceWithoutVOFError,
   bool,
   << std::boolalpha << "Surface tension force is activated (" << arg1
-  << "), while VOF is not activated (false)." << std::endl
-  << "Surface tension force cannot be activated without activating VOF.");
+  << "), while CLS is not activated (false)." << std::endl
+  << "Surface tension force cannot be activated without activating CLS.");
 
 DeclException1(
   MarangoniWithoutVOFError,
   bool,
   << std::boolalpha << "Marangoni effect is activated (" << arg1
-  << "), while VOF is not activated (false)." << std::endl
-  << "Marangoni effect cannot be activated without activating VOF.");
+  << "), while CLS is not activated (false)." << std::endl
+  << "Marangoni effect cannot be activated without activating CLS.");
 
 DeclException1(
   InterfaceSharpeningWithoutVOFError,
   bool,
   << std::boolalpha << "Interface sharpening is activated (" << arg1
-  << "), while VOF is not activated (false)." << std::endl
-  << "Interface sharpening cannot be activated without activating VOF.");
+  << "), while CLS is not activated (false)." << std::endl
+  << "Interface sharpening cannot be activated without activating CLS.");
 
 DeclExceptionMsg(CahnHilliardWithHeatTransferError,
                  "Cahn-Hilliard and heat transfer are both activated. "

@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2024, 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -24,7 +24,7 @@ end
 subsection multiphysics
   set heat transfer          = true
   set thermal buoyancy force = true
-  set VOF                    = true
+  set cls                    = true
 end
 
 #---------------------------------------------------
@@ -35,7 +35,7 @@ subsection initial conditions
   subsection temperature
     set Function expression = 28
   end
-  subsection VOF
+  subsection CLS
     set Function expression = if(y>=0.125, 0, 1)
   end
 end
@@ -147,7 +147,7 @@ subsection boundary conditions heat transfer
   end
 end
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number = 4
 end
 
@@ -159,16 +159,16 @@ subsection constrain stasis
   set enable                = true
   set number of constraints = 2
   subsection constraint 0
-    set fluid id                 = 0
-    set phase fraction tolerance = 1e-4
-    set min temperature          = 0
-    set max temperature          = 28
+    set fluid id                  = 0
+    set phase indicator tolerance = 1e-4
+    set min temperature           = 0
+    set max temperature           = 28
   end
   subsection constraint 1
-    set fluid id                 = 1
-    set phase fraction tolerance = 1e-4
-    set min temperature          = 0
-    set max temperature          = 33
+    set fluid id                  = 1
+    set phase indicator tolerance = 1e-4
+    set min temperature           = 0
+    set max temperature           = 33
   end
 end
 
@@ -198,7 +198,7 @@ subsection non-linear solver
     set max iterations = 5
     set verbosity      = quiet
   end
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-9
     set max iterations = 20
     set verbosity      = quiet
@@ -219,7 +219,7 @@ subsection linear solver
     set verbosity        = quiet
     set minimum residual = 1e-8
   end
-  subsection VOF
+  subsection CLS
     set verbosity        = quiet
     set minimum residual = 1e-10
   end

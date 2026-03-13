@@ -32,7 +32,7 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF = true
+  set cls = true
 end
 
 #---------------------------------------------------
@@ -44,7 +44,7 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function constants  = eps=1.5, hCell=0.03526, center=0, radius=0.25
     set Function expression = 0.5 - 0.5*tanh((sqrt((x-center)*(x-center)+(y-center)*(y-center))-radius)/(2*eps*hCell))
   end
@@ -62,11 +62,11 @@ subsection mesh
 end
 
 #---------------------------------------------------
-# VOF
+# CLS
 #---------------------------------------------------
 
-subsection VOF
-  subsection interface regularization method
+subsection CLS
+  subsection interface reinitialization method
     set type      = geometric interface reinitialization
     set frequency = 1
     #set verbosity = verbose
@@ -80,10 +80,10 @@ subsection VOF
     set type = tanh
   end
   subsection surface tension force
-    set enable                                   = true
-    set phase fraction gradient diffusion factor = 4
-    set curvature diffusion factor               = 1
-    set output auxiliary fields                  = true
+    set enable                                    = true
+    set phase indicator gradient diffusion factor = 4
+    set curvature diffusion factor                = 1
+    set output auxiliary fields                   = true
   end
 end
 
@@ -141,7 +141,7 @@ subsection boundary conditions
   end
 end
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number = 4
 end
 
@@ -150,7 +150,7 @@ end
 #---------------------------------------------------
 
 subsection stabilization
-  set vof dcdd stabilization = false
+  set cls dcdd stabilization = false
 end
 
 #---------------------------------------------------
@@ -168,7 +168,7 @@ end
 subsection FEM
   set velocity order = 2
   set pressure order = 1
-  set VOF order      = 1
+  set cls order      = 1
 end
 
 #---------------------------------------------------
@@ -176,7 +176,7 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-9
     set max iterations = 20
     set verbosity      = quiet
@@ -200,7 +200,7 @@ subsection linear solver
     set minimum residual  = 1e-10
     set preconditioner    = ilu
   end
-  subsection VOF
+  subsection CLS
     set verbosity         = quiet
     set method            = gmres
     set relative residual = 1e-3

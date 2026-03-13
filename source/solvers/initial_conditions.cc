@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019, 2021-2023 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019, 2021-2023, 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <solvers/initial_conditions.h>
@@ -132,13 +132,13 @@ namespace Parameters
       tracer.declare_parameters(prm);
       prm.leave_subsection();
 
-      prm.enter_subsection("VOF");
+      prm.enter_subsection("CLS");
       VOF.declare_parameters(prm);
       prm.declare_entry(
         "smoothing type",
         "none",
         Patterns::Selection("none|diffusive|geometric"),
-        "Apply a projection step with diffusion to smooth the VOF initial condition");
+        "Apply a projection step with diffusion to smooth the CLS initial condition");
 
       prm.declare_entry(
         "diffusion factor",
@@ -203,7 +203,7 @@ namespace Parameters
       tracer.parse_parameters(prm);
       prm.leave_subsection();
 
-      prm.enter_subsection("VOF");
+      prm.enter_subsection("CLS");
       {
         VOF.parse_parameters(prm);
         const std::string op = prm.get("smoothing type");
@@ -215,7 +215,7 @@ namespace Parameters
           vof_initial_condition_smoothing = VOFInitialConditionType::geometric;
         else
           throw(
-            std::runtime_error("Unknown VOF initial condition smoothing type"));
+            std::runtime_error("Unknown CLS initial condition smoothing type"));
 
         projection_step_diffusion_factor = prm.get_double("diffusion factor");
       }

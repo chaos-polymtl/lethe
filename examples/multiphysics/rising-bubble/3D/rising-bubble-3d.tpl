@@ -25,14 +25,14 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF = true
+  set cls = true
 end
 
 #---------------------------------------------------
-# VOF
+# CLS
 #---------------------------------------------------
 
-subsection VOF
+subsection CLS
   subsection interface regularization method
     set type      = REGULARIZATION_TYPE
     set frequency = REGULARIZATION_FREQUENCY
@@ -47,7 +47,7 @@ subsection VOF
       set tanh thickness                = TANH_THICKNESS
       set transformation type           = tanh
     end
-    subsection algebraic interface reinitialization
+    subsection PDE-based interface reinitialization
       set output reinitialization steps = false
       set steady-state criterion        = 1e-4
       set max steps number              = 10000
@@ -61,10 +61,10 @@ subsection VOF
     set beta = 20
   end
   subsection surface tension force
-    set enable                                   = true
-    set phase fraction gradient diffusion factor = 4
-    set curvature diffusion factor               = 1
-    set output auxiliary fields                  = true
+    set enable                                    = true
+    set phase indicator gradient diffusion factor = 4
+    set curvature diffusion factor                = 1
+    set output auxiliary fields                   = true
   end
 end
 
@@ -77,7 +77,7 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0; 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function constants  = center=0.5
     set Function expression = 0.5 - 0.5*tanh((sqrt((x-center)*(x-center)+(y-center)*(y-center)+(z-center)*(z-center))-0.25)/(TANH_THICKNESS))
   end
@@ -145,7 +145,7 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set type                     = adaptive 
+  set type                     = adaptive
   set error estimator          = kelly
   set variable                 = phase
   set fraction type            = fraction
@@ -197,7 +197,7 @@ subsection boundary conditions
   end
 end
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number = 6
 end
 
@@ -220,12 +220,12 @@ subsection non-linear solver
     set max iterations = 20
     set verbosity      = verbose
   end
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-11
     set max iterations = 20
     set verbosity      = verbose
   end
-  subsection VOF algebraic interface reinitialization
+  subsection CLS PDE-based interface reinitialization
     set tolerance      = 1e-11
     set max iterations = 20
     set verbosity      = verbose
@@ -249,7 +249,7 @@ subsection linear solver
     set ilu preconditioner relative tolerance = 1.00
     set max krylov vectors                    = 200
   end
-  subsection VOF
+  subsection CLS
     set verbosity                             = verbose
     set method                                = gmres
     set max iters                             = 8000
@@ -261,7 +261,7 @@ subsection linear solver
     set ilu preconditioner relative tolerance = 1.00
     set max krylov vectors                    = 200
   end
-  subsection VOF algebraic interface reinitialization
+  subsection CLS PDE-based interface reinitialization
     set verbosity                             = verbose
     set method                                = gmres
     set max iters                             = 8000
@@ -280,7 +280,7 @@ end
 #---------------------------------------------------
 
 subsection stabilization
-  set vof dcdd stabilization = false
+  set cls dcdd stabilization = false
 end
 
 # --------------------------------------------------

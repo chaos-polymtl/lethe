@@ -26,16 +26,16 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF = true
+  set cls = true
 end
 
 #---------------------------------------------------
-# VOF
+# CLS
 #---------------------------------------------------
 
-subsection VOF
+subsection CLS
   set compressible = true
-  subsection interface regularization method
+  subsection interface reinitialization method
     set type      = projection-based interface sharpening
     set frequency = 25
     subsection projection-based interface sharpening
@@ -58,7 +58,7 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function expression = 0
   end
 end
@@ -140,10 +140,10 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# VOF Boundary Conditions
+# CLS Boundary Conditions
 #---------------------------------------------------
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number = 4
   subsection bc 0
     set id   = 2
@@ -170,7 +170,7 @@ end
 subsection FEM
   set velocity order = 1
   set pressure order = 1
-  set VOF order      = 1
+  set cls order      = 1
 end
 
 #---------------------------------------------------
@@ -183,7 +183,7 @@ subsection non-linear solver
     set max iterations = 20
     set verbosity      = verbose
   end
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-10
     set max iterations = 20
     set verbosity      = verbose
@@ -207,7 +207,7 @@ subsection linear solver
     set ilu preconditioner relative tolerance = 1.00
     set max krylov vectors                    = 500
   end
-  subsection VOF
+  subsection CLS
     set verbosity                             = verbose
     set method                                = gmres
     set max iters                             = 1000

@@ -26,15 +26,15 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF = true
+  set cls = true
 end
 
-subsection VOF
+subsection CLS
   subsection surface tension force
-    set enable                                   = true
-    set phase fraction gradient diffusion factor = 4
-    set curvature diffusion factor               = 1
-    set output auxiliary fields                  = true
+    set enable                                    = true
+    set phase indicator gradient diffusion factor = 4
+    set curvature diffusion factor                = 1
+    set output auxiliary fields                   = true
   end
   subsection phase filtration
     set type      = tanh
@@ -52,7 +52,7 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function expression = if ((x-0.04) * (x-0.04) + (y-0.04) * (y-0.04) < 0.02 * 0.02 , 1, if ((x-0.04) * (x-0.04) + (y-0.04) * (y-0.04) < 0.023 * 0.023 , 7.67 - 333.33 * sqrt((x-0.04) * (x-0.04) + (y-0.04) * (y-0.04)) , 0))
   end
 end
@@ -68,7 +68,7 @@ subsection analytical solution
     set Function constants  = sigma=0.023, R=0.022
     set Function expression = 0; 0; if ((x-0.04) * (x-0.04) + (y-0.04) * (y-0.04) < 0.02 * 0.02 , sigma / R , 0)
   end
-  subsection VOF
+  subsection CLS
     set Function constants  = sigma=0.023, R=0.022
     set Function expression = if ((x-0.04) * (x-0.04) + (y-0.04) * (y-0.04) < 0.02 * 0.02 , 1, if ((x-0.04) * (x-0.04) + (y-0.04) * (y-0.04) < 0.023 * 0.023 , 7.67 - 333.33 * sqrt((x-0.04) * (x-0.04) + (y-0.04) * (y-0.04)) , 0))
   end
@@ -136,7 +136,7 @@ subsection boundary conditions
   end
 end
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number = 4
 end
 
@@ -154,7 +154,7 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-8
     set max iterations = 100
     set verbosity      = quiet
@@ -183,7 +183,7 @@ subsection linear solver
     set ilu preconditioner relative tolerance = 1.00
     set max krylov vectors                    = 200
   end
-  subsection VOF
+  subsection CLS
     set verbosity                             = quiet
     set method                                = gmres
     set max iters                             = 8000

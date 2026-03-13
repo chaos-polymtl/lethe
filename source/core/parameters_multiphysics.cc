@@ -24,9 +24,9 @@ DeclException1(
 DeclException1(
   RegularizationMethodFrequencyError,
   int,
-  << "Regularization method frequency : " << arg1
+  << "Reinitialization method frequency : " << arg1
   << " is equal or smaller than 0." << std::endl
-  << "Interface regularization method requires an frequency larger than 0.");
+  << "Interface reinitialization method requires an frequency larger than 0.");
 
 template <int dim>
 void
@@ -49,10 +49,11 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
                       Patterns::Bool(),
                       "Passive tracer calculation <true|false>");
 
-    prm.declare_entry("VOF",
+    prm.declare_entry("cls",
                       "false",
                       Patterns::Bool(),
-                      "VOF calculation <true|false>");
+                      "CLS calculation <true|false>");
+    prm.declare_alias("cls", "VOF", true);
 
     prm.declare_entry("cahn hilliard",
                       "false",
@@ -97,7 +98,7 @@ Parameters::Multiphysics<dim>::parse_parameters(
     fluid_dynamics   = prm.get_bool("fluid dynamics");
     heat_transfer    = prm.get_bool("heat transfer");
     tracer           = prm.get_bool("tracer");
-    VOF              = prm.get_bool("VOF");
+    VOF              = prm.get_bool("cls");
     cahn_hilliard    = prm.get_bool("cahn hilliard");
     electromagnetics = prm.get_bool("electromagnetics");
 
@@ -114,7 +115,7 @@ Parameters::Multiphysics<dim>::parse_parameters(
 void
 Parameters::VOF::declare_parameters(ParameterHandler &prm) const
 {
-  prm.enter_subsection("VOF");
+  prm.enter_subsection("CLS");
   {
     regularization_method.declare_parameters(prm);
     surface_tension_force.declare_parameters(prm);
@@ -130,14 +131,14 @@ Parameters::VOF::declare_parameters(ParameterHandler &prm) const
       "diffusivity",
       "0",
       Patterns::Double(),
-      "Diffusivity (diffusion coefficient in L^2/s) in the VOF transport equation. "
+      "Diffusivity (diffusion coefficient in L^2/s) in the phase indicator transport equation. "
       "Default value is 0 to have pure advection.");
 
     prm.declare_entry(
       "compressible",
       "false",
       Patterns::Bool(),
-      "Enable phase compressibility in the VOF equation. This leads to the inclusion of the phase * div(u) term in the VOF conservation equation. "
+      "Enable phase compressibility in the CLS equation. This leads to the inclusion of the phase * div(u) term in the CLS equation. "
       "It should be set to false when the phases are incompressible");
   }
   prm.leave_subsection();
@@ -146,7 +147,7 @@ Parameters::VOF::declare_parameters(ParameterHandler &prm) const
 void
 Parameters::VOF::parse_parameters(ParameterHandler &prm)
 {
-  prm.enter_subsection("VOF");
+  prm.enter_subsection("CLS");
   {
     regularization_method.parse_parameters(prm);
     surface_tension_force.parse_parameters(prm);
@@ -175,27 +176,27 @@ void
 Parameters::VOF_RegularizationMethod::declare_parameters(
   ParameterHandler &prm) const
 {
-  prm.enter_subsection("interface regularization method");
+  prm.enter_subsection("interface reinitialization method");
   {
     prm.declare_entry(
       "type",
       "none",
       Patterns::Selection(
-        "none|projection-based interface sharpening|algebraic interface reinitialization|geometric interface reinitialization"),
-      "VOF interface regularization method");
+        "none|projection-based interface sharpening|pde-based interface reinitialization|geometric interface reinitialization"),
+      "CLS interface reinitialization method");
 
     prm.declare_entry(
       "frequency",
       "10",
       Patterns::Integer(),
       "Reinitialization frequency (number of time steps) at which the "
-      "interface regularization process will be applied to the VOF "
-      "phase fraction field.");
+      "interface reinitialization process will be applied to the CLS "
+      "phase indicator field.");
     prm.declare_entry(
       "verbosity",
       "quiet",
       Patterns::Selection("quiet|verbose|extra verbose"),
-      "States whether the output from the interface regularization method "
+      "States whether the output from the interface reinitialization method "
       "should be printed."
       "Choices are <quiet|verbose|extra verbose>.");
 
@@ -209,7 +210,7 @@ Parameters::VOF_RegularizationMethod::declare_parameters(
 void
 Parameters::VOF_RegularizationMethod::parse_parameters(ParameterHandler &prm)
 {
-  prm.enter_subsection("interface regularization method");
+  prm.enter_subsection("interface reinitialization method");
   {
     const std::string t = prm.get("type");
     if (t == "none")
@@ -221,7 +222,7 @@ Parameters::VOF_RegularizationMethod::parse_parameters(ParameterHandler &prm)
           Parameters::RegularizationMethodType::sharpening;
         sharpening.enable = true;
       }
-    else if (t == "algebraic interface reinitialization")
+    else if (t == "pde-based interface reinitialization")
       {
         this->regularization_method_type =
           Parameters::RegularizationMethodType::algebraic;
@@ -235,7 +236,7 @@ Parameters::VOF_RegularizationMethod::parse_parameters(ParameterHandler &prm)
       }
     else
       throw(
-        std::runtime_error("Invalid interface regularization method type!"));
+        std::runtime_error("Invalid interface reinitialization method type!"));
 
     this->frequency = prm.get_integer("frequency");
     Assert(this->frequency > 0,
@@ -269,7 +270,7 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
       "type",
       "constant",
       Patterns::Selection("constant|adaptive"),
-      "VOF interface sharpening type, "
+      "CLS interface sharpening type, "
       "if constant the sharpening threshold is the same throughout the simulation, "
       "if adaptive the sharpening threshold is determined by binary search, "
       "to ensure mass conservation of the monitored phase");
@@ -279,7 +280,7 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
       "threshold",
       "0.5",
       Patterns::Double(),
-      "Interface sharpening threshold that represents the phase fraction at which "
+      "Interface sharpening threshold that represents the phase indicator at which "
       "the interphase is considered located");
 
     // Parameters for adaptive sharpening
@@ -382,13 +383,16 @@ Parameters::VOF_SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
     prm.declare_entry("output auxiliary fields",
                       "false",
                       Patterns::Bool(),
-                      "Output the phase fraction gradient and curvature");
+                      "Output the phase indicator gradient and curvature");
 
     prm.declare_entry(
-      "phase fraction gradient diffusion factor",
+      "phase indicator gradient diffusion factor",
       "4",
       Patterns::Double(),
-      "Factor applied to the filter for phase fraction gradient calculations to damp high-frequency errors");
+      "Factor applied to the filter for phase indicator gradient calculations to damp high-frequency errors");
+    prm.declare_alias("phase indicator gradient diffusion factor",
+                      "phase fraction gradient diffusion factor",
+                      true);
 
     prm.declare_entry(
       "curvature diffusion factor",
@@ -419,7 +423,7 @@ Parameters::VOF_SurfaceTensionForce::parse_parameters(ParameterHandler &prm)
   {
     enable = prm.get_bool("enable");
     phase_fraction_gradient_diffusion_factor =
-      prm.get_double("phase fraction gradient diffusion factor");
+      prm.get_double("phase indicator gradient diffusion factor");
     curvature_diffusion_factor = prm.get_double("curvature diffusion factor");
 
     output_vof_auxiliary_fields = prm.get_bool("output auxiliary fields");
@@ -446,7 +450,7 @@ Parameters::VOF_PhaseFilter::declare_parameters(ParameterHandler &prm)
       "type",
       "none",
       Patterns::Selection("none|tanh"),
-      "VOF phase filtration type, "
+      "CLS phase indicator filtration type, "
       "if <none> is selected, the phase won't be filtered"
       "if <tanh> is selected, the filtered phase will be a result of the "
       "following function: \\alpha_f = 0.5 \\tanh(\\beta(\\alpha-0.5)) + 0.5; "
@@ -502,26 +506,26 @@ void
 Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
   dealii::ParameterHandler &prm)
 {
-  prm.enter_subsection("algebraic interface reinitialization");
+  prm.enter_subsection("PDE-based interface reinitialization");
   {
     prm.declare_entry(
       "output reinitialization steps",
       "false",
       Patterns::Bool(),
-      "Enables pvtu format outputs of the algebraic interface reinitialization "
+      "Enables pvtu format outputs of the PDE-based interface reinitialization "
       "steps <true|false>");
     prm.declare_entry(
       "diffusivity multiplier",
       "1.",
       Patterns::Double(),
       "Factor that multiplies the mesh-size in the mesh-dependant diffusion "
-      "coefficient of the algebraic interface reinitialization.");
+      "coefficient of the PDE-based interface reinitialization.");
     prm.declare_entry(
       "diffusivity power",
       "1.",
       Patterns::Double(),
       "Power value applied to the mesh-size in the mesh-dependant diffusion "
-      "coefficient of the algebraic interface reinitialization.");
+      "coefficient of the PDE-based interface reinitialization.");
     prm.declare_entry("steady-state criterion",
                       "1e-4",
                       Patterns::Double(),
@@ -534,7 +538,7 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
       "artificial time-step factor",
       "0.25",
       Patterns::Double(),
-      "Factor multiplying the artificial time step in the algebraic "
+      "Factor multiplying the artificial time step in the PDE-based "
       "interface reinitialization.");
     prm.declare_alias("artificial time-step factor",
                       "reinitialization CFL",
@@ -547,7 +551,7 @@ void
 Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters(
   dealii::ParameterHandler &prm)
 {
-  prm.enter_subsection("algebraic interface reinitialization");
+  prm.enter_subsection("PDE-based interface reinitialization");
   {
     this->output_reinitialization_steps =
       prm.get_bool("output reinitialization steps");

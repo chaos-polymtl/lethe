@@ -4,7 +4,7 @@
 # Listing of Parameters
 # ---------------------
 
-set dimension = 3
+set dimension        = 3
 set print parameters = all
 
 #---------------------------------------------------
@@ -12,17 +12,17 @@ set print parameters = all
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = bdf2
-  set time end          = 0.08
-  set time step         = MAX_TIME_STEP
-  set output name       = CASE_NAME
-  set output frequency  = 200
-  set output path       = ./output/
-  set adapt             = true
-  set max cfl           = 0.25
-  set max time step     = MAX_TIME_STEP
-  set group files       = 96
-  set subdivision       = 1
+  set method           = bdf2
+  set time end         = 0.08
+  set time step        = MAX_TIME_STEP
+  set output name      = CASE_NAME
+  set output frequency = 200
+  set output path      = ./output/
+  set adapt            = true
+  set max cfl          = 0.25
+  set max time step    = MAX_TIME_STEP
+  set group files      = 96
+  set subdivision      = 1
   #set output time interval = 0.05, 0.08
 end
 
@@ -31,14 +31,14 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF = true
+  set cls = true
 end
 
 #---------------------------------------------------
-# VOF
+# CLS
 #---------------------------------------------------
 
-subsection VOF
+subsection CLS
   subsection surface tension force
     set enable                  = true
     set output auxiliary fields = true
@@ -50,17 +50,17 @@ subsection VOF
     subsection projection-based interface sharpening
       set interface sharpness = 1.5
     end
-    subsection algebraic interface reinitialization
-      set steady-state criterion        = 1e-4
-      set max steps number              = 10000
+    subsection PDE-based interface reinitialization
+      set steady-state criterion = 1e-4
+      set max steps number       = 10000
       set diffusivity multiplier = DIFFUSIVITY_MULT
-      set diffusivity power             = 1.0
-      set reinitialization CFL          = 0.25
+      set diffusivity power      = 1.0
+      set reinitialization CFL   = 0.25
     end
     subsection geometric interface reinitialization
       set max reinitialization distance = REGULARIZATION_DISTANCE
-      set tanh thickness = TANH_THICKNESS
-      set transformation type = tanh
+      set tanh thickness                = TANH_THICKNESS
+      set transformation type           = tanh
     end
   end
   subsection phase filtration
@@ -76,11 +76,11 @@ end
 subsection initial conditions
   set type = nodal
   subsection uvwp
-    set Function constants  = U=1.569,r=1.145e-3
+    set Function constants = U=1.569,r=1.145e-3
     #set Function expression = if((y^2 + z^2) <= 1.3110e-6, U, 0); 0; 0; 0
     set Function expression = (0.5 - 0.5 * tanh((sqrt(y*y + z*z)-r) / TANH_THICKNESS))*U; 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function constants  = r=1.145e-3
     set Function expression = 0.5 - 0.5 * tanh((sqrt(y*y + z*z)-r) / TANH_THICKNESS)
     set smoothing type      = none
@@ -126,7 +126,7 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set type                     = adaptive 
+  set type                     = adaptive
   set error estimator          = kelly
   set variable                 = phase
   set fraction type            = fraction
@@ -143,13 +143,13 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 6
+  set number         = 6
   set time dependent = true
   subsection bc 0
     set id   = 0
     set type = function
     subsection u
-      set Function constants  = U=1.569, delta=0.3, kappa=0.7, r=1.145e-3
+      set Function constants = U=1.569, delta=0.3, kappa=0.7, r=1.145e-3
       #set Function expression = if ((y^2 + z^2) <= 1.3110e-6, U*(1 + delta*sin(kappa*U*t/r)), 0)
       set Function expression = (0.5 - 0.5 * tanh((sqrt(y*y + z*z)-r) / TANH_THICKNESS))*U*(1 + delta*sin(kappa*U*t/r))
     end
@@ -182,10 +182,10 @@ subsection boundary conditions
 end
 
 # --------------------------------------------------
-# Boundary Conditions VOF
+# Boundary Conditions CLS
 #---------------------------------------------------
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number         = 6
   set time dependent = true
   subsection bc 0
@@ -222,7 +222,7 @@ subsection non-linear solver
     set tolerance      = 1e-7
     set max iterations = 20
   end
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-10
     set max iterations = 20
   end
@@ -237,7 +237,7 @@ subsection linear solver
     set relative residual = 5e-4
     set minimum residual  = 1e-8
   end
-  subsection VOF
+  subsection CLS
     set relative residual = 1e-8
     set minimum residual  = 1e-11
   end
@@ -262,8 +262,6 @@ subsection restart
   set restart    = false
 end
 
-
 subsection stabilization
-  set vof dcdd stabilization = false
+  set cls dcdd stabilization = false
 end
-

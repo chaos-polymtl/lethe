@@ -3,12 +3,12 @@ Running on 1 MPI rank(s)...
    Number of degrees of freedom: 867
    Volume of triangulation:      0.2
    Number of thermal degrees of freedom: 289
-   Number of VOF degrees of freedom: 289
+   Number of CLS degrees of freedom: 289
    Number of active cells:       496
    Number of degrees of freedom: 1698
    Volume of triangulation:      0.2
    Number of thermal degrees of freedom: 566
-   Number of VOF degrees of freedom: 566
+   Number of CLS degrees of freedom: 566
 
 *******************************************************************************
 Transient iteration: 1        Time: 0.2      Time step: 0.2      CFL: 0       
@@ -24,7 +24,7 @@ Transient iteration: 2        Time: 0.4      Time step: 0.2      CFL: 0
    Number of degrees of freedom: 2325
    Volume of triangulation:      0.2
    Number of thermal degrees of freedom: 775
-   Number of VOF degrees of freedom: 775
+   Number of CLS degrees of freedom: 775
 L2 error velocity : 0
 L2 error temperature : 0.0948012
 L2 error phase : 0.00208364
@@ -36,7 +36,7 @@ Transient iteration: 3        Time: 0.6      Time step: 0.2      CFL: 0
    Number of degrees of freedom: 2766
    Volume of triangulation:      0.2
    Number of thermal degrees of freedom: 922
-   Number of VOF degrees of freedom: 922
+   Number of CLS degrees of freedom: 922
 L2 error velocity : 0
 L2 error temperature : 0.0237115
 L2 error phase : 0.00208379
@@ -48,7 +48,7 @@ Transient iteration: 4        Time: 0.8      Time step: 0.2      CFL: 0
    Number of degrees of freedom: 2766
    Volume of triangulation:      0.2
    Number of thermal degrees of freedom: 922
-   Number of VOF degrees of freedom: 922
+   Number of CLS degrees of freedom: 922
 L2 error velocity : 0
 L2 error temperature : 0.00536548
 L2 error phase : 0.00208394
@@ -60,7 +60,7 @@ Transient iteration: 5        Time: 1        Time step: 0.2      CFL: 0
    Number of degrees of freedom: 2694
    Volume of triangulation:      0.2
    Number of thermal degrees of freedom: 898
-   Number of VOF degrees of freedom: 898
+   Number of CLS degrees of freedom: 898
 L2 error velocity : 0
 L2 error temperature : 0.00108678
 L2 error phase : 0.00208412

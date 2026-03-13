@@ -27,19 +27,19 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF = true
+  set cls = true
 end
 
 #---------------------------------------------------
-# VOF
+# CLS
 #---------------------------------------------------
 
-subsection VOF
-  subsection interface regularization method
-    set type      = algebraic interface reinitialization
+subsection CLS
+  subsection interface reinitialization method
+    set type      = pde-based interface reinitialization
     set frequency = 20
     set verbosity = verbose
-    subsection algebraic interface reinitialization
+    subsection PDE-based interface reinitialization
       set diffusivity multiplier = 2
     end
   end
@@ -49,15 +49,15 @@ subsection VOF
     set beta      = 20
   end
   subsection surface tension force
-    set enable                                   = true
-    set phase fraction gradient diffusion factor = 4
-    set curvature diffusion factor               = 1
-    set output auxiliary fields                  = true
+    set enable                                    = true
+    set phase indicator gradient diffusion factor = 4
+    set curvature diffusion factor                = 1
+    set output auxiliary fields                   = true
   end
 end
 
 subsection stabilization
-  set vof dcdd stabilization = false
+  set cls dcdd stabilization = false
 end
 
 #---------------------------------------------------
@@ -69,7 +69,7 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function constants  = eps=2, hCell=0.0022, center=0.5
     set Function expression = 0.5 - 0.5*tanh((sqrt((x-center)*(x-center)+(y-center)*(y-center))-0.25)/(2*eps*hCell))
   end
@@ -188,7 +188,7 @@ subsection boundary conditions
   end
 end
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number = 4
 end
 
@@ -211,7 +211,7 @@ subsection non-linear solver
     set max iterations = 20
     set verbosity      = verbose
   end
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-11
     set max iterations = 20
     set verbosity      = verbose
@@ -235,7 +235,7 @@ subsection linear solver
     set ilu preconditioner relative tolerance = 1.00
     set max krylov vectors                    = 200
   end
-  subsection VOF
+  subsection CLS
     set verbosity                             = verbose
     set method                                = gmres
     set max iters                             = 8000

@@ -2601,7 +2601,7 @@ HeatTransfer<dim>::set_phase_coefficient(
               // Defensive only here, this has been checked already
               // in simulation_parameters.h
               throw std::logic_error(
-                "Inconsistency in .prm!\n when VOF = false"
+                "Inconsistency in .prm!\n when CLS = false"
                 "\n use (default value): set postprocessed fluid = both"
                 "\n or: set postprocessed fluid = fluid 0");
             }
