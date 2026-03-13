@@ -174,8 +174,9 @@ if [[ -z "$destination" ]]; then
 fi
 
 # Check if the base directory exists
-if [[ ! -e "$base" ]]; then
-    echo "$base does not exist"
+if [[ ! -d "$base" ]]; then
+    echo "The base directory specified ($base) does not exist"
+    exit 1
 fi
 
 # Handle deletion if requested
@@ -256,7 +257,6 @@ process_simulation() {
     last_step=$(echo "$last_file" | awk -F. '{print $(NF-1)}')
 
     echo " Last time-step index: $last_step"
-    echo " Corresponding pvtu file: $last_file"
 
     #----------------------------
     # BUILD TIME-STEP INDEX LIST
@@ -297,7 +297,8 @@ process_simulation() {
     # Loop through steps
     for step in "${step_list[@]}"; do
       printf -v step_padded "%05d" "$((10#$step))"
-      echo " Copying step $step_padded"
+      echo ""
+      echo " Copying step $step_padded: "
       pvtu_files=( "$dir/$output_file_name/"*".${step_padded}.pvtu" )
 
       if (( ${#pvtu_files[@]} == 0 )); then
@@ -306,6 +307,8 @@ process_simulation() {
       fi
 
       pvtu=$(basename "${pvtu_files[0]}")
+
+      echo "  Corresponding pvtu file: $pvtu"
 
       cp "$dir/$output_file_name/$pvtu" \
          "$dst/$sim_name/$output_file_name/"
