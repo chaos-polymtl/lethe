@@ -10,7 +10,7 @@ USAGE="
  Bash script for copying files of interest in a specific folder.
 
  This script can be used for identifying and copying files of importance before
- transferring to another machine or simply to cleanup irrelevant files. This
+ transferring to another machine or simply to clean up irrelevant files. This
  can be especially useful for parametric studies with more than necessary
  outputs for postprocessing.
 
