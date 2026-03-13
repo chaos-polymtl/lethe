@@ -138,7 +138,7 @@ The ``physical properties`` subsection defines the physical properties of the fl
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 
-In the ``initial conditions`` subsection, we need to define the interface between the heavy and light fluids. We define this interface by using a ``Function expression`` in the ``VOF`` subsection of the ``initial conditions``. The interface between the two fluids is made smoother with the :doc:`geometric smoother <../../../parameters/cfd/initial_conditions>`  by setting the parameter ``smoothing type`` to ``geometric``. Essentially, the geometric smoother converts the initial function expression into a signed distance function using the geometric redistanciation algorithm. This defines a smooth initial condition that is coherent with the resdistanciation used within the simulation.
+In the ``initial conditions`` subsection, we need to define the interface between the heavy and light fluids. We define this interface by using a ``Function expression`` in the ``VOF`` subsection of the ``initial conditions``. The interface between the two fluids is made smoother with the :doc:`geometric smoother <../../../parameters/cfd/initial_conditions>`  by setting the parameter ``smoothing type`` to ``geometric``. Essentially, the geometric smoother converts the initial function expression into a signed distance function using the geometric redistanciation algorithm. This defines a smooth initial condition that is coherent with the redistanciation used within the simulation.
 
 .. code-block:: text
 

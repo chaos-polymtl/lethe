@@ -77,8 +77,8 @@ This subsection controls the mesh adaptation method, with default values given b
 	* For steady-state simulation in which the steady-state problem is solved on successively refined meshes, the user should have ``set frequency = 1``, which is the default value.
 
 * The minimal and maximal refinement level reachable for a cell are controlled respectively with the ``min refinement`` and ``max refinement`` parameters.
-   * for ``deal.ii`` meshes, if the ``min refinement level`` is equal to the ``initial refinement`` (see `Mesh paramater <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/mesh.html>`_), no cell will be coarser than the initial mesh.
-   * for ``gmsh`` imported meshes, if ``set min refinement level = 0``, no cell will be coarser than the initial mesh.
+  * for ``deal.ii`` meshes, if the ``min refinement level`` is equal to the ``initial refinement`` (see `Mesh parameter <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/mesh.html>`_), no cell will be coarser than the initial mesh.
+  * for ``gmsh`` imported meshes, if ``set min refinement level = 0``, no cell will be coarser than the initial mesh.
 
 .. tip:: 
 	For a ``gmsh`` mesh, a cell cannot be coarsened more than it's initial level. Consequently, adaptively refined simulations should start with a mesh as coarse as possible. 

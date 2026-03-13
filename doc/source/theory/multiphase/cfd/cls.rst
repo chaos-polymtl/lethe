@@ -4,7 +4,7 @@ The Conservative Level-Set (CLS) Method
 
 Numerous examples of flow encountered in engineering involve multiple fluids: sloshing of fuel in aircraft tanks, mixing of bread dough, and motion of droplets and bubbles to name a few. In these cases, the involved fluids can be immiscible, and we are interested in the evolution of the interfaces between those fluids.
 
-Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, namely fluid :math:`0` and :math:`1`, with :math:`\Gamma` denoting their interface and :math:`\partial \Omega`, the remaining boundaries, as illustrated in the figure below. In the CLS method [#hirt1981]_, we define the scalar function :math:`\phi` as a phase indicator such that:
+Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, namely fluid :math:`0` and :math:`1`, with :math:`\Gamma` denoting their interface and :math:`\partial \Omega`, the remaining boundaries, as illustrated in the figure below. In the CLS method, we define the scalar function :math:`\phi` as a phase indicator such that:
 
 .. math::
   \phi =
@@ -347,8 +347,6 @@ where :math:`\alpha` and :math:`\beta` are user-defined factors, and :math:`h` i
 
 References
 -----------
-
-.. [#hirt1981] \C. W. Hirt and B. D. Nichols, “Volume of fluid (CLS) method for the dynamics of free boundaries,” *J. Comput. Phys.*, vol. 39, no. 1, pp. 201–225, Jan. 1981, doi: `10.1016/0021-9991(81)90145-5 <https://doi.org/10.1016/0021-9991(81)90145-5>`_\.
 
 .. [#tezduyar2003] \T. E. Tezduyar, “Computation of moving boundaries and interfaces and stabilization parameters,” *Int. J. Numer. Methods Fluids*, vol. 43, no. 5, pp. 555–575, 2003, doi: `10.1002/fld.505 <https://doi.org/10.1002/fld.505>`_\.
 
