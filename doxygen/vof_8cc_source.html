@@ -161,7 +161,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>      this-&gt;simulation_parameters.post_processing.calculate_mass_conservation)</div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    {</div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>      this-&gt;<a class="code hl_variable" href="classPhysicsSolver.html#a438c5dbf8b3a750d042d56ffc3285f1f">pcout</a></div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        &lt;&lt; <span class="stringliteral">&quot;Warning: DG-VOF and the geometric surface and volume computations are not compatible. Only the global volume will be monitored.&quot;</span></div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        &lt;&lt; <span class="stringliteral">&quot;Warning: DG-CLS and the geometric surface and volume computations are not compatible. Only the global volume will be monitored.&quot;</span></div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        &lt;&lt; std::endl;</div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    }</div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
@@ -1790,7 +1790,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01648" name="l01648"></a><span class="lineno"> 1648</span> </div>
 <div class="line"><a id="l01649" name="l01649"></a><span class="lineno"> 1649</span> </div>
 <div class="line"><a id="l01650" name="l01650"></a><span class="lineno"> 1650</span> </div>
-<div class="line"><a id="l01651" name="l01651"></a><span class="lineno"> 1651</span>              <a class="code hl_function" href="utilities_8h.html#a9329b0f36d22e7ab552519cfd2846612">announce_string</a>(this-&gt;pcout, <span class="stringliteral">&quot;VOF Mass Conservation&quot;</span>);</div>
+<div class="line"><a id="l01651" name="l01651"></a><span class="lineno"> 1651</span>              <a class="code hl_function" href="utilities_8h.html#a9329b0f36d22e7ab552519cfd2846612">announce_string</a>(this-&gt;pcout, <span class="stringliteral">&quot;CLS Mass Conservation&quot;</span>);</div>
 <div class="line"><a id="l01652" name="l01652"></a><span class="lineno"> 1652</span>              table.write_text(std::cout);</div>
 <div class="line"><a id="l01653" name="l01653"></a><span class="lineno"> 1653</span>            }</div>
 <div class="line"><a id="l01654" name="l01654"></a><span class="lineno"> 1654</span>        }</div>
@@ -1888,7 +1888,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01746" name="l01746"></a><span class="lineno"> 1746</span>                this-&gt;simulation_parameters.simulation_control.log_precision,</div>
 <div class="line"><a id="l01747" name="l01747"></a><span class="lineno"> 1747</span>                <span class="keyword">true</span>);</div>
 <div class="line"><a id="l01748" name="l01748"></a><span class="lineno"> 1748</span> </div>
-<div class="line"><a id="l01749" name="l01749"></a><span class="lineno"> 1749</span>              <a class="code hl_function" href="utilities_8h.html#a9329b0f36d22e7ab552519cfd2846612">announce_string</a>(this-&gt;pcout, <span class="stringliteral">&quot;VOF Barycenter&quot;</span>);</div>
+<div class="line"><a id="l01749" name="l01749"></a><span class="lineno"> 1749</span>              <a class="code hl_function" href="utilities_8h.html#a9329b0f36d22e7ab552519cfd2846612">announce_string</a>(this-&gt;pcout, <span class="stringliteral">&quot;CLS Barycenter&quot;</span>);</div>
 <div class="line"><a id="l01750" name="l01750"></a><span class="lineno"> 1750</span>              table.write_text(std::cout);</div>
 <div class="line"><a id="l01751" name="l01751"></a><span class="lineno"> 1751</span>            }</div>
 <div class="line"><a id="l01752" name="l01752"></a><span class="lineno"> 1752</span> </div>
@@ -1964,7 +1964,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01822" name="l01822"></a><span class="lineno"> 1822</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.timer.type ==</div>
 <div class="line"><a id="l01823" name="l01823"></a><span class="lineno"> 1823</span>      <a class="code hl_enumvalue" href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa6f012ea8d7efd87146dd62db83f2ed99">Parameters::Timer::Type::iteration</a>)</div>
 <div class="line"><a id="l01824" name="l01824"></a><span class="lineno"> 1824</span>    {</div>
-<div class="line"><a id="l01825" name="l01825"></a><span class="lineno"> 1825</span>      <a class="code hl_function" href="utilities_8h.html#a9329b0f36d22e7ab552519cfd2846612">announce_string</a>(this-&gt;pcout, <span class="stringliteral">&quot;VOF&quot;</span>);</div>
+<div class="line"><a id="l01825" name="l01825"></a><span class="lineno"> 1825</span>      <a class="code hl_function" href="utilities_8h.html#a9329b0f36d22e7ab552519cfd2846612">announce_string</a>(this-&gt;pcout, <span class="stringliteral">&quot;CLS&quot;</span>);</div>
 <div class="line"><a id="l01826" name="l01826"></a><span class="lineno"> 1826</span>      this-&gt;computing_timer.print_summary();</div>
 <div class="line"><a id="l01827" name="l01827"></a><span class="lineno"> 1827</span>      this-&gt;computing_timer.reset();</div>
 <div class="line"><a id="l01828" name="l01828"></a><span class="lineno"> 1828</span>    }</div>
@@ -2433,7 +2433,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02275" name="l02275"></a><span class="lineno"> 2275</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.multiphysics.vof_parameters</div>
 <div class="line"><a id="l02276" name="l02276"></a><span class="lineno"> 2276</span>        .surface_tension_force.verbosity != <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a>)</div>
 <div class="line"><a id="l02277" name="l02277"></a><span class="lineno"> 2277</span>    {</div>
-<div class="line"><a id="l02278" name="l02278"></a><span class="lineno"> 2278</span>      this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;  -Iterative solver (phase fraction) took : &quot;</span></div>
+<div class="line"><a id="l02278" name="l02278"></a><span class="lineno"> 2278</span>      this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;  -Iterative solver (phase indicator) took : &quot;</span></div>
 <div class="line"><a id="l02279" name="l02279"></a><span class="lineno"> 2279</span>                  &lt;&lt; solver_control.last_step() &lt;&lt; <span class="stringliteral">&quot; steps &quot;</span> &lt;&lt; std::endl;</div>
 <div class="line"><a id="l02280" name="l02280"></a><span class="lineno"> 2280</span>    }</div>
 <div class="line"><a id="l02281" name="l02281"></a><span class="lineno"> 2281</span> </div>
@@ -2510,7 +2510,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02346" name="l02346"></a><span class="lineno"> 2346</span>          <a class="code hl_enumvalue" href="structParameters_1_1MultipleAdaptationParameters.html#a0415d48307e584ae60c4c4fc9ee053c0aae074a5692dfb7c26aae5147e52ceb40">Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly</a>,</div>
 <div class="line"><a id="l02347" name="l02347"></a><span class="lineno"> 2347</span>        ExcMessage(</div>
 <div class="line"><a id="l02348" name="l02348"></a><span class="lineno"> 2348</span>          <span class="stringliteral">&quot;Only the Kelly error estimator is currently implemented for the &quot;</span></div>
-<div class="line"><a id="l02349" name="l02349"></a><span class="lineno"> 2349</span>          <span class="stringliteral">&quot;&lt;phase&gt; VOF field.&quot;</span>));</div>
+<div class="line"><a id="l02349" name="l02349"></a><span class="lineno"> 2349</span>          <span class="stringliteral">&quot;&lt;phase&gt; CLS field.&quot;</span>));</div>
 <div class="line"><a id="l02350" name="l02350"></a><span class="lineno"> 2350</span> </div>
 <div class="line"><a id="l02351" name="l02351"></a><span class="lineno"> 2351</span> </div>
 <div class="line"><a id="l02352" name="l02352"></a><span class="lineno"> 2352</span>      ComponentMask phase_mask =</div>
@@ -2609,7 +2609,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02437" name="l02437"></a><span class="lineno"> 2437</span>  <span class="keyword">auto</span> mpi_communicator = this-&gt;triangulation-&gt;get_mpi_communicator();</div>
 <div class="line"><a id="l02438" name="l02438"></a><span class="lineno"> 2438</span> </div>
 <div class="line"><a id="l02439" name="l02439"></a><span class="lineno"> 2439</span>  <span class="keyword">auto</span> previous_solutions_size = this-&gt;previous_solutions-&gt;size();</div>
-<div class="line"><a id="l02440" name="l02440"></a><span class="lineno"> 2440</span>  this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;Reading VOF checkpoint&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a id="l02440" name="l02440"></a><span class="lineno"> 2440</span>  this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;Reading CLS checkpoint&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line"><a id="l02441" name="l02441"></a><span class="lineno"> 2441</span> </div>
 <div class="line"><a id="l02442" name="l02442"></a><span class="lineno"> 2442</span>  std::vector&lt;GlobalVectorType *&gt; input_vectors(1 + previous_solutions_size);</div>
 <div class="line"><a id="l02443" name="l02443"></a><span class="lineno"> 2443</span>  <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>                distributed_system(this-&gt;locally_owned_dofs,</div>
@@ -2770,7 +2770,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02596" name="l02596"></a><span class="lineno"> 2596</span>                             dsp,</div>
 <div class="line"><a id="l02597" name="l02597"></a><span class="lineno"> 2597</span>                             mpi_communicator);</div>
 <div class="line"><a id="l02598" name="l02598"></a><span class="lineno"> 2598</span> </div>
-<div class="line"><a id="l02599" name="l02599"></a><span class="lineno"> 2599</span>  this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;   Number of VOF degrees of freedom: &quot;</span></div>
+<div class="line"><a id="l02599" name="l02599"></a><span class="lineno"> 2599</span>  this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;   Number of CLS degrees of freedom: &quot;</span></div>
 <div class="line"><a id="l02600" name="l02600"></a><span class="lineno"> 2600</span>              &lt;&lt; this-&gt;dof_handler-&gt;n_dofs() &lt;&lt; std::endl;</div>
 <div class="line"><a id="l02601" name="l02601"></a><span class="lineno"> 2601</span> </div>
 <div class="line"><a id="l02602" name="l02602"></a><span class="lineno"> 2602</span>  <span class="comment">// Provide the VOF dof_handler and solution pointers to the</span></div>
@@ -2971,7 +2971,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02789" name="l02789"></a><span class="lineno"> 2789</span>      <span class="keyword">auto</span> mpi_communicator = this-&gt;triangulation-&gt;get_mpi_communicator();</div>
 <div class="line"><a id="l02790" name="l02790"></a><span class="lineno"> 2790</span>      <span class="keyword">const</span> std::string folder =</div>
 <div class="line"><a id="l02791" name="l02791"></a><span class="lineno"> 2791</span>        this-&gt;simulation_parameters.simulation_control.output_folder +</div>
-<div class="line"><a id="l02792" name="l02792"></a><span class="lineno"> 2792</span>        <span class="stringliteral">&quot;/algebraic-reinitialization-steps-output/&quot;</span>;</div>
+<div class="line"><a id="l02792" name="l02792"></a><span class="lineno"> 2792</span>        <span class="stringliteral">&quot;/pde-based-reinitialization-steps-output/&quot;</span>;</div>
 <div class="line"><a id="l02793" name="l02793"></a><span class="lineno"> 2793</span> </div>
 <div class="line"><a id="l02794" name="l02794"></a><span class="lineno"> 2794</span>      <span class="keyword">struct </span>stat buffer;</div>
 <div class="line"><a id="l02795" name="l02795"></a><span class="lineno"> 2795</span> </div>
@@ -3412,7 +3412,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="foldopen" id="foldopen03217" data-start="{" data-end="}">
 <div class="line"><a id="l03217" name="l03217"></a><span class="lineno"><a class="line" href="classVolumeOfFluid.html#a546d706000ac60b076d609a805012c20"> 3217</a></span><a class="code hl_function" href="classVolumeOfFluid.html#a546d706000ac60b076d609a805012c20">VolumeOfFluid&lt;dim&gt;::reinitialize_interface_with_algebraic_method</a>()</div>
 <div class="line"><a id="l03218" name="l03218"></a><span class="lineno"> 3218</span>{</div>
-<div class="line"><a id="l03219" name="l03219"></a><span class="lineno"> 3219</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;Algebraic reinitialization&quot;</span>);</div>
+<div class="line"><a id="l03219" name="l03219"></a><span class="lineno"> 3219</span>  TimerOutput::Scope t(this-&gt;computing_timer, <span class="stringliteral">&quot;PDE-based reinitialization&quot;</span>);</div>
 <div class="line"><a id="l03220" name="l03220"></a><span class="lineno"> 3220</span> </div>
 <div class="line"><a id="l03221" name="l03221"></a><span class="lineno"> 3221</span>  <span class="comment">// Reinitialize previous VOF solution</span></div>
 <div class="line"><a id="l03222" name="l03222"></a><span class="lineno"> 3222</span>  <span class="comment">// (this is only coherent with BDF1 and BDF2)</span></div>
@@ -3527,7 +3527,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l03325" name="l03325"></a><span class="lineno"> 3325</span>  <span class="keywordflow">if</span> (simulation_parameters.multiphysics.vof_parameters.regularization_method</div>
 <div class="line"><a id="l03326" name="l03326"></a><span class="lineno"> 3326</span>        .verbosity != <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::Verbosity::quiet</a>)</div>
 <div class="line"><a id="l03327" name="l03327"></a><span class="lineno"> 3327</span>    {</div>
-<div class="line"><a id="l03328" name="l03328"></a><span class="lineno"> 3328</span>      <a class="code hl_function" href="utilities_8h.html#a9329b0f36d22e7ab552519cfd2846612">announce_string</a>(this-&gt;pcout, <span class="stringliteral">&quot;VOF geometric interface reinitialization&quot;</span>);</div>
+<div class="line"><a id="l03328" name="l03328"></a><span class="lineno"> 3328</span>      <a class="code hl_function" href="utilities_8h.html#a9329b0f36d22e7ab552519cfd2846612">announce_string</a>(this-&gt;pcout, <span class="stringliteral">&quot;CLS geometric interface reinitialization&quot;</span>);</div>
 <div class="line"><a id="l03329" name="l03329"></a><span class="lineno"> 3329</span>      this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;In redistanciation of the previous solution ...&quot;</span></div>
 <div class="line"><a id="l03330" name="l03330"></a><span class="lineno"> 3330</span>                  &lt;&lt; std::endl;</div>
 <div class="line"><a id="l03331" name="l03331"></a><span class="lineno"> 3331</span>    }</div>

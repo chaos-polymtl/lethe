@@ -140,9 +140,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>               &lt;&lt; <span class="stringliteral">&quot;Cahn Hilliard boundary id: &quot;</span> &lt;&lt; arg1</div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>               &lt;&lt; <span class="stringliteral">&quot; has already been declared as a boundary condition&quot;</span>);</div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="boundary__conditions_8h.html#a0e32717a81907600e6240f19bbf9332e">   44</a></span><a class="code hl_function" href="boundary__conditions_8h.html#a5fcd305334cb05e8a032b84fcfbf3918">DeclException1</a>(VOFBoundaryDuplicated,</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="boundary__conditions_8h.html#a7c3e43e3ecfd1354f8261f0e3bb69d63">   44</a></span><a class="code hl_function" href="boundary__conditions_8h.html#a5fcd305334cb05e8a032b84fcfbf3918">DeclException1</a>(VOFBoundaryDuplicated,</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>               types::boundary_id,</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>               &lt;&lt; <span class="stringliteral">&quot;VOF boundary id: &quot;</span> &lt;&lt; arg1</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>               &lt;&lt; <span class="stringliteral">&quot;CLS boundary id: &quot;</span> &lt;&lt; arg1</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>               &lt;&lt; <span class="stringliteral">&quot; has already been declared as a boundary condition&quot;</span>);</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno"><a class="line" href="boundary__conditions_8h.html#a1e5a7f2b20720ebe1c95736b63ba5ade">   49</a></span><a class="code hl_function" href="boundary__conditions_8h.html#a5fcd305334cb05e8a032b84fcfbf3918">DeclException1</a>(TimeHarmonicMaxwellDuplicated,</div>
@@ -1486,7 +1486,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01331" name="l01331"></a><span class="lineno"> 1331</span>    prm.declare_entry(<span class="stringliteral">&quot;type&quot;</span>,</div>
 <div class="line"><a id="l01332" name="l01332"></a><span class="lineno"> 1332</span>                      <span class="stringliteral">&quot;none&quot;</span>,</div>
 <div class="line"><a id="l01333" name="l01333"></a><span class="lineno"> 1333</span>                      Patterns::Selection(<span class="stringliteral">&quot;none|dirichlet|periodic&quot;</span>),</div>
-<div class="line"><a id="l01334" name="l01334"></a><span class="lineno"> 1334</span>                      <span class="stringliteral">&quot;Type of boundary condition for VOF&quot;</span></div>
+<div class="line"><a id="l01334" name="l01334"></a><span class="lineno"> 1334</span>                      <span class="stringliteral">&quot;Type of boundary condition for CLS&quot;</span></div>
 <div class="line"><a id="l01335" name="l01335"></a><span class="lineno"> 1335</span>                      <span class="stringliteral">&quot;Choices are &lt;none|dirichlet|periodic&gt;.&quot;</span>);</div>
 <div class="line"><a id="l01336" name="l01336"></a><span class="lineno"> 1336</span> </div>
 <div class="line"><a id="l01337" name="l01337"></a><span class="lineno"> 1337</span>    prm.declare_entry(<span class="stringliteral">&quot;id&quot;</span>,</div>
@@ -1532,7 +1532,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01375" name="l01375"></a><span class="lineno"> 1375</span>    ParameterHandler  &amp;prm,</div>
 <div class="line"><a id="l01376" name="l01376"></a><span class="lineno"> 1376</span>    <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> number_of_boundary_conditions)</div>
 <div class="line"><a id="l01377" name="l01377"></a><span class="lineno"> 1377</span>  {</div>
-<div class="line"><a id="l01378" name="l01378"></a><span class="lineno"> 1378</span>    prm.enter_subsection(<span class="stringliteral">&quot;boundary conditions VOF&quot;</span>);</div>
+<div class="line"><a id="l01378" name="l01378"></a><span class="lineno"> 1378</span>    prm.enter_subsection(<span class="stringliteral">&quot;boundary conditions CLS&quot;</span>);</div>
 <div class="line"><a id="l01379" name="l01379"></a><span class="lineno"> 1379</span>    {</div>
 <div class="line"><a id="l01380" name="l01380"></a><span class="lineno"> 1380</span>      prm.declare_entry(<span class="stringliteral">&quot;number&quot;</span>,</div>
 <div class="line"><a id="l01381" name="l01381"></a><span class="lineno"> 1381</span>                        <span class="stringliteral">&quot;0&quot;</span>,</div>
@@ -1576,7 +1576,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01417" name="l01417"></a><span class="lineno"> 1417</span>    AssertThrow(</div>
 <div class="line"><a id="l01418" name="l01418"></a><span class="lineno"> 1418</span>      boundary_ids.size() &gt; 0,</div>
 <div class="line"><a id="l01419" name="l01419"></a><span class="lineno"> 1419</span>      ExcMessage(</div>
-<div class="line"><a id="l01420" name="l01420"></a><span class="lineno"> 1420</span>        <span class="stringliteral">&quot;A boundary id has not been set for one of the VOF boundary conditions. Please ensure that the id is set for every boundary condition.&quot;</span>));</div>
+<div class="line"><a id="l01420" name="l01420"></a><span class="lineno"> 1420</span>        <span class="stringliteral">&quot;A boundary id has not been set for one of the CLS boundary conditions. Please ensure that the id is set for every boundary condition.&quot;</span>));</div>
 <div class="line"><a id="l01421" name="l01421"></a><span class="lineno"> 1421</span> </div>
 <div class="line"><a id="l01422" name="l01422"></a><span class="lineno"> 1422</span>    <span class="comment">// Loop through all boundary ids to ensure that they are all non-negative</span></div>
 <div class="line"><a id="l01423" name="l01423"></a><span class="lineno"> 1423</span>    <span class="comment">// and unique</span></div>
@@ -1632,7 +1632,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="foldopen" id="foldopen01472" data-start="{" data-end="}">
 <div class="line"><a id="l01472" name="l01472"></a><span class="lineno"><a class="line" href="classBoundaryConditions_1_1VOFBoundaryConditions.html#a74210c57cd2d9146c2ca7d5cdbed747e"> 1472</a></span>  <a class="code hl_function" href="classBoundaryConditions_1_1VOFBoundaryConditions.html#a74210c57cd2d9146c2ca7d5cdbed747e">VOFBoundaryConditions&lt;dim&gt;::parse_parameters</a>(ParameterHandler &amp;prm)</div>
 <div class="line"><a id="l01473" name="l01473"></a><span class="lineno"> 1473</span>  {</div>
-<div class="line"><a id="l01474" name="l01474"></a><span class="lineno"> 1474</span>    prm.enter_subsection(<span class="stringliteral">&quot;boundary conditions VOF&quot;</span>);</div>
+<div class="line"><a id="l01474" name="l01474"></a><span class="lineno"> 1474</span>    prm.enter_subsection(<span class="stringliteral">&quot;boundary conditions CLS&quot;</span>);</div>
 <div class="line"><a id="l01475" name="l01475"></a><span class="lineno"> 1475</span>    {</div>
 <div class="line"><a id="l01476" name="l01476"></a><span class="lineno"> 1476</span>      this-&gt;number_of_boundary_conditions = prm.get_integer(<span class="stringliteral">&quot;number&quot;</span>);</div>
 <div class="line"><a id="l01477" name="l01477"></a><span class="lineno"> 1477</span>      this-&gt;time_dependent                = prm.get_bool(<span class="stringliteral">&quot;time dependent&quot;</span>);</div>

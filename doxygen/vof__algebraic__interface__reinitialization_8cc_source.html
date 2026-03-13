@@ -779,9 +779,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span> </div>
 <div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>  <span class="keywordflow">if</span> (verbose)</div>
 <div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span>    {</div>
-<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span>      <a class="code hl_function" href="utilities_8h.html#a9329b0f36d22e7ab552519cfd2846612">announce_string</a>(this-&gt;pcout, <span class="stringliteral">&quot;VOF algebraic interface reinitialization&quot;</span>);</div>
+<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span>      <a class="code hl_function" href="utilities_8h.html#a9329b0f36d22e7ab552519cfd2846612">announce_string</a>(this-&gt;pcout, <span class="stringliteral">&quot;CLS PDE-based interface reinitialization&quot;</span>);</div>
 <div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span> </div>
-<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span>      this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;Current algebraic reinitialization time step: &quot;</span></div>
+<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span>      this-&gt;pcout &lt;&lt; <span class="stringliteral">&quot;Current PDE-based reinitialization time step: &quot;</span></div>
 <div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span>                  &lt;&lt; this-&gt;current_time_step &lt;&lt; std::endl;</div>
 <div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span>    }</div>
 <div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span> </div>
@@ -837,10 +837,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span>  <span class="keyword">auto</span> mpi_communicator = this-&gt;triangulation-&gt;get_mpi_communicator();</div>
 <div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span>  <span class="keyword">const</span> std::string folder =</div>
 <div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span>    this-&gt;simulation_parameters.simulation_control.output_folder +</div>
-<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span>    <span class="stringliteral">&quot;/algebraic-reinitialization-steps-output/&quot;</span>;</div>
+<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span>    <span class="stringliteral">&quot;/pde-based-reinitialization-steps-output/&quot;</span>;</div>
 <div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span> </div>
 <div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span>  <span class="keyword">const</span> std::string file_name =</div>
-<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span>    <span class="stringliteral">&quot;algebraic-reinitialization-&quot;</span> +</div>
+<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span>    <span class="stringliteral">&quot;pde-based-reinitialization-&quot;</span> +</div>
 <div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>    this-&gt;simulation_parameters.simulation_control.output_name + <span class="stringliteral">&quot;-it&quot;</span> +</div>
 <div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span>    Utilities::int_to_string(this-&gt;simulation_control-&gt;get_iteration_number(),</div>
 <div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span>                             5);</div>
