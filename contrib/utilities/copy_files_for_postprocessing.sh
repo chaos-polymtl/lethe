@@ -15,7 +15,7 @@ USAGE="
  outputs for postprocessing.
 
  This script identifies .vtu and .pvtu files corresponding to requested
- time-step indices a and copies them. If none is requested, by default, it
+ time-step indices and copies them. If none is requested, by default, it
  copies the last time-step files.
  This script also copies files of the output folder with the following
  extensions: .dat and .pvd
