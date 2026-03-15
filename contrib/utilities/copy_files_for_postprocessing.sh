@@ -54,12 +54,16 @@ USAGE="
  that appear at the end of the .pvtu filename (before the extension).
  
   Supported formats with examples:
-    2309            → single step
-    100,500,2309    → list of steps
-    1000-1010       → range of steps
-    0,500,1000-1010 → mixed list
-    end             → last available step
-    0-20,end        → range plus last step
+    2309                             → single step
+    100,500,2309                     → list of steps
+    1000-1010                        → range of steps (+1 incrementation)
+    0:50:5                           → range with custom incrementation
+                                       [format: start:end:incrementation]
+                                       (here, we would have: 0,5,10,...,50)
+    end                              → last available step
+    0-20,end                         → range plus last step
+    0:100:10,end                     → custom incrementation range plus last step
+    0,500,1000-1010,2000:2500:20,end → mixed list
  
   *** If this option is not provided, the script copies the last
   time step available in the .pvd file. ***
@@ -276,18 +280,48 @@ process_simulation() {
     if [[ -n "$requested_step_indices" ]]; then
       IFS=',' read -ra step_indices <<< "$requested_step_indices"
         for step_index in "${step_indices[@]}"; do
+          # Last step
           if [[ "$step_index" == "end" ]]; then
             step_list+=("$last_step")
+
+          # Range with custom incrementation [start:end:incrementation]
+          elif [[ "$step_index" =~ ^[0-9]+:[0-9]+:[0-9]+$ ]]; then
+            start=${step_index%%:*}
+            rest=${step_index#*:}
+            end=${rest%%:*}
+            step=${rest#*:}
+
+            for ((i=start; i<=end; i+=step)); do
+              step_list+=("$i")
+            done
+
+          # Standard range start-end
           elif [[ "$step_index" =~ ^[0-9]+-[0-9]+$ ]]; then
             start=${step_index%-*}
             end=${step_index#*-}
             for ((i=start;i<=end;i++)); do
               step_list+=("$i")
             done
+
+          # Specific time-step index
           elif [[ "$step_index" =~ ^[0-9]+$ ]]; then
             step_list+=("$step_index")
+
+          # Invalid option
           else
-            echo " Warning: invalid time-step index '$step_index'"
+            echo " Warning: invalid time-step index (-si|--step-index): '$step_index'"
+            echo " Supported formats with examples:
+                     2309                             → single step
+                     100,500,2309                     → list of steps
+                     1000-1010                        → range of steps (+1 incrementation)
+                     0:50:5                           → range with custom incrementation
+                                                        [format: start:end:incrementation]
+                                                        (here, we would have: 0,5,10,...,50)
+                     end                              → last available step
+                     0-20,end                         → range plus last step
+                     0:100:10,end                     → custom incrementation range plus last step
+                     0,500,1000-1010,2000:2500:20,end → mixed list
+                     "
           fi
         done
       else
