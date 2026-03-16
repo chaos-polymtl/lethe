@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/03/15
+
+### Added
+
+- MINOR This PR adds to the utilities a bash script (`copy_files_for_postprocessing.sh`) that helps with copying only simulation result files of interest in a specific folder. This script can be used for identifying and copying files of importance before transferring to another machine or simply to clean up irrelevant files. This can be especially useful for parametric studies with more than necessary outputs for postprocessing. [#1941](https://github.com/chaos-polymtl/lethe/pull/1941)
+
 ## [Master] - 2026/03/12
 
 ### Changed
@@ -20,7 +26,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
   - VTK output fields, and
   - post-processing data
     
-  will also be done in subsequent PRs. [#1937](https://github.com/chaos-polymtl/lethe/pull/1937) 
+  will also be done in subsequent PRs. [#1937](https://github.com/chaos-polymtl/lethe/pull/1937)
 
 ## [Master] - 2026/03/11
 
