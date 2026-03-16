@@ -33,6 +33,7 @@ namespace Parameters
       , mass(1)
       , time(1)
       , temperature(1)
+      , electric_current(1)
     {
       define_all_scales();
     }
@@ -73,6 +74,7 @@ namespace Parameters
     double mass;
     double time;
     double temperature;
+    double electric_current;
 
     /*
      * Scaling laws. These are constants that are used to rescale quantities
@@ -94,6 +96,8 @@ namespace Parameters
     double cahn_hilliard_mobility_scaling;
     double cahn_hilliard_epsilon_scaling;
     double electromagnetic_frequency_scaling;
+    double electric_amplitude_scaling;
+    double magnetic_amplitude_scaling;
   };
 } // namespace Parameters
 

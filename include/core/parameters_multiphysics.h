@@ -14,6 +14,8 @@
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/utilities.h>
 
+#include <algorithm>
+
 using namespace dealii;
 
 namespace Parameters
@@ -411,6 +413,27 @@ namespace Parameters
     // Boundary ids where waveguide ports are applied so the port can be linked
     // to the right boundary
     std::vector<int> waveguide_boundary_ids;
+
+    // Waveguide power (in W) to be able to link the amplitude of the
+    // electromagnetic wave to the power injected in the waveguide
+    std::vector<double> waveguide_power;
+
+    // By default, the time-harmonic Maxwell solver rescale the solution to
+    // solve everything in a dimensionless form with quantities of order 1 to
+    // improve the conditioning of the linear system. However, if the user wants
+    // to recover the physical solution with the desired units, they can set
+    // this parameter to true. Note that if multiphysics coupling is enabled,
+    // this parameter needs to be set to true for the time-harmonic Maxwell
+    // solver to ensure that the coupling between the different physics is
+    // consistent in terms of units and magnitudes of the physical quantities.
+    bool apply_amplitude_scaling;
+
+    // When the scaling is applied, we need to know the dimensionality of the
+    // electric and magnetic fields to be able to recover the physical solution
+    // from the dimensionless one. Those parameters are used for that purpose
+    // and stores the value obtain from the dimensionality class.
+    double electric_field_dimensionality;
+    double magnetic_field_dimensionality;
 
     // Waveguide mode to simulate (TE|TM)
     std::vector<Parameters::WaveguideMode> waveguide_mode;

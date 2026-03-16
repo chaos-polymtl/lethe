@@ -97,32 +97,36 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
 }
 
 
-
 template <>
-std::pair<Tensor<1, 2, std::complex<double>>, std::complex<double>>
-TimeHarmonicMaxwell<2>::compute_waveguide_port_excitation(
+std::pair<Tensor<1, 2, std::complex<double>>,
+          Tensor<1, 2, std::complex<double>>>
+TimeHarmonicMaxwell<2>::compute_waveguide_port_incident_fields(
   const Point<2> & /*p*/,
   const Tensor<1, 2> & /*normal*/,
   const std::complex<double> & /*effective_electric_permittivity*/,
   const std::complex<double> & /*effective_magnetic_permeability*/,
-  const unsigned int /*boundary_id_index*/)
+  const unsigned int /*boundary_id_index*/,
+  std::complex<double> * /*surface_admittance*/)
 {
   // The waveguide port excitation would be completely different in 2D as curls
   // and cross products are not defined the same way as in 3D. Therefore, we do
   // not implement it for now and throw an error if someone tries to use the 2D
   // version.
   AssertThrow(false, TimeHarmonicMaxwellDimensionNotSupported(2));
-  return std::pair<Tensor<1, 2, std::complex<double>>, std::complex<double>>();
+  return std::pair<Tensor<1, 2, std::complex<double>>,
+                   Tensor<1, 2, std::complex<double>>>();
 }
 
 template <>
-std::pair<Tensor<1, 3, std::complex<double>>, std::complex<double>>
-TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
+std::pair<Tensor<1, 3, std::complex<double>>,
+          Tensor<1, 3, std::complex<double>>>
+TimeHarmonicMaxwell<3>::compute_waveguide_port_incident_fields(
   const Point<3>             &p,
   const Tensor<1, 3>         &normal,
   const std::complex<double> &effective_electric_permittivity,
   const std::complex<double> &effective_magnetic_permeability,
-  const unsigned int          boundary_id_index)
+  const unsigned int          boundary_id_index,
+  std::complex<double>       *surface_admittance)
 {
   // Define some constexpr values for the computation
   static constexpr std::complex<double> imag{0., 1.};
@@ -231,6 +235,13 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
                 " is evanescent at the given frequency. Please "
                 "choose another mode or increase the frequency."));
 
+  if (surface_admittance != nullptr)
+    {
+      *surface_admittance = (mode == Parameters::WaveguideMode::TE) ?
+                              k_l / (omega * effective_magnetic_permeability) :
+                              omega * effective_electric_permittivity / k_l;
+    }
+
   // Now we want to compute the electromagnetic field and surface admittance at
   // point p as if the waveguide center was at the origin. So we will perform a
   // change of basis to a local coordinate system where the waveguide center is
@@ -306,16 +317,60 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
   Tensor<1, dim, std::complex<double>> E_inc =
     E_inc_local[0] * e_t1 + E_inc_local[1] * e_t2 + E_inc_local[2] * e_t3;
   Tensor<1, dim, std::complex<double>> H_inc =
-    H_inc_local[0] * e_t1 + H_inc_local[1] * e_t2 + H_inc_local[2] * e_t3;
-  Tensor<1, dim, std::complex<double>> excitation;
-  std::complex<double>                 surface_admittance;
+    parity_factor *
+    (H_inc_local[0] * e_t1 + H_inc_local[1] * e_t2 + H_inc_local[2] * e_t3);
 
-  surface_admittance = (mode == Parameters::WaveguideMode::TE) ?
-                         k_l / (omega * effective_magnetic_permeability) :
-                         omega * effective_electric_permittivity / k_l;
+  return std::make_pair(E_inc, H_inc);
+}
 
-  excitation = parity_factor * cross_product_3d(normal, H_inc) +
-               map_H12(surface_admittance * E_inc, normal);
+
+template <>
+std::pair<Tensor<1, 2, std::complex<double>>, std::complex<double>>
+TimeHarmonicMaxwell<2>::compute_waveguide_port_excitation(
+  const Point<2> & /*p*/,
+  const Tensor<1, 2> & /*normal*/,
+  const std::complex<double> & /*effective_electric_permittivity*/,
+  const std::complex<double> & /*effective_magnetic_permeability*/,
+  const unsigned int /*boundary_id_index*/)
+{
+  // The waveguide port excitation would be completely different in 2D as curls
+  // and cross products are not defined the same way as in 3D. Therefore, we do
+  // not implement it for now and throw an error if someone tries to use the 2D
+  // version.
+  AssertThrow(false, TimeHarmonicMaxwellDimensionNotSupported(2));
+  return std::pair<Tensor<1, 2, std::complex<double>>, std::complex<double>>();
+}
+
+template <>
+std::pair<Tensor<1, 3, std::complex<double>>, std::complex<double>>
+TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
+  const Point<3>             &p,
+  const Tensor<1, 3>         &normal,
+  const std::complex<double> &effective_electric_permittivity,
+  const std::complex<double> &effective_magnetic_permeability,
+  const unsigned int          boundary_id_index)
+{
+  static constexpr unsigned int dim = 3;
+
+  std::complex<double> surface_admittance;
+
+  const auto incident_fields =
+    compute_waveguide_port_incident_fields(p,
+                                           normal,
+                                           effective_electric_permittivity,
+                                           effective_magnetic_permeability,
+                                           boundary_id_index,
+                                           &surface_admittance);
+
+  const Tensor<1, dim, std::complex<double>> &E_inc = incident_fields.first;
+  const Tensor<1, dim, std::complex<double>> &H_inc = incident_fields.second;
+
+  // We normalize the excitation by the electromagnetic scaling factor
+  const Tensor<1, dim, std::complex<double>> excitation =
+    this->waveguide_ports_amplitudes[boundary_id_index] /
+    this->electromagnetic_scaling *
+    (cross_product_3d(normal, H_inc) +
+     map_H12(surface_admittance * E_inc, normal));
 
   return std::make_pair(excitation, surface_admittance);
 }
@@ -345,6 +400,162 @@ TimeHarmonicMaxwell<dim>::update_material_properties(
       ->value(field_values)};
 }
 
+template <int dim>
+void
+TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
+  const PhysicalPropertiesManager &physical_properties_manager)
+{
+  auto        mpi_communicator = this->triangulation->get_mpi_communicator();
+  const auto &electromagnetic_parameters =
+    this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
+
+  // If there are no waveguide inlets, we can skip the scaling computation and
+  // set the scaling factor to 1.0.
+  if (electromagnetic_parameters.number_of_waveguide_inlets == 0)
+    {
+      this->waveguide_ports_amplitudes.clear();
+      this->electromagnetic_scaling = 1.0;
+      return;
+    }
+
+  const auto &waveguide_powers = electromagnetic_parameters.waveguide_power;
+
+  // The following vector will store the modal power for each waveguide inlet
+  // boundary condition computed from integrating the Poynting vector of the
+  // incident wave over the inlet face.
+  std::vector<double> waveguide_modal_powers(
+    electromagnetic_parameters.number_of_waveguide_inlets, 0.);
+
+  // Resize the vector that will store the waveguide port electric field
+  // amplitudes. Those are obtain by computing the square root of the ratio
+  // between the input power provided by the user and the modal power computed
+  // from integrating the Poynting vector of the incident wave over the inlet
+  // face.
+  this->waveguide_ports_amplitudes =
+    std::vector<double>(electromagnetic_parameters.number_of_waveguide_inlets,
+                        0.);
+
+  // We need to define a FEFaceValues object to perform the integral of the
+  // Poynting vector on faces
+  FEFaceValues<dim>  fe_face_values_trial_skeleton(*this->mapping,
+                                                  *this->fe_trial_skeleton,
+                                                  *this->face_quadrature,
+                                                  update_quadrature_points |
+                                                    update_normal_vectors |
+                                                    update_JxW_values);
+  const unsigned int n_q_points_face =
+    fe_face_values_trial_skeleton.n_quadrature_points;
+  BoundaryConditions::BoundaryType bc_type;
+
+  // Containers for electromagnetic quantities at the quadrature points
+  Tensor<1, dim, std::complex<double>> E_inc;
+  Tensor<1, dim, std::complex<double>> H_inc;
+  std::complex<double>                 effective_electric_permittivity;
+  std::complex<double>                 effective_magnetic_permeability;
+  unsigned int                         material_id;
+
+  // Here we perform the Poynting vector integration over the waveguide inlet
+  // faces.
+  for (const auto &cell : triangulation->active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          material_id = cell->material_id();
+          update_material_properties(physical_properties_manager,
+                                     effective_electric_permittivity,
+                                     effective_magnetic_permeability,
+                                     material_id);
+
+          for (const auto &face : cell->face_iterators())
+            {
+              fe_face_values_trial_skeleton.reinit(cell, face);
+
+              // Get the boundary condition type on the current face
+              bc_type = BoundaryConditions::BoundaryType::none;
+
+              if (face->at_boundary())
+                {
+                  bc_type =
+                    this->simulation_parameters
+                      .boundary_conditions_time_harmonic_electromagnetics.type
+                      .at(face->boundary_id());
+
+                  // If the boundary condition is a waveguide port, we compute
+                  // the modal power
+                  if (bc_type ==
+                      BoundaryConditions::BoundaryType::waveguide_port)
+                    {
+                      // Get the index of the waveguide port boundary condition
+                      // to apply the correct mode parameters
+                      unsigned int boundary_index = std::distance(
+                        electromagnetic_parameters.waveguide_boundary_ids
+                          .begin(),
+                        std::ranges::find(
+                          electromagnetic_parameters.waveguide_boundary_ids,
+                          face->boundary_id()));
+
+                      // Loop over all face quadrature points
+                      for (unsigned int q_point = 0; q_point < n_q_points_face;
+                           ++q_point)
+                        {
+                          // Initialize reusable variables
+                          const auto &position =
+                            fe_face_values_trial_skeleton.quadrature_point(
+                              q_point);
+                          const auto &normal =
+                            fe_face_values_trial_skeleton.normal_vector(
+                              q_point);
+                          const double JxW_face =
+                            fe_face_values_trial_skeleton.JxW(q_point);
+
+                          std::tie(E_inc, H_inc) =
+                            compute_waveguide_port_incident_fields(
+                              position,
+                              normal,
+                              effective_electric_permittivity,
+                              effective_magnetic_permeability,
+                              boundary_index);
+
+                          // The Poynting vector is given by S = 0.5 * Re(E x
+                          // H*), where H* is the complex conjugate of H. The
+                          // normal points outward from the domain, so the power
+                          // entering the domain is given by the negative of the
+                          // flux of the Poynting vector through the face
+                          // (that's why we have a negative sign in front of the
+                          // integral).
+                          waveguide_modal_powers[boundary_index] -=
+                            0.5 *
+                            std::real(
+                              normal[0] * (E_inc[1] * std::conj(H_inc[2]) -
+                                           E_inc[2] * std::conj(H_inc[1])) +
+                              normal[1] * (E_inc[2] * std::conj(H_inc[0]) -
+                                           E_inc[0] * std::conj(H_inc[2])) +
+                              normal[2] * (E_inc[0] * std::conj(H_inc[1]) -
+                                           E_inc[1] * std::conj(H_inc[0]))) *
+                            JxW_face;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+  // Now we need to aggregate from all the MPI processes to get the global modal
+  // power for each waveguide inlet
+  for (unsigned int inlets = 0;
+       inlets < electromagnetic_parameters.number_of_waveguide_inlets;
+       ++inlets)
+    {
+      this->waveguide_ports_amplitudes[inlets] = std::sqrt(
+        waveguide_powers[inlets] /
+        Utilities::MPI::sum(waveguide_modal_powers[inlets], mpi_communicator));
+    }
+
+  double max_amplitude =
+    *std::max_element(this->waveguide_ports_amplitudes.begin(),
+                      this->waveguide_ports_amplitudes.end());
+  this->electromagnetic_scaling = max_amplitude;
+}
 
 template <int dim>
 std::vector<OutputStruct<dim, GlobalVectorType>>
@@ -1248,6 +1459,68 @@ TimeHarmonicMaxwell<dim>::solve_linear_system()
 
   // Reconstruct the interior solution from the skeleton solution
   reconstruct_interior_solution();
+
+  // Apply the rescaling to obtain the physical solution if required.
+  const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters =
+    this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
+  if (time_harmonic_maxwell_parameters.apply_amplitude_scaling)
+    {
+      constexpr double Z_0 = 4 * numbers::PI * 29.9792458;
+
+      const double electric_scale =
+        time_harmonic_maxwell_parameters.electric_field_dimensionality *
+        this->electromagnetic_scaling;
+      const double magnetic_scale =
+        (time_harmonic_maxwell_parameters.magnetic_field_dimensionality / Z_0) *
+        this->electromagnetic_scaling;
+
+      // Loop over all dofs of the solution and apply the scaling to the
+      // electric and magnetic field components
+      for (const auto &dof_index :
+           this->present_solution->locally_owned_elements())
+        {
+          // Get the component of the dof
+          const unsigned int component =
+            this->fe_trial_interior->system_to_component_index(dof_index)
+              .second;
+          std::cout << "dof_index: " << dof_index
+                    << ", component: " << component << std::endl;
+
+          if (component == 0 || component == 1)
+            {
+              // Electric field component
+              (*this->present_solution)[dof_index] *= electric_scale;
+            }
+          else if (component == 2 || component == 3)
+            {
+              // Magnetic field component
+              (*this->present_solution)[dof_index] *= magnetic_scale;
+            }
+        }
+
+      // We also need to apply the scaling to the skeleton solution for
+      // consistency, even if it is not used for the multiphysics coupling nor
+      // outputed at the moment.
+      for (const auto &dof_index :
+           this->present_solution_skeleton->locally_owned_elements())
+        {
+          // Get the component of the dof
+          const unsigned int component =
+            this->fe_trial_skeleton->system_to_component_index(dof_index)
+              .second;
+
+          if (component == 0 || component == 1)
+            {
+              // Electric field component
+              (*this->present_solution_skeleton)[dof_index] *= electric_scale;
+            }
+          else if (component == 2 || component == 3)
+            {
+              // Magnetic field component
+              (*this->present_solution_skeleton)[dof_index] *= magnetic_scale;
+            }
+        }
+    }
 }
 
 template <>
@@ -1286,6 +1559,11 @@ TimeHarmonicMaxwell<3>::assemble_system_matrix()
     this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
   const double omega =
     2.0 * PI * time_harmonic_maxwell_parameters.electromagnetic_frequency;
+
+  // We always need to compute the scaling for the electromagnetic fields even
+  // if the user does not want to apply it to the solution because it is used to
+  // normalize the waveguide inlets relative input power
+  compute_electromagnetic_scaling(properties_manager);
 
   TimerOutput::Scope t(this->computing_timer, "Assemble matrix and RHS");
 

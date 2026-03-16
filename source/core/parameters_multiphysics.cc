@@ -789,8 +789,14 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
     prm.declare_entry(
       "electromagnetic frequency",
       "1",
-      Patterns::Double(),
+      Patterns::Double(0),
       "Frequency of the time harmonic electromagnetic wave excitation (in Hz).");
+
+    prm.declare_entry(
+      "apply amplitude scaling",
+      "false",
+      Patterns::Bool(),
+      "Whether to apply or not amplitude scaling to the waveguide mode excitation. This is used to recover the correct physical solution in dimensional units. This is only relevant when the waveguide mode excitation is used as a boundary condition for the electromagnetic wave excitation (when using the user define its own first, second or third kind of boundary condition it is the user's responsibility to apply the correct amplitude scaling to the electromagnetic wave excitation).");
 
     prm.declare_entry("number of waveguide inlets",
                       "0",
@@ -813,6 +819,12 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
             Patterns::Integer(0),
             "The boundary id where the waveguide inlet is applied.");
 
+          prm.declare_entry(
+            "waveguide power",
+            "1",
+            Patterns::Double(0),
+            "The power of the waveguide mode excitation in Watts. This is used to compute the amplitude of the electromagnetic wave at the inlet in dimensional units.");
+
           prm.enter_subsection("waveguide mode");
           {
             prm.declare_entry(
@@ -824,13 +836,13 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
             prm.declare_entry(
               "mode order m",
               "1",
-              Patterns::Integer(),
+              Patterns::Integer(0),
               "The mode order m in the first transverse direction of the rectangular waveguide.");
 
             prm.declare_entry(
               "mode order n",
               "0",
-              Patterns::Integer(),
+              Patterns::Integer(0),
               "The mode order n in the second transverse direction of the rectangular waveguide.");
           }
           prm.leave_subsection();
@@ -874,6 +886,19 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
       prm.get_double("electromagnetic frequency") *
       dimensions.electromagnetic_frequency_scaling;
 
+    TimeHarmonicMaxwell::apply_amplitude_scaling =
+      prm.get_bool("apply amplitude scaling");
+
+    // By default, the electric field dimensionality is in V/m, but if the user
+    // changed the dimensionality of the problem, we need to change the
+    // dimensionality of the electric field accordingly to ensure that the
+    // correct physical solution is obtained in dimensional units.
+    TimeHarmonicMaxwell::electric_field_dimensionality =
+      dimensions.electric_amplitude_scaling;
+    // The same applies for the magnetic field, which is in A/m by default.
+    TimeHarmonicMaxwell::magnetic_field_dimensionality =
+      dimensions.magnetic_amplitude_scaling;
+
     TimeHarmonicMaxwell::number_of_waveguide_inlets =
       prm.get_integer("number of waveguide inlets");
 
@@ -892,6 +917,7 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
     TimeHarmonicMaxwell::mode_order_n.resize(number_of_waveguide_inlets);
     TimeHarmonicMaxwell::waveguide_boundary_ids.resize(
       number_of_waveguide_inlets);
+    TimeHarmonicMaxwell::waveguide_power.resize(number_of_waveguide_inlets);
 
     for (unsigned int inlet = 0; inlet < number_of_waveguide_inlets; ++inlet)
       {
@@ -899,6 +925,9 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
         {
           TimeHarmonicMaxwell::waveguide_boundary_ids[inlet] =
             prm.get_integer("port boundary id");
+
+          TimeHarmonicMaxwell::waveguide_power[inlet] =
+            prm.get_double("waveguide power");
 
           prm.enter_subsection("waveguide mode");
           {
@@ -984,6 +1013,17 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
           TimeHarmonicMaxwell::waveguide_corners.push_back(tmp_corners);
         }
         prm.leave_subsection();
+      }
+    if (number_of_waveguide_inlets > 0)
+      {
+        double max_power =
+          *std::max_element(TimeHarmonicMaxwell::waveguide_power.begin(),
+                            TimeHarmonicMaxwell::waveguide_power.end());
+
+        AssertThrow(
+          max_power > 0,
+          ExcMessage(
+            "The maximum waveguide port power is zero. Please check that at least one waveguide power parameters in the input prm file is not 0 so the solution is not trivial."));
       }
   }
   prm.leave_subsection();
