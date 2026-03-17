@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
-# Checks the transient stabilized ALE mortar implementation.
+# Two-dimensional example of a paddle mixer using the mortar method.
 
 # Listing of Parameters
 #----------------------
@@ -42,22 +42,12 @@ subsection physical properties
 end
 
 #---------------------------------------------------
-# Post-Processing
-#---------------------------------------------------
-
-subsection post-processing
-  set verbosity                = verbose
-  set calculate enstrophy      = false
-  set calculate kinetic energy = false
-end
-
-#---------------------------------------------------
 # Mesh
 #---------------------------------------------------
 
 subsection mesh
   set type               = gmsh
-  set file name          = stator.msh
+  set file name          = mixer_stator.msh
   set initial refinement = 2
 end
 
@@ -68,8 +58,8 @@ end
 subsection mortar
   set enable = true
   subsection mesh
-    set type      = gmsh
-    set file name = rotor.msh
+    set type               = gmsh
+    set file name          = mixer_rotor.msh
   end
   set rotor boundary id  = 3
   set stator boundary id = 4

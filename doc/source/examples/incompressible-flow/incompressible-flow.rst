@@ -69,7 +69,7 @@ Incompressible Flow
 
       incompressible_1_10 [label="Sudden-Expansion Flow", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-sudden-expansion-flow/2d-sudden-expansion-flow.html"];
       
-      incompressible_1_11 [label="Mortar Method", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-mortar-method/2d-mortar-method.html", tooltip="Mortar method"];
+      incompressible_1_11 [label="Paddle Mixer Using \nthe Mortar Method", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-mortar-method/2d-mortar-method.html", tooltip="Mortar method"];
 
 
       incompressible_2 [label="3D",shape=polygon,sides=4]; 
