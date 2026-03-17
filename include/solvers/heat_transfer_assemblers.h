@@ -606,4 +606,50 @@ private:
   std::shared_ptr<EvaporationModel> evaporation_model;
 };
 
+
+/**
+ * @brief Class that assembles the time average electromagnetic heating for the heat transfer solver when the time-harmonic Maxwell solver is enabled. The electromagnetic heating is applied as a volumetric source term in the heat equation, and is calculated as
+ \f$ Q = 1/2(\sigma |E|^2 + \omega \varepsilon_0 \varepsilon_i |E|^2 + \omega
+ \mu_0 \mu_i |H|^2 ) \f$
+ * @tparam dim An integer that denotes the number of spatial dimensions.
+ *
+ * @param simulation_control Shared pointer of the SimulationControl object
+ * controlling the current simulation.
+ * @param p_time_harmonic_maxwell Struct that holds all time-harmonic Maxwell model
+ * parameters.
+ * @ingroup assemblers.
+ */
+template <int dim>
+class HeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell
+
+  : public HeatTransferAssemblerBase<dim>
+{
+public:
+  HeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell(
+    const std::shared_ptr<SimulationControl> &simulation_control)
+    : simulation_control(simulation_control)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(const HeatTransferScratchData<dim> &scratch_data,
+                  StabilizedMethodsCopyData          &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(const HeatTransferScratchData<dim> &scratch_data,
+               StabilizedMethodsCopyData          &copy_data) override;
+
+protected:
+  const std::shared_ptr<SimulationControl> simulation_control;
+};
+
 #endif

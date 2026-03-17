@@ -93,7 +93,8 @@ public:
     AssertThrow(delta_T_ref > 0,
                 ExcMessage("Reference temperature is invalid (< 0)."));
 
-    gather_cls = false;
+    gather_cls                   = false;
+    gather_time_harmonic_maxwell = false;
 
     allocate();
   }
@@ -131,15 +132,21 @@ public:
     AssertThrow(sd.global_delta_T_ref > 0,
                 ExcMessage("Reference temperature is invalid (< 0)."));
 
-    gather_cls = sd.gather_cls;
+    gather_cls                   = sd.gather_cls;
+    gather_time_harmonic_maxwell = sd.gather_time_harmonic_maxwell;
     allocate();
-    if (sd.gather_cls)
+    if (gather_cls)
       enable_cls(sd.fe_values_cls->get_fe(),
                  sd.fe_values_cls->get_quadrature(),
                  sd.fe_values_cls->get_mapping(),
                  sd.filter);
-  }
 
+    if (gather_time_harmonic_maxwell)
+      enable_time_harmonic_maxwell(
+        sd.fe_values_time_harmonic_maxwell->get_fe(),
+        sd.fe_values_time_harmonic_maxwell->get_quadrature(),
+        sd.fe_values_time_harmonic_maxwell->get_mapping());
+  }
 
   /** @brief Allocates the memory for the scratch
    *
@@ -220,7 +227,6 @@ public:
             this->laplacian_phi_T[q][k] = trace(this->hess_phi_T[q][k]);
           }
       }
-
 
     // Arrays related to faces must be re-initialized for each cell, since they
     // might depend on reference cell
@@ -400,11 +406,58 @@ public:
       current_filtered_solution, this->filtered_phase_gradient_values);
   }
 
+  /**
+   * @brief enable_time_harmonic_maxwell Enables the collection of the
+   * time-harmonic Maxwell data by the scratch - function overload used in the
+   * copy constructor of HeatTransferScratchData
+   *
+   * @param fe FiniteElement associated with the time-harmonic Maxwell problem.
+   *
+   * @param quadrature Quadrature rule of the time-harmonic Maxwell problem
+   * assembly
+   *
+   * @param mapping Mapping used for the time-harmonic Maxwell problem assembly
+   */
 
-  /** @brief Calculates the physical properties. This method calculates the physical properties
-   * that may be required by the heat transfer problem. Namely the density,
-   * specific heat, thermal conductivity and viscosity (for viscous
-   * dissipation).
+  void
+  enable_time_harmonic_maxwell(const FiniteElement<dim> &fe,
+                               const Quadrature<dim>    &quadrature,
+                               const Mapping<dim>       &mapping);
+
+  /** @brief Reinitialize the content of the scratch for the time-harmonic
+   * Maxwell problem.
+   *
+   * @tparam VectorType The Vector type used for the solvers
+   *
+   * @param cell The cell over which the assembly is being carried.
+   * This cell must be compatible with the time-harmonic Maxwell FE and not the
+   * Fluid Dynamics FE
+   *
+   * @param current_solution The present solution for the electromagnetic field
+   * values
+   */
+
+  template <typename VectorType>
+  void
+  reinit_time_harmonic_maxwell(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const VectorType                                     &current_solution)
+  {
+    this->fe_values_time_harmonic_maxwell->reinit(cell);
+    (*this->fe_values_time_harmonic_maxwell)[this->extractor_E_real]
+      .get_function_values(current_solution, this->electric_field_real_values);
+    (*this->fe_values_time_harmonic_maxwell)[this->extractor_E_imag]
+      .get_function_values(current_solution, this->electric_field_imag_values);
+    (*this->fe_values_time_harmonic_maxwell)[this->extractor_H_real]
+      .get_function_values(current_solution, this->magnetic_field_real_values);
+    (*this->fe_values_time_harmonic_maxwell)[this->extractor_H_imag]
+      .get_function_values(current_solution, this->magnetic_field_imag_values);
+  }
+
+  /** @brief Calculates the physical properties. This method calculates the
+   * physical properties that may be required by the heat transfer problem.
+   * Namely the density, specific heat, thermal conductivity and viscosity (for
+   * viscous dissipation).
    *
    */
   void
@@ -436,6 +489,15 @@ public:
   std::vector<double> density_1;
   std::vector<double> dynamic_viscosity_1;
   std::vector<double> grad_specific_heat_temperature_1;
+
+  // Physical properties for time-harmonic Maxwell's equations. Note that only
+  // the imaginary part of the electric permittivity and magnetic permeability
+  // are responsible for the heat generation, so only these are stored here (and
+  // conductivity is always real).
+  std::vector<double> electric_conductivity;
+  std::vector<double> magnetic_permeability_imag;
+  std::vector<double> electric_permittivity_imag;
+  double              angular_frequency;
 
   // FEValues for the HT problem
   FEValues<dim> fe_values_T;
@@ -477,6 +539,22 @@ public:
   std::shared_ptr<FEValues<dim>> fe_values_cls;
   std::shared_ptr<ConservativeLevelSetFilterBase>
     filter; // Phase indicator filter
+
+  /**
+   * Scratch component for the time-harmonic Maxwell auxiliary physics
+   */
+  bool                             gather_time_harmonic_maxwell;
+  const FEValuesExtractors::Vector extractor_E_real;
+  const FEValuesExtractors::Vector extractor_E_imag;
+  const FEValuesExtractors::Vector extractor_H_real;
+  const FEValuesExtractors::Vector extractor_H_imag;
+  std::vector<Tensor<1, dim>>      electric_field_real_values;
+  std::vector<Tensor<1, dim>>      electric_field_imag_values;
+  std::vector<Tensor<1, dim>>      magnetic_field_real_values;
+  std::vector<Tensor<1, dim>>      magnetic_field_imag_values;
+
+  // Stored as shared_ptr because only instantiated when EM is active
+  std::shared_ptr<FEValues<dim>> fe_values_time_harmonic_maxwell;
 
   /**
    * Scratch component for the Navier-Stokes components

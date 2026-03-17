@@ -26,6 +26,13 @@ DeclException1(
   << "Thermal buoyancy force cannot be activated without activating heat transfer.");
 
 DeclException1(
+  MicrowaveHeatingWithoutElectromagneticsError,
+  bool,
+  << std::boolalpha << "Microwave heating is activated (" << arg1
+  << "), while electromagnetics is not activated (false)." << std::endl
+  << "Microwave heating cannot be activated without activating electromagnetics.");
+
+DeclException1(
   MarangoniWithoutFluidDynamicsError,
   bool,
   << std::boolalpha << "Marangoni effect is activated (" << arg1
@@ -82,6 +89,7 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   std::shared_ptr<SimulationControl> p_simulation_control,
   ConditionalOStream                &p_pcout)
   : multiphysics_parameters(nsparam.multiphysics)
+  , simulation_control(p_simulation_control)
   , pcout(p_pcout)
 {
   inspect_multiphysics_models_dependencies(nsparam);
@@ -256,7 +264,8 @@ MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
 {
   bool thermal_buoyancy_force_enabled =
     nsparam.multiphysics.thermal_buoyancy_force;
-  bool heat_transfer_enabled = nsparam.multiphysics.heat_transfer;
+  bool heat_transfer_enabled     = nsparam.multiphysics.heat_transfer;
+  bool microwave_heating_enabled = nsparam.multiphysics.microwave_heating;
   bool marangoni_effect_enabled =
     nsparam.multiphysics.cls_parameters.surface_tension_force
       .enable_marangoni_effect;
@@ -266,14 +275,15 @@ MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
   bool interface_sharpening_enabled =
     nsparam.multiphysics.cls_parameters.reinitialization_method.sharpening
       .enable;
-  bool CLS_enabled           = nsparam.multiphysics.CLS;
-  bool cahn_hilliard_enabled = nsparam.multiphysics.cahn_hilliard;
+  bool CLS_enabled              = nsparam.multiphysics.CLS;
+  bool cahn_hilliard_enabled    = nsparam.multiphysics.cahn_hilliard;
+  bool electromagnetics_enabled = nsparam.multiphysics.electromagnetics;
 
   // To avoid getting unused parameter warning
   _unused(thermal_buoyancy_force_enabled && heat_transfer_enabled &&
           marangoni_effect_enabled && surface_tension_force_enabled &&
           fluid_dynamics_enabled && interface_sharpening_enabled &&
-          CLS_enabled && cahn_hilliard_enabled);
+          CLS_enabled && cahn_hilliard_enabled && electromagnetics_enabled);
 
   // Dependence of thermal buoyancy force on fluid dynamics
   AssertThrow(!(thermal_buoyancy_force_enabled == true &&
@@ -323,6 +333,71 @@ MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
   AssertThrow(!(cahn_hilliard_enabled == true &&
                 thermal_buoyancy_force_enabled == true),
               CahnHilliardWithThermalBuoyancyForceError());
+
+  // Dependence of Microwave heating in heat transfer on electromagnetics
+  AssertThrow(
+    !(microwave_heating_enabled == true && electromagnetics_enabled == false),
+    MicrowaveHeatingWithoutElectromagneticsError(microwave_heating_enabled));
+}
+
+template <int dim>
+bool
+MultiphysicsInterface<dim>::should_solve_electromagnetics() const
+{
+  const Parameters::TimeHarmonicMaxwell<dim> &thm_parameters =
+    this->multiphysics_parameters.time_harmonic_maxwell_parameters;
+
+  // Always solve at the first step of the simulation (simulation start as 0 but
+  // it is then incremented before solving the physics for the first time, so
+  // the first time this function is called, the step number is 1).
+  if (this->simulation_control->get_step_number() == 1)
+    {
+      return true;
+    }
+  else
+    {
+      switch (thm_parameters.time_coupling_method)
+        {
+          case Parameters::TimeCouplingMethod::none:
+            return false;
+          case Parameters::TimeCouplingMethod::iteration:
+            // Solve only if we are at a multiple of the specified iteration
+            // frequency. We substract 1 since the step number starts at 1.
+            if ((this->simulation_control->get_step_number() - 1) %
+                  thm_parameters.coupling_iteration ==
+                0)
+              return true;
+            else
+              return false;
+          case Parameters::TimeCouplingMethod::time:
+            // Solve only if the current time has passed a multiple of
+            // the specified time frequency since the last time the
+            // electromagnetics were solved. This is done by comparing the floor
+            // of the current time divided by the time coupling parameter to the
+            // floor of the previous time divided by the time coupling
+            // parameter. If they are different, it means we have passed a
+            // multiple of the time coupling parameter and we should solve the
+            // electromagnetics.
+            if (std::floor(this->simulation_control->get_current_time() /
+                           thm_parameters.coupling_time) >
+                std::floor(this->simulation_control->get_previous_time() /
+                           thm_parameters.coupling_time))
+              return true;
+            else
+              return false;
+          case Parameters::TimeCouplingMethod::threshold:
+            AssertThrow(
+              false,
+              ExcMessage(
+                "Time coupling method 'threshold' is not yet implemented "
+                "for the time-harmonic Maxwell solver since the physical "
+                "properties only support a constant model."));
+            return true;
+          default:
+            AssertThrow(false, ExcMessage("Unknown time coupling method."));
+            return false;
+        }
+    }
 }
 
 template class MultiphysicsInterface<2>;

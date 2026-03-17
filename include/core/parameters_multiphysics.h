@@ -14,8 +14,6 @@
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/utilities.h>
 
-#include <algorithm>
-
 using namespace dealii;
 
 namespace Parameters
@@ -141,6 +139,18 @@ namespace Parameters
     electric_field,
     magnetic_field,
     power
+  };
+
+  /**
+   * @brief Parameters for the time coupling of the time-harmonic Maxwell solver
+   * with the other physics solvers.
+   */
+  enum class TimeCouplingMethod : std::int8_t
+  {
+    none,
+    iteration,
+    time,
+    threshold
   };
 
   /**
@@ -433,6 +443,27 @@ namespace Parameters
   template <int dim>
   struct TimeHarmonicMaxwell
   {
+    // Integration method for the time coupling of the time-harmonic Maxwell
+    // solver
+    Parameters::TimeCouplingMethod time_coupling_method;
+
+    // Coupling paramter for the time coupling strategy. If the time coupling
+    // strategy is based on iteration, this parameter represents the number of
+    // time iterations between two consecutive resolutions of the
+    // electromagnetic fields.
+    unsigned int coupling_iteration;
+
+    // If the time coupling strategy is based on time, this parameter represents
+    // the real time interval between two consecutive resolutions of the
+    // electromagnetic fields.
+    double coupling_time;
+
+    // If the time coupling strategy is based on a threshold, this parameter
+    // represents the change in the electromagnetic properties of the medium
+    // (i.e., permittivity, permeability or conductivity) that triggers the
+    // recomputation of the electromagnetic fields.
+    double coupling_threshold;
+
     // We use vectors in the following to be able to define multiple waveguides
     // in the same simulation.
     unsigned int number_of_waveguide_inlets;
@@ -482,7 +513,6 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm, const Dimensionality &dimensions);
   };
 
-
   /**
    * @brief Multiphysics - the parameters for multiphysics simulations
    * and handles sub-physics parameters.
@@ -500,6 +530,7 @@ namespace Parameters
     // subparameters for heat_transfer
     bool viscous_dissipation;
     bool thermal_buoyancy_force;
+    bool microwave_heating;
 
     Parameters::CLS                      cls_parameters;
     Parameters::CahnHilliard             cahn_hilliard_parameters;

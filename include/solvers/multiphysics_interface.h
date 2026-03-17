@@ -116,6 +116,12 @@ public:
     // sequentially.
     for (auto &iphys : physics)
       {
+        // Skip electromagnetics physics if not required from the time coupling
+        // strategy
+        if (iphys.first == PhysicsID::electromagnetics &&
+            !should_solve_electromagnetics())
+          continue;
+
         // If iphys.first should be solved BEFORE fluid dynamics
         if (!fluid_dynamics_has_been_solved && solve_pre_fluid[iphys.first])
           solve_physics(iphys.first, time_stepping_method);
@@ -130,6 +136,12 @@ public:
 
     for (auto &iphys : block_physics)
       {
+        // Skip electromagnetics physics if not required from the time coupling
+        // strategy
+        if (iphys.first == PhysicsID::electromagnetics &&
+            !should_solve_electromagnetics())
+          continue;
+
         // If iphys.first should be solved BEFORE fluid dynamics
         if (!fluid_dynamics_has_been_solved && solve_pre_fluid[iphys.first])
           solve_block_physics(iphys.first, time_stepping_method);
@@ -870,8 +882,16 @@ public:
       }
   };
 
+  /**
+   * @brief Checks if electromagnetics physics should be solved based on the time coupling strategy.
+   * @return true if electromagnetics physics should be solved, false otherwise.
+   */
+  bool
+  should_solve_electromagnetics() const;
+
 private:
   const Parameters::Multiphysics<dim>        multiphysics_parameters;
+  std::shared_ptr<SimulationControl>         simulation_control;
   std::map<PhysicsID, Parameters::Verbosity> verbosity;
   ConditionalOStream                         pcout;
 

@@ -360,6 +360,15 @@ HeatTransfer<dim>::setup_assemblers()
           simulation_parameters.boundary_conditions_ht));
     }
 
+  // Microwave heating
+  if (this->simulation_parameters.multiphysics.microwave_heating)
+    {
+      this->assemblers.emplace_back(
+        std::make_shared<
+          HeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell<dim>>(
+          this->simulation_control));
+    }
+
 
   if (this->simulation_parameters.multiphysics.viscous_dissipation)
     {
@@ -433,6 +442,34 @@ HeatTransfer<dim>::assemble_system_matrix()
         *this->cell_quadrature,
         *this->temperature_mapping,
         this->simulation_parameters.multiphysics.cls_parameters.phase_filter);
+    }
+
+  if (this->simulation_parameters.multiphysics.electromagnetics)
+    {
+      // Check if the time-harmonic Maxwell physics solution is scaling type is
+      // not <none>, since the solution needs to not be dimensionless for the
+      // heat transfer physics to be able to use it.
+      AssertThrow(this->simulation_parameters.multiphysics
+                      .time_harmonic_maxwell_parameters
+                      .electromagnetic_solution_scaling !=
+                    Parameters::ElectromagneticScalingTyper::none,
+                  ExcMessage(
+                    "Time-harmonic Maxwell solution scaling is none, but heat "
+                    "transfer physics requires a non-dimensionless solution."));
+
+      // We also get the problem frequency here because we have access to the
+      // simulation parameters, while the scratch data doesn't have access to it
+      // at construction.
+      this->angular_frequency =
+        this->simulation_parameters.multiphysics
+          .time_harmonic_maxwell_parameters.electromagnetic_frequency *
+        2. * numbers::PI;
+
+      const DoFHandler<dim> &dof_handler_thm =
+        this->multiphysics->get_dof_handler(PhysicsID::electromagnetics);
+      scratch_data.enable_time_harmonic_maxwell(dof_handler_thm.get_fe(),
+                                                *this->cell_quadrature,
+                                                *this->temperature_mapping);
     }
 
   WorkStream::run(this->dof_handler->begin_active(),
