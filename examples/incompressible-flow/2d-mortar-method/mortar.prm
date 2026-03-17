@@ -68,8 +68,8 @@ end
 subsection mortar
   set enable = true
   subsection mesh
-    set type               = gmsh
-    set file name          = rotor.msh
+    set type      = gmsh
+    set file name = rotor.msh
   end
   set rotor boundary id  = 3
   set stator boundary id = 4
@@ -80,7 +80,7 @@ subsection mortar
   subsection rotor angular velocity
     set Function expression = 1
   end
-  set verbosity = verbose
+  set verbosity        = verbose
   set radius tolerance = 1e-6
 end
 
@@ -91,12 +91,12 @@ end
 subsection boundary conditions
   set number = 3
   subsection bc 0
-    set type               = noslip
-    set id                 = 5,6
+    set type = noslip
+    set id   = 5,6
   end
   subsection bc 1
-    set type               = none
-    set id                 = 3,4
+    set type = none
+    set id   = 3,4
   end
   subsection bc 2
     set type = function
@@ -117,18 +117,18 @@ end
 subsection manifolds
   set number = 3
   subsection manifold 0
-    set id = 3
-    set type = spherical
+    set id                = 3
+    set type              = spherical
     set point coordinates = 0, 0
   end
   subsection manifold 1
-    set id = 4
-    set type = spherical
+    set id                = 4
+    set type              = spherical
     set point coordinates = 0, 0
   end
   subsection manifold 2
-    set id = 5
-    set type = spherical
+    set id                = 5
+    set type              = spherical
     set point coordinates = 0, 0
   end
 end
@@ -151,8 +151,8 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set verbosity                             = quiet
-    set method                                = gmres
-    set preconditioner                        = amg
+    set verbosity      = quiet
+    set method         = gmres
+    set preconditioner = amg
   end
 end
