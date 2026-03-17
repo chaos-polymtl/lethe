@@ -558,8 +558,7 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
         }
 
       max_port_electric_amplitude =
-        *std::max_element(this->waveguide_ports_amplitudes.begin(),
-                          this->waveguide_ports_amplitudes.end());
+        *std::ranges::max_element(this->waveguide_ports_amplitudes);
     }
 
   // Now we need to define the electromagnetic scaling factor according to the
