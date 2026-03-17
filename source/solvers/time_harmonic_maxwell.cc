@@ -590,7 +590,17 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
   else if (electromagnetic_parameters.electromagnetic_scaling_type ==
            Parameters::ElectromagneticScalingType::none)
     {
-      this->electromagnetic_scaling = 1.0;
+      // If there is at least one waveguide inlet, we need to apply the scaling
+      // because some inlet may have different power even if the user chose to
+      // not apply the scaling to the solution after computation.
+      if (electromagnetic_parameters.number_of_waveguide_inlets > 0)
+        {
+          this->electromagnetic_scaling = max_port_electric_amplitude;
+        }
+      else
+        {
+          this->electromagnetic_scaling = 1.0;
+        }
     }
   else
     {
