@@ -115,6 +115,17 @@ namespace Parameters
   };
 
   /**
+   * @brief Type of electromagnetic scaling to apply to the solution of the time-harmonic Maxwell solver after solving the linear system. This is relevant when the user wants to recover the physical solution in dimensional units instead of the dimensionless solution used for better conditioning of the linear system.
+   */
+  enum class ElectromagneticScalingType : std::int8_t
+  {
+    none,
+    electric_field,
+    magnetic_field,
+    power
+  };
+
+  /**
    * @brief CahnHilliard_PhaseFilter - Defines the parameters for the phase filtration of CahnHilliard physics
    */
   struct CahnHilliard_PhaseFilter
@@ -418,15 +429,14 @@ namespace Parameters
     // electromagnetic wave to the power injected in the waveguide
     std::vector<double> waveguide_power;
 
-    // By default, the time-harmonic Maxwell solver rescale the solution to
-    // solve everything in a dimensionless form with quantities of order 1 to
-    // improve the conditioning of the linear system. However, if the user wants
-    // to recover the physical solution with the desired units, they can set
-    // this parameter to true. Note that if multiphysics coupling is enabled,
-    // this parameter needs to be set to true for the time-harmonic Maxwell
-    // solver to ensure that the coupling between the different physics is
-    // consistent in terms of units and magnitudes of the physical quantities.
-    bool apply_amplitude_scaling;
+    // Electric field amplitude used for the normalization of the solution
+    double electric_field_amplitude;
+
+    // Magnetic field amplitude used for the normalization of the solution
+    double magnetic_field_amplitude;
+
+    // Type of scaling to apply to the solution after solving the linear system
+    Parameters::ElectromagneticScalingType electromagnetic_scaling_type;
 
     // When the scaling is applied, we need to know the dimensionality of the
     // electric and magnetic fields to be able to recover the physical solution

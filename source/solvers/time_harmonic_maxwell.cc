@@ -405,160 +405,198 @@ void
 TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
   const PhysicalPropertiesManager &physical_properties_manager)
 {
+  // Define so reusable variables for the computation of the scaling factor.
   auto        mpi_communicator = this->triangulation->get_mpi_communicator();
   const auto &electromagnetic_parameters =
     this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
+  constexpr double Z_0 = 4 * numbers::PI * 29.9792458; // Void impedance in Ohms
 
-  // If there are no waveguide inlets, we can skip the scaling computation and
-  // set the scaling factor to 1.0.
-  if (electromagnetic_parameters.number_of_waveguide_inlets == 0)
+  // Initialize the amplitude, if there are no waveguide inlets, the max of 0
+  // and something else that is positive will just be the something else.
+  double max_port_electric_amplitude = 0.0;
+
+  // If there are waveguide inlets we need to compute there scaling from the
+  // input power provided by the user.
+  if (electromagnetic_parameters.number_of_waveguide_inlets > 0)
     {
-      this->waveguide_ports_amplitudes.clear();
-      this->electromagnetic_scaling = 1.0;
-      return;
-    }
+      const auto &waveguide_powers = electromagnetic_parameters.waveguide_power;
 
-  const auto &waveguide_powers = electromagnetic_parameters.waveguide_power;
+      // The following vector will store the modal power for each waveguide
+      // inlet boundary condition computed from integrating the Poynting vector
+      // of the incident wave over the inlet face.
+      std::vector<double> waveguide_modal_powers(
+        electromagnetic_parameters.number_of_waveguide_inlets, 0.);
 
-  // The following vector will store the modal power for each waveguide inlet
-  // boundary condition computed from integrating the Poynting vector of the
-  // incident wave over the inlet face.
-  std::vector<double> waveguide_modal_powers(
-    electromagnetic_parameters.number_of_waveguide_inlets, 0.);
+      // Resize the vector that will store the waveguide port electric field
+      // amplitudes. Those are obtain by computing the square root of the ratio
+      // between the input power provided by the user and the modal power
+      // computed from integrating the Poynting vector of the incident wave over
+      // the inlet face.
+      this->waveguide_ports_amplitudes = std::vector<double>(
+        electromagnetic_parameters.number_of_waveguide_inlets, 0.);
 
-  // Resize the vector that will store the waveguide port electric field
-  // amplitudes. Those are obtain by computing the square root of the ratio
-  // between the input power provided by the user and the modal power computed
-  // from integrating the Poynting vector of the incident wave over the inlet
-  // face.
-  this->waveguide_ports_amplitudes =
-    std::vector<double>(electromagnetic_parameters.number_of_waveguide_inlets,
-                        0.);
+      // We need to define a FEFaceValues object to perform the integral of the
+      // Poynting vector on faces
+      FEFaceValues<dim>  fe_face_values_trial_skeleton(*this->mapping,
+                                                      *this->fe_trial_skeleton,
+                                                      *this->face_quadrature,
+                                                      update_quadrature_points |
+                                                        update_normal_vectors |
+                                                        update_JxW_values);
+      const unsigned int n_q_points_face =
+        fe_face_values_trial_skeleton.n_quadrature_points;
+      BoundaryConditions::BoundaryType bc_type;
 
-  // We need to define a FEFaceValues object to perform the integral of the
-  // Poynting vector on faces
-  FEFaceValues<dim>  fe_face_values_trial_skeleton(*this->mapping,
-                                                  *this->fe_trial_skeleton,
-                                                  *this->face_quadrature,
-                                                  update_quadrature_points |
-                                                    update_normal_vectors |
-                                                    update_JxW_values);
-  const unsigned int n_q_points_face =
-    fe_face_values_trial_skeleton.n_quadrature_points;
-  BoundaryConditions::BoundaryType bc_type;
+      // Containers for electromagnetic quantities at the quadrature points
+      Tensor<1, dim, std::complex<double>> E_inc;
+      Tensor<1, dim, std::complex<double>> H_inc;
+      std::complex<double>                 effective_electric_permittivity;
+      std::complex<double>                 effective_magnetic_permeability;
+      unsigned int                         material_id;
 
-  // Containers for electromagnetic quantities at the quadrature points
-  Tensor<1, dim, std::complex<double>> E_inc;
-  Tensor<1, dim, std::complex<double>> H_inc;
-  std::complex<double>                 effective_electric_permittivity;
-  std::complex<double>                 effective_magnetic_permeability;
-  unsigned int                         material_id;
-
-  // Here we perform the Poynting vector integration over the waveguide inlet
-  // faces.
-  for (const auto &cell : triangulation->active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
+      // Here we perform the Poynting vector integration over the waveguide
+      // inlet faces.
+      for (const auto &cell : triangulation->active_cell_iterators())
         {
-          material_id = cell->material_id();
-          update_material_properties(physical_properties_manager,
-                                     effective_electric_permittivity,
-                                     effective_magnetic_permeability,
-                                     material_id);
-
-          for (const auto &face : cell->face_iterators())
+          if (cell->is_locally_owned())
             {
-              fe_face_values_trial_skeleton.reinit(cell, face);
+              material_id = cell->material_id();
+              update_material_properties(physical_properties_manager,
+                                         effective_electric_permittivity,
+                                         effective_magnetic_permeability,
+                                         material_id);
 
-              // Get the boundary condition type on the current face
-              bc_type = BoundaryConditions::BoundaryType::none;
-
-              if (face->at_boundary())
+              for (const auto &face : cell->face_iterators())
                 {
-                  bc_type =
-                    this->simulation_parameters
-                      .boundary_conditions_time_harmonic_electromagnetics.type
-                      .at(face->boundary_id());
+                  fe_face_values_trial_skeleton.reinit(cell, face);
 
-                  // If the boundary condition is a waveguide port, we compute
-                  // the modal power
-                  if (bc_type ==
-                      BoundaryConditions::BoundaryType::waveguide_port)
+                  // Get the boundary condition type on the current face
+                  bc_type = BoundaryConditions::BoundaryType::none;
+
+                  if (face->at_boundary())
                     {
-                      // Get the index of the waveguide port boundary condition
-                      // to apply the correct mode parameters
-                      unsigned int boundary_index = std::distance(
-                        electromagnetic_parameters.waveguide_boundary_ids
-                          .begin(),
-                        std::ranges::find(
-                          electromagnetic_parameters.waveguide_boundary_ids,
-                          face->boundary_id()));
+                      bc_type =
+                        this->simulation_parameters
+                          .boundary_conditions_time_harmonic_electromagnetics
+                          .type.at(face->boundary_id());
 
-                      // Loop over all face quadrature points
-                      for (unsigned int q_point = 0; q_point < n_q_points_face;
-                           ++q_point)
+                      // If the boundary condition is a waveguide port, we
+                      // compute the modal power
+                      if (bc_type ==
+                          BoundaryConditions::BoundaryType::waveguide_port)
                         {
-                          // Initialize reusable variables
-                          const auto &position =
-                            fe_face_values_trial_skeleton.quadrature_point(
-                              q_point);
-                          const auto &normal =
-                            fe_face_values_trial_skeleton.normal_vector(
-                              q_point);
-                          const double JxW_face =
-                            fe_face_values_trial_skeleton.JxW(q_point);
+                          // Get the index of the waveguide port boundary
+                          // condition to apply the correct mode parameters
+                          unsigned int boundary_index = std::distance(
+                            electromagnetic_parameters.waveguide_boundary_ids
+                              .begin(),
+                            std::ranges::find(
+                              electromagnetic_parameters.waveguide_boundary_ids,
+                              face->boundary_id()));
 
-                          std::tie(E_inc, H_inc) =
-                            compute_waveguide_port_incident_fields(
-                              position,
-                              normal,
-                              effective_electric_permittivity,
-                              effective_magnetic_permeability,
-                              boundary_index);
+                          // Loop over all face quadrature points
+                          for (unsigned int q_point = 0;
+                               q_point < n_q_points_face;
+                               ++q_point)
+                            {
+                              // Initialize reusable variables
+                              const auto &position =
+                                fe_face_values_trial_skeleton.quadrature_point(
+                                  q_point);
+                              const auto &normal =
+                                fe_face_values_trial_skeleton.normal_vector(
+                                  q_point);
+                              const double JxW_face =
+                                fe_face_values_trial_skeleton.JxW(q_point);
 
-                          // The Poynting vector is given by S = 0.5 * Re(E x
-                          // H*), where H* is the complex conjugate of H. The
-                          // normal points outward from the domain, so the power
-                          // entering the domain is given by the negative of the
-                          // flux of the Poynting vector through the face
-                          // (that's why we have a negative sign in front of the
-                          // integral).
-                          waveguide_modal_powers[boundary_index] -=
-                            0.5 *
-                            std::real(
-                              normal[0] * (E_inc[1] * std::conj(H_inc[2]) -
-                                           E_inc[2] * std::conj(H_inc[1])) +
-                              normal[1] * (E_inc[2] * std::conj(H_inc[0]) -
-                                           E_inc[0] * std::conj(H_inc[2])) +
-                              normal[2] * (E_inc[0] * std::conj(H_inc[1]) -
-                                           E_inc[1] * std::conj(H_inc[0]))) *
-                            JxW_face;
+                              std::tie(E_inc, H_inc) =
+                                compute_waveguide_port_incident_fields(
+                                  position,
+                                  normal,
+                                  effective_electric_permittivity,
+                                  effective_magnetic_permeability,
+                                  boundary_index);
+
+                              // The Poynting vector is given by S = 0.5 * Re(E
+                              // x H*), where H* is the complex conjugate of H.
+                              // The normal points outward from the domain, so
+                              // the power entering the domain is given by the
+                              // negative of the flux of the Poynting vector
+                              // through the face (that's why we have a negative
+                              // sign in front of the integral).
+                              waveguide_modal_powers[boundary_index] -=
+                                0.5 *
+                                std::real(
+                                  normal[0] * (E_inc[1] * std::conj(H_inc[2]) -
+                                               E_inc[2] * std::conj(H_inc[1])) +
+                                  normal[1] * (E_inc[2] * std::conj(H_inc[0]) -
+                                               E_inc[0] * std::conj(H_inc[2])) +
+                                  normal[2] *
+                                    (E_inc[0] * std::conj(H_inc[1]) -
+                                     E_inc[1] * std::conj(H_inc[0]))) *
+                                JxW_face;
+                            }
                         }
                     }
                 }
             }
         }
+
+      // Now we need to aggregate from all the MPI processes to get the global
+      // modal power for each waveguide inlet
+      for (unsigned int inlets = 0;
+           inlets < electromagnetic_parameters.number_of_waveguide_inlets;
+           ++inlets)
+        {
+          // The power amplitude comes from the non-dimensionalization of power:
+          // P = 0.5 * int(ExH*)= E_0 * H_0 * P_modal. So we can isolate the
+          // electric field amplitude E_0.
+          this->waveguide_ports_amplitudes[inlets] =
+            std::sqrt(waveguide_powers[inlets] * Z_0 /
+                      Utilities::MPI::sum(waveguide_modal_powers[inlets],
+                                          mpi_communicator));
+        }
+
+      max_port_electric_amplitude =
+        *std::max_element(this->waveguide_ports_amplitudes.begin(),
+                          this->waveguide_ports_amplitudes.end());
     }
 
-  // Now we need to aggregate from all the MPI processes to get the global modal
-  // power for each waveguide inlet
-  constexpr double Z_0 = 4 * numbers::PI * 29.9792458;
-  for (unsigned int inlets = 0;
-       inlets < electromagnetic_parameters.number_of_waveguide_inlets;
-       ++inlets)
+  // Now we need to define the electromagnetic scaling factor according to the
+  // type chosen by the user.
+  if (electromagnetic_parameters.electromagnetic_scaling_type ==
+      Parameters::ElectromagneticScalingType::electric_field)
     {
-      // The power amplitude comes from the non-dimensionalization of power: P =
-      // 0.5 * int(ExH*)= E_0 * H_0 * P_modal. So we can isolate the electric
-      // field amplitude E_0.
-      this->waveguide_ports_amplitudes[inlets] = std::sqrt(
-        waveguide_powers[inlets] * Z_0 /
-        Utilities::MPI::sum(waveguide_modal_powers[inlets], mpi_communicator));
+      this->electromagnetic_scaling =
+        std::max(electromagnetic_parameters.electric_field_dimensionality *
+                   max_port_electric_amplitude,
+                 electromagnetic_parameters.electric_field_amplitude);
     }
-
-  double max_amplitude =
-    *std::max_element(this->waveguide_ports_amplitudes.begin(),
-                      this->waveguide_ports_amplitudes.end());
-  this->electromagnetic_scaling = max_amplitude;
+  else if (electromagnetic_parameters.electromagnetic_scaling_type ==
+           Parameters::ElectromagneticScalingType::magnetic_field)
+    {
+      this->electromagnetic_scaling =
+        Z_0 *
+        std::max(electromagnetic_parameters.magnetic_field_dimensionality *
+                   max_port_electric_amplitude / Z_0,
+                 electromagnetic_parameters.magnetic_field_amplitude);
+    }
+  else if (electromagnetic_parameters.electromagnetic_scaling_type ==
+           Parameters::ElectromagneticScalingType::power)
+    {
+      this->electromagnetic_scaling =
+        electromagnetic_parameters.electric_field_dimensionality *
+        max_port_electric_amplitude;
+    }
+  else if (electromagnetic_parameters.electromagnetic_scaling_type ==
+           Parameters::ElectromagneticScalingType::none)
+    {
+      this->electromagnetic_scaling = 1.0;
+    }
+  else
+    {
+      AssertThrow(false, ExcMessage("Unknown electromagnetic scaling type."));
+    }
 }
 
 template <int dim>
@@ -571,14 +609,13 @@ TimeHarmonicMaxwell<dim>::scale_solution_components(
   const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters =
     this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
 
-  constexpr double Z_0 = 4 * numbers::PI * 29.9792458;
+  if (time_harmonic_maxwell_parameters.electromagnetic_scaling_type ==
+      Parameters::ElectromagneticScalingType::none)
+    return;
 
-  const double electric_scale =
-    time_harmonic_maxwell_parameters.electric_field_dimensionality *
-    this->electromagnetic_scaling;
-  const double magnetic_scale =
-    (time_harmonic_maxwell_parameters.magnetic_field_dimensionality / Z_0) *
-    this->electromagnetic_scaling;
+  constexpr double Z_0            = 4 * numbers::PI * 29.9792458;
+  const double     electric_scale = this->electromagnetic_scaling;
+  const double     magnetic_scale = this->electromagnetic_scaling / Z_0;
 
   const IndexSet   &locally_owned_dofs = solution.locally_owned_elements();
   std::vector<bool> dof_scaled(locally_owned_dofs.n_elements(), false);
@@ -1545,23 +1582,19 @@ TimeHarmonicMaxwell<dim>::solve_linear_system()
   // Reconstruct the interior solution from the skeleton solution
   reconstruct_interior_solution();
 
-  // Apply the rescaling to obtain the physical solution if required.
-  if (this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters
-        .apply_amplitude_scaling)
-    {
-      // We need to apply the scaling to the interior solution as it is the one
-      // used for the multiphysics coupling and output.
-      scale_solution_components(*this->dof_handler_trial_interior,
-                                *this->fe_trial_interior,
-                                *this->present_solution);
 
-      // We also apply the scaling to the skeleton solution for
-      // consistency, even if it is not used for the multiphysics coupling nor
-      // outputed at the moment.
-      scale_solution_components(*this->dof_handler_trial_skeleton,
-                                *this->fe_trial_skeleton,
-                                *this->present_solution_skeleton);
-    }
+  // We need to apply the scaling to the interior solution as it is the one
+  // used for the multiphysics coupling and output.
+  scale_solution_components(*this->dof_handler_trial_interior,
+                            *this->fe_trial_interior,
+                            *this->present_solution);
+
+  // We also apply the scaling to the skeleton solution for
+  // consistency, even if it is not used for the multiphysics coupling nor
+  // outputed at the moment.
+  scale_solution_components(*this->dof_handler_trial_skeleton,
+                            *this->fe_trial_skeleton,
+                            *this->present_solution_skeleton);
 }
 
 template <>

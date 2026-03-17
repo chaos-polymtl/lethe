@@ -793,10 +793,22 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
       "Frequency of the time harmonic electromagnetic wave excitation (in Hz).");
 
     prm.declare_entry(
-      "apply amplitude scaling",
-      "false",
-      Patterns::Bool(),
-      "Whether to apply or not amplitude scaling to the waveguide mode excitation. This is used to recover the correct physical solution in dimensional units. This is only relevant when the waveguide mode excitation is used as a boundary condition for the electromagnetic wave excitation (when using the user define its own first, second or third kind of boundary condition it is the user's responsibility to apply the correct amplitude scaling to the electromagnetic wave excitation).");
+      "electromagnetic scaling type",
+      "none",
+      Patterns::Selection("none|electric_field|magnetic_field|power"),
+      "The type of electromagnetic scaling to apply to the solution of the time-harmonic Maxwell solver after solving the linear system. This is relevant when the user wants to recover the physical solution in dimensional units instead of the dimensionless solution used for better conditioning of the linear system.");
+
+    prm.declare_entry(
+      "electric field amplitude",
+      "1",
+      Patterns::Double(0),
+      "The amplitude of the electric field used for the normalization of the solution in [V/m].");
+
+    prm.declare_entry(
+      "magnetic field amplitude",
+      "1",
+      Patterns::Double(0),
+      "The amplitude of the magnetic field used for the normalization of the solution in [A/m].");
 
     prm.declare_entry("number of waveguide inlets",
                       "0",
@@ -886,18 +898,46 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
       prm.get_double("electromagnetic frequency") *
       dimensions.electromagnetic_frequency_scaling;
 
-    TimeHarmonicMaxwell::apply_amplitude_scaling =
-      prm.get_bool("apply amplitude scaling");
+    const std::string op_scaling_type = prm.get("electromagnetic scaling type");
+    if (op_scaling_type == "none")
+      TimeHarmonicMaxwell::electromagnetic_scaling_type =
+        Parameters::ElectromagneticScalingType::none;
+    else if (op_scaling_type == "electric field")
+      TimeHarmonicMaxwell::electromagnetic_scaling_type =
+        Parameters::ElectromagneticScalingType::electric_field;
+    else if (op_scaling_type == "magnetic field")
+      TimeHarmonicMaxwell::electromagnetic_scaling_type =
+        Parameters::ElectromagneticScalingType::magnetic_field;
+    else if (op_scaling_type == "power")
+      TimeHarmonicMaxwell::electromagnetic_scaling_type =
+        Parameters::ElectromagneticScalingType::power;
+    else
+      throw(std::runtime_error(
+        "Invalid electromagnetic scaling type. "
+        "Options are <none|electric field|magnetic field|power>."));
 
     // By default, the electric field dimensionality is in V/m, but if the user
     // changed the dimensionality of the problem, we need to change the
     // dimensionality of the electric field accordingly to ensure that the
-    // correct physical solution is obtained in dimensional units.
+    // correct physical solution is obtained in dimensional units. This needs to
+    // be apply to the power later on as well if the user chooses power-based
+    // scaling which we cannot make dimensionless yet to recover the amplitude
+    // scaling.
     TimeHarmonicMaxwell::electric_field_dimensionality =
       dimensions.electric_amplitude_scaling;
     // The same applies for the magnetic field, which is in A/m by default.
     TimeHarmonicMaxwell::magnetic_field_dimensionality =
       dimensions.magnetic_amplitude_scaling;
+
+    // If the choose other scaling, we can already apply the dimensionality to
+    // the amplitude provided.
+    TimeHarmonicMaxwell::electric_field_amplitude =
+      prm.get_double("electric field amplitude") *
+      TimeHarmonicMaxwell::electric_field_dimensionality;
+
+    TimeHarmonicMaxwell::magnetic_field_amplitude =
+      prm.get_double("magnetic field amplitude") *
+      TimeHarmonicMaxwell::magnetic_field_dimensionality;
 
     TimeHarmonicMaxwell::number_of_waveguide_inlets =
       prm.get_integer("number of waveguide inlets");
@@ -928,6 +968,14 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
 
           TimeHarmonicMaxwell::waveguide_power[inlet] =
             prm.get_double("waveguide power");
+
+          // Check that the waveguide power is not zero which would imply no
+          // excitation at the inlet.
+          AssertThrow(
+            TimeHarmonicMaxwell::waveguide_power[inlet] > 0,
+            ExcMessage(
+              "The waveguide power for inlet " + std::to_string(inlet) +
+              " is zero. Please check the waveguide power parameter in the input prm file for this inlet. If you really want to have no excitation but an open boundary condition at this inlet, you should change the boundary condition type to the impedance boundary condition with zero excitation and the desired admittance."));
 
           prm.enter_subsection("waveguide mode");
           {
@@ -1014,17 +1062,15 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
         }
         prm.leave_subsection();
       }
-    if (number_of_waveguide_inlets > 0)
-      {
-        double max_power =
-          *std::max_element(TimeHarmonicMaxwell::waveguide_power.begin(),
-                            TimeHarmonicMaxwell::waveguide_power.end());
 
-        AssertThrow(
-          max_power > 0,
-          ExcMessage(
-            "The maximum waveguide port power is zero. Please check that at least one waveguide power parameters in the input prm file is not 0 so the solution is not trivial."));
-      }
+    // Check that there is at least one waveguide inlet if the user use the
+    // `power` electromagnetic scaling type.
+    AssertThrow(
+      !((TimeHarmonicMaxwell::electromagnetic_scaling_type ==
+         Parameters::ElectromagneticScalingType::power) &&
+        TimeHarmonicMaxwell::number_of_waveguide_inlets == 0),
+      ExcMessage(
+        "The power-based electromagnetic scaling type requires at least one waveguide inlet to be defined. Please check the number of waveguide inlets specified in the input prm file."));
   }
   prm.leave_subsection();
 }
