@@ -653,6 +653,18 @@ private:
     const PhysicalPropertiesManager &physical_properties_manager);
 
   /**
+   * @brief Scale the solution components by the electromagnetic scaling factor to recover the physical values of the solution after solving the non-dimensionalized system. This function is called at the end of the solve_linear_system method after reconstructing the interior solution from the skeleton solution.
+   * @param[in] dof_handler The degree of freedom handler for the mesh
+   * associated with the solution.
+   * @param[in] fe The finite element object for the solution space.
+   * @param[in,out] solution The solution vector to be scaled.
+   */
+  void
+  scale_solution_components(const DoFHandler<dim>    &dof_handler,
+                            const FiniteElement<dim> &fe,
+                            GlobalVectorType         &solution);
+
+  /**
    * @brief Pointer to the multiphysics interface that manages the coupling
    * between the different physics solvers.
    */

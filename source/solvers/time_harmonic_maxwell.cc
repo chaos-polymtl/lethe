@@ -542,12 +542,16 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
 
   // Now we need to aggregate from all the MPI processes to get the global modal
   // power for each waveguide inlet
+  constexpr double Z_0 = 4 * numbers::PI * 29.9792458;
   for (unsigned int inlets = 0;
        inlets < electromagnetic_parameters.number_of_waveguide_inlets;
        ++inlets)
     {
+      // The power amplitude comes from the non-dimensionalization of power: P =
+      // 0.5 * int(ExH*)= E_0 * H_0 * P_modal. So we can isolate the electric
+      // field amplitude E_0.
       this->waveguide_ports_amplitudes[inlets] = std::sqrt(
-        waveguide_powers[inlets] /
+        waveguide_powers[inlets] * Z_0 /
         Utilities::MPI::sum(waveguide_modal_powers[inlets], mpi_communicator));
     }
 
@@ -555,6 +559,87 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
     *std::max_element(this->waveguide_ports_amplitudes.begin(),
                       this->waveguide_ports_amplitudes.end());
   this->electromagnetic_scaling = max_amplitude;
+}
+
+template <int dim>
+void
+TimeHarmonicMaxwell<dim>::scale_solution_components(
+  const DoFHandler<dim>    &dof_handler,
+  const FiniteElement<dim> &fe,
+  GlobalVectorType         &solution)
+{
+  const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters =
+    this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
+
+  constexpr double Z_0 = 4 * numbers::PI * 29.9792458;
+
+  const double electric_scale =
+    time_harmonic_maxwell_parameters.electric_field_dimensionality *
+    this->electromagnetic_scaling;
+  const double magnetic_scale =
+    (time_harmonic_maxwell_parameters.magnetic_field_dimensionality / Z_0) *
+    this->electromagnetic_scaling;
+
+  const IndexSet   &locally_owned_dofs = solution.locally_owned_elements();
+  std::vector<bool> dof_scaled(locally_owned_dofs.n_elements(), false);
+  std::vector<types::global_dof_index> local_dof_indices(fe.n_dofs_per_cell());
+
+  // We loop over all the cells and apply the correct scaling to the electric
+  // and magnetic field components of the solution. We need to do so because the
+  // solution is stored as a single vector but contains different physical
+  // fields (electric and magnetic) that need to be scaled differently and the
+  // system_to_base_index function which allows us to identify which
+  // component of the solution corresponds to which dof is based on the local
+  // dof index and not the global one. Therefore, we need to loop over all the
+  // cells and their local dofs to apply the correct scaling to each component
+  // of the solution.
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          // Get the global dof indices for the current cell
+          cell->get_dof_indices(local_dof_indices);
+
+          // Loop over the local dofs of the cell
+          for (unsigned int local_dof = 0; local_dof < local_dof_indices.size();
+               ++local_dof)
+            {
+              // Get the global dof index corresponding to the local dof index
+              const types::global_dof_index global_dof =
+                local_dof_indices[local_dof];
+
+              // Check if the global dof index is locally owned. If not, we skip
+              // it since we only want to scale the locally owned part of the
+              // solution vector.
+              if (!locally_owned_dofs.is_element(global_dof))
+                continue;
+
+              const unsigned int locally_owned_position =
+                locally_owned_dofs.index_within_set(global_dof);
+
+              // Since we loop over all the cells, we will encounter each dof
+              // multiple times (once for each cell it belongs to). We only want
+              // to apply the scaling once for each dof, so we keep track of
+              // which dofs have already been scaled using the dof_scaled
+              // vector. If a dof has already been scaled, we skip it.
+              if (dof_scaled[locally_owned_position])
+                continue;
+
+              dof_scaled[locally_owned_position] = true;
+
+              // Get the base element of the current dof. Remember that the
+              // convention for the FE system we are using is [E_real, E_imag,
+              // H_real, H_imag].
+              const unsigned int base_element =
+                fe.system_to_base_index(local_dof).first.first;
+
+              if (base_element == 0 || base_element == 1)
+                solution[global_dof] *= electric_scale;
+              else if (base_element == 2 || base_element == 3)
+                solution[global_dof] *= magnetic_scale;
+            }
+        }
+    }
 }
 
 template <int dim>
@@ -1461,65 +1546,21 @@ TimeHarmonicMaxwell<dim>::solve_linear_system()
   reconstruct_interior_solution();
 
   // Apply the rescaling to obtain the physical solution if required.
-  const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters =
-    this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
-  if (time_harmonic_maxwell_parameters.apply_amplitude_scaling)
+  if (this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters
+        .apply_amplitude_scaling)
     {
-      constexpr double Z_0 = 4 * numbers::PI * 29.9792458;
+      // We need to apply the scaling to the interior solution as it is the one
+      // used for the multiphysics coupling and output.
+      scale_solution_components(*this->dof_handler_trial_interior,
+                                *this->fe_trial_interior,
+                                *this->present_solution);
 
-      const double electric_scale =
-        time_harmonic_maxwell_parameters.electric_field_dimensionality *
-        this->electromagnetic_scaling;
-      const double magnetic_scale =
-        (time_harmonic_maxwell_parameters.magnetic_field_dimensionality / Z_0) *
-        this->electromagnetic_scaling;
-
-      // Loop over all dofs of the solution and apply the scaling to the
-      // electric and magnetic field components
-      for (const auto &dof_index :
-           this->present_solution->locally_owned_elements())
-        {
-          // Get the component of the dof
-          const unsigned int component =
-            this->fe_trial_interior->system_to_component_index(dof_index)
-              .second;
-          std::cout << "dof_index: " << dof_index
-                    << ", component: " << component << std::endl;
-
-          if (component == 0 || component == 1)
-            {
-              // Electric field component
-              (*this->present_solution)[dof_index] *= electric_scale;
-            }
-          else if (component == 2 || component == 3)
-            {
-              // Magnetic field component
-              (*this->present_solution)[dof_index] *= magnetic_scale;
-            }
-        }
-
-      // We also need to apply the scaling to the skeleton solution for
+      // We also apply the scaling to the skeleton solution for
       // consistency, even if it is not used for the multiphysics coupling nor
       // outputed at the moment.
-      for (const auto &dof_index :
-           this->present_solution_skeleton->locally_owned_elements())
-        {
-          // Get the component of the dof
-          const unsigned int component =
-            this->fe_trial_skeleton->system_to_component_index(dof_index)
-              .second;
-
-          if (component == 0 || component == 1)
-            {
-              // Electric field component
-              (*this->present_solution_skeleton)[dof_index] *= electric_scale;
-            }
-          else if (component == 2 || component == 3)
-            {
-              // Magnetic field component
-              (*this->present_solution_skeleton)[dof_index] *= magnetic_scale;
-            }
-        }
+      scale_solution_components(*this->dof_handler_trial_skeleton,
+                                *this->fe_trial_skeleton,
+                                *this->present_solution_skeleton);
     }
 }
 
