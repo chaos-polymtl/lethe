@@ -86,7 +86,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.65345e-27 s^-1
+Global continuity equation error: -3.95693e-27 s^-1
 Max local continuity error: 2.66523e-12 s^-1
 --------------------
 Particle statistics
@@ -113,7 +113,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 5.3327e-27 s^-1
+Global continuity equation error: 5.04871e-29 s^-1
 Max local continuity error: 5.74938e-12 s^-1
 --------------------
 Particle statistics
@@ -140,7 +140,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -5.80602e-28 s^-1
+Global continuity equation error: 4.39238e-27 s^-1
 Max local continuity error: 1.01413e-11 s^-1
 --------------------
 Particle statistics
@@ -167,7 +167,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -2.4095e-26 s^-1
+Global continuity equation error: 1.21169e-27 s^-1
 Max local continuity error: 1.59073e-11 s^-1
 --------------------
 Particle statistics
@@ -194,7 +194,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -2.58999e-26 s^-1
+Global continuity equation error: -1.29626e-26 s^-1
 Max local continuity error: 2.30991e-11 s^-1
 --------------------
 Particle statistics
@@ -221,7 +221,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 4.07557e-26 s^-1
+Global continuity equation error: -6.48759e-27 s^-1
 Max local continuity error: 3.18064e-11 s^-1
 --------------------
 Particle statistics
@@ -248,7 +248,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 2.95152e-26 s^-1
+Global continuity equation error: 4.85386e-26 s^-1
 Max local continuity error: 4.20807e-11 s^-1
 --------------------
 Particle statistics
@@ -275,7 +275,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 5.93223e-26 s^-1
+Global continuity equation error: 7.864e-26 s^-1
 Max local continuity error: 5.41297e-11 s^-1
 --------------------
 Particle statistics
@@ -302,7 +302,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -6.91673e-27 s^-1
+Global continuity equation error: -1.3884e-27 s^-1
 Max local continuity error: 6.80009e-11 s^-1
 --------------------
 Particle statistics
@@ -329,7 +329,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -9.62789e-26 s^-1
+Global continuity equation error: 4.08945e-27 s^-1
 Max local continuity error: 8.38323e-11 s^-1
 --------------------
 Particle statistics
@@ -356,7 +356,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 3.68556e-27 s^-1
+Global continuity equation error: 3.524e-26 s^-1
 Max local continuity error: 1.01679e-10 s^-1
 --------------------
 Particle statistics
@@ -383,7 +383,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.60347e-25 s^-1
+Global continuity equation error: -1.55096e-25 s^-1
 Max local continuity error: 1.21552e-10 s^-1
 --------------------
 Particle statistics
@@ -410,7 +410,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -2.39612e-25 s^-1
+Global continuity equation error: -8.31018e-26 s^-1
 Max local continuity error: 1.43375e-10 s^-1
 --------------------
 Particle statistics
@@ -437,7 +437,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -7.76492e-26 s^-1
+Global continuity equation error: -2.56878e-25 s^-1
 Max local continuity error: 1.66964e-10 s^-1
 --------------------
 Particle statistics
@@ -464,7 +464,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -2.3527e-26 s^-1
+Global continuity equation error: -4.26111e-26 s^-1
 Max local continuity error: 1.92029e-10 s^-1
 --------------------
 Particle statistics
@@ -491,7 +491,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.60498e-25 s^-1
+Global continuity equation error: 1.78018e-25 s^-1
 Max local continuity error: 2.18179e-10 s^-1
 --------------------
 Particle statistics
@@ -518,7 +518,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -2.41429e-25 s^-1
+Global continuity equation error: -1.88165e-25 s^-1
 Max local continuity error: 2.45075e-10 s^-1
 --------------------
 Particle statistics
@@ -545,7 +545,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -3.64138e-26 s^-1
+Global continuity equation error: 6.49769e-26 s^-1
 Max local continuity error: 2.7239e-10 s^-1
 --------------------
 Particle statistics
@@ -572,7 +572,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -9.12554e-26 s^-1
+Global continuity equation error: 1.72237e-25 s^-1
 Max local continuity error: 2.99798e-10 s^-1
 --------------------
 Particle statistics
@@ -599,7 +599,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 5.66465e-26 s^-1
+Global continuity equation error: 1.89731e-25 s^-1
 Max local continuity error: 3.27066e-10 s^-1
 --------------------
 Particle statistics
@@ -626,7 +626,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.27429e-25 s^-1
+Global continuity equation error: -3.03629e-25 s^-1
 Max local continuity error: 3.54057e-10 s^-1
 --------------------
 Particle statistics
@@ -639,7 +639,7 @@ Particle statistics
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 24       Time: 0.12     Time step: 0.005    CFL: 6.37565e-06
+Transient iteration: 24       Time: 0.12     Time step: 0.005    CFL: 6.37564e-06
 **********************************************************************************
 --------------
 Void Fraction
@@ -653,7 +653,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -4.47922e-25 s^-1
+Global continuity equation error: 2.37895e-25 s^-1
 Max local continuity error: 3.80739e-10 s^-1
 --------------------
 Particle statistics
@@ -680,7 +680,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -6.45225e-25 s^-1
+Global continuity equation error: 5.92315e-25 s^-1
 Max local continuity error: 4.07146e-10 s^-1
 --------------------
 Particle statistics
@@ -693,7 +693,7 @@ Particle statistics
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 26       Time: 0.13     Time step: 0.005    CFL: 7.35193e-06
+Transient iteration: 26       Time: 0.13     Time step: 0.005    CFL: 7.35192e-06
 **********************************************************************************
 --------------
 Void Fraction
@@ -707,7 +707,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -3.89356e-25 s^-1
+Global continuity equation error: 1.84177e-25 s^-1
 Max local continuity error: 4.33349e-10 s^-1
 --------------------
 Particle statistics
@@ -734,7 +734,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -2.18104e-26 s^-1
+Global continuity equation error: 2.9121e-25 s^-1
 Max local continuity error: 4.59416e-10 s^-1
 --------------------
 Particle statistics
@@ -761,7 +761,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -7.39131e-25 s^-1
+Global continuity equation error: -9.67333e-25 s^-1
 Max local continuity error: 4.85397e-10 s^-1
 --------------------
 Particle statistics
@@ -788,7 +788,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -5.96556e-25 s^-1
+Global continuity equation error: -1.36154e-24 s^-1
 Max local continuity error: 5.11348e-10 s^-1
 --------------------
 Particle statistics
@@ -815,7 +815,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 1.29085e-24 s^-1
+Global continuity equation error: 1.12687e-25 s^-1
 Max local continuity error: 5.37317e-10 s^-1
 --------------------
 Particle statistics
@@ -842,7 +842,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 7.42362e-25 s^-1
+Global continuity equation error: 4.62058e-25 s^-1
 Max local continuity error: 5.6335e-10 s^-1
 --------------------
 Particle statistics
@@ -869,7 +869,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 6.51889e-25 s^-1
+Global continuity equation error: -1.27793e-24 s^-1
 Max local continuity error: 5.89461e-10 s^-1
 --------------------
 Particle statistics
@@ -896,7 +896,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.51219e-24 s^-1
+Global continuity equation error: -2.89998e-25 s^-1
 Max local continuity error: 6.15574e-10 s^-1
 --------------------
 Particle statistics
@@ -923,7 +923,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 1.18342e-24 s^-1
+Global continuity equation error: 1.18503e-24 s^-1
 Max local continuity error: 6.41439e-10 s^-1
 --------------------
 Particle statistics
@@ -950,7 +950,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 3.19886e-25 s^-1
+Global continuity equation error: 1.54127e-24 s^-1
 Max local continuity error: 6.66664e-10 s^-1
 --------------------
 Particle statistics
@@ -977,7 +977,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -5.00832e-26 s^-1
+Global continuity equation error: -1.29893e-24 s^-1
 Max local continuity error: 6.90742e-10 s^-1
 --------------------
 Particle statistics
@@ -1004,7 +1004,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 7.39131e-25 s^-1
+Global continuity equation error: 1.02994e-24 s^-1
 Max local continuity error: 7.13225e-10 s^-1
 --------------------
 Particle statistics
@@ -1031,7 +1031,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -5.13757e-25 s^-1
+Global continuity equation error: 5.47684e-25 s^-1
 Max local continuity error: 7.33512e-10 s^-1
 --------------------
 Particle statistics
@@ -1058,7 +1058,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 3.95819e-25 s^-1
+Global continuity equation error: 7.33477e-25 s^-1
 Max local continuity error: 7.51071e-10 s^-1
 --------------------
 Particle statistics
@@ -1085,7 +1085,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.16969e-24 s^-1
+Global continuity equation error: 1.17776e-24 s^-1
 Max local continuity error: 7.65594e-10 s^-1
 --------------------
 Particle statistics
@@ -1112,7 +1112,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -4.66905e-25 s^-1
+Global continuity equation error: 1.61397e-24 s^-1
 Max local continuity error: 7.77084e-10 s^-1
 --------------------
 Particle statistics
@@ -1139,7 +1139,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -8.78879e-25 s^-1
+Global continuity equation error: 1.97748e-24 s^-1
 Max local continuity error: 7.85834e-10 s^-1
 --------------------
 Particle statistics
@@ -1166,7 +1166,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -2.87575e-25 s^-1
+Global continuity equation error: 1.94032e-24 s^-1
 Max local continuity error: 7.9222e-10 s^-1
 --------------------
 Particle statistics
@@ -1193,7 +1193,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 2.10026e-25 s^-1
+Global continuity equation error: 4.45902e-25 s^-1
 Max local continuity error: 7.96934e-10 s^-1
 --------------------
 Particle statistics
@@ -1220,7 +1220,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 1.97263e-24 s^-1
+Global continuity equation error: -5.25066e-25 s^-1
 Max local continuity error: 8.00849e-10 s^-1
 --------------------
 Particle statistics
@@ -1247,7 +1247,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 2.76265e-25 s^-1
+Global continuity equation error: -1.19069e-24 s^-1
 Max local continuity error: 8.04213e-10 s^-1
 --------------------
 Particle statistics
@@ -1274,7 +1274,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.67213e-24 s^-1
+Global continuity equation error: 2.11642e-25 s^-1
 Max local continuity error: 8.069e-10 s^-1
 --------------------
 Particle statistics
@@ -1301,7 +1301,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -6.52697e-25 s^-1
+Global continuity equation error: 8.61108e-25 s^-1
 Max local continuity error: 8.08323e-10 s^-1
 --------------------
 Particle statistics
@@ -1328,7 +1328,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -2.87251e-24 s^-1
+Global continuity equation error: -9.87124e-25 s^-1
 Max local continuity error: 8.07811e-10 s^-1
 --------------------
 Particle statistics
@@ -1355,7 +1355,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -7.52864e-25 s^-1
+Global continuity equation error: -6.22001e-25 s^-1
 Max local continuity error: 8.04798e-10 s^-1
 --------------------
 Particle statistics
@@ -1382,7 +1382,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 1.65598e-24 s^-1
+Global continuity equation error: -1.62043e-24 s^-1
 Max local continuity error: 7.99077e-10 s^-1
 --------------------
 Particle statistics
@@ -1409,7 +1409,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 1.41525e-24 s^-1
+Global continuity equation error: 1.14707e-24 s^-1
 Max local continuity error: 7.91152e-10 s^-1
 --------------------
 Particle statistics
@@ -1436,7 +1436,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 6.23617e-25 s^-1
+Global continuity equation error: -1.90155e-24 s^-1
 Max local continuity error: 7.81796e-10 s^-1
 --------------------
 Particle statistics
@@ -1463,7 +1463,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -2.10026e-26 s^-1
+Global continuity equation error: 6.67237e-25 s^-1
 Max local continuity error: 7.7167e-10 s^-1
 --------------------
 Particle statistics
@@ -1490,7 +1490,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -3.79663e-25 s^-1
+Global continuity equation error: 8.82111e-25 s^-1
 Max local continuity error: 7.61214e-10 s^-1
 --------------------
 Particle statistics
@@ -1517,7 +1517,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -3.2958e-25 s^-1
+Global continuity equation error: -1.8143e-24 s^-1
 Max local continuity error: 7.50354e-10 s^-1
 --------------------
 Particle statistics
@@ -1544,7 +1544,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -2.99691e-24 s^-1
+Global continuity equation error: 1.55904e-24 s^-1
 Max local continuity error: 7.38646e-10 s^-1
 --------------------
 Particle statistics
@@ -1571,7 +1571,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.76099e-25 s^-1
+Global continuity equation error: -5.07294e-25 s^-1
 Max local continuity error: 7.25207e-10 s^-1
 --------------------
 Particle statistics
@@ -1598,7 +1598,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.3894e-24 s^-1
+Global continuity equation error: -6.34926e-25 s^-1
 Max local continuity error: 7.09493e-10 s^-1
 --------------------
 Particle statistics
@@ -1625,7 +1625,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.42172e-24 s^-1
+Global continuity equation error: -2.21497e-24 s^-1
 Max local continuity error: 6.91402e-10 s^-1
 --------------------
 Particle statistics
@@ -1652,7 +1652,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 2.11319e-24 s^-1
+Global continuity equation error: -1.25693e-24 s^-1
 Max local continuity error: 6.7096e-10 s^-1
 --------------------
 Particle statistics
@@ -1679,7 +1679,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 3.52198e-25 s^-1
+Global continuity equation error: 1.46049e-24 s^-1
 Max local continuity error: 6.48498e-10 s^-1
 --------------------
 Particle statistics
@@ -1706,7 +1706,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 1.47826e-24 s^-1
+Global continuity equation error: -2.1455e-24 s^-1
 Max local continuity error: 6.24608e-10 s^-1
 --------------------
 Particle statistics
@@ -1733,7 +1733,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 9.56428e-25 s^-1
+Global continuity equation error: 1.87893e-24 s^-1
 Max local continuity error: 6e-10 s^-1
 --------------------
 Particle statistics
@@ -1760,7 +1760,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -2.90806e-26 s^-1
+Global continuity equation error: -2.38945e-24 s^-1
 Max local continuity error: 5.75328e-10 s^-1
 --------------------
 Particle statistics
@@ -1787,7 +1787,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 1.54127e-24 s^-1
+Global continuity equation error: -7.99716e-25 s^-1
 Max local continuity error: 5.50998e-10 s^-1
 --------------------
 Particle statistics
@@ -1814,7 +1814,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -6.31695e-25 s^-1
+Global continuity equation error: -1.44595e-24 s^-1
 Max local continuity error: 5.27415e-10 s^-1
 --------------------
 Particle statistics
@@ -1841,7 +1841,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 3.02115e-25 s^-1
+Global continuity equation error: -1.95971e-24 s^-1
 Max local continuity error: 5.04769e-10 s^-1
 --------------------
 Particle statistics
@@ -1868,7 +1868,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 3.69e-24 s^-1
+Global continuity equation error: -8.29604e-25 s^-1
 Max local continuity error: 4.83158e-10 s^-1
 --------------------
 Particle statistics
@@ -1895,7 +1895,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -7.981e-25 s^-1
+Global continuity equation error: -9.45926e-25 s^-1
 Max local continuity error: 4.62407e-10 s^-1
 --------------------
 Particle statistics
@@ -1922,7 +1922,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -3.35234e-25 s^-1
+Global continuity equation error: 7.15705e-25 s^-1
 Max local continuity error: 4.42361e-10 s^-1
 --------------------
 Particle statistics
@@ -1949,8 +1949,8 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 1.69233e-24 s^-1
-Max local continuity error: 4.2286e-10 s^-1
+Global continuity equation error: -2.11076e-24 s^-1
+Max local continuity error: 4.22859e-10 s^-1
 --------------------
 Particle statistics
 --------------------
@@ -1976,7 +1976,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 1.65355e-24 s^-1
+Global continuity equation error: -1.3369e-24 s^-1
 Max local continuity error: 4.03759e-10 s^-1
 --------------------
 Particle statistics
@@ -2003,7 +2003,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 2.85959e-25 s^-1
+Global continuity equation error: 1.82884e-24 s^-1
 Max local continuity error: 3.84932e-10 s^-1
 --------------------
 Particle statistics
@@ -2030,7 +2030,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -8.80495e-26 s^-1
+Global continuity equation error: -3.98242e-25 s^-1
 Max local continuity error: 3.66267e-10 s^-1
 --------------------
 Particle statistics
@@ -2057,7 +2057,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -9.20481e-25 s^-1
+Global continuity equation error: 1.05781e-24 s^-1
 Max local continuity error: 3.56911e-10 s^-1
 --------------------
 Particle statistics
@@ -2084,7 +2084,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.38294e-24 s^-1
+Global continuity equation error: -1.82077e-24 s^-1
 Max local continuity error: 3.85683e-10 s^-1
 --------------------
 Particle statistics
@@ -2111,7 +2111,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.58368e-24 s^-1
+Global continuity equation error: -1.12304e-24 s^-1
 Max local continuity error: 4.1448e-10 s^-1
 --------------------
 Particle statistics
@@ -2138,7 +2138,7 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 1.10163e-25 s^-1
+Global continuity equation error: 1.30418e-24 s^-1
 Max local continuity error: 4.43124e-10 s^-1
 --------------------
 Particle statistics
@@ -2165,8 +2165,8 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 1.27021e-24 s^-1
-Max local continuity error: 4.7132e-10 s^-1
+Global continuity equation error: -3.99362e-25 s^-1
+Max local continuity error: 4.71322e-10 s^-1
 --------------------
 Particle statistics
 --------------------
@@ -2192,8 +2192,8 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.59156e-24 s^-1
-Max local continuity error: 4.98562e-10 s^-1
+Global continuity equation error: 1.13798e-24 s^-1
+Max local continuity error: 4.98564e-10 s^-1
 --------------------
 Particle statistics
 --------------------
@@ -2219,8 +2219,8 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -3.96728e-24 s^-1
-Max local continuity error: 5.24338e-10 s^-1
+Global continuity equation error: 3.02923e-27 s^-1
+Max local continuity error: 5.24339e-10 s^-1
 --------------------
 Particle statistics
 --------------------
@@ -2246,8 +2246,8 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -4.88715e-26 s^-1
-Max local continuity error: 5.48126e-10 s^-1
+Global continuity equation error: 1.07558e-24 s^-1
+Max local continuity error: 5.48128e-10 s^-1
 --------------------
 Particle statistics
 --------------------
@@ -2259,7 +2259,7 @@ Particle statistics
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 84       Time: 0.42     Time step: 0.005    CFL: 2.60287e-05
+Transient iteration: 84       Time: 0.42     Time step: 0.005    CFL: 2.60288e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -2273,8 +2273,8 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.54208e-24 s^-1
-Max local continuity error: 5.69279e-10 s^-1
+Global continuity equation error: 9.83489e-25 s^-1
+Max local continuity error: 5.69281e-10 s^-1
 --------------------
 Particle statistics
 --------------------
@@ -2300,8 +2300,8 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.34336e-24 s^-1
-Max local continuity error: 5.87355e-10 s^-1
+Global continuity equation error: 8.09005e-25 s^-1
+Max local continuity error: 5.87358e-10 s^-1
 --------------------
 Particle statistics
 --------------------
@@ -2327,8 +2327,8 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 1.10304e-24 s^-1
-Max local continuity error: 6.02197e-10 s^-1
+Global continuity equation error: -4.73367e-25 s^-1
+Max local continuity error: 6.022e-10 s^-1
 --------------------
 Particle statistics
 --------------------
@@ -2354,8 +2354,8 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 3.75624e-25 s^-1
-Max local continuity error: 6.13989e-10 s^-1
+Global continuity equation error: 1.53965e-24 s^-1
+Max local continuity error: 6.13992e-10 s^-1
 --------------------
 Particle statistics
 --------------------
@@ -2367,7 +2367,7 @@ Particle statistics
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 88       Time: 0.44     Time step: 0.005    CFL: 2.77115e-05
+Transient iteration: 88       Time: 0.44     Time step: 0.005    CFL: 2.77116e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -2381,8 +2381,8 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 7.44786e-25 s^-1
-Max local continuity error: 6.23064e-10 s^-1
+Global continuity equation error: 7.22975e-25 s^-1
+Max local continuity error: 6.23067e-10 s^-1
 --------------------
 Particle statistics
 --------------------
@@ -2394,7 +2394,7 @@ Particle statistics
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 89       Time: 0.445    Time step: 0.005    CFL: 2.80708e-05
+Transient iteration: 89       Time: 0.445    Time step: 0.005    CFL: 2.80709e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -2408,8 +2408,8 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.64224e-24 s^-1
-Max local continuity error: 6.29951e-10 s^-1
+Global continuity equation error: -1.57681e-24 s^-1
+Max local continuity error: 6.29954e-10 s^-1
 --------------------
 Particle statistics
 --------------------
@@ -2420,9 +2420,9 @@ Particle statistics
 | Translational kinetic energy | 1.367015e-08 | 1.367015e-08  | 1.367015e-08 | 1.367015e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
-********************************************************************************
-Transient iteration: 90       Time: 0.45     Time step: 0.005    CFL: 2.841e-05
-********************************************************************************
+**********************************************************************************
+Transient iteration: 90       Time: 0.45     Time step: 0.005    CFL: 2.84101e-05
+**********************************************************************************
 --------------
 Void Fraction
 --------------
@@ -2435,8 +2435,8 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.02024e-24 s^-1
-Max local continuity error: 6.35591e-10 s^-1
+Global continuity equation error: -1.74241e-24 s^-1
+Max local continuity error: 6.35595e-10 s^-1
 --------------------
 Particle statistics
 --------------------
@@ -2448,7 +2448,7 @@ Particle statistics
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 91       Time: 0.455    Time step: 0.005    CFL: 2.87364e-05
+Transient iteration: 91       Time: 0.455    Time step: 0.005    CFL: 2.87365e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -2462,8 +2462,8 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -5.25954e-24 s^-1
-Max local continuity error: 6.40457e-10 s^-1
+Global continuity equation error: 1.07275e-24 s^-1
+Max local continuity error: 6.40461e-10 s^-1
 --------------------
 Particle statistics
 --------------------
@@ -2475,7 +2475,7 @@ Particle statistics
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 92       Time: 0.46     Time step: 0.005    CFL: 2.90541e-05
+Transient iteration: 92       Time: 0.46     Time step: 0.005    CFL: 2.90542e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -2489,8 +2489,8 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -4.59715e-24 s^-1
-Max local continuity error: 6.44671e-10 s^-1
+Global continuity equation error: 4.01716e-24 s^-1
+Max local continuity error: 6.44675e-10 s^-1
 --------------------
 Particle statistics
 --------------------
@@ -2502,7 +2502,7 @@ Particle statistics
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 93       Time: 0.465    Time step: 0.005    CFL: 2.93644e-05
+Transient iteration: 93       Time: 0.465    Time step: 0.005    CFL: 2.93645e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -2516,8 +2516,8 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 3.38304e-24 s^-1
-Max local continuity error: 6.47773e-10 s^-1
+Global continuity equation error: -6.115e-25 s^-1
+Max local continuity error: 6.47776e-10 s^-1
 --------------------
 Particle statistics
 --------------------
@@ -2528,9 +2528,9 @@ Particle statistics
 | Translational kinetic energy | 1.367103e-08 | 1.367103e-08  | 1.367103e-08 | 1.367103e-08 | 
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
-**********************************************************************************
-Transient iteration: 94       Time: 0.47     Time step: 0.005    CFL: 2.96639e-05
-**********************************************************************************
+*********************************************************************************
+Transient iteration: 94       Time: 0.47     Time step: 0.005    CFL: 2.9664e-05
+*********************************************************************************
 --------------
 Void Fraction
 --------------
@@ -2543,8 +2543,8 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.78442e-24 s^-1
-Max local continuity error: 6.49052e-10 s^-1
+Global continuity equation error: -3.06638e-24 s^-1
+Max local continuity error: 6.49056e-10 s^-1
 --------------------
 Particle statistics
 --------------------
@@ -2556,7 +2556,7 @@ Particle statistics
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 95       Time: 0.475    Time step: 0.005    CFL: 2.99476e-05
+Transient iteration: 95       Time: 0.475    Time step: 0.005    CFL: 2.99477e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -2570,8 +2570,8 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 1.36921e-24 s^-1
-Max local continuity error: 6.47945e-10 s^-1
+Global continuity equation error: 2.3006e-24 s^-1
+Max local continuity error: 6.47949e-10 s^-1
 --------------------
 Particle statistics
 --------------------
@@ -2583,7 +2583,7 @@ Particle statistics
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 96       Time: 0.48     Time step: 0.005    CFL: 3.02116e-05
+Transient iteration: 96       Time: 0.48     Time step: 0.005    CFL: 3.02117e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -2597,8 +2597,8 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 2.27959e-24 s^-1
-Max local continuity error: 6.43986e-10 s^-1
+Global continuity equation error: -1.513e-24 s^-1
+Max local continuity error: 6.4399e-10 s^-1
 --------------------
 Particle statistics
 --------------------
@@ -2610,7 +2610,7 @@ Particle statistics
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 97       Time: 0.485    Time step: 0.005    CFL: 3.04523e-05
+Transient iteration: 97       Time: 0.485    Time step: 0.005    CFL: 3.04524e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -2624,8 +2624,8 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 1.28439e-25 s^-1
-Max local continuity error: 6.37407e-10 s^-1
+Global continuity equation error: 1.5752e-24 s^-1
+Max local continuity error: 6.3741e-10 s^-1
 --------------------
 Particle statistics
 --------------------
@@ -2637,7 +2637,7 @@ Particle statistics
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 98       Time: 0.49     Time step: 0.005    CFL: 3.06714e-05
+Transient iteration: 98       Time: 0.49     Time step: 0.005    CFL: 3.06715e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -2651,8 +2651,8 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -9.90355e-25 s^-1
-Max local continuity error: 6.2898e-10 s^-1
+Global continuity equation error: -2.61725e-24 s^-1
+Max local continuity error: 6.28983e-10 s^-1
 --------------------
 Particle statistics
 --------------------
@@ -2664,7 +2664,7 @@ Particle statistics
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 99       Time: 0.495    Time step: 0.005    CFL: 3.08742e-05
+Transient iteration: 99       Time: 0.495    Time step: 0.005    CFL: 3.08743e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -2678,8 +2678,8 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: -1.77553e-24 s^-1
-Max local continuity error: 6.19363e-10 s^-1
+Global continuity equation error: 2.0001e-24 s^-1
+Max local continuity error: 6.19366e-10 s^-1
 --------------------
 Particle statistics
 --------------------
@@ -2691,7 +2691,7 @@ Particle statistics
 | Rotational kinetic energy    | 0.000000e+00 | 2.225074e-308 | 0.000000e+00 | 0.000000e+00 | 
 
 **********************************************************************************
-Transient iteration: 100      Time: 0.5      Time step: 0.005    CFL: 3.10657e-05
+Transient iteration: 100      Time: 0.5      Time step: 0.005    CFL: 3.10658e-05
 **********************************************************************************
 --------------
 Void Fraction
@@ -2705,8 +2705,8 @@ DEM
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 4.3217e-25 s^-1
-Max local continuity error: 6.09164e-10 s^-1
+Global continuity equation error: -2.18831e-24 s^-1
+Max local continuity error: 6.09167e-10 s^-1
 --------------------
 Particle statistics
 --------------------

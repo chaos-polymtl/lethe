@@ -662,6 +662,12 @@ CFDDEMMatrixFree<dim>::read_checkpoint()
   std::vector<OutputStructTableHandler> table_output_structs =
     NavierStokesBase<dim, VectorType, IndexSet>::gather_tables();
   deserialize_tables_vector(table_output_structs, this->mpi_communicator);
+
+  // Force a resort of the particles and exchange the ghost particles
+  // to ensure the cache to update the ghost particles is correctly
+  // built.
+  this->particle_handler.sort_particles_into_subdomains_and_cells();
+  this->particle_handler.exchange_ghost_particles(true);
 }
 
 template <int dim>
@@ -1325,8 +1331,6 @@ CFDDEMMatrixFree<dim>::sort_particles_into_subdomains_and_cells()
 
   // Always reset the displacement values since we are doing a search detection
   std::ranges::fill(displacement, 0.);
-
-  this->particle_handler.exchange_ghost_particles(true);
 }
 
 template <int dim>
@@ -1513,7 +1517,6 @@ CFDDEMMatrixFree<dim>::solve()
     read_dem();
 
   this->computing_timer.leave_subsection("Read mesh, manifolds and particles");
-
 
   this->setup_dofs();
 

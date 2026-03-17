@@ -50,6 +50,12 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
     ExcMessage(
       "The VANS always requires the Hessian for the assembly of the matrix. Please \"set enable hessian jacobian = true\""));
 
+  AssertThrow(
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .enable_hessians_residual,
+    ExcMessage(
+      "The VANS always requires the Hessian for the assembly of the residual. Please \"set enable hessian residual = true\""));
+
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
     {
@@ -271,7 +277,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
       particle_projector.fluid_drag_on_particles.particle_field_solution
         .update_ghost_values();
 
-      this->mg_transfer_gc_pf_force->interpolate_to_mg(
+      this->mg_transfer_gc_pf_drag->interpolate_to_mg(
         particle_projector.fluid_drag_on_particles.dof_handler,
         mg_pf_drag_solution,
         particle_projector.fluid_drag_on_particles.particle_field_solution);
@@ -280,7 +286,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
       particle_projector.particle_velocity.particle_field_solution
         .update_ghost_values();
 
-      this->mg_transfer_gc_pf_force->interpolate_to_mg(
+      this->mg_transfer_gc_particle_velocity->interpolate_to_mg(
         particle_projector.particle_velocity.dof_handler,
         mg_particle_velocity_solution,
         particle_projector.particle_velocity.particle_field_solution);
@@ -719,8 +725,13 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
 
   this->setup_dofs();
 
-  particle_projector.initialize_void_fraction(
-    this->simulation_control->get_current_time());
+  // Initialize void fraction only when not restarting. On restart, the void
+  // fraction is restored from the checkpoint in read_checkpoint(). Calling
+  // initialize_void_fraction before read_checkpoint would crash because the
+  // particle handler has not been deserialized yet.
+  if (!this->simulation_parameters.restart_parameters.restart)
+    particle_projector.initialize_void_fraction(
+      this->simulation_control->get_current_time());
 
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
