@@ -3,6 +3,13 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/03/18
+
+### Fixed
+
+- MAJOR The lethe-fluid-particles-matrix-free solver would not restart adequately. This was mainly caused by three factors. The first is that the vector used to project the forces was never reset to zero, and so the projection of the forces and the other variables became dependent on the history of this projection since this would affect the GMRES solver behavior. The second was that the void fraction time-history would get partially erased if a BDF2 time-stepping scheme was used. The last one was that some of the multigrid operators being used to transfer the particle-fluid force/drag information were not the correct one. All these three things have been fixed. They don't changes tests (except a small one for some floating point error), but now the code restarts to machine precision. [#1943](https://github.com/chaos-polymtl/7lethe/pull/1943).
+
+
 ## [Master] - 2026/03/17
 
 ### Changed
