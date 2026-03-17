@@ -257,7 +257,7 @@ Explicit coupling constraint parameters
 
   and replaces the time step with the capillary time step :math:`\left(\Delta t_\text{CTR} = N_\text{CTR, max} \times \Delta t_\sigma\right)` if the later is smaller than the current ``time step`` and ``max time step``. :math:`N_\text{CTR, max}` is the user-defined ``max capillary time-step ratio``.
 
-  This is used in the coupling of the :doc:`Navier-Stokes equations <../../theory/multiphysics/fluid_dynamics/navier-stokes>` with the :doc:`VOF <../../theory/multiphase/cfd/vof>` method to simulate multiphase flows with surface tension.
+  This is used in the coupling of the :doc:`Navier-Stokes equations <../../theory/multiphysics/fluid_dynamics/navier-stokes>` with the :doc:`CLS <../../theory/multiphase/cfd/cls>` method to simulate multiphase flows with surface tension.
 
   .. note::
 

@@ -276,7 +276,7 @@ Physical Properties
 
 The ``physical properties`` subsection sets the material properties for the metal and gas phase. It is in this subsection that we activate the phase change by setting the solid and liquid properties for the metal phase, in the same fashion as in the :doc:`Stefan problem <../stefan-problem/stefan-problem>` and :doc:`melting cavity <../melting-cavity/melting-cavity>` examples. However, since we consider an alloy (TI6Al4V), the phase change occurs over a temperature range. Hence, the difference between the ``liquidus temperature`` and ``solidus temperature`` corresponds to the real temperature range in which the solid and liquid TI6Al4V coexist (mushy zone). 
 
-We also set in this subsection the reference surface tension coefficient of the metal-gas interface and its temperature derivative to simulate the Maragoni effect. Here, we consider a linear evolution of the surface tension coefficient with the temperature at the liquid-gas interface, and we neglect its effect at the solid-gas interface to avoid numerical instabilities. This is done by setting ``surface tension model = phase change``. We refer to the parameter guide :doc:`../../../../parameters/cfd/physical_properties` for more details on this model.
+We also set in this subsection the reference surface tension coefficient of the metal-gas interface and its temperature derivative to simulate the Marangoni effect. Here, we consider a linear evolution of the surface tension coefficient with the temperature at the liquid-gas interface, and we neglect its effect at the solid-gas interface to avoid numerical instabilities. This is done by setting ``surface tension model = phase change``. We refer to the parameter guide :doc:`../../../../parameters/cfd/physical_properties` for more details on this model.
   
 .. code-block:: text
 
@@ -388,7 +388,7 @@ where :math:`\phi_\text{evap}=0.82` and :math:`\psi_\text{evap}=0.56` are the ``
 
 where :math:`p_\text{atm}=101.325\;\text{kPa}` is the ``ambient pressure``, and :math:`T_\text{boil}=3550\;\text{K}` is the ``boiling temperature``.
 
-Both terms are then applied at the liquid-gas interface using the Continuous Surface Force (CSF) model, as described for the surface tension in :doc:`../../../theory/multiphase/cfd/vof` theory guide.
+Both terms are then applied at the liquid-gas interface using the Continuous Surface Force (CSF) model, as described for the surface tension in :doc:`../../../theory/multiphase/cfd/cls` theory guide.
 
     
 Non-Linear Solver
@@ -459,8 +459,7 @@ We call ``lethe-fluid`` to launch the simulation by invoking the following comma
 Results
 -------
 
-The following video shows on the left the temperature evolution in the metal, and on the right, the phase fraction evolution. We observe the melt pool, delimited by the black line, deepening and the formation of the vapor depression at the liquid-gas interface. This is often refered as a keyhole. It is caused by the recoil pressure, resulting from the fast out of equilibrium evaporation, and the Marangoni effect, driving melt alway from the melt pool center. 
-
+The following video shows on the left the temperature evolution in the metal, and on the right, the phase fraction evolution. We observe the melt pool, delimited by the black line, deepening and the formation of the vapor depression at the liquid-gas interface. This is often referred as a keyhole. It is caused by the recoil pressure, resulting from the fast out of equilibrium evaporation, and the Marangoni effect, driving melt always from the melt pool center.
 .. raw:: html
 
     <iframe width="700" height="394" src="https://www.youtube.com/embed/1L66uYqNbXQ" title="Static irradiation of the Ti6Al4V bare plate" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>

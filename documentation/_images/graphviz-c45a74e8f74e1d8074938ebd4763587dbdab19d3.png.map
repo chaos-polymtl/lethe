@@ -1,6 +1,6 @@
 <map id="multiphysics_diagram" name="multiphysics_diagram">
 <area shape="rect" id="node1" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/multiphysics.html" title="Multiphysics" alt="" coords="2,622,59,655"/>
-<area shape="rect" id="node2" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/vof.html" title="VOF" alt="" coords="127,209,154,242"/>
+<area shape="rect" id="node2" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/cls.html" title="CLS" alt="" coords="128,209,153,242"/>
 <area shape="rect" id="node13" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/heat-transfer.html" title="Heat Transfer" alt="" coords="109,581,172,614"/>
 <area shape="rect" id="node22" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/tracer.html" title="Tracer" alt="" coords="123,705,157,738"/>
 <area shape="rect" id="node24" href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/chns.html" title="CHNS" alt="" coords="124,788,157,821"/>

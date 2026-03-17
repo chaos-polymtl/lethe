@@ -120,14 +120,14 @@ For tracer boundary conditions, the defaults parameters are:
     * ``dirichlet`` to impose specific values;
     * ``periodic`` to impose periodicity between boundaries. ``periodic id`` and ``periodic direction`` specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set ``id = 0``, ``periodic id = 1`` and ``periodic direction = 0``.
 
-VOF
+CLS
 ^^^
 
-For VOF boundary conditions (multiphase flow), the possible ``types`` are ``none`` (default) and ``dirichlet``, as shown below.
+For CLS boundary conditions (multiphase flow), the possible ``types`` are ``none`` (default) and ``dirichlet``, as shown below.
 
 .. code-block:: text
 
-  subsection boundary conditions VOF
+  subsection boundary conditions CLS
     set number         = 3
     set time dependent = false
     subsection bc 0

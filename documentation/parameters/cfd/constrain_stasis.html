@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Dimensionality" href="dimensionality.html" /><link rel="prev" title="Cahn-Hilliard" href="cahn_hilliard.html" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Dimensionality" href="dimensionality.html" /><link rel="prev" title="Conservative Level-Set (Multiphase Flow)" href="conservative_level_set.html" />
 
     <link rel="shortcut icon" href="../../_static/lethe_favicon.ico"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
         <title>Constrain Stasis - Lethe documentation</title>
@@ -176,6 +176,7 @@
 <li class="toctree-l3"><a class="reference internal" href="boundary_conditions_multiphysics.html">Boundary Conditions - Multiphysics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="box_refinement.html">Box Refinement</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cahn_hilliard.html">Cahn-Hilliard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="conservative_level_set.html">Conservative Level-Set (Multiphase Flow)</a></li>
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Constrain Stasis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dimensionality.html">Dimensionality</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dynamic_flow_control.html">Dynamic Flow Control</a></li>
@@ -200,7 +201,6 @@
 <li class="toctree-l3"><a class="reference internal" href="timer.html">Timer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tracer_drift_velocity.html">Tracer Drift Velocity</a></li>
 <li class="toctree-l3"><a class="reference internal" href="velocity_source.html">Velocity Source</a></li>
-<li class="toctree-l3"><a class="reference internal" href="volume_of_fluid.html">Volume of Fluid (Multiphase Flow)</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../dem/dem.html">Discrete Element Method (DEM)</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Discrete Element Method (DEM)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -248,7 +248,7 @@
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../examples/multiphysics/multiphysics.html">Multiphysics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Multiphysics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../examples/multiphysics/vof.html">VOF</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of VOF</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../examples/multiphysics/cls.html">CLS</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of CLS</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/dam-break/dam-break.html">Dam-Break</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability.html">Rayleigh-Taylor Instability</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/static-bubble/static-bubble.html">Static Bubble</a></li>
@@ -376,7 +376,7 @@
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../theory/multiphase/multiphase.html">Multiphase</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle navigation of Multiphase</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../theory/multiphase/cfd/cfd.html">Fluid-Fluid Flows - Interface Capturing Models</a><input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><div class="visually-hidden">Toggle navigation of Fluid-Fluid Flows - Interface Capturing Models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphase/cfd/vof.html">The Volume of Fluid (VOF) Method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphase/cfd/cls.html">The Conservative Level-Set (CLS) Method</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../theory/multiphase/cfd/cahn-hilliard.html">Cahn-Hilliard Method</a></li>
 </ul>
 </li>
@@ -463,10 +463,10 @@ Homogenous constraints are applied on velocity degrees of freedom (DoFs) of cell
   set restriction plane normal vector      = 0.0, 0.0, 0.0
   set number of constraints                = 0
   subsection constraint 0
-    set fluid id                 = 0
-    set phase fraction tolerance = 1e-4
-    set min temperature          = -999.0
-    set max temperature          = 0.0
+    set fluid id                  = 0
+    set phase indicator tolerance = 1e-4
+    set min temperature           = -999.0
+    set max temperature           = 0.0
   end
 end
 </pre></div>
@@ -476,10 +476,10 @@ end
 <li><p>The <code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">domain</span> <span class="pre">restriction</span> <span class="pre">with</span> <span class="pre">plane</span></code> parameter is set to <code class="docutils literal notranslate"><span class="pre">true</span></code> when it is desired to reduce the constrained domain using a plane in addition to the temperature range. The plane cuts the domain in two subdomains. Only cells in the subdomain in the opposite direction to the normal vector can be constrained.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">restriction</span> <span class="pre">plane</span> <span class="pre">point</span></code> parameter is a point on the plane.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">restriction</span> <span class="pre">plane</span> <span class="pre">normal</span> <span class="pre">vector</span></code> parameter is an outward-pointing normal vector of the plane. This vector points to the side of the plane that contains cells to constrain.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">constraints</span></code> parameter is an integer representing the number of constraints that will be applied. It is used in multiphase (VOF) simulations to apply different constraints to each fluid. Only one constraint per fluid can be imposed. Each constraint comes with its own subsection (starting with number <code class="docutils literal notranslate"><span class="pre">0</span></code>) containing its own set of parameters as detailed below.</p>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">constraints</span></code> parameter is an integer representing the number of constraints that will be applied. It is used in multiphase (CLS) simulations to apply different constraints to each fluid. Only one constraint per fluid can be imposed. Each constraint comes with its own subsection (starting with number <code class="docutils literal notranslate"><span class="pre">0</span></code>) containing its own set of parameters as detailed below.</p>
 <ul>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">id</span></code> parameter is an integer representing the fluid on which the current constraint should be applied.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">fraction</span> <span class="pre">tolerance</span></code> parameter is an absolute tolerance on the filtered phase fraction <span class="math notranslate nohighlight">\((\phi')\)</span> used in conjunction with VOF simulations (see <a class="reference internal" href="volume_of_fluid.html"><span class="doc">Volume of Fluid (Multiphase Flow)</span></a> subsection) to select the cells on which the constraint is applied. For example, if a <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">fraction</span> <span class="pre">tolerance</span></code> of <span class="math notranslate nohighlight">\(10^{-4}\)</span> is specified for a constraint on a fluid of <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">id</span> <span class="pre">=</span> <span class="pre">1</span></code>, cells with <span class="math notranslate nohighlight">\(\phi' \in [0.9999,1.0001]\)</span> are considered as the cells of interest. Note that if the phase fraction filter is disabled, the tolerance will be applied on the solved phase fraction field <span class="math notranslate nohighlight">\((\phi)\)</span>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">indicator</span> <span class="pre">tolerance</span></code> parameter is an absolute tolerance on the filtered phase indicator <span class="math notranslate nohighlight">\((\phi')\)</span> used in conjunction with CLS simulations (see <a class="reference internal" href="conservative_level_set.html"><span class="doc">Conservative Level-Set (Multiphase Flow)</span></a> subsection) to select the cells on which the constraint is applied. For example, if a <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">indicator</span> <span class="pre">tolerance</span></code> of <span class="math notranslate nohighlight">\(10^{-4}\)</span> is specified for a constraint on a fluid of <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">id</span> <span class="pre">=</span> <span class="pre">1</span></code>, cells with <span class="math notranslate nohighlight">\(\phi' \in [0.9999,1.0001]\)</span> are considered as the cells of interest. Note that if the phase indicator filter is disabled, the tolerance will be applied on the solved phase indicator field <span class="math notranslate nohighlight">\((\phi)\)</span>.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">temperature</span></code> parameter is a double representing the minimum temperature value for a cell to be considered a solid <span class="math notranslate nohighlight">\([\Theta]\)</span>.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">temperature</span></code> parameter is a double representing the maximum temperature value for a cell to be considered a solid <span class="math notranslate nohighlight">\([\Theta]\)</span>.</p></li>
 </ul>
@@ -501,14 +501,14 @@ end
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="cahn_hilliard.html">
+          <a class="prev-page" href="conservative_level_set.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Cahn-Hilliard</div>
+                <div class="title">Conservative Level-Set (Multiphase Flow)</div>
                 
               </div>
             </a>

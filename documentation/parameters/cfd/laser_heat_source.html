@@ -176,6 +176,7 @@
 <li class="toctree-l3"><a class="reference internal" href="boundary_conditions_multiphysics.html">Boundary Conditions - Multiphysics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="box_refinement.html">Box Refinement</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cahn_hilliard.html">Cahn-Hilliard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="conservative_level_set.html">Conservative Level-Set (Multiphase Flow)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="constrain_stasis.html">Constrain Stasis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dimensionality.html">Dimensionality</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dynamic_flow_control.html">Dynamic Flow Control</a></li>
@@ -200,7 +201,6 @@
 <li class="toctree-l3"><a class="reference internal" href="timer.html">Timer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tracer_drift_velocity.html">Tracer Drift Velocity</a></li>
 <li class="toctree-l3"><a class="reference internal" href="velocity_source.html">Velocity Source</a></li>
-<li class="toctree-l3"><a class="reference internal" href="volume_of_fluid.html">Volume of Fluid (Multiphase Flow)</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../dem/dem.html">Discrete Element Method (DEM)</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Discrete Element Method (DEM)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -248,7 +248,7 @@
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../examples/multiphysics/multiphysics.html">Multiphysics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Multiphysics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../examples/multiphysics/vof.html">VOF</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of VOF</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../examples/multiphysics/cls.html">CLS</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of CLS</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/dam-break/dam-break.html">Dam-Break</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability.html">Rayleigh-Taylor Instability</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/static-bubble/static-bubble.html">Static Bubble</a></li>
@@ -376,7 +376,7 @@
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../theory/multiphase/multiphase.html">Multiphase</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle navigation of Multiphase</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../theory/multiphase/cfd/cfd.html">Fluid-Fluid Flows - Interface Capturing Models</a><input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><div class="visually-hidden">Toggle navigation of Fluid-Fluid Flows - Interface Capturing Models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphase/cfd/vof.html">The Volume of Fluid (VOF) Method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphase/cfd/cls.html">The Conservative Level-Set (CLS) Method</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../theory/multiphase/cfd/cahn-hilliard.html">Cahn-Hilliard Method</a></li>
 </ul>
 </li>
@@ -448,7 +448,7 @@
 <p>If a laser heat source is present in a simulation, it can be added in this section. The default parameters are:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection laser parameters
   set enable               = false
-  set type                 = gaussian_heat_flux_vof_interface
+  set type                 = gaussian_heat_flux_cls_interface
   set concentration factor = 2.0
   set power                = 0.0
   set absorptivity         = 0.5
@@ -475,7 +475,7 @@ end
 </div>
 <ul>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">enable</span></code> parameter is set to <code class="docutils literal notranslate"><span class="pre">true</span></code> if the problem has a laser heat source term and enables its calculation.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">type</span></code> parameter is set to <code class="docutils literal notranslate"><span class="pre">gaussian_heat_flux_vof_interface</span></code> (default) if we assume that the laser behaves as a surface heat flux with a normal irradiation distribution.  If the laser is assumed to have a uniform surface heat flux, the <code class="docutils literal notranslate"><span class="pre">type</span></code> can be set at <code class="docutils literal notranslate"><span class="pre">uniform_heat_flux_vof_interface</span></code>. In both cases, the laser model must be used in conjunction with the <a class="reference internal" href="volume_of_fluid.html"><span class="doc">VOF auxiliary physic</span></a>. The third available laser model is the  <code class="docutils literal notranslate"><span class="pre">exponential_decay</span></code> and considers that the laser behaves as a volumetric source. The different models are detailed <a class="reference internal" href="#lasertypes"><span class="std std-ref">below</span></a>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">type</span></code> parameter is set to <code class="docutils literal notranslate"><span class="pre">gaussian_heat_flux_cls_interface</span></code> (default) if we assume that the laser behaves as a surface heat flux with a normal irradiation distribution.  If the laser is assumed to have a uniform surface heat flux, the <code class="docutils literal notranslate"><span class="pre">type</span></code> can be set at <code class="docutils literal notranslate"><span class="pre">uniform_heat_flux_cls_interface</span></code>. In both cases, the laser model must be used in conjunction with the <a class="reference internal" href="conservative_level_set.html"><span class="doc">CLS auxiliary physic</span></a>. The third available laser model is the  <code class="docutils literal notranslate"><span class="pre">exponential_decay</span></code> and considers that the laser behaves as a volumetric source. The different models are detailed <a class="reference internal" href="#lasertypes"><span class="std std-ref">below</span></a>.</p></li>
 <li><p>Laser <code class="docutils literal notranslate"><span class="pre">concentration</span> <span class="pre">factor</span></code> parameter indicates the definition of the beam radius. In almost all the articles, it is assumed equal to <span class="math notranslate nohighlight">\(2.0\)</span>.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">power</span></code> parameter sets the power of the laser <span class="math notranslate nohighlight">\([ML^2T^{-3}]\)</span>.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">absorptivity</span></code> parameter is defined as the fraction of incident radiation that is absorbed by the surface, and it is measured using diffuse reﬂectance spectroscopy (DRS). Generally, a constant value in the range of <span class="math notranslate nohighlight">\(0.3\)</span>-<span class="math notranslate nohighlight">\(0.8\)</span> (for welding processes with titanium) is used in the literature. However, recent studies show that it varies with powder particle size distribution and the angle of incidence that changes due to the dynamic melt pool surface <a class="footnote-reference brackets" href="#zhang2019" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p></li>
@@ -493,7 +493,7 @@ end
 <p>In two-dimensional simulations, the laser beam orientation cannot be in the z-direction.</p>
 </div>
 </li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">beam</span> <span class="pre">rotation</span> <span class="pre">angle</span></code> and <code class="docutils literal notranslate"><span class="pre">beam</span> <span class="pre">rotation</span> <span class="pre">axis</span></code> parameters allow to rotate the beam axis (given by <code class="docutils literal notranslate"><span class="pre">beam</span> <span class="pre">orientation</span></code>) of an angle <span class="math notranslate nohighlight">\(\theta\)</span> in radians around the specified rotation axis, described by its tangent vector <span class="math notranslate nohighlight">\(\vec{t}_\text{rot}\)</span>. It is only available for the <code class="docutils literal notranslate"><span class="pre">gaussian_heat_flux_vof_interface</span></code> model, and the <code class="docutils literal notranslate"><span class="pre">beam</span> <span class="pre">rotation</span> <span class="pre">axis</span></code> is only used in 3D simulations. The rotation is performed using the matrix for rotation <span class="math notranslate nohighlight">\(R(\vec{t}_\text{rot}, \theta)\)</span> following:</p>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">beam</span> <span class="pre">rotation</span> <span class="pre">angle</span></code> and <code class="docutils literal notranslate"><span class="pre">beam</span> <span class="pre">rotation</span> <span class="pre">axis</span></code> parameters allow to rotate the beam axis (given by <code class="docutils literal notranslate"><span class="pre">beam</span> <span class="pre">orientation</span></code>) of an angle <span class="math notranslate nohighlight">\(\theta\)</span> in radians around the specified rotation axis, described by its tangent vector <span class="math notranslate nohighlight">\(\vec{t}_\text{rot}\)</span>. It is only available for the <code class="docutils literal notranslate"><span class="pre">gaussian_heat_flux_cls_interface</span></code> model, and the <code class="docutils literal notranslate"><span class="pre">beam</span> <span class="pre">rotation</span> <span class="pre">axis</span></code> is only used in 3D simulations. The rotation is performed using the matrix for rotation <span class="math notranslate nohighlight">\(R(\vec{t}_\text{rot}, \theta)\)</span> following:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\vec{t}_\text{laser,rot} = R(\vec{t}_\text{rot}, \theta)\vec{t}_\text{laser}\]</div>
@@ -501,16 +501,16 @@ end
 <p>where <span class="math notranslate nohighlight">\(\vec{t}_\text{laser}\)</span> is the initial beam tangent vector, given by the <code class="docutils literal notranslate"><span class="pre">beam</span> <span class="pre">orientation</span></code> parameter, and <span class="math notranslate nohighlight">\(\vec{t}_\text{laser}\)</span> is the rotated one.</p>
 </li>
 <li><p>In the <code class="docutils literal notranslate"><span class="pre">path</span></code> subsection, the laser scanning path is defined using a <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">expression</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">free</span> <span class="pre">surface</span> <span class="pre">radiation</span></code>: In additive manufacturing simulations, radiation at the interface between the air and the metal is a significant cooling mechanism. When this interface (i.e., free surface) is resolved by the <a class="reference internal" href="volume_of_fluid.html"><span class="doc">Volume of Fluid (Multiphase Flow)</span></a> solver, the <code class="docutils literal notranslate"><span class="pre">free</span> <span class="pre">surface</span> <span class="pre">radiation</span></code> subsection defines the parameters to impose this radiation cooling following the Stefan-Boltzmann law of radiation:</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">free</span> <span class="pre">surface</span> <span class="pre">radiation</span></code>: In additive manufacturing simulations, radiation at the interface between the air and the metal is a significant cooling mechanism. When this interface (i.e., free surface) is resolved by the <a class="reference internal" href="conservative_level_set.html"><span class="doc">Conservative Level-Set (Multiphase Flow)</span></a> solver, the <code class="docutils literal notranslate"><span class="pre">free</span> <span class="pre">surface</span> <span class="pre">radiation</span></code> subsection defines the parameters to impose this radiation cooling following the Stefan-Boltzmann law of radiation:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[q_\text{rad} = \epsilon \sigma (T^4 - T_\text{inf}^4)\]</div>
 </div>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">enable</span></code>: controls if the radiation cooling is enabled. The radiation sink is modulated by the filtered phase fraction gradient norm, <span class="math notranslate nohighlight">\(|\nabla \psi|\)</span>, in such way that the flux is applied at the interface between the fluids.</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">enable</span></code>: controls if the radiation cooling is enabled. The radiation sink is modulated by the filtered phase indicator gradient norm, <span class="math notranslate nohighlight">\(|\nabla \psi|\)</span>, in such way that the flux is applied at the interface between the fluids.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>To apply this radiation cooling, the <code class="docutils literal notranslate"><span class="pre">VOF</span></code> parameter must be set to <code class="docutils literal notranslate"><span class="pre">true</span></code> in the <a class="reference internal" href="multiphysics.html"><span class="doc">Multiphysics</span></a> subsection.</p>
+<p>To apply this radiation cooling, the <code class="docutils literal notranslate"><span class="pre">CLS</span></code> parameter must be set to <code class="docutils literal notranslate"><span class="pre">true</span></code> in the <a class="reference internal" href="multiphysics.html"><span class="doc">Multiphysics</span></a> subsection.</p>
 </div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">emissivity</span></code>, <code class="docutils literal notranslate"><span class="pre">Tinf</span></code>, and <code class="docutils literal notranslate"><span class="pre">Stefan-Boltzmann</span> <span class="pre">constant</span></code> are respectively the emissivity <span class="math notranslate nohighlight">\(\epsilon\)</span> of the surface, the environment temperature <span class="math notranslate nohighlight">\(T_\text{inf}\)</span>, and the Stefan-Boltzmann constant <span class="math notranslate nohighlight">\(\sigma\)</span>.</p></li>
@@ -520,20 +520,20 @@ end
 <section id="laser-types">
 <span id="lasertypes"></span><h2>Laser types<a class="headerlink" href="#laser-types" title="Link to this heading">#</a></h2>
 <ul>
-<li><p>When the <code class="docutils literal notranslate"><span class="pre">type</span></code> is set to <code class="docutils literal notranslate"><span class="pre">gaussian_heat_flux_vof_interface</span></code> or <code class="docutils literal notranslate"><span class="pre">uniform_heat_flux_vof_interface</span></code>, it <strong>must be used in conjunction with the</strong> <a class="reference internal" href="volume_of_fluid.html"><span class="doc">VOF auxiliary physic</span></a>.</p>
+<li><p>When the <code class="docutils literal notranslate"><span class="pre">type</span></code> is set to <code class="docutils literal notranslate"><span class="pre">gaussian_heat_flux_cls_interface</span></code> or <code class="docutils literal notranslate"><span class="pre">uniform_heat_flux_cls_interface</span></code>, it <strong>must be used in conjunction with the</strong> <a class="reference internal" href="conservative_level_set.html"><span class="doc">CLS auxiliary physic</span></a>.</p>
 <ul>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">gaussian_heat_flux_vof_interface</span></code> model is used to apply a gaussian heat flux only at the interface. In 3D, this heat flux is given by:</p>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">gaussian_heat_flux_cls_interface</span></code> model is used to apply a gaussian heat flux only at the interface. In 3D, this heat flux is given by:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[q(x,y,z) = \frac{|\nabla \psi| \eta \alpha P}{\pi R^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(r\)</span> is the radial distance from the laser’s axis and <span class="math notranslate nohighlight">\(|\nabla \psi|\)</span> is the <span class="math notranslate nohighlight">\(L^2\)</span> norm of the filtered phase fraction gradient. In 2D, the pre-exponential factor accounts for the change in the receiving area (going from a disk of radius <span class="math notranslate nohighlight">\(R\)</span> in 3D to a line segment of length <span class="math notranslate nohighlight">\(2R\)</span> in 2D):</p>
+<p>where <span class="math notranslate nohighlight">\(r\)</span> is the radial distance from the laser’s axis and <span class="math notranslate nohighlight">\(|\nabla \psi|\)</span> is the <span class="math notranslate nohighlight">\(L^2\)</span> norm of the filtered phase indicator gradient. In 2D, the pre-exponential factor accounts for the change in the receiving area (going from a disk of radius <span class="math notranslate nohighlight">\(R\)</span> in 3D to a line segment of length <span class="math notranslate nohighlight">\(2R\)</span> in 2D):</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[q(x,y,z) = \frac{2|\nabla \psi| \sqrt{\eta\;} \alpha P}{\sqrt{\pi^3} R^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}\]</div>
 </div>
 </li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">uniform_heat_flux_vof_interface</span></code> model is used to apply a uniform heat flux, given by the expression below, only at the interface.</p>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">uniform_heat_flux_cls_interface</span></code> model is used to apply a uniform heat flux, given by the expression below, only at the interface.</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[q(x,y,z) = \frac{|\nabla \psi| \alpha P}{\pi R^2}\]</div>
@@ -547,12 +547,12 @@ end
 \[q(x,y,z) = \frac{\eta \alpha P}{\pi R^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}\]</div>
 </div>
 <p>where <span class="math notranslate nohighlight">\(\eta\)</span>, <span class="math notranslate nohighlight">\(\alpha\)</span>, <span class="math notranslate nohighlight">\(P\)</span>, <span class="math notranslate nohighlight">\(R\)</span>, <span class="math notranslate nohighlight">\(\mu\)</span>, <span class="math notranslate nohighlight">\(r\)</span>, and <span class="math notranslate nohighlight">\(z\)</span> denote the concentration factor, absorptivity, laser power, beam radius, penetration depth, radial distance from the laser focal point, and axial distance from the laser focal point, respectively.</p>
-<p>When the <code class="docutils literal notranslate"><span class="pre">exponential_decay</span></code> is used in conjunction with the <a class="reference internal" href="volume_of_fluid.html"><span class="doc">VOF auxiliary physic</span></a> the equation takes the following form:</p>
+<p>When the <code class="docutils literal notranslate"><span class="pre">exponential_decay</span></code> is used in conjunction with the <a class="reference internal" href="conservative_level_set.html"><span class="doc">CLS auxiliary physic</span></a> the equation takes the following form:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[q(x,y,z) = \frac{\psi \eta \alpha P}{\pi R^2 \mu} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \exp{\left(- \frac{|z|}{\mu}\right)}\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(\psi\)</span> is the filtered phase fraction.</p>
+<p>where <span class="math notranslate nohighlight">\(\psi\)</span> is the filtered phase indicator.</p>
 <div class="admonition attention">
 <p class="admonition-title">Attention</p>
 <p>In this case, the heat affects the fluid initialized as <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code>.</p>

@@ -176,6 +176,7 @@
 <li class="toctree-l3"><a class="reference internal" href="boundary_conditions_multiphysics.html">Boundary Conditions - Multiphysics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="box_refinement.html">Box Refinement</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cahn_hilliard.html">Cahn-Hilliard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="conservative_level_set.html">Conservative Level-Set (Multiphase Flow)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="constrain_stasis.html">Constrain Stasis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dimensionality.html">Dimensionality</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dynamic_flow_control.html">Dynamic Flow Control</a></li>
@@ -200,7 +201,6 @@
 <li class="toctree-l3"><a class="reference internal" href="timer.html">Timer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tracer_drift_velocity.html">Tracer Drift Velocity</a></li>
 <li class="toctree-l3"><a class="reference internal" href="velocity_source.html">Velocity Source</a></li>
-<li class="toctree-l3"><a class="reference internal" href="volume_of_fluid.html">Volume of Fluid (Multiphase Flow)</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../dem/dem.html">Discrete Element Method (DEM)</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Discrete Element Method (DEM)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -248,7 +248,7 @@
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../examples/multiphysics/multiphysics.html">Multiphysics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Multiphysics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../examples/multiphysics/vof.html">VOF</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of VOF</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../examples/multiphysics/cls.html">CLS</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of CLS</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/dam-break/dam-break.html">Dam-Break</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability.html">Rayleigh-Taylor Instability</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/static-bubble/static-bubble.html">Static Bubble</a></li>
@@ -376,7 +376,7 @@
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../theory/multiphase/multiphase.html">Multiphase</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle navigation of Multiphase</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../theory/multiphase/cfd/cfd.html">Fluid-Fluid Flows - Interface Capturing Models</a><input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><div class="visually-hidden">Toggle navigation of Fluid-Fluid Flows - Interface Capturing Models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphase/cfd/vof.html">The Volume of Fluid (VOF) Method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphase/cfd/cls.html">The Conservative Level-Set (CLS) Method</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../theory/multiphase/cfd/cahn-hilliard.html">Cahn-Hilliard Method</a></li>
 </ul>
 </li>
@@ -679,8 +679,8 @@ end
 </li>
 <li><dl>
 <dt><code class="docutils literal notranslate"><span class="pre">postprocessed</span> <span class="pre">fluid</span></code>: fluid domain used for thermal postprocesses. Choices are<span class="classifier"><code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code>, or <code class="docutils literal notranslate"><span class="pre">both</span></code> (default).</span></dt><dd><ul class="simple">
-<li><p>For monophasic simulations (<code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">VOF</span> <span class="pre">=</span> <span class="pre">false</span></code> in <a class="reference internal" href="multiphysics.html"><span class="doc">Multiphysics</span></a>), <code class="docutils literal notranslate"><span class="pre">both</span></code> and <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">0</span></code> are equivalent and the temperature statistics are computed over the entire domain.</p></li>
-<li><p>For multiphasic simulations (<code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">VOF</span> <span class="pre">=</span> <span class="pre">true</span></code> in <a class="reference internal" href="multiphysics.html"><span class="doc">Multiphysics</span></a>), temperature statistics can be computed over the entire domain (<code class="docutils literal notranslate"><span class="pre">both</span></code>) or inside a given fluid only (<code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">0</span></code> or <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code>), with the fluid IDs defined in Physical properties - <a class="reference internal" href="physical_properties.html#two-phase-simulations"><span class="std std-ref">Two Phase Simulations</span></a>.</p></li>
+<li><p>For monophasic simulations (<code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">CLS</span> <span class="pre">=</span> <span class="pre">false</span></code> in <a class="reference internal" href="multiphysics.html"><span class="doc">Multiphysics</span></a>), <code class="docutils literal notranslate"><span class="pre">both</span></code> and <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">0</span></code> are equivalent and the temperature statistics are computed over the entire domain.</p></li>
+<li><p>For multiphasic simulations (<code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">CLS</span> <span class="pre">=</span> <span class="pre">true</span></code> in <a class="reference internal" href="multiphysics.html"><span class="doc">Multiphysics</span></a>), temperature statistics can be computed over the entire domain (<code class="docutils literal notranslate"><span class="pre">both</span></code>) or inside a given fluid only (<code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">0</span></code> or <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code>), with the fluid IDs defined in Physical properties - <a class="reference internal" href="physical_properties.html#two-phase-simulations"><span class="std std-ref">Two Phase Simulations</span></a>.</p></li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -743,7 +743,7 @@ end
 </li>
 </ul>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">calculate</span> <span class="pre">barycenter</span></code>: calculates the barycenter of <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code> and its velocity in VOF and Cahn-Hilliard simulations. The barycenter <span class="math notranslate nohighlight">\(\mathbf{x}_b\)</span> and its velocity <span class="math notranslate nohighlight">\(\mathbf{v}_b\)</span> are defined as:</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">calculate</span> <span class="pre">barycenter</span></code>: calculates the barycenter of <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code> and its velocity in CLS and Cahn-Hilliard simulations. The barycenter <span class="math notranslate nohighlight">\(\mathbf{x}_b\)</span> and its velocity <span class="math notranslate nohighlight">\(\mathbf{v}_b\)</span> are defined as:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\mathbf{x_b} = \frac{\int_{\Omega} \psi \mathbf{x} \mathrm{d}\Omega }{\int_{\Omega} \psi \mathrm{d}\Omega}\]</div>
@@ -752,7 +752,7 @@ end
 <div class="math notranslate nohighlight">
 \[\mathbf{v_b} = \frac{\int_{\Omega} \psi \mathbf{u} \mathrm{d}\Omega }{\int_{\Omega} \psi \mathrm{d}\Omega}\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(\psi \in [0,1]\)</span> is the filtered phase indicator for VOF simulations.</p>
+<p>where <span class="math notranslate nohighlight">\(\psi \in [0,1]\)</span> is the filtered phase indicator for CLS simulations.</p>
 <p>For Cahn-Hilliard the formula is slightly different since the phase order parameter <span class="math notranslate nohighlight">\(\phi\)</span> belongs to the <span class="math notranslate nohighlight">\([-1,1]\)</span> interval:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -764,9 +764,9 @@ end
 </div>
 <p>where <span class="math notranslate nohighlight">\(\phi\)</span> is the phase order parameter.</p>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">barycenter</span> <span class="pre">name</span></code>: name of the output file containing the position and velocity of the barycenter for VOF and Cahn-Hilliard simulations. The default file name is <code class="docutils literal notranslate"><span class="pre">barycenter_information</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">calculate</span> <span class="pre">mass</span> <span class="pre">conservation</span></code>: calculates the mass and momentum of both fluids for VOF simulations.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">mass</span> <span class="pre">conservation</span> <span class="pre">name</span></code>: name of the output file containing the mass of both fluids for VOF simulations. The default file name is <code class="docutils literal notranslate"><span class="pre">mass_conservation_information</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">barycenter</span> <span class="pre">name</span></code>: name of the output file containing the position and velocity of the barycenter for CLS and Cahn-Hilliard simulations. The default file name is <code class="docutils literal notranslate"><span class="pre">barycenter_information</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">calculate</span> <span class="pre">mass</span> <span class="pre">conservation</span></code>: calculates the mass and momentum of both fluids for CLS simulations.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mass</span> <span class="pre">conservation</span> <span class="pre">name</span></code>: name of the output file containing the mass of both fluids for CLS simulations. The default file name is <code class="docutils literal notranslate"><span class="pre">mass_conservation_information</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">calculate</span> <span class="pre">liquid</span> <span class="pre">fraction</span></code>: calculates the liquid fraction in simulations with phase change. The liquid fraction corresponds to the volume (area) integral of the liquid divided by the volume (area) of the domain.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">liquid</span> <span class="pre">fraction</span> <span class="pre">name</span></code>: name of the output file containing the time evolution of the liquid fraction.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">calculate</span> <span class="pre">phase</span> <span class="pre">statistics</span></code>: outputs Cahn-Hilliard phase statistics, including minimum, maximum, average, integral of the phase order parameter, and the volume of each phase.</p>

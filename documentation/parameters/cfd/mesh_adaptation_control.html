@@ -176,6 +176,7 @@
 <li class="toctree-l3"><a class="reference internal" href="boundary_conditions_multiphysics.html">Boundary Conditions - Multiphysics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="box_refinement.html">Box Refinement</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cahn_hilliard.html">Cahn-Hilliard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="conservative_level_set.html">Conservative Level-Set (Multiphase Flow)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="constrain_stasis.html">Constrain Stasis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dimensionality.html">Dimensionality</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dynamic_flow_control.html">Dynamic Flow Control</a></li>
@@ -200,7 +201,6 @@
 <li class="toctree-l3"><a class="reference internal" href="timer.html">Timer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tracer_drift_velocity.html">Tracer Drift Velocity</a></li>
 <li class="toctree-l3"><a class="reference internal" href="velocity_source.html">Velocity Source</a></li>
-<li class="toctree-l3"><a class="reference internal" href="volume_of_fluid.html">Volume of Fluid (Multiphase Flow)</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../dem/dem.html">Discrete Element Method (DEM)</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Discrete Element Method (DEM)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -248,7 +248,7 @@
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../examples/multiphysics/multiphysics.html">Multiphysics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Multiphysics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../examples/multiphysics/vof.html">VOF</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of VOF</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../examples/multiphysics/cls.html">CLS</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of CLS</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/dam-break/dam-break.html">Dam-Break</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability.html">Rayleigh-Taylor Instability</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/static-bubble/static-bubble.html">Static Bubble</a></li>
@@ -376,7 +376,7 @@
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../theory/multiphase/multiphase.html">Multiphase</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle navigation of Multiphase</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../theory/multiphase/cfd/cfd.html">Fluid-Fluid Flows - Interface Capturing Models</a><input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><div class="visually-hidden">Toggle navigation of Fluid-Fluid Flows - Interface Capturing Models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphase/cfd/vof.html">The Volume of Fluid (VOF) Method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphase/cfd/cls.html">The Conservative Level-Set (CLS) Method</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../theory/multiphase/cfd/cahn-hilliard.html">Cahn-Hilliard Method</a></li>
 </ul>
 </li>
@@ -498,7 +498,7 @@ end
 <ul>
 <li><p>Two <code class="docutils literal notranslate"><span class="pre">type</span></code> of mesh adaptation are available. The <code class="docutils literal notranslate"><span class="pre">uniform</span></code> mesh adaptation refines the mesh at every cell, whereas the <code class="docutils literal notranslate"><span class="pre">adaptive</span></code> mesh adaptation refines the mesh only at cells where the error estimator (see below) indicates that the error is too high.</p></li>
 <li><dl class="simple">
-<dt>The variable for adaptive refinement should be specified with <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">variable</span></code>, and can be: velocity, pressure, phase (for VOF multiphase flows), temperature, phase_cahn_hilliard, chemical_potential_cahn_hilliard, tracer, electric_field, magnetic_field or electromagnetic_fields.</dt><dd><ul class="simple">
+<dt>The variable for adaptive refinement should be specified with <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">variable</span></code>, and can be: velocity, pressure, phase (for CLS multiphase flows), temperature, phase_cahn_hilliard, chemical_potential_cahn_hilliard, tracer, electric_field, magnetic_field or electromagnetic_fields.</dt><dd><ul class="simple">
 <li><p>Mesh adaptation can be defined on multiple variables, separated with a coma (e.g. <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">variable</span> <span class="pre">=</span> <span class="pre">velocity,temperature</span></code>, or <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">variable</span> <span class="pre">=</span> <span class="pre">velocity,phase,pressure</span></code> etc.).</p></li>
 </ul>
 </dd>
@@ -533,14 +533,9 @@ end
 </dd>
 </dl>
 </li>
-<li><dl class="simple">
-<dt>The minimal and maximal refinement level reachable for a cell are controlled respectively with the <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">refinement</span></code> and <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">refinement</span></code> parameters.</dt><dd><ul>
-<li><p>for <code class="docutils literal notranslate"><span class="pre">deal.ii</span></code> meshes, if the <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">refinement</span> <span class="pre">level</span></code> is equal to the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> (see <a class="reference external" href="https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/mesh.html">Mesh paramater</a>), no cell will be coarser than the initial mesh.</p></li>
-<li><p>for <code class="docutils literal notranslate"><span class="pre">gmsh</span></code> imported meshes, if <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">min</span> <span class="pre">refinement</span> <span class="pre">level</span> <span class="pre">=</span> <span class="pre">0</span></code>, no cell will be coarser than the initial mesh.</p></li>
-</ul>
-</dd>
-</dl>
-</li>
+<li><p>The minimal and maximal refinement level reachable for a cell are controlled respectively with the <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">refinement</span></code> and <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">refinement</span></code> parameters.
+* for <code class="docutils literal notranslate"><span class="pre">deal.ii</span></code> meshes, if the <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">refinement</span> <span class="pre">level</span></code> is equal to the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> (see <a class="reference external" href="https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/mesh.html">Mesh parameter</a>), no cell will be coarser than the initial mesh.
+* for <code class="docutils literal notranslate"><span class="pre">gmsh</span></code> imported meshes, if <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">min</span> <span class="pre">refinement</span> <span class="pre">level</span> <span class="pre">=</span> <span class="pre">0</span></code>, no cell will be coarser than the initial mesh.</p></li>
 </ul>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
@@ -593,7 +588,7 @@ end
 <p>If <code class="docutils literal notranslate"><span class="pre">mesh</span> <span class="pre">refinement</span> <span class="pre">controller</span></code> is set to <code class="docutils literal notranslate"><span class="pre">false</span></code>, the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">number</span> <span class="pre">elements</span></code> parameter puts a hard limit on the number of cells in the domain, even if the <code class="docutils literal notranslate"><span class="pre">fraction</span> <span class="pre">refinement</span></code> is increased.</p>
 </div>
 <ul class="simple">
-<li><p>The number of initial (before solving) adaptive refinement steps is controlled by the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">steps</span></code> parameter. With an <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">steps</span></code> larger than 0, the triangulation is refined adaptively before the solver starts solving the problem. This enables the user to adapt the initial mesh to the initial condition. For example, if the simulation is a VOF simulation, it is ideal to have an initial mesh that captures the interface between the fluids accurately. This is achieved by refining the mesh using the dynamic mesh adaptation parameters and reapplying the initial condition after each adaptation. This process will be repeated <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">steps</span></code> times.</p></li>
+<li><p>The number of initial (before solving) adaptive refinement steps is controlled by the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">steps</span></code> parameter. With an <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">steps</span></code> larger than 0, the triangulation is refined adaptively before the solver starts solving the problem. This enables the user to adapt the initial mesh to the initial condition. For example, if the simulation is a CLS simulation, it is ideal to have an initial mesh that captures the interface between the fluids accurately. This is achieved by refining the mesh using the dynamic mesh adaptation parameters and reapplying the initial condition after each adaptation. This process will be repeated <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">steps</span></code> times.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">fix</span> <span class="pre">boundary</span> <span class="pre">refinement</span></code> parameter is used to fix the boundary mesh size at the defined initial refinement level. <code class="docutils literal notranslate"><span class="pre">boundaries</span> <span class="pre">fixed</span></code> can be used to specify which boundary ids will not be refined or coarsened when the kelly mesh adaptation is used. Cells on the boundary will still be refined when global refinement is active or when neighbouring cells force the refinement of a boundary mesh cell.</p></li>
 </ul>
 </section>

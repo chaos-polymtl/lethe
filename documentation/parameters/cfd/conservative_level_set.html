@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Discrete Element Method (DEM)" href="../dem/dem.html" /><link rel="prev" title="Velocity Source" href="velocity_source.html" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Constrain Stasis" href="constrain_stasis.html" /><link rel="prev" title="Cahn-Hilliard" href="cahn_hilliard.html" />
 
     <link rel="shortcut icon" href="../../_static/lethe_favicon.ico"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.09.10 -->
-        <title>Volume of Fluid (Multiphase Flow) - Lethe documentation</title>
+        <title>Conservative Level-Set (Multiphase Flow) - Lethe documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -176,6 +176,7 @@
 <li class="toctree-l3"><a class="reference internal" href="boundary_conditions_multiphysics.html">Boundary Conditions - Multiphysics</a></li>
 <li class="toctree-l3"><a class="reference internal" href="box_refinement.html">Box Refinement</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cahn_hilliard.html">Cahn-Hilliard</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Conservative Level-Set (Multiphase Flow)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="constrain_stasis.html">Constrain Stasis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dimensionality.html">Dimensionality</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dynamic_flow_control.html">Dynamic Flow Control</a></li>
@@ -200,7 +201,6 @@
 <li class="toctree-l3"><a class="reference internal" href="timer.html">Timer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="tracer_drift_velocity.html">Tracer Drift Velocity</a></li>
 <li class="toctree-l3"><a class="reference internal" href="velocity_source.html">Velocity Source</a></li>
-<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Volume of Fluid (Multiphase Flow)</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../dem/dem.html">Discrete Element Method (DEM)</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Discrete Element Method (DEM)</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -248,7 +248,7 @@
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../examples/multiphysics/multiphysics.html">Multiphysics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Multiphysics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3 has-children"><a class="reference internal" href="../../examples/multiphysics/vof.html">VOF</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of VOF</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../examples/multiphysics/cls.html">CLS</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of CLS</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/dam-break/dam-break.html">Dam-Break</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/rayleigh-taylor-instability/rayleigh-taylor-instability.html">Rayleigh-Taylor Instability</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../examples/multiphysics/static-bubble/static-bubble.html">Static Bubble</a></li>
@@ -376,7 +376,7 @@
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../theory/multiphase/multiphase.html">Multiphase</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" role="switch" type="checkbox"/><label for="toctree-checkbox-26"><div class="visually-hidden">Toggle navigation of Multiphase</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../theory/multiphase/cfd/cfd.html">Fluid-Fluid Flows - Interface Capturing Models</a><input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" role="switch" type="checkbox"/><label for="toctree-checkbox-27"><div class="visually-hidden">Toggle navigation of Fluid-Fluid Flows - Interface Capturing Models</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphase/cfd/vof.html">The Volume of Fluid (VOF) Method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../theory/multiphase/cfd/cls.html">The Conservative Level-Set (CLS) Method</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../../theory/multiphase/cfd/cahn-hilliard.html">Cahn-Hilliard Method</a></li>
 </ul>
 </li>
@@ -443,22 +443,22 @@
           </label>
         </div>
         <article role="main">
-          <section id="volume-of-fluid-multiphase-flow">
-<h1>Volume of Fluid (Multiphase Flow)<a class="headerlink" href="#volume-of-fluid-multiphase-flow" title="Link to this heading">#</a></h1>
-<p>In this subsection, the parameters for multiphase flow simulation using the volume of fluid method (VOF) are specified.</p>
-<p>In this method, the two fluids considered are given index of <span class="math notranslate nohighlight">\(0\)</span> and <span class="math notranslate nohighlight">\(1\)</span> respectively. The amount of fluid at any given quadrature point is represented by a phase fraction between <span class="math notranslate nohighlight">\(0\)</span> and <span class="math notranslate nohighlight">\(1\)</span>. The interface is therefore considered located where the phase fraction <span class="math notranslate nohighlight">\(= 0.5\)</span>. The interface between the two fluids is moved by a transport equation on the phase fraction.</p>
+          <section id="conservative-level-set-multiphase-flow">
+<h1>Conservative Level-Set (Multiphase Flow)<a class="headerlink" href="#conservative-level-set-multiphase-flow" title="Link to this heading">#</a></h1>
+<p>In this subsection, the parameters for multiphase flow simulation using the Conservative Level-Set method (CLS) are specified.</p>
+<p>In this method, the two fluids considered are given index of <span class="math notranslate nohighlight">\(0\)</span> and <span class="math notranslate nohighlight">\(1\)</span> respectively. The amount of fluid at any given quadrature point is represented by a phase indicator between <span class="math notranslate nohighlight">\(0\)</span> and <span class="math notranslate nohighlight">\(1\)</span>. The interface is therefore considered located where the phase indicator <span class="math notranslate nohighlight">\(= 0.5\)</span>. The interface between the two fluids is moved by a transport equation on the phase indicator.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>At the moment, a maximum of two fluids is supported. By convention, air is usually the <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">0</span></code> and the other fluid of interest is the <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code>.    See <a class="reference internal" href="initial_conditions.html"><span class="doc">Initial Conditions</span></a> for the definition of the VOF initial conditions and <a class="reference internal" href="physical_properties.html#two-phase-simulations"><span class="std std-ref">Physical properties - Two Phase Simulations</span></a> for the definition of the physical properties of both fluids.  Do not forget to <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">VOF</span> <span class="pre">=</span> <span class="pre">true</span></code> in the <a class="reference internal" href="multiphysics.html"><span class="doc">Multiphysics</span></a> subsection of the <code class="docutils literal notranslate"><span class="pre">.prm</span></code>.</p>
+<p>At the moment, a maximum of two fluids is supported. By convention, air is usually the <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">0</span></code> and the other fluid of interest is the <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code>.    See <a class="reference internal" href="initial_conditions.html"><span class="doc">Initial Conditions</span></a> for the definition of the CLS initial conditions and <a class="reference internal" href="physical_properties.html#two-phase-simulations"><span class="std std-ref">Physical properties - Two Phase Simulations</span></a> for the definition of the physical properties of both fluids.  Do not forget to <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">CLS</span> <span class="pre">=</span> <span class="pre">true</span></code> in the <a class="reference internal" href="multiphysics.html"><span class="doc">Multiphysics</span></a> subsection of the <code class="docutils literal notranslate"><span class="pre">.prm</span></code>.</p>
 </div>
-<p>The default values of the VOF parameters are given in the text box below.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection VOF
+<p>The default values of the CLS parameters are given in the text box below.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection CLS
 
   set viscous dissipative fluid = fluid 1
   set diffusivity               = 0
   set compressible              = false
 
-  subsection interface regularization method
+  subsection interface reinitialization method
     set type       = none
     set frequency  = 10
     set verbosity  = quiet
@@ -483,7 +483,7 @@
       set tanh thickness                = 1.0
     end
 
-    subsection algebraic interface reinitialization
+    subsection pde-based interface reinitialization
       set output reinitialization steps = false
       set steady-state criterion        = 1e-4
       set max steps number              = 10000
@@ -502,12 +502,12 @@
   end
 
   subsection surface tension force
-    set enable                                   = false
-    set verbosity                                = quiet
-    set output auxiliary fields                  = false
-    set phase fraction gradient diffusion factor = 4
-    set curvature diffusion factor               = 1
-    set enable marangoni effect                  = false
+    set enable                                    = false
+    set verbosity                                 = quiet
+    set output auxiliary fields                   = false
+    set phase indicator gradient diffusion factor = 4
+    set curvature diffusion factor                = 1
+    set enable marangoni effect                   = false
   end
 
 end
@@ -521,36 +521,36 @@ end
 <p>Applying viscous dissipation in one of the fluids instead of both is particularly useful when one of the fluids is air. For numerical stability, the <code class="docutils literal notranslate"><span class="pre">kinematic</span> <span class="pre">viscosity</span></code> of the air is usually increased. However, we do not want to have viscous dissipation in the air, because it would result in an unrealistic increase in its temperature. This parameter is used only if <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">heat</span> <span class="pre">transfer</span> <span class="pre">=</span> <span class="pre">true</span></code> and <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">viscous</span> <span class="pre">dissipation</span> <span class="pre">=</span> <span class="pre">true</span></code> in <a class="reference internal" href="multiphysics.html"><span class="doc">Multiphysics</span></a>.</p>
 </div>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">diffusivity</span></code>: value of the diffusivity (diffusion coefficient) in the transport equation of the phase fraction. Default value is <code class="docutils literal notranslate"><span class="pre">0</span></code> to have pure advection.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">compressible</span></code>: enables interface compression (<span class="math notranslate nohighlight">\(\phi \nabla \cdot \mathbf{u}\)</span>) in the VOF equation.  This term should be kept to its default value of <code class="docutils literal notranslate"><span class="pre">false</span></code> except when compressible equations of state are used.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">diffusivity</span></code>: value of the diffusivity (diffusion coefficient) in the transport equation of the phase indicator. Default value is <code class="docutils literal notranslate"><span class="pre">0</span></code> to have pure advection.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">compressible</span></code>: enables interface compression (<span class="math notranslate nohighlight">\(\phi \nabla \cdot \mathbf{u}\)</span>) in the CLS equation.  This term should be kept to its default value of <code class="docutils literal notranslate"><span class="pre">false</span></code> except when compressible equations of state are used.</p></li>
 </ul>
-<section id="interface-regularization-method">
-<h2>Interface Regularization Method<a class="headerlink" href="#interface-regularization-method" title="Link to this heading">#</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">interface</span> <span class="pre">regularization</span> <span class="pre">method</span></code> defines parameters to counter numerical diffusion of the VOF method and to avoid the interface between the two fluids becoming more and more blurry after each time step.</p>
+<section id="interface-reinitialization-method">
+<h2>Interface Reinitialization Method<a class="headerlink" href="#interface-reinitialization-method" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">interface</span> <span class="pre">reinitialization</span> <span class="pre">method</span></code> defines parameters to counter numerical diffusion of the CLS method and to avoid the interface between the two fluids becoming more and more blurry after each time step.</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: sets the method of regularization. There are four methods available:<code class="docutils literal notranslate"><span class="pre">none</span></code>, <code class="docutils literal notranslate"><span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code>, <code class="docutils literal notranslate"><span class="pre">geometric</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code>, and <code class="docutils literal notranslate"><span class="pre">algebraic</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code>. If <code class="docutils literal notranslate"><span class="pre">none</span></code> is selected, the interface is not regularized. The three other types are described bellow along with their corresponding subsection.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">frequency</span></code>: indicates the frequency at which the regularization process is applied to the VOF phase fraction field. For instance, if the user specifies <code class="docutils literal notranslate"><span class="pre">frequency</span> <span class="pre">=</span> <span class="pre">2</span></code>, the interface will be regularized once every <span class="math notranslate nohighlight">\(2\)</span> time steps.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">verbosity</span></code>: displays the solution process of the regularization method. The different levels of verbosity are:</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: sets the method of reinitialization. There are four methods available:<code class="docutils literal notranslate"><span class="pre">none</span></code>, <code class="docutils literal notranslate"><span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code>, <code class="docutils literal notranslate"><span class="pre">geometric</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code>, and <code class="docutils literal notranslate"><span class="pre">pde-based</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code>. If <code class="docutils literal notranslate"><span class="pre">none</span></code> is selected, the interface is not regularized. The three other types are described bellow along with their corresponding subsection.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">frequency</span></code>: indicates the frequency at which the reinitialization process is applied to the CLS phase indicator field. For instance, if the user specifies <code class="docutils literal notranslate"><span class="pre">frequency</span> <span class="pre">=</span> <span class="pre">2</span></code>, the interface will be regularized once every <span class="math notranslate nohighlight">\(2\)</span> time steps.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">verbosity</span></code>: displays the solution process of the reinitialization method. The different levels of verbosity are:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">quiet</span></code>: default verbosity level; no information on the process is displayed.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>The verbosity of the algebraic interface reinitialization (<code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">algebraic</span></code>) depends also on the verbosity level of the non-linear and linear solvers. If they are set to <code class="docutils literal notranslate"><span class="pre">verbose</span></code>, the console outputs of the iteration progress (e.g., norms of the residual and Newton update) may remain.</p>
+<p>The verbosity of the pde-based interface reinitialization (<code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">pde-based</span></code>) depends also on the verbosity level of the non-linear and linear solvers. If they are set to <code class="docutils literal notranslate"><span class="pre">verbose</span></code>, the console outputs of the iteration progress (e.g., norms of the residual and Newton update) may remain.</p>
 </div>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code>: displays regularization steps progression. For the <code class="docutils literal notranslate"><span class="pre">algebraic</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code>, it only indicates the details of the non-linear and linear iterations if the corresponding solvers are also set to <code class="docutils literal notranslate"><span class="pre">verbose</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">extra</span> <span class="pre">verbose</span></code>: for the <code class="docutils literal notranslate"><span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code>, indicates the details of the linear iterations. For the <code class="docutils literal notranslate"><span class="pre">algebraic</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code>, in addition to what is displayed at the <code class="docutils literal notranslate"><span class="pre">verbose</span></code> level, it displays the steady-state criterion progression through reinitialization steps. This may be used for debugging purposes.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code>: displays reinitialization steps progression. For the <code class="docutils literal notranslate"><span class="pre">pde-based</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code>, it only indicates the details of the non-linear and linear iterations if the corresponding solvers are also set to <code class="docutils literal notranslate"><span class="pre">verbose</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">extra</span> <span class="pre">verbose</span></code>: for the <code class="docutils literal notranslate"><span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code>, indicates the details of the linear iterations. For the <code class="docutils literal notranslate"><span class="pre">pde-based</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code>, in addition to what is displayed at the <code class="docutils literal notranslate"><span class="pre">verbose</span></code> level, it displays the steady-state criterion progression through reinitialization steps. This may be used for debugging purposes.</p></li>
 </ul>
 </li>
 </ul>
 <section id="projection-based-interface-sharpening">
 <h3>Projection-Based Interface Sharpening<a class="headerlink" href="#projection-based-interface-sharpening" title="Link to this heading">#</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code> corresponds to a projection-based regularization method in which the phase indicator is projected into a sharper space. The reader is referred to the Projection-Based Interface Sharpening section of <a class="reference internal" href="../../theory/multiphase/cfd/vof.html"><span class="doc">The Volume of Fluid (VOF) Method</span></a> theory guide for additional details on this regularization method. The <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code> defines the relevant parameters.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code> corresponds to a projection-based reinitialization method in which the phase indicator is projected into a sharper space. The reader is referred to the Projection-Based Interface Sharpening section of <a class="reference internal" href="../../theory/multiphase/cfd/cls.html"><span class="doc">The Conservative Level-Set (CLS) Method</span></a> theory guide for additional details on this reinitialization method. The <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code> defines the relevant parameters.</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">sharpness</span></code>: sharpness of the moving interface, denoted <span class="math notranslate nohighlight">\(\alpha\)</span> in the Interface Sharpening section of <a class="reference internal" href="../../theory/multiphase/cfd/vof.html"><span class="doc">The Volume of Fluid (VOF) Method</span></a> and <span class="math notranslate nohighlight">\(a\)</span> in the <a class="reference external" href="https://www.researchgate.net/publication/287118331_Development_of_efficient_interface_sharpening_procedure_for_viscous_incompressible_flows">interface sharpening model</a> paper. This parameter must be larger than 1 for interface sharpening. Choosing values less than 1 leads to interface smoothing instead of sharpening. A good value would be around 1.5.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">sharpness</span></code>: sharpness of the moving interface, denoted <span class="math notranslate nohighlight">\(\alpha\)</span> in the Interface Sharpening section of <a class="reference internal" href="../../theory/multiphase/cfd/cls.html"><span class="doc">The Conservative Level-Set (CLS) Method</span></a> and <span class="math notranslate nohighlight">\(a\)</span> in the <a class="reference external" href="https://www.researchgate.net/publication/287118331_Development_of_efficient_interface_sharpening_procedure_for_viscous_incompressible_flows">interface sharpening model</a> paper. This parameter must be larger than 1 for interface sharpening. Choosing values less than 1 leads to interface smoothing instead of sharpening. A good value would be around 1.5.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: defines the projection-based interface sharpening type, either <code class="docutils literal notranslate"><span class="pre">constant</span></code> or <code class="docutils literal notranslate"><span class="pre">adaptive</span></code></p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">constant</span></code>: the sharpening <code class="docutils literal notranslate"><span class="pre">threshold</span></code> is the same throughout the simulation. This <code class="docutils literal notranslate"><span class="pre">threshold</span></code>, between <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">1</span></code> (<code class="docutils literal notranslate"><span class="pre">0.5</span></code> by default), corresponds to the phase fraction at which the interface is located.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">constant</span></code>: the sharpening <code class="docutils literal notranslate"><span class="pre">threshold</span></code> is the same throughout the simulation. This <code class="docutils literal notranslate"><span class="pre">threshold</span></code>, between <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">1</span></code> (<code class="docutils literal notranslate"><span class="pre">0.5</span></code> by default), corresponds to the phase indicator at which the interface is located.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">adaptive</span></code>: the sharpening threshold is searched in the range <span class="math notranslate nohighlight">\(\left[0.5-c_\text{dev} \; ; 0.5+c_\text{dev}\right]\)</span>, with <span class="math notranslate nohighlight">\(c_\text{dev}\)</span> the <code class="docutils literal notranslate"><span class="pre">threshold</span> <span class="pre">max</span> <span class="pre">deviation</span></code> (<code class="docutils literal notranslate"><span class="pre">0.2</span></code> by default), to ensure mass conservation. The search algorithm will stop either if the mass conservation <code class="docutils literal notranslate"><span class="pre">tolerance</span></code> is reached, or if the number of search steps reaches the number of <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">iterations</span></code>. If the <code class="docutils literal notranslate"><span class="pre">tolerance</span></code> is not reached, a warning message will be printed.</p></li>
 </ul>
 <div class="admonition-example-of-a-warning-message-if-the-sharpening-is-adaptive-but-the-mass-conservation-tolerance-is-not-reached admonition">
@@ -581,12 +581,12 @@ number of iterations to reach the mass conservation tolerance.
 </section>
 <section id="geometric-interface-reinitialization">
 <span id="id1"></span><h3>Geometric Interface Reinitialization<a class="headerlink" href="#geometric-interface-reinitialization" title="Link to this heading">#</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">geometric</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code> reinitializes the phase fraction field by computing the signed distance from the interface. The latter is then converted back to a phase fraction using a transformation function. The reader is referred to the <em>Geometric Interface Reinitialization</em> section of the <a class="reference internal" href="../../theory/multiphase/cfd/vof.html"><span class="doc">Volume of Fluid method theory guide</span></a> for additional details on this method. The <code class="docutils literal notranslate"><span class="pre">geometric</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code> sunsection defines the relevant parameters.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">geometric</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code> reinitializes the phase indicator field by computing the signed distance from the interface. The latter is then converted back to a phase indicator using a transformation function. The reader is referred to the <em>Geometric Interface Reinitialization</em> section of the <a class="reference internal" href="../../theory/multiphase/cfd/cls.html"><span class="doc">Conservative Level-Set method theory guide</span></a> for additional details on this method. The <code class="docutils literal notranslate"><span class="pre">geometric</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code> sunsection defines the relevant parameters.</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">reinitialization</span> <span class="pre">distance</span></code>: the maximum distance to the interface up to which the signed distance is computed. Above this value, the signed distance is set to the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">reinitialization</span> <span class="pre">distance</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">transformation</span> <span class="pre">type</span></code>: type of the transformation function used to convert the signed distance to a phase fraction. The choices are: <code class="docutils literal notranslate"><span class="pre">tanh</span></code> and <code class="docutils literal notranslate"><span class="pre">piecewise</span> <span class="pre">polynomial</span></code>.</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">transformation</span> <span class="pre">type</span></code>: type of the transformation function used to convert the signed distance to a phase indicator. The choices are: <code class="docutils literal notranslate"><span class="pre">tanh</span></code> and <code class="docutils literal notranslate"><span class="pre">piecewise</span> <span class="pre">polynomial</span></code>.</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">tanh</span></code>: the regularized phase fraction is given by <span class="math notranslate nohighlight">\(\phi = 0.5-0.5\tanh(d/\varepsilon)\)</span>, where <span class="math notranslate nohighlight">\(d\)</span> is the signed distance to the interface and <span class="math notranslate nohighlight">\(\varepsilon\)</span> is a measure of the interface thickness and is set by the parameter <code class="docutils literal notranslate"><span class="pre">tanh</span> <span class="pre">thickness</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tanh</span></code>: the regularized phase indicator is given by <span class="math notranslate nohighlight">\(\phi = 0.5-0.5\tanh(d/\varepsilon)\)</span>, where <span class="math notranslate nohighlight">\(d\)</span> is the signed distance to the interface and <span class="math notranslate nohighlight">\(\varepsilon\)</span> is a measure of the interface thickness and is set by the parameter <code class="docutils literal notranslate"><span class="pre">tanh</span> <span class="pre">thickness</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">piecewise</span> <span class="pre">polynomial</span></code>: this transformation uses a piecewise polynomial function of degree 4. It takes the form:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -602,29 +602,29 @@ number of iterations to reach the mass conservation tolerance.
 </li>
 </ul>
 </section>
-<section id="algebraic-interface-reinitialization">
-<h3>Algebraic Interface Reinitialization<a class="headerlink" href="#algebraic-interface-reinitialization" title="Link to this heading">#</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">algebraic</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code> corresponds to a PDE-based reinitialization method. Alike the projection-based interface sharpening, this aims to reduce numerical diffusion of the phase fraction and redefine the interface sharply by resolving a PDE.  The reader is referred to the <em>Algebraic Interface Reinitialization</em> section of the <a class="reference internal" href="../../theory/multiphase/cfd/vof.html"><span class="doc">Volume of Fluid method theory guide</span></a> for additional details on this method. The <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">algebraic</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code> defines parameters used to reinitialize the interface in VOF simulations.</p>
+<section id="pde-based-interface-reinitialization">
+<h3>PDE-based Interface Reinitialization<a class="headerlink" href="#pde-based-interface-reinitialization" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">pde-based</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code> corresponds to a PDE-based reinitialization method. Alike the projection-based interface sharpening, this aims to reduce numerical diffusion of the phase indicator and redefine the interface sharply by resolving a PDE.  The reader is referred to the <em>PDE-based Interface Reinitialization</em> section of the <a class="reference internal" href="../../theory/multiphase/cfd/cls.html"><span class="doc">Conservative level set method theory guide</span></a> for additional details on this method. The <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">pde-based</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code> defines parameters used to reinitialize the interface in CLS simulations.</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">reinitialization</span> <span class="pre">steps</span></code>: when set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, it enables outputs in parallel vtu format of the algebraic reinitialization steps. The files are stored in a folder named <code class="docutils literal notranslate"><span class="pre">algebraic-reinitialization-steps-output</span></code> located inside the <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">path</span></code> directory specified in the <a class="reference internal" href="simulation_control.html"><span class="doc">simulation control</span></a> subsection.</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">reinitialization</span> <span class="pre">steps</span></code>: when set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, it enables outputs in parallel vtu format of the pde-based reinitialization steps. The files are stored in a folder named <code class="docutils literal notranslate"><span class="pre">pde-based-reinitialization-steps-output</span></code> located inside the <code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">path</span></code> directory specified in the <a class="reference internal" href="simulation_control.html"><span class="doc">simulation control</span></a> subsection.</p>
 <dl class="simple">
 <dt>Outputted quantities of interest are:</dt><dd><ul class="simple">
-<li><p>Reinitialized phase fraction scalar-field (<code class="docutils literal notranslate"><span class="pre">reinit_phase_fraction</span></code>);</p></li>
-<li><p>VOF phase fraction scalar-field (<code class="docutils literal notranslate"><span class="pre">vof_phase_fraction</span></code>);</p></li>
-<li><p>VOF projected phase gradient vector-field (<code class="docutils literal notranslate"><span class="pre">vof_phase_gradient</span></code>) and;</p></li>
-<li><p>VOF projected curvature scalar-field (<code class="docutils literal notranslate"><span class="pre">vof_curvature</span></code>).</p></li>
+<li><p>Reinitialized phase indicator scalar-field (<code class="docutils literal notranslate"><span class="pre">reinit_phase_indicator</span></code>);</p></li>
+<li><p>CLS phase indicator scalar-field (<code class="docutils literal notranslate"><span class="pre">cls_phase_indicator</span></code>);</p></li>
+<li><p>CLS projected phase gradient vector-field (<code class="docutils literal notranslate"><span class="pre">cls_phase_gradient</span></code>) and;</p></li>
+<li><p>CLS projected curvature scalar-field (<code class="docutils literal notranslate"><span class="pre">cls_curvature</span></code>).</p></li>
 </ul>
 </dd>
 </dl>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>This feature can be used for debugging purposes by observing how the reinitialization steps affect the phase fraction field.</p>
+<p>This feature can be used for debugging purposes by observing how the reinitialization steps affect the phase indicator field.</p>
 </div>
 </li>
 </ul>
 <p>The interface reinitialization process ends either when steady-state (<code class="docutils literal notranslate"><span class="pre">steady-state</span> <span class="pre">criterion</span></code>) is reached or when an imposed maximum number of steps (<code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">steps</span> <span class="pre">number</span></code>) is reached.</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">steady-state</span> <span class="pre">criterion</span></code>: one of the two stop criteria of the interface reinitialization process. This parameter <span class="math notranslate nohighlight">\((\alpha_\text{ss})\)</span> acts as a tolerance for reaching steady-state when solving the algebraic interface reinitialization partial differential equation (PDE).</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">steady-state</span> <span class="pre">criterion</span></code>: one of the two stop criteria of the interface reinitialization process. This parameter <span class="math notranslate nohighlight">\((\alpha_\text{ss})\)</span> acts as a tolerance for reaching steady-state when solving the pde-based interface reinitialization partial differential equation (PDE).</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\alpha_\text{ss} \geq \frac{ \lVert \phi_\text{reinit}^{\iota + 1} - \phi_\text{reinit}^{\iota} \rVert_2}{\lVert \phi_\text{reinit}^{\iota} \rVert_2}\]</div>
@@ -633,7 +633,7 @@ number of iterations to reach the mass conservation tolerance.
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">steps</span> <span class="pre">number</span></code>: indicates the maximum number of interface reinitialization steps that can be applied before the process ends.</p></li>
 </ul>
-<p>The algebraic interface reinitialization PDE contains a diffusion term. This term contains a diffusion coefficient <span class="math notranslate nohighlight">\((\varepsilon)\)</span> given by:</p>
+<p>The pde-based interface reinitialization PDE contains a diffusion term. This term contains a diffusion coefficient <span class="math notranslate nohighlight">\((\varepsilon)\)</span> given by:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\varepsilon = C h_\text{min}^d\]</div>
@@ -664,15 +664,15 @@ number of iterations to reach the mass conservation tolerance.
 <section id="phase-filtration">
 <h2>Phase Filtration<a class="headerlink" href="#phase-filtration" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">phase</span> <span class="pre">filtration</span></code>: defines the filter applied to the phase fraction. This affects the definition of the interface.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">phase</span> <span class="pre">filtration</span></code>: defines the filter applied to the phase indicator. This affects the definition of the interface.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: defines the filter type, either <code class="docutils literal notranslate"><span class="pre">none</span></code> or <code class="docutils literal notranslate"><span class="pre">tanh</span></code></p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">none</span></code>: the phase fraction is not filtered</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">tanh</span></code>: the filter function described in the Interface filtration section of <a class="reference internal" href="../../theory/multiphase/cfd/vof.html"><span class="doc">The Volume of Fluid (VOF) Method</span></a> theory guide is applied.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">none</span></code>: the phase indicator is not filtered</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">type</span> <span class="pre">=</span> <span class="pre">tanh</span></code>: the filter function described in the Interface filtration section of <a class="reference internal" href="../../theory/multiphase/cfd/cls.html"><span class="doc">The Conservative Level-Set (CLS) Method</span></a> theory guide is applied.</p></li>
 </ul>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">beta</span></code>: value of the <span class="math notranslate nohighlight">\(\beta\)</span> parameter of the <code class="docutils literal notranslate"><span class="pre">tanh</span></code> filter</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">verbosity</span></code>: enables the display of filtered phase fraction values. Choices are <code class="docutils literal notranslate"><span class="pre">quiet</span></code> (no output) and <code class="docutils literal notranslate"><span class="pre">verbose</span></code> (displays values)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">verbosity</span></code>: enables the display of filtered phase indicator values. Choices are <code class="docutils literal notranslate"><span class="pre">quiet</span></code> (no output) and <code class="docutils literal notranslate"><span class="pre">verbose</span></code> (displays values)</p></li>
 </ul>
 </section>
 <section id="surface-tension-force">
@@ -687,20 +687,20 @@ number of iterations to reach the mass conservation tolerance.
 </div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">verbosity</span></code>: enables the display of the output from the surface tension force calculations. Choices are: <code class="docutils literal notranslate"><span class="pre">quiet</span></code> (default, no output) and <code class="docutils literal notranslate"><span class="pre">verbose</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">auxiliary</span> <span class="pre">fields</span></code>: enables the display of the projected <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">fraction</span> <span class="pre">gradient</span></code> and projected <code class="docutils literal notranslate"><span class="pre">curvature</span></code>. Used for debugging purposes.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">fraction</span> <span class="pre">gradient</span> <span class="pre">diffusion</span> <span class="pre">factor</span></code>: value of the factor <span class="math notranslate nohighlight">\(\alpha\)</span> in <span class="math notranslate nohighlight">\(\eta_n = \alpha h^2\)</span>, where <span class="math notranslate nohighlight">\(h\)</span> is the cell size. This diffusion coefficient (<span class="math notranslate nohighlight">\(\eta_n\)</span>) is used in a <a class="reference external" href="https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643">projection step</a> to damp high frequency errors, that are magnified by differentiation, in the phase fraction gradient (<span class="math notranslate nohighlight">\(\bf{\psi}\)</span>), following the equation:</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">output</span> <span class="pre">auxiliary</span> <span class="pre">fields</span></code>: enables the display of the projected <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">indicator</span> <span class="pre">gradient</span></code> and projected <code class="docutils literal notranslate"><span class="pre">curvature</span></code>. Used for debugging purposes.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">indicator</span> <span class="pre">gradient</span> <span class="pre">diffusion</span> <span class="pre">factor</span></code>: value of the factor <span class="math notranslate nohighlight">\(\alpha\)</span> in <span class="math notranslate nohighlight">\(\eta_n = \alpha h^2\)</span>, where <span class="math notranslate nohighlight">\(h\)</span> is the cell size. This diffusion coefficient (<span class="math notranslate nohighlight">\(\eta_n\)</span>) is used in a <a class="reference external" href="https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643">projection step</a> to damp high frequency errors, that are magnified by differentiation, in the phase indicator gradient (<span class="math notranslate nohighlight">\(\bf{\psi}\)</span>), following the equation:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\int_\Omega \left( {\bf{v}} \cdot {\bf{\psi}} + \eta_n \nabla {\bf{v}} \cdot \nabla {\bf{\psi}} \right) d\Omega = \int_\Omega \left( {\bf{v}} \cdot \nabla {\phi} \right) d\Omega\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(\bf{v}\)</span> is a piecewise continuous vector-valued test function, <span class="math notranslate nohighlight">\(\bf{\psi}\)</span> is the projected phase fraction gradient, and <span class="math notranslate nohighlight">\(\phi\)</span> is the phase fraction.</p>
+<p>where <span class="math notranslate nohighlight">\(\bf{v}\)</span> is a piecewise continuous vector-valued test function, <span class="math notranslate nohighlight">\(\bf{\psi}\)</span> is the projected phase indicator gradient, and <span class="math notranslate nohighlight">\(\phi\)</span> is the phase indicator.</p>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">curvature</span> <span class="pre">diffusion</span> <span class="pre">factor</span></code>: value of the factor <span class="math notranslate nohighlight">\(\beta\)</span> in  <span class="math notranslate nohighlight">\(\eta_\kappa = \beta h^2\)</span>, where <span class="math notranslate nohighlight">\(h\)</span> is the cell size. This diffusion coefficient (<span class="math notranslate nohighlight">\(\eta_\kappa\)</span>) is used in a <a class="reference external" href="https://onlinelibrary.wiley.com/doi/full/10.1002/fld.2643">projection step</a> to damp high frequency errors, that are magnified by differentiation, in the curvature <span class="math notranslate nohighlight">\(\kappa\)</span>, following the equation:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\int_\Omega \left( v \kappa + \eta_\kappa \nabla v \cdot \nabla \kappa \right) d\Omega = \int_\Omega \left( \nabla v \cdot \frac{\bf{\psi}}{|\bf{\psi}|} \right) d\Omega\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(v\)</span> is a test function, <span class="math notranslate nohighlight">\(\kappa\)</span> is the projected curvature, and <span class="math notranslate nohighlight">\(\bf{\psi}\)</span> is the projected phase fraction gradient.</p>
+<p>where <span class="math notranslate nohighlight">\(v\)</span> is a test function, <span class="math notranslate nohighlight">\(\kappa\)</span> is the projected curvature, and <span class="math notranslate nohighlight">\(\bf{\psi}\)</span> is the projected phase indicator gradient.</p>
 </li>
 </ul>
 <div class="admonition tip">
@@ -718,12 +718,12 @@ number of iterations to reach the mass conservation tolerance.
 </div>
 <section id="choosing-values-for-the-surface-tension-force-diffusion-factors">
 <span id="id3"></span><h3>Choosing Values for the Surface Tension Force Diffusion Factors<a class="headerlink" href="#choosing-values-for-the-surface-tension-force-diffusion-factors" title="Link to this heading">#</a></h3>
-<p>The following procedure is recommended to choose proper values for the <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">fraction</span> <span class="pre">gradient</span> <span class="pre">diffusion</span> <span class="pre">factor</span></code> and <code class="docutils literal notranslate"><span class="pre">curvature</span> <span class="pre">diffusion</span> <span class="pre">factor</span></code>:</p>
+<p>The following procedure is recommended to choose proper values for the <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">indicator</span> <span class="pre">gradient</span> <span class="pre">diffusion</span> <span class="pre">factor</span></code> and <code class="docutils literal notranslate"><span class="pre">curvature</span> <span class="pre">diffusion</span> <span class="pre">factor</span></code>:</p>
 <ol class="arabic simple">
-<li><p>Use <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">output</span> <span class="pre">auxiliary</span> <span class="pre">fields</span> <span class="pre">=</span> <span class="pre">true</span></code> to write projected phase fraction gradient and projected curvature fields.</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">output</span> <span class="pre">auxiliary</span> <span class="pre">fields</span> <span class="pre">=</span> <span class="pre">true</span></code> to write projected phase indicator gradient and projected curvature fields.</p></li>
 <li><p>Choose a value close to 1, for example, <span class="math notranslate nohighlight">\(\alpha = 4\)</span> and <span class="math notranslate nohighlight">\(\beta = 1\)</span>.</p></li>
-<li><p>Run the simulation and check whether the projected phase fraction gradient field is smooth and without oscillation.</p></li>
-<li><p>If the projected phase fraction gradient and projected curvature fields show oscillations, increase the value <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span>, and repeat this process until reaching smooth projected phase fraction gradient and projected curvature fields without oscillations.</p></li>
+<li><p>Run the simulation and check whether the projected phase indicator gradient field is smooth and without oscillation.</p></li>
+<li><p>If the projected phase indicator gradient and projected curvature fields show oscillations, increase the value <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span>, and repeat this process until reaching smooth projected phase indicator gradient and projected curvature fields without oscillations.</p></li>
 </ol>
 </section>
 </section>
@@ -734,23 +734,23 @@ number of iterations to reach the mass conservation tolerance.
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../dem/dem.html">
+          <a class="next-page" href="constrain_stasis.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Discrete Element Method (DEM)</div>
+                <div class="title">Constrain Stasis</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="velocity_source.html">
+          <a class="prev-page" href="cahn_hilliard.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Velocity Source</div>
+                <div class="title">Cahn-Hilliard</div>
                 
               </div>
             </a>
@@ -784,11 +784,11 @@ number of iterations to reach the mass conservation tolerance.
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Volume of Fluid (Multiphase Flow)</a><ul>
-<li><a class="reference internal" href="#interface-regularization-method">Interface Regularization Method</a><ul>
+<li><a class="reference internal" href="#">Conservative Level-Set (Multiphase Flow)</a><ul>
+<li><a class="reference internal" href="#interface-reinitialization-method">Interface Reinitialization Method</a><ul>
 <li><a class="reference internal" href="#projection-based-interface-sharpening">Projection-Based Interface Sharpening</a></li>
 <li><a class="reference internal" href="#geometric-interface-reinitialization">Geometric Interface Reinitialization</a></li>
-<li><a class="reference internal" href="#algebraic-interface-reinitialization">Algebraic Interface Reinitialization</a></li>
+<li><a class="reference internal" href="#pde-based-interface-reinitialization">PDE-based Interface Reinitialization</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#phase-filtration">Phase Filtration</a></li>
