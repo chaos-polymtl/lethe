@@ -4,7 +4,7 @@ Cahn-Hilliard Method
 
 The Cahn-Hilliard system of equations [#cahn1958]_ is a model used to describe the process of phase separation based on the principle of free energy minimization. The key idea at the heart of the Cahn-Hilliard equation is that the system try to achieve a state where the free energy is minimized while competing with the energy cost associated with creating new interfaces between phases. Let us introduce those concepts formally.
 
-Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, namely fluid :math:`0` and :math:`1`, with :math:`\Gamma` the boundaries of the system. Like in :doc:`vof`, we define a scalar function :math:`\phi` as a phase indicator such that:
+Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, namely fluid :math:`0` and :math:`1`, with :math:`\Gamma` the boundaries of the system. Like in :doc:`cls`, we define a scalar function :math:`\phi` as a phase indicator such that:
 
 .. math::
   \phi =

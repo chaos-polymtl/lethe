@@ -21,7 +21,7 @@ If the problem being simulated has a known analytical solution, or an exact solu
     subsection tracer
       set Function expression = 0
     end
-    subsection VOF
+    subsection CLS
       set Function expression = 0
     end
     subsection cahn hilliard
@@ -47,7 +47,7 @@ Analytical solutions for all physics are supported. They are all declared in the
 * ``uvwp``: Analytical solution for the velocity and pressure fields obtained from fluid dynamics. The expression must provide :math:`u`, :math:`v` and :math:`p` for a 2D simulation and :math:`u`, :math:`v`, :math:`w` and :math:`p` for a 3D simulation.
 * ``temperature``: Analytical solution for temperature obtained with the heat transfer physics.
 * ``tracer``: Analytical solution for the tracer physics.
-* ``VOF``: Analytical solution for the VOF field.
+* ``CLS``: Analytical solution for the CLS field.
 * ``cahn hilliard``: Analytical solution for the phase order and the chemical potential of the Cahn-Hilliard physics.
 
 .. note:: 

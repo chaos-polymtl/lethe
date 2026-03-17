@@ -108,7 +108,7 @@ The ``phase filtration`` method filters the phase field used for the calculation
 Since a straightforward advection of the phase fraction typically leads to significant interface diffusion, an interface regularization method is required. 
 This is addressed in the ``interface regularization method`` subsection. Lethe provides three regularization techniques to maintain a sharp interface:  the ``projection-based interface sharpening``, the ``algebraic interface reinitialization``, and the ``geometric interface reinitialization``. The desired method can be selected using the ``type`` parameter.
 
-We refer the reader to :doc:`../../../theory/multiphase/cfd/vof` theory guide for more explanation on phase filtration and the interface regularization methods.
+We refer the reader to :doc:`../../../theory/multiphase/cfd/cls` theory guide for more explanation on phase filtration and the interface regularization methods.
 
 For the first part of this example, the ``projection-based interface sharpening`` method is selected and its parameters are defined in the ``subsection projection-based interface sharpening``. The selection of the parameters for this method is explained in the :doc:`../dam-break/dam-break` example. The other regularization methods available are described in the second part of this example (:ref:`Interface Regularization Methods Comparison`).
 
@@ -371,7 +371,7 @@ Parameter Files
 
 For the methods other than ``projection-based interface sharpening``, the ``.prm`` file is modified as follows. In the ``VOF`` subsection, the ``interface regularization method`` is changed to ``geometric interface reinitialization`` or ``algebraic interface reinitialization``. The associated parameter files, ``rising-bubble-geo.prm`` and ``rising-bubble-alge.prm`` respectively, are available in the example's folder. The subsections are modified according to each regularization method: 
 
-* With the geometric method, the phase fraction field is regularized using the signed distance from the interface, as described in :doc:`../../../theory/multiphase/cfd/vof` theory guide. We select the ``tanh`` function to transform the signed distance in a phase fraction field. The ``tanh thickness`` is set to :math:`0.0066` and the ``max reinitialization distance`` parameter is set to :math:`0.0264`.
+* With the geometric method, the phase fraction field is regularized using the signed distance from the interface, as described in :doc:`../../../theory/multiphase/cfd/cls` theory guide. We select the ``tanh`` function to transform the signed distance in a phase fraction field. The ``tanh thickness`` is set to :math:`0.0066` and the ``max reinitialization distance`` parameter is set to :math:`0.0264`.
 
 .. code-block:: text
 
@@ -397,7 +397,7 @@ For the geometric method, we use a slightly thicker interface and we adapt the i
       end
     end
 
-* For the algebraic method, an intermediary PDE is solved to compress the interface until reaching a pseudo-steady-state. This PDE is described in :doc:`../../../theory/multiphase/cfd/vof` theory guide. Setting the ``diffusivity multiplier`` to :math:`1` yields good results.
+* For the algebraic method, an intermediary PDE is solved to compress the interface until reaching a pseudo-steady-state. This PDE is described in :doc:`../../../theory/multiphase/cfd/cls` theory guide. Setting the ``diffusivity multiplier`` to :math:`1` yields good results.
 
 .. code-block:: text
 

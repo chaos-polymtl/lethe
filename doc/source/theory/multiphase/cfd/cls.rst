@@ -1,10 +1,10 @@
-================================
-The Volume of Fluid (VOF) Method
-================================
+=======================================
+The Conservative Level-Set (CLS) Method
+=======================================
 
 Numerous examples of flow encountered in engineering involve multiple fluids: sloshing of fuel in aircraft tanks, mixing of bread dough, and motion of droplets and bubbles to name a few. In these cases, the involved fluids can be immiscible, and we are interested in the evolution of the interfaces between those fluids.
 
-Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, namely fluid :math:`0` and :math:`1`, with :math:`\Gamma` denoting their interface and :math:`\partial \Omega`, the remaining boundaries, as illustrated in the figure below. In the VOF method [#hirt1981]_, we define the scalar function :math:`\phi` as a phase indicator such that:
+Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, namely fluid :math:`0` and :math:`1`, with :math:`\Gamma` denoting their interface and :math:`\partial \Omega`, the remaining boundaries, as illustrated in the figure below. In the CLS method, we define the scalar function :math:`\phi` as a phase indicator such that:
 
 .. math::
   \phi =
@@ -13,9 +13,9 @@ Let :math:`\Omega = \Omega_0 \cup \Omega_1` be the domain formed by two fluids, 
     1 \quad \forall \mathbf{x} \in \Omega_1
   \end{cases}
 
-This phase indicator (or phase fraction) changes rapidly but smoothly from :math:`0` to :math:`1` at the interface such that :math:`\Gamma` is located at the iso-contour :math:`\phi=0.5`, as illustrated below.
+This phase indicator changes rapidly but smoothly from :math:`0` to :math:`1` at the interface such that :math:`\Gamma` is located at the iso-contour :math:`\phi=0.5`, as illustrated below.
 
-.. image:: images/vof.png
+.. image:: images/cls.png
     :alt: Schematic
     :align: center
     :width: 600
@@ -106,12 +106,12 @@ where :math:`D_\mathrm{DCDD}` is a user-defined diffusion coefficient. The term 
 
 To avoid a non-linear finite element formulation, the phase gradient of the previous time step :math:`(\phi^h_\mathrm{old})` is used.
 
-Interface Diffusion and Regularization
---------------------------------------
+Interface Diffusion and Reinitialization
+----------------------------------------
 
-The VOF method tends to diffuse the interface, i.e., over time, the interface becomes blurry instead of a sharp definition, and the change from :math:`\phi = 0` to :math:`1` occurs on a larger distance.
+The CLS method tends to diffuse the interface, i.e., over time, the interface becomes blurry instead of a sharp definition, and the change from :math:`\phi = 0` to :math:`1` occurs on a larger distance.
 
-Thus, we use regularization methods to keep the change in :math:`\phi` sharp at the interface. Three methods are currently available: projection-based interface sharpening, algebraic interface reinitialization and interface filtration.
+Thus, we use reinitialization methods to keep the change in :math:`\phi` sharp at the interface. Three methods are currently available: projection-based interface sharpening, PDE-based interface reinitialization and interface filtration.
 
 """"""""""""""""""""""""""""""""""""""
 Projection-Based Interface Sharpening
@@ -120,13 +120,13 @@ Projection-Based Interface Sharpening
 The current projection-based interface sharpening method consists of two steps:
 
 
-1. Phase fraction limiter
+1. Phase indicator limiter
 
 .. math::
 
     \phi = \min \left( \max \left(\phi_\mathrm{old},0 \right),1 \right)
 
-The phase fraction limiter above will update the phase fraction if it failed to respect these bounds.
+The phase indicator limiter above will update the phase indicator if it failed to respect these bounds.
 
 
 2. Interface sharpening using a projection
@@ -140,13 +140,13 @@ The phase fraction limiter above will update the phase fraction if it failed to 
     \end{cases}
 
 where :math:`c` denotes the sharpening threshold, which defines
-a phase fraction threshold (generally :math:`0.5`), and :math:`\alpha` corresponds to the interface sharpness, which is a model parameter generally in the range of :math:`(1,2]`. This projection-based interface sharpening method was proposed by Aliabadi and Tezduyar (2000) [#aliabadi2000]_.
+a phase indicator threshold (generally :math:`0.5`), and :math:`\alpha` corresponds to the interface sharpness, which is a model parameter generally in the range of :math:`(1,2]`. This projection-based interface sharpening method was proposed by Aliabadi and Tezduyar (2000) [#aliabadi2000]_.
 
 """"""""""""""""""""""""""""""""""""""""
 Geometric Interface Reinitialization
 """"""""""""""""""""""""""""""""""""""""
 
-The geometric interface reinitialization implemented in Lethe uses the signed distance :math:`d` from the interface to regularize the phase fraction field.  The method is based on the work of Ausas *et al.* (2011) [#ausas2011]_, originaly proposed in a level-set framework. Once computed, the signed distance is transformed into a phase fraction field using a transformation function :math:`g` such as :math:`\phi = g(d)`.
+The geometric interface reinitialization implemented in Lethe uses the signed distance :math:`d` from the interface to regularize the phase indicator field.  The method is based on the work of Ausas *et al.* (2011) [#ausas2011]_, originaly proposed in a level-set framework. Once computed, the signed distance is transformed into a phase indicator field using a transformation function :math:`g` such as :math:`\phi = g(d)`.
 
 To compute the signed distance, the interface is linearly reconstructed from the iso-contour :math:`\phi=0.5` using the `Marching Cube algorithm implemented in deal.II <https://dealii.org/current/doxygen/deal.II/classGridTools_1_1MarchingCubeAlgorithm.html>`_. Then, the signed distance is computed layer-by-layer, from the interface until the user-defined maximum distance :math:`d_\mathrm{max}` is reached on each side of the interface. 
 
@@ -154,7 +154,7 @@ For the first layer, the analytical minimum distance between the DoFs of the cel
 
 For the subsequent layers, the signed distance for the remaining DoFs is computed iteratively in the narrow band defined by :math:`d \in [-d_\mathrm{max}, d_\mathrm{max}]`, by solving a minimization problem. We refer the reader to the work of Ausas *et al.* (2011) [#ausas2011]_ for more details. The signed distance for the DoFs outside of the narrow band is set to :math:`\pm d_\mathrm{max}`, where the sign depends on the side of the interface on which they are located.
 
-Finally, the signed distance field is transformed to a phase fraction field. Here, we want that:
+Finally, the signed distance field is transformed to a phase indicator field. Here, we want that:
 
 .. math::
   \phi \approx
@@ -166,7 +166,7 @@ Finally, the signed distance field is transformed to a phase fraction field. Her
 
 In Lethe, two functions are available to achieve that: a hyperbolic tangent function or a 4th degree, piecewise polynomial. 
 
-* hyperbolic tangent: the regularized phase fraction is given by
+* hyperbolic tangent: the regularized phase indicator is given by
 
   .. math::
     \phi = 0.5-0.5\tanh(d/\varepsilon)
@@ -185,10 +185,10 @@ In Lethe, two functions are available to achieve that: a hyperbolic tangent func
   where :math:`d' = d/d_\mathrm{max}` is the dimensionless distance. Contrary to the hyperbolic tangent function, it ensures that :math:`\phi=0` or :math:`1` when :math:`d = \pm d_\mathrm{max}`.
 
 """"""""""""""""""""""""""""""""""""""""
-Algebraic Interface Reinitialization
+PDE-based Interface Reinitialization
 """"""""""""""""""""""""""""""""""""""""
 
-The algebraic interface reinitialization method consists of compressing and diffusing the interface in its normal direction. This is done by solving the following transient Partial Differential Equation (PDE) until steady-state is reached using an artificial time-stepping scheme as proposed by Olsson and coworkers (2007) [#olsson2007]_:
+The PDE-based interface reinitialization method consists of compressing and diffusing the interface in its normal direction. This is done by solving the following transient Partial Differential Equation (PDE) until steady-state is reached using an artificial time-stepping scheme as proposed by Olsson and coworkers (2007) [#olsson2007]_:
 
 .. math::
 
@@ -199,17 +199,17 @@ The algebraic interface reinitialization method consists of compressing and diff
 
 where:
 
-- :math:`\phi_\text{reinit}` is the reinitialized phase fraction;
+- :math:`\phi_\text{reinit}` is the reinitialized phase indicator;
 
 - :math:`\tau` is the artificial time independent variable. It is different from the time independent variable :math:`t` of the actual simulation.
 
-- :math:`\mathbf{n} = \frac{\nabla \psi}{\lVert \nabla \psi \rVert}` is the normal vector of the interface with :math:`\nabla \psi` the :ref:`projected VOF phase gradient<Normal and curvature computations>`, and;
+- :math:`\mathbf{n} = \frac{\nabla \psi}{\lVert \nabla \psi \rVert}` is the normal vector of the interface with :math:`\nabla \psi` the :ref:`projected CLS phase gradient<Normal and curvature computations>`, and;
 
 - :math:`\varepsilon = C \, h_\text{min}^d` is the diffusion coefficient with  :math:`h_\text{min}` the smallest cell-size, :math:`C` a constant factor multiplying :math:`h_\text{min}`, and :math:`d` a constant power to which :math:`h_\text{min}` is elevated. As default, :math:`C` and :math:`d` are set to :math:`1`.
 
 .. note::
 
-    :math:`\nabla \psi` is computed with the VOF phase fraction gradient field and remains constant through the interface reinitialization process of a same global time iteration.
+    :math:`\nabla \psi` is computed with the CLS phase indicator gradient field and remains constant through the interface reinitialization process of a same global time iteration.
 
 .. note::
 
@@ -240,7 +240,7 @@ As the equation is non-linear, we use the `Newton-Raphson method <https://en.wik
                    &\qquad \forall \upsilon \in V
     \end{split}
 
-where, :math:`\phi_\text{reinit}^{n}` is the reinitialized phase fraction value of the previous Newton iteration.
+where, :math:`\phi_\text{reinit}^{n}` is the reinitialized phase indicator value of the previous Newton iteration.
 
 Considering,
 
@@ -248,7 +248,7 @@ Considering,
 
     \delta \phi_\text{reinit} = \sum_{j=1}^N \delta \phi_{\text{reinit},j} \, \xi_j
 
-where :math:`\xi_j` is the :math:`j\text{th}` interpolation function of the reinitialized phase fraction field, the Jacobian reads:
+where :math:`\xi_j` is the :math:`j\text{th}` interpolation function of the reinitialized phase indicator field, the Jacobian reads:
 
 .. math::
     \begin{split}
@@ -258,7 +258,7 @@ where :math:`\xi_j` is the :math:`j\text{th}` interpolation function of the rein
                    & \qquad \forall \upsilon \in V
     \end{split}
 
-and the reinitialized phase fraction is given by:
+and the reinitialized phase indicator is given by:
 
 .. math::
     \phi_\text{reinit}^{n+1} = \phi_\text{reinit}^{n} + \delta \phi_\text{reinit}
@@ -268,12 +268,12 @@ and the reinitialized phase fraction is given by:
 Interface Filtration
 """"""""""""""""""""""""""""""""
 
-In the interface filtration method, the following filter function is applied to the phase fraction :math:`\phi` in order to get a better definition of the interface between the fluids:
+In the interface filtration method, the following filter function is applied to the phase indicator :math:`\phi` in order to get a better definition of the interface between the fluids:
 
 .. math::
     \phi' = 0.5 \tanh[\beta(\phi-0.5)] + 0.5
 
-where :math:`\phi'` is the filtered phase fraction value, and :math:`\beta` is a model parameter that enables sharper definition when increased. Recommended value is :math:`\beta=20`.
+where :math:`\phi'` is the filtered phase indicator value, and :math:`\beta` is a model parameter that enables sharper definition when increased. Recommended value is :math:`\beta=20`.
 
 Surface Tension
 ---------------
@@ -294,7 +294,7 @@ where :math:`\sigma` is the surface tension coefficient, :math:`\kappa` is the c
 
     {\bf{F_{\sigma}}} = \bf{f_{\sigma}} \delta = \sigma \kappa {\bf{n}}\delta
 
-where :math:`\delta` is a Dirac delta measure with support on the interface. A good approximation for the term :math:`{\bf{n}}\delta` is :math:`{\bf{n}}\delta = \nabla \phi`, where :math:`\phi` is the phase fraction. Thus, the volumetric surface force is given by:
+where :math:`\delta` is a Dirac delta measure with support on the interface. A good approximation for the term :math:`{\bf{n}}\delta` is :math:`{\bf{n}}\delta = \nabla \phi`, where :math:`\phi` is the phase indicator. Thus, the volumetric surface force is given by:
 
 .. math::
 
@@ -312,7 +312,7 @@ and the unit normal vector of the free surface, pointing from fluid 0 to 1, is o
 
     \bf{n} = \frac{\nabla \phi}{|\nabla \phi|}
 
-When including the surface tension force in the resolution of the Navier-Stokes equations, the numerical computation of the curvature can give rise to parasitic flows near the interface between the two fluids. To avoid such spurious currents, the phase fraction gradient and curvature are filtered using projection steps [#zahedi2012]_, as presented in section :ref:`Normal and curvature computations`.
+When including the surface tension force in the resolution of the Navier-Stokes equations, the numerical computation of the curvature can give rise to parasitic flows near the interface between the two fluids. To avoid such spurious currents, the phase indicator gradient and curvature are filtered using projection steps [#zahedi2012]_, as presented in section :ref:`Normal and curvature computations`.
 
 .. _Normal and curvature computations:
 
@@ -320,13 +320,13 @@ When including the surface tension force in the resolution of the Navier-Stokes 
 Normal and Curvature Computations
 """""""""""""""""""""""""""""""""
 
-The following equations are used to compute the projected phase fraction gradient and projected curvature. They correspond to the projection steps previously mentioned.
+The following equations are used to compute the projected phase indicator gradient and projected curvature. They correspond to the projection steps previously mentioned.
 
 .. math::
 
     \int_\Omega \left( {\bf{v}} \cdot {\bf{\psi}} + \eta_n \nabla {\bf{v}} \cdot \nabla {\bf{\psi}} \right) d\Omega = \int_\Omega \left( {\bf{v}} \cdot \nabla {\phi} \right) d\Omega
 
-where :math:`{\bf{v}}` is a vector test function, :math:`\bf{\psi}` is the projected phase fraction gradient, :math:`\eta_n` is the phase fraction gradient diffusion value, and :math:`\phi` is the phase fraction.
+where :math:`{\bf{v}}` is a vector test function, :math:`\bf{\psi}` is the projected phase indicator gradient, :math:`\eta_n` is the phase indicator gradient diffusion value, and :math:`\phi` is the phase indicator.
 
 .. math::
 
@@ -334,7 +334,7 @@ where :math:`{\bf{v}}` is a vector test function, :math:`\bf{\psi}` is the proje
 
 where :math:`\kappa` is the projected curvature, and :math:`\eta_\kappa` is the curvature diffusion value, and :math:`v` is a test function.
 
-The phase fraction gradient diffusion :math:`\eta_n` and the curvature diffusion value :math:`\eta_\kappa` are respectively computed according to:
+The phase indicator gradient diffusion :math:`\eta_n` and the curvature diffusion value :math:`\eta_\kappa` are respectively computed according to:
 
 .. math::
 
@@ -347,8 +347,6 @@ where :math:`\alpha` and :math:`\beta` are user-defined factors, and :math:`h` i
 
 References
 -----------
-
-.. [#hirt1981] \C. W. Hirt and B. D. Nichols, “Volume of fluid (VOF) method for the dynamics of free boundaries,” *J. Comput. Phys.*, vol. 39, no. 1, pp. 201–225, Jan. 1981, doi: `10.1016/0021-9991(81)90145-5 <https://doi.org/10.1016/0021-9991(81)90145-5>`_\.
 
 .. [#tezduyar2003] \T. E. Tezduyar, “Computation of moving boundaries and interfaces and stabilization parameters,” *Int. J. Numer. Methods Fluids*, vol. 43, no. 5, pp. 555–575, 2003, doi: `10.1002/fld.505 <https://doi.org/10.1002/fld.505>`_\.
 

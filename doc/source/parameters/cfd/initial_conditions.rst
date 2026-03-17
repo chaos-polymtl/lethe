@@ -17,7 +17,7 @@ It is often necessary to set-up complex initial conditions when simulating trans
       set Function expression = 0; 0; 0; 0
     end
 
-    subsection VOF
+    subsection CLS
       set Function expression = if (x<0.5 & y<1, 1, 0)
       set smoothing type = none # <none|diffusive|geometric>
       set diffusion factor = 1
@@ -57,12 +57,12 @@ It is often necessary to set-up complex initial conditions when simulating trans
 
 * The ``subsection uvwp`` allows the user to select a function (velocity-pressure) to set a nodal or L2 projection initial condition.
 
-* The ``subsection VOF`` defines the areas where both fluids lay at the initial state (see section :doc:`multiphysics`). In this example, the ``Function expression`` is used with a boolean condition to establish the region where the fluid indicator is :math:`0` or :math:`1`: ``if (condition, value if true, value if false)``. ``if (x<0.5 & y<1, 1, 0)`` means that ``fluid 1`` initially fills the surface where ``x<0.5`` and ``y<1``, the rest being filled with ``fluid 0``.
+* The ``subsection CLS`` defines the areas where both fluids lay at the initial state (see section :doc:`multiphysics`). In this example, the ``Function expression`` is used with a boolean condition to establish the region where the fluid indicator is :math:`0` or :math:`1`: ``if (condition, value if true, value if false)``. ``if (x<0.5 & y<1, 1, 0)`` means that ``fluid 1`` initially fills the surface where ``x<0.5`` and ``y<1``, the rest being filled with ``fluid 0``.
 
   .. note::
     The ``Function expression`` can be used to establish an even more complex free surface initial geometry. For example, one can create a circle of fluid : ``if ( (x^2+y^2)<=(r)^2 ,1,0)``
 
-  * The ``smoothing type`` allows to smooth the VOF initial condition and avoid a staircase definition of the free surface.
+  * The ``smoothing type`` allows to smooth the CLS initial condition and avoid a staircase definition of the free surface.
 
     * When the parameter ``smoothing type = diffusive``, the initial condition is projected following:
 
@@ -72,12 +72,12 @@ It is often necessary to set-up complex initial conditions when simulating trans
     .. math::
       \int_\Omega \left( \psi^* v + \eta_\psi \nabla \psi^* \cdot \nabla v  \right) d\Omega = \int_\Omega \psi v  d\Omega
 
-    where :math:`\psi(\Omega_K)` corresponds to a color function value on the Kth element, :math:`\phi` is the phase fraction, :math:`\psi^*` is the smoothed phase fraction, :math:`\eta_\psi = \alpha h^2` with :math:`\alpha` corresponding to the ``diffusion factor`` and :math:`h` to the cell size, and :math:`v` is a test function.
+    where :math:`\psi(\Omega_K)` corresponds to a color function value on the Kth element, :math:`\phi` is the phase indicator, :math:`\psi^*` is the smoothed phase indicator, :math:`\eta_\psi = \alpha h^2` with :math:`\alpha` corresponding to the ``diffusion factor`` and :math:`h` to the cell size, and :math:`v` is a test function.
     
-    * When the parameter ``smoothing type = geometric``, the initial condition is smoothed using a geometric redistanciation method. In that case, the parameters for the geometric redistanciation method are declared in the :ref:`Geometric Interface Reinitialization <geometric-interface-reinitialization>` subsection such as described in the :doc:`Volume of Fluid (Multiphase Flow)<./volume_of_fluid>` documentation.
+    * When the parameter ``smoothing type = geometric``, the initial condition is smoothed using a geometric redistanciation method. In that case, the parameters for the geometric redistanciation method are declared in the :ref:`Geometric Interface Reinitialization <geometric-interface-reinitialization>` subsection such as described in the :doc:`Conservative Level-Set (Multiphase Flow)<./conservative_level_set>` documentation.
 
-* The ``subsection cahn hilliard`` defines the areas where both fluids lay at the initial state (see section :doc:`multiphysics`). It works similarly to the ``subsection VOF`` for the first component, which corresponds to the phase order parameter. The user also has the choice to specify initial conditions for the chemical potential, although it is often more suitable to leave it at :math:`0`.
-* The ``subsection temperature`` allows the user to define an initial temperature for the fluid domain (if ``set heat tranfer = true`` in :doc:`multiphysics`).
+* The ``subsection cahn hilliard`` defines the areas where both fluids lay at the initial state (see section :doc:`multiphysics`). It works similarly to the ``subsection CLS`` for the first component, which corresponds to the phase order parameter. The user also has the choice to specify initial conditions for the chemical potential, although it is often more suitable to leave it at :math:`0`.
+* The ``subsection temperature`` allows the user to define an initial temperature for the fluid domain (if ``set heat transfer = true`` in :doc:`multiphysics`).
 
 * The ``subsection ramp`` holds the parameters to operate a ramp on either or both the kinematic viscosity and the ``n`` parameter in rheological models (see :doc:`physical_properties` for more information on this parameter). When ramping on the kinematic viscosity value,
 
