@@ -58,8 +58,8 @@ end
 subsection mortar
   set enable = true
   subsection mesh
-    set type               = gmsh
-    set file name          = mixer_rotor.msh
+    set type      = gmsh
+    set file name = mixer_rotor.msh
   end
   set rotor boundary id  = 3
   set stator boundary id = 4
