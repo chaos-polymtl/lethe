@@ -102,12 +102,12 @@ CLS
 ~~~
 
 
-To prevent the interface between phases from becoming blurry due to diffusion, the interface ``geometric interface reinitialization`` method is selected in the ``interface regularization method`` subsection. The ``max reinitialization distance`` is set to ensure the interface thickness is at least 12 cells. Furthermore, the ``phase filtration`` is enabled in this example. We refer the reader to the :doc:`../../../theory/multiphase/cfd/cls` documentation for more explanation on both methods.
+To prevent the interface between phases from becoming blurry due to diffusion, the interface ``geometric interface reinitialization`` method is selected in the ``interface reinitialization method`` subsection. The ``max reinitialization distance`` is set to ensure the interface thickness is at least 12 cells. Furthermore, the ``phase filtration`` is enabled in this example. We refer the reader to the :doc:`../../../theory/multiphase/cfd/cls` documentation for more explanation on both methods.
 
 .. code-block:: text
 
     subsection CLS
-      subsection interface regularization method
+      subsection interface reinitialization method
         set type      = geometric interface reinitialization
         set frequency = 10
         set verbosity = verbose

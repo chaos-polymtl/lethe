@@ -2,7 +2,7 @@
 Rising Bubble
 ==========================
 
-This example simulates a two-dimensional rising bubble [#hysing2009]_. In the first part, we are interested in two different rising regimes: ellipsoidal and skirted. The second part, :ref:`Interface Regularization Methods Comparison`, focuses on the effects of the interface regularization methods on the results.
+This example simulates a two-dimensional rising bubble [#hysing2009]_. In the first part, we are interested in two different rising regimes: ellipsoidal and skirted. The second part, :ref:`Interface Reinitialization Methods Comparison`, focuses on the effects of the interface reinitialization methods on the results.
 
 
 --------
@@ -10,11 +10,11 @@ Features
 --------
 
 - Solver: ``lethe-fluid`` 
-- Two phase flow handled by the Conservative Level-Set (CLS) approach with phase filtering, interface regularization, and surface tension force
+- Two phase flow handled by the Conservative Level-Set (CLS) approach with phase filtering, interface reinitialization, and surface tension force
 - Calculation of filtered phase indicator gradient and curvature fields
 - Unsteady problem handled by an adaptive BDF2 time-stepping scheme 
 - Post-processing of a fluid barycentric coordinate and velocity
-- Comparison of interface regularization methods
+- Comparison of interface reinitialization methods
 
 
 --------------------------
@@ -105,18 +105,18 @@ CLS
 In the ``CLS`` subsection, two features are enabled : the ``phase filtration`` and the ``surface tension force``. 
 The ``phase filtration`` method filters the phase field used for the calculation of physical properties by stiffening the value of the phase indicator.  The ``surface tension force`` computation is explained in the :doc:`../static-bubble/static-bubble` example.
 
-Since a straightforward advection of the phase indicator typically leads to significant interface diffusion, an interface regularization method is required. 
-This is addressed in the ``interface regularization method`` subsection. Lethe provides three regularization techniques to maintain a sharp interface:  the ``projection-based interface sharpening``, the ``algebraic interface reinitialization``, and the ``geometric interface reinitialization``. The desired method can be selected using the ``type`` parameter.
+Since a straightforward advection of the phase indicator typically leads to significant interface diffusion, an interface reinitialization method is required. 
+This is addressed in the ``interface reinitialization method`` subsection. Lethe provides three reinitialization techniques to maintain a sharp interface:  the ``projection-based interface sharpening``, the ``algebraic interface reinitialization``, and the ``geometric interface reinitialization``. The desired method can be selected using the ``type`` parameter.
 
-We refer the reader to :doc:`../../../theory/multiphase/cfd/cls` theory guide for more explanation on phase filtration and the interface regularization methods.
+We refer the reader to :doc:`../../../theory/multiphase/cfd/cls` theory guide for more explanation on phase filtration and the interface reinitialization methods.
 
-For the first part of this example, the ``projection-based interface sharpening`` method is selected and its parameters are defined in the ``subsection projection-based interface sharpening``. The selection of the parameters for this method is explained in the :doc:`../dam-break/dam-break` example. The other regularization methods available are described in the second part of this example (:ref:`Interface Regularization Methods Comparison`).
+For the first part of this example, the ``projection-based interface sharpening`` method is selected and its parameters are defined in the ``subsection projection-based interface sharpening``. The selection of the parameters for this method is explained in the :doc:`../dam-break/dam-break` example. The other reinitialization methods available are described in the second part of this example (:ref:`Interface Reinitialization Methods Comparison`).
 
 
 .. code-block:: text
 
   subsection CLS
-    subsection interface regularization method
+    subsection interface reinitialization method
       set type      = projection-based interface sharpening
       set frequency = 20
       set verbosity = verbose
@@ -360,22 +360,22 @@ The evolution of the position and velocity of the barycenter of the bubble is al
     :align: center
     :width: 500
 
-.. _Interface Regularization Methods Comparison:
+.. _Interface Reinitialization Methods Comparison:
 
 ---------------------------------------------
-Interface Regularization Methods Comparison
+Interface Reinitialization Methods Comparison
 ---------------------------------------------
 
 Parameter Files
 ~~~~~~~~~~~~~~~~
 
-For the methods other than ``projection-based interface sharpening``, the ``.prm`` file is modified as follows. In the ``CLS`` subsection, the ``interface regularization method`` is changed to ``geometric interface reinitialization`` or ``algebraic interface reinitialization``. The associated parameter files, ``rising-bubble-geo.prm`` and ``rising-bubble-alge.prm`` respectively, are available in the example's folder. The subsections are modified according to each regularization method: 
+For the methods other than ``projection-based interface sharpening``, the ``.prm`` file is modified as follows. In the ``CLS`` subsection, the ``interface reinitialization method`` is changed to ``geometric interface reinitialization`` or ``algebraic interface reinitialization``. The associated parameter files, ``rising-bubble-geo.prm`` and ``rising-bubble-alge.prm`` respectively, are available in the example's folder. The subsections are modified according to each reinitialization method: 
 
 * With the geometric method, the phase indicator field is regularized using the signed distance from the interface, as described in :doc:`../../../theory/multiphase/cfd/cls` theory guide. We select the ``tanh`` function to transform the signed distance in a phase indicator field. The ``tanh thickness`` is set to :math:`0.0066` and the ``max reinitialization distance`` parameter is set to :math:`0.0264`.
 
 .. code-block:: text
 
-    subsection interface regularization method
+    subsection interface reinitialization method
       set type       = geometric interface reinitialization
       set frequency  = 20
       set verbosity  = verbose
@@ -401,7 +401,7 @@ For the geometric method, we use a slightly thicker interface and we adapt the i
 
 .. code-block:: text
 
-    subsection interface regularization method
+    subsection interface reinitialization method
       set type      = algebraic interface reinitialization
       set frequency = 20
       set verbosity = verbose
@@ -414,7 +414,7 @@ For the geometric method, we use a slightly thicker interface and we adapt the i
 Running the Simulations
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-To run the simulations for the geometric and algebraic regularization methods:
+To run the simulations for the geometric and algebraic reinitialization methods:
 
 .. code-block:: text
   :class: copy-button
@@ -426,7 +426,7 @@ To run the simulations for the geometric and algebraic regularization methods:
 
   mpirun -np 8 lethe-fluid rising-bubble-alge.prm
 
-We are interested in four metrics for this comparison: the barycenter position and velocity, the bubble shape, and the volume conservation. To compare these metrics between the three regularization methods, the python post-processing script ``rising-bubble.py`` is used:
+We are interested in four metrics for this comparison: the barycenter position and velocity, the bubble shape, and the volume conservation. To compare these metrics between the three reinitialization methods, the python post-processing script ``rising-bubble.py`` is used:
 
 .. code-block:: text
   :class: copy-button
@@ -440,7 +440,7 @@ Case 1
 
 * Barycenter Position and Velocity
 
-  The evolution of the height and velocity of the barycenter of the bubble when using either of the three regularization methods appears to be in great agreement with the results obtained by Zahedi *et al.* [#zahedi2012]_ and Hysing *et al.* [#hysing2009]_.
+  The evolution of the height and velocity of the barycenter of the bubble when using either of the three reinitialization methods appears to be in great agreement with the results obtained by Zahedi *et al.* [#zahedi2012]_ and Hysing *et al.* [#hysing2009]_.
 
   .. image:: images/bubble-rise-velocity-case1.png
       :align: center
@@ -487,7 +487,7 @@ Case 2
 
 * Barycenter Position and Velocity
 
-  For this case also, the evolution of the height and velocity of the barycenter of the bubble when using either of the three regularization methods appears to be in agreement with the results obtained by the three solvers in the work of Hysing *et al.* [#hysing2009]_.
+  For this case also, the evolution of the height and velocity of the barycenter of the bubble when using either of the three reinitialization methods appears to be in agreement with the results obtained by the three solvers in the work of Hysing *et al.* [#hysing2009]_.
 
   .. image:: images/bubble-rise-velocity-case2.png
       :align: center
@@ -499,7 +499,7 @@ Case 2
 
 * Bubble Contour
 
-  Regarding the final shape and dimensions of the bubble, the geometric and algebraic methods seem to reproduce the results from  Hysing *et al.* [#hysing2009]_ more accurately than the projection-based method. However, the three regularization methods capture the skirt of the bubble differently: the geometric method results in a continuous skirt, while the PDE-based and projection-based methods result in a discontinuous skirt.
+  Regarding the final shape and dimensions of the bubble, the geometric and algebraic methods seem to reproduce the results from  Hysing *et al.* [#hysing2009]_ more accurately than the projection-based method. However, the three reinitialization methods capture the skirt of the bubble differently: the geometric method results in a continuous skirt, while the PDE-based and projection-based methods result in a discontinuous skirt.
 
   .. image:: images/proj-bubble-contour-case2.png
       :width: 350

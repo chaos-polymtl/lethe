@@ -93,7 +93,7 @@ In the ``CLS`` subsection, the ``compressible`` and the ``phase filtration`` fea
 The enabled ``compressible`` parameter allows interface compression by adding the term :math:`\phi (\nabla \cdot \mathbf{u})` to the CLS equation.
 The ``phase filtration`` filters the phase field used for the calculation of physical properties by stiffening the value of the phase indicator.
 We refer the reader to :doc:`../../../../theory/multiphase/cfd/cls` theory guide for further explanation on ``phase filtration``.
-The ``projection-based interface sharpening`` method is selected as the ``interface regularization method`` and its parameters, defined in the ``subsection projection-based interface sharpening``, are explained in the :doc:`../dam-break/dam-break` example.
+The ``projection-based interface sharpening`` method is selected as the ``interface reinitialization method`` and its parameters, defined in the ``subsection projection-based interface sharpening``, are explained in the :doc:`../dam-break/dam-break` example.
 
 .. code-block:: text
 
@@ -103,7 +103,7 @@ The ``projection-based interface sharpening`` method is selected as the ``interf
         set type = tanh
         set beta = 10
       end
-      subsection interface regularization method
+      subsection interface reinitialization method
         set type      = projection-based interface sharpening
         set frequency = 8
         subsection projection-based interface sharpening

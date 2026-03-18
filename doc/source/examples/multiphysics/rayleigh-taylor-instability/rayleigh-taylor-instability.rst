@@ -138,7 +138,7 @@ The ``physical properties`` subsection defines the physical properties of the fl
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 
-In the ``initial conditions`` subsection, we need to define the interface between the heavy and light fluids. We define this interface by using a ``Function expression`` in the ``CLS`` subsection of the ``initial conditions``. The interface between the two fluids is made smoother with the :doc:`geometric smoother <../../../parameters/cfd/initial_conditions>`  by setting the parameter ``smoothing type`` to ``geometric``. Essentially, the geometric smoother converts the initial function expression into a signed distance function using the geometric redistanciation algorithm. This defines a smooth initial condition that is coherent with the redistanciation used within the simulation.
+In the ``initial conditions`` subsection, we need to define the interface between the heavy and light fluids. We define this interface by using a ``Function expression`` in the ``CLS`` subsection of the ``initial conditions``. The interface between the two fluids is made smoother with the :doc:`geometric smoother <../../../parameters/cfd/initial_conditions>`  by setting the parameter ``smoothing type`` to ``geometric``. Essentially, the geometric smoother converts the initial function expression into a signed distance function using the geometric reinitialization algorithm. This defines a smooth initial condition that is coherent with the reinitialization used within the simulation.
 
 .. code-block:: text
 
@@ -239,12 +239,12 @@ For CLS, we specify the periodic boundary conditions on the sides and no-flux bo
 CLS
 ~~~
 
-In the ``CLS`` subsection, we select the ``geometric interface reinitialization`` in the ``interface regularization method`` subsection to reconstruct the interface and keep it sharp during the simulation. This approach is currently the most robust method available in Lethe.
+In the ``CLS`` subsection, we select the ``geometric interface reinitialization`` in the ``interface reinitialization method`` subsection to reconstruct the interface and keep it sharp during the simulation. This approach is currently the most robust method available in Lethe.
 
 .. code-block:: text
 
   subsection CLS
-    subsection interface regularization method
+    subsection interface reinitialization method
       set type      = geometric interface reinitialization
       set frequency = 20
       set verbosity = verbose
