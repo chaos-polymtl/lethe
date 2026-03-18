@@ -1587,8 +1587,8 @@ CahnHilliard<dim>::output_newton_update_norms()
               << std::endl;
   this->pcout << "\t||deta||_L2 = " << std::setw(6)
               << global_chemical_potential_l2_norm << std::setw(6)
-              << "\t||deta||_Linfty = "
-              << global_chemical_potential_linfty_norm << std::endl;
+              << "\t||deta||_Linfty = " << global_chemical_potential_linfty_norm
+              << std::endl;
 }
 
 template std::pair<Tensor<1, 2>, Tensor<1, 2>>

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_inexact_newton_non_linear_solver_strategy_h
@@ -132,8 +132,8 @@ InexactNewtonNonLinearSolverStrategy<VectorType>::solve()
           if (this->params.verbosity != Parameters::Verbosity::quiet)
             {
               solver->pcout << "\talpha = " << std::setw(6) << alpha
-                            << std::setw(0) << " res = "
-                            << std::setw(6) << current_res;
+                            << std::setw(0) << " res = " << std::setw(6)
+                            << current_res;
 
               solver->output_newton_update_norms();
             }

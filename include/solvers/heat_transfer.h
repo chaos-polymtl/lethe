@@ -92,8 +92,7 @@ public:
           .get_thermal_conductivity_vector())
 
   {
-    this->pcout << std::setprecision(
-                     simulation_control->get_log_precision())
+    this->pcout << std::setprecision(simulation_control->get_log_precision())
                 << std::scientific;
 
     if (simulation_parameters.mesh.simplex)

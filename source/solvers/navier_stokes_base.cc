@@ -213,7 +213,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
               << " MPI rank(s)..." << std::endl;
 
   this->pcout << std::setprecision(
-                    simulation_parameters.simulation_control.log_precision)
+                   simulation_parameters.simulation_control.log_precision)
               << std::scientific;
 }
 
@@ -3364,8 +3364,9 @@ NavierStokesBase<dim, VectorType, DofsType>::output_newton_update_norms()
                   << "\t||du||_Linfty = " << global_velocity_linfty_norm
                   << std::endl;
       this->pcout << "\t||dp||_L2 = " << std::setw(6) << global_pressure_l2_norm
-                  << std::setw(6) << "\t||dp||_Linfty = "
-                  << global_pressure_linfty_norm << std::endl;
+                  << std::setw(6)
+                  << "\t||dp||_Linfty = " << global_pressure_linfty_norm
+                  << std::endl;
     }
   if constexpr (std::is_same_v<VectorType, GlobalBlockVectorType>)
     {

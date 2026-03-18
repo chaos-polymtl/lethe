@@ -73,8 +73,7 @@ public:
     , simulation_control(p_simulation_control)
     , dof_handler(std::make_shared<DoFHandler<dim>>(*triangulation))
   {
-    this->pcout << std::setprecision(
-                     simulation_control->get_log_precision())
+    this->pcout << std::setprecision(simulation_control->get_log_precision())
                 << std::scientific;
 
     if (simulation_parameters.mesh.simplex)
