@@ -104,7 +104,11 @@ namespace Parameters
   };
 
   /**
-   * @brief Types of waveguide port mode.
+   * @brief Types of waveguide port modes:
+   * - Transverse Electric (TE): the electric field is transverse to the
+   * direction of propagation.
+   * - Transverse Magnetic (TM): the magnetic field is transverse to the
+   * direction of propagation.
    */
   enum class WaveguideMode : std::int8_t
   {
@@ -115,7 +119,21 @@ namespace Parameters
   };
 
   /**
-   * @brief Type of electromagnetic scaling to apply to the solution of the time-harmonic Maxwell solver after solving the linear system. This is relevant when the user wants to recover the physical solution in dimensional units instead of the dimensionless solution used for better conditioning of the linear system.
+   * @brief Type of electromagnetic scaling to apply to the solution of the time-harmonic Maxwell solver after solving the linear system. This is relevant when the user wants to recover the physical solution in dimensional units from  the dimensionless solution.
+   * - none: no scaling will be applied to the solution after solving the linear
+   * system, so the solution will be in dimensionless units.
+   * - electric_field: the solution will be scaled by the electric scaling
+   * factor given from the user input parameter. This factor needs to match the
+   * dimensionality of the problem.
+   * - magnetic_field: the solution will be scaled by the magnetic scaling
+   * factor given from the user input parameter. This factor needs to match the
+   * dimensionality of the problem.
+   * - power: the solution will be scaled by the power given from the user input
+   * parameter in waveguide inlets. This option is only relevant when there is
+   * at least one waveguide inlet in the problem. Note that it is the user
+   * responsibility to ensure that if the problem also applies non-zero electric
+   * or magnetic field Dirichlet boundary conditions, those need to be scaled
+   * accordingly.
    */
   enum class ElectromagneticScalingType : std::int8_t
   {

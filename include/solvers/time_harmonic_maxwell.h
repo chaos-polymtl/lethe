@@ -569,11 +569,7 @@ private:
    * file.
    * @return This function returns a std::pair containing the electric field
    * Tensor<1, dim, std::complex<double>> and the magnetic field Tensor<1, dim,
-   * std::complex<double>> computed at the given position. Also, if the surface
-   * admittance is requested by the caller, it is returned as a pointer in the
-   * argument list and updated in place by the function. This allows to avoid
-   * unnecessary recomputation of some intermediate values if the caller needs
-   * both the incident fields and the surface admittance.
+   * std::complex<double>> computed at the given position.
    */
   std::pair<Tensor<1, dim, std::complex<double>>,
             Tensor<1, dim, std::complex<double>>>
@@ -582,8 +578,7 @@ private:
     const Tensor<1, dim>       &normal,
     const std::complex<double> &local_effective_electric_permittivity,
     const std::complex<double> &local_effective_magnetic_permeability,
-    const unsigned int          boundary_id_index  = 0,
-    std::complex<double>       *surface_admittance = nullptr);
+    const types::boundary_id    boundary_id_index = 0);
 
 
   /**
@@ -609,7 +604,7 @@ private:
     const Tensor<1, dim>       &normal,
     const std::complex<double> &local_effective_electric_permittivity,
     const std::complex<double> &local_effective_magnetic_permeability,
-    const unsigned int          boundary_id_index = 0);
+    const types::boundary_id    boundary_id_index = 0);
 
   /**
    * @brief Update the material properties during the assembly of the system matrix.
@@ -640,13 +635,18 @@ private:
 
 
   /**
-   * @brief Compute the electromagnetic scaling factor used to non-dimensionalize the time-harmonic Maxwell system from the input power required from the user. This is factor will be the maximum of all the electric field intensity across all inlets in the problem, calculated from each inlet's input power.
+   * @brief Compute the electromagnetic scaling factor used to non-dimensionalize the time-harmonic Maxwell system from the type of scaling required from the user. This is factor will be the electric field obtained :
+   * - directly from parameters (if ElectromagneticScalingType::electric_field);
+   * - by converting the magnetic field also obtained from parameters (if
+   * ElectromagneticScalingType::magnetic_field);
+   * - or by taking the maximum of all the electric field intensity across all
+   * inlets in the problem, calculated from each inlet's input power (if
+   * ElectromagneticScalingType::power). The scaling factor will be stored in
+   * the class attribute electromagnetic_scaling.
    *
    * @param[in] physical_properties_manager The object that manages the physical
    * properties of the problem and provides them at any given position of the
    * domain.
-   * @param[out] electromagnetic_scaling The scaling factor for electromagnetic
-   * fields in farads per meter that is updated in place by the function.
    */
   void
   compute_electromagnetic_scaling(
@@ -656,13 +656,11 @@ private:
    * @brief Scale the solution components by the electromagnetic scaling factor to recover the physical values of the solution after solving the non-dimensionalized system. This function is called at the end of the solve_linear_system method after reconstructing the interior solution from the skeleton solution.
    * @param[in] dof_handler The degree of freedom handler for the mesh
    * associated with the solution.
-   * @param[in] fe The finite element object for the solution space.
    * @param[in,out] solution The solution vector to be scaled.
    */
   void
-  scale_solution_components(const DoFHandler<dim>    &dof_handler,
-                            const FiniteElement<dim> &fe,
-                            GlobalVectorType         &solution);
+  scale_solution_components(const DoFHandler<dim> &dof_handler,
+                            GlobalVectorType      &solution);
 
   /**
    * @brief Pointer to the multiphysics interface that manages the coupling
@@ -867,7 +865,7 @@ private:
   const FEValuesExtractors::Vector extractor_H_imag;
 
   /*
-   * @brief The time-harmonic Maxwell DPG system of equation is solved in a dimensionless form. However, to be able to recover the physical solution, the physical amplitude of the electromagnetic fields needs to be calculated from the input power provided and the associated scaling factor is the maximum of those field amplitudes across all the inlets in the problem. This way, the electromagnetic fields remain with an amplitude of order 1 (for the inlet with the highest input power) or less (for the other inlets) in the dimensionless system.
+   * @brief The time-harmonic Maxwell DPG system of equation is solved in dimensionless form. However, to be able to recover the physical solution, the physical amplitude of the electromagnetic fields needs to be calculated from the input power provided and the associated scaling factor is the maximum of those field amplitudes across all the inlets in the problem. This way, the electromagnetic fields remain with an amplitude of order 1 (for the inlet with the highest input power) or less (for the other inlets) in the dimensionless system.
    *
    */
   double electromagnetic_scaling;
