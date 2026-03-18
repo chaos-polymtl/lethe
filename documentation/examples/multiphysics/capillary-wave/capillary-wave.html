@@ -451,7 +451,7 @@
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Solver: <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code></p></li>
-<li><p>Volume of fluid (VOF)</p></li>
+<li><p>Conservative Level-Set (CLS)</p></li>
 <li><p>Unsteady problem handled by an adaptive BDF2 time-stepping scheme</p></li>
 <li><p>Bash scripts to write, launch, and postprocess multiple cases</p></li>
 <li><p>Python scripts for postprocessing data</p></li>
@@ -521,7 +521,7 @@
 <div class="math notranslate nohighlight">
 \[\omega_\sigma = \sqrt{\frac{\sigma}{\hat{\rho}} \left(\frac{2\pi}{\lambda_\sigma}\right)^3}\]</div>
 </div>
-<p>Since, the phase fraction (<span class="math notranslate nohighlight">\(\phi\)</span>) is treated explicitly, the temporal resolution of the capillary wave leads to a Courant-Friedrichs-Lewy (CFL) condition, also known as the <em>capillary time-step constraint</em>:</p>
+<p>Since, the phase indicator (<span class="math notranslate nohighlight">\(\phi\)</span>) is treated explicitly, the temporal resolution of the capillary wave leads to a Courant-Friedrichs-Lewy (CFL) condition, also known as the <em>capillary time-step constraint</em>:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\Delta t_\sigma = \frac{\Delta x}{\sqrt{2} c_\sigma} = \sqrt{\frac{\hat{\rho}}{2\pi\sigma}{{\Delta x}^3}}\]</div>
@@ -549,9 +549,9 @@ end
 </section>
 <section id="multiphysics">
 <h3>Multiphysics<a class="headerlink" href="#multiphysics" title="Link to this heading">#</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">multiphysics</span></code> subsection is used to enable the VOF solver.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">multiphysics</span></code> subsection is used to enable the CLS solver.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection multiphysics
-  set VOF  = true
+  set CLS  = true
 end
 </pre></div>
 </div>
@@ -564,7 +564,7 @@ end
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function expression = if (y&lt;=1e-6*cos(2*3.14159/1e-4*x), min(0.5-(y-1e-6*cos(2*3.14159/1e-4*x))/1e-6,1), max(0.5-(y-1e-6*cos(2*3.14159/1e-4*x))/1e-6,0))
     subsection projection step
       set enable           = true
@@ -589,7 +589,7 @@ end
 </section>
 <section id="mesh-adaptation">
 <h3>Mesh Adaptation<a class="headerlink" href="#mesh-adaptation" title="Link to this heading">#</a></h3>
-<p>In the <code class="docutils literal notranslate"><span class="pre">mesh</span> <span class="pre">adaptation</span></code> subsection, we dynamically adapt the mesh using the <code class="docutils literal notranslate"><span class="pre">phase</span></code> as refinement <code class="docutils literal notranslate"><span class="pre">variable</span></code>. We choose <span class="math notranslate nohighlight">\(3\)</span> as the <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">refinement</span> <span class="pre">level</span></code> and <span class="math notranslate nohighlight">\(5\)</span> as the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">refinement</span> <span class="pre">level</span></code>. We set <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">steps</span> <span class="pre">=</span> <span class="pre">4</span></code> to adapt the mesh to the initial value of the VOF field.</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">mesh</span> <span class="pre">adaptation</span></code> subsection, we dynamically adapt the mesh using the <code class="docutils literal notranslate"><span class="pre">phase</span></code> as refinement <code class="docutils literal notranslate"><span class="pre">variable</span></code>. We choose <span class="math notranslate nohighlight">\(3\)</span> as the <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">refinement</span> <span class="pre">level</span></code> and <span class="math notranslate nohighlight">\(5\)</span> as the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">refinement</span> <span class="pre">level</span></code>. We set <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">steps</span> <span class="pre">=</span> <span class="pre">4</span></code> to adapt the mesh to the initial value of the CLS field.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh adaptation
   set type                     = adaptive
   set error estimator          = kelly
@@ -758,7 +758,7 @@ Make sure that the information entered in the Python script corresponds to the o
 </tbody>
 </table>
 </div>
-<p>A pretty good agreement is obtained for the <span class="math notranslate nohighlight">\(2\)</span> first simulations, demonstrating the accuracy and robustness of the VOF solver. The unexpected stability of the solution at <span class="math notranslate nohighlight">\(\Delta t \approx 15\Delta t_\sigma\)</span> is most probably the consequence of the implicit PSPG and SUPG stabilizations in the Navier-Stokes equations acting as artificial viscosity terms. These artificial viscosities locally increase the Ohnesorge number <span class="math notranslate nohighlight">\(\left( \mathrm{Oh} = \frac{\mu_0+\mu_1}{\sqrt{2\hat{\rho}\sigma\Delta x}} \sim \frac{\text{viscous forces}}{\sqrt{\text{inertia} \times \text{surface tension}}}\right)\)</span> near the interface which can be correlated to the stability of the simulation. As <span class="math notranslate nohighlight">\(\mathrm{Oh}\)</span> increases, it was found that the simulation results remain stable at higher multiples of the capillary time-step constraint <a class="reference external" href="https://doi.org/10.1016/j.jcp.2022.111128">[1,</a> <a class="reference external" href="https://doi.org/10.1016/j.jcp.2015.01.021">2]</a>.</p>
+<p>A pretty good agreement is obtained for the <span class="math notranslate nohighlight">\(2\)</span> first simulations, demonstrating the accuracy and robustness of the CLS solver. The unexpected stability of the solution at <span class="math notranslate nohighlight">\(\Delta t \approx 15\Delta t_\sigma\)</span> is most probably the consequence of the implicit PSPG and SUPG stabilizations in the Navier-Stokes equations acting as artificial viscosity terms. These artificial viscosities locally increase the Ohnesorge number <span class="math notranslate nohighlight">\(\left( \mathrm{Oh} = \frac{\mu_0+\mu_1}{\sqrt{2\hat{\rho}\sigma\Delta x}} \sim \frac{\text{viscous forces}}{\sqrt{\text{inertia} \times \text{surface tension}}}\right)\)</span> near the interface which can be correlated to the stability of the simulation. As <span class="math notranslate nohighlight">\(\mathrm{Oh}\)</span> increases, it was found that the simulation results remain stable at higher multiples of the capillary time-step constraint <a class="reference external" href="https://doi.org/10.1016/j.jcp.2022.111128">[1,</a> <a class="reference external" href="https://doi.org/10.1016/j.jcp.2015.01.021">2]</a>.</p>
 <p>By increasing the mesh resolution by an additional refinement, the <span class="math notranslate nohighlight">\(\mathrm{Oh}\)</span> at the interface increases, therefore viscous effects increase and we get a more stable solution as seen below. However, we also see a slight negative phase shift.</p>
 <div class="table-wrapper docutils container">
 <table class="docutils align-default">

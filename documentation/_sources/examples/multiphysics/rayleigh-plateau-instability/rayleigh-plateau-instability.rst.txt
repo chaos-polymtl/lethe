@@ -11,7 +11,7 @@ Features
 --------
 
 - Solver: ``lethe-fluid`` 
-- Volume of fluid (VOF)
+- Conservative Level-Set (CLS)
 - Unsteady problem handled by an adaptive BDF2 time-stepping scheme
 - Bash scripts to write, launch, and postprocess multiple cases
 - Python scripts for postprocessing data
@@ -93,12 +93,12 @@ The time integration is handled by a 2nd-order backward differentiation scheme (
 Multiphysics
 ~~~~~~~~~~~~
 
-The ``multiphysics`` subsection is used to enable the VOF solver.
+The ``multiphysics`` subsection is used to enable the CLS solver.
 
 .. code-block:: text
 
     subsection multiphysics
-      set VOF  = true
+      set CLS  = true
     end
 
 
@@ -145,7 +145,7 @@ In the ``mesh`` subsection, we define a subdivided hyper rectangle with appropri
 Mesh Adaptation
 ~~~~~~~~~~~~~~~~
 
-In the ``mesh adaptation`` subsection, we dynamically adapt the mesh using the ``phase`` as refinement ``variable``. We choose :math:`5` as the ``min refinement level`` and :math:`8` as the ``max refinement level``. We set ``initial refinement steps = 4`` to adapt the mesh to the initial value of the VOF field.
+In the ``mesh adaptation`` subsection, we dynamically adapt the mesh using the ``phase`` as refinement ``variable``. We choose :math:`5` as the ``min refinement level`` and :math:`8` as the ``max refinement level``. We set ``initial refinement steps = 4`` to adapt the mesh to the initial value of the CLS field.
 
 .. code-block:: text
 
@@ -175,7 +175,7 @@ The uniform jet velocity :math:`(U = 1.569 \; \mathrm{m \, s^{-1}})` corresponds
         set Function constants  = U=1.569
         set Function expression = if(y^2 <= 1.3110e-6, U, 0); 0; 0
       end
-      subsection VOF
+      subsection CLS
         set Function expression = if(y^2 <= 1.3110e-6, 1, 0)
         subsection projection step
           set enable = true
@@ -213,14 +213,14 @@ In the ``boundary conditions`` subsection, the inlet velocity perturbation is sp
       end
     end
 
-Boundary Conditions VOF
+Boundary Conditions CLS
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Lasty, in the ``boundary conditions VOF`` subsection we ensure that ``fluid 1`` is at the inlet. The other boundary conditions are default outlets.
+Lasty, in the ``boundary conditions CLS`` subsection we ensure that ``fluid 1`` is at the inlet. The other boundary conditions are default outlets.
 
 .. code-block:: text
 
-    subsection boundary conditions VOF
+    subsection boundary conditions CLS
       set number = 3
       subsection bc 0
         set id   = 0

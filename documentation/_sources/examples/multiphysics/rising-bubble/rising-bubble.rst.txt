@@ -2,7 +2,7 @@
 Rising Bubble
 ==========================
 
-This example simulates a two-dimensional rising bubble [#hysing2009]_. In the first part, we are interested in two different rising regimes: ellipsoidal and skirted. The second part, :ref:`Interface Regularization Methods Comparison`, focuses on the effects of the interface regularization methods on the results.
+This example simulates a two-dimensional rising bubble [#hysing2009]_. In the first part, we are interested in two different rising regimes: ellipsoidal and skirted. The second part, :ref:`Interface Reinitialization Methods Comparison`, focuses on the effects of the interface reinitialization methods on the results.
 
 
 --------
@@ -10,11 +10,11 @@ Features
 --------
 
 - Solver: ``lethe-fluid`` 
-- Two phase flow handled by the Volume of fluids (VOF) approach with phase filtering, interface regularization, and surface tension force
-- Calculation of filtered phase fraction gradient and curvature fields
+- Two phase flow handled by the Conservative Level-Set (CLS) approach with phase filtering, interface reinitialization, and surface tension force
+- Calculation of filtered phase indicator gradient and curvature fields
 - Unsteady problem handled by an adaptive BDF2 time-stepping scheme 
 - Post-processing of a fluid barycentric coordinate and velocity
-- Comparison of interface regularization methods
+- Comparison of interface reinitialization methods
 
 
 --------------------------
@@ -78,12 +78,12 @@ Multiphysics
 ~~~~~~~~~~~~
 
 The ``multiphysics`` subsection enables to turn on (``true``)
-and off (``false``) the physics of interest. Here ``VOF`` is chosen.
+and off (``false``) the physics of interest. Here ``CLS`` is chosen.
 
 .. code-block:: text
 
     subsection multiphysics
-      set VOF = true
+      set CLS = true
     end
 
 Source Term
@@ -99,24 +99,24 @@ The ``source term`` subsection defines the gravitational acceleration:
       end
     end
 
-VOF
+CLS
 ~~~
 
-In the ``VOF`` subsection, two features are enabled : the ``phase filtration`` and the ``surface tension force``. 
-The ``phase filtration`` method filters the phase field used for the calculation of physical properties by stiffening the value of the phase fraction.  The ``surface tension force`` computation is explained in the :doc:`../static-bubble/static-bubble` example.
+In the ``CLS`` subsection, two features are enabled : the ``phase filtration`` and the ``surface tension force``. 
+The ``phase filtration`` method filters the phase field used for the calculation of physical properties by stiffening the value of the phase indicator.  The ``surface tension force`` computation is explained in the :doc:`../static-bubble/static-bubble` example.
 
-Since a straightforward advection of the phase fraction typically leads to significant interface diffusion, an interface regularization method is required. 
-This is addressed in the ``interface regularization method`` subsection. Lethe provides three regularization techniques to maintain a sharp interface:  the ``projection-based interface sharpening``, the ``algebraic interface reinitialization``, and the ``geometric interface reinitialization``. The desired method can be selected using the ``type`` parameter.
+Since a straightforward advection of the phase indicator typically leads to significant interface diffusion, an interface reinitialization method is required. 
+This is addressed in the ``interface reinitialization method`` subsection. Lethe provides three reinitialization techniques to maintain a sharp interface:  the ``projection-based interface sharpening``, the ``pde-based interface reinitialization``, and the ``geometric interface reinitialization``. The desired method can be selected using the ``type`` parameter.
 
-We refer the reader to :doc:`../../../theory/multiphase/cfd/cls` theory guide for more explanation on phase filtration and the interface regularization methods.
+We refer the reader to :doc:`../../../theory/multiphase/cfd/cls` theory guide for more explanation on phase filtration and the interface reinitialization methods.
 
-For the first part of this example, the ``projection-based interface sharpening`` method is selected and its parameters are defined in the ``subsection projection-based interface sharpening``. The selection of the parameters for this method is explained in the :doc:`../dam-break/dam-break` example. The other regularization methods available are described in the second part of this example (:ref:`Interface Regularization Methods Comparison`).
+For the first part of this example, the ``projection-based interface sharpening`` method is selected and its parameters are defined in the ``subsection projection-based interface sharpening``. The selection of the parameters for this method is explained in the :doc:`../dam-break/dam-break` example. The other reinitialization methods available are described in the second part of this example (:ref:`Interface Reinitialization Methods Comparison`).
 
 
 .. code-block:: text
 
-  subsection VOF
-    subsection interface regularization method
+  subsection CLS
+    subsection interface reinitialization method
       set type      = projection-based interface sharpening
       set frequency = 20
       set verbosity = verbose
@@ -134,7 +134,7 @@ For the first part of this example, the ``projection-based interface sharpening`
 
     subsection surface tension force
       set enable                                   = true
-      set phase fraction gradient difusion factor  = 4
+      set phase indicator gradient difusion factor  = 4
       set curvature diffusion factor               = 1
       set output auxiliary fields                  = true
     end
@@ -143,18 +143,18 @@ For the first part of this example, the ``projection-based interface sharpening`
 Stabilization
 ~~~~~~~~~~~~~
 
-The ``vof dcdd stabilization`` is turned off as it had a negative impact on volume conservation.
+The ``cls dcdd stabilization`` is turned off as it had a negative impact on volume conservation.
 
 .. code-block:: text
 
     subsection stabilization
-      set vof dcdd stabilization = false
+      set cls dcdd stabilization = false
     end
 
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 
-In the ``initial conditions`` subsection, the initial velocity and initial position of the liquid phase are defined. The light phase is initially defined as a circle with a radius :math:`r= 0.25` and a center located at :math:`(x_\text{c},y_\text{c})=(0.5, 0.5)`. To ensure that the initial condition is sufficiently smooth, we define the phase fraction field with the analytical solution of both the PDE and geometric reinitialization methods:
+In the ``initial conditions`` subsection, the initial velocity and initial position of the liquid phase are defined. The light phase is initially defined as a circle with a radius :math:`r= 0.25` and a center located at :math:`(x_\text{c},y_\text{c})=(0.5, 0.5)`. To ensure that the initial condition is sufficiently smooth, we define the phase indicator field with the analytical solution of both the PDE and geometric reinitialization methods:
 
 .. math::
 
@@ -169,7 +169,7 @@ where :math:`d = \left[\sqrt{(x-x_\text{c})^2 + (y-y_\text{c})^2} - 0.25\right]`
       subsection uvwp
         set Function expression = 0; 0; 0
       end
-      subsection VOF
+      subsection CLS
         set Function constants  = eps=1, hCell=0.0022, center=0.5
         set Function expression = 0.5 - 0.5*tanh((sqrt((x-center)*(x-center)+(y-center)*(y-center))-0.25)/(2*eps*hCell))
       end
@@ -179,7 +179,7 @@ where :math:`d = \left[\sqrt{(x-x_\text{c})^2 + (y-y_\text{c})^2} - 0.25\right]`
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~
 
-We define two fluids simply by setting the number of fluids to be :math:`2`. In ``subsection fluid 0``, we set the density and the kinematic viscosity for the phase associated with a VOF indicator of :math:`0`, depending on the test case. A similar procedure is done for the phase associated with a VOF indicator of :math:`1` in ``subsection fluid 1``. 
+We define two fluids simply by setting the number of fluids to be :math:`2`. In ``subsection fluid 0``, we set the density and the kinematic viscosity for the phase associated with a CLS indicator of :math:`0`, depending on the test case. A similar procedure is done for the phase associated with a CLS indicator of :math:`1` in ``subsection fluid 1``. 
 
 Then a ``fluid-fluid`` type of ``material interaction`` is added to specify the ``surface tension model``. In this example, it is set to ``constant`` with the ``surface tension coefficient`` depending on the test case [#hysing2009]_.
 
@@ -238,7 +238,7 @@ Mesh Adaptation
 
 In the ``mesh adaptation subsection``, adaptive mesh refinement is 
 defined for ``phase``. ``min refinement level`` and ``max refinement level`` are :math:`6` and :math:`9`, respectively. Since the bubble rises and changes its location, we choose a rather large ``fraction refinement`` (:math:`0.99`) and moderate ``fraction coarsening`` (:math:`0.01`).
-To capture the bubble adequately, we set ``initial refinement steps = 5`` so that the initial mesh is adapted to ensure that the initial condition is imposed for the VOF phase with maximal accuracy.
+To capture the bubble adequately, we set ``initial refinement steps = 5`` so that the initial mesh is adapted to ensure that the initial condition is imposed for the CLS phase with maximal accuracy.
 
 .. code-block:: text
 
@@ -258,14 +258,14 @@ To capture the bubble adequately, we set ``initial refinement steps = 5`` so tha
 Post-processing: Fluid Barycenter Position and Velocity
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To compare our simulation results to the literature, we extract the position and the velocity of the barycenter of the bubble. This generates a ``vof_barycenter_information.dat`` file which contains the position and the velocity of the barycenter of the bubble.
+To compare our simulation results to the literature, we extract the position and the velocity of the barycenter of the bubble. This generates a ``cls_barycenter_information.dat`` file which contains the position and the velocity of the barycenter of the bubble.
 
 .. code-block:: text
 
     subsection post-processing
       set verbosity            = quiet
       set calculate barycenter = true
-      set barycenter name      = vof_barycenter_information
+      set barycenter name      = cls_barycenter_information
     end
 
 ---------------------------
@@ -360,22 +360,22 @@ The evolution of the position and velocity of the barycenter of the bubble is al
     :align: center
     :width: 500
 
-.. _Interface Regularization Methods Comparison:
+.. _Interface Reinitialization Methods Comparison:
 
 ---------------------------------------------
-Interface Regularization Methods Comparison
+Interface Reinitialization Methods Comparison
 ---------------------------------------------
 
 Parameter Files
 ~~~~~~~~~~~~~~~~
 
-For the methods other than ``projection-based interface sharpening``, the ``.prm`` file is modified as follows. In the ``VOF`` subsection, the ``interface regularization method`` is changed to ``geometric interface reinitialization`` or ``algebraic interface reinitialization``. The associated parameter files, ``rising-bubble-geo.prm`` and ``rising-bubble-alge.prm`` respectively, are available in the example's folder. The subsections are modified according to each regularization method: 
+For the methods other than ``projection-based interface sharpening``, the ``.prm`` file is modified as follows. In the ``CLS`` subsection, the ``interface reinitialization method`` is changed to ``geometric interface reinitialization`` or ``pde-based interface reinitialization``. The associated parameter files, ``rising-bubble-geo.prm`` and ``rising-bubble-alge.prm`` respectively, are available in the example's folder. The subsections are modified according to each reinitialization method: 
 
-* With the geometric method, the phase fraction field is regularized using the signed distance from the interface, as described in :doc:`../../../theory/multiphase/cfd/cls` theory guide. We select the ``tanh`` function to transform the signed distance in a phase fraction field. The ``tanh thickness`` is set to :math:`0.0066` and the ``max reinitialization distance`` parameter is set to :math:`0.0264`.
+* With the geometric method, the phase indicator field is regularized using the signed distance from the interface, as described in :doc:`../../../theory/multiphase/cfd/cls` theory guide. We select the ``tanh`` function to transform the signed distance in a phase indicator field. The ``tanh thickness`` is set to :math:`0.0066` and the ``max reinitialization distance`` parameter is set to :math:`0.0264`.
 
 .. code-block:: text
 
-    subsection interface regularization method
+    subsection interface reinitialization method
       set type       = geometric interface reinitialization
       set frequency  = 20
       set verbosity  = verbose
@@ -391,21 +391,21 @@ For the geometric method, we use a slightly thicker interface and we adapt the i
 .. code-block:: text
 
     subsection initial conditions
-      subsection VOF
+      subsection CLS
         set Function constants  = eps=1.5, hCell=0.0022, center=0.5
         set Function expression = 0.5 - 0.5*tanh((sqrt((x-center)*(x-center)+(y-center)*(y-center))-0.25)/(2*eps*hCell))
       end
     end
 
-* For the algebraic method, an intermediary PDE is solved to compress the interface until reaching a pseudo-steady-state. This PDE is described in :doc:`../../../theory/multiphase/cfd/cls` theory guide. Setting the ``diffusivity multiplier`` to :math:`1` yields good results.
+* For the PDE-based method, an intermediary PDE is solved to compress the interface until reaching a pseudo-steady-state. This PDE is described in :doc:`../../../theory/multiphase/cfd/cls` theory guide. Setting the ``diffusivity multiplier`` to :math:`1` yields good results.
 
 .. code-block:: text
 
-    subsection interface regularization method
-      set type      = algebraic interface reinitialization
+    subsection interface reinitialization method
+      set type      = pde-based interface reinitialization
       set frequency = 20
       set verbosity = verbose
-      subsection algebraic interface reinitialization
+      subsection pde-based interface reinitialization
         set diffusivity multiplier = 1
       end
     end
@@ -414,7 +414,7 @@ For the geometric method, we use a slightly thicker interface and we adapt the i
 Running the Simulations
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-To run the simulations for the geometric and algebraic regularization methods:
+To run the simulations for the geometric and PDE-based reinitialization methods:
 
 .. code-block:: text
   :class: copy-button
@@ -426,7 +426,7 @@ To run the simulations for the geometric and algebraic regularization methods:
 
   mpirun -np 8 lethe-fluid rising-bubble-alge.prm
 
-We are interested in four metrics for this comparison: the barycenter position and velocity, the bubble shape, and the volume conservation. To compare these metrics between the three regularization methods, the python post-processing script ``rising-bubble.py`` is used:
+We are interested in four metrics for this comparison: the barycenter position and velocity, the bubble shape, and the volume conservation. To compare these metrics between the three reinitialization methods, the python post-processing script ``rising-bubble.py`` is used:
 
 .. code-block:: text
   :class: copy-button
@@ -440,7 +440,7 @@ Case 1
 
 * Barycenter Position and Velocity
 
-  The evolution of the height and velocity of the barycenter of the bubble when using either of the three regularization methods appears to be in great agreement with the results obtained by Zahedi *et al.* [#zahedi2012]_ and Hysing *et al.* [#hysing2009]_.
+  The evolution of the height and velocity of the barycenter of the bubble when using either of the three reinitialization methods appears to be in great agreement with the results obtained by Zahedi *et al.* [#zahedi2012]_ and Hysing *et al.* [#hysing2009]_.
 
   .. image:: images/bubble-rise-velocity-case1.png
       :align: center
@@ -452,7 +452,7 @@ Case 1
 
 * Bubble Contour
 
-  For the final shape and dimensions of the bubble, the geometric and algebraic methods seem to reproduce the results from  Zahedi *et al.* [#zahedi2012]_ more accurately than the projection-based method. 
+  For the final shape and dimensions of the bubble, the geometric and PDE-based methods seem to reproduce the results from  Zahedi *et al.* [#zahedi2012]_ more accurately than the projection-based method. 
 
   .. image:: images/proj-bubble-contour-case1.png
       :width: 350
@@ -487,7 +487,7 @@ Case 2
 
 * Barycenter Position and Velocity
 
-  For this case also, the evolution of the height and velocity of the barycenter of the bubble when using either of the three regularization methods appears to be in agreement with the results obtained by the three solvers in the work of Hysing *et al.* [#hysing2009]_.
+  For this case also, the evolution of the height and velocity of the barycenter of the bubble when using either of the three reinitialization methods appears to be in agreement with the results obtained by the three solvers in the work of Hysing *et al.* [#hysing2009]_.
 
   .. image:: images/bubble-rise-velocity-case2.png
       :align: center
@@ -499,7 +499,7 @@ Case 2
 
 * Bubble Contour
 
-  Regarding the final shape and dimensions of the bubble, the geometric and algebraic methods seem to reproduce the results from  Hysing *et al.* [#hysing2009]_ more accurately than the projection-based method. However, the three regularization methods capture the skirt of the bubble differently: the geometric method results in a continuous skirt, while the PDE-based and projection-based methods result in a discontinuous skirt.
+  Regarding the final shape and dimensions of the bubble, the geometric and PDE-based methods seem to reproduce the results from  Hysing *et al.* [#hysing2009]_ more accurately than the projection-based method. However, the three reinitialization methods capture the skirt of the bubble differently: the geometric method results in a continuous skirt, while the PDE-based and projection-based methods result in a discontinuous skirt.
 
   .. image:: images/proj-bubble-contour-case2.png
       :width: 350
@@ -515,7 +515,7 @@ Case 2
 
 * Volume Conservation
 
-  The following images show the evolution of the ratio of the bubble volume over its initial counterpart throughout the simulation, with the global volume shown on the left and the geometric volume, on the right. Overall, the volume variation in this test case is higher than for case 1. For the projection-based and geometric methods, the likely cause of the increase of the volume, and particularly the global volume, is the presence of unresolved filaments that are thin enough to prevent the phase fraction from attaining a value of 1 within them.
+  The following images show the evolution of the ratio of the bubble volume over its initial counterpart throughout the simulation, with the global volume shown on the left and the geometric volume, on the right. Overall, the volume variation in this test case is higher than for case 1. For the projection-based and geometric methods, the likely cause of the increase of the volume, and particularly the global volume, is the presence of unresolved filaments that are thin enough to prevent the phase indicator from attaining a value of 1 within them.
 
   .. image:: images/global-mass-conservation-case2.png
       :width: 350

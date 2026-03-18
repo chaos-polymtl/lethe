@@ -451,7 +451,7 @@
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Solver: <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code></p></li>
-<li><p>Volume of fluid (VOF)</p></li>
+<li><p>Conservative Level-Set (CLS)</p></li>
 <li><p>Unsteady problem handled by an adaptive BDF2 time-stepping scheme</p></li>
 <li><p>Usage of a python script for post-processing data</p></li>
 </ul>
@@ -477,7 +477,7 @@
 <p>Predicting the dynamics of free surface waves is essential for many industrial applications (e.g. transport of liquefied natural gas).
 Yet, simulating their dynamics is difficult, especially for high Reynolds number values.
 Indeed, in this case, the amplitude of the waves dampen very slowly.
-This leads to an oscillatory wave problem which is highly sensitive to the time integration scheme and the coupling between the VOF solver and the Navier-Stokes solver.</p>
+This leads to an oscillatory wave problem which is highly sensitive to the time integration scheme and the coupling between the CLS solver and the Navier-Stokes solver.</p>
 <p>In this problem, we simulate the damping of a small amplitude wave in a rectangular cavity defined from  <span class="math notranslate nohighlight">\((-1,-1)\)</span> to <span class="math notranslate nohighlight">\((1,0.1)\)</span>. The initial height of the wave <span class="math notranslate nohighlight">\(\xi (x)\)</span> is given by:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -520,9 +520,9 @@ end
 </section>
 <section id="multiphysics">
 <h3>Multiphysics<a class="headerlink" href="#multiphysics" title="Link to this heading">#</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">multiphysics</span></code> subsection is used to enable the VOF solver.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">multiphysics</span></code> subsection is used to enable the CLS solver.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection multiphysics
-  set VOF  = true
+  set CLS  = true
 end
 </pre></div>
 </div>
@@ -535,7 +535,7 @@ end
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function expression =  if (y&lt;=(0.01*sin(3.1416*(x+0.5))), min(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,1), max(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,0))
   end
 end
@@ -609,7 +609,7 @@ run in parallel using mpirun. This simulation takes
 <p class="admonition-title">Important</p>
 <p>You need to ensure that the <code class="docutils literal notranslate"><span class="pre">lethe_pyvista_tools</span></code> is working on your machine. Click <a class="reference external" href="../../../tools/postprocessing/postprocessing.html">here</a> for details.</p>
 </div>
-<p>The following table presents a comparison between the analytical results and the simulation results for all Reynolds numbers mentioned above. A very good agreement is obtained for each of them, demonstrating the accuracy of the VOF solver.</p>
+<p>The following table presents a comparison between the analytical results and the simulation results for all Reynolds numbers mentioned above. A very good agreement is obtained for each of them, demonstrating the accuracy of the CLS solver.</p>
 <div class="table-wrapper docutils container">
 <table class="docutils align-center">
 <thead>

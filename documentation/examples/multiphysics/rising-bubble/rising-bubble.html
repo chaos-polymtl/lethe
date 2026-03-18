@@ -445,16 +445,16 @@
         <article role="main">
           <section id="rising-bubble">
 <h1>Rising Bubble<a class="headerlink" href="#rising-bubble" title="Link to this heading">#</a></h1>
-<p>This example simulates a two-dimensional rising bubble <a class="footnote-reference brackets" href="#hysing2009" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>. In the first part, we are interested in two different rising regimes: ellipsoidal and skirted. The second part, <a class="reference internal" href="#interface-regularization-methods-comparison"><span class="std std-ref">Interface Regularization Methods Comparison</span></a>, focuses on the effects of the interface regularization methods on the results.</p>
+<p>This example simulates a two-dimensional rising bubble <a class="footnote-reference brackets" href="#hysing2009" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>. In the first part, we are interested in two different rising regimes: ellipsoidal and skirted. The second part, <a class="reference internal" href="#interface-reinitialization-methods-comparison"><span class="std std-ref">Interface Reinitialization Methods Comparison</span></a>, focuses on the effects of the interface reinitialization methods on the results.</p>
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Solver: <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code></p></li>
-<li><p>Two phase flow handled by the Volume of fluids (VOF) approach with phase filtering, interface regularization, and surface tension force</p></li>
-<li><p>Calculation of filtered phase fraction gradient and curvature fields</p></li>
+<li><p>Two phase flow handled by the Conservative Level-Set (CLS) approach with phase filtering, interface reinitialization, and surface tension force</p></li>
+<li><p>Calculation of filtered phase indicator gradient and curvature fields</p></li>
 <li><p>Unsteady problem handled by an adaptive BDF2 time-stepping scheme</p></li>
 <li><p>Post-processing of a fluid barycentric coordinate and velocity</p></li>
-<li><p>Comparison of interface regularization methods</p></li>
+<li><p>Comparison of interface reinitialization methods</p></li>
 </ul>
 </section>
 <section id="files-used-in-this-example">
@@ -504,9 +504,9 @@ end
 <section id="multiphysics">
 <h3>Multiphysics<a class="headerlink" href="#multiphysics" title="Link to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">multiphysics</span></code> subsection enables to turn on (<code class="docutils literal notranslate"><span class="pre">true</span></code>)
-and off (<code class="docutils literal notranslate"><span class="pre">false</span></code>) the physics of interest. Here <code class="docutils literal notranslate"><span class="pre">VOF</span></code> is chosen.</p>
+and off (<code class="docutils literal notranslate"><span class="pre">false</span></code>) the physics of interest. Here <code class="docutils literal notranslate"><span class="pre">CLS</span></code> is chosen.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection multiphysics
-  set VOF = true
+  set CLS = true
 end
 </pre></div>
 </div>
@@ -522,16 +522,16 @@ end
 </pre></div>
 </div>
 </section>
-<section id="vof">
-<h3>VOF<a class="headerlink" href="#vof" title="Link to this heading">#</a></h3>
-<p>In the <code class="docutils literal notranslate"><span class="pre">VOF</span></code> subsection, two features are enabled : the <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">filtration</span></code> and the <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">force</span></code>.
-The <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">filtration</span></code> method filters the phase field used for the calculation of physical properties by stiffening the value of the phase fraction.  The <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">force</span></code> computation is explained in the <a class="reference internal" href="../static-bubble/static-bubble.html"><span class="doc">Static Bubble</span></a> example.</p>
-<p>Since a straightforward advection of the phase fraction typically leads to significant interface diffusion, an interface regularization method is required.
-This is addressed in the <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">regularization</span> <span class="pre">method</span></code> subsection. Lethe provides three regularization techniques to maintain a sharp interface:  the <code class="docutils literal notranslate"><span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code>, the <code class="docutils literal notranslate"><span class="pre">algebraic</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code>, and the <code class="docutils literal notranslate"><span class="pre">geometric</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code>. The desired method can be selected using the <code class="docutils literal notranslate"><span class="pre">type</span></code> parameter.</p>
-<p>We refer the reader to <a class="reference internal" href="../../../theory/multiphase/cfd/cls.html"><span class="doc">The Conservative Level-Set (CLS) Method</span></a> theory guide for more explanation on phase filtration and the interface regularization methods.</p>
-<p>For the first part of this example, the <code class="docutils literal notranslate"><span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code> method is selected and its parameters are defined in the <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code>. The selection of the parameters for this method is explained in the <a class="reference internal" href="../dam-break/dam-break.html"><span class="doc">Dam-Break</span></a> example. The other regularization methods available are described in the second part of this example (<a class="reference internal" href="#interface-regularization-methods-comparison"><span class="std std-ref">Interface Regularization Methods Comparison</span></a>).</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection VOF
-  subsection interface regularization method
+<section id="cls">
+<h3>CLS<a class="headerlink" href="#cls" title="Link to this heading">#</a></h3>
+<p>In the <code class="docutils literal notranslate"><span class="pre">CLS</span></code> subsection, two features are enabled : the <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">filtration</span></code> and the <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">force</span></code>.
+The <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">filtration</span></code> method filters the phase field used for the calculation of physical properties by stiffening the value of the phase indicator.  The <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">force</span></code> computation is explained in the <a class="reference internal" href="../static-bubble/static-bubble.html"><span class="doc">Static Bubble</span></a> example.</p>
+<p>Since a straightforward advection of the phase indicator typically leads to significant interface diffusion, an interface reinitialization method is required.
+This is addressed in the <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">reinitialization</span> <span class="pre">method</span></code> subsection. Lethe provides three reinitialization techniques to maintain a sharp interface:  the <code class="docutils literal notranslate"><span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code>, the <code class="docutils literal notranslate"><span class="pre">pde-based</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code>, and the <code class="docutils literal notranslate"><span class="pre">geometric</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code>. The desired method can be selected using the <code class="docutils literal notranslate"><span class="pre">type</span></code> parameter.</p>
+<p>We refer the reader to <a class="reference internal" href="../../../theory/multiphase/cfd/cls.html"><span class="doc">The Conservative Level-Set (CLS) Method</span></a> theory guide for more explanation on phase filtration and the interface reinitialization methods.</p>
+<p>For the first part of this example, the <code class="docutils literal notranslate"><span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code> method is selected and its parameters are defined in the <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code>. The selection of the parameters for this method is explained in the <a class="reference internal" href="../dam-break/dam-break.html"><span class="doc">Dam-Break</span></a> example. The other reinitialization methods available are described in the second part of this example (<a class="reference internal" href="#interface-reinitialization-methods-comparison"><span class="std std-ref">Interface Reinitialization Methods Comparison</span></a>).</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection CLS
+  subsection interface reinitialization method
     set type      = projection-based interface sharpening
     set frequency = 20
     set verbosity = verbose
@@ -549,7 +549,7 @@ This is addressed in the <code class="docutils literal notranslate"><span class=
 
   subsection surface tension force
     set enable                                   = true
-    set phase fraction gradient difusion factor  = 4
+    set phase indicator gradient difusion factor  = 4
     set curvature diffusion factor               = 1
     set output auxiliary fields                  = true
   end
@@ -559,16 +559,16 @@ end
 </section>
 <section id="stabilization">
 <h3>Stabilization<a class="headerlink" href="#stabilization" title="Link to this heading">#</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">vof</span> <span class="pre">dcdd</span> <span class="pre">stabilization</span></code> is turned off as it had a negative impact on volume conservation.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">cls</span> <span class="pre">dcdd</span> <span class="pre">stabilization</span></code> is turned off as it had a negative impact on volume conservation.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection stabilization
-  set vof dcdd stabilization = false
+  set cls dcdd stabilization = false
 end
 </pre></div>
 </div>
 </section>
 <section id="initial-conditions">
 <h3>Initial Conditions<a class="headerlink" href="#initial-conditions" title="Link to this heading">#</a></h3>
-<p>In the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">conditions</span></code> subsection, the initial velocity and initial position of the liquid phase are defined. The light phase is initially defined as a circle with a radius <span class="math notranslate nohighlight">\(r= 0.25\)</span> and a center located at <span class="math notranslate nohighlight">\((x_\text{c},y_\text{c})=(0.5, 0.5)\)</span>. To ensure that the initial condition is sufficiently smooth, we define the phase fraction field with the analytical solution of both the PDE and geometric reinitialization methods:</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">conditions</span></code> subsection, the initial velocity and initial position of the liquid phase are defined. The light phase is initially defined as a circle with a radius <span class="math notranslate nohighlight">\(r= 0.25\)</span> and a center located at <span class="math notranslate nohighlight">\((x_\text{c},y_\text{c})=(0.5, 0.5)\)</span>. To ensure that the initial condition is sufficiently smooth, we define the phase indicator field with the analytical solution of both the PDE and geometric reinitialization methods:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\phi = 0.5 - 0.5 \tanh \left[ \frac{d}{2\varepsilon h}\right]\]</div>
@@ -579,7 +579,7 @@ end
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function constants  = eps=1, hCell=0.0022, center=0.5
     set Function expression = 0.5 - 0.5*tanh((sqrt((x-center)*(x-center)+(y-center)*(y-center))-0.25)/(2*eps*hCell))
   end
@@ -589,7 +589,7 @@ end
 </section>
 <section id="physical-properties">
 <h3>Physical Properties<a class="headerlink" href="#physical-properties" title="Link to this heading">#</a></h3>
-<p>We define two fluids simply by setting the number of fluids to be <span class="math notranslate nohighlight">\(2\)</span>. In <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">fluid</span> <span class="pre">0</span></code>, we set the density and the kinematic viscosity for the phase associated with a VOF indicator of <span class="math notranslate nohighlight">\(0\)</span>, depending on the test case. A similar procedure is done for the phase associated with a VOF indicator of <span class="math notranslate nohighlight">\(1\)</span> in <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">fluid</span> <span class="pre">1</span></code>.</p>
+<p>We define two fluids simply by setting the number of fluids to be <span class="math notranslate nohighlight">\(2\)</span>. In <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">fluid</span> <span class="pre">0</span></code>, we set the density and the kinematic viscosity for the phase associated with a CLS indicator of <span class="math notranslate nohighlight">\(0\)</span>, depending on the test case. A similar procedure is done for the phase associated with a CLS indicator of <span class="math notranslate nohighlight">\(1\)</span> in <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">fluid</span> <span class="pre">1</span></code>.</p>
 <p>Then a <code class="docutils literal notranslate"><span class="pre">fluid-fluid</span></code> type of <code class="docutils literal notranslate"><span class="pre">material</span> <span class="pre">interaction</span></code> is added to specify the <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">model</span></code>. In this example, it is set to <code class="docutils literal notranslate"><span class="pre">constant</span></code> with the <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">coefficient</span></code> depending on the test case <a class="footnote-reference brackets" href="#hysing2009" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
 <p>The values in the provided parameter files correspond to case 1. When launching case 2, the density and the kinematic viscosity of <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code> and the <code class="docutils literal notranslate"><span class="pre">surface</span> <span class="pre">tension</span> <span class="pre">coefficient</span></code> for case 1 should be commented to use the ones for case 2 instead.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection physical properties
@@ -642,7 +642,7 @@ end
 <h3>Mesh Adaptation<a class="headerlink" href="#mesh-adaptation" title="Link to this heading">#</a></h3>
 <p>In the <code class="docutils literal notranslate"><span class="pre">mesh</span> <span class="pre">adaptation</span> <span class="pre">subsection</span></code>, adaptive mesh refinement is
 defined for <code class="docutils literal notranslate"><span class="pre">phase</span></code>. <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">refinement</span> <span class="pre">level</span></code> and <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">refinement</span> <span class="pre">level</span></code> are <span class="math notranslate nohighlight">\(6\)</span> and <span class="math notranslate nohighlight">\(9\)</span>, respectively. Since the bubble rises and changes its location, we choose a rather large <code class="docutils literal notranslate"><span class="pre">fraction</span> <span class="pre">refinement</span></code> (<span class="math notranslate nohighlight">\(0.99\)</span>) and moderate <code class="docutils literal notranslate"><span class="pre">fraction</span> <span class="pre">coarsening</span></code> (<span class="math notranslate nohighlight">\(0.01\)</span>).
-To capture the bubble adequately, we set <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">steps</span> <span class="pre">=</span> <span class="pre">5</span></code> so that the initial mesh is adapted to ensure that the initial condition is imposed for the VOF phase with maximal accuracy.</p>
+To capture the bubble adequately, we set <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">steps</span> <span class="pre">=</span> <span class="pre">5</span></code> so that the initial mesh is adapted to ensure that the initial condition is imposed for the CLS phase with maximal accuracy.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh adaptation
   set type                     = adaptive
   set error estimator          = kelly
@@ -660,11 +660,11 @@ end
 </section>
 <section id="post-processing-fluid-barycenter-position-and-velocity">
 <h3>Post-processing: Fluid Barycenter Position and Velocity<a class="headerlink" href="#post-processing-fluid-barycenter-position-and-velocity" title="Link to this heading">#</a></h3>
-<p>To compare our simulation results to the literature, we extract the position and the velocity of the barycenter of the bubble. This generates a <code class="docutils literal notranslate"><span class="pre">vof_barycenter_information.dat</span></code> file which contains the position and the velocity of the barycenter of the bubble.</p>
+<p>To compare our simulation results to the literature, we extract the position and the velocity of the barycenter of the bubble. This generates a <code class="docutils literal notranslate"><span class="pre">cls_barycenter_information.dat</span></code> file which contains the position and the velocity of the barycenter of the bubble.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection post-processing
   set verbosity            = quiet
   set calculate barycenter = true
-  set barycenter name      = vof_barycenter_information
+  set barycenter name      = cls_barycenter_information
 end
 </pre></div>
 </div>
@@ -714,15 +714,15 @@ Run</p>
 <a class="reference internal image-reference" href="../../../_images/proj-bubble-rise-velocity-case2.png"><img alt="bubble_rise_velocity" class="align-center" src="../../../_images/proj-bubble-rise-velocity-case2.png" style="width: 500px;" /></a>
 </section>
 </section>
-<section id="interface-regularization-methods-comparison">
-<span id="id9"></span><h2>Interface Regularization Methods Comparison<a class="headerlink" href="#interface-regularization-methods-comparison" title="Link to this heading">#</a></h2>
+<section id="interface-reinitialization-methods-comparison">
+<span id="id9"></span><h2>Interface Reinitialization Methods Comparison<a class="headerlink" href="#interface-reinitialization-methods-comparison" title="Link to this heading">#</a></h2>
 <section id="parameter-files">
 <h3>Parameter Files<a class="headerlink" href="#parameter-files" title="Link to this heading">#</a></h3>
-<p>For the methods other than <code class="docutils literal notranslate"><span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code>, the <code class="docutils literal notranslate"><span class="pre">.prm</span></code> file is modified as follows. In the <code class="docutils literal notranslate"><span class="pre">VOF</span></code> subsection, the <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">regularization</span> <span class="pre">method</span></code> is changed to <code class="docutils literal notranslate"><span class="pre">geometric</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code> or <code class="docutils literal notranslate"><span class="pre">algebraic</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code>. The associated parameter files, <code class="docutils literal notranslate"><span class="pre">rising-bubble-geo.prm</span></code> and <code class="docutils literal notranslate"><span class="pre">rising-bubble-alge.prm</span></code> respectively, are available in the example’s folder. The subsections are modified according to each regularization method:</p>
+<p>For the methods other than <code class="docutils literal notranslate"><span class="pre">projection-based</span> <span class="pre">interface</span> <span class="pre">sharpening</span></code>, the <code class="docutils literal notranslate"><span class="pre">.prm</span></code> file is modified as follows. In the <code class="docutils literal notranslate"><span class="pre">CLS</span></code> subsection, the <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">reinitialization</span> <span class="pre">method</span></code> is changed to <code class="docutils literal notranslate"><span class="pre">geometric</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code> or <code class="docutils literal notranslate"><span class="pre">pde-based</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code>. The associated parameter files, <code class="docutils literal notranslate"><span class="pre">rising-bubble-geo.prm</span></code> and <code class="docutils literal notranslate"><span class="pre">rising-bubble-alge.prm</span></code> respectively, are available in the example’s folder. The subsections are modified according to each reinitialization method:</p>
 <ul class="simple">
-<li><p>With the geometric method, the phase fraction field is regularized using the signed distance from the interface, as described in <a class="reference internal" href="../../../theory/multiphase/cfd/cls.html"><span class="doc">The Conservative Level-Set (CLS) Method</span></a> theory guide. We select the <code class="docutils literal notranslate"><span class="pre">tanh</span></code> function to transform the signed distance in a phase fraction field. The <code class="docutils literal notranslate"><span class="pre">tanh</span> <span class="pre">thickness</span></code> is set to <span class="math notranslate nohighlight">\(0.0066\)</span> and the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">reinitialization</span> <span class="pre">distance</span></code> parameter is set to <span class="math notranslate nohighlight">\(0.0264\)</span>.</p></li>
+<li><p>With the geometric method, the phase indicator field is regularized using the signed distance from the interface, as described in <a class="reference internal" href="../../../theory/multiphase/cfd/cls.html"><span class="doc">The Conservative Level-Set (CLS) Method</span></a> theory guide. We select the <code class="docutils literal notranslate"><span class="pre">tanh</span></code> function to transform the signed distance in a phase indicator field. The <code class="docutils literal notranslate"><span class="pre">tanh</span> <span class="pre">thickness</span></code> is set to <span class="math notranslate nohighlight">\(0.0066\)</span> and the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">reinitialization</span> <span class="pre">distance</span></code> parameter is set to <span class="math notranslate nohighlight">\(0.0264\)</span>.</p></li>
 </ul>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection interface regularization method
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection interface reinitialization method
   set type       = geometric interface reinitialization
   set frequency  = 20
   set verbosity  = verbose
@@ -736,7 +736,7 @@ end
 </div>
 <p>For the geometric method, we use a slightly thicker interface and we adapt the initial condition accordingly by increasing <span class="math notranslate nohighlight">\(\varepsilon\)</span> from <span class="math notranslate nohighlight">\(1\)</span> to <span class="math notranslate nohighlight">\(1.5\)</span>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection initial conditions
-  subsection VOF
+  subsection CLS
     set Function constants  = eps=1.5, hCell=0.0022, center=0.5
     set Function expression = 0.5 - 0.5*tanh((sqrt((x-center)*(x-center)+(y-center)*(y-center))-0.25)/(2*eps*hCell))
   end
@@ -744,13 +744,13 @@ end
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>For the algebraic method, an intermediary PDE is solved to compress the interface until reaching a pseudo-steady-state. This PDE is described in <a class="reference internal" href="../../../theory/multiphase/cfd/cls.html"><span class="doc">The Conservative Level-Set (CLS) Method</span></a> theory guide. Setting the <code class="docutils literal notranslate"><span class="pre">diffusivity</span> <span class="pre">multiplier</span></code> to <span class="math notranslate nohighlight">\(1\)</span> yields good results.</p></li>
+<li><p>For the PDE-based method, an intermediary PDE is solved to compress the interface until reaching a pseudo-steady-state. This PDE is described in <a class="reference internal" href="../../../theory/multiphase/cfd/cls.html"><span class="doc">The Conservative Level-Set (CLS) Method</span></a> theory guide. Setting the <code class="docutils literal notranslate"><span class="pre">diffusivity</span> <span class="pre">multiplier</span></code> to <span class="math notranslate nohighlight">\(1\)</span> yields good results.</p></li>
 </ul>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection interface regularization method
-  set type      = algebraic interface reinitialization
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection interface reinitialization method
+  set type      = pde-based interface reinitialization
   set frequency = 20
   set verbosity = verbose
-  subsection algebraic interface reinitialization
+  subsection pde-based interface reinitialization
     set diffusivity multiplier = 1
   end
 end
@@ -759,14 +759,14 @@ end
 </section>
 <section id="running-the-simulations">
 <h3>Running the Simulations<a class="headerlink" href="#running-the-simulations" title="Link to this heading">#</a></h3>
-<p>To run the simulations for the geometric and algebraic regularization methods:</p>
+<p>To run the simulations for the geometric and PDE-based reinitialization methods:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>mpirun -np 8 lethe-fluid rising-bubble-geo.prm
 </pre></div>
 </div>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>mpirun -np 8 lethe-fluid rising-bubble-alge.prm
 </pre></div>
 </div>
-<p>We are interested in four metrics for this comparison: the barycenter position and velocity, the bubble shape, and the volume conservation. To compare these metrics between the three regularization methods, the python post-processing script <code class="docutils literal notranslate"><span class="pre">rising-bubble.py</span></code> is used:</p>
+<p>We are interested in four metrics for this comparison: the barycenter position and velocity, the bubble shape, and the volume conservation. To compare these metrics between the three reinitialization methods, the python post-processing script <code class="docutils literal notranslate"><span class="pre">rising-bubble.py</span></code> is used:</p>
 <div class="copy-button highlight-text notranslate"><div class="highlight"><pre><span></span>python3 ./rising-bubble.py -p rising-bubble-proj -g rising-bubble-geo -a rising-bubble-alge -c 1
 </pre></div>
 </div>
@@ -776,12 +776,12 @@ end
 <h3>Case 1<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
 <ul>
 <li><p>Barycenter Position and Velocity</p>
-<p>The evolution of the height and velocity of the barycenter of the bubble when using either of the three regularization methods appears to be in great agreement with the results obtained by Zahedi <em>et al.</em> <a class="footnote-reference brackets" href="#zahedi2012" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> and Hysing <em>et al.</em> <a class="footnote-reference brackets" href="#hysing2009" id="id12" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+<p>The evolution of the height and velocity of the barycenter of the bubble when using either of the three reinitialization methods appears to be in great agreement with the results obtained by Zahedi <em>et al.</em> <a class="footnote-reference brackets" href="#zahedi2012" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> and Hysing <em>et al.</em> <a class="footnote-reference brackets" href="#hysing2009" id="id12" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
 <a class="reference internal image-reference" href="../../../_images/bubble-rise-velocity-case1.png"><img alt="../../../_images/bubble-rise-velocity-case1.png" class="align-center" src="../../../_images/bubble-rise-velocity-case1.png" style="width: 400px;" /></a>
 <a class="reference internal image-reference" href="../../../_images/ymean-t-case1.png"><img alt="../../../_images/ymean-t-case1.png" class="align-center" src="../../../_images/ymean-t-case1.png" style="width: 400px;" /></a>
 </li>
 <li><p>Bubble Contour</p>
-<p>For the final shape and dimensions of the bubble, the geometric and algebraic methods seem to reproduce the results from  Zahedi <em>et al.</em> <a class="footnote-reference brackets" href="#zahedi2012" id="id13" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> more accurately than the projection-based method.</p>
+<p>For the final shape and dimensions of the bubble, the geometric and PDE-based methods seem to reproduce the results from  Zahedi <em>et al.</em> <a class="footnote-reference brackets" href="#zahedi2012" id="id13" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> more accurately than the projection-based method.</p>
 <a class="reference internal image-reference" href="../../../_images/proj-bubble-contour-case1.png"><img alt="../../../_images/proj-bubble-contour-case1.png" src="../../../_images/proj-bubble-contour-case1.png" style="width: 350px;" /></a>
 <a class="reference internal image-reference" href="../../../_images/geo-bubble-contour-case1.png"><img alt="../../../_images/geo-bubble-contour-case1.png" src="../../../_images/geo-bubble-contour-case1.png" style="width: 350px;" /></a>
 <a class="reference internal image-reference" href="../../../_images/alge-bubble-contour-case1.png"><img alt="../../../_images/alge-bubble-contour-case1.png" src="../../../_images/alge-bubble-contour-case1.png" style="width: 350px;" /></a>
@@ -804,19 +804,19 @@ where <span class="math notranslate nohighlight">\(\Omega_1\)</span> represents 
 <h3>Case 2<a class="headerlink" href="#id14" title="Link to this heading">#</a></h3>
 <ul>
 <li><p>Barycenter Position and Velocity</p>
-<p>For this case also, the evolution of the height and velocity of the barycenter of the bubble when using either of the three regularization methods appears to be in agreement with the results obtained by the three solvers in the work of Hysing <em>et al.</em> <a class="footnote-reference brackets" href="#hysing2009" id="id15" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+<p>For this case also, the evolution of the height and velocity of the barycenter of the bubble when using either of the three reinitialization methods appears to be in agreement with the results obtained by the three solvers in the work of Hysing <em>et al.</em> <a class="footnote-reference brackets" href="#hysing2009" id="id15" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
 <a class="reference internal image-reference" href="../../../_images/bubble-rise-velocity-case2.png"><img alt="../../../_images/bubble-rise-velocity-case2.png" class="align-center" src="../../../_images/bubble-rise-velocity-case2.png" style="width: 400px;" /></a>
 <a class="reference internal image-reference" href="../../../_images/ymean-t-case2.png"><img alt="../../../_images/ymean-t-case2.png" class="align-center" src="../../../_images/ymean-t-case2.png" style="width: 400px;" /></a>
 </li>
 <li><p>Bubble Contour</p>
-<p>Regarding the final shape and dimensions of the bubble, the geometric and algebraic methods seem to reproduce the results from  Hysing <em>et al.</em> <a class="footnote-reference brackets" href="#hysing2009" id="id16" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> more accurately than the projection-based method. However, the three regularization methods capture the skirt of the bubble differently: the geometric method results in a continuous skirt, while the PDE-based and projection-based methods result in a discontinuous skirt.</p>
+<p>Regarding the final shape and dimensions of the bubble, the geometric and PDE-based methods seem to reproduce the results from  Hysing <em>et al.</em> <a class="footnote-reference brackets" href="#hysing2009" id="id16" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> more accurately than the projection-based method. However, the three reinitialization methods capture the skirt of the bubble differently: the geometric method results in a continuous skirt, while the PDE-based and projection-based methods result in a discontinuous skirt.</p>
 <a class="reference internal image-reference" href="../../../_images/proj-bubble-contour-case2.png"><img alt="../../../_images/proj-bubble-contour-case2.png" src="../../../_images/proj-bubble-contour-case2.png" style="width: 350px;" /></a>
 <a class="reference internal image-reference" href="../../../_images/geo-bubble-contour-case2.png"><img alt="../../../_images/geo-bubble-contour-case2.png" src="../../../_images/geo-bubble-contour-case2.png" style="width: 350px;" /></a>
 <a class="reference internal image-reference" href="../../../_images/alge-bubble-contour-case2.png"><img alt="../../../_images/alge-bubble-contour-case2.png" src="../../../_images/alge-bubble-contour-case2.png" style="width: 350px;" /></a>
 <a class="reference internal image-reference" href="../../../_images/bubble-contour-case2.png"><img alt="../../../_images/bubble-contour-case2.png" src="../../../_images/bubble-contour-case2.png" style="width: 350px;" /></a>
 </li>
 <li><p>Volume Conservation</p>
-<p>The following images show the evolution of the ratio of the bubble volume over its initial counterpart throughout the simulation, with the global volume shown on the left and the geometric volume, on the right. Overall, the volume variation in this test case is higher than for case 1. For the projection-based and geometric methods, the likely cause of the increase of the volume, and particularly the global volume, is the presence of unresolved filaments that are thin enough to prevent the phase fraction from attaining a value of 1 within them.</p>
+<p>The following images show the evolution of the ratio of the bubble volume over its initial counterpart throughout the simulation, with the global volume shown on the left and the geometric volume, on the right. Overall, the volume variation in this test case is higher than for case 1. For the projection-based and geometric methods, the likely cause of the increase of the volume, and particularly the global volume, is the presence of unresolved filaments that are thin enough to prevent the phase indicator from attaining a value of 1 within them.</p>
 <a class="reference internal image-reference" href="../../../_images/global-mass-conservation-case2.png"><img alt="../../../_images/global-mass-conservation-case2.png" src="../../../_images/global-mass-conservation-case2.png" style="width: 350px;" /></a>
 <a class="reference internal image-reference" href="../../../_images/geo-mass-conservation-case2.png"><img alt="../../../_images/geo-mass-conservation-case2.png" src="../../../_images/geo-mass-conservation-case2.png" style="width: 350px;" /></a>
 </li>
@@ -903,7 +903,7 @@ where <span class="math notranslate nohighlight">\(\Omega_1\)</span> represents 
 <li><a class="reference internal" href="#simulation-control">Simulation Control</a></li>
 <li><a class="reference internal" href="#multiphysics">Multiphysics</a></li>
 <li><a class="reference internal" href="#source-term">Source Term</a></li>
-<li><a class="reference internal" href="#vof">VOF</a></li>
+<li><a class="reference internal" href="#cls">CLS</a></li>
 <li><a class="reference internal" href="#stabilization">Stabilization</a></li>
 <li><a class="reference internal" href="#initial-conditions">Initial Conditions</a></li>
 <li><a class="reference internal" href="#physical-properties">Physical Properties</a></li>
@@ -918,7 +918,7 @@ where <span class="math notranslate nohighlight">\(\Omega_1\)</span> represents 
 <li><a class="reference internal" href="#case-2">Case 2</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#interface-regularization-methods-comparison">Interface Regularization Methods Comparison</a><ul>
+<li><a class="reference internal" href="#interface-reinitialization-methods-comparison">Interface Reinitialization Methods Comparison</a><ul>
 <li><a class="reference internal" href="#parameter-files">Parameter Files</a></li>
 <li><a class="reference internal" href="#running-the-simulations">Running the Simulations</a></li>
 <li><a class="reference internal" href="#id10">Case 1</a></li>

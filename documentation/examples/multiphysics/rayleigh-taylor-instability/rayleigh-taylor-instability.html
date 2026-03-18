@@ -451,7 +451,7 @@
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Solver: <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code></p></li>
-<li><p>Mesh adaptation using phase fraction</p></li>
+<li><p>Mesh adaptation using phase indicator</p></li>
 <li><p>Periodic boundary condition</p></li>
 <li><p>Unsteady problem handled by an adaptive BDF2 time-stepping scheme</p></li>
 <li><p>Monitoring mass conservation</p></li>
@@ -532,9 +532,9 @@ end
 </section>
 <section id="multiphysics">
 <h3>Multiphysics<a class="headerlink" href="#multiphysics" title="Link to this heading">#</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">multiphysics</span></code> subsection enables to turn on (<code class="docutils literal notranslate"><span class="pre">true</span></code>) and off (<code class="docutils literal notranslate"><span class="pre">false</span></code>) the physics of interest. Here <code class="docutils literal notranslate"><span class="pre">VOF</span></code> and <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">dynamics</span></code> are chosen (<code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">dynamics</span></code> is <code class="docutils literal notranslate"><span class="pre">true</span></code> by default).</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">multiphysics</span></code> subsection enables to turn on (<code class="docutils literal notranslate"><span class="pre">true</span></code>) and off (<code class="docutils literal notranslate"><span class="pre">false</span></code>) the physics of interest. Here <code class="docutils literal notranslate"><span class="pre">CLS</span></code> and <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">dynamics</span></code> are chosen (<code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">dynamics</span></code> is <code class="docutils literal notranslate"><span class="pre">true</span></code> by default).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection multiphysics
-  set VOF = true
+  set CLS = true
 end
 </pre></div>
 </div>
@@ -569,13 +569,13 @@ end
 </section>
 <section id="initial-conditions">
 <h3>Initial Conditions<a class="headerlink" href="#initial-conditions" title="Link to this heading">#</a></h3>
-<p>In the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">conditions</span></code> subsection, we need to define the interface between the heavy and light fluids. We define this interface by using a <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">expression</span></code> in the <code class="docutils literal notranslate"><span class="pre">VOF</span></code> subsection of the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">conditions</span></code>. The interface between the two fluids is made smoother with the <a class="reference internal" href="../../../parameters/cfd/initial_conditions.html"><span class="doc">geometric smoother</span></a>  by setting the parameter <code class="docutils literal notranslate"><span class="pre">smoothing</span> <span class="pre">type</span></code> to <code class="docutils literal notranslate"><span class="pre">geometric</span></code>. Essentially, the geometric smoother converts the initial function expression into a signed distance function using the geometric redistanciation algorithm. This defines a smooth initial condition that is coherent with the redistanciation used within the simulation.</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">conditions</span></code> subsection, we need to define the interface between the heavy and light fluids. We define this interface by using a <code class="docutils literal notranslate"><span class="pre">Function</span> <span class="pre">expression</span></code> in the <code class="docutils literal notranslate"><span class="pre">CLS</span></code> subsection of the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">conditions</span></code>. The interface between the two fluids is made smoother with the <a class="reference internal" href="../../../parameters/cfd/initial_conditions.html"><span class="doc">geometric smoother</span></a>  by setting the parameter <code class="docutils literal notranslate"><span class="pre">smoothing</span> <span class="pre">type</span></code> to <code class="docutils literal notranslate"><span class="pre">geometric</span></code>. Essentially, the geometric smoother converts the initial function expression into a signed distance function using the geometric reinitialization algorithm. This defines a smooth initial condition that is coherent with the reinitialization used within the simulation.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection initial conditions
   set type = nodal
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function expression = y - (0.5 + 0.1 * 0.25 * cos(2 *3.1415 * x / 0.25)) + 0.5
     set smoothing type      = geometric
   end
@@ -598,7 +598,7 @@ end
 <section id="mesh-adaptation">
 <h3>Mesh Adaptation<a class="headerlink" href="#mesh-adaptation" title="Link to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">mesh</span> <span class="pre">adaptation</span></code> section controls the dynamic mesh adaptation. Here, we choose <code class="docutils literal notranslate"><span class="pre">phase</span></code> as the <code class="docutils literal notranslate"><span class="pre">refinement</span> <span class="pre">variable</span></code> and <span class="math notranslate nohighlight">\(5\)</span> as the <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">refinement</span> <span class="pre">level</span></code>.
-We set <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">steps</span> <span class="pre">=</span> <span class="pre">4</span></code> to adapt the mesh to the initial value of the VOF field.</p>
+We set <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">steps</span> <span class="pre">=</span> <span class="pre">4</span></code> to adapt the mesh to the initial value of the CLS field.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh adaptation
   set type                     = adaptive
   set error estimator          = kelly
@@ -636,8 +636,8 @@ end
 end
 </pre></div>
 </div>
-<p>For VOF, we specify the periodic boundary conditions on the sides and no-flux boundary conditions on the top and bottom.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions VOF
+<p>For CLS, we specify the periodic boundary conditions on the sides and no-flux boundary conditions on the top and bottom.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions CLS
   set number = 3
   subsection bc 0
     set id   = 0
@@ -657,11 +657,11 @@ end
 </pre></div>
 </div>
 </section>
-<section id="vof">
-<h3>VOF<a class="headerlink" href="#vof" title="Link to this heading">#</a></h3>
-<p>In the <code class="docutils literal notranslate"><span class="pre">VOF</span></code> subsection, we select the <code class="docutils literal notranslate"><span class="pre">geometric</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code> in the <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">regularization</span> <span class="pre">method</span></code> subsection to reconstruct the interface and keep it sharp during the simulation. This approach is currently the most robust method available in Lethe.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection VOF
-  subsection interface regularization method
+<section id="cls">
+<h3>CLS<a class="headerlink" href="#cls" title="Link to this heading">#</a></h3>
+<p>In the <code class="docutils literal notranslate"><span class="pre">CLS</span></code> subsection, we select the <code class="docutils literal notranslate"><span class="pre">geometric</span> <span class="pre">interface</span> <span class="pre">reinitialization</span></code> in the <code class="docutils literal notranslate"><span class="pre">interface</span> <span class="pre">reinitialization</span> <span class="pre">method</span></code> subsection to reconstruct the interface and keep it sharp during the simulation. This approach is currently the most robust method available in Lethe.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection CLS
+  subsection interface reinitialization method
     set type      = geometric interface reinitialization
     set frequency = 20
     set verbosity = verbose
@@ -684,7 +684,7 @@ We refer the reader to the <a class="reference internal" href="../../../paramete
 </section>
 <section id="post-processing">
 <h3>Post-processing<a class="headerlink" href="#post-processing" title="Link to this heading">#</a></h3>
-<p>In the <code class="docutils literal notranslate"><span class="pre">post-processing</span></code> subsection, the output of the area of each fluid is enabled and allows to track to mass conservation throughout the simulation. If the area is conserved in a 2D simulation, then the mass per unit length is too. The mass conservation is tracked both from a geometric perspective and from the volumetric integral of the VOF field.</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">post-processing</span></code> subsection, the output of the area of each fluid is enabled and allows to track to mass conservation throughout the simulation. If the area is conserved in a 2D simulation, then the mass per unit length is too. The mass conservation is tracked both from a geometric perspective and from the volumetric integral of the CLS field.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection post-processing
   set verbosity                   = verbose
   set calculate mass conservation = true
@@ -740,7 +740,7 @@ run in parallel using mpirun. On <span class="math notranslate nohighlight">\(8\
 </tbody>
 </table>
 </div>
-<p>The following figures show the relative area of <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code> throughout the simulation from a geometric perspective and from the volumetric integral of the VOF field. The left figure displays the result for the coarser mesh resolution of the example whereas the right figure shows area conservation for the finer mesh. We see that area conservation is not fully preserved once the interface has been significantly stretched and deformed, but it improves as the mesh is refined.</p>
+<p>The following figures show the relative area of <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code> throughout the simulation from a geometric perspective and from the volumetric integral of the CLS field. The left figure displays the result for the coarser mesh resolution of the example whereas the right figure shows area conservation for the finer mesh. We see that area conservation is not fully preserved once the interface has been significantly stretched and deformed, but it improves as the mesh is refined.</p>
 <div class="table-wrapper docutils container">
 <table class="docutils align-default">
 <tbody>
@@ -839,7 +839,7 @@ run in parallel using mpirun. On <span class="math notranslate nohighlight">\(8\
 <li><a class="reference internal" href="#mesh">Mesh</a></li>
 <li><a class="reference internal" href="#mesh-adaptation">Mesh Adaptation</a></li>
 <li><a class="reference internal" href="#boundary-conditions">Boundary Conditions</a></li>
-<li><a class="reference internal" href="#vof">VOF</a></li>
+<li><a class="reference internal" href="#cls">CLS</a></li>
 <li><a class="reference internal" href="#post-processing">Post-processing</a></li>
 </ul>
 </li>

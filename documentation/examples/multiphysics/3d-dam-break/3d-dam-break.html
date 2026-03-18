@@ -454,8 +454,8 @@
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Solver: <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code> (Q1-Q1)</p></li>
-<li><p>Two phase flow handled by the Volume-of-Fluids (VOF) approach with phase fraction filtration</p></li>
-<li><p>Mesh adaptation using phase fraction</p></li>
+<li><p>Two phase flow handled by the Conservative Level-Set (CLS) approach with phase indicator filtration</p></li>
+<li><p>Mesh adaptation using phase indicator</p></li>
 <li><p>Unsteady problem handled by an adaptive BDF1 time-stepping scheme</p></li>
 <li><p>The use of a python script for post-processing data</p></li>
 </ul>
@@ -552,10 +552,10 @@ end
 <section id="multiphysics">
 <h3>Multiphysics<a class="headerlink" href="#multiphysics" title="Link to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">multiphysics</span></code> subsection enables to turn on <cite>(true)</cite>
-and off <cite>(false)</cite> the physics of interest. Here <code class="docutils literal notranslate"><span class="pre">VOF</span></code> is chosen.
+and off <cite>(false)</cite> the physics of interest. Here <code class="docutils literal notranslate"><span class="pre">CLS</span></code> is chosen.
 Note that the fluid dynamics are solved by default.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection multiphysics
-  set VOF = true
+  set CLS = true
 end
 </pre></div>
 </div>
@@ -583,14 +583,14 @@ end
 </section>
 <section id="initial-conditions">
 <h3>Initial Conditions<a class="headerlink" href="#initial-conditions" title="Link to this heading">#</a></h3>
-<p>In the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">conditions</span></code> subsection, we need to define the interface between the two fluids. We define this interface by using a function expression in the <code class="docutils literal notranslate"><span class="pre">VOF</span></code> subsection of <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">conditions</span></code>. A projection step is applied to ensure a smooth definition of the initial condition.</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">conditions</span></code> subsection, we need to define the interface between the two fluids. We define this interface by using a function expression in the <code class="docutils literal notranslate"><span class="pre">CLS</span></code> subsection of <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">conditions</span></code>. A projection step is applied to ensure a smooth definition of the initial condition.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection initial conditions
   set type = nodal
   subsection uvwp
     set Function expression = 0; 0; 0; 0
   end
 
-  subsection VOF
+  subsection CLS
     set Function expression = if (x&gt;1.992 &amp; z&lt;0.55 &amp; y&gt;=-0.5, 1, 0)
     subsection projection step
       set enable           = true
@@ -612,10 +612,10 @@ end
 </pre></div>
 </div>
 </section>
-<section id="vof">
-<h3>VOF<a class="headerlink" href="#vof" title="Link to this heading">#</a></h3>
-<p>In the <code class="docutils literal notranslate"><span class="pre">VOF</span></code> subsection, we select the <code class="docutils literal notranslate"><span class="pre">tanh</span></code> filter to filter the phase fraction and get a more defined interface. We set the value of beta to 10.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection VOF
+<section id="cls">
+<h3>CLS<a class="headerlink" href="#cls" title="Link to this heading">#</a></h3>
+<p>In the <code class="docutils literal notranslate"><span class="pre">CLS</span></code> subsection, we select the <code class="docutils literal notranslate"><span class="pre">tanh</span></code> filter to filter the phase indicator and get a more defined interface. We set the value of beta to 10.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection CLS
   subsection phase filtration
     set type   = tanh
     set beta   = 10
@@ -761,7 +761,7 @@ end
 <li><a class="reference internal" href="#physical-properties">Physical Properties</a></li>
 <li><a class="reference internal" href="#initial-conditions">Initial Conditions</a></li>
 <li><a class="reference internal" href="#source-term">Source Term</a></li>
-<li><a class="reference internal" href="#vof">VOF</a></li>
+<li><a class="reference internal" href="#cls">CLS</a></li>
 <li><a class="reference internal" href="#mesh">Mesh</a></li>
 <li><a class="reference internal" href="#mesh-adaptation">Mesh Adaptation</a></li>
 </ul>

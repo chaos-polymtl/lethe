@@ -451,7 +451,7 @@
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p>Solver: <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code></p></li>
-<li><p>Volume of fluid (VOF)</p></li>
+<li><p>Conservative Level-Set (CLS)</p></li>
 <li><p>Unsteady problem handled by an adaptive BDF2 time-stepping scheme</p></li>
 <li><p>Bash scripts to write, launch, and postprocess multiple cases</p></li>
 <li><p>Python scripts for postprocessing data</p></li>
@@ -526,9 +526,9 @@ end
 </section>
 <section id="multiphysics">
 <h3>Multiphysics<a class="headerlink" href="#multiphysics" title="Link to this heading">#</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">multiphysics</span></code> subsection is used to enable the VOF solver.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">multiphysics</span></code> subsection is used to enable the CLS solver.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection multiphysics
-  set VOF  = true
+  set CLS  = true
 end
 </pre></div>
 </div>
@@ -571,7 +571,7 @@ end
 </section>
 <section id="mesh-adaptation">
 <h3>Mesh Adaptation<a class="headerlink" href="#mesh-adaptation" title="Link to this heading">#</a></h3>
-<p>In the <code class="docutils literal notranslate"><span class="pre">mesh</span> <span class="pre">adaptation</span></code> subsection, we dynamically adapt the mesh using the <code class="docutils literal notranslate"><span class="pre">phase</span></code> as refinement <code class="docutils literal notranslate"><span class="pre">variable</span></code>. We choose <span class="math notranslate nohighlight">\(5\)</span> as the <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">refinement</span> <span class="pre">level</span></code> and <span class="math notranslate nohighlight">\(8\)</span> as the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">refinement</span> <span class="pre">level</span></code>. We set <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">steps</span> <span class="pre">=</span> <span class="pre">4</span></code> to adapt the mesh to the initial value of the VOF field.</p>
+<p>In the <code class="docutils literal notranslate"><span class="pre">mesh</span> <span class="pre">adaptation</span></code> subsection, we dynamically adapt the mesh using the <code class="docutils literal notranslate"><span class="pre">phase</span></code> as refinement <code class="docutils literal notranslate"><span class="pre">variable</span></code>. We choose <span class="math notranslate nohighlight">\(5\)</span> as the <code class="docutils literal notranslate"><span class="pre">min</span> <span class="pre">refinement</span> <span class="pre">level</span></code> and <span class="math notranslate nohighlight">\(8\)</span> as the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">refinement</span> <span class="pre">level</span></code>. We set <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">steps</span> <span class="pre">=</span> <span class="pre">4</span></code> to adapt the mesh to the initial value of the CLS field.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh adaptation
   set type                     = adaptive
   set error estimator          = kelly
@@ -596,7 +596,7 @@ The uniform jet velocity <span class="math notranslate nohighlight">\((U = 1.569
     set Function constants  = U=1.569
     set Function expression = if(y^2 &lt;= 1.3110e-6, U, 0); 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function expression = if(y^2 &lt;= 1.3110e-6, 1, 0)
     subsection projection step
       set enable = true
@@ -634,10 +634,10 @@ end
 </pre></div>
 </div>
 </section>
-<section id="boundary-conditions-vof">
-<h3>Boundary Conditions VOF<a class="headerlink" href="#boundary-conditions-vof" title="Link to this heading">#</a></h3>
-<p>Lasty, in the <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">conditions</span> <span class="pre">VOF</span></code> subsection we ensure that <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code> is at the inlet. The other boundary conditions are default outlets.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions VOF
+<section id="boundary-conditions-cls">
+<h3>Boundary Conditions CLS<a class="headerlink" href="#boundary-conditions-cls" title="Link to this heading">#</a></h3>
+<p>Lasty, in the <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">conditions</span> <span class="pre">CLS</span></code> subsection we ensure that <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code> is at the inlet. The other boundary conditions are default outlets.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection boundary conditions CLS
   set number = 3
   subsection bc 0
     set id   = 0
@@ -816,7 +816,7 @@ We also observe that none of the other evaluation points match with the work of 
 <li><a class="reference internal" href="#mesh-adaptation">Mesh Adaptation</a></li>
 <li><a class="reference internal" href="#initial-conditions">Initial Conditions</a></li>
 <li><a class="reference internal" href="#boundary-conditions">Boundary Conditions</a></li>
-<li><a class="reference internal" href="#boundary-conditions-vof">Boundary Conditions VOF</a></li>
+<li><a class="reference internal" href="#boundary-conditions-cls">Boundary Conditions CLS</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#running-the-simulation">Running the Simulation</a></li>

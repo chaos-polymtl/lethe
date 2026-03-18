@@ -10,7 +10,7 @@ Features
 --------
 
 - Solver: ``lethe-fluid`` 
-- Mesh adaptation using phase fraction
+- Mesh adaptation using phase indicator
 - Periodic boundary condition
 - Unsteady problem handled by an adaptive BDF2 time-stepping scheme
 - Monitoring mass conservation
@@ -94,12 +94,12 @@ and the max CFL is :math:`0.8`.
 Multiphysics
 ~~~~~~~~~~~~
 
-The ``multiphysics`` subsection enables to turn on (``true``) and off (``false``) the physics of interest. Here ``VOF`` and ``fluid dynamics`` are chosen (``fluid dynamics`` is ``true`` by default).
+The ``multiphysics`` subsection enables to turn on (``true``) and off (``false``) the physics of interest. Here ``CLS`` and ``fluid dynamics`` are chosen (``fluid dynamics`` is ``true`` by default).
 
 .. code-block:: text
 
     subsection multiphysics
-      set VOF = true
+      set CLS = true
     end 
 
 Source Term
@@ -138,7 +138,7 @@ The ``physical properties`` subsection defines the physical properties of the fl
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 
-In the ``initial conditions`` subsection, we need to define the interface between the heavy and light fluids. We define this interface by using a ``Function expression`` in the ``VOF`` subsection of the ``initial conditions``. The interface between the two fluids is made smoother with the :doc:`geometric smoother <../../../parameters/cfd/initial_conditions>`  by setting the parameter ``smoothing type`` to ``geometric``. Essentially, the geometric smoother converts the initial function expression into a signed distance function using the geometric redistanciation algorithm. This defines a smooth initial condition that is coherent with the redistanciation used within the simulation.
+In the ``initial conditions`` subsection, we need to define the interface between the heavy and light fluids. We define this interface by using a ``Function expression`` in the ``CLS`` subsection of the ``initial conditions``. The interface between the two fluids is made smoother with the :doc:`geometric smoother <../../../parameters/cfd/initial_conditions>`  by setting the parameter ``smoothing type`` to ``geometric``. Essentially, the geometric smoother converts the initial function expression into a signed distance function using the geometric reinitialization algorithm. This defines a smooth initial condition that is coherent with the reinitialization used within the simulation.
 
 .. code-block:: text
 
@@ -147,7 +147,7 @@ In the ``initial conditions`` subsection, we need to define the interface betwee
     subsection uvwp
       set Function expression = 0; 0; 0
     end
-    subsection VOF
+    subsection CLS
       set Function expression = y - (0.5 + 0.1 * 0.25 * cos(2 *3.1415 * x / 0.25)) + 0.5
       set smoothing type      = geometric
     end
@@ -171,7 +171,7 @@ Mesh Adaptation
 ~~~~~~~~~~~~~~~
 
 The ``mesh adaptation`` section controls the dynamic mesh adaptation. Here, we choose ``phase`` as the ``refinement variable`` and :math:`5` as the ``min refinement level``.
-We set ``initial refinement steps = 4`` to adapt the mesh to the initial value of the VOF field. 
+We set ``initial refinement steps = 4`` to adapt the mesh to the initial value of the CLS field. 
 
 .. code-block:: text
 
@@ -213,12 +213,12 @@ The boundary conditions applied on the left and right boundaries are ``periodic`
     end
   end
 
-For VOF, we specify the periodic boundary conditions on the sides and no-flux boundary conditions on the top and bottom.
+For CLS, we specify the periodic boundary conditions on the sides and no-flux boundary conditions on the top and bottom.
 
 
 .. code-block:: text
 
-  subsection boundary conditions VOF
+  subsection boundary conditions CLS
     set number = 3
     subsection bc 0
       set id   = 0
@@ -236,15 +236,15 @@ For VOF, we specify the periodic boundary conditions on the sides and no-flux bo
     end
   end
 
-VOF
+CLS
 ~~~
 
-In the ``VOF`` subsection, we select the ``geometric interface reinitialization`` in the ``interface regularization method`` subsection to reconstruct the interface and keep it sharp during the simulation. This approach is currently the most robust method available in Lethe.
+In the ``CLS`` subsection, we select the ``geometric interface reinitialization`` in the ``interface reinitialization method`` subsection to reconstruct the interface and keep it sharp during the simulation. This approach is currently the most robust method available in Lethe.
 
 .. code-block:: text
 
-  subsection VOF
-    subsection interface regularization method
+  subsection CLS
+    subsection interface reinitialization method
       set type      = geometric interface reinitialization
       set frequency = 20
       set verbosity = verbose
@@ -267,7 +267,7 @@ We refer the reader to the :doc:`../../../../parameters/cfd/conservative_level_s
 Post-processing
 ~~~~~~~~~~~~~~~
 
-In the ``post-processing`` subsection, the output of the area of each fluid is enabled and allows to track to mass conservation throughout the simulation. If the area is conserved in a 2D simulation, then the mass per unit length is too. The mass conservation is tracked both from a geometric perspective and from the volumetric integral of the VOF field.
+In the ``post-processing`` subsection, the output of the area of each fluid is enabled and allows to track to mass conservation throughout the simulation. If the area is conserved in a 2D simulation, then the mass per unit length is too. The mass conservation is tracked both from a geometric perspective and from the volumetric integral of the CLS field.
 
 .. code-block:: text
 
@@ -351,7 +351,7 @@ With one higher level of refinement, we can see a similar correspondence between
 |                                                                                       |
 +---------------------------------------------------------------------------------------+
 
-The following figures show the relative area of ``fluid 1`` throughout the simulation from a geometric perspective and from the volumetric integral of the VOF field. The left figure displays the result for the coarser mesh resolution of the example whereas the right figure shows area conservation for the finer mesh. We see that area conservation is not fully preserved once the interface has been significantly stretched and deformed, but it improves as the mesh is refined.
+The following figures show the relative area of ``fluid 1`` throughout the simulation from a geometric perspective and from the volumetric integral of the CLS field. The left figure displays the result for the coarser mesh resolution of the example whereas the right figure shows area conservation for the finer mesh. We see that area conservation is not fully preserved once the interface has been significantly stretched and deformed, but it improves as the mesh is refined.
 
 +--------------------------------------------------------------+--------------------------------------------------------------+
 |  .. image:: images/mass_of_fluid_1.png                       |  .. image:: images/mass_of_fluid_1_ref_max_8_min_6.png       |
