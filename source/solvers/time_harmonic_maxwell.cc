@@ -367,8 +367,8 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
 
   // We normalize the excitation by the electromagnetic scaling factor
   const Tensor<1, dim, std::complex<double>> excitation =
-    this->waveguide_ports_amplitudes[boundary_id_index] /
-    this->electromagnetic_scaling *
+    (this->waveguide_ports_electric_amplitudes[boundary_id_index] /
+     this->electromagnetic_scaling) *
     (cross_product_3d(normal, H_inc) +
      map_H12(surface_admittance * E_inc, normal));
 
@@ -409,7 +409,10 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
   auto        mpi_communicator = this->triangulation->get_mpi_communicator();
   const auto &electromagnetic_parameters =
     this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
-  constexpr double Z_0 = 4 * numbers::PI * 29.9792458; // Void impedance in Ohms
+  constexpr double Z_0 =
+    4 * numbers::PI *
+    29.9792458; // Void impedance in Ohms, the unit conversion of this value is
+                // done when computing the scaling factor.
 
   // Initialize the amplitude, if there are no waveguide inlets, the max of 0
   // and something else that is positive will just be the something else.
@@ -432,7 +435,7 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
       // between the input power provided by the user and the modal power
       // computed from integrating the Poynting vector of the incident wave over
       // the inlet face.
-      this->waveguide_ports_amplitudes = std::vector<double>(
+      this->waveguide_ports_electric_amplitudes = std::vector<double>(
         electromagnetic_parameters.number_of_waveguide_inlets, 0.);
 
       // We need to define a FEFaceValues object to perform the integral of the
@@ -551,14 +554,14 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
           // The power amplitude comes from the non-dimensionalization of power:
           // P = 0.5 * int(ExH*)= E_0 * H_0 * P_modal. So we can isolate the
           // electric field amplitude E_0.
-          this->waveguide_ports_amplitudes[inlets] =
+          this->waveguide_ports_electric_amplitudes[inlets] =
             std::sqrt(waveguide_powers[inlets] * Z_0 /
                       Utilities::MPI::sum(waveguide_modal_powers[inlets],
                                           mpi_communicator));
         }
 
       max_port_electric_amplitude =
-        *std::ranges::max_element(this->waveguide_ports_amplitudes);
+        *std::ranges::max_element(this->waveguide_ports_electric_amplitudes);
     }
 
   // Now we need to define the electromagnetic scaling factor according to the
@@ -566,19 +569,22 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
   if (electromagnetic_parameters.electromagnetic_scaling_type ==
       Parameters::ElectromagneticScalingType::electric_field)
     {
+      // We assume that the electric field amplitude provided by the user is
+      // already scaled by the unit conversion factor, so we can directly use it
+      // as the scaling factor.
       this->electromagnetic_scaling =
-        std::max(electromagnetic_parameters.electric_field_dimensionality *
-                   max_port_electric_amplitude,
-                 electromagnetic_parameters.electric_field_amplitude);
+        electromagnetic_parameters.electric_field_amplitude;
     }
   else if (electromagnetic_parameters.electromagnetic_scaling_type ==
            Parameters::ElectromagneticScalingType::magnetic_field)
     {
+      // We assume that the magnetic field amplitude provided by the user is
+      // already scaled by the unit conversion factor, but the void impedance
+      // needs to be rescaled from the dimensionality.
       this->electromagnetic_scaling =
-        Z_0 *
-        std::max(electromagnetic_parameters.magnetic_field_dimensionality *
-                   max_port_electric_amplitude / Z_0,
-                 electromagnetic_parameters.magnetic_field_amplitude);
+        (Z_0 * electromagnetic_parameters.electric_field_dimensionality /
+         electromagnetic_parameters.magnetic_field_dimensionality) *
+        electromagnetic_parameters.magnetic_field_amplitude;
     }
   else if (electromagnetic_parameters.electromagnetic_scaling_type ==
            Parameters::ElectromagneticScalingType::power)
@@ -624,7 +630,10 @@ TimeHarmonicMaxwell<dim>::scale_solution_components(
 
   constexpr double Z_0            = 4 * numbers::PI * 29.9792458;
   const double     electric_scale = this->electromagnetic_scaling;
-  const double     magnetic_scale = this->electromagnetic_scaling / Z_0;
+  const double     magnetic_scale =
+    this->electromagnetic_scaling *
+    time_harmonic_maxwell_parameters.magnetic_field_dimensionality /
+    (Z_0 * time_harmonic_maxwell_parameters.electric_field_dimensionality);
 
   const IndexSet   &locally_owned_dofs = solution.locally_owned_elements();
   std::vector<bool> dof_scaled(locally_owned_dofs.n_elements(), false);
