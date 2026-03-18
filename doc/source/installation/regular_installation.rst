@@ -202,7 +202,7 @@ This will install lethe to the installation folder you provided in the previous 
 .. code-block:: text
   :class: copy-button
 
-  export PATH=$PATH:/home/username/path/to/installation/bin:
+  export PATH=$PATH:/home/username/path/to/installation/bin
 
 to add the Lethe executables to your path.
 
