@@ -11,7 +11,7 @@ Features
 
 - Solver: ``lethe-fluid`` 
 - Two phase flow handled by the Conservative Level-Set (CLS) approach with phase filtering, interface regularization, and surface tension force
-- Calculation of filtered phase fraction gradient and curvature fields
+- Calculation of filtered phase indicator gradient and curvature fields
 - Unsteady problem handled by an adaptive BDF2 time-stepping scheme 
 - Post-processing of a fluid barycentric coordinate and velocity
 - Comparison of interface regularization methods
@@ -103,9 +103,9 @@ CLS
 ~~~
 
 In the ``CLS`` subsection, two features are enabled : the ``phase filtration`` and the ``surface tension force``. 
-The ``phase filtration`` method filters the phase field used for the calculation of physical properties by stiffening the value of the phase fraction.  The ``surface tension force`` computation is explained in the :doc:`../static-bubble/static-bubble` example.
+The ``phase filtration`` method filters the phase field used for the calculation of physical properties by stiffening the value of the phase indicator.  The ``surface tension force`` computation is explained in the :doc:`../static-bubble/static-bubble` example.
 
-Since a straightforward advection of the phase fraction typically leads to significant interface diffusion, an interface regularization method is required. 
+Since a straightforward advection of the phase indicator typically leads to significant interface diffusion, an interface regularization method is required. 
 This is addressed in the ``interface regularization method`` subsection. Lethe provides three regularization techniques to maintain a sharp interface:  the ``projection-based interface sharpening``, the ``algebraic interface reinitialization``, and the ``geometric interface reinitialization``. The desired method can be selected using the ``type`` parameter.
 
 We refer the reader to :doc:`../../../theory/multiphase/cfd/cls` theory guide for more explanation on phase filtration and the interface regularization methods.
@@ -134,7 +134,7 @@ For the first part of this example, the ``projection-based interface sharpening`
 
     subsection surface tension force
       set enable                                   = true
-      set phase fraction gradient difusion factor  = 4
+      set phase indicator gradient difusion factor  = 4
       set curvature diffusion factor               = 1
       set output auxiliary fields                  = true
     end
@@ -154,7 +154,7 @@ The ``cls dcdd stabilization`` is turned off as it had a negative impact on volu
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 
-In the ``initial conditions`` subsection, the initial velocity and initial position of the liquid phase are defined. The light phase is initially defined as a circle with a radius :math:`r= 0.25` and a center located at :math:`(x_\text{c},y_\text{c})=(0.5, 0.5)`. To ensure that the initial condition is sufficiently smooth, we define the phase fraction field with the analytical solution of both the PDE and geometric reinitialization methods:
+In the ``initial conditions`` subsection, the initial velocity and initial position of the liquid phase are defined. The light phase is initially defined as a circle with a radius :math:`r= 0.25` and a center located at :math:`(x_\text{c},y_\text{c})=(0.5, 0.5)`. To ensure that the initial condition is sufficiently smooth, we define the phase indicator field with the analytical solution of both the PDE and geometric reinitialization methods:
 
 .. math::
 
@@ -371,7 +371,7 @@ Parameter Files
 
 For the methods other than ``projection-based interface sharpening``, the ``.prm`` file is modified as follows. In the ``CLS`` subsection, the ``interface regularization method`` is changed to ``geometric interface reinitialization`` or ``algebraic interface reinitialization``. The associated parameter files, ``rising-bubble-geo.prm`` and ``rising-bubble-alge.prm`` respectively, are available in the example's folder. The subsections are modified according to each regularization method: 
 
-* With the geometric method, the phase fraction field is regularized using the signed distance from the interface, as described in :doc:`../../../theory/multiphase/cfd/cls` theory guide. We select the ``tanh`` function to transform the signed distance in a phase fraction field. The ``tanh thickness`` is set to :math:`0.0066` and the ``max reinitialization distance`` parameter is set to :math:`0.0264`.
+* With the geometric method, the phase indicator field is regularized using the signed distance from the interface, as described in :doc:`../../../theory/multiphase/cfd/cls` theory guide. We select the ``tanh`` function to transform the signed distance in a phase indicator field. The ``tanh thickness`` is set to :math:`0.0066` and the ``max reinitialization distance`` parameter is set to :math:`0.0264`.
 
 .. code-block:: text
 
@@ -515,7 +515,7 @@ Case 2
 
 * Volume Conservation
 
-  The following images show the evolution of the ratio of the bubble volume over its initial counterpart throughout the simulation, with the global volume shown on the left and the geometric volume, on the right. Overall, the volume variation in this test case is higher than for case 1. For the projection-based and geometric methods, the likely cause of the increase of the volume, and particularly the global volume, is the presence of unresolved filaments that are thin enough to prevent the phase fraction from attaining a value of 1 within them.
+  The following images show the evolution of the ratio of the bubble volume over its initial counterpart throughout the simulation, with the global volume shown on the left and the geometric volume, on the right. Overall, the volume variation in this test case is higher than for case 1. For the projection-based and geometric methods, the likely cause of the increase of the volume, and particularly the global volume, is the presence of unresolved filaments that are thin enough to prevent the phase indicator from attaining a value of 1 within them.
 
   .. image:: images/global-mass-conservation-case2.png
       :width: 350

@@ -184,7 +184,7 @@ In the ``source term`` subsection, we define the gravitational acceleration.
 CLS
 ~~~
 
-In the ``CLS`` subsection, we select the ``tanh`` filter to filter the phase fraction and get a more defined interface. We set the value of beta to 10.
+In the ``CLS`` subsection, we select the ``tanh`` filter to filter the phase indicator and get a more defined interface. We set the value of beta to 10.
 
 .. code-block:: text
 

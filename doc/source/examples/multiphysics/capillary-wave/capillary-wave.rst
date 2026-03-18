@@ -82,7 +82,7 @@ and the angular frequency simply becomes:
 .. math::
  \omega_\sigma = \sqrt{\frac{\sigma}{\hat{\rho}} \left(\frac{2\pi}{\lambda_\sigma}\right)^3}
 
-Since, the phase fraction (:math:`\phi`) is treated explicitly, the temporal resolution of the capillary wave leads to a Courant-Friedrichs-Lewy (CFL) condition, also known as the *capillary time-step constraint*:
+Since, the phase indicator (:math:`\phi`) is treated explicitly, the temporal resolution of the capillary wave leads to a Courant-Friedrichs-Lewy (CFL) condition, also known as the *capillary time-step constraint*:
 
 .. math::
   \Delta t_\sigma = \frac{\Delta x}{\sqrt{2} c_\sigma} = \sqrt{\frac{\hat{\rho}}{2\pi\sigma}{{\Delta x}^3}}

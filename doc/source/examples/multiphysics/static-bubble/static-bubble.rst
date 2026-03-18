@@ -11,7 +11,7 @@ Features
 
 - Solver: ``lethe-fluid``
 - Two phase flow handled by the Volume of fluids (CLS) approach with surface tension force
-- Calculation of filtered phase fraction gradient and curvature fields
+- Calculation of filtered phase indicator gradient and curvature fields
 - Unsteady problem handled by a BDF1 time-stepping scheme
 
 
@@ -125,14 +125,14 @@ defined as a circle with a radius :math:`R= 0.5` in the center of the computatio
 CLS
 ~~~
 
-The surface tension force computation is enabled in the ``CLS`` subsection. The value of the diffusion factors :math:`\alpha` and :math:`\beta` described in section :ref:`Normal and curvature computations` are controlled respectively by the parameters ``phase fraction gradient diffusion factor`` and ``curvature diffusion factor``. Finally, the parameter ``output auxiliary fields`` set at ``true`` enables the output of the filtered phase fraction gradient and filtered curvature fields.
+The surface tension force computation is enabled in the ``CLS`` subsection. The value of the diffusion factors :math:`\alpha` and :math:`\beta` described in section :ref:`Normal and curvature computations` are controlled respectively by the parameters ``phase indicator gradient diffusion factor`` and ``curvature diffusion factor``. Finally, the parameter ``output auxiliary fields`` set at ``true`` enables the output of the filtered phase indicator gradient and filtered curvature fields.
 
 .. code-block:: text
 
     subsection CLS
       subsection surface tension force
         set enable                                   = true
-        set phase fraction gradient diffusion factor = 4
+        set phase indicator gradient diffusion factor = 4
         set curvature diffusion factor               = 1
         set output auxiliary fields                  = true
       end
@@ -140,12 +140,12 @@ The surface tension force computation is enabled in the ``CLS`` subsection. The 
 
 .. tip::
 
-  The phase fraction gradient diffusion value :math:`\left(\eta_n = \alpha h^2\right)` and curvature diffusion value :math:`\left(\eta_\kappa = \beta h^2\right)` must be small values larger than 0. We recommend the following procedure to choose a proper value for these parameters:
+  The phase indicator gradient diffusion value :math:`\left(\eta_n = \alpha h^2\right)` and curvature diffusion value :math:`\left(\eta_\kappa = \beta h^2\right)` must be small values larger than 0. We recommend the following procedure to choose a proper value for these parameters:
 
-  1. Enable ``output auxiliary fields`` to write filtered phase fraction gradient and filtered curvature fields.
+  1. Enable ``output auxiliary fields`` to write filtered phase indicator gradient and filtered curvature fields.
   2. Choose a value close to 1, for example, the default values  :math:`\alpha = 4` and :math:`\beta = 1`.
-  3. Run the simulation and check whether the filtered phase fraction gradient and filtered curvature fields are smooth and without oscillation.
-  4. If the filtered phase fraction gradient and filtered curvature fields show oscillations, increase the value :math:`\alpha` and :math:`\beta` to larger values, and repeat this process until reaching smooth filtered phase fraction gradient and filtered curvature fields without oscillations. Generally, the default values should be sufficient.
+  3. Run the simulation and check whether the filtered phase indicator gradient and filtered curvature fields are smooth and without oscillation.
+  4. If the filtered phase indicator gradient and filtered curvature fields show oscillations, increase the value :math:`\alpha` and :math:`\beta` to larger values, and repeat this process until reaching smooth filtered phase indicator gradient and filtered curvature fields without oscillations. Generally, the default values should be sufficient.
 
 
 Physical Properties

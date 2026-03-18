@@ -459,7 +459,7 @@ We call ``lethe-fluid`` to launch the simulation by invoking the following comma
 Results
 -------
 
-The following video shows on the left the temperature evolution in the metal, and on the right, the phase fraction evolution. We observe the melt pool, delimited by the black line, deepening and the formation of the vapor depression at the liquid-gas interface. This is often referred as a keyhole. It is caused by the recoil pressure, resulting from the fast out of equilibrium evaporation, and the Marangoni effect, driving melt always from the melt pool center.
+The following video shows on the left the temperature evolution in the metal, and on the right, the phase indicator evolution. We observe the melt pool, delimited by the black line, deepening and the formation of the vapor depression at the liquid-gas interface. This is often referred as a keyhole. It is caused by the recoil pressure, resulting from the fast out of equilibrium evaporation, and the Marangoni effect, driving melt always from the melt pool center.
 .. raw:: html
 
     <iframe width="700" height="394" src="https://www.youtube.com/embed/1L66uYqNbXQ" title="Static irradiation of the Ti6Al4V bare plate" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>

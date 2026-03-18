@@ -10,7 +10,7 @@ Features
 --------
 
 - Solver: ``lethe-fluid`` 
-- Mesh adaptation using phase fraction
+- Mesh adaptation using phase indicator
 - Periodic boundary condition
 - Unsteady problem handled by an adaptive BDF2 time-stepping scheme
 - Monitoring mass conservation

@@ -91,7 +91,7 @@ CLS
 
 In the ``CLS`` subsection, the ``compressible`` and the ``phase filtration`` features are enabled.
 The enabled ``compressible`` parameter allows interface compression by adding the term :math:`\phi (\nabla \cdot \mathbf{u})` to the CLS equation.
-The ``phase filtration`` filters the phase field used for the calculation of physical properties by stiffening the value of the phase fraction.
+The ``phase filtration`` filters the phase field used for the calculation of physical properties by stiffening the value of the phase indicator.
 We refer the reader to :doc:`../../../../theory/multiphase/cfd/cls` theory guide for further explanation on ``phase filtration``.
 The ``projection-based interface sharpening`` method is selected as the ``interface regularization method`` and its parameters, defined in the ``subsection projection-based interface sharpening``, are explained in the :doc:`../dam-break/dam-break` example.
 
@@ -134,8 +134,8 @@ An initial velocity field is used to avoid discontinuities in the solution.
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-On all four sides of the domain, water which is associated with the phase fraction :math:`\phi=1` is injected.
-This is done in the simulation by setting the velocities of the fluid in the ``boundary conditions`` subsection and by selecting the correct fluid in the ``boundary conditions CLS`` subsection using ``dirichlet`` boundary conditions on the phase fraction as shown below.
+On all four sides of the domain, water which is associated with the phase indicator :math:`\phi=1` is injected.
+This is done in the simulation by setting the velocities of the fluid in the ``boundary conditions`` subsection and by selecting the correct fluid in the ``boundary conditions CLS`` subsection using ``dirichlet`` boundary conditions on the phase indicator as shown below.
 
 Boundary Conditions - Fluid Dynamics
 ************************************
