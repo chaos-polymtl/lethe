@@ -15,7 +15,7 @@ Features
 --------
 
 - Solver: ``lethe-fluid`` 
-- Volume of fluid (VOF) and Heat Transfer (HT)
+- Conservative Level-Set (CLS) and Heat Transfer (HT)
 - Unsteady problem with phase change handled by an adaptive BDF1 time-stepping scheme
 
 ****
@@ -63,7 +63,7 @@ The dimensions (:math:`H, \Delta h`, and :math:`L`) and the Dirichlet boundary c
 | :math:`L`                 | :math:`600\;\mu\text{m}`  | :math:`T_{\text{0}}`       | :math:`298\;\text{K}`       |
 +---------------------------+---------------------------+----------------------------+-----------------------------+
 
-There are three phases involved in this simulation: solid and liquid Ti6Al4V, and Argon. The metal-gas interface is handled by the VOF solver, while the solid-liquid interface is obtained from the temperature field of the HT solver. Hence, this example models a two-fluid problem: ``fluid 0`` corresponds to the Argon phase and ``fluid 1`` is the metal (solid and liquid), for which the solid part corresponds to a infinitely viscous fluid. 
+There are three phases involved in this simulation: solid and liquid Ti6Al4V, and Argon. The metal-gas interface is handled by the CLS solver, while the solid-liquid interface is obtained from the temperature field of the HT solver. Hence, this example models a two-fluid problem: ``fluid 0`` corresponds to the Argon phase and ``fluid 1`` is the metal (solid and liquid), for which the solid part corresponds to a infinitely viscous fluid. 
 
 .. note::
   To improve the performance of the solvers, all dimensional quantities in this example are based on the SI system except for the reference length, which is taken as :math:`1\;\text{mm}`. This scaling helps the matrices to have better conditioning, as explained for the pressure scaling in the :doc:`stabilization subsection <../../../parameters/cfd/stabilization>`.
@@ -94,12 +94,12 @@ The time integration is handled by a first order backward differentiation scheme
 Multiphysics
 ~~~~~~~~~~~~
 
-In the ``multiphysics`` subsection, we enable both the VOF and HT solvers.
+In the ``multiphysics`` subsection, we enable both the CLS and HT solvers.
 
 .. code-block:: text
 
     subsection multiphysics
-      set VOF           = true
+      set CLS           = true
       set heat transfer = true
     end
     
@@ -150,7 +150,7 @@ As the laser heats the metal-gas interface, a vapor depression forms and deepens
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-In the ``boundary conditions`` subsection, we set the boundary conditions described in the figure above for the NS, HT, and VOF solvers. The following ``subsection boundary conditions`` sets the NS boundary conditions:
+In the ``boundary conditions`` subsection, we set the boundary conditions described in the figure above for the NS, HT, and CLS solvers. The following ``subsection boundary conditions`` sets the NS boundary conditions:
 
 .. code-block:: text
 
@@ -245,7 +245,7 @@ In ``subsection boundary conditions heat transfer``, we set the boundary conditi
 
   Here, the ``id`` corresponds to the second column and we identify the corresponding boundary in the domain with the description given in the third column.
     
-For the sake of brevity, we leave out the ``subsection boundary conditions VOF`` because they all corresponds to no flux boundary conditions (``none``). However, in the example's parameter file, all boundary conditions are defined.  
+For the sake of brevity, we leave out the ``subsection boundary conditions CLS`` because they all corresponds to no flux boundary conditions (``none``). However, in the example's parameter file, all boundary conditions are defined.  
 
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
@@ -254,7 +254,7 @@ In the ``initial conditions`` subsection, we set the initial condition for all t
 
 - NS intial conditions are :math:`0.0` for both velocity components and for the pressure
 - HT intial condition corresponds to a uniform temperature :math:`T_\text{0} = 298\;\text{K}`
-- VOF intial condition allows us to described the metal and gas phases. The bottom part of the domain (:math:`y<430\;\mu\text{m}`) corresponds to the Ti6Al4V metal phase (``fluid 1``), while Argon (``fluid 0``) fills the top part.
+- CLS intial condition allows us to described the metal and gas phases. The bottom part of the domain (:math:`y<430\;\mu\text{m}`) corresponds to the Ti6Al4V metal phase (``fluid 1``), while Argon (``fluid 0``) fills the top part.
 
 .. code-block:: text
 
@@ -266,7 +266,7 @@ In the ``initial conditions`` subsection, we set the initial condition for all t
       subsection temperature
         set Function expression = 298
       end
-      subsection VOF
+      subsection CLS
         set Function expression = if (y<0.43 , 1, 0)
       end
     end
@@ -329,13 +329,13 @@ We also set in this subsection the reference surface tension coefficient of the 
 Laser parameters
 ~~~~~~~~~~~~~~~~
 
-We defined the laser heat source in the ``laser parameters`` subsection. In the present example, we are considering the irradiation of a bare plate. Thus, the laser only heats the metal-gas interface and we model this surface heat flux using the ``gaussian_heat_flux_vof_interface`` laser model. We refer to the parameter guide :doc:`../../../../parameters/cfd/laser_heat_source` for more details on this model.
+We defined the laser heat source in the ``laser parameters`` subsection. In the present example, we are considering the irradiation of a bare plate. Thus, the laser only heats the metal-gas interface and we model this surface heat flux using the ``gaussian_heat_flux_cls_interface`` laser model. We refer to the parameter guide :doc:`../../../../parameters/cfd/laser_heat_source` for more details on this model.
 
 .. code-block:: text
 
     subsection laser parameters
       set enable           = true
-      set type             = gaussian_heat_flux_vof_interface
+      set type             = gaussian_heat_flux_cls_interface
       set power            = 156e6
       set absorptivity     = 0.35
       set beam radius      = 0.07
@@ -347,7 +347,7 @@ We defined the laser heat source in the ``laser parameters`` subsection. In the 
       end
     end
 
-The laser is static in the middle of the domain at the metal-gas interface :math:`\vec{x} = [0.3, 0.43]`, hence its ``path`` is independent of the time. Note that the :math:`y` component of the ``path`` is not relevant: the ``gaussian_heat_flux_vof_interface`` model applies the laser heat flux at the metal-gas interface no matter its position along the :math:`y` axis. This allows us to model the effect of the interface deformation on the surface heat flux.
+The laser is static in the middle of the domain at the metal-gas interface :math:`\vec{x} = [0.3, 0.43]`, hence its ``path`` is independent of the time. Note that the :math:`y` component of the ``path`` is not relevant: the ``gaussian_heat_flux_cls_interface`` model applies the laser heat flux at the metal-gas interface no matter its position along the :math:`y` axis. This allows us to model the effect of the interface deformation on the surface heat flux.
 
 Evaporation
 ~~~~~~~~~~~
@@ -409,7 +409,7 @@ The parameters for the non-linear system resolution of the three physiscs are se
         set max iterations = 20
         set verbosity      = verbose
       end
-      subsection VOF
+      subsection CLS
         set tolerance      = 1e-4
         set max iterations = 20
         set verbosity      = verbose
@@ -459,7 +459,7 @@ We call ``lethe-fluid`` to launch the simulation by invoking the following comma
 Results
 -------
 
-The following video shows on the left the temperature evolution in the metal, and on the right, the phase fraction evolution. We observe the melt pool, delimited by the black line, deepening and the formation of the vapor depression at the liquid-gas interface. This is often referred as a keyhole. It is caused by the recoil pressure, resulting from the fast out of equilibrium evaporation, and the Marangoni effect, driving melt always from the melt pool center.
+The following video shows on the left the temperature evolution in the metal, and on the right, the phase indicator evolution. We observe the melt pool, delimited by the black line, deepening and the formation of the vapor depression at the liquid-gas interface. This is often referred as a keyhole. It is caused by the recoil pressure, resulting from the fast out of equilibrium evaporation, and the Marangoni effect, driving melt always from the melt pool center.
 .. raw:: html
 
     <iframe width="700" height="394" src="https://www.youtube.com/embed/1L66uYqNbXQ" title="Static irradiation of the Ti6Al4V bare plate" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
