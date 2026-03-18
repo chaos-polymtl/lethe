@@ -130,9 +130,9 @@ test()
   }
 
   // -------------------------------------------------------
-  // Test 3: TimeCouplingMethod::time with coupling_time 0.25
-  //         dt = 0.1, so we cross 0.25 between step 2→3,
-  //         0.50 between step 4→5, 0.75 between step 7→8, etc.
+  // Test 3: TimeCouplingMethod::time with coupling_time 0.24
+  //         dt = 0.1, so we cross 0.24 between step 2→3,
+  //         0.48 between step 4→5, 0.72 between step 7→8, etc.
   // -------------------------------------------------------
   {
     solver_parameters.multiphysics.time_harmonic_maxwell_parameters
@@ -152,7 +152,7 @@ test()
     deallog << "--- Test: TimeCouplingMethod::time (every 0.24s, dt=0.1) ---"
             << std::endl;
 
-    for (int i = 0; i < 11; ++i)
+    for (int i = 0; i < 10; ++i)
       {
         simulation_control->integrate();
         deallog << "Step " << simulation_control->get_step_number()

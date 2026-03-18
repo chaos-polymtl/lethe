@@ -542,15 +542,15 @@ public:
   /**
    * Scratch component for the time-harmonic Maxwell auxiliary physics
    */
-  bool                             gather_time_harmonic_maxwell;
-  const FEValuesExtractors::Vector extractor_E_real;
-  const FEValuesExtractors::Vector extractor_E_imag;
-  const FEValuesExtractors::Vector extractor_H_real;
-  const FEValuesExtractors::Vector extractor_H_imag;
-  std::vector<Tensor<1, dim>>      electric_field_real_values;
-  std::vector<Tensor<1, dim>>      electric_field_imag_values;
-  std::vector<Tensor<1, dim>>      magnetic_field_real_values;
-  std::vector<Tensor<1, dim>>      magnetic_field_imag_values;
+  bool                        gather_time_harmonic_maxwell;
+  FEValuesExtractors::Vector  extractor_E_real;
+  FEValuesExtractors::Vector  extractor_E_imag;
+  FEValuesExtractors::Vector  extractor_H_real;
+  FEValuesExtractors::Vector  extractor_H_imag;
+  std::vector<Tensor<1, dim>> electric_field_real_values;
+  std::vector<Tensor<1, dim>> electric_field_imag_values;
+  std::vector<Tensor<1, dim>> magnetic_field_real_values;
+  std::vector<Tensor<1, dim>> magnetic_field_imag_values;
 
   // Stored as shared_ptr because only instantiated when EM is active
   std::shared_ptr<FEValues<dim>> fe_values_time_harmonic_maxwell;

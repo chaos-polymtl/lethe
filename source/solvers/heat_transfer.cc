@@ -449,16 +449,15 @@ HeatTransfer<dim>::assemble_system_matrix()
 
   if (this->simulation_parameters.multiphysics.electromagnetics)
     {
-      // Check if the time-harmonic Maxwell physics solution is scaling type is
+      // Check if the time-harmonic Maxwell physics solution scaling type is
       // not <none>, since the solution needs to not be dimensionless for the
       // heat transfer physics to be able to use it.
-      AssertThrow(this->simulation_parameters.multiphysics
-                      .time_harmonic_maxwell_parameters
-                      .electromagnetic_solution_scaling !=
-                    Parameters::ElectromagneticScalingTyper::none,
-                  ExcMessage(
-                    "Time-harmonic Maxwell solution scaling is none, but heat "
-                    "transfer physics requires a non-dimensionless solution."));
+      AssertThrow(
+        this->simulation_parameters.multiphysics
+            .time_harmonic_maxwell_parameters.electromagnetic_scaling_type !=
+          Parameters::ElectromagneticScalingType::none,
+        ExcMessage("Time-harmonic Maxwell solution scaling is none, but heat "
+                   "transfer physics requires a non-dimensionless solution."));
 
       const DoFHandler<dim> &dof_handler_thm =
         this->multiphysics->get_dof_handler(PhysicsID::electromagnetics);

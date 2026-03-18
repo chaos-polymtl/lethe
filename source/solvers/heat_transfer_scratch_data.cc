@@ -164,10 +164,10 @@ HeatTransferScratchData<dim>::enable_time_harmonic_maxwell(
   this->electric_permittivity_imag = std::vector<double>(this->n_q_points);
 
   // Define extractors for the time-harmonic Maxwell fields
-  this->electric_field_real_extractor = FEValuesExtractors::Vector(0);
-  this->electric_field_imag_extractor = FEValuesExtractors::Vector(dim);
-  this->magnetic_field_real_extractor = FEValuesExtractors::Vector(2 * dim);
-  this->magnetic_field_imag_extractor = FEValuesExtractors::Vector(3 * dim);
+  this->extractor_E_real = FEValuesExtractors::Vector(0);
+  this->extractor_E_imag = FEValuesExtractors::Vector(dim);
+  this->extractor_H_real = FEValuesExtractors::Vector(2 * dim);
+  this->extractor_H_imag = FEValuesExtractors::Vector(3 * dim);
 }
 
 template <int dim>
