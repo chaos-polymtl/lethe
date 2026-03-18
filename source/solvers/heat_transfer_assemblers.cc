@@ -1552,10 +1552,6 @@ HeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell<dim>::assemble_rhs(
   const HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData          &copy_data)
 {
-  // Define electromagnetic constants that are only useful here.
-  constexpr vacuum_permittivity = 8.854187817e-12;
-  constexpr vacuum_permeability = 4 * numbers::PI * 1e-7;
-
   // Loop and quadrature informations
   const unsigned int n_q_points = scratch_data.n_q_points;
   const unsigned int n_dofs     = scratch_data.n_dofs;
@@ -1590,12 +1586,12 @@ HeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell<dim>::assemble_rhs(
 
       // Dielectric loss heating: 0.5 * omega * epsilon_0 * epsilon_r'' * |E|^2
       const double dielectric_loss_heating =
-        0.5 * scratch_data.angular_frequency * vacuum_permittivity *
+        0.5 * angular_frequency * vacuum_permittivity *
         electric_permittivity_imag * electric_field_squared_amplitude;
 
       // Magnetic loss heating: 0.5 * omega * mu_0 * mu_r'' * |H|^2
       const double magnetic_loss_heating =
-        0.5 * scratch_data.angular_frequency * vacuum_permeability *
+        0.5 * angular_frequency * vacuum_permeability *
         magnetic_permeability_imag * magnetic_field_squared_amplitude;
 
       const double JxW = scratch_data.JxW[q];

@@ -35,8 +35,10 @@ namespace Parameters
                    // necessary to rescale by time because in the time harmonic
                    // form the time scale cancels out as the solution is
                    // independent of it.
-    electric_amplitude_scaling = 1 * A * T * T * T / M / L;
-    magnetic_amplitude_scaling = 1 * L / A;
+    electric_amplitude_scaling  = 1 * A * T * T * T / M / L;
+    magnetic_amplitude_scaling  = 1 * L / A;
+    vacuum_permittivity_scaling = 1 * M * L * L * L / A / A / T / T / T / T;
+    vacuum_permeability_scaling = 1 * T * T * A * A / M / L;
   }
 
   void

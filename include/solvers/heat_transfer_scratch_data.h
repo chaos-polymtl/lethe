@@ -497,7 +497,6 @@ public:
   std::vector<double> electric_conductivity;
   std::vector<double> magnetic_permeability_imag;
   std::vector<double> electric_permittivity_imag;
-  double              angular_frequency;
 
   // FEValues for the HT problem
   FEValues<dim> fe_values_T;

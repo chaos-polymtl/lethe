@@ -626,8 +626,16 @@ class HeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell
 {
 public:
   HeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell(
-    const std::shared_ptr<SimulationControl> &simulation_control)
+    const std::shared_ptr<SimulationControl>   &simulation_control,
+    const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell,
+    const Parameters::Dimensionality           &dimensionality)
     : simulation_control(simulation_control)
+    , angular_frequency(2. * numbers::PI *
+                        time_harmonic_maxwell.electromagnetic_frequency)
+    , vacuum_permittivity(8.854187817e-12 *
+                          dimensionality.vacuum_permittivity_scaling)
+    , vacuum_permeability(4. * numbers::PI * 1e-7 *
+                          dimensionality.vacuum_permeability_scaling)
   {}
 
   /**
@@ -650,6 +658,9 @@ public:
 
 protected:
   const std::shared_ptr<SimulationControl> simulation_control;
+  const double                             angular_frequency;
+  const double                             vacuum_permittivity;
+  const double                             vacuum_permeability;
 };
 
 #endif

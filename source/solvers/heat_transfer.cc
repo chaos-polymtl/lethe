@@ -366,7 +366,10 @@ HeatTransfer<dim>::setup_assemblers()
       this->assemblers.emplace_back(
         std::make_shared<
           HeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell<dim>>(
-          this->simulation_control));
+          this->simulation_control,
+          this->simulation_parameters.multiphysics
+            .time_harmonic_maxwell_parameters,
+          this->simulation_parameters.dimensionality));
     }
 
 
@@ -456,14 +459,6 @@ HeatTransfer<dim>::assemble_system_matrix()
                   ExcMessage(
                     "Time-harmonic Maxwell solution scaling is none, but heat "
                     "transfer physics requires a non-dimensionless solution."));
-
-      // We also get the problem frequency here because we have access to the
-      // simulation parameters, while the scratch data doesn't have access to it
-      // at construction.
-      this->angular_frequency =
-        this->simulation_parameters.multiphysics
-          .time_harmonic_maxwell_parameters.electromagnetic_frequency *
-        2. * numbers::PI;
 
       const DoFHandler<dim> &dof_handler_thm =
         this->multiphysics->get_dof_handler(PhysicsID::electromagnetics);

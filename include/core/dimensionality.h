@@ -98,6 +98,8 @@ namespace Parameters
     double electromagnetic_frequency_scaling;
     double electric_amplitude_scaling;
     double magnetic_amplitude_scaling;
+    double vacuum_permittivity_scaling;
+    double vacuum_permeability_scaling;
   };
 } // namespace Parameters
 
