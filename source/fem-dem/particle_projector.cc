@@ -1441,9 +1441,9 @@ ParticleProjector<dim>::calculate_field_projection(
 
   // Force the field solution to start from 0. There is no indication
   // that the previous solution is a good starting point and this can
-  // actually create problem when restarting the code with checkpoint
+  // actually create problems when restarting the code with a checkpoint
   // since the checkpointing mechanism can become non-deterministic.
-  // Future Bruno,trust me on this. You were heavily bothered by this
+  // Future Bruno, trust me on this. You were heavily bothered by this
   // for three months and it made you doubt your sanity.
   field_qcm.particle_field_solution = 0.;
 
