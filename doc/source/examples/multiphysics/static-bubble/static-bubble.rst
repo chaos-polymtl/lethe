@@ -10,7 +10,7 @@ Features
 ----------------------------------
 
 - Solver: ``lethe-fluid``
-- Two phase flow handled by the Volume of fluids (CLS) approach with surface tension force
+- Two phase flow handled by the Conservative Level-Set (CLS) approach with surface tension force
 - Calculation of filtered phase indicator gradient and curvature fields
 - Unsteady problem handled by a BDF1 time-stepping scheme
 
