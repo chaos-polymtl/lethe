@@ -106,7 +106,7 @@ In the ``CLS`` subsection, two features are enabled : the ``phase filtration`` a
 The ``phase filtration`` method filters the phase field used for the calculation of physical properties by stiffening the value of the phase indicator.  The ``surface tension force`` computation is explained in the :doc:`../static-bubble/static-bubble` example.
 
 Since a straightforward advection of the phase indicator typically leads to significant interface diffusion, an interface reinitialization method is required. 
-This is addressed in the ``interface reinitialization method`` subsection. Lethe provides three reinitialization techniques to maintain a sharp interface:  the ``projection-based interface sharpening``, the ``algebraic interface reinitialization``, and the ``geometric interface reinitialization``. The desired method can be selected using the ``type`` parameter.
+This is addressed in the ``interface reinitialization method`` subsection. Lethe provides three reinitialization techniques to maintain a sharp interface:  the ``projection-based interface sharpening``, the ``pde-based interface reinitialization``, and the ``geometric interface reinitialization``. The desired method can be selected using the ``type`` parameter.
 
 We refer the reader to :doc:`../../../theory/multiphase/cfd/cls` theory guide for more explanation on phase filtration and the interface reinitialization methods.
 
@@ -369,7 +369,7 @@ Interface Reinitialization Methods Comparison
 Parameter Files
 ~~~~~~~~~~~~~~~~
 
-For the methods other than ``projection-based interface sharpening``, the ``.prm`` file is modified as follows. In the ``CLS`` subsection, the ``interface reinitialization method`` is changed to ``geometric interface reinitialization`` or ``algebraic interface reinitialization``. The associated parameter files, ``rising-bubble-geo.prm`` and ``rising-bubble-alge.prm`` respectively, are available in the example's folder. The subsections are modified according to each reinitialization method: 
+For the methods other than ``projection-based interface sharpening``, the ``.prm`` file is modified as follows. In the ``CLS`` subsection, the ``interface reinitialization method`` is changed to ``geometric interface reinitialization`` or ``pde-based interface reinitialization``. The associated parameter files, ``rising-bubble-geo.prm`` and ``rising-bubble-alge.prm`` respectively, are available in the example's folder. The subsections are modified according to each reinitialization method: 
 
 * With the geometric method, the phase indicator field is regularized using the signed distance from the interface, as described in :doc:`../../../theory/multiphase/cfd/cls` theory guide. We select the ``tanh`` function to transform the signed distance in a phase indicator field. The ``tanh thickness`` is set to :math:`0.0066` and the ``max reinitialization distance`` parameter is set to :math:`0.0264`.
 
@@ -397,15 +397,15 @@ For the geometric method, we use a slightly thicker interface and we adapt the i
       end
     end
 
-* For the algebraic method, an intermediary PDE is solved to compress the interface until reaching a pseudo-steady-state. This PDE is described in :doc:`../../../theory/multiphase/cfd/cls` theory guide. Setting the ``diffusivity multiplier`` to :math:`1` yields good results.
+* For the PDE-based method, an intermediary PDE is solved to compress the interface until reaching a pseudo-steady-state. This PDE is described in :doc:`../../../theory/multiphase/cfd/cls` theory guide. Setting the ``diffusivity multiplier`` to :math:`1` yields good results.
 
 .. code-block:: text
 
     subsection interface reinitialization method
-      set type      = algebraic interface reinitialization
+      set type      = pde-based interface reinitialization
       set frequency = 20
       set verbosity = verbose
-      subsection algebraic interface reinitialization
+      subsection pde-based interface reinitialization
         set diffusivity multiplier = 1
       end
     end
@@ -414,7 +414,7 @@ For the geometric method, we use a slightly thicker interface and we adapt the i
 Running the Simulations
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-To run the simulations for the geometric and algebraic reinitialization methods:
+To run the simulations for the geometric and PDE-based reinitialization methods:
 
 .. code-block:: text
   :class: copy-button
@@ -452,7 +452,7 @@ Case 1
 
 * Bubble Contour
 
-  For the final shape and dimensions of the bubble, the geometric and algebraic methods seem to reproduce the results from  Zahedi *et al.* [#zahedi2012]_ more accurately than the projection-based method. 
+  For the final shape and dimensions of the bubble, the geometric and PDE-based methods seem to reproduce the results from  Zahedi *et al.* [#zahedi2012]_ more accurately than the projection-based method. 
 
   .. image:: images/proj-bubble-contour-case1.png
       :width: 350
@@ -499,7 +499,7 @@ Case 2
 
 * Bubble Contour
 
-  Regarding the final shape and dimensions of the bubble, the geometric and algebraic methods seem to reproduce the results from  Hysing *et al.* [#hysing2009]_ more accurately than the projection-based method. However, the three reinitialization methods capture the skirt of the bubble differently: the geometric method results in a continuous skirt, while the PDE-based and projection-based methods result in a discontinuous skirt.
+  Regarding the final shape and dimensions of the bubble, the geometric and PDE-based methods seem to reproduce the results from  Hysing *et al.* [#hysing2009]_ more accurately than the projection-based method. However, the three reinitialization methods capture the skirt of the bubble differently: the geometric method results in a continuous skirt, while the PDE-based and projection-based methods result in a discontinuous skirt.
 
   .. image:: images/proj-bubble-contour-case2.png
       :width: 350
