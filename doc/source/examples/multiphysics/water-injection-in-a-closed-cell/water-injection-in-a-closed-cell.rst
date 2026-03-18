@@ -11,7 +11,7 @@ Features
 --------
 
 - Solver: ``lethe-fluid`` (with Q1-Q1)
-- Volume of fluid (VOF)
+- Conservative Level-Set (CLS)
 - Isothermal compressible fluid
 - Unsteady problem handled by an adaptive BDF2 time-stepping scheme
 - Usage of a python script for post-processing data
@@ -71,26 +71,26 @@ The initial time step is set to :math:`0.005 \, \text{s}` and the simulation end
 Multiphysics
 ~~~~~~~~~~~~
 
-The ``multiphysics`` subsection is used to enable the VOF solver.
+The ``multiphysics`` subsection is used to enable the CLS solver.
 
 .. code-block:: text
 
     subsection multiphysics
-      set VOF  = true
+      set CLS  = true
     end 
 
-VOF
+CLS
 ~~~
 
-In the ``VOF`` subsection, the ``compressible`` and the ``phase filtration`` features are enabled.
-The enabled ``compressible`` parameter allows interface compression by adding the term :math:`\phi (\nabla \cdot \mathbf{u})` to the VOF equation.
+In the ``CLS`` subsection, the ``compressible`` and the ``phase filtration`` features are enabled.
+The enabled ``compressible`` parameter allows interface compression by adding the term :math:`\phi (\nabla \cdot \mathbf{u})` to the CLS equation.
 The ``phase filtration`` filters the phase field used for the calculation of physical properties by stiffening the value of the phase fraction.
 We refer the reader to :doc:`../../../../theory/multiphase/cfd/cls` theory guide for further explanation on the ``phase filtration``.
 The ``projection-based interface sharpening`` method is selected as the ``interface regularization method`` and its parameters, defined in the ``subsection projection-based interface sharpening``, are explained in the :doc:`../dam-break/dam-break` example.
 
 .. code-block:: text
 
-    subsection VOF
+    subsection CLS
       set compressible = true
       subsection phase filtration
         set type      = tanh
@@ -118,7 +118,7 @@ In the ``initial conditions`` subsection, we define a cell filled with air (:mat
       subsection uvwp
         set Function expression = 0; 0; 0
       end
-      subsection VOF
+      subsection CLS
         set Function expression = 0
       end
     end
@@ -127,7 +127,7 @@ Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
 At the bottom of the domain, water which is associated with the phase fraction :math:`\phi=1` is injected.
-This is done in the simulation by setting the velocity of the fluid at the bottom boundary (``id = 2``) in the ``boundary conditions`` subsection and by imposing a ``dirichlet`` condition on the bottom boundary in the ``boundary conditions VOF`` subsection as shown below.
+This is done in the simulation by setting the velocity of the fluid at the bottom boundary (``id = 2``) in the ``boundary conditions`` subsection and by imposing a ``dirichlet`` condition on the bottom boundary in the ``boundary conditions CLS`` subsection as shown below.
 
 Boundary Conditions - Fluid Dynamics
 ************************************
@@ -157,12 +157,12 @@ Boundary Conditions - Fluid Dynamics
       end
     end
 
-Boundary Conditions - VOF
+Boundary Conditions - CLS
 ************************************
 
 .. code-block:: text
 
-    subsection boundary conditions VOF
+    subsection boundary conditions CLS
       set number = 1
       subsection bc 0
         set id   = 2

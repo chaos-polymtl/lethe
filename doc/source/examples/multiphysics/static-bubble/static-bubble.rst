@@ -10,7 +10,7 @@ Features
 ----------------------------------
 
 - Solver: ``lethe-fluid``
-- Two phase flow handled by the Volume of fluids (VOF) approach with surface tension force
+- Two phase flow handled by the Volume of fluids (CLS) approach with surface tension force
 - Calculation of filtered phase fraction gradient and curvature fields
 - Unsteady problem handled by a BDF1 time-stepping scheme
 
@@ -75,13 +75,13 @@ Time integration is handled by a 1st order backward differentiation scheme (BDF1
 Multiphysics
 ~~~~~~~~~~~~
 
-The ``multiphysics`` subsection enables to turn on (``true``) and off (``false``) the physics of interest. Here ``VOF`` is chosen. The ``surface tension force`` are enabled in the VOF subsection.
+The ``multiphysics`` subsection enables to turn on (``true``) and off (``false``) the physics of interest. Here ``CLS`` is chosen. The ``surface tension force`` are enabled in the CLS subsection.
 
 
 .. code-block:: text
 
     subsection multiphysics
-      set VOF = true
+      set CLS = true
     end
 
 
@@ -112,7 +112,7 @@ defined as a circle with a radius :math:`R= 0.5` in the center of the computatio
       subsection uvwp
         set Function expression = 0; 0; 0
       end
-      subsection VOF
+      subsection CLS
         set Function expression = if (x^2 + y^2 < 0.5^2 , 1, 0)
         subsection projection step
           set enable           = true
@@ -122,14 +122,14 @@ defined as a circle with a radius :math:`R= 0.5` in the center of the computatio
     end
 
 
-VOF
+CLS
 ~~~
 
-The surface tension force computation is enabled in the ``VOF`` subsection. The value of the diffusion factors :math:`\alpha` and :math:`\beta` described in section :ref:`Normal and curvature computations` are controlled respectively by the parameters ``phase fraction gradient diffusion factor`` and ``curvature diffusion factor``. Finally, the parameter ``output auxiliary fields`` set at ``true`` enables the output of the filtered phase fraction gradient and filtered curvature fields.
+The surface tension force computation is enabled in the ``CLS`` subsection. The value of the diffusion factors :math:`\alpha` and :math:`\beta` described in section :ref:`Normal and curvature computations` are controlled respectively by the parameters ``phase fraction gradient diffusion factor`` and ``curvature diffusion factor``. Finally, the parameter ``output auxiliary fields`` set at ``true`` enables the output of the filtered phase fraction gradient and filtered curvature fields.
 
 .. code-block:: text
 
-    subsection VOF
+    subsection CLS
       subsection surface tension force
         set enable                                   = true
         set phase fraction gradient diffusion factor = 4

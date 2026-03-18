@@ -15,7 +15,7 @@ Features
 ----------------------------------
 
 - Solver: ``lethe-fluid``  (with Q1-Q1)
-- Two phase flow handled by the Volume of fluids (VOF) approach with projection-based interface sharpening
+- Two phase flow handled by the Conservative Level-Set (CLS) approach with projection-based interface sharpening
 - Unsteady problem handled by an adaptive BDF1 time-stepping scheme 
 - The use of a python script for post-processing data
 
@@ -89,16 +89,16 @@ Multiphysics
 ~~~~~~~~~~~~
 
 The ``multiphysics`` subsection enables to turn on `(true)` 
-and off `(false)` the physics of interest. Here ``VOF`` is chosen.
+and off `(false)` the physics of interest. Here ``CLS`` is chosen.
 
 
 .. code-block:: text
 
     subsection multiphysics
-      set VOF = true
+      set CLS = true
     end
 
-VOF
+CLS
 ~~~
 
 
@@ -106,7 +106,7 @@ To prevent the interface between phases from becoming blurry due to diffusion, t
 
 .. code-block:: text
 
-    subsection VOF
+    subsection CLS
       subsection interface regularization method
         set type      = geometric interface reinitialization
         set frequency = 10
@@ -139,7 +139,7 @@ defined as rectangle of length :math:`= 3.5` and height :math:`= 7`.
       subsection uvwp
         set Function expression = 0; 0; 0
       end
-      subsection VOF
+      subsection CLS
         set Function expression = if (x<3.5 & y<7 , 1, 0)
       end
     end
@@ -179,8 +179,8 @@ properties`` subsection, their physical properties should be defined:
     end
 
 We define two fluids here simply by setting the number of fluids to be :math:`2`.
-In ``subsection fluid 0``, we set the density and the kinematic viscosity for the phase associated with a VOF indicator of 0. 
-Similar procedure is done for the phase associated with a VOF indicator of 1 in ``subsection fluid 1``.
+In ``subsection fluid 0``, we set the density and the kinematic viscosity for the phase associated with a CLS indicator of 0. 
+Similar procedure is done for the phase associated with a CLS indicator of 1 in ``subsection fluid 1``.
 
 
 Mesh
@@ -204,7 +204,7 @@ In the ``mesh adaptation subsection``, adaptive mesh refinement is
 defined for ``phase``. ``min refinement level`` and ``max refinement 
 level`` are 3 and 5, respectively. The adaptation strategy ``fraction type`` is set to ``fraction``, which leads
 the mesh adaptation to refine the cells contributing to a certain fraction of the total error. This is highly
-appropriate for VOF simulations since the error for the VOF field is highly localized to the
+appropriate for CLS simulations since the error for the CLS field is highly localized to the
 vicinity of the interface. We set ``initial refinement steps=4`` to ensure that the initial mesh
 is adapted to the initial condition for the phase.
 

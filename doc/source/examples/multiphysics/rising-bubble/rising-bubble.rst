@@ -10,7 +10,7 @@ Features
 --------
 
 - Solver: ``lethe-fluid`` 
-- Two phase flow handled by the Volume of fluids (VOF) approach with phase filtering, interface regularization, and surface tension force
+- Two phase flow handled by the Conservative Level-Set (CLS) approach with phase filtering, interface regularization, and surface tension force
 - Calculation of filtered phase fraction gradient and curvature fields
 - Unsteady problem handled by an adaptive BDF2 time-stepping scheme 
 - Post-processing of a fluid barycentric coordinate and velocity
@@ -78,12 +78,12 @@ Multiphysics
 ~~~~~~~~~~~~
 
 The ``multiphysics`` subsection enables to turn on (``true``)
-and off (``false``) the physics of interest. Here ``VOF`` is chosen.
+and off (``false``) the physics of interest. Here ``CLS`` is chosen.
 
 .. code-block:: text
 
     subsection multiphysics
-      set VOF = true
+      set CLS = true
     end
 
 Source Term
@@ -99,10 +99,10 @@ The ``source term`` subsection defines the gravitational acceleration:
       end
     end
 
-VOF
+CLS
 ~~~
 
-In the ``VOF`` subsection, two features are enabled : the ``phase filtration`` and the ``surface tension force``. 
+In the ``CLS`` subsection, two features are enabled : the ``phase filtration`` and the ``surface tension force``. 
 The ``phase filtration`` method filters the phase field used for the calculation of physical properties by stiffening the value of the phase fraction.  The ``surface tension force`` computation is explained in the :doc:`../static-bubble/static-bubble` example.
 
 Since a straightforward advection of the phase fraction typically leads to significant interface diffusion, an interface regularization method is required. 
@@ -115,7 +115,7 @@ For the first part of this example, the ``projection-based interface sharpening`
 
 .. code-block:: text
 
-  subsection VOF
+  subsection CLS
     subsection interface regularization method
       set type      = projection-based interface sharpening
       set frequency = 20
@@ -143,12 +143,12 @@ For the first part of this example, the ``projection-based interface sharpening`
 Stabilization
 ~~~~~~~~~~~~~
 
-The ``vof dcdd stabilization`` is turned off as it had a negative impact on volume conservation.
+The ``cls dcdd stabilization`` is turned off as it had a negative impact on volume conservation.
 
 .. code-block:: text
 
     subsection stabilization
-      set vof dcdd stabilization = false
+      set cls dcdd stabilization = false
     end
 
 Initial Conditions
@@ -169,7 +169,7 @@ where :math:`d = \left[\sqrt{(x-x_\text{c})^2 + (y-y_\text{c})^2} - 0.25\right]`
       subsection uvwp
         set Function expression = 0; 0; 0
       end
-      subsection VOF
+      subsection CLS
         set Function constants  = eps=1, hCell=0.0022, center=0.5
         set Function expression = 0.5 - 0.5*tanh((sqrt((x-center)*(x-center)+(y-center)*(y-center))-0.25)/(2*eps*hCell))
       end
@@ -179,7 +179,7 @@ where :math:`d = \left[\sqrt{(x-x_\text{c})^2 + (y-y_\text{c})^2} - 0.25\right]`
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~~
 
-We define two fluids simply by setting the number of fluids to be :math:`2`. In ``subsection fluid 0``, we set the density and the kinematic viscosity for the phase associated with a VOF indicator of :math:`0`, depending on the test case. A similar procedure is done for the phase associated with a VOF indicator of :math:`1` in ``subsection fluid 1``. 
+We define two fluids simply by setting the number of fluids to be :math:`2`. In ``subsection fluid 0``, we set the density and the kinematic viscosity for the phase associated with a CLS indicator of :math:`0`, depending on the test case. A similar procedure is done for the phase associated with a CLS indicator of :math:`1` in ``subsection fluid 1``. 
 
 Then a ``fluid-fluid`` type of ``material interaction`` is added to specify the ``surface tension model``. In this example, it is set to ``constant`` with the ``surface tension coefficient`` depending on the test case [#hysing2009]_.
 
@@ -238,7 +238,7 @@ Mesh Adaptation
 
 In the ``mesh adaptation subsection``, adaptive mesh refinement is 
 defined for ``phase``. ``min refinement level`` and ``max refinement level`` are :math:`6` and :math:`9`, respectively. Since the bubble rises and changes its location, we choose a rather large ``fraction refinement`` (:math:`0.99`) and moderate ``fraction coarsening`` (:math:`0.01`).
-To capture the bubble adequately, we set ``initial refinement steps = 5`` so that the initial mesh is adapted to ensure that the initial condition is imposed for the VOF phase with maximal accuracy.
+To capture the bubble adequately, we set ``initial refinement steps = 5`` so that the initial mesh is adapted to ensure that the initial condition is imposed for the CLS phase with maximal accuracy.
 
 .. code-block:: text
 
@@ -258,14 +258,14 @@ To capture the bubble adequately, we set ``initial refinement steps = 5`` so tha
 Post-processing: Fluid Barycenter Position and Velocity
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To compare our simulation results to the literature, we extract the position and the velocity of the barycenter of the bubble. This generates a ``vof_barycenter_information.dat`` file which contains the position and the velocity of the barycenter of the bubble.
+To compare our simulation results to the literature, we extract the position and the velocity of the barycenter of the bubble. This generates a ``cls_barycenter_information.dat`` file which contains the position and the velocity of the barycenter of the bubble.
 
 .. code-block:: text
 
     subsection post-processing
       set verbosity            = quiet
       set calculate barycenter = true
-      set barycenter name      = vof_barycenter_information
+      set barycenter name      = cls_barycenter_information
     end
 
 ---------------------------
@@ -369,7 +369,7 @@ Interface Regularization Methods Comparison
 Parameter Files
 ~~~~~~~~~~~~~~~~
 
-For the methods other than ``projection-based interface sharpening``, the ``.prm`` file is modified as follows. In the ``VOF`` subsection, the ``interface regularization method`` is changed to ``geometric interface reinitialization`` or ``algebraic interface reinitialization``. The associated parameter files, ``rising-bubble-geo.prm`` and ``rising-bubble-alge.prm`` respectively, are available in the example's folder. The subsections are modified according to each regularization method: 
+For the methods other than ``projection-based interface sharpening``, the ``.prm`` file is modified as follows. In the ``CLS`` subsection, the ``interface regularization method`` is changed to ``geometric interface reinitialization`` or ``algebraic interface reinitialization``. The associated parameter files, ``rising-bubble-geo.prm`` and ``rising-bubble-alge.prm`` respectively, are available in the example's folder. The subsections are modified according to each regularization method: 
 
 * With the geometric method, the phase fraction field is regularized using the signed distance from the interface, as described in :doc:`../../../theory/multiphase/cfd/cls` theory guide. We select the ``tanh`` function to transform the signed distance in a phase fraction field. The ``tanh thickness`` is set to :math:`0.0066` and the ``max reinitialization distance`` parameter is set to :math:`0.0264`.
 
@@ -391,7 +391,7 @@ For the geometric method, we use a slightly thicker interface and we adapt the i
 .. code-block:: text
 
     subsection initial conditions
-      subsection VOF
+      subsection CLS
         set Function constants  = eps=1.5, hCell=0.0022, center=0.5
         set Function expression = 0.5 - 0.5*tanh((sqrt((x-center)*(x-center)+(y-center)*(y-center))-0.25)/(2*eps*hCell))
       end
