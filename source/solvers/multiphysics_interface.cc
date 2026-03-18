@@ -347,6 +347,14 @@ MultiphysicsInterface<dim>::should_solve_electromagnetics() const
   const Parameters::TimeHarmonicMaxwell<dim> &thm_parameters =
     this->multiphysics_parameters.time_harmonic_maxwell_parameters;
 
+  // For steady simulations, each outer iteration (e.g., mesh adaptation
+  // cycles) should solve electromagnetics regardless of time-coupling settings.
+  if (this->simulation_control->get_assembly_method() ==
+      Parameters::SimulationControl::TimeSteppingMethod::steady)
+    {
+      return true;
+    }
+
   // Always solve at the first step of the simulation (simulation start as 0 but
   // it is then incremented before solving the physics for the first time, so
   // the first time this function is called, the step number is 1).
@@ -360,7 +368,7 @@ MultiphysicsInterface<dim>::should_solve_electromagnetics() const
         {
           case Parameters::TimeCouplingMethod::none:
             return false;
-          case Parameters::TimeCouplingMethod::iteration:
+
             // Solve only if we are at a multiple of the specified iteration
             // frequency. We substract 1 since the step number starts at 1.
             if ((this->simulation_control->get_step_number() - 1) %
