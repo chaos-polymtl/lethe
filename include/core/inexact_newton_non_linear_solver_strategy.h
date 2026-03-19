@@ -133,11 +133,9 @@ InexactNewtonNonLinearSolverStrategy<VectorType>::solve()
             {
               solver->pcout << "\talpha = " << std::setw(6) << alpha
                             << std::setw(0) << " res = "
-                            << std::setprecision(this->params.display_precision)
                             << std::setw(6) << current_res;
 
-              solver->output_newton_update_norms(
-                this->params.display_precision);
+              solver->output_newton_update_norms();
             }
 
           // If it's not the first iteration of alpha check if the residual is

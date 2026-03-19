@@ -37,9 +37,6 @@ In the example below, only ``fluid dynamics`` is shown but the same block can be
       # Maximum number of Newton Iterations
       set max iterations               = 10
 
-      # Number of digits displayed when showing residuals
-      set residual precision           = 4
-
       # State if the RHS must be calculated at the beginning of every newton iteration
       set force rhs calculation        = false
 
@@ -93,7 +90,6 @@ In the example below, only ``fluid dynamics`` is shown but the same block can be
 .. warning::
 	Be careful to always set an absolute tolerance for the linear solver that is below the tolerance of the non-linear solver. Otherwise, you might find that it is impossible to converge because the linear system of equation is solved with insufficient accuracy.
 
-* The ``residual precision`` parameter enables to change the number of digits displayed when showing residuals (with ``set verbosity = verbose``).
 * The ``force_rhs_calculation``: Force RHS recalculation at the beginning of every non-linear steps, This is required if there is a fixed point component to the non-linear solver that is changed at the beginning of every newton iteration. This is notably the case of the sharp edge method. The default value of this parameter is false.
 * The ``abort at convergence failure`` allows the user to stop the simulation and throw an error if the non-linear solver has failed to converge. Setting ``abort at convergence failure = true`` will enable this feature. This is generally useful when launching a large batch of simulation to quickly identify which one have failed.
 * The ``reuse preconditioner = true`` allows the simulation to use the same preconditioner between Newton iterations when using the Newton solver. This can reduce the overall time depending on the problem, and it is especially useful for the ``lethe-fluid-matrix-free`` application.

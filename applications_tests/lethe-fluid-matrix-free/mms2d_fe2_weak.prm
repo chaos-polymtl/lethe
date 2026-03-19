@@ -114,7 +114,6 @@ subsection non-linear solver
     set solver             = newton
     set tolerance          = 1e-8
     set max iterations     = 5
-    set residual precision = 2
     set verbosity          = quiet
   end
 end

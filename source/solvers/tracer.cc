@@ -878,8 +878,6 @@ Tracer<dim>::calculate_tracer_statistics()
   if (simulation_parameters.post_processing.verbosity ==
       Parameters::Verbosity::verbose)
     {
-      this->pcout << std::setprecision(
-        this->simulation_control->get_log_precision());
       this->pcout << "Tracer statistics: " << std::endl;
       this->pcout << "\t     Min: " << min_tracer_value << std::endl;
       this->pcout << "\t     Max: " << max_tracer_value << std::endl;

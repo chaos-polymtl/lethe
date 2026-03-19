@@ -87,7 +87,6 @@ end
 subsection non-linear solver
   subsection fluid dynamics
     set max iterations     = 1
-    set residual precision = 3
     set verbosity          = verbose
   end
 end

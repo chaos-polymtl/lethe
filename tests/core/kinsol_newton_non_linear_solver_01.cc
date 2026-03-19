@@ -25,7 +25,6 @@ test()
                                                                 // strategy
     .tolerance                    = 1e-8,
     .max_iterations               = 20,
-    .display_precision            = 4,
     .force_rhs_calculation        = false,
     .matrix_tolerance             = 0.0,
     .step_tolerance               = 0.0,

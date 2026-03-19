@@ -19,6 +19,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MAJOR The lethe-fluid-particles-matrix-free solver would not restart adequately. This was mainly caused by three factors. The first is that the vector used to project the forces was never reset to zero, and so the projection of the forces and the other variables became dependent on the history of this projection since this would affect the GMRES solver behavior. The second was that the void fraction time-history would get partially erased if a BDF2 time-stepping scheme was used. The last one was that some of the multigrid operators being used to transfer the particle-fluid force/drag information were not the correct ones. All these three things have been fixed. They don't changes tests (except a small one for some floating point error), but now the code restarts to machine precision. [#1943](https://github.com/chaos-polymtl/7lethe/pull/1943).
 
+- MAJOR The way we parametrize the display precision on the terminal in Lethe was incredibly messy. The log_precision parameter in the SimulationControl is supposed to control it, but we also have another display_precision in the non-linear solver which can overwrite it. This led to a lot of confusion. The simple thing should be that one parameter controls the log precision and that's it. This PR achieves this. It deletes the display_precision parameter from the non-linear solver parameters. Not the usage of the log_precision is made uniform and the precision is set once at the start of the simulation. The documentation has been adapted as well.  [#XXXX](https://github.com/chaos-polymtl/7lethe/pull/XXXX).
+
 ## [Master] - 2026/03/17
 
 ### Changed

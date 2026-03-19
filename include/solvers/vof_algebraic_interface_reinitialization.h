@@ -70,6 +70,9 @@ public:
     , subequation_verbosity(p_simulation_parameters.multiphysics.vof_parameters
                               .regularization_method.verbosity)
   {
+    this->pcout << std::setprecision(simulation_control->get_log_precision())
+                << std::scientific;
+
     if (this->simulation_parameters.mesh.simplex)
       {
         // For simplex meshes
@@ -190,17 +193,13 @@ public:
 
   /**
    * @brief Output the \f$L_2\f$ and \f$L_\infty\f$ norms of the correction vector.
-   *
-   * @param[in] display_precision Number of outputted digits.
    */
   void
-  output_newton_update_norms(const unsigned int display_precision) override
+  output_newton_update_norms() override
   {
-    this->pcout << std::setprecision(display_precision)
-                << "\t||dphi_reinit||_L2 = " << std::setw(6)
+    this->pcout << "\t||dphi_reinit||_L2 = " << std::setw(6)
                 << this->newton_update.l2_norm() << std::setw(6)
                 << "\t||dphi_reinit||_Linfty = "
-                << std::setprecision(display_precision)
                 << this->newton_update.linfty_norm() << std::endl;
   }
 

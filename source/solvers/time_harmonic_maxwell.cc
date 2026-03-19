@@ -28,6 +28,9 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
   , extractor_H_real(2 * dim)
   , extractor_H_imag(3 * dim)
 {
+  this->pcout << std::setprecision(simulation_control->get_log_precision())
+              << std::scientific;
+
   if (simulation_parameters.mesh.simplex)
     {
       // for simplex meshes

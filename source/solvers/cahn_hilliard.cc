@@ -572,15 +572,9 @@ CahnHilliard<dim>::calculate_phase_energy()
       Parameters::Verbosity::verbose)
     {
       announce_string(this->pcout, "Phase energy");
-      this->pcout << "Bulk energy: "
-                  << std::setprecision(simulation_control->get_log_precision())
-                  << bulk_energy << std::endl;
-      this->pcout << "Interface energy: "
-                  << std::setprecision(simulation_control->get_log_precision())
-                  << interface_energy << std::endl;
-      this->pcout << "Total energy: "
-                  << std::setprecision(simulation_control->get_log_precision())
-                  << total_energy << std::endl;
+      this->pcout << "Bulk energy: " << bulk_energy << std::endl;
+      this->pcout << "Interface energy: " << interface_energy << std::endl;
+      this->pcout << "Total energy: " << total_energy << std::endl;
     }
 }
 
@@ -1538,8 +1532,7 @@ CahnHilliard<dim>::apply_phase_filter()
 
 template <int dim>
 void
-CahnHilliard<dim>::output_newton_update_norms(
-  const unsigned int display_precision)
+CahnHilliard<dim>::output_newton_update_norms()
 {
   auto mpi_communicator = triangulation->get_mpi_communicator();
 
@@ -1588,15 +1581,13 @@ CahnHilliard<dim>::output_newton_update_norms(
   double global_chemical_potential_linfty_norm =
     Utilities::MPI::max(local_max, mpi_communicator);
 
-  this->pcout << std::setprecision(display_precision)
-              << "\n\t||dphi||_L2 = " << std::setw(6)
+  this->pcout << "\n\t||dphi||_L2 = " << std::setw(6)
               << global_phase_order_l2_norm << std::setw(6)
-              << "\t||dphi||_Linfty = " << std::setprecision(display_precision)
-              << global_phase_order_linfty_norm << std::endl;
-  this->pcout << std::setprecision(display_precision)
-              << "\t||deta||_L2 = " << std::setw(6)
+              << "\t||dphi||_Linfty = " << global_phase_order_linfty_norm
+              << std::endl;
+  this->pcout << "\t||deta||_L2 = " << std::setw(6)
               << global_chemical_potential_l2_norm << std::setw(6)
-              << "\t||deta||_Linfty = " << std::setprecision(display_precision)
+              << "\t||deta||_Linfty = "
               << global_chemical_potential_linfty_norm << std::endl;
 }
 

@@ -115,11 +115,9 @@ public:
 
   /**
    * @brief Output the L2 and Linfty norms of the correction vector.
-   *
-   * @param[in] display_precision Number of outputted digits.
    */
   virtual void
-  output_newton_update_norms(const unsigned int display_precision) = 0;
+  output_newton_update_norms() = 0;
 
   /**
    * @brief Return the metric for residual rescaling. By default, should return 1.

@@ -117,7 +117,6 @@ subsection non-linear solver
   subsection fluid dynamics
     set tolerance          = 1e-9
     set max iterations     = 10
-    set residual precision = 2
     set verbosity          = quiet
   end
 end

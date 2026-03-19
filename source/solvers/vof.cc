@@ -37,6 +37,9 @@ VolumeOfFluid<dim>::VolumeOfFluid(
   , sharpening_threshold(simulation_parameters.multiphysics.vof_parameters
                            .regularization_method.sharpening.threshold)
 {
+  this->pcout << std::setprecision(simulation_control->get_log_precision())
+              << std::scientific;
+
   AssertThrow(
     simulation_parameters.physical_properties_manager.get_number_of_fluids() ==
       2,

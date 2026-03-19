@@ -3219,8 +3219,7 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
       // Ramp on kinematic viscosity
       for (int i = 0; i < n_iter_viscosity; ++i)
         {
-          this->pcout << std::setprecision(4)
-                      << "********* Solution for kinematic viscosity = " +
+          this->pcout << "********* Solution for kinematic viscosity = " +
                            std::to_string(kinematic_viscosity) + " *********"
                       << std::endl;
 

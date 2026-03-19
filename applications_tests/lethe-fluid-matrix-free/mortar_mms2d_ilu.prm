@@ -138,7 +138,6 @@ subsection non-linear solver
     set verbosity          = quiet
     set tolerance          = 1e-8
     set max iterations     = 10
-    set residual precision = 2
   end
 end
 
