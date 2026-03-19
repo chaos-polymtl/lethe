@@ -1592,13 +1592,13 @@ CahnHilliard<dim>::output_newton_update_norms()
   double global_chemical_potential_linfty_norm =
     Utilities::MPI::max(local_max, mpi_communicator);
 
-  this->pcout << "\n\t||dphi||_L2 = " << std::setw(6)
+  this->pcout << "\n\t  ||dphi||_L2 = " << std::setw(6)
               << global_phase_order_l2_norm << std::setw(6)
-              << "\t||dphi||_Linfty = " << global_phase_order_linfty_norm
+              << "\t  ||dphi||_Linfty = " << global_phase_order_linfty_norm
               << std::endl;
-  this->pcout << "\t||deta||_L2 = " << std::setw(6)
+  this->pcout << "\t  ||deta||_L2 = " << std::setw(6)
               << global_chemical_potential_l2_norm << std::setw(6)
-              << "\t||deta||_Linfty = " << global_chemical_potential_linfty_norm
+              << "\t  ||deta||_Linfty = " << global_chemical_potential_linfty_norm
               << std::endl;
 }
 

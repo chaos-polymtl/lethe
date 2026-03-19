@@ -197,9 +197,9 @@ public:
   void
   output_newton_update_norms() override
   {
-    this->pcout << "\t||dphi_reinit||_L2 = " << std::setw(6)
+    this->pcout << "\t  ||dphi_reinit||_L2 = " << std::setw(6)
                 << this->newton_update.l2_norm() << std::setw(6)
-                << "\t||dphi_reinit||_Linfty = "
+                << "\t  ||dphi_reinit||_Linfty = "
                 << this->newton_update.linfty_norm() << std::endl;
   }
 

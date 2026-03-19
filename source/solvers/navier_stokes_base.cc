@@ -3365,24 +3365,24 @@ NavierStokesBase<dim, VectorType, DofsType>::output_newton_update_norms()
       double global_pressure_linfty_norm =
         Utilities::MPI::max(local_max, this->mpi_communicator);
 
-      this->pcout << "\n\t||du||_L2 = " << std::setw(6)
+      this->pcout << "\n\t  ||du||_L2 = " << std::setw(6)
                   << global_velocity_l2_norm << std::setw(6)
-                  << "\t||du||_Linfty = " << global_velocity_linfty_norm
+                  << "\t  ||du||_Linfty = " << global_velocity_linfty_norm
                   << std::endl;
-      this->pcout << "\t||dp||_L2 = " << std::setw(6) << global_pressure_l2_norm
-                  << std::setw(6)
-                  << "\t||dp||_Linfty = " << global_pressure_linfty_norm
+      this->pcout << "\t  ||dp||_L2 = " << std::setw(6)
+                  << global_pressure_l2_norm << std::setw(6)
+                  << "\t  ||dp||_Linfty = " << global_pressure_linfty_norm
                   << std::endl;
     }
   if constexpr (std::is_same_v<VectorType, GlobalBlockVectorType>)
     {
-      this->pcout << "\t||du||_L2 = " << std::setw(6)
+      this->pcout << "\t  ||du||_L2 = " << std::setw(6)
                   << newton_update.block(0).l2_norm() << std::setw(6)
-                  << "\t||du||_Linfty = "
+                  << "\t  ||du||_Linfty = "
                   << newton_update.block(0).linfty_norm() << std::endl;
-      this->pcout << "\t||dp||_L2 = " << std::setw(6)
+      this->pcout << "\t  ||dp||_L2 = " << std::setw(6)
                   << newton_update.block(1).l2_norm() << std::setw(6)
-                  << "\t||dp||_Linfty = "
+                  << "\t  ||dp||_Linfty = "
                   << newton_update.block(1).linfty_norm() << std::endl;
     }
 }

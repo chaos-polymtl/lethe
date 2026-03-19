@@ -132,8 +132,8 @@ InexactNewtonNonLinearSolverStrategy<VectorType>::solve()
           if (this->params.verbosity != Parameters::Verbosity::quiet)
             {
               solver->pcout << "\talpha = " << std::defaultfloat
-                            << std::setw(6) << alpha << std::scientific
-                            << std::setw(0) << " res = " << std::setw(6)
+                            << std::setw(6) << alpha << std::setw(6)
+                            << std::scientific << "\tres = " << std::setw(6)
                             << current_res;
 
               solver->output_newton_update_norms();
