@@ -8,6 +8,8 @@
 
 #include <boost/algorithm/string/replace.hpp>
 
+#include <type_traits>
+
 #if __GNUC__ > 7
 #  include <filesystem>
 #endif
@@ -69,13 +71,16 @@ make_table_scalars_tensors(
         table.add_value(dependent_column_names[d], dependent_vector[i][d]);
     }
 
-  table.set_precision(independent_column_name, display_precision);
   for (int d = 0; d < dim; ++d)
     table.set_precision(dependent_column_names[d], display_precision);
 
+  if constexpr (!std::is_integral_v<T>)
+    table.set_precision(independent_column_name, display_precision);
+
   if (display_scientific_notation)
     {
-      table.set_scientific(independent_column_name, true);
+      if constexpr (!std::is_integral_v<T>)
+        table.set_scientific(independent_column_name, true);
       for (int d = 0; d < dim; ++d)
         table.set_scientific(dependent_column_names[d], true);
     }
@@ -121,9 +126,12 @@ make_table_scalars_tensors(
       vect_index += dim;
     }
 
-  table.set_precision(independent_column_name, display_precision);
-  if (display_scientific_notation)
-    table.set_scientific(independent_column_name, true);
+  if constexpr (!std::is_integral_v<T>)
+    {
+      table.set_precision(independent_column_name, display_precision);
+      if (display_scientific_notation)
+        table.set_scientific(independent_column_name, true);
+    }
 
   return table;
 }
