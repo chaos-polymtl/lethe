@@ -1,13 +1,13 @@
 
 DEAL::Creating solver
 DEAL::Solving non-linear system 
-DEAL::	  ||dx||_L2 = 1.521 	  ||dx||_Linfty = 1.500
-DEAL::	  ||dx||_L2 = 0.03125	  ||dx||_Linfty = 0.03125
-DEAL::	  ||dx||_L2 = 0.006010	  ||dx||_Linfty = 0.006010
-DEAL::	  ||dx||_L2 = 1.482e-05	  ||dx||_Linfty = 1.482e-05
-DEAL::	  ||dx||_L2 = 7.297e-08	  ||dx||_Linfty = 7.297e-08
-DEAL::	  ||dx||_L2 = 1.514 	  ||dx||_Linfty = 1.500
-DEAL::	  ||dx||_L2 = 0.01956	  ||dx||_Linfty = 0.01956
-DEAL::	  ||dx||_L2 = 6.168e-05	  ||dx||_Linfty = 6.168e-05
-DEAL::	  ||dx||_L2 = 3.019e-07	  ||dx||_Linfty = 3.019e-07
-DEAL::The final solution is : 1.225 -1.500
+DEAL::	  ||dx||_L2 = 1.52069	  ||dx||_Linfty = 1.50000
+DEAL::	  ||dx||_L2 = 0.0312500	  ||dx||_Linfty = 0.0312500
+DEAL::	  ||dx||_L2 = 0.00600962	  ||dx||_Linfty = 0.00600962
+DEAL::	  ||dx||_L2 = 1.48166e-05	  ||dx||_Linfty = 1.48166e-05
+DEAL::	  ||dx||_L2 = 7.29701e-08	  ||dx||_Linfty = 7.29701e-08
+DEAL::	  ||dx||_L2 = 1.51396	  ||dx||_Linfty = 1.50000
+DEAL::	  ||dx||_L2 = 0.0195553	  ||dx||_Linfty = 0.0195553
+DEAL::	  ||dx||_L2 = 6.16808e-05	  ||dx||_Linfty = 6.16808e-05
+DEAL::	  ||dx||_L2 = 3.01854e-07	  ||dx||_Linfty = 3.01854e-07
+DEAL::The final solution is : 1.22474 -1.50000

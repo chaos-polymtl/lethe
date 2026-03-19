@@ -1,7 +1,7 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       64
    Number of degrees of freedom: 243
-   Volume of triangulation:      1
+   Volume of triangulation:      1.000000e+00
    Number of CLS degrees of freedom: 81
 
 ----------------------

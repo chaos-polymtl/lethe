@@ -1,30 +1,30 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       64
    Number of degrees of freedom: 243
-   Volume of triangulation:      4
+   Volume of triangulation:      4.000000e+00
    Number of Cahn-Hilliard degrees of freedom: 162
 -----------------
 Phase statistics
 -----------------
-Min: -0.994529
-Max: 1
-Average: 0.544551
-Integral: 2.1782
-Volume phase 0: 3.0891
-Volume phase 1: 0.910898
+Min: -9.945286e-01
+Max: 9.999997e-01
+Average: 5.445512e-01
+Integral: 2.178205e+00
+Volume phase 0: 3.089102e+00
+Volume phase 1: 9.108976e-01
 
 *******************************************************************************
-Transient iteration: 1        Time: 0.5      Time step: 0.5      CFL: 0
+Transient iteration: 1        Time: 0.5      Time step: 0.5      CFL: 0       
 *******************************************************************************
 -----------------
 Phase statistics
 -----------------
-Min: -0.786164
-Max: 0.781734
-Average: 0.423636
-Integral: 1.69454
-Volume phase 0: 2.84727
-Volume phase 1: 1.15273
+Min: -7.861636e-01
+Max: 7.817341e-01
+Average: 4.236361e-01
+Integral: 1.694544e+00
+Volume phase 0: 2.847272e+00
+Volume phase 1: 1.152728e+00
 
 *******************************************************************************
 Transient iteration: 2        Time: 1        Time step: 0.5      CFL: 0.533525
@@ -32,9 +32,9 @@ Transient iteration: 2        Time: 1        Time step: 0.5      CFL: 0.533525
 -----------------
 Phase statistics
 -----------------
-Min: -0.780241
-Max: 0.794182
-Average: 0.427977
-Integral: 1.71191
-Volume phase 0: 2.85595
-Volume phase 1: 1.14405
+Min: -7.802414e-01
+Max: 7.941824e-01
+Average: 4.279767e-01
+Integral: 1.711907e+00
+Volume phase 0: 2.855953e+00
+Volume phase 1: 1.144047e+00

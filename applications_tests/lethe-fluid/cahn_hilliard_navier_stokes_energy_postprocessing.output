@@ -1,42 +1,42 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       64
    Number of degrees of freedom: 243
-   Volume of triangulation:      4
+   Volume of triangulation:      4.000000e+00
    Number of Cahn-Hilliard degrees of freedom: 162
 -----------------
 Phase statistics
 -----------------
-Min: -0.994529
-Max: 1
-Average: 0.607051
-Integral: 2.4282
-Volume phase 0: 3.2141
-Volume phase 1: 0.785898
+Min: -9.945286e-01
+Max: 9.999997e-01
+Average: 6.070508e-01
+Integral: 2.428203e+00
+Volume phase 0: 3.214102e+00
+Volume phase 1: 7.858984e-01
 -------------
 Phase energy
 -------------
-Bulk energy: 0.667619
-Interface energy: 1.74433
-Total energy: 2.41195
+Bulk energy: 6.676187e-01
+Interface energy: 1.744328e+00
+Total energy: 2.411947e+00
 
 *******************************************************************************
-Transient iteration: 1        Time: 0.5      Time step: 0.5      CFL: 0
+Transient iteration: 1        Time: 0.5      Time step: 0.5      CFL: 0       
 *******************************************************************************
 -----------------
 Phase statistics
 -----------------
-Min: -1.01453
-Max: 1.00534
-Average: 0.60706
-Integral: 2.42824
-Volume phase 0: 3.21412
-Volume phase 1: 0.78588
+Min: -1.014527e+00
+Max: 1.005339e+00
+Average: 6.070598e-01
+Integral: 2.428239e+00
+Volume phase 0: 3.214120e+00
+Volume phase 1: 7.858805e-01
 -------------
 Phase energy
 -------------
-Bulk energy: 0.687751
-Interface energy: 1.66703
-Total energy: 2.35478
+Bulk energy: 6.877508e-01
+Interface energy: 1.667028e+00
+Total energy: 2.354779e+00
 
 *******************************************************************************
 Transient iteration: 2        Time: 1        Time step: 0.5      CFL: 0.967317
@@ -44,15 +44,15 @@ Transient iteration: 2        Time: 1        Time step: 0.5      CFL: 0.967317
 -----------------
 Phase statistics
 -----------------
-Min: -0.891115
-Max: 1.0132
-Average: 0.61502
-Integral: 2.46008
-Volume phase 0: 3.23004
-Volume phase 1: 0.76996
+Min: -8.911153e-01
+Max: 1.013203e+00
+Average: 6.150198e-01
+Integral: 2.460079e+00
+Volume phase 0: 3.230040e+00
+Volume phase 1: 7.699603e-01
 -------------
 Phase energy
 -------------
-Bulk energy: 1.08564
-Interface energy: 1.19563
-Total energy: 2.28127
+Bulk energy: 1.085641e+00
+Interface energy: 1.195632e+00
+Total energy: 2.281274e+00

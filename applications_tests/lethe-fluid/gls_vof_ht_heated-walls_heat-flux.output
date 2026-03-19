@@ -1,140 +1,140 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       1024
    Number of degrees of freedom: 3267
-   Volume of triangulation:      0.2
+   Volume of triangulation:      2.000000e-01
    Number of thermal degrees of freedom: 1089
    Number of CLS degrees of freedom: 1089
 Temperature statistics on fluid_1: 
-	     Min: 0
-	     Max: 3.94338
-	 Average: 0.151515
-	 Std-Dev: 0.69433
+	     Min: 0.000000e+00
+	     Max: 3.943376e+00
+	 Average: 1.515152e-01
+	 Std-Dev: 6.943297e-01
 Total heat flux at the heat transfer boundary conditions : 
-	 boundary 0 : 64
-	 boundary 1 : 0.64
-	 boundary 2 : 0
-	 boundary 3 : 0
+	 boundary 0 : 6.400000e+01
+	 boundary 1 : 6.400000e-01
+	 boundary 2 : 0.000000e+00
+	 boundary 3 : 0.000000e+00
 Convective heat flux at the heat transfer boundary conditions : 
-	 boundary 0 : 0
-	 boundary 1 : 0
-	 boundary 2 : 0
-	 boundary 3 : 0
-Thermal energy in fluid_1 : 0.015625
+	 boundary 0 : 0.000000e+00
+	 boundary 1 : 0.000000e+00
+	 boundary 2 : 0.000000e+00
+	 boundary 3 : 0.000000e+00
+Thermal energy in fluid_1 : 1.562500e-02
 
 *******************************************************************************
 Transient iteration: 1        Time: 0.2      Time step: 0.2      CFL: 0       
 *******************************************************************************
-L2 error velocity: 0
-L2 error temperature : 0.413192
+L2 error velocity: 0.000000e+00
+L2 error temperature : 4.131917e-01
 Temperature statistics on fluid_1: 
-	     Min: 3.17766
-	     Max: 4.9604
-	 Average: 3.87484
-	 Std-Dev: 0.532331
+	     Min: 3.177659e+00
+	     Max: 4.960404e+00
+	 Average: 3.874839e+00
+	 Std-Dev: 5.323308e-01
 Total heat flux at the heat transfer boundary conditions : 
-	 boundary 0 : 2.39833
-	 boundary 1 : 0.0905848
-	 boundary 2 : 6.59905e-10
-	 boundary 3 : 1.99325e-09
+	 boundary 0 : 2.398334e+00
+	 boundary 1 : 9.058483e-02
+	 boundary 2 : 6.599053e-10
+	 boundary 3 : 1.993247e-09
 Convective heat flux at the heat transfer boundary conditions : 
-	 boundary 0 : 0
-	 boundary 1 : 0
-	 boundary 2 : 0
-	 boundary 3 : 0
-Thermal energy in fluid_1 : 0.399593
-L2 error phase : 0.00208465
+	 boundary 0 : 0.000000e+00
+	 boundary 1 : 0.000000e+00
+	 boundary 2 : 0.000000e+00
+	 boundary 3 : 0.000000e+00
+Thermal energy in fluid_1 : 3.995928e-01
+L2 error phase : 2.084655e-03
 
 *******************************************************************************
 Transient iteration: 2        Time: 0.4      Time step: 0.2      CFL: 0       
 *******************************************************************************
-L2 error velocity: 0
-L2 error temperature : 0.0934075
+L2 error velocity: 0.000000e+00
+L2 error temperature : 9.340749e-02
 Temperature statistics on fluid_1: 
-	     Min: 4.22648
-	     Max: 4.98783
-	 Average: 4.57062
-	 Std-Dev: 0.230306
+	     Min: 4.226476e+00
+	     Max: 4.987831e+00
+	 Average: 4.570617e+00
+	 Std-Dev: 2.303061e-01
 Total heat flux at the heat transfer boundary conditions : 
-	 boundary 0 : 0.737056
-	 boundary 1 : -0.012363
-	 boundary 2 : -1.30848e-08
-	 boundary 3 : 4.50293e-08
+	 boundary 0 : 7.370562e-01
+	 boundary 1 : -1.236297e-02
+	 boundary 2 : -1.308484e-08
+	 boundary 3 : 4.502931e-08
 Convective heat flux at the heat transfer boundary conditions : 
-	 boundary 0 : 0
-	 boundary 1 : 0
-	 boundary 2 : 0
-	 boundary 3 : 0
-Thermal energy in fluid_1 : 0.471345
-L2 error phase : 0.00208505
+	 boundary 0 : 0.000000e+00
+	 boundary 1 : 0.000000e+00
+	 boundary 2 : 0.000000e+00
+	 boundary 3 : 0.000000e+00
+Thermal energy in fluid_1 : 4.713449e-01
+L2 error phase : 2.085054e-03
 
 *******************************************************************************
 Transient iteration: 3        Time: 0.6      Time step: 0.2      CFL: 0       
 *******************************************************************************
-L2 error velocity: 0
-L2 error temperature : 0.0223097
+L2 error velocity: 0.000000e+00
+L2 error temperature : 2.230974e-02
 Temperature statistics on fluid_1: 
-	     Min: 4.55848
-	     Max: 4.99373
-	 Average: 4.76612
-	 Std-Dev: 0.131429
+	     Min: 4.558480e+00
+	     Max: 4.993728e+00
+	 Average: 4.766125e+00
+	 Std-Dev: 1.314294e-01
 Total heat flux at the heat transfer boundary conditions : 
-	 boundary 0 : 0.379891
-	 boundary 1 : -0.0720555
-	 boundary 2 : 1.17724e-09
-	 boundary 3 : -4.3806e-09
+	 boundary 0 : 3.798913e-01
+	 boundary 1 : -7.205547e-02
+	 boundary 2 : 1.177238e-09
+	 boundary 3 : -4.380596e-09
 Convective heat flux at the heat transfer boundary conditions : 
-	 boundary 0 : 0
-	 boundary 1 : 0
-	 boundary 2 : 0
-	 boundary 3 : 0
-Thermal energy in fluid_1 : 0.491977
-L2 error phase : 0.00208424
+	 boundary 0 : 0.000000e+00
+	 boundary 1 : 0.000000e+00
+	 boundary 2 : 0.000000e+00
+	 boundary 3 : 0.000000e+00
+Thermal energy in fluid_1 : 4.919767e-01
+L2 error phase : 2.084241e-03
 
 *******************************************************************************
 Transient iteration: 4        Time: 0.8      Time step: 0.2      CFL: 0       
 *******************************************************************************
-L2 error velocity: 0
-L2 error temperature : 0.00467602
+L2 error velocity: 0.000000e+00
+L2 error temperature : 4.676022e-03
 Temperature statistics on fluid_1: 
-	     Min: 4.68132
-	     Max: 4.99569
-	 Average: 4.83519
-	 Std-Dev: 0.0948586
+	     Min: 4.681323e+00
+	     Max: 4.995693e+00
+	 Average: 4.835189e+00
+	 Std-Dev: 9.485864e-02
 Total heat flux at the heat transfer boundary conditions : 
-	 boundary 0 : 0.260893
-	 boundary 1 : -0.110035
-	 boundary 2 : 8.12855e-10
-	 boundary 3 : 4.31516e-10
+	 boundary 0 : 2.608934e-01
+	 boundary 1 : -1.100354e-01
+	 boundary 2 : 8.128551e-10
+	 boundary 3 : 4.315160e-10
 Convective heat flux at the heat transfer boundary conditions : 
-	 boundary 0 : 0
-	 boundary 1 : 0
-	 boundary 2 : 0
-	 boundary 3 : 0
-Thermal energy in fluid_1 : 0.499108
-L2 error phase : 0.00208425
+	 boundary 0 : 0.000000e+00
+	 boundary 1 : 0.000000e+00
+	 boundary 2 : 0.000000e+00
+	 boundary 3 : 0.000000e+00
+Thermal energy in fluid_1 : 4.991081e-01
+L2 error phase : 2.084251e-03
 
 *******************************************************************************
 Transient iteration: 5        Time: 1        Time step: 0.2      CFL: 0       
 *******************************************************************************
-L2 error velocity: 0
-L2 error temperature : 0.00092359
+L2 error velocity: 0.000000e+00
+L2 error temperature : 9.235898e-04
 Temperature statistics on fluid_1: 
-	     Min: 4.7347
-	     Max: 4.9965
-	 Average: 4.86434
-	 Std-Dev: 0.0789895
+	     Min: 4.734702e+00
+	     Max: 4.996498e+00
+	 Average: 4.864341e+00
+	 Std-Dev: 7.898947e-02
 Total heat flux at the heat transfer boundary conditions : 
-	 boundary 0 : 0.212121
-	 boundary 1 : -0.133064
-	 boundary 2 : 3.65135e-10
-	 boundary 3 : 5.22763e-10
+	 boundary 0 : 2.121210e-01
+	 boundary 1 : -1.330640e-01
+	 boundary 2 : 3.651350e-10
+	 boundary 3 : 5.227629e-10
 Convective heat flux at the heat transfer boundary conditions : 
-	 boundary 0 : 0
-	 boundary 1 : 0
-	 boundary 2 : 0
-	 boundary 3 : 0
-Thermal energy in fluid_1 : 0.502118
-L2 error phase : 0.00208425
+	 boundary 0 : 0.000000e+00
+	 boundary 1 : 0.000000e+00
+	 boundary 2 : 0.000000e+00
+	 boundary 3 : 0.000000e+00
+Thermal energy in fluid_1 : 5.021179e-01
+L2 error phase : 2.084253e-03
  time  error_velocity error_pressure 
 0.2000   0.000000e+00         0.0000 
 0.4000   0.000000e+00         0.0000 

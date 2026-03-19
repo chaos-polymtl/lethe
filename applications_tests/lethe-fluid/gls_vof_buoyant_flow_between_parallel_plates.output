@@ -1,28 +1,28 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       64
    Number of degrees of freedom: 243
-   Volume of triangulation:      0.05
+   Volume of triangulation:      5.000000e-02
    Number of thermal degrees of freedom: 81
    Number of CLS degrees of freedom: 81
 
 *****************************
 Steady iteration:        1/2
 *****************************
-L2 error velocity: 2.97905e-05
-L2 error temperature : 5.81828e-13
-L2 error phase : 0
+L2 error velocity: 2.979046e-05
+L2 error temperature : 5.818282e-13
+L2 error phase : 0.000000e+00
 
 *****************************
 Steady iteration:        2/2
 *****************************
    Number of active cells:       256
    Number of degrees of freedom: 867
-   Volume of triangulation:      0.05
+   Volume of triangulation:      5.000000e-02
    Number of thermal degrees of freedom: 289
    Number of CLS degrees of freedom: 289
-L2 error velocity: 6.92009e-06
-L2 error temperature : 7.74873e-11
-L2 error phase : 0
+L2 error velocity: 6.920086e-06
+L2 error temperature : 7.748728e-11
+L2 error phase : 0.000000e+00
 cells  error_velocity    error_pressure   
    64 2.979046e-05    - 6.154162e+00    - 
   256 6.920086e-06 2.11 3.166236e+00 0.96 

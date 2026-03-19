@@ -1,46 +1,46 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       1024
    Number of degrees of freedom: 3267
-   Volume of triangulation:      0.2
+   Volume of triangulation:      2.000000e-01
    Number of thermal degrees of freedom: 1089
 Temperature statistics on fluid: 
-	     Min: 0
-	     Max: 3.94338
-	 Average: 0.09375
-	 Std-Dev: 0.511903
+	     Min: 0.000000e+00
+	     Max: 3.943376e+00
+	 Average: 9.375000e-02
+	 Std-Dev: 5.119026e-01
 Total heat flux at the heat transfer boundary conditions : 
-	 boundary 0 : 64
-	 boundary 1 : 12.8
-	 boundary 2 : 0
-	 boundary 3 : 0
+	 boundary 0 : 6.400000e+01
+	 boundary 1 : 1.280000e+01
+	 boundary 2 : 0.000000e+00
+	 boundary 3 : 0.000000e+00
 Convective heat flux at the heat transfer boundary conditions : 
-	 boundary 0 : 0
-	 boundary 1 : 0
-	 boundary 2 : 0
-	 boundary 3 : 0
-Thermal energy in fluid : 0.01875
+	 boundary 0 : 0.000000e+00
+	 boundary 1 : 0.000000e+00
+	 boundary 2 : 0.000000e+00
+	 boundary 3 : 0.000000e+00
+Thermal energy in fluid : 1.875000e-02
 
 *****************************
 Steady iteration:        1/1
 *****************************
-L2 error velocity: 0
-L2 error temperature : 1.31683e-19
+L2 error velocity: 0.000000e+00
+L2 error temperature : 1.316831e-19
 Temperature statistics on fluid: 
-	     Min: 1.02642
-	     Max: 4.97358
-	 Average: 3
-	 Std-Dev: 1.1547
+	     Min: 1.026416e+00
+	     Max: 4.973584e+00
+	 Average: 3.000000e+00
+	 Std-Dev: 1.154701e+00
 Total heat flux at the heat transfer boundary conditions : 
-	 boundary 0 : 1.6
-	 boundary 1 : -1.6
-	 boundary 2 : 1.09963e-09
-	 boundary 3 : -8.40378e-10
+	 boundary 0 : 1.600000e+00
+	 boundary 1 : -1.600000e+00
+	 boundary 2 : 1.099633e-09
+	 boundary 3 : -8.403780e-10
 Convective heat flux at the heat transfer boundary conditions : 
-	 boundary 0 : 0
-	 boundary 1 : 0
-	 boundary 2 : 0
-	 boundary 3 : 0
-Thermal energy in fluid : 0.6
+	 boundary 0 : 0.000000e+00
+	 boundary 1 : 0.000000e+00
+	 boundary 2 : 0.000000e+00
+	 boundary 3 : 0.000000e+00
+Thermal energy in fluid : 6.000000e-01
 cells error_velocity error_pressure 
  1024 0.000000e+00 - 0.000000e+00 - 
 cells error_temperature 

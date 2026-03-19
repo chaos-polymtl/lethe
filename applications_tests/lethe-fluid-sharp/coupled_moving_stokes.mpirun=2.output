@@ -1,20 +1,20 @@
 Running on 2 MPI rank(s)...
    Number of active cells:       1024
    Number of degrees of freedom: 5508
-   Volume of triangulation:      16
+   Volume of triangulation:      1.600000000000e+01
 Initial refinement in box 0 - Step  1 of 1
    Number of active cells:       4552
    Number of degrees of freedom: 22172
-   Volume of triangulation:      16
+   Volume of triangulation:      1.600000000000e+01
 
 *******************************************************************************
 Transient iteration: 1        Time: 0.05     Time step: 0.05     CFL: 0       
 *******************************************************************************
-div u : 2.43466163029e-12
-error at the weak BC : 0.000124532071685
-L2 error velocity : 0.00158956636743 L2 error pressure: 0.0369356375109
-particle 0 position 0.997440813986 3.18006235857e-08 3.17773473251e-08
-particle 0 velocity -0.0511837202703 6.36012471714e-07 6.35546946502e-07
+div u : 2.434661630288e-12
+error at the weak BC : 1.245320716854e-04
+L2 error velocity : 1.589566367434e-03 L2 error pressure: 3.693563751089e-02
+particle 0 position 9.974408139865e-01 3.180062358569e-08 3.177734732509e-08
+particle 0 velocity -5.118372027032e-02 6.360124717138e-07 6.355469465017e-07
 +------------------------------------------+
 |  Force summary particles                 |
 +------------------------------------------+
@@ -24,11 +24,11 @@ particle_ID  time        T_x          omega_x        theta_x          T_y       
 **************************************************************************************
 Transient iteration: 2        Time: 0.125    Time step: 0.075    CFL: 0.0165057215672
 **************************************************************************************
-div u : -3.16327042685e-13
-error at the weak BC : 0.000587329285964
-L2 error velocity : 0.00405753969248 L2 error pressure: 0.120586739061
-particle 0 position 0.99000339018 9.78804030558e-08 9.78248269662e-08
-particle 0 velocity -0.127954809041 1.028094479e-06 1.02768473111e-06
+div u : -3.163270426848e-13
+error at the weak BC : 5.873292859635e-04
+L2 error velocity : 4.057539692476e-03 L2 error pressure: 1.205867390609e-01
+particle 0 position 9.900033901801e-01 9.788040305584e-08 9.782482696622e-08
+particle 0 velocity -1.279548090408e-01 1.028094479002e-06 1.027684731110e-06
 +------------------------------------------+
 |  Force summary particles                 |
 +------------------------------------------+

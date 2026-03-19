@@ -1,52 +1,52 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       256
    Number of degrees of freedom: 867
-   Volume of triangulation:      1.5
+   Volume of triangulation:      1.500000e+00
 
 *****************************
 Steady iteration:        1/3
 *****************************
-L2 error velocity : 0.00301746
+L2 error velocity: 3.017456e-03
 
 +------------------------------------------+
 |  Force on solid summary                  |
 +------------------------------------------+
-Solid ID    f_x      f_y    
-       0 -0.234506 0.000002 
-Solid ID    f_x       f_y    
-       1 -0.720662 -0.000003 
+  Solid ID        f_x          f_y      
+0.000000e+00 -2.345056e-01 1.790054e-06 
+  Solid ID        f_x           f_y      
+1.000000e+00 -7.206616e-01 -3.190270e-06 
 
 *****************************
 Steady iteration:        2/3
 *****************************
    Number of active cells:       1024
    Number of degrees of freedom: 3267
-   Volume of triangulation:      1.5
-L2 error velocity : 0.00192713
+   Volume of triangulation:      1.500000e+00
+L2 error velocity: 1.927129e-03
 
 +------------------------------------------+
 |  Force on solid summary                  |
 +------------------------------------------+
-Solid ID    f_x      f_y    
-       0 -0.257803 0.000001 
-Solid ID    f_x       f_y    
-       1 -0.735806 -0.000001 
+  Solid ID        f_x          f_y      
+0.000000e+00 -2.578032e-01 6.278446e-07 
+  Solid ID        f_x           f_y      
+1.000000e+00 -7.358057e-01 -9.183024e-07 
 
 *****************************
 Steady iteration:        3/3
 *****************************
    Number of active cells:       4096
    Number of degrees of freedom: 12675
-   Volume of triangulation:      1.5
-L2 error velocity : 0.00084416
+   Volume of triangulation:      1.500000e+00
+L2 error velocity: 8.441597e-04
 
 +------------------------------------------+
 |  Force on solid summary                  |
 +------------------------------------------+
-Solid ID    f_x      f_y    
-       0 -0.246125 0.000000 
-Solid ID    f_x       f_y    
-       1 -0.742867 0.000000 
+  Solid ID        f_x          f_y      
+0.000000e+00 -2.461251e-01 9.157139e-08 
+  Solid ID        f_x           f_y      
+1.000000e+00 -7.428666e-01 -1.758366e-07 
 cells  error_velocity    error_pressure   
   256 3.017456e-03    - 3.792536e-02    - 
  1024 1.927129e-03 0.65 2.185101e-02 0.80 

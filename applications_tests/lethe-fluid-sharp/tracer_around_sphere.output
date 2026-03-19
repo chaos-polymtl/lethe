@@ -1,34 +1,34 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       128
    Number of degrees of freedom: 459
-   Volume of triangulation:      0.5
+   Volume of triangulation:      5.0000e-01
    Number of tracer degrees of freedom: 153
 Initial refinement around IB particles - Step : 1 of 3
    Number of active cells:       176
    Number of degrees of freedom: 627
-   Volume of triangulation:      0.5
+   Volume of triangulation:      5.0000e-01
    Number of tracer degrees of freedom: 209
 Initial refinement around IB particles - Step : 2 of 3
    Number of active cells:       284
    Number of degrees of freedom: 987
-   Volume of triangulation:      0.5
+   Volume of triangulation:      5.0000e-01
    Number of tracer degrees of freedom: 329
 Initial refinement around IB particles - Step : 3 of 3
    Number of active cells:       500
    Number of degrees of freedom: 1719
-   Volume of triangulation:      0.5
+   Volume of triangulation:      5.0000e-01
    Number of tracer degrees of freedom: 573
-Tracer statistics :
-	     Min : 0
-	     Max : 0.7887
-	 Average : 0.01367
-	 Std-Dev : 0.09216
+Tracer statistics: 
+	     Min: 0.0000e+00
+	     Max: 7.8868e-01
+	 Average: 1.3672e-02
+	 Std-Dev: 9.2161e-02
 
 *****************************
 Steady iteration:        1/1
 *****************************
-Tracer statistics :
-	     Min : -0.0071
-	     Max : 1.007
-	 Average : 0.441
-	 Std-Dev : 0.3645
+Tracer statistics: 
+	     Min: -7.1002e-03
+	     Max: 1.0069e+00
+	 Average: 4.4100e-01
+	 Std-Dev: 3.6445e-01

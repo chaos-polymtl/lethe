@@ -1,7 +1,7 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       4096
    Number of degrees of freedom: 12675
-   Volume of triangulation:      0.0064
+   Volume of triangulation:      6.400000e-03
    Number of thermal degrees of freedom: 4225
    Number of CLS degrees of freedom: 4225
 

@@ -1,7 +1,7 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       1167
    Number of degrees of freedom: 3750
-   Volume of triangulation:      511.219
+   Volume of triangulation:      5.112186e+02
 
 *******************************************************************************
 Transient iteration: 1        Time: 0.1      Time step: 0.1      CFL: 0.386319
@@ -21,7 +21,7 @@ Transient iteration: 2        Time: 0.2      Time step: 0.1      CFL: 0.638265
 *******************************************************************************
    Number of active cells:       1203
    Number of degrees of freedom: 3900
-   Volume of triangulation:      511.218
+   Volume of triangulation:      5.112184e+02
 
 +------------------------------------------+
 |  Force summary                           |
@@ -37,7 +37,7 @@ Transient iteration: 3        Time: 0.3      Time step: 0.1      CFL: 1.3879
 *******************************************************************************
    Number of active cells:       1251
    Number of degrees of freedom: 4062
-   Volume of triangulation:      511.218
+   Volume of triangulation:      5.112176e+02
 
 +------------------------------------------+
 |  Force summary                           |
@@ -53,7 +53,7 @@ Transient iteration: 4        Time: 0.4      Time step: 0.1      CFL: 1.3482
 *******************************************************************************
    Number of active cells:       1311
    Number of degrees of freedom: 4278
-   Volume of triangulation:      511.217
+   Volume of triangulation:      5.112168e+02
 
 +------------------------------------------+
 |  Force summary                           |
@@ -69,7 +69,7 @@ Transient iteration: 5        Time: 0.5      Time step: 0.1      CFL: 2.06274
 *******************************************************************************
    Number of active cells:       1413
    Number of degrees of freedom: 4692
-   Volume of triangulation:      511.216
+   Volume of triangulation:      5.112164e+02
 
 +------------------------------------------+
 |  Force summary                           |

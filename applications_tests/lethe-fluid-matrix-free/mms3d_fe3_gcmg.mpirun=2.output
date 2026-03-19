@@ -1,7 +1,7 @@
 Running on 2 MPI rank(s)...
    Number of active cells:       512
    Number of degrees of freedom: 62500
-   Volume of triangulation:      8
+   Volume of triangulation:      8.000000e+00
 
 *****************************
 Steady iteration:        1/1
@@ -15,75 +15,75 @@ Steady iteration:        1/1
 
 
   -Eigenvalue estimation level 0:
-    Relaxation parameter: 1.21092
-    Minimum eigenvalue: 1.25124
-    Maximum eigenvalue: 1.50148
+    Relaxation parameter: 1.210924e+00
+    Minimum eigenvalue: 1.251236e+00
+    Maximum eigenvalue: 1.501483e+00
 
 
   -Eigenvalue estimation level 1:
-    Relaxation parameter: 0.822348
-    Minimum eigenvalue: 1.84247
-    Maximum eigenvalue: 2.21096
+    Relaxation parameter: 8.223477e-01
+    Minimum eigenvalue: 1.842471e+00
+    Maximum eigenvalue: 2.210965e+00
 
 
   -Eigenvalue estimation level 2:
-    Relaxation parameter: 0.808408
-    Minimum eigenvalue: 1.87424
-    Maximum eigenvalue: 2.24909
+    Relaxation parameter: 8.084078e-01
+    Minimum eigenvalue: 1.874242e+00
+    Maximum eigenvalue: 2.249090e+00
 
 
   -Eigenvalue estimation level 3:
-    Relaxation parameter: 0.847692
-    Minimum eigenvalue: 1.78738
-    Maximum eigenvalue: 2.14486
+    Relaxation parameter: 8.476923e-01
+    Minimum eigenvalue: 1.787384e+00
+    Maximum eigenvalue: 2.144861e+00
 
 
   -Eigenvalue estimation level 0:
-    Relaxation parameter: 1.20968
-    Minimum eigenvalue: 1.25252
-    Maximum eigenvalue: 1.50303
+    Relaxation parameter: 1.209681e+00
+    Minimum eigenvalue: 1.252521e+00
+    Maximum eigenvalue: 1.503026e+00
 
 
   -Eigenvalue estimation level 1:
-    Relaxation parameter: 0.823503
-    Minimum eigenvalue: 1.83988
-    Maximum eigenvalue: 2.20786
+    Relaxation parameter: 8.235034e-01
+    Minimum eigenvalue: 1.839885e+00
+    Maximum eigenvalue: 2.207862e+00
 
 
   -Eigenvalue estimation level 2:
-    Relaxation parameter: 0.808568
-    Minimum eigenvalue: 1.87387
-    Maximum eigenvalue: 2.24864
+    Relaxation parameter: 8.085683e-01
+    Minimum eigenvalue: 1.873870e+00
+    Maximum eigenvalue: 2.248644e+00
 
 
   -Eigenvalue estimation level 3:
-    Relaxation parameter: 0.847685
-    Minimum eigenvalue: 1.7874
-    Maximum eigenvalue: 2.14488
+    Relaxation parameter: 8.476852e-01
+    Minimum eigenvalue: 1.787399e+00
+    Maximum eigenvalue: 2.144879e+00
 
 
   -Eigenvalue estimation level 0:
-    Relaxation parameter: 1.20968
-    Minimum eigenvalue: 1.25252
-    Maximum eigenvalue: 1.50303
+    Relaxation parameter: 1.209679e+00
+    Minimum eigenvalue: 1.252523e+00
+    Maximum eigenvalue: 1.503028e+00
 
 
   -Eigenvalue estimation level 1:
-    Relaxation parameter: 0.823512
-    Minimum eigenvalue: 1.83987
-    Maximum eigenvalue: 2.20784
+    Relaxation parameter: 8.235123e-01
+    Minimum eigenvalue: 1.839865e+00
+    Maximum eigenvalue: 2.207838e+00
 
 
   -Eigenvalue estimation level 2:
-    Relaxation parameter: 0.808566
-    Minimum eigenvalue: 1.87388
-    Maximum eigenvalue: 2.24865
+    Relaxation parameter: 8.085656e-01
+    Minimum eigenvalue: 1.873876e+00
+    Maximum eigenvalue: 2.248651e+00
 
 
   -Eigenvalue estimation level 3:
-    Relaxation parameter: 0.847685
-    Minimum eigenvalue: 1.7874
-    Maximum eigenvalue: 2.14488
+    Relaxation parameter: 8.476853e-01
+    Minimum eigenvalue: 1.787399e+00
+    Maximum eigenvalue: 2.144878e+00
 
 cells error_velocity error_pressure 
   512 1.285973e-03 - 1.224979e-02 - 

@@ -1,7 +1,7 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       1312
    Number of degrees of freedom: 7012
-   Volume of triangulation:      0.038
+   Volume of triangulation:      3.796e-02
 
 *****************************
 Steady iteration:        1/1
@@ -10,7 +10,7 @@ Steady iteration:        1/1
 +------------------------------------------+
 |  Torque summary                          |
 +------------------------------------------+
-Boundary ID  T_x   T_y   T_z  
-          0 0.000 0.000 0.000 
+Boundary ID    T_x       T_y       T_z    
+  0.000e+00 6.794e-12 1.566e-11 9.039e-13 
 cells error_velocity error_pressure 
  1312 5.297e-11    - 5.241e-11    - 
