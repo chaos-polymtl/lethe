@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_grid_motion_h
@@ -37,7 +37,7 @@ public:
    * translational-rotational motions.
    *
    * @param grid_motion_parameters DEM parameters defined using the parameter handler
-   * @param dem_time_step DEM time-step
+   * @param dem_time_step DEM time step
    */
   GridMotion(
     const Parameters::Lagrangian::GridMotion<spacedim> &grid_motion_parameters,
@@ -103,8 +103,8 @@ private:
   }
 
 
-  // Since the DEM time-step and rotational speed are constant, we calculate the
-  // rotation angle at each time-step once in the constructor and define it as a
+  // Since the DEM time step and rotational speed are constant, we calculate the
+  // rotation angle at each time step once in the constructor and define it as a
   // member variable.
   double rotation_angle;
 

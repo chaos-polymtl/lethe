@@ -47,13 +47,13 @@ Simulation Control
 .. code-block:: text
 
     subsection simulation control
-      set method             = bdf2
-      set time step          = 0.0005 
-      set adapt              = true
-      set output frequency   = 10
-      set max cfl            = 0.5
-      set time end           = 0.6    
-      set output path        = out/
+      set method                         = bdf2
+      set time step                      = 0.0005
+      set adapt time step to respect CFL = true
+      set output frequency               = 10
+      set max cfl                        = 0.5
+      set time end                       = 0.6
+      set output path                    = out/
     end
 
 * The ``time step`` is set to  ``0.0005``. This is very small for this case but it ensures that the particle is properly accelerated from rest at the beginning of the simulation. In order to reduce the computational time, we use use adaptive time stepping with a maximum CFL of ``0.5``. This will allow the time step to increase as the particle accelerates and the flow becomes more steady around the particle.
@@ -96,15 +96,16 @@ Mesh Adaptation
 .. code-block:: text
 
     subsection mesh adaptation
-      set fraction coarsening = 0.3
-      set fraction refinement = 0.05
-      set max number elements = 750000
+      set fraction coarsening  = 0.3
+      set fraction refinement  = 0.05
+      set max number elements  = 750000
 
       set max refinement level = 8
       set min refinement level = 4
 
-      set type = kelly
-      set variable = velocity
+      set type                 = adaptive 
+      set error estimator      = kelly
+      set variable             = velocity
     end
 
 * The ``fraction coarsening`` is set to ``0.3``.The results are shown in the animation below.  This limits the accumulation of elements when the particle is moving. It allows for cells far from the particle to be coarsened when the particles get further away.
@@ -113,7 +114,7 @@ Mesh Adaptation
 
 * The ``max refinement level`` is set to ``8``. This parameter limits how small the elements around the particle can get limiting the total number of elements in the problem. Here we limit the mesh size to ~ :math:`10` elements per sides of the cuboid. An initial mesh sensitivity study showed this resulted in close to mesh independent results sufficient for demonstration purposes, although a more refined mesh would be required for a rigorous study
 
-* The ``type`` is set to ``kelly``. Since the particle is moving and we do not want a uniform refinement of all the cells, we use the kelly error estimator based on the ``velocity`` variable.
+* The ``type`` is set to ``adaptive``. Since the particle is moving and we do not want a uniform refinement of all the cells, we use the ``kelly`` error estimator based on the ``velocity`` variable.
 
 
 Boundary Conditions

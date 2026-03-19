@@ -1,3 +1,7 @@
+..
+  SPDX-FileCopyrightText: Copyright (c) 2024, 2026 The Lethe Authors
+  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 ===================================
 Static Irradiation of a Bare Plate
 ===================================
@@ -11,7 +15,7 @@ Features
 --------
 
 - Solver: ``lethe-fluid`` 
-- Volume of fluid (VOF) and Heat Transfer (HT)
+- Conservative Level-Set (CLS) and Heat Transfer (HT)
 - Unsteady problem with phase change handled by an adaptive BDF1 time-stepping scheme
 
 ****
@@ -59,7 +63,7 @@ The dimensions (:math:`H, \Delta h`, and :math:`L`) and the Dirichlet boundary c
 | :math:`L`                 | :math:`600\;\mu\text{m}`  | :math:`T_{\text{0}}`       | :math:`298\;\text{K}`       |
 +---------------------------+---------------------------+----------------------------+-----------------------------+
 
-There are three phases involved in this simulation: solid and liquid Ti6Al4V, and Argon. The metal-gas interface is handled by the VOF solver, while the solid-liquid interface is obtained from the temperature field of the HT solver. Hence, this example models a two-fluid problem: ``fluid 0`` corresponds to the Argon phase and ``fluid 1`` is the metal (solid and liquid), for which the solid part corresponds to a infinitely viscous fluid. 
+There are three phases involved in this simulation: solid and liquid Ti6Al4V, and Argon. The metal-gas interface is handled by the CLS solver, while the solid-liquid interface is obtained from the temperature field of the HT solver. Hence, this example models a two-fluid problem: ``fluid 0`` corresponds to the Argon phase and ``fluid 1`` is the metal (solid and liquid), for which the solid part corresponds to a infinitely viscous fluid. 
 
 .. note::
   To improve the performance of the solvers, all dimensional quantities in this example are based on the SI system except for the reference length, which is taken as :math:`1\;\text{mm}`. This scaling helps the matrices to have better conditioning, as explained for the pressure scaling in the :doc:`stabilization subsection <../../../parameters/cfd/stabilization>`.
@@ -71,31 +75,31 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The time integration is handled by a first order backward differentiation scheme (``bdf1``) with a maximum time-step of :math:`\Delta t = 1.9 \times 10^{-8} \; \text{s} < \Delta t_\sigma` which corresponds to the capillary time-step constraint (see :doc:`capillary wave example <../capillary-wave/capillary-wave>`). We use adaptive time stepping with a maximum CFL of :math:`0.06` to prevent instability resulting from the explicit coupling between the NS and HT solvers through the recoil pressure and evaporative cooling. 
+The time integration is handled by a first order backward differentiation scheme (``bdf1``) with a maximum time step of :math:`\Delta t = 1.9 \times 10^{-8} \; \text{s} < \Delta t_\sigma` which corresponds to the capillary time-step constraint (see :doc:`capillary wave example <../capillary-wave/capillary-wave>`). We use adaptive time stepping with a maximum CFL of :math:`0.06` to prevent instability resulting from the explicit coupling between the NS and HT solvers through the recoil pressure and evaporative cooling.
 
 .. code-block:: text
 
     subsection simulation control
-      set method           = bdf1
-      set time end         = 0.0005
-      set time step        = 1.9e-8
-      set adapt            = true
-      set max cfl          = 0.06
-      set max time step    = 1.9e-8
-      set output name      = static-irradiation
-      set output path      = output/
-      set output frequency = 100
+      set method                         = bdf1
+      set time end                       = 0.0005
+      set time step                      = 1.9e-8
+      set adapt time step to respect CFL = true
+      set max cfl                        = 0.06
+      set max time step                  = 1.9e-8
+      set output name                    = static-irradiation
+      set output path                    = output/
+      set output frequency               = 100
     end
     
 Multiphysics
 ~~~~~~~~~~~~
 
-In the ``multiphysics`` subsection, we enable both the VOF and HT solvers.
+In the ``multiphysics`` subsection, we enable both the CLS and HT solvers.
 
 .. code-block:: text
 
     subsection multiphysics
-      set VOF           = true
+      set CLS           = true
       set heat transfer = true
     end
     
@@ -113,12 +117,15 @@ The coarse level mesh considered for this example is generated with Pointwise to
     end
 
     subsection box refinement
-      subsection mesh
-        set type           = dealii
-        set grid type      = subdivided_hyper_rectangle
-        set grid arguments = 8,1 : 0,0.3925: 0.6,0.4675: false
+      set number of refinement boxes = 1
+      subsection box 0
+        subsection mesh
+          set type           = dealii
+          set grid type      = subdivided_hyper_rectangle
+          set grid arguments = 8,1 : 0,0.3925: 0.6,0.4675: false
+        end
+        set additional refinement = 3
       end
-      set initial refinement = 3
     end
 
 Mesh Adaptation
@@ -129,7 +136,8 @@ As the laser heats the metal-gas interface, a vapor depression forms and deepens
 .. code-block:: text
 
     subsection mesh adaptation
-      set type                 = kelly
+      set type                 = adaptive 
+      set error estimator      = kelly
       set variable             = temperature
       set fraction type        = fraction
       set max refinement level = 7
@@ -142,7 +150,7 @@ As the laser heats the metal-gas interface, a vapor depression forms and deepens
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-In the ``boundary conditions`` subsection, we set the boundary conditions described in the figure above for the NS, HT, and VOF solvers. The following ``subsection boundary conditions`` sets the NS boundary conditions:
+In the ``boundary conditions`` subsection, we set the boundary conditions described in the figure above for the NS, HT, and CLS solvers. The following ``subsection boundary conditions`` sets the NS boundary conditions:
 
 .. code-block:: text
 
@@ -237,7 +245,7 @@ In ``subsection boundary conditions heat transfer``, we set the boundary conditi
 
   Here, the ``id`` corresponds to the second column and we identify the corresponding boundary in the domain with the description given in the third column.
     
-For the sake of brevity, we leave out the ``subsection boundary conditions VOF`` because they all corresponds to no flux boundary conditions (``none``). However, in the example's parameter file, all boundary conditions are defined.  
+For the sake of brevity, we leave out the ``subsection boundary conditions CLS`` because they all corresponds to no flux boundary conditions (``none``). However, in the example's parameter file, all boundary conditions are defined.  
 
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
@@ -246,7 +254,7 @@ In the ``initial conditions`` subsection, we set the initial condition for all t
 
 - NS intial conditions are :math:`0.0` for both velocity components and for the pressure
 - HT intial condition corresponds to a uniform temperature :math:`T_\text{0} = 298\;\text{K}`
-- VOF intial condition allows us to described the metal and gas phases. The bottom part of the domain (:math:`y<430\;\mu\text{m}`) corresponds to the Ti6Al4V metal phase (``fluid 1``), while Argon (``fluid 0``) fills the top part.
+- CLS intial condition allows us to described the metal and gas phases. The bottom part of the domain (:math:`y<430\;\mu\text{m}`) corresponds to the Ti6Al4V metal phase (``fluid 1``), while Argon (``fluid 0``) fills the top part.
 
 .. code-block:: text
 
@@ -258,7 +266,7 @@ In the ``initial conditions`` subsection, we set the initial condition for all t
       subsection temperature
         set Function expression = 298
       end
-      subsection VOF
+      subsection CLS
         set Function expression = if (y<0.43 , 1, 0)
       end
     end
@@ -268,7 +276,7 @@ Physical Properties
 
 The ``physical properties`` subsection sets the material properties for the metal and gas phase. It is in this subsection that we activate the phase change by setting the solid and liquid properties for the metal phase, in the same fashion as in the :doc:`Stefan problem <../stefan-problem/stefan-problem>` and :doc:`melting cavity <../melting-cavity/melting-cavity>` examples. However, since we consider an alloy (TI6Al4V), the phase change occurs over a temperature range. Hence, the difference between the ``liquidus temperature`` and ``solidus temperature`` corresponds to the real temperature range in which the solid and liquid TI6Al4V coexist (mushy zone). 
 
-We also set in this subsection the reference surface tension coefficient of the metal-gas interface and its temperature derivative to simulate the Maragoni effect. Here, we consider a linear evolution of the surface tension coefficient with the temperature at the liquid-gas interface, and we neglect its effect at the solid-gas interface to avoid numerical instabilities. This is done by setting ``surface tension model = phase change``. We refer to the parameter guide :doc:`../../../../parameters/cfd/physical_properties` for more details on this model.
+We also set in this subsection the reference surface tension coefficient of the metal-gas interface and its temperature derivative to simulate the Marangoni effect. Here, we consider a linear evolution of the surface tension coefficient with the temperature at the liquid-gas interface, and we neglect its effect at the solid-gas interface to avoid numerical instabilities. This is done by setting ``surface tension model = phase change``. We refer to the parameter guide :doc:`../../../../parameters/cfd/physical_properties` for more details on this model.
   
 .. code-block:: text
 
@@ -321,13 +329,13 @@ We also set in this subsection the reference surface tension coefficient of the 
 Laser parameters
 ~~~~~~~~~~~~~~~~
 
-We defined the laser heat source in the ``laser parameters`` subsection. In the present example, we are considering the irradiation of a bare plate. Thus, the laser only heats the metal-gas interface and we model this surface heat flux using the ``gaussian_heat_flux_vof_interface`` laser model. We refer to the parameter guide :doc:`../../../../parameters/cfd/laser_heat_source` for more details on this model.
+We defined the laser heat source in the ``laser parameters`` subsection. In the present example, we are considering the irradiation of a bare plate. Thus, the laser only heats the metal-gas interface and we model this surface heat flux using the ``gaussian_heat_flux_cls_interface`` laser model. We refer to the parameter guide :doc:`../../../../parameters/cfd/laser_heat_source` for more details on this model.
 
 .. code-block:: text
 
     subsection laser parameters
       set enable           = true
-      set type             = gaussian_heat_flux_vof_interface
+      set type             = gaussian_heat_flux_cls_interface
       set power            = 156e6
       set absorptivity     = 0.35
       set beam radius      = 0.07
@@ -339,7 +347,7 @@ We defined the laser heat source in the ``laser parameters`` subsection. In the 
       end
     end
 
-The laser is static in the middle of the domain at the metal-gas interface :math:`\vec{x} = [0.3, 0.43]`, hence its ``path`` is independent of the time. Note that the :math:`y` component of the ``path`` is not relevant: the ``gaussian_heat_flux_vof_interface`` model applies the laser heat flux at the metal-gas interface no matter its postion along the :math:`y` axis. This allows us to model the effect of the interface deformation on the surface heat flux.
+The laser is static in the middle of the domain at the metal-gas interface :math:`\vec{x} = [0.3, 0.43]`, hence its ``path`` is independent of the time. Note that the :math:`y` component of the ``path`` is not relevant: the ``gaussian_heat_flux_cls_interface`` model applies the laser heat flux at the metal-gas interface no matter its position along the :math:`y` axis. This allows us to model the effect of the interface deformation on the surface heat flux.
 
 Evaporation
 ~~~~~~~~~~~
@@ -380,7 +388,7 @@ where :math:`\phi_\text{evap}=0.82` and :math:`\psi_\text{evap}=0.56` are the ``
 
 where :math:`p_\text{atm}=101.325\;\text{kPa}` is the ``ambient pressure``, and :math:`T_\text{boil}=3550\;\text{K}` is the ``boiling temperature``.
 
-Both terms are then applied at the liquid-gas interface using the Continuous Surface Force (CSF) model, as described for the surface tension in :doc:`../../../theory/multiphase/cfd/vof` theory guide.
+Both terms are then applied at the liquid-gas interface using the Continuous Surface Force (CSF) model, as described for the surface tension in :doc:`../../../theory/multiphase/cfd/cls` theory guide.
 
     
 Non-Linear Solver
@@ -401,7 +409,7 @@ The parameters for the non-linear system resolution of the three physiscs are se
         set max iterations = 20
         set verbosity      = verbose
       end
-      subsection VOF
+      subsection CLS
         set tolerance      = 1e-4
         set max iterations = 20
         set verbosity      = verbose
@@ -451,8 +459,7 @@ We call ``lethe-fluid`` to launch the simulation by invoking the following comma
 Results
 -------
 
-The following video shows on the left the temperature evolution in the metal, and on the right, the phase fraction evolution. We observe the melt pool, delimited by the black line, deepening and the formation of the vapor depression at the liquid-gas interface. This is often refered as a keyhole. It is caused by the recoil pressure, resulting from the fast out of equilibrium evaporation, and the Marangoni effect, driving melt alway from the melt pool center. 
-
+The following video shows on the left the temperature evolution in the metal, and on the right, the phase indicator evolution. We observe the melt pool, delimited by the black line, deepening and the formation of the vapor depression at the liquid-gas interface. This is often referred as a keyhole. It is caused by the recoil pressure, resulting from the fast out of equilibrium evaporation, and the Marangoni effect, driving melt always from the melt pool center.
 .. raw:: html
 
     <iframe width="700" height="394" src="https://www.youtube.com/embed/1L66uYqNbXQ" title="Static irradiation of the Ti6Al4V bare plate" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>

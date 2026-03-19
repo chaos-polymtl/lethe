@@ -57,7 +57,8 @@ subsection FEM
 end
 
 subsection mesh adaptation
-  set type                = kelly
+  set type                = adaptive
+  set error estimator     = kelly
   set frequency           = 1
   set fraction coarsening = 0.05
   set fraction refinement = 0.1

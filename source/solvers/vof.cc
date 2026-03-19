@@ -61,7 +61,7 @@ VolumeOfFluid<dim>::VolumeOfFluid(
       this->simulation_parameters.post_processing.calculate_mass_conservation)
     {
       this->pcout
-        << "Warning: DG-VOF and the geometric surface and volume computations are not compatible. Only the global volume will be monitored."
+        << "Warning: DG-CLS and the geometric surface and volume computations are not compatible. Only the global volume will be monitored."
         << std::endl;
     }
 
@@ -1648,7 +1648,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
 
 
 
-              announce_string(this->pcout, "VOF Mass Conservation");
+              announce_string(this->pcout, "CLS Mass Conservation");
               table.write_text(std::cout);
             }
         }
@@ -1746,7 +1746,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
                 this->simulation_parameters.simulation_control.log_precision,
                 true);
 
-              announce_string(this->pcout, "VOF Barycenter");
+              announce_string(this->pcout, "CLS Barycenter");
               table.write_text(std::cout);
             }
 
@@ -1807,9 +1807,8 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
         Parameters::SimulationControl::TimeSteppingMethod::steady &&
       this->simulation_parameters.multiphysics.vof_parameters
         .surface_tension_force.enable &&
-      this->simulation_parameters.simulation_control.adapt &&
       this->simulation_parameters.simulation_control
-        .respect_capillary_time_step_constraint)
+        .adapt_with_capillary_time_step_ratio)
     {
       // Compute capillary time-step constraint
       this->simulation_control->set_capillary_time_step_constraint(
@@ -1823,7 +1822,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
   if (this->simulation_parameters.timer.type ==
       Parameters::Timer::Type::iteration)
     {
-      announce_string(this->pcout, "VOF");
+      announce_string(this->pcout, "CLS");
       this->computing_timer.print_summary();
       this->computing_timer.reset();
     }
@@ -2276,7 +2275,7 @@ VolumeOfFluid<dim>::solve_projection_phase_fraction(GlobalVectorType &solution)
   if (this->simulation_parameters.multiphysics.vof_parameters
         .surface_tension_force.verbosity != Parameters::Verbosity::quiet)
     {
-      this->pcout << "  -Iterative solver (phase fraction) took : "
+      this->pcout << "  -Iterative solver (phase indicator) took : "
                   << solver_control.last_step() << " steps " << std::endl;
     }
 
@@ -2335,24 +2334,41 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::compute_kelly(
+VolumeOfFluid<dim>::compute_error_estimate(
   const std::pair<const Variable, Parameters::MultipleAdaptationParameters>
                         &ivar,
   dealii::Vector<float> &estimated_error_per_cell)
 {
   if (ivar.first == Variable::phase)
     {
-      const FEValuesExtractors::Scalar phase(0);
+      AssertThrow(
+        ivar.second.error_estimator ==
+          Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly,
+        ExcMessage(
+          "Only the Kelly error estimator is currently implemented for the "
+          "<phase> CLS field."));
 
-      KellyErrorEstimator<dim>::estimate(
-        *this->mapping,
-        *this->dof_handler,
-        *this->face_quadrature,
-        typename std::map<types::boundary_id, const Function<dim, double> *>(),
-        *this->present_solution,
-        estimated_error_per_cell,
-        this->fe->component_mask(phase));
+
+      ComponentMask phase_mask =
+        fe->component_mask(FEValuesExtractors::Scalar(0));
+      compute_kelly(estimated_error_per_cell, phase_mask);
     }
+}
+
+template <int dim>
+void
+VolumeOfFluid<dim>::compute_kelly(
+  dealii::Vector<float> &estimated_error_per_cell,
+  const ComponentMask   &component_mask)
+{
+  KellyErrorEstimator<dim>::estimate(
+    *this->mapping,
+    *this->dof_handler,
+    *this->face_quadrature,
+    typename std::map<types::boundary_id, const Function<dim, double> *>(),
+    *this->present_solution,
+    estimated_error_per_cell,
+    component_mask);
 }
 
 template <int dim>
@@ -2421,7 +2437,7 @@ VolumeOfFluid<dim>::read_checkpoint()
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
   auto previous_solutions_size = this->previous_solutions->size();
-  this->pcout << "Reading VOF checkpoint" << std::endl;
+  this->pcout << "Reading CLS checkpoint" << std::endl;
 
   std::vector<GlobalVectorType *> input_vectors(1 + previous_solutions_size);
   GlobalVectorType                distributed_system(this->locally_owned_dofs,
@@ -2580,7 +2596,7 @@ VolumeOfFluid<dim>::setup_dofs()
                              dsp,
                              mpi_communicator);
 
-  this->pcout << "   Number of VOF degrees of freedom: "
+  this->pcout << "   Number of CLS degrees of freedom: "
               << this->dof_handler->n_dofs() << std::endl;
 
   // Provide the VOF dof_handler and solution pointers to the
@@ -2773,7 +2789,7 @@ VolumeOfFluid<dim>::set_initial_conditions()
       auto mpi_communicator = this->triangulation->get_mpi_communicator();
       const std::string folder =
         this->simulation_parameters.simulation_control.output_folder +
-        "/algebraic-reinitialization-steps-output/";
+        "/pde-based-reinitialization-steps-output/";
 
       struct stat buffer;
 
@@ -2796,7 +2812,7 @@ VolumeOfFluid<dim>::set_initial_conditions()
       this->simulation_parameters.multiphysics.vof_parameters
         .surface_tension_force.enable &&
       this->simulation_parameters.simulation_control
-        .respect_capillary_time_step_constraint)
+        .adapt_with_capillary_time_step_ratio)
     {
       // Compute capillary time-step constraint
       this->simulation_control->set_capillary_time_step_constraint(
@@ -2806,19 +2822,9 @@ VolumeOfFluid<dim>::set_initial_conditions()
           this->simulation_parameters.physical_properties_manager
             .field_is_required(field::temperature)));
 
-      // Update initial time-step with capillary constraint if requested
+      // Update initial time step with capillary constraint if requested
       this->simulation_control
         ->limit_initial_time_step_with_capillary_time_step_constraint();
-
-      if (!this->simulation_parameters.simulation_control.adapt)
-        this->pcout
-          << "Warning: Adaptive time-stepping is disabled. \n"
-             "Therefore, the capillary time-step constraint might not be respected through the \n"
-             "simulation if either of the mesh cell size, the densities or the surface tension \n"
-             "coefficient evolves dynamically. To ensure that the capillary time-step \n"
-             "constraint is respected dynamically, set 'adapt' to 'true' in the 'simulation \n"
-             "control' subsection."
-          << std::endl;
     }
 
   percolate_time_vectors();
@@ -3210,7 +3216,7 @@ template <int dim>
 void
 VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
 {
-  TimerOutput::Scope t(this->computing_timer, "Algebraic reinitialization");
+  TimerOutput::Scope t(this->computing_timer, "PDE-based reinitialization");
 
   // Reinitialize previous VOF solution
   // (this is only coherent with BDF1 and BDF2)
@@ -3319,7 +3325,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
   if (simulation_parameters.multiphysics.vof_parameters.regularization_method
         .verbosity != Parameters::Verbosity::quiet)
     {
-      announce_string(this->pcout, "VOF geometric interface reinitialization");
+      announce_string(this->pcout, "CLS geometric interface reinitialization");
       this->pcout << "In redistanciation of the previous solution ..."
                   << std::endl;
     }

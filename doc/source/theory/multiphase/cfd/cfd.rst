@@ -9,5 +9,5 @@ Fluid-Fluid Flows - Interface Capturing Models
     :glob:
     :titlesonly:
 
-    vof
+    cls
     cahn-hilliard

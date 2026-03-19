@@ -1,9 +1,13 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/boundary_conditions.h>
+#include <core/cylinder_grid.h>
+#include <core/fichera_oven_grid.h>
+#include <core/grid_birmingham_fluidized_bed.h>
 #include <core/grids.h>
 #include <core/periodic_hills_grid.h>
+#include <core/uniform_channel_with_meshed_cylinder_grid.h>
 
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_in.h>
@@ -12,6 +16,7 @@
 
 #include <fstream>
 #include <numbers>
+#include <string>
 
 
 template <int dim, int spacedim>
@@ -123,191 +128,97 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
             mesh_parameters.grid_type,
             mesh_parameters.grid_arguments);
 
+          // Scale, translate, and rotate mesh
+          apply_mesh_transformation(mesh_parameters, triangulation);
+        }
+
+      // deal.II colorize some meshes material ID in a way that is not
+      // compatible with the way we use material ID and boundary ID in Lethe
+      // (e.g. GridGenerator ::subdivided_hyper_rectangle). Therefore, we reset
+      // all material IDs to zero for dealii meshes.
+      for (const auto &cell : triangulation.active_cell_iterators())
+        cell->set_material_id(0);
+    }
+
+  else if (mesh_parameters.type == Parameters::Mesh::Type::lethe)
+    {
+      std::string grid_type = mesh_parameters.grid_type;
+
+      // Customizable cylinder mesh
+      if (grid_type.starts_with("cylinder_"))
+        {
+          AssertThrow(
+            !mesh_parameters.simplex,
+            ExcMessage(
+              "Unsupported mesh type - custom cylinder mesh with simplex is not supported. Use a dealii cylinder to use simplex mesh."));
+
+          CylinderGrid<dim, spacedim> grid(grid_type,
+                                           mesh_parameters.grid_arguments);
+          grid.make_grid(triangulation);
+
           GridTools::scale(mesh_parameters.scale, triangulation);
-
-          if constexpr (dim == 3)
-            {
-              // Initial mesh translation
-              GridTools::shift(mesh_parameters.translation, triangulation);
-
-              // Initial mesh rotation
-              GridTools::rotate(mesh_parameters.rotation_axis,
-                                mesh_parameters.rotation_angle,
-                                triangulation);
-            }
         }
-    }
-  // Customizable cylinder mesh
-  else if (mesh_parameters.type == Parameters::Mesh::Type::cylinder)
-    {
-      if (mesh_parameters.simplex)
+      // Periodic Hills grid
+      else if (grid_type == "periodic_hills")
         {
-          throw std::runtime_error(
-            "Unsupported mesh type - custom cylinder mesh with simplex is not supported. Use a dealii cylinder to use simplex mesh.");
-        }
-      else if (dim != 3)
-        {
-          throw std::runtime_error(
-            "Unsupported mesh type - custom cylinder mesh is only supported in 3d.");
-        }
+          AssertThrow(
+            !mesh_parameters.simplex,
+            ExcMessage(
+              "Unsupported mesh type - periodic hills mesh with simplex is not supported"));
 
-      if constexpr (dim == 3)
-        {
-          // Separate arguments of the string
-          std::vector<std::string> arguments;
-          std::stringstream        s_stream(mesh_parameters.grid_arguments);
-          while (s_stream.good())
-            {
-              std::string substr;
-              getline(s_stream, substr, ':');
-              arguments.push_back(substr);
-            }
-
-          // Arguments declaration
-          unsigned int subdivisions;
-          double       radius, half_height;
-          if (arguments.size() != 3)
-            {
-              throw std::runtime_error(
-                "Mandatory cylinder parameters are (x subdivisions: radius : half height)");
-            }
-          else
-            {
-              std::vector<double> arguments_double =
-                dealii::Utilities::string_to_double(arguments);
-              subdivisions = static_cast<int>(arguments_double[0]);
-              radius       = arguments_double[1];
-              half_height  = arguments_double[2];
-            }
-
-          if (mesh_parameters.grid_type == "classic")
-            {
-              // Create a subdivided cylinder from deal.ii
-              GridGenerator::subdivided_cylinder(triangulation,
-                                                 subdivisions,
-                                                 radius,
-                                                 half_height);
-
-              GridTools::scale(mesh_parameters.scale, triangulation);
-            }
-          else
-            {
-              // Create a temporary 2d mesh
-              Triangulation<2, spacedim - 1> temporary_triangulation;
-
-              // Create a spherical manifold for 2d mesh
-              Point<2>                                 center(0.0, 0.0);
-              const SphericalManifold<2, spacedim - 1> m0(center);
-
-              if (mesh_parameters.grid_type == "regularized" ||
-                  mesh_parameters.grid_type == "squared")
-                {
-                  // Create a square mesh
-                  double real_radius = radius * std::sin(M_PI_4);
-                  GridGenerator::hyper_cube(temporary_triangulation,
-                                            -real_radius,
-                                            real_radius,
-                                            true);
-
-                  // Assign boundary 0 to perimeter as for cylinder
-                  for (const auto &cell :
-                       temporary_triangulation.active_cell_iterators())
-                    {
-                      if (cell->is_locally_owned())
-                        {
-                          // Looping through all the faces of the cell
-                          for (const auto &face : cell->face_iterators())
-                            {
-                              // Check to see if the face is located at boundary
-                              if (face->at_boundary())
-                                {
-                                  face->set_boundary_id(0);
-                                }
-                            }
-                        }
-                    }
-                }
-              else if (mesh_parameters.grid_type == "balanced")
-                {
-                  GridGenerator::hyper_ball_balanced(temporary_triangulation,
-                                                     center,
-                                                     radius);
-                }
-              else
-                {
-                  throw std::runtime_error(
-                    "Unknown grid type. Choices are <classic|balanced|squared|regularized>.");
-                }
-
-              temporary_triangulation.reset_all_manifolds();
-              temporary_triangulation.set_all_manifold_ids_on_boundary(0);
-              temporary_triangulation.set_manifold(0, m0);
-
-              if (mesh_parameters.grid_type == "regularized")
-                {
-                  // Pre-refinement to reduce mesh size at corners before
-                  // regularization
-                  temporary_triangulation.refine_global(2);
-                  GridTools::regularize_corner_cells(temporary_triangulation);
-
-                  // Flatten the triangulation
-                  Triangulation<2, spacedim - 1> flat_temporary_triangulation;
-                  flat_temporary_triangulation.copy_triangulation(
-                    temporary_triangulation);
-                  temporary_triangulation.clear();
-                  GridGenerator::flatten_triangulation(
-                    flat_temporary_triangulation, temporary_triangulation);
-                }
-
-              // Extrude the 2d temporary mesh to 3d cylinder
-              GridGenerator::extrude_triangulation(temporary_triangulation,
-                                                   subdivisions + 1,
-                                                   2.0 * half_height,
-                                                   triangulation,
-                                                   true);
-
-              // Rotate mesh in x-axis and set the (0,0,0) at the barycenter
-              // to be comparable to dealii cylinder meshes
-              Tensor<1, spacedim> axis_vector({0.0, 1.0, 0.0});
-              GridTools::rotate(axis_vector, M_PI_2, triangulation);
-              Tensor<1, spacedim> shift_vector({-half_height, 0.0, 0.0});
-              GridTools::shift(shift_vector, triangulation);
-
-              // Force the manifold id to be zero in the case of the balanced
-              // cylinder
-              if (mesh_parameters.grid_type == "balanced")
-                triangulation.reset_manifold(1);
-
-              // Add a cylindrical manifold on the final unrefined mesh
-              const CylindricalManifold<3, spacedim> m1(0);
-              triangulation.set_manifold(0, m1);
-
-              GridTools::scale(mesh_parameters.scale, triangulation);
-            }
-        }
-    }
-
-  // Periodic Hills grid
-  else if (mesh_parameters.type == Parameters::Mesh::Type::periodic_hills &&
-           !mesh_parameters.simplex)
-    {
-      if (mesh_parameters.simplex)
-        {
-          throw std::runtime_error(
-            "Unsupported mesh type - periodic hills mesh with simplex is not supported");
-        }
-      else
-        {
           PeriodicHillsGrid<dim, spacedim> grid(mesh_parameters.grid_arguments);
           grid.make_grid(triangulation);
 
           GridTools::scale(mesh_parameters.scale, triangulation);
         }
+      else if (grid_type == "fichera_oven")
+        {
+          AssertThrow(
+            !mesh_parameters.simplex,
+            ExcMessage(
+              "Unsupported mesh type - Fichera oven mesh with simplex is not supported"));
+
+          FicheraOvenGrid<dim, spacedim> grid(mesh_parameters.grid_arguments);
+          grid.make_grid(triangulation);
+
+          GridTools::scale(mesh_parameters.scale, triangulation);
+        }
+      else if (grid_type == "birmingham_fluidized_bed")
+        {
+          AssertThrow(
+            !mesh_parameters.simplex,
+            ExcMessage(
+              "Unsupported mesh type - Birmingham fluidized bed mesh with simplex is not supported"));
+
+          BirminghamFluidizedBedGrid<dim, spacedim> grid(
+            mesh_parameters.grid_arguments);
+          grid.make_grid(triangulation);
+
+          GridTools::scale(mesh_parameters.scale, triangulation);
+        }
+      else if (grid_type == "uniform_channel_with_meshed_cylinder")
+        {
+          AssertThrow(
+            !mesh_parameters.simplex,
+            ExcMessage(
+              "Unsupported mesh type - uniform channel with meshed cylinder mesh with simplex is not supported"));
+
+          UniformChannelWithMeshedCylinderGrid<dim, spacedim> grid(
+            mesh_parameters.grid_arguments);
+          grid.make_grid(triangulation);
+
+          GridTools::scale(mesh_parameters.scale, triangulation);
+        }
+
+      else
+        {
+          AssertThrow(false,
+                      ExcMessage(
+                        "Unsupported mesh type - mesh will not be created"));
+        }
     }
-  else
-    throw std::runtime_error(
-      "Unsupported mesh type - mesh will not be created");
 }
+
 
 
 template <int dim, int spacedim>
@@ -369,10 +280,10 @@ read_mesh_and_manifolds(
       // If the parameter file forces the occurrence of manifold,
       // loop over the faces of the triangulation. If the face of the
       // triangulation has a boundary id which corresponds to a manifold id
-      // identified within the parameter file, then fix the manifold id of this
-      // face manually to be that of the boundary id. In the past, this was done
-      // by default for every face, but since 2023-12 this throws (rightfully)
-      // an error in deal.II
+      // identified within the parameter file, then fix the manifold id of
+      // this face manually to be that of the boundary id. In the past, this
+      // was done by default for every face, but since 2023-12 this throws
+      // (rightfully) an error in deal.II
       if (manifolds_parameters.size > 0)
         {
           for (const auto &face : triangulation.active_face_iterators())
@@ -385,8 +296,8 @@ read_mesh_and_manifolds(
     }
 
   // Finally attach the manifolds to the triangulation
-  // Right now this should only occur for GMSH mesh, but the function is generic
-  // enough.
+  // Right now this should only occur for GMSH mesh, but the function is
+  // generic enough.
   attach_manifolds_to_triangulation(triangulation, manifolds_parameters);
 
   if (mesh_parameters.simplex)
@@ -426,7 +337,16 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   const BoundaryConditions::BoundaryConditions          &boundary_conditions,
   const Parameters::Mortar<dim>                         &mortar_parameters)
 {
-  // First check if stator and rotor meshes are of the same type
+  // If linear mortar manager, only two-dimensional cases are supported
+  if (mortar_parameters.interface_type ==
+      Parameters::Mortar<dim>::InterfaceType::linear)
+    if constexpr (dim == 3)
+      AssertThrow(
+        false,
+        ExcMessage(
+          "The linear mortar interface type supports only two-dimensional cases at the moment."));
+
+  // Check if stator and rotor meshes are of the same type
   AssertThrow(
     mesh_parameters.type == mortar_parameters.rotor_mesh->type,
     ExcMessage(
@@ -631,8 +551,49 @@ read_mesh_and_manifolds_for_stator_and_rotor(
       std::to_string(n_faces_rotor_interface_total) +
       ") is different from the number of faces at the stator interface ID #" +
       std::to_string(mortar_parameters.stator_boundary_id) + " (" +
-      std::to_string(n_faces_rotor_interface_total) + ")."));
+      std::to_string(n_faces_stator_interface_total) + ")."));
 }
+
+template <int dim, int spacedim>
+void
+apply_mesh_transformation(const Parameters::Mesh       &mesh_parameters,
+                          Triangulation<dim, spacedim> &triangulation)
+{
+  // Mesh scaling
+  GridTools::scale(mesh_parameters.scale, triangulation);
+  if constexpr (dim == 2 && spacedim == 2)
+    {
+      // Box mesh translation
+      Tensor<1, 2> translation_vector;
+      translation_vector[0] = mesh_parameters.translation[0];
+      translation_vector[1] = mesh_parameters.translation[1];
+      GridTools::shift(translation_vector, triangulation);
+
+      // Box mesh rotation around the origin of the system coordinates
+      GridTools::rotate(mesh_parameters.rotation_angle, triangulation);
+    }
+  else if constexpr (dim == 2 && spacedim == 3)
+    {
+      // Box mesh translation
+      GridTools::shift(mesh_parameters.translation, triangulation);
+
+      // Box mesh rotation
+      GridTools::rotate(mesh_parameters.rotation_axis,
+                        mesh_parameters.rotation_angle,
+                        triangulation);
+    }
+  else if constexpr (dim == 3)
+    {
+      // Box mesh translation
+      GridTools::shift(mesh_parameters.translation, triangulation);
+
+      // Box mesh rotation
+      GridTools::rotate(mesh_parameters.rotation_axis,
+                        mesh_parameters.rotation_angle,
+                        triangulation);
+    }
+}
+
 
 template void
 attach_grid_to_triangulation(Triangulation<2>       &triangulation,
@@ -696,3 +657,13 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   const bool                                    restart,
   const BoundaryConditions::BoundaryConditions &boundary_conditions,
   const Parameters::Mortar<3>                  &mortar_parameters);
+
+template void
+apply_mesh_transformation(const Parameters::Mesh &mesh_parameters,
+                          Triangulation<2, 2>    &triangulation);
+template void
+apply_mesh_transformation(const Parameters::Mesh &mesh_parameters,
+                          Triangulation<2, 3>    &triangulation);
+template void
+apply_mesh_transformation(const Parameters::Mesh &mesh_parameters,
+                          Triangulation<3, 3>    &triangulation);

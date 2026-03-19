@@ -11,7 +11,7 @@ Features
 --------
 
 - Solver: ``lethe-fluid`` 
-- Volume of fluid (VOF)
+- Conservative Level-Set (CLS)
 - Unsteady problem handled by an adaptive BDF2 time-stepping scheme
 - Usage of a python script for post-processing data
 
@@ -40,7 +40,7 @@ Description of the Case
 Predicting the dynamics of free surface waves is essential for many industrial applications (e.g. transport of liquefied natural gas).
 Yet, simulating their dynamics is difficult, especially for high Reynolds number values.
 Indeed, in this case, the amplitude of the waves dampen very slowly.
-This leads to an oscillatory wave problem which is highly sensitive to the time integration scheme and the coupling between the VOF solver and the Navier-Stokes solver.
+This leads to an oscillatory wave problem which is highly sensitive to the time integration scheme and the coupling between the CLS solver and the Navier-Stokes solver.
 
 In this problem, we simulate the damping of a small amplitude wave in a rectangular cavity defined from  :math:`(-1,-1)` to :math:`(1,0.1)`. The initial height of the wave :math:`\xi (x)` is given by:
 
@@ -73,26 +73,26 @@ The results for this problem are highly sensitive to the accuracy of the time-st
 .. code-block:: text
 
     subsection simulation control
-      set method                       = bdf2
-      set time end                     = 50
-      set time step                    = 0.01
-      set adapt                        = true
-      set max cfl                      = 0.25
-      set output name                  = sloshing-in-rectangular-tank_Re20
-      set output path                  = ./output_Re20/
-      set output frequency             = 1
-      set adaptative time step scaling = 1.025
+      set method                         = bdf2
+      set time end                       = 50
+      set time step                      = 0.01
+      set adapt time step to respect CFL = true
+      set max cfl                        = 0.25
+      set output name                    = sloshing-in-rectangular-tank_Re20
+      set output path                    = ./output_Re20/
+      set output frequency               = 2
+      set adaptative time step scaling   = 1.025
     end
 
 Multiphysics
 ~~~~~~~~~~~~
 
-The ``multiphysics`` subsection is used to enable the VOF solver.
+The ``multiphysics`` subsection is used to enable the CLS solver.
 
 .. code-block:: text
 
     subsection multiphysics
-      set VOF  = true
+      set CLS  = true
     end 
 
 Initial Conditions
@@ -107,7 +107,7 @@ In the ``initial conditions``, we define the initial height of the wave, such th
       subsection uvwp
         set Function expression = 0; 0; 0
       end
-      subsection VOF
+      subsection CLS
         set Function expression =  if (y<=(0.01*sin(3.1416*(x+0.5))), min(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,1), max(0.5-(y-0.01*sin(3.1416*(x+0.5)))/0.0025,0))
       end
     end
@@ -197,7 +197,7 @@ We compare the relative height of the free surface at :math:`x=0` with an analyt
     You need to ensure that the ``lethe_pyvista_tools`` is working on your machine. Click `here <../../../tools/postprocessing/postprocessing.html>`_ for details.
 
 
-The following table presents a comparison between the analytical results and the simulation results for all Reynolds numbers mentioned above. A very good agreement is obtained for each of them, demonstrating the accuracy of the VOF solver.
+The following table presents a comparison between the analytical results and the simulation results for all Reynolds numbers mentioned above. A very good agreement is obtained for each of them, demonstrating the accuracy of the CLS solver.
 
 .. table::
    :align: center

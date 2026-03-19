@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -1171,24 +1171,42 @@ HeatTransfer<dim>::post_mesh_adaptation()
 
 template <int dim>
 void
-HeatTransfer<dim>::compute_kelly(
+HeatTransfer<dim>::compute_error_estimate(
   const std::pair<const Variable, Parameters::MultipleAdaptationParameters>
                         &ivar,
   dealii::Vector<float> &estimated_error_per_cell)
 {
   if (ivar.first == Variable::temperature)
     {
-      const FEValuesExtractors::Scalar temperature(0);
+      AssertThrow(
+        ivar.second.error_estimator ==
+          Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly,
+        ExcMessage(
+          "Only the Kelly error estimator is currently implemented for the "
+          "<temperature> field."));
 
-      KellyErrorEstimator<dim>::estimate(
-        *this->temperature_mapping,
-        *this->dof_handler,
-        *this->face_quadrature,
-        typename std::map<types::boundary_id, const Function<dim, double> *>(),
-        *this->present_solution,
-        estimated_error_per_cell,
-        this->fe->component_mask(temperature));
+
+      ComponentMask temperature_mask =
+        fe->component_mask(FEValuesExtractors::Scalar(0));
+      compute_kelly(estimated_error_per_cell, temperature_mask);
     }
+}
+
+
+template <int dim>
+void
+HeatTransfer<dim>::compute_kelly(
+  dealii::Vector<float> &estimated_error_per_cell,
+  const ComponentMask   &component_mask)
+{
+  KellyErrorEstimator<dim>::estimate(
+    *this->temperature_mapping,
+    *this->dof_handler,
+    *this->face_quadrature,
+    typename std::map<types::boundary_id, const Function<dim, double> *>(),
+    *this->present_solution,
+    estimated_error_per_cell,
+    component_mask);
 }
 
 template <int dim>
@@ -2000,7 +2018,9 @@ HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_vof)
   // Fill table
   this->liquid_fraction_table.add_value(
     "time", this->simulation_control->get_current_time());
+  this->liquid_fraction_table.set_scientific("time", true);
   this->liquid_fraction_table.add_value("liquid fraction", liquid_fraction);
+  this->liquid_fraction_table.set_scientific("liquid fraction", true);
 }
 
 template <int dim>
@@ -2581,7 +2601,7 @@ HeatTransfer<dim>::set_phase_coefficient(
               // Defensive only here, this has been checked already
               // in simulation_parameters.h
               throw std::logic_error(
-                "Inconsistency in .prm!\n when VOF = false"
+                "Inconsistency in .prm!\n when CLS = false"
                 "\n use (default value): set postprocessed fluid = both"
                 "\n or: set postprocessed fluid = fluid 0");
             }

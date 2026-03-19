@@ -58,16 +58,16 @@ For :math:`\textrm{Re} = 610`, a transient second-order backward differentiation
 .. code-block:: text
 
     subsection simulation control
-      set method           = bdf2
-      set output name      = sudden-expansion-flow-output
-      set output frequency = 15
-      set adapt            = true
-      set max cfl          = 5
-      set time step        = 0.001
-      set time end         = 15
+      set method                         = bdf2
+      set output name                    = sudden-expansion-flow-output
+      set output frequency               = 15
+      set adapt time step to respect CFL = true
+      set max cfl                        = 5
+      set time step                      = 0.001
+      set time end                       = 15
     end
 
-in which ``adapt``, ``max cfl``, and ``time step`` parameters are defined so that the time step is small enough to capture the flow behaviour without large damping oscillations. The final simulation time is taken as :math:`t_{end} = 15` s so that results can be compared to the reference case in [#durst1993]_.
+in which ``adapt time step to respect CFL``, ``max cfl``, and ``time step`` parameters are defined so that the time step is small enough to capture the flow behaviour without large damping oscillations. The final simulation time is taken as :math:`t_{end} = 15` s so that results can be compared to the reference case in [#durst1993]_.
 
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
@@ -111,7 +111,8 @@ The mesh adaptation algorithm is based on the Kelly error estimator applied on t
 
     subsection mesh adaptation
       set variable             = velocity
-      set type                 = kelly
+      set type                 = adaptive 
+      set error estimator      = kelly
       set fraction refinement  = 0.2
       set fraction coarsening  = 0
       set frequency            = 1
@@ -125,14 +126,15 @@ In this case, the algorithm thoroughly discretizes the mesh around the expansion
 
 For :math:`\textrm{Re} = 610`, mesh adaptation was limited by the maximum refinement level, the fraction refinement, and the number of cells, so that the mesh discretization did not become too computationally expensive at the final simulation time. 
 
-Also, it is useful not to have a very refined mesh at the beginning of the simulation (when the flow is still being developed at the inlet channel) and rather allow the algorithm to allocate more cells as the flow becomes turlent at the outlet section. 
+Also, it is useful not to have a very refined mesh at the beginning of the simulation (when the flow is still being developed at the inlet channel) and rather allow the algorithm to allocate more cells as the flow becomes turbulent at the outlet section. 
 The ``mesh refinement controller`` feature aims to maintain the total number of elements constant by changing coarsening and refinement ratios.
 
 .. code-block:: text
 
     subsection mesh adaptation
       set variable                    = velocity
-      set type                        = kelly
+      set type                        = adaptive 
+      set error estimator             = kelly
       set fraction refinement         = 0.05
       set fraction coarsening         = 0
       set frequency                   = 5

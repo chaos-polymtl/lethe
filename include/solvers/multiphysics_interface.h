@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /*
@@ -77,7 +77,7 @@ public:
       }
     else if (physics_id == PhysicsID::VOF)
       {
-        announce_string(pcout, "VOF");
+        announce_string(pcout, "CLS");
       }
     else if (physics_id == PhysicsID::cahn_hilliard)
       {
@@ -813,24 +813,27 @@ public:
   }
 
   /**
-   * @brief Mesh refinement according to an auxiliary physic parameter
+   * @brief  Compute error estimator for mesh refinement according to the auxiliary physic parameters
    *
-   * @param ivar The current element of the map simulation_parameters.mesh_adaptation.variables
+   * @param[in] ivar The current element of the map
+   * simulation_parameters.mesh_adaptation.variables
    *
-   * @param estimated_error_per_cell The deal.II vector of estimated_error_per_cell
+   * @param[in,out] estimated_error_per_cell The deal.II vector of
+   * estimated_error_per_cell
    */
   virtual void
-  compute_kelly(const std::pair<const Variable,
-                                Parameters::MultipleAdaptationParameters> &ivar,
-                dealii::Vector<float> &estimated_error_per_cell)
+  compute_error_estimate(
+    const std::pair<const Variable, Parameters::MultipleAdaptationParameters>
+                          &ivar,
+    dealii::Vector<float> &estimated_error_per_cell)
   {
     for (auto &iphys : physics)
       {
-        iphys.second->compute_kelly(ivar, estimated_error_per_cell);
+        iphys.second->compute_error_estimate(ivar, estimated_error_per_cell);
       }
     for (auto &iphys : block_physics)
       {
-        iphys.second->compute_kelly(ivar, estimated_error_per_cell);
+        iphys.second->compute_error_estimate(ivar, estimated_error_per_cell);
       }
   };
 
@@ -911,17 +914,18 @@ private:
     block_physics_solutions;
 
   /**
-   * Map of physics and shared pointers to their respective filtered solutions.
-   * These solutions are used with both VOF and Cahn-Hilliard multiphase flow
-   * approaches for surface tension force calculation in the momentum equation.
+   * Map of physics and shared pointers to their respective filtered
+   * solutions. These solutions are used with both VOF and Cahn-Hilliard
+   * multiphase flow approaches for surface tension force calculation in the
+   * momentum equation.
    */
   std::map<PhysicsID, std::shared_ptr<GlobalVectorType>>
     physics_filtered_solutions;
 
   /**
-   * Map of physics and shared pointers to their respective filtered solutions.
-   * Same as MultiphysicsInterface::physics_filtered_solutions, but used with
-   * BlockVector.
+   * Map of physics and shared pointers to their respective filtered
+   * solutions. Same as MultiphysicsInterface::physics_filtered_solutions, but
+   * used with BlockVector.
    */
   std::map<PhysicsID, std::shared_ptr<GlobalVectorType>>
     block_physics_filtered_solutions;
@@ -969,8 +973,8 @@ private:
   std::map<PhysicsID, std::shared_ptr<GlobalBlockVectorType>>
     block_physics_solutions_m1;
 
-  // Checks the required dependencies between multiphase models and handles the
-  // corresponding assertions
+  // Checks the required dependencies between multiphase models and handles
+  // the corresponding assertions
   void
   inspect_multiphysics_models_dependencies(
     const SimulationParameters<dim> &nsparam);

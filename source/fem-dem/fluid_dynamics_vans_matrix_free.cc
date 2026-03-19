@@ -44,6 +44,18 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
   const VectorType                         &time_derivative_void_fraction,
   const ParticleProjector<dim>             &particle_projector)
 {
+  AssertThrow(
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .enable_hessians_jacobian,
+    ExcMessage(
+      "The matrix-free VANS solver always requires the Hessian for the assembly of the matrix. Please \"set enable hessian jacobian = true\""));
+
+  AssertThrow(
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+      .enable_hessians_residual,
+    ExcMessage(
+      "The matrix-free VANS solver always requires the Hessian for the assembly of the residual. Please \"set enable hessian residual = true\""));
+
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
     {
@@ -265,7 +277,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
       particle_projector.fluid_drag_on_particles.particle_field_solution
         .update_ghost_values();
 
-      this->mg_transfer_gc_pf_force->interpolate_to_mg(
+      this->mg_transfer_gc_pf_drag->interpolate_to_mg(
         particle_projector.fluid_drag_on_particles.dof_handler,
         mg_pf_drag_solution,
         particle_projector.fluid_drag_on_particles.particle_field_solution);
@@ -274,7 +286,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
       particle_projector.particle_velocity.particle_field_solution
         .update_ghost_values();
 
-      this->mg_transfer_gc_pf_force->interpolate_to_mg(
+      this->mg_transfer_gc_particle_velocity->interpolate_to_mg(
         particle_projector.particle_velocity.dof_handler,
         mg_particle_velocity_solution,
         particle_projector.particle_velocity.particle_field_solution);
@@ -393,6 +405,12 @@ template <int dim>
 void
 FluidDynamicsVANSMatrixFree<dim>::read_dem()
 {
+  AssertThrow(
+    dim == 3,
+    ExcMessage(
+      "The DEM coupling capabilities of the VANS solver only support 3D calculations. All of the CFD-DEM closure terms rely on the usage of 3D spherical particles and, consequently, 2D CFD-DEM simulations are currently not supported"));
+
+
   std::string prefix =
     this->cfd_dem_simulation_parameters.void_fraction->dem_file_name;
 
@@ -593,47 +611,60 @@ FluidDynamicsVANSMatrixFree<dim>::gather_output_hook()
                          name,
                          component_interpretation);
 
-  std::vector<std::string> force_names(dim, "fluid_drag_on_particles");
-  std::vector<DataComponentInterpretation::DataComponentInterpretation>
-    force_component_interpretation(
-      dim, DataComponentInterpretation::component_is_part_of_vector);
+  // Since the information related to the particles are always 3-dimensional
+  // (e.g. the velocity of the particles, the drag, etc.) we prevent the output
+  // of the particle-laden information if the solver is running in 2D. The 2D
+  // capability of the CFD-DEM component of the VANS solver have never really
+  // been assessed and so running them is very uncertain at the time.
+  if constexpr (dim > 2)
+    {
+      std::vector<std::string> force_names(dim, "fluid_drag_on_particles");
+      std::vector<DataComponentInterpretation::DataComponentInterpretation>
+        force_component_interpretation(
+          dim, DataComponentInterpretation::component_is_part_of_vector);
 
-  OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
-    particle_fluid_drag_struct(
-      particle_projector.fluid_drag_on_particles.dof_handler,
-      particle_projector.fluid_drag_on_particles.particle_field_solution,
-      force_names,
-      force_component_interpretation);
+      OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
+        particle_fluid_drag_struct(
+          particle_projector.fluid_drag_on_particles.dof_handler,
+          particle_projector.fluid_drag_on_particles.particle_field_solution,
+          force_names,
+          force_component_interpretation);
 
-  std::vector<std::string> particle_velocity_names(dim, "particle_velocity");
-  std::vector<DataComponentInterpretation::DataComponentInterpretation>
-    particle_velocity_component_interpretation(
-      dim, DataComponentInterpretation::component_is_part_of_vector);
+      std::vector<std::string> particle_velocity_names(dim,
+                                                       "particle_velocity");
+      std::vector<DataComponentInterpretation::DataComponentInterpretation>
+        particle_velocity_component_interpretation(
+          dim, DataComponentInterpretation::component_is_part_of_vector);
 
-  OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
-    particle_velocity_struct(
-      particle_projector.particle_velocity.dof_handler,
-      particle_projector.particle_velocity.particle_field_solution,
-      particle_velocity_names,
-      particle_velocity_component_interpretation);
+      OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
+        particle_velocity_struct(
+          particle_projector.particle_velocity.dof_handler,
+          particle_projector.particle_velocity.particle_field_solution,
+          particle_velocity_names,
+          particle_velocity_component_interpretation);
 
-  std::vector<std::string> mtc_name(1, "momentum_transfer_coefficient");
-  std::vector<DataComponentInterpretation::DataComponentInterpretation>
-    mtc_component_interpretation(
-      1, DataComponentInterpretation::component_is_scalar);
+      std::vector<std::string> mtc_name(1, "momentum_transfer_coefficient");
+      std::vector<DataComponentInterpretation::DataComponentInterpretation>
+        mtc_component_interpretation(
+          1, DataComponentInterpretation::component_is_scalar);
 
-  OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
-    mtc_struct(
-      particle_projector.momentum_transfer_coefficient.dof_handler,
-      particle_projector.momentum_transfer_coefficient.particle_field_solution,
-      mtc_name,
-      mtc_component_interpretation);
+      OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
+        mtc_struct(particle_projector.momentum_transfer_coefficient.dof_handler,
+                   particle_projector.momentum_transfer_coefficient
+                     .particle_field_solution,
+                   mtc_name,
+                   mtc_component_interpretation);
 
 
-  return {void_fraction_struct,
-          particle_fluid_drag_struct,
-          particle_velocity_struct,
-          mtc_struct};
+      return {void_fraction_struct,
+              particle_fluid_drag_struct,
+              particle_velocity_struct,
+              mtc_struct};
+    }
+  else
+    {
+      return {void_fraction_struct};
+    }
 }
 
 template <int dim>
@@ -694,8 +725,13 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
 
   this->setup_dofs();
 
-  particle_projector.initialize_void_fraction(
-    this->simulation_control->get_current_time());
+  // Initialize void fraction only when not restarting. On restart, the void
+  // fraction is restored from the checkpoint in read_checkpoint(). Calling
+  // initialize_void_fraction before read_checkpoint would crash because the
+  // particle handler has not been deserialized yet.
+  if (!this->simulation_parameters.restart_parameters.restart)
+    particle_projector.initialize_void_fraction(
+      this->simulation_control->get_current_time());
 
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,

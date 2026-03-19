@@ -1,5 +1,20 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+/**
+ * @file solid_objects_parameters.h
+ * @brief Parameter classes for solid objects used in Nitsche immersed boundary
+ * and DEM simulations.
+ *
+ * This file defines the parameter structures for configuring solid objects
+ * within Lethe simulations. It provides three levels of solid object
+ * management:
+ * - NitscheObject: individual solid for the Nitsche immersed boundary method.
+ * - Nitsche: container managing multiple NitscheObject instances.
+ * - RigidSolidObject: individual rigid solid for DEM simulations.
+ * - DEMSolidObjects: container managing multiple RigidSolidObject instances
+ *   as surfaces and volumes.
+ */
 
 #ifndef lethe_solid_objects_parameters_h
 #define lethe_solid_objects_parameters_h
@@ -13,12 +28,28 @@ using namespace dealii;
 
 namespace Parameters
 {
+  /**
+   * @brief Thermal boundary condition type applied on a solid object surface.
+   */
   enum ThermalBoundaryType
   {
+    /// No heat flux through the solid boundary.
     adiabatic,
+    /// Fixed temperature imposed on the solid boundary.
     isothermal
   };
 
+  /**
+   * @brief Parameters for a single solid object used with the Nitsche immersed
+   * boundary method.
+   *
+   * This class stores all the parameters needed to define and control an
+   * individual Nitsche solid, including its mesh, velocity, temperature,
+   * penalization coefficients, particle motion settings, and force/torque
+   * calculation options.
+   *
+   * @tparam dim Number of spatial dimensions.
+   */
   template <int dim>
   class NitscheObject
   {
@@ -27,37 +58,70 @@ namespace Parameters
       : solid_velocity(dim)
     {}
 
+    /**
+     * @brief Declare the parameters in the parameter handler.
+     *
+     * @param[in,out] prm The parameter handler.
+     * @param[in] id Index of the solid object.
+     */
     void
     declare_parameters(ParameterHandler &prm, unsigned int id);
+
+    /**
+     * @brief Parse the parameters from the parameter handler.
+     *
+     * @param[in,out] prm The parameter handler.
+     * @param[in] id Index of the solid object.
+     */
     void
     parse_parameters(ParameterHandler &prm, unsigned int id);
 
-    // Solid mesh
+    /// Mesh parameters for the solid object.
     Parameters::Mesh solid_mesh;
-    unsigned int     number_quadrature_points;
 
-    // Solid velocity
+    /// Number of quadrature points per 1D cell used to represent the solid.
+    unsigned int number_quadrature_points;
+
+    /// Velocity function imposed on the solid.
     Functions::ParsedFunction<dim> solid_velocity;
-    Functions::ParsedFunction<dim> solid_temperature;
-    bool                           enable_particles_motion;
-    bool                           enable_heat_bc;
 
-    // Penalization term
+    /// Temperature function imposed on the solid boundary.
+    Functions::ParsedFunction<dim> solid_temperature;
+
+    /// Enable the motion of Nitsche particles.
+    bool enable_particles_motion;
+
+    /// Enable heat boundary condition on the immersed boundary.
+    bool enable_heat_bc;
+
+    /// Penalization parameter for the Nitsche method (momentum equation).
     double beta;
+
+    /// Penalization parameter for the Nitsche method (heat equation).
     double beta_heat;
 
-    // Particle motion integration parameters
+    /// Number of sub-iterations for particle motion integration.
     unsigned int particles_sub_iterations;
-    bool         stop_particles_lost;
 
-    // Information for force calculation
-    Point<dim>
-      center_of_rotation; // Center of rotation used for torque calculation
+    /// Stop the simulation if Nitsche particles are lost.
+    bool stop_particles_lost;
 
-    bool        calculate_force_on_solid;
-    bool        calculate_torque_on_solid;
-    Point<dim>  cor; // Center of rotation used for torque calculation
+    /// Center of rotation used for torque calculation.
+    Point<dim> center_of_rotation;
+
+    /// Enable calculation of forces on the solid.
+    bool calculate_force_on_solid;
+
+    /// Enable calculation of torques on the solid.
+    bool calculate_torque_on_solid;
+
+    /// Center of rotation used for torque calculation.
+    Point<dim> cor;
+
+    /// File name prefix for the force output.
     std::string force_output_name;
+
+    /// File name prefix for the torque output.
     std::string torque_output_name;
   };
 
@@ -199,6 +263,15 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  /**
+   * @brief Container class managing multiple Nitsche solid objects.
+   *
+   * This class holds a collection of NitscheObject instances and provides
+   * parameter declaration and parsing for the Nitsche immersed boundary method
+   * section of the parameter file.
+   *
+   * @tparam dim Number of spatial dimensions.
+   */
   template <int dim>
   class Nitsche
   {
@@ -206,18 +279,33 @@ namespace Parameters
     Nitsche()
     {}
 
+    /**
+     * @brief Declare the parameters in the parameter handler.
+     *
+     * @param[in,out] prm The parameter handler.
+     */
     void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters from the parameter handler.
+     *
+     * @param[in,out] prm The parameter handler.
+     */
     void
     parse_parameters(ParameterHandler &prm);
 
-    // Calculate forces
+    /// Verbosity level for force/torque output.
     Verbosity verbosity;
 
-    // Nitsche solid objects
+    /// Collection of Nitsche solid objects.
     std::vector<std::shared_ptr<NitscheObject<dim>>> nitsche_solids;
-    unsigned int                                     number_solids;
-    static const unsigned int                        max_nitsche_solids = 10;
+
+    /// Number of active Nitsche solid objects.
+    unsigned int number_solids;
+
+    /// Maximum number of Nitsche solid objects allowed.
+    static const unsigned int max_nitsche_solids = 10;
   };
 
   template <int dim>
@@ -271,6 +359,17 @@ namespace Parameters
   }
 
 
+  /**
+   * @brief Parameters for a single rigid solid object used in DEM simulations.
+   *
+   * This class stores the mesh, motion, temperature, and output parameters for
+   * a rigid solid. The velocity fields are stored as
+   * std::shared_ptr<Function<dim>> so that any function type can be used
+   * (e.g., ParsedFunction for parameter-file input or ConstantFunction for
+   * unit tests).
+   *
+   * @tparam dim Number of spatial dimensions.
+   */
   template <int dim>
   class RigidSolidObject
   {
@@ -278,30 +377,43 @@ namespace Parameters
     RigidSolidObject()
     {}
 
+    /**
+     * @brief Declare the parameters in the parameter handler.
+     *
+     * @param[in,out] prm The parameter handler.
+     * @param[in] id Index of the solid object.
+     */
     void
     declare_parameters(ParameterHandler &prm, unsigned int id);
+
+    /**
+     * @brief Parse the parameters from the parameter handler.
+     *
+     * @param[in,out] prm The parameter handler.
+     * @param[in] id Index of the solid object.
+     */
     void
     parse_parameters(ParameterHandler &prm, unsigned int id);
 
-    // Solid mesh
+    /// Mesh parameters for the solid object.
     Parameters::Mesh solid_mesh;
 
-    // Output management
+    /// Controls the generation of output files for this solid.
     bool output_bool;
 
-    // Solid object velocity
-    // Velocities are std::shared_ptr<Function<dim>> type, this way it is
-    // possible to define a velocity using any type of function, like
-    // ParsedFunction (which is used in the declared and parsing functions)
-    // or ConstantFunctions (which is useful for unit tests).
+    /// Translational velocity function of the solid object.
     std::shared_ptr<Function<dim>> translational_velocity;
+
+    /// Angular velocity function of the solid object.
     std::shared_ptr<Function<dim>> angular_velocity;
-    Point<dim>
-      center_of_rotation; // Center of rotation used to locate the center of the
-                          // object and also used to rotate the object
-    // Temperature function for solid object
+
+    /// Center of rotation used to locate and rotate the solid object.
+    Point<dim> center_of_rotation;
+
+    /// Temperature function for the solid object boundary.
     std::shared_ptr<Function<dim>> solid_temperature;
-    // Thermal boundary type for solid object
+
+    /// Type of thermal boundary condition applied on the solid surface.
     ThermalBoundaryType thermal_boundary_type;
   };
 
@@ -437,6 +549,16 @@ namespace Parameters
   }
 
 
+  /**
+   * @brief Container class managing rigid solid objects for DEM simulations.
+   *
+   * This class holds two collections of RigidSolidObject instances:
+   * solid surfaces (2D boundaries) and solid volumes (3D bodies). It provides
+   * parameter declaration and parsing for the "solid objects" section of the
+   * parameter file.
+   *
+   * @tparam dim Number of spatial dimensions.
+   */
   template <int dim>
   class DEMSolidObjects
   {
@@ -444,20 +566,38 @@ namespace Parameters
     DEMSolidObjects()
     {}
 
+    /**
+     * @brief Declare the parameters in the parameter handler.
+     *
+     * @param[in,out] prm The parameter handler.
+     */
     void
     declare_parameters(ParameterHandler &prm);
+
+    /**
+     * @brief Parse the parameters from the parameter handler.
+     *
+     * @param[in,out] prm The parameter handler.
+     */
     void
     parse_parameters(ParameterHandler &prm);
 
-    // Calculate forces
+    /// Verbosity level for force/torque output.
     Verbosity verbosity;
 
-    // DEM solid objects
+    /// Collection of rigid solid surface objects.
     std::vector<std::shared_ptr<RigidSolidObject<dim>>> solid_surfaces;
-    std::vector<std::shared_ptr<RigidSolidObject<dim>>> solid_volumes;
-    unsigned int                                        number_solid_surfaces;
-    unsigned int                                        number_solid_volumes;
 
+    /// Collection of rigid solid volume objects.
+    std::vector<std::shared_ptr<RigidSolidObject<dim>>> solid_volumes;
+
+    /// Number of active solid surface objects.
+    unsigned int number_solid_surfaces;
+
+    /// Number of active solid volume objects.
+    unsigned int number_solid_volumes;
+
+    /// Maximum number of solid objects allowed.
     static const unsigned int max_number_of_solids = 50;
   };
 

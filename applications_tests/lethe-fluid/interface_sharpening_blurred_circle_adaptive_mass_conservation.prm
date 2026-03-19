@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -22,11 +22,11 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF = true
+  set cls = true
 end
 
-subsection VOF
-  subsection interface regularization method
+subsection CLS
+  subsection interface reinitialization method
     set type      = projection-based interface sharpening
     set frequency = 2
     set verbosity = verbose
@@ -50,7 +50,7 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function constants  = eta=5, ri=0.8, ro=2.5
     set Function expression = if((x-eta)*(x-eta)+(y-eta)*(y-eta) <ro*ro , (if ((x-eta)*(x-eta)+(y-eta)*(y-eta)<ri*ri , 1 , -(1/(ro-ri)) * sqrt((x-eta)*(x-eta)+(y-eta)*(y-eta)) + (ro/(ro-ri)))) , 0)
   end
@@ -137,7 +137,7 @@ subsection boundary conditions
   end
 end
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number = 4
 end
 
@@ -155,7 +155,7 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-4
     set max iterations = 100
     set verbosity      = quiet
@@ -184,7 +184,7 @@ subsection linear solver
     set ilu preconditioner relative tolerance = 1.00
     set max krylov vectors                    = 200
   end
-  subsection VOF
+  subsection CLS
     set verbosity                             = quiet
     set method                                = gmres
     set max iters                             = 8000
@@ -208,7 +208,7 @@ subsection analytical solution
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function constants  = eta=5, ro=1.65
     set Function expression = if((x-eta)*(x-eta)+(y-eta)*(y-eta) <ro*ro , 1 , 0)
   end

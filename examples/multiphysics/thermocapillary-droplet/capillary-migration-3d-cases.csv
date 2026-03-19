@@ -1,0 +1,13 @@
+CASE_NUMBER,CASE_NAME,ENABLE_AMR,REGULARIZATION_TYPE,REGULARIZATION_FREQUENCY,EPSILON,REGULARIZATION_DISTANCE,TANH_THICKNESS
+00,capillary-migration-3d-AMR-pro-f001-eps06,projection-based interface sharpening,1,2.45,0.1875,0.046875
+01,capillary-migration-3d-AMR-pro-f010-eps06,projection-based interface sharpening,10,2.45,0.1875,0.046875
+02,capillary-migration-3d-AMR-pro-f100-eps06,projection-based interface sharpening,100,2.45,0.1875,0.046875
+
+03,capillary-migration-3d-AMR-pde-f001-eps04,algebraic interface reinitialization,1,1.632,0.125,0.03125
+04,capillary-migration-3d-AMR-pde-f010-eps04,algebraic interface reinitialization,10,1.632,0.125,0.03125
+05,capillary-migration-3d-AMR-pde-f100-eps04,algebraic interface reinitialization,100,1.632,0.125,0.03125
+
+06,capillary-migration-3d-AMR-geo-f001-eps06,geometric interface reinitialization,1,2.45,0.1875,0.046875
+07,capillary-migration-3d-AMR-geo-f010-eps06,geometric interface reinitialization,10,2.45,0.1875,0.046875
+08,capillary-migration-3d-AMR-geo-f100-eps06,geometric interface reinitialization,100,2.45,0.1875,0.046875
+

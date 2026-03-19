@@ -1,3 +1,7 @@
+..
+  SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
+  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 ==========================
 Dam-Break
 ==========================
@@ -11,7 +15,7 @@ Features
 ----------------------------------
 
 - Solver: ``lethe-fluid``  (with Q1-Q1)
-- Two phase flow handled by the Volume of fluids (VOF) approach with projection-based interface sharpening
+- Two phase flow handled by the Conservative Level-Set (CLS) approach with projection-based interface sharpening
 - Unsteady problem handled by an adaptive BDF1 time-stepping scheme 
 - The use of a python script for post-processing data
 
@@ -61,59 +65,63 @@ Simulation Control
 
 Time integration is handled by a 1st order backward differentiation scheme 
 `(bdf1)`, for a :math:`4.1` s simulation time with an initial 
-time-step of :math:`0.01` seconds.
+time step of :math:`0.01` seconds.
 
 .. note::   
     This example uses an adaptive time-stepping method, where the 
-    time-steps are modified during the simulation to keep the maximum value of the CFL condition
+    time steps are modified during the simulation to keep the maximum value of the CFL condition
     below a given threshold.
 
 .. code-block:: text
 
     subsection simulation control
-      set method           = bdf1
-      set time end         = 4
-      set time step        = 0.01
-      set adapt            = true
-      set max cfl          = 0.5
-      set output name      = dam-break
-      set output frequency = 20
-      set output path      = ./output/
+      set method                         = bdf1
+      set time end                       = 4
+      set time step                      = 0.01
+      set adapt time step to respect CFL = true
+      set max cfl                        = 0.5
+      set output name                    = dam-break
+      set output frequency               = 20
+      set output path                    = ./output/
     end
 
 Multiphysics
 ~~~~~~~~~~~~
 
 The ``multiphysics`` subsection enables to turn on `(true)` 
-and off `(false)` the physics of interest. Here ``VOF`` is chosen.
+and off `(false)` the physics of interest. Here ``CLS`` is chosen.
 
 
 .. code-block:: text
 
     subsection multiphysics
-      set VOF = true
+      set CLS = true
     end
 
-VOF
+CLS
 ~~~
 
 
-To prevent the interface between phases from becoming blurry due to diffusion, the interface ``projection-based interface sharpening`` method is selected in the ``interface regularization method`` subsection. Furthermore, the ``phase filtration`` is enabled in this example. We refer the reader to the :doc:`../../../theory/multiphase/cfd/vof` documentation for more explanation on both methods.
+To prevent the interface between phases from becoming blurry due to diffusion, the interface ``geometric interface reinitialization`` method is selected in the ``interface reinitialization method`` subsection. The ``max reinitialization distance`` is set to ensure the interface thickness is at least 12 cells. Furthermore, the ``phase filtration`` is enabled in this example. We refer the reader to the :doc:`../../../theory/multiphase/cfd/cls` documentation for more explanation on both methods.
 
 .. code-block:: text
 
-    subsection VOF
-      subsection interface regularization method
-        set type      = projection-based interface sharpening
-        set frequency = 20
-        subsection projection-based interface sharpening
-          set threshold           = 0.5
-          set interface sharpness = 1.5
+    subsection CLS
+      subsection interface reinitialization method
+        set type      = geometric interface reinitialization
+        set frequency = 10
+        set verbosity = verbose
+        subsection geometric interface reinitialization
+          set max reinitialization distance = 0.32
+          set tanh thickness                = 0.08
+          set transformation type           = tanh
         end
-      end
+      end  
+
       subsection phase filtration
-        set type            = tanh
-        set beta            = 10
+        set type      = tanh
+        set verbosity = quiet
+        set beta      = 10
       end
     end
 
@@ -131,7 +139,7 @@ defined as rectangle of length :math:`= 3.5` and height :math:`= 7`.
       subsection uvwp
         set Function expression = 0; 0; 0
       end
-      subsection VOF
+      subsection CLS
         set Function expression = if (x<3.5 & y<7 , 1, 0)
       end
     end
@@ -171,8 +179,8 @@ properties`` subsection, their physical properties should be defined:
     end
 
 We define two fluids here simply by setting the number of fluids to be :math:`2`.
-In ``subsection fluid 0``, we set the density and the kinematic viscosity for the phase associated with a VOF indicator of 0. 
-Similar procedure is done for the phase associated with a VOF indicator of 1 in ``subsection fluid 1``.
+In ``subsection fluid 0``, we set the density and the kinematic viscosity for the phase associated with a CLS indicator of 0. 
+Similar procedure is done for the phase associated with a CLS indicator of 1 in ``subsection fluid 1``.
 
 
 Mesh
@@ -196,14 +204,15 @@ In the ``mesh adaptation subsection``, adaptive mesh refinement is
 defined for ``phase``. ``min refinement level`` and ``max refinement 
 level`` are 3 and 5, respectively. The adaptation strategy ``fraction type`` is set to ``fraction``, which leads
 the mesh adaptation to refine the cells contributing to a certain fraction of the total error. This is highly
-appropriate for VOF simulations since the error for the VOF field is highly localized to the
+appropriate for CLS simulations since the error for the CLS field is highly localized to the
 vicinity of the interface. We set ``initial refinement steps=4`` to ensure that the initial mesh
 is adapted to the initial condition for the phase.
 
 .. code-block:: text
 
     subsection mesh adaptation
-      set type                     = kelly
+      set type                     = adaptive 
+      set error estimator          = kelly
       set variable                 = phase
       set fraction type            = fraction
       set max refinement level     = 5
@@ -278,6 +287,13 @@ and refines the meshes on the interface.
     :align: center
 
 ****
+
+Finally, the animation below displays the evolution of the liquid phase through time:
+
+.. raw:: html
+
+    <iframe width="850" height="478" src="https://www.youtube.com/embed/VO09gtJxbSE?si=x7zKsTrLN7N4zi4u" title="2D Dam-break simulation" frameborder="0" allowfullscreen></iframe>
+
 
 ----------------------------
 References

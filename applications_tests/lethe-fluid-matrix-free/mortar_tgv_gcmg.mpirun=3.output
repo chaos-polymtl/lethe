@@ -1,6 +1,9 @@
 Running on 3 MPI rank(s)...
-Mortar - Rotor grid angle is: 0 rad 
-         Rotor grid velocity is: 0.03 rad/time 
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    0 rad 
+Rotor grid velocity: 0.03 rad/time 
 
    Number of active cells:       1280
    Number of degrees of freedom: 15939
@@ -11,8 +14,11 @@ Kinetic energy: 0.249995
 *******************************************************************************
 Transient iteration: 1        Time: 0.04     Time step: 0.04     CFL: 1.44003 
 *******************************************************************************
-Mortar - Rotor grid angle is: 0.0012 rad 
-         Rotor grid velocity is: 0.03 rad/time 
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    0.0012 rad 
+Rotor grid velocity: 0.03 rad/time 
 
 
   -Levels of MG preconditioner:
@@ -76,8 +82,11 @@ L2 error velocity: 0.0124571
 *******************************************************************************
 Transient iteration: 2        Time: 0.1      Time step: 0.06     CFL: 0.533355
 *******************************************************************************
-Mortar - Rotor grid angle is: 0.003 rad 
-         Rotor grid velocity is: 0.03 rad/time 
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    0.003 rad 
+Rotor grid velocity: 0.03 rad/time 
 
 
   -Levels of MG preconditioner:
@@ -141,8 +150,11 @@ L2 error velocity: 0.0170073
 *******************************************************************************
 Transient iteration: 3        Time: 0.2      Time step: 0.1      CFL: 0.710746
 *******************************************************************************
-Mortar - Rotor grid angle is: 0.006 rad 
-         Rotor grid velocity is: 0.03 rad/time 
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    0.006 rad 
+Rotor grid velocity: 0.03 rad/time 
 
 
   -Levels of MG preconditioner:
@@ -206,8 +218,11 @@ L2 error velocity: 0.0137705
 *******************************************************************************
 Transient iteration: 4        Time: 0.3      Time step: 0.1      CFL: 0.969837
 *******************************************************************************
-Mortar - Rotor grid angle is: 0.009 rad 
-         Rotor grid velocity is: 0.03 rad/time 
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    0.009 rad 
+Rotor grid velocity: 0.03 rad/time 
 
 
   -Levels of MG preconditioner:
@@ -271,8 +286,11 @@ L2 error velocity: 0.00674692
 *******************************************************************************
 Transient iteration: 5        Time: 0.4      Time step: 0.1      CFL: 0.792583
 *******************************************************************************
-Mortar - Rotor grid angle is: 0.012 rad 
-         Rotor grid velocity is: 0.03 rad/time 
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    0.012 rad 
+Rotor grid velocity: 0.03 rad/time 
 
 
   -Levels of MG preconditioner:

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <dem/dem_contact_manager.h>
@@ -744,20 +744,16 @@ store_candidates(
     &contact_pair_candidates)
 {
   // Find the contact candidate container of the main particle
-  auto candidates_container_it = contact_pair_candidates.find(main_particle_id);
+  auto [candidates_container_it, inserted] =
+    contact_pair_candidates.try_emplace(main_particle_id);
 
   // Reserve arbitrary vector capacity and store if the particle does not have
   // contact candidate yet
-  if (candidates_container_it == contact_pair_candidates.end())
+  if (inserted)
     {
-      std::vector<types::particle_index> candidates_container;
-      candidates_container.reserve(40);
-
-      // Insert the empty vector and get the iterator to the inserted element
-      // prior storing the particle ids
-      auto pair_it_bool =
-        contact_pair_candidates.emplace(main_particle_id, candidates_container);
-      candidates_container_it = pair_it_bool.first;
+      // This 40 is arbitrary and will need to be monitored. Some initial
+      // tests suggest that 60 might be a more adequate number.
+      candidates_container_it->second.reserve(40);
     }
 
   // Store particle ids from the selected particle iterator

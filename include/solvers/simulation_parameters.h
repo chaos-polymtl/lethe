@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_simulation_parameters_h
@@ -82,6 +82,12 @@ public:
                       Patterns::Selection("none|only changed|all"),
                       "Print all the parameters, or only"
                       "the changed parameters or none");
+
+    prm.declare_entry(
+      "comment message",
+      "",
+      Patterns::Anything(),
+      "Print a comment at the beginning of the console output.");
 
     dimensionality.declare_parameters(prm);
     Parameters::SimulationControl::declare_parameters(prm);
@@ -226,14 +232,14 @@ public:
     if (multiphysics.VOF && physical_properties.number_of_fluids != 2)
       {
         throw std::logic_error(
-          "Inconsistency in .prm!\n with VOF = true\n use: number of fluids = 2");
+          "Inconsistency in .prm!\n with CLS = true\n use: number of fluids = 2");
       }
 
     if (not(multiphysics.VOF) && post_processing.postprocessed_fluid ==
                                    Parameters::FluidIndicator::fluid1)
       {
         throw std::logic_error(
-          "Inconsistency in .prm!\n when VOF = false"
+          "Inconsistency in .prm!\n when CLS = false"
           "\n use (default value): set postprocessed fluid = both"
           "\n or: set postprocessed fluid = fluid 0");
       }
@@ -244,7 +250,7 @@ public:
         throw std::logic_error(
           "Inconsistency in .prm!\n "
           "Number of fluids in 'physical properties' was set to 2,\n "
-          "but neither VOF or cahn hilliard is enabled in the 'multiphysics'.\n ");
+          "but neither 'cls' or 'cahn hilliard' is enabled in the 'multiphysics'.\n ");
       }
 
     // Interface physical property models consistency check
@@ -284,7 +290,7 @@ public:
               {
                 throw std::logic_error(
                   "Inconsistency in .prm!\n "
-                  "In subsection VOF, with surface tension force enabled,\n "
+                  "In subsection CLS, with surface tension force enabled,\n "
                   "but no material interactions specified in\n "
                   "subsection physical properties.\n "
                   "Use:\n\n"
@@ -302,11 +308,11 @@ public:
                   {
                     throw std::logic_error(
                       "Inconsistency in .prm!\n "
-                      "In subsection multiphysics, VOF and heat transfer enabled,\n "
+                      "In subsection multiphysics, 'cls' and 'heat transfer' enabled,\n "
                       "and in subsection physical properties, a non-constant surface\n "
                       "tension model, but Marangoni effect disabled in subsection\n "
-                      "surface tension force of subsection VOF. This is necessary to account\n "
-                      "for Marangoni effect. In subsection VOF, use:\n\n "
+                      "surface tension force of subsection CLS. This is necessary to account\n "
+                      "for Marangoni effect. In subsection CLS, use:\n\n "
                       "  subsection surface tension force\n"
                       "    set enable                  = true\n"
                       "    set enable marangoni effect = true\n"
@@ -320,7 +326,7 @@ public:
                   {
                     throw std::logic_error(
                       "Inconsistency in .prm!\n "
-                      "in subsection VOF, surface tension force enabled,\n "
+                      "in subsection CLS, surface tension force enabled,\n "
                       "but no fluid-fluid material interactions specified in \n "
                       "subsection physical properties\n "
                       "Use:\n\n"
@@ -336,7 +342,7 @@ public:
               {
                 throw std::logic_error(
                   "Inconsistency in .prm!\n "
-                  "In subsection VOF, marangoni effect enabled,\n "
+                  "In subsection CLS, marangoni effect enabled,\n "
                   "but no material interactions specified in subsection physical\n "
                   "properties. This is necessary to account for Marangoni \n "
                   "effect. In subsection physical properties, use:\n\n"
@@ -358,7 +364,7 @@ public:
                   {
                     throw std::logic_error(
                       "Inconsistency in .prm!\n "
-                      "In subsection VOF, Marangoni effect enabled,\n "
+                      "In subsection CLS, Marangoni effect enabled,\n "
                       "but no fluid-fluid material interactions specified in subsection\n "
                       "physical properties. This is necessary to account for Marangoni\n "
                       "effect. In subsection physical properties, use:\n\n"
@@ -377,7 +383,7 @@ public:
                   {
                     throw std::logic_error(
                       "Inconsistency in .prm!\n "
-                      "In subsection VOF, Marangoni effect enabled,\n "
+                      "In subsection CLS, Marangoni effect enabled,\n "
                       "but a constant surface tension model is specified in subsection\n "
                       "physical properties. This is necessary to account for Marangoni \n "
                       "effect. In subsection physical properties, use:\n\n"
@@ -398,7 +404,7 @@ public:
     if (multiphysics.cahn_hilliard && multiphysics.VOF)
       {
         throw std::runtime_error(
-          "Cannot solve a multiphase problem using VOF and Cahn-Hilliard at the same time");
+          "Cannot solve a multiphase problem using CLS and Cahn-Hilliard at the same time");
       }
 
     if (multiphysics.cahn_hilliard &&
@@ -431,7 +437,7 @@ public:
       {
         throw std::logic_error(
           "At the moment, the laser surface heat flux is not implemented for 1 fluid simulations."
-          "Please enable the VOF auxiliary physic in the 'multiphysics' subsection, \n"
+          "Please enable the CLS auxiliary physic in the 'multiphysics' subsection, \n"
           "specify a 2nd fluid in the 'physical properties' subsection,\n"
           "and define appropriate initial conditions in the 'initial conditions' subsection.");
       }
@@ -469,13 +475,29 @@ public:
           "temperature is not implemented for Cahn Hilliard simulations.\n ");
       }
 
-    if (simulation_control.respect_capillary_time_step_constraint)
+    if (multiphysics.thermal_buoyancy_force)
+      {
+        for (const auto &fluid : physical_properties.fluids)
+          {
+            AssertThrow(
+              fluid.density_model !=
+                Parameters::Material::DensityModel::isothermal_ideal_gas,
+              ExcMessage(
+                "Inconsistency in .prm!\n "
+                "Thermal buoyancy force is enabled while the isothermal ideal gas\n "
+                "density model is used. The isothermal ideal gas density model assumes\n "
+                "thermal independence of the density, which is incompatible with the\n "
+                "thermal buoyancy force."));
+          }
+      }
+
+    if (simulation_control.adapt_with_capillary_time_step_ratio)
       AssertThrow(
         (multiphysics.vof_parameters.surface_tension_force.enable &&
          multiphysics.VOF),
         ExcMessage(
           "The current implementation only allows the capillary time-step constraint \n "
-          "to be respected for VOF multiphase flows with surface tension.\n "));
+          "to be respected for CLS multiphase flows with surface tension.\n "));
   }
 
   inline bool
@@ -517,13 +539,13 @@ private:
   std::vector<std::string> nonlinear_physics_names = {"fluid dynamics",
                                                       "heat transfer",
                                                       "tracer",
-                                                      "VOF",
+                                                      "CLS",
                                                       "cahn hilliard",
                                                       "void fraction"};
   std::vector<std::string> linear_physics_names    = {"electromagnetics"};
   // Names of subequations within VOF that inherits from PhysicsSolver
   std::vector<std::string> vof_subequations_names = {
-    "VOF algebraic interface reinitialization"};
+    "CLS PDE-based interface reinitialization"};
 };
 
 #endif

@@ -21,7 +21,7 @@ DeclException1(
   NumberOfFluidsError,
   int,
   << "Number of fluids: " << arg1
-  << " is not 1 (single phase simulation) or 2 (VOF simulation). This is currently not supported.");
+  << " is not 1 (single phase simulation) or 2 (CLS/Cahn-Hilliard simulations). This is currently not supported.");
 
 DeclException1(NumberOfSolidsError,
                int,
@@ -105,15 +105,17 @@ namespace Parameters
                         Patterns::Double(),
                         "Scaling factor used in the iterations necessary to "
                         "start-up the BDF schemes.");
-      prm.declare_entry("adapt",
-                        "false",
-                        Patterns::Bool(),
-                        "Adaptative time-stepping <true|false>");
+      prm.declare_entry(
+        "adapt time step to respect CFL",
+        "false",
+        Patterns::Bool(),
+        "Adapt the time step to respect the maximum CFL condition. When multiple conditions are applied to the time step, this ensures that the CFL condition is also respected (Δt ≤ Δt_{CFL}). <true|false>");
+      prm.declare_alias("adapt time step to respect CFL", "adapt", true);
       prm.declare_entry(
         "override time step on restart",
         "false",
         Patterns::Bool(),
-        "Override checkpointed time-step upon restart <true|false>");
+        "Override checkpointed time step upon restart <true|false>");
       prm.declare_entry(
         "time step independent of end time",
         "true",
@@ -132,15 +134,15 @@ namespace Parameters
                         Patterns::Double(),
                         "Maximum time step value");
       prm.declare_entry(
-        "respect capillary time-step constraint",
+        "adapt time step to respect CTR",
         "false",
         Patterns::Bool(),
-        "By setting to 'true', it ensures that the capillary time-step constraint is respected at the initial condition. To respect it throughout the simulation, it must be paired with an adaptive time-stepping simulation.");
+        "By setting to 'true', it ensures that the imposed maximum capillary time-step ratio (CTR) is respected throughout the simulation (Δt ≤ Δt_{CTR}). <true|false>");
       prm.declare_entry(
-        "capillary time-step ratio",
+        "max capillary time-step ratio",
         "1.0",
         Patterns::Double(0),
-        "The capillary time-step ratio (CTR) corresponds to the ratio of the time-step over capillary time-step constraint (Δt/Δt_σ)");
+        "The capillary time-step ratio (CTR) corresponds to the ratio of the time step over capillary time-step constraint (Δt/Δt_σ)");
       prm.declare_entry("stop tolerance",
                         "1e-10",
                         Patterns::Double(),
@@ -263,17 +265,17 @@ namespace Parameters
         {
           AssertThrow(false, ExcMessage("Invalid output control scheme"));
         }
-      dt       = prm.get_double("time step");
-      time_end = prm.get_double("time end");
-      adapt    = prm.get_bool("adapt");
+      dt             = prm.get_double("time step");
+      time_end       = prm.get_double("time end");
+      adapt_with_cfl = prm.get_bool("adapt time step to respect CFL");
       time_step_independent_of_end_time =
         prm.get_bool("time step independent of end time");
       maxCFL = prm.get_double("max cfl");
       max_dt = prm.get_double("max time step");
-      respect_capillary_time_step_constraint =
-        prm.get_bool("respect capillary time-step constraint");
-      target_capillary_time_step_ratio =
-        prm.get_double("capillary time-step ratio");
+      adapt_with_capillary_time_step_ratio =
+        prm.get_bool("adapt time step to respect CTR");
+      max_capillary_time_step_ratio =
+        prm.get_double("max capillary time-step ratio");
       stop_tolerance = prm.get_double("stop tolerance");
       adaptative_time_step_scaling =
         prm.get_double("adaptative time step scaling");
@@ -297,6 +299,8 @@ namespace Parameters
       group_files   = prm.get_integer("group files");
       log_frequency = prm.get_integer("log frequency");
       log_precision = prm.get_integer("log precision");
+      time_step_adaptation_required =
+        adapt_with_cfl || adapt_with_capillary_time_step_ratio;
     }
     prm.leave_subsection();
   } // namespace Parameters
@@ -736,12 +740,15 @@ namespace Parameters
                       "0",
                       Patterns::Integer(),
                       "Identifier of the fluid material that is constrained.");
-    prm.declare_entry("phase fraction tolerance",
+    prm.declare_entry("phase indicator tolerance",
                       "1e-4",
                       Patterns::Double(),
-                      "Absolute filtered phase fraction tolerance used in "
-                      "conjunction with VOF simulations to select the cells "
+                      "Absolute filtered phase indicator tolerance used in "
+                      "conjunction with CLS simulations to select the cells "
                       "on which the constraint is applied.");
+    prm.declare_alias("phase indicator tolerance",
+                      "phase fraction tolerance",
+                      true);
     prm.declare_entry("min temperature",
                       "-999",
                       Patterns::Double(),
@@ -799,7 +806,7 @@ namespace Parameters
   {
     this->fluid_ids[constraint_id] = prm.get_integer("fluid id");
     this->filtered_phase_fraction_tolerance[constraint_id] =
-      prm.get_double("phase fraction tolerance");
+      prm.get_double("phase indicator tolerance");
     this->temperature_min_values[constraint_id] =
       prm.get_double("min temperature");
     this->temperature_max_values[constraint_id] =
@@ -831,18 +838,24 @@ namespace Parameters
         "stabilization term on heat transfer <true|false>");
 
       prm.declare_entry(
-        "vof dcdd stabilization",
+        "cls dcdd stabilization",
         "true",
         Patterns::Bool(),
         "Apply Discontinuity-Capturing Directional Dissipation (DCDD) "
-        "stabilization term on the VOF phase fraction <true|false>");
+        "stabilization term on the CLS phase indicator <true|false>");
+      prm.declare_alias("cls dcdd stabilization",
+                        "vof dcdd stabilization",
+                        true);
 
       prm.declare_entry(
-        "vof dcdd diffusion factor",
+        "cls dcdd diffusion factor",
         "0.5",
         Patterns::Double(),
-        "Diffusion factor scaling the DCDD stabilization term in the VOF "
+        "Diffusion factor scaling the DCDD stabilization term in the CLS "
         "equation");
+      prm.declare_alias("cls dcdd diffusion factor",
+                        "vof dcdd diffusion factor",
+                        true);
 
       prm.declare_entry(
         "pressure scaling factor",
@@ -892,8 +905,8 @@ namespace Parameters
       // DCDD stabilization activation parameters
       heat_transfer_dcdd_stabilization =
         prm.get_bool("heat transfer dcdd stabilization");
-      vof_dcdd_stabilization = prm.get_bool("vof dcdd stabilization");
-      dcdd_diffusion_coeff   = prm.get_double("vof dcdd diffusion factor");
+      vof_dcdd_stabilization = prm.get_bool("cls dcdd stabilization");
+      dcdd_diffusion_coeff   = prm.get_double("cls dcdd diffusion factor");
 
       pressure_scaling_factor = prm.get_double("pressure scaling factor");
     }
@@ -1734,10 +1747,11 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "interpolation order tracer");
-      prm.declare_entry("VOF order",
+      prm.declare_entry("cls order",
                         "1",
                         Patterns::Integer(),
                         "interpolation order tracer");
+      prm.declare_alias("cls order", "VOF order", true);
       prm.declare_entry(
         "phase cahn hilliard order",
         "1",
@@ -1766,10 +1780,11 @@ namespace Parameters
         "Switch tracer to Discontinuous Galerkin (DG) formulation");
 
       prm.declare_entry(
-        "VOF uses dg",
+        "cls uses dg",
         "false",
         Patterns::Bool(),
-        "Switch VOF to Discontinuous Galerkin (DG) formulation");
+        "Switch CLS to Discontinuous Galerkin (DG) formulation");
+      prm.declare_alias("cls uses dg", "VOF uses dg", true);
 
       prm.declare_entry("enable bubble function velocity",
                         "false",
@@ -1795,8 +1810,8 @@ namespace Parameters
       temperature_order         = prm.get_integer("temperature order");
       tracer_order              = prm.get_integer("tracer order");
       tracer_uses_dg            = prm.get_bool("tracer uses dg");
-      VOF_order                 = prm.get_integer("VOF order");
-      VOF_uses_dg               = prm.get_bool("VOF uses dg");
+      VOF_order                 = prm.get_integer("cls order");
+      VOF_uses_dg               = prm.get_bool("cls uses dg");
       phase_cahn_hilliard_order = prm.get_integer("phase cahn hilliard order");
       potential_cahn_hilliard_order =
         prm.get_integer("potential cahn hilliard order");
@@ -1925,11 +1940,11 @@ namespace Parameters
       prm.declare_entry("enable", "false", Patterns::Bool(), "Activate laser");
       prm.declare_entry(
         "type",
-        "gaussian_heat_flux_vof_interface",
+        "gaussian_heat_flux_cls_interface",
         Patterns::Selection(
-          "exponential_decay|gaussian_heat_flux_vof_interface|uniform_heat_flux_vof_interface"),
+          "exponential_decay|gaussian_heat_flux_cls_interface|uniform_heat_flux_cls_interface"),
         "Type of laser model used."
-        "Choices are <exponential_decay|gaussian_heat_flux_vof_interface|uniform_heat_flux_vof_interface>.");
+        "Choices are <exponential_decay|gaussian_heat_flux_cls_interface|uniform_heat_flux_cls_interface>.");
       prm.declare_entry("concentration factor",
                         "2.0",
                         Patterns::Double(),
@@ -1994,7 +2009,7 @@ namespace Parameters
       const std::string type_string = prm.get("type");
       if (type_string == "exponential_decay")
         laser_type = LaserType::exponential_decay;
-      else if (type_string == "gaussian_heat_flux_vof_interface")
+      else if (type_string == "gaussian_heat_flux_cls_interface")
         laser_type = LaserType::gaussian_heat_flux_vof_interface;
       else
         laser_type = LaserType::uniform_heat_flux_vof_interface;
@@ -2348,25 +2363,25 @@ namespace Parameters
         "calculate barycenter",
         "false",
         Patterns::Bool(),
-        "Enable calculation of the barycenter location and velocity of fluid 1 in VOF and Cahn-Hilliard simulations.");
+        "Enable calculation of the barycenter location and velocity of fluid 1 in CLS and Cahn-Hilliard simulations.");
 
       prm.declare_entry(
         "barycenter name",
         "barycenter_information",
         Patterns::FileName(),
-        "Name of barycenter information output file in VOF or Cahn-Hilliard simulations");
+        "Name of barycenter information output file in CLS or Cahn-Hilliard simulations");
 
       prm.declare_entry(
         "calculate mass conservation",
         "true",
         Patterns::Bool(),
-        "Enable calculation of the mass and momentum of both fluids in VOF simulations.");
+        "Enable calculation of the mass and momentum of both fluids in CLS simulations.");
 
       prm.declare_entry(
         "mass conservation name",
         "mass_conservation_information",
         Patterns::FileName(),
-        "Name of mass conservation output file in VOF simulations");
+        "Name of mass conservation output file in CLS simulations");
 
       prm.declare_entry(
         "calculate phase energy",
@@ -2391,6 +2406,22 @@ namespace Parameters
         "phase_volumes",
         Patterns::FileName(),
         "Name of phases volume output file in cfd-dem simulations. The file is stored in the output folder specified in the simulation control subsection");
+
+      prm.declare_entry("output qcriterion",
+                        "true",
+                        Patterns::Bool(),
+                        "Enable output of Q-criterion field <true|false>");
+
+      prm.declare_entry("output vorticity",
+                        "true",
+                        Patterns::Bool(),
+                        "Enable output of vorticity field <true|false>");
+
+      prm.declare_entry(
+        "output velocity gradient",
+        "true",
+        Patterns::Bool(),
+        "Enable output of velocity gradient field <true|false>");
     }
     prm.leave_subsection();
   }
@@ -2454,6 +2485,9 @@ namespace Parameters
       phase_energy_output_name      = prm.get("phase energy name");
       calculate_phase_volumes       = prm.get_bool("calculate phase volumes");
       phase_volumes_output_name     = prm.get("phase volumes name");
+      output_q_criterion            = prm.get_bool("output qcriterion");
+      output_vorticity              = prm.get_bool("output vorticity");
+      output_velocity_gradient      = prm.get_bool("output velocity gradient");
 
       // Viscous dissipative fluid
       const std::string op_fluid = prm.get("postprocessed fluid");
@@ -2625,10 +2659,9 @@ namespace Parameters
     {
       prm.declare_entry("type",
                         "dealii",
-                        Patterns::Selection(
-                          "gmsh|dealii|periodic_hills|cylinder"),
+                        Patterns::Selection("gmsh|dealii|lethe"),
                         "Type of mesh "
-                        "Choices are <gmsh|dealii|periodic_hills|cylinder>.");
+                        "Choices are <gmsh|dealii|lethe>.");
 
       prm.declare_entry("file name",
                         "none",
@@ -2652,15 +2685,6 @@ namespace Parameters
         Patterns::List(Patterns::Integer()),
         "Boundary ids of the boundaries to be initially refined");
 
-      if (prm.get("type") == "periodic_hills")
-        {
-          prm.declare_entry("grid arguments", "1 ; 1 ; 1 ; 1 ; 1");
-        }
-      else
-        {
-          prm.declare_entry("grid type", "hyper_cube");
-          prm.declare_entry("grid arguments", "-1 : 1 : false");
-        }
       prm.declare_entry(
         "enable target size",
         "false",
@@ -2694,7 +2718,6 @@ namespace Parameters
                         Patterns::Double(),
                         "Target size of the initial refinement");
 
-
       prm.declare_entry("grid type", "hyper_cube");
       prm.declare_entry("grid arguments", "-1 : 1 : false");
 
@@ -2702,13 +2725,16 @@ namespace Parameters
         "initial translation",
         "0, 0, 0",
         Patterns::List(Patterns::Double()),
-        "Component of the desired translation of the mesh at initialization");
+        "Component of the desired translation of the mesh at initialization. \n"
+        "In 2D, the third value (z-component) is ignored.");
 
       prm.declare_entry(
         "initial rotation axis",
         "1, 0, 0",
         Patterns::List(Patterns::Double()),
-        "Component of the desired rotation of the mesh at initialization");
+        "Component of the desired rotation of the mesh at initialization.\n"
+        "In 2D, this has no effect, only a counter-clockwise rotation around the origin \n "
+        "of the coordinate system is applied.");
 
       prm.declare_entry(
         "initial rotation angle",
@@ -2718,7 +2744,7 @@ namespace Parameters
 
       prm.declare_entry("scale",
                         "1",
-                        Patterns::Double(),
+                        Patterns::Double(0),
                         "Scaling factor used for the mesh.");
     }
     prm.leave_subsection();
@@ -2735,10 +2761,8 @@ namespace Parameters
           type = Type::gmsh;
         else if (op == "dealii")
           type = Type::dealii;
-        else if (op == "periodic_hills")
-          type = Type::periodic_hills;
-        else if (op == "cylinder")
-          type = Type::cylinder;
+        else if (op == "lethe")
+          type = Type::lethe;
         else
           throw std::logic_error(
             "Error, invalid mesh type. Choices are gmsh and dealii");
@@ -2782,13 +2806,27 @@ namespace Parameters
   {
     prm.enter_subsection("box refinement");
     {
-      box_mesh = std::make_shared<Mesh>();
-      box_mesh->declare_parameters(prm);
-
-      prm.declare_entry("initial refinement",
+      prm.declare_entry("number of refinement boxes",
                         "0",
-                        Patterns::Integer(),
-                        "Initial refinement of the principal mesh");
+                        Patterns::Integer(0),
+                        "Number of refinement boxes specified");
+      for (unsigned int i_box = 0; i_box < max_number_of_refinement_boxes;
+           ++i_box)
+        {
+          prm.enter_subsection("box " + Utilities::int_to_string(i_box, 1));
+          {
+            (*refinement_boxes_meshes)[i_box].declare_parameters(prm);
+            prm.declare_entry(
+              "additional refinement",
+              "0",
+              Patterns::Integer(0),
+              "Additional refinements of the principal mesh within the area delimited by the 'box' mesh.");
+            prm.declare_alias("additional refinement",
+                              "initial refinement",
+                              true);
+          }
+          prm.leave_subsection();
+        }
     }
     prm.leave_subsection();
   }
@@ -2798,9 +2836,27 @@ namespace Parameters
   {
     prm.enter_subsection("box refinement");
     {
-      box_mesh->parse_parameters(prm);
+      number_of_refinement_boxes =
+        prm.get_integer("number of refinement boxes");
+      AssertThrow(
+        number_of_refinement_boxes <= max_number_of_refinement_boxes,
+        ExcMessage(
+          "The current implementation limits the number of refinement boxes up to " +
+          Utilities::int_to_string(max_number_of_refinement_boxes) +
+          " refinement boxes.\n You have declared " +
+          Utilities::int_to_string(number_of_refinement_boxes) +
+          " refinement boxes.\n Please reduce the number of refinement boxes."));
 
-      initial_refinement = prm.get_integer("initial refinement");
+      for (unsigned int i_box = 0; i_box < number_of_refinement_boxes; ++i_box)
+        {
+          prm.enter_subsection("box " + Utilities::int_to_string(i_box, 1));
+          {
+            (*refinement_boxes_meshes)[i_box].parse_parameters(prm);
+            box_additional_refinements[i_box] =
+              prm.get_integer("additional refinement");
+          }
+          prm.leave_subsection();
+        }
     }
     prm.leave_subsection();
   }
@@ -3006,6 +3062,11 @@ namespace Parameters
                             "decrease by one|bisect|go to one"),
                           "mg p coarsening type for gcmg");
 
+        prm.declare_entry("mg p min coarsening degree",
+                          "1",
+                          Patterns::Integer(),
+                          "mg p minimum coarsening degree for gcmg");
+
         prm.declare_entry("mg gmres max iterations",
                           "2000",
                           Patterns::Integer(),
@@ -3204,6 +3265,9 @@ namespace Parameters
         else
           AssertThrow(false, ExcNotImplemented());
 
+        mg_p_min_coarsening_degree =
+          prm.get_integer("mg p min coarsening degree");
+
         AssertThrow((!mg_use_fe_q_iso_q1) ||
                       (this->mg_coarsening_type ==
                        MultigridCoarseningSequenceType::h),
@@ -3261,9 +3325,16 @@ namespace Parameters
 
       prm.declare_entry("type",
                         "none",
-                        Patterns::Selection("none|uniform|kelly"),
+                        Patterns::Selection("none|uniform|adaptive"),
                         "Type of mesh adaptation"
-                        "Choices are <none|uniform|kelly>.");
+                        "Choices are <none|uniform|adaptive>.");
+
+      prm.declare_entry(
+        "error estimator",
+        "kelly",
+        Patterns::List(Patterns::Selection("kelly|dpg")),
+        "Error estimator for adaptive mesh refinement. For multi-variables refinement, separate the different strategies with a comma. They should follow the same order as what is specified in the variable parameter."
+        "Choices are <kelly|dpg>.");
 
       prm.declare_entry(
         "fraction refinement",
@@ -3285,9 +3356,9 @@ namespace Parameters
         "variable",
         "velocity",
         Patterns::List(Patterns::Selection(
-          "velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer")),
-        "Variable(s) for kelly estimation"
-        "Choices are <velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer>."
+          "velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer|electric field|magnetic field|electromagnetic fields")),
+        "Variable(s) for error estimation"
+        "Choices are <velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer|electric field|magnetic field|electromagnetic_fields>."
         "For multi-variables refinement, separate the different variables with a comma "
         "(ex/ 'set variables = velocity,temperature')");
 
@@ -3341,14 +3412,20 @@ namespace Parameters
       const std::string op = prm.get("type");
       if (op == "none")
         type = Type::none;
-      if (op == "uniform")
+      else if (op == "uniform")
         type = Type::uniform;
-      if (op == "kelly")
-        type = Type::kelly;
+      else if (op == "adaptive")
+        type = Type::adaptive;
+      else
+        throw std::logic_error(
+          "Error, invalid mesh adaptation type. Choices are <none|uniform|adaptive>.");
 
       // Getting multivariables refinement parameters
-      const std::string        var_op   = prm.get("variable");
-      std::vector<std::string> var_vec  = Utilities::split_string_list(var_op);
+      const std::string        var_op  = prm.get("variable");
+      std::vector<std::string> var_vec = Utilities::split_string_list(var_op);
+      const std::string        strategy_op = prm.get("error estimator");
+      std::vector<std::string> strategy_vec =
+        Utilities::split_string_list(strategy_op);
       const std::string        coars_op = prm.get("fraction coarsening");
       std::vector<std::string> coars_vec =
         Utilities::split_string_list(coars_op);
@@ -3357,6 +3434,10 @@ namespace Parameters
         Utilities::split_string_list(refin_op);
 
       // Checking that the sizes are coherent
+      Assert(strategy_vec.size() == var_vec.size(),
+             MultipleAdaptationSizeError("error estimator",
+                                         strategy_vec.size(),
+                                         var_vec.size()));
       Assert(coars_vec.size() == var_vec.size(),
              MultipleAdaptationSizeError("fraction coarsening",
                                          coars_vec.size(),
@@ -3384,9 +3465,26 @@ namespace Parameters
             vars = Variable::chemical_potential_cahn_hilliard;
           else if (var_vec[i] == "tracer")
             vars = Variable::tracer;
+          else if (var_vec[i] == "electric field")
+            vars = Variable::electric_field;
+          else if (var_vec[i] == "magnetic field")
+            vars = Variable::magnetic_field;
+          else if (var_vec[i] == "electromagnetic fields")
+            vars = Variable::electromagnetic_fields;
           else
             throw std::logic_error(
-              "Error, invalid mesh adaptation variable. Choices are velocity, pressure, phase, temperature, phase_cahn_hilliard, chemical_potential_cahn_hilliard or tracer");
+              "Error, invalid mesh adaptation variable. Choices are velocity, pressure, phase, temperature, phase_cahn_hilliard, chemical_potential_cahn_hilliard, electric field, magnetic field or electromagnetic fields. Note that <electric field> or <magnetic field> and <electromagnetic fields> are mutually exclusive.");
+
+          // Parsing strategy for this variable
+          if (strategy_vec[i] == "kelly")
+            var_adaptation_param.error_estimator =
+              MultipleAdaptationParameters::ErrorEstimator::kelly;
+          else if (strategy_vec[i] == "dpg")
+            var_adaptation_param.error_estimator =
+              MultipleAdaptationParameters::ErrorEstimator::dpg;
+          else
+            throw std::logic_error(
+              "Error, invalid mesh adaptation error estimator. Choices are kelly or dpg");
 
           var_adaptation_param.coarsening_fraction = std::stod(coars_vec[i]);
           var_adaptation_param.refinement_fraction = std::stod(refin_vec[i]);
@@ -3394,6 +3492,22 @@ namespace Parameters
           // defining adaptation map for this variable
           variables[vars] = var_adaptation_param;
         }
+      // Verify that the user did not specify both electric_field or
+      // magnetic_field with electromagnetic_fields
+      const bool has_em =
+        variables.find(Variable::electromagnetic_fields) != variables.end();
+
+      const bool has_e =
+        variables.find(Variable::electric_field) != variables.end();
+
+      const bool has_h =
+        variables.find(Variable::magnetic_field) != variables.end();
+
+      AssertThrow(!(has_em && (has_e || has_h)),
+                  ExcMessage(
+                    "Invalid mesh adaptation configuration: "
+                    "electromagnetic_fields is mutually exclusive with "
+                    "electric_field and magnetic_field."));
 
       const std::string fop = prm.get("fraction type");
       if (fop == "number")
@@ -3809,7 +3923,7 @@ namespace Parameters
           "print DEM",
           "true",
           Patterns::Bool(),
-          "Bool to define if particles' information are printed on the terminal when particles' time-step is finished");
+          "Bool to define if particles' information are printed on the terminal when particles' time step is finished");
         prm.declare_entry(
           "enable extra sharp interface vtu output field",
           "false",
@@ -4377,6 +4491,11 @@ namespace Parameters
                         "false",
                         Patterns::Bool(),
                         "Enable mortar interface <true|false>");
+      prm.declare_entry("interface type",
+                        "circular",
+                        Patterns::Selection("circular|linear"),
+                        "Type of mortar interface"
+                        "Choices are <circular|linear>.");
       rotor_mesh = std::make_shared<Mesh>();
       rotor_mesh->declare_parameters(prm);
       prm.declare_entry("rotor boundary id",
@@ -4426,9 +4545,9 @@ namespace Parameters
       prm.declare_entry(
         "verbosity",
         "quiet",
-        Patterns::Selection("quiet|verbose"),
+        Patterns::Selection("quiet|verbose|extra verbose"),
         "State whether from the mortar information should be printed "
-        "Choices are <quiet|verbose>.");
+        "Choices are <quiet|verbose|extra verbose>.");
     }
     prm.leave_subsection();
   }
@@ -4440,6 +4559,18 @@ namespace Parameters
     prm.enter_subsection("mortar");
     {
       enable = prm.get_bool("enable");
+      {
+        const std::string op = prm.get("interface type");
+        if (op == "circular")
+          interface_type = InterfaceType::circular;
+        else if (op == "linear")
+          interface_type = InterfaceType::linear;
+        else
+          AssertThrow(
+            false,
+            ExcMessage(
+              "Error, invalid mortar interface type. Current choices are <circular|linear>."));
+      }
       rotor_mesh->parse_parameters(prm);
       rotor_boundary_id  = prm.get_integer("rotor boundary id");
       stator_boundary_id = prm.get_integer("stator boundary id");
@@ -4466,6 +4597,8 @@ namespace Parameters
         verbosity = Verbosity::verbose;
       if (op == "quiet")
         verbosity = Verbosity::quiet;
+      if (op == "extra verbose")
+        verbosity = Verbosity::extra_verbose;
     }
     prm.leave_subsection();
   }

@@ -1,3 +1,7 @@
+..
+  SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
+  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 =====================================
 Turbulent Flow Around a Cylinder
 =====================================
@@ -69,15 +73,17 @@ The ``box refinement`` subsection refines the mesh in a specific region of the d
 
 .. code-block:: text
 
-  subsection box refinement
-    subsection mesh
-      set type               = dealii
-      set grid type          = subdivided_hyper_rectangle
-      set grid arguments     = 1, 1, 1 : -2, -3, -1 : 52, 3, 5 : false
-      set initial refinement = 0
+    subsection box refinement
+      set number of refinement boxes = 1
+      subsection box 0
+        subsection mesh
+          set type           = dealii
+          set grid type      = subdivided_hyper_rectangle
+          set grid arguments = 1,1,1 : -2, -3, -1 : 52,3,5 : false
+        end
+        set additional refinement = 2
+      end
     end
-    set initial refinement = 2
-  end
 
 A slice of the final mesh obtained from both the initial boundary refinement and the box refinement is shown in the following figure:
 
@@ -192,20 +198,20 @@ To monitor the average velocity and pressure, we set ``calculate average velocit
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-The ``simulation control`` subsection controls the flow of the simulation. To maximize the temporal accuracy of the simulation, we use a second-order ``bdf2`` scheme. Results are written every 500 time-steps. 
+The ``simulation control`` subsection controls the flow of the simulation. To maximize the temporal accuracy of the simulation, we use a second-order ``bdf2`` scheme. Results are written every 500 time steps.
 
 .. code-block:: text
 
-  subsection simulation control
-    set method           = bdf2
-    set output name      = cylinder-Re3900
-    set output path      = ./output/
-    set time end         = 200                               
-    set adapt            = true
-    set max cfl          = 1
-    set time step        = 0.002
-    set output frequency = 500
-  end
+    subsection simulation control
+      set method                         = bdf2
+      set output name                    = cylinder-Re3900
+      set output path                    = ./output/
+      set time end                       = 200
+      set adapt time step to respect CFL = true
+      set max cfl                        = 1
+      set time step                      = 0.002
+      set output frequency               = 500
+    end
 
 
 ----------------------

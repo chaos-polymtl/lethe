@@ -102,7 +102,7 @@ A floating wall is added :math:`10 \: \text{cm}` above the bottom of the mesh, s
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Here, we define the time-step and the simulation end time.
+Here, we define the time step and the simulation end time.
 
 .. code-block:: text
 
@@ -412,7 +412,7 @@ We briefly comment on some results that can be extracted from this example.
 
 .. important::
 
-    To use the code, run ``python3 lsfb_postprocessing.py $PATH_TO_YOUR_CASE_FOLDER``. The code will generate several graphics showing the pressure profile within the bed, which are going to be stored in ``$PATH_TO_YOUR_CASE_FOLDER/P_x``. It will also generate a ``deltaP_t.csv`` file with the total pressure difference for each time-step. Additionally, it generates a void fraction as a function of time graphic (``eps_t.png``).
+    To use the code, run ``python3 lsfb_postprocessing.py $PATH_TO_YOUR_CASE_FOLDER``. The code will generate several graphics showing the pressure profile within the bed, which are going to be stored in ``$PATH_TO_YOUR_CASE_FOLDER/P_x``. It will also generate a ``deltaP_t.csv`` file with the total pressure difference for each time step. Additionally, it generates a void fraction as a function of time graphic (``eps_t.png``).
 
 .. important::
 

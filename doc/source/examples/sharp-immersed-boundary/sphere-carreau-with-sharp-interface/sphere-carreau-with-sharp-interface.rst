@@ -1,3 +1,7 @@
+..
+  SPDX-FileCopyrightText: Copyright (c) 2022-2024, 2026 The Lethe Authors
+  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 ================================
 Non-Newtonian Flow past a Sphere
 ================================
@@ -19,7 +23,7 @@ Features
 Files Used in this Example
 ---------------------------
 
-- Parameter file: ``examples/sharp-immersed-boundary/sphere-carreau-with-sharp-inferface/sphere-carreau-with-sharp-interface.prm``
+- Parameter file: ``examples/sharp-immersed-boundary/sphere-carreau-with-sharp-interface/sphere-carreau-with-sharp-interface.prm``
 
 
 -----------------------
@@ -57,12 +61,14 @@ The dimensions of the used domain are :math:`(60 \times 30 \times 30)`, and the 
 .. code-block:: text
 
     subsection box refinement
-      set initial refinement = 3
-      subsection mesh
-        set type               = dealii
-        set grid type          = subdivided_hyper_rectangle
-        set grid arguments     = 1,1,1: -2,-2,-2 : 6,2,2 : true
-        set initial refinement = 0
+      set number of refinement boxes = 1
+      subsection box 0
+        set additional refinement = 3
+        subsection mesh
+          set type           = dealii
+          set grid type      = subdivided_hyper_rectangle
+          set grid arguments = 1,1,1: -2,-2,-2 : 6,2,2 : true
+        end
       end
     end
 
@@ -222,12 +228,13 @@ The simulation is solved at steady-state with 2 mesh adaptations.
 Mesh Adaptation
 ~~~~~~~~~~~~~~~
 
-To generate an additional refinement zone around the immersed boundary, the ``mesh adaptation`` ``type`` must be set to ``kelly``. During both of the mesh refinement steps, :math:`40\%` of the cells with be split in :math:`8` (``fraction refinement = 0.4``) using a velocity-gradient Kelly operator.
+To generate an additional refinement zone around the immersed boundary, the mesh adaptation ``type`` must be set to ``adaptive``. During both of the mesh refinement steps, :math:`40\%` of the cells with be split in :math:`8` (``fraction refinement = 0.4``) using a velocity-gradient Kelly operator.
 
 .. code-block:: text
 
     subsection mesh adaptation
-      set type                 = kelly
+      set type                 = adaptive 
+      set error estimator      = kelly
       set fraction coarsening  = 0.1
       set fraction refinement  = 0.4
       set fraction type        = number

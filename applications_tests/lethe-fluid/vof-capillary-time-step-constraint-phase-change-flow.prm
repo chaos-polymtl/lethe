@@ -19,13 +19,13 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method                                 = bdf1
-  set time end                               = 0.1
-  set time step                              = 0.1
-  set adapt                                  = true
-  set output frequency                       = 0
-  set output name                            = vof-capillary-time-step-constraint-phase-change-flow
-  set respect capillary time-step constraint = true
+  set method                         = bdf1
+  set time end                       = 0.1
+  set time step                      = 0.1
+  set adapt time step to respect CFL = true
+  set output frequency               = 0
+  set output name                    = vof-capillary-time-step-constraint-phase-change-flow
+  set adapt time step to respect CTR = true
 end
 
 #---------------------------------------------------
@@ -33,16 +33,16 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF           = true
+  set cls           = true
   set heat transfer = true
 end
 
 #---------------------------------------------------
-# VOF
+# CLS
 #---------------------------------------------------
 
-subsection VOF
-  subsection interface regularization method
+subsection CLS
+  subsection interface reinitialization method
     set type      = geometric interface reinitialization
     set frequency = 1
     subsection geometric interface reinitialization
@@ -52,11 +52,11 @@ subsection VOF
     end
   end
   subsection surface tension force
-    set enable                                   = true
-    set phase fraction gradient diffusion factor = 4
-    set curvature diffusion factor               = 1
-    set output auxiliary fields                  = true
-    set enable marangoni effect                  = true
+    set enable                                    = true
+    set phase indicator gradient diffusion factor = 4
+    set curvature diffusion factor                = 1
+    set output auxiliary fields                   = true
+    set enable marangoni effect                   = true
   end
 end
 
@@ -69,7 +69,7 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function constants  = eps=1.5, hCell=0.10578, center=0, radius=1
     set Function expression = 0.5 - 0.5*tanh((sqrt((x-center)*(x-center)+(y-center)*(y-center))-radius)/(2*eps*hCell))
   end
@@ -156,7 +156,7 @@ subsection boundary conditions heat transfer
   end
 end
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number = 4
 end
 
@@ -175,7 +175,7 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-5
     set max iterations = 100
     set verbosity      = quiet
@@ -209,7 +209,7 @@ subsection linear solver
     set ilu preconditioner relative tolerance = 1.00
     set max krylov vectors                    = 200
   end
-  subsection VOF
+  subsection CLS
     set verbosity                             = quiet
     set method                                = gmres
     set max iters                             = 8000

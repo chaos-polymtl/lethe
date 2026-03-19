@@ -1,0 +1,122 @@
+# SPDX-FileCopyrightText: Copyright (c) 2019, 2021, 2023-2024 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# This test solves a 2D Poiseuille flow driven by pressure boundary conditions
+# using Q2Q2 (equal-order) elements with default stabilization and the matrix-based solver. A pressure of 10
+# is imposed at the inlet (boundary 0) and 5 at the outlet (boundary 1), with
+# no-slip walls (boundary 2). Since the Q2Q2 element pair can represent the
+# analytical solution exactly, the L2 error should be limited only by the
+# tolerance of the linear solver.
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method           = steady
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity order = 2
+  set pressure order = 2
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set kinematic viscosity = 1.000
+  end
+end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set enable = true
+  subsection uvwp
+    set Function constants  = H=1, G=1, mu=1
+    set Function expression = 0.5 * 0.5 / mu * (y) * (H - y) ; 0 ; 10 - 5*(x/10)
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = subdivided_hyper_rectangle
+  set grid arguments     = 2,  3: 0, 0: 10, 1 : true
+  set initial refinement = 0
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 3
+  subsection bc 0
+    set type = pressure
+    set id   = 0
+    subsection p
+      set Function expression = 10
+    end
+  end
+
+  subsection bc 1
+    set type = pressure
+    set id   = 1
+    subsection p
+      set Function expression = 5
+    end
+  end
+  subsection bc 2
+    set type = noslip
+    set id   = 2,3
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set verbosity = quiet
+    set tolerance = 1e-6
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity                             = quiet
+    set method                                = gmres
+    set max iters                             = 5000
+    set relative residual                     = 1e-4
+    set minimum residual                      = 1e-9
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 1
+    set ilu preconditioner absolute tolerance = 1e-5
+    set ilu preconditioner relative tolerance = 1.00
+  end
+end

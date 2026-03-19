@@ -7,7 +7,8 @@ The mortar section is used when simulating rotor-stator geometries, in which the
 .. code-block:: text
 
   subsection mortar
-    set enable = true
+    set enable          = true
+    set interface type  = circular 
     subsection mesh
       set type                   = dealii
       set grid type              = subdivided_hyper_rectangle
@@ -27,8 +28,13 @@ The mortar section is used when simulating rotor-stator geometries, in which the
     set penalty factor      = 1.0
     set oversampling factor = 2
     set radius tolerance    = 1e-8
-    set verbosity           = verbose
+    set verbosity           = quiet
   end
+
+* The available options for the mortar ``interface type`` are ``circular`` and ``linear``.
+
+.. warning::
+  The ``linear`` interface type supports only two-dimensional problems. It assumes that the domain is rectangular, and that the mortar interface is parallel to the y axis.
 
 * The mesh parameters in the :doc:`../cfd/mesh` subsection refer to the stator domain. The ``mesh`` subsection herein mentioned contains the parameters of the rotor domain; nonetheless, the input format is the same as in :doc:`../cfd/mesh`.
 
@@ -66,7 +72,20 @@ where :math:`r_{max}`, :math:`r_{min}` are the maximum and minimum values obtain
 .. note::
   The default value for ``radius tolerance`` is :math:`10^{-8}`, which should cover the precision range of deal.II-generated grids. The tolerance might need to be increased for some ``gmsh`` mesh type cases or for large simulations running in multiple cores, when the above verification fails even if the mesh discretization is coherent.
 
-* When enabling ``verbosity`` (``set verbosity = verbose``), the rotor rotation information is printed at every iteration.
+* When enabling ``verbosity`` (``set verbosity = verbose``), the rotor rotation information is printed at every iteration. The option ``extra verbose`` also prints the workload imbalance of mortar cells. We consider that an ideal work imbalance is given by:
+
+.. math::
+  \text{ideal} = \dfrac{\sum_i^{n_{proc}} cells_{(i)}}{n_{proc}}
+
+where :math:`n_{proc}` is the total number of processes and :math:`cells_{(i)}` is the number of cells at each process :math:`i`. The actual workload imbalance is given by the ratio between the maximum number of cells in a processor, :math:`cells_{(max)}`, and the ideal workload:
+
+.. math::
+  \text{workload} = \dfrac{cells_{(max)}}{\text{ideal}}
+
+Ideally, this parallel distribution imbalance is equal to 1; values greater than 1 indicate a slowdown compared to a perfectly distributed scenario in which all processes would contain the same number of mortar cells.
+
+.. seealso::
+  The workload imbalance computation used here follows the same idea as the deal.II ``workload_imbalance()`` function used in the `geometric multigrid setup <https://dealii.org/current/doxygen/deal.II/namespaceMGTools.html>`_, enabled in the :doc:`../cfd/linear_solver_control` when ``set preconditioner = gcmg`` and ``set mg verbosity = extra verbose``.
 
 Reference
 ---------

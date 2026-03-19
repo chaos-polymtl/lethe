@@ -24,12 +24,33 @@ template <int dim>
 class MortarManagerBase
 {
 public:
+  /**
+   * @brief Mortar manager base constructor used in 2D problems
+   * TODO: Combine both 2D and 3D constructors into one
+   *
+   * @param[in] n_subdivisions Number of cells at the interface between inner
+   * and outer domains
+   * @param[in] radius Radius at the mortar interface
+   * @param[in] quadrature Quadrature for local cell operations
+   * @param[in] rotation_angle Rotation angle for the inner domain
+   */
   template <int dim2>
   MortarManagerBase(unsigned int            n_subdivisions,
                     double                  radius,
                     const Quadrature<dim2> &quadrature,
                     const double            rotation_angle);
 
+  /**
+   * @brief Mortar manager base constructor used in 3D problems
+   * TODO: Combine both 2D and 3D constructors into one
+   *
+   * @param[in] n_subdivisions Number of cells at the interface between inner
+   * and outer domains
+   * @param[in] radius Vector containing the radius at the mortar interface and
+   * the domain length in the direction of the rotation axis
+   * @param[in] quadrature Quadrature for local cell operations
+   * @param[in] rotation_angle Rotation angle for the inner domain
+   */
   template <int dim2>
   MortarManagerBase(const std::vector<unsigned int> &n_subdivisions,
                     const std::vector<double>       &radius,
@@ -37,7 +58,7 @@ public:
                     const double                     rotation_angle);
 
   /**
-   * @brief Default destructor.
+   * @brief Default destructor
    */
   virtual ~MortarManagerBase() = default;
 
@@ -150,26 +171,35 @@ protected:
    * @return id_in_plane Index of the cell in which lies the rotated cell center
    * @return id_out_plane Second index of the cell in which lies the rotated cell center.
    *
-   * Note that the id_out_plane corresponds to indexes along the rotation axis,
-   * and it is necessary only for 3D problems.
+   * The id_out_plane corresponds to indexes along the rotation axis, and it is
+   * necessary only for 3D problems
    */
   std::tuple<unsigned int, unsigned int, unsigned int>
   get_config(const Point<dim> &face_center, const bool is_inner) const;
 
   /**
-   * @brief Convert radiant to quadrature point in real space.
+   * @brief Convert angle (in radians) to quadrature point in real space
+   *
+   * @param[in] angle_rad Angle (in radians)
+   * @return Point in cartesian coordinates
    */
   virtual Point<dim>
-  from_1D(const double radiant) const = 0;
+  from_1D(const double angle_rad) const = 0;
 
   /**
-   * @brief Convert quadrature point in real space to radiant.
+   * @brief Convert quadrature point in real space to angle (in radians)
+   *
+   * @param[in] point Point in cartesian coordinates
+   * @return Angle (in radians)
    */
   virtual double
   to_1D(const Point<dim> &point) const = 0;
 
   /**
-   * @brief Return the normal for a given quadrature point.
+   * @brief Return the normal for a given quadrature point
+   *
+   * @param[in] point Point in cartesian coordinates
+   * @return Corresponding outward normal vector
    */
   virtual Tensor<1, dim, double>
   get_normal(const Point<dim> &point) const = 0;
@@ -183,19 +213,52 @@ protected:
 };
 
 /**
- * @brief Compute the number of subdivisions at the rotor-stator interface and the rotor radius
+ * @brief Compute the number of cells located at the mortar interface
+ *
  * @param[in] triangulation The triangulation object
- * @param[in] mapping Mapping associated to the domain
  * @param[in] mortar_parameters The information about the mortar method
  * control, including the rotor mesh parameters
  *
- * @return n_subdivisions Number of cells at the interface between inner
+ * @return number_interface_cells Number of cells at the interface between inner
  * and outer domains
- * @return radius Radius at the interface between inner and outer domains
  */
 template <int dim>
-std::tuple<std::vector<unsigned int>, std::vector<double>, double>
-compute_n_subdivisions_and_radius(
+std::vector<unsigned int>
+compute_number_interface_cells(
+  const Triangulation<dim>      &triangulation,
+  const Parameters::Mortar<dim> &mortar_parameters);
+
+/**
+ * @brief Compute circular mortar interface dimensions and the rotor mesh pre-rotation angle
+ * @param[in] triangulation The triangulation object
+ * @param[in] mapping Mapping associated to the domain
+ * @param[in] mortar_parameters The information about the mortar method control,
+ * including the rotor mesh parameters
+ *
+ * @return interface_dimensions Vector containing the radius at the mortar interface and the
+ * domain length in the direction of the rotation axis
+ * @return pre_rotation_angle Rotation angle of the initial mesh configuration
+ */
+template <int dim>
+std::tuple<std::vector<double>, double>
+compute_interface_dimensions_circular(
+  const Triangulation<dim>      &triangulation,
+  const Mapping<dim>            &mapping,
+  const Parameters::Mortar<dim> &mortar_parameters);
+
+/**
+ * @brief Compute linear mortar interface dimensions
+ * @param[in] triangulation The triangulation object
+ * @param[in] mapping Mapping associated to the domain
+ * @param[in] mortar_parameters The information about the mortar method control,
+ * including the rotor mesh parameters
+ *
+ * @return interface_dimensions Vector containing the minimum and maximum
+ * y coordinates of the vertices at the extremeties of the mortar interface
+ */
+template <int dim>
+std::pair<double, double>
+compute_interface_dimensions_linear(
   const Triangulation<dim>      &triangulation,
   const Mapping<dim>            &mapping,
   const Parameters::Mortar<dim> &mortar_parameters);
@@ -214,11 +277,43 @@ Quadrature<dim>
 construct_quadrature(const Quadrature<dim>         &quadrature,
                      const Parameters::Mortar<dim> &mortar_parameters);
 
+/**
+ * @brief Compute workload imbalance of mortar cells
+ *
+ * @param[in] triangulation The triangulation object
+ * @param[in] mortar_parameters The information about the mortar method
+ * control, including the rotor mesh parameters
+ * @param[in] pcout Parallel conditional output stream used to print the
+ * information
+ */
+template <int dim>
+void
+mortar_workload_imbalance(const Triangulation<dim>      &triangulation,
+                          const Parameters::Mortar<dim> &mortar_parameters,
+                          const ConditionalOStream      &pcout);
 
+/**
+ * @brief Mortar manager class for circular interface
+ */
 template <int dim>
 class MortarManagerCircle : public MortarManagerBase<dim>
 {
 public:
+  /**
+   * @brief Class constructor for circular mortar interface used in 2D
+   * Poisson/Stokes test cases
+   * TODO: Move Poisson/Stokes tests to prototypes and remove this constructor
+   *
+   * @param[in] n_subdivisions Number of cells at the interface between inner
+   * and outer domains
+   * @param[in] radius Radius at the mortar interface
+   * @param[in] quadrature Quadrature for local cell operations
+   * @param[in] rotation_angle Rotation angle for the inner domain
+   * @param[in] center_of_rotation Center of rotation of the inner domain
+   * @param[in] pre_rotation_angle Initial rotation angle used for computing
+   * mortar locations, accounting for cases here the element edges are not
+   * aligned with the x axis
+   */
   template <int dim2>
   MortarManagerCircle(unsigned int            n_subdivisions,
                       double                  radius,
@@ -227,6 +322,22 @@ public:
                       const Point<dim>       &center_of_rotation = Point<dim>(),
                       const double            pre_rotation_angle = 0.0);
 
+  /**
+   * @brief Class constructor for circular mortar interface used in 3D
+   * Poisson/Stokes test cases
+   * TODO: Move Poisson/Stokes tests to prototypes and remove this constructor
+   *
+   * @param[in] n_subdivisions Number of cells at the interface between inner
+   * and outer domains
+   * @param[in] radius Vector containing the radius at the mortar interface and
+   * the domain length in the direction of the rotation axis
+   * @param[in] quadrature Quadrature for local cell operations
+   * @param[in] rotation_angle Rotation angle for the inner domain
+   * @param[in] center_of_rotation Center of rotation of the inner domain
+   * @param[in] pre_rotation_angle Initial rotation angle used for computing
+   * mortar locations, accounting for cases here the element edges are not
+   * aligned with the x axis
+   */
   template <int dim2>
   MortarManagerCircle(std::vector<unsigned int> n_subdivisions,
                       std::vector<double>       radius,
@@ -235,6 +346,16 @@ public:
                       const Point<dim> &center_of_rotation = Point<dim>(),
                       const double      pre_rotation_angle = 0.0);
 
+  /**
+   * @brief Class constructor for circular interface used within the Navier-Stokes
+   * base
+   *
+   * @param[in] quadrature Quadrature for local cell operations
+   * @param[in] mapping Mapping associated to the domain
+   * @param[in] dof_handler DoFHandler associated to the triangulation
+   * @param[in] mortar_parameters The information about the mortar method
+   * control, including the rotor mesh parameters
+   */
   template <int dim2>
   MortarManagerCircle(const Quadrature<dim2>        &quadrature,
                       const Mapping<dim>            &mapping,
@@ -243,7 +364,7 @@ public:
 
 protected:
   Point<dim>
-  from_1D(const double rad) const override;
+  from_1D(const double angle_rad) const override;
 
   double
   to_1D(const Point<dim> &point) const override;
@@ -255,10 +376,48 @@ protected:
   /// cases here the element edges are not aligned with the x axis
   const double pre_rotation_angle;
 
-  /// Center of rotation
+  /// Center of rotation of the inner domain
   const Point<dim> center_of_rotation;
 };
 
+/**
+ * @brief Mortar manager class for linear interface
+ */
+template <int dim>
+class MortarManagerLinear : public MortarManagerBase<dim>
+{
+public:
+  /**
+   * @brief Class constructor for linear interface used within the Navier-Stokes
+   * base
+   *
+   * @param[in] quadrature Quadrature for local cell operations
+   * @param[in] mapping Mapping associated to the domain
+   * @param[in] dof_handler DoFHandler associated to the triangulation
+   * @param[in] mortar_parameters The information about the mortar method
+   * control, including the rotor mesh parameters
+   */
+  template <int dim2>
+  MortarManagerLinear(const Quadrature<dim2>        &quadrature,
+                      const Mapping<dim>            &mapping,
+                      const DoFHandler<dim>         &dof_handler,
+                      const Parameters::Mortar<dim> &mortar_parameters);
+
+protected:
+  Point<dim>
+  from_1D(const double angle_rad) const override;
+
+  double
+  to_1D(const Point<dim> &point) const override;
+
+  Tensor<1, dim, double>
+  get_normal(const Point<dim> &) const override;
+
+  /// Minimum y coordinate of interface nodes
+  double coord_min;
+  /// Maximum  y coordinate of interface nodes
+  double coord_max;
+};
 
 template <int dim>
 template <int dim2>
@@ -325,23 +484,48 @@ MortarManagerCircle<dim>::MortarManagerCircle(
   const DoFHandler<dim>         &dof_handler,
   const Parameters::Mortar<dim> &mortar_parameters)
   : MortarManagerCircle(
+      compute_number_interface_cells(dof_handler.get_triangulation(),
+                                     mortar_parameters),
       std::get<0>(
-        compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
-                                          mapping,
-                                          mortar_parameters)),
-      std::get<1>(
-        compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
-                                          mapping,
-                                          mortar_parameters)),
+        compute_interface_dimensions_circular(dof_handler.get_triangulation(),
+                                              mapping,
+                                              mortar_parameters)),
       construct_quadrature(quadrature, mortar_parameters),
       mortar_parameters.rotor_rotation_angle->value(Point<dim>()),
       mortar_parameters.center_of_rotation,
-      std::get<2>(
-        compute_n_subdivisions_and_radius(dof_handler.get_triangulation(),
-                                          mapping,
-                                          mortar_parameters)))
+      std::get<1>(
+        compute_interface_dimensions_circular(dof_handler.get_triangulation(),
+                                              mapping,
+                                              mortar_parameters)))
 {}
 
+template <int dim>
+template <int dim2>
+MortarManagerLinear<dim>::MortarManagerLinear(
+  const Quadrature<dim2>        &quadrature,
+  const Mapping<dim>            &mapping,
+  const DoFHandler<dim>         &dof_handler,
+  const Parameters::Mortar<dim> &mortar_parameters)
+  : MortarManagerBase<dim>(
+      compute_number_interface_cells(dof_handler.get_triangulation(),
+                                     mortar_parameters)[0],
+      (std::get<1>(
+         compute_interface_dimensions_linear(dof_handler.get_triangulation(),
+                                             mapping,
+                                             mortar_parameters)) -
+       std::get<0>(
+         compute_interface_dimensions_linear(dof_handler.get_triangulation(),
+                                             mapping,
+                                             mortar_parameters))) /
+        (2.0 * numbers::PI),
+      quadrature,
+      0.0)
+{
+  std::tie(this->coord_min, this->coord_max) =
+    compute_interface_dimensions_linear(dof_handler.get_triangulation(),
+                                        mapping,
+                                        mortar_parameters);
+}
 
 /**
  * @brief Compute inner product
@@ -628,14 +812,20 @@ class CouplingOperator
 {
 public:
   /**
-   * @brief Constructor.
+   * @brief Mortar coupling operator constructor
    *
+   * @param[in] mapping Mapping associated to the domain
+   * @param[in] dof_handler DoFHandler associated to the triangulation
+   * @param[in] constraints Constraints object
+   * @param[in] evaluator Mortar evaluation data
+   * @param[in] mortar_manager Mortar manager
    * @param[in] bid_m Boundary ID of the face whose outwards-pointing
-   *   normal shows in the same direction as the normal provided by
-   *   @p mortar_manager.
-   * @param[in] bid_p Boundary ID of the face whose outwards-pointing
-   *   normal shows in the opposite direction as the normal provided by
-   *   @p mortar_manager.
+   * normal shows in the same direction as the normal provided by
+   * @p mortar_manager.
+   * @param[in] bid_p Boundary ID of the face whose outwards-pointing normal
+   * shows in the opposite direction as the normal provided by
+   * @p mortar_manager.
+   * @param[in] sip_factor Penalty factor used in SIPG term
    */
   CouplingOperator(
     const Mapping<dim>                                        &mapping,
@@ -718,12 +908,12 @@ private:
     const typename Triangulation<dim>::cell_iterator &cell) const;
 
   /**
-   * @brief Returns angle of a point (cell center)
+   * @brief Returns the point corresponding to the cell center
    *
    * @param[in] cell Cell iterator
    * @param[in] face Face iterator
    *
-   * @return Angle in radians
+   * @return Cell center in cartesian coordinates
    */
   Point<dim>
   get_face_center(const typename Triangulation<dim>::cell_iterator &cell,
@@ -733,13 +923,15 @@ private:
    * @brief Returns dof indices
    *
    * @param[in] cell Cell iterator
+   *
+   * @return Vector of global dof indices
    */
   std::vector<types::global_dof_index>
   get_dof_indices(
     const typename DoFHandler<dim>::active_cell_iterator &cell) const;
 
 
-  /// Mapping of the domain
+  /// Mapping associated to the domain
   const Mapping<dim> &mapping;
   /// DoFHandler associated to the triangulation
   const DoFHandler<dim> &dof_handler;
@@ -757,9 +949,11 @@ protected:
   /// Number of data points per quadrature point
   unsigned int q_data_size;
 
-  /// Boundary ID of the inner domain (rotor)
+  /// Boundary ID of the face whose outwards-pointing normal shows in the
+  /// same direction as the normal provided by @p mortar_manager
   const unsigned int bid_m;
-  /// Boundary ID of the outer domain (stator)
+  /// Boundary ID of the face whose outwards-pointing normal shows in the
+  /// opposite direction as the normal provided by @p mortar_manager
   const unsigned int bid_p;
 
   /// List of relevant DoF indices per cell
@@ -788,14 +982,17 @@ protected:
 /**
  * @brief Create a temporary vector where mortar evaluation data is stored
  * before being passed to the system matrix
- *
- * @param[in] ptr Vector of values on one of the mortar sides
- * @param[in] offset Number of components to offset the ptr vector
  */
 template <typename T>
 class BufferRW
 {
 public:
+  /**
+   * @brief Class constructor
+   *
+   * @param[in] ptr Vector of values on one of the mortar sides
+   * @param[in] offset Number of components to offset the ptr vector
+   */
   BufferRW(T *ptr, const unsigned int offset)
     : ptr(ptr ? (ptr + offset) : nullptr)
   {}
@@ -910,12 +1107,18 @@ public:
 
   using u_value_type = typename FEPointIntegratorU::value_type;
 
+  /**
+   * @brief Class constructor
+   * @param[in] mapping Mapping associated to the domain
+   * @param[in] dof_handler DoFHandler associated to the triangulation
+   * @param[in] kinematic_vicosity Kinematic viscosity
+   */
   NavierStokesCouplingEvaluation(const Mapping<dim>    &mapping,
                                  const DoFHandler<dim> &dof_handler,
                                  const double           kinematic_viscosity);
 
   /**
-   *    @brief Default destructor.
+   * @brief Default destructor
    */
   virtual ~NavierStokesCouplingEvaluation() = default;
 

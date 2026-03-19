@@ -1,13 +1,13 @@
-# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# This test checks the geometric interface reinitialization in the VOF solver.
+# This test checks the geometric interface reinitialization in the CLS solver.
 # It simulates a swirling flow: a disk of radius 0.15, initially at the position
 # (0.5,0.75), is advected with a periodic, divergence-free velocity field. The
 # geometric redistanciation is apply each 10 iterations, and the test output the
 # conservation of the mass and the volume as well as the progression of the
 # redistanciation method. The velocity field  is imposed, hence, the fluid
-# dynamics is not resolve, only the VOF.
+# dynamics is not resolve, only the CLS.
 
 # Listing of Parameters
 #----------------------
@@ -31,15 +31,15 @@ end
 
 subsection multiphysics
   set fluid dynamics = false
-  set VOF            = true
+  set cls            = true
 end
 
 #---------------------------------------------------
-# VOF
+# CLS
 #---------------------------------------------------
 
-subsection VOF
-  subsection interface regularization method
+subsection CLS
+  subsection interface reinitialization method
     set type      = geometric interface reinitialization
     set frequency = 10
     set verbosity = verbose
@@ -70,7 +70,7 @@ subsection initial conditions
     set Function constants  = T=2
     set Function expression = -sin(pi*x)*sin(pi*x)*sin(2*pi*y)*cos(pi*t/T); sin(2*pi*x)*sin(pi*y)*sin(pi*y)*cos(pi*t/T); 0
   end
-  subsection VOF
+  subsection CLS
     set Function expression = 0.5 - 0.5*tanh((sqrt((0.5-x)*(0.5-x) +(0.75-y)*(0.75-y))-0.15)/0.04)
     set smoothing type      = none
   end
@@ -128,7 +128,7 @@ subsection mesh adaptation
 end
 
 subsection stabilization
-  set vof dcdd stabilization = false
+  set cls dcdd stabilization = false
 end
 
 #---------------------------------------------------
@@ -187,7 +187,7 @@ subsection boundary conditions
   end
 end
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number = 4
 end
 
@@ -210,7 +210,7 @@ subsection non-linear solver
     set max iterations = 20
     set verbosity      = verbose
   end
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-11
     set max iterations = 20
     set verbosity      = verbose
@@ -234,7 +234,7 @@ subsection linear solver
     set ilu preconditioner relative tolerance = 1.00
     set max krylov vectors                    = 200
   end
-  subsection VOF
+  subsection CLS
     set verbosity                             = verbose
     set method                                = gmres
     set max iters                             = 8000

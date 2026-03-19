@@ -70,13 +70,13 @@ In this section we introduce the different sections of the parameter file ``load
 Mesh
 ----
 
-In this example, we simulate the transport of particles in a 1 m wide long 0.084 m diameter pipe. The conveying is processed in the x-direction through periodic boundary conditions. We use the `custom cylinder <../../../parameters/cfd/mesh.html>`_ of type balanced, which is prefered over the regular deal.II option for having an uniform cell size distribution in the radial direction. Cells' size are approximately 2 times the diameter of the particles in both longitudinal and radial directions.
+In this example, we simulate the transport of particles in a 1 m wide long 0.084 m diameter pipe. The conveying is processed in the x-direction through periodic boundary conditions. We use the lethe custom `cylinder_balanced <../../../parameters/cfd/mesh.html>`_ , which is prefered over the regular deal.II option for having an uniform cell size distribution in the radial direction. Cells' size are approximately 2 times the diameter of the particles in both longitudinal and radial directions.
 
 .. code-block:: text
 
    subsection mesh
-     set type                                = cylinder
-     set grid type                           = balanced
+     set type                                = lethe
+     set grid type                           = cylinder_balanced
      set grid arguments                      = 45 : 0.042 : 0.5
      set initial refinement                  = 1
      set expand particle-wall contact search = true

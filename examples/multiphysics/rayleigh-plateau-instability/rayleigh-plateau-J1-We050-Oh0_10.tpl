@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2024-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -11,15 +11,15 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf2
-  set time end         = 0.08
-  set time step        = 4.4e-5
-  set adapt            = true
-  set max cfl          = 0.75
-  set max time step    = 4.4e-5
-  set output name      = rayleigh-plateau
-  set output frequency = 5
-  set output path      = ./output_deltaDELTA_VALUE_OUTPUT/
+  set method                         = bdf2
+  set time end                       = 0.08
+  set time step                      = 4.4e-5
+  set adapt time step to respect CFL = true
+  set max cfl                        = 0.75
+  set max time step                  = 4.4e-5
+  set output name                    = rayleigh-plateau
+  set output frequency               = 5
+  set output path                    = ./output_deltaDELTA_VALUE_OUTPUT/
 end
 
 #---------------------------------------------------
@@ -27,14 +27,14 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF = true
+  set cls = true
 end
 
 #---------------------------------------------------
-# VOF
+# CLS
 #---------------------------------------------------
 
-subsection VOF
+subsection CLS
   subsection surface tension force
     set enable                  = true
     set output auxiliary fields = true
@@ -62,7 +62,7 @@ subsection initial conditions
     set Function constants  = U=1.569
     set Function expression = if(y^2 <= 1.3110e-6, U, 0); 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function expression = if(y^2 <= 1.3110e-6, 1, 0)
     set smoothing type      = diffusive
   end
@@ -107,7 +107,8 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set type                     = kelly
+  set type                     = adaptive
+  set error estimator          = kelly
   set variable                 = phase
   set fraction type            = fraction
   set max refinement level     = 8
@@ -138,17 +139,17 @@ subsection boundary conditions
     set periodic_direction = 1
   end
   subsection bc 2
-    set id                 = 1
-    set type               = outlet
-    set beta               = 0
+    set id   = 1
+    set type = outlet
+    set beta = 0
   end
 end
 
 # --------------------------------------------------
-# Boundary Conditions VOF
+# Boundary Conditions CLS
 #---------------------------------------------------
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number = 4
   subsection bc 0
     set id   = 0
@@ -168,7 +169,7 @@ subsection non-linear solver
     set tolerance      = 1e-6
     set max iterations = 20
   end
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-10
     set max iterations = 2
   end
@@ -180,11 +181,11 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set relative residual  = 1e-3
-    set minimum residual   = 1e-9
-    set preconditioner     = amg
+    set relative residual = 1e-3
+    set minimum residual  = 1e-9
+    set preconditioner    = amg
   end
-  subsection VOF
+  subsection CLS
     set relative residual = 1e-8
     set minimum residual  = 1e-11
   end

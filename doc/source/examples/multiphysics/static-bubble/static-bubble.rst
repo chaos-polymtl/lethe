@@ -10,8 +10,8 @@ Features
 ----------------------------------
 
 - Solver: ``lethe-fluid``
-- Two phase flow handled by the Volume of fluids (VOF) approach with surface tension force
-- Calculation of filtered phase fraction gradient and curvature fields
+- Two phase flow handled by the Conservative Level-Set (CLS) approach with surface tension force
+- Calculation of filtered phase indicator gradient and curvature fields
 - Unsteady problem handled by a BDF1 time-stepping scheme
 
 
@@ -41,7 +41,7 @@ A circular bubble of radius :math:`R=0.5` is at equilibrium in the center of a t
 Surface Tension Force
 ~~~~~~~~~~~~~~~~~~~~~
 
-When including the surface tension force in the resolution of the Navier-Stokes equations, the numerical computation of the curvature can give rise to parasitic flows near the interface between the two fluids, as presented in :doc:`../../../theory/multiphase/cfd/vof` theory guide.
+When including the surface tension force in the resolution of the Navier-Stokes equations, the numerical computation of the curvature can give rise to parasitic flows near the interface between the two fluids, as presented in :doc:`../../../theory/multiphase/cfd/cls` theory guide.
 
 The static bubble case is a relevant case to study the parasitic currents, since the analytical solution is zero for the velocity. Therefore, non-zero velocities in the computed velocity field are considered parasitic currents [#zahedi2012]_. The analytical pressure drop between the interior (:math:`p_{int}`) and exterior (:math:`p_{ext}`) of the bubble is given by the Young-Laplace relation:
 
@@ -75,13 +75,13 @@ Time integration is handled by a 1st order backward differentiation scheme (BDF1
 Multiphysics
 ~~~~~~~~~~~~
 
-The ``multiphysics`` subsection enables to turn on (``true``) and off (``false``) the physics of interest. Here ``VOF`` is chosen. The ``surface tension force`` are enabled in the VOF subsection.
+The ``multiphysics`` subsection enables to turn on (``true``) and off (``false``) the physics of interest. Here ``CLS`` is chosen. The ``surface tension force`` are enabled in the CLS subsection.
 
 
 .. code-block:: text
 
     subsection multiphysics
-      set VOF = true
+      set CLS = true
     end
 
 
@@ -112,7 +112,7 @@ defined as a circle with a radius :math:`R= 0.5` in the center of the computatio
       subsection uvwp
         set Function expression = 0; 0; 0
       end
-      subsection VOF
+      subsection CLS
         set Function expression = if (x^2 + y^2 < 0.5^2 , 1, 0)
         subsection projection step
           set enable           = true
@@ -122,17 +122,17 @@ defined as a circle with a radius :math:`R= 0.5` in the center of the computatio
     end
 
 
-VOF
+CLS
 ~~~
 
-The surface tension force computation is enabled in the ``VOF`` subsection. The value of the diffusion factors :math:`\alpha` and :math:`\beta` described in section :ref:`Normal and curvature computations` are controlled respectively by the parameters ``phase fraction gradient diffusion factor`` and ``curvature diffusion factor``. Finally, the parameter ``output auxiliary fields`` set at ``true`` enables the output of the filtered phase fraction gradient and filtered curvature fields.
+The surface tension force computation is enabled in the ``CLS`` subsection. The value of the diffusion factors :math:`\alpha` and :math:`\beta` described in section :ref:`Normal and curvature computations` are controlled respectively by the parameters ``phase indicator gradient diffusion factor`` and ``curvature diffusion factor``. Finally, the parameter ``output auxiliary fields`` set at ``true`` enables the output of the filtered phase indicator gradient and filtered curvature fields.
 
 .. code-block:: text
 
-    subsection VOF
+    subsection CLS
       subsection surface tension force
         set enable                                   = true
-        set phase fraction gradient diffusion factor = 4
+        set phase indicator gradient diffusion factor = 4
         set curvature diffusion factor               = 1
         set output auxiliary fields                  = true
       end
@@ -140,12 +140,12 @@ The surface tension force computation is enabled in the ``VOF`` subsection. The 
 
 .. tip::
 
-  The phase fraction gradient diffusion value :math:`\left(\eta_n = \alpha h^2\right)` and curvature diffusion value :math:`\left(\eta_\kappa = \beta h^2\right)` must be small values larger than 0. We recommend the following procedure to choose a proper value for these parameters:
+  The phase indicator gradient diffusion value :math:`\left(\eta_n = \alpha h^2\right)` and curvature diffusion value :math:`\left(\eta_\kappa = \beta h^2\right)` must be small values larger than 0. We recommend the following procedure to choose a proper value for these parameters:
 
-  1. Enable ``output auxiliary fields`` to write filtered phase fraction gradient and filtered curvature fields.
+  1. Enable ``output auxiliary fields`` to write filtered phase indicator gradient and filtered curvature fields.
   2. Choose a value close to 1, for example, the default values  :math:`\alpha = 4` and :math:`\beta = 1`.
-  3. Run the simulation and check whether the filtered phase fraction gradient and filtered curvature fields are smooth and without oscillation.
-  4. If the filtered phase fraction gradient and filtered curvature fields show oscillations, increase the value :math:`\alpha` and :math:`\beta` to larger values, and repeat this process until reaching smooth filtered phase fraction gradient and filtered curvature fields without oscillations. Generally, the default values should be sufficient.
+  3. Run the simulation and check whether the filtered phase indicator gradient and filtered curvature fields are smooth and without oscillation.
+  4. If the filtered phase indicator gradient and filtered curvature fields show oscillations, increase the value :math:`\alpha` and :math:`\beta` to larger values, and repeat this process until reaching smooth filtered phase indicator gradient and filtered curvature fields without oscillations. Generally, the default values should be sufficient.
 
 
 Physical Properties

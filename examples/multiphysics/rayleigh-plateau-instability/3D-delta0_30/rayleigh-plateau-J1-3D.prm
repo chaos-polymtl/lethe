@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2024-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -11,16 +11,16 @@ set dimension = 3
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = bdf2
-  set time end          = 0.08
-  set time step         = 4.4e-5
-  set adapt             = true
-  set max cfl           = 0.75
-  set max time step     = 4.4e-5
-  set output name       = rayleigh-plateau
-  set output frequency  = 5
-  set output path       = ./3D-output_delta0_30/
-  set output boundaries = true
+  set method                         = bdf2
+  set time end                       = 0.08
+  set time step                      = 4.4e-5
+  set adapt time step to respect CFL = true
+  set max cfl                        = 0.75
+  set max time step                  = 4.4e-5
+  set output name                    = rayleigh-plateau
+  set output frequency               = 5
+  set output path                    = ./3D-output_delta0_30/
+  set output boundaries              = true
 end
 
 #---------------------------------------------------
@@ -28,19 +28,19 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF = true
+  set cls = true
 end
 
 #---------------------------------------------------
-# VOF
+# CLS
 #---------------------------------------------------
 
-subsection VOF
+subsection CLS
   subsection surface tension force
     set enable                  = true
     set output auxiliary fields = true
   end
-  subsection interface regularization method
+  subsection interface reinitialization method
     set type      = projection-based interface sharpening
     set frequency = 20
     subsection projection-based interface sharpening
@@ -63,7 +63,7 @@ subsection initial conditions
     set Function constants  = U=1.569
     set Function expression = if((y^2 + z^2) <= 1.3110e-6, U, 0); 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function expression = if((y^2 + z^2) <= 1.3110e-6, 1, 0)
     set smoothing type      = diffusive
     set diffusion factor    = 1
@@ -109,7 +109,8 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set type                     = kelly
+  set type                     = adaptive
+  set error estimator          = kelly
   set variable                 = phase
   set fraction type            = fraction
   set max refinement level     = 7
@@ -144,10 +145,10 @@ subsection boundary conditions
 end
 
 # --------------------------------------------------
-# Boundary Conditions VOF
+# boundary conditions CLS
 #---------------------------------------------------
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number         = 3
   set time dependent = true
   subsection bc 0
@@ -174,7 +175,7 @@ subsection non-linear solver
     set tolerance      = 1e-7
     set max iterations = 20
   end
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-10
     set max iterations = 2
   end
@@ -189,7 +190,7 @@ subsection linear solver
     set relative residual = 1e-3
     set minimum residual  = 1e-8
   end
-  subsection VOF
+  subsection CLS
     set relative residual = 1e-8
     set minimum residual  = 1e-11
   end

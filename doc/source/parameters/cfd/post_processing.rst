@@ -1,3 +1,7 @@
+..
+  SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
+  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 ===============
 Post-processing
 ===============
@@ -47,6 +51,15 @@ This subsection controls the post-processing other than the forces and torque on
     set calculate pressure power         = false
     set pressure power name              = pressure_power
 
+    # Output Q-criterion
+    set output qcriterion                = true
+
+    # Output vorticity
+    set output vorticity                 = true
+
+    # Output velocity gradient
+    set output velocity gradient         = true
+
     #---------------------------------------------------
     # Physical properties post-processing
     #---------------------------------------------------
@@ -74,6 +87,8 @@ This subsection controls the post-processing other than the forces and torque on
     set barycenter name                  = barycenter_information
     set calculate mass conservation      = true
     set mass conservation name           = mass_conservation_information
+    set calculate liquid fraction        = false
+    set liquid fraction name             = liquid_fraction
 
     # Other Cahn-Hilliard postprocessing
     set calculate phase statistics       = false
@@ -161,6 +176,14 @@ This subsection controls the post-processing other than the forces and torque on
 
     with :math:`\Omega` representing the volume of the domain, :math:`\mathbf{u}` the velocity  and :math:`p` the pressure.
 
+* ``output qcriterion``, ``output vorticity``, ``output velocity gradient``: control whether the Q-criterion, vorticity, and velocity gradient fields, respectively, are included in the output files.
+
+  .. tip::
+    When the size of ``.pvd`` / ``.vtu`` files is a concern, consider disabling the output of some/all of these three fields if they are unnecessary in the analysis.
+
+  .. warning::
+    ``output qcriterion``, ``output vorticity``, ``output velocity gradient`` are only applicable to ``lethe-fluid`` solvers.
+
 * ``calculate apparent viscosity``: controls if parameter calculation of an apparent viscosity is enabled, when using a non Newtonian flow (see section Physical properties - :ref:`rheological_models`). This is mainly used to define the Reynolds number `a posteriori`. 
     * ``apparent viscosity name``: output filename for apparent viscosity calculations.
 
@@ -172,8 +195,8 @@ This subsection controls the post-processing other than the forces and torque on
     * ``tracer statistics name``: output filename for tracer statistics calculations.
 
 * ``postprocessed fluid``: fluid domain used for thermal postprocesses. Choices are : ``fluid 0``, ``fluid 1``, or ``both`` (default).
-    * For monophasic simulations (``set VOF = false`` in :doc:`multiphysics`), ``both`` and ``fluid 0`` are equivalent and the temperature statistics are computed over the entire domain.
-    * For multiphasic simulations (``set VOF = true`` in :doc:`multiphysics`), temperature statistics can be computed over the entire domain (``both``) or inside a given fluid only (``fluid 0`` or ``fluid 1``), with the fluid IDs defined in Physical properties - :ref:`two phase simulations`.
+    * For monophasic simulations (``set CLS = false`` in :doc:`multiphysics`), ``both`` and ``fluid 0`` are equivalent and the temperature statistics are computed over the entire domain.
+    * For multiphasic simulations (``set CLS = true`` in :doc:`multiphysics`), temperature statistics can be computed over the entire domain (``both``) or inside a given fluid only (``fluid 0`` or ``fluid 1``), with the fluid IDs defined in Physical properties - :ref:`two phase simulations`.
 
     .. note::
 
@@ -231,7 +254,7 @@ This subsection controls the post-processing other than the forces and torque on
 		0.0000          0.0000               0.0000               0.0000            1000.0000 
 		1.0000         -0.9732               0.0000               1.4856               0.9732 
 
-* ``calculate barycenter``: calculates the barycenter of ``fluid 1`` and its velocity in VOF and Cahn-Hilliard simulations. The barycenter :math:`\mathbf{x}_b` and its velocity :math:`\mathbf{v}_b` are defined as:
+* ``calculate barycenter``: calculates the barycenter of ``fluid 1`` and its velocity in CLS and Cahn-Hilliard simulations. The barycenter :math:`\mathbf{x}_b` and its velocity :math:`\mathbf{v}_b` are defined as:
 
   .. math::
 
@@ -241,7 +264,7 @@ This subsection controls the post-processing other than the forces and torque on
 
       \mathbf{v_b} = \frac{\int_{\Omega} \psi \mathbf{u} \mathrm{d}\Omega }{\int_{\Omega} \psi \mathrm{d}\Omega}
 
-  where :math:`\psi \in [0,1]` is the filtered phase indicator for VOF simulations. 
+  where :math:`\psi \in [0,1]` is the filtered phase indicator for CLS simulations. 
   
   For Cahn-Hilliard the formula is slightly different since the phase order parameter :math:`\phi` belongs to the :math:`[-1,1]` interval:
   
@@ -256,11 +279,15 @@ This subsection controls the post-processing other than the forces and torque on
   where :math:`\phi` is the phase order parameter.
   
   
-* ``barycenter name``: name of the output file containing the position and velocity of the barycenter for VOF and Cahn-Hilliard simulations. The default file name is ``barycenter_information``.
+* ``barycenter name``: name of the output file containing the position and velocity of the barycenter for CLS and Cahn-Hilliard simulations. The default file name is ``barycenter_information``.
 
-* ``calculate mass conservation``: calculates the mass and momentum of both fluids for VOF simulations.
+* ``calculate mass conservation``: calculates the mass and momentum of both fluids for CLS simulations.
 
-* ``mass conservation name``: name of the output file containing the mass of both fluids for VOF simulations. The default file name is ``mass_conservation_information``.
+* ``mass conservation name``: name of the output file containing the mass of both fluids for CLS simulations. The default file name is ``mass_conservation_information``.
+
+* ``calculate liquid fraction``: calculates the liquid fraction in simulations with phase change. The liquid fraction corresponds to the volume (area) integral of the liquid divided by the volume (area) of the domain.
+
+* ``liquid fraction name``: name of the output file containing the time evolution of the liquid fraction.
   
 * ``calculate phase statistics``: outputs Cahn-Hilliard phase statistics, including minimum, maximum, average, integral of the phase order parameter, and the volume of each phase.
 

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -148,7 +148,8 @@ NavierStokesOperatorBase<dim, number>::reinit(
   // additional data
   for (auto const &[id, type] : boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::function_weak)
+      if (type == BoundaryConditions::BoundaryType::function_weak ||
+          type == BoundaryConditions::BoundaryType::pressure)
         {
           this->enable_face_terms = true;
           additional_data.mapping_update_flags_boundary_faces =
@@ -350,7 +351,7 @@ NavierStokesOperatorBase<dim, number>::compute_forcing_term()
 
 template <int dim, typename number>
 void
-NavierStokesOperatorBase<dim, number>::compute_buoyancy_term(
+NavierStokesOperatorBase<dim, number>::compute_thermal_buoyancy_term(
   const VectorType      &temperature_solution,
   const DoFHandler<dim> &temperature_dof_handler)
 {
@@ -368,7 +369,7 @@ NavierStokesOperatorBase<dim, number>::compute_buoyancy_term(
                           this->matrix_free.get_quadrature(),
                           update_values);
 
-  buoyancy_term.reinit(n_cells, fe_values.n_quadrature_points);
+  thermal_buoyancy_term.reinit(n_cells, fe_values.n_quadrature_points);
 
   std::vector<number> cell_temperature_solution(fe_values.n_quadrature_points);
   std::vector<double> thermal_expansion(fe_values.n_quadrature_points);
@@ -399,7 +400,7 @@ NavierStokesOperatorBase<dim, number>::compute_buoyancy_term(
               // (1 - β (T -Tref))g where the g has already been precomputed
               // in compute_forcing_term() function.
               for (int c = 0; c < dim; ++c)
-                buoyancy_term[cell][q][c][lane] =
+                thermal_buoyancy_term[cell][q][c][lane] =
                   forcing_terms[cell][q][c][lane] * scaling;
             }
         }
@@ -486,9 +487,11 @@ NavierStokesOperatorBase<dim, number>::vmult(VectorType       &dst,
   // If enabled, add mortar entries
   if (this->enable_mortar)
     {
+      this->timer.enter_subsection("operator::vmult_mortar");
       this->mortar_coupling_operator_mf->vmult_add(dst, src);
       dst.compress(VectorOperation::add);
       src.zero_out_ghost_values();
+      this->timer.leave_subsection("operator::vmult_mortar");
     }
 
   // copy constrained dofs from src to dst (corresponding to diagonal
@@ -762,9 +765,11 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
   // If mortar is enabled, add system matrix entries
   if (this->enable_mortar)
     {
+      this->timer.enter_subsection("operator::get_system_matrix_mortar");
       this->mortar_coupling_operator_mf->add_system_matrix_entries(
         system_matrix);
       system_matrix.compress(VectorOperation::add);
+      this->timer.leave_subsection("operator::get_system_matrix_mortar");
     }
 
   // make sure that diagonal entries related to constrained dofs
@@ -829,6 +834,7 @@ NavierStokesOperatorBase<dim, number>::
   nonlinear_previous_values.reinit(n_cells, integrator.n_q_points);
   nonlinear_previous_gradient.reinit(n_cells, integrator.n_q_points);
   nonlinear_previous_hessian_diagonal.reinit(n_cells, integrator.n_q_points);
+  nonlinear_previous_hessian.reinit(n_cells, integrator.n_q_points);
   stabilization_parameter.reinit(n_cells, integrator.n_q_points);
   stabilization_parameter_lsic.reinit(n_cells, integrator.n_q_points);
   kinematic_viscosity_vector.reinit(n_cells, integrator.n_q_points);
@@ -881,8 +887,11 @@ NavierStokesOperatorBase<dim, number>::
             velocity_for_stabilization(cell, q) -= this->velocity_ale(cell, q);
 
           if (this->enable_hessians_jacobian)
-            nonlinear_previous_hessian_diagonal(cell, q) =
-              integrator.get_hessian_diagonal(q);
+            {
+              nonlinear_previous_hessian_diagonal(cell, q) =
+                integrator.get_hessian_diagonal(q);
+              nonlinear_previous_hessian(cell, q) = integrator.get_hessian(q);
+            }
 
           // Calculate tau
           VectorizedArray<number> u_mag_squared = 1e-12;
@@ -1007,6 +1016,8 @@ NavierStokesOperatorBase<dim, number>::
     {
       effective_beta_face.reinit(n_boundary_faces);
       face_target_velocity.reinit(n_boundary_faces, face_integrator.n_q_points);
+      face_target_pressure.reinit(n_boundary_faces, face_integrator.n_q_points);
+
       face_nonlinear_previous_values.reinit(n_boundary_faces,
                                             face_integrator.n_q_points);
 
@@ -1023,12 +1034,9 @@ NavierStokesOperatorBase<dim, number>::
           // Check if the boundary condition is a weak Dirichlet boundary
           // condition or an outlet boundary condition, otherwise, no terms
           // need to be precomputed for faces
-          if (this->boundary_conditions.type.at(
-                face_integrator.boundary_id()) !=
-                BoundaryConditions::BoundaryType::function_weak &&
-              this->boundary_conditions.type.at(
-                face_integrator.boundary_id()) !=
-                BoundaryConditions::BoundaryType::outlet)
+          if (boundary_condition_requires_face_assembly(
+                this->boundary_conditions.type.at(
+                  face_integrator.boundary_id())) == false)
             continue;
 
           // We need to read the values for the outlet boundary condition
@@ -1080,6 +1088,23 @@ NavierStokesOperatorBase<dim, number>::
                 {
                   face_nonlinear_previous_values[face - n_inner_faces][q] =
                     face_integrator.get_value(q);
+                }
+
+              else if (this->boundary_conditions.type.at(
+                         face_integrator.boundary_id()) ==
+                       BoundaryConditions::BoundaryType::pressure)
+                {
+                  // Gather the quadrature points
+                  Point<dim, VectorizedArray<number>> point_batch =
+                    face_integrator.quadrature_point(q);
+
+                  // Evaluate the face target pressure
+                  face_target_pressure(face - n_inner_faces, q) =
+                    evaluate_function<dim, number>(
+                      boundary_conditions.navier_stokes_functions
+                        .at(face_integrator.boundary_id())
+                        ->p,
+                      point_batch);
                 }
             }
 
@@ -1255,7 +1280,11 @@ NavierStokesOperatorBase<dim, number>::compute_inverse_diagonal(
 
   // If mortar is enabled, add diagonal entries
   if (this->enable_mortar)
-    this->mortar_coupling_operator_mf->add_diagonal_entries(diagonal);
+    {
+      this->timer.enter_subsection("operator::compute_inverse_diagonal_mortar");
+      this->mortar_coupling_operator_mf->add_diagonal_entries(diagonal);
+      this->timer.leave_subsection("operator::compute_inverse_diagonal_mortar");
+    }
 
   for (const auto &i : edge_constrained_indices)
     diagonal.local_element(i) = 0.0;
@@ -1349,12 +1378,11 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
 
   // If the boundary condition is not in our list of boundary
   // conditions or the boundary condition that is set in the list is
-  // not a weak function or outlet BC, there is nothing to do, so we set the
+  // not a boundary condition that requires face asssembly (for example
+  // pressure, weak dirichlet or outlet), there is nothing to do, so we set the
   // values to zero and return
-  if (this->boundary_conditions.type.at(integrator.boundary_id()) !=
-        BoundaryConditions::BoundaryType::function_weak &&
-      this->boundary_conditions.type.at(integrator.boundary_id()) !=
-        BoundaryConditions::BoundaryType::outlet)
+  if (boundary_condition_requires_face_assembly(
+        this->boundary_conditions.type.at(integrator.boundary_id())) == false)
     {
       const VectorizedArray<number> zero = 0.0;
 
@@ -1457,6 +1485,49 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
 
       integrator.integrate(EvaluationFlags::EvaluationFlags::values);
     }
+
+  else if (this->boundary_conditions.type.at(integrator.boundary_id()) ==
+           BoundaryConditions::BoundaryType::pressure)
+    {
+      integrator.evaluate(EvaluationFlags::EvaluationFlags::values |
+                          EvaluationFlags::EvaluationFlags::gradients);
+
+      for (const auto q : integrator.quadrature_point_indices())
+        {
+          typename FEFaceIntegrator::value_type value_result = {};
+
+          const auto normal_vector = integrator.normal_vector(q);
+          auto       gradient      = integrator.get_gradient(q);
+
+          for (int d = 0; d < dim; ++d)
+            {
+              // We are assembling the residual, so we need to impose the
+              // target pressure
+              if constexpr (assemble_residual)
+                {
+                  // Assemble ν(v,-∇δu·n - p n )
+                  for (int i = 0; i < dim; ++i)
+                    value_result[d] +=
+                      kinematic_viscosity * gradient[d][i] * normal_vector[i];
+
+                  value_result[d] += this->face_target_pressure[face_index][q] *
+                                     normal_vector[d];
+                }
+              // We are just assembling the matrix, the face target pressure
+              // is not part of the assembly process.
+              else
+                {
+                  // Assemble ν(v,-∇δu·n )
+                  for (int i = 0; i < dim; ++i)
+                    value_result[d] -=
+                      kinematic_viscosity * gradient[d][i] * normal_vector[i];
+                }
+            }
+          integrator.submit_value(value_result, q);
+        }
+
+      integrator.integrate(EvaluationFlags::EvaluationFlags::values);
+    }
 }
 
 
@@ -1540,8 +1611,8 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
       Tensor<1, dim, VectorizedArray<number>> source_value;
 
       // Evaluate source term function if enabled
-      if (!this->buoyancy_term.empty())
-        source_value = this->buoyancy_term(cell, q);
+      if (!this->thermal_buoyancy_term.empty())
+        source_value = this->thermal_buoyancy_term(cell, q);
       else if (this->forcing_function)
         source_value = this->forcing_terms(cell, q);
 
@@ -1843,8 +1914,8 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
           Tensor<1, dim, VectorizedArray<number>> source_value;
 
           // Evaluate source term function if enabled
-          if (!this->buoyancy_term.empty())
-            source_value = this->buoyancy_term(cell, q);
+          if (!this->thermal_buoyancy_term.empty())
+            source_value = this->thermal_buoyancy_term(cell, q);
           else if (this->forcing_function)
             source_value = this->forcing_terms(cell, q);
 

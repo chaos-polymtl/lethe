@@ -1,197 +1,116 @@
-
 # Change Log
 All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [Master] - 2026/01/26
+## [Master] - 2026/03/18
+
+### Changed
+
+- MAJOR Following PRs [#1937](https://github.com/chaos-polymtl/7lethe/pull/1937) and [#1938](https://github.com/chaos-polymtl/7lethe/pull/1938), this PR renames all occurrences of "VOF", "interface regularization", "algebraic interface reinitialization", and "phase fraction" with "CLS", "interface reinitialization", "pde-based interface reinitialization", and "phase indicator" respectively in the example section of the documentation. [#1944](https://github.com/chaos-polymtl/7lethe/pull/1944).
+
+### Fixed
+
+- MAJOR The lethe-fluid-particles-matrix-free solver would not restart adequately. This was mainly caused by three factors. The first is that the vector used to project the forces was never reset to zero, and so the projection of the forces and the other variables became dependent on the history of this projection since this would affect the GMRES solver behavior. The second was that the void fraction time-history would get partially erased if a BDF2 time-stepping scheme was used. The last one was that some of the multigrid operators being used to transfer the particle-fluid force/drag information were not the correct ones. All these three things have been fixed. They don't changes tests (except a small one for some floating point error), but now the code restarts to machine precision. [#1943](https://github.com/chaos-polymtl/7lethe/pull/1943).
+
+## [Master] - 2026/03/17
+
+### Changed
+
+- MAJOR Following PR [#1937](https://github.com/chaos-polymtl/7lethe/pull/1937), this PR renames all occurrences of "VOF", "interface regularization", "algebraic interface reinitialization", and "phase fraction" with "CLS", "interface reinitialization", "pde-based interface reinitialization", and "phase indicator" respectively in the parameters and theory sections of the documentation. [#1938](https://github.com/chaos-polymtl/7lethe/pull/1938).
+
+## [Master] - 2026/03/15
 
 ### Added
 
-- MINOR This PR adds the option to set a simulation initial time-step that respects the capillary time-step constraint through enabling (setting to `true`) the parameter `respect capillary time-step constraint` ($\Delta t_\sigma$) in the `simulation control` subsection. This constraint is especially useful when simulating capillary flows. With the parameter `capillary time-step ratio` ($N_\text{CTR}$), users can specify a multiple of the default capillary time-step constraint as defined by [1]. By default, the $N_\text{CTR}$ is set to 1. A $N_\text{CTR}$ value < 1 can improve stability for highly dynamic cases, and using a $N_\text{CTR}$ value > 1 can lead to a significant decrease in computation time in some cases. 
+- MINOR This PR adds to the utilities a bash script (`copy_files_for_postprocessing.sh`) that helps with copying only simulation result files of interest in a specific folder. This script can be used for identifying and copying files of importance before transferring to another machine or simply to clean up irrelevant files. This can be especially useful for parametric studies with more than necessary outputs for postprocessing. [#1941](https://github.com/chaos-polymtl/lethe/pull/1941)
 
-  Additionally, when `respect capillary time-step constraint` is  paired with `adapt` (for adaptive time-stepping), the time-step will be dynamically updated to respect the capillary time-step ($N_\text{CTR} \times \Delta t_\sigma $) at every time-step. A warning message is printed on the console when `adapt` is disabled to inform the user that the capillary time-step constraint might not be respected if either of the mesh cell size, the densities or the surface tension coefficient evolves dynamically.
-
-  Finally, a new overload of the `announce_string` function has also been added to allow multiple line banners. [#1886](https://github.com/chaos-polymtl/lethe/pull/1886)
-
-  [1] F. Denner, F. Evrard, and B. van Wachem “Breaching the capillary
-  time-step constraint using a coupled VOF method with implicit surface tension,” J. Comput. Phys., vol. 459, p. 111128, Jun. 2022, doi: 10.1016/j.jcp.2022.111128
-- MINOR This PR is a follow-up for the time harmonic electromagnetic auxiliary physics rudimentary implementation #1852. It links its physical material properties #1862 to the assembly, creates the waveguide port boundary conditions, update previous application tests related to the physics and add a new one for a dissipative medium. It also removes .prm in the examples/multiphysics/waveguide as this example will come in a follow up PR. [#1882](https://github.com/chaos-polymtl/lethe/pull/1882) 
-
-## [Master] - 2026-01-23
+## [Master] - 2026/03/12
 
 ### Changed
 
-- MAJOR Some initial tests created for the mortar feature became obsolete as the code developed. Hence, this PR cleans up the mortar tests and moves the more representative ones (that are not used anymore) to the prototypes folder. [#1887](https://github.com/chaos-polymtl/lethe/pull/1887)
+- MAJOR This PR renames all occurrences of "VOF", "interface regularization", "algebraic interface reinitialization", and "phase fraction" with "CLS", "interface reinitialization", "pde-based interface reinitialization", and "phase indicator" respectively in:
+  - parameter names, values and descriptions;
+  - parameter subsection names;
+  - console output strings (including warning and exception messages) that are not related to in-code variables or classes names, and
+  - .prm, .tpl, .output files in the code (application tests and examples).
+  
+  All modified parameter names have an alias with their previous names.
+  The objective of this PR is to update all in-code user-seen aspects when running the code that refer to VOF with CLS. All related documentation will be updated in a subsequent PR. In the same mindset, all the changes in the following:
+  - Filenames;
+  - Classes, Structs, variables, and functions names;
+  - VTK output fields, and
+  - post-processing data
+    
+  will also be done in subsequent PRs. [#1937](https://github.com/chaos-polymtl/lethe/pull/1937)
 
-## [Master] - 2026-01-22
-
-### Fixed
-
-- MINOR The hopper example post-processing script was not working anymore since the change in the definition of the floating wall. The script would try to parse "nx" from the .prm file, but this variable did not exist anymore. This PR fixes this issue by removing this parameter parsing. Furthermore, we have identified an issue with the automatic validation script which can keep on reusing old pdf of the results if the generation of the new ones did not work. This is also fixed by automatically removing all PDF that were already present in the case folder. [#1889](https://github.com/chaos-polymtl/lethe/pull/1889)
-
-## [Master] - 2026-01-21
-
-### Changed
-
-- MINOR The cylindrical gas–solid fluidized bed example, introduced in PR [#1844], has been added to the Lucille validation test suite. The selected validation case uses the matrix-free solver with a semi-implicit drag scheme and a QCM filter. The corresponding post-processing Python script has been modified to allow users to select the simulation configuration to be post-processed. [#1880](https://github.com/chaos-polymtl/lethe/pull/1880)
-
-### Fixed
-
-- MINOR Calls to convert_vector_dealii_to_trilinos() were failling due to new restriction on ghosted Trilinos vectors in dealii. This PR fixes this using a temporary locally owned vector. [#1888](https://github.com/chaos-polymtl/lethe/pull/1888)
-
-## [Master] - 2026-01-20
-
-### Changed
-
-- MINOR This PR improves the performances of the signed distance solver. Previously, the bottleneck was the calls to FEPointEvaluation.reinit(cell, points_vector) in compute_second_neighbors(). Hence, the cost of these calls has been reduce in two ways: 1)  the numerical jacobian of the minimization problem was replace by the analytic jacaobian to reduce the number of points to reinit for and 2) the MappingFE(Fe_Q) was replaced by a MappingQ(fe.degree) to take the fast path in FEPointEvaluation.reinit() (those two mapping are equivalent, but MappingFe was not recognized for the fast path). For the 3D simulation of the rising bubble benchmark, we have a speed up of approx. 7x for the signed distance computations. Hence, the geometric reinitialization is not the bottleneck of the simulation anymore. [#1885](https://github.com/chaos-polymtl/lethe/pull/1885)
-
-## [Master] - 2026-01-19
-
-### Changed
-
-- MINOR The latest Lethe release is compatible with deal.ii 9.7, and we don't have CI checks with 9.6 version (or below) anymore. Hence, this PR removes deprecated checks for deal.II versions prior to 9.7. [#1884](https://github.com/chaos-polymtl/lethe/pull/1884)
-
-## [Master] - 2026-01-16
-
-### Changed
-
-- MINOR In the cylindrical packed bed example, the pressure drop across the bed is compared with the Ergun correlation. This was done in PR [#1840], where a bed porosity of 0.45 was used in the correlation. In this PR, the bed porosity is calculated using the bed height that is extracted from the simulation instead, leading to a better estimate for the pressure drop. [#1881] (https://github.com/chaos-polymtl/lethe/pull/1881)
-
-- MINOR This PR adds the option to declare a particle size distribution in the parameter file as volume-based for the ``normal`` and ``lognormal`` distribution. The ``custom`` distribution is the only distribution that is not supporting the ``number-based`` distribution. The will get fixed in a follow up PR. [#1875](https://github.com/chaos-polymtl/lethe/pull/1875)
-
-## [Master] - 2026/01/15
-
-### Changed
-
-- MAJOR The algebraic reinitialization PDE had some issues converging towards steady-state. To solve them, this PR: 
-  - changes the weak formulation of the problem solved (the curvature field is no more required);
-  - changes how the artificial time-step is computed;
-  - changes how the steady-state criterion is evaluated;
-  - removes the filtered VOF solution field for the computation of the projected phase gradient used to compute the unit interface normal vector and the curvature;
-  - renames the `reinitialization CFL` parameter to `artificial time-step factor` (an alias was made for `reinitialization CFL`, to avoid parameter file version issues), and;
-  - changes default values of algebraic reinitialization parameters.
-
-  This PR also updates the rising bubble example. Other VOF examples with surface tension force (static bubble, capillary wave, and Rayleigh-Plateau instability) will have to be checked and updated in a future PR. [#1879](https://github.com/chaos-polymtl/lethe/pull/1879)
-
-## [Master] - 2026-01-13
-
-### Changed
-
-- MINOR This PR replaces the duplicate ``set_insertion_type`` function definitions in ``dem.cc``, ``cfd_dem_coupling.cc``, and ``cfd_dem_coupling_matrix_free.cc`` with a single definition in ``set_insertion_method.cc``. [#1877](https://github.com/chaos-polymtl/lethe/pull/1877)
-
-## [Master] - 2026/01/12
-
-## Fixed
-
-- Minor The lethe-particles/distribution_normal.prm application test was using a log-normal distribution. The parameter was changed back to ``normal``. As a result, the output of the test did change. [#1876](https://github.com/chaos-polymtl/lethe/pull/1876) 
-
-- Minor The convection term in the VANS equations for models A and B is changed from ``local_matrix_ij += ((phi_u_j * void_fraction * velocity_gradient * phi_u_i) + (grad_phi_u_j * void_fraction * velocity * phi_u_i));`` to ``local_matrix_ij += ((velocity_gradient * phi_u_j * void_fraction * phi_u_i) + (grad_phi_u_j * void_fraction * velocity * phi_u_i))`` in the matrix assembly, to match the correct algebraic formula. The output of the ``lethe-fluid-particles`` and ``lethe-fluid-vans`` application tests changed only slightly. Therefore, their outputs were updated in this PR as well. [#1874](https://github.com/chaos-polymtl/lethe/pull/1874) 
-
-
-## [Master] - 2026/01/07
-
-## Added
-
-- MINOR The particle projector can be used to project the particle-fluid force onto the CFD mesh. This requires the assembly of a matrix and a right-hand side. On smaller meshes, this assembly is quite cheap, but when using the matrix-free methods, it becomes a significant cost for large parallel simulations. This PR optimizes this projection step by ensuring that the matrix and the preconditioner are only recalculated and reinitialized when it is necessary. In the case when the projected field does not have a Neumann boundary condition, then the matrix is only assembled once, whenever the degrees of freedom are set up, instead of at every iteration. This greatly diminishes the cost of the explicit, semi-implicit and implicit coupling. There are still optimizations remaining (for example, to carry out all the projections in a single step instead of one by one), but these will be addressed in a follow-up PR. This already reduces the cost by 20-25% of the projection. Furthermore, the projection was not adequately timed, this has been fixed in this PR. [#1873](https://github.com/chaos-polymtl/lethe/pull/1873)
-
-## Fixed
-
-- MINOR  The use of an automatic pointer was creating a compilation error on modern C++ compiler. The communicator is explicitely declared instead of using an automatic pointer. This does not affect anything, but makes compilation more stable accross platforms. [#1872](https://github.com/chaos-polymtl/lethe/pull/1872)
-
-## [Master] - 2026/01/06
-
-## Fixed
-
-- MINOR The test read_mortar_data_02 constantly fails in the CI release, even if it passes on debug mode and also in local office computers. Since read_mortar_data_01 and read_mortar_data_03 are very similar to such test (only with different grids), this PR solves this issue by removing the (unnecessary) read_mortar_data_02 test. [#1871](https://github.com/chaos-polymtl/lethe/pull/1871)
-
-## [Master] - 2025/12/19
+## [Master] - 2026/03/11
 
 ### Added
 
-- MAJOR This PR adds a rudimentary version of the new time harmonic electromagnetic auxiliary physics solver. It puts in place the time_harmonic_maxwell.h and .cc files with the minimum required functions to solve the DPG linear system with two .prm files as input. The electromagnetic multiphysics, its most basic boundary conditions, the initial condition, the analytical solution, and the post processing of the interior fields function skeletons are set in place. The other functionality implementation will come in future PRs. The solver is tested with two new application tests based on the .prm. [#1852](https://github.com/chaos-polymtl/lethe/pull/1852)
+- MINOR Added the `birmingham_fluidized_bed` Lethe grid type. This custom mesh generates the Birmingham fluidized bed geometry, composed of a bottom cylinder, a truncated cone, and a top cylinder merged along the x-axis with appropriate manifold and boundary IDs.
 
-## [Master] - 2025/12/23
+## [Master] - 2026/03/10
 
 ### Added
 
-- MINOR This PR adds a gas-solid cylindrical fluidized bed example to the Lethe example suite. Different filtering and drag coupling approaches are compared using a robust benchmark problem: the dependence of the pressure drop on the superficial gas inlet velocity. VANS Model A is used with both QCM and cell-based filters using the matrix-based solver. The same model is also tested with the QCM filter using the matrix-free solver. For each configuration, three drag coupling strategies are considered: explicit, semi-implicit, and implicit. [#1844](https://github.com/chaos-polymtl/lethe/pull/1844)
+- MINOR This PR adds a new parameter to the .prm file: `comment message`. It belongs to the head level of parameters just like `dimension` and `print parameters`. It allows users to comment a message on the console at the very beginning of the simulation. When combined with `print parameters`, it helps to dissociate console outputs from the parameters file (if it were to ever be lost). Indeed, it allows user to describe more explicitly what they are simulating/studying/analyzing. This can be especially useful when looking back at older simulations after a while. This PR also adds Sphinx documentation for the head level parameters. [#1932](https://github.com/chaos-polymtl/lethe/pull/1932)
 
-- MAJOR The unresolved CFD-DEM matrix-free implementation could not allow dynamic load balancing during the simulation since this feature had not been implemented yet. This adds the load balance implementation as well as make sure that it works well in both releaseand debug mode. An application test which is the sedimentation of a particle in parallel with dynamic load balancing is added to ensure that the test is stable in parallel since it was quite difficult to figure out all of the ghost logic of the vectors considering that both Trilinos and deal.II vectors are used in the ParticleProjector class. [#1869](https://github.com/chaos-polymtl/lethe/pull/1869)
-
-## [Master] - 2025/12/19
+- MAJOR Added support to pressure boundary conditions in the matrix-free solvers including two application tests. Improved the documentation on the pressure boundary conditions. [#1933](https://github.com/chaos-polymtl/lethe/pull/1933)
 
 ### Fixed
 
-- MINOR This is the follow-up to PR 1855, where we fixed the infinite while loop related to solid surface. This PR adds an application that was falling previously to this fix. This PR also changes how the main loop on every solid object is built during the force calculation which results in a significant speed-up of the code. [#1865](https://github.com/chaos-polymtl/lethe/pull/1865)
+- MINOR To avoid division by zero in navier_stokes_vof_assembler, a tolerance of DBL_MIN was used. However, since DBL_MIN is approx. 1e-300, it didn't really avoid a division by zero. It led to issues for fine meshes. This PR fixes this issue by changing DBL_MIN for 1e-14. [#1934](https://github.com/chaos-polymtl/lethe/pull/1934)
 
-## [Master] - 2025/12/18**
+## [Master] - 2026/03/06
+
+### Added
+
+- MINOR This PR adds the Fichera oven validation test for the time-harmonic Maxwell solver. The test keep track of the DPG error norm at each h-refinement step and also output a .dat that contains the number of cell, interior dofs (even if its not the number of dofs in the linear system) the maximum error and the L2 error.[#1931](https://github.com/chaos-polymtl/lethe/pull/1931)
+
+### Added
+
+- MINOR This PR adds a new mortar manager class that allows a linear (straight) interface, which is useful for debugging. At the moment, the implementation supports only two-dimensional cases, and it assumes that the mortar interface is parallel to the y axis.[#1926](https://github.com/chaos-polymtl/lethe/pull/1926)
 
 ### Fixed
 
-- MINOR This PR fixes boundary list that were added in #1697. Boundary lists were not being parsed properly for physics other than fluid dynamic. The parameter parsing now expected a list of integers instead of an integer. [#1866](https://github.com/chaos-polymtl/lethe/pull/1866)
+- MINOR The p-refinement in the multigrid preconditioner was not working with the mortar feature. When calling the function `compute_n_subdivisions_and_radius` to rotate the mapping at each level, the level triangulation was being passed as argument. This was not compatible with the p-refinement structure, since no new triangulation is created for levels with the same refinement but different p order. This PR fixes this by computing the `interface_radius` outside the levels loop, which is suitable because such variable is the same for all levels. [#1927](https://github.com/chaos-polymtl/lethe/pull/1927)
 
-## [Master] - 2025/12/17
+- MAJOR This refactoring changes the way the h-adaptivity is decided for the .prm by changing the `kelly` `type` to `adaptive` and adding a new parameter in the mesh adaptation subsection : `error estimator`. This new parameter follow the same logic as the variable parameter and therefore enable the use of different types of error estimators for different physics. This refactor was necessary for the Time-harmonic Maxwell solver that has a DPG built-in error indicator. This new error indicator is also introduced in the PR along with h-adaptivity for the time-harmonic auxiliary physics. Note that I also needed to change the type of element from FE_NedelecSZ to FE_Nedelec, because there is a bug with the SZ version when using multiple core in deal.ii library currently.[#1922](https://github.com/chaos-polymtl/lethe/pull/1922)
+
+- MAJOR The CFD-DEM solvers (`CFDDEMSolver` and `CFDDEMMatrixFree`) have been refactored to centralize DEM sub-iteration management within the `SubSimulationControlDEM` class. The `coupling_frequency` and `dem_time_step`  member variables have been removed and replaced by a shared `SubSimulationControlDEM` object from which the state of the DEM steps is queried. This also fixes a bug in which particle location within the cells would not be forced at the last DEM time-step if the DEM time step was based on a fraction of the Rayleigh time step. [#1929](https://github.com/chaos-polymtl/lethe/pull/1929)
+
+## [Master] - 2026/03/03
+
+### Added
+
+- MAJOR The double contact PR between solid surface and particle still had a problem. The contact_info was being passed by copy in the contact_record which caused the tangential displacement and the rolling resistance spring torque to be reset instead of properly updated. Another bug was that contact_info was not cleared when a particle was no longer in contact with a given triangle. As a result, during a subsequent contact with the same triangle, the particle could start with a non-zero tangential displacement and rolling resistance spring torque. [#1928](https://github.com/chaos-polymtl/lethe/pull/1928s)
+
+## [Master] - 2026/02/26
+
+### Added
+
+- MINOR This PR adds a new parameter to the multigrid setup, named `set mg p min coarsening degree`. Combined with the p-multigrid coarsening type `decrease by one`, it allows the user to limit the lowest polynomial degree to a value greater than 1 (which was previously the default).[#1925](https://github.com/chaos-polymtl/lethe/pull/1925)
+
+### Fixed
+
+- MINOR The matrix-free CFD-DEM solver (lethe-fluid-particles-matrix-free) requires the hesisan of the velocity field in both the matrix and the right-hand side. Without the hessian, the solver does not converge adequately. This PR adds a check that ensures that hessians are enabled when using this solver, otherwise the hessian of the velocity is used uninitialized and this leads to NaNs. [#1924](https://github.com/chaos-polymtl/lethe/pull/1924)
+
+### Fixed
+
+- MAJOR The dynamic time-stepping functionality of the unresolved CFD-DEM did not work adequately because the set dem iteration control = fraction of rayleigh time could not be parsed adequately. This was due to a small spelling mistake. This PR fixes this and the mode works adequately. [#1923](https://github.com/chaos-polymtl/lethe/pull/1923)
+
+## [Master] - 2026/02/24
+
+### Added
+
+- MINOR This PR adds three new simulation parameters: `set output qcriterion`, `set output vorticity`, and `set output velocity gradient`. They allow the user to enable/disable the output of the respective fields within the `pvd`/`vtu` files. As default, all of them are set to `true`. [#1919](https://github.com/chaos-polymtl/lethe/pull/1919)
+
+## [Master] - 2026/02/23
 
 ### Changed
+- MAJOR This PR refactor the grid.cc file so it now have a special enum argument for custom Lethe mesh. The type associated to custom grid is now ``lethe`` and the previous option are now handled with the ``grid_type`` following a similar convention as deal.II. The PR also add two new grid that will be used in future time-harmonic benchmark examples (i.e the fichera_oven and the uniform_channel_with meshed_cylinder). [#1914](https://github.com/chaos-polymtl/lethe/pull/1914)
 
-- MAJOR Floating walls declaration in a parameter file got changed so that it requires fewer parameters for the ``point on wall`` and the ``normal vector``. A bug was also find during this change: the ``normal vector`` wasn't normalized after being parsed. As a results, if the user did not declare a unit vector in the parameter file, the normal overlap between particles and this ``floating wall`` is off by some factor. This problem got fixed, but resulted in the change of an application-test output (which was declaring the normal vector as a non-unit vector). [#1850](https://github.com/chaos-polymtl/lethe/pull/1850)
-
-- MINOR The verification of the number of cells at the stator and rotor interfaces was being done inside the loops for dealii and gmsh grids. This PR adjusts this by doing the verification only once, after the initial mesh refinement is performed. [#1854](https://github.com/chaos-polymtl/lethe/pull/1854)
-
-### Fixed
-
-- MINOR This is a follow-up of #1863. Although #1863 fixed the restart and prevented the simulations from crashing, the time history of the void fraction was not store appropriately. This stemmed from a confusion since in the matrix-free solver, it is the deal.II distributed vectors for the void fraction which are checkpointed and not the Trilinos ones. This PR reads the correct deal.II vector when reading a checkpoint, but also ensures that the values in the Trilinos vectors matches that of the deal.II vectors. This allows reproducing the norm of the residuals to machine accuracy when restarting. [#1864](https://github.com/chaos-polymtl/lethe/pull/1864)
-
-- MINOR The Matrix-free CFD-DEM solver could not restart adequately. This is because the solution vector for the fluid was not sized accordingly. The deal.II vectors require that the locally relevant dofs be provided to the vector before reading a checkpoint, which is not the case for the Trilinos vectors. This would prevent restarts in parallel. [#1863](https://github.com/chaos-polymtl/lethe/pull/1863)
-
-## [Master] - 2025/12/16
-
-### Added
-
-- MINOR This PR add the material properties that will be used by the time-harmonic electromagnetic solver which include the electric conductivity, the complex electric permittivity and the complex magnetic permeability. At the moment, those properties only support a "constant" field. A unit test for the electromagnetic constant properties was added, along with the update of the already existing "physical_properties_manager" tests. [#1862](https://github.com/chaos-polymtl/lethe/pull/1862)
-
-## [Master] - 2025/12/15
-
-### Fixed
-
-- MINOR The tolerance adopted in the radius computation at the rotor-stator mortar interface was a hard-coded value, which was not ideal. This PR fixes this by introducing a radius tolerance parameter. [#1853](https://github.com/chaos-polymtl/lethe/pull/1853)
-
-## [Master] - 2025/12/14
-
-### Changed
-
-- MAJOR A new message is added at the start of every DEM and unresolved CDF-DEM simulation which informs the user about the kind of distribution being used for every particle type. When using a normal or lognormal distribution, an extra message is written about the diameter cutoff values relative to the entire distribution. This change is MAJOR since every application test using the `lethe-particles`, `lethe-fluid-particles` and `lethe-fluid-particles-matrix-free` solver had to be updated. Also in this PR, the documentation relative to the `update-golden.tl` script got updated. [#1849](https://github.com/chaos-polymtl/lethe/pull/1849)
-
-### Added
-
-- MINOR This PR adds the possibility to use the semi-implicit and implicit drag couplings with the CFD-DEM matrix-based solver while also using the QCM filter to project the particle forces onto the fluid. At this stage, it has been tested with the single particle sedimentation case. [#1845](https://github.com/chaos-polymtl/lethe/pull/1845)
-
-## [Master] - 2025/12/13
-
-### Fixed
-
-- MAJOR The new implementation of the solid-particle contact detection could lead to an infinite loop for one of the cases that happens only on deformed mesh. The issue was that two continue statement could be called without having the iterator increased. This lead to the aforementioned bug. Running any example with a solid object (bunny drill or granular mixer) would directly lead to this infinite loop being encountered no matter the number of cores. The solution is simple (increment the iterator), but it also demonstrates that we need more robust testing for this part of the code. [#1855](https://github.com/chaos-polymtl/lethe/pull/1855)
-
-## [Master] - 2025/12/11
-
-### Fixed
-
-- MINOR The documentation for the simulation control and the analytical solution was improved. [#1843](https://github.com/chaos-polymtl/lethe/pull/1843)
-
-### Removed
-
-- MAJOR Officially deprecate the RPT applications and remove them. The applications are now available at https://github.com/chaos-polymtl/lethe-rpt. This significantly decreases the size of the repository and the length of the CI procedure. [#1851](https://github.com/chaos-polymtl/lethe/pull/1851) 
-
-## [Master] - 2025/12/10
-
-### Added
-
-- MINOR This PR adds the possibility to change the diffusion factor of the VOF DCDD stabilization in the prm file. [#1847](https://github.com/chaos-polymtl/lethe/pull/1847)
-
-### Fixed
-
-- MINOR The extract-slice-from-vtu.py tool was not working properly with --np > 1 because an argument (file path) was missing in the call of extract_slice. This PR fixes this bug and add 2 functionalities. 1) When the flag group files in the .prm (parallel output of Lethe) was set to a value larger than 1, the extract-slice-from-vtu.py would not slice all .vtus associated with a .pvtu. Since pyvista can read .pvtus correctly, the list of files to read is now based on .pvtus instead of .vtus. 2) There was no sliced .pvd file generated, so the slices could not be used easily in other post-processing tools using .pvds. The .pvd file of the slices is now generated. [#1848] (https://github.com/chaos-polymtl/lethe/pull/1848)
 
 ## [Sample] - YYYY/MM/DD
 

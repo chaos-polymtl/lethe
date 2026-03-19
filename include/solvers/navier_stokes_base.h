@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_navier_stokes_base_h
@@ -433,13 +433,10 @@ protected:
   refine_mesh();
 
   /**
-   * @brief Allow the refinement of the mesh based on the Kelly error estimator.
-   * See :
-   * https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html
-   * for more information on the Kelly error estimator.
+   * @brief Allow the refinement of the mesh based on an error estimator.
    */
   void
-  refine_mesh_kelly();
+  refine_mesh_adaptive();
 
   /**
    * @brief Allow the uniform refinement of all the mesh.
@@ -1045,7 +1042,7 @@ protected:
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
 
   // Mortar coupling manager and operator
-  std::shared_ptr<MortarManagerCircle<dim>>      mortar_manager;
+  std::shared_ptr<MortarManagerBase<dim>>        mortar_manager;
   std::shared_ptr<CouplingOperator<dim, double>> mortar_coupling_operator;
   std::shared_ptr<NavierStokesCouplingEvaluation<dim, double>>
     mortar_coupling_evaluator;

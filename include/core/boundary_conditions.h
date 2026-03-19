@@ -43,7 +43,7 @@ DeclException1(CahnHilliardBoundaryDuplicated,
 
 DeclException1(VOFBoundaryDuplicated,
                types::boundary_id,
-               << "VOF boundary id: " << arg1
+               << "CLS boundary id: " << arg1
                << " has already been declared as a boundary condition");
 
 DeclException1(TimeHarmonicMaxwellDuplicated,
@@ -1331,7 +1331,7 @@ namespace BoundaryConditions
     prm.declare_entry("type",
                       "none",
                       Patterns::Selection("none|dirichlet|periodic"),
-                      "Type of boundary condition for VOF"
+                      "Type of boundary condition for CLS"
                       "Choices are <none|dirichlet|periodic>.");
 
     prm.declare_entry("id",
@@ -1375,7 +1375,7 @@ namespace BoundaryConditions
     ParameterHandler  &prm,
     const unsigned int number_of_boundary_conditions)
   {
-    prm.enter_subsection("boundary conditions VOF");
+    prm.enter_subsection("boundary conditions CLS");
     {
       prm.declare_entry("number",
                         "0",
@@ -1417,7 +1417,7 @@ namespace BoundaryConditions
     AssertThrow(
       boundary_ids.size() > 0,
       ExcMessage(
-        "A boundary id has not been set for one of the VOF boundary conditions. Please ensure that the id is set for every boundary condition."));
+        "A boundary id has not been set for one of the CLS boundary conditions. Please ensure that the id is set for every boundary condition."));
 
     // Loop through all boundary ids to ensure that they are all non-negative
     // and unique
@@ -1471,7 +1471,7 @@ namespace BoundaryConditions
   void
   VOFBoundaryConditions<dim>::parse_parameters(ParameterHandler &prm)
   {
-    prm.enter_subsection("boundary conditions VOF");
+    prm.enter_subsection("boundary conditions CLS");
     {
       this->number_of_boundary_conditions = prm.get_integer("number");
       this->time_dependent                = prm.get_bool("time dependent");

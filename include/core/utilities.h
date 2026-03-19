@@ -953,6 +953,31 @@ print_parameters_to_output_file(const ConditionalOStream &pcout,
                                 const std::string        &file_name);
 
 /**
+ * @brief Identify escape sequences listed below and apply them to the string.
+ *  - "\n": Newline
+ *  - "\t": Horizontal tab
+ *  - "\r": Carriage return
+ *  - "\b": Backspace
+ *  - "\v": Vertical tab
+ *
+ * @param[in, out] s String to be modified if escape sequences are specified.
+ */
+void
+interpret_escape_sequences(std::string &s);
+
+/**
+ * @brief Print a user comment at the beginning of the simulation on the console
+ * output.
+ *
+ * @param[in] pcout Parallel console output stream.
+ * @param[in,out] prm ParameterHandler.
+ * specified.
+ */
+void
+print_comment_to_output_file(const ConditionalOStream &pcout,
+                             ParameterHandler         &prm);
+
+/**
  * @brief Delete vtu and pvd files
  */
 void
@@ -978,19 +1003,19 @@ point_to_angle(const Point<dim> &point,
 
 /**
  * @brief Converts radius to point in cartesian coordinates (in the x-y plane)
- * @param[in] radius Radial distance.
- * @param[in] rad Angle (in radians).
+ * @param[in] radius Radial distance
+ * @param[in] angle_rad Angle (in radians)
  *
  * @return point Point cartesian coordinates
  */
 template <int dim>
 inline Point<dim>
-radius_to_point(const double radius, const double rad)
+radius_to_point(const double radius, const double angle_rad)
 {
   Point<dim> point;
 
-  point[0] = radius * std::cos(rad);
-  point[1] = radius * std::sin(rad);
+  point[0] = radius * std::cos(angle_rad);
+  point[1] = radius * std::sin(angle_rad);
 
   return point;
 }

@@ -84,8 +84,8 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type               = cylinder
-  set grid type          = balanced
+  set type               = lethe
+  set grid type          = cylinder_balanced
   set grid arguments     = 6 : 0.1 : 0.25
   set initial refinement = 2
 end

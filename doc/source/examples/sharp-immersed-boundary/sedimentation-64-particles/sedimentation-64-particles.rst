@@ -109,17 +109,18 @@ Mesh Adaptation
 ~~~~~~~~~~~~~~~
 .. code-block:: text
 
-    subsection mesh adaptation
-      set fraction coarsening = 0.2
-      set fraction refinement = 0.025
-      set fraction type = number
-      set frequency = 1
-      set max number elements = 750000
-      set max refinement level = 6
-      set min refinement level = 4
-      set type = kelly
-      set variable = velocity
-    end
+    subsection mesh adaptation  
+      set fraction coarsening  = 0.2  
+      set fraction refinement  = 0.025  
+      set fraction type        = number  
+      set frequency            = 1  
+      set max number elements  = [7500000](https://github.com/chaos-polymtl/lethe/commit/7500000)  
+      set max refinement level = 6  
+      set min refinement level = 4  
+      set type                 = adaptive  
+      set error estimator      = kelly  
+      set variable             = velocity  
+    end  
 
 * The ``fraction coarsening`` is set to 0.2. This limits the accumulation of elements when the particle is moving. It allows for cells far from the particle to be coarsened when the particles get further away.
 
@@ -129,7 +130,7 @@ Mesh Adaptation
 
 * The ``max refinement level`` is set to 6. This parameter limits how small the elements around the particle can get, limiting the total number of elements in the problem. Here we limit the mesh size to 8 elements per diameter of the particle. This should be sufficient to show the capabilities of the solver. However, the discretization error is not negligible in this case.
 
-* The ``type`` is set to ``kelly``. Since the particle is moving and we do not want a uniform refinement of all the cells, we use the kelly error estimator based on the ``velocity`` variable.
+* The ``type`` is set to ``adaptive``. Since the particle is moving and we do not want a uniform refinement of all the cells, we use the ``kelly`` error estimator based on the ``velocity`` variable.
 
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
@@ -369,7 +370,7 @@ The results are shown in the animation below. We can see the complex motion of t
 
 
 .. note:: 
-    The results shown in the animation were obtained with a finer mesh and with a finer time-step.
+    The results shown in the animation were obtained with a finer mesh and with a lower time step.
 
 .. raw:: html
 

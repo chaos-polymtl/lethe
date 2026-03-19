@@ -46,6 +46,12 @@ public:
                       "Print all the parameters, or only"
                       "the changed parameters or none");
 
+    prm.declare_entry(
+      "comment message",
+      "",
+      Patterns::Anything(),
+      "Print a comment at the beginning of the console output.");
+
     simulation_control.declare_parameters(prm);
     mesh.declare_parameters(prm);
     restart.declare_parameters(prm);

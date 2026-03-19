@@ -21,8 +21,8 @@ This subsection specifies the characteristics of the finite element method used 
     set tracer order       = 1
     set tracer uses dg     = false
 
-    # interpolation order vof
-    set VOF order          = 1
+    # interpolation order CLS
+    set CLS order          = 1
 
     # interpolation order cahn hilliard
     set phase cahn hilliard order     = 1
@@ -46,9 +46,9 @@ This subsection specifies the characteristics of the finite element method used 
 
 .. important::
 
-    The DG formulation is sensitive to the CFL value. Use a small time-step to  keep the tracer value bounded. From our experience, a CFL of 1 or lower is recommended.
+    The DG formulation is sensitive to the CFL value. Use a small time step to  keep the tracer value bounded. From our experience, a CFL of 1 or lower is recommended.
 
-* ``VOF order`` specifies the interpolation for the VOF phase indicator. It is not recommended to use higher order interpolation for the VOF method as this may conflict with the bounding and the sharpening mechanism used therein.
+* ``CLS order`` specifies the interpolation for the CLS phase indicator. It is not recommended to use higher order interpolation for the CLS method as this may conflict with the bounding and the sharpening mechanism used therein.
 
 * ``phase cahn hilliard order`` and ``potential cahn hilliard order`` specify the interpolation order for the phase order parameter and the chemical potential in the Cahn-Hilliard equations. The orders chosen should be equal. They are left as two separate parameters for debugging purposes.
 

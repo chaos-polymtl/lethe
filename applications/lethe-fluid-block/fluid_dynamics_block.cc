@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/exceptions.h>
@@ -66,9 +66,14 @@ main(int argc, char *argv[])
                                    "lethe-fluid-block",
                                    "lethe-fluid-nitsche"));
 
-          // Print parameters if needed
           if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
-            print_parameters_to_output_file(pcout, prm, file_name);
+            {
+              // Print comment message if there is one
+              print_comment_to_output_file(pcout, prm);
+
+              // Print parameters if needed
+              print_parameters_to_output_file(pcout, prm, file_name);
+            }
 
           FluidDynamicsBlock<2> problem(NSparam);
           problem.solve();
@@ -97,9 +102,14 @@ main(int argc, char *argv[])
                                    "lethe-fluid-block",
                                    "lethe-fluid-nitsche"));
 
-          // Print parameters if needed
           if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
-            print_parameters_to_output_file(pcout, prm, file_name);
+            {
+              // Print comment message if there is one
+              print_comment_to_output_file(pcout, prm);
+
+              // Print parameters if needed
+              print_parameters_to_output_file(pcout, prm, file_name);
+            }
 
           FluidDynamicsBlock<3> problem(NSparam);
           problem.solve();

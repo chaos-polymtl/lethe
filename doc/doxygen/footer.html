@@ -1,0 +1,46 @@
+<!--
+SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+-->
+
+<!-- HTML footer for doxygen 1.9.8-->
+<!-- Start footer part -->
+<!--BEGIN GENERATE_TREEVIEW-->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    $navpath
+    <li class="footer">$generatedby <a href="https://www.doxygen.org/index.html"><img class="footer" src="$relpath^doxygen.svg" width="104" height="31" alt="doxygen"/></a> $doxygenversion </li>
+  </ul>
+</div>
+<!--END GENERATE_TREEVIEW-->
+<!--BEGIN !GENERATE_TREEVIEW-->
+<hr class="footer"/>
+<address class="footer"><small>
+  <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px;">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <a href="https://www.chaos-lab.ca/" target="_blank" rel="noopener noreferrer">
+        <img class="chaos-logo chaos-logo-light" src="$relpath^chaos_logo_black_without_bkg.png" alt="CHAOS Laboratory" style="height: 40px;"/>
+        <img class="chaos-logo chaos-logo-dark" src="$relpath^chaos_logo_white_without_bkg.png" alt="CHAOS Laboratory" style="height: 40px;"/>
+      </a>
+      <span style="display: flex; align-items: center; height: 40px;" class="chaos-copyright"></span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      $generatedby &#160;<a href="https://www.doxygen.org/index.html">
+      <img class="footer" src="$relpath^doxygen.svg" width="104" height="31" alt="doxygen"/>
+    </a> $doxygenversion
+    </div>
+  </div>
+</small></address>
+<!--END !GENERATE_TREEVIEW-->
+
+  <!-- Update copyright year automatically -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const copyrightSpan = document.querySelector('.chaos-copyright');
+      if (copyrightSpan) {
+        copyrightSpan.textContent = `© 2019-${new Date().getFullYear()}, CHAOS Laboratory`;
+      }
+    });
+  </script>
+</body>
+</html>

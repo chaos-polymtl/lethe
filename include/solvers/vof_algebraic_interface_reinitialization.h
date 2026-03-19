@@ -228,8 +228,8 @@ private:
    *
    * @param[in] step Integer indicating the reinitialization step number.
    *
-   * @note Only the reinitialization steps of the last global time-step
-   * (simulation time-step) ran are outputted.
+   * @note Only the reinitialization steps of the last global time step
+   * (simulation time step) ran are outputted.
    */
   void
   write_output_results(const unsigned int step);
@@ -256,10 +256,10 @@ private:
   }
 
   /**
-   * @brief Computes algebraic reinitialization time-step value with
+   * @brief Computes algebraic reinitialization time step value with
    * user-imposed CFL and minimum cell size.
    *
-   * @return Algebraic reinitialization time-step.
+   * @return Algebraic reinitialization time step.
    */
   inline double
   compute_time_step()
@@ -279,11 +279,11 @@ private:
     // Compute diffusivity
     const double diffusivity_inv = 1.0 / compute_diffusivity(h_min);
 
-    // Compute artificial time-step
+    // Compute artificial time step
     const double dtau = h_min * h_min * diffusivity_inv * dtau_factor;
 
-    // Use the smallest of the computed artificial time-step and the simulation
-    // time-step for the reinitialization scheme
+    // Use the smallest of the computed artificial time step and the simulation
+    // time step for the reinitialization scheme
     return std::min(dtau, this->simulation_control->get_time_step());
   }
 
@@ -364,13 +364,13 @@ private:
         if (this->subequation_verbosity == Parameters::Verbosity::extra_verbose)
           {
             this->pcout
-              << "Algebraic reinitialization solution norm difference = "
+              << "PDE-based reinitialization solution norm difference = "
               << solution_diff.l2_norm() << std::endl;
             this->pcout
-              << "Algebraic reinitialization steady-state criterion value = "
+              << "PDE-based reinitialization steady-state criterion value = "
               << stop_criterion << std::endl;
             this->pcout
-              << "Algebraic reinitialization fixed steady-state criterion = "
+              << "PDE-based reinitialization fixed steady-state criterion = "
               << steady_state_criterion << std::endl;
           }
 

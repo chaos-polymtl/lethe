@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -414,13 +414,27 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
           this->simulation_parameters.boundary_conditions));
     }
 
-  // Buoyancy force
-  if (this->simulation_parameters.multiphysics.buoyancy_force)
+  // Thermal buoyancy force
+  if (this->simulation_parameters.multiphysics.thermal_buoyancy_force)
     {
-      this->assemblers.emplace_back(std::make_shared<BuoyancyAssembly<dim>>(
-        this->simulation_control,
-        this->simulation_parameters.physical_properties_manager
-          .get_reference_temperature()));
+      if (this->simulation_parameters.multiphysics.VOF)
+        {
+          // VOF formulation includes density explicitly in the momentum
+          // equation
+          this->assemblers.emplace_back(
+            std::make_shared<ThermalBuoyancyAssemblyVOF<dim>>(
+              this->simulation_control,
+              this->simulation_parameters.physical_properties_manager
+                .get_reference_temperature()));
+        }
+      else
+        {
+          this->assemblers.emplace_back(
+            std::make_shared<ThermalBuoyancyAssembly<dim>>(
+              this->simulation_control,
+              this->simulation_parameters.physical_properties_manager
+                .get_reference_temperature()));
+        }
     }
 
   // ALE
@@ -736,8 +750,12 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
 
   // Add mortar entries
   if (this->simulation_parameters.mortar_parameters.enable)
-    this->mortar_coupling_operator->add_system_matrix_entries(
-      this->system_matrix);
+    {
+      this->computing_timer.enter_subsection("Assemble matrix (mortar)");
+      this->mortar_coupling_operator->add_system_matrix_entries(
+        this->system_matrix);
+      this->computing_timer.leave_subsection("Assemble matrix (mortar)");
+    }
 
   system_matrix.compress(VectorOperation::add);
 }
@@ -965,6 +983,7 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
   // Add mortar entries
   if (this->simulation_parameters.mortar_parameters.enable)
     {
+      this->computing_timer.enter_subsection("Assemble RHS (mortar)");
       // Change sign of RHS to be compatible with mortar coupling terms
       this->system_rhs.compress(VectorOperation::add);
       this->system_rhs *= -1.0;
@@ -972,6 +991,8 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
                                                 this->evaluation_point);
       // Return RHS to original sign
       this->system_rhs *= -1.0;
+
+      this->computing_timer.leave_subsection("Assemble RHS (mortar)");
     }
 
   this->system_rhs.compress(VectorOperation::add);
@@ -1480,7 +1501,7 @@ template <int dim>
 void
 FluidDynamicsMatrixBased<dim>::setup_AMG()
 {
-  TimerOutput::Scope t(this->computing_timer, "setup_AMG");
+  TimerOutput::Scope t(this->computing_timer, "Setup AMG");
 
   // Constant modes for velocity
   std::vector<std::vector<bool>> constant_modes;
@@ -1656,12 +1677,12 @@ FluidDynamicsMatrixBased<dim>::solve_system_GMRES(
           }
 
           this->computing_timer.enter_subsection(
-            "Distribute constraints after linear solve");
+            "Distribute constraints after linear solver");
 
           zero_constraints_used.distribute(completely_distributed_solution);
 
           this->computing_timer.leave_subsection(
-            "Distribute constraints after linear solve");
+            "Distribute constraints after linear solver");
 
           auto &newton_update = this->newton_update;
           newton_update       = completely_distributed_solution;
@@ -1789,12 +1810,12 @@ FluidDynamicsMatrixBased<dim>::solve_L2_system(const double absolute_residual,
           }
 
           this->computing_timer.enter_subsection(
-            "Distribute constraints after linear solve");
+            "Distribute constraints after linear solver");
 
           nonzero_constraints.distribute(completely_distributed_solution);
 
           this->computing_timer.leave_subsection(
-            "Distribute constraints after linear solve");
+            "Distribute constraints after linear solver");
 
           auto &newton_update = this->newton_update;
           newton_update       = completely_distributed_solution;

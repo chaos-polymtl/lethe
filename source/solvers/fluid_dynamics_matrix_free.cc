@@ -32,6 +32,8 @@
 #else
 #  include <deal.II/multigrid/mg_transfer_global_coarsening.templates.h>
 #endif
+#include <core/lethe_grid_tools.h>
+
 #include <deal.II/lac/trilinos_solver.h>
 
 #include <deal.II/multigrid/multigrid.h>
@@ -750,6 +752,15 @@ MFNavierStokesPreconditionGMGBase<dim>::MFNavierStokesPreconditionGMGBase(
   this->use_manifold_for_normal = true;
   if (this->simulation_parameters.mortar_parameters.enable)
     this->use_manifold_for_normal = false;
+
+  // Verify whether the minimum coarsening degree prescribed is lower than the
+  // problem's polynomial degree
+  AssertThrow(
+    this->dof_handler.get_fe().degree >=
+      this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .mg_p_min_coarsening_degree,
+    ExcMessage(
+      "The prescribed minimum polynomial degree for the p-multigrid needs to be lower than the velocity/pressure interpolation order."));
 }
 
 template <int dim>
@@ -844,12 +855,20 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
           .mg_coarsening_type;
 
-      const auto polynomial_coarsening_sequence =
+      auto polynomial_coarsening_sequence =
         MGTransferGlobalCoarseningTools::create_polynomial_coarsening_sequence(
           this->dof_handler.get_fe().degree,
           this->simulation_parameters.linear_solver
             .at(PhysicsID::fluid_dynamics)
             .mg_p_coarsening_type);
+
+      // Remove terms of polynomial coarsening sequence that are below the
+      // minimum coarsening degree
+      for (unsigned int p = 1; p < this->simulation_parameters.linear_solver
+                                     .at(PhysicsID::fluid_dynamics)
+                                     .mg_p_min_coarsening_degree;
+           p++)
+        std::erase(polynomial_coarsening_sequence, p);
 
       std::vector<std::pair<unsigned int, unsigned int>> levels;
 
@@ -1035,10 +1054,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             }
           else if (type == BoundaryConditions::BoundaryType::pressure)
             {
-              Assert(
-                false,
-                ExcMessage(
-                  "Pressure boundary conditions are not supported by the matrix free application."));
+              /*The pressure boundary condition is implemented in the
+               * operators*/
             }
           else if (type == BoundaryConditions::BoundaryType::function_weak)
             {
@@ -1047,7 +1064,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             }
           else if (type == BoundaryConditions::BoundaryType::partial_slip)
             {
-              Assert(
+              AssertThrow(
                 false,
                 ExcMessage(
                   "Partial slip boundary conditions are not supported by the matrix free application."));
@@ -1308,12 +1325,20 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
           .mg_coarsening_type;
 
-      const auto polynomial_coarsening_sequence =
+      auto polynomial_coarsening_sequence =
         MGTransferGlobalCoarseningTools::create_polynomial_coarsening_sequence(
           this->dof_handler.get_fe().degree,
           this->simulation_parameters.linear_solver
             .at(PhysicsID::fluid_dynamics)
             .mg_p_coarsening_type);
+
+      // Remove terms of polynomial coarsening sequence that are below the
+      // minimum coarsening degree
+      for (unsigned int p = 1; p < this->simulation_parameters.linear_solver
+                                     .at(PhysicsID::fluid_dynamics)
+                                     .mg_p_min_coarsening_degree;
+           p++)
+        std::erase(polynomial_coarsening_sequence, p);
 
       std::vector<std::pair<unsigned int, unsigned int>> levels;
 
@@ -1448,10 +1473,68 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                       << std::endl;
         }
 
+      // Initialize variable needed when mortar is enabled
+      double interface_radius = 0;
+      if (this->simulation_parameters.mortar_parameters.enable)
+        {
+          // Create mappings for each level
+          this->mappings.resize(this->minlevel, this->maxlevel);
+          // Compute interface radius (same for all levels)
+          if (this->simulation_parameters.mortar_parameters.interface_type ==
+              Parameters::Mortar<dim>::InterfaceType::circular)
+            interface_radius =
+              std::get<0>(compute_interface_dimensions_circular(
+                *this->coarse_grid_triangulations[0],
+                *mapping,
+                this->simulation_parameters.mortar_parameters))[0];
+        }
+
       // Apply constraints and create mg operators for each level
       for (unsigned int level = this->minlevel; level <= this->maxlevel;
            ++level)
         {
+          this->mg_setup_timer.enter_subsection("Create level mappings");
+          std::shared_ptr<Mapping<dim>> level_mapping;
+
+          // If mortar is enabled, one MappingQCache<dim> object is created for
+          // each level to access correct mapping information. Otherwise, the
+          // MappingQ<dim> object passed to the current function can be used in
+          // all levels
+          if (this->simulation_parameters.mortar_parameters.enable)
+            {
+              this->mappings[level] = std::make_shared<MappingQCache<dim>>(
+                this->dof_handlers[level].get_fe().degree);
+
+              // Rotate mapping only in the case of a circular mortar interface
+              if (this->simulation_parameters.mortar_parameters
+                    .interface_type ==
+                  Parameters::Mortar<dim>::InterfaceType::circular)
+                LetheGridTools::rotate_mapping(
+                  this->dof_handlers[level],
+                  *this->mappings[level],
+                  *mapping,
+                  interface_radius,
+                  this->simulation_parameters.mortar_parameters
+                    .rotor_rotation_angle->value(Point<dim>()),
+                  this->simulation_parameters.mortar_parameters
+                    .center_of_rotation,
+                  this->simulation_parameters.mortar_parameters.rotation_axis);
+              else if (this->simulation_parameters.mortar_parameters
+                         .interface_type ==
+                       Parameters::Mortar<dim>::InterfaceType::linear)
+                this->mappings[level]->initialize(
+                  *mapping, this->dof_handlers[level].get_triangulation());
+              else
+                AssertThrow(false,
+                            ExcMessage("Invalid mortar interface type."));
+
+              level_mapping = this->mappings[level];
+            }
+          else
+            level_mapping = mapping;
+
+          this->mg_setup_timer.leave_subsection("Create level mappings");
+
           const auto &level_dof_handler = this->dof_handlers[level];
           auto       &level_constraint  = constraints[level];
 
@@ -1484,7 +1567,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                     0,
                     no_normal_flux_boundaries,
                     level_constraint,
-                    *mapping,
+                    *level_mapping,
                     this->use_manifold_for_normal);
                 }
               else if (type == BoundaryConditions::BoundaryType::periodic)
@@ -1505,10 +1588,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                 }
               else if (type == BoundaryConditions::BoundaryType::pressure)
                 {
-                  Assert(
-                    false,
-                    ExcMessage(
-                      "Pressure boundary conditions are not supported by the matrix free application."));
+                  /*The pressure boundary condition is implemented in
+                   * the operators*/
                 }
               else if (type == BoundaryConditions::BoundaryType::function_weak)
                 {
@@ -1517,7 +1598,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                 }
               else if (type == BoundaryConditions::BoundaryType::partial_slip)
                 {
-                  Assert(
+                  AssertThrow(
                     false,
                     ExcMessage(
                       "Partial slip boundary conditions are not supported by the matrix free application."));
@@ -1531,7 +1612,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                        type == BoundaryConditions::BoundaryType::function)
                 {
                   VectorTools::interpolate_boundary_values(
-                    *mapping,
+                    *level_mapping,
                     level_dof_handler,
                     id,
                     dealii::Functions::ZeroFunction<dim, MGNumber>(dim + 1),
@@ -1613,7 +1694,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
           this->create_level_operator(level);
 
           this->mg_operators[level]->reinit(
-            *mapping,
+            *level_mapping,
             level_dof_handler,
             level_constraint,
             quadrature_mg,
@@ -1637,17 +1718,32 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               this->mg_setup_timer.enter_subsection("Set up mortar operators");
 
               // Manager
-              this->mg_operators[level]->mortar_manager_mf =
-                std::make_shared<MortarManagerCircle<dim>>(
-                  quadrature_mg,
-                  *mapping,
-                  level_dof_handler,
-                  this->simulation_parameters.mortar_parameters);
+              if (this->simulation_parameters.mortar_parameters
+                    .interface_type ==
+                  Parameters::Mortar<dim>::InterfaceType::circular)
+                this->mg_operators[level]->mortar_manager_mf =
+                  std::make_shared<MortarManagerCircle<dim>>(
+                    quadrature_mg,
+                    *level_mapping,
+                    level_dof_handler,
+                    this->simulation_parameters.mortar_parameters);
+              else if (this->simulation_parameters.mortar_parameters
+                         .interface_type ==
+                       Parameters::Mortar<dim>::InterfaceType::linear)
+                this->mg_operators[level]->mortar_manager_mf =
+                  std::make_shared<MortarManagerLinear<dim>>(
+                    quadrature_mg,
+                    *level_mapping,
+                    level_dof_handler,
+                    this->simulation_parameters.mortar_parameters);
+              else
+                AssertThrow(false,
+                            ExcMessage("Invalid mortar interface type."));
 
               // Coupling evaluator
               this->mg_operators[level]->mortar_coupling_evaluator_mf =
                 std::make_shared<NavierStokesCouplingEvaluation<dim, double>>(
-                  *mapping,
+                  *level_mapping,
                   level_dof_handler,
                   physical_properties_manager->get_rheology()
                     ->get_kinematic_viscosity());
@@ -1655,7 +1751,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               // Coupling operator
               this->mg_operators[level]->mortar_coupling_operator_mf =
                 std::make_shared<CouplingOperator<dim, double>>(
-                  *mapping,
+                  *level_mapping,
                   level_dof_handler,
                   level_constraint,
                   this->mg_operators[level]->mortar_coupling_evaluator_mf,
@@ -2541,7 +2637,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize_auxiliary_physics(
         {
           mg_temperature_solution[l].update_ghost_values();
 
-          this->mg_operators[l]->compute_buoyancy_term(
+          this->mg_operators[l]->compute_thermal_buoyancy_term(
             mg_temperature_solution[l], this->temperature_dof_handlers[l]);
         }
     }
@@ -2758,8 +2854,8 @@ FluidDynamicsMatrixFree<dim>::solve()
         {
           update_solutions_for_fluid_dynamics();
 
-          if (this->simulation_parameters.multiphysics.buoyancy_force)
-            this->system_operator->compute_buoyancy_term(
+          if (this->simulation_parameters.multiphysics.thermal_buoyancy_force)
+            this->system_operator->compute_thermal_buoyancy_term(
               temperature_present_solution,
               this->multiphysics->get_dof_handler(PhysicsID::heat_transfer));
         }
@@ -2836,13 +2932,12 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
   for (auto const &[id, type] :
        this->simulation_parameters.boundary_conditions.type)
     {
-      if (type == BoundaryConditions::BoundaryType::pressure ||
-          type == BoundaryConditions::BoundaryType::partial_slip)
+      if (type == BoundaryConditions::BoundaryType::partial_slip)
         {
-          Assert(
+          AssertThrow(
             false,
             ExcMessage(
-              "The following boundary conditions are not supported by the lethe-fluid-matrix-free application: pressure and partial slip."));
+              "The following boundary conditions are not supported by the lethe-fluid-matrix-free application: partial slip."));
         }
     }
 
@@ -2999,12 +3094,24 @@ FluidDynamicsMatrixFree<dim>::reinit_mortar_operators_mf()
   TimerOutput::Scope t(this->computing_timer, "Reinit mortar operators");
 
   // Create mortar manager
-  this->system_operator->mortar_manager_mf =
-    std::make_shared<MortarManagerCircle<dim>>(
-      *this->cell_quadrature,
-      *this->get_mapping(),
-      *this->dof_handler,
-      this->simulation_parameters.mortar_parameters);
+  if (this->simulation_parameters.mortar_parameters.interface_type ==
+      Parameters::Mortar<dim>::InterfaceType::circular)
+    this->system_operator->mortar_manager_mf =
+      std::make_shared<MortarManagerCircle<dim>>(
+        *this->cell_quadrature,
+        *this->get_mapping(),
+        *this->dof_handler,
+        this->simulation_parameters.mortar_parameters);
+  else if (this->simulation_parameters.mortar_parameters.interface_type ==
+           Parameters::Mortar<dim>::InterfaceType::linear)
+    this->system_operator->mortar_manager_mf =
+      std::make_shared<MortarManagerLinear<dim>>(
+        *this->cell_quadrature,
+        *this->get_mapping(),
+        *this->dof_handler,
+        this->simulation_parameters.mortar_parameters);
+  else
+    AssertThrow(false, ExcMessage("Invalid mortar interface type."));
 
   // Create mortar coupling evaluator
   this->system_operator->mortar_coupling_evaluator_mf =
@@ -3192,9 +3299,11 @@ FluidDynamicsMatrixFree<dim>::assemble_system_rhs()
   // If mortar is enabled, add RHS entries
   if (this->simulation_parameters.mortar_parameters.enable)
     {
+      this->computing_timer.enter_subsection("Assemble RHS (mortar)");
       this->system_operator->mortar_coupling_operator_mf->vmult_add(
         this->system_rhs, this->evaluation_point);
       this->system_rhs.compress(VectorOperation::add);
+      this->computing_timer.leave_subsection("Assemble RHS (mortar)");
     }
 
   this->system_rhs *= -1.0;
@@ -3281,7 +3390,7 @@ FluidDynamicsMatrixFree<dim>::create_GMG()
     *this->dof_handler,
     this->dof_handler_fe_q_iso_q1);
 
-  gmg_preconditioner->reinit(this->get_mapping(),
+  gmg_preconditioner->reinit(this->mapping,
                              this->cell_quadrature,
                              this->forcing_function,
                              this->simulation_control,
@@ -3294,7 +3403,7 @@ void
 FluidDynamicsMatrixFree<dim>::initialize_GMG()
 {
   // Initialize everything related to heat transfer within the MG algorithm
-  if (this->simulation_parameters.multiphysics.buoyancy_force)
+  if (this->simulation_parameters.multiphysics.thermal_buoyancy_force)
     dynamic_cast<MFNavierStokesPreconditionGMG<dim> *>(gmg_preconditioner.get())
       ->initialize_auxiliary_physics(this->multiphysics->get_dof_handler(
                                        PhysicsID::heat_transfer),
@@ -3657,12 +3766,12 @@ FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const double absolute_residual,
     }
 
   this->computing_timer.enter_subsection(
-    "Distribute constraints after linear solve");
+    "Distribute constraints after linear solver");
 
   zero_constraints.distribute(this->newton_update);
 
   this->computing_timer.leave_subsection(
-    "Distribute constraints after linear solve");
+    "Distribute constraints after linear solver");
 }
 
 template <int dim>
@@ -3698,12 +3807,12 @@ FluidDynamicsMatrixFree<dim>::solve_system_direct(
   this->computing_timer.leave_subsection("Solve linear system");
 
   this->computing_timer.enter_subsection(
-    "Distribute constraints after linear solve");
+    "Distribute constraints after linear solver");
 
   zero_constraints.distribute(this->newton_update);
 
   this->computing_timer.leave_subsection(
-    "Distribute constraints after linear solve");
+    "Distribute constraints after linear solver");
 }
 
 template class FluidDynamicsMatrixFree<2>;

@@ -45,6 +45,9 @@ ParticleFieldQCM<dim, n_components, component_start>::setup_dofs()
                                          dof_handler),
                                        mpi_communicator);
 
+  // Force the vector to zero after the reinit.
+  particle_field_solution = 0;
+
   particle_field_constraints.clear();
   particle_field_constraints.reinit(locally_owned_dofs, locally_relevant_dofs);
   DoFTools::make_hanging_node_constraints(dof_handler,
@@ -699,7 +702,7 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
   system_rhs_void_fraction    = 0;
   system_matrix_void_fraction = 0;
 
-  // Clear all contributions of particles from the previous time-step
+  // Clear all contributions of particles from the previous time step
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
@@ -1436,6 +1439,14 @@ ParticleProjector<dim>::calculate_field_projection(
                                                preconditionerOptions);
     }
 
+  // Force the field solution to start from 0. There is no indication
+  // that the previous solution is a good starting point and this can
+  // actually create problems when restarting the code with a checkpoint
+  // since the checkpointing mechanism can become non-deterministic.
+  // Future Bruno, trust me on this. You were heavily bothered by this
+  // for three months and it made you doubt your sanity.
+  field_qcm.particle_field_solution = 0.;
+
   solver.solve(field_qcm.system_matrix,
                field_qcm.particle_field_solution,
                field_qcm.system_rhs,
@@ -1664,7 +1675,7 @@ ParticleProjector<dim>::calculate_particle_fluid_forces_projection(
 
   // We project both the fluid force (without drag) and the drag force.
   // We do not announce the string since the projection can be called
-  // multiple time if this is a non-linear problem and the coupling is
+  // multiple times if this is a non-linear problem and the coupling is
   // implicit.
   calculate_field_projection(fluid_force_on_particles_two_way_coupling);
   calculate_field_projection(fluid_drag_on_particles);

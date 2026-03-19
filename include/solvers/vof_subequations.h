@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_vof_subequations_h
@@ -29,17 +29,17 @@ enum class VOFSubequationsID : unsigned int
 inline VOFSubequationsID
 get_vof_subequation_id(const std::string &vof_subequation_name)
 {
-  if (vof_subequation_name == "VOF phase gradient L2 projection")
+  if (vof_subequation_name == "CLS phase gradient L2 projection")
     return VOFSubequationsID::phase_gradient_projection;
-  else if (vof_subequation_name == "VOF curvature L2 projection")
+  else if (vof_subequation_name == "CLS curvature L2 projection")
     return VOFSubequationsID::curvature_projection;
-  else if (vof_subequation_name == "VOF algebraic interface reinitialization")
+  else if (vof_subequation_name == "CLS PDE-based interface reinitialization")
     return VOFSubequationsID::algebraic_interface_reinitialization;
   else
-    throw(std::invalid_argument("Invalid VOF subequation name. Options are: \n"
-                                " <VOF phase gradient L2 projection>\n"
-                                " <VOF curvature L2 projection>\n"
-                                " <VOF algebraic interface reinitialization>"));
+    throw(std::invalid_argument("Invalid CLS subequation name. Options are: \n"
+                                " <CLS phase gradient L2 projection>\n"
+                                " <CLS curvature L2 projection>\n"
+                                " <CLS PDE-based interface reinitialization>"));
 }
 
 #endif

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_postprocessors_h
@@ -191,6 +191,58 @@ public:
             velocity_divergence += input_data.solution_gradients[p][d][d];
           }
         computed_quantities[p] = velocity_divergence;
+      }
+  }
+};
+
+
+/**
+ * @brief Return the velocity gradient field within a domain.
+ *
+ * The gradient is defined as \f$\nabla \mathbf{u}\f$ where
+ * \f$\mathbf{u}\f$ is the velocity vector. Note that the gradient components
+ * are numbered such that:
+ * 0 = xx, 1 = xy, 2 = xz, 3 = yx, 4 = yy, 5 = yz, 6 = zx, 7 = zy, 8 = zz
+ */
+template <int dim>
+class GradientPostprocessor : public DataPostprocessorTensor<dim>
+{
+public:
+  /**
+   * @brief Constructor of the velocity gradient postprocessor.
+   */
+  GradientPostprocessor()
+    : DataPostprocessorTensor<dim>("velocity_gradient", update_gradients)
+  {}
+
+  /**
+   * @brief Return the gradient of the velocity at given evaluation points.
+   *
+   * @param[in] input_data Fluid dynamics velocity and pressure information.
+   *
+   * @param[out] computed_quantities Velocity gradient at evaluation
+   * points.
+   *
+   * @note @p input_data contains both velocity and pressure data since fluid
+   * dynamics in Lethe is solved in a monolithic way, but only the velocity
+   * gradient is used.
+   */
+  virtual void
+  evaluate_vector_field(
+    const DataPostprocessorInputs::Vector<dim> &input_data,
+    std::vector<Vector<double>> &computed_quantities) const override
+  {
+    AssertDimension(input_data.solution_gradients.size(),
+                    computed_quantities.size());
+    for (unsigned int p = 0; p < input_data.solution_gradients.size(); ++p)
+      {
+        AssertDimension(computed_quantities[p].size(),
+                        (Tensor<2, dim>::n_independent_components));
+
+        for (int d = 0; d < dim; ++d)
+          for (int e = 0; e < dim; ++e)
+            computed_quantities[p][Tensor<2, dim>::component_to_unrolled_index(
+              TableIndices<2>(d, e))] = input_data.solution_gradients[p][d][e];
       }
   }
 };

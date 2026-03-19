@@ -1,6 +1,6 @@
 Running on 1 MPI rank(s)...
 The particle size distribution of particle type 0 is uniform.
-DEM time-step is 2.433653979% of Rayleigh time step
+DEM time step is 2.433653979% of Rayleigh time step
 Reading DEM checkpoint
 Finished reading DEM checkpoint
 10000 particles are in the simulation
@@ -12,7 +12,7 @@ Initializing DEM parameters
 Warning: expansion of particle-wall contact list is disabled. 
 This feature is useful in geometries with concave boundaries. 
 Finished initializing DEM parameters
-DEM time-step is 1e-05 s
+DEM time step is 1e-05 s
 --------------
 Void Fraction
 --------------
@@ -29,8 +29,8 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 0
-DEM contact search at dem step 9
+DEM contact search at dem step 1
+DEM contact search at dem step 10
 Finished 10 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -8.655792949e-13 s^-1
@@ -48,7 +48,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 9
+DEM contact search at dem step 10
 Finished 10 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -6.70321169e-12 s^-1
@@ -66,7 +66,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 9
+DEM contact search at dem step 10
 Finished 10 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: 4.979246415e-13 s^-1
@@ -84,7 +84,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 9
+DEM contact search at dem step 10
 Finished 10 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -5.088892681e-10 s^-1
@@ -102,7 +102,7 @@ Volume-Averaged Fluid Dynamics
 ----
 DEM
 ----
-DEM contact search at dem step 9
+DEM contact search at dem step 10
 Finished 10 DEM iterations
 ---------------------------------------------------------------
 Global continuity equation error: -3.175412487e-10 s^-1

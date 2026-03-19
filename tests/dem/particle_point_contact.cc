@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -23,6 +23,7 @@
 // Lethe
 #include <core/dem_properties.h>
 
+#include <../tests/dem/test_particles_functions.h>
 #include <dem/contact_info.h>
 #include <dem/contact_type.h>
 #include <dem/dem_solver_parameters.h>
@@ -50,32 +51,31 @@ test()
   tr.refine_global(refinement_number);
   MappingQ<dim>            mapping(1);
   DEMSolverParameters<dim> dem_parameters;
-  unsigned int             step              = 0;
-  const int                writing_frequency = 100;
+
+  Parameters::Lagrangian::LagrangianPhysicalProperties &lpp =
+    dem_parameters.lagrangian_physical_properties;
+
+  set_default_dem_parameters(1, dem_parameters);
+
+  unsigned int step              = 0;
+  const int    writing_frequency = 100;
 
   // Defining general simulation parameters
   Tensor<1, 3> g{{0.0, -9.81, 0.0}};
-  double       dt                                                    = 0.0001;
-  double       particle_diameter                                     = 0.1;
-  dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
-  dem_parameters.lagrangian_physical_properties.youngs_modulus_particle[0] =
-    200000000000;
-  dem_parameters.lagrangian_physical_properties.youngs_modulus_wall =
-    200000000000;
-  dem_parameters.lagrangian_physical_properties.poisson_ratio_particle[0] = 0.3;
-  dem_parameters.lagrangian_physical_properties.poisson_ratio_wall        = 0.3;
-  dem_parameters.lagrangian_physical_properties
-    .restitution_coefficient_particle[0] = 0.95;
-  dem_parameters.lagrangian_physical_properties.restitution_coefficient_wall =
-    0.95;
-  dem_parameters.lagrangian_physical_properties
-    .friction_coefficient_particle[0] = 0.05;
-  dem_parameters.lagrangian_physical_properties.friction_coefficient_wall =
-    0.05;
-  dem_parameters.lagrangian_physical_properties
-    .rolling_friction_coefficient_particle[0]                         = 0.1;
-  dem_parameters.lagrangian_physical_properties.rolling_friction_wall = 0.1;
-  dem_parameters.lagrangian_physical_properties.density_particle[0]   = 2500;
+  double       dt                              = 0.0001;
+  double       particle_diameter               = 0.1;
+  lpp.particle_type_number                     = 1;
+  lpp.youngs_modulus_particle[0]               = 200000000000;
+  lpp.youngs_modulus_wall                      = 200000000000;
+  lpp.poisson_ratio_particle[0]                = 0.3;
+  lpp.poisson_ratio_wall                       = 0.3;
+  lpp.restitution_coefficient_particle[0]      = 0.95;
+  lpp.restitution_coefficient_wall             = 0.95;
+  lpp.friction_coefficient_particle[0]         = 0.05;
+  lpp.friction_coefficient_wall                = 0.05;
+  lpp.rolling_friction_coefficient_particle[0] = 0.1;
+  lpp.rolling_friction_wall                    = 0.1;
+  lpp.density_particle[0]                      = 2500;
   const double neighborhood_threshold = std::pow(1.3 * particle_diameter, 2);
 
   // Defining particle handler

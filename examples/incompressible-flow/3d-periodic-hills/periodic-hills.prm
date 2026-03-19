@@ -34,7 +34,8 @@ end
 #---------------------------------------------------
 
 subsection mesh
-  set type               = periodic_hills
+  set type               = lethe
+  set grid type          = periodic_hills
   set initial refinement = 5
   set grid arguments     = 1;1;4;2;1
 end

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_fluid_dynamics_matrix_free_operators_h
@@ -130,6 +130,25 @@ evaluate_function(const Function<dim>                       &function,
 }
 
 /**
+ * @brief Check if a boundary condition type requires face assembly in the
+ * matrix-free operator.
+ *
+ * @param boundary_type Type of the boundary condition.
+ * @return true if the boundary condition requires face assembly.
+ */
+inline bool
+boundary_condition_requires_face_assembly(
+  BoundaryConditions::BoundaryType boundary_type)
+{
+  if (boundary_type == BoundaryConditions::BoundaryType::function_weak ||
+      boundary_type == BoundaryConditions::BoundaryType::outlet ||
+      boundary_type == BoundaryConditions::BoundaryType::pressure)
+    return true;
+  else
+    return false;
+}
+
+/**
  * @brief A class that serves as base for all the matrix-free
  * Navier-Stokes operators.
  *
@@ -251,15 +270,15 @@ public:
 
 
   /**
-   * @brief Precompute buoyancy term for heat-transfer coupling.
+   * @brief Precompute thermal buoyancy term for heat-transfer coupling.
    *
    * @param[in] temperature_solution Present solution of the temperature
    * as given by the multiphysics interface.
    * @param[in] temperature_dof_handler DoF Handler used for the heat transfer.
    */
   void
-  compute_buoyancy_term(const VectorType      &temperature_solution,
-                        const DoFHandler<dim> &temperature_dof_handler);
+  compute_thermal_buoyancy_term(const VectorType      &temperature_solution,
+                                const DoFHandler<dim> &temperature_dof_handler);
 
   /**
    * @brief Get the total number of DoFs.
@@ -449,7 +468,7 @@ public:
    * base. Because we have a different system_operator here, we need to create
    * new pointers.
    */
-  std::shared_ptr<MortarManagerCircle<dim>>      mortar_manager_mf;
+  std::shared_ptr<MortarManagerBase<dim>>        mortar_manager_mf;
   std::shared_ptr<CouplingOperator<dim, double>> mortar_coupling_operator_mf;
   std::shared_ptr<NavierStokesCouplingEvaluation<dim, double>>
     mortar_coupling_evaluator_mf;
@@ -674,10 +693,10 @@ protected:
 
 
   /**
-   * @brief Table with precomputed buoyancy term values.
+   * @brief Table with precomputed thermal buoyancy term values.
    *
    */
-  Table<2, Tensor<1, dim, VectorizedArray<number>>> buoyancy_term;
+  Table<2, Tensor<1, dim, VectorizedArray<number>>> thermal_buoyancy_term;
 
   /**
    * @brief Flag to turn the calculation of face terms on or off.
@@ -711,6 +730,14 @@ protected:
     nonlinear_previous_hessian_diagonal;
 
   /**
+   * @brief Table with correct alignment for vectorization to store the hessian
+   *  of the previous newton step.
+   *
+   */
+  Table<2, Tensor<1, dim + 1, Tensor<2, dim, VectorizedArray<number>>>>
+    nonlinear_previous_hessian;
+
+  /**
    * @brief Table with correct alignment for vectorization to store the time derivatives
    * of previous solutions.
    *
@@ -732,6 +759,13 @@ protected:
    *
    */
   Table<2, Tensor<1, dim, VectorizedArray<number>>> face_target_velocity;
+
+  /**
+   * @brief Table with correct alignment for vectorization to store the values
+   * of the target pressure of a pressure boundary condition.
+   *
+   */
+  Table<2, VectorizedArray<number>> face_target_pressure;
 
 
   /**

@@ -644,7 +644,7 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve()
   // Check if all required solutions are valid
   check_dependencies_validity();
 
-  // Compute current time-step
+  // Compute current time step
   this->current_time_step   = compute_time_step();
   this->time_step_vector[0] = this->current_time_step;
 
@@ -665,9 +665,9 @@ VOFAlgebraicInterfaceReinitialization<dim>::solve()
 
   if (verbose)
     {
-      announce_string(this->pcout, "VOF algebraic interface reinitialization");
+      announce_string(this->pcout, "CLS PDE-based interface reinitialization");
 
-      this->pcout << "Current algebraic reinitialization time-step: "
+      this->pcout << "Current PDE-based reinitialization time step: "
                   << this->current_time_step << std::endl;
     }
 
@@ -721,10 +721,10 @@ VOFAlgebraicInterfaceReinitialization<dim>::write_output_results(
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
   const std::string folder =
     this->simulation_parameters.simulation_control.output_folder +
-    "/algebraic-reinitialization-steps-output/";
+    "/pde-based-reinitialization-steps-output/";
 
   const std::string file_name =
-    "algebraic-reinitialization-" +
+    "pde-based-reinitialization-" +
     this->simulation_parameters.simulation_control.output_name + "-it" +
     Utilities::int_to_string(this->simulation_control->get_iteration_number(),
                              5);

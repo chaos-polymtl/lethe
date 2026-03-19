@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -31,13 +31,14 @@ NavierStokesScratchData<dim>::allocate()
   this->pressure.component                = dim;
 
   // Velocity
-  this->velocity_values            = std::vector<Tensor<1, dim>>(n_q_points);
-  this->velocity_divergences       = std::vector<double>(n_q_points);
-  this->velocity_gradients         = std::vector<Tensor<2, dim>>(n_q_points);
-  this->velocity_laplacians        = std::vector<Tensor<1, dim>>(n_q_points);
-  this->velocity_hessians          = std::vector<Tensor<3, dim>>(n_q_points);
-  this->shear_rate                 = std::vector<double>(n_q_points);
-  this->velocity_for_stabilization = std::vector<Tensor<1, dim>>(n_q_points);
+  this->velocity_values              = std::vector<Tensor<1, dim>>(n_q_points);
+  this->velocity_divergences         = std::vector<double>(n_q_points);
+  this->velocity_gradients           = std::vector<Tensor<2, dim>>(n_q_points);
+  this->velocity_laplacians          = std::vector<Tensor<1, dim>>(n_q_points);
+  this->velocity_hessians            = std::vector<Tensor<3, dim>>(n_q_points);
+  this->velocity_gradient_divergence = std::vector<Tensor<1, dim>>(n_q_points);
+  this->shear_rate                   = std::vector<double>(n_q_points);
+  this->velocity_for_stabilization   = std::vector<Tensor<1, dim>>(n_q_points);
 
   // For SDIRK method: sum(a_ij * k_j)
   if (this->simulation_control->is_sdirk())
@@ -66,6 +67,7 @@ NavierStokesScratchData<dim>::allocate()
   this->div_phi_u.reinit(n_q_points, n_dofs);
   this->hess_phi_u.reinit(n_q_points, n_dofs);
   this->laplacian_phi_u.reinit(n_q_points, n_dofs);
+  this->gradient_divergence_phi_u.reinit(n_q_points, n_dofs);
 
   // Pressure shape functions
   this->phi_p.reinit(n_q_points, n_dofs);
@@ -83,6 +85,7 @@ NavierStokesScratchData<dim>::allocate()
   dynamic_viscosity_for_stabilization   = std::vector<double>(n_q_points);
   kinematic_viscosity_for_stabilization = std::vector<double>(n_q_points);
   thermal_expansion                     = std::vector<double>(n_q_points);
+  density_thermal_expansion             = std::vector<double>(n_q_points);
   grad_kinematic_viscosity_shear_rate   = std::vector<double>(n_q_points);
 
   previous_density =
@@ -314,6 +317,9 @@ NavierStokesScratchData<dim>::enable_void_fraction(
   const Mapping<dim>       &mapping)
 {
   gather_void_fraction = true;
+  // The hessian is needed to calculate the gradient of the velocity divergence
+  // term in the stress tensor
+  gather_hessian = true;
 
   // Contrary to the other physics, we enable the calculation of the JxW values
   // on the void fraction
@@ -636,6 +642,14 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                     calculate_point_property(filtered_phase_value,
                                              this->thermal_expansion_0[q],
                                              this->thermal_expansion_1[q]);
+
+                  // Phase interpolate the product rho*beta per-phase to avoid
+                  // cross term error from bilinear phase interpolation:
+                  // interp_lin(rho)*interp_lin(beta) != interp_lin(rho*beta)
+                  density_thermal_expansion[q] = calculate_point_property(
+                    filtered_phase_value,
+                    this->density_0[q] * this->thermal_expansion_0[q],
+                    this->density_1[q] * this->thermal_expansion_1[q]);
                 }
 
               // Gather density_psi for isothermal compressible NS equations

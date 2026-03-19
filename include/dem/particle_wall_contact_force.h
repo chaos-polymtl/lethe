@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_particle_wall_contact_force_h
@@ -200,7 +200,7 @@ protected:
 
     // Calculating new tangential_displacement
     // Since this value is history-dependent, it needs the value at previous
-    // time-step. This variable is the main reason that we have iteration over
+    // time step. This variable is the main reason that we have iteration over
     // two different vectors (pairs_in_contact and contact_pair_candidates):
     // tangential_displacement of the particles which were already in contact
     // (pairs_in_contact) needs to be modified using its history, while the
@@ -271,7 +271,7 @@ protected:
 
     // Calculate the new tangential_displacement
     // Since this value is history-dependent, it needs the value at
-    // previous time-step.
+    // previous time step.
     contact_info.tangential_displacement += tangential_relative_velocity * dt;
   }
 
@@ -1089,7 +1089,7 @@ private:
     std::tuple<typename Triangulation<dim - 1, dim>::active_cell_iterator,
                double,
                LetheGridTools::ParticleTriangleContactIndicator,
-               particle_wall_contact_info<dim>>>
+               particle_wall_contact_info<dim> *>>
     particle_triangle_contact_description;
 
   typedef ankerl::unordered_dense::map<types::particle_index,

@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2025 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -11,15 +11,15 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf1
-  set time end         = 0.0005
-  set time step        = 1.9e-8
-  set adapt            = true
-  set max cfl          = 0.06
-  set max time step    = 1.9e-8
-  set output name      = static-irradiation
-  set output path      = output/
-  set output frequency = 100
+  set method                         = bdf1
+  set time end                       = 0.0005
+  set time step                      = 1.9e-8
+  set adapt time step to respect CFL = true
+  set max cfl                        = 0.06
+  set max time step                  = 1.9e-8
+  set output name                    = static-irradiation
+  set output path                    = output/
+  set output frequency               = 100
 end
 
 #---------------------------------------------------
@@ -27,7 +27,7 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF           = true
+  set cls           = true
   set heat transfer = true
 end
 
@@ -42,12 +42,15 @@ subsection mesh
 end
 
 subsection box refinement
-  subsection mesh
-    set type           = dealii
-    set grid type      = subdivided_hyper_rectangle
-    set grid arguments = 8,1 : 0,0.3925: 0.6,0.4675: false
+  set number of refinement boxes = 1
+  subsection box 0
+    subsection mesh
+      set type           = dealii
+      set grid type      = subdivided_hyper_rectangle
+      set grid arguments = 8,1 : 0,0.3925: 0.6,0.4675: false
+    end
+    set additional refinement = 3
   end
-  set initial refinement = 3
 end
 
 #---------------------------------------------------
@@ -55,7 +58,8 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set type                 = kelly
+  set type                 = adaptive
+  set error estimator      = kelly
   set variable             = temperature
   set fraction type        = fraction
   set max refinement level = 7
@@ -138,7 +142,7 @@ subsection boundary conditions heat transfer
   end
 end
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number = 6
   subsection bc 0
     set id   = 2
@@ -175,7 +179,7 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function expression = if (y<0.43 , 1, 0)
     set smoothing type      = diffusive
     set diffusion factor    = 1
@@ -241,7 +245,7 @@ end
 
 subsection laser parameters
   set enable           = true
-  set type             = gaussian_heat_flux_vof_interface
+  set type             = gaussian_heat_flux_cls_interface
   set power            = 156e6
   set absorptivity     = 0.35
   set beam radius      = 0.07
@@ -254,16 +258,16 @@ subsection laser parameters
 end
 
 #---------------------------------------------------
-# VOF
+# CLS
 #---------------------------------------------------
 
-subsection VOF
+subsection CLS
   subsection phase filtration
     set type      = tanh
     set verbosity = quiet
     set beta      = 20
   end
-  subsection interface regularization method
+  subsection interface reinitialization method
     set type      = projection-based interface sharpening
     set frequency = 10
     set verbosity = verbose
@@ -278,11 +282,11 @@ subsection VOF
     end
   end
   subsection surface tension force
-    set enable                                   = true
-    set phase fraction gradient diffusion factor = 4
-    set curvature diffusion factor               = 1
-    set output auxiliary fields                  = true
-    set enable marangoni effect                  = true
+    set enable                                    = true
+    set phase indicator gradient diffusion factor = 4
+    set curvature diffusion factor                = 1
+    set output auxiliary fields                   = true
+    set enable marangoni effect                   = true
   end
 end
 
@@ -328,7 +332,7 @@ subsection non-linear solver
     set max iterations = 20
     set verbosity      = verbose
   end
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-4
     set max iterations = 20
     set verbosity      = verbose
@@ -355,7 +359,7 @@ subsection linear solver
     set preconditioner          = ilu
     set ilu preconditioner fill = 1
   end
-  subsection VOF
+  subsection CLS
     set verbosity               = verbose
     set method                  = gmres
     set relative residual       = 1e-3

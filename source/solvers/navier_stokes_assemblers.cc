@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -71,7 +71,7 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
       // is steady or unsteady. In the unsteady case it includes the
-      // value of the time-step
+      // value of the time step
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
@@ -249,7 +249,7 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_rhs(
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
       // is steady or unsteady. In the unsteady case it includes the
-      // value of the time-step
+      // value of the time step
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
@@ -366,7 +366,7 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
       // is steady or unsteady. In the unsteady case it includes the
-      // value of the time-step
+      // value of the time step
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
@@ -550,7 +550,7 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
       // is steady or unsteady. In the unsteady case it includes the
-      // value of the time-step
+      // value of the time step
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
@@ -699,7 +699,7 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
       // is steady or unsteady. In the unsteady case it includes the
-      // value of the time-step
+      // value of the time step
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
@@ -888,7 +888,7 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
       // is steady or unsteady. In the unsteady case it includes the
-      // value of the time-step
+      // value of the time step
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
@@ -1780,7 +1780,7 @@ template class LaplaceAssembly<3>;
 
 template <int dim>
 void
-BuoyancyAssembly<dim>::assemble_matrix(
+ThermalBuoyancyAssembly<dim>::assemble_matrix(
   const NavierStokesScratchData<dim> & /*scratch_data*/,
   StabilizedMethodsTensorCopyData<dim> & /*copy_data*/)
 {}
@@ -1789,7 +1789,7 @@ BuoyancyAssembly<dim>::assemble_matrix(
 
 template <int dim>
 void
-BuoyancyAssembly<dim>::assemble_rhs(
+ThermalBuoyancyAssembly<dim>::assemble_rhs(
   const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -1810,7 +1810,6 @@ BuoyancyAssembly<dim>::assemble_rhs(
 
       const double thermal_expansion = scratch_data.thermal_expansion[q];
 
-
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
 
@@ -1825,7 +1824,6 @@ BuoyancyAssembly<dim>::assemble_rhs(
         {
           const auto phi_u_i = scratch_data.phi_u[q][i];
 
-          // Laplacian on the velocity terms
           local_rhs(i) -= force * thermal_expansion *
                           (current_temperature - reference_temperature) *
                           phi_u_i * JxW;
@@ -1833,8 +1831,8 @@ BuoyancyAssembly<dim>::assemble_rhs(
     }
 }
 
-template class BuoyancyAssembly<2>;
-template class BuoyancyAssembly<3>;
+template class ThermalBuoyancyAssembly<2>;
+template class ThermalBuoyancyAssembly<3>;
 
 template <int dim>
 void
@@ -2818,7 +2816,7 @@ NavierStokesAssemblerMortarALE<dim>::assemble_matrix(
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
       // is steady or unsteady. In the unsteady case it includes the
-      // value of the time-step
+      // value of the time step
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
@@ -2951,7 +2949,7 @@ NavierStokesAssemblerMortarALE<dim>::assemble_rhs(
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
       // is steady or unsteady. In the unsteady case it includes the
-      // value of the time-step
+      // value of the time step
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?

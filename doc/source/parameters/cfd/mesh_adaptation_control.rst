@@ -7,12 +7,15 @@ This subsection controls the mesh adaptation method, with default values given b
 .. code-block:: text
 
   subsection mesh adaptation
-    # Type of mesh adaptation. Choices are  none, uniform or kelly.
+    # Type of mesh adaptation. Choices are  none, uniform or adaptive.
     set type                     = none
 
-    # Variable(s) for kelly estimation. Choices are velocity, pressure, phase or temperature.
-    # For multi-variables refinement, separate the different variables with a comma
+    # Variable(s) for adaptive refinement. 
+    # For multi-variables refinement, separate the different variables with a comma.
     set variable                 = velocity
+
+    # Choice of error estimator for adaptive refinement. Choices are <kelly|dpg>. For multi-variables refinement, separate the different error estimators with a comma. The order of the error estimators should be the same as the order of the variables defined in the "set variable" parameter.
+    set error estimator            = kelly
 
     # Frequency of the mesh refinement
     set frequency                = 1
@@ -52,25 +55,30 @@ This subsection controls the mesh adaptation method, with default values given b
   end
 
 
-* Two ``type`` of mesh adaptation are available. The ``uniform`` mesh adaptation refines the mesh at every cell, whereas the ``kelly`` uses a `kelly error estimator <https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html>`_ to decide which cell are refined, by estimating the error per cell for a given variable. 
-* The variable for kelly estimation should be specified with ``set variable``, and can be: velocity, pressure, phase (for multiphase flows), temperature
+* Two ``type`` of mesh adaptation are available. The ``uniform`` mesh adaptation refines the mesh at every cell, whereas the ``adaptive`` mesh adaptation refines the mesh only at cells where the error estimator (see below) indicates that the error is too high.
+* The variable for adaptive refinement should be specified with ``set variable``, and can be: velocity, pressure, phase (for CLS multiphase flows), temperature, phase_cahn_hilliard, chemical_potential_cahn_hilliard, tracer, electric_field, magnetic_field or electromagnetic_fields. 
 	* Mesh adaptation can be defined on multiple variables, separated with a coma (e.g. ``set variable = velocity,temperature``, or ``set variable = velocity,phase,pressure`` etc.).
 
-	.. warning::
-		The different ``fraction refinement`` and ``fraction coarsening`` must be defined explicitly (see these parameters definition below).
+  .. note::  
+    Note that the ``electromagnetic fields`` is used to compute the error estimator for both electric and magnetic fields simultaneously and is the only choice of ``variable`` when using the ``dpg`` error estimator. If the user wants to use the ``kelly`` error estimator for the electric and magnetic fields separately, they should specify ``set variable = electric field,magnetic field`` and ``set error estimator = kelly,kelly``. If fractions for refinement and coarsening are the same for both electric and magnetic fields, the user could also only specify ``set variable = electromagnetic fields`` with ``set error estimator = kelly`` for the same result.  
+
+    .. warning::  
+      The different ``fraction refinement`` and ``fraction coarsening`` must be defined explicitly (see these parameters definition below).  
 
 .. important::
 	In the case of multiple variable mesh adaptation, the cells are:
 		* refined if refinement is necessary for at least one variable
 		* coarsened if coarsening is necessary for *all* variables
 
+* The error estimator for adaptive mesh refinement is specified with the ``set error estimator`` parameter. The main available error estimator at the moment is ``kelly`` which uses a `kelly error estimator <https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html>`_ to decide which cell are refined, by estimating the error per cell for a given variable. This estimator is available for all physics. The second error estimator is the ``dpg`` error estimator, which is only available for the electromagnetics physics, and uses the built-in error estimator of the `DPG method <https://www.cambridge.org/core/journals/acta-numerica/article/discontinuous-petrovgalerkin-method/71BCF32CDE92B0924051FA31E8F54DC2>`_ to decide which cell are refined. In case of multiple variables, the user can also choose to use different error estimators for each variables (e.g. ``set error estimator = kelly,dpg``). 
+
 * The frequency at which the mesh is refined is controlled with the ``frequency`` parameter. If ``set frequency = 1``, the mesh is refined at every iteration. 
-	* For transient simulation, this means at every time-step. 
+	* For transient simulation, this means at every time step.
 	* For steady-state simulation in which the steady-state problem is solved on successively refined meshes, the user should have ``set frequency = 1``, which is the default value.
 
 * The minimal and maximal refinement level reachable for a cell are controlled respectively with the ``min refinement`` and ``max refinement`` parameters.
-   * for ``deal.ii`` meshes, if the ``min refinement level`` is equal to the ``initial refinement`` (see `Mesh paramater <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/mesh.html>`_), no cell will be coarser than the initial mesh.
-   * for ``gmsh`` imported meshes, if ``set min refinement level = 0``, no cell will be coarser than the initial mesh.
+  * for ``deal.ii`` meshes, if the ``min refinement level`` is equal to the ``initial refinement`` (see `Mesh parameter <https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/mesh.html>`_), no cell will be coarser than the initial mesh.
+  * for ``gmsh`` imported meshes, if ``set min refinement level = 0``, no cell will be coarser than the initial mesh.
 
 .. tip:: 
 	For a ``gmsh`` mesh, a cell cannot be coarsened more than it's initial level. Consequently, adaptively refined simulations should start with a mesh as coarse as possible. 
@@ -85,9 +93,9 @@ This subsection controls the mesh adaptation method, with default values given b
 		The different ``variable`` must be defined explicitly (see this parameter definition above).
 
 .. tip:: 
-	For ``set type = kelly``, and ``set variable = velocity`` or ``pressure``, a good first start is achieve with ``set fraction refinement = 0.2`` and ``set fraction coarsening = 0.1``.
+	For ``set type = adaptive`` with ``set error estimator = kelly``, and ``set variable = velocity`` or ``pressure``, a good first start is achieved with ``set fraction refinement = 0.2`` and ``set fraction coarsening = 0.1``.
 
-	For ``set type = kelly``, and ``set variable = phase``, use ``fraction type = fraction`` (explained below) and ``set fraction refinement = 0.8`` for a good tracking of the entire free surface (see `Multiphysics <file:///home/jeannej/Softwares/lethe/lethe/doc/build/html/parameters/cfd/multiphysics.html>`_).
+	For ``set type = adaptive`` with ``set error estimator = kelly``, and ``set variable = phase``, use ``fraction type = fraction`` (explained below) and ``set fraction refinement = 0.8`` for a good tracking of the entire free surface.
 
 * The fraction of refinement/coarsening can be interpreted in ``number`` or ``fraction``  depending on the parameter ``fraction type``. At first sight, this is a relatively difficult concept to understand that is inherited from deal.II. 
 	* When ``fraction type = number``  the  `refine_and_coarsen_fixed_number <https://www.dealii.org/current/doxygen/deal.II/namespaceGridRefinement.html#a48e5395381ed87155942a61a1edd134d>`_ strategy of deal.II is used. This function provides a strategy to mark cells for refinement and coarsening with the goal of providing predictable growth in the size of the mesh by refining  and coarsening a given fraction of all cells.  
@@ -107,6 +115,6 @@ This subsection controls the mesh adaptation method, with default values given b
 .. warning::
 	If ``mesh refinement controller`` is set to ``false``, the ``max number elements`` parameter puts a hard limit on the number of cells in the domain, even if the ``fraction refinement`` is increased. 
 
-* The number of initial (before solving) adaptive refinement steps is controlled by the ``initial refinement steps`` parameter. With an ``initial refinement steps`` larger than 0, the triangulation is refined adaptively before the solver starts solving the problem. This enables the user to adapt the initial mesh to the initial condition. For example, if the simulation is a VOF simulation, it is ideal to have an initial mesh that captures the interface between the fluids accurately. This is achieved by refining the mesh using the dynamic mesh adaptation parameters and reapplying the initial condition after each adaptation. This process will be repeated ``initial refinement steps`` times.
+* The number of initial (before solving) adaptive refinement steps is controlled by the ``initial refinement steps`` parameter. With an ``initial refinement steps`` larger than 0, the triangulation is refined adaptively before the solver starts solving the problem. This enables the user to adapt the initial mesh to the initial condition. For example, if the simulation is a CLS simulation, it is ideal to have an initial mesh that captures the interface between the fluids accurately. This is achieved by refining the mesh using the dynamic mesh adaptation parameters and reapplying the initial condition after each adaptation. This process will be repeated ``initial refinement steps`` times.
 
 * The ``fix boundary refinement`` parameter is used to fix the boundary mesh size at the defined initial refinement level. ``boundaries fixed`` can be used to specify which boundary ids will not be refined or coarsened when the kelly mesh adaptation is used. Cells on the boundary will still be refined when global refinement is active or when neighbouring cells force the refinement of a boundary mesh cell.

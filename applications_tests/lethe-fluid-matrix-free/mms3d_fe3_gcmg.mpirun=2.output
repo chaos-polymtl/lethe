@@ -1,0 +1,89 @@
+Running on 2 MPI rank(s)...
+   Number of active cells:       512
+   Number of degrees of freedom: 62500
+   Volume of triangulation:      8
+
+*****************************
+Steady iteration:        1/1
+*****************************
+
+  -Levels of MG preconditioner:
+    Level 0: 500 DoFs, 8 cells
+    Level 1: 1372 DoFs, 8 cells
+    Level 2: 8788 DoFs, 64 cells
+    Level 3: 62500 DoFs, 512 cells
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.21092
+    Minimum eigenvalue: 1.25124
+    Maximum eigenvalue: 1.50148
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.822348
+    Minimum eigenvalue: 1.84247
+    Maximum eigenvalue: 2.21096
+
+
+  -Eigenvalue estimation level 2:
+    Relaxation parameter: 0.808408
+    Minimum eigenvalue: 1.87424
+    Maximum eigenvalue: 2.24909
+
+
+  -Eigenvalue estimation level 3:
+    Relaxation parameter: 0.847692
+    Minimum eigenvalue: 1.78738
+    Maximum eigenvalue: 2.14486
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.20968
+    Minimum eigenvalue: 1.25252
+    Maximum eigenvalue: 1.50303
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.823503
+    Minimum eigenvalue: 1.83988
+    Maximum eigenvalue: 2.20786
+
+
+  -Eigenvalue estimation level 2:
+    Relaxation parameter: 0.808568
+    Minimum eigenvalue: 1.87387
+    Maximum eigenvalue: 2.24864
+
+
+  -Eigenvalue estimation level 3:
+    Relaxation parameter: 0.847685
+    Minimum eigenvalue: 1.7874
+    Maximum eigenvalue: 2.14488
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 1.20968
+    Minimum eigenvalue: 1.25252
+    Maximum eigenvalue: 1.50303
+
+
+  -Eigenvalue estimation level 1:
+    Relaxation parameter: 0.823512
+    Minimum eigenvalue: 1.83987
+    Maximum eigenvalue: 2.20784
+
+
+  -Eigenvalue estimation level 2:
+    Relaxation parameter: 0.808566
+    Minimum eigenvalue: 1.87388
+    Maximum eigenvalue: 2.24865
+
+
+  -Eigenvalue estimation level 3:
+    Relaxation parameter: 0.847685
+    Minimum eigenvalue: 1.7874
+    Maximum eigenvalue: 2.14488
+
+cells error_velocity error_pressure 
+  512 1.285973e-03 - 1.224979e-02 - 

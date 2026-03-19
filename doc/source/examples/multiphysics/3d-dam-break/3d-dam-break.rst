@@ -12,8 +12,8 @@ Features
 ----------------------------------
 
 - Solver: ``lethe-fluid`` (Q1-Q1)
-- Two phase flow handled by the Volume-of-Fluids (VOF) approach with phase fraction filtration
-- Mesh adaptation using phase fraction
+- Two phase flow handled by the Conservative Level-Set (CLS) approach with phase indicator filtration
+- Mesh adaptation using phase indicator
 - Unsteady problem handled by an adaptive BDF1 time-stepping scheme
 - The use of a python script for post-processing data
 
@@ -90,38 +90,38 @@ Parameter File
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
 
-Time integration is handled by a 1st order backward differentiation scheme (`bdf1`), for a :math:`6 \ \text{s}` simulation time with an initial time-step of :math:`0.001 \ \text{s}`. Time-step adaptation is enabled using ``adapt=true``
+Time integration is handled by a 1st order backward differentiation scheme (`bdf1`), for a :math:`6 \ \text{s}` simulation time with an initial time step of :math:`0.001 \ \text{s}`. Time-step adaptation is enabled using ``adapt time step to respect CFL` = true``
 and the max CFL is :math:`0.8`.
 
 .. note::
-    This example uses an adaptive time-stepping method, where the time-steps are modified during the simulation to keep the maximum value of the CFL condition below the given threshold (0.5).
+    This example uses an adaptive time-stepping method, where the time steps are modified during the simulation to keep the maximum value of the CFL condition below the given threshold (0.5).
 
 .. code-block:: text
 
     subsection simulation control
-      set method                       = bdf1
-      set time end                     = 6
-      set time step                    = 0.001
-      set adapt                        = true
-      set max cfl                      = 0.8
-      set output name                  = 3d-dam-break
-      set output frequency             = 5
-      set output path                  = ./output/
-      set adaptative time step scaling = 1.05
-      set output boundaries            = true
+      set method                         = bdf1
+      set time end                       = 6
+      set time step                      = 0.001
+      set adapt time step to respect CFL = true
+      set max cfl                        = 0.8
+      set output name                    = 3d-dam-break
+      set output frequency               = 5
+      set output path                    = ./output/
+      set adaptative time step scaling   = 1.05
+      set output boundaries              = true
     end
 
 Multiphysics
 ~~~~~~~~~~~~
 
 The ``multiphysics`` subsection enables to turn on `(true)`
-and off `(false)` the physics of interest. Here ``VOF`` is chosen.
+and off `(false)` the physics of interest. Here ``CLS`` is chosen.
 Note that the fluid dynamics are solved by default.
 
 .. code-block:: text
 
     subsection multiphysics
-      set VOF = true
+      set CLS = true
     end
 
 Physical Properties
@@ -149,7 +149,7 @@ The ``physical properties`` subsection defines the physical properties of the fl
 Initial Conditions
 ~~~~~~~~~~~~~~~~~~
 
-In the ``initial conditions`` subsection, we need to define the interface between the two fluids. We define this interface by using a function expression in the ``VOF`` subsection of ``initial conditions``. A projection step is applied to ensure a smooth definition of the initial condition.
+In the ``initial conditions`` subsection, we need to define the interface between the two fluids. We define this interface by using a function expression in the ``CLS`` subsection of ``initial conditions``. A projection step is applied to ensure a smooth definition of the initial condition.
 
 .. code-block:: text
 
@@ -159,7 +159,7 @@ In the ``initial conditions`` subsection, we need to define the interface betwee
         set Function expression = 0; 0; 0; 0
       end
 
-      subsection VOF
+      subsection CLS
         set Function expression = if (x>1.992 & z<0.55 & y>=-0.5, 1, 0)
         subsection projection step
           set enable           = true
@@ -181,14 +181,14 @@ In the ``source term`` subsection, we define the gravitational acceleration.
       end
     end
 
-VOF
+CLS
 ~~~
 
-In the ``VOF`` subsection, we select the ``tanh`` filter to filter the phase fraction and get a more defined interface. We set the value of beta to 10.
+In the ``CLS`` subsection, we select the ``tanh`` filter to filter the phase indicator and get a more defined interface. We set the value of beta to 10.
 
 .. code-block:: text
 
-    subsection VOF
+    subsection CLS
       subsection phase filtration
         set type   = tanh
         set beta   = 10
@@ -217,7 +217,8 @@ The ``mesh adaptation`` section controls the dynamic mesh adaptation. Here, we c
 .. code-block:: text
 
     subsection mesh adaptation
-      set type                     = kelly
+      set type                     = adaptive 
+      set error estimator          = kelly, kelly
       set variable                 = phase, pressure
       set fraction type            = fraction
       set max refinement level     = 4

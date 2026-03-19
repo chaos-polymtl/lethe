@@ -3,7 +3,7 @@ Running on 1 MPI rank(s)...
    Number of degrees of freedom: 765
    Volume of triangulation:      0.1
    Number of thermal degrees of freedom: 255
-   Number of VOF degrees of freedom: 255
+   Number of CLS degrees of freedom: 255
 
 *******************************************************************************
 Transient iteration: 1        Time: 2        Time step: 2        CFL: 62.5156 

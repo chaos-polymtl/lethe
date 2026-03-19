@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_navier_stokes_assemblers_h
@@ -653,7 +653,7 @@ public:
 
 
 /**
- * @brief Class that assembles a buoyancy forcing term using the Boussinesq
+ * @brief Class that assembles a thermal buoyancy forcing term using the Boussinesq
  * approximation. For more information, read Chapter 10 of Transport phenomena
  * by Bird et al., or "Boussinesq approximation (buoyancy)" page on Wikipedia.
  *
@@ -662,11 +662,12 @@ public:
  * @ingroup assemblers
  */
 template <int dim>
-class BuoyancyAssembly : public NavierStokesAssemblerBase<dim>
+class ThermalBuoyancyAssembly : public NavierStokesAssemblerBase<dim>
 {
 public:
-  BuoyancyAssembly(const std::shared_ptr<SimulationControl> &simulation_control,
-                   const double reference_temperature)
+  ThermalBuoyancyAssembly(
+    const std::shared_ptr<SimulationControl> &simulation_control,
+    const double                              reference_temperature)
     : simulation_control(simulation_control)
     , reference_temperature(reference_temperature)
   {}

@@ -1,0 +1,29 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       6
+   Number of degrees of freedom: 105
+   Volume of triangulation:      10
+
+*****************************
+Steady iteration:        1/1
+*****************************
+---------------
+Fluid Dynamics
+---------------
+
+  -Levels of MG preconditioner:
+    Level 0: 105 DoFs, 6 cells
+
+
+  -Eigenvalue estimation level 0:
+    Relaxation parameter: 0.508427
+    Minimum eigenvalue: 2.98008
+    Maximum eigenvalue: 3.57609
+
+Newton iteration: 0  - Residual:  4.64811
+  -Tolerance of iterative solver is : 0.000464811
+  -Iterative solver took : 1 steps to reach a residual norm of 0
+	alpha =      1 res = 2.594e-14
+	||du||_L2 = 0.2499	||du||_Linfty = 0.0625
+	||dp||_L2 =  45.59	||dp||_Linfty = 10
+cells error_velocity error_pressure 
+    6 1.988898e-14 - 3.162424e-13 - 

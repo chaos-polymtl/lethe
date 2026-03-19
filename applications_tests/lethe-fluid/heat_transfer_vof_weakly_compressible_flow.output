@@ -3,7 +3,7 @@ Running on 1 MPI rank(s)...
    Number of degrees of freedom: 867
    Volume of triangulation:      0.0625
    Number of thermal degrees of freedom: 289
-   Number of VOF degrees of freedom: 289
+   Number of CLS degrees of freedom: 289
 Pressure drop: 0 Pa
 Total pressure drop: 0 Pa
 

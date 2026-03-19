@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 set dimension = 2
@@ -13,8 +13,8 @@ end
 subsection FEM
   set velocity order = 1
   set pressure order = 1
-  set VOF order      = 1
-  set VOF uses dg    = true
+  set cls order      = 1
+  set cls uses dg    = true
 end
 
 subsection initial conditions
@@ -22,7 +22,7 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 1; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function expression = 0.5+0.5*tanh(5-10*x^2)
   end
 end
@@ -45,7 +45,7 @@ subsection mesh
 end
 
 subsection multiphysics
-  set VOF = true
+  set cls = true
 end
 
 subsection analytical solution
@@ -54,7 +54,7 @@ subsection analytical solution
   subsection uvwp
     set Function expression = 1 ; 0 ; 0
   end
-  subsection VOF
+  subsection CLS
     set Function expression = 0.5+0.5*tanh(5-10*(x-t)^2)
   end
 end
@@ -77,7 +77,7 @@ subsection boundary conditions
   end
 end
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number = 3
   subsection bc 0
     set type               = periodic
@@ -96,7 +96,7 @@ subsection boundary conditions VOF
 end
 
 subsection non-linear solver
-  subsection VOF
+  subsection CLS
     set verbosity      = quiet
     set tolerance      = 1e-9
     set max iterations = 1
@@ -120,7 +120,7 @@ subsection linear solver
     set ilu preconditioner absolute tolerance = 1e-14
     set ilu preconditioner relative tolerance = 1.00
   end
-  subsection VOF
+  subsection CLS
     set verbosity                             = quiet
     set method                                = gmres
     set max iters                             = 300

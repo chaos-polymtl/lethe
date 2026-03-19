@@ -61,16 +61,16 @@ subsection lagrangian physical properties
   set g                        = 0.0, -9.81
   set number of particle types = 1
   subsection particle type 0
-    set size distribution type            = custom
-    set custom diameters                  = 0.0069 , 0.0089
-    set custom volume fractions           = 0.7   , 0.3
-    set number of particles               = 3000
-    set density particles                 = 1056
-    set young modulus particles           = 4000000
-    set poisson ratio particles           = 0.49
-    set restitution coefficient particles = 0.7
-    set friction coefficient particles    = 0.8
-    set rolling friction particles        = 0.3
+    set size distribution type                      = custom
+    set custom distribution diameters values        = 0.0069, 0.0089
+    set custom distribution diameters probabilities = 0.7   , 0.3
+    set number of particles                         = 3000
+    set density particles                           = 1056
+    set young modulus particles                     = 4000000
+    set poisson ratio particles                     = 0.49
+    set restitution coefficient particles           = 0.7
+    set friction coefficient particles              = 0.8
+    set rolling friction particles                  = 0.3
   end
   set young modulus wall           = 4000000
   set poisson ratio wall           = 0.49

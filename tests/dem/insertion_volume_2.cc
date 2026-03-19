@@ -36,21 +36,26 @@ test()
   MappingQ<dim>            mapping(1);
   DEMSolverParameters<dim> dem_parameters;
 
+  InsertionInfo<dim>           &insert_info = dem_parameters.insertion_info;
+  LagrangianPhysicalProperties &lpp =
+    dem_parameters.lagrangian_physical_properties;
+
   // Defining simulation general parameters
-  dem_parameters.insertion_info.insertion_box_point_1 = {-0.05, -0.05, -0.05};
-  dem_parameters.insertion_info.insertion_box_point_2 = {0.05, 0.05, 0.05};
-  dem_parameters.insertion_info.direction_sequence    = {0, 1, 2};
-  dem_parameters.insertion_info.inserted_this_step    = 10;
-  dem_parameters.insertion_info.distance_threshold    = 2;
-  dem_parameters.lagrangian_physical_properties.particle_type_number = 1;
-  dem_parameters.lagrangian_physical_properties.distribution_type.push_back(
-    Parameters::Lagrangian::SizeDistributionType::uniform);
-  dem_parameters.lagrangian_physical_properties.particle_average_diameter[0] =
-    0.005;
-  dem_parameters.lagrangian_physical_properties.density_particle[0] = 2500;
-  dem_parameters.lagrangian_physical_properties.number[0]           = 10;
-  dem_parameters.insertion_info.insertion_maximum_offset            = 0;
-  dem_parameters.insertion_info.seed_for_insertion                  = 19;
+  // Insertion info
+  insert_info.insertion_box_point_1    = {-0.05, -0.05, -0.05};
+  insert_info.insertion_box_point_2    = {0.05, 0.05, 0.05};
+  insert_info.direction_sequence       = {0, 1, 2};
+  insert_info.inserted_this_step       = 10;
+  insert_info.distance_threshold       = 2;
+  insert_info.insertion_maximum_offset = 0;
+  insert_info.seed_for_insertion       = 19;
+
+  // Lagrangian physical properties
+  lpp.particle_type_number = 1;
+  lpp.distribution_type.push_back(SizeDistributionType::uniform);
+  lpp.particle_average_diameter.push_back(0.005);
+  lpp.density_particle.push_back(2500);
+  lpp.number.push_back(10);
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(

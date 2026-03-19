@@ -82,7 +82,8 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set type                = kelly
+  set type                = adaptive
+  set error estimator     = kelly
   set variable            = tracer
   set fraction type       = fraction
   set fraction coarsening = 0

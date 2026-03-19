@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2024, 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -11,15 +11,15 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = bdf1
-  set time end          = 0.005
-  set time step         = 0.001
-  set adapt             = false
-  set number mesh adapt = 0
-  set output name       = droplet_marangoni
-  set output frequency  = 0
-  set subdivision       = 1
-  set log precision     = 5
+  set method                         = bdf1
+  set time end                       = 0.005
+  set time step                      = 0.001
+  set adapt time step to respect CFL = false
+  set number mesh adapt              = 0
+  set output name                    = droplet_marangoni
+  set output frequency               = 0
+  set subdivision                    = 1
+  set log precision                  = 5
 end
 
 #---------------------------------------------------
@@ -27,10 +27,10 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF            = true
-  set heat transfer  = true
-  set buoyancy force = true
-  set fluid dynamics = true
+  set cls                    = true
+  set heat transfer          = true
+  set thermal buoyancy force = true
+  set fluid dynamics         = true
 end
 
 #---------------------------------------------------
@@ -38,20 +38,20 @@ end
 #---------------------------------------------------
 
 subsection stabilization
-  set vof dcdd stabilization = false
+  set cls dcdd stabilization = false
 end
 
 #---------------------------------------------------
-# VOF
+# CLS
 #---------------------------------------------------
 
-subsection VOF
+subsection CLS
   subsection surface tension force
-    set enable                                   = true
-    set phase fraction gradient diffusion factor = 4
-    set curvature diffusion factor               = 1
-    set output auxiliary fields                  = true
-    set enable marangoni effect                  = true
+    set enable                                    = true
+    set phase indicator gradient diffusion factor = 4
+    set curvature diffusion factor                = 1
+    set output auxiliary fields                   = true
+    set enable marangoni effect                   = true
   end
 end
 
@@ -75,7 +75,7 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function expression = if ((x-0.04) * (x-0.04) + (y-0.04) * (y-0.04) < 0.02 * 0.02 , 1, if ((x-0.04) * (x-0.04) + (y-0.04) * (y-0.04) < 0.023 * 0.023 , 7.67 - 333.33 * sqrt((x-0.04) * (x-0.04) + (y-0.04) * (y-0.04)) , 0))
   end
 end
@@ -100,13 +100,13 @@ subsection physical properties
     set density              = 100
     set kinematic viscosity  = 0.01
     set thermal conductivity = 60
-    set thermal expansion    = 1
+    set thermal expansion    = 1e-2
   end
   subsection fluid 1
     set density              = 1000
     set kinematic viscosity  = 0.01
     set thermal conductivity = 60
-    set thermal expansion    = 1
+    set thermal expansion    = 1e-3
   end
 
   set number of material interactions = 1
@@ -190,7 +190,7 @@ subsection boundary conditions heat transfer
   end
 end
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number = 4
 end
 
@@ -199,7 +199,7 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-9
     set max iterations = 100
     set verbosity      = quiet
@@ -233,7 +233,7 @@ subsection linear solver
     set ilu preconditioner relative tolerance = 1.00
     set max krylov vectors                    = 4000
   end
-  subsection VOF
+  subsection CLS
     set verbosity                             = quiet
     set method                                = gmres
     set max iters                             = 2000

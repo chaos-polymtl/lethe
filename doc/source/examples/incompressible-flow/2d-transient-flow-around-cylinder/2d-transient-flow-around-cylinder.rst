@@ -95,7 +95,8 @@ While the discretization in the wake of the cylinder has less impact on the forc
 .. code-block:: text
 
     subsection mesh adaptation
-      set type                 = kelly
+      set type                 = adaptive 
+      set error estimator      = kelly
       set variable             = pressure
       set fraction type        = number
       set max number elements  = 70000
@@ -160,7 +161,7 @@ The Reynolds number must be high enough to capture a transient flow and study th
 Linear Solver
 ~~~~~~~~~~~~~
 
-For 2D problems, the ``amg`` preconditioner is an adequate preconditioner. It is especially robust for the first few time-steps for which the velocity and pressure profile is not well-defined because the initial conditions are not mass conservative.
+For 2D problems, the ``amg`` preconditioner is an adequate preconditioner. It is especially robust for the first few time steps for which the velocity and pressure profile is not well-defined because the initial conditions are not mass conservative.
 
 .. code-block:: text
 
@@ -311,7 +312,7 @@ Possibilities for Extension
 - Study the vortex shedding of other bluff bodies.
 - Increase the Reynolds number to study a completely turbulent wake and the drag crisis phenomenon.
 - Repeat the same example in 3D for a cylinder/sphere and study the effect on the drag and lift forces.
-- Investigate the impact of the time-step and the time-stepping scheme (e.g., bdf 3)
+- Investigate the impact of the time step and the time-stepping scheme (e.g., bdf 3)
 
 
 ----------

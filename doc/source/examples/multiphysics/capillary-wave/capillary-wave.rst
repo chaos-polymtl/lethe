@@ -2,7 +2,7 @@
 Capillary Wave
 ================================
 
-This example simulates the damping of a small amplitude capillary wave for different time-steps allowing us to study the capillary time-step constraint. The problem is inspired by the test case of Denner *et al.* [#denner2022]_
+This example simulates the damping of a small amplitude capillary wave for different time steps allowing us to study the capillary time-step constraint. The problem is inspired by the test case of Denner *et al.* [#denner2022]_
 
 ****
 
@@ -11,7 +11,7 @@ Features
 --------
 
 - Solver: ``lethe-fluid`` 
-- Volume of fluid (VOF)
+- Conservative Level-Set (CLS)
 - Unsteady problem handled by an adaptive BDF2 time-stepping scheme
 - Bash scripts to write, launch, and postprocess multiple cases
 - Python scripts for postprocessing data
@@ -82,14 +82,14 @@ and the angular frequency simply becomes:
 .. math::
  \omega_\sigma = \sqrt{\frac{\sigma}{\hat{\rho}} \left(\frac{2\pi}{\lambda_\sigma}\right)^3}
 
-Since, the phase fraction (:math:`\phi`) is treated explicitly, the temporal resolution of the capillary wave leads to a Courant-Friedrichs-Lewy (CFL) condition, also known as the *capillary time-step constraint*:
+Since, the phase indicator (:math:`\phi`) is treated explicitly, the temporal resolution of the capillary wave leads to a Courant-Friedrichs-Lewy (CFL) condition, also known as the *capillary time-step constraint*:
 
 .. math::
   \Delta t_\sigma = \frac{\Delta x}{\sqrt{2} c_\sigma} = \sqrt{\frac{\hat{\rho}}{2\pi\sigma}{{\Delta x}^3}}
 
 with the shortest unambiguously resolved capillary wave having a wavelength of :math:`\lambda_\sigma = 2 \Delta x` [#denner2015]_.
 
-Therefore, in order to get stable simulation results, :math:`\Delta t < \Delta t_\sigma` should be respected. In this example, different time-steps will be used to explore the stability limit of Lethe's current implementation.
+Therefore, in order to get stable simulation results, :math:`\Delta t < \Delta t_\sigma` should be respected. In this example, different time steps will be used to explore the stability limit of Lethe's current implementation.
 
 ****
 
@@ -101,7 +101,7 @@ Simulation Control
 ~~~~~~~~~~~~~~~~~~
 Below, the ``simulation control`` subsection for the case of :math:`\Delta t \approx 0.95\Delta t_\sigma \approx 0.95(3.9 \times 10^{-9})\, \text{s}` is shown. For other cases, the ``time step`` value will change and accordingly the ``output frequency`` will also.
 
-The time integration is handled by a 2nd-order backward differentiation scheme (bdf2) with a constant time-step of :math:`\Delta t=3.7 \times 10^{-9} \, \text{s}`. To assess the stability of the simulation results, the wave is simulated for :math:`t_{\text{end}} = \frac{50}{\omega_\sigma} \approx 4.5 \times 10^{-5} \, \text{s}`.
+The time integration is handled by a 2nd-order backward differentiation scheme (bdf2) with a constant time step of :math:`\Delta t=3.7 \times 10^{-9} \, \text{s}`. To assess the stability of the simulation results, the wave is simulated for :math:`t_{\text{end}} = \frac{50}{\omega_\sigma} \approx 4.5 \times 10^{-5} \, \text{s}`.
 
 .. code-block:: text
 
@@ -117,12 +117,12 @@ The time integration is handled by a 2nd-order backward differentiation scheme (
 Multiphysics
 ~~~~~~~~~~~~
 
-The ``multiphysics`` subsection is used to enable the VOF solver.
+The ``multiphysics`` subsection is used to enable the CLS solver.
 
 .. code-block:: text
 
     subsection multiphysics
-      set VOF  = true
+      set CLS  = true
     end 
 
 Initial Conditions
@@ -137,7 +137,7 @@ In the ``initial conditions``, we define the initial height of the wave, such th
       subsection uvwp
         set Function expression = 0; 0; 0
       end
-      subsection VOF
+      subsection CLS
         set Function expression = if (y<=1e-6*cos(2*3.14159/1e-4*x), min(0.5-(y-1e-6*cos(2*3.14159/1e-4*x))/1e-6,1), max(0.5-(y-1e-6*cos(2*3.14159/1e-4*x))/1e-6,0))
         subsection projection step
           set enable           = true
@@ -163,12 +163,13 @@ In the ``mesh`` subsection, we define a subdivided hyper rectangle with appropri
 Mesh Adaptation
 ~~~~~~~~~~~~~~~~
 
-In the ``mesh adaptation`` subsection, we dynamically adapt the mesh using the ``phase`` as refinement ``variable``. We choose :math:`3` as the ``min refinement level`` and :math:`5` as the ``max refinement level``. We set ``initial refinement steps = 4`` to adapt the mesh to the initial value of the VOF field.
+In the ``mesh adaptation`` subsection, we dynamically adapt the mesh using the ``phase`` as refinement ``variable``. We choose :math:`3` as the ``min refinement level`` and :math:`5` as the ``max refinement level``. We set ``initial refinement steps = 4`` to adapt the mesh to the initial value of the CLS field.
 
 .. code-block:: text
 
     subsection mesh adaptation
-      set type                     = kelly
+      set type                     = adaptive 
+      set error estimator          = kelly
       set variable                 = phase
       set fraction type            = fraction
       set max refinement level     = 5
@@ -319,7 +320,7 @@ with ``./capillaryWaveData_rho_1_nu_5e-6_prosperetti.csv`` being the path to the
 Results for :math:`\Delta t = \mathrm{TSM} \times \Delta t_\sigma` with :math:`\mathrm{TSM} \in \{0.95,15,20\}`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A comparison figure for multiple time-steps can be generated using the ``capillary-wave-combined.py`` Python script:
+A comparison figure for multiple time steps can be generated using the ``capillary-wave-combined.py`` Python script:
 
 .. code-block:: text
   :class: copy-button
@@ -332,7 +333,7 @@ with ``./capillaryWaveData_rho_1_nu_5e-6_prosperetti.csv`` being the path to the
   Before running ``capillary-wave-combined.py``, data from individual cases must be extracted using ``capillary-wave-postprocess.py`` as shown in the subsection above.
 
 .. tip::
-  If you want to **prostprocess multiple cases consecutively and generate the comparison figure** in one entry, a Bash script (``capillary-wave-time-step-sensitivity-postprocess.sh``) is provided. Make sure that the file has executable permissions before calling it using:
+  If you want to **postprocess multiple cases consecutively and generate the comparison figure** in one entry, a Bash script (``capillary-wave-time-step-sensitivity-postprocess.sh``) is provided. Make sure that the file has executable permissions before calling it using:
 
   .. code-block:: text
       :class: copy-button
@@ -347,13 +348,13 @@ The following figure presents a comparison between the analytical results and th
 |  .. figure:: images/TSM_comparison_figure.png                                                                                |
 |     :align: center                                                                                                           |
 |     :width: 800                                                                                                              |
-|     :name: Comparison of wave amplitude evolutions for different time-steps for :math:`\mathrm{Oh=0.057}`                    |
+|     :name: Comparison of wave amplitude evolutions for different time steps for :math:`\mathrm{Oh=0.057}`                    |
 |                                                                                                                              |
-|     Comparison of wave relative amplitude evolutions for different time-steps for :math:`\mathrm{Oh=0.057}` at the interface |
+|     Comparison of wave relative amplitude evolutions for different time steps for :math:`\mathrm{Oh=0.057}` at the interface |
 |                                                                                                                              |
 +------------------------------------------------------------------------------------------------------------------------------+
 
-A pretty good agreement is obtained for the :math:`2` first simulations, demonstrating the accuracy and robustness of the VOF solver. The unexpected stability of the solution at :math:`\Delta t \approx 15\Delta t_\sigma` is most probably the consequence of the implicit PSPG and SUPG stabilizations in the Navier-Stokes equations acting as artificial viscosity terms. These artificial viscosities locally increase the Ohnesorge number :math:`\left( \mathrm{Oh} = \frac{\mu_0+\mu_1}{\sqrt{2\hat{\rho}\sigma\Delta x}} \sim \frac{\text{viscous forces}}{\sqrt{\text{inertia} \times \text{surface tension}}}\right)` near the interface which can be correlated to the stability of the simulation. As :math:`\mathrm{Oh}` increases, it was found that the simulation results remain stable at higher multiples of the capillary time-step constraint `[1, <https://doi.org/10.1016/j.jcp.2022.111128>`_ `2] <https://doi.org/10.1016/j.jcp.2015.01.021>`_.
+A pretty good agreement is obtained for the :math:`2` first simulations, demonstrating the accuracy and robustness of the CLS solver. The unexpected stability of the solution at :math:`\Delta t \approx 15\Delta t_\sigma` is most probably the consequence of the implicit PSPG and SUPG stabilizations in the Navier-Stokes equations acting as artificial viscosity terms. These artificial viscosities locally increase the Ohnesorge number :math:`\left( \mathrm{Oh} = \frac{\mu_0+\mu_1}{\sqrt{2\hat{\rho}\sigma\Delta x}} \sim \frac{\text{viscous forces}}{\sqrt{\text{inertia} \times \text{surface tension}}}\right)` near the interface which can be correlated to the stability of the simulation. As :math:`\mathrm{Oh}` increases, it was found that the simulation results remain stable at higher multiples of the capillary time-step constraint `[1, <https://doi.org/10.1016/j.jcp.2022.111128>`_ `2] <https://doi.org/10.1016/j.jcp.2015.01.021>`_.
 
 By increasing the mesh resolution by an additional refinement, the :math:`\mathrm{Oh}` at the interface increases, therefore viscous effects increase and we get a more stable solution as seen below. However, we also see a slight negative phase shift.
 
@@ -361,9 +362,9 @@ By increasing the mesh resolution by an additional refinement, the :math:`\mathr
 |  .. figure:: images/TSM_comparison_figure_ref-6.png                                                                         |
 |     :align: center                                                                                                          |
 |     :width: 800                                                                                                             |
-|     :name: Comparison of wave amplitude evolutions for different time-steps for :math:`\mathrm{Oh=0.08}`                    |
+|     :name: Comparison of wave amplitude evolutions for different time steps for :math:`\mathrm{Oh=0.08}`                    |
 |                                                                                                                             |
-|     Comparison of wave relative amplitude evolutions for different time-steps for :math:`\mathrm{Oh=0.08}` at the interface |
+|     Comparison of wave relative amplitude evolutions for different time steps for :math:`\mathrm{Oh=0.08}` at the interface |
 |                                                                                                                             |
 +-----------------------------------------------------------------------------------------------------------------------------+
 

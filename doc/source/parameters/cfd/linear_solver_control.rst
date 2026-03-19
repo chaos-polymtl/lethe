@@ -2,7 +2,7 @@
 Linear Solver
 =============
 
-In this subsection, the control options of the linear solvers are specified. The default values for the linear solver parameters are given in the text box below. Lethe supports different physics (``fluid dynamics``, ``VOF``, ``heat transfer``, ``cahn hilliard``, ``tracer`` and ``void fraction``) and it is possible to specify linear solver parameters for each of them. The ``VOF algebraic interface reinitialization`` subequation has also its own subsection.
+In this subsection, the control options of the linear solvers are specified. The default values for the linear solver parameters are given in the text box below. Lethe supports different physics (``fluid dynamics``, ``CLS``, ``heat transfer``, ``cahn hilliard``, ``tracer`` and ``void fraction``) and it is possible to specify linear solver parameters for each of them. The ``CLS pde-based interface reinitialization`` subequation has also its own subsection.
 
 In the example below, only ``fluid dynamics`` is used, however, the same block can be used for other physics.
 
@@ -129,7 +129,7 @@ where :math:`R` is the residual vector and :math:`V` is the volume of the entire
 * ``preconditioner`` sets the type of preconditioning used for the linear solver. It can be either ``ilu`` for an Incomplete LU decomposition, ``amg`` for an Algebraic Multigrid, ``lsmg`` for a Local Smoothing Multigrid, or ``gcmg`` for a Global Coarsening Multigrid.
 
 .. warning::
-    Currently, the ``lethe-fluid-sharp`` solver makes it almost impossible to reach convergence with the ``amg`` preconditioner. Therefore, it is recommended to use ``ilu`` instead, even for fine meshes. In addition, the ``VOF``, ``heat transfer``, ``cahn hilliard`` and ``tracer`` physics only support ``ilu``.
+    Currently, the ``lethe-fluid-sharp`` solver makes it almost impossible to reach convergence with the ``amg`` preconditioner. Therefore, it is recommended to use ``ilu`` instead, even for fine meshes. In addition, the ``CLS``, ``heat transfer``, ``cahn hilliard`` and ``tracer`` physics only support ``ilu``.
 
 .. warning::
     Currently, the ``lsmg`` and ``gcmg`` preconditioners can only be used within the ``lethe-fluid-matrix-free`` application.
@@ -286,12 +286,13 @@ Different parameters for the main components of the two geometric multigrid algo
 .. tip::
   The ``mg int level`` option only works for the ``gcmg`` preconditioner. It allows to choose an intermediate level as coarse grid solver where a GMRES preconditioned by several multigrid v-cycles is used. The following parameters: ``set mg gmres max iterations``, ``set mg gmres tolerance`` and ``set mg gmres reduce`` can be used to set the desired number of maximum iterations, the absolute tolerance and the relative tolerance. 
 
-In addition, Lethe supports `p-multigrid` through the ``gcmg`` preconditioner. It can be used by specifying two additional parameters:
+In addition, Lethe supports `p-multigrid` through the ``gcmg`` preconditioner. It can be used by specifying the following additional parameters:
 
 .. code-block:: text
 
     set mg coarsening type             = p
     set mg p coarsening type           = decrease by one
+    set mg p min coarsening degree     = 1
 
 This multigrid preconditioner creates the different multigrid levels by keeping the mesh constant but reducing the polynomial degree `p` of the shape functions. Three strategies to create the `p-multigrid` levels can be used by specifying the ``mg p coarsening type`` parameter:
 
@@ -300,6 +301,8 @@ This multigrid preconditioner creates the different multigrid levels by keeping 
 * ``decrease by one``: decrease the polynomial degree by one for every level.
 
 * ``go to one``: decrease the polynomial degree to one directly.
+
+When using ``mg p coarsening type = decrease by one``, the lowest level has a first order polynomial degree by default; this can be altered by modifying the parameter ``set mg p min coarsening degree``.
 
 In addition, Lethe supports hybrid strategies that combine h- and p-multigrid, and can be specified through the ``mg coarsening type`` parameter:
 

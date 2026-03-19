@@ -1,7 +1,7 @@
-# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# This application-test tests the algebraic interface reinitialization of
+# This application-test tests the PDE-based interface reinitialization of
 # previous solutions for a BDF2 time integration scheme. A regularization
 # frequency higher than 1 is used to ensure that the mechanism for regularizing
 # previous solutions is used. The test simulates a circle advected to the left
@@ -29,7 +29,7 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set VOF            = true
+  set cls            = true
   set fluid dynamics = false
 end
 
@@ -53,7 +53,7 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0.025; 0; 0
   end
-  subsection VOF
+  subsection CLS
     set Function expression = if(((x*x+y*y)<=0.75^2), 1, 0)
     set smoothing type      = diffusive
     set diffusion factor    = 2
@@ -61,14 +61,14 @@ subsection initial conditions
 end
 
 #---------------------------------------------------
-# VOF
+# CLS
 #---------------------------------------------------
 
-subsection VOF
-  subsection interface regularization method
-    set type      = algebraic interface reinitialization
+subsection CLS
+  subsection interface reinitialization method
+    set type      = pde-based interface reinitialization
     set frequency = 4
-    subsection algebraic interface reinitialization
+    subsection PDE-based interface reinitialization
       set diffusivity multiplier = 0.6
     end
   end
@@ -102,7 +102,7 @@ subsection boundary conditions
   end
 end
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number = 1
 end
 
@@ -123,7 +123,7 @@ end
 subsection FEM
   set velocity order = 2
   set pressure order = 1
-  set VOF order      = 1
+  set cls order      = 1
 end
 
 #---------------------------------------------------
@@ -131,12 +131,12 @@ end
 #---------------------------------------------------
 
 subsection non-linear solver
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-9
     set max iterations = 30
     set verbosity      = quiet
   end
-  subsection VOF algebraic interface reinitialization
+  subsection CLS PDE-based interface reinitialization
     set tolerance      = 1e-9
     set max iterations = 30
     set verbosity      = quiet
@@ -160,14 +160,14 @@ subsection linear solver
     set minimum residual  = 1e-10
     set preconditioner    = ilu
   end
-  subsection VOF
+  subsection CLS
     set verbosity         = quiet
     set method            = gmres
     set relative residual = 1e-3
     set minimum residual  = 1e-10
     set preconditioner    = ilu
   end
-  subsection VOF algebraic interface reinitialization
+  subsection CLS PDE-based interface reinitialization
     set verbosity         = quiet
     set method            = gmres
     set relative residual = 1e-3

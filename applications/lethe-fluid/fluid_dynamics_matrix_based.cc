@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019, 2022-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019, 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include "solvers/fluid_dynamics_matrix_based.h"
@@ -63,9 +63,14 @@ main(int argc, char *argv[])
                                    "lethe-fluid",
                                    "lethe-fluid-nitsche"));
 
-          // Print parameters if needed
           if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
-            print_parameters_to_output_file(pcout, prm, file_name);
+            {
+              // Print comment message if there is one
+              print_comment_to_output_file(pcout, prm);
+
+              // Print parameters if needed
+              print_parameters_to_output_file(pcout, prm, file_name);
+            }
 
           FluidDynamicsMatrixBased<2> problem(NSparam);
           problem.solve();
@@ -93,9 +98,14 @@ main(int argc, char *argv[])
                                    "lethe-fluid",
                                    "lethe-fluid-nitsche"));
 
-          // Print parameters if needed
           if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
-            print_parameters_to_output_file(pcout, prm, file_name);
+            {
+              // Print comment message if there is one
+              print_comment_to_output_file(pcout, prm);
+
+              // Print parameters if needed
+              print_parameters_to_output_file(pcout, prm, file_name);
+            }
 
           FluidDynamicsMatrixBased<3> problem(NSparam);
           problem.solve();

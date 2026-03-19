@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_fluid_dynamics_vans_matrix_free_h
@@ -191,7 +191,7 @@ protected:
   assemble_system_rhs() override;
 
   /**
-   * @brief Finish the time-step and manage the time-step end for the void
+   * @brief Finish the time step and manage the end of the time step for the void
    * fraction.
    */
   virtual void

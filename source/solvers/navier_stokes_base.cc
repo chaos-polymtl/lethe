@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -787,8 +787,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh()
   if (refinement_step)
     {
       if (this->simulation_parameters.mesh_adaptation.type ==
-          Parameters::MeshAdaptation::Type::kelly)
-        refine_mesh_kelly();
+          Parameters::MeshAdaptation::Type::adaptive)
+        refine_mesh_adaptive();
 
       else if (this->simulation_parameters.mesh_adaptation.type ==
                Parameters::MeshAdaptation::Type::uniform)
@@ -804,214 +804,249 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
     {
       return;
     }
-  // Read the mesh that define the box use in this function
-  Triangulation<dim> box_to_refine;
-  if (this->simulation_parameters.mesh_box_refinement->box_mesh->type ==
-      Parameters::Mesh::Type::gmsh)
+
+  for (unsigned int i_box = 0;
+       i_box < this->simulation_parameters.mesh_box_refinement
+                 ->number_of_refinement_boxes;
+       ++i_box)
     {
-      if (this->simulation_parameters.mesh_box_refinement->box_mesh->simplex)
+      // Read the mesh that defines the box
+      Triangulation<dim> box_to_refine;
+      if ((*this->simulation_parameters.mesh_box_refinement
+              ->refinement_boxes_meshes)[i_box]
+            .type == Parameters::Mesh::Type::gmsh)
         {
-          Triangulation<dim> basetria(
-            Triangulation<dim>::limit_level_difference_at_vertices);
-
-          GridIn<dim> grid_in;
-          grid_in.attach_triangulation(basetria);
-          std::ifstream input_file(this->simulation_parameters
-                                     .mesh_box_refinement->box_mesh->file_name);
-
-          grid_in.read_msh(input_file);
-
-          // By default uses the METIS partitioner.
-          // A user parameter option could be made to choose a partitionner.
-          GridTools::partition_triangulation(0, basetria);
-
-
-          auto construction_data = TriangulationDescription::Utilities::
-            create_description_from_triangulation(basetria, mpi_communicator);
-
-          triangulation->create_triangulation(construction_data);
-        }
-      else
-        {
-          GridIn<dim> grid_in;
-          grid_in.attach_triangulation(box_to_refine);
-          std::ifstream input_file(this->simulation_parameters
-                                     .mesh_box_refinement->box_mesh->file_name);
-          grid_in.read_msh(input_file);
-        }
-    }
-  // Dealii grids
-  else if (this->simulation_parameters.mesh_box_refinement->box_mesh->type ==
-           Parameters::Mesh::Type::dealii)
-    {
-      if (this->simulation_parameters.mesh_box_refinement->box_mesh->simplex)
-        {
-          Triangulation<dim> temporary_quad_triangulation;
-          GridGenerator::generate_from_name_and_arguments(
-            temporary_quad_triangulation,
-            this->simulation_parameters.mesh_box_refinement->box_mesh
-              ->grid_type,
-            this->simulation_parameters.mesh_box_refinement->box_mesh
-              ->grid_arguments);
-
-          // initial refinement
-          const int initial_refinement =
-            this->simulation_parameters.mesh_box_refinement->box_mesh
-              ->initial_refinement;
-          temporary_quad_triangulation.refine_global(initial_refinement);
-          // flatten the triangulation
-          Triangulation<dim> flat_temp_quad_triangulation;
-          GridGenerator::flatten_triangulation(temporary_quad_triangulation,
-                                               flat_temp_quad_triangulation);
-
-          Triangulation<dim> temporary_tri_triangulation(
-            Triangulation<dim>::limit_level_difference_at_vertices);
-          GridGenerator::convert_hypercube_to_simplex_mesh(
-            flat_temp_quad_triangulation, temporary_tri_triangulation);
-
-          GridTools::partition_triangulation_zorder(
-            0, temporary_tri_triangulation);
-          GridTools::partition_multigrid_levels(temporary_tri_triangulation);
-
-          // extract relevant information from distributed triangulation
-          auto construction_data = TriangulationDescription::Utilities::
-            create_description_from_triangulation(
-              temporary_tri_triangulation,
-              mpi_communicator,
-              TriangulationDescription::Settings::
-                construct_multigrid_hierarchy);
-          box_to_refine.create_triangulation(construction_data);
-        }
-      else
-        {
-          GridGenerator::generate_from_name_and_arguments(
-            box_to_refine,
-            this->simulation_parameters.mesh_box_refinement->box_mesh
-              ->grid_type,
-            this->simulation_parameters.mesh_box_refinement->box_mesh
-              ->grid_arguments);
-        }
-    }
-
-  // Define a local dofhandler of this mesh. This won't be needed in later
-  // version of LetheGridTools
-
-  box_to_refine.refine_global(this->simulation_parameters.mesh_box_refinement
-                                ->box_mesh->initial_refinement);
-  DoFHandler<dim> box_to_refine_dof_handler(box_to_refine);
-  // Refine the number of time needed
-  for (unsigned int i = 0;
-       i < this->simulation_parameters.mesh_box_refinement->initial_refinement;
-       ++i)
-    {
-      if (dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-            this->triangulation.get()) == nullptr)
-        return;
-
-      auto &tria = *dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-        this->triangulation.get());
-
-      // Time monitoring
-      TimerOutput::Scope t(this->computing_timer, "Box refine");
-      this->pcout
-        << "Initial refinement in box - Step  " << i + 1 << " of "
-        << this->simulation_parameters.mesh_box_refinement->initial_refinement
-        << std::endl;
-
-
-      Vector<float> estimated_error_per_cell(tria.n_active_cells());
-      auto         &present_solution = *this->present_solution;
-
-      const auto &cell_iterator =
-        box_to_refine_dof_handler.active_cell_iterators();
-
-      // Find all the cells of the principal mesh that are partially contained
-      // inside the box_mesh and set them up for refinement.
-      for (const auto &cell : cell_iterator)
-        {
-          std::vector<typename DoFHandler<dim>::active_cell_iterator>
-            cell_to_refine;
-          cell_to_refine =
-            (LetheGridTools::find_cells_in_cells(*this->dof_handler, cell));
-          for (unsigned int j = 0; j < cell_to_refine.size(); ++j)
+          if ((*this->simulation_parameters.mesh_box_refinement
+                  ->refinement_boxes_meshes)[i_box]
+                .simplex)
             {
-              cell_to_refine[j]->set_refine_flag();
+              Triangulation<dim> base_tria(
+                Triangulation<dim>::limit_level_difference_at_vertices);
+
+              GridIn<dim> grid_in;
+              grid_in.attach_triangulation(base_tria);
+              std::ifstream input_file(
+                (*this->simulation_parameters.mesh_box_refinement
+                    ->refinement_boxes_meshes)[i_box]
+                  .file_name);
+
+              grid_in.read_msh(input_file);
+
+              // By default, uses the METIS partitioner.
+              // A user parameter option could be made to choose a partitioner.
+              GridTools::partition_triangulation(0, base_tria);
+
+
+              auto construction_data = TriangulationDescription::Utilities::
+                create_description_from_triangulation(base_tria,
+                                                      mpi_communicator);
+
+              triangulation->create_triangulation(construction_data);
+            }
+          else
+            {
+              GridIn<dim> grid_in;
+              grid_in.attach_triangulation(box_to_refine);
+              std::ifstream input_file(
+                (*this->simulation_parameters.mesh_box_refinement
+                    ->refinement_boxes_meshes)[i_box]
+                  .file_name);
+              grid_in.read_msh(input_file);
+            }
+        }
+      // deal.II grids
+      else if ((*this->simulation_parameters.mesh_box_refinement
+                   ->refinement_boxes_meshes)[i_box]
+                 .type == Parameters::Mesh::Type::dealii)
+        {
+          if ((*this->simulation_parameters.mesh_box_refinement
+                  ->refinement_boxes_meshes)[i_box]
+                .simplex)
+            {
+              Triangulation<dim> temporary_quad_triangulation;
+              GridGenerator::generate_from_name_and_arguments(
+                temporary_quad_triangulation,
+                (*this->simulation_parameters.mesh_box_refinement
+                    ->refinement_boxes_meshes)[i_box]
+                  .grid_type,
+                (*this->simulation_parameters.mesh_box_refinement
+                    ->refinement_boxes_meshes)[i_box]
+                  .grid_arguments);
+
+              // Apply mesh transformation (Scaling, translation, then rotation)
+              apply_mesh_transformation(
+                (*this->simulation_parameters.mesh_box_refinement
+                    ->refinement_boxes_meshes)[i_box],
+                temporary_quad_triangulation);
+
+              // Apply initial refinement
+              const int initial_refinement =
+                (*this->simulation_parameters.mesh_box_refinement
+                    ->refinement_boxes_meshes)[i_box]
+                  .initial_refinement;
+              temporary_quad_triangulation.refine_global(initial_refinement);
+              // flatten the triangulation
+              Triangulation<dim> flat_temp_quad_triangulation;
+              GridGenerator::flatten_triangulation(
+                temporary_quad_triangulation, flat_temp_quad_triangulation);
+
+              Triangulation<dim> temporary_tri_triangulation(
+                Triangulation<dim>::limit_level_difference_at_vertices);
+              GridGenerator::convert_hypercube_to_simplex_mesh(
+                flat_temp_quad_triangulation, temporary_tri_triangulation);
+
+              GridTools::partition_triangulation_zorder(
+                0, temporary_tri_triangulation);
+              GridTools::partition_multigrid_levels(
+                temporary_tri_triangulation);
+
+              // Extract relevant information from distributed triangulation
+              auto construction_data = TriangulationDescription::Utilities::
+                create_description_from_triangulation(
+                  temporary_tri_triangulation,
+                  mpi_communicator,
+                  TriangulationDescription::Settings::
+                    construct_multigrid_hierarchy);
+              box_to_refine.create_triangulation(construction_data);
+            }
+          else // Quad mesh
+            {
+              GridGenerator::generate_from_name_and_arguments(
+                box_to_refine,
+                (*this->simulation_parameters.mesh_box_refinement
+                    ->refinement_boxes_meshes)[i_box]
+                  .grid_type,
+                (*this->simulation_parameters.mesh_box_refinement
+                    ->refinement_boxes_meshes)[i_box]
+                  .grid_arguments);
+
+              // Apply mesh transformation (Scaling, translation, then rotation)
+              apply_mesh_transformation(
+                (*this->simulation_parameters.mesh_box_refinement
+                    ->refinement_boxes_meshes)[i_box],
+                box_to_refine);
             }
         }
 
-      tria.prepare_coarsening_and_refinement();
-
-      // Solution transfer objects for all the solutions
-      SolutionTransfer<dim, VectorType> solution_transfer(*this->dof_handler,
-                                                          true);
-      std::vector<SolutionTransfer<dim, VectorType>>
-        previous_solutions_transfer;
-      // Important to reserve to prevent pointer dangling
-      previous_solutions_transfer.reserve(previous_solutions->size());
-      for (unsigned int i = 0; i < previous_solutions->size(); ++i)
+      // Define a local DoFHandler of this mesh. This won't be needed in later
+      // versions of LetheGridTools
+      box_to_refine.refine_global(
+        (*this->simulation_parameters.mesh_box_refinement
+            ->refinement_boxes_meshes)[i_box]
+          .initial_refinement);
+      DoFHandler<dim> box_to_refine_dof_handler(box_to_refine);
+      // Refine the number of time needed
+      for (unsigned int i = 0;
+           i < this->simulation_parameters.mesh_box_refinement
+                 ->box_additional_refinements[i_box];
+           ++i)
         {
-          previous_solutions_transfer.emplace_back(
-            SolutionTransfer<dim, VectorType>(*this->dof_handler, true));
+          if (dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+                this->triangulation.get()) == nullptr)
+            return;
+
+          auto &tria =
+            *dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+              this->triangulation.get());
+
+          // Time monitoring
+          TimerOutput::Scope t(this->computing_timer, "Box refine");
+          this->pcout << "Initial refinement in box " << i_box << " - Step  "
+                      << i + 1 << " of "
+                      << this->simulation_parameters.mesh_box_refinement
+                           ->box_additional_refinements[i_box]
+                      << std::endl;
+
+
+          auto &present_solution = *this->present_solution;
+
+          const auto &cell_iterator =
+            box_to_refine_dof_handler.active_cell_iterators();
+
+          // Find all the cells of the principal mesh that are partially
+          // contained inside the box mesh and set them up for refinement.
+          for (const auto &cell : cell_iterator)
+            {
+              std::vector<typename DoFHandler<dim>::active_cell_iterator>
+                cell_to_refine;
+              cell_to_refine =
+                (LetheGridTools::find_cells_in_cells(*this->dof_handler, cell));
+              for (unsigned int j = 0; j < cell_to_refine.size(); ++j)
+                {
+                  cell_to_refine[j]->set_refine_flag();
+                }
+            }
+
+          tria.prepare_coarsening_and_refinement();
+
+          // Solution transfer objects for all the solutions
+          SolutionTransfer<dim, VectorType> solution_transfer(
+            *this->dof_handler, true);
+          std::vector<SolutionTransfer<dim, VectorType>>
+            previous_solutions_transfer;
+          // Important to reserve to prevent pointer dangling
+          previous_solutions_transfer.reserve(previous_solutions->size());
+          for (unsigned int p = 0; p < previous_solutions->size(); ++p)
+            {
+              previous_solutions_transfer.emplace_back(
+                SolutionTransfer<dim, VectorType>(*this->dof_handler, true));
+              if constexpr (std::is_same_v<
+                              VectorType,
+                              LinearAlgebra::distributed::Vector<double>>)
+                (*previous_solutions)[p].update_ghost_values();
+              previous_solutions_transfer[p]
+                .prepare_for_coarsening_and_refinement(
+                  (*previous_solutions)[p]);
+            }
+
           if constexpr (std::is_same_v<
                           VectorType,
                           LinearAlgebra::distributed::Vector<double>>)
-            (*previous_solutions)[i].update_ghost_values();
-          previous_solutions_transfer[i].prepare_for_coarsening_and_refinement(
-            (*previous_solutions)[i]);
+            present_solution.update_ghost_values();
+          solution_transfer.prepare_for_coarsening_and_refinement(
+            present_solution);
+
+          multiphysics->prepare_for_mesh_adaptation();
+          if (this->simulation_parameters.post_processing
+                .calculate_average_velocities)
+            average_velocities->prepare_for_mesh_adaptation();
+
+          tria.execute_coarsening_and_refinement();
+          this->setup_dofs();
+
+          // Set up the vectors for the transfer
+          VectorType tmp = init_temporary_vector();
+
+          // Interpolate the solution at time and previous time
+          solution_transfer.interpolate(tmp);
+
+          // Distribute constraints
+          auto &nonzero_constraints = this->nonzero_constraints;
+          nonzero_constraints.distribute(tmp);
+
+          // Fix on the new mesh
+          present_solution = tmp;
+
+          for (unsigned int i = 0; i < previous_solutions->size(); ++i)
+            {
+              VectorType tmp_previous_solution = init_temporary_vector();
+              previous_solutions_transfer[i].interpolate(tmp_previous_solution);
+              nonzero_constraints.distribute(tmp_previous_solution);
+              (*previous_solutions)[i] = tmp_previous_solution;
+            }
+
+          multiphysics->post_mesh_adaptation();
+          if (this->simulation_parameters.post_processing
+                .calculate_average_velocities)
+            average_velocities->post_mesh_adaptation();
         }
-
-      SolutionTransfer<dim, VectorType> solution_transfer_m1(*this->dof_handler,
-                                                             true);
-      SolutionTransfer<dim, VectorType> solution_transfer_m2(*this->dof_handler,
-                                                             true);
-      SolutionTransfer<dim, VectorType> solution_transfer_m3(*this->dof_handler,
-                                                             true);
-
-      if constexpr (std::is_same_v<VectorType,
-                                   LinearAlgebra::distributed::Vector<double>>)
-        present_solution.update_ghost_values();
-      solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
-
-      multiphysics->prepare_for_mesh_adaptation();
-      if (this->simulation_parameters.post_processing
-            .calculate_average_velocities)
-        average_velocities->prepare_for_mesh_adaptation();
-
-      tria.execute_coarsening_and_refinement();
-      this->setup_dofs();
-
-      // Set up the vectors for the transfer
-      VectorType tmp = init_temporary_vector();
-
-      // Interpolate the solution at time and previous time
-      solution_transfer.interpolate(tmp);
-
-      // Distribute constraints
-      auto &nonzero_constraints = this->nonzero_constraints;
-      nonzero_constraints.distribute(tmp);
-
-      // Fix on the new mesh
-      present_solution = tmp;
-
-      for (unsigned int i = 0; i < previous_solutions->size(); ++i)
-        {
-          VectorType tmp_previous_solution = init_temporary_vector();
-          previous_solutions_transfer[i].interpolate(tmp_previous_solution);
-          nonzero_constraints.distribute(tmp_previous_solution);
-          (*previous_solutions)[i] = tmp_previous_solution;
-        }
-
-      multiphysics->post_mesh_adaptation();
-      if (this->simulation_parameters.post_processing
-            .calculate_average_velocities)
-        average_velocities->post_mesh_adaptation();
     }
 }
 
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
+NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_adaptive()
 {
   if (dynamic_cast<parallel::distributed::Triangulation<dim> *>(
         this->triangulation.get()) == nullptr)
@@ -1055,6 +1090,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   for (const std::pair<const Variable, Parameters::MultipleAdaptationParameters>
          &ivar : this->simulation_parameters.mesh_adaptation.variables)
     {
+      Parameters::MultipleAdaptationParameters::ErrorEstimator
+             error_indicator_type   = ivar.second.error_estimator;
       double ivar_coarsening_factor = ivar.second.coarsening_fraction;
       if (this->simulation_parameters.mesh_adaptation
             .mesh_controller_is_enabled)
@@ -1062,6 +1099,13 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
 
       if (ivar.first == Variable::pressure)
         {
+          AssertThrow(
+            error_indicator_type ==
+              Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly,
+            ExcMessage(
+              "For the pressure variable, only the Kelly error estimator is "
+              "available."));
+
           KellyErrorEstimator<dim>::estimate(
             *this->get_mapping(),
             *this->dof_handler,
@@ -1074,6 +1118,13 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
         }
       else if (ivar.first == Variable::velocity)
         {
+          AssertThrow(
+            error_indicator_type ==
+              Parameters::MultipleAdaptationParameters::ErrorEstimator::kelly,
+            ExcMessage(
+              "For the velocity variable, only the Kelly error estimator is "
+              "available."));
+
           KellyErrorEstimator<dim>::estimate(
             *this->get_mapping(),
             *this->dof_handler,
@@ -1087,7 +1138,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
       else
         {
           // refine_mesh on an auxiliary physic parameter
-          multiphysics->compute_kelly(ivar, estimated_error_per_cell);
+          multiphysics->compute_error_estimate(ivar, estimated_error_per_cell);
         }
 
       if (this->simulation_parameters.mesh_adaptation.fractionType ==
@@ -2071,11 +2122,23 @@ NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar_operators()
   TimerOutput::Scope t(this->computing_timer, "Reinit mortar operators");
 
   // Create mortar manager
-  this->mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
-    *this->cell_quadrature,
-    *this->get_mapping(),
-    *this->dof_handler,
-    this->simulation_parameters.mortar_parameters);
+  if (this->simulation_parameters.mortar_parameters.interface_type ==
+      Parameters::Mortar<dim>::InterfaceType::circular)
+    this->mortar_manager = std::make_shared<MortarManagerCircle<dim>>(
+      *this->cell_quadrature,
+      *this->get_mapping(),
+      *this->dof_handler,
+      this->simulation_parameters.mortar_parameters);
+  else if (this->simulation_parameters.mortar_parameters.interface_type ==
+           Parameters::Mortar<dim>::InterfaceType::linear)
+    this->mortar_manager = std::make_shared<MortarManagerLinear<dim>>(
+      *this->cell_quadrature,
+      *this->get_mapping(),
+      *this->dof_handler,
+      this->simulation_parameters.mortar_parameters);
+  else
+    AssertThrow(false, ExcMessage("Invalid mortar interface type."));
+
 
   // Create mortar coupling evaluator
   this->mortar_coupling_evaluator =
@@ -2105,6 +2168,19 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_rotor_mapping(
   if (!this->simulation_parameters.mortar_parameters.enable)
     return;
 
+  if ((simulation_parameters.mortar_parameters.verbosity ==
+         Parameters::Verbosity::verbose ||
+       simulation_parameters.mortar_parameters.verbosity ==
+         Parameters::Verbosity::extra_verbose) &&
+      !is_first)
+    {
+      announce_string(this->pcout, "Mortar Interface");
+      if (simulation_parameters.mortar_parameters.verbosity ==
+          Parameters::Verbosity::extra_verbose)
+        mortar_workload_imbalance(*this->triangulation,
+                                  this->simulation_parameters.mortar_parameters,
+                                  this->pcout);
+    }
   TimerOutput::Scope t(this->computing_timer, "Rotate rotor mapping");
 
   // Get updated rotation angle (radians)
@@ -2121,13 +2197,14 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_rotor_mapping(
     simulation_parameters.mortar_parameters.rotor_angular_velocity->value(
       Point<dim>());
 
-  if (simulation_parameters.mortar_parameters.verbosity ==
-        Parameters::Verbosity::verbose &&
+  if ((simulation_parameters.mortar_parameters.verbosity ==
+         Parameters::Verbosity::verbose ||
+       simulation_parameters.mortar_parameters.verbosity ==
+         Parameters::Verbosity::extra_verbose) &&
       !is_first)
     {
-      this->pcout << "Mortar - Rotor grid angle is: " << rotation_angle
-                  << " rad \n"
-                  << "         Rotor grid velocity is: " << angular_velocity
+      this->pcout << "Rotor grid angle:    " << rotation_angle << " rad \n"
+                  << "Rotor grid velocity: " << angular_velocity
                   << " rad/time \n"
                   << std::endl;
     }
@@ -2136,17 +2213,26 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_rotor_mapping(
   this->mapping_cache =
     std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
 
-  LetheGridTools::rotate_mapping(
-    *this->dof_handler,
-    *this->mapping_cache,
-    *this->mapping,
-    std::get<1>(compute_n_subdivisions_and_radius(
-      *this->triangulation,
+  // Rotate mapping only in the case of a circular mortar interface
+  if (this->simulation_parameters.mortar_parameters.interface_type ==
+      Parameters::Mortar<dim>::InterfaceType::circular)
+    LetheGridTools::rotate_mapping(
+      *this->dof_handler,
+      *this->mapping_cache,
       *this->mapping,
-      this->simulation_parameters.mortar_parameters))[0],
-    rotation_angle,
-    this->simulation_parameters.mortar_parameters.center_of_rotation,
-    this->simulation_parameters.mortar_parameters.rotation_axis);
+      std::get<0>(compute_interface_dimensions_circular(
+        *this->triangulation,
+        *this->mapping,
+        this->simulation_parameters.mortar_parameters))[0],
+      rotation_angle,
+      this->simulation_parameters.mortar_parameters.center_of_rotation,
+      this->simulation_parameters.mortar_parameters.rotation_axis);
+  else if (this->simulation_parameters.mortar_parameters.interface_type ==
+           Parameters::Mortar<dim>::InterfaceType::linear)
+    this->mapping_cache->initialize(*this->mapping,
+                                    this->dof_handler->get_triangulation());
+  else
+    AssertThrow(false, ExcMessage("Invalid mortar interface type."));
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -2690,13 +2776,16 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
   // that the objects still exist when the write output of DataOut is called
   // Regular discontinuous postprocessors
   // They are created as shared pointers to outlive the function
-  std::shared_ptr<QCriterionPostprocessor<dim>> qcriterion =
-    std::make_shared<QCriterionPostprocessor<dim>>();
-  solution_output_structs.emplace_back(
-    std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
-    *this->dof_handler,
-    solution,
-    qcriterion);
+  if (this->simulation_parameters.post_processing.output_q_criterion)
+    {
+      std::shared_ptr<QCriterionPostprocessor<dim>> qcriterion =
+        std::make_shared<QCriterionPostprocessor<dim>>();
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
+        *this->dof_handler,
+        solution,
+        qcriterion);
+    }
 
   std::shared_ptr<DivergencePostprocessor<dim>> divergence =
     std::make_shared<DivergencePostprocessor<dim>>();
@@ -2706,13 +2795,27 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
     solution,
     divergence);
 
-  std::shared_ptr<VorticityPostprocessor<dim>> vorticity =
-    std::make_shared<VorticityPostprocessor<dim>>();
-  solution_output_structs.emplace_back(
-    std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
-    *this->dof_handler,
-    solution,
-    vorticity);
+  if (this->simulation_parameters.post_processing.output_velocity_gradient)
+    {
+      std::shared_ptr<GradientPostprocessor<dim>> gradient =
+        std::make_shared<GradientPostprocessor<dim>>();
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
+        *this->dof_handler,
+        solution,
+        gradient);
+    }
+
+  if (this->simulation_parameters.post_processing.output_vorticity)
+    {
+      std::shared_ptr<VorticityPostprocessor<dim>> vorticity =
+        std::make_shared<VorticityPostprocessor<dim>>();
+      solution_output_structs.emplace_back(
+        std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
+        *this->dof_handler,
+        solution,
+        vorticity);
+    }
 
   // Get physical properties models
   std::vector<std::shared_ptr<DensityModel>> density_models =

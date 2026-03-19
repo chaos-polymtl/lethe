@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -884,8 +884,8 @@ FluidDynamicsNitsche<dim, spacedim>::refine_mesh()
 
 
       if (this->simulation_parameters.mesh_adaptation.type ==
-          Parameters::MeshAdaptation::Type::kelly)
-        this->refine_mesh_kelly();
+          Parameters::MeshAdaptation::Type::adaptive)
+        this->refine_mesh_adaptive();
 
       else if (this->simulation_parameters.mesh_adaptation.type ==
                Parameters::MeshAdaptation::Type::uniform)

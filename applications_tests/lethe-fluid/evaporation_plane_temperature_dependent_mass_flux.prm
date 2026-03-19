@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2023, 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -21,7 +21,7 @@ end
 
 subsection multiphysics
   set heat transfer  = true
-  set VOF            = true
+  set cls            = true
   set fluid dynamics = false
 end
 
@@ -44,7 +44,7 @@ subsection initial conditions
     set Function expression = 3300
   end
 
-  subsection VOF
+  subsection CLS
     set Function expression = if (y>0, 0, 1)
   end
 end
@@ -96,7 +96,7 @@ subsection boundary conditions heat transfer
   end
 end
 
-subsection boundary conditions VOF
+subsection boundary conditions CLS
   set number = 4
 end
 
@@ -140,7 +140,7 @@ end
 subsection analytical solution
   set enable    = true
   set verbosity = verbose
-  subsection VOF
+  subsection CLS
     set Function expression = if (y>0, 0, 1)
   end
   subsection temperature
@@ -158,7 +158,7 @@ subsection non-linear solver
     set max iterations = 100
     set verbosity      = quiet
   end
-  subsection VOF
+  subsection CLS
     set tolerance      = 1e-8
     set max iterations = 100
     set verbosity      = quiet
@@ -180,7 +180,7 @@ subsection linear solver
     set ilu preconditioner absolute tolerance = 1e-12
     set ilu preconditioner relative tolerance = 1.00
   end
-  subsection VOF
+  subsection CLS
     set verbosity                             = quiet
     set method                                = gmres
     set relative residual                     = 1e-3

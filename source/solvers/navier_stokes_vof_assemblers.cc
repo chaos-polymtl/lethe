@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -83,7 +83,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_matrix(
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
       // is steady or unsteady. In the unsteady case it includes the
-      // value of the time-step
+      // value of the time step
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
@@ -284,7 +284,7 @@ GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs(
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
       // is steady or unsteady. In the unsteady case it includes the
-      // value of the time-step
+      // value of the time step
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
@@ -661,7 +661,7 @@ GLSNavierStokesVOFAssemblerSTF<dim>::assemble_rhs(
         filtered_phase_gradient_value_q.norm();
 
       const Tensor<1, dim> normalized_phase_fraction_gradient =
-        phase_gradient_value_q / (phase_gradient_norm + DBL_MIN);
+        phase_gradient_value_q / (phase_gradient_norm + 1e-15);
 
       const double JxW_value = JxW[q];
 
@@ -738,7 +738,7 @@ GLSNavierStokesVOFAssemblerMarangoni<dim>::assemble_rhs(
         filtered_phase_gradient_value_q.norm();
 
       const Tensor<1, dim> normalized_phase_fraction_gradient =
-        phase_gradient_value_q / (phase_gradient_norm + DBL_MIN);
+        phase_gradient_value_q / (phase_gradient_norm + 1e-15);
 
       // Gather temperature gradient
       const Tensor<1, dim> temperature_gradient =
@@ -825,7 +825,7 @@ NavierStokesVOFAssemblerEvaporation<dim>::assemble_rhs(
         filtered_phase_gradient_value_q.norm();
 
       const Tensor<1, dim> normalized_phase_fraction_gradient =
-        phase_gradient_value_q / (phase_gradient_norm + DBL_MIN);
+        phase_gradient_value_q / (phase_gradient_norm + 1e-15);
 
 
       const double JxW_value = JxW[q];
@@ -934,7 +934,7 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_matrix(
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
       // is steady or unsteady. In the unsteady case it includes the
-      // value of the time-step
+      // value of the time step
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
@@ -1138,7 +1138,7 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
       // Calculation of the GLS stabilization parameter. The
       // stabilization parameter used is different if the simulation
       // is steady or unsteady. In the unsteady case it includes the
-      // value of the time-step
+      // value of the time step
       const double tau =
         this->simulation_control->get_assembly_method() ==
             Parameters::SimulationControl::TimeSteppingMethod::steady ?
@@ -1196,3 +1196,57 @@ GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>::assemble_rhs(
 
 template class GLSNavierStokesVOFAssemblerNonNewtonianCore<2>;
 template class GLSNavierStokesVOFAssemblerNonNewtonianCore<3>;
+
+template <int dim>
+void
+ThermalBuoyancyAssemblyVOF<dim>::assemble_matrix(
+  const NavierStokesScratchData<dim> & /*scratch_data*/,
+  StabilizedMethodsTensorCopyData<dim> & /*copy_data*/)
+{}
+
+template <int dim>
+void
+ThermalBuoyancyAssemblyVOF<dim>::assemble_rhs(
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Loop and quadrature information
+  const auto        &JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  auto &local_rhs       = copy_data.local_rhs;
+  auto &strong_residual = copy_data.strong_residual;
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Forcing term (gravity)
+      const Tensor<1, dim> &force = scratch_data.force[q];
+
+      const double density_thermal_expansion_eq =
+        scratch_data.density_thermal_expansion[q];
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      // Current temperature values
+      double current_temperature = scratch_data.temperature_values[q];
+
+      strong_residual[q] += force * density_thermal_expansion_eq *
+                            (current_temperature - reference_temperature);
+
+      // Assembly of the right-hand side
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_u_i = scratch_data.phi_u[q][i];
+
+          local_rhs(i) -= force * density_thermal_expansion_eq *
+                          (current_temperature - reference_temperature) *
+                          phi_u_i * JxW;
+        }
+    }
+}
+
+template class ThermalBuoyancyAssemblyVOF<2>;
+template class ThermalBuoyancyAssemblyVOF<3>;

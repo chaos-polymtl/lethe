@@ -101,8 +101,25 @@ namespace Parameters
     // end time specify. Both for fixed time step and adaptive time step.
     bool time_step_independent_of_end_time;
 
-    // Adaptative time stepping
-    bool adapt;
+    /**
+     * Boolean indicating if adaptive time-stepping is enabled.
+     * To enable it, enable either SimulationControl::adapt_with_cfl or
+     * SimulationControl::adapt_with_capillary_time_step_ratio.
+     *
+     * @remark By default, this is set to @p false since both
+     * SimulationControl::adapt_with_cfl and
+     * SimulationControl::adapt_with_capillary_time_step_ratio are set to
+     * @p false by default.
+     */
+    bool time_step_adaptation_required;
+
+    /**
+     * Boolean indicating if the CFL condition should be controlling the
+     * simulation time step.
+     *
+     * @remark By default, this is set to @p false.
+     */
+    bool adapt_with_cfl;
 
     // Max CFL
     double maxCFL;
@@ -111,23 +128,23 @@ namespace Parameters
     double max_dt;
 
     /**
-     * Boolean indicating if the capillary time-step constraint should be
-     * controlling the simulation time-step
+     * Boolean indicating if the capillary time-step ratio should be controlling
+     * the simulation time step
      *
      * @remark By default, this is set to @p false.
      */
-    bool respect_capillary_time_step_constraint;
+    bool adapt_with_capillary_time_step_ratio;
 
     /**
      * The capillary time-step ratio (CTR) corresponds to the imposed value for
-     * the ratio between the time-step and the capillary time-step constraint
-     * (Δt/Δt_σ) to be respected when
-     * SimulationControl::respect_capillary_time_step_constraint
+     * the ratio between the current time step and the capillary time-step
+     * constraint (Δt/Δt_σ) to be maximally respected when
+     * SimulationControl::adapt_with_capillary_time_step_ratio
      * is set to @p true.
      *
      * @remark By default, this is set to 1.
      */
-    double target_capillary_time_step_ratio;
+    double max_capillary_time_step_ratio;
 
     // Aimed tolerance at which simulation is stopped
     double stop_tolerance;
@@ -138,7 +155,7 @@ namespace Parameters
     // BDF startup time scaling
     double startup_timestep_scaling;
 
-    // True if the time-step should be overridden upon restart
+    // True if the time step should be overridden upon restart
     bool override_time_step_on_restart;
 
     // Number of mesh adaptation (steady simulations)
@@ -1149,6 +1166,15 @@ namespace Parameters
     /// prefix for the total volume output in cfd-dem simulation
     std::string phase_volumes_output_name;
 
+    /// Enable output of Q-criterion field
+    bool output_q_criterion;
+
+    /// Enable output of vorticity field
+    bool output_vorticity;
+
+    /// Enable output of velocity gradient field
+    bool output_velocity_gradient;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
@@ -1398,6 +1424,9 @@ namespace Parameters
     MGTransferGlobalCoarseningTools::PolynomialCoarseningSequenceType
       mg_p_coarsening_type;
 
+    /// Minimum polynomial degree for p coarsening sequence
+    unsigned int mg_p_min_coarsening_degree;
+
     /// MG smoother number of iterations
     int mg_smoother_iterations;
 
@@ -1474,8 +1503,7 @@ namespace Parameters
     {
       gmsh,
       dealii,
-      periodic_hills,
-      cylinder
+      lethe
     };
     Type type;
 
@@ -1539,6 +1567,13 @@ namespace Parameters
    */
   struct MultipleAdaptationParameters
   {
+    /// Error estimator for the variable
+    enum class ErrorEstimator : std::int8_t
+    {
+      kelly,
+      dpg
+    } error_estimator;
+
     // Coarsening fraction
     double coarsening_fraction;
 
@@ -1561,7 +1596,7 @@ namespace Parameters
     {
       none,
       uniform,
-      kelly
+      adaptive
     } type;
 
     /// Fields on which the mesh adaptation can be based
@@ -1573,7 +1608,7 @@ namespace Parameters
     Variable                     vars;
     MultipleAdaptationParameters var_adaptation_param;
 
-    // Decision factor for Kelly refinement (number or fraction)
+    /// Decision factor for adaptive refinement (number or fraction)
     enum class FractionType : std::int8_t
     {
       number,
@@ -1609,12 +1644,33 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  /**
+   * Container of the parameters for box refinements. The regions to refine can
+   * be described by either a GMSH or a deal.II mesh.
+   */
   struct MeshBoxRefinement
   {
-    // GMSH or dealii
-    std::shared_ptr<Mesh> box_mesh;
-    // Initial refinement level of primitive mesh contained in the box
-    unsigned int initial_refinement;
+    /// Number of boxes delimiting refinement regions
+    unsigned int number_of_refinement_boxes;
+
+    /**
+     * Maximum number of refinement boxes that can be defined by a user.
+     *
+     * @remark A maximal value has to be initialized to fill the vectors with
+     * parameter declarations.
+     */
+    const unsigned int max_number_of_refinement_boxes = 5;
+
+    /**
+     * Shared pointer of a vector of GMSH and deal.II meshes representing
+     * refinement areas.
+     */
+    std::shared_ptr<std::vector<Mesh>> refinement_boxes_meshes =
+      std::make_shared<std::vector<Mesh>>(max_number_of_refinement_boxes);
+
+    /// Vector of additional refinement values of the different boxes
+    std::vector<unsigned int> box_additional_refinements =
+      std::vector<unsigned int>(max_number_of_refinement_boxes);
 
     void
     declare_parameters(ParameterHandler &prm);
@@ -1892,6 +1948,12 @@ namespace Parameters
   {
     /// Indicates whether mortar elements are enabled
     bool enable;
+    /// Type of mortar interface
+    enum class InterfaceType : std::int8_t
+    {
+      circular,
+      linear
+    } interface_type;
     /// Mesh parameters for the rotor part
     std::shared_ptr<Mesh> rotor_mesh;
     /// Boundary ID # of the rotor at the rotor-stator interface

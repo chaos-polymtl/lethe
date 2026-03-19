@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include "solvers/time_harmonic_maxwell.h"
@@ -12,18 +12,18 @@
 #define _unused(x) ((void)(x))
 
 DeclException1(
-  BuoyancyWithoutFluidDynamicsError,
+  ThermalBuoyancyWithoutFluidDynamicsError,
   bool,
-  << std::boolalpha << "Buoyancy force is activated (" << arg1
+  << std::boolalpha << "Thermal buoyancy force is activated (" << arg1
   << "), while fluid dynamics is not activated (false)." << std::endl
-  << "Buoyancy force cannot be activated without activating fluid dynamics.");
+  << "Thermal buoyancy force cannot be activated without activating fluid dynamics.");
 
 DeclException1(
-  BuoyancyWithoutHeatTransferError,
+  ThermalBuoyancyWithoutHeatTransferError,
   bool,
-  << std::boolalpha << "Buoyancy force is activated (" << arg1
+  << std::boolalpha << "Thermal buoyancy force is activated (" << arg1
   << "), while heat transfer is not activated (false)." << std::endl
-  << "Buoyancy force cannot be activated without activating heat transfer.");
+  << "Thermal buoyancy force cannot be activated without activating heat transfer.");
 
 DeclException1(
   MarangoniWithoutFluidDynamicsError,
@@ -50,22 +50,30 @@ DeclException1(
   SurfaceTensionForceWithoutVOFError,
   bool,
   << std::boolalpha << "Surface tension force is activated (" << arg1
-  << "), while VOF is not activated (false)." << std::endl
-  << "Surface tension force cannot be activated without activating VOF.");
+  << "), while CLS is not activated (false)." << std::endl
+  << "Surface tension force cannot be activated without activating CLS.");
 
 DeclException1(
   MarangoniWithoutVOFError,
   bool,
   << std::boolalpha << "Marangoni effect is activated (" << arg1
-  << "), while VOF is not activated (false)." << std::endl
-  << "Marangoni effect cannot be activated without activating VOF.");
+  << "), while CLS is not activated (false)." << std::endl
+  << "Marangoni effect cannot be activated without activating CLS.");
 
 DeclException1(
   InterfaceSharpeningWithoutVOFError,
   bool,
   << std::boolalpha << "Interface sharpening is activated (" << arg1
-  << "), while VOF is not activated (false)." << std::endl
-  << "Interface sharpening cannot be activated without activating VOF.");
+  << "), while CLS is not activated (false)." << std::endl
+  << "Interface sharpening cannot be activated without activating CLS.");
+
+DeclExceptionMsg(CahnHilliardWithHeatTransferError,
+                 "Cahn-Hilliard and heat transfer are both activated. "
+                 "This combination is not currently supported.");
+
+DeclExceptionMsg(CahnHilliardWithThermalBuoyancyForceError,
+                 "Cahn-Hilliard and thermal buoyancy force are both activated. "
+                 "This combination is not currently supported.");
 
 template <int dim>
 MultiphysicsInterface<dim>::MultiphysicsInterface(
@@ -246,8 +254,9 @@ void
 MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
   const SimulationParameters<dim> &nsparam)
 {
-  bool buoyancy_force_enabled = nsparam.multiphysics.buoyancy_force;
-  bool heat_transfer_enabled  = nsparam.multiphysics.heat_transfer;
+  bool thermal_buoyancy_force_enabled =
+    nsparam.multiphysics.thermal_buoyancy_force;
+  bool heat_transfer_enabled = nsparam.multiphysics.heat_transfer;
   bool marangoni_effect_enabled =
     nsparam.multiphysics.vof_parameters.surface_tension_force
       .enable_marangoni_effect;
@@ -256,23 +265,25 @@ MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
   bool fluid_dynamics_enabled = nsparam.multiphysics.fluid_dynamics;
   bool interface_sharpening_enabled =
     nsparam.multiphysics.vof_parameters.regularization_method.sharpening.enable;
-  bool VOF_enabled = nsparam.multiphysics.VOF;
+  bool VOF_enabled           = nsparam.multiphysics.VOF;
+  bool cahn_hilliard_enabled = nsparam.multiphysics.cahn_hilliard;
 
   // To avoid getting unused parameter warning
-  _unused(buoyancy_force_enabled && heat_transfer_enabled &&
+  _unused(thermal_buoyancy_force_enabled && heat_transfer_enabled &&
           marangoni_effect_enabled && surface_tension_force_enabled &&
           fluid_dynamics_enabled && interface_sharpening_enabled &&
-          VOF_enabled);
+          VOF_enabled && cahn_hilliard_enabled);
 
-  // Dependence of buoyant force on fluid dynamics
-  AssertThrow(!(buoyancy_force_enabled == true &&
+  // Dependence of thermal buoyancy force on fluid dynamics
+  AssertThrow(!(thermal_buoyancy_force_enabled == true &&
                 fluid_dynamics_enabled == false),
-              BuoyancyWithoutFluidDynamicsError(buoyancy_force_enabled));
+              ThermalBuoyancyWithoutFluidDynamicsError(
+                thermal_buoyancy_force_enabled));
 
-  // Dependence of buoyant force on heat transfer
-  AssertThrow(!(buoyancy_force_enabled == true &&
-                heat_transfer_enabled == false),
-              BuoyancyWithoutHeatTransferError(buoyancy_force_enabled));
+  // Dependence of thermal buoyancy force on heat transfer
+  AssertThrow(
+    !(thermal_buoyancy_force_enabled == true && heat_transfer_enabled == false),
+    ThermalBuoyancyWithoutHeatTransferError(thermal_buoyancy_force_enabled));
 
   // Dependence of Marangoni effect on fluid dynamics
   AssertThrow(!(marangoni_effect_enabled == true &&
@@ -302,6 +313,15 @@ MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
   // Dependence of interface sharpening on VOF
   AssertThrow(!(interface_sharpening_enabled == true && VOF_enabled == false),
               InterfaceSharpeningWithoutVOFError(interface_sharpening_enabled));
+
+  // Cahn-Hilliard does not support heat transfer
+  AssertThrow(!(cahn_hilliard_enabled == true && heat_transfer_enabled == true),
+              CahnHilliardWithHeatTransferError());
+
+  // Cahn-Hilliard does not support thermal buoyancy force
+  AssertThrow(!(cahn_hilliard_enabled == true &&
+                thermal_buoyancy_force_enabled == true),
+              CahnHilliardWithThermalBuoyancyForceError());
 }
 
 template class MultiphysicsInterface<2>;
