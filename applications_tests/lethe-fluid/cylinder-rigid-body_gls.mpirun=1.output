@@ -11,6 +11,6 @@ Steady iteration:        1/1
 |  Torque summary                          |
 +------------------------------------------+
 Boundary ID    T_x       T_y       T_z    
-  0.000e+00 6.794e-12 1.566e-11 9.039e-13 
+          0 6.794e-12 1.566e-11 9.039e-13 
 cells error_velocity error_pressure 
  1312 5.297e-11    - 5.241e-11    - 
