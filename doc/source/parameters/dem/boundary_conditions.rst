@@ -12,7 +12,7 @@ In this subsection, the boundary conditions of the DEM simulation are defined. F
     # Total number of boundary motion
     set number of boundary conditions = 3
 
-    # For each motion, we need a separate subsection
+    # For each boundary condition, we need a separate subsection
     subsection boundary condition 0
       # ID of boundary
       set boundary id         = 0
@@ -44,22 +44,36 @@ In this subsection, the boundary conditions of the DEM simulation are defined. F
       set speed y     = 0
       set speed z     = 0
     end
+
+    # OR for periodic boundaries
+    subsection boundary condition 2
+      # Boundary type
+      set type               = periodic
+
+      # ID of principal boundary
+      set periodic id 0      = 3
+
+      # ID of associated periodic boundary
+      set periodic id 1      = 2
+
+      # Direction along axis separating the periodic boundary pair
+      set periodic direction = 1
   end
 
 * The ``number of boundary conditions`` parameter defines the number of desired boundary conditions to be specified. Note that if a boundary condition ``type`` is not defined explicitly, Lethe defines it as a fixed static wall.
 
-* For each boundary condition, we have to define a separate subsection. In the sample parameter list above, the ``number of boundary conditions`` is equal to 2. Hence, we need to define two subsections (``subsection boundary condition 0`` and ``subsection boundary condition 1``).
+* For each boundary condition, we have to define a separate subsection. In the sample parameter list above, the ``number of boundary conditions`` is equal to 3. Hence, we need to define three subsections (``subsection boundary condition 0``, ``subsection boundary condition 1`` and ``subsection boundary condition 2```).
 
-* The ``boundary id`` parameter specifies the boundary ID for which the boundary condition should be applied, periodic boundaries are an exception.
-
-* The ``periodic id 0`` and ``periodic id 1`` parameters specify the periodic boundaries ID for which the periodic boundary condition should be applied.
-
-.. note::
-        Only periodic boundaries which have co-linear normal vectors which align along one axis of the problem (e.g., x axis) are currently supported.
+* The ``boundary id`` parameter specifies the boundary ID for which the boundary condition should be applied. Periodic boundaries are an exception.
 
 * The ``type`` parameter specifies the type of the boundary condition. Acceptable types are: ``fixed_wall``, ``outlet``, ``rotational``, ``translational`` and ``periodic``. The default boundary condition type is ``fixed_wall``.
 
-* The ``periodic direction`` parameter specifies the perpendicular axis to the periodic boundaries.
+* The ``periodic id 0`` and ``periodic id 1`` parameters specify the periodic boundaries ID for which the periodic boundary condition should be applied. By convention, ``periodic id 0`` should correspond to the boundary ID for which the boundary is further along the coordinate axis (this is the principal boundary).
+
+.. note::
+        Only periodic boundaries which have co-linear normal vectors which align along an axis of the problem (e.g., x axis) are currently supported. Multiple simultaneous periodic directions are supported.
+
+* The ``periodic direction`` parameter specifies the perpendicular axis to a pair of periodic boundaries (``0`` is the `x` axis, ``1`` is the `y` and ``2`` is the `z`).
 
 * The ``rotational speed`` parameter defines the rotational speed of the specified boundary.  
 
