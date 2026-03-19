@@ -148,7 +148,6 @@ public:
     // Initialize solutions shared_ptr
     present_solution  = std::make_shared<GlobalVectorType>();
     filtered_solution = std::make_shared<GlobalVectorType>();
-
   }
 
   /**

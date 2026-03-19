@@ -531,8 +531,7 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_simulation_fd()
         }
     }
 
-  if (this->simulation_parameters.timer.type ==
-      Parameters::Timer::Type::end)
+  if (this->simulation_parameters.timer.type == Parameters::Timer::Type::end)
     {
       announce_string(this->pcout, "Fluid Dynamics");
       this->pcout << std::defaultfloat;

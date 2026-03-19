@@ -94,7 +94,6 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
   // Allocate solution transfer
   solution_transfer = std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(
     *dof_handler_trial_interior);
-
 }
 
 
@@ -541,8 +540,7 @@ TimeHarmonicMaxwell<dim>::finish_simulation()
       error_table.write_text(std::cout);
     }
 
-  if (this->simulation_parameters.timer.type ==
-      Parameters::Timer::Type::end)
+  if (this->simulation_parameters.timer.type == Parameters::Timer::Type::end)
     {
       announce_string(this->pcout, "Time Harmonic Electromagnetics");
       this->pcout << std::defaultfloat;

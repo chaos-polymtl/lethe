@@ -116,10 +116,9 @@ NewtonNonLinearSolverStrategy<VectorType>::solve()
 
           if (this->params.verbosity != Parameters::Verbosity::quiet)
             {
-              solver->pcout << "\talpha = " << std::defaultfloat
-                            << std::setw(6) << alpha << std::setw(6)
-                            << std::scientific << "\tres = " << std::setw(6)
-                            << current_res;
+              solver->pcout << "\talpha = " << std::defaultfloat << std::setw(6)
+                            << alpha << std::setw(6) << std::scientific
+                            << "\tres = " << std::setw(6) << current_res;
 
               solver->output_newton_update_norms();
             }
@@ -137,11 +136,11 @@ NewtonNonLinearSolverStrategy<VectorType>::solve()
 
               if (this->params.verbosity != Parameters::Verbosity::quiet)
                 {
-                  solver->pcout
-                    << "\t\talpha value was kept at alpha = "
-                    << std::defaultfloat << alpha
-                    << " since alpha = " << alpha / 2 << std::scientific
-                    << " increased the residual" << std::endl;
+                  solver->pcout << "\t\talpha value was kept at alpha = "
+                                << std::defaultfloat << alpha
+                                << " since alpha = " << alpha / 2
+                                << std::scientific << " increased the residual"
+                                << std::endl;
                 }
               current_res = last_alpha_res;
               break;

@@ -121,7 +121,6 @@ public:
         previous_solutions_transfer.emplace_back(
           SolutionTransfer<dim, GlobalVectorType>(*this->dof_handler));
       }
-
   }
 
   /**
@@ -307,8 +306,8 @@ public:
   void
   output_newton_update_norms() override
   {
-    this->pcout << "\t  ||dx||_L2 = " << std::setw(6)
-                << newton_update.l2_norm() << std::setw(6)
+    this->pcout << "\t  ||dx||_L2 = " << std::setw(6) << newton_update.l2_norm()
+                << std::setw(6)
                 << "\t  ||dx||_Linfty = " << newton_update.linfty_norm()
                 << std::endl;
   }

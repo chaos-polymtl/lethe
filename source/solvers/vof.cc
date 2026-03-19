@@ -1351,8 +1351,7 @@ VolumeOfFluid<dim>::finish_simulation()
       this->error_table.write_text(std::cout);
     }
 
-  if (this->simulation_parameters.timer.type ==
-      Parameters::Timer::Type::end)
+  if (this->simulation_parameters.timer.type == Parameters::Timer::Type::end)
     {
       announce_string(this->pcout, "CLS");
       this->pcout << std::defaultfloat;

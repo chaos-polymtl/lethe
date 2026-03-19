@@ -628,8 +628,7 @@ CahnHilliard<dim>::finish_simulation()
       error_table.write_text(std::cout);
     }
 
-  if (this->simulation_parameters.timer.type ==
-      Parameters::Timer::Type::end)
+  if (this->simulation_parameters.timer.type == Parameters::Timer::Type::end)
     {
       announce_string(this->pcout, "Cahn-Hilliard");
       this->pcout << std::defaultfloat;
@@ -1598,8 +1597,8 @@ CahnHilliard<dim>::output_newton_update_norms()
               << std::endl;
   this->pcout << "\t  ||deta||_L2 = " << std::setw(6)
               << global_chemical_potential_l2_norm << std::setw(6)
-              << "\t  ||deta||_Linfty = " << global_chemical_potential_linfty_norm
-              << std::endl;
+              << "\t  ||deta||_Linfty = "
+              << global_chemical_potential_linfty_norm << std::endl;
 }
 
 template std::pair<Tensor<1, 2>, Tensor<1, 2>>

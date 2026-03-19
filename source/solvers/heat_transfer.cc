@@ -962,8 +962,7 @@ HeatTransfer<dim>::finish_simulation()
       error_table.write_text(std::cout);
     }
 
-  if (this->simulation_parameters.timer.type ==
-      Parameters::Timer::Type::end)
+  if (this->simulation_parameters.timer.type == Parameters::Timer::Type::end)
     {
       announce_string(this->pcout, "Heat Transfer");
       this->pcout << std::defaultfloat;
