@@ -13,7 +13,7 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
   , multiphysics(multiphysics_interface)
   , computing_timer(p_triangulation->get_mpi_communicator(),
                     this->pcout,
-                    TimerOutput::summary,
+                    TimerOutput::never,
                     TimerOutput::wall_times)
   , simulation_parameters(p_simulation_parameters)
   , triangulation(p_triangulation)
@@ -95,10 +95,6 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
   solution_transfer = std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(
     *dof_handler_trial_interior);
 
-  // Change the behavior of the timer for situations when you don't want
-  // outputs
-  if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
-    this->computing_timer.disable_output();
 }
 
 
@@ -544,6 +540,15 @@ TimeHarmonicMaxwell<dim>::finish_simulation()
                                 this->simulation_control->get_log_precision());
       error_table.write_text(std::cout);
     }
+
+  if (this->simulation_parameters.timer.type ==
+      Parameters::Timer::Type::end)
+    {
+      announce_string(this->pcout, "Time Harmonic Electromagnetics");
+      this->pcout << std::defaultfloat;
+      this->computing_timer.print_summary();
+      this->pcout << std::scientific;
+    }
 }
 
 template <int dim>
@@ -607,7 +612,9 @@ TimeHarmonicMaxwell<dim>::postprocess(bool first_iteration)
       Parameters::Timer::Type::iteration)
     {
       announce_string(this->pcout, "Time Harmonic Electromagnetics");
+      this->pcout << std::defaultfloat;
       this->computing_timer.print_summary();
+      this->pcout << std::scientific;
       this->computing_timer.reset();
     }
 }

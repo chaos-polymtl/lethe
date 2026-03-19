@@ -3459,6 +3459,8 @@ FluidDynamicsMatrixFree<dim>::print_mg_setup_times()
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .mg_verbosity == Parameters::Verbosity::extra_verbose)
     {
+      this->pcout << std::defaultfloat;
+
       announce_string(this->pcout, "Multigrid setup times");
       this->gmg_preconditioner->mg_setup_timer.print_wall_time_statistics(
         MPI_COMM_WORLD);
@@ -3501,6 +3503,8 @@ FluidDynamicsMatrixFree<dim>::print_mg_setup_times()
       // Reset timers if output is set to every iteration
       this->gmg_preconditioner->mg_setup_timer.reset();
       this->gmg_preconditioner->mg_vmult_timer.reset();
+
+      this->pcout << std::scientific;
     }
 }
 

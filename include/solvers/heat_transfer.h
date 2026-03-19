@@ -81,7 +81,7 @@ public:
     , multiphysics(multiphysics_interface)
     , computing_timer(p_triangulation->get_mpi_communicator(),
                       this->pcout,
-                      TimerOutput::summary,
+                      TimerOutput::never,
                       TimerOutput::wall_times)
     , simulation_parameters(p_simulation_parameters)
     , triangulation(p_triangulation)
@@ -134,11 +134,6 @@ public:
         previous_solutions_transfer.emplace_back(
           SolutionTransfer<dim, GlobalVectorType>(*this->dof_handler));
       }
-
-    // Change the behavior of the timer for situations when you don't want
-    // outputs
-    if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
-      this->computing_timer.disable_output();
 
     if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
       {

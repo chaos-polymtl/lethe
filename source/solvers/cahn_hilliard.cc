@@ -627,6 +627,15 @@ CahnHilliard<dim>::finish_simulation()
                                 simulation_control->get_log_precision());
       error_table.write_text(std::cout);
     }
+
+  if (this->simulation_parameters.timer.type ==
+      Parameters::Timer::Type::end)
+    {
+      announce_string(this->pcout, "Cahn-Hilliard");
+      this->pcout << std::defaultfloat;
+      this->computing_timer.print_summary();
+      this->pcout << std::scientific;
+    }
 }
 
 template <int dim>
@@ -720,7 +729,9 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
       Parameters::Timer::Type::iteration)
     {
       announce_string(this->pcout, "Cahn-Hilliard");
+      this->pcout << std::defaultfloat;
       this->computing_timer.print_summary();
+      this->pcout << std::scientific;
       this->computing_timer.reset();
     }
 

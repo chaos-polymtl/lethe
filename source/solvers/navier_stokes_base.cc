@@ -54,7 +54,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   , dof_handler()
   , computing_timer(this->mpi_communicator,
                     this->pcout,
-                    TimerOutput::summary,
+                    TimerOutput::never,
                     TimerOutput::wall_times)
   , simulation_parameters(p_nsparam)
   , flow_control(simulation_parameters.flow_control)
@@ -188,11 +188,6 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   // of the BDF schemes
   previous_solutions = std::make_shared<std::vector<VectorType>>(
     maximum_number_of_previous_solutions());
-
-  // Change the behavior of the timer for situations when you don't want
-  // outputs
-  if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
-    this->computing_timer.disable_output();
 
   // Get the exact solution from the parser
   exact_solution = &simulation_parameters.analytical_solution->uvwp;
@@ -535,6 +530,15 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_simulation_fd()
           error_table.write_text(std::cout);
         }
     }
+
+  if (this->simulation_parameters.timer.type ==
+      Parameters::Timer::Type::end)
+    {
+      announce_string(this->pcout, "Fluid Dynamics");
+      this->pcout << std::defaultfloat;
+      this->computing_timer.print_summary();
+      this->pcout << std::scientific;
+    }
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -581,7 +585,9 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
       Parameters::Timer::Type::iteration)
     {
       announce_string(this->pcout, "Fluid Dynamics");
+      this->pcout << std::defaultfloat;
       this->computing_timer.print_summary();
+      this->pcout << std::scientific;
       this->computing_timer.reset();
     }
 }

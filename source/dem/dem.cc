@@ -45,7 +45,7 @@ DEMSolver<dim, PropertiesIndex>::DEMSolver(
   , particle_handler(triangulation, mapping, PropertiesIndex::n_properties)
   , computing_timer(this->mpi_communicator,
                     this->pcout,
-                    TimerOutput::summary,
+                    TimerOutput::never,
                     TimerOutput::wall_times)
   , contact_build_number(0)
   , background_dh(triangulation)
@@ -78,10 +78,6 @@ DEMSolver<dim, PropertiesIndex>::setup_parameters()
 
   // Get the pointer of the only instance of the action manager
   action_manager = DEMActionManager::get_action_manager();
-
-  // Change the behavior of the timer for situations when you don't want outputs
-  if (parameters.timer.type == Parameters::Timer::Type::none)
-    computing_timer.disable_output();
 
   // Set the simulation control as transient DEM
   simulation_control = std::make_shared<SimulationControlTransientDEM>(
@@ -555,7 +551,11 @@ DEMSolver<dim, PropertiesIndex>::finish_simulation()
 {
   // Timer output
   if (parameters.timer.type == Parameters::Timer::Type::end)
-    this->computing_timer.print_summary();
+    {
+      this->pcout << std::defaultfloat;
+      this->computing_timer.print_summary();
+      this->pcout << std::scientific;
+    }
 
   // Testing
   if (parameters.test.enabled)
@@ -771,7 +771,9 @@ DEMSolver<dim, PropertiesIndex>::report_statistics()
   // Timer output
   if (parameters.timer.type == Parameters::Timer::Type::iteration)
     {
+      this->pcout << std::defaultfloat;
       this->computing_timer.print_summary();
+      this->pcout << std::scientific;
     }
 }
 
