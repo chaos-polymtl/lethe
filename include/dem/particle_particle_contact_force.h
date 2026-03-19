@@ -29,7 +29,7 @@ using namespace dealii;
  * ParticleParticleContactForce class which is templated by the contact model
  * type.
  * @tparam dim An integer that denotes the number of spatial dimensions.
- * @tparam PropertiesIndex Index of the properties used within the 
+ * @tparam PropertiesIndex Index of the properties used within the
  * ParticleHandler.
  */
 template <int dim, typename PropertiesIndex>
@@ -45,13 +45,13 @@ public:
    * @param ghost_adjacent_particles Container of the contact pair candidates
    * information for calculation of the local-ghost particle-particle contact
    * forces.
-   * @param local_local_periodic_adjacent_particles Container of the contact 
+   * @param local_local_periodic_adjacent_particles Container of the contact
    * pair candidates information for calculation of the local periodic
    * particle-particle contact forces.
-   * @param local_ghost_periodic_adjacent_particles Container of the contact 
+   * @param local_ghost_periodic_adjacent_particles Container of the contact
    * pair candidates information for calculation of the local-ghost periodic
    * particle-particle contact forces.
-   * @param ghost_local_periodic_adjacent_particles Container of the contact 
+   * @param ghost_local_periodic_adjacent_particles Container of the contact
    * pair candidates information for calculation of the ghost-local periodic
    * particle-particle contact forces.
    * @param dt DEM time step.
@@ -127,13 +127,13 @@ public:
    * @param ghost_adjacent_particles Container of the contact pair candidates
    * information for calculation of the local-ghost particle-particle contact
    * forces.
-   * @param local_local_periodic_adjacent_particles Container of the contact 
+   * @param local_local_periodic_adjacent_particles Container of the contact
    * pair candidates information for calculation of the local periodic
    * particle-particle contact forces.
-   * @param local_ghost_periodic_adjacent_particles Container of the contact 
+   * @param local_ghost_periodic_adjacent_particles Container of the contact
    * pair candidates information for calculation of the local-ghost periodic
    * particle-particle contact forces.
-   * @param ghost_local_periodic_adjacent_particles Container of the contact 
+   * @param ghost_local_periodic_adjacent_particles Container of the contact
    * pair candidates information for calculation of the ghost-local periodic
    * particle-particle contact forces.
    * @param dt DEM time step.

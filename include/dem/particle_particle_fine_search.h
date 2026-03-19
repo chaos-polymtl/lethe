@@ -32,7 +32,7 @@ using namespace dealii;
  * @param contact_pair_candidates The output of broad search which shows
  * contact pair candidates
  * @param neighborhood_threshold A value which defines the neighbor particles
- * @param periodic_offsets A map of tensors of the periodic offsets to change 
+ * @param periodic_offsets A map of tensors of the periodic offsets to change
  * the location of the particles crossing periodic boudnaries.
  * TODO: default value of zeros
  */
