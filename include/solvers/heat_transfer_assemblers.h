@@ -631,7 +631,8 @@ public:
     const Parameters::Dimensionality           &dimensionality)
     : simulation_control(simulation_control)
     , angular_frequency(2. * numbers::PI *
-                        time_harmonic_maxwell.electromagnetic_frequency)
+                        (time_harmonic_maxwell.electromagnetic_frequency /
+                         dimensionality.electromagnetic_frequency_scaling))
     , vacuum_permittivity(8.854187817e-12 *
                           dimensionality.vacuum_permittivity_scaling)
     , vacuum_permeability(4. * numbers::PI * 1e-7 *

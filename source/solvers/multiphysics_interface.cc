@@ -369,6 +369,8 @@ MultiphysicsInterface<dim>::should_solve_electromagnetics() const
           case Parameters::TimeCouplingMethod::none:
             return false;
 
+
+          case Parameters::TimeCouplingMethod::iteration:
             // Solve only if we are at a multiple of the specified iteration
             // frequency. We substract 1 since the step number starts at 1.
             if ((this->simulation_control->get_step_number() - 1) %

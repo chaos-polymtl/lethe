@@ -363,6 +363,16 @@ HeatTransfer<dim>::setup_assemblers()
   // Microwave heating
   if (this->simulation_parameters.multiphysics.microwave_heating)
     {
+      // Check if the time-harmonic Maxwell physics solution scaling type is
+      // not <none>, since the solution needs to not be dimensionless for the
+      // heat transfer physics to be able to use it.
+      AssertThrow(
+        this->simulation_parameters.multiphysics
+            .time_harmonic_maxwell_parameters.electromagnetic_scaling_type !=
+          Parameters::ElectromagneticScalingType::none,
+        ExcMessage("Time-harmonic Maxwell solution scaling is none, but heat "
+                   "transfer physics requires a non-dimensionless solution."));
+
       this->assemblers.emplace_back(
         std::make_shared<
           HeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell<dim>>(
@@ -449,16 +459,6 @@ HeatTransfer<dim>::assemble_system_matrix()
 
   if (this->simulation_parameters.multiphysics.electromagnetics)
     {
-      // Check if the time-harmonic Maxwell physics solution scaling type is
-      // not <none>, since the solution needs to not be dimensionless for the
-      // heat transfer physics to be able to use it.
-      AssertThrow(
-        this->simulation_parameters.multiphysics
-            .time_harmonic_maxwell_parameters.electromagnetic_scaling_type !=
-          Parameters::ElectromagneticScalingType::none,
-        ExcMessage("Time-harmonic Maxwell solution scaling is none, but heat "
-                   "transfer physics requires a non-dimensionless solution."));
-
       const DoFHandler<dim> &dof_handler_thm =
         this->multiphysics->get_dof_handler(PhysicsID::electromagnetics);
       scratch_data.enable_time_harmonic_maxwell(dof_handler_thm.get_fe(),
@@ -575,6 +575,21 @@ HeatTransfer<dim>::assemble_local_system_matrix(
         phase_cell, this->multiphysics->get_filtered_solution(PhysicsID::CLS));
     }
 
+  if (this->simulation_parameters.multiphysics.electromagnetics)
+    {
+      const DoFHandler<dim> &dof_handler_thm =
+        this->multiphysics->get_dof_handler(PhysicsID::electromagnetics);
+      typename DoFHandler<dim>::active_cell_iterator thm_cell(
+        &(*(this->triangulation)),
+        cell->level(),
+        cell->index(),
+        &dof_handler_thm);
+
+      scratch_data.reinit_time_harmonic_maxwell(
+        thm_cell,
+        this->multiphysics->get_solution(PhysicsID::electromagnetics));
+    }
+
   scratch_data.calculate_physical_properties();
 
   copy_data.reset();
@@ -635,6 +650,15 @@ HeatTransfer<dim>::assemble_system_rhs()
         *this->cell_quadrature,
         *this->temperature_mapping,
         this->simulation_parameters.multiphysics.cls_parameters.phase_filter);
+    }
+
+  if (this->simulation_parameters.multiphysics.electromagnetics)
+    {
+      const DoFHandler<dim> &dof_handler_thm =
+        this->multiphysics->get_dof_handler(PhysicsID::electromagnetics);
+      scratch_data.enable_time_harmonic_maxwell(dof_handler_thm.get_fe(),
+                                                *this->cell_quadrature,
+                                                *this->temperature_mapping);
     }
 
   WorkStream::run(this->dof_handler->begin_active(),
@@ -748,6 +772,21 @@ HeatTransfer<dim>::assemble_local_system_rhs(
 
       scratch_data.reinit_cls(
         phase_cell, this->multiphysics->get_filtered_solution(PhysicsID::CLS));
+    }
+
+  if (this->simulation_parameters.multiphysics.electromagnetics)
+    {
+      const DoFHandler<dim> &dof_handler_thm =
+        this->multiphysics->get_dof_handler(PhysicsID::electromagnetics);
+      typename DoFHandler<dim>::active_cell_iterator thm_cell(
+        &(*(this->triangulation)),
+        cell->level(),
+        cell->index(),
+        &dof_handler_thm);
+
+      scratch_data.reinit_time_harmonic_maxwell(
+        thm_cell,
+        this->multiphysics->get_solution(PhysicsID::electromagnetics));
     }
 
   scratch_data.calculate_physical_properties();
