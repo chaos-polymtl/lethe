@@ -17,7 +17,7 @@ Incompressible Flow
     2d-naca0012-low-reynolds/2d-naca0012-low-reynolds
     2d-taylor-couette-flow-nitsche/2d-taylor-couette-flow-nitsche
     2d-sudden-expansion-flow/2d-sudden-expansion-flow
-    2d-mortar-method/2d-mortar-method
+    2d-paddle-mixer-mortar/2d-paddle-mixer-mortar
     3d-flow-around-sphere/flow-around-sphere
     3d-taylor-green-vortex/3d-taylor-green-vortex
     3d-turbulent-taylor-couette/3d-turbulent-taylor-couette
@@ -69,7 +69,7 @@ Incompressible Flow
 
       incompressible_1_10 [label="Sudden-Expansion Flow", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-sudden-expansion-flow/2d-sudden-expansion-flow.html"];
       
-      incompressible_1_11 [label="Paddle Mixer Using \nthe Mortar Method", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-mortar-method/2d-mortar-method.html", tooltip="Mortar method"];
+      incompressible_1_11 [label="Paddle Mixer Using \nthe Mortar Method", href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-paddle-mixer-mortar/2d-paddle-mixer-mortar.html", tooltip="Paddle Mixer Mortar Method"];
 
 
       incompressible_2 [label="3D",shape=polygon,sides=4]; 
