@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The square gas–solid fluidized bed example is removed, as PR [#1844] introduced a more comprehensive cylindrical fluidized bed simulation. This closes issue [#1860]. [#1948](https://github.com/chaos-polymtl/lethe/pull/1948).
 
-- MAJOR The way we parametrize the display precision on the terminal in Lethe was incredibly messy. The log_precision parameter in the SimulationControl is supposed to control it, but we also have another display_precision in the non-linear solver which can overwrite it. This led to a lot of confusion. The simple thing should be that one parameter controls the log precision and that's it. This PR achieves this. It deletes the display_precision parameter from the non-linear solver parameters. Not the usage of the log_precision is made uniform and the precision is set once at the start of the simulation. The documentation has been adapted as well.  [#XXXX](https://github.com/chaos-polymtl/lethe/pull/1947).
+- MAJOR The way we parametrized the display precision on the terminal in Lethe was incredibly messy. The log_precision parameter in the SimulationControl is supposed to control it, but we also have another display_precision in the non-linear solver which can overwrite it. This led to a lot of confusion. The simple thing should be that one parameter controls the log precision and that's it. This PR achieves this. It deletes the display_precision parameter from the non-linear solver parameters. Now, the usage of the log_precision is made uniform and the precision is set once at the start of the simulation. The documentation has been adapted as well.  [#1947](https://github.com/chaos-polymtl/lethe/pull/1947).
 
 ## [Master] - 2026/03/18
 
