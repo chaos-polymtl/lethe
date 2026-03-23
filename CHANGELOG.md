@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/03/19
+
+### Removed
+
+- MINOR The square gas–solid fluidized bed example is removed, as PR [#1844] introduced a more comprehensive cylindrical fluidized bed simulation. This closes issue [#1860]. [#1948](https://github.com/chaos-polymtl/lethe/pull/1948).
+
 ## [Master] - 2026/03/18
 
 ### Changed
