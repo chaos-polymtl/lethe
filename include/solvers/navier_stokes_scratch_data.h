@@ -15,7 +15,7 @@
 #include <solvers/cahn_hilliard_filter.h>
 #include <solvers/physical_properties_manager.h>
 #include <solvers/physics_scratch_data.h>
-#include <solvers/vof_filter.h>
+#include <solvers/cls_filter.h>
 
 #include <deal.II/base/quadrature.h>
 
@@ -36,7 +36,7 @@ using namespace dealii;
  * (values, gradients, laplacians) at all the gauss points for all degrees
  * of freedom and stores it into arrays. Additionally, the use can request
  * that this class gathers additional fields for physics which are coupled
- * to the Navier-Stokes equation, such as the VOF. This class
+ * to the Navier-Stokes equation, such as the CLS. This class
  * serves as a separation between the evaluation at the gauss point of the
  * variables of interest and their use in the assembly, which is carried out
  * by the assembler functions. For more information on this design, the reader
@@ -105,7 +105,7 @@ public:
 
     // By default, the assembly of variables belonging to auxiliary physics is
     // disabled.
-    gather_vof                               = false;
+    gather_cls                               = false;
     gather_projected_phase_fraction_gradient = false;
     gather_curvature                         = false;
     gather_void_fraction                     = false;
@@ -146,7 +146,7 @@ public:
 
     // By default, the assembly of variables belonging to auxiliary physics is
     // disabled.
-    gather_vof                               = false;
+    gather_cls                               = false;
     gather_projected_phase_fraction_gradient = false;
     gather_curvature                         = false;
     gather_void_fraction                     = false;
@@ -157,10 +157,10 @@ public:
     gather_particle_field_project            = false;
     gather_hessian = properties_manager.is_non_newtonian();
 
-    if (sd.gather_vof)
-      enable_vof(sd.fe_values_vof->get_fe(),
-                 sd.fe_values_vof->get_quadrature(),
-                 sd.fe_values_vof->get_mapping(),
+    if (sd.gather_cls)
+      enable_cls(sd.fe_values_cls->get_fe(),
+                 sd.fe_values_cls->get_quadrature(),
+                 sd.fe_values_cls->get_mapping(),
                  sd.filter);
     if (sd.gather_projected_phase_fraction_gradient)
       enable_projected_phase_fraction_gradient(
@@ -497,9 +497,9 @@ public:
   }
 
   /**
-   * @brief enable_vof Enables the collection of the VOF data by the scratch
+   * @brief enable_cls Enables the collection of the CLS data by the scratch
    *
-   * @param fe FiniteElement associated with the VOF.
+   * @param fe FiniteElement associated with the CLS.
    *
    * @param quadrature Quadrature rule of the Navier-Stokes problem assembly
    *
@@ -509,15 +509,15 @@ public:
    */
 
   void
-  enable_vof(const FiniteElement<dim>          &fe,
+  enable_cls(const FiniteElement<dim>          &fe,
              const Quadrature<dim>             &quadrature,
              const Mapping<dim>                &mapping,
-             const Parameters::VOF_PhaseFilter &phase_filter_parameters);
+             const Parameters::CLS_PhaseFilter &phase_filter_parameters);
 
   /**
-   * @brief enable_vof Enables the collection of the VOF data by the scratch - function overload used in the copy constructor of NavierStokesScratchData
+   * @brief enable_cls Enables the collection of the CLS data by the scratch - function overload used in the copy constructor of NavierStokesScratchData
    *
-   * @param fe FiniteElement associated with the VOF.
+   * @param fe FiniteElement associated with the CLS.
    *
    * @param quadrature Quadrature rule of the Navier-Stokes problem assembly
    *
@@ -527,7 +527,7 @@ public:
    */
 
   void
-  enable_vof(const FiniteElement<dim>                       &fe,
+  enable_cls(const FiniteElement<dim>                       &fe,
              const Quadrature<dim>                          &quadrature,
              const Mapping<dim>                             &mapping,
              const std::shared_ptr<VolumeOfFluidFilterBase> &filter);
@@ -544,10 +544,10 @@ public:
                    const Mapping<dim>       &mapping);
 
   /**
-   * @brief Reinitialize the content of the scratch for the vof
+   * @brief Reinitialize the content of the scratch for the cls
    *
    * @param cell The cell over which the assembly is being carried.
-   * This cell must be compatible with the VOF FE and not the
+   * This cell must be compatible with the CLS FE and not the
    * Navier-Stokes FE
    *
    * @param current_solution The present value of the solution for [alpha]
@@ -559,31 +559,31 @@ public:
 
   template <typename VectorType>
   void
-  reinit_vof(const typename DoFHandler<dim>::active_cell_iterator &cell,
+  reinit_cls(const typename DoFHandler<dim>::active_cell_iterator &cell,
              const VectorType              &current_solution,
              const VectorType              &current_filtered_solution,
              const std::vector<VectorType> &previous_solutions)
   {
     Assert(
-      gather_vof,
+      gather_cls,
       ExcMessage(
-        "You are trying to reinit the VOF model in a cell, but you did not enable VOF for the scratch data (gather_vof=false)."));
+        "You are trying to reinit the CLS model in a cell, but you did not enable CLS for the scratch data (gather_cls=false)."));
 
-    this->fe_values_vof->reinit(cell);
+    this->fe_values_cls->reinit(cell);
     // Gather phase fraction (values, gradient)
-    this->fe_values_vof->get_function_values(current_solution,
+    this->fe_values_cls->get_function_values(current_solution,
                                              this->phase_values);
-    this->fe_values_vof->get_function_values(current_filtered_solution,
+    this->fe_values_cls->get_function_values(current_filtered_solution,
                                              this->filtered_phase_values);
-    this->fe_values_vof->get_function_gradients(
+    this->fe_values_cls->get_function_gradients(
       current_filtered_solution, this->filtered_phase_gradient_values);
-    this->fe_values_vof->get_function_gradients(current_solution,
+    this->fe_values_cls->get_function_gradients(current_solution,
                                                 this->phase_gradient_values);
 
     // Gather previous phase fraction values
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
       {
-        this->fe_values_vof->get_function_values(previous_solutions[p],
+        this->fe_values_cls->get_function_values(previous_solutions[p],
                                                  previous_phase_values[p]);
       }
   }
@@ -884,8 +884,8 @@ public:
   /**
    * @brief Calculates the properties of the fluid at the locations of the particles.
    * At the moment, only constant properties within the same fluid are
-   * supported. When two fluids are present and VOF is used, the properties are
-   * calculated based on the filtered VOF solution interpolated at the
+   * supported. When two fluids are present and CLS is used, the properties are
+   * calculated based on the filtered CLS solution interpolated at the
    * location of the particles. These properties are used in the forces
    * calculations in the VANS equations.
    */
@@ -905,7 +905,7 @@ public:
       ExcMessage(
         "The lethe-fluid-particles solver only supports constant rheology model"));
 
-    if (gather_vof)
+    if (gather_cls)
       {
         for (unsigned int i_particle = 0; i_particle < number_of_particles;
              ++i_particle)
@@ -929,7 +929,7 @@ public:
         return;
       }
 
-    // Regular case without VOF
+    // Regular case without CLS
     for (unsigned int i_particle = 0; i_particle < number_of_particles;
          ++i_particle)
       {
@@ -982,33 +982,33 @@ public:
   }
 
   /**
-   * @brief Interpolates the filtered VOF solution at the location of the particles.
+   * @brief Interpolates the filtered CLS solution at the location of the particles.
    * The latter values are used in calculating the density and viscosity of the
-   * fluid at the particles' locations when VOF is used.
+   * fluid at the particles' locations when CLS is used.
    *
    * @param[in] q_particles_location Quadrature type object that contains the
    * location of the particles relative to the cell's frame of reference.
    *
-   * @param[in] phase_cell The active cell associated with the VOF DoFHandler
+   * @param[in] phase_cell The active cell associated with the CLS DoFHandler
    *
-   * @param[in] current_filtered_solution The present value of the filtered VOF
+   * @param[in] current_filtered_solution The present value of the filtered CLS
    * solution
    */
 
   template <typename VectorType>
   void
-  calculate_vof_at_particle_location(
+  calculate_cls_at_particle_location(
     const Quadrature<dim>                                &q_particles_location,
     const typename DoFHandler<dim>::active_cell_iterator &phase_cell,
     const VectorType &current_filtered_solution)
   {
     Assert(
-      gather_vof,
+      gather_cls,
       ExcMessage(
-        "gather_vof has been set to false, yet you are trying to gather the VOF at the location of the particles. The scratch data is currently unaware of the finite element interpolation for VOF and the simulation will abort."));
+        "gather_cls has been set to false, yet you are trying to gather the CLS at the location of the particles. The scratch data is currently unaware of the finite element interpolation for CLS and the simulation will abort."));
 
 
-    FEValues<dim> fe_values_vof_local_particles((*this->fe_values_vof).get_fe(),
+    FEValues<dim> fe_values_cls_local_particles((*this->fe_values_cls).get_fe(),
                                                 q_particles_location,
                                                 update_values |
                                                   update_quadrature_points |
@@ -1016,9 +1016,9 @@ public:
 
     filtered_phase_values_at_particle_location.resize(number_of_particles);
 
-    fe_values_vof_local_particles.reinit(phase_cell);
+    fe_values_cls_local_particles.reinit(phase_cell);
 
-    fe_values_vof_local_particles.get_function_values(
+    fe_values_cls_local_particles.get_function_values(
       current_filtered_solution, filtered_phase_values_at_particle_location);
   }
 
@@ -1100,7 +1100,7 @@ public:
 
   /**
    * @brief Calculates the variables needed to compute the particle fluid interactions
-   * in the VANS equations.This version of the function is used when VOF is used
+   * in the VANS equations.This version of the function is used when CLS is used
    * with CFD-DEM.
    *
    * @param[in] velocity_cell The active cell associated with the velocity and
@@ -1109,7 +1109,7 @@ public:
    * @param[in] void_fraction_cell The active cell associated with the void
    * fraction DoFHandler.
    *
-   * @param[in] phase_cell The active cell associated with the VOF DoFHandler.
+   * @param[in] phase_cell The active cell associated with the CLS DoFHandler.
    *
    * @param[in] present_velocity_pressure_solution The solution (velocity and
    * pressure) at the current time step. This solution is used in the implicit
@@ -1125,7 +1125,7 @@ public:
    * @param[in] particle_handler The particle handler object that stores and
    * manages the particles in the simulations.
    *
-   * @param[in] current_filtered_VOF_solution The present value of the VOF
+   * @param[in] current_filtered_CLS_solution The present value of the CLS
    * solution.
    *
    * @param[in] drag_coupling Indicator for the type of coupling that is
@@ -1143,7 +1143,7 @@ public:
     const VectorType                      &void_fraction_solution,
     const Particles::ParticleHandler<dim> &particle_handler,
     const Parameters::DragCoupling        &drag_coupling,
-    const VectorType                      &current_filtered_VOF_solution)
+    const VectorType                      &current_filtered_CLS_solution)
   {
     pic = particle_handler.particles_in_cell(velocity_cell);
 
@@ -1169,9 +1169,9 @@ public:
                                                      void_fraction_cell,
                                                      void_fraction_solution);
       }
-    calculate_vof_at_particle_location(q_particles_location,
+    calculate_cls_at_particle_location(q_particles_location,
                                        phase_cell,
-                                       current_filtered_VOF_solution);
+                                       current_filtered_CLS_solution);
     calculate_fluid_properties_at_particle_location();
     calculate_force_parameters_at_particle_location();
   }
@@ -1315,7 +1315,7 @@ public:
       .get_function_gradients(current_solution,
                               this->phase_order_cahn_hilliard_gradients);
 
-    // Gather filtered VOF solution (values, gradients)
+    // Gather filtered CLS solution (values, gradients)
     this->fe_values_cahn_hilliard->operator[](phase_order)
       .get_function_values(current_filtered_solution,
                            this->filtered_phase_order_cahn_hilliard_values);
@@ -1463,7 +1463,7 @@ public:
   // pressure
   double pressure_scaling_factor;
 
-  // For VOF and CH simulations. Present properties for fluid 0 and 1.
+  // For CLS and CH simulations. Present properties for fluid 0 and 1.
   std::vector<double> density_0;
   std::vector<double> density_1;
   double              density_ref_0;
@@ -1544,10 +1544,10 @@ public:
   Table<2, Tensor<1, dim>> grad_phi_p;
 
   /**
-   * Scratch component for the VOF auxiliary physics
+   * Scratch component for the CLS auxiliary physics
    */
-  bool                             gather_vof;
-  unsigned int                     n_dofs_vof;
+  bool                             gather_cls;
+  unsigned int                     n_dofs_cls;
   std::vector<double>              phase_values;
   std::vector<double>              filtered_phase_values;
   std::vector<double>              filtered_phase_values_at_particle_location;
@@ -1555,7 +1555,7 @@ public:
   std::vector<Tensor<1, dim>>      filtered_phase_gradient_values;
   std::vector<Tensor<1, dim>>      phase_gradient_values;
   // This is stored as a shared_ptr because it is only instantiated when needed
-  std::shared_ptr<FEValues<dim>>           fe_values_vof;
+  std::shared_ptr<FEValues<dim>>           fe_values_cls;
   std::shared_ptr<VolumeOfFluidFilterBase> filter; // Phase fraction filter
 
   bool                           gather_projected_phase_fraction_gradient;

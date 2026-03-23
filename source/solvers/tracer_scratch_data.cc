@@ -105,9 +105,9 @@ TracerScratchData<dim>::calculate_physical_properties()
           diffusivity_models[0]->vector_value(fields, tracer_diffusivity_0);
           diffusivity_models[1]->vector_value(fields, tracer_diffusivity_1);
 
-          // TODO Incomplete at the present time because the tracer VOF
+          // TODO Incomplete at the present time because the tracer CLS
           // complete is not finished Blend the physical properties
-          // using the VOF field
+          // using the CLS field
           // for (unsigned int q = 0; q < this->n_q_points; ++q)
           // {
           //          tracer_diffusivity[q] =

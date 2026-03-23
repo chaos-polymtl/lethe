@@ -53,7 +53,7 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
                       "false",
                       Patterns::Bool(),
                       "CLS calculation <true|false>");
-    prm.declare_alias("cls", "VOF", true);
+    prm.declare_alias("cls", "CLS", true);
 
     prm.declare_entry("cahn hilliard",
                       "false",
@@ -82,7 +82,7 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
   }
   prm.leave_subsection();
 
-  vof_parameters.declare_parameters(prm);
+  cls_parameters.declare_parameters(prm);
   cahn_hilliard_parameters.declare_parameters(prm);
   time_harmonic_maxwell_parameters.declare_parameters(prm);
 }
@@ -98,7 +98,7 @@ Parameters::Multiphysics<dim>::parse_parameters(
     fluid_dynamics   = prm.get_bool("fluid dynamics");
     heat_transfer    = prm.get_bool("heat transfer");
     tracer           = prm.get_bool("tracer");
-    VOF              = prm.get_bool("cls");
+    CLS              = prm.get_bool("cls");
     cahn_hilliard    = prm.get_bool("cahn hilliard");
     electromagnetics = prm.get_bool("electromagnetics");
 
@@ -107,13 +107,13 @@ Parameters::Multiphysics<dim>::parse_parameters(
     thermal_buoyancy_force = prm.get_bool("thermal buoyancy force");
   }
   prm.leave_subsection();
-  vof_parameters.parse_parameters(prm);
+  cls_parameters.parse_parameters(prm);
   cahn_hilliard_parameters.parse_parameters(prm, dimensions);
   time_harmonic_maxwell_parameters.parse_parameters(prm, dimensions);
 }
 
 void
-Parameters::VOF::declare_parameters(ParameterHandler &prm) const
+Parameters::CLS::declare_parameters(ParameterHandler &prm) const
 {
   prm.enter_subsection("CLS");
   {
@@ -145,7 +145,7 @@ Parameters::VOF::declare_parameters(ParameterHandler &prm) const
 }
 
 void
-Parameters::VOF::parse_parameters(ParameterHandler &prm)
+Parameters::CLS::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("CLS");
   {
@@ -173,7 +173,7 @@ Parameters::VOF::parse_parameters(ParameterHandler &prm)
 }
 
 void
-Parameters::VOF_RegularizationMethod::declare_parameters(
+Parameters::CLS_RegularizationMethod::declare_parameters(
   ParameterHandler &prm) const
 {
   prm.enter_subsection("interface reinitialization method");
@@ -208,7 +208,7 @@ Parameters::VOF_RegularizationMethod::declare_parameters(
 }
 
 void
-Parameters::VOF_RegularizationMethod::parse_parameters(ParameterHandler &prm)
+Parameters::CLS_RegularizationMethod::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("interface reinitialization method");
   {
@@ -262,7 +262,7 @@ Parameters::VOF_RegularizationMethod::parse_parameters(ParameterHandler &prm)
 }
 
 void
-Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
+Parameters::CLS_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("projection-based interface sharpening");
   {
@@ -328,7 +328,7 @@ Parameters::VOF_InterfaceSharpening::declare_parameters(ParameterHandler &prm)
 }
 
 void
-Parameters::VOF_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
+Parameters::CLS_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("projection-based interface sharpening");
   {
@@ -371,7 +371,7 @@ Parameters::VOF_InterfaceSharpening::parse_parameters(ParameterHandler &prm)
 }
 
 void
-Parameters::VOF_SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
+Parameters::CLS_SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("surface tension force");
   {
@@ -417,7 +417,7 @@ Parameters::VOF_SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
 }
 
 void
-Parameters::VOF_SurfaceTensionForce::parse_parameters(ParameterHandler &prm)
+Parameters::CLS_SurfaceTensionForce::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("surface tension force");
   {
@@ -426,7 +426,7 @@ Parameters::VOF_SurfaceTensionForce::parse_parameters(ParameterHandler &prm)
       prm.get_double("phase indicator gradient diffusion factor");
     curvature_diffusion_factor = prm.get_double("curvature diffusion factor");
 
-    output_vof_auxiliary_fields = prm.get_bool("output auxiliary fields");
+    output_cls_auxiliary_fields = prm.get_bool("output auxiliary fields");
 
     const std::string op = prm.get("verbosity");
     if (op == "verbose")
@@ -442,7 +442,7 @@ Parameters::VOF_SurfaceTensionForce::parse_parameters(ParameterHandler &prm)
 }
 
 void
-Parameters::VOF_PhaseFilter::declare_parameters(ParameterHandler &prm)
+Parameters::CLS_PhaseFilter::declare_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("phase filtration");
   {
@@ -473,7 +473,7 @@ Parameters::VOF_PhaseFilter::declare_parameters(ParameterHandler &prm)
 }
 
 void
-Parameters::VOF_PhaseFilter::parse_parameters(ParameterHandler &prm)
+Parameters::CLS_PhaseFilter::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("phase filtration");
   {
@@ -503,7 +503,7 @@ Parameters::VOF_PhaseFilter::parse_parameters(ParameterHandler &prm)
 }
 
 void
-Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
+Parameters::CLS_AlgebraicInterfaceReinitialization::declare_parameters(
   dealii::ParameterHandler &prm)
 {
   prm.enter_subsection("PDE-based interface reinitialization");
@@ -548,7 +548,7 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::declare_parameters(
 }
 
 void
-Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters(
+Parameters::CLS_AlgebraicInterfaceReinitialization::parse_parameters(
   dealii::ParameterHandler &prm)
 {
   prm.enter_subsection("PDE-based interface reinitialization");
@@ -565,7 +565,7 @@ Parameters::VOF_AlgebraicInterfaceReinitialization::parse_parameters(
 }
 
 void
-Parameters::VOF_GeometricInterfaceReinitialization::declare_parameters(
+Parameters::CLS_GeometricInterfaceReinitialization::declare_parameters(
   dealii::ParameterHandler &prm)
 {
   prm.enter_subsection("geometric interface reinitialization");
@@ -595,7 +595,7 @@ Parameters::VOF_GeometricInterfaceReinitialization::declare_parameters(
 }
 
 void
-Parameters::VOF_GeometricInterfaceReinitialization::parse_parameters(
+Parameters::CLS_GeometricInterfaceReinitialization::parse_parameters(
   dealii::ParameterHandler &prm)
 {
   prm.enter_subsection("geometric interface reinitialization");

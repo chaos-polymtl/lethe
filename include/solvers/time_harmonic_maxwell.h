@@ -190,7 +190,7 @@ public:
 
   /**
    * @brief Carry out modifications on the auxiliary physics solution.
-   * To be defined for some physics only (eg. free surface, see vof.h).
+   * To be defined for some physics only (eg. free surface, see cls.h).
    */
   virtual void
   modify_solution() override;
@@ -460,7 +460,7 @@ public:
   double
   get_residual_rescale_metric() const override
   {
-    return simulation_parameters.linear_solver.at(PhysicsID::VOF)
+    return simulation_parameters.linear_solver.at(PhysicsID::CLS)
                .rescale_residual_by_volume ?
              std::sqrt(
                GridTools::volume(*this->triangulation, *this->mapping)) :

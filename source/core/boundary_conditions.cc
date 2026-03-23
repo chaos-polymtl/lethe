@@ -11,8 +11,8 @@ namespace BoundaryConditions
   extern template class HTBoundaryConditions<3>;
   extern template class TracerBoundaryConditions<2>;
   extern template class TracerBoundaryConditions<3>;
-  extern template class VOFBoundaryConditions<2>;
-  extern template class VOFBoundaryConditions<3>;
+  extern template class CLSBoundaryConditions<2>;
+  extern template class CLSBoundaryConditions<3>;
   extern template class CahnHilliardBoundaryConditions<2>;
   extern template class CahnHilliardBoundaryConditions<3>;
   extern template class TimeHarmonicMaxwellBoundaryConditions<2>;

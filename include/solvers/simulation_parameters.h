@@ -17,7 +17,7 @@
 #include <solvers/physical_properties_manager.h>
 #include <solvers/source_terms.h>
 #include <solvers/tracer_drift_velocity.h>
-#include <solvers/vof_subequations.h>
+#include <solvers/cls_subequations.h>
 
 template <int dim>
 class SimulationParameters
@@ -26,10 +26,10 @@ public:
   Parameters::Testing                              test;
   std::map<PhysicsID, Parameters::LinearSolver>    linear_solver;
   std::map<PhysicsID, Parameters::NonLinearSolver> physics_solving_strategy;
-  std::map<VOFSubequationsID, Parameters::LinearSolver>
-    vof_subequations_linear_solvers;
-  std::map<VOFSubequationsID, Parameters::NonLinearSolver>
-                             vof_subequations_non_linear_solvers;
+  std::map<CLSSubequationsID, Parameters::LinearSolver>
+    cls_subequations_linear_solvers;
+  std::map<CLSSubequationsID, Parameters::NonLinearSolver>
+                             cls_subequations_non_linear_solvers;
   Parameters::MeshAdaptation mesh_adaptation;
   Parameters::Mesh           mesh;
   Parameters::Dimensionality dimensionality;
@@ -46,7 +46,7 @@ public:
   BoundaryConditions::NSBoundaryConditions<dim>     boundary_conditions;
   BoundaryConditions::HTBoundaryConditions<dim>     boundary_conditions_ht;
   BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
-  BoundaryConditions::VOFBoundaryConditions<dim>    boundary_conditions_vof;
+  BoundaryConditions::CLSBoundaryConditions<dim>    boundary_conditions_cls;
   BoundaryConditions::CahnHilliardBoundaryConditions<dim>
     boundary_conditions_cahn_hilliard;
   BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions<dim>
@@ -102,7 +102,7 @@ public:
       prm, size_of_subsections.boundary_conditions);
     boundary_conditions_tracer.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
-    boundary_conditions_vof.declare_parameters(
+    boundary_conditions_cls.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
     boundary_conditions_cahn_hilliard.declare_parameters(
       prm, size_of_subsections.boundary_conditions);
@@ -129,11 +129,11 @@ public:
       {
         Parameters::LinearSolver::declare_parameters(prm, physics_name);
       }
-    for (const auto &vof_subequation_name : vof_subequations_names)
+    for (const auto &cls_subequation_name : cls_subequations_names)
       {
-        Parameters::LinearSolver::declare_parameters(prm, vof_subequation_name);
+        Parameters::LinearSolver::declare_parameters(prm, cls_subequation_name);
         Parameters::NonLinearSolver::declare_parameters(prm,
-                                                        vof_subequation_name);
+                                                        cls_subequation_name);
       }
 
     Parameters::PostProcessing::declare_parameters(prm);
@@ -182,14 +182,14 @@ public:
         PhysicsID physics_id = get_physics_id(physics_name);
         linear_solver[physics_id].parse_parameters(prm, physics_name);
       }
-    for (const auto &vof_subequation_name : vof_subequations_names)
+    for (const auto &cls_subequation_name : cls_subequations_names)
       {
-        VOFSubequationsID vof_subequations_id =
-          get_vof_subequation_id(vof_subequation_name);
-        vof_subequations_linear_solvers[vof_subequations_id].parse_parameters(
-          prm, vof_subequation_name);
-        vof_subequations_non_linear_solvers[vof_subequations_id]
-          .parse_parameters(prm, vof_subequation_name);
+        CLSSubequationsID cls_subequations_id =
+          get_cls_subequation_id(cls_subequation_name);
+        cls_subequations_linear_solvers[cls_subequations_id].parse_parameters(
+          prm, cls_subequation_name);
+        cls_subequations_non_linear_solvers[cls_subequations_id]
+          .parse_parameters(prm, cls_subequation_name);
       }
 
     mesh_adaptation.parse_parameters(prm);
@@ -208,7 +208,7 @@ public:
     boundary_conditions.parse_parameters(prm);
     boundary_conditions_ht.parse_parameters(prm);
     boundary_conditions_tracer.parse_parameters(prm);
-    boundary_conditions_vof.parse_parameters(prm);
+    boundary_conditions_cls.parse_parameters(prm);
     boundary_conditions_cahn_hilliard.parse_parameters(prm);
     boundary_conditions_time_harmonic_electromagnetics.parse_parameters(prm);
     manifolds_parameters.parse_parameters(prm);
@@ -229,13 +229,13 @@ public:
 
 
     // Check consistency of parameters parsed in different subsections
-    if (multiphysics.VOF && physical_properties.number_of_fluids != 2)
+    if (multiphysics.CLS && physical_properties.number_of_fluids != 2)
       {
         throw std::logic_error(
           "Inconsistency in .prm!\n with CLS = true\n use: number of fluids = 2");
       }
 
-    if (not(multiphysics.VOF) && post_processing.postprocessed_fluid ==
+    if (not(multiphysics.CLS) && post_processing.postprocessed_fluid ==
                                    Parameters::FluidIndicator::fluid1)
       {
         throw std::logic_error(
@@ -245,7 +245,7 @@ public:
       }
 
     if (physical_properties.number_of_fluids == 2 &&
-        (!multiphysics.VOF && !multiphysics.cahn_hilliard))
+        (!multiphysics.CLS && !multiphysics.cahn_hilliard))
       {
         throw std::logic_error(
           "Inconsistency in .prm!\n "
@@ -254,7 +254,7 @@ public:
       }
 
     // Interface physical property models consistency check
-    if (multiphysics.vof_parameters.surface_tension_force.enable)
+    if (multiphysics.cls_parameters.surface_tension_force.enable)
       {
         std::string constant_surface_tension_model(
           "    subsection fluid-fluid interaction\n"
@@ -283,7 +283,7 @@ public:
           "      set solidus temperature                         = $value_of_solidus_temperature\n"
           "      set liquidus temperature                        = $value_of_liquidus_temperature\n"
           "    end\n");
-        if (!multiphysics.vof_parameters.surface_tension_force
+        if (!multiphysics.cls_parameters.surface_tension_force
                .enable_marangoni_effect) // constant surface tension model
           {
             if (physical_properties.number_of_material_interactions == 0)
@@ -299,7 +299,7 @@ public:
                   "    set type = fluid-fluid\n" +
                   constant_surface_tension_model + "  end\n");
               }
-            else if (multiphysics.VOF &&
+            else if (multiphysics.CLS &&
                      multiphysics
                        .heat_transfer) // disabled Marangoni effect error
               {
@@ -401,7 +401,7 @@ public:
           }
       }
 
-    if (multiphysics.cahn_hilliard && multiphysics.VOF)
+    if (multiphysics.cahn_hilliard && multiphysics.CLS)
       {
         throw std::runtime_error(
           "Cannot solve a multiphase problem using CLS and Cahn-Hilliard at the same time");
@@ -429,11 +429,11 @@ public:
     if (laser_parameters->activate_laser &&
         (laser_parameters->laser_type ==
            Parameters::Laser<
-             dim>::LaserType::gaussian_heat_flux_vof_interface ||
+             dim>::LaserType::gaussian_heat_flux_cls_interface ||
          laser_parameters->laser_type ==
            Parameters::Laser<
-             dim>::LaserType::uniform_heat_flux_vof_interface) &&
-        !multiphysics.VOF)
+             dim>::LaserType::uniform_heat_flux_cls_interface) &&
+        !multiphysics.CLS)
       {
         throw std::logic_error(
           "At the moment, the laser surface heat flux is not implemented for 1 fluid simulations."
@@ -493,8 +493,8 @@ public:
 
     if (simulation_control.adapt_with_capillary_time_step_ratio)
       AssertThrow(
-        (multiphysics.vof_parameters.surface_tension_force.enable &&
-         multiphysics.VOF),
+        (multiphysics.cls_parameters.surface_tension_force.enable &&
+         multiphysics.CLS),
         ExcMessage(
           "The current implementation only allows the capillary time-step constraint \n "
           "to be respected for CLS multiphase flows with surface tension.\n "));
@@ -543,8 +543,8 @@ private:
                                                       "cahn hilliard",
                                                       "void fraction"};
   std::vector<std::string> linear_physics_names    = {"electromagnetics"};
-  // Names of subequations within VOF that inherits from PhysicsSolver
-  std::vector<std::string> vof_subequations_names = {
+  // Names of subequations within CLS that inherits from PhysicsSolver
+  std::vector<std::string> cls_subequations_names = {
     "CLS PDE-based interface reinitialization"};
 };
 

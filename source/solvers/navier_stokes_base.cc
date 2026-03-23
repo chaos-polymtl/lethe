@@ -765,15 +765,15 @@ NavierStokesBase<dim, VectorType, DofsType>::
                                     *this->cell_quadrature,
                                     update_values);
 
-  // For VOF simulations
-  if (this->simulation_parameters.multiphysics.VOF)
+  // For CLS simulations
+  if (this->simulation_parameters.multiphysics.CLS)
     {
-      const DoFHandler<dim> &dof_handler_vof =
+      const DoFHandler<dim> &dof_handler_cls =
         this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
 
-      this->fe_values_vof =
+      this->fe_values_cls =
         std::make_shared<FEValues<dim>>(*this->get_mapping(),
-                                        dof_handler_vof.get_fe(),
+                                        dof_handler_cls.get_fe(),
                                         *this->cell_quadrature,
                                         update_values);
     }
@@ -1819,9 +1819,9 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
                   this->error_table.add_value("total_time", total_time);
                 }
 
-              // Calculate error on pressure for VOF or Cahn-Hilliard
+              // Calculate error on pressure for CLS or Cahn-Hilliard
               // simulations
-              if (this->simulation_parameters.multiphysics.VOF ||
+              if (this->simulation_parameters.multiphysics.CLS ||
                   this->simulation_parameters.multiphysics.cahn_hilliard)
                 this->error_table.add_value("error_pressure", error_pressure);
             }
@@ -2559,7 +2559,7 @@ NavierStokesBase<dim, VectorType, DofsType>::constrain_stasis_with_temperature(
 template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::
-  constrain_stasis_with_temperature_vof(const DoFHandler<dim> *dof_handler_vof,
+  constrain_stasis_with_temperature_cls(const DoFHandler<dim> *dof_handler_cls,
                                         const DoFHandler<dim> *dof_handler_ht)
 {
   const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
@@ -2577,7 +2577,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
 
   // Get filtered phase fraction solution
   const auto filtered_phase_fraction_solution =
-    this->multiphysics->get_filtered_solution(PhysicsID::VOF);
+    this->multiphysics->get_filtered_solution(PhysicsID::CLS);
   std::vector<double> local_filtered_phase_fraction_values(
     this->cell_quadrature->size());
 
@@ -2607,7 +2607,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
                   bool cell_is_in_right_fluid = true;
                   get_cell_filtered_phase_fraction_values(
                     cell,
-                    dof_handler_vof,
+                    dof_handler_cls,
                     filtered_phase_fraction_solution,
                     local_filtered_phase_fraction_values);
 
@@ -2852,7 +2852,7 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
       // Only output when density is not constant or if it is a multiphase
       // flow
       if (!density_models[f_id]->is_constant_density_model() ||
-          this->simulation_parameters.multiphysics.VOF ||
+          this->simulation_parameters.multiphysics.CLS ||
           this->simulation_parameters.multiphysics.cahn_hilliard)
         solution_output_structs.emplace_back(
           std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
@@ -2870,7 +2870,7 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
             kinematic_viscosity_postprocessors[f_id]);
 
           // Only output the dynamic viscosity for multiphase flows
-          if (this->simulation_parameters.multiphysics.VOF ||
+          if (this->simulation_parameters.multiphysics.CLS ||
               this->simulation_parameters.multiphysics.cahn_hilliard)
             solution_output_structs.emplace_back(
               std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,

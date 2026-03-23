@@ -7,7 +7,7 @@ Postprocessing code for rising-bubble example
 
 Quick user guide :
 
-This python script allows you to plot the vertical position, vertical speed and contour of the bubble in the rising bubble test case (for VOF or Cahn-Hilliard simulations) and to compare it with results from the literature. If you want to plot the results for different simulations, it does it automatically.
+This python script allows you to plot the vertical position, vertical speed and contour of the bubble in the rising bubble test case (for CLS or Cahn-Hilliard simulations) and to compare it with results from the literature. If you want to plot the results for different simulations, it does it automatically.
 
 How to use this script?
 
@@ -167,9 +167,9 @@ with plt.style.context(['science', 'ieee']):
 
    for i in range(len(dirs)):
       sim = pv.read(list_latest_files[i])
-      # If VOF simulation results are in the main subdirectory, the script is able to output the contour of the bubble nonetheless.
-      # The VOF subdirectories should have VOF somewhere in their name
-      if ("VOF" in list_latest_files[i]):
+      # If CLS simulation results are in the main subdirectory, the script is able to output the contour of the bubble nonetheless.
+      # The CLS subdirectories should have CLS somewhere in their name
+      if ("CLS" in list_latest_files[i]):
           sim.set_active_scalars("filtered_phase")
           contour_val = np.array([0.5])
           contours = sim.contour(contour_val)

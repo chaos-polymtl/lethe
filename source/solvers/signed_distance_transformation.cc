@@ -5,7 +5,7 @@
 
 std::shared_ptr<SignedDistanceTransformationBase>
 SignedDistanceTransformationBase::model_cast(
-  const Parameters::VOF_GeometricInterfaceReinitialization
+  const Parameters::CLS_GeometricInterfaceReinitialization
     &geometric_redistanciation_parameters)
 {
   if (geometric_redistanciation_parameters.transformation_type ==

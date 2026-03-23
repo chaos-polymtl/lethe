@@ -9,8 +9,8 @@
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
-#include <solvers/isothermal_compressible_navier_stokes_vof_assembler.h>
-#include <solvers/navier_stokes_vof_assemblers.h>
+#include <solvers/isothermal_compressible_navier_stokes_cls_assembler.h>
+#include <solvers/navier_stokes_cls_assemblers.h>
 #include <solvers/postprocessing_cfd.h>
 
 #include <fem-dem/fluid_dynamics_sharp.h>
@@ -3874,7 +3874,7 @@ FluidDynamicsSharp<dim>::setup_assemblers()
           this->simulation_control,
           this->simulation_parameters.boundary_conditions));
     }
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
       // Time-stepping schemes
       if (time_stepping_is_bdf(
@@ -3883,7 +3883,7 @@ FluidDynamicsSharp<dim>::setup_assemblers()
             .density_is_constant())
         {
           this->assemblers.push_back(
-            std::make_shared<GLSNavierStokesVOFAssemblerBDF<dim>>(
+            std::make_shared<GLSNavierStokesCLSAssemblerBDF<dim>>(
               this->simulation_control));
         }
       else if (time_stepping_is_bdf(
@@ -3891,7 +3891,7 @@ FluidDynamicsSharp<dim>::setup_assemblers()
         {
           this->assemblers.push_back(
             std::make_shared<
-              GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF<dim>>(
+              GLSIsothermalCompressibleNavierStokesCLSAssemblerBDF<dim>>(
               this->simulation_control));
         }
 
@@ -3901,7 +3901,7 @@ FluidDynamicsSharp<dim>::setup_assemblers()
         {
           // Core assembler with Non newtonian viscosity
           this->assemblers.push_back(
-            std::make_shared<GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>>(
+            std::make_shared<GLSNavierStokesCLSAssemblerNonNewtonianCore<dim>>(
               this->simulation_control, this->simulation_parameters));
         }
       else if (!this->simulation_parameters.physical_properties_manager
@@ -3909,14 +3909,14 @@ FluidDynamicsSharp<dim>::setup_assemblers()
         {
           this->assemblers.push_back(
             std::make_shared<
-              GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<dim>>(
+              GLSIsothermalCompressibleNavierStokesCLSAssemblerCore<dim>>(
               this->simulation_control, this->simulation_parameters));
         }
       else
         {
           // Core assembler
           this->assemblers.push_back(
-            std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
+            std::make_shared<GLSNavierStokesCLSAssemblerCore<dim>>(
               this->simulation_control, this->simulation_parameters));
         }
     }
@@ -3996,21 +3996,21 @@ FluidDynamicsSharp<dim>::assemble_local_system_matrix(
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
 
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
-      const DoFHandler<dim> &dof_handler_vof =
-        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      const DoFHandler<dim> &dof_handler_cls =
+        this->multiphysics->get_dof_handler(PhysicsID::CLS);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        &dof_handler_vof);
+        &dof_handler_cls);
 
-      scratch_data.reinit_vof(
+      scratch_data.reinit_cls(
         phase_cell,
-        this->multiphysics->get_solution(PhysicsID::VOF),
-        this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+        this->multiphysics->get_solution(PhysicsID::CLS),
+        this->multiphysics->get_filtered_solution(PhysicsID::CLS),
+        this->multiphysics->get_previous_solutions(PhysicsID::CLS));
     }
 
   scratch_data.calculate_physical_properties();
@@ -4088,21 +4088,21 @@ FluidDynamicsSharp<dim>::assemble_local_system_rhs(
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
 
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
-      const DoFHandler<dim> &dof_handler_vof =
-        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      const DoFHandler<dim> &dof_handler_cls =
+        this->multiphysics->get_dof_handler(PhysicsID::CLS);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        &dof_handler_vof);
+        &dof_handler_cls);
 
-      scratch_data.reinit_vof(
+      scratch_data.reinit_cls(
         phase_cell,
-        this->multiphysics->get_solution(PhysicsID::VOF),
-        this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+        this->multiphysics->get_solution(PhysicsID::CLS),
+        this->multiphysics->get_filtered_solution(PhysicsID::CLS),
+        this->multiphysics->get_previous_solutions(PhysicsID::CLS));
     }
 
   scratch_data.calculate_physical_properties();

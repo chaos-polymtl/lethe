@@ -215,7 +215,7 @@ GLSNavierStokesCahnHilliardAssemblerCore<dim>::assemble_rhs(
 
   Assert(scratch_data.properties_manager.density_is_constant(),
          RequiresConstantDensity(
-           "GLSNavierStokesVOFAssemblerCore<dim>::assemble_rhs"));
+           "GLSNavierStokesCLSAssemblerCore<dim>::assemble_rhs"));
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)

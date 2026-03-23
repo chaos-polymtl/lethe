@@ -1,0 +1,188 @@
+# SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method            = bdf1
+  set number mesh adapt = 0
+  set time end          = 1
+  set time step         = 0.2
+  set output name       = cls_ht_heated-walls
+  set output frequency  = 0
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set heat transfer = true
+  set cls           = true
+end
+
+#---------------------------------------------------
+# CLS
+#---------------------------------------------------
+
+subsection CLS
+  subsection interface reinitialization method
+    set type      = projection-based interface sharpening
+    set frequency = 1
+    subsection projection-based interface sharpening
+      set interface sharpness = 1.5
+    end
+  end
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+
+subsection initial conditions
+  subsection CLS
+    set Function expression = if (x<=0,1,0)
+  end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 2
+  subsection fluid 1
+    set density              = 1
+    set specific heat        = 1
+    set thermal conductivity = 2
+    set kinematic viscosity  = 1
+  end
+  subsection fluid 0
+    set density              = 1
+    set specific heat        = 1
+    set thermal conductivity = 0.1
+    set kinematic viscosity  = 1
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_rectangle
+  set grid arguments     = -0.5, -0.1 : 0.5, 0.1 : true
+  set initial refinement = 5
+end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set enable    = true
+  set verbosity = verbose
+  subsection temperature
+    set Function constants = k1=2, k0=0.1, T1=5, T0=1, L=0.5
+    #temperature for fluid 1 (x<=0) : T = k0*(T0-T1)/(L*(k1+k0)) * x + T1+(T0-T1)*k0/(k1+k0)
+    #temperature for fluid 0 (x>0) : T = k1*(T0-T1)/(L*(k1+k0)) * x + T1+(T0-T1)*k0/(k1+k0)
+    set Function expression = if(x<=0, k0*(T0-T1)/(L*(k1+k0)) * x + T1+(T0-T1)*k0/(k1+k0), k1*(T0-T1)/(L*(k1+k0)) * x + T1+(T0-T1)*k0/(k1+k0) )
+  end
+  subsection CLS
+    set Function expression = if(x<=0,1,0)
+  end
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 4
+  subsection bc 0
+    set id   = 0
+    set type = noslip
+  end
+  subsection bc 1
+    set id   = 1
+    set type = noslip
+  end
+  subsection bc 2
+    set id   = 2
+    set type = noslip
+  end
+  subsection bc 3
+    set id   = 3
+    set type = noslip
+  end
+end
+
+subsection boundary conditions heat transfer
+  set number = 4
+  subsection bc 0 #left wall
+    set id   = 0
+    set type = temperature
+    subsection value
+      set Function expression = 5
+    end
+  end
+  subsection bc 1 #right wall
+    set id   = 1
+    set type = temperature
+    subsection value
+      set Function expression = 1
+    end
+  end
+  subsection bc 2 #bottom wall
+    set id   = 2
+    set type = noflux
+  end
+  subsection bc 3 #top wall
+    set id   = 3
+    set type = noflux
+  end
+end
+
+subsection boundary conditions CLS
+  set number = 4
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection heat transfer
+    set verbosity = quiet
+  end
+  subsection CLS
+    set verbosity = quiet
+  end
+  subsection fluid dynamics
+    set verbosity = quiet
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity = quiet
+  end
+  subsection CLS
+    set verbosity = quiet
+  end
+  subsection heat transfer
+    set verbosity = quiet
+  end
+end

@@ -21,8 +21,8 @@ using namespace dealii;
  * The EvaporativeModel is the parent class, and its children are specific
  * types of evaporative models, e.g., constant, temperature dependent. The
  * selected model is instantiated in the assemblers' constructor
- * (NavierStokesVOFAssemblerEvaporation and/or
- * HeatTransferAssemblerVOFEvaporation), using the model_cast method according
+ * (NavierStokesCLSAssemblerEvaporation and/or
+ * HeatTransferAssemblerCLSEvaporation), using the model_cast method according
  * to the evaporation model parameters.
  *
  * The assemblers call the required method of the EvaporationModel for either

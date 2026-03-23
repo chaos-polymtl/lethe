@@ -8,9 +8,9 @@
 #include <core/utilities.h>
 
 #include <solvers/fluid_dynamics_block.h>
-#include <solvers/isothermal_compressible_navier_stokes_vof_assembler.h>
+#include <solvers/isothermal_compressible_navier_stokes_cls_assembler.h>
 #include <solvers/navier_stokes_assemblers.h>
-#include <solvers/navier_stokes_vof_assemblers.h>
+#include <solvers/navier_stokes_cls_assemblers.h>
 
 #include <deal.II/base/work_stream.h>
 
@@ -48,12 +48,12 @@ FluidDynamicsBlock<dim>::setup_assemblers()
   // Thermal buoyancy force
   if (this->simulation_parameters.multiphysics.thermal_buoyancy_force)
     {
-      if (this->simulation_parameters.multiphysics.VOF)
+      if (this->simulation_parameters.multiphysics.CLS)
         {
-          // VOF formulation includes density explicitly in the momentum
+          // CLS formulation includes density explicitly in the momentum
           // equation
           this->assemblers.emplace_back(
-            std::make_shared<ThermalBuoyancyAssemblyVOF<dim>>(
+            std::make_shared<ThermalBuoyancyAssemblyCLS<dim>>(
               this->simulation_control,
               this->simulation_parameters.physical_properties_manager
                 .get_reference_temperature()));
@@ -76,7 +76,7 @@ FluidDynamicsBlock<dim>::setup_assemblers()
           this->simulation_control, this->simulation_parameters.ale));
     }
 
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
       // Time-stepping schemes
       if (time_stepping_is_bdf(
@@ -85,7 +85,7 @@ FluidDynamicsBlock<dim>::setup_assemblers()
             .density_is_constant())
         {
           this->assemblers.emplace_back(
-            std::make_shared<GLSNavierStokesVOFAssemblerBDF<dim>>(
+            std::make_shared<GLSNavierStokesCLSAssemblerBDF<dim>>(
               this->simulation_control));
         }
       else if (time_stepping_is_bdf(
@@ -93,7 +93,7 @@ FluidDynamicsBlock<dim>::setup_assemblers()
         {
           this->assemblers.emplace_back(
             std::make_shared<
-              GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF<dim>>(
+              GLSIsothermalCompressibleNavierStokesCLSAssemblerBDF<dim>>(
               this->simulation_control));
         }
 
@@ -104,7 +104,7 @@ FluidDynamicsBlock<dim>::setup_assemblers()
           AssertThrow(this->simulation_parameters.multiphysics.heat_transfer,
                       PhaseChangeDarcyModelRequiresTemperature());
           this->assemblers.emplace_back(
-            std::make_shared<PhaseChangeDarcyVOFAssembler<dim>>(
+            std::make_shared<PhaseChangeDarcyCLSAssembler<dim>>(
               this->simulation_parameters.physical_properties_manager
                 .get_phase_change_parameters_vector()));
         }
@@ -114,14 +114,14 @@ FluidDynamicsBlock<dim>::setup_assemblers()
         {
           this->assemblers.emplace_back(
             std::make_shared<
-              GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<dim>>(
+              GLSIsothermalCompressibleNavierStokesCLSAssemblerCore<dim>>(
               this->simulation_control, this->simulation_parameters));
         }
       else
         {
           // Core assembler
           this->assemblers.emplace_back(
-            std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
+            std::make_shared<GLSNavierStokesCLSAssemblerCore<dim>>(
               this->simulation_control, this->simulation_parameters));
         }
     }
@@ -215,15 +215,15 @@ FluidDynamicsBlock<dim>::assemble_system_matrix()
     *this->mapping,
     *this->face_quadrature);
 
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
-      const DoFHandler<dim> &dof_handler_vof =
-        this->multiphysics->get_dof_handler(PhysicsID::VOF);
-      scratch_data.enable_vof(
-        dof_handler_vof.get_fe(),
+      const DoFHandler<dim> &dof_handler_cls =
+        this->multiphysics->get_dof_handler(PhysicsID::CLS);
+      scratch_data.enable_cls(
+        dof_handler_cls.get_fe(),
         *this->cell_quadrature,
         *this->mapping,
-        this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
+        this->simulation_parameters.multiphysics.cls_parameters.phase_filter);
     }
 
 
@@ -274,21 +274,21 @@ FluidDynamicsBlock<dim>::assemble_local_system_matrix(
     this->forcing_function,
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
-      const DoFHandler<dim> &dof_handler_vof =
-        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      const DoFHandler<dim> &dof_handler_cls =
+        this->multiphysics->get_dof_handler(PhysicsID::CLS);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        &dof_handler_vof);
+        &dof_handler_cls);
 
-      scratch_data.reinit_vof(
+      scratch_data.reinit_cls(
         phase_cell,
-        this->multiphysics->get_solution(PhysicsID::VOF),
-        this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+        this->multiphysics->get_solution(PhysicsID::CLS),
+        this->multiphysics->get_filtered_solution(PhysicsID::CLS),
+        this->multiphysics->get_previous_solutions(PhysicsID::CLS));
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
@@ -346,15 +346,15 @@ FluidDynamicsBlock<dim>::assemble_system_rhs()
     *this->mapping,
     *this->face_quadrature);
 
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
-      const DoFHandler<dim> &dof_handler_vof =
-        this->multiphysics->get_dof_handler(PhysicsID::VOF);
-      scratch_data.enable_vof(
-        dof_handler_vof.get_fe(),
+      const DoFHandler<dim> &dof_handler_cls =
+        this->multiphysics->get_dof_handler(PhysicsID::CLS);
+      scratch_data.enable_cls(
+        dof_handler_cls.get_fe(),
         *this->cell_quadrature,
         *this->mapping,
-        this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
+        this->simulation_parameters.multiphysics.cls_parameters.phase_filter);
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)
@@ -426,21 +426,21 @@ FluidDynamicsBlock<dim>::assemble_local_system_rhs(
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
 
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
-      const DoFHandler<dim> &dof_handler_vof =
-        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      const DoFHandler<dim> &dof_handler_cls =
+        this->multiphysics->get_dof_handler(PhysicsID::CLS);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        &dof_handler_vof);
+        &dof_handler_cls);
 
-      scratch_data.reinit_vof(
+      scratch_data.reinit_cls(
         phase_cell,
-        this->multiphysics->get_solution(PhysicsID::VOF),
-        this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+        this->multiphysics->get_solution(PhysicsID::CLS),
+        this->multiphysics->get_filtered_solution(PhysicsID::CLS),
+        this->multiphysics->get_previous_solutions(PhysicsID::CLS));
     }
 
   if (this->simulation_parameters.multiphysics.heat_transfer)

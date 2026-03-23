@@ -621,11 +621,11 @@ protected:
    *
    * @param[in] cell Pointer to an active cell of the fluid dynamics DoFHandler.
    *
-   * @param[in] dof_handler_vof DoFHandler of the Volume of Fluid (VOF)
+   * @param[in] dof_handler_cls DoFHandler of the Volume of Fluid (CLS)
    * auxiliary physic.
    *
    * @param[in] filtered_phase_fraction_solution Filtered phase fraction
-   * solution vector from the VOF auxiliary physic.
+   * solution vector from the CLS auxiliary physic.
    *
    * @param[out] local_filtered_phase_fraction_values Cell's local filtered
    * phase fraction values at quadrature points.
@@ -633,15 +633,15 @@ protected:
   inline void
   get_cell_filtered_phase_fraction_values(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const DoFHandler<dim>                                *dof_handler_vof,
+    const DoFHandler<dim>                                *dof_handler_cls,
     const GlobalVectorType &filtered_phase_fraction_solution,
     std::vector<double>    &local_filtered_phase_fraction_values)
   {
-    const typename DoFHandler<dim>::active_cell_iterator vof_cell(
-      &(*(this->triangulation)), cell->level(), cell->index(), dof_handler_vof);
+    const typename DoFHandler<dim>::active_cell_iterator cls_cell(
+      &(*(this->triangulation)), cell->level(), cell->index(), dof_handler_cls);
 
-    this->fe_values_vof->reinit(vof_cell);
-    this->fe_values_vof->get_function_values(
+    this->fe_values_cls->reinit(cls_cell);
+    this->fe_values_cls->get_function_values(
       filtered_phase_fraction_solution, local_filtered_phase_fraction_values);
   }
 
@@ -843,8 +843,8 @@ protected:
    * @brief Constrain a fluid's subdomains according to the temperature field to null
    * velocity and pressure fields to model solid subdomains.
    *
-   * @note Its equivalent for Volume of Fluid (VOF) simulations is
-   * NavierStokesBase<dim, VectorType, DofsType>::constrain_solid_domain_vof.
+   * @note Its equivalent for Volume of Fluid (CLS) simulations is
+   * NavierStokesBase<dim, VectorType, DofsType>::constrain_solid_domain_cls.
    *
    * @param[in] dof_handler_ht DoFHandler of the Heat Transfer (HT) auxiliary
    * physic.
@@ -855,15 +855,15 @@ protected:
   /**
    * @brief Constrain fluids' subdomains according to the temperature field to
    * null velocity and pressure fields to model solid subdomains in Volume of
-   * Fluid (VOF) simulations.
+   * Fluid (CLS) simulations.
    *
-   * @param[in] dof_handler_vof DoFHandler of the VOF auxiliary physic.
+   * @param[in] dof_handler_cls DoFHandler of the CLS auxiliary physic.
    *
    * @param[in] dof_handler_ht DoFHandler of the Heat Transfer (HT) auxiliary
    * physic.
    */
   void
-  constrain_stasis_with_temperature_vof(const DoFHandler<dim> *dof_handler_vof,
+  constrain_stasis_with_temperature_cls(const DoFHandler<dim> *dof_handler_cls,
                                         const DoFHandler<dim> *dof_handler_ht);
 
   /**
@@ -1084,10 +1084,10 @@ protected:
   /// FEValues object used for temperature-dependent solid domain constraints
   std::shared_ptr<FEValues<dim>> fe_values_temperature;
   /// FEValues object used for temperature-dependent solid domain constraints in
-  /// VOF simulations
-  std::shared_ptr<FEValues<dim>> fe_values_vof;
+  /// CLS simulations
+  std::shared_ptr<FEValues<dim>> fe_values_cls;
   /// Vector containing solid domain constraint structs for
-  /// temperature-dependent solid domain constraints in VOF simulations
+  /// temperature-dependent solid domain constraints in CLS simulations
   std::vector<StasisConstraintWithTemperature> stasis_constraint_structs;
   /// Dynamic homogeneous constraints used for temperature-dependent solid
   /// domain constraints

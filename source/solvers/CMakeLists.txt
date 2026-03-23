@@ -15,7 +15,7 @@ add_library(lethe-solvers
   heat_transfer_scratch_data.cc
   initial_conditions.cc
   isothermal_compressible_navier_stokes_assembler.cc
-  isothermal_compressible_navier_stokes_vof_assembler.cc
+  isothermal_compressible_navier_stokes_cls_assembler.cc
   fluid_dynamics_matrix_free.cc
   fluid_dynamics_matrix_free_operators.cc
   multiphysics_interface.cc
@@ -23,7 +23,7 @@ add_library(lethe-solvers
   navier_stokes_base.cc
   navier_stokes_cahn_hilliard_assemblers.cc
   navier_stokes_scratch_data.cc
-  navier_stokes_vof_assemblers.cc
+  navier_stokes_cls_assemblers.cc
   physical_properties_manager.cc
   postprocessing_cfd.cc
   postprocessing_velocities.cc
@@ -37,15 +37,15 @@ add_library(lethe-solvers
   tracer_assemblers.cc
   tracer_drift_velocity.cc
   tracer_scratch_data.cc
-  vof.cc
-  vof_algebraic_interface_reinitialization.cc
-  vof_assemblers.cc
-  vof_curvature_projection.cc
-  vof_filter.cc
-  vof_linear_subequations_solver.cc
-  vof_phase_gradient_projection.cc
-  vof_scratch_data.cc
-  vof_subequations_interface.cc
+  cls.cc
+  cls_algebraic_interface_reinitialization.cc
+  cls_assemblers.cc
+  cls_curvature_projection.cc
+  cls_filter.cc
+  cls_linear_subequations_solver.cc
+  cls_phase_gradient_projection.cc
+  cls_scratch_data.cc
+  cls_subequations_interface.cc
   # Headers
   ../../include/solvers/analytical_solutions.h
   ../../include/solvers/auxiliary_physics.h
@@ -64,7 +64,7 @@ add_library(lethe-solvers
   ../../include/solvers/heat_transfer_scratch_data.h
   ../../include/solvers/initial_conditions.h
   ../../include/solvers/isothermal_compressible_navier_stokes_assembler.h
-  ../../include/solvers/isothermal_compressible_navier_stokes_vof_assembler.h
+  ../../include/solvers/isothermal_compressible_navier_stokes_cls_assembler.h
   ../../include/solvers/fluid_dynamics_matrix_free.h
   ../../include/solvers/fluid_dynamics_matrix_free_operators.h
   ../../include/solvers/multiphysics_interface.h
@@ -72,7 +72,7 @@ add_library(lethe-solvers
   ../../include/solvers/navier_stokes_base.h
   ../../include/solvers/navier_stokes_cahn_hilliard_assemblers.h
   ../../include/solvers/navier_stokes_scratch_data.h
-  ../../include/solvers/navier_stokes_vof_assemblers.h
+  ../../include/solvers/navier_stokes_cls_assemblers.h
   ../../include/solvers/physical_properties_manager.h
   ../../include/solvers/physics_assemblers.h
   ../../include/solvers/physics_scratch_data.h
@@ -89,16 +89,16 @@ add_library(lethe-solvers
   ../../include/solvers/tracer_assemblers.h
   ../../include/solvers/tracer_drift_velocity.h
   ../../include/solvers/tracer_scratch_data.h
-  ../../include/solvers/vof.h
-  ../../include/solvers/vof_algebraic_interface_reinitialization.h
-  ../../include/solvers/vof_assemblers.h
-  ../../include/solvers/vof_curvature_projection.h
-  ../../include/solvers/vof_filter.h
-  ../../include/solvers/vof_linear_subequations_solver.h
-  ../../include/solvers/vof_phase_gradient_projection.h
-  ../../include/solvers/vof_scratch_data.h
-  ../../include/solvers/vof_subequations.h
-  ../../include/solvers/vof_subequations_interface.h
+  ../../include/solvers/cls.h
+  ../../include/solvers/cls_algebraic_interface_reinitialization.h
+  ../../include/solvers/cls_assemblers.h
+  ../../include/solvers/cls_curvature_projection.h
+  ../../include/solvers/cls_filter.h
+  ../../include/solvers/cls_linear_subequations_solver.h
+  ../../include/solvers/cls_phase_gradient_projection.h
+  ../../include/solvers/cls_scratch_data.h
+  ../../include/solvers/cls_subequations.h
+  ../../include/solvers/cls_subequations_interface.h
   )
 
 deal_ii_setup_target(lethe-solvers)

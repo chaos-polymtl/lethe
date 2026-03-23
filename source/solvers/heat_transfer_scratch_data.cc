@@ -72,17 +72,17 @@ HeatTransferScratchData<dim>::allocate()
 
 template <int dim>
 void
-HeatTransferScratchData<dim>::enable_vof(
+HeatTransferScratchData<dim>::enable_cls(
   const FiniteElement<dim>          &fe,
   const Quadrature<dim>             &quadrature,
   const Mapping<dim>                &mapping,
-  const Parameters::VOF_PhaseFilter &phase_filter_parameters)
+  const Parameters::CLS_PhaseFilter &phase_filter_parameters)
 {
-  gather_vof    = true;
-  fe_values_vof = std::make_shared<FEValues<dim>>(
+  gather_cls    = true;
+  fe_values_cls = std::make_shared<FEValues<dim>>(
     mapping, fe, quadrature, update_values | update_gradients);
 
-  // Allocate VOF values
+  // Allocate CLS values
   filtered_phase_values = std::vector<double>(this->n_q_points);
   filtered_phase_gradient_values =
     std::vector<Tensor<1, dim>>(this->n_q_points);
@@ -106,17 +106,17 @@ HeatTransferScratchData<dim>::enable_vof(
 
 template <int dim>
 void
-HeatTransferScratchData<dim>::enable_vof(
+HeatTransferScratchData<dim>::enable_cls(
   const FiniteElement<dim>                       &fe,
   const Quadrature<dim>                          &quadrature,
   const Mapping<dim>                             &mapping,
   const std::shared_ptr<VolumeOfFluidFilterBase> &filter)
 {
-  gather_vof    = true;
-  fe_values_vof = std::make_shared<FEValues<dim>>(
+  gather_cls    = true;
+  fe_values_cls = std::make_shared<FEValues<dim>>(
     mapping, fe, quadrature, update_values | update_gradients);
 
-  // Allocate VOF values
+  // Allocate CLS values
   filtered_phase_values = std::vector<double>(this->n_q_points);
   filtered_phase_gradient_values =
     std::vector<Tensor<1, dim>>(this->n_q_points);
@@ -235,7 +235,7 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
               specific_heat_models[1]->vector_jacobian(
                 fields, field::temperature, grad_specific_heat_temperature_1);
 
-              // Blend the physical properties using the VOF field
+              // Blend the physical properties using the CLS field
               for (unsigned int q = 0; q < this->n_q_points; ++q)
                 {
                   auto filtered_phase_value = this->filtered_phase_values[q];

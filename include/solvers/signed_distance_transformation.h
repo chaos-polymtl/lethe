@@ -9,7 +9,7 @@
 
 /**
  * @brief Abstract class for the transformation of the signed distance to the
- * phase fraction for the VOF solver when geometric redistanciation is used.
+ * phase fraction for the CLS solver when geometric redistanciation is used.
  */
 class SignedDistanceTransformationBase
 {
@@ -25,13 +25,13 @@ public:
    * SignedDistanceTransformationBase object by casting it to the proper child
    * class.
    *
-   * @param[in] geometric_redistanciation_parameters VOF geometric
+   * @param[in] geometric_redistanciation_parameters CLS geometric
    * redistanciation parameters.
    *
    * @return Casted SignedDistanceTransformationBase child class object.
    */
   static std::shared_ptr<SignedDistanceTransformationBase>
-  model_cast(const Parameters::VOF_GeometricInterfaceReinitialization
+  model_cast(const Parameters::CLS_GeometricInterfaceReinitialization
                &geometric_redistanciation_parameters);
 
   /**

@@ -54,7 +54,7 @@ namespace Parameters
    *  - fluid1: fluid 1 only,
    *  - both: both fluids
    * This is used for multiphase simulations, in PostProcessing and in
-   * VOF (see parameter_multiphysics.h)
+   * CLS (see parameter_multiphysics.h)
    */
   enum class FluidIndicator : std::uint8_t
   {
@@ -802,11 +802,11 @@ namespace Parameters
 
     bool heat_transfer_dcdd_stabilization;
 
-    /// Boolean indicating if the DCDD stabilization term for the VOF phase
+    /// Boolean indicating if the DCDD stabilization term for the CLS phase
     /// fraction should be assembled (@p true) or not (@p false).
-    bool vof_dcdd_stabilization;
+    bool cls_dcdd_stabilization;
 
-    // Diffusion factor scaling the DCDD stabilization term in the VOF equation
+    // Diffusion factor scaling the DCDD stabilization term in the CLS equation
     double dcdd_diffusion_coeff;
 
     // Pressure scaling factor used to facilitate the linear solving when
@@ -927,14 +927,14 @@ namespace Parameters
 
     // Type of laser model used in simulations. With "exponential_decay", the
     // laser acts as a volumetric source, whereas, with
-    // "heat_flux_vof_interface", the laser behaves as a surface flux at the
-    // interface between fluids (VOF auxiliary physic must be enabled to use
+    // "heat_flux_cls_interface", the laser behaves as a surface flux at the
+    // interface between fluids (CLS auxiliary physic must be enabled to use
     // this model).
     enum class LaserType : std::int8_t
     {
       exponential_decay,
-      gaussian_heat_flux_vof_interface,
-      uniform_heat_flux_vof_interface
+      gaussian_heat_flux_cls_interface,
+      uniform_heat_flux_cls_interface
     } laser_type;
 
     // Laser concentration factor indicates the definition of the beam radius.
@@ -1134,11 +1134,11 @@ namespace Parameters
     /// Fluid domain, used when post-processing a multiphase simulation
     Parameters::FluidIndicator postprocessed_fluid;
 
-    /// Enable barycenter calculation for fluid 1 in VOF and Cahn-Hilliard
+    /// Enable barycenter calculation for fluid 1 in CLS and Cahn-Hilliard
     /// simulations
     bool calculate_barycenter;
 
-    /// Prefix for the VOF and Cahn-Hilliard barycenter output
+    /// Prefix for the CLS and Cahn-Hilliard barycenter output
     std::string barycenter_output_name;
 
     /// Enable phase statistics
@@ -1147,10 +1147,10 @@ namespace Parameters
     /// Prefix for the phase output
     std::string phase_output_name;
 
-    /// Enable mass conservation calculation for both fluids in VOF simulations
+    /// Enable mass conservation calculation for both fluids in CLS simulations
     bool calculate_mass_conservation;
 
-    /// Prefix for the VOF mass conservation output
+    /// Prefix for the CLS mass conservation output
     std::string mass_conservation_output_name;
 
     /// Enable energies calculation on the domain in Cahn-Hilliard simulations
@@ -1207,11 +1207,11 @@ namespace Parameters
     // Switch tracer to DG formulation instead of CG
     bool tracer_uses_dg;
 
-    // Interpolation order vof model
-    unsigned int VOF_order;
+    // Interpolation order cls model
+    unsigned int CLS_order;
 
-    // Switch vof to DG formulation instead of CG
-    bool VOF_uses_dg;
+    // Switch cls to DG formulation instead of CG
+    bool CLS_uses_dg;
 
     // Interpolation order Cahn-Hilliard
     unsigned int phase_cahn_hilliard_order;

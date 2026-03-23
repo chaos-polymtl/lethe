@@ -6,7 +6,7 @@
 #include <solvers/heat_transfer.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/tracer.h>
-#include <solvers/vof.h>
+#include <solvers/cls.h>
 
 #include <deal.II/base/exceptions.h>
 #define _unused(x) ((void)(x))
@@ -47,21 +47,21 @@ DeclException1(
   << "Marangoni effect cannot be activated without activating surface tension force.");
 
 DeclException1(
-  SurfaceTensionForceWithoutVOFError,
+  SurfaceTensionForceWithoutCLSError,
   bool,
   << std::boolalpha << "Surface tension force is activated (" << arg1
   << "), while CLS is not activated (false)." << std::endl
   << "Surface tension force cannot be activated without activating CLS.");
 
 DeclException1(
-  MarangoniWithoutVOFError,
+  MarangoniWithoutCLSError,
   bool,
   << std::boolalpha << "Marangoni effect is activated (" << arg1
   << "), while CLS is not activated (false)." << std::endl
   << "Marangoni effect cannot be activated without activating CLS.");
 
 DeclException1(
-  InterfaceSharpeningWithoutVOFError,
+  InterfaceSharpeningWithoutCLSError,
   bool,
   << std::boolalpha << "Interface sharpening is activated (" << arg1
   << "), while CLS is not activated (false)." << std::endl
@@ -119,17 +119,17 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
       physics[PhysicsID::tracer] = std::make_shared<Tracer<dim>>(
         this, nsparam, p_triangulation, p_simulation_control);
     }
-  if (multiphysics_parameters.VOF)
+  if (multiphysics_parameters.CLS)
     {
-      verbosity[PhysicsID::VOF] =
-        (nsparam.physics_solving_strategy.at(PhysicsID::VOF).verbosity !=
+      verbosity[PhysicsID::CLS] =
+        (nsparam.physics_solving_strategy.at(PhysicsID::CLS).verbosity !=
            Parameters::Verbosity::quiet ||
-         nsparam.linear_solver.at(PhysicsID::VOF).verbosity !=
+         nsparam.linear_solver.at(PhysicsID::CLS).verbosity !=
            Parameters::Verbosity::quiet) ?
           Parameters::Verbosity::verbose :
           Parameters::Verbosity::quiet;
-      active_physics.push_back(PhysicsID::VOF);
-      physics[PhysicsID::VOF] = std::make_shared<VolumeOfFluid<dim>>(
+      active_physics.push_back(PhysicsID::CLS);
+      physics[PhysicsID::CLS] = std::make_shared<VolumeOfFluid<dim>>(
         this, nsparam, p_triangulation, p_simulation_control);
     }
 
@@ -168,16 +168,16 @@ template <int dim>
 const GlobalVectorType &
 MultiphysicsInterface<dim>::get_projected_phase_fraction_gradient_solution()
 {
-  // Throw error if VOF is not enabled
-  AssertThrow((std::ranges::find(active_physics, PhysicsID::VOF) !=
+  // Throw error if CLS is not enabled
+  AssertThrow((std::ranges::find(active_physics, PhysicsID::CLS) !=
                active_physics.end()),
               ExcInternalError());
   // Throw error if surface tension force is not enabled
   AssertThrow(
-    (multiphysics_parameters.vof_parameters.surface_tension_force.enable),
+    (multiphysics_parameters.cls_parameters.surface_tension_force.enable),
     ExcInternalError());
 
-  return dynamic_cast<VolumeOfFluid<dim> &>(*physics[PhysicsID::VOF])
+  return dynamic_cast<VolumeOfFluid<dim> &>(*physics[PhysicsID::CLS])
     .get_projected_phase_fraction_gradient_solution();
 }
 
@@ -185,16 +185,16 @@ template <int dim>
 const GlobalVectorType &
 MultiphysicsInterface<dim>::get_curvature_solution()
 {
-  // Throw error if VOF is not enabled
-  AssertThrow((std::ranges::find(active_physics, PhysicsID::VOF) !=
+  // Throw error if CLS is not enabled
+  AssertThrow((std::ranges::find(active_physics, PhysicsID::CLS) !=
                active_physics.end()),
               ExcInternalError());
   // Throw error if surface tension force is not enabled
   AssertThrow(
-    (multiphysics_parameters.vof_parameters.surface_tension_force.enable),
+    (multiphysics_parameters.cls_parameters.surface_tension_force.enable),
     ExcInternalError());
 
-  return dynamic_cast<VolumeOfFluid<dim> &>(*physics[PhysicsID::VOF])
+  return dynamic_cast<VolumeOfFluid<dim> &>(*physics[PhysicsID::CLS])
     .get_curvature_solution();
 }
 
@@ -202,16 +202,16 @@ template <int dim>
 const DoFHandler<dim> &
 MultiphysicsInterface<dim>::get_curvature_dof_handler()
 {
-  // Throw error if VOF is not enabled
-  AssertThrow((std::ranges::find(active_physics, PhysicsID::VOF) !=
+  // Throw error if CLS is not enabled
+  AssertThrow((std::ranges::find(active_physics, PhysicsID::CLS) !=
                active_physics.end()),
               ExcInternalError());
   // Throw error if surface tension force is not enabled
   AssertThrow(
-    (multiphysics_parameters.vof_parameters.surface_tension_force.enable),
+    (multiphysics_parameters.cls_parameters.surface_tension_force.enable),
     ExcInternalError());
 
-  return dynamic_cast<VolumeOfFluid<dim> &>(*physics[PhysicsID::VOF])
+  return dynamic_cast<VolumeOfFluid<dim> &>(*physics[PhysicsID::CLS])
     .get_curvature_dof_handler();
 }
 
@@ -219,16 +219,16 @@ template <int dim>
 const DoFHandler<dim> &
 MultiphysicsInterface<dim>::get_projected_phase_fraction_gradient_dof_handler()
 {
-  // Throw error if VOF is not enabled
-  AssertThrow((std::ranges::find(active_physics, PhysicsID::VOF) !=
+  // Throw error if CLS is not enabled
+  AssertThrow((std::ranges::find(active_physics, PhysicsID::CLS) !=
                active_physics.end()),
               ExcInternalError());
   // Throw error if surface tension force is not enabled
   AssertThrow(
-    (multiphysics_parameters.vof_parameters.surface_tension_force.enable),
+    (multiphysics_parameters.cls_parameters.surface_tension_force.enable),
     ExcInternalError());
 
-  return dynamic_cast<VolumeOfFluid<dim> &>(*physics[PhysicsID::VOF])
+  return dynamic_cast<VolumeOfFluid<dim> &>(*physics[PhysicsID::CLS])
     .get_projected_phase_fraction_gradient_dof_handler();
 }
 
@@ -258,21 +258,21 @@ MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
     nsparam.multiphysics.thermal_buoyancy_force;
   bool heat_transfer_enabled = nsparam.multiphysics.heat_transfer;
   bool marangoni_effect_enabled =
-    nsparam.multiphysics.vof_parameters.surface_tension_force
+    nsparam.multiphysics.cls_parameters.surface_tension_force
       .enable_marangoni_effect;
   bool surface_tension_force_enabled =
-    nsparam.multiphysics.vof_parameters.surface_tension_force.enable;
+    nsparam.multiphysics.cls_parameters.surface_tension_force.enable;
   bool fluid_dynamics_enabled = nsparam.multiphysics.fluid_dynamics;
   bool interface_sharpening_enabled =
-    nsparam.multiphysics.vof_parameters.regularization_method.sharpening.enable;
-  bool VOF_enabled           = nsparam.multiphysics.VOF;
+    nsparam.multiphysics.cls_parameters.regularization_method.sharpening.enable;
+  bool CLS_enabled           = nsparam.multiphysics.CLS;
   bool cahn_hilliard_enabled = nsparam.multiphysics.cahn_hilliard;
 
   // To avoid getting unused parameter warning
   _unused(thermal_buoyancy_force_enabled && heat_transfer_enabled &&
           marangoni_effect_enabled && surface_tension_force_enabled &&
           fluid_dynamics_enabled && interface_sharpening_enabled &&
-          VOF_enabled && cahn_hilliard_enabled);
+          CLS_enabled && cahn_hilliard_enabled);
 
   // Dependence of thermal buoyancy force on fluid dynamics
   AssertThrow(!(thermal_buoyancy_force_enabled == true &&
@@ -301,18 +301,18 @@ MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
               MarangoniWithoutSurfaceTensionForceError(
                 marangoni_effect_enabled));
 
-  // Dependence of surface tension force on VOF
-  AssertThrow(!(surface_tension_force_enabled == true && VOF_enabled == false),
-              SurfaceTensionForceWithoutVOFError(
+  // Dependence of surface tension force on CLS
+  AssertThrow(!(surface_tension_force_enabled == true && CLS_enabled == false),
+              SurfaceTensionForceWithoutCLSError(
                 surface_tension_force_enabled));
 
-  // Dependence of Marangoni effect on VOF
-  AssertThrow(!(marangoni_effect_enabled == true && VOF_enabled == false),
-              MarangoniWithoutVOFError(marangoni_effect_enabled));
+  // Dependence of Marangoni effect on CLS
+  AssertThrow(!(marangoni_effect_enabled == true && CLS_enabled == false),
+              MarangoniWithoutCLSError(marangoni_effect_enabled));
 
-  // Dependence of interface sharpening on VOF
-  AssertThrow(!(interface_sharpening_enabled == true && VOF_enabled == false),
-              InterfaceSharpeningWithoutVOFError(interface_sharpening_enabled));
+  // Dependence of interface sharpening on CLS
+  AssertThrow(!(interface_sharpening_enabled == true && CLS_enabled == false),
+              InterfaceSharpeningWithoutCLSError(interface_sharpening_enabled));
 
   // Cahn-Hilliard does not support heat transfer
   AssertThrow(!(cahn_hilliard_enabled == true && heat_transfer_enabled == true),

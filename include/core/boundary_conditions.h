@@ -41,7 +41,7 @@ DeclException1(CahnHilliardBoundaryDuplicated,
                << "Cahn Hilliard boundary id: " << arg1
                << " has already been declared as a boundary condition");
 
-DeclException1(VOFBoundaryDuplicated,
+DeclException1(CLSBoundaryDuplicated,
                types::boundary_id,
                << "CLS boundary id: " << arg1
                << " has already been declared as a boundary condition");
@@ -78,8 +78,8 @@ namespace BoundaryConditions
     convection_radiation,
     // for tracer
     tracer_dirichlet,
-    // for vof
-    vof_dirichlet,
+    // for cls
+    cls_dirichlet,
     // for cahn hilliard
     cahn_hilliard_noflux,
     cahn_hilliard_dirichlet_phase_order,
@@ -1290,13 +1290,13 @@ namespace BoundaryConditions
   }
 
   /**
-   * @brief This class manages the boundary conditions for VOF solver
+   * @brief This class manages the boundary conditions for CLS solver
    * It introduces the boundary functions and declares the boundary conditions
    * coherently.
    */
 
   template <int dim>
-  class VOFBoundaryConditions : public BoundaryConditions
+  class CLSBoundaryConditions : public BoundaryConditions
   {
   public:
     std::map<types::boundary_id,
@@ -1324,7 +1324,7 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  VOFBoundaryConditions<dim>::declare_default_entry(
+  CLSBoundaryConditions<dim>::declare_default_entry(
     ParameterHandler        &prm,
     const types::boundary_id default_boundary_id)
   {
@@ -1344,7 +1344,7 @@ namespace BoundaryConditions
     temporary_function.declare_parameters(prm);
     prm.leave_subsection();
 
-    // Periodic boundary condition parameters for VOF physics
+    // Periodic boundary condition parameters for CLS physics
     prm.declare_entry(
       "periodic id",
       "-1",
@@ -1371,7 +1371,7 @@ namespace BoundaryConditions
    */
   template <int dim>
   void
-  VOFBoundaryConditions<dim>::declare_parameters(
+  CLSBoundaryConditions<dim>::declare_parameters(
     ParameterHandler  &prm,
     const unsigned int number_of_boundary_conditions)
   {
@@ -1407,7 +1407,7 @@ namespace BoundaryConditions
 
   template <int dim>
   void
-  VOFBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
+  CLSBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm)
   {
     // Parse the list of boundary ids
     std::vector<types::boundary_id> boundary_ids =
@@ -1424,7 +1424,7 @@ namespace BoundaryConditions
     for (const auto boundary_id : boundary_ids)
       {
         AssertThrow(this->type.find(boundary_id) == this->type.end(),
-                    VOFBoundaryDuplicated(boundary_id));
+                    CLSBoundaryDuplicated(boundary_id));
 
         if (auto const option = prm.get("type"); option == "none")
           {
@@ -1433,7 +1433,7 @@ namespace BoundaryConditions
 
         if (auto const option = prm.get("type"); option == "dirichlet")
           {
-            this->type[boundary_id] = BoundaryType::vof_dirichlet;
+            this->type[boundary_id] = BoundaryType::cls_dirichlet;
             prm.enter_subsection("dirichlet");
             phase_fraction[boundary_id] =
               std::make_shared<Functions::ParsedFunction<dim>>();
@@ -1469,7 +1469,7 @@ namespace BoundaryConditions
 
   template <int dim>
   void
-  VOFBoundaryConditions<dim>::parse_parameters(ParameterHandler &prm)
+  CLSBoundaryConditions<dim>::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("boundary conditions CLS");
     {
