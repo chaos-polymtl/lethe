@@ -530,7 +530,7 @@ public:
   enable_cls(const FiniteElement<dim>                       &fe,
              const Quadrature<dim>                          &quadrature,
              const Mapping<dim>                             &mapping,
-             const std::shared_ptr<VolumeOfFluidFilterBase> &filter);
+             const std::shared_ptr<ConservativeLevelSetFilterBase> &filter);
 
   void
   enable_projected_phase_fraction_gradient(
@@ -1556,7 +1556,7 @@ public:
   std::vector<Tensor<1, dim>>      phase_gradient_values;
   // This is stored as a shared_ptr because it is only instantiated when needed
   std::shared_ptr<FEValues<dim>>           fe_values_cls;
-  std::shared_ptr<VolumeOfFluidFilterBase> filter; // Phase fraction filter
+  std::shared_ptr<ConservativeLevelSetFilterBase> filter; // Phase fraction filter
 
   bool                           gather_projected_phase_fraction_gradient;
   bool                           gather_curvature;

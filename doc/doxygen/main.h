@@ -53,7 +53,7 @@
       navier_stokes_base:e -> navier_stokes_base_2:w [dir=back];
       navier_stokes_base:e -> navier_stokes_base_3:w [dir=back];
 
-      auxiliary_physics_1 [label="VolumeOfFluid",href="https://chaos-polymtl.github.io/lethe/doxygen/classVolumeOfFluid.html"];
+      auxiliary_physics_1 [label="ConservativeLevelSet",href="https://chaos-polymtl.github.io/lethe/doxygen/classConservativeLevelSet.html"];
       auxiliary_physics_2 [label="CahnHilliard",href="https://chaos-polymtl.github.io/lethe/doxygen/classCahnHilliard.html"];
       auxiliary_physics_3 [label="HeatTransfer",href="https://chaos-polymtl.github.io/lethe/doxygen/classHeatTransfer.html"];
       auxiliary_physics_4 [label="Tracer",href="https://chaos-polymtl.github.io/lethe/doxygen/classTracer.html"];

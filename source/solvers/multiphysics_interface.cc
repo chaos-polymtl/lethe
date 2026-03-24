@@ -129,7 +129,7 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
           Parameters::Verbosity::verbose :
           Parameters::Verbosity::quiet;
       active_physics.push_back(PhysicsID::CLS);
-      physics[PhysicsID::CLS] = std::make_shared<VolumeOfFluid<dim>>(
+      physics[PhysicsID::CLS] = std::make_shared<ConservativeLevelSet<dim>>(
         this, nsparam, p_triangulation, p_simulation_control);
     }
 
@@ -177,7 +177,7 @@ MultiphysicsInterface<dim>::get_projected_phase_fraction_gradient_solution()
     (multiphysics_parameters.cls_parameters.surface_tension_force.enable),
     ExcInternalError());
 
-  return dynamic_cast<VolumeOfFluid<dim> &>(*physics[PhysicsID::CLS])
+  return dynamic_cast<ConservativeLevelSet<dim> &>(*physics[PhysicsID::CLS])
     .get_projected_phase_fraction_gradient_solution();
 }
 
@@ -194,7 +194,7 @@ MultiphysicsInterface<dim>::get_curvature_solution()
     (multiphysics_parameters.cls_parameters.surface_tension_force.enable),
     ExcInternalError());
 
-  return dynamic_cast<VolumeOfFluid<dim> &>(*physics[PhysicsID::CLS])
+  return dynamic_cast<ConservativeLevelSet<dim> &>(*physics[PhysicsID::CLS])
     .get_curvature_solution();
 }
 
@@ -211,7 +211,7 @@ MultiphysicsInterface<dim>::get_curvature_dof_handler()
     (multiphysics_parameters.cls_parameters.surface_tension_force.enable),
     ExcInternalError());
 
-  return dynamic_cast<VolumeOfFluid<dim> &>(*physics[PhysicsID::CLS])
+  return dynamic_cast<ConservativeLevelSet<dim> &>(*physics[PhysicsID::CLS])
     .get_curvature_dof_handler();
 }
 
@@ -228,7 +228,7 @@ MultiphysicsInterface<dim>::get_projected_phase_fraction_gradient_dof_handler()
     (multiphysics_parameters.cls_parameters.surface_tension_force.enable),
     ExcInternalError());
 
-  return dynamic_cast<VolumeOfFluid<dim> &>(*physics[PhysicsID::CLS])
+  return dynamic_cast<ConservativeLevelSet<dim> &>(*physics[PhysicsID::CLS])
     .get_projected_phase_fraction_gradient_dof_handler();
 }
 

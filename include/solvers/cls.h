@@ -57,13 +57,13 @@ DeclExceptionMsg(
   "The CLS physics has been set to use DG and the latter implementation currently does not support defining an initial condition with a projection.");
 
 template <int dim>
-class VolumeOfFluid : public AuxiliaryPhysics<dim, GlobalVectorType>
+class ConservativeLevelSet : public AuxiliaryPhysics<dim, GlobalVectorType>
 {
 public:
   /**
    * @brief CLS - Base constructor.
    */
-  VolumeOfFluid(MultiphysicsInterface<dim>      *multiphysics_interface,
+  ConservativeLevelSet(MultiphysicsInterface<dim>      *multiphysics_interface,
                 const SimulationParameters<dim> &p_simulation_parameters,
                 std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                                    p_triangulation,
@@ -73,7 +73,7 @@ public:
    * @brief CLS - Base destructor. At the present
    * moment this is an interface with nothing.
    */
-  ~VolumeOfFluid() = default;
+  ~ConservativeLevelSet() = default;
 
   /**
    * @brief Call for the assembly of the right-hand side
@@ -834,7 +834,7 @@ private:
   std::shared_ptr<CLSAssemblerSIPG<dim>> inner_face_assembler;
 
   // Phase fraction filter
-  std::shared_ptr<VolumeOfFluidFilterBase> filter;
+  std::shared_ptr<ConservativeLevelSetFilterBase> filter;
 
   // Signed distance solver for geometric redistanciation
   std::shared_ptr<InterfaceTools::SignedDistanceSolver<dim, GlobalVectorType>>

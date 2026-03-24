@@ -621,7 +621,7 @@ protected:
    *
    * @param[in] cell Pointer to an active cell of the fluid dynamics DoFHandler.
    *
-   * @param[in] dof_handler_cls DoFHandler of the Volume of Fluid (CLS)
+   * @param[in] dof_handler_cls DoFHandler of the Conservative Level Set (CLS)
    * auxiliary physic.
    *
    * @param[in] filtered_phase_fraction_solution Filtered phase fraction
@@ -843,7 +843,7 @@ protected:
    * @brief Constrain a fluid's subdomains according to the temperature field to null
    * velocity and pressure fields to model solid subdomains.
    *
-   * @note Its equivalent for Volume of Fluid (CLS) simulations is
+   * @note Its equivalent for Conservative Level Set (CLS) simulations is
    * NavierStokesBase<dim, VectorType, DofsType>::constrain_solid_domain_cls.
    *
    * @param[in] dof_handler_ht DoFHandler of the Heat Transfer (HT) auxiliary

@@ -101,7 +101,7 @@ HeatTransferScratchData<dim>::enable_cls(
   grad_specific_heat_temperature_1 = std::vector<double>(n_q_points);
 
   // Create filter
-  filter = VolumeOfFluidFilterBase::model_cast(phase_filter_parameters);
+  filter = ConservativeLevelSetFilterBase::model_cast(phase_filter_parameters);
 }
 
 template <int dim>
@@ -110,7 +110,7 @@ HeatTransferScratchData<dim>::enable_cls(
   const FiniteElement<dim>                       &fe,
   const Quadrature<dim>                          &quadrature,
   const Mapping<dim>                             &mapping,
-  const std::shared_ptr<VolumeOfFluidFilterBase> &filter)
+  const std::shared_ptr<ConservativeLevelSetFilterBase> &filter)
 {
   gather_cls    = true;
   fe_values_cls = std::make_shared<FEValues<dim>>(

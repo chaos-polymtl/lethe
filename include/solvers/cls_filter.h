@@ -8,26 +8,26 @@
 #include <core/parameters_multiphysics.h>
 
 /**
- * @brief Abstract class for filtering phase fraction in volume of fluid (CLS)
+ * @brief Abstract class for filtering phase fraction in Conservative Level Set (CLS)
  * simulations.
  */
-class VolumeOfFluidFilterBase
+class ConservativeLevelSetFilterBase
 {
 public:
   /**
    * @brief Default destructor.
    */
-  virtual ~VolumeOfFluidFilterBase() = default;
+  virtual ~ConservativeLevelSetFilterBase() = default;
 
   /**
-   * @brief Instantiate and return a pointer to a VolumeOfFluidFilterBase
+   * @brief Instantiate and return a pointer to a ConservativeLevelSetFilterBase
    * object by casting it to the proper child class.
    *
    * @param[in] phase_filter_parameters CLS filtration parameters.
    *
-   * @return Casted VolumeOfFluidFilterBase child class object.
+   * @return Casted ConservativeLevelSetFilterBase child class object.
    */
-  static std::shared_ptr<VolumeOfFluidFilterBase>
+  static std::shared_ptr<ConservativeLevelSetFilterBase>
   model_cast(const Parameters::CLS_PhaseFilter &phase_filter_parameters);
 
   /**
@@ -43,10 +43,10 @@ public:
 };
 
 /**
- * @brief Default filter applied to phase fraction. The VolumeOfFluidNoFilter
+ * @brief Default filter applied to phase fraction. The ConservativeLevelSetNoFilter
  * filter does not modify the phase fraction value and returns it as it is.
  */
-class VolumeOfFluidNoFilter : public VolumeOfFluidFilterBase
+class ConservativeLevelSetNoFilter : public ConservativeLevelSetFilterBase
 {
 public:
   /**
@@ -55,7 +55,7 @@ public:
    * No filter is applied to the computed filtered phase fraction and the
    * unfiltered phase fraction is returned.
    */
-  VolumeOfFluidNoFilter()
+  ConservativeLevelSetNoFilter()
   {}
 
   /**
@@ -90,7 +90,7 @@ public:
  * The filter allows a sharper definition of the interface and clamps the value
  * of the phase fraction between 0 and 1.
  */
-class VolumeOfFluidTanhFilter : public VolumeOfFluidFilterBase
+class ConservativeLevelSetTanhFilter : public ConservativeLevelSetFilterBase
 {
 public:
   /**
@@ -99,7 +99,7 @@ public:
    * @param[in] beta Value of the \f$\beta\f$ parameter modulating the
    * interface sharpness.
    */
-  VolumeOfFluidTanhFilter(const double beta)
+  ConservativeLevelSetTanhFilter(const double beta)
     : beta(beta)
   {}
 

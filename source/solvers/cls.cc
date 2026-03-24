@@ -18,7 +18,7 @@
 #include <cmath>
 
 template <int dim>
-VolumeOfFluid<dim>::VolumeOfFluid(
+ConservativeLevelSet<dim>::ConservativeLevelSet(
   MultiphysicsInterface<dim>      *multiphysics_interface,
   const SimulationParameters<dim> &p_simulation_parameters,
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> p_triangulation,
@@ -169,7 +169,7 @@ VolumeOfFluid<dim>::VolumeOfFluid(
 
 template <int dim>
 void
-VolumeOfFluid<dim>::assemble_rhs()
+ConservativeLevelSet<dim>::assemble_rhs()
 {
   assemble_system_rhs();
 }
@@ -177,7 +177,7 @@ VolumeOfFluid<dim>::assemble_rhs()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::setup_assemblers()
+ConservativeLevelSet<dim>::setup_assemblers()
 {
   AssertThrow(time_stepping_is_sdirk(
                 this->simulation_control->get_assembly_method()) == false,
@@ -220,7 +220,7 @@ VolumeOfFluid<dim>::setup_assemblers()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::assemble_system_matrix()
+ConservativeLevelSet<dim>::assemble_system_matrix()
 {
   TimerOutput::Scope t(this->computing_timer, "Assemble matrix");
 
@@ -235,7 +235,7 @@ VolumeOfFluid<dim>::assemble_system_matrix()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::assemble_system_matrix_cg()
+ConservativeLevelSet<dim>::assemble_system_matrix_cg()
 {
   const DoFHandler<dim> &dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -252,8 +252,8 @@ VolumeOfFluid<dim>::assemble_system_matrix_cg()
   WorkStream::run(this->dof_handler->begin_active(),
                   this->dof_handler->end(),
                   *this,
-                  &VolumeOfFluid::assemble_local_system_matrix,
-                  &VolumeOfFluid::copy_local_matrix_to_global_matrix,
+                  &ConservativeLevelSet::assemble_local_system_matrix,
+                  &ConservativeLevelSet::copy_local_matrix_to_global_matrix,
                   scratch_data,
                   StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
                                             this->cell_quadrature->size()));
@@ -264,7 +264,7 @@ VolumeOfFluid<dim>::assemble_system_matrix_cg()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::assemble_system_matrix_dg()
+ConservativeLevelSet<dim>::assemble_system_matrix_dg()
 {
   const DoFHandler<dim> &dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -367,7 +367,7 @@ VolumeOfFluid<dim>::assemble_system_matrix_dg()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::assemble_local_system_matrix(
+ConservativeLevelSet<dim>::assemble_local_system_matrix(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   CLSScratchData<dim>                                  &scratch_data,
   StabilizedMethodsCopyData                            &copy_data)
@@ -454,7 +454,7 @@ VolumeOfFluid<dim>::assemble_local_system_matrix(
 
 template <int dim>
 void
-VolumeOfFluid<dim>::copy_local_matrix_to_global_matrix(
+ConservativeLevelSet<dim>::copy_local_matrix_to_global_matrix(
   const StabilizedMethodsCopyData &copy_data)
 {
   if (!copy_data.cell_is_local)
@@ -468,7 +468,7 @@ VolumeOfFluid<dim>::copy_local_matrix_to_global_matrix(
 
 template <int dim>
 void
-VolumeOfFluid<dim>::assemble_system_rhs()
+ConservativeLevelSet<dim>::assemble_system_rhs()
 {
   TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
 
@@ -485,7 +485,7 @@ VolumeOfFluid<dim>::assemble_system_rhs()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::assemble_system_rhs_cg()
+ConservativeLevelSet<dim>::assemble_system_rhs_cg()
 {
   const DoFHandler<dim> &dof_handler_fd =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -502,8 +502,8 @@ VolumeOfFluid<dim>::assemble_system_rhs_cg()
   WorkStream::run(this->dof_handler->begin_active(),
                   this->dof_handler->end(),
                   *this,
-                  &VolumeOfFluid::assemble_local_system_rhs,
-                  &VolumeOfFluid::copy_local_rhs_to_global_rhs,
+                  &ConservativeLevelSet::assemble_local_system_rhs,
+                  &ConservativeLevelSet::copy_local_rhs_to_global_rhs,
                   scratch_data,
                   StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
                                             this->cell_quadrature->size()));
@@ -513,7 +513,7 @@ VolumeOfFluid<dim>::assemble_system_rhs_cg()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::assemble_system_rhs_dg()
+ConservativeLevelSet<dim>::assemble_system_rhs_dg()
 {
   const DoFHandler<dim> &dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
@@ -612,7 +612,7 @@ VolumeOfFluid<dim>::assemble_system_rhs_dg()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::assemble_local_system_rhs(
+ConservativeLevelSet<dim>::assemble_local_system_rhs(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
   CLSScratchData<dim>                                  &scratch_data,
   StabilizedMethodsCopyData                            &copy_data)
@@ -699,7 +699,7 @@ VolumeOfFluid<dim>::assemble_local_system_rhs(
 
 template <int dim>
 void
-VolumeOfFluid<dim>::copy_local_rhs_to_global_rhs(
+ConservativeLevelSet<dim>::copy_local_rhs_to_global_rhs(
   const StabilizedMethodsCopyData &copy_data)
 {
   if (!copy_data.cell_is_local)
@@ -713,7 +713,7 @@ VolumeOfFluid<dim>::copy_local_rhs_to_global_rhs(
 
 template <int dim>
 std::vector<OutputStruct<dim, GlobalVectorType>>
-VolumeOfFluid<dim>::gather_output_hook()
+ConservativeLevelSet<dim>::gather_output_hook()
 {
   std::vector<OutputStruct<dim, GlobalVectorType>> solution_output_structs;
   std::vector<std::string>                         solution_names(1, "phase");
@@ -815,7 +815,7 @@ VolumeOfFluid<dim>::gather_output_hook()
 
 template <int dim>
 double
-VolumeOfFluid<dim>::calculate_L2_error()
+ConservativeLevelSet<dim>::calculate_L2_error()
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
@@ -861,7 +861,7 @@ VolumeOfFluid<dim>::calculate_L2_error()
 template <int dim>
 template <typename VectorType>
 std::pair<Tensor<1, dim>, Tensor<1, dim>>
-VolumeOfFluid<dim>::calculate_barycenter(const GlobalVectorType &solution,
+ConservativeLevelSet<dim>::calculate_barycenter(const GlobalVectorType &solution,
                                          const VectorType       &solution_fd)
 {
   const MPI_Comm mpi_communicator = this->triangulation->get_mpi_communicator();
@@ -872,8 +872,8 @@ VolumeOfFluid<dim>::calculate_barycenter(const GlobalVectorType &solution,
                               update_values | update_quadrature_points |
                                 update_JxW_values);
 
-  std::shared_ptr<VolumeOfFluidFilterBase> filter =
-    VolumeOfFluidFilterBase::model_cast(
+  std::shared_ptr<ConservativeLevelSetFilterBase> filter =
+    ConservativeLevelSetFilterBase::model_cast(
       this->simulation_parameters.multiphysics.cls_parameters.phase_filter);
 
   const DoFHandler<dim> &dof_handler_fd =
@@ -943,24 +943,24 @@ VolumeOfFluid<dim>::calculate_barycenter(const GlobalVectorType &solution,
 }
 
 template std::pair<Tensor<1, 2>, Tensor<1, 2>>
-VolumeOfFluid<2>::calculate_barycenter<GlobalVectorType>(
+ConservativeLevelSet<2>::calculate_barycenter<GlobalVectorType>(
   const GlobalVectorType &solution,
   const GlobalVectorType &current_solution_fd);
 
 
 template std::pair<Tensor<1, 3>, Tensor<1, 3>>
-VolumeOfFluid<3>::calculate_barycenter<GlobalVectorType>(
+ConservativeLevelSet<3>::calculate_barycenter<GlobalVectorType>(
   const GlobalVectorType &solution,
   const GlobalVectorType &current_solution_fd);
 
 template std::pair<Tensor<1, 2>, Tensor<1, 2>>
-VolumeOfFluid<2>::calculate_barycenter<GlobalBlockVectorType>(
+ConservativeLevelSet<2>::calculate_barycenter<GlobalBlockVectorType>(
   const GlobalVectorType      &solution,
   const GlobalBlockVectorType &current_solution_fd);
 
 
 template std::pair<Tensor<1, 3>, Tensor<1, 3>>
-VolumeOfFluid<3>::calculate_barycenter<GlobalBlockVectorType>(
+ConservativeLevelSet<3>::calculate_barycenter<GlobalBlockVectorType>(
   const GlobalVectorType      &solution,
   const GlobalBlockVectorType &current_solution_fd);
 
@@ -968,7 +968,7 @@ VolumeOfFluid<3>::calculate_barycenter<GlobalBlockVectorType>(
 template <int dim>
 template <typename VectorType>
 void
-VolumeOfFluid<dim>::calculate_volume_and_mass(
+ConservativeLevelSet<dim>::calculate_volume_and_mass(
   const GlobalVectorType          &solution,
   const VectorType                &current_solution_fd,
   const Parameters::FluidIndicator monitored_fluid)
@@ -1072,7 +1072,7 @@ VolumeOfFluid<dim>::calculate_volume_and_mass(
 template <int dim>
 template <typename VectorType>
 Tensor<1, dim>
-VolumeOfFluid<dim>::calculate_momentum(
+ConservativeLevelSet<dim>::calculate_momentum(
   const GlobalVectorType          &solution,
   const VectorType                &current_solution_fd,
   const Parameters::FluidIndicator monitored_fluid)
@@ -1176,7 +1176,7 @@ VolumeOfFluid<dim>::calculate_momentum(
 
 template <int dim>
 double
-VolumeOfFluid<dim>::compute_capillary_time_step_constraint(
+ConservativeLevelSet<dim>::compute_capillary_time_step_constraint(
   const bool pressure_dependent,
   const bool temperature_dependent)
 {
@@ -1329,7 +1329,7 @@ VolumeOfFluid<dim>::compute_capillary_time_step_constraint(
 
 template <int dim>
 void
-VolumeOfFluid<dim>::finish_simulation()
+ConservativeLevelSet<dim>::finish_simulation()
 {
   auto         mpi_communicator = this->triangulation->get_mpi_communicator();
   unsigned int this_mpi_process(
@@ -1362,7 +1362,7 @@ VolumeOfFluid<dim>::finish_simulation()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::percolate_time_vectors()
+ConservativeLevelSet<dim>::percolate_time_vectors()
 {
   for (unsigned int i = this->previous_solutions->size() - 1; i > 0; --i)
     {
@@ -1373,7 +1373,7 @@ VolumeOfFluid<dim>::percolate_time_vectors()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::postprocess(bool first_iteration)
+ConservativeLevelSet<dim>::postprocess(bool first_iteration)
 {
   auto         mpi_communicator = this->triangulation->get_mpi_communicator();
   unsigned int this_mpi_process(
@@ -1839,7 +1839,7 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
 
 template <int dim>
 void
-VolumeOfFluid<dim>::modify_solution()
+ConservativeLevelSet<dim>::modify_solution()
 {
   {
     TimerOutput::Scope t(this->computing_timer, "Modify solution");
@@ -1896,7 +1896,7 @@ VolumeOfFluid<dim>::modify_solution()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::handle_interface_sharpening()
+ConservativeLevelSet<dim>::handle_interface_sharpening()
 {
   if (this->simulation_parameters.multiphysics.cls_parameters
         .regularization_method.verbosity != Parameters::Verbosity::quiet)
@@ -1938,7 +1938,7 @@ VolumeOfFluid<dim>::handle_interface_sharpening()
 
 template <int dim>
 double
-VolumeOfFluid<dim>::find_sharpening_threshold()
+ConservativeLevelSet<dim>::find_sharpening_threshold()
 {
   // Sharpening threshold (st) search range extrema
   double st_min =
@@ -2064,7 +2064,7 @@ VolumeOfFluid<dim>::find_sharpening_threshold()
 
 template <int dim>
 double
-VolumeOfFluid<dim>::calculate_mass_deviation(
+ConservativeLevelSet<dim>::calculate_mass_deviation(
   const Parameters::FluidIndicator monitored_fluid,
   const double                     sharpening_threshold)
 {
@@ -2089,7 +2089,7 @@ VolumeOfFluid<dim>::calculate_mass_deviation(
 
 template <int dim>
 void
-VolumeOfFluid<dim>::sharpen_interface(GlobalVectorType &solution,
+ConservativeLevelSet<dim>::sharpen_interface(GlobalVectorType &solution,
                                       const double      sharpening_threshold,
                                       const bool sharpen_previous_solutions)
 {
@@ -2128,7 +2128,7 @@ VolumeOfFluid<dim>::sharpen_interface(GlobalVectorType &solution,
 
 template <int dim>
 void
-VolumeOfFluid<dim>::smooth_phase_fraction(GlobalVectorType &solution)
+ConservativeLevelSet<dim>::smooth_phase_fraction(GlobalVectorType &solution)
 {
   assemble_projection_phase_fraction(solution);
   solve_projection_phase_fraction(solution);
@@ -2137,7 +2137,7 @@ VolumeOfFluid<dim>::smooth_phase_fraction(GlobalVectorType &solution)
 
 template <int dim>
 void
-VolumeOfFluid<dim>::assemble_projection_phase_fraction(
+ConservativeLevelSet<dim>::assemble_projection_phase_fraction(
   GlobalVectorType &solution)
 {
   // Get fe values of CLS phase fraction
@@ -2242,7 +2242,7 @@ VolumeOfFluid<dim>::assemble_projection_phase_fraction(
 
 template <int dim>
 void
-VolumeOfFluid<dim>::solve_projection_phase_fraction(GlobalVectorType &solution)
+ConservativeLevelSet<dim>::solve_projection_phase_fraction(GlobalVectorType &solution)
 {
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-13;
@@ -2295,7 +2295,7 @@ VolumeOfFluid<dim>::solve_projection_phase_fraction(GlobalVectorType &solution)
 
 template <int dim>
 void
-VolumeOfFluid<dim>::pre_mesh_adaptation()
+ConservativeLevelSet<dim>::pre_mesh_adaptation()
 {
   this->solution_transfer->prepare_for_coarsening_and_refinement(
     *this->present_solution);
@@ -2310,7 +2310,7 @@ VolumeOfFluid<dim>::pre_mesh_adaptation()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::post_mesh_adaptation()
+ConservativeLevelSet<dim>::post_mesh_adaptation()
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
@@ -2342,7 +2342,7 @@ VolumeOfFluid<dim>::post_mesh_adaptation()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::compute_error_estimate(
+ConservativeLevelSet<dim>::compute_error_estimate(
   const std::pair<const Variable, Parameters::MultipleAdaptationParameters>
                         &ivar,
   dealii::Vector<float> &estimated_error_per_cell)
@@ -2365,7 +2365,7 @@ VolumeOfFluid<dim>::compute_error_estimate(
 
 template <int dim>
 void
-VolumeOfFluid<dim>::compute_kelly(
+ConservativeLevelSet<dim>::compute_kelly(
   dealii::Vector<float> &estimated_error_per_cell,
   const ComponentMask   &component_mask)
 {
@@ -2381,7 +2381,7 @@ VolumeOfFluid<dim>::compute_kelly(
 
 template <int dim>
 std::vector<OutputStructTableHandler>
-VolumeOfFluid<dim>::gather_tables()
+ConservativeLevelSet<dim>::gather_tables()
 {
   std::vector<OutputStructTableHandler> table_output_structs;
 
@@ -2415,7 +2415,7 @@ VolumeOfFluid<dim>::gather_tables()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::write_checkpoint()
+ConservativeLevelSet<dim>::write_checkpoint()
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
@@ -2440,7 +2440,7 @@ VolumeOfFluid<dim>::write_checkpoint()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::read_checkpoint()
+ConservativeLevelSet<dim>::read_checkpoint()
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
@@ -2497,7 +2497,7 @@ VolumeOfFluid<dim>::read_checkpoint()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::setup_dofs()
+ConservativeLevelSet<dim>::setup_dofs()
 {
   verify_consistency_of_boundary_conditions();
 
@@ -2632,7 +2632,7 @@ VolumeOfFluid<dim>::setup_dofs()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::update_boundary_conditions()
+ConservativeLevelSet<dim>::update_boundary_conditions()
 {
   if (!this->simulation_parameters.boundary_conditions_cls.time_dependent)
     return;
@@ -2654,7 +2654,7 @@ VolumeOfFluid<dim>::update_boundary_conditions()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::define_zero_constraints()
+ConservativeLevelSet<dim>::define_zero_constraints()
 {
   // Zero constraints
   this->zero_constraints.clear();
@@ -2693,7 +2693,7 @@ VolumeOfFluid<dim>::define_zero_constraints()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::define_non_zero_constraints()
+ConservativeLevelSet<dim>::define_non_zero_constraints()
 {
   {
     nonzero_constraints.clear();
@@ -2734,7 +2734,7 @@ VolumeOfFluid<dim>::define_non_zero_constraints()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::set_initial_conditions()
+ConservativeLevelSet<dim>::set_initial_conditions()
 {
   VectorTools::interpolate(*this->mapping,
                            *this->dof_handler,
@@ -2841,7 +2841,7 @@ VolumeOfFluid<dim>::set_initial_conditions()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::solve_linear_system()
+ConservativeLevelSet<dim>::solve_linear_system()
 {
   TimerOutput::Scope t(this->computing_timer, "Solve linear system");
 
@@ -2917,7 +2917,7 @@ VolumeOfFluid<dim>::solve_linear_system()
 // This function is explained in detail in step-41 of deal.II tutorials
 template <int dim>
 void
-VolumeOfFluid<dim>::update_solution_and_constraints(GlobalVectorType &solution)
+ConservativeLevelSet<dim>::update_solution_and_constraints(GlobalVectorType &solution)
 {
   // This is a penalty parameter for limiting the phase fraction
   // in the range of [0,1]. According to step 41, this parameter depends
@@ -2991,7 +2991,7 @@ VolumeOfFluid<dim>::update_solution_and_constraints(GlobalVectorType &solution)
 
 template <int dim>
 void
-VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
+ConservativeLevelSet<dim>::assemble_L2_projection_interface_sharpening(
   GlobalVectorType &solution,
   const double      sharpening_threshold)
 {
@@ -3084,7 +3084,7 @@ VolumeOfFluid<dim>::assemble_L2_projection_interface_sharpening(
 
 template <int dim>
 void
-VolumeOfFluid<dim>::solve_interface_sharpening(GlobalVectorType &solution)
+ConservativeLevelSet<dim>::solve_interface_sharpening(GlobalVectorType &solution)
 {
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-15;
@@ -3151,7 +3151,7 @@ VolumeOfFluid<dim>::solve_interface_sharpening(GlobalVectorType &solution)
 
 template <int dim>
 void
-VolumeOfFluid<dim>::assemble_mass_matrix(
+ConservativeLevelSet<dim>::assemble_mass_matrix(
   TrilinosWrappers::SparseMatrix &mass_matrix)
 {
   QGauss<dim> quadrature_formula(this->cell_quadrature->size());
@@ -3186,7 +3186,7 @@ VolumeOfFluid<dim>::assemble_mass_matrix(
 
 template <int dim>
 void
-VolumeOfFluid<dim>::apply_phase_filter(
+ConservativeLevelSet<dim>::apply_phase_filter(
   const GlobalVectorType &original_solution,
   GlobalVectorType       &filtered_solution)
 {
@@ -3198,7 +3198,7 @@ VolumeOfFluid<dim>::apply_phase_filter(
   filtered_solution.reinit(original_solution);
 
   // Create filter object
-  filter = VolumeOfFluidFilterBase::model_cast(
+  filter = ConservativeLevelSetFilterBase::model_cast(
     this->simulation_parameters.multiphysics.cls_parameters.phase_filter);
 
   // Apply filter to the solution
@@ -3222,7 +3222,7 @@ VolumeOfFluid<dim>::apply_phase_filter(
 
 template <int dim>
 void
-VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
+ConservativeLevelSet<dim>::reinitialize_interface_with_algebraic_method()
 {
   TimerOutput::Scope t(this->computing_timer, "PDE-based reinitialization");
 
@@ -3284,7 +3284,7 @@ VolumeOfFluid<dim>::reinitialize_interface_with_algebraic_method()
 
 template <int dim>
 void
-VolumeOfFluid<dim>::compute_level_set_from_phase_fraction(
+ConservativeLevelSet<dim>::compute_level_set_from_phase_fraction(
   const GlobalVectorType &solution,
   GlobalVectorType       &level_set_solution)
 {
@@ -3305,7 +3305,7 @@ VolumeOfFluid<dim>::compute_level_set_from_phase_fraction(
 
 template <int dim>
 void
-VolumeOfFluid<dim>::compute_phase_fraction_from_level_set(
+ConservativeLevelSet<dim>::compute_phase_fraction_from_level_set(
   const GlobalVectorType &level_set_solution,
   GlobalVectorType       &phase_fraction_solution)
 {
@@ -3326,7 +3326,7 @@ VolumeOfFluid<dim>::compute_phase_fraction_from_level_set(
 
 template <int dim>
 void
-VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
+ConservativeLevelSet<dim>::reinitialize_interface_with_geometric_method()
 {
   TimerOutput::Scope t(this->computing_timer, "Geometric reinitialization");
 
@@ -3396,5 +3396,5 @@ VolumeOfFluid<dim>::reinitialize_interface_with_geometric_method()
 }
 
 
-template class VolumeOfFluid<2>;
-template class VolumeOfFluid<3>;
+template class ConservativeLevelSet<2>;
+template class ConservativeLevelSet<3>;
