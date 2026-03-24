@@ -1,8 +1,8 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       64
    Number of degrees of freedom: 864
-   Volume of triangulation:      2.9
-Viscous dissipation : 0.63
+   Volume of triangulation:      2.95e+00
+Viscous dissipation: 6.27e-01
 
 *****************************
 Steady iteration:        1/3
@@ -13,7 +13,7 @@ Steady iteration:        1/3
     Level 1: 240 DoFs, 16 cells
     Level 2: 864 DoFs, 64 cells
 
-Viscous dissipation : 0.28
+Viscous dissipation: 2.85e-01
 
 +------------------------------------------+
 |  Torque summary                          |
@@ -27,7 +27,7 @@ Steady iteration:        2/3
 *****************************
    Number of active cells:       256
    Number of degrees of freedom: 3264
-   Volume of triangulation:      2.9
+   Volume of triangulation:      2.95e+00
 
   -Levels of MG preconditioner:
     Level 0: 72 DoFs, 4 cells
@@ -35,7 +35,7 @@ Steady iteration:        2/3
     Level 2: 864 DoFs, 64 cells
     Level 3: 3264 DoFs, 256 cells
 
-Viscous dissipation : 0.28
+Viscous dissipation: 2.84e-01
 
 +------------------------------------------+
 |  Torque summary                          |
@@ -49,7 +49,7 @@ Steady iteration:        3/3
 *****************************
    Number of active cells:       1024
    Number of degrees of freedom: 12672
-   Volume of triangulation:      2.9
+   Volume of triangulation:      2.95e+00
 
   -Levels of MG preconditioner:
     Level 0: 72 DoFs, 4 cells
@@ -58,7 +58,7 @@ Steady iteration:        3/3
     Level 3: 3264 DoFs, 256 cells
     Level 4: 12672 DoFs, 1024 cells
 
-Viscous dissipation : 0.28
+Viscous dissipation: 2.84e-01
 
 +------------------------------------------+
 |  Torque summary                          |

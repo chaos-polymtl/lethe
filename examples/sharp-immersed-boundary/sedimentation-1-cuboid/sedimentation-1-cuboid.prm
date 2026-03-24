@@ -178,7 +178,6 @@ subsection non-linear solver
     set verbosity             = verbose
     set tolerance             = 1e-5
     set max iterations        = 10
-    set residual precision    = 5
     set force rhs calculation = true
     set reuse preconditioner  = true
   end

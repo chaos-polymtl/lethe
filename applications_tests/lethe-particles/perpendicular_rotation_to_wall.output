@@ -214,4 +214,4 @@ Transient iteration: 200000   Time: 1        Time step: 5e-06
 | Translational kinetic energy | 1.3471e-01 | 1.3471e-01 | 1.3471e-01 | 1.3471e-01 | 
 | Rotational kinetic energy    | 6.7356e-01 | 6.7356e-01 | 6.7356e-01 | 6.7356e-01 | 
 id, type, dp, x, y, z 
-0 0 0.20000 -0.9001 0.1426 -0.7892
+0 0 0.20000 -0.9001 0.1426 -0.7892 

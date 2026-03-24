@@ -1148,9 +1148,7 @@ CFDDEMSolver<dim>::print_particles_summary()
               auto particle_properties = particle->get_properties();
               auto particle_location   = particle->get_location();
 
-              std::cout << std::setprecision(
-                             this->simulation_control->get_log_precision())
-                        << std::setw(display_width) << std::left << id;
+              std::cout << std::setw(display_width) << std::left << id;
               for (int d = 0; d < dim; ++d)
                 std::cout << std::setw(display_width) << std::left
                           << particle_location[d];
@@ -1215,15 +1213,11 @@ CFDDEMSolver<dim>::postprocess_cfd_dem()
           Parameters::Verbosity::verbose)
         {
           this->pcout << "Total volume of fluid: "
-                      << std::setprecision(
-                           this->simulation_control->get_log_precision())
                       << this->simulation_parameters.physical_properties_manager
                              .get_density_scale() *
                            total_volume_fluid
                       << " m^3" << std::endl;
           this->pcout << "Total volume of particles: "
-                      << std::setprecision(
-                           this->simulation_control->get_log_precision())
                       << this->simulation_parameters.physical_properties_manager
                              .get_density_scale() *
                            total_volume_particles

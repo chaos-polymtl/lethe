@@ -1,38 +1,38 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       4096
    Number of degrees of freedom: 12675
-   Volume of triangulation:      0.0064
+   Volume of triangulation:      6.40000e-03
    Number of thermal degrees of freedom: 4225
    Number of CLS degrees of freedom: 4225
-Enstrophy: 0
-Kinetic energy: 0
+Enstrophy: 0.00000e+00
+Kinetic energy: 0.00000e+00
 
 *******************************************************************************
 Transient iteration: 1        Time: 0.001    Time step: 0.001    CFL: 0       
 *******************************************************************************
-Enstrophy: 0.42658
-Kinetic energy: 1.5988e-05
+Enstrophy: 4.26579e-01
+Kinetic energy: 1.59877e-05
 
 ********************************************************************************
 Transient iteration: 2        Time: 0.002    Time step: 0.001    CFL: 0.0080812
 ********************************************************************************
-Enstrophy: 97.103
-Kinetic energy: 0.001011
+Enstrophy: 9.71029e+01
+Kinetic energy: 1.01098e-03
 
 *******************************************************************************
 Transient iteration: 3        Time: 0.003    Time step: 0.001    CFL: 0.17531 
 *******************************************************************************
-Enstrophy: 299.47
-Kinetic energy: 0.0039228
+Enstrophy: 2.99469e+02
+Kinetic energy: 3.92278e-03
 
 *******************************************************************************
 Transient iteration: 4        Time: 0.004    Time step: 0.001    CFL: 0.31002 
 *******************************************************************************
-Enstrophy: 513.9
-Kinetic energy: 0.0079503
+Enstrophy: 5.13899e+02
+Kinetic energy: 7.95030e-03
 
 *******************************************************************************
 Transient iteration: 5        Time: 0.005    Time step: 0.001    CFL: 0.40314 
 *******************************************************************************
-Enstrophy: 705.51
-Kinetic energy: 0.012354
+Enstrophy: 7.05513e+02
+Kinetic energy: 1.23541e-02

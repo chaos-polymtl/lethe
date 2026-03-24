@@ -1,7 +1,7 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       256
    Number of degrees of freedom: 867
-   Volume of triangulation:      0.0001
+   Volume of triangulation:      1.000000e-04
    Number of tracer degrees of freedom: 1024
 
 *****************************
@@ -10,17 +10,17 @@ Steady iteration:        1/1
 ---------------
 Fluid Dynamics
 ---------------
-Newton iteration: 0  - Residual:  0.0125018
-	alpha =      1 res = 7.255e-06
-	||du||_L2 = 0.0001605	||du||_Linfty = 2.555e-05
-	||dp||_L2 = 0.02672	||dp||_Linfty = 0.003901
+Newton iteration: 0  - Residual:  1.250176e-02
+	alpha =      1	res = 7.255444e-06
+	  ||du||_L2 = 1.605281e-04	  ||du||_Linfty = 2.554939e-05
+	  ||dp||_L2 = 2.671752e-02	  ||dp||_Linfty = 3.901135e-03
 -------
 Tracer
 -------
-Newton iteration: 0  - Residual:  1.732e-05
-	alpha =      1 res = 1.152e-11	||dx||_L2 = 1.376e-07	||dx||_Linfty = 1.607e-08
-L2 error velocity: 1.13937e-07
-L2 error tracer: 6.88633e-22
+Newton iteration: 0  - Residual:  1.731798e-05
+	alpha =      1	res = 1.152180e-11	  ||dx||_L2 = 1.375526e-07	  ||dx||_Linfty = 1.607454e-08
+L2 error velocity: 1.139369e-07
+L2 error tracer: 6.886326e-22
 cells error_velocity error_pressure 
   256 1.139369e-07 - 1.267443e-05 - 
 cells  error_tracer  

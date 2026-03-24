@@ -1,32 +1,32 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       4096
    Number of degrees of freedom: 12675
-   Volume of triangulation:      140
+   Volume of triangulation:      1.400000e+02
    Number of CLS degrees of freedom: 4225
 
 *******************************************************************************
 Transient iteration: 1        Time: 0.01     Time step: 0.01     CFL: 0       
 *******************************************************************************
-L2 error velocity : 0
-L2 error phase : 1.46905
+L2 error velocity: 0.000000e+00
+L2 error phase : 1.469055e+00
 
 *******************************************************************************
 Transient iteration: 2        Time: 0.02     Time step: 0.01     CFL: 0       
 *******************************************************************************
-L2 error velocity : 0
-L2 error phase : 0.628957
+L2 error velocity: 0.000000e+00
+L2 error phase : 6.289568e-01
 
 *******************************************************************************
 Transient iteration: 3        Time: 0.03     Time step: 0.01     CFL: 0       
 *******************************************************************************
-L2 error velocity : 0
-L2 error phase : 0.628957
+L2 error velocity: 0.000000e+00
+L2 error phase : 6.289568e-01
 
 *******************************************************************************
 Transient iteration: 4        Time: 0.04     Time step: 0.01     CFL: 0       
 *******************************************************************************
-L2 error velocity : 0
-L2 error phase : 0.24963
+L2 error velocity: 0.000000e+00
+L2 error phase : 2.496299e-01
  time  error_velocity error_pressure 
 0.0100   0.000000e+00         0.0000 
 0.0200   0.000000e+00         0.0000 

@@ -81,7 +81,7 @@ public:
     , multiphysics(multiphysics_interface)
     , computing_timer(p_triangulation->get_mpi_communicator(),
                       this->pcout,
-                      TimerOutput::summary,
+                      TimerOutput::never,
                       TimerOutput::wall_times)
     , simulation_parameters(p_simulation_parameters)
     , triangulation(p_triangulation)
@@ -92,6 +92,9 @@ public:
           .get_thermal_conductivity_vector())
 
   {
+    this->pcout << std::setprecision(simulation_control->get_log_precision())
+                << std::scientific;
+
     if (simulation_parameters.mesh.simplex)
       {
         // for simplex meshes
@@ -131,11 +134,6 @@ public:
         previous_solutions_transfer.emplace_back(
           SolutionTransfer<dim, GlobalVectorType>(*this->dof_handler));
       }
-
-    // Change the behavior of the timer for situations when you don't want
-    // outputs
-    if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
-      this->computing_timer.disable_output();
 
     if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
       {
@@ -406,17 +404,14 @@ public:
 
   /**
    * @brief Output the L2 and Linfty norms of the correction vector.
-   *
-   * @param[in] display_precision Number of outputted digits.
    */
   void
-  output_newton_update_norms(const unsigned int display_precision) override
+  output_newton_update_norms() override
   {
-    this->pcout << std::setprecision(display_precision)
-                << "\t||dT||_L2 = " << std::setw(6) << newton_update.l2_norm()
+    this->pcout << "\t  ||dT||_L2 = " << std::setw(6) << newton_update.l2_norm()
                 << std::setw(6)
-                << "\t||dT||_Linfty = " << std::setprecision(display_precision)
-                << newton_update.linfty_norm() << std::endl;
+                << "\t  ||dT||_Linfty = " << newton_update.linfty_norm()
+                << std::endl;
   }
 
   /**

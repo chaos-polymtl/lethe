@@ -1,21 +1,21 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       256
    Number of degrees of freedom: 867
-   Volume of triangulation:      16
+   Volume of triangulation:      1.600e+01
 Initial refinement around IB particles - Step : 1 of 2
    Number of active cells:       388
    Number of degrees of freedom: 1305
-   Volume of triangulation:      16
+   Volume of triangulation:      1.600e+01
 Initial refinement around IB particles - Step : 2 of 2
    Number of active cells:       388
    Number of degrees of freedom: 1305
-   Volume of triangulation:      16
+   Volume of triangulation:      1.600e+01
 
 *******************************************************************************
 Transient iteration: 1        Time: 0.0312   Time step: 0.0312   CFL: 0.222   
 *******************************************************************************
 +------------------------------------------+
-|  Force  summary particles                |
+|  Force summary particles                 |
 +------------------------------------------+
 particle_ID  time   T_z   f_x     f_y   f_xv   f_yv    f_xp   f_yp   
           0 0.0312 0.182 63.025 -32.554 8.657 -11.043 54.367 -21.511 
@@ -25,9 +25,9 @@ Transient iteration: 2        Time: 0.0625   Time step: 0.0312   CFL: 0.328
 *******************************************************************************
    Number of active cells:       388
    Number of degrees of freedom: 1305
-   Volume of triangulation:      16
+   Volume of triangulation:      1.600e+01
 +------------------------------------------+
-|  Force  summary particles                |
+|  Force summary particles                 |
 +------------------------------------------+
 particle_ID  time   T_z   f_x     f_y   f_xv   f_yv   f_xp   f_yp  
           0 0.0625 0.209 17.747 -14.295 5.995 -7.855 11.752 -6.440 
@@ -37,9 +37,9 @@ Transient iteration: 3        Time: 0.0938   Time step: 0.0312   CFL: 0.302
 *******************************************************************************
    Number of active cells:       388
    Number of degrees of freedom: 1305
-   Volume of triangulation:      16
+   Volume of triangulation:      1.600e+01
 +------------------------------------------+
-|  Force  summary particles                |
+|  Force summary particles                 |
 +------------------------------------------+
 particle_ID  time   T_z   f_x     f_y   f_xv   f_yv  f_xp   f_yp  
           0 0.0938 0.105 13.671 -11.611 4.819 -6.499 8.852 -5.112 
@@ -49,9 +49,9 @@ Transient iteration: 4        Time: 0.125    Time step: 0.0312   CFL: 0.287
 *******************************************************************************
    Number of active cells:       391
    Number of degrees of freedom: 1314
-   Volume of triangulation:      16
+   Volume of triangulation:      1.600e+01
 +------------------------------------------+
-|  Force  summary particles                |
+|  Force summary particles                 |
 +------------------------------------------+
 particle_ID  time   T_z   f_x     f_y   f_xv   f_yv  f_xp   f_yp  
           0 0.1250 0.106 11.587 -10.221 4.059 -5.696 7.528 -4.524 

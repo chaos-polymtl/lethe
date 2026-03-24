@@ -1,7 +1,7 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       4096
    Number of degrees of freedom: 12675
-   Volume of triangulation:      1
+   Volume of triangulation:      1.000000e+00
    Number of CLS degrees of freedom: 4225
 
 ----------------------
@@ -22,10 +22,10 @@ Transient iteration: 1        Time: 0.0024   Time step: 0.0024   CFL: 0.339811
 ----
 CLS
 ----
-Newton iteration: 0  - Residual:  0.0262327
-  -Tolerance of iterative solver is : 2.62327e-11
-  -Iterative solver took : 3 steps to reach a residual norm of 4.38093e-12
-	alpha =      1 res = 4.381e-12	||dphi||_L2 = 0.2632	||dphi||_Linfty = 0.02727
+Newton iteration: 0  - Residual:  2.623268e-02
+  -Tolerance of iterative solver is : 2.623268e-11
+  -Iterative solver took : 3 steps to reach a residual norm of 4.380931e-12
+	alpha =      1	res = 4.380934e-12	  ||dphi||_L2 = 2.631743e-01	  ||dphi||_Linfty = 2.727452e-02
 
 ----------------------
 CLS Mass Conservation
@@ -45,14 +45,14 @@ Transient iteration: 2        Time: 0.006    Time step: 0.0036   CFL: 0.135923
 ----
 CLS
 ----
-Newton iteration: 0  - Residual:  0.04197
-  -Tolerance of iterative solver is : 4.197e-11
-  -Iterative solver took : 3 steps to reach a residual norm of 1.506e-11
-	alpha =      1 res = 1.506e-11	||dphi||_L2 = 0.3944	||dphi||_Linfty = 0.04072
-Newton iteration: 1  - Residual:  1.506e-11
-  -Tolerance of iterative solver is : 1e-12
-  -Iterative solver took : 1 steps to reach a residual norm of 3.405e-14
-	alpha =      1 res = 3.405e-14	||dphi||_L2 = 6.391e-10	||dphi||_Linfty = 2.082e-10
+Newton iteration: 0  - Residual:  4.197311e-02
+  -Tolerance of iterative solver is : 4.197311e-11
+  -Iterative solver took : 3 steps to reach a residual norm of 1.506213e-11
+	alpha =      1	res = 1.506213e-11	  ||dphi||_L2 = 3.944300e-01	  ||dphi||_Linfty = 4.071585e-02
+Newton iteration: 1  - Residual:  1.506213e-11
+  -Tolerance of iterative solver is : 1.000000e-12
+  -Iterative solver took : 1 steps to reach a residual norm of 3.404793e-14
+	alpha =      1	res = 3.404860e-14	  ||dphi||_L2 = 6.390853e-10	  ||dphi||_Linfty = 2.082280e-10
 
 ----------------------
 CLS Mass Conservation
@@ -72,10 +72,10 @@ Transient iteration: 3        Time: 0.012    Time step: 0.006    CFL: 0.203877
 ----
 CLS
 ----
-Newton iteration: 0  - Residual:  0.04269
-  -Tolerance of iterative solver is : 4.269e-11
-  -Iterative solver took : 4 steps to reach a residual norm of 1.508e-13
-	alpha =      1 res = 1.508e-13	||dphi||_L2 =  0.656	||dphi||_Linfty = 0.06765
+Newton iteration: 0  - Residual:  4.269426e-02
+  -Tolerance of iterative solver is : 4.269426e-11
+  -Iterative solver took : 4 steps to reach a residual norm of 1.508170e-13
+	alpha =      1	res = 1.508166e-13	  ||dphi||_L2 = 6.559796e-01	  ||dphi||_Linfty = 6.764669e-02
 
 ----------------------
 CLS Mass Conservation
@@ -95,10 +95,10 @@ Transient iteration: 4        Time: 0.018    Time step: 0.006    CFL: 0.339751
 ----
 CLS
 ----
-Newton iteration: 0  - Residual:  0.03936
-  -Tolerance of iterative solver is : 3.936e-11
-  -Iterative solver took : 4 steps to reach a residual norm of 1.523e-13
-	alpha =      1 res = 1.523e-13	||dphi||_L2 = 0.6549	||dphi||_Linfty = 0.0672
+Newton iteration: 0  - Residual:  3.936106e-02
+  -Tolerance of iterative solver is : 3.936106e-11
+  -Iterative solver took : 4 steps to reach a residual norm of 1.522611e-13
+	alpha =      1	res = 1.522608e-13	  ||dphi||_L2 = 6.548757e-01	  ||dphi||_Linfty = 6.720043e-02
 
 ----------------------
 CLS Mass Conservation
@@ -118,10 +118,10 @@ Transient iteration: 5        Time: 0.024    Time step: 0.006    CFL: 0.339675
 ----
 CLS
 ----
-Newton iteration: 0  - Residual:  0.03933
-  -Tolerance of iterative solver is : 3.933e-11
-  -Iterative solver took : 4 steps to reach a residual norm of 1.559e-13
-	alpha =      1 res = 1.559e-13	||dphi||_L2 = 0.6543	||dphi||_Linfty = 0.06682
+Newton iteration: 0  - Residual:  3.932554e-02
+  -Tolerance of iterative solver is : 3.932554e-11
+  -Iterative solver took : 4 steps to reach a residual norm of 1.559496e-13
+	alpha =      1	res = 1.559496e-13	  ||dphi||_L2 = 6.542699e-01	  ||dphi||_Linfty = 6.681857e-02
 
 ----------------------
 CLS Mass Conservation
@@ -141,10 +141,10 @@ Transient iteration: 6        Time: 0.03     Time step: 0.006    CFL: 0.339569
 ----
 CLS
 ----
-Newton iteration: 0  - Residual:  0.0393
-  -Tolerance of iterative solver is : 3.93e-11
-  -Iterative solver took : 4 steps to reach a residual norm of 1.597e-13
-	alpha =      1 res = 1.597e-13	||dphi||_L2 = 0.6538	||dphi||_Linfty = 0.06684
+Newton iteration: 0  - Residual:  3.929790e-02
+  -Tolerance of iterative solver is : 3.929790e-11
+  -Iterative solver took : 4 steps to reach a residual norm of 1.597285e-13
+	alpha =      1	res = 1.597281e-13	  ||dphi||_L2 = 6.538165e-01	  ||dphi||_Linfty = 6.684365e-02
 
 ----------------------
 CLS Mass Conservation
@@ -164,10 +164,10 @@ Transient iteration: 7        Time: 0.036    Time step: 0.006    CFL: 0.339434
 ----
 CLS
 ----
-Newton iteration: 0  - Residual:  0.03927
-  -Tolerance of iterative solver is : 3.927e-11
-  -Iterative solver took : 4 steps to reach a residual norm of 1.637e-13
-	alpha =      1 res = 1.637e-13	||dphi||_L2 = 0.6534	||dphi||_Linfty = 0.06649
+Newton iteration: 0  - Residual:  3.927060e-02
+  -Tolerance of iterative solver is : 3.927060e-11
+  -Iterative solver took : 4 steps to reach a residual norm of 1.637173e-13
+	alpha =      1	res = 1.637174e-13	  ||dphi||_L2 = 6.533828e-01	  ||dphi||_Linfty = 6.649119e-02
 
 ----------------------
 CLS Mass Conservation
@@ -187,10 +187,10 @@ Transient iteration: 8        Time: 0.042    Time step: 0.006    CFL: 0.339268
 ----
 CLS
 ----
-Newton iteration: 0  - Residual:  0.03924
-  -Tolerance of iterative solver is : 3.924e-11
-  -Iterative solver took : 4 steps to reach a residual norm of 1.678e-13
-	alpha =      1 res = 1.678e-13	||dphi||_L2 = 0.6529	||dphi||_Linfty = 0.0667
+Newton iteration: 0  - Residual:  3.924091e-02
+  -Tolerance of iterative solver is : 3.924091e-11
+  -Iterative solver took : 4 steps to reach a residual norm of 1.678022e-13
+	alpha =      1	res = 1.678017e-13	  ||dphi||_L2 = 6.529215e-01	  ||dphi||_Linfty = 6.669830e-02
 
 ----------------------
 CLS Mass Conservation
@@ -210,10 +210,10 @@ Transient iteration: 9        Time: 0.048    Time step: 0.006    CFL: 0.339072
 ----
 CLS
 ----
-Newton iteration: 0  - Residual:  0.03921
-  -Tolerance of iterative solver is : 3.921e-11
-  -Iterative solver took : 4 steps to reach a residual norm of 1.715e-13
-	alpha =      1 res = 1.715e-13	||dphi||_L2 = 0.6524	||dphi||_Linfty = 0.06621
+Newton iteration: 0  - Residual:  3.920791e-02
+  -Tolerance of iterative solver is : 3.920791e-11
+  -Iterative solver took : 4 steps to reach a residual norm of 1.715233e-13
+	alpha =      1	res = 1.715202e-13	  ||dphi||_L2 = 6.524163e-01	  ||dphi||_Linfty = 6.620640e-02
 
 ----------------------
 CLS Mass Conservation
@@ -233,10 +233,10 @@ Transient iteration: 10       Time: 0.054    Time step: 0.006    CFL: 0.338845
 ----
 CLS
 ----
-Newton iteration: 0  - Residual:  0.03917
-  -Tolerance of iterative solver is : 3.917e-11
-  -Iterative solver took : 4 steps to reach a residual norm of 1.742e-13
-	alpha =      1 res = 1.742e-13	||dphi||_L2 = 0.6519	||dphi||_Linfty = 0.06609
+Newton iteration: 0  - Residual:  3.917128e-02
+  -Tolerance of iterative solver is : 3.917128e-11
+  -Iterative solver took : 4 steps to reach a residual norm of 1.742207e-13
+	alpha =      1	res = 1.742244e-13	  ||dphi||_L2 = 6.518619e-01	  ||dphi||_Linfty = 6.609107e-02
 -----------------------------------------
 CLS geometric interface reinitialization
 -----------------------------------------
@@ -245,7 +245,7 @@ In redistanciation of the previous solution ...
 Signed Distance Solver
 -----------------------
 Initial volume Volume after redistanciation Remaining error on the volume 
-    7.0538e-02                   7.0538e-02                   -8.3267e-17 
+    7.0538e-02                   7.0538e-02                   -1.1102e-16 
 Solving signed distance of layer 0
 Solving signed distance of layer 1
 Solving signed distance of layer 2
@@ -265,7 +265,7 @@ In redistanciation of the present solution ...
 Signed Distance Solver
 -----------------------
 Initial volume Volume after redistanciation Remaining error on the volume 
-    7.0544e-02                   7.0544e-02                   -1.1102e-16 
+    7.0544e-02                   7.0544e-02                   -1.2490e-16 
 Solving signed distance of layer 0
 Solving signed distance of layer 1
 Solving signed distance of layer 2
@@ -299,10 +299,10 @@ Transient iteration: 11       Time: 0.06     Time step: 0.006    CFL: 0.338589
 ----
 CLS
 ----
-Newton iteration: 0  - Residual:  0.03928
-  -Tolerance of iterative solver is : 3.928e-11
-  -Iterative solver took : 4 steps to reach a residual norm of 1.72e-13
-	alpha =      1 res = 1.72e-13	||dphi||_L2 = 0.6535	||dphi||_Linfty = 0.07027
+Newton iteration: 0  - Residual:  3.927584e-02
+  -Tolerance of iterative solver is : 3.927584e-11
+  -Iterative solver took : 4 steps to reach a residual norm of 1.720396e-13
+	alpha =      1	res = 1.720404e-13	  ||dphi||_L2 = 6.534556e-01	  ||dphi||_Linfty = 7.026556e-02
 
 ----------------------
 CLS Mass Conservation

@@ -1241,8 +1241,7 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
       // Ramp on n
       for (int i = 0; i < n_iter_n; ++i)
         {
-          this->pcout << std::setprecision(4)
-                      << "********* Solution for n = " + std::to_string(n) +
+          this->pcout << "********* Solution for n = " + std::to_string(n) +
                            " and viscosity = " +
                            std::to_string(kinematic_viscosity) + " *********"
                       << std::endl;
@@ -1263,8 +1262,7 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
       // Ramp on kinematic viscosity
       for (int i = 0; i < n_iter_viscosity; ++i)
         {
-          this->pcout << std::setprecision(4)
-                      << "********* Solution for n = " + std::to_string(n_end) +
+          this->pcout << "********* Solution for n = " + std::to_string(n_end) +
                            " and viscosity = " +
                            std::to_string(kinematic_viscosity) + " *********"
                       << std::endl;

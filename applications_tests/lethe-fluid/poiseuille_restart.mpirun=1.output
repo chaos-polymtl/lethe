@@ -1,55 +1,55 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       10
    Number of degrees of freedom: 96
-   Volume of triangulation:      4
+   Volume of triangulation:      4.000000e+00
 ************************
----> Simulation Restart
+---> Simulation Restart 
 ************************
    Number of active cells:       5120
    Number of degrees of freedom: 22916
-   Volume of triangulation:      6.24289
+   Volume of triangulation:      6.242890e+00
 
 *******************************************************************************
-Transient iteration: 16       Time: 1.6      Time step: 0.1      CFL: 5.91664
+Transient iteration: 16       Time: 1.6      Time step: 0.1      CFL: 5.91664 
 *******************************************************************************
 ---------------------
 Flow control summary
 ---------------------
-Space-average velocity: 3.20801
-Beta force:  25.9194
+Space-average velocity: 3.208012e+00
+Beta force:  2.591935e+01
 
 *******************************************************************************
-Transient iteration: 17       Time: 1.7      Time step: 0.1      CFL: 5.91617
+Transient iteration: 17       Time: 1.7      Time step: 0.1      CFL: 5.91617 
 *******************************************************************************
 ---------------------
 Flow control summary
 ---------------------
-Space-average velocity: 3.20638
-Beta force:  25.9084
+Space-average velocity: 3.206375e+00
+Beta force:  2.590837e+01
 
 *******************************************************************************
-Transient iteration: 18       Time: 1.8      Time step: 0.1      CFL: 5.91426
+Transient iteration: 18       Time: 1.8      Time step: 0.1      CFL: 5.91426 
 *******************************************************************************
 ---------------------
 Flow control summary
 ---------------------
-Space-average velocity: 3.20498
-Beta force:  25.9089
+Space-average velocity: 3.204983e+00
+Beta force:  2.590886e+01
 
 *******************************************************************************
-Transient iteration: 19       Time: 1.9      Time step: 0.1      CFL: 5.91281
+Transient iteration: 19       Time: 1.9      Time step: 0.1      CFL: 5.91281 
 *******************************************************************************
 ---------------------
 Flow control summary
 ---------------------
-Space-average velocity: 3.20418
-Beta force:  25.9114
+Space-average velocity: 3.204183e+00
+Beta force:  2.591144e+01
 
 *******************************************************************************
-Transient iteration: 20       Time: 2        Time step: 0.1      CFL: 5.91201
+Transient iteration: 20       Time: 2        Time step: 0.1      CFL: 5.91201 
 *******************************************************************************
 ---------------------
 Flow control summary
 ---------------------
-Space-average velocity: 3.20381
-Beta force:  25.9134
+Space-average velocity: 3.203812e+00
+Beta force:  2.591343e+01

@@ -1,14 +1,14 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       512
    Number of degrees of freedom: 867
-   Volume of triangulation:      1
+   Volume of triangulation:      1.000000e+00
    Number of tracer degrees of freedom: 289
 
 *****************************
 Steady iteration:        1/1
 *****************************
-L2 error velocity : 0
-L2 error tracer : 2.20927e-05
+L2 error velocity: 0.000000e+00
+L2 error tracer: 2.209270e-05
 cells error_velocity error_pressure 
   512 0.000000e+00 - 0.000000e+00 - 
 cells  error_tracer  

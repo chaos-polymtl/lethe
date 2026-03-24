@@ -28,7 +28,7 @@ VolumeOfFluid<dim>::VolumeOfFluid(
   , multiphysics(multiphysics_interface)
   , computing_timer(p_triangulation->get_mpi_communicator(),
                     this->pcout,
-                    TimerOutput::summary,
+                    TimerOutput::never,
                     TimerOutput::wall_times)
   , simulation_parameters(p_simulation_parameters)
   , triangulation(p_triangulation)
@@ -37,6 +37,9 @@ VolumeOfFluid<dim>::VolumeOfFluid(
   , sharpening_threshold(simulation_parameters.multiphysics.vof_parameters
                            .regularization_method.sharpening.threshold)
 {
+  this->pcout << std::setprecision(simulation_control->get_log_precision())
+              << std::scientific;
+
   AssertThrow(
     simulation_parameters.physical_properties_manager.get_number_of_fluids() ==
       2,
@@ -125,11 +128,6 @@ VolumeOfFluid<dim>::VolumeOfFluid(
       << "The interface sharpness value should be set between 1 and 2"
       << std::endl;
 
-
-  // Change the behavior of the timer for situations when you don't want
-  // outputs
-  if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
-    this->computing_timer.disable_output();
 
   // Initialize the interface object for subequations to solve
   this->vof_subequations_interface =
@@ -1352,6 +1350,14 @@ VolumeOfFluid<dim>::finish_simulation()
         "error_phase", this->simulation_control->get_log_precision());
       this->error_table.write_text(std::cout);
     }
+
+  if (this->simulation_parameters.timer.type == Parameters::Timer::Type::end)
+    {
+      announce_string(this->pcout, "CLS");
+      this->pcout << std::defaultfloat;
+      this->computing_timer.print_summary();
+      this->pcout << std::scientific;
+    }
 }
 
 template <int dim>
@@ -1823,7 +1829,9 @@ VolumeOfFluid<dim>::postprocess(bool first_iteration)
       Parameters::Timer::Type::iteration)
     {
       announce_string(this->pcout, "CLS");
+      this->pcout << std::defaultfloat;
       this->computing_timer.print_summary();
+      this->pcout << std::scientific;
       this->computing_timer.reset();
     }
 }

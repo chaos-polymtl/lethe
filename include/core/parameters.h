@@ -1271,10 +1271,6 @@ namespace Parameters
     // Maximal number of iterations for the Newton solver
     unsigned int max_iterations;
 
-    // Residual precision
-    unsigned int display_precision;
-
-
     // Force RHS recalculation at the beginning of every non-linear steps
     // This is required if there is a fixed point component to the non-linear
     // solver that is changed at the beginning of every newton iteration.

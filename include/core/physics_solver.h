@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_physics_solver_h
@@ -115,11 +115,9 @@ public:
 
   /**
    * @brief Output the L2 and Linfty norms of the correction vector.
-   *
-   * @param[in] display_precision Number of outputted digits.
    */
   virtual void
-  output_newton_update_norms(const unsigned int display_precision) = 0;
+  output_newton_update_norms() = 0;
 
   /**
    * @brief Return the metric for residual rescaling. By default, should return 1.

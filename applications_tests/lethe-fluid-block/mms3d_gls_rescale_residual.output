@@ -1,7 +1,7 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       64
    Number of degrees of freedom: 500
-   Volume of triangulation:      0.008
+   Volume of triangulation:      8.000000e-03
 
 *****************************
 Steady iteration:        1/1
@@ -9,10 +9,10 @@ Steady iteration:        1/1
 ---------------
 Fluid Dynamics
 ---------------
-Newton iteration: 0  - Residual:  0.00484293
-  -Tolerance of iterative solver is : 4.84293e-06
-  -Iterative solver took : 2 steps to reach a residual norm of 1.24009e-08
-	alpha =      1 res = 1.49e-08	||du||_L2 = 0.0026	||du||_Linfty = 0.001
-	||dp||_L2 =  0.461	||dp||_Linfty = 0.133
+Newton iteration: 0  - Residual:  4.842928e-03
+  -Tolerance of iterative solver is : 4.842928e-06
+  -Iterative solver took : 2 steps to reach a residual norm of 1.240088e-08
+	alpha =      1	res = 1.494735e-08	  ||du||_L2 = 2.598209e-03	  ||du||_Linfty = 1.000051e-03
+	  ||dp||_L2 = 4.610353e-01	  ||dp||_Linfty = 1.330930e-01
 cells error_velocity error_pressure 
    64 2.897222e-04 - 1.855844e-03 - 

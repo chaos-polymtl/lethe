@@ -1,7 +1,7 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       16
    Number of degrees of freedom: 75
-   Volume of triangulation:      0.36
+   Volume of triangulation:      3.600000e-01
    Number of thermal degrees of freedom: 25
    Number of CLS degrees of freedom: 25
 ************************
@@ -9,7 +9,7 @@ Running on 1 MPI rank(s)...
 ************************
    Number of active cells:       1024
    Number of degrees of freedom: 3267
-   Volume of triangulation:      0.36
+   Volume of triangulation:      3.600000e-01
    Number of thermal degrees of freedom: 1089
    Number of CLS degrees of freedom: 1089
 Reading heat transfer checkpoint
@@ -19,10 +19,10 @@ Reading CLS checkpoint
 Transient iteration: 31       Time: 6.012e-06 Time step: 2e-07    CFL: 1.00174e-06
 ***********************************************************************************
 Temperature statistics on fluid: 
-	     Min: 298
-	     Max: 1432.85
-	 Average: 307.475
-	 Std-Dev: 72.4407
+	     Min: 2.980000e+02
+	     Max: 1.432854e+03
+	 Average: 3.074751e+02
+	 Std-Dev: 7.244072e+01
 
 ----------------------
 CLS Mass Conservation
@@ -34,10 +34,10 @@ CLS Mass Conservation
 Transient iteration: 32       Time: 6.212e-06 Time step: 2e-07    CFL: 9.94585e-07
 ***********************************************************************************
 Temperature statistics on fluid: 
-	     Min: 298
-	     Max: 1464.73
-	 Average: 307.787
-	 Std-Dev: 74.5852
+	     Min: 2.980000e+02
+	     Max: 1.464727e+03
+	 Average: 3.077865e+02
+	 Std-Dev: 7.458525e+01
 
 ----------------------
 CLS Mass Conservation
@@ -49,10 +49,10 @@ CLS Mass Conservation
 Transient iteration: 33       Time: 6.412e-06 Time step: 2e-07    CFL: 9.90394e-07
 ***********************************************************************************
 Temperature statistics on fluid: 
-	     Min: 298
-	     Max: 1496.28
-	 Average: 308.098
-	 Std-Dev: 76.7152
+	     Min: 2.980000e+02
+	     Max: 1.496279e+03
+	 Average: 3.080976e+02
+	 Std-Dev: 7.671517e+01
 
 ----------------------
 CLS Mass Conservation
@@ -64,10 +64,10 @@ CLS Mass Conservation
 Transient iteration: 34       Time: 6.612e-06 Time step: 2e-07    CFL: 9.91106e-07
 ***********************************************************************************
 Temperature statistics on fluid: 
-	     Min: 298
-	     Max: 1527.51
-	 Average: 308.408
-	 Std-Dev: 78.8307
+	     Min: 2.980000e+02
+	     Max: 1.527512e+03
+	 Average: 3.084084e+02
+	 Std-Dev: 7.883067e+01
 
 ----------------------
 CLS Mass Conservation
@@ -79,10 +79,10 @@ CLS Mass Conservation
 Transient iteration: 35       Time: 6.812e-06 Time step: 2e-07    CFL: 9.94625e-07
 ***********************************************************************************
 Temperature statistics on fluid: 
-	     Min: 298
-	     Max: 1558.43
-	 Average: 308.719
-	 Std-Dev: 80.932
+	     Min: 2.980000e+02
+	     Max: 1.558433e+03
+	 Average: 3.087189e+02
+	 Std-Dev: 8.093196e+01
 
 ----------------------
 CLS Mass Conservation
@@ -94,10 +94,10 @@ CLS Mass Conservation
 Transient iteration: 36       Time: 7.012e-06 Time step: 2e-07    CFL: 1.00207e-06
 ***********************************************************************************
 Temperature statistics on fluid: 
-	     Min: 298
-	     Max: 1589.05
-	 Average: 309.029
-	 Std-Dev: 83.0192
+	     Min: 2.980000e+02
+	     Max: 1.589046e+03
+	 Average: 3.090291e+02
+	 Std-Dev: 8.301922e+01
 
 ----------------------
 CLS Mass Conservation
@@ -109,10 +109,10 @@ CLS Mass Conservation
 Transient iteration: 37       Time: 7.212e-06 Time step: 2e-07    CFL: 1.00915e-06
 ***********************************************************************************
 Temperature statistics on fluid: 
-	     Min: 298
-	     Max: 1619.35
-	 Average: 309.339
-	 Std-Dev: 85.0926
+	     Min: 2.980000e+02
+	     Max: 1.619355e+03
+	 Average: 3.093389e+02
+	 Std-Dev: 8.509263e+01
 
 ----------------------
 CLS Mass Conservation
@@ -124,10 +124,10 @@ CLS Mass Conservation
 Transient iteration: 38       Time: 7.412e-06 Time step: 2e-07    CFL: 1.00796e-06
 ***********************************************************************************
 Temperature statistics on fluid: 
-	     Min: 298
-	     Max: 1649.36
-	 Average: 309.648
-	 Std-Dev: 87.1524
+	     Min: 2.980000e+02
+	     Max: 1.649364e+03
+	 Average: 3.096485e+02
+	 Std-Dev: 8.715238e+01
 
 ----------------------
 CLS Mass Conservation
@@ -139,10 +139,10 @@ CLS Mass Conservation
 Transient iteration: 39       Time: 7.612e-06 Time step: 2e-07    CFL: 1.00744e-06
 ***********************************************************************************
 Temperature statistics on fluid: 
-	     Min: 298
-	     Max: 1679.08
-	 Average: 309.958
-	 Std-Dev: 89.1986
+	     Min: 2.980000e+02
+	     Max: 1.679078e+03
+	 Average: 3.099577e+02
+	 Std-Dev: 8.919864e+01
 
 ----------------------
 CLS Mass Conservation
@@ -154,10 +154,10 @@ CLS Mass Conservation
 Transient iteration: 40       Time: 7.812e-06 Time step: 2e-07    CFL: 1.00627e-06
 ***********************************************************************************
 Temperature statistics on fluid: 
-	     Min: 298
-	     Max: 1708.5
-	 Average: 310.267
-	 Std-Dev: 91.2316
+	     Min: 2.980000e+02
+	     Max: 1.708500e+03
+	 Average: 3.102666e+02
+	 Std-Dev: 9.123158e+01
 
 ----------------------
 CLS Mass Conservation
@@ -169,10 +169,10 @@ CLS Mass Conservation
 Transient iteration: 41       Time: 8.012e-06 Time step: 2e-07    CFL: 1.0046e-06
 **********************************************************************************
 Temperature statistics on fluid: 
-	     Min: 298
-	     Max: 1737.64
-	 Average: 310.575
-	 Std-Dev: 93.2514
+	     Min: 2.980000e+02
+	     Max: 1.737636e+03
+	 Average: 3.105751e+02
+	 Std-Dev: 9.325138e+01
 
 ----------------------
 CLS Mass Conservation

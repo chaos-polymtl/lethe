@@ -1,11 +1,11 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       1536
    Number of degrees of freedom: 4851
-   Volume of triangulation:      0.714
+   Volume of triangulation:      7.140000e-01
    Number of thermal degrees of freedom: 1617
    Number of CLS degrees of freedom: 1617
-Pressure drop: 0 Pa
-Total pressure drop: 0 Pa
+Pressure drop: 0.000000e+00 Pa
+Total pressure drop: 0.000000e+00 Pa
 
 ----------------------
 CLS Mass Conservation
@@ -22,8 +22,8 @@ CLS Barycenter
 *******************************************************************************
 Transient iteration: 1        Time: 0.01     Time step: 0.01     CFL: 0       
 *******************************************************************************
-Pressure drop: -0.00583401 Pa
-Total pressure drop: -0.00583401 Pa
+Pressure drop: -5.834013e-03 Pa
+Total pressure drop: -5.834013e-03 Pa
 
 ----------------------
 CLS Mass Conservation
@@ -40,8 +40,8 @@ CLS Barycenter
 **********************************************************************************
 Transient iteration: 2        Time: 0.02     Time step: 0.01     CFL: 8.87758e-05
 **********************************************************************************
-Pressure drop: -0.00497741 Pa
-Total pressure drop: -0.00497741 Pa
+Pressure drop: -4.977411e-03 Pa
+Total pressure drop: -4.977411e-03 Pa
 
 ----------------------
 CLS Mass Conservation
@@ -58,8 +58,8 @@ CLS Barycenter
 **********************************************************************************
 Transient iteration: 3        Time: 0.03     Time step: 0.01     CFL: 0.000176621
 **********************************************************************************
-Pressure drop: -0.00508755 Pa
-Total pressure drop: -0.00508755 Pa
+Pressure drop: -5.087554e-03 Pa
+Total pressure drop: -5.087554e-03 Pa
 
 ----------------------
 CLS Mass Conservation
@@ -76,8 +76,8 @@ CLS Barycenter
 **********************************************************************************
 Transient iteration: 4        Time: 0.04     Time step: 0.01     CFL: 0.000187224
 **********************************************************************************
-Pressure drop: -0.00517128 Pa
-Total pressure drop: -0.00517128 Pa
+Pressure drop: -5.171278e-03 Pa
+Total pressure drop: -5.171278e-03 Pa
 
 ----------------------
 CLS Mass Conservation

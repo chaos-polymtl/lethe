@@ -1,9 +1,9 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       1024
    Number of degrees of freedom: 28227
-   Volume of triangulation:      39.4784
-Enstrophy: 0.5
-Kinetic energy: 0.25
+   Volume of triangulation:      3.947842e+01
+Enstrophy: 5.000000e-01
+Kinetic energy: 2.500000e-01
 
 *******************************************************************************
 Transient iteration: 1        Time: 0.1      Time step: 0.1      CFL: 1.3538  
@@ -11,51 +11,51 @@ Transient iteration: 1        Time: 0.1      Time step: 0.1      CFL: 1.3538
 ---------------
 Fluid Dynamics
 ---------------
-Newton iteration: 0  - Residual:  0.786081
-	alpha =      1 res = 0.001774
-	||du||_L2 =  5.499	||du||_Linfty = 0.08018
-	||dp||_L2 =  3.998	||dp||_Linfty = 0.08806
-Newton iteration: 1  - Residual:  0.001774
-	alpha =      1 res = 7.863e-08
-	||du||_L2 = 6.049e-05	||du||_Linfty = 2.594e-06
-	||dp||_L2 = 0.1551	||dp||_Linfty = 0.003314
-Newton iteration: 2  - Residual:  7.863e-08
-	alpha =      1 res = 3.45e-12
-	||du||_L2 = 7.532e-08	||du||_Linfty = 1.977e-09
-	||dp||_L2 = 2.106e-06	||dp||_Linfty = 8.58e-08
+Newton iteration: 0  - Residual:  7.860813e-01
+	alpha =      1	res = 1.774017e-03
+	  ||du||_L2 = 5.499399e+00	  ||du||_Linfty = 8.018071e-02
+	  ||dp||_L2 = 3.997786e+00	  ||dp||_Linfty = 8.806432e-02
+Newton iteration: 1  - Residual:  1.774017e-03
+	alpha =      1	res = 7.863242e-08
+	  ||du||_L2 = 6.048840e-05	  ||du||_Linfty = 2.594455e-06
+	  ||dp||_L2 = 1.551195e-01	  ||dp||_Linfty = 3.313615e-03
+Newton iteration: 2  - Residual:  7.863242e-08
+	alpha =      1	res = 3.450387e-12
+	  ||du||_L2 = 7.532336e-08	  ||du||_Linfty = 1.977369e-09
+	  ||dp||_L2 = 2.105847e-06	  ||dp||_Linfty = 8.579672e-08
 ---------------
 Fluid Dynamics
 ---------------
-Newton iteration: 0  - Residual:  0.4679
-	alpha =      1 res = 0.000629
-	||du||_L2 =  3.274	||du||_Linfty = 0.04773
-	||dp||_L2 =   2.19	||dp||_Linfty = 0.04824
-Newton iteration: 1  - Residual:  0.000629
-	alpha =      1 res = 3.299e-08
-	||du||_L2 = 3.627e-05	||du||_Linfty = 1.555e-06
-	||dp||_L2 = 0.05496	||dp||_Linfty = 0.001179
-Newton iteration: 2  - Residual:  3.299e-08
-	alpha =      1 res = 5.156e-12
-	||du||_L2 = 3.093e-08	||du||_Linfty = 1.222e-09
-	||dp||_L2 = 1.001e-06	||dp||_Linfty = 5.267e-08
+Newton iteration: 0  - Residual:  4.678795e-01
+	alpha =      1	res = 6.290151e-04
+	  ||du||_L2 = 3.273528e+00	  ||du||_Linfty = 4.772869e-02
+	  ||dp||_L2 = 2.189542e+00	  ||dp||_Linfty = 4.824035e-02
+Newton iteration: 1  - Residual:  6.290151e-04
+	alpha =      1	res = 3.299164e-08
+	  ||du||_L2 = 3.627026e-05	  ||du||_Linfty = 1.555292e-06
+	  ||dp||_L2 = 5.495602e-02	  ||dp||_Linfty = 1.179165e-03
+Newton iteration: 2  - Residual:  3.299164e-08
+	alpha =      1	res = 5.156234e-12
+	  ||du||_L2 = 3.092983e-08	  ||du||_Linfty = 1.221986e-09
+	  ||dp||_L2 = 1.000690e-06	  ||dp||_Linfty = 5.267280e-08
 ---------------
 Fluid Dynamics
 ---------------
-Newton iteration: 0  - Residual:  0.5233
-	alpha =      1 res = 0.0007868
-	||du||_L2 =  3.662	||du||_Linfty = 0.05339
-	||dp||_L2 =  2.322	||dp||_Linfty = 0.05116
-Newton iteration: 1  - Residual:  0.0007868
-	alpha =      1 res = 3.971e-08
-	||du||_L2 = 4.076e-05	||du||_Linfty = 1.748e-06
-	||dp||_L2 = 0.06876	||dp||_Linfty = 0.001474
-Newton iteration: 2  - Residual:  3.971e-08
-	alpha =      1 res = 6.151e-12
-	||du||_L2 = 3.753e-08	||du||_Linfty = 1.381e-09
-	||dp||_L2 = 1.174e-06	||dp||_Linfty = 5.887e-08
-Enstrophy: 0.3351
-Kinetic energy: 0.1676
-L2 error velocity: 0.000135518
+Newton iteration: 0  - Residual:  5.233429e-01
+	alpha =      1	res = 7.868297e-04
+	  ||du||_L2 = 3.661569e+00	  ||du||_Linfty = 5.338640e-02
+	  ||dp||_L2 = 2.321876e+00	  ||dp||_Linfty = 5.115578e-02
+Newton iteration: 1  - Residual:  7.868297e-04
+	alpha =      1	res = 3.970697e-08
+	  ||du||_L2 = 4.076174e-05	  ||du||_Linfty = 1.748471e-06
+	  ||dp||_L2 = 6.876170e-02	  ||dp||_Linfty = 1.473692e-03
+Newton iteration: 2  - Residual:  3.970697e-08
+	alpha =      1	res = 6.151092e-12
+	  ||du||_L2 = 3.753277e-08	  ||du||_Linfty = 1.381463e-09
+	  ||dp||_L2 = 1.173793e-06	  ||dp||_Linfty = 5.887056e-08
+Enstrophy: 3.351351e-01
+Kinetic energy: 1.675675e-01
+L2 error velocity: 1.355182e-04
 
 *******************************************************************************
 Transient iteration: 2        Time: 0.2      Time step: 0.1      CFL: 1.10836 
@@ -63,51 +63,51 @@ Transient iteration: 2        Time: 0.2      Time step: 0.1      CFL: 1.10836
 ---------------
 Fluid Dynamics
 ---------------
-Newton iteration: 0  - Residual:  0.643515
-	alpha =      1 res = 0.001189
-	||du||_L2 =  4.502	||du||_Linfty = 0.06565
-	||dp||_L2 =   2.68	||dp||_Linfty = 0.05904
-Newton iteration: 1  - Residual:  0.001189
-	alpha =      1 res = 5.624e-08
-	||du||_L2 = 5.039e-05	||du||_Linfty = 2.162e-06
-	||dp||_L2 =  0.104	||dp||_Linfty = 0.002224
-Newton iteration: 2  - Residual:  5.624e-08
-	alpha =      1 res = 8.842e-12
-	||du||_L2 = 5.384e-08	||du||_Linfty = 1.699e-09
-	||dp||_L2 = 1.582e-06	||dp||_Linfty = 7.065e-08
+Newton iteration: 0  - Residual:  6.435150e-01
+	alpha =      1	res = 1.189363e-03
+	  ||du||_L2 = 4.502372e+00	  ||du||_Linfty = 6.564549e-02
+	  ||dp||_L2 = 2.679897e+00	  ||dp||_Linfty = 5.904124e-02
+Newton iteration: 1  - Residual:  1.189363e-03
+	alpha =      1	res = 5.624366e-08
+	  ||du||_L2 = 5.039189e-05	  ||du||_Linfty = 2.162495e-06
+	  ||dp||_L2 = 1.039758e-01	  ||dp||_Linfty = 2.224295e-03
+Newton iteration: 2  - Residual:  5.624366e-08
+	alpha =      1	res = 8.842409e-12
+	  ||du||_L2 = 5.383500e-08	  ||du||_Linfty = 1.699404e-09
+	  ||dp||_L2 = 1.582046e-06	  ||dp||_Linfty = 7.064799e-08
 ---------------
 Fluid Dynamics
 ---------------
-Newton iteration: 0  - Residual:  0.3831
-	alpha =      1 res = 0.0004219
-	||du||_L2 =   2.68	||du||_Linfty = 0.03908
-	||dp||_L2 =  1.468	||dp||_Linfty = 0.03234
-Newton iteration: 1  - Residual:  0.0004219
-	alpha =      1 res = 2.434e-08
-	||du||_L2 = 3.019e-05	||du||_Linfty = 1.295e-06
-	||dp||_L2 = 0.03684	||dp||_Linfty = 0.0007924
-Newton iteration: 2  - Residual:  2.434e-08
-	alpha =      1 res = 3.909e-12
-	||du||_L2 = 2.261e-08	||du||_Linfty = 9.865e-10
-	||dp||_L2 = 7.687e-07	||dp||_Linfty = 4.261e-08
+Newton iteration: 0  - Residual:  3.830536e-01
+	alpha =      1	res = 4.219146e-04
+	  ||du||_L2 = 2.680038e+00	  ||du||_Linfty = 3.907549e-02
+	  ||dp||_L2 = 1.467735e+00	  ||dp||_Linfty = 3.234131e-02
+Newton iteration: 1  - Residual:  4.219146e-04
+	alpha =      1	res = 2.433846e-08
+	  ||du||_L2 = 3.018554e-05	  ||du||_Linfty = 1.295183e-06
+	  ||dp||_L2 = 3.684060e-02	  ||dp||_Linfty = 7.923801e-04
+Newton iteration: 2  - Residual:  2.433846e-08
+	alpha =      1	res = 3.909477e-12
+	  ||du||_L2 = 2.260838e-08	  ||du||_Linfty = 9.864745e-10
+	  ||dp||_L2 = 7.687202e-07	  ||dp||_Linfty = 4.261309e-08
 ---------------
 Fluid Dynamics
 ---------------
-Newton iteration: 0  - Residual:  0.4285
-	alpha =      1 res = 0.0005277
-	||du||_L2 =  2.998	||du||_Linfty = 0.04371
-	||dp||_L2 =  1.556	||dp||_Linfty = 0.0343
-Newton iteration: 1  - Residual:  0.0005277
-	alpha =      1 res = 2.909e-08
-	||du||_L2 = 3.39e-05	||du||_Linfty = 1.455e-06
-	||dp||_L2 = 0.04609	||dp||_Linfty = 0.00099
-Newton iteration: 2  - Residual:  2.909e-08
-	alpha =      1 res = 4.633e-12
-	||du||_L2 = 2.727e-08	||du||_Linfty = 1.127e-09
-	||dp||_L2 = 9.001e-07	||dp||_Linfty = 4.826e-08
-Enstrophy: 0.2246
-Kinetic energy: 0.1123
-L2 error velocity: 0.000221854
+Newton iteration: 0  - Residual:  4.284606e-01
+	alpha =      1	res = 5.276940e-04
+	  ||du||_L2 = 2.997727e+00	  ||du||_Linfty = 4.370746e-02
+	  ||dp||_L2 = 1.556436e+00	  ||dp||_Linfty = 3.429545e-02
+Newton iteration: 1  - Residual:  5.276940e-04
+	alpha =      1	res = 2.909484e-08
+	  ||du||_L2 = 3.389777e-05	  ||du||_Linfty = 1.454821e-06
+	  ||dp||_L2 = 4.609406e-02	  ||dp||_Linfty = 9.900287e-04
+Newton iteration: 2  - Residual:  2.909484e-08
+	alpha =      1	res = 4.633377e-12
+	  ||du||_L2 = 2.727432e-08	  ||du||_Linfty = 1.127245e-09
+	  ||dp||_L2 = 9.001417e-07	  ||dp||_Linfty = 4.826444e-08
+Enstrophy: 2.246310e-01
+Kinetic energy: 1.123155e-01
+L2 error velocity: 2.218537e-04
  time  error_velocity 
 0.1000   1.355182e-04 
 0.2000   2.218537e-04 

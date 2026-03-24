@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_newton_non_linear_solver_strategy_h
@@ -116,13 +116,11 @@ NewtonNonLinearSolverStrategy<VectorType>::solve()
 
           if (this->params.verbosity != Parameters::Verbosity::quiet)
             {
-              solver->pcout << "\talpha = " << std::setw(6) << alpha
-                            << std::setw(0) << " res = "
-                            << std::setprecision(this->params.display_precision)
-                            << std::setw(6) << current_res;
+              solver->pcout << "\talpha = " << std::defaultfloat << std::setw(6)
+                            << alpha << std::setw(6) << std::scientific
+                            << "\tres = " << std::setw(6) << current_res;
 
-              solver->output_newton_update_norms(
-                this->params.display_precision);
+              solver->output_newton_update_norms();
             }
 
           // If it's not the first iteration of alpha check if the residual is
@@ -138,10 +136,11 @@ NewtonNonLinearSolverStrategy<VectorType>::solve()
 
               if (this->params.verbosity != Parameters::Verbosity::quiet)
                 {
-                  solver->pcout
-                    << "\t\talpha value was kept at alpha = " << alpha
-                    << " since alpha = " << alpha / 2
-                    << " increased the residual" << std::endl;
+                  solver->pcout << "\t\talpha value was kept at alpha = "
+                                << std::defaultfloat << alpha
+                                << " since alpha = " << alpha / 2
+                                << std::scientific << " increased the residual"
+                                << std::endl;
                 }
               current_res = last_alpha_res;
               break;

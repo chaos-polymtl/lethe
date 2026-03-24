@@ -1,40 +1,40 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       1024
    Number of degrees of freedom: 3267
-   Volume of triangulation:      2
+   Volume of triangulation:      2.000000e+00
    Number of thermal degrees of freedom: 1089
 Total heat flux at the heat transfer boundary conditions : 
-	 boundary 0 : 0
-	 boundary 1 : 0
-	 boundary 2 : 0
-	 boundary 3 : 0
+	 boundary 0 : 0.000000e+00
+	 boundary 1 : 0.000000e+00
+	 boundary 2 : 0.000000e+00
+	 boundary 3 : 0.000000e+00
 Convective heat flux at the heat transfer boundary conditions : 
-	 boundary 0 : 0
-	 boundary 1 : 0
-	 boundary 2 : 0
-	 boundary 3 : 0
-Thermal energy in fluid : 0
+	 boundary 0 : 0.000000e+00
+	 boundary 1 : 0.000000e+00
+	 boundary 2 : 0.000000e+00
+	 boundary 3 : 0.000000e+00
+Thermal energy in fluid : 0.000000e+00
 Heat flux at the nitsche immersed boundary : 
-	 Nitsche boundary 0 : 1000
+	 Nitsche boundary 0 : 1.000000e+03
 
 *****************************
 Steady iteration:        1/1
 *****************************
-L2 error velocity: 0
-L2 error temperature : 0.000255471
+L2 error velocity: 0.000000e+00
+L2 error temperature : 2.554706e-04
 Total heat flux at the heat transfer boundary conditions : 
-	 boundary 0 : 0.00235245
-	 boundary 1 : 0.00235245
-	 boundary 2 : -7.74437e-11
-	 boundary 3 : -0.973213
+	 boundary 0 : 2.352446e-03
+	 boundary 1 : 2.352450e-03
+	 boundary 2 : -7.744367e-11
+	 boundary 3 : -9.732133e-01
 Convective heat flux at the heat transfer boundary conditions : 
-	 boundary 0 : 0
-	 boundary 1 : 0
-	 boundary 2 : 0
-	 boundary 3 : 0
-Thermal energy in fluid : 1.48563
+	 boundary 0 : 0.000000e+00
+	 boundary 1 : 0.000000e+00
+	 boundary 2 : 0.000000e+00
+	 boundary 3 : 0.000000e+00
+Thermal energy in fluid : 1.485629e+00
 Heat flux at the nitsche immersed boundary : 
-	 Nitsche boundary 0 : 0.973213
+	 Nitsche boundary 0 : 9.732133e-01
 cells error_velocity error_pressure 
  1024 0.000000e+00 - 0.000000e+00 - 
 cells error_temperature 

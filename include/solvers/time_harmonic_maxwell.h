@@ -440,12 +440,9 @@ public:
 
   /**
    * @brief Output the L2 and Linfty norms of the correction vector.
-   *
-   * @param[in] display_precision Number of outputted digits.
    */
   void
-  output_newton_update_norms(
-    [[maybe_unused]] const unsigned int display_precision) override
+  output_newton_update_norms() override
   {
     AssertThrow(
       false,

@@ -205,7 +205,6 @@ Non-linear Solver
         set verbosity             = verbose
         set tolerance             = 1e-4
         set max iterations        = 10
-        set residual precision    = 5
         set force rhs calculation = true
       end
     end

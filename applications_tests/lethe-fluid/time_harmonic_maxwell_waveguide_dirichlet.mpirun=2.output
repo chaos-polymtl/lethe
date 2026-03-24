@@ -1,7 +1,7 @@
 Running on 2 MPI rank(s)...
    Number of active cells:       4
    Number of degrees of freedom: 80
-   Volume of triangulation:      0.0625
+   Volume of triangulation:      6.250000e-02
   DPG system for Time-Harmonic Maxwell Equations:
    Number of skeleton degrees of freedom for Time-Harmonic Maxwell: 720
    Number of interior degrees of freedom for Time-Harmonic Maxwell: 384
@@ -9,26 +9,26 @@ Running on 2 MPI rank(s)...
 *****************************
 Steady iteration:        1/2
 *****************************
-L2 error velocity: 0
-L2 error E real: 0.0788978
-L2 error E imag: 0.0731478
-L2 error H real: 0.0550058
-L2 error H imag: 0.0637403
+L2 error velocity: 0.000000e+00
+L2 error E real: 7.889776e-02
+L2 error E imag: 7.314783e-02
+L2 error H real: 5.500585e-02
+L2 error H imag: 6.374030e-02
 
 *****************************
 Steady iteration:        2/2
 *****************************
    Number of active cells:       32
    Number of degrees of freedom: 324
-   Volume of triangulation:      0.0625
+   Volume of triangulation:      6.250000e-02
   DPG system for Time-Harmonic Maxwell Equations:
    Number of skeleton degrees of freedom for Time-Harmonic Maxwell: 4320
    Number of interior degrees of freedom for Time-Harmonic Maxwell: 3072
-L2 error velocity: 0
-L2 error E real: 0.0143779
-L2 error E imag: 0.0146103
-L2 error H real: 0.0146737
-L2 error H imag: 0.0144374
+L2 error velocity: 0.000000e+00
+L2 error E real: 1.437787e-02
+L2 error E imag: 1.461033e-02
+L2 error H real: 1.467369e-02
+L2 error H imag: 1.443742e-02
 cells  error_velocity   error_pressure  
     4 0.000000e+00   - 0.000000e+00   - 
    32 0.000000e+00 nan 0.000000e+00 nan 

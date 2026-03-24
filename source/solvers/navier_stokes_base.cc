@@ -54,7 +54,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   , dof_handler()
   , computing_timer(this->mpi_communicator,
                     this->pcout,
-                    TimerOutput::summary,
+                    TimerOutput::never,
                     TimerOutput::wall_times)
   , simulation_parameters(p_nsparam)
   , flow_control(simulation_parameters.flow_control)
@@ -189,11 +189,6 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   previous_solutions = std::make_shared<std::vector<VectorType>>(
     maximum_number_of_previous_solutions());
 
-  // Change the behavior of the timer for situations when you don't want
-  // outputs
-  if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
-    this->computing_timer.disable_output();
-
   // Get the exact solution from the parser
   exact_solution = &simulation_parameters.analytical_solution->uvwp;
 
@@ -213,7 +208,8 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
               << " MPI rank(s)..." << std::endl;
 
   this->pcout << std::setprecision(
-    simulation_parameters.simulation_control.log_precision);
+                   simulation_parameters.simulation_control.log_precision)
+              << std::scientific;
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -534,6 +530,14 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_simulation_fd()
           error_table.write_text(std::cout);
         }
     }
+
+  if (this->simulation_parameters.timer.type == Parameters::Timer::Type::end)
+    {
+      announce_string(this->pcout, "Fluid Dynamics");
+      this->pcout << std::defaultfloat;
+      this->computing_timer.print_summary();
+      this->pcout << std::scientific;
+    }
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -580,7 +584,9 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
       Parameters::Timer::Type::iteration)
     {
       announce_string(this->pcout, "Fluid Dynamics");
+      this->pcout << std::defaultfloat;
       this->computing_timer.print_summary();
+      this->pcout << std::scientific;
       this->computing_timer.reset();
     }
 }
@@ -1630,15 +1636,11 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
           Parameters::Verbosity::verbose)
         {
           this->pcout << "Pressure drop: "
-                      << std::setprecision(
-                           simulation_control->get_log_precision())
                       << this->simulation_parameters.physical_properties_manager
                              .get_density_scale() *
                            pressure_drop
                       << " Pa" << std::endl;
           this->pcout << "Total pressure drop: "
-                      << std::setprecision(
-                           simulation_control->get_log_precision())
                       << this->simulation_parameters.physical_properties_manager
                              .get_density_scale() *
                            total_pressure_drop
@@ -1698,8 +1700,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
             {
               this->pcout << "Flow rate at boundary " +
                                std::to_string(boundary_id) + ": "
-                          << std::setprecision(
-                               simulation_control->get_log_precision())
                           << boundary_flow_rate.first << " m^3/s" << std::endl;
             }
         }
@@ -1828,16 +1828,12 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
           if (this->simulation_parameters.analytical_solution->verbosity ==
               Parameters::Verbosity::verbose)
             {
-              this->pcout << "L2 error velocity: "
-                          << std::setprecision(
-                               simulation_control->get_log_precision())
-                          << error_velocity << std::endl;
+              this->pcout << "L2 error velocity: " << error_velocity
+                          << std::endl;
               if (this->simulation_parameters.multiphysics.cahn_hilliard)
                 {
-                  this->pcout << "L2 error pressure: "
-                              << std::setprecision(
-                                   simulation_control->get_log_precision())
-                              << error_pressure << std::endl;
+                  this->pcout << "L2 error pressure: " << error_pressure
+                              << std::endl;
                 }
             }
         }
@@ -3315,8 +3311,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::output_newton_update_norms(
-  const unsigned int display_precision)
+NavierStokesBase<dim, VectorType, DofsType>::output_newton_update_norms()
 {
   TimerOutput::Scope t(this->computing_timer,
                        "Calculate and output norms after Newton its");
@@ -3369,31 +3364,24 @@ NavierStokesBase<dim, VectorType, DofsType>::output_newton_update_norms(
       double global_pressure_linfty_norm =
         Utilities::MPI::max(local_max, this->mpi_communicator);
 
-      this->pcout << std::setprecision(display_precision)
-                  << "\n\t||du||_L2 = " << std::setw(6)
+      this->pcout << "\n\t  ||du||_L2 = " << std::setw(6)
                   << global_velocity_l2_norm << std::setw(6)
-                  << "\t||du||_Linfty = "
-                  << std::setprecision(display_precision)
-                  << global_velocity_linfty_norm << std::endl;
-      this->pcout << std::setprecision(display_precision)
-                  << "\t||dp||_L2 = " << std::setw(6) << global_pressure_l2_norm
-                  << std::setw(6) << "\t||dp||_Linfty = "
-                  << std::setprecision(display_precision)
-                  << global_pressure_linfty_norm << std::endl;
+                  << "\t  ||du||_Linfty = " << global_velocity_linfty_norm
+                  << std::endl;
+      this->pcout << "\t  ||dp||_L2 = " << std::setw(6)
+                  << global_pressure_l2_norm << std::setw(6)
+                  << "\t  ||dp||_Linfty = " << global_pressure_linfty_norm
+                  << std::endl;
     }
   if constexpr (std::is_same_v<VectorType, GlobalBlockVectorType>)
     {
-      this->pcout << std::setprecision(display_precision)
-                  << "\t||du||_L2 = " << std::setw(6)
+      this->pcout << "\t  ||du||_L2 = " << std::setw(6)
                   << newton_update.block(0).l2_norm() << std::setw(6)
-                  << "\t||du||_Linfty = "
-                  << std::setprecision(display_precision)
+                  << "\t  ||du||_Linfty = "
                   << newton_update.block(0).linfty_norm() << std::endl;
-      this->pcout << std::setprecision(display_precision)
-                  << "\t||dp||_L2 = " << std::setw(6)
+      this->pcout << "\t  ||dp||_L2 = " << std::setw(6)
                   << newton_update.block(1).l2_norm() << std::setw(6)
-                  << "\t||dp||_Linfty = "
-                  << std::setprecision(display_precision)
+                  << "\t  ||dp||_Linfty = "
                   << newton_update.block(1).linfty_norm() << std::endl;
     }
 }

@@ -2573,10 +2573,6 @@ namespace Parameters
           "The default value of this parameter is false.");
 
 
-        prm.declare_entry("residual precision",
-                          "4",
-                          Patterns::Integer(),
-                          "Number of digits displayed when showing residuals");
         prm.declare_entry(
           "reuse matrix",
           "false",
@@ -2641,7 +2637,6 @@ namespace Parameters
         step_tolerance        = prm.get_double("step tolerance");
         matrix_tolerance      = prm.get_double("matrix tolerance");
         max_iterations        = prm.get_integer("max iterations");
-        display_precision     = prm.get_integer("residual precision");
         force_rhs_calculation = prm.get_bool("force rhs calculation");
         reuse_matrix          = prm.get_bool("reuse matrix");
         reuse_preconditioner  = prm.get_bool("reuse preconditioner");

@@ -1,7 +1,7 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       64
    Number of degrees of freedom: 243
-   Volume of triangulation:      4
+   Volume of triangulation:      4.000000e+00
    Number of tracer degrees of freedom: 81
 
 *****************************
@@ -10,16 +10,16 @@ Steady iteration:        1/1
 ---------------
 Fluid Dynamics
 ---------------
-Newton iteration: 0  - Residual:  0
-  -Tolerance of iterative solver is : 1e-12
-  -Iterative solver took : 0 steps to reach a residual norm of 0
-	alpha =      1 res =      0
-	||du||_L2 =      0	||du||_Linfty = 0
-	||dp||_L2 =      0	||dp||_Linfty = 0
+Newton iteration: 0  - Residual:  0.000000e+00
+  -Tolerance of iterative solver is : 1.000000e-12
+  -Iterative solver took : 0 steps to reach a residual norm of 0.000000e+00
+	alpha =      1	res = 0.000000e+00
+	  ||du||_L2 = 0.000000e+00	  ||du||_Linfty = 0.000000e+00
+	  ||dp||_L2 = 0.000000e+00	  ||dp||_Linfty = 0.000000e+00
 -------
 Tracer
 -------
-Newton iteration: 0  - Residual:  0
-  -Tolerance of iterative solver is : 1e-12
-  -Iterative solver took : 0 steps to reach a residual norm of 0
-	alpha =      1 res =      0	||dx||_L2 =      0	||dx||_Linfty = 0
+Newton iteration: 0  - Residual:  0.000000e+00
+  -Tolerance of iterative solver is : 1.000000e-12
+  -Iterative solver took : 0 steps to reach a residual norm of 0.000000e+00
+	alpha =      1	res = 0.000000e+00	  ||dx||_L2 = 0.000000e+00	  ||dx||_Linfty = 0.000000e+00

@@ -1,14 +1,14 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       1
    Number of degrees of freedom: 12
-   Volume of triangulation:      0.001
+   Volume of triangulation:      1.000000e-03
    Number of thermal degrees of freedom: 4
 ************************
 ---> Simulation Restart 
 ************************
    Number of active cells:       1408
    Number of degrees of freedom: 4623
-   Volume of triangulation:      0.001
+   Volume of triangulation:      1.000000e-03
    Number of thermal degrees of freedom: 1541
 Reading heat transfer checkpoint
 Warning: The checkpointed time-averaged temperature and heat flux have been reinitialized because the initial averaging time has not yet been reached.
@@ -16,54 +16,54 @@ Warning: The checkpointed time-averaged temperature and heat flux have been rein
 *******************************************************************************
 Transient iteration: 3        Time: 0.03     Time step: 0.01     CFL: 0       
 *******************************************************************************
-L2 error velocity: 0
-L2 error temperature : 1.00274e-06
+L2 error velocity: 0.000000e+00
+L2 error temperature : 1.002740e-06
 Temperature statistics on fluid: 
-	     Min: 10.133
-	     Max: 49.867
-	 Average: 30
-	 Std-Dev: 11.5223
+	     Min: 1.013301e+01
+	     Max: 4.986699e+01
+	 Average: 3.000000e+01
+	 Std-Dev: 1.152226e+01
 Time-averaged temperature statistics on fluid: 
-	     Min: 10.133
-	     Max: 49.867
-	 Average: 30
-	 Std-Dev: 11.5223
+	     Min: 1.013301e+01
+	     Max: 4.986699e+01
+	 Average: 3.000000e+01
+	 Std-Dev: 1.152226e+01
 
 *******************************************************************************
 Transient iteration: 4        Time: 0.04     Time step: 0.01     CFL: 0       
 *******************************************************************************
    Number of active cells:       1792
    Number of degrees of freedom: 5979
-   Volume of triangulation:      0.001
+   Volume of triangulation:      1.000000e-03
    Number of thermal degrees of freedom: 1993
-L2 error velocity: 0
-L2 error temperature : 2.32585e-08
+L2 error velocity: 0.000000e+00
+L2 error temperature : 2.325845e-08
 Temperature statistics on fluid: 
-	     Min: 10.1322
-	     Max: 49.8678
-	 Average: 30
-	 Std-Dev: 11.5433
+	     Min: 1.013222e+01
+	     Max: 4.986778e+01
+	 Average: 3.000000e+01
+	 Std-Dev: 1.154326e+01
 Time-averaged temperature statistics on fluid: 
-	     Min: 10.1326
-	     Max: 49.8674
-	 Average: 30
-	 Std-Dev: 11.5328
+	     Min: 1.013261e+01
+	     Max: 4.986739e+01
+	 Average: 3.000000e+01
+	 Std-Dev: 1.153275e+01
 
 *******************************************************************************
 Transient iteration: 5        Time: 0.05     Time step: 0.01     CFL: 0       
 *******************************************************************************
-L2 error velocity: 0
-L2 error temperature : 5.39828e-10
+L2 error velocity: 0.000000e+00
+L2 error temperature : 5.398281e-10
 Temperature statistics on fluid: 
-	     Min: 10.1321
-	     Max: 49.8679
-	 Average: 30
-	 Std-Dev: 11.5464
+	     Min: 1.013210e+01
+	     Max: 4.986790e+01
+	 Average: 3.000000e+01
+	 Std-Dev: 1.154644e+01
 Time-averaged temperature statistics on fluid: 
-	     Min: 10.1324
-	     Max: 49.8676
-	 Average: 30
-	 Std-Dev: 11.5373
+	     Min: 1.013244e+01
+	     Max: 4.986756e+01
+	 Average: 3.000000e+01
+	 Std-Dev: 1.153731e+01
  time  error_velocity 
 0.0100   0.000000e+00 
 0.0200   0.000000e+00 

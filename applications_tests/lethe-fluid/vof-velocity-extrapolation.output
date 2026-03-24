@@ -1,27 +1,27 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       240
    Number of degrees of freedom: 819
-   Volume of triangulation:      2.2
+   Volume of triangulation:      2.200000e+00
    Number of CLS degrees of freedom: 273
 Initial refinement in box 0 - Step  1 of 4
    Number of active cells:       360
    Number of degrees of freedom: 1245
-   Volume of triangulation:      2.2
+   Volume of triangulation:      2.200000e+00
    Number of CLS degrees of freedom: 415
 Initial refinement in box 0 - Step  2 of 4
    Number of active cells:       600
    Number of degrees of freedom: 2091
-   Volume of triangulation:      2.2
+   Volume of triangulation:      2.200000e+00
    Number of CLS degrees of freedom: 697
 Initial refinement in box 0 - Step  3 of 4
    Number of active cells:       1500
    Number of degrees of freedom: 5046
-   Volume of triangulation:      2.2
+   Volume of triangulation:      2.200000e+00
    Number of CLS degrees of freedom: 1682
 Initial refinement in box 0 - Step  4 of 4
    Number of active cells:       4260
    Number of degrees of freedom: 13827
-   Volume of triangulation:      2.2
+   Volume of triangulation:      2.200000e+00
    Number of CLS degrees of freedom: 4609
 
 ----------------------

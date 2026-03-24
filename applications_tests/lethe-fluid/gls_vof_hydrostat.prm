@@ -151,16 +151,14 @@ end
 
 subsection non-linear solver
   subsection CLS
-    set verbosity          = quiet
-    set tolerance          = 1e-9
-    set max iterations     = 10
-    set residual precision = 2
+    set verbosity      = quiet
+    set tolerance      = 1e-9
+    set max iterations = 10
   end
   subsection fluid dynamics
-    set verbosity          = quiet
-    set tolerance          = 1e-9
-    set max iterations     = 10
-    set residual precision = 2
+    set verbosity      = quiet
+    set tolerance      = 1e-9
+    set max iterations = 10
   end
 end
 

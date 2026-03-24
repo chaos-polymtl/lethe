@@ -738,6 +738,14 @@ Tracer<dim>::finish_simulation()
                                 simulation_control->get_log_precision());
       error_table.write_text(std::cout);
     }
+
+  if (this->simulation_parameters.timer.type == Parameters::Timer::Type::end)
+    {
+      announce_string(this->pcout, "Tracer");
+      this->pcout << std::defaultfloat;
+      this->computing_timer.print_summary();
+      this->pcout << std::scientific;
+    }
 }
 
 template <int dim>
@@ -809,7 +817,9 @@ Tracer<dim>::postprocess(bool first_iteration)
       Parameters::Timer::Type::iteration)
     {
       announce_string(this->pcout, "Tracer");
+      this->pcout << std::defaultfloat;
       this->computing_timer.print_summary();
+      this->pcout << std::scientific;
       this->computing_timer.reset();
     }
 }
@@ -878,8 +888,6 @@ Tracer<dim>::calculate_tracer_statistics()
   if (simulation_parameters.post_processing.verbosity ==
       Parameters::Verbosity::verbose)
     {
-      this->pcout << std::setprecision(
-        this->simulation_control->get_log_precision());
       this->pcout << "Tracer statistics: " << std::endl;
       this->pcout << "\t     Min: " << min_tracer_value << std::endl;
       this->pcout << "\t     Max: " << max_tracer_value << std::endl;

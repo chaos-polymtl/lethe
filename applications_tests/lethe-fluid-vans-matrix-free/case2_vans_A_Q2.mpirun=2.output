@@ -1,7 +1,7 @@
 Running on 2 MPI rank(s)...
    Number of active cells:       256
    Number of degrees of freedom: 3267
-   Volume of triangulation:      4
+   Volume of triangulation:      4.000000e+00
 --------------
 Void Fraction
 --------------
@@ -18,7 +18,7 @@ Steady iteration:        2/3
 *****************************
    Number of active cells:       1024
    Number of degrees of freedom: 12675
-   Volume of triangulation:      4
+   Volume of triangulation:      4.000000e+00
 --------------
 Void Fraction
 --------------
@@ -28,7 +28,7 @@ Steady iteration:        3/3
 *****************************
    Number of active cells:       4096
    Number of degrees of freedom: 49923
-   Volume of triangulation:      4
+   Volume of triangulation:      4.000000e+00
 --------------
 Void Fraction
 --------------
