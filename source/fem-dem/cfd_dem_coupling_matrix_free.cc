@@ -144,7 +144,8 @@ CFDDEMMatrixFree<dim>::dem_setup_parameters()
 
           periodic_boundaries_object.set_periodic_boundaries_information(
             dem_parameters.boundary_conditions.periodic_boundary_0,
-            dem_parameters.boundary_conditions.periodic_direction);
+            dem_parameters.boundary_conditions.periodic_direction,
+            dem_parameters.boundary_conditions.periodic_bc_index);
 
           break;
         }

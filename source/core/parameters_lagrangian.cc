@@ -1556,7 +1556,8 @@ namespace Parameters
                             periodic_boundary_1,
                             periodic_direction,
                             outlet_boundaries,
-                            bc_types);
+                            bc_types,
+                            periodic_bc_index);
 
       for (unsigned int counter = 0; counter < DEM_BC_number; ++counter)
         {
@@ -1635,12 +1636,12 @@ namespace Parameters
 
       if (boundary_type == "outlet")
         {
-          bc_types.push_back(BoundaryType::outlet);
+          this->bc_types.push_back(BoundaryType::outlet);
           this->outlet_boundaries.push_back(boundary_id);
         }
       else if (boundary_type == "translational")
         {
-          bc_types.push_back(BoundaryType::translational);
+          this->bc_types.push_back(BoundaryType::translational);
           Tensor<1, 3> translational_velocity;
           translational_velocity[0] = prm.get_double("speed x");
           translational_velocity[1] = prm.get_double("speed y");
@@ -1651,7 +1652,7 @@ namespace Parameters
         }
       else if (boundary_type == "rotational")
         {
-          bc_types.push_back(BoundaryType::rotational);
+          this->bc_types.push_back(BoundaryType::rotational);
           double rotational_speed = prm.get_double("rotational speed");
 
           // Read the rotational vector from a list of doubles
@@ -1674,11 +1675,12 @@ namespace Parameters
         }
       else if (boundary_type == "fixed_wall")
         {
-          bc_types.push_back(BoundaryType::fixed_wall);
+          this->bc_types.push_back(BoundaryType::fixed_wall);
         }
       else if (boundary_type == "periodic")
         {
-          bc_types.push_back(BoundaryType::periodic);
+          this->bc_types.push_back(BoundaryType::periodic);
+          this->periodic_bc_index.push_back(i_bc);
           this->periodic_boundary_0.at(i_bc) = prm.get_integer("periodic id 0");
           this->periodic_boundary_1.at(i_bc) = prm.get_integer("periodic id 1");
           this->periodic_direction.at(i_bc) =
@@ -1700,11 +1702,12 @@ namespace Parameters
       std::unordered_map<unsigned int, types::boundary_id> &periodic_bndry_1,
       std::unordered_map<unsigned int, unsigned int>       &periodic_dir,
       std::vector<unsigned int> &outlet_boundaries_id,
-      std::vector<BoundaryType> &boundaries_types) const
+      std::vector<BoundaryType> &boundaries_types,
+      std::vector<unsigned int> &periodic_bc_ind) const
     {
       Tensor<1, 3> zero_tensor({0.0, 0.0, 0.0});
 
-      for (unsigned int counter = 0; counter < DEM_BC_number; ++counter)
+      for (unsigned int counter = 0; counter < DEM_BC_number_max; ++counter)
         {
           boundary_trans_velocity.insert({counter, zero_tensor});
           boundary_rot_speed.insert({counter, 0});
@@ -1718,6 +1721,7 @@ namespace Parameters
       // NOTE This first vector should not be initialized this big.
       outlet_boundaries_id.reserve(DEM_BC_number);
       boundaries_types.reserve(DEM_BC_number);
+      periodic_bc_ind.reserve(DEM_BC_number);
     }
 
     template <int dim>

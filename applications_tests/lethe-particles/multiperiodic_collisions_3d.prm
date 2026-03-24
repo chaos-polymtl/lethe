@@ -66,15 +66,15 @@ end
 #---------------------------------------------------
 
 subsection insertion info
-  set insertion method                               = list
-  set insertion frequency                            = 1000000
-  set list x                                         = 0.500, 0.025, 0.975, 0.025, 0.025, 0.975, 0.025, 0.975
-  set list y                                         = 0.500, 0.025, 0.025, 0.975, 0.025, 0.025, 0.975, 0.975
-  set list z                                         = 0.500, 0.025, 0.025, 0.025, 0.975, 0.975, 0.975, 0.975
-  set list velocity x                                = 1.500, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
-  set list velocity y                                = 1.500, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
-  set list velocity z                                =-1.500, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
-  set list diameters                                 = 0.050, 0.050, 0.050, 0.050, 0.050, 0.050, 0.050, 0.050
+  set insertion method    = list
+  set insertion frequency = 1000000
+  set list x              = 0.500, 0.025, 0.975, 0.025, 0.025, 0.975, 0.025, 0.975
+  set list y              = 0.500, 0.025, 0.025, 0.975, 0.025, 0.025, 0.975, 0.975
+  set list z              = 0.500, 0.025, 0.025, 0.025, 0.975, 0.975, 0.975, 0.975
+  set list velocity x     = 1.500, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
+  set list velocity y     = 1.500, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
+  set list velocity z     = -1.500, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
+  set list diameters      = 0.050, 0.050, 0.050, 0.050, 0.050, 0.050, 0.050, 0.050
 end
 
 #---------------------------------------------------
@@ -97,23 +97,23 @@ subsection DEM boundary conditions
   set number of boundary conditions = 3
 
   subsection boundary condition 0
-    set type                = periodic
-    set periodic id 0       = 1
-    set periodic id 1       = 0
-    set periodic direction  = 0
+    set type               = periodic
+    set periodic id 0      = 1
+    set periodic id 1      = 0
+    set periodic direction = 0
   end
 
   subsection boundary condition 1
-    set type                = periodic
-    set periodic id 0       = 3
-    set periodic id 1       = 2
-    set periodic direction  = 1
+    set type               = periodic
+    set periodic id 0      = 3
+    set periodic id 1      = 2
+    set periodic direction = 1
   end
 
   subsection boundary condition 2
-    set type                = periodic
-    set periodic id 0       = 5
-    set periodic id 1       = 4
-    set periodic direction  = 2
+    set type               = periodic
+    set periodic id 0      = 5
+    set periodic id 1      = 4
+    set periodic direction = 2
   end
 end

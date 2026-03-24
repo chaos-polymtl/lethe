@@ -132,7 +132,8 @@ DEMSolver<dim, PropertiesIndex>::setup_parameters()
         {
           periodic_boundaries_object.set_periodic_boundaries_information(
             parameters.boundary_conditions.periodic_boundary_0,
-            parameters.boundary_conditions.periodic_direction);
+            parameters.boundary_conditions.periodic_direction,
+            parameters.boundary_conditions.periodic_bc_index);
           break;
         }
     }

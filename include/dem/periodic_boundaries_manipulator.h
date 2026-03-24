@@ -47,7 +47,8 @@ public:
   set_periodic_boundaries_information(
     const std::unordered_map<unsigned int, types::boundary_id>
       &periodic_boundary_ids_0,
-    const std::unordered_map<unsigned int, unsigned int> &periodic_directions)
+    const std::unordered_map<unsigned int, unsigned int> &periodic_directions,
+    const std::vector<unsigned int>                      &periodic_bc_ind)
   {
     // If function is reached and vectors are not empty
     if (!periodic_boundary_ids_0.empty())
@@ -58,11 +59,12 @@ public:
         DEMActionManager::get_action_manager()
           ->set_periodic_boundaries_enabled();
 
-        periodic_boundaries_ids = periodic_boundary_ids_0;
-        directions              = periodic_directions;
+        this->periodic_boundaries_ids = periodic_boundary_ids_0;
+        this->directions              = periodic_directions;
+        this->periodic_bc_index       = periodic_bc_ind;
 
         // Initialize offset map
-        periodic_offsets.clear();
+        this->periodic_offsets.clear();
       }
   }
 
@@ -118,7 +120,16 @@ public:
   }
 
   /**
-   * @brief Return the IDs of the periodic boundaries
+   * @brief Return the index of the periodic boundary conditions in the .prm
+   */
+  inline const std::vector<unsigned int> &
+  get_periodic_bc_index() const
+  {
+    return periodic_bc_index;
+  }
+
+  /**
+   * @brief Return the mesh IDs of the periodic boundaries
    */
   inline const std::unordered_map<unsigned int, types::boundary_id> &
   get_periodic_boundaries_ids() const
@@ -192,11 +203,18 @@ private:
   std::unordered_map<unsigned int, unsigned int> directions;
 
   /**
-   * @brief ID of the first periodic boundary for all PB pairs. No needs to
-   * store the second one since they are linked on the triangulation, and
-   * accessible through functions on cells on the boundary condition 0.
-   * Map key: index of BC from .prm
-   * Map value: id of a primary periodic boundary
+   * @brief Index of the boundary conditions in the .prm (subsection numbers)
+   * that correspond to periodic boundary conditions.
+   */
+  std::vector<unsigned int> periodic_bc_index;
+
+  /**
+   * @brief Mesh ID of the first periodic boundary for all periodic boundary
+   * pairs. No need to store the second one since they are linked on the
+   * triangulation, and accessible through functions on cells on the boundary
+   * condition 0.
+   *    Map key: index of BC from .prm
+   *    Map value: ID of a primary periodic boundary
    */
   std::unordered_map<unsigned int, types::boundary_id> periodic_boundaries_ids;
 
