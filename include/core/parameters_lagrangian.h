@@ -795,6 +795,9 @@ namespace Parameters
       /// Boundary IDs designated as outlets.
       std::vector<unsigned int> outlet_boundaries;
 
+      /// Index of boundary conditions that are periodic
+      std::vector<unsigned int> periodic_bc_index;
+
       /// Translational velocity of each moving boundary.
       std::unordered_map<unsigned int, Tensor<1, 3>>
         boundary_translational_velocity;
@@ -811,7 +814,9 @@ namespace Parameters
       // Periodic boundary IDs
       std::unordered_map<unsigned int, types::boundary_id> periodic_boundary_0;
       std::unordered_map<unsigned int, types::boundary_id> periodic_boundary_1;
-      std::unordered_map<unsigned int, unsigned int>       periodic_direction;
+
+      // Directions of periodicity
+      std::unordered_map<unsigned int, unsigned int> periodic_direction;
 
       /**
        * @brief Declare the parameters in the parameter handler.
@@ -842,6 +847,7 @@ namespace Parameters
        * @brief Parse boundary condition parameters for a single boundary.
        *
        * @param[in] prm The parameter handler.
+       * @param[in] i_bc Index of the boundary condition subsection
        */
       void
       parse_boundary_conditions(const ParameterHandler &prm,
@@ -860,6 +866,7 @@ namespace Parameters
        * @param[in,out] point_on_rot_axis Points on rotation axes.
        * @param[in,out] outlet_boundaries_id Outlet boundary IDs.
        * @param[in,out] boundaries_types Boundary types.
+       * @param[in,out] periodic_bc_ind Index of periodic BCs.
        */
       void
       initialize_containers(
@@ -871,7 +878,8 @@ namespace Parameters
         std::unordered_map<unsigned int, types::boundary_id> &periodic_bndry_1,
         std::unordered_map<unsigned int, unsigned int>       &periodic_dir,
         std::vector<unsigned int> &outlet_boundaries_id,
-        std::vector<BoundaryType> &boundaries_types) const;
+        std::vector<BoundaryType> &boundaries_types,
+        std::vector<unsigned int> &periodic_bc_ind) const;
     };
 
     /**

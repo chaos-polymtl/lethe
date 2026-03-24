@@ -15,9 +15,6 @@
 #include <algorithm>
 #include <unordered_map>
 
-// TODO: data structure periodic_boundaries_cells_info must be defined
-// as std::unordered_multimap
-
 using namespace dealii;
 
 template <int dim>
@@ -97,43 +94,48 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
 <<<<<<< HEAD
 
                   // Check if face matches any of the PB IDs
-                  for (auto const &[bc_index, primary_mesh_id] :
-                       periodic_boundaries_ids)
+                  for (const unsigned int pbc_index : periodic_bc_index)
                     {
-                      if (face_boundary_id == primary_mesh_id)
+                      auto it = periodic_boundaries_ids.find(pbc_index);
+                      if (it != periodic_boundaries_ids.end())
                         {
-                          // Get direction corresponding to this BC index
-                          unsigned int current_direction =
-                            directions.at(bc_index);
+                          auto const &primary_mesh_id = it->second;
 
-                          periodic_boundaries_cells_info_struct<dim>
-                                       boundaries_information;
-                          unsigned int face_id =
-                            cell->face_iterator_to_index(face);
-
-                          get_periodic_boundaries_info(cell,
-                                                       face_id,
-                                                       boundaries_information);
-
-                          // Insert into multimap
-                          // One entry per boundary found
-                          periodic_boundaries_cells_information.insert(
-                            {boundaries_information.cell
-                               ->global_active_cell_index(),
-                             boundaries_information});
-
-                          // Calculate offset if not yet done for this PB ID
-                          if (!offset_calculated[face_boundary_id])
+                          if (face_boundary_id == primary_mesh_id)
                             {
-                              Tensor<1, dim> offset;
-                              offset[current_direction] =
-                                boundaries_information
-                                  .point_on_periodic_face[current_direction] -
-                                boundaries_information
-                                  .point_on_face[current_direction];
+                              // Get direction corresponding to this BC index
+                              unsigned int current_direction =
+                                directions.at(pbc_index);
 
-                              periodic_offsets[face_boundary_id]  = offset;
-                              offset_calculated[face_boundary_id] = true;
+                              periodic_boundaries_cells_info_struct<dim>
+                                           boundaries_information;
+                              unsigned int face_id =
+                                cell->face_iterator_to_index(face);
+
+                              get_periodic_boundaries_info(
+                                cell, face_id, boundaries_information);
+
+                              // Insert into multimap
+                              // One entry per boundary found
+                              periodic_boundaries_cells_information.insert(
+                                {boundaries_information.cell
+                                   ->global_active_cell_index(),
+                                 boundaries_information});
+
+                              // Calculate offset if not yet done for this PB ID
+                              if (!offset_calculated[face_boundary_id])
+                                {
+                                  Tensor<1, dim> offset;
+                                  offset[current_direction] =
+                                    boundaries_information
+                                      .point_on_periodic_face
+                                        [current_direction] -
+                                    boundaries_information
+                                      .point_on_face[current_direction];
+
+                                  periodic_offsets[face_boundary_id]  = offset;
+                                  offset_calculated[face_boundary_id] = true;
+                                }
                             }
                         }
                     }
