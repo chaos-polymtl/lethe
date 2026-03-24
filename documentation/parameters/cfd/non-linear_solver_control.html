@@ -475,9 +475,6 @@
     # Maximum number of Newton Iterations
     set max iterations               = 10
 
-    # Number of digits displayed when showing residuals
-    set residual precision           = 4
-
     # State if the RHS must be calculated at the beginning of every newton iteration
     set force rhs calculation        = false
 
@@ -554,7 +551,6 @@ Newton iteration: 3  - Residual:  1.12e-08
 <p>Be careful to always set an absolute tolerance for the linear solver that is below the tolerance of the non-linear solver. Otherwise, you might find that it is impossible to converge because the linear system of equation is solved with insufficient accuracy.</p>
 </div>
 <ul class="simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">residual</span> <span class="pre">precision</span></code> parameter enables to change the number of digits displayed when showing residuals (with <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">verbosity</span> <span class="pre">=</span> <span class="pre">verbose</span></code>).</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">force_rhs_calculation</span></code>: Force RHS recalculation at the beginning of every non-linear steps, This is required if there is a fixed point component to the non-linear solver that is changed at the beginning of every newton iteration. This is notably the case of the sharp edge method. The default value of this parameter is false.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">abort</span> <span class="pre">at</span> <span class="pre">convergence</span> <span class="pre">failure</span></code> allows the user to stop the simulation and throw an error if the non-linear solver has failed to converge. Setting <code class="docutils literal notranslate"><span class="pre">abort</span> <span class="pre">at</span> <span class="pre">convergence</span> <span class="pre">failure</span> <span class="pre">=</span> <span class="pre">true</span></code> will enable this feature. This is generally useful when launching a large batch of simulation to quickly identify which one have failed.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">reuse</span> <span class="pre">preconditioner</span> <span class="pre">=</span> <span class="pre">true</span></code> allows the simulation to use the same preconditioner between Newton iterations when using the Newton solver. This can reduce the overall time depending on the problem, and it is especially useful for the <code class="docutils literal notranslate"><span class="pre">lethe-fluid-matrix-free</span></code> application.</p></li>

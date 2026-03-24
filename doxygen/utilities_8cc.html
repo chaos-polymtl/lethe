@@ -98,6 +98,7 @@ $(function() {
 <code>#include &lt;<a class="el" href="utilities_8h_source.html">core/utilities.h</a>&gt;</code><br />
 <code>#include &lt;deal.II/base/revision.h&gt;</code><br />
 <code>#include &lt;boost/algorithm/string/replace.hpp&gt;</code><br />
+<code>#include &lt;type_traits&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for utilities.cc:</div>
 <div class="dyncontent">
@@ -230,7 +231,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00722">722</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00730">730</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -258,7 +259,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00360">360</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00368">368</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -286,7 +287,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00371">371</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00379">379</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -308,7 +309,7 @@ Functions</h2></td></tr>
 
 <p>Delete vtu and pvd files. </p>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00862">862</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00870">870</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -354,7 +355,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00311">311</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00319">319</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -401,7 +402,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00212">212</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00220">220</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -447,7 +448,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00258">258</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00266">266</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -475,9 +476,9 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00634">634</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00642">642</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00551">get_last_value_of_parameter()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00559">get_last_value_of_parameter()</a>.</p>
 
 </div>
 </div>
@@ -517,7 +518,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>std::string Value of the parameter, or an empty string if not found. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00551">551</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00559">559</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -546,9 +547,9 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The maximum number of boundary conditions or manifolds. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00700">700</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00708">708</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00590">get_max_value_of_parameter()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00598">get_max_value_of_parameter()</a>.</p>
 
 </div>
 </div>
@@ -578,7 +579,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00590">590</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00598">598</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -613,7 +614,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00837">837</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00845">845</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1106,7 +1107,7 @@ template&lt;int dim, typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Table with the independent variable values followed by the dependent variables values. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00088">88</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00093">93</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1183,7 +1184,7 @@ template&lt;int dim, typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Table with the independent variable values followed by the dependent variables values. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00052">52</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00054">54</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1571,7 +1572,7 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Table with the independent variable values followed by the dependent variables values. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00017">17</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00019">19</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1803,7 +1804,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Table with the independent variables values followed by the dependent variable values. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00176">176</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00184">184</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -1983,7 +1984,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Table with the independent variables values followed by the dependent variables values. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00134">134</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00142">142</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -2023,7 +2024,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Tuple containing a map with the command line flags and a boolean set to 1 for the specific flag; and a vector of strings with the rest of the arguments that are not flags; in Lethe, this corresponds to the parameter file given to the application. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00764">764</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00772">772</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>
@@ -2062,9 +2063,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00847">847</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00855">855</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00837">interpret_escape_sequences()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00845">interpret_escape_sequences()</a>.</p>
 
 </div>
 </div>
@@ -2109,9 +2110,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00810">810</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00818">818</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00551">get_last_value_of_parameter()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8cc_source.html#l00559">get_last_value_of_parameter()</a>.</p>
 
 </div>
 </div>
@@ -2139,7 +2140,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00739">739</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="utilities_8cc_source.html#l00747">747</a> of file <a class="el" href="utilities_8cc_source.html">utilities.cc</a>.</p>
 
 </div>
 </div>

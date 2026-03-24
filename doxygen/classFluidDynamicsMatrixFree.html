@@ -178,8 +178,8 @@ Protected Member Functions</h2></td></tr>
 <tr class="separator:a89f919c51a1bcc34c2fa04ba4adc4089 inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5392e772aeb561e6ba35e55c9bf920a5 inherit pro_methods_classNavierStokesBase" id="r_a5392e772aeb561e6ba35e55c9bf920a5"><td class="memItemLeft" align="right" valign="top">virtual AffineConstraints&lt; double &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a5392e772aeb561e6ba35e55c9bf920a5">get_nonzero_constraints</a> () override</td></tr>
 <tr class="separator:a5392e772aeb561e6ba35e55c9bf920a5 inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9931f481332d3cd539f3d69b748bb3c inherit pro_methods_classNavierStokesBase" id="r_ae9931f481332d3cd539f3d69b748bb3c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#ae9931f481332d3cd539f3d69b748bb3c">output_newton_update_norms</a> (const unsigned int display_precision) override</td></tr>
-<tr class="separator:ae9931f481332d3cd539f3d69b748bb3c inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a021411c9b16083d833c71af8fff50910 inherit pro_methods_classNavierStokesBase" id="r_a021411c9b16083d833c71af8fff50910"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a021411c9b16083d833c71af8fff50910">output_newton_update_norms</a> () override</td></tr>
+<tr class="separator:a021411c9b16083d833c71af8fff50910 inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a17b73199dbbb5f6c5b49f24fc727bb13 inherit pro_methods_classNavierStokesBase" id="r_a17b73199dbbb5f6c5b49f24fc727bb13"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a17b73199dbbb5f6c5b49f24fc727bb13">get_residual_rescale_metric</a> () const override</td></tr>
 <tr class="separator:a17b73199dbbb5f6c5b49f24fc727bb13 inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab80853df347a58fc01e89fe9b04a329f inherit pro_methods_classNavierStokesBase" id="r_ab80853df347a58fc01e89fe9b04a329f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#ab80853df347a58fc01e89fe9b04a329f">finish_simulation</a> ()</td></tr>
@@ -517,7 +517,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l02647">2647</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00975">NavierStokesBase&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt;, IndexSet &gt;::fe</a>, <a class="el" href="simulation__parameters_8h_source.html#l00040">SimulationParameters&lt; dim &gt;::fem_parameters</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00985">NavierStokesBase&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt;, IndexSet &gt;::forcing_function</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00665">FluidDynamicsMatrixFree&lt; dim &gt;::multiphysics_present_solution</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00685">FluidDynamicsMatrixFree&lt; dim &gt;::physical_properties_manager</a>, <a class="el" href="parameters_8h_source.html#l01196">Parameters::FEM::pressure_order</a>, <a class="el" href="structParameters_1_1Stabilization.html#a7f67c17b0ca688dd966290f8610583bbaae21e5838883a96aab921c84e14383bb">Parameters::Stabilization::pspg_supg</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00979">NavierStokesBase&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt;, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00627">FluidDynamicsMatrixFree&lt; dim &gt;::system_operator</a>, and <a class="el" href="parameters_8h_source.html#l01193">Parameters::FEM::velocity_order</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l00973">NavierStokesBase&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt;, IndexSet &gt;::fe</a>, <a class="el" href="simulation__parameters_8h_source.html#l00040">SimulationParameters&lt; dim &gt;::fem_parameters</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00983">NavierStokesBase&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt;, IndexSet &gt;::forcing_function</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00665">FluidDynamicsMatrixFree&lt; dim &gt;::multiphysics_present_solution</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00685">FluidDynamicsMatrixFree&lt; dim &gt;::physical_properties_manager</a>, <a class="el" href="parameters_8h_source.html#l01196">Parameters::FEM::pressure_order</a>, <a class="el" href="structParameters_1_1Stabilization.html#a7f67c17b0ca688dd966290f8610583bbaae21e5838883a96aab921c84e14383bb">Parameters::Stabilization::pspg_supg</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00977">NavierStokesBase&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt;, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="fluid__dynamics__matrix__free_8h_source.html#l00627">FluidDynamicsMatrixFree&lt; dim &gt;::system_operator</a>, and <a class="el" href="parameters_8h_source.html#l01193">Parameters::FEM::velocity_order</a>.</p>
 
 </div>
 </div>
@@ -572,7 +572,7 @@ template&lt;int dim&gt; </div>
 
 <p>Assemble a L2 projection matrix for the velocity and the pressure, which can be used to set the initial condition for the Navier-Stokes problem. Currently not implemented for this solver. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03674">3674</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03677">3677</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 </div>
 </div>
@@ -605,7 +605,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a73215f315918e22864cf04248c583045">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03267">3267</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03266">3266</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 </div>
 </div>
@@ -640,7 +640,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented in <a class="el" href="classFluidDynamicsVANSMatrixFree.html#aafa177adb480470bcc8d6c2235203768">FluidDynamicsVANSMatrixFree&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03275">3275</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03274">3274</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 </div>
 </div>
@@ -671,7 +671,7 @@ template&lt;int dim&gt; </div>
 
 <p>Calculate and store time derivatives of previous solutions according to time-stepping scheme to use them in the operator. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03348">3348</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03347">3347</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="sdirk__stage__data_8h_source.html#l00113">SDIRKStageData::a_ij</a>, <a class="el" href="bdf_8h_source.html#l00097">number_of_previous_solutions()</a>, <a class="el" href="sdirk__stage__data_8cc_source.html#l00019">sdirk_table()</a>, and <a class="el" href="time__integration__utilities_8h_source.html#l00060">time_stepping_is_sdirk()</a>.</p>
 
@@ -706,7 +706,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented in <a class="el" href="classFluidDynamicsVANSMatrixFree.html#a29d058b88593e0c40e69b31d0a466c96">FluidDynamicsVANSMatrixFree&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03386">3386</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03385">3385</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 </div>
 </div>
@@ -739,7 +739,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented in <a class="el" href="classFluidDynamicsVANSMatrixFree.html#a057a90a8ff9caa259574b2645f07beb3">FluidDynamicsVANSMatrixFree&lt; dim &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03403">3403</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03402">3402</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00028">heat_transfer</a>.</p>
 
@@ -885,7 +885,7 @@ template&lt;int dim&gt; </div>
 
 <p>Prints the setup times for the geometric multigrid preconditioner. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03458">3458</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03457">3457</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="utilities_8h_source.html#l00468">announce_string()</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919ae5cbb8171b496f26a4488b9e15a0fe52">Parameters::extra_verbose</a>, and <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>.</p>
 
@@ -1036,7 +1036,7 @@ template&lt;int dim&gt; </div>
 
 <p>Setup the geometric multigrid preconditioner. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03421">3421</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03420">3420</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 </div>
 </div>
@@ -1067,7 +1067,7 @@ template&lt;int dim&gt; </div>
 
 <p>Setup the implicit LU preconditioner and call the solve function of the linear solver. Attention: an actual matrix needs to be constructed using the matrix-free operator. </p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03433">3433</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03432">3432</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>.</p>
 
@@ -1102,7 +1102,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a566177a0569619dcf0c3a5f2fb1cdf4d">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03607">3607</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03610">3610</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="structParameters_1_1LinearSolver.html#abcc346895a204b69b5fa4edabd810834a0b65af7f2357d3fa0ee8d8972d7e0646">Parameters::LinearSolver::amg</a>, <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, <a class="el" href="structParameters_1_1LinearSolver.html#abcc346895a204b69b5fa4edabd810834ae0941be0c6a876b60f0d7f9e6d33d341">Parameters::LinearSolver::gcmg</a>, <a class="el" href="structParameters_1_1LinearSolver.html#abcc346895a204b69b5fa4edabd810834a95dfbb838164998e04803c1e488b86ab">Parameters::LinearSolver::ilu</a>, and <a class="el" href="structParameters_1_1LinearSolver.html#abcc346895a204b69b5fa4edabd810834a5d266332fc0c9664dfb1414b629535f6">Parameters::LinearSolver::lsmg</a>.</p>
 
@@ -1139,7 +1139,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l02779">2779</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa7f021a1415b86f2d013b2618fb31ae53">Parameters::Timer::end</a>, <a class="el" href="multiphysics_8h_source.html#l00028">heat_transfer</a>, <a class="el" href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa6f012ea8d7efd87146dd62db83f2ed99">Parameters::Timer::iteration</a>, <a class="el" href="grids_8cc_source.html#l00254">read_mesh_and_manifolds()</a>, <a class="el" href="grids_8cc_source.html#l00332">read_mesh_and_manifolds_for_stator_and_rotor()</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l00778">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::refine_mesh()</a>, and <a class="el" href="time__integration__utilities_8h_source.html#l00042">time_stepping_is_bdf()</a>.</p>
+<p class="reference">References <a class="el" href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa7f021a1415b86f2d013b2618fb31ae53">Parameters::Timer::end</a>, <a class="el" href="multiphysics_8h_source.html#l00028">heat_transfer</a>, <a class="el" href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa6f012ea8d7efd87146dd62db83f2ed99">Parameters::Timer::iteration</a>, <a class="el" href="grids_8cc_source.html#l00254">read_mesh_and_manifolds()</a>, <a class="el" href="grids_8cc_source.html#l00332">read_mesh_and_manifolds_for_stator_and_rotor()</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l00784">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::refine_mesh()</a>, and <a class="el" href="time__integration__utilities_8h_source.html#l00042">time_stepping_is_bdf()</a>.</p>
 
 </div>
 </div>
@@ -1172,7 +1172,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a375f91bc1e5a05dac2c71f5ae5575f84">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03651">3651</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03654">3654</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="structParameters_1_1LinearSolver.html#a0c300811885c24fbdc85d98143af8743a7caa701b2bd5a182b80c72b9bdf88e2d">Parameters::LinearSolver::direct</a>, <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, and <a class="el" href="structParameters_1_1LinearSolver.html#a0c300811885c24fbdc85d98143af8743ad43c33b8e3d5435d9cbe65c156887a02">Parameters::LinearSolver::gmres</a>.</p>
 
@@ -1223,7 +1223,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03779">3779</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03782">3782</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>.</p>
 
@@ -1274,7 +1274,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03681">3681</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03684">3684</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, <a class="el" href="structParameters_1_1LinearSolver.html#abcc346895a204b69b5fa4edabd810834ae0941be0c6a876b60f0d7f9e6d33d341">Parameters::LinearSolver::gcmg</a>, <a class="el" href="structParameters_1_1LinearSolver.html#abcc346895a204b69b5fa4edabd810834a95dfbb838164998e04803c1e488b86ab">Parameters::LinearSolver::ilu</a>, <a class="el" href="structParameters_1_1LinearSolver.html#abcc346895a204b69b5fa4edabd810834a5d266332fc0c9664dfb1414b629535f6">Parameters::LinearSolver::lsmg</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>.</p>
 
@@ -1385,7 +1385,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classNavierStokesBase.html#a85802a4d64ad89f9ff6593a1fab22b4f">NavierStokesBase&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt;, IndexSet &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03319">3319</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03318">3318</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="vector_8h_source.html#l00035">convert_vector_dealii_to_trilinos()</a>, and <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>.</p>
 
@@ -1420,7 +1420,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classNavierStokesBase.html#a076b80584a2f9834d480fdaaf50b7752">NavierStokesBase&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt;, IndexSet &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03567">3567</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03570">3570</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="vector_8h_source.html#l00054">convert_vector_trilinos_to_dealii()</a>, and <a class="el" href="multiphysics_8h_source.html#l00028">heat_transfer</a>.</p>
 
@@ -1455,7 +1455,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classNavierStokesBase.html#a3a0cae74ede7c73dd20c2b5bd143d462">NavierStokesBase&lt; dim, LinearAlgebra::distributed::Vector&lt; double &gt;, IndexSet &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03510">3510</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html#l03513">3513</a> of file <a class="el" href="fluid__dynamics__matrix__free_8cc_source.html">fluid_dynamics_matrix_free.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="vector_8h_source.html#l00035">convert_vector_dealii_to_trilinos()</a>, <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, and <a class="el" href="bdf_8h_source.html#l00097">number_of_previous_solutions()</a>.</p>
 

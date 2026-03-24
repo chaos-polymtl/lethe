@@ -163,8 +163,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a465e7e120ef8c935e0a59295955db2d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af35168b958d6f4862e0df91bbe271670" id="r_af35168b958d6f4862e0df91bbe271670"><td class="memItemLeft" align="right" valign="top">AffineConstraints&lt; double &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwell.html#af35168b958d6f4862e0df91bbe271670">get_nonzero_constraints</a> () override</td></tr>
 <tr class="separator:af35168b958d6f4862e0df91bbe271670"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a503fbbcd48367023214a387a3aaba5" id="r_a1a503fbbcd48367023214a387a3aaba5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwell.html#a1a503fbbcd48367023214a387a3aaba5">output_newton_update_norms</a> (const unsigned int display_precision) override</td></tr>
-<tr class="separator:a1a503fbbcd48367023214a387a3aaba5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a747c3526e363f80f45880cabc285181a" id="r_a747c3526e363f80f45880cabc285181a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwell.html#a747c3526e363f80f45880cabc285181a">output_newton_update_norms</a> () override</td></tr>
+<tr class="separator:a747c3526e363f80f45880cabc285181a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a08a6df54ece4f89429bcfd2c1dfdec1b" id="r_a08a6df54ece4f89429bcfd2c1dfdec1b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classTimeHarmonicMaxwell.html#a08a6df54ece4f89429bcfd2c1dfdec1b">get_residual_rescale_metric</a> () const override</td></tr>
 <tr class="separator:a08a6df54ece4f89429bcfd2c1dfdec1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classAuxiliaryPhysics"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classAuxiliaryPhysics')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics&lt; dim, VectorType &gt;</a></td></tr>
@@ -357,7 +357,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00007">7</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="time__harmonic__maxwell_8h_source.html#l00699">TimeHarmonicMaxwell&lt; dim &gt;::cell_quadrature</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00612">TimeHarmonicMaxwell&lt; dim &gt;::computing_timer</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00641">TimeHarmonicMaxwell&lt; dim &gt;::dof_handler_trial_interior</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00705">TimeHarmonicMaxwell&lt; dim &gt;::face_quadrature</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00675">TimeHarmonicMaxwell&lt; dim &gt;::fe_test</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00665">TimeHarmonicMaxwell&lt; dim &gt;::fe_trial_interior</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00670">TimeHarmonicMaxwell&lt; dim &gt;::fe_trial_skeleton</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00693">TimeHarmonicMaxwell&lt; dim &gt;::mapping</a>, <a class="el" href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::Timer::none</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00755">TimeHarmonicMaxwell&lt; dim &gt;::present_DPG_error_indicator</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00745">TimeHarmonicMaxwell&lt; dim &gt;::present_solution</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00750">TimeHarmonicMaxwell&lt; dim &gt;::present_solution_skeleton</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00617">TimeHarmonicMaxwell&lt; dim &gt;::simulation_parameters</a>, and <a class="el" href="time__harmonic__maxwell_8h_source.html#l00782">TimeHarmonicMaxwell&lt; dim &gt;::solution_transfer</a>.</p>
+<p class="reference">References <a class="el" href="time__harmonic__maxwell_8h_source.html#l00696">TimeHarmonicMaxwell&lt; dim &gt;::cell_quadrature</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00638">TimeHarmonicMaxwell&lt; dim &gt;::dof_handler_trial_interior</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00702">TimeHarmonicMaxwell&lt; dim &gt;::face_quadrature</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00672">TimeHarmonicMaxwell&lt; dim &gt;::fe_test</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00662">TimeHarmonicMaxwell&lt; dim &gt;::fe_trial_interior</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00667">TimeHarmonicMaxwell&lt; dim &gt;::fe_trial_skeleton</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00690">TimeHarmonicMaxwell&lt; dim &gt;::mapping</a>, <a class="el" href="physics__solver_8h_source.html#l00155">PhysicsSolver&lt; VectorType &gt;::pcout</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00752">TimeHarmonicMaxwell&lt; dim &gt;::present_DPG_error_indicator</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00742">TimeHarmonicMaxwell&lt; dim &gt;::present_solution</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00747">TimeHarmonicMaxwell&lt; dim &gt;::present_solution_skeleton</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00629">TimeHarmonicMaxwell&lt; dim &gt;::simulation_control</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00614">TimeHarmonicMaxwell&lt; dim &gt;::simulation_parameters</a>, and <a class="el" href="time__harmonic__maxwell_8h_source.html#l00779">TimeHarmonicMaxwell&lt; dim &gt;::solution_transfer</a>.</p>
 
 </div>
 </div>
@@ -420,7 +420,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a73215f315918e22864cf04248c583045">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l01247">1247</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l01255">1255</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 </div>
 </div>
@@ -452,7 +452,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a73215f315918e22864cf04248c583045">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l01260">1260</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l01268">1268</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="parameters__multiphysics_8h_source.html#l00409">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::electromagnetic_frequency</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab7c1e17b9ed3e1002ff5b1057421da05">BoundaryConditions::impedance_boundary</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a334c4a4c42fdb79d7ebc3e73b517e6f8">BoundaryConditions::none</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae00c4bcecdb269fd409e0a19d07b0dc9">BoundaryConditions::silver_muller</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00413">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::waveguide_boundary_ids</a>, and <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a805dc066461856ae03531d14d90b9045">BoundaryConditions::waveguide_port</a>.</p>
 
@@ -518,7 +518,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a74110493860247f4ed2da56ef3050f08">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l02223">2223</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l02231">2231</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 </div>
 </div>
@@ -541,7 +541,7 @@ template&lt;int dim&gt; </div>
 
 <p>Calculates the L2 error of the solution. It returns a vector of doubles containing the L2 errors of the real and imaginary parts of the electric and magnetic fields in the order [E_real, E_imag, H_real, H_imag]. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00404">404</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00402">402</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 </div>
 </div>
@@ -580,7 +580,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00744">744</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00752">752</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 </div>
 </div>
@@ -631,7 +631,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#a4fd20b9411d6ac816873465deae02530">AuxiliaryPhysics&lt; dim, VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00665">665</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00673">673</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="structParameters_1_1MultipleAdaptationParameters.html#a0415d48307e584ae60c4c4fc9ee053c0a6623bdf78746d87e7c6c2888a5c70c9f">Parameters::MultipleAdaptationParameters::dpg</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaa79864cf485f38be6b1076d4b73e51b2">electric_field</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda2b10330fe7e35354ff14a91b5af1c176">electromagnetic_fields</a>, <a class="el" href="structParameters_1_1MultipleAdaptationParameters.html#a0415d48307e584ae60c4c4fc9ee053c0aae074a5692dfb7c26aae5147e52ceb40">Parameters::MultipleAdaptationParameters::kelly</a>, and <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda8732c340b849ed4f600a10f719097755">magnetic_field</a>.</p>
 
@@ -674,7 +674,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00728">728</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00736">736</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 </div>
 </div>
@@ -730,7 +730,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00105">105</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00103">103</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 </div>
 </div>
@@ -786,7 +786,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00122">122</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00120">120</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="parameters__multiphysics_8h_source.html#l00409">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::electromagnetic_frequency</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00419">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::mode_order_m</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00420">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::mode_order_n</a>, <a class="el" href="namespaceParameters.html#a3c6eda968f919b83f3e2e3fc92c54a08a83f56f37a245ccaf8c885814074777f6">Parameters::TE</a>, <a class="el" href="namespaceParameters.html#a3c6eda968f919b83f3e2e3fc92c54a08aac7a4fbd0d788d94f43454817e1c208c">Parameters::TM</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00424">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::waveguide_corners</a>, and <a class="el" href="parameters__multiphysics_8h_source.html#l00416">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::waveguide_mode</a>.</p>
 
@@ -886,7 +886,7 @@ template&lt;int dim&gt; </div>
 
 <p>Define the constraints for the <a class="el" href="classTimeHarmonicMaxwell.html">TimeHarmonicMaxwell</a> solver. This is equivalent to the define_non_zero_constraints method in other physics solvers, but here there is no need to separate zero and non-zero constraints. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00929">929</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00937">937</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8aa79864cf485f38be6b1076d4b73e51b2">BoundaryConditions::electric_field</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a8732c340b849ed4f600a10f719097755">BoundaryConditions::magnetic_field</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ac3592ad763cac73a15466c0d3c10a77d">BoundaryConditions::pec</a>, and <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a04130da60e65c7800006cd7886515b56">BoundaryConditions::pmc</a>.</p>
 
@@ -921,9 +921,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#aa917fdacf48dbefe7657aa7978edd53a">AuxiliaryPhysics&lt; dim, VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00513">513</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00511">511</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00468">announce_string()</a>, <a class="el" href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa7f021a1415b86f2d013b2618fb31ae53">Parameters::Timer::end</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>.</p>
 
 </div>
 </div>
@@ -957,7 +957,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classAuxiliaryPhysics.html#a4ebbb78aa057532aae3143b3a1f5647a">AuxiliaryPhysics&lt; dim, VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00353">353</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00351">351</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="structParameters_1_1MultipleAdaptationParameters.html#a0415d48307e584ae60c4c4fc9ee053c0a6623bdf78746d87e7c6c2888a5c70c9f">Parameters::MultipleAdaptationParameters::dpg</a>.</p>
 
@@ -993,7 +993,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#a764abbac51050515970d14a13b5e8aad">AuxiliaryPhysics&lt; dim, VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00657">657</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00665">665</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 </div>
 </div>
@@ -1028,7 +1028,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00332">332</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
-<p class="reference">References <a class="el" href="time__harmonic__maxwell_8h_source.html#l00641">TimeHarmonicMaxwell&lt; dim &gt;::dof_handler_trial_interior</a>.</p>
+<p class="reference">References <a class="el" href="time__harmonic__maxwell_8h_source.html#l00638">TimeHarmonicMaxwell&lt; dim &gt;::dof_handler_trial_interior</a>.</p>
 
 </div>
 </div>
@@ -1166,7 +1166,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00436">436</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
-<p class="reference">References <a class="el" href="time__harmonic__maxwell_8h_source.html#l00774">TimeHarmonicMaxwell&lt; dim &gt;::nonzero_constraints</a>.</p>
+<p class="reference">References <a class="el" href="time__harmonic__maxwell_8h_source.html#l00771">TimeHarmonicMaxwell&lt; dim &gt;::nonzero_constraints</a>.</p>
 
 </div>
 </div>
@@ -1202,7 +1202,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00393">393</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
-<p class="reference">References <a class="el" href="time__harmonic__maxwell_8h_source.html#l00745">TimeHarmonicMaxwell&lt; dim &gt;::present_solution</a>.</p>
+<p class="reference">References <a class="el" href="time__harmonic__maxwell_8h_source.html#l00742">TimeHarmonicMaxwell&lt; dim &gt;::present_solution</a>.</p>
 
 </div>
 </div>
@@ -1236,7 +1236,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00409">409</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
-<p class="reference">References <a class="el" href="time__harmonic__maxwell_8h_source.html#l00750">TimeHarmonicMaxwell&lt; dim &gt;::present_solution_skeleton</a>.</p>
+<p class="reference">References <a class="el" href="time__harmonic__maxwell_8h_source.html#l00747">TimeHarmonicMaxwell&lt; dim &gt;::present_solution_skeleton</a>.</p>
 
 </div>
 </div>
@@ -1270,9 +1270,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a365035283c1495135aaee11de8abaa19">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00464">464</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00461">461</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
-<p class="reference">References <a class="el" href="time__harmonic__maxwell_8h_source.html#l00693">TimeHarmonicMaxwell&lt; dim &gt;::mapping</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00617">TimeHarmonicMaxwell&lt; dim &gt;::simulation_parameters</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00624">TimeHarmonicMaxwell&lt; dim &gt;::triangulation</a>, and <a class="el" href="multiphysics_8h_source.html#l00033">VOF</a>.</p>
+<p class="reference">References <a class="el" href="time__harmonic__maxwell_8h_source.html#l00690">TimeHarmonicMaxwell&lt; dim &gt;::mapping</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00614">TimeHarmonicMaxwell&lt; dim &gt;::simulation_parameters</a>, <a class="el" href="time__harmonic__maxwell_8h_source.html#l00621">TimeHarmonicMaxwell&lt; dim &gt;::triangulation</a>, and <a class="el" href="multiphysics_8h_source.html#l00033">VOF</a>.</p>
 
 </div>
 </div>
@@ -1308,7 +1308,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00422">422</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
-<p class="reference">References <a class="el" href="time__harmonic__maxwell_8h_source.html#l00765">TimeHarmonicMaxwell&lt; dim &gt;::system_rhs</a>.</p>
+<p class="reference">References <a class="el" href="time__harmonic__maxwell_8h_source.html#l00762">TimeHarmonicMaxwell&lt; dim &gt;::system_rhs</a>.</p>
 
 </div>
 </div>
@@ -1369,7 +1369,7 @@ template&lt;int dim&gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>The tangential component of the input vector.</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>This operation is used to obtain traces in H^{-1/2}(curl) spaces, where only tangential components are continuous across interfaces. The inline keyword is enforced to make sure that the tensor operations are efficient as they are called frequently during assembly. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00538">538</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00535">535</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -1402,12 +1402,12 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classAuxiliaryPhysics.html#ace42d65b732019925cb4824e9af89f52">AuxiliaryPhysics&lt; dim, VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00555">555</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00561">561</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 </div>
 </div>
-<a id="a1a503fbbcd48367023214a387a3aaba5" name="a1a503fbbcd48367023214a387a3aaba5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1a503fbbcd48367023214a387a3aaba5">&#9670;&#160;</a></span>output_newton_update_norms()</h2>
+<a id="a747c3526e363f80f45880cabc285181a" name="a747c3526e363f80f45880cabc285181a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a747c3526e363f80f45880cabc285181a">&#9670;&#160;</a></span>output_newton_update_norms()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1420,8 +1420,7 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classTimeHarmonicMaxwell.html">TimeHarmonicMaxwell</a>&lt; dim &gt;::output_newton_update_norms </td>
           <td>(</td>
-          <td class="paramtype">const unsigned int&#160;</td>
-          <td class="paramname"><em>display_precision</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -1433,16 +1432,10 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p>Output the L2 and Linfty norms of the correction vector. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">display_precision</td><td>Number of outputted digits. </td></tr>
-  </table>
-  </dd>
-</dl>
 
-<p>Implements <a class="el" href="classPhysicsSolver.html#a33c67d4913c1e92d0404cc67f70caca4">PhysicsSolver&lt; VectorType &gt;</a>.</p>
+<p>Implements <a class="el" href="classPhysicsSolver.html#abfa7bc1385779d5c7175411f4c8e3264">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00447">447</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00445">445</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -1475,7 +1468,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#a0e74925e0067b4bcf2578f18a2f15204">AuxiliaryPhysics&lt; dim, VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00548">548</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00554">554</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 </div>
 </div>
@@ -1508,7 +1501,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#a3870a0c5dc427098c9bec1afc9a668c0">AuxiliaryPhysics&lt; dim, VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00622">622</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00630">630</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 </div>
 </div>
@@ -1542,7 +1535,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#a5cddfe1a7224404a899d7564d908d098">AuxiliaryPhysics&lt; dim, VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00575">575</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00581">581</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="utilities_8h_source.html#l00468">announce_string()</a>, <a class="el" href="postprocessing__cfd_8cc_source.html#l01221">calculate_L2_error()</a>, <a class="el" href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa6f012ea8d7efd87146dd62db83f2ed99">Parameters::Timer::iteration</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>.</p>
 
@@ -1577,7 +1570,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#ae80e26995eb53ee0ea0239a2390d082f">AuxiliaryPhysics&lt; dim, VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00614">614</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00622">622</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 </div>
 </div>
@@ -1610,7 +1603,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#ab68fa8d211549189803ddd8ba1fcc4ff">AuxiliaryPhysics&lt; dim, VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00650">650</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00658">658</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 </div>
 </div>
@@ -1666,7 +1659,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l02232">2232</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l02240">2240</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 </div>
 </div>
@@ -1694,7 +1687,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Excitation properties</p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l02244">2244</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l02252">2252</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="structParameters_1_1MultipleAdaptationParameters.html#a0415d48307e584ae60c4c4fc9ee053c0a6623bdf78746d87e7c6c2888a5c70c9f">Parameters::MultipleAdaptationParameters::dpg</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00409">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::electromagnetic_frequency</a>, <a class="el" href="multiphysics_8h_source.html#l00039">electromagnetics</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab7c1e17b9ed3e1002ff5b1057421da05">BoundaryConditions::impedance_boundary</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a334c4a4c42fdb79d7ebc3e73b517e6f8">BoundaryConditions::none</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae00c4bcecdb269fd409e0a19d07b0dc9">BoundaryConditions::silver_muller</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00413">Parameters::TimeHarmonicMaxwell&lt; dim &gt;::waveguide_boundary_ids</a>, and <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a805dc066461856ae03531d14d90b9045">BoundaryConditions::waveguide_port</a>.</p>
 
@@ -1729,7 +1722,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#aeecb470de43133aa878a5e9499509b31">AuxiliaryPhysics&lt; dim, VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00876">876</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00884">884</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 </div>
 </div>
@@ -1762,7 +1755,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#a3d0c0d037152ce2e8552227c3dda383e">AuxiliaryPhysics&lt; dim, VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00788">788</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00796">796</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00039">electromagnetics</a>.</p>
 
@@ -1797,7 +1790,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classAuxiliaryPhysics.html#a664990d705edc069f7676ac5e575e3c8">AuxiliaryPhysics&lt; dim, VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00922">922</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00930">930</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 </div>
 </div>
@@ -1830,7 +1823,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a375f91bc1e5a05dac2c71f5ae5575f84">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l01188">1188</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l01196">1196</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00039">electromagnetics</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919ae5cbb8171b496f26a4488b9e15a0fe52">Parameters::extra_verbose</a>.</p>
 
@@ -1865,7 +1858,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classAuxiliaryPhysics.html#aa4eb967dee8229dc43ff95182df011fe">AuxiliaryPhysics&lt; dim, VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00562">562</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00568">568</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 </div>
 </div>
@@ -1929,7 +1922,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00327">327</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00325">325</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="physical__properties__manager_8h_source.html#l00197">PhysicalPropertiesManager::get_electric_conductivity()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00226">PhysicalPropertiesManager::get_electric_permittivity_imag()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00211">PhysicalPropertiesManager::get_electric_permittivity_real()</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00256">PhysicalPropertiesManager::get_magnetic_permeability_imag()</a>, and <a class="el" href="physical__properties__manager_8h_source.html#l00241">PhysicalPropertiesManager::get_magnetic_permeability_real()</a>.</p>
 
@@ -1962,9 +1955,9 @@ template&lt;int dim&gt; </div>
 
 <p>Verify consistency of the input parameters for boundary conditions to ensure that for every boundary id within the triangulation, a boundary condition has been specified in the input file. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00480">480</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00477">477</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
-<p class="reference">References <a class="el" href="time__harmonic__maxwell_8h_source.html#l00617">TimeHarmonicMaxwell&lt; dim &gt;::simulation_parameters</a>, and <a class="el" href="time__harmonic__maxwell_8h_source.html#l00624">TimeHarmonicMaxwell&lt; dim &gt;::triangulation</a>.</p>
+<p class="reference">References <a class="el" href="time__harmonic__maxwell_8h_source.html#l00614">TimeHarmonicMaxwell&lt; dim &gt;::simulation_parameters</a>, and <a class="el" href="time__harmonic__maxwell_8h_source.html#l00621">TimeHarmonicMaxwell&lt; dim &gt;::triangulation</a>.</p>
 
 </div>
 </div>
@@ -1997,7 +1990,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#aac6b380b7f28d81bef3a7d33eb13ec34">AuxiliaryPhysics&lt; dim, VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00643">643</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8cc_source.html#l00651">651</a> of file <a class="el" href="time__harmonic__maxwell_8cc_source.html">time_harmonic_maxwell.cc</a>.</p>
 
 </div>
 </div>
@@ -2026,7 +2019,7 @@ template&lt;int dim&gt; </div>
 
 <p>Approximate an integral over a cell by evaluating the integrand at specific points and summing the point values with specific weights. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00699">699</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00696">696</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2054,7 +2047,7 @@ template&lt;int dim&gt; </div>
 
 <p>Store information related to the computing time such as CPU times or wall time. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00612">612</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00609">609</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2082,7 +2075,7 @@ template&lt;int dim&gt; </div>
 
 <p>Given a triangulation and a description of a finite element, this class enumerates degrees of freedom on all vertices, edges, faces, and cells of the triangulation of the test space dofs. NB: in DPG, the test space is not split into interior and skeleton dofs in opposition to the trial space and therefore manages vertices, edges, faces and cells dofs. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00660">660</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00657">657</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2110,7 +2103,7 @@ template&lt;int dim&gt; </div>
 
 <p>Given a triangulation and a description of a finite element, this class enumerates degrees of freedom on all vertices, edges, faces, and cells of the triangulation of the trial space for the interior dofs. NB: Since it is based on DG elements, there are no dofs on vertices, edges or faces. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00641">641</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00638">638</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2138,7 +2131,7 @@ template&lt;int dim&gt; </div>
 
 <p>Given a triangulation and a description of a finite element, this class enumerates degrees of freedom on all vertices, edges, faces, and cells of the triangulation of the trial space for the skeleton dofs. NB: This DoFHandler is based on global FE spaces with frozen interior dofs, so the dofs effectively live only on faces, edges and vertices. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00650">650</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00647">647</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2166,7 +2159,7 @@ template&lt;int dim&gt; </div>
 
 <p>Store some convergence data, such as residuals of the cg-method, or some evaluated <em>L<sup>2</sup></em>-errors of discrete solutions. Evaluate convergence rates or orders. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00687">687</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00684">684</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2194,7 +2187,7 @@ template&lt;int dim&gt; </div>
 
 <p>Extractor for the imaginary part of the electric field vector. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00792">792</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00789">789</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2222,7 +2215,7 @@ template&lt;int dim&gt; </div>
 
 <p>Extractor for the real part of the electric field vector. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00787">787</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00784">784</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2250,7 +2243,7 @@ template&lt;int dim&gt; </div>
 
 <p>Extractor for the imaginary part of the magnetic field vector. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00802">802</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00799">799</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2278,7 +2271,7 @@ template&lt;int dim&gt; </div>
 
 <p>Extractor for the real part of the magnetic field vector. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00797">797</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00794">794</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2306,7 +2299,7 @@ template&lt;int dim&gt; </div>
 
 <p>Approximate an integral over a cell's face by evaluating the integrand at specific points and summing the point values with specific weights. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00705">705</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00702">702</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2334,7 +2327,7 @@ template&lt;int dim&gt; </div>
 
 <p>The base class for finite elements. This class will manage everything related to the shape functions of the test space. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00675">675</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00672">672</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2362,7 +2355,7 @@ template&lt;int dim&gt; </div>
 
 <p>The base class for finite elements. This class will manage everything related to the shape functions of the trial interior space. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00665">665</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00662">662</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2390,7 +2383,7 @@ template&lt;int dim&gt; </div>
 
 <p>The base class for finite elements. This class will manage everything related to the shape functions of the trial skeleton space. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00670">670</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00667">667</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2418,7 +2411,7 @@ template&lt;int dim&gt; </div>
 
 <p>A vector containing the values of the dpg error estimator for each cell of the triangulation. This is used for mesh adaptation based on the DPG error estimator. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00760">760</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00757">757</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2446,7 +2439,7 @@ template&lt;int dim&gt; </div>
 
 <p>IndexSet of the owned degrees of freedom for the test space. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00730">730</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00727">727</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2474,7 +2467,7 @@ template&lt;int dim&gt; </div>
 
 <p>IndexSet of the owned degrees of freedom for the interior trial space. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00710">710</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00707">707</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2502,7 +2495,7 @@ template&lt;int dim&gt; </div>
 
 <p>IndexSet of the owned degrees of freedom for the skeleton trial space. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00720">720</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00717">717</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2530,7 +2523,7 @@ template&lt;int dim&gt; </div>
 
 <p>IndexSet of the relevant degrees of freedom for the test space. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00735">735</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00732">732</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2558,7 +2551,7 @@ template&lt;int dim&gt; </div>
 
 <p>IndexSet of the relevant degrees of freedom for the interior trial space. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00715">715</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00712">712</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2586,7 +2579,7 @@ template&lt;int dim&gt; </div>
 
 <p>IndexSet of the relevant degrees of freedom for the skeleton trial space. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00725">725</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00722">722</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2614,7 +2607,7 @@ template&lt;int dim&gt; </div>
 
 <p>Transformation which maps point in the reference cell to points in the actual grid cell. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00693">693</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00690">690</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2642,7 +2635,7 @@ template&lt;int dim&gt; </div>
 
 <p>Pointer to the multiphysics interface that manages the coupling between the different physics solvers. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00606">606</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00603">603</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2670,7 +2663,7 @@ template&lt;int dim&gt; </div>
 
 <p>Store the nonzero constraints that arise from several sources such as boundary conditions and hanging nodes in the mesh. See the deal.II documentation on constraints on degrees of freedom for more information. The zero constraints are not used in this solver as it solve a linear system. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00774">774</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00771">771</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2698,7 +2691,7 @@ template&lt;int dim&gt; </div>
 
 <p>Preconditioner for the linear solver. At the present moment, this is an identity preconditioner. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00680">680</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00677">677</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2724,7 +2717,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00755">755</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00752">752</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2752,7 +2745,7 @@ template&lt;int dim&gt; </div>
 
 <p>A vector containing all the values of the solution in the interior trial space. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00745">745</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00742">742</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2780,7 +2773,7 @@ template&lt;int dim&gt; </div>
 
 <p>A vector containing all the values of the solution on the skeleton for the trial space. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00750">750</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00747">747</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2808,7 +2801,7 @@ template&lt;int dim&gt; </div>
 
 <p>Responsible for the control of steady-state and transient simulations. Contains all the information related to time stepping and the stopping criteria. See simulation_control abstract class for more information. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00632">632</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00629">629</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2836,7 +2829,7 @@ template&lt;int dim&gt; </div>
 
 <p>Contain the simulation parameter file information. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00617">617</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00614">614</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2864,7 +2857,7 @@ template&lt;int dim&gt; </div>
 
 <p>SolutionTransfer&lt;dim, GlobalVectorType&gt;&gt; is used to implement the transfer of a discrete FE function (e.g. a solution vector) from one mesh to another. This Deal.ii class is used for mesh_refinement and simulation restarts. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00782">782</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00779">779</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2892,7 +2885,7 @@ template&lt;int dim&gt; </div>
 
 <p>The system matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00740">740</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00737">737</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2920,7 +2913,7 @@ template&lt;int dim&gt; </div>
 
 <p>The right hand side vector. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00765">765</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00762">762</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
@@ -2948,7 +2941,7 @@ template&lt;int dim&gt; </div>
 
 <p>Collection of cells that cover the domain on which one wants to solve a partial differential equation. </p>
 
-<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00624">624</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="time__harmonic__maxwell_8h_source.html#l00621">621</a> of file <a class="el" href="time__harmonic__maxwell_8h_source.html">time_harmonic_maxwell.h</a>.</p>
 
 </div>
 </div>
