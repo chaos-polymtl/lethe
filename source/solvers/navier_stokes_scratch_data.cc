@@ -138,9 +138,9 @@ NavierStokesScratchData<dim>::enable_cls(
 template <int dim>
 void
 NavierStokesScratchData<dim>::enable_cls(
-  const FiniteElement<dim>                       &fe,
-  const Quadrature<dim>                          &quadrature,
-  const Mapping<dim>                             &mapping,
+  const FiniteElement<dim>                              &fe,
+  const Quadrature<dim>                                 &quadrature,
+  const Mapping<dim>                                    &mapping,
   const std::shared_ptr<ConservativeLevelSetFilterBase> &filter)
 {
   gather_cls    = true;

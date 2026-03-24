@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_heat_transfer_scratch_data_h
@@ -7,9 +7,9 @@
 #include <core/physical_property_model.h>
 #include <core/vector.h>
 
+#include <solvers/cls_filter.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/physics_scratch_data.h>
-#include <solvers/cls_filter.h>
 
 #include <deal.II/base/exceptions.h>
 
@@ -368,9 +368,9 @@ public:
    */
 
   void
-  enable_cls(const FiniteElement<dim>                       &fe,
-             const Quadrature<dim>                          &quadrature,
-             const Mapping<dim>                             &mapping,
+  enable_cls(const FiniteElement<dim>                              &fe,
+             const Quadrature<dim>                                 &quadrature,
+             const Mapping<dim>                                    &mapping,
              const std::shared_ptr<ConservativeLevelSetFilterBase> &filter);
 
   /** @brief Reinitialize the content of the scratch for CLS.
@@ -474,8 +474,9 @@ public:
   std::vector<double>         filtered_phase_values;
   std::vector<Tensor<1, dim>> filtered_phase_gradient_values;
   // This is stored as a shared_ptr because it is only instantiated when needed
-  std::shared_ptr<FEValues<dim>>           fe_values_cls;
-  std::shared_ptr<ConservativeLevelSetFilterBase> filter; // Phase fraction filter
+  std::shared_ptr<FEValues<dim>> fe_values_cls;
+  std::shared_ptr<ConservativeLevelSetFilterBase>
+    filter; // Phase fraction filter
 
   /**
    * Scratch component for the Navier-Stokes components

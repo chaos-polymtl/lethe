@@ -4,9 +4,9 @@
 #ifndef lethe_subequations_interface_h
 #define lethe_subequations_interface_h
 
+#include <solvers/cls_subequations.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/physics_subequations_solver.h>
-#include <solvers/cls_subequations.h>
 
 using namespace dealii;
 

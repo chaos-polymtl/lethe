@@ -10,13 +10,13 @@
 #include <core/vector.h>
 
 #include <solvers/auxiliary_physics.h>
-#include <solvers/multiphysics_interface.h>
-#include <solvers/signed_distance_transformation.h>
 #include <solvers/cls_assemblers.h>
 #include <solvers/cls_filter.h>
 #include <solvers/cls_linear_subequations_solver.h>
 #include <solvers/cls_scratch_data.h>
 #include <solvers/cls_subequations_interface.h>
+#include <solvers/multiphysics_interface.h>
+#include <solvers/signed_distance_transformation.h>
 
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/table_handler.h>
@@ -63,11 +63,12 @@ public:
   /**
    * @brief CLS - Base constructor.
    */
-  ConservativeLevelSet(MultiphysicsInterface<dim>      *multiphysics_interface,
-                const SimulationParameters<dim> &p_simulation_parameters,
-                std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                                   p_triangulation,
-                std::shared_ptr<SimulationControl> p_simulation_control);
+  ConservativeLevelSet(
+    MultiphysicsInterface<dim>      *multiphysics_interface,
+    const SimulationParameters<dim> &p_simulation_parameters,
+    std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                       p_triangulation,
+    std::shared_ptr<SimulationControl> p_simulation_control);
 
   /**
    * @brief CLS - Base destructor. At the present

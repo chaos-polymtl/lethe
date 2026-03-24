@@ -13,11 +13,11 @@
 #include <core/solid_objects_parameters.h>
 
 #include <solvers/analytical_solutions.h>
+#include <solvers/cls_subequations.h>
 #include <solvers/initial_conditions.h>
 #include <solvers/physical_properties_manager.h>
 #include <solvers/source_terms.h>
 #include <solvers/tracer_drift_velocity.h>
-#include <solvers/cls_subequations.h>
 
 template <int dim>
 class SimulationParameters

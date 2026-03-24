@@ -6,9 +6,9 @@
 
 #include <core/pvd_handler.h>
 
-#include <solvers/physics_subequations_solver.h>
 #include <solvers/cls_scratch_data.h>
 #include <solvers/cls_subequations_interface.h>
+#include <solvers/physics_subequations_solver.h>
 
 #include <deal.II/base/timer.h>
 #include <deal.II/base/work_stream.h>

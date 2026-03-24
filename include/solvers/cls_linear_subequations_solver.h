@@ -1,12 +1,12 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_cls_linear_subequations_solver_h
 #define lethe_cls_linear_subequations_solver_h
 
-#include <solvers/physics_subequations_solver.h>
 #include <solvers/cls_scratch_data.h>
 #include <solvers/cls_subequations_interface.h>
+#include <solvers/physics_subequations_solver.h>
 
 #include <deal.II/base/timer.h>
 #include <deal.II/base/work_stream.h>

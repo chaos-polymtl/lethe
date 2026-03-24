@@ -13,9 +13,9 @@
 #include <core/time_integration_utilities.h>
 
 #include <solvers/cahn_hilliard_filter.h>
+#include <solvers/cls_filter.h>
 #include <solvers/physical_properties_manager.h>
 #include <solvers/physics_scratch_data.h>
-#include <solvers/cls_filter.h>
 
 #include <deal.II/base/quadrature.h>
 
@@ -527,9 +527,9 @@ public:
    */
 
   void
-  enable_cls(const FiniteElement<dim>                       &fe,
-             const Quadrature<dim>                          &quadrature,
-             const Mapping<dim>                             &mapping,
+  enable_cls(const FiniteElement<dim>                              &fe,
+             const Quadrature<dim>                                 &quadrature,
+             const Mapping<dim>                                    &mapping,
              const std::shared_ptr<ConservativeLevelSetFilterBase> &filter);
 
   void
@@ -1555,8 +1555,9 @@ public:
   std::vector<Tensor<1, dim>>      filtered_phase_gradient_values;
   std::vector<Tensor<1, dim>>      phase_gradient_values;
   // This is stored as a shared_ptr because it is only instantiated when needed
-  std::shared_ptr<FEValues<dim>>           fe_values_cls;
-  std::shared_ptr<ConservativeLevelSetFilterBase> filter; // Phase fraction filter
+  std::shared_ptr<FEValues<dim>> fe_values_cls;
+  std::shared_ptr<ConservativeLevelSetFilterBase>
+    filter; // Phase fraction filter
 
   bool                           gather_projected_phase_fraction_gradient;
   bool                           gather_curvature;

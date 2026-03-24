@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_cls_assemblers_h
@@ -6,9 +6,9 @@
 
 #include <core/simulation_control.h>
 
+#include <solvers/cls_scratch_data.h>
 #include <solvers/copy_data.h>
 #include <solvers/physics_assemblers.h>
-#include <solvers/cls_scratch_data.h>
 
 /**
  * @brief A pure virtual class that serves as an interface for all

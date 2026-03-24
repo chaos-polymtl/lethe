@@ -3,10 +3,10 @@
 
 #include "solvers/time_harmonic_maxwell.h"
 #include <solvers/cahn_hilliard.h>
+#include <solvers/cls.h>
 #include <solvers/heat_transfer.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/tracer.h>
-#include <solvers/cls.h>
 
 #include <deal.II/base/exceptions.h>
 #define _unused(x) ((void)(x))

@@ -861,8 +861,9 @@ ConservativeLevelSet<dim>::calculate_L2_error()
 template <int dim>
 template <typename VectorType>
 std::pair<Tensor<1, dim>, Tensor<1, dim>>
-ConservativeLevelSet<dim>::calculate_barycenter(const GlobalVectorType &solution,
-                                         const VectorType       &solution_fd)
+ConservativeLevelSet<dim>::calculate_barycenter(
+  const GlobalVectorType &solution,
+  const VectorType       &solution_fd)
 {
   const MPI_Comm mpi_communicator = this->triangulation->get_mpi_communicator();
 
@@ -2089,9 +2090,10 @@ ConservativeLevelSet<dim>::calculate_mass_deviation(
 
 template <int dim>
 void
-ConservativeLevelSet<dim>::sharpen_interface(GlobalVectorType &solution,
-                                      const double      sharpening_threshold,
-                                      const bool sharpen_previous_solutions)
+ConservativeLevelSet<dim>::sharpen_interface(
+  GlobalVectorType &solution,
+  const double      sharpening_threshold,
+  const bool        sharpen_previous_solutions)
 {
   // Limit the phase fractions between 0 and 1
   update_solution_and_constraints(solution);
@@ -2242,7 +2244,8 @@ ConservativeLevelSet<dim>::assemble_projection_phase_fraction(
 
 template <int dim>
 void
-ConservativeLevelSet<dim>::solve_projection_phase_fraction(GlobalVectorType &solution)
+ConservativeLevelSet<dim>::solve_projection_phase_fraction(
+  GlobalVectorType &solution)
 {
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-13;
@@ -2917,7 +2920,8 @@ ConservativeLevelSet<dim>::solve_linear_system()
 // This function is explained in detail in step-41 of deal.II tutorials
 template <int dim>
 void
-ConservativeLevelSet<dim>::update_solution_and_constraints(GlobalVectorType &solution)
+ConservativeLevelSet<dim>::update_solution_and_constraints(
+  GlobalVectorType &solution)
 {
   // This is a penalty parameter for limiting the phase fraction
   // in the range of [0,1]. According to step 41, this parameter depends
@@ -3084,7 +3088,8 @@ ConservativeLevelSet<dim>::assemble_L2_projection_interface_sharpening(
 
 template <int dim>
 void
-ConservativeLevelSet<dim>::solve_interface_sharpening(GlobalVectorType &solution)
+ConservativeLevelSet<dim>::solve_interface_sharpening(
+  GlobalVectorType &solution)
 {
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-15;
