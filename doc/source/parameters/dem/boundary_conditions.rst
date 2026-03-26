@@ -56,7 +56,7 @@ In this subsection, the boundary conditions of the DEM simulation are defined. F
       # ID of associated periodic boundary
       set periodic id 1      = 2
 
-      # Direction along axis separating the periodic boundary pair
+      # Direction normal to the periodic boundary faces (x=0, y=1, z=2)
       set periodic direction = 1
   end
 
