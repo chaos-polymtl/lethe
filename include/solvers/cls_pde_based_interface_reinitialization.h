@@ -266,7 +266,8 @@ private:
     // Get artificial time-step factor
     const double dtau_factor =
       this->simulation_parameters.multiphysics.cls_parameters
-        .reinitialization_method.pde_based_interface_reinitialization.dtau_factor;
+        .reinitialization_method.pde_based_interface_reinitialization
+        .dtau_factor;
 
     // Get the minimum cell size
     const double h_min =
@@ -339,8 +340,8 @@ private:
       {
         return (step_number <
                 this->simulation_parameters.multiphysics.cls_parameters
-                    .reinitialization_method.pde_based_interface_reinitialization
-                    .max_steps_number +
+                    .reinitialization_method
+                    .pde_based_interface_reinitialization.max_steps_number +
                   1);
       }
     else
@@ -376,8 +377,8 @@ private:
         return ((stop_criterion > steady_state_criterion) &&
                 (step_number <
                  this->simulation_parameters.multiphysics.cls_parameters
-                     .reinitialization_method.pde_based_interface_reinitialization
-                     .max_steps_number +
+                     .reinitialization_method
+                     .pde_based_interface_reinitialization.max_steps_number +
                    1));
       }
   }

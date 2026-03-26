@@ -1,9 +1,9 @@
 // SPDX-FileCopyrightText: Copyright (c) 2024-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include <solvers/cls_pde_based_interface_reinitialization.h>
 #include <solvers/cls_curvature_projection.h>
 #include <solvers/cls_linear_subequations_solver.h>
+#include <solvers/cls_pde_based_interface_reinitialization.h>
 #include <solvers/cls_phase_gradient_projection.h>
 #include <solvers/cls_subequations_interface.h>
 
@@ -21,8 +21,8 @@ CLSSubequationsInterface<dim>::initialize_subequations(
   // Activate and add relevant subequations
   if ((p_simulation_parameters.multiphysics.cls_parameters.surface_tension_force
          .enable) ||
-      (p_simulation_parameters.multiphysics.cls_parameters.reinitialization_method
-         .pde_based_interface_reinitialization.enable))
+      (p_simulation_parameters.multiphysics.cls_parameters
+         .reinitialization_method.pde_based_interface_reinitialization.enable))
     {
       // Phase gradient projection
       this->active_subequations.push_back(
@@ -40,7 +40,8 @@ CLSSubequationsInterface<dim>::initialize_subequations(
                                                       *this);
 
       if (p_simulation_parameters.multiphysics.cls_parameters
-            .reinitialization_method.pde_based_interface_reinitialization.enable)
+            .reinitialization_method.pde_based_interface_reinitialization
+            .enable)
         {
           // PDE-based interface reinitialization
           this->active_subequations.push_back(

@@ -691,7 +691,7 @@ private:
    */
   void
   compute_level_set_from_phase_indicator(const GlobalVectorType &solution,
-                                        GlobalVectorType &level_set_solution);
+                                         GlobalVectorType &level_set_solution);
 
   /**
    * @brief Compute the phase indicator field from level-set field using a

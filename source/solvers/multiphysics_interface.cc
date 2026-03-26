@@ -264,7 +264,8 @@ MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
     nsparam.multiphysics.cls_parameters.surface_tension_force.enable;
   bool fluid_dynamics_enabled = nsparam.multiphysics.fluid_dynamics;
   bool interface_sharpening_enabled =
-    nsparam.multiphysics.cls_parameters.reinitialization_method.sharpening.enable;
+    nsparam.multiphysics.cls_parameters.reinitialization_method.sharpening
+      .enable;
   bool CLS_enabled           = nsparam.multiphysics.CLS;
   bool cahn_hilliard_enabled = nsparam.multiphysics.cahn_hilliard;
 

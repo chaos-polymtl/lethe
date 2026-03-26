@@ -105,15 +105,15 @@ public:
 
     // By default, the assembly of variables belonging to auxiliary physics is
     // disabled.
-    gather_cls                               = false;
+    gather_cls                                = false;
     gather_projected_phase_indicator_gradient = false;
-    gather_curvature                         = false;
-    gather_void_fraction                     = false;
-    gather_particles_information             = false;
-    gather_temperature                       = false;
-    gather_cahn_hilliard                     = false;
-    gather_mortar                            = false;
-    gather_particle_field_project            = false;
+    gather_curvature                          = false;
+    gather_void_fraction                      = false;
+    gather_particles_information              = false;
+    gather_temperature                        = false;
+    gather_cahn_hilliard                      = false;
+    gather_mortar                             = false;
+    gather_particle_field_project             = false;
     gather_hessian = properties_manager.is_non_newtonian();
   }
 
@@ -146,15 +146,15 @@ public:
 
     // By default, the assembly of variables belonging to auxiliary physics is
     // disabled.
-    gather_cls                               = false;
+    gather_cls                                = false;
     gather_projected_phase_indicator_gradient = false;
-    gather_curvature                         = false;
-    gather_void_fraction                     = false;
-    gather_particles_information             = false;
-    gather_temperature                       = false;
-    gather_cahn_hilliard                     = false;
-    gather_mortar                            = false;
-    gather_particle_field_project            = false;
+    gather_curvature                          = false;
+    gather_void_fraction                      = false;
+    gather_particles_information              = false;
+    gather_temperature                        = false;
+    gather_cahn_hilliard                      = false;
+    gather_mortar                             = false;
+    gather_particle_field_project             = false;
     gather_hessian = properties_manager.is_non_newtonian();
 
     if (sd.gather_cls)

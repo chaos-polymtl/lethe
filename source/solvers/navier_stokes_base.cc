@@ -2592,8 +2592,8 @@ NavierStokesBase<dim, VectorType, DofsType>::
     this->multiphysics->get_solution(PhysicsID::heat_transfer);
   std::vector<double> local_temperature_values(this->cell_quadrature->size());
 
-  // Loop over structs containing fluid id, temperature and phase indicator range
-  // information, and flag containers for DOFs.
+  // Loop over structs containing fluid id, temperature and phase indicator
+  // range information, and flag containers for DOFs.
   for (StasisConstraintWithTemperature &stasis_constraint_struct :
        this->stasis_constraint_structs)
     {

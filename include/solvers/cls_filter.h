@@ -33,8 +33,8 @@ public:
   /**
    * @brief Compute the value of the filtered phase indicator.
    *
-   * @param[in] unfiltered_phase Value of the phase indicator before applying the
-   * filter.
+   * @param[in] unfiltered_phase Value of the phase indicator before applying
+   * the filter.
    *
    * @return Value of the computed phase indicator after applying the filter.
    */
@@ -64,8 +64,8 @@ public:
    * Here, the filtered phase indicator value corresponds to the unfiltered one
    * (@p unfiltered_phase).
    *
-   * @param[in] unfiltered_phase Value of the phase indicator before applying the
-   * filter.
+   * @param[in] unfiltered_phase Value of the phase indicator before applying
+   * the filter.
    *
    * @return Value of @p unfiltered_phase.
    */
@@ -106,8 +106,8 @@ public:
   /**
    * @brief Computes the value of the filtered phase indicator.
    *
-   * @param[in] unfiltered_phase Value of the phase indicator before applying the
-   * filter.
+   * @param[in] unfiltered_phase Value of the phase indicator before applying
+   * the filter.
    *
    * @return Value of the computed phase indicator after applying the filter.
    */

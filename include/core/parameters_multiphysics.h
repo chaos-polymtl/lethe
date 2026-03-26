@@ -275,7 +275,8 @@ namespace Parameters
     bool output_signed_distance;
     /// Maximum reinitialization distance value
     double max_reinitialization_distance;
-    /// Transformation type transforming the signed distance to a phase indicator
+    /// Transformation type transforming the signed distance to a phase
+    /// indicator
     RedistanciationTransformationType transformation_type;
     /// Interface thickness for the tanh transformation
     double tanh_thickness;
@@ -350,8 +351,8 @@ namespace Parameters
    */
   struct CLS
   {
-    Parameters::CLS_SurfaceTensionForce  surface_tension_force;
-    Parameters::CLS_PhaseFilter          phase_filter;
+    Parameters::CLS_SurfaceTensionForce    surface_tension_force;
+    Parameters::CLS_PhaseFilter            phase_filter;
     Parameters::CLS_ReinitializationMethod reinitialization_method;
 
     Parameters::FluidIndicator viscous_dissipative_fluid;

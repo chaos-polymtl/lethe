@@ -714,7 +714,8 @@ namespace Parameters
 
       // Resize vectors
       this->fluid_ids.resize(max_number_of_constraints);
-      this->filtered_phase_indicator_tolerance.resize(max_number_of_constraints);
+      this->filtered_phase_indicator_tolerance.resize(
+        max_number_of_constraints);
       this->temperature_min_values.resize(max_number_of_constraints);
       this->temperature_max_values.resize(max_number_of_constraints);
 

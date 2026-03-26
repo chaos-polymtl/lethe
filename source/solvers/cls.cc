@@ -153,12 +153,13 @@ ConservativeLevelSet<dim>::ConservativeLevelSet(
         InterfaceTools::SignedDistanceSolver<dim, GlobalVectorType>>(
         triangulation,
         fe,
-        simulation_parameters.multiphysics.cls_parameters.reinitialization_method
-          .geometric_interface_reinitialization.max_reinitialization_distance,
+        simulation_parameters.multiphysics.cls_parameters
+          .reinitialization_method.geometric_interface_reinitialization
+          .max_reinitialization_distance,
         0.5,
         -1.0,
-        simulation_parameters.multiphysics.cls_parameters.reinitialization_method
-          .verbosity);
+        simulation_parameters.multiphysics.cls_parameters
+          .reinitialization_method.verbosity);
       this->signed_distance_transformation =
         SignedDistanceTransformationBase::model_cast(
           simulation_parameters.multiphysics.cls_parameters
@@ -745,8 +746,8 @@ ConservativeLevelSet<dim>::gather_output_hook()
 
   if ((cls_parameters.surface_tension_force.enable &&
        cls_parameters.surface_tension_force.output_cls_auxiliary_fields) ||
-      cls_parameters.reinitialization_method.pde_based_interface_reinitialization
-        .enable)
+      cls_parameters.reinitialization_method
+        .pde_based_interface_reinitialization.enable)
     {
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
         projected_phase_indicator_gradient_component_interpretation(
@@ -1865,8 +1866,8 @@ ConservativeLevelSet<dim>::modify_solution()
   if (simulation_parameters.multiphysics.cls_parameters.reinitialization_method
         .pde_based_interface_reinitialization.enable &&
       (simulation_control->get_step_number() %
-         simulation_parameters.multiphysics.cls_parameters.reinitialization_method
-           .frequency ==
+         simulation_parameters.multiphysics.cls_parameters
+           .reinitialization_method.frequency ==
        0))
     reinitialize_interface_with_pde_based_method();
 
@@ -1874,8 +1875,8 @@ ConservativeLevelSet<dim>::modify_solution()
   if (simulation_parameters.multiphysics.cls_parameters.reinitialization_method
         .geometric_interface_reinitialization.enable &&
       (simulation_control->get_step_number() %
-         simulation_parameters.multiphysics.cls_parameters.reinitialization_method
-           .frequency ==
+         simulation_parameters.multiphysics.cls_parameters
+           .reinitialization_method.frequency ==
        0))
     reinitialize_interface_with_geometric_method();
 
@@ -2144,10 +2145,10 @@ ConservativeLevelSet<dim>::assemble_projection_phase_indicator(
 {
   // Get fe values of CLS phase indicator
   FEValues<dim> fe_values_phase_indicator(*this->mapping,
-                                         *this->fe,
-                                         *this->cell_quadrature,
-                                         update_values | update_JxW_values |
-                                           update_gradients);
+                                          *this->fe,
+                                          *this->cell_quadrature,
+                                          update_values | update_JxW_values |
+                                            update_gradients);
 
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
@@ -2581,22 +2582,23 @@ ConservativeLevelSet<dim>::setup_dofs()
   // system, given via the variables complete_system_matrix_phase_indicator and
   // complete_system_rhs_phase_indicator
   system_matrix_phase_indicator.reinit(this->locally_owned_dofs,
-                                      this->locally_owned_dofs,
-                                      dsp,
-                                      mpi_communicator);
+                                       this->locally_owned_dofs,
+                                       dsp,
+                                       mpi_communicator);
 
   complete_system_matrix_phase_indicator.reinit(this->locally_owned_dofs,
-                                               this->locally_owned_dofs,
-                                               dsp,
-                                               mpi_communicator);
+                                                this->locally_owned_dofs,
+                                                dsp,
+                                                mpi_communicator);
 
   complete_system_rhs_phase_indicator.reinit(this->locally_owned_dofs,
-                                            mpi_communicator);
+                                             mpi_communicator);
 
   // In update_solution_and_constraints (which limits the phase indicator
   // between 0 and 1) nodal_phase_indicator_owned copies the solution, then
   // limits it, and finally updates (rewrites) the solution.
-  nodal_phase_indicator_owned.reinit(this->locally_owned_dofs, mpi_communicator);
+  nodal_phase_indicator_owned.reinit(this->locally_owned_dofs,
+                                     mpi_communicator);
 
   // Right hand side of the interface sharpening problem (used in
   // assemble_L2_projection_interface_sharpening).
@@ -2626,9 +2628,9 @@ ConservativeLevelSet<dim>::setup_dofs()
 
 
   mass_matrix_phase_indicator.reinit(this->locally_owned_dofs,
-                                    this->locally_owned_dofs,
-                                    dsp,
-                                    mpi_communicator);
+                                     this->locally_owned_dofs,
+                                     dsp,
+                                     mpi_communicator);
 
   assemble_mass_matrix(mass_matrix_phase_indicator);
 }
@@ -2773,8 +2775,8 @@ ConservativeLevelSet<dim>::set_initial_conditions()
       this->mass_first_iteration = this->mass_monitored;
     }
 
-  // Solve initial phase indicator gradient and curvature projections if solution
-  // outputs are requested
+  // Solve initial phase indicator gradient and curvature projections if
+  // solution outputs are requested
   if ((simulation_parameters.multiphysics.cls_parameters.surface_tension_force
          .enable &&
        simulation_parameters.multiphysics.cls_parameters.surface_tension_force
@@ -2935,8 +2937,8 @@ ConservativeLevelSet<dim>::update_solution_and_constraints(
   nodal_phase_indicator_owned = solution;
 
   complete_system_matrix_phase_indicator.residual(lambda,
-                                                 nodal_phase_indicator_owned,
-                                                 system_rhs_phase_indicator);
+                                                  nodal_phase_indicator_owned,
+                                                  system_rhs_phase_indicator);
 
   this->bounding_constraints.clear();
 
@@ -2973,7 +2975,7 @@ ConservativeLevelSet<dim>::update_solution_and_constraints(
                   else if (lambda(dof_index) +
                              penalty_parameter *
                                mass_matrix_phase_indicator(dof_index,
-                                                          dof_index) *
+                                                           dof_index) *
                                (solution_value - this->phase_lower_bound) <
                            0)
                     {
@@ -3372,7 +3374,7 @@ ConservativeLevelSet<dim>::reinitialize_interface_with_geometric_method()
       previous_level_set = previous_level_set_owned;
 
       compute_phase_indicator_from_level_set(previous_level_set,
-                                            (*this->previous_solutions)[0]);
+                                             (*this->previous_solutions)[0]);
     }
 
   if (simulation_parameters.multiphysics.cls_parameters.reinitialization_method
@@ -3397,7 +3399,7 @@ ConservativeLevelSet<dim>::reinitialize_interface_with_geometric_method()
   this->level_set = level_set_owned;
 
   compute_phase_indicator_from_level_set(this->level_set,
-                                        *this->present_solution);
+                                         *this->present_solution);
 }
 
 
