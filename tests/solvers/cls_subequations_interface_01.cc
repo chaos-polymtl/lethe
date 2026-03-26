@@ -115,7 +115,7 @@ test()
   }
 
   // Enable algebraic interface reinitialization
-  solver_parameters.multiphysics.cls_parameters.regularization_method
+  solver_parameters.multiphysics.cls_parameters.reinitialization_method
     .algebraic_interface_reinitialization.enable = true;
   {
     subequations_interface.initialize_subequations(solver_parameters,

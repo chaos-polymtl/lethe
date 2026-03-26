@@ -189,7 +189,7 @@ CLSAlgebraicInterfaceReinitialization<dim>::set_initial_conditions()
 
   // Initial condition
   if (this->simulation_parameters.multiphysics.cls_parameters
-        .regularization_method.algebraic_interface_reinitialization
+        .reinitialization_method.algebraic_interface_reinitialization
         .output_reinitialization_steps)
     {
       this->pvdhandler.times_and_names.clear();
@@ -673,7 +673,7 @@ CLSAlgebraicInterfaceReinitialization<dim>::solve()
 
   // For debugging purposes
   if (this->simulation_parameters.multiphysics.cls_parameters
-        .regularization_method.algebraic_interface_reinitialization
+        .reinitialization_method.algebraic_interface_reinitialization
         .output_reinitialization_steps)
     write_output_results(step);
 
@@ -698,7 +698,7 @@ CLSAlgebraicInterfaceReinitialization<dim>::solve()
 
       // For debugging purposes
       if (this->simulation_parameters.multiphysics.cls_parameters
-            .regularization_method.algebraic_interface_reinitialization
+            .reinitialization_method.algebraic_interface_reinitialization
             .output_reinitialization_steps)
         write_output_results(step);
 

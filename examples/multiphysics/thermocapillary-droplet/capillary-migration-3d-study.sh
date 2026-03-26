@@ -169,10 +169,10 @@ do
     IFS=',' read -r -a case_parameters <<< "$line"
 
     case_name=${case_parameters[1]}
-    regularization_type=${case_parameters[2]}
-    regularization_frequency=${case_parameters[3]}
+    reinitialization_type=${case_parameters[2]}
+    reinitialization_frequency=${case_parameters[3]}
     epsilon=${case_parameters[4]}
-    regularization_distance=${case_parameters[5]}
+    reinitialization_distance=${case_parameters[5]}
     tanh_thickness=${case_parameters[6]}
     tanh_thickness="${tanh_thickness//[$'\t\r\n ']/}"
 
@@ -194,20 +194,20 @@ do
   echo ""
 
   echo " Parameter values:"
-  echo "  REGULARIZATION_TYPE:      $regularization_type"
-  echo "  REGULARIZATION_FREQUENCY: $regularization_frequency"
+  echo "  REINITIALIZATION_TYPE:      $reinitialization_type"
+  echo "  REINITIALIZATION_FREQUENCY: $reinitialization_frequency"
   echo "  EPSILON:                  $epsilon"
-  echo "  REGULARIZATION_DISTANCE:  $regularization_distance"
+  echo "  REINITIALIZATION_DISTANCE:  $reinitialization_distance"
   echo "  TANH_THICKNESS:           $tanh_thickness"
   echo ""
 
   # Create parameter file for the case
   case_parameter_file=$(echo $case_name".prm")
   sed "s/CASE_NAME/$case_name/g" $template_parameter_file > "$case_name/$case_parameter_file"
-  sed -i "s/REGULARIZATION_TYPE/$regularization_type/g" "$case_name/$case_parameter_file"
-  sed -i "s/REGULARIZATION_FREQUENCY/$regularization_frequency/g" "$case_name/$case_parameter_file"
+  sed -i "s/REINITIALIZATION_TYPE/$reinitialization_type/g" "$case_name/$case_parameter_file"
+  sed -i "s/REINITIALIZATION_FREQUENCY/$reinitialization_frequency/g" "$case_name/$case_parameter_file"
   sed -i "s/EPSILON/$epsilon/g" "$case_name/$case_parameter_file"
-  sed -i "s/REGULARIZATION_DISTANCE/$regularization_distance/g" "$case_name/$case_parameter_file"
+  sed -i "s/REINITIALIZATION_DISTANCE/$reinitialization_distance/g" "$case_name/$case_parameter_file"
   sed -i "s/TANH_THICKNESS/$tanh_thickness/g" "$case_name/$case_parameter_file"
 
 

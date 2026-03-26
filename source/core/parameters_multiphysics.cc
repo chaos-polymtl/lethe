@@ -22,7 +22,7 @@ DeclException1(
   << " sharpening threshold between 0.0 and 0.5. See documentation for further details");
 
 DeclException1(
-  RegularizationMethodFrequencyError,
+  ReinitializationMethodFrequencyError,
   int,
   << "Reinitialization method frequency : " << arg1
   << " is equal or smaller than 0." << std::endl
@@ -117,7 +117,7 @@ Parameters::CLS::declare_parameters(ParameterHandler &prm) const
 {
   prm.enter_subsection("CLS");
   {
-    regularization_method.declare_parameters(prm);
+    reinitialization_method.declare_parameters(prm);
     surface_tension_force.declare_parameters(prm);
     phase_filter.declare_parameters(prm);
 
@@ -149,7 +149,7 @@ Parameters::CLS::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("CLS");
   {
-    regularization_method.parse_parameters(prm);
+    reinitialization_method.parse_parameters(prm);
     surface_tension_force.parse_parameters(prm);
     phase_filter.parse_parameters(prm);
 
@@ -173,7 +173,7 @@ Parameters::CLS::parse_parameters(ParameterHandler &prm)
 }
 
 void
-Parameters::CLS_RegularizationMethod::declare_parameters(
+Parameters::CLS_ReinitializationMethod::declare_parameters(
   ParameterHandler &prm) const
 {
   prm.enter_subsection("interface reinitialization method");
@@ -208,30 +208,30 @@ Parameters::CLS_RegularizationMethod::declare_parameters(
 }
 
 void
-Parameters::CLS_RegularizationMethod::parse_parameters(ParameterHandler &prm)
+Parameters::CLS_ReinitializationMethod::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("interface reinitialization method");
   {
     const std::string t = prm.get("type");
     if (t == "none")
-      this->regularization_method_type =
-        Parameters::RegularizationMethodType::none;
+      this->reinitialization_method_type =
+        Parameters::ReinitializationMethodType::none;
     else if (t == "projection-based interface sharpening")
       {
-        regularization_method_type =
-          Parameters::RegularizationMethodType::sharpening;
+        reinitialization_method_type =
+          Parameters::ReinitializationMethodType::sharpening;
         sharpening.enable = true;
       }
     else if (t == "pde-based interface reinitialization")
       {
-        this->regularization_method_type =
-          Parameters::RegularizationMethodType::algebraic;
+        this->reinitialization_method_type =
+          Parameters::ReinitializationMethodType::algebraic;
         algebraic_interface_reinitialization.enable = true;
       }
     else if (t == "geometric interface reinitialization")
       {
-        this->regularization_method_type =
-          Parameters::RegularizationMethodType::geometric;
+        this->reinitialization_method_type =
+          Parameters::ReinitializationMethodType::geometric;
         geometric_interface_reinitialization.enable = true;
       }
     else
@@ -240,7 +240,7 @@ Parameters::CLS_RegularizationMethod::parse_parameters(ParameterHandler &prm)
 
     this->frequency = prm.get_integer("frequency");
     Assert(this->frequency > 0,
-           RegularizationMethodFrequencyError(this->frequency));
+           ReinitializationMethodFrequencyError(this->frequency));
 
     const std::string op2 = prm.get("verbosity");
     if (op2 == "quiet")

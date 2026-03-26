@@ -19,13 +19,13 @@ using namespace dealii;
 namespace Parameters
 {
   /**
-   * @brief Different interface regularization method types:
+   * @brief Different interface reinitialization method types:
    *  - none
    *  - sharpening: projection-based interface sharpening
    *  - algebraic: PDE-based reinitialization
    *  - geometric: geometric redistanciation
    */
-  enum class RegularizationMethodType : std::int8_t
+  enum class ReinitializationMethodType : std::int8_t
   {
     none,
     sharpening,
@@ -298,17 +298,17 @@ namespace Parameters
   };
 
   /**
-   * @brief Parameters for interface regularization methods
+   * @brief Parameters for interface reinitialization methods
    * used within the CLS solver. It stores the parameters for the three
    * available methods (projection-, algebraic-, and geometric based
-   * regularization).
+   * reinitialization).
    */
-  struct CLS_RegularizationMethod
+  struct CLS_ReinitializationMethod
   {
-    /// Regularization method type
-    Parameters::RegularizationMethodType regularization_method_type;
+    /// Reinitialization method type
+    Parameters::ReinitializationMethodType reinitialization_method_type;
 
-    /// Regularization frequency at every \f$x\f$ time steps the CLS phase
+    /// Reinitialization frequency at every \f$x\f$ time steps the CLS phase
     /// fraction field will be regularized
     int frequency;
 
@@ -352,7 +352,7 @@ namespace Parameters
   {
     Parameters::CLS_SurfaceTensionForce  surface_tension_force;
     Parameters::CLS_PhaseFilter          phase_filter;
-    Parameters::CLS_RegularizationMethod regularization_method;
+    Parameters::CLS_ReinitializationMethod reinitialization_method;
 
     Parameters::FluidIndicator viscous_dissipative_fluid;
 

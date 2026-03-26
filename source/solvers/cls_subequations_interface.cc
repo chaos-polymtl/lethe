@@ -21,7 +21,7 @@ CLSSubequationsInterface<dim>::initialize_subequations(
   // Activate and add relevant subequations
   if ((p_simulation_parameters.multiphysics.cls_parameters.surface_tension_force
          .enable) ||
-      (p_simulation_parameters.multiphysics.cls_parameters.regularization_method
+      (p_simulation_parameters.multiphysics.cls_parameters.reinitialization_method
          .algebraic_interface_reinitialization.enable))
     {
       // Phase gradient projection
@@ -40,7 +40,7 @@ CLSSubequationsInterface<dim>::initialize_subequations(
                                                       *this);
 
       if (p_simulation_parameters.multiphysics.cls_parameters
-            .regularization_method.algebraic_interface_reinitialization.enable)
+            .reinitialization_method.algebraic_interface_reinitialization.enable)
         {
           // Algebraic interface reinitialization
           this->active_subequations.push_back(

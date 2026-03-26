@@ -45,11 +45,11 @@ DeclException1(
   << " is defined in the triangulation, but not as a boundary condition for the CLS physics. Lethe does not assign a default boundary condition to boundary ids. Every boundary id defined within the triangulation must have a corresponding boundary condition defined in the input file.");
 
 DeclExceptionMsg(
-  UnsupportedRegularization,
+  UnsupportedReinitialization,
   "The CLS physics has been set to use DG and the latter implementation currently does not support any interface reinitialization mechanism.");
 
 DeclExceptionMsg(
-  UnsupportedRegularizationWithSimplex,
+  UnsupportedReinitializationWithSimplex,
   "The CLS physics has been set to use simplex and the latter implementation currently does not support the geometric interface reinitialization mechanism.");
 
 DeclExceptionMsg(

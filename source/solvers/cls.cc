@@ -35,7 +35,7 @@ ConservativeLevelSet<dim>::ConservativeLevelSet(
   , simulation_control(std::move(p_simulation_control))
   , dof_handler(std::make_shared<DoFHandler<dim>>(*triangulation))
   , sharpening_threshold(simulation_parameters.multiphysics.cls_parameters
-                           .regularization_method.sharpening.threshold)
+                           .reinitialization_method.sharpening.threshold)
 {
   this->pcout << std::setprecision(simulation_control->get_log_precision())
               << std::scientific;
@@ -48,17 +48,17 @@ ConservativeLevelSet<dim>::ConservativeLevelSet(
 
   AssertThrow(((simulation_parameters.fem_parameters.CLS_uses_dg &&
                 simulation_parameters.multiphysics.cls_parameters
-                    .regularization_method.regularization_method_type ==
-                  Parameters::RegularizationMethodType::none) ||
+                    .reinitialization_method.reinitialization_method_type ==
+                  Parameters::ReinitializationMethodType::none) ||
                !simulation_parameters.fem_parameters.CLS_uses_dg),
-              UnsupportedRegularization());
+              UnsupportedReinitialization());
 
   AssertThrow(((simulation_parameters.mesh.simplex &&
                 simulation_parameters.multiphysics.cls_parameters
-                    .regularization_method.regularization_method_type !=
-                  Parameters::RegularizationMethodType::geometric) ||
+                    .reinitialization_method.reinitialization_method_type !=
+                  Parameters::ReinitializationMethodType::geometric) ||
                !simulation_parameters.mesh.simplex),
-              UnsupportedRegularizationWithSimplex());
+              UnsupportedReinitializationWithSimplex());
 
   if (simulation_parameters.fem_parameters.CLS_uses_dg &&
       this->simulation_parameters.post_processing.calculate_mass_conservation)
@@ -120,7 +120,7 @@ ConservativeLevelSet<dim>::ConservativeLevelSet(
   filtered_solution = std::make_shared<GlobalVectorType>();
 
   // Check the value of interface sharpness
-  if (simulation_parameters.multiphysics.cls_parameters.regularization_method
+  if (simulation_parameters.multiphysics.cls_parameters.reinitialization_method
         .sharpening.interface_sharpness < 1.0)
     this->pcout
       << "Warning: interface sharpness values smaller than 1 smooth the interface instead of sharpening it."
@@ -137,7 +137,7 @@ ConservativeLevelSet<dim>::ConservativeLevelSet(
                                                     this->simulation_control);
 
 
-  if (simulation_parameters.multiphysics.cls_parameters.regularization_method
+  if (simulation_parameters.multiphysics.cls_parameters.reinitialization_method
         .geometric_interface_reinitialization.enable ||
       simulation_parameters.initial_condition
           ->cls_initial_condition_smoothing ==
@@ -153,16 +153,16 @@ ConservativeLevelSet<dim>::ConservativeLevelSet(
         InterfaceTools::SignedDistanceSolver<dim, GlobalVectorType>>(
         triangulation,
         fe,
-        simulation_parameters.multiphysics.cls_parameters.regularization_method
+        simulation_parameters.multiphysics.cls_parameters.reinitialization_method
           .geometric_interface_reinitialization.max_reinitialization_distance,
         0.5,
         -1.0,
-        simulation_parameters.multiphysics.cls_parameters.regularization_method
+        simulation_parameters.multiphysics.cls_parameters.reinitialization_method
           .verbosity);
       this->signed_distance_transformation =
         SignedDistanceTransformationBase::model_cast(
           simulation_parameters.multiphysics.cls_parameters
-            .regularization_method.geometric_interface_reinitialization);
+            .reinitialization_method.geometric_interface_reinitialization);
     }
 }
 
@@ -745,7 +745,7 @@ ConservativeLevelSet<dim>::gather_output_hook()
 
   if ((cls_parameters.surface_tension_force.enable &&
        cls_parameters.surface_tension_force.output_cls_auxiliary_fields) ||
-      cls_parameters.regularization_method.algebraic_interface_reinitialization
+      cls_parameters.reinitialization_method.algebraic_interface_reinitialization
         .enable)
     {
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
@@ -782,12 +782,12 @@ ConservativeLevelSet<dim>::gather_output_hook()
         }
     }
 
-  if (simulation_parameters.multiphysics.cls_parameters.regularization_method
+  if (simulation_parameters.multiphysics.cls_parameters.reinitialization_method
         .geometric_interface_reinitialization.enable)
     {
       if ((simulation_control->get_step_number() %
              simulation_parameters.multiphysics.cls_parameters
-               .regularization_method.frequency !=
+               .reinitialization_method.frequency !=
            0) ||
           (simulation_control->get_step_number() == 0))
         {
@@ -1848,12 +1848,12 @@ ConservativeLevelSet<dim>::modify_solution()
     auto cls_parameters =
       this->simulation_parameters.multiphysics.cls_parameters;
     // Interface sharpening
-    if (cls_parameters.regularization_method.sharpening.enable)
+    if (cls_parameters.reinitialization_method.sharpening.enable)
       {
         // Interface sharpening is done at a constant frequency
         if (this->simulation_control->get_step_number() %
               this->simulation_parameters.multiphysics.cls_parameters
-                .regularization_method.frequency ==
+                .reinitialization_method.frequency ==
             0)
           {
             handle_interface_sharpening();
@@ -1862,19 +1862,19 @@ ConservativeLevelSet<dim>::modify_solution()
   }
 
   // Apply algebraic interface reinitialization
-  if (simulation_parameters.multiphysics.cls_parameters.regularization_method
+  if (simulation_parameters.multiphysics.cls_parameters.reinitialization_method
         .algebraic_interface_reinitialization.enable &&
       (simulation_control->get_step_number() %
-         simulation_parameters.multiphysics.cls_parameters.regularization_method
+         simulation_parameters.multiphysics.cls_parameters.reinitialization_method
            .frequency ==
        0))
     reinitialize_interface_with_algebraic_method();
 
   // Apply geometric interface reinitialization
-  if (simulation_parameters.multiphysics.cls_parameters.regularization_method
+  if (simulation_parameters.multiphysics.cls_parameters.reinitialization_method
         .geometric_interface_reinitialization.enable &&
       (simulation_control->get_step_number() %
-         simulation_parameters.multiphysics.cls_parameters.regularization_method
+         simulation_parameters.multiphysics.cls_parameters.reinitialization_method
            .frequency ==
        0))
     reinitialize_interface_with_geometric_method();
@@ -1900,17 +1900,17 @@ void
 ConservativeLevelSet<dim>::handle_interface_sharpening()
 {
   if (this->simulation_parameters.multiphysics.cls_parameters
-        .regularization_method.verbosity != Parameters::Verbosity::quiet)
+        .reinitialization_method.verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "Sharpening interface at step "
                   << this->simulation_control->get_step_number() << std::endl;
     }
   if (this->simulation_parameters.multiphysics.cls_parameters
-        .regularization_method.sharpening.type ==
+        .reinitialization_method.sharpening.type ==
       Parameters::SharpeningType::adaptive)
     {
       if (this->simulation_parameters.multiphysics.cls_parameters
-            .regularization_method.verbosity != Parameters::Verbosity::quiet)
+            .reinitialization_method.verbosity != Parameters::Verbosity::quiet)
         {
           this->pcout << "   Adapting the sharpening threshold" << std::endl;
         }
@@ -1918,7 +1918,7 @@ ConservativeLevelSet<dim>::handle_interface_sharpening()
       this->sharpening_threshold = find_sharpening_threshold();
 
       if (this->simulation_parameters.multiphysics.cls_parameters
-            .regularization_method.verbosity != Parameters::Verbosity::quiet)
+            .reinitialization_method.verbosity != Parameters::Verbosity::quiet)
         {
           this->pcout << "   ... final sharpening is : "
                       << this->sharpening_threshold << std::endl;
@@ -1929,7 +1929,7 @@ ConservativeLevelSet<dim>::handle_interface_sharpening()
       // Constant sharpening
       this->sharpening_threshold =
         this->simulation_parameters.multiphysics.cls_parameters
-          .regularization_method.sharpening.threshold;
+          .reinitialization_method.sharpening.threshold;
     }
 
   // Sharpen the interface of all solutions (present and previous)
@@ -1944,23 +1944,23 @@ ConservativeLevelSet<dim>::find_sharpening_threshold()
   // Sharpening threshold (st) search range extrema
   double st_min =
     0.5 - this->simulation_parameters.multiphysics.cls_parameters
-            .regularization_method.sharpening.threshold_max_deviation;
+            .reinitialization_method.sharpening.threshold_max_deviation;
   double st_max =
     0.5 + this->simulation_parameters.multiphysics.cls_parameters
-            .regularization_method.sharpening.threshold_max_deviation;
+            .reinitialization_method.sharpening.threshold_max_deviation;
 
   // Useful definitions for readability
   const double mass_deviation_tol =
     this->simulation_parameters.multiphysics.cls_parameters
-      .regularization_method.sharpening.tolerance *
+      .reinitialization_method.sharpening.tolerance *
     this->mass_first_iteration;
   const unsigned int max_iterations =
     this->simulation_parameters.multiphysics.cls_parameters
-      .regularization_method.sharpening.max_iterations;
+      .reinitialization_method.sharpening.max_iterations;
 
   const Parameters::FluidIndicator monitored_fluid =
     this->simulation_parameters.multiphysics.cls_parameters
-      .regularization_method.sharpening.monitored_fluid;
+      .reinitialization_method.sharpening.monitored_fluid;
 
   unsigned int nb_search_ite = 0;
   // Local variable for the tested sharpening_threshold values
@@ -1983,7 +1983,7 @@ ConservativeLevelSet<dim>::find_sharpening_threshold()
       mass_deviation_avg = calculate_mass_deviation(monitored_fluid, st_avg);
 
       if (this->simulation_parameters.multiphysics.cls_parameters
-            .regularization_method.verbosity != Parameters::Verbosity::quiet)
+            .reinitialization_method.verbosity != Parameters::Verbosity::quiet)
         {
           this->pcout
             << "   ... step " << nb_search_ite
@@ -2049,7 +2049,7 @@ ConservativeLevelSet<dim>::find_sharpening_threshold()
 
   // Output message that mass conservation condition is reached
   if (this->simulation_parameters.multiphysics.cls_parameters
-        .regularization_method.verbosity != Parameters::Verbosity::quiet)
+        .reinitialization_method.verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "   ... search algorithm took : " << nb_search_ite
                   << " step(s) " << std::endl
@@ -2483,7 +2483,7 @@ ConservativeLevelSet<dim>::read_checkpoint()
   deserialize_tables_vector(table_output_structs, mpi_communicator);
 
   if (this->simulation_parameters.multiphysics.cls_parameters
-        .regularization_method.sharpening.type ==
+        .reinitialization_method.sharpening.type ==
       Parameters::SharpeningType::adaptive)
     {
       // Calculate volume and mass
@@ -2491,7 +2491,7 @@ ConservativeLevelSet<dim>::read_checkpoint()
         *this->present_solution,
         multiphysics->get_solution(PhysicsID::fluid_dynamics),
         this->simulation_parameters.multiphysics.cls_parameters
-          .regularization_method.sharpening.monitored_fluid);
+          .reinitialization_method.sharpening.monitored_fluid);
 
       this->mass_first_iteration = this->mass_monitored;
     }
@@ -2618,7 +2618,7 @@ ConservativeLevelSet<dim>::setup_dofs()
   multiphysics->set_previous_solutions(PhysicsID::CLS,
                                        this->previous_solutions);
 
-  if (simulation_parameters.multiphysics.cls_parameters.regularization_method
+  if (simulation_parameters.multiphysics.cls_parameters.reinitialization_method
         .geometric_interface_reinitialization.enable)
     {
       signed_distance_solver->setup_dofs();
@@ -2760,7 +2760,7 @@ ConservativeLevelSet<dim>::set_initial_conditions()
   apply_phase_filter(*this->present_solution, *this->filtered_solution);
 
   if (this->simulation_parameters.multiphysics.cls_parameters
-        .regularization_method.sharpening.type ==
+        .reinitialization_method.sharpening.type ==
       Parameters::SharpeningType::adaptive)
     {
       // Calculate volume and mass
@@ -2768,7 +2768,7 @@ ConservativeLevelSet<dim>::set_initial_conditions()
         *this->present_solution,
         multiphysics->get_solution(PhysicsID::fluid_dynamics),
         this->simulation_parameters.multiphysics.cls_parameters
-          .regularization_method.sharpening.monitored_fluid);
+          .reinitialization_method.sharpening.monitored_fluid);
 
       this->mass_first_iteration = this->mass_monitored;
     }
@@ -2779,7 +2779,7 @@ ConservativeLevelSet<dim>::set_initial_conditions()
          .enable &&
        simulation_parameters.multiphysics.cls_parameters.surface_tension_force
          .output_cls_auxiliary_fields) ||
-      simulation_parameters.multiphysics.cls_parameters.regularization_method
+      simulation_parameters.multiphysics.cls_parameters.reinitialization_method
         .algebraic_interface_reinitialization.enable)
     {
       this->cls_subequations_interface->set_cls_solution_and_dof_handler(
@@ -2792,9 +2792,9 @@ ConservativeLevelSet<dim>::set_initial_conditions()
 
   // Reset algebraic interface reinitialization output directory;
   // if it does not exist, create it.
-  if (simulation_parameters.multiphysics.cls_parameters.regularization_method
+  if (simulation_parameters.multiphysics.cls_parameters.reinitialization_method
         .algebraic_interface_reinitialization.enable &&
-      simulation_parameters.multiphysics.cls_parameters.regularization_method
+      simulation_parameters.multiphysics.cls_parameters.reinitialization_method
         .algebraic_interface_reinitialization.output_reinitialization_steps)
     {
       auto mpi_communicator = this->triangulation->get_mpi_communicator();
@@ -3001,7 +3001,7 @@ ConservativeLevelSet<dim>::assemble_L2_projection_interface_sharpening(
 {
   const double interface_sharpness =
     this->simulation_parameters.multiphysics.cls_parameters
-      .regularization_method.sharpening.interface_sharpness;
+      .reinitialization_method.sharpening.interface_sharpness;
 
   FEValues<dim> fe_values_cls(*this->mapping,
                               *this->fe,
@@ -3095,7 +3095,7 @@ ConservativeLevelSet<dim>::solve_interface_sharpening(
   const double linear_solver_tolerance = 1e-15;
 
   if (this->simulation_parameters.multiphysics.cls_parameters
-        .regularization_method.verbosity ==
+        .reinitialization_method.verbosity ==
       Parameters::Verbosity::extra_verbose)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
@@ -3142,7 +3142,7 @@ ConservativeLevelSet<dim>::solve_interface_sharpening(
                *ilu_preconditioner);
 
   if (this->simulation_parameters.multiphysics.cls_parameters
-        .regularization_method.verbosity ==
+        .reinitialization_method.verbosity ==
       Parameters::Verbosity::extra_verbose)
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()
@@ -3234,7 +3234,7 @@ ConservativeLevelSet<dim>::reinitialize_interface_with_algebraic_method()
   // Reinitialize previous CLS solution
   // (this is only coherent with BDF1 and BDF2)
   if (this->simulation_parameters.multiphysics.cls_parameters
-        .regularization_method.frequency > 1)
+        .reinitialization_method.frequency > 1)
     {
       auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
@@ -3335,7 +3335,7 @@ ConservativeLevelSet<dim>::reinitialize_interface_with_geometric_method()
 {
   TimerOutput::Scope t(this->computing_timer, "Geometric reinitialization");
 
-  if (simulation_parameters.multiphysics.cls_parameters.regularization_method
+  if (simulation_parameters.multiphysics.cls_parameters.reinitialization_method
         .verbosity != Parameters::Verbosity::quiet)
     {
       announce_string(this->pcout, "CLS geometric interface reinitialization");
@@ -3351,7 +3351,7 @@ ConservativeLevelSet<dim>::reinitialize_interface_with_geometric_method()
                                       locally_relevant_dofs,
                                       mpi_communicator);
 
-  if (simulation_parameters.multiphysics.cls_parameters.regularization_method
+  if (simulation_parameters.multiphysics.cls_parameters.reinitialization_method
         .frequency != 1)
     {
       signed_distance_solver->set_level_set_from_background_mesh(
@@ -3375,7 +3375,7 @@ ConservativeLevelSet<dim>::reinitialize_interface_with_geometric_method()
                                             (*this->previous_solutions)[0]);
     }
 
-  if (simulation_parameters.multiphysics.cls_parameters.regularization_method
+  if (simulation_parameters.multiphysics.cls_parameters.reinitialization_method
         .verbosity != Parameters::Verbosity::quiet)
     this->pcout << "In redistanciation of the present solution ..."
                 << std::endl;

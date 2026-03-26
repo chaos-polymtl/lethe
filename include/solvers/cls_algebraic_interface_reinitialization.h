@@ -68,7 +68,7 @@ public:
     , triangulation(p_triangulation)
     , dof_handler(std::make_shared<DoFHandler<dim>>(*this->triangulation))
     , subequation_verbosity(p_simulation_parameters.multiphysics.cls_parameters
-                              .regularization_method.verbosity)
+                              .reinitialization_method.verbosity)
   {
     this->pcout << std::setprecision(simulation_control->get_log_precision())
                 << std::scientific;
@@ -245,11 +245,11 @@ private:
   {
     const double multiplier =
       this->simulation_parameters.multiphysics.cls_parameters
-        .regularization_method.algebraic_interface_reinitialization
+        .reinitialization_method.algebraic_interface_reinitialization
         .diffusivity_multiplier;
     const double power =
       this->simulation_parameters.multiphysics.cls_parameters
-        .regularization_method.algebraic_interface_reinitialization
+        .reinitialization_method.algebraic_interface_reinitialization
         .diffusivity_power;
     return multiplier * std::pow(min_cell_size, power);
   }
@@ -266,7 +266,7 @@ private:
     // Get artificial time-step factor
     const double dtau_factor =
       this->simulation_parameters.multiphysics.cls_parameters
-        .regularization_method.algebraic_interface_reinitialization.dtau_factor;
+        .reinitialization_method.algebraic_interface_reinitialization.dtau_factor;
 
     // Get the minimum cell size
     const double h_min =
@@ -339,7 +339,7 @@ private:
       {
         return (step_number <
                 this->simulation_parameters.multiphysics.cls_parameters
-                    .regularization_method.algebraic_interface_reinitialization
+                    .reinitialization_method.algebraic_interface_reinitialization
                     .max_steps_number +
                   1);
       }
@@ -348,7 +348,7 @@ private:
         // Get the stop criterion of the artificial time-stepping scheme
         double steady_state_criterion =
           this->simulation_parameters.multiphysics.cls_parameters
-            .regularization_method.algebraic_interface_reinitialization
+            .reinitialization_method.algebraic_interface_reinitialization
             .steady_state_criterion;
 
         // Evaluate the solution difference between the 2 last solutions
@@ -376,7 +376,7 @@ private:
         return ((stop_criterion > steady_state_criterion) &&
                 (step_number <
                  this->simulation_parameters.multiphysics.cls_parameters
-                     .regularization_method.algebraic_interface_reinitialization
+                     .reinitialization_method.algebraic_interface_reinitialization
                      .max_steps_number +
                    1));
       }

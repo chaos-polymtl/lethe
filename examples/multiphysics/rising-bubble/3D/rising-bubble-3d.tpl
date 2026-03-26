@@ -33,9 +33,9 @@ end
 #---------------------------------------------------
 
 subsection CLS
-  subsection interface regularization method
-    set type      = REGULARIZATION_TYPE
-    set frequency = REGULARIZATION_FREQUENCY
+  subsection interface reinitialization method
+    set type      = REINITIALIZATION_TYPE
+    set frequency = REINITIALIZATION_FREQUENCY
     set verbosity = extra verbose
     subsection projection-based interface sharpening
       set threshold           = 0.5
@@ -43,7 +43,7 @@ subsection CLS
     end
     subsection geometric interface reinitialization
       # TODO after reinitialization initialization fix
-      set max reinitialization distance = REGULARIZATION_DISTANCE
+      set max reinitialization distance = REINITIALIZATION_DISTANCE
       set tanh thickness                = TANH_THICKNESS
       set transformation type           = tanh
     end
