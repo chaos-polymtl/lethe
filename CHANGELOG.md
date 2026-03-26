@@ -3,11 +3,17 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/03/26
+
+### Fixed
+
+- MINOR The two prototype "matrix_based_advection_diffusion" and "matrix_based_non_linear_poisson" would not compile with the current deal.II master version.  Essentialy the changes to the Trilinos sparsity pattern prevented compilation. This has been fixed by adopting the process used in step-50. This has no consequence on the main Lethe software stack. [#1944](https://github.com/chaos-polymtl/lethe/pull/1951).
+
 ## [Master] - 2026/03/24
 
 ### Changed
 
-- MAJOR Following PRs [#1937](https://github.com/chaos-polymtl/lethe/pull/1937), [#1938](https://github.com/chaos-polymtl/lethe/pull/1938), and [#1944](https://github.com/chaos-polymtl/lethe/pull/1944), this PR renames all occurrences of "VOF" with "CLS" in the code. [#1944](https://github.com/chaos-polymtl/lethe/pull/1944).
+- MAJOR Following PRs [#1937](https://github.com/chaos-polymtl/lethe/pull/1937), [#1938](https://github.com/chaos-polymtl/lethe/pull/1938), and [#1944](https://github.com/chaos-polymtl/lethe/pull/1944), this PR renames all occurrences of "VOF" with "CLS" in the code. [#1950](https://github.com/chaos-polymtl/lethe/pull/1950).
 
 ## [Master] - 2026/03/19
 
