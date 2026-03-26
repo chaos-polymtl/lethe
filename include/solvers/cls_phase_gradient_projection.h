@@ -30,7 +30,7 @@ DeclException1(
        "before solving the subequation.");
 
 /**
- * @brief CLS phase fraction gradient L2 projection solver.
+ * @brief CLS phase indicator gradient L2 projection solver.
  *
  * @tparam dim Number of dimensions of the problem.
  */
@@ -39,7 +39,7 @@ class CLSPhaseGradientProjection : public CLSLinearSubequationsSolver<dim>
 {
 public:
   /**
-   * @brief Constructor for the L2 projection of the CLS phase fraction gradient
+   * @brief Constructor for the L2 projection of the CLS phase indicator gradient
    * (pfg).
    *
    * @param[in] p_simulation_parameters Simulation parameters.

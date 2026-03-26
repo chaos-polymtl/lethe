@@ -212,9 +212,9 @@ public:
   }
 
   /**
-   * @brief Get a reference to the phase fraction solution vector.
+   * @brief Get a reference to the phase indicator solution vector.
    *
-   * @return Reference to the phase fraction solution vector.
+   * @return Reference to the phase indicator solution vector.
    */
   const GlobalVectorType &
   get_cls_solution()

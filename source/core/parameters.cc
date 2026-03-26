@@ -714,7 +714,7 @@ namespace Parameters
 
       // Resize vectors
       this->fluid_ids.resize(max_number_of_constraints);
-      this->filtered_phase_fraction_tolerance.resize(max_number_of_constraints);
+      this->filtered_phase_indicator_tolerance.resize(max_number_of_constraints);
       this->temperature_min_values.resize(max_number_of_constraints);
       this->temperature_max_values.resize(max_number_of_constraints);
 
@@ -747,7 +747,7 @@ namespace Parameters
                       "conjunction with CLS simulations to select the cells "
                       "on which the constraint is applied.");
     prm.declare_alias("phase indicator tolerance",
-                      "phase fraction tolerance",
+                      "phase indicator tolerance",
                       true);
     prm.declare_entry("min temperature",
                       "-999",
@@ -781,7 +781,7 @@ namespace Parameters
 
       // Resize vectors
       this->fluid_ids.resize(number_of_constraints);
-      this->filtered_phase_fraction_tolerance.resize(number_of_constraints);
+      this->filtered_phase_indicator_tolerance.resize(number_of_constraints);
       this->temperature_min_values.resize(number_of_constraints);
       this->temperature_max_values.resize(number_of_constraints);
 
@@ -805,7 +805,7 @@ namespace Parameters
     const unsigned int              constraint_id)
   {
     this->fluid_ids[constraint_id] = prm.get_integer("fluid id");
-    this->filtered_phase_fraction_tolerance[constraint_id] =
+    this->filtered_phase_indicator_tolerance[constraint_id] =
       prm.get_double("phase indicator tolerance");
     this->temperature_min_values[constraint_id] =
       prm.get_double("min temperature");

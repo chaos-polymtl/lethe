@@ -414,7 +414,7 @@ public:
  * The weak form assembled is:
  * \f$ -\rho \mathbf{g} \beta (T - T_0) \f$
  *
- * where \f$ \rho \f$ is the phase-fraction-weighted density.
+ * where \f$ \rho \f$ is the phase-indicator-weighted density.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *

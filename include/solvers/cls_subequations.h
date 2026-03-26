@@ -9,7 +9,7 @@
  */
 enum class CLSSubequationsID : unsigned int
 {
-  /// CLS phase fraction gradient L2 projection
+  /// CLS phase indicator gradient L2 projection
   phase_gradient_projection = 0,
   /// CLS curvature L2 projection
   curvature_projection = 1,

@@ -70,9 +70,9 @@ namespace Parameters
   };
 
   /**
-   * @brief Different phase fraction filtering types:
-   * - none: no filter wil be applied on the calculated phase fraction
-   * - tanh: the tanh filter function will be applied to the phase fraction,
+   * @brief Different phase indicator filtering types:
+   * - none: no filter wil be applied on the calculated phase indicator
+   * - tanh: the tanh filter function will be applied to the phase indicator,
    * a \f$\beta\f$ parameter influencing the interface definition must be
    * defined
    */
@@ -178,7 +178,7 @@ namespace Parameters
   {
     bool enable;
 
-    double phase_fraction_gradient_diffusion_factor;
+    double phase_indicator_gradient_diffusion_factor;
     double curvature_diffusion_factor;
 
     bool output_cls_auxiliary_fields;
@@ -275,7 +275,7 @@ namespace Parameters
     bool output_signed_distance;
     /// Maximum reinitialization distance value
     double max_reinitialization_distance;
-    /// Transformation type transforming the signed distance to a phase fraction
+    /// Transformation type transforming the signed distance to a phase indicator
     RedistanciationTransformationType transformation_type;
     /// Interface thickness for the tanh transformation
     double tanh_thickness;

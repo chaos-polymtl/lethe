@@ -751,7 +751,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
         this->simulation_parameters.constrain_solid_domain
           .temperature_max_values[c_id],
         this->simulation_parameters.constrain_solid_domain
-          .filtered_phase_fraction_tolerance[c_id]);
+          .filtered_phase_indicator_tolerance[c_id]);
       this->stasis_constraint_structs.emplace_back(stasis_constraint_struct);
     }
 
@@ -2581,10 +2581,10 @@ NavierStokesBase<dim, VectorType, DofsType>::
     this->simulation_parameters.constrain_solid_domain
       .restriction_plane_normal_vector);
 
-  // Get filtered phase fraction solution
-  const auto filtered_phase_fraction_solution =
+  // Get filtered phase indicator solution
+  const auto filtered_phase_indicator_solution =
     this->multiphysics->get_filtered_solution(PhysicsID::CLS);
-  std::vector<double> local_filtered_phase_fraction_values(
+  std::vector<double> local_filtered_phase_indicator_values(
     this->cell_quadrature->size());
 
   // Get temperature solution
@@ -2592,7 +2592,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
     this->multiphysics->get_solution(PhysicsID::heat_transfer);
   std::vector<double> local_temperature_values(this->cell_quadrature->size());
 
-  // Loop over structs containing fluid id, temperature and phase fraction range
+  // Loop over structs containing fluid id, temperature and phase indicator range
   // information, and flag containers for DOFs.
   for (StasisConstraintWithTemperature &stasis_constraint_struct :
        this->stasis_constraint_structs)
@@ -2611,22 +2611,22 @@ NavierStokesBase<dim, VectorType, DofsType>::
                                               plane_normal_vector))
                 {
                   bool cell_is_in_right_fluid = true;
-                  get_cell_filtered_phase_fraction_values(
+                  get_cell_filtered_phase_indicator_values(
                     cell,
                     dof_handler_cls,
-                    filtered_phase_fraction_solution,
-                    local_filtered_phase_fraction_values);
+                    filtered_phase_indicator_solution,
+                    local_filtered_phase_indicator_values);
 
                   // Check if cell is only in the fluid of interest. As soon as
-                  // one filtered phase fraction value is outside the tolerated
+                  // one filtered phase indicator value is outside the tolerated
                   // range, the cell is perceived as being in the wrong fluid.
-                  for (const double &filtered_phase_fraction :
-                       local_filtered_phase_fraction_values)
+                  for (const double &filtered_phase_indicator :
+                       local_filtered_phase_indicator_values)
                     {
                       if (abs(stasis_constraint_struct.fluid_id -
-                              filtered_phase_fraction) >=
+                              filtered_phase_indicator) >=
                           stasis_constraint_struct
-                            .filtered_phase_fraction_tolerance)
+                            .filtered_phase_indicator_tolerance)
                         {
                           cell_is_in_right_fluid = false;
                           break;

@@ -147,7 +147,7 @@ ConservativeLevelSet<dim>::ConservativeLevelSet(
          \f$\phi\f = 0.5$. Hence, for the  SignedDistanceSolver, we set the
          iso-level to 0.5. We also define the inside part of the domain as
          \f$\phi>0.5\f$. Since the SignedDistanceSolver considers the inside
-         of the domain as \f$d<0\f$, we scale the phase fraction with a factor
+         of the domain as \f$d<0\f$, we scale the phase indicator with a factor
          of -1.*/
       this->signed_distance_solver = std::make_shared<
         InterfaceTools::SignedDistanceSolver<dim, GlobalVectorType>>(
@@ -721,7 +721,7 @@ ConservativeLevelSet<dim>::gather_output_hook()
     solution_component_interpretation(
       1, DataComponentInterpretation::component_is_scalar);
 
-  // Phase fraction
+  // Phase indicator
   solution_output_structs.emplace_back(
     std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
     *this->dof_handler,
@@ -729,7 +729,7 @@ ConservativeLevelSet<dim>::gather_output_hook()
     solution_names,
     solution_component_interpretation);
 
-  // Filter phase fraction
+  // Filter phase indicator
   std::vector<std::string> filtered_solution_names(1, "filtered_phase");
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     filtered_solution_component_interpretation(
@@ -749,14 +749,14 @@ ConservativeLevelSet<dim>::gather_output_hook()
         .enable)
     {
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
-        projected_phase_fraction_gradient_component_interpretation(
+        projected_phase_indicator_gradient_component_interpretation(
           dim, DataComponentInterpretation::component_is_scalar);
       for (int i = 0; i < dim; ++i)
-        projected_phase_fraction_gradient_component_interpretation[i] =
+        projected_phase_indicator_gradient_component_interpretation[i] =
           DataComponentInterpretation::component_is_part_of_vector;
 
       std::vector<std::string> phase_gradient_projection_name(
-        dim, "phase_fraction_gradient");
+        dim, "phase_indicator_gradient");
       solution_output_structs.emplace_back(
         std::in_place_type<OutputStructSolution<dim, GlobalVectorType>>,
         this->cls_subequations_interface->get_dof_handler(
@@ -764,7 +764,7 @@ ConservativeLevelSet<dim>::gather_output_hook()
         this->cls_subequations_interface->get_solution(
           CLSSubequationsID::phase_gradient_projection),
         phase_gradient_projection_name,
-        projected_phase_fraction_gradient_component_interpretation);
+        projected_phase_indicator_gradient_component_interpretation);
 
       if (cls_parameters.surface_tension_force.enable &&
           cls_parameters.surface_tension_force.output_cls_auxiliary_fields)
@@ -1879,10 +1879,10 @@ ConservativeLevelSet<dim>::modify_solution()
        0))
     reinitialize_interface_with_geometric_method();
 
-  // Apply filter to phase fraction values
+  // Apply filter to phase indicator values
   apply_phase_filter(*this->present_solution, *this->filtered_solution);
 
-  // Solve phase fraction gradient and curvature projections
+  // Solve phase indicator gradient and curvature projections
   if (simulation_parameters.multiphysics.cls_parameters.surface_tension_force
         .enable)
     {
@@ -2095,7 +2095,7 @@ ConservativeLevelSet<dim>::sharpen_interface(
   const double      sharpening_threshold,
   const bool        sharpen_previous_solutions)
 {
-  // Limit the phase fractions between 0 and 1
+  // Limit the phase indicators between 0 and 1
   update_solution_and_constraints(solution);
   if (sharpen_previous_solutions)
     {
@@ -2117,7 +2117,7 @@ ConservativeLevelSet<dim>::sharpen_interface(
         }
     }
 
-  // Re limit the phase fractions between 0 and 1 after interface
+  // Re limit the phase indicators between 0 and 1 after interface
   // sharpening
   update_solution_and_constraints(solution);
   if (sharpen_previous_solutions)
@@ -2130,20 +2130,20 @@ ConservativeLevelSet<dim>::sharpen_interface(
 
 template <int dim>
 void
-ConservativeLevelSet<dim>::smooth_phase_fraction(GlobalVectorType &solution)
+ConservativeLevelSet<dim>::smooth_phase_indicator(GlobalVectorType &solution)
 {
-  assemble_projection_phase_fraction(solution);
-  solve_projection_phase_fraction(solution);
+  assemble_projection_phase_indicator(solution);
+  solve_projection_phase_indicator(solution);
 }
 
 
 template <int dim>
 void
-ConservativeLevelSet<dim>::assemble_projection_phase_fraction(
+ConservativeLevelSet<dim>::assemble_projection_phase_indicator(
   GlobalVectorType &solution)
 {
-  // Get fe values of CLS phase fraction
-  FEValues<dim> fe_values_phase_fraction(*this->mapping,
+  // Get fe values of CLS phase indicator
+  FEValues<dim> fe_values_phase_indicator(*this->mapping,
                                          *this->fe,
                                          *this->cell_quadrature,
                                          update_values | update_JxW_values |
@@ -2152,23 +2152,23 @@ ConservativeLevelSet<dim>::assemble_projection_phase_fraction(
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
   const unsigned int n_q_points = this->cell_quadrature->size();
-  FullMatrix<double> local_matrix_phase_fraction(dofs_per_cell, dofs_per_cell);
-  Vector<double>     local_rhs_phase_fraction(dofs_per_cell);
+  FullMatrix<double> local_matrix_phase_indicator(dofs_per_cell, dofs_per_cell);
+  Vector<double>     local_rhs_phase_indicator(dofs_per_cell);
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
-  std::vector<double>         phi_phase_fraction(dofs_per_cell);
-  std::vector<Tensor<1, dim>> phi_phase_fraction_gradient(dofs_per_cell);
+  std::vector<double>         phi_phase_indicator(dofs_per_cell);
+  std::vector<Tensor<1, dim>> phi_phase_indicator_gradient(dofs_per_cell);
 
   std::vector<double> phase_values(n_q_points);
 
-  // Reinitialize system matrix and rhs for the projected phase fraction
-  system_rhs_phase_fraction    = 0;
-  system_matrix_phase_fraction = 0;
+  // Reinitialize system matrix and rhs for the projected phase indicator
+  system_rhs_phase_indicator    = 0;
+  system_matrix_phase_indicator = 0;
 
   double h;
   double cell_measure;
 
-  const double phase_fraction_diffusion_factor =
+  const double phase_indicator_diffusion_factor =
     this->simulation_parameters.initial_condition
       ->projection_step_diffusion_factor;
 
@@ -2176,24 +2176,24 @@ ConservativeLevelSet<dim>::assemble_projection_phase_fraction(
     {
       if (cell->is_locally_owned())
         {
-          fe_values_phase_fraction.reinit(cell);
+          fe_values_phase_indicator.reinit(cell);
 
           // Compute cell diameter
           cell_measure = compute_cell_measure_with_JxW(
-            fe_values_phase_fraction.get_JxW_values());
+            fe_values_phase_indicator.get_JxW_values());
           h = compute_cell_diameter<dim>(cell_measure, fe->degree);
 
-          local_matrix_phase_fraction = 0;
-          local_rhs_phase_fraction    = 0;
+          local_matrix_phase_indicator = 0;
+          local_rhs_phase_indicator    = 0;
 
-          // Get phase fraction values
-          fe_values_phase_fraction.get_function_values(solution, phase_values);
+          // Get phase indicator values
+          fe_values_phase_indicator.get_function_values(solution, phase_values);
 
           double color_function = 0.0;
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
               color_function +=
-                phase_values[q] * fe_values_phase_fraction.JxW(q);
+                phase_values[q] * fe_values_phase_indicator.JxW(q);
             }
 
           color_function /= cell_measure;
@@ -2202,10 +2202,10 @@ ConservativeLevelSet<dim>::assemble_projection_phase_fraction(
             {
               for (unsigned int k = 0; k < dofs_per_cell; ++k)
                 {
-                  phi_phase_fraction[k] =
-                    fe_values_phase_fraction.shape_value(k, q);
-                  phi_phase_fraction_gradient[k] =
-                    fe_values_phase_fraction.shape_grad(k, q);
+                  phi_phase_indicator[k] =
+                    fe_values_phase_indicator.shape_value(k, q);
+                  phi_phase_indicator_gradient[k] =
+                    fe_values_phase_indicator.shape_grad(k, q);
                 }
 
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
@@ -2213,44 +2213,44 @@ ConservativeLevelSet<dim>::assemble_projection_phase_fraction(
                   // Matrix assembly
                   for (unsigned int j = 0; j < dofs_per_cell; ++j)
                     {
-                      local_matrix_phase_fraction(i, j) +=
-                        (phi_phase_fraction[j] * phi_phase_fraction[i] +
-                         phase_fraction_diffusion_factor * h * h *
-                           scalar_product(phi_phase_fraction_gradient[i],
-                                          phi_phase_fraction_gradient[j])) *
-                        fe_values_phase_fraction.JxW(q);
+                      local_matrix_phase_indicator(i, j) +=
+                        (phi_phase_indicator[j] * phi_phase_indicator[i] +
+                         phase_indicator_diffusion_factor * h * h *
+                           scalar_product(phi_phase_indicator_gradient[i],
+                                          phi_phase_indicator_gradient[j])) *
+                        fe_values_phase_indicator.JxW(q);
                     }
 
                   // rhs
-                  local_rhs_phase_fraction(i) +=
-                    phi_phase_fraction[i] * color_function *
-                    fe_values_phase_fraction.JxW(q);
+                  local_rhs_phase_indicator(i) +=
+                    phi_phase_indicator[i] * color_function *
+                    fe_values_phase_indicator.JxW(q);
                 }
             }
 
           cell->get_dof_indices(local_dof_indices);
           this->nonzero_constraints.distribute_local_to_global(
-            local_matrix_phase_fraction,
-            local_rhs_phase_fraction,
+            local_matrix_phase_indicator,
+            local_rhs_phase_indicator,
             local_dof_indices,
-            system_matrix_phase_fraction,
-            system_rhs_phase_fraction);
+            system_matrix_phase_indicator,
+            system_rhs_phase_indicator);
         }
     }
-  system_matrix_phase_fraction.compress(VectorOperation::add);
-  system_rhs_phase_fraction.compress(VectorOperation::add);
+  system_matrix_phase_indicator.compress(VectorOperation::add);
+  system_rhs_phase_indicator.compress(VectorOperation::add);
 }
 
 
 template <int dim>
 void
-ConservativeLevelSet<dim>::solve_projection_phase_fraction(
+ConservativeLevelSet<dim>::solve_projection_phase_indicator(
   GlobalVectorType &solution)
 {
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-13;
 
-  GlobalVectorType completely_distributed_phase_fraction_solution(
+  GlobalVectorType completely_distributed_phase_indicator_solution(
     this->locally_owned_dofs, triangulation->get_mpi_communicator());
 
   SolverControl solver_control(
@@ -2276,11 +2276,11 @@ ConservativeLevelSet<dim>::solve_projection_phase_fraction(
 
   ilu_preconditioner = std::make_shared<TrilinosWrappers::PreconditionILU>();
 
-  ilu_preconditioner->initialize(system_matrix_phase_fraction,
+  ilu_preconditioner->initialize(system_matrix_phase_indicator,
                                  preconditionerOptions);
-  solver.solve(system_matrix_phase_fraction,
-               completely_distributed_phase_fraction_solution,
-               system_rhs_phase_fraction,
+  solver.solve(system_matrix_phase_indicator,
+               completely_distributed_phase_indicator_solution,
+               system_rhs_phase_indicator,
                *ilu_preconditioner);
 
   if (this->simulation_parameters.multiphysics.cls_parameters
@@ -2291,8 +2291,8 @@ ConservativeLevelSet<dim>::solve_projection_phase_fraction(
     }
 
   this->nonzero_constraints.distribute(
-    completely_distributed_phase_fraction_solution);
-  solution = completely_distributed_phase_fraction_solution;
+    completely_distributed_phase_indicator_solution);
+  solution = completely_distributed_phase_indicator_solution;
 }
 
 
@@ -2339,7 +2339,7 @@ ConservativeLevelSet<dim>::post_mesh_adaptation()
       (*this->previous_solutions)[i] = tmp_previous_solution;
     }
 
-  // Apply filter to phase fraction
+  // Apply filter to phase indicator
   apply_phase_filter(*this->present_solution, *this->filtered_solution);
 }
 
@@ -2473,7 +2473,7 @@ ConservativeLevelSet<dim>::read_checkpoint()
       (*this->previous_solutions)[i] = distributed_previous_solutions[i];
     }
 
-  // Apply filter to phase fraction
+  // Apply filter to phase indicator
   apply_phase_filter(*this->present_solution, *this->filtered_solution);
 
   // Deserialize all post-processing tables that are currently used with the CLS
@@ -2571,36 +2571,36 @@ ConservativeLevelSet<dim>::setup_dofs()
                                              mpi_communicator,
                                              this->locally_relevant_dofs);
 
-  // Initialization of phase fraction matrices for interface sharpening.
-  // system_matrix_phase_fraction is used in
+  // Initialization of phase indicator matrices for interface sharpening.
+  // system_matrix_phase_indicator is used in
   // assemble_L2_projection_interface_sharpening for assembling the system for
-  // sharpening the interface, while complete_system_matrix_phase_fraction is
-  // used in update_solution_and_constraints to limit the phase fraction
-  // values between 0 and 1. According to step-41, to limit the phase fractions
+  // sharpening the interface, while complete_system_matrix_phase_indicator is
+  // used in update_solution_and_constraints to limit the phase indicator
+  // values between 0 and 1. According to step-41, to limit the phase indicators
   // we compute the Lagrange multiplier as the residual of the original linear
-  // system, given via the variables complete_system_matrix_phase_fraction and
-  // complete_system_rhs_phase_fraction
-  system_matrix_phase_fraction.reinit(this->locally_owned_dofs,
+  // system, given via the variables complete_system_matrix_phase_indicator and
+  // complete_system_rhs_phase_indicator
+  system_matrix_phase_indicator.reinit(this->locally_owned_dofs,
                                       this->locally_owned_dofs,
                                       dsp,
                                       mpi_communicator);
 
-  complete_system_matrix_phase_fraction.reinit(this->locally_owned_dofs,
+  complete_system_matrix_phase_indicator.reinit(this->locally_owned_dofs,
                                                this->locally_owned_dofs,
                                                dsp,
                                                mpi_communicator);
 
-  complete_system_rhs_phase_fraction.reinit(this->locally_owned_dofs,
+  complete_system_rhs_phase_indicator.reinit(this->locally_owned_dofs,
                                             mpi_communicator);
 
-  // In update_solution_and_constraints (which limits the phase fraction
-  // between 0 and 1) nodal_phase_fraction_owned copies the solution, then
+  // In update_solution_and_constraints (which limits the phase indicator
+  // between 0 and 1) nodal_phase_indicator_owned copies the solution, then
   // limits it, and finally updates (rewrites) the solution.
-  nodal_phase_fraction_owned.reinit(this->locally_owned_dofs, mpi_communicator);
+  nodal_phase_indicator_owned.reinit(this->locally_owned_dofs, mpi_communicator);
 
   // Right hand side of the interface sharpening problem (used in
   // assemble_L2_projection_interface_sharpening).
-  system_rhs_phase_fraction.reinit(this->locally_owned_dofs, mpi_communicator);
+  system_rhs_phase_indicator.reinit(this->locally_owned_dofs, mpi_communicator);
 
   this->system_matrix.reinit(this->locally_owned_dofs,
                              this->locally_owned_dofs,
@@ -2625,12 +2625,12 @@ ConservativeLevelSet<dim>::setup_dofs()
     }
 
 
-  mass_matrix_phase_fraction.reinit(this->locally_owned_dofs,
+  mass_matrix_phase_indicator.reinit(this->locally_owned_dofs,
                                     this->locally_owned_dofs,
                                     dsp,
                                     mpi_communicator);
 
-  assemble_mass_matrix(mass_matrix_phase_fraction);
+  assemble_mass_matrix(mass_matrix_phase_indicator);
 }
 
 template <int dim>
@@ -2646,7 +2646,7 @@ ConservativeLevelSet<dim>::update_boundary_conditions()
     {
       if (type == BoundaryConditions::BoundaryType::cls_dirichlet)
         {
-          this->simulation_parameters.boundary_conditions_cls.phase_fraction
+          this->simulation_parameters.boundary_conditions_cls.phase_indicator
             .at(id)
             ->set_time(time);
         }
@@ -2715,7 +2715,7 @@ ConservativeLevelSet<dim>::define_non_zero_constraints()
               *this->dof_handler,
               id,
               *this->simulation_parameters.boundary_conditions_cls
-                 .phase_fraction.at(id),
+                 .phase_indicator.at(id),
               nonzero_constraints);
           }
         if (type == BoundaryConditions::BoundaryType::periodic)
@@ -2750,7 +2750,7 @@ ConservativeLevelSet<dim>::set_initial_conditions()
   if (simulation_parameters.initial_condition
         ->cls_initial_condition_smoothing ==
       Parameters::CLSInitialConditionType::diffusive)
-    smooth_phase_fraction(*this->present_solution);
+    smooth_phase_indicator(*this->present_solution);
 
   else if (simulation_parameters.initial_condition
              ->cls_initial_condition_smoothing ==
@@ -2773,7 +2773,7 @@ ConservativeLevelSet<dim>::set_initial_conditions()
       this->mass_first_iteration = this->mass_monitored;
     }
 
-  // Solve initial phase fraction gradient and curvature projections if solution
+  // Solve initial phase indicator gradient and curvature projections if solution
   // outputs are requested
   if ((simulation_parameters.multiphysics.cls_parameters.surface_tension_force
          .enable &&
@@ -2923,7 +2923,7 @@ void
 ConservativeLevelSet<dim>::update_solution_and_constraints(
   GlobalVectorType &solution)
 {
-  // This is a penalty parameter for limiting the phase fraction
+  // This is a penalty parameter for limiting the phase indicator
   // in the range of [0,1]. According to step 41, this parameter depends
   // on the problem itself and needs to be chosen large enough (for example,
   // there is no convergence using the penalty_parameter = 1)
@@ -2932,11 +2932,11 @@ ConservativeLevelSet<dim>::update_solution_and_constraints(
   GlobalVectorType lambda(this->locally_owned_dofs,
                           this->triangulation->get_mpi_communicator());
 
-  nodal_phase_fraction_owned = solution;
+  nodal_phase_indicator_owned = solution;
 
-  complete_system_matrix_phase_fraction.residual(lambda,
-                                                 nodal_phase_fraction_owned,
-                                                 system_rhs_phase_fraction);
+  complete_system_matrix_phase_indicator.residual(lambda,
+                                                 nodal_phase_indicator_owned,
+                                                 system_rhs_phase_indicator);
 
   this->bounding_constraints.clear();
 
@@ -2956,23 +2956,23 @@ ConservativeLevelSet<dim>::update_solution_and_constraints(
               if (this->locally_owned_dofs.is_element(dof_index))
                 {
                   const double solution_value =
-                    nodal_phase_fraction_owned(dof_index);
+                    nodal_phase_indicator_owned(dof_index);
                   if (lambda(dof_index) +
                         penalty_parameter *
-                          mass_matrix_phase_fraction(dof_index, dof_index) *
+                          mass_matrix_phase_indicator(dof_index, dof_index) *
                           (solution_value - this->phase_upper_bound) >
                       0)
                     {
                       this->bounding_constraints.add_line(dof_index);
                       this->bounding_constraints.set_inhomogeneity(
                         dof_index, this->phase_upper_bound);
-                      nodal_phase_fraction_owned(dof_index) =
+                      nodal_phase_indicator_owned(dof_index) =
                         this->phase_upper_bound;
                       lambda(dof_index) = 0;
                     }
                   else if (lambda(dof_index) +
                              penalty_parameter *
-                               mass_matrix_phase_fraction(dof_index,
+                               mass_matrix_phase_indicator(dof_index,
                                                           dof_index) *
                                (solution_value - this->phase_lower_bound) <
                            0)
@@ -2980,7 +2980,7 @@ ConservativeLevelSet<dim>::update_solution_and_constraints(
                       this->bounding_constraints.add_line(dof_index);
                       this->bounding_constraints.set_inhomogeneity(
                         dof_index, this->phase_lower_bound);
-                      nodal_phase_fraction_owned(dof_index) =
+                      nodal_phase_indicator_owned(dof_index) =
                         this->phase_lower_bound;
                       lambda(dof_index) = 0;
                     }
@@ -2988,7 +2988,7 @@ ConservativeLevelSet<dim>::update_solution_and_constraints(
             }
         }
     }
-  solution = nodal_phase_fraction_owned;
+  solution = nodal_phase_indicator_owned;
   this->bounding_constraints.close();
 }
 
@@ -3010,15 +3010,15 @@ ConservativeLevelSet<dim>::assemble_L2_projection_interface_sharpening(
 
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
   const unsigned int n_q_points    = this->cell_quadrature->size();
-  FullMatrix<double> local_matrix_phase_fraction(dofs_per_cell, dofs_per_cell);
-  Vector<double>     local_rhs_phase_fraction(dofs_per_cell);
+  FullMatrix<double> local_matrix_phase_indicator(dofs_per_cell, dofs_per_cell);
+  Vector<double>     local_rhs_phase_indicator(dofs_per_cell);
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   std::vector<double>                  phi_phase(dofs_per_cell);
 
   std::vector<double> phase_values(n_q_points);
 
-  system_rhs_phase_fraction    = 0;
-  system_matrix_phase_fraction = 0;
+  system_rhs_phase_indicator    = 0;
+  system_matrix_phase_indicator = 0;
 
   for (const auto &cell : this->dof_handler->active_cell_iterators())
     {
@@ -3026,8 +3026,8 @@ ConservativeLevelSet<dim>::assemble_L2_projection_interface_sharpening(
         {
           fe_values_cls.reinit(cell);
 
-          local_matrix_phase_fraction = 0;
-          local_rhs_phase_fraction    = 0;
+          local_matrix_phase_indicator = 0;
+          local_rhs_phase_indicator    = 0;
 
           fe_values_cls.get_function_values(solution, phase_values);
 
@@ -3045,7 +3045,7 @@ ConservativeLevelSet<dim>::assemble_L2_projection_interface_sharpening(
                   // Matrix assembly
                   for (unsigned int j = 0; j < dofs_per_cell; ++j)
                     {
-                      local_matrix_phase_fraction(i, j) +=
+                      local_matrix_phase_indicator(i, j) +=
                         (phi_phase[j] * phi_phase[i]) * fe_values_cls.JxW(q);
                     }
 
@@ -3055,14 +3055,14 @@ ConservativeLevelSet<dim>::assemble_L2_projection_interface_sharpening(
                   // \alpha)
                   // * (1 - \phi) ^ \alpha}
                   if (phase_value >= 0 && phase_value <= sharpening_threshold)
-                    local_rhs_phase_fraction(i) +=
+                    local_rhs_phase_indicator(i) +=
                       std::pow(sharpening_threshold,
                                (1. - interface_sharpness)) *
                       std::pow(phase_value, interface_sharpness) *
                       phi_phase[i] * fe_values_cls.JxW(q);
                   else
                     {
-                      local_rhs_phase_fraction(i) +=
+                      local_rhs_phase_indicator(i) +=
                         (1 -
                          std::pow((1. - sharpening_threshold),
                                   (1. - interface_sharpness)) *
@@ -3074,16 +3074,16 @@ ConservativeLevelSet<dim>::assemble_L2_projection_interface_sharpening(
 
           cell->get_dof_indices(local_dof_indices);
           this->nonzero_constraints.distribute_local_to_global(
-            local_matrix_phase_fraction,
-            local_rhs_phase_fraction,
+            local_matrix_phase_indicator,
+            local_rhs_phase_indicator,
             local_dof_indices,
-            system_matrix_phase_fraction,
-            system_rhs_phase_fraction);
+            system_matrix_phase_indicator,
+            system_rhs_phase_indicator);
         }
     }
 
-  system_matrix_phase_fraction.compress(VectorOperation::add);
-  system_rhs_phase_fraction.compress(VectorOperation::add);
+  system_matrix_phase_indicator.compress(VectorOperation::add);
+  system_rhs_phase_indicator.compress(VectorOperation::add);
 }
 
 template <int dim>
@@ -3102,7 +3102,7 @@ ConservativeLevelSet<dim>::solve_interface_sharpening(
                   << linear_solver_tolerance << std::endl;
     }
 
-  GlobalVectorType completely_distributed_phase_fraction_solution(
+  GlobalVectorType completely_distributed_phase_indicator_solution(
     this->locally_owned_dofs, triangulation->get_mpi_communicator());
 
 
@@ -3133,12 +3133,12 @@ ConservativeLevelSet<dim>::solve_interface_sharpening(
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner =
     std::make_shared<TrilinosWrappers::PreconditionILU>();
 
-  ilu_preconditioner->initialize(system_matrix_phase_fraction,
+  ilu_preconditioner->initialize(system_matrix_phase_indicator,
                                  preconditionerOptions);
 
-  solver.solve(system_matrix_phase_fraction,
-               completely_distributed_phase_fraction_solution,
-               system_rhs_phase_fraction,
+  solver.solve(system_matrix_phase_indicator,
+               completely_distributed_phase_indicator_solution,
+               system_rhs_phase_indicator,
                *ilu_preconditioner);
 
   if (this->simulation_parameters.multiphysics.cls_parameters
@@ -3150,8 +3150,8 @@ ConservativeLevelSet<dim>::solve_interface_sharpening(
     }
 
   this->nonzero_constraints.distribute(
-    completely_distributed_phase_fraction_solution);
-  solution = completely_distributed_phase_fraction_solution;
+    completely_distributed_phase_indicator_solution);
+  solution = completely_distributed_phase_indicator_solution;
 }
 
 template <int dim>
@@ -3289,7 +3289,7 @@ ConservativeLevelSet<dim>::reinitialize_interface_with_algebraic_method()
 
 template <int dim>
 void
-ConservativeLevelSet<dim>::compute_level_set_from_phase_fraction(
+ConservativeLevelSet<dim>::compute_level_set_from_phase_indicator(
   const GlobalVectorType &solution,
   GlobalVectorType       &level_set_solution)
 {
@@ -3310,9 +3310,9 @@ ConservativeLevelSet<dim>::compute_level_set_from_phase_fraction(
 
 template <int dim>
 void
-ConservativeLevelSet<dim>::compute_phase_fraction_from_level_set(
+ConservativeLevelSet<dim>::compute_phase_indicator_from_level_set(
   const GlobalVectorType &level_set_solution,
-  GlobalVectorType       &phase_fraction_solution)
+  GlobalVectorType       &phase_indicator_solution)
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
@@ -3326,7 +3326,7 @@ ConservativeLevelSet<dim>::compute_phase_fraction_from_level_set(
     }
   this->nonzero_constraints.distribute(solution_owned);
 
-  phase_fraction_solution = solution_owned;
+  phase_indicator_solution = solution_owned;
 }
 
 template <int dim>
@@ -3371,7 +3371,7 @@ ConservativeLevelSet<dim>::reinitialize_interface_with_geometric_method()
 
       previous_level_set = previous_level_set_owned;
 
-      compute_phase_fraction_from_level_set(previous_level_set,
+      compute_phase_indicator_from_level_set(previous_level_set,
                                             (*this->previous_solutions)[0]);
     }
 
@@ -3396,7 +3396,7 @@ ConservativeLevelSet<dim>::reinitialize_interface_with_geometric_method()
 
   this->level_set = level_set_owned;
 
-  compute_phase_fraction_from_level_set(this->level_set,
+  compute_phase_indicator_from_level_set(this->level_set,
                                         *this->present_solution);
 }
 

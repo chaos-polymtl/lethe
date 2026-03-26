@@ -8,7 +8,7 @@
 #include <core/parameters_multiphysics.h>
 
 /**
- * @brief Abstract class for filtering phase fraction in Conservative Level Set (CLS)
+ * @brief Abstract class for filtering phase indicator in Conservative Level Set (CLS)
  * simulations.
  */
 class ConservativeLevelSetFilterBase
@@ -31,20 +31,20 @@ public:
   model_cast(const Parameters::CLS_PhaseFilter &phase_filter_parameters);
 
   /**
-   * @brief Compute the value of the filtered phase fraction.
+   * @brief Compute the value of the filtered phase indicator.
    *
-   * @param[in] unfiltered_phase Value of the phase fraction before applying the
+   * @param[in] unfiltered_phase Value of the phase indicator before applying the
    * filter.
    *
-   * @return Value of the computed phase fraction after applying the filter.
+   * @return Value of the computed phase indicator after applying the filter.
    */
   virtual double
   filter_phase(const double &unfiltered_phase) = 0;
 };
 
 /**
- * @brief Default filter applied to phase fraction. The ConservativeLevelSetNoFilter
- * filter does not modify the phase fraction value and returns it as it is.
+ * @brief Default filter applied to phase indicator. The ConservativeLevelSetNoFilter
+ * filter does not modify the phase indicator value and returns it as it is.
  */
 class ConservativeLevelSetNoFilter : public ConservativeLevelSetFilterBase
 {
@@ -52,19 +52,19 @@ public:
   /**
    * @brief Constructor of the transparent filter.
    *
-   * No filter is applied to the computed filtered phase fraction and the
-   * unfiltered phase fraction is returned.
+   * No filter is applied to the computed filtered phase indicator and the
+   * unfiltered phase indicator is returned.
    */
   ConservativeLevelSetNoFilter()
   {}
 
   /**
-   * @brief Computes the value of the filtered phase fraction.
+   * @brief Computes the value of the filtered phase indicator.
    *
-   * Here, the filtered phase fraction value corresponds to the unfiltered one
+   * Here, the filtered phase indicator value corresponds to the unfiltered one
    * (@p unfiltered_phase).
    *
-   * @param[in] unfiltered_phase Value of the phase fraction before applying the
+   * @param[in] unfiltered_phase Value of the phase indicator before applying the
    * filter.
    *
    * @return Value of @p unfiltered_phase.
@@ -77,24 +77,24 @@ public:
 };
 
 /**
- * @brief Filter phase fraction with a hyperbolic tangent function
+ * @brief Filter phase indicator with a hyperbolic tangent function
  * for CLS simulations.
  *
  * The filtered phase is defined as:
  *
  * \f$\phi' = 0.5 \tanh(\beta(\phi-0.5)) + 0.5\f$
  *
- * where \f$\phi'\f$ is the filtered phase fraction value and \f$\beta\f$
+ * where \f$\phi'\f$ is the filtered phase indicator value and \f$\beta\f$
  * is a model parameter that enables sharper definition when increased.
  *
  * The filter allows a sharper definition of the interface and clamps the value
- * of the phase fraction between 0 and 1.
+ * of the phase indicator between 0 and 1.
  */
 class ConservativeLevelSetTanhFilter : public ConservativeLevelSetFilterBase
 {
 public:
   /**
-   * @brief Constructor of the hyperbolic tangent phase fraction filter.
+   * @brief Constructor of the hyperbolic tangent phase indicator filter.
    *
    * @param[in] beta Value of the \f$\beta\f$ parameter modulating the
    * interface sharpness.
@@ -104,12 +104,12 @@ public:
   {}
 
   /**
-   * @brief Computes the value of the filtered phase fraction.
+   * @brief Computes the value of the filtered phase indicator.
    *
-   * @param[in] unfiltered_phase Value of the phase fraction before applying the
+   * @param[in] unfiltered_phase Value of the phase indicator before applying the
    * filter.
    *
-   * @return Value of the computed phase fraction after applying the filter.
+   * @return Value of the computed phase indicator after applying the filter.
    */
   virtual double
   filter_phase(const double &unfiltered_phase) override

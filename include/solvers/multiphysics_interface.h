@@ -558,10 +558,10 @@ public:
 
   /**
    * @brief Request the reference to the present solution vector of the
-   * projected phase fraction gradient (PFG)
+   * projected phase indicator gradient (PFG)
    */
   const GlobalVectorType &
-  get_projected_phase_fraction_gradient_solution();
+  get_projected_phase_indicator_gradient_solution();
 
   /**
    * @brief Request the reference to the present solution of the curvature
@@ -576,11 +576,11 @@ public:
   get_curvature_dof_handler();
 
   /**
-   * @brief Request the reference to the projected phase fraction gradient (PFG)
+   * @brief Request the reference to the projected phase indicator gradient (PFG)
    * DOF handler
    */
   const DoFHandler<dim> &
-  get_projected_phase_fraction_gradient_dof_handler();
+  get_projected_phase_indicator_gradient_dof_handler();
 
   /**
    * @brief Request shared pointer to immersed solid shape

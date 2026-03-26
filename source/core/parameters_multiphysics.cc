@@ -391,7 +391,7 @@ Parameters::CLS_SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
       Patterns::Double(),
       "Factor applied to the filter for phase indicator gradient calculations to damp high-frequency errors");
     prm.declare_alias("phase indicator gradient diffusion factor",
-                      "phase fraction gradient diffusion factor",
+                      "phase indicator gradient diffusion factor",
                       true);
 
     prm.declare_entry(
@@ -422,7 +422,7 @@ Parameters::CLS_SurfaceTensionForce::parse_parameters(ParameterHandler &prm)
   prm.enter_subsection("surface tension force");
   {
     enable = prm.get_bool("enable");
-    phase_fraction_gradient_diffusion_factor =
+    phase_indicator_gradient_diffusion_factor =
       prm.get_double("phase indicator gradient diffusion factor");
     curvature_diffusion_factor = prm.get_double("curvature diffusion factor");
 

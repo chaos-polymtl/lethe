@@ -647,11 +647,11 @@ GLSNavierStokesCLSAssemblerSTF<dim>::assemble_rhs(
       // Gather pfg and curvature values
       const double &curvature_value = scratch_data.curvature_values[q];
 
-      // Gather phase fraction gradient
+      // Gather phase indicator gradient
       const Tensor<1, dim> &phase_gradient_value_q =
         scratch_data.phase_gradient_values[q];
 
-      // Gather filtered phase fraction gradient
+      // Gather filtered phase indicator gradient
       const Tensor<1, dim> &filtered_phase_gradient_value_q =
         scratch_data.filtered_phase_gradient_values[q];
 
@@ -660,14 +660,14 @@ GLSNavierStokesCLSAssemblerSTF<dim>::assemble_rhs(
       const double filtered_phase_gradient_norm =
         filtered_phase_gradient_value_q.norm();
 
-      const Tensor<1, dim> normalized_phase_fraction_gradient =
+      const Tensor<1, dim> normalized_phase_indicator_gradient =
         phase_gradient_value_q / (phase_gradient_norm + 1e-15);
 
       const double JxW_value = JxW[q];
 
       const Tensor<1, dim> surface_tension_force =
         -surface_tension_coef * curvature_value *
-        normalized_phase_fraction_gradient * filtered_phase_gradient_norm;
+        normalized_phase_indicator_gradient * filtered_phase_gradient_norm;
 
       strong_residual[q] += surface_tension_force;
 
@@ -724,11 +724,11 @@ GLSNavierStokesCLSAssemblerMarangoni<dim>::assemble_rhs(
 
       const double &curvature_value = scratch_data.curvature_values[q];
 
-      // Gather phase fraction gradient
+      // Gather phase indicator gradient
       const Tensor<1, dim> &phase_gradient_value_q =
         scratch_data.phase_gradient_values[q];
 
-      // Gather filtered phase fraction gradient
+      // Gather filtered phase indicator gradient
       const Tensor<1, dim> &filtered_phase_gradient_value_q =
         scratch_data.filtered_phase_gradient_values[q];
 
@@ -737,7 +737,7 @@ GLSNavierStokesCLSAssemblerMarangoni<dim>::assemble_rhs(
       const double filtered_phase_gradient_norm =
         filtered_phase_gradient_value_q.norm();
 
-      const Tensor<1, dim> normalized_phase_fraction_gradient =
+      const Tensor<1, dim> normalized_phase_indicator_gradient =
         phase_gradient_value_q / (phase_gradient_norm + 1e-15);
 
       // Gather temperature gradient
@@ -749,13 +749,13 @@ GLSNavierStokesCLSAssemblerMarangoni<dim>::assemble_rhs(
 
       const Tensor<1, dim> surface_tension_force =
         -surface_tension * curvature_value *
-        normalized_phase_fraction_gradient * filtered_phase_gradient_norm;
+        normalized_phase_indicator_gradient * filtered_phase_gradient_norm;
 
       const Tensor<1, dim> marangoni_effect =
         -surface_tension_gradient *
         (temperature_gradient -
-         normalized_phase_fraction_gradient *
-           (normalized_phase_fraction_gradient * temperature_gradient)) *
+         normalized_phase_indicator_gradient *
+           (normalized_phase_indicator_gradient * temperature_gradient)) *
         filtered_phase_gradient_norm;
 
       strong_residual[q] += marangoni_effect + surface_tension_force;
@@ -812,7 +812,7 @@ NavierStokesCLSAssemblerEvaporation<dim>::assemble_rhs(
       const double recoil_pressure =
         this->evaporation_model->momentum_flux(field_value);
 
-      // Gather phase fraction gradient
+      // Gather phase indicator gradient
       const Tensor<1, dim> &phase_gradient_value_q =
         scratch_data.phase_gradient_values[q];
 
@@ -824,14 +824,14 @@ NavierStokesCLSAssemblerEvaporation<dim>::assemble_rhs(
       const double filtered_phase_gradient_norm =
         filtered_phase_gradient_value_q.norm();
 
-      const Tensor<1, dim> normalized_phase_fraction_gradient =
+      const Tensor<1, dim> normalized_phase_indicator_gradient =
         phase_gradient_value_q / (phase_gradient_norm + 1e-15);
 
 
       const double JxW_value = JxW[q];
 
       const Tensor<1, dim> recoil_pressure_force =
-        recoil_pressure * normalized_phase_fraction_gradient *
+        recoil_pressure * normalized_phase_indicator_gradient *
         filtered_phase_gradient_norm;
 
       strong_residual[q] -= recoil_pressure_force;

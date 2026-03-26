@@ -157,7 +157,7 @@ CLSAlgebraicInterfaceReinitialization<dim>::define_non_zero_constraints()
           VectorTools::interpolate_boundary_values(
             *this->dof_handler,
             id,
-            *this->simulation_parameters.boundary_conditions_cls.phase_fraction
+            *this->simulation_parameters.boundary_conditions_cls.phase_indicator
                .at(id),
             this->nonzero_constraints);
         }
@@ -206,12 +206,12 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
   this->system_matrix = 0;
 
   // Get projected CLS phase gradient DoFHandler
-  const DoFHandler<dim> &dof_handler_cls_phase_fraction_gradient =
+  const DoFHandler<dim> &dof_handler_cls_phase_indicator_gradient =
     this->subequations_interface.get_dof_handler(
       CLSSubequationsID::phase_gradient_projection);
 
   // Initialize FEValues for algebraic interface reinitialization and CLS
-  // phase fraction gradient projection
+  // phase indicator gradient projection
   FEValues<dim> fe_values_algebraic_reinitialization(*this->mapping,
                                                      *this->fe,
                                                      *this->cell_quadrature,
@@ -220,7 +220,7 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
                                                        update_JxW_values);
   FEValues<dim> fe_values_phase_gradient_projection(
     *this->mapping,
-    dof_handler_cls_phase_fraction_gradient.get_fe(),
+    dof_handler_cls_phase_indicator_gradient.get_fe(),
     *this->cell_quadrature,
     update_values);
 
@@ -236,11 +236,11 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
   // Initialize local dof indices array
   std::vector<types::global_dof_index> local_dof_indices(n_dofs_per_cell);
 
-  // Extractor for phase fraction gradient vector
-  FEValuesExtractors::Vector phase_fraction_gradients(0);
+  // Extractor for phase indicator gradient vector
+  FEValuesExtractors::Vector phase_indicator_gradients(0);
 
-  // Initialize phase fraction and projected phase gradient solution arrays
-  std::vector<double>         present_phase_fraction_values(n_q_points);
+  // Initialize phase indicator and projected phase gradient solution arrays
+  std::vector<double>         present_phase_indicator_values(n_q_points);
   std::vector<Tensor<1, dim>> present_phase_gradient_projection_values(
     n_q_points);
   std::vector<Tensor<1, dim>> present_reinitialized_phase_gradient_values(
@@ -284,7 +284,7 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
               &(*this->triangulation),
               cell->level(),
               cell->index(),
-              &dof_handler_cls_phase_fraction_gradient);
+              &dof_handler_cls_phase_indicator_gradient);
 
           // Reinitialize FEValues with corresponding cell
           fe_values_algebraic_reinitialization.reinit(cell);
@@ -295,10 +295,10 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
           std::vector<double> JxW_vec =
             fe_values_algebraic_reinitialization.get_JxW_values();
 
-          // Get present phase fraction and projected CLS phase gradient
+          // Get present phase indicator and projected CLS phase gradient
           fe_values_algebraic_reinitialization.get_function_values(
-            this->evaluation_point, present_phase_fraction_values);
-          fe_values_phase_gradient_projection[phase_fraction_gradients]
+            this->evaluation_point, present_phase_indicator_values);
+          fe_values_phase_gradient_projection[phase_indicator_gradients]
             .get_function_values(present_phase_gradient_projection_solution,
                                  present_phase_gradient_projection_values);
 
@@ -317,9 +317,9 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
                     fe_values_algebraic_reinitialization.shape_grad(k, q);
                 }
 
-              // Extract phase fraction value and projected phase fraction
+              // Extract phase indicator value and projected phase indicator
               // gradient
-              const double phase_fraction = present_phase_fraction_values[q];
+              const double phase_indicator = present_phase_indicator_values[q];
               const Tensor<1, dim> projected_cls_phase_gradient =
                 present_phase_gradient_projection_values[q];
 
@@ -342,7 +342,7 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
                           // Compressive term
                           scalar_product(grad_phi[i],
                                          (phi[j] -
-                                          2 * phase_fraction * phi[j]) *
+                                          2 * phase_indicator * phi[j]) *
                                            interface_normal) +
                           // Diffusive term
                           scalar_product(grad_phi[i],
@@ -372,12 +372,12 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
   this->system_rhs = 0;
 
   // Get projected phase gradient DoFHandler
-  const DoFHandler<dim> &dof_handler_cls_phase_fraction_gradient =
+  const DoFHandler<dim> &dof_handler_cls_phase_indicator_gradient =
     this->subequations_interface.get_dof_handler(
       CLSSubequationsID::phase_gradient_projection);
 
   // Initialize FEValues for algebraic interface reinitialization and CLS phase
-  // fraction gradient projection
+  // indicator gradient projection
   FEValues<dim> fe_values_algebraic_reinitialization(*this->mapping,
                                                      *this->fe,
                                                      *this->cell_quadrature,
@@ -386,7 +386,7 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
                                                        update_JxW_values);
   FEValues<dim> fe_values_phase_gradient_projection(
     *this->mapping,
-    dof_handler_cls_phase_fraction_gradient.get_fe(),
+    dof_handler_cls_phase_indicator_gradient.get_fe(),
     *this->cell_quadrature,
     update_values);
 
@@ -402,13 +402,13 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
   // Initialize local dof indices array
   std::vector<types::global_dof_index> local_dof_indices(n_dofs_per_cell);
 
-  // Extractor for phase fraction gradient vector
-  FEValuesExtractors::Vector phase_fraction_gradients(0);
+  // Extractor for phase indicator gradient vector
+  FEValuesExtractors::Vector phase_indicator_gradients(0);
 
-  // Initialize phase fraction and projected phase fraction gradient solution
+  // Initialize phase indicator and projected phase indicator gradient solution
   // arrays
-  std::vector<double>         present_phase_fraction_values(n_q_points);
-  std::vector<double>         previous_phase_fraction_values(n_q_points);
+  std::vector<double>         present_phase_indicator_values(n_q_points);
+  std::vector<double>         previous_phase_indicator_values(n_q_points);
   std::vector<Tensor<1, dim>> present_cls_phase_gradient_projection_values(
     n_q_points);
   std::vector<Tensor<1, dim>> present_reinitialized_phase_gradient_values(
@@ -449,7 +449,7 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
               &(*this->triangulation),
               cell->level(),
               cell->index(),
-              &dof_handler_cls_phase_fraction_gradient);
+              &dof_handler_cls_phase_indicator_gradient);
 
           // Reinitialize FEValues with corresponding cells
           fe_values_algebraic_reinitialization.reinit(cell);
@@ -460,12 +460,12 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
           std::vector<double> JxW_vec =
             fe_values_algebraic_reinitialization.get_JxW_values();
 
-          // Get CLS phase fraction and projected phase gradient values
+          // Get CLS phase indicator and projected phase gradient values
           fe_values_algebraic_reinitialization.get_function_values(
-            this->evaluation_point, present_phase_fraction_values);
+            this->evaluation_point, present_phase_indicator_values);
           fe_values_algebraic_reinitialization.get_function_values(
-            this->previous_solution, previous_phase_fraction_values);
-          fe_values_phase_gradient_projection[phase_fraction_gradients]
+            this->previous_solution, previous_phase_indicator_values);
+          fe_values_phase_gradient_projection[phase_indicator_gradients]
             .get_function_values(
               this->subequations_interface.get_solution(
                 CLSSubequationsID::phase_gradient_projection),
@@ -486,12 +486,12 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
                     fe_values_algebraic_reinitialization.shape_grad(k, q);
                 }
 
-              // Extract present and previous phase fraction values and
+              // Extract present and previous phase indicator values and
               // projected phase gradient values
-              std::vector<double> phase_fraction_values(2);
-              phase_fraction_values[0]    = present_phase_fraction_values[q];
-              const double phase_fraction = phase_fraction_values[0];
-              phase_fraction_values[1]    = previous_phase_fraction_values[q];
+              std::vector<double> phase_indicator_values(2);
+              phase_indicator_values[0]    = present_phase_indicator_values[q];
+              const double phase_indicator = phase_indicator_values[0];
+              phase_indicator_values[1]    = previous_phase_indicator_values[q];
               const Tensor<1, dim> projected_cls_phase_gradient =
                 present_cls_phase_gradient_projection_values[q];
               const Tensor<1, dim> reinitialized_phase_gradient =
@@ -511,16 +511,16 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
                   for (unsigned int p = 0; p < 2; ++p)
                     {
                       local_rhs(i) -= bdf_coefficient_vector[p] *
-                                      (phase_fraction_values[p] * phi[i]) *
+                                      (phase_indicator_values[p] * phi[i]) *
                                       JxW_vec[q];
                     }
                   local_rhs(i) -=
                     (
                       // Compressive term
                       -scalar_product(grad_phi[i],
-                                      (phase_fraction -
+                                      (phase_indicator -
                                        Utilities::fixed_power<2>(
-                                         phase_fraction)) *
+                                         phase_indicator)) *
                                         interface_normal) +
                       // Diffusive term
                       scalar_product(
@@ -741,10 +741,10 @@ CLSAlgebraicInterfaceReinitialization<dim>::write_output_results(
 
   // Attach solution data to DataOut object
   data_out.attach_dof_handler(*this->dof_handler);
-  data_out.add_data_vector(*this->present_solution, "reinit_phase_fraction");
+  data_out.add_data_vector(*this->present_solution, "reinit_phase_indicator");
   data_out.add_data_vector(this->subequations_interface.get_cls_dof_handler(),
                            this->subequations_interface.get_cls_solution(),
-                           "cls_phase_fraction",
+                           "cls_phase_indicator",
                            data_component_interpretation);
   std::vector<std::string> cls_gradient_solution_names(dim,
                                                        "cls_phase_gradient");

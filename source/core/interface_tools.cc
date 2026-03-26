@@ -1023,7 +1023,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
           /* We want to find a cell-wise correction to apply to the cell's dof
           values of the signed_distance so that the geometric cell-wise volume
           encompassed by the level 0 of the signed_distance V_K and by the
-          iso-contour 0.5 of the phase fraction V_K,CLS match. This is
+          iso-contour 0.5 of the phase indicator V_K,CLS match. This is
           required because the computed distance doesn't belong to the Q1
           approximation space.
 
@@ -1183,7 +1183,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
 
   /* Compute targeted global volume. It corresponds to the one enclosed by
   the level 0 of the level_set vector (same volume as the one enclosed
-  by iso-contour 0.5 of the phase fraction).*/
+  by iso-contour 0.5 of the phase indicator).*/
   double global_volume, surface;
 
   std::tie(global_volume, surface) = compute_surface_and_volume(
