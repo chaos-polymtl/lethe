@@ -135,9 +135,15 @@ public:
    * rotor (inner) side of the mortar interface
    *
    * @return points Angular weights of quadrature points of the cell
-   */
+   */n_quadrature_points
   std::vector<double>
   get_weights(const Point<dim> &face_center, const bool is_inner) const;
+
+  /**
+   * @brief Sets the minimum z value of cell centers at the mortar interface
+   */
+  void
+  set_z_min();
 
   /**
    * @brief Returns the normal vector for the quadrature points
@@ -211,6 +217,8 @@ protected:
   const unsigned int n_quadrature_points;
   /// Rotation angle for the inner domain
   const double rotation_angle;
+  /// Minimum z value in 3D problems
+  double z_min;
 };
 
 /**

@@ -367,6 +367,34 @@ MortarManagerBase<dim>::get_weights(const Point<dim> &face_center,
 }
 
 template <int dim>
+void
+MortarManagerBase<dim>::set_z_min()
+{
+  if constexpr (dim == 3)
+    {
+      double z_min_local = std::numeric_limits<double>::max();
+
+      for (const auto &cell : this->triangulation->active_cell_iterators())
+        if (cell->is_locally_owned())
+          for (const auto face_no : cell->face_indices())
+            const auto face = cell->face(face_no);
+            if (face->boundary_id() == this->mortar_parameters.stator_boundary_id)
+            {
+              z_min_local = std::min(z_min_local, cell->center()[2]);
+            }
+      this->z_min =
+        Utilities::MPI::min(z_min_local, this->triangulation->get_communicator());
+    }
+  else
+    this->z_min = 0.0;
+}
+
+
+
+
+
+
+template <int dim>
 std::vector<Tensor<1, dim, double>>
 MortarManagerBase<dim>::get_normals(const Point<dim> &face_center,
                                     const bool        is_inner) const
