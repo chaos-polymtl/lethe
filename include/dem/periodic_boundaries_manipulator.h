@@ -109,14 +109,10 @@ public:
    * @param[in] boundary_id ID of the boundary to query
    * @return Offset distance between periodic boundaries.
    */
-  inline Tensor<1, dim>
-  get_periodic_offset_distance(const types::boundary_id boundary_id)
+  inline const Tensor<1, dim> &
+  get_periodic_offset_distance(const types::boundary_id boundary_id) const
   {
-    auto it = periodic_offsets.find(boundary_id);
-    if (it != periodic_offsets.end())
-      return it->second;
-    else
-      return Tensor<1, dim>();
+    return periodic_offsets.at(boundary_id);
   }
 
   /**

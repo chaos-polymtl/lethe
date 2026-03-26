@@ -314,13 +314,21 @@ DEMSolver<dim, PropertiesIndex>::setup_triangulation_dependent_parameters()
     periodic_boundaries_object.get_combined_offsets());
 
   // Set the periodic offsets of the periodic boundary pairs for other classes
-  for (auto [bc_index, pb_id] :
-       periodic_boundaries_object.get_periodic_boundaries_ids())
+  auto const &periodic_bc_index =
+    periodic_boundaries_object.get_periodic_bc_index();
+  auto const &periodic_boundaries_ids =
+    periodic_boundaries_object.get_periodic_boundaries_ids();
+
+  for (const unsigned int pbc_index : periodic_bc_index)
     {
-      // contact_manager.set_periodic_offset(
-      // periodic_boundaries_object.get_periodic_offset_distance(pb_id), pb_id);
-      particle_particle_contact_force_object->set_periodic_offset(
-        periodic_boundaries_object.get_periodic_offset_distance(pb_id), pb_id);
+      auto it = periodic_boundaries_ids.find(pbc_index);
+      if (it != periodic_boundaries_ids.end())
+        {
+          auto const &pb_id = it->second;
+          particle_particle_contact_force_object->set_periodic_offset(
+            periodic_boundaries_object.get_periodic_offset_distance(pb_id),
+            pb_id);
+        }
     }
 
   // Set up the local and ghost cells (if ASC enabled)

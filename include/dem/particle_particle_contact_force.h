@@ -251,34 +251,26 @@ protected:
   /**
    * @brief Get the location of the particle.
    *
-   * @param particle The particle to get the location from.
+   * @param[in] particle The particle to get the location from.
    */
   inline Point<3>
   get_location(const Particles::ParticleIterator<dim> &particle) &
   {
-    if constexpr (dim == 3)
-      return particle->get_location();
-
-    if constexpr (dim == 2)
-      return point_nd_to_3d(particle->get_location());
+    return point_nd_to_3d(particle->get_location());
   }
 
   /**
    * @brief Get the shifted location of a particle on a periodic boundary.
    *
-   * @param particle The particle to get the location from.
-   * @param[in] boundary_id The periodic boundary with which to shift the
+   * @param[in] particle The particle to get the location from.
+   * @param[in] periodic_offset The periodic offset with which to shift the
    * location.
    */
   inline Point<3>
   get_periodic_location(const Particles::ParticleIterator<dim> &particle,
                         const Tensor<1, 3> &periodic_offset) &
   {
-    if constexpr (dim == 3)
-      return (particle->get_location() + periodic_offset);
-
-    if constexpr (dim == 2)
-      return point_nd_to_3d(particle->get_location()) + periodic_offset;
+    return point_nd_to_3d(particle->get_location()) + periodic_offset;
   }
 
   /**

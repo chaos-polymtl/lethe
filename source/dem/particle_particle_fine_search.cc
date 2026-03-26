@@ -50,10 +50,13 @@ particle_particle_fine_search(
           auto &particle_two = adjacent_pair_information.particle_two;
 
           // Finding the properties of the particles in contact
-          Point<dim, double> particle_two_base_location =
+          Point<dim, double> particle_two_real_location =
             particle_two->get_location();
 
-          // Find minimum periodic distance squared
+          // Find minimum periodic distance squared between particle one and
+          // the set of periodic images of particle two. The nearest periodic
+          // image corresponds to a given periodic offset, indicating if the
+          // particles are in contact through a periodic edge, face, or corner.
           double min_square_distance = std::numeric_limits<double>::max();
           Tensor<1, dim> nearest_translation;
 
@@ -62,7 +65,7 @@ particle_particle_fine_search(
               // Check particle 1 against every periodic image of particle 2
               double current_square_distance =
                 particle_one_location.distance_square(
-                  particle_two_base_location + translation);
+                  particle_two_real_location + translation);
 
               if (current_square_distance < min_square_distance)
                 {
@@ -83,7 +86,7 @@ particle_particle_fine_search(
             {
               // Save a translation that falls within the threshold
               Tensor<1, 3> offset_3d;
-              for (unsigned int d = 0; d < dim; ++d)
+              for (int d = 0; d < dim; ++d)
                 offset_3d[d] = nearest_translation[d];
 
               adjacent_pair_information.periodic_offset = offset_3d;
@@ -109,7 +112,7 @@ particle_particle_fine_search(
            second_particle_container)
         {
           auto particle_two = particle_container.at(particle_two_id);
-          Point<dim, double> particle_two_base_location =
+          Point<dim, double> particle_two_real_location =
             particle_two->get_location();
 
           // Finding distance
@@ -120,7 +123,7 @@ particle_particle_fine_search(
             {
               double current_square_distance =
                 particle_one_location.distance_square(
-                  particle_two_base_location + translation);
+                  particle_two_real_location + translation);
 
               if (current_square_distance < min_square_distance)
                 {
@@ -134,7 +137,7 @@ particle_particle_fine_search(
             {
               // Save a translation that falls within the threshold
               Tensor<1, 3> offset_3d;
-              for (unsigned int d = 0; d < dim; ++d)
+              for (int d = 0; d < dim; ++d)
                 offset_3d[d] = nearest_translation[d];
 
               auto &particle_one_contact_list =

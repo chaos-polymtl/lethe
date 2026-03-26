@@ -882,6 +882,14 @@ namespace Parameters
         std::vector<unsigned int> &periodic_bc_ind) const;
     };
 
+    /**
+     * @brief Parameters for grid (mesh) motion in DEM simulations.
+     *
+     * This class defines the type and parameters of the grid motion, which
+     * can be translational, rotational, or none.
+     *
+     * @tparam dim Number of spatial dimensions.
+     */
     template <int dim>
     class GridMotion
     {
