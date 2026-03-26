@@ -93,6 +93,7 @@ $(function() {
 <li>gas_parameter_m&#160;:&#160;<a class="el" href="classParticleParticleContactForce.html#a7ea86ff3c08bf0aed162c98a0dee3292">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;</a>, <a class="el" href="classParticleWallContactForce.html#a1d8d7f3ba0f20e1eec06fc1f79d75a6c">ParticleWallContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;</a></li>
 <li>gas_thermal_conductivity&#160;:&#160;<a class="el" href="classParticleWallContactForce.html#a0703e28b37bc427ee2f07f3efd6ebd93">ParticleWallContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;</a></li>
 <li>gather_cahn_hilliard&#160;:&#160;<a class="el" href="classNavierStokesScratchData.html#a80675043762c14c602da2c651248d2c6">NavierStokesScratchData&lt; dim &gt;</a></li>
+<li>gather_cls&#160;:&#160;<a class="el" href="classHeatTransferScratchData.html#a996d779c18044703746802c5ae4a37d0">HeatTransferScratchData&lt; dim &gt;</a>, <a class="el" href="classNavierStokesScratchData.html#a97d8271b6351d136131b9f5c1b9b9caa">NavierStokesScratchData&lt; dim &gt;</a></li>
 <li>gather_curvature&#160;:&#160;<a class="el" href="classNavierStokesScratchData.html#a6ecba60f4ef7a7c6e0c49c688464d990">NavierStokesScratchData&lt; dim &gt;</a></li>
 <li>gather_hessian&#160;:&#160;<a class="el" href="classNavierStokesScratchData.html#ad53462b1362da031efce498558afbdf9">NavierStokesScratchData&lt; dim &gt;</a></li>
 <li>gather_mortar&#160;:&#160;<a class="el" href="classNavierStokesScratchData.html#a0bd069ab2a2e317dcfb1f506b0041a50">NavierStokesScratchData&lt; dim &gt;</a></li>
@@ -100,13 +101,12 @@ $(function() {
 <li>gather_particles_information&#160;:&#160;<a class="el" href="classNavierStokesScratchData.html#a1c3df5a7c2e0bd07238e9cff84928b76">NavierStokesScratchData&lt; dim &gt;</a></li>
 <li>gather_projected_phase_fraction_gradient&#160;:&#160;<a class="el" href="classNavierStokesScratchData.html#a3ea0ab72226feac5c12b4c018b2e7672">NavierStokesScratchData&lt; dim &gt;</a></li>
 <li>gather_temperature&#160;:&#160;<a class="el" href="classNavierStokesScratchData.html#ac45b659821eec6e1fa6c8ecd2cae5415">NavierStokesScratchData&lt; dim &gt;</a></li>
-<li>gather_vof&#160;:&#160;<a class="el" href="classHeatTransferScratchData.html#a40ec474c9839aec992aa01ca56fd0300">HeatTransferScratchData&lt; dim &gt;</a>, <a class="el" href="classNavierStokesScratchData.html#a10a1bb5ffa32ef81cf831b2508513d76">NavierStokesScratchData&lt; dim &gt;</a></li>
 <li>gather_void_fraction&#160;:&#160;<a class="el" href="classNavierStokesScratchData.html#ac56d38ff514f674f06df2d66d50ae980">NavierStokesScratchData&lt; dim &gt;</a></li>
 <li>gc&#160;:&#160;<a class="el" href="classMGTransferMatrixFreeWrapper.html#ac4091845666fe84775203c7d70143a05">MGTransferMatrixFreeWrapper&lt; dim, Number &gt;</a></li>
 <li>gc_multigrid_preconditioner&#160;:&#160;<a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a1ba236541db9bf28c707680784fe624e">MFNavierStokesPreconditionGMGBase&lt; dim &gt;</a></li>
 <li>gc_multigrid_preconditioner_intermediate&#160;:&#160;<a class="el" href="classMFNavierStokesPreconditionGMGBase.html#a852a03763344c1d625405a8906cb688f">MFNavierStokesPreconditionGMGBase&lt; dim &gt;</a></li>
 <li>gen&#160;:&#160;<a class="el" href="classCustomDistribution.html#a5d849699f8136a27020a24abe129b883">CustomDistribution</a>, <a class="el" href="classLogNormalDistribution.html#af33f67d552611047c2a350331a1a87f2">LogNormalDistribution</a>, <a class="el" href="classNormalDistribution.html#aa5dce1f2f07dcc009cd5942b50ecd474">NormalDistribution</a></li>
-<li>geometric_interface_reinitialization&#160;:&#160;<a class="el" href="structParameters_1_1VOF__RegularizationMethod.html#a0f5be5a8bf29b0aa32e4b78fda167aa4">Parameters::VOF_RegularizationMethod</a></li>
+<li>geometric_interface_reinitialization&#160;:&#160;<a class="el" href="structParameters_1_1CLS__RegularizationMethod.html#a5f2052a7b3da5187fcee40c2760eb4df">Parameters::CLS_RegularizationMethod</a></li>
 <li>get_av&#160;:&#160;<a class="el" href="classAverageVelocities.html#a3b95065afa2e8a04c4953b16d644ea97">AverageVelocities&lt; dim, VectorType, DofsType &gt;</a></li>
 <li>get_rns&#160;:&#160;<a class="el" href="classAverageVelocities.html#a51453267a4ce6dfc785b1a801042dd66">AverageVelocities&lt; dim, VectorType, DofsType &gt;</a></li>
 <li>get_rss&#160;:&#160;<a class="el" href="classAverageVelocities.html#a61b139bf6299a4ef937379a4f5daf05e">AverageVelocities&lt; dim, VectorType, DofsType &gt;</a></li>
@@ -126,7 +126,7 @@ $(function() {
 <li>grad_div&#160;:&#160;<a class="el" href="structParameters_1_1CFDDEM.html#a00b7fa0994c5cf465b5ba9fc3dec9f83">Parameters::CFDDEM</a></li>
 <li>grad_div_gamma&#160;:&#160;<a class="el" href="classVANSOperator.html#a3259e11505baf670d385fffcad8e83d2">VANSOperator&lt; dim, number &gt;</a></li>
 <li>grad_kinematic_viscosity_shear_rate&#160;:&#160;<a class="el" href="classNavierStokesOperatorBase.html#ae1e5713c60284c7ba0ba7483f425f7a8">NavierStokesOperatorBase&lt; dim, number &gt;</a>, <a class="el" href="classNavierStokesScratchData.html#ae7754a9f031d997877e37f788f749fdb">NavierStokesScratchData&lt; dim &gt;</a></li>
-<li>grad_phi&#160;:&#160;<a class="el" href="classTracerScratchData.html#ad608b0881f2a737df5540e974832ae07">TracerScratchData&lt; dim &gt;</a>, <a class="el" href="classVOFScratchData.html#a94514f083c4205d21bf36c68aa533415">VOFScratchData&lt; dim &gt;</a></li>
+<li>grad_phi&#160;:&#160;<a class="el" href="classCLSScratchData.html#a5822bf2d4c4ab8a7f3846f1e39f2664a">CLSScratchData&lt; dim &gt;</a>, <a class="el" href="classTracerScratchData.html#ad608b0881f2a737df5540e974832ae07">TracerScratchData&lt; dim &gt;</a></li>
 <li>grad_phi_face_phase&#160;:&#160;<a class="el" href="classCahnHilliardScratchData.html#ac4accd482b9a8ad6f620145d6904711b">CahnHilliardScratchData&lt; dim &gt;</a></li>
 <li>grad_phi_p&#160;:&#160;<a class="el" href="classNavierStokesScratchData.html#ae38cfc270e721ef6a4de6db34dbe7e12">NavierStokesScratchData&lt; dim &gt;</a></li>
 <li>grad_phi_phase&#160;:&#160;<a class="el" href="classCahnHilliardScratchData.html#a9f32b3dfea0571f15ba81662e8a3255b">CahnHilliardScratchData&lt; dim &gt;</a></li>

@@ -97,7 +97,7 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">physical_properties_manager.h</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="physical__properties__manager_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2022-2024 The Lethe Authors</span></div>
+<a href="physical__properties__manager_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-FileCopyrightText: Copyright (c) 2022-2024, 2026 The Lethe Authors</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#ifndef lethe_physical_properties_manager_h</span></div>
@@ -665,7 +665,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00475" name="l00475"></a><span class="lineno">  475</span><span class="comment">   *  the properties of the fluids, then the properties of the solid. Fluids</span></div>
 <div class="line"><a id="l00476" name="l00476"></a><span class="lineno">  476</span><span class="comment">   * need to have a material id of 0, then solids are consequential.</span></div>
 <div class="line"><a id="l00477" name="l00477"></a><span class="lineno">  477</span><span class="comment">   *</span></div>
-<div class="line"><a id="l00478" name="l00478"></a><span class="lineno">  478</span><span class="comment">   * @param fluid_id the id of the fluid (0 for single phase simulations, 0 or 1 for VOF simulations)</span></div>
+<div class="line"><a id="l00478" name="l00478"></a><span class="lineno">  478</span><span class="comment">   * @param fluid_id the id of the fluid (0 for single phase simulations, 0 or 1 for CLS simulations)</span></div>
 <div class="line"><a id="l00479" name="l00479"></a><span class="lineno">  479</span><span class="comment">   *</span></div>
 <div class="line"><a id="l00480" name="l00480"></a><span class="lineno">  480</span><span class="comment">   * @param material_id the material id of the cell. Cells with material_id=0 are fluid cells (0 or 1) and cells with material_id&gt;0 are solid cells</span></div>
 <div class="line"><a id="l00481" name="l00481"></a><span class="lineno">  481</span><span class="comment">   */</span></div>

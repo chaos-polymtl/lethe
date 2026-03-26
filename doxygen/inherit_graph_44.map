@@ -1,7 +1,11 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classEvaporationModel.html" title="EvaporationModel. Abstract class that allows to calculate the evaporation mass, heat and momentum flu..." alt="" coords="5,31,145,56"/>
-<area shape="rect" id="Node000001" href="$classEvaporationModelConstant.html" title="EvaporationModelConstant. Class that allows to calculate the evaporation mass, heat,..." alt="" coords="205,5,404,31"/>
-<area shape="poly" id="edge64_Node000000_Node000001" title=" " alt="" coords="159,31,205,26,206,32,160,37"/>
-<area shape="rect" id="Node000002" href="$classEvaporationModelTemperature.html" title="EvaporationModelTemperature. Class that allows to calculate the evaporation mass, heat,..." alt="" coords="193,55,416,80"/>
-<area shape="poly" id="edge65_Node000000_Node000002" title=" " alt="" coords="160,49,193,53,193,58,159,55"/>
+<area shape="rect" id="Node000000" href="$classDistribution.html" title=" " alt="" coords="5,80,104,105"/>
+<area shape="rect" id="Node000001" href="$classCustomDistribution.html" title=" " alt="" coords="163,5,311,31"/>
+<area shape="poly" id="edge52_Node000000_Node000001" title=" " alt="" coords="88,71,151,40,184,28,186,33,153,44,90,76"/>
+<area shape="rect" id="Node000002" href="$classLogNormalDistribution.html" title=" " alt="" coords="152,55,321,80"/>
+<area shape="poly" id="edge53_Node000000_Node000002" title=" " alt="" coords="117,81,151,76,152,82,118,87"/>
+<area shape="rect" id="Node000003" href="$classNormalDistribution.html" title=" " alt="" coords="163,104,310,129"/>
+<area shape="poly" id="edge54_Node000000_Node000003" title=" " alt="" coords="118,98,164,104,163,110,117,104"/>
+<area shape="rect" id="Node000004" href="$classUniformDistribution.html" title=" " alt="" coords="161,153,312,179"/>
+<area shape="poly" id="edge55_Node000000_Node000004" title=" " alt="" coords="92,110,153,138,189,151,188,156,151,143,90,114"/>
 </map>

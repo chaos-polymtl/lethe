@@ -12,19 +12,18 @@
 <g id="Node000001" class="node">
 <title>Node1</title>
 <g id="a_Node000001"><a xlink:title="Base class for assembler objects of physics and subequations that require a face assembly....">
-<polygon fill="#999999" stroke="#666666" points="197,-67.5 0,-67.5 0,-37.5 197,-37.5 197,-67.5"/>
-<text text-anchor="start" x="8" y="-55.5" font-family="Helvetica,sans-Serif" font-size="10.00">PhysicsFaceAssemblerBase</text>
-<text text-anchor="middle" x="98.5" y="-44.5" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; ScratchDataType, CopyDataType &gt;</text>
+<polygon fill="#999999" stroke="#666666" points="197,-78 0,-78 0,-48 197,-48 197,-78"/>
+<text text-anchor="start" x="8" y="-66" font-family="Helvetica,sans-Serif" font-size="10.00">PhysicsFaceAssemblerBase</text>
+<text text-anchor="middle" x="98.5" y="-55" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; ScratchDataType, CopyDataType &gt;</text>
 </a>
 </g>
 </g>
 <!-- Node2 -->
 <g id="Node000002" class="node">
 <title>Node2</title>
-<g id="a_Node000002"><a xlink:href="classTracerAssemblerBoundaryNitsche.html" target="_top" xlink:title="Assembles Nitsche&#39;s method for boundary faces. This assembler is only required when solving the Trace...">
-<polygon fill="white" stroke="#666666" points="414,-115.5 233,-115.5 233,-85.5 414,-85.5 414,-115.5"/>
-<text text-anchor="start" x="241" y="-103.5" font-family="Helvetica,sans-Serif" font-size="10.00">TracerAssemblerBoundaryNitsche</text>
-<text text-anchor="middle" x="323.5" y="-92.5" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>
+<g id="a_Node000002"><a xlink:href="classCLSAssemblerSIPG.html" target="_top" xlink:title="Assembles the symmetric interior penalty Galerkin (SIPG) method (or Nitsche&#39;s method) for internal fa...">
+<polygon fill="white" stroke="#666666" points="399,-115.5 248,-115.5 248,-96.5 399,-96.5 399,-115.5"/>
+<text text-anchor="middle" x="323.5" y="-103.5" font-family="Helvetica,sans-Serif" font-size="10.00">CLSAssemblerSIPG&lt; dim &gt;</text>
 </a>
 </g>
 </g>
@@ -32,18 +31,18 @@
 <g id="edge1_Node000001_Node000002" class="edge">
 <title>Node1&#45;&gt;Node2</title>
 <g id="a_edge1_Node000001_Node000002"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M179.25,-69.67C203.28,-74.84 229.47,-80.48 252.8,-85.5"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="179.96,-66.24 169.45,-67.56 178.49,-73.08 179.96,-66.24"/>
+<path fill="none" stroke="#63b8ff" d="M187.67,-80C216.73,-85.61 248.01,-91.64 273.12,-96.48"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="187.98,-76.5 177.49,-78.04 186.65,-83.37 187.98,-76.5"/>
 </a>
 </g>
 </g>
 <!-- Node3 -->
 <g id="Node000003" class="node">
 <title>Node3</title>
-<g id="a_Node000003"><a xlink:href="classTracerAssemblerSIPG.html" target="_top" xlink:title="Assembles the symmetric interior penalty (SIPG) method (or Nitsche&#39;s method) for internal faces....">
-<polygon fill="white" stroke="#666666" points="383.5,-67.5 263.5,-67.5 263.5,-37.5 383.5,-37.5 383.5,-67.5"/>
-<text text-anchor="start" x="271.5" y="-55.5" font-family="Helvetica,sans-Serif" font-size="10.00">TracerAssemblerSIPG</text>
-<text text-anchor="middle" x="323.5" y="-44.5" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>
+<g id="a_Node000003"><a xlink:href="classTracerAssemblerBoundaryNitsche.html" target="_top" xlink:title="Assembles Nitsche&#39;s method for boundary faces. This assembler is only required when solving the Trace...">
+<polygon fill="white" stroke="#666666" points="414,-78 233,-78 233,-48 414,-48 414,-78"/>
+<text text-anchor="start" x="241" y="-66" font-family="Helvetica,sans-Serif" font-size="10.00">TracerAssemblerBoundaryNitsche</text>
+<text text-anchor="middle" x="323.5" y="-55" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>
 </a>
 </g>
 </g>
@@ -51,17 +50,18 @@
 <g id="edge2_Node000001_Node000003" class="edge">
 <title>Node1&#45;&gt;Node3</title>
 <g id="a_edge2_Node000001_Node000003"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M207.35,-52.5C226.61,-52.5 246.01,-52.5 263.25,-52.5"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="207.31,-49 197.31,-52.5 207.31,-56 207.31,-49"/>
+<path fill="none" stroke="#63b8ff" d="M207.32,-63C215.87,-63 224.45,-63 232.85,-63"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="207.31,-59.5 197.31,-63 207.31,-66.5 207.31,-59.5"/>
 </a>
 </g>
 </g>
 <!-- Node4 -->
 <g id="Node000004" class="node">
 <title>Node4</title>
-<g id="a_Node000004"><a xlink:href="classVOFAssemblerSIPG.html" target="_top" xlink:title="Assembles the symmetric interior penalty Galerkin (SIPG) method (or Nitsche&#39;s method) for internal fa...">
-<polygon fill="white" stroke="#666666" points="399,-19 248,-19 248,0 399,0 399,-19"/>
-<text text-anchor="middle" x="323.5" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">VOFAssemblerSIPG&lt; dim &gt;</text>
+<g id="a_Node000004"><a xlink:href="classTracerAssemblerSIPG.html" target="_top" xlink:title="Assembles the symmetric interior penalty (SIPG) method (or Nitsche&#39;s method) for internal faces....">
+<polygon fill="white" stroke="#666666" points="383.5,-30 263.5,-30 263.5,0 383.5,0 383.5,-30"/>
+<text text-anchor="start" x="271.5" y="-18" font-family="Helvetica,sans-Serif" font-size="10.00">TracerAssemblerSIPG</text>
+<text text-anchor="middle" x="323.5" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>
 </a>
 </g>
 </g>
@@ -69,8 +69,8 @@
 <g id="edge3_Node000001_Node000004" class="edge">
 <title>Node1&#45;&gt;Node4</title>
 <g id="a_edge3_Node000001_Node000004"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M187.67,-35.5C216.73,-29.89 248.01,-23.86 273.12,-19.02"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="186.65,-32.13 177.49,-37.46 187.98,-39 186.65,-32.13"/>
+<path fill="none" stroke="#63b8ff" d="M179.49,-45.78C207.15,-39.83 237.62,-33.27 263.3,-27.74"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="178.49,-42.42 169.45,-47.94 179.96,-49.26 178.49,-42.42"/>
 </a>
 </g>
 </g>

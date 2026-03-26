@@ -32,7 +32,7 @@
 <g id="edge1_Node000001_Node000002" class="edge">
 <title>Node1&#45;&gt;Node2</title>
 <g id="a_edge1_Node000001_Node000002"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M1189.38,-678.1C1017.69,-674.1 577.71,-660.52 436,-624 290.63,-586.53 210.61,-607.64 130,-481 122.84,-469.75 123.5,-462.64 130,-451 139.62,-433.75 157.92,-421.71 174.69,-413.77"/>
+<path fill="none" stroke="#63b8ff" d="M1189.47,-678.08C1017.99,-674.05 578.56,-660.4 437,-624 291.22,-586.52 210.9,-607.93 130,-481 122.83,-469.76 123.5,-462.64 130,-451 139.62,-433.75 157.92,-421.71 174.69,-413.77"/>
 <polygon fill="#63b8ff" stroke="#63b8ff" points="176.56,-416.78 184.32,-409.56 173.75,-410.36 176.56,-416.78"/>
 </a>
 </g>
@@ -142,19 +142,19 @@
 <g id="edge57_Node000001_Node000059" class="edge">
 <title>Node1&#45;&gt;Node59</title>
 <g id="a_edge57_Node000001_Node000059"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M1189.35,-678.13C975.28,-673.59 336.18,-657.36 249,-624 155.2,-588.11 93.9,-473.98 71.04,-424.38"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="74.16,-422.78 66.87,-415.1 67.78,-425.65 74.16,-422.78"/>
+<path fill="none" stroke="#63b8ff" d="M1189.34,-678.15C975.25,-673.67 336.1,-657.58 249,-624 155.29,-587.87 93.94,-473.87 71.06,-424.35"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="74.18,-422.75 66.88,-415.08 67.79,-425.63 74.18,-422.75"/>
 </a>
 </g>
 </g>
 <!-- Node60 -->
 <g id="Node000060" class="node">
 <title>Node60</title>
-<g id="a_Node000060"><a xlink:href="isothermal__compressible__navier__stokes__vof__assembler_8h.html" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="584.5,-624 445.5,-624 445.5,-583 584.5,-583 584.5,-624"/>
-<text text-anchor="start" x="453.5" y="-612" font-family="Helvetica,sans-Serif" font-size="10.00">solvers/isothermal</text>
-<text text-anchor="start" x="453.5" y="-601" font-family="Helvetica,sans-Serif" font-size="10.00">_compressible_navier</text>
-<text text-anchor="middle" x="515" y="-590" font-family="Helvetica,sans-Serif" font-size="10.00">_stokes_vof_assembler.h</text>
+<g id="a_Node000060"><a xlink:href="isothermal__compressible__navier__stokes__cls__assembler_8h.html" target="_top" xlink:title=" ">
+<polygon fill="white" stroke="#666666" points="583.5,-624 446.5,-624 446.5,-583 583.5,-583 583.5,-624"/>
+<text text-anchor="start" x="454.5" y="-612" font-family="Helvetica,sans-Serif" font-size="10.00">solvers/isothermal</text>
+<text text-anchor="start" x="454.5" y="-601" font-family="Helvetica,sans-Serif" font-size="10.00">_compressible_navier</text>
+<text text-anchor="middle" x="515" y="-590" font-family="Helvetica,sans-Serif" font-size="10.00">_stokes_cls_assembler.h</text>
 </a>
 </g>
 </g>
@@ -162,8 +162,8 @@
 <g id="edge60_Node000001_Node000060" class="edge">
 <title>Node1&#45;&gt;Node60</title>
 <g id="a_edge60_Node000001_Node000060"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M1189.46,-674.51C1075.64,-666.06 842.56,-647.51 646,-624 629.46,-622.02 611.78,-619.6 594.94,-617.15"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="594.99,-613.62 584.59,-615.62 593.97,-620.54 594.99,-613.62"/>
+<path fill="none" stroke="#63b8ff" d="M1189.46,-674.51C1075.64,-666.06 842.56,-647.51 646,-624 629.01,-621.97 610.84,-619.47 593.6,-616.95"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="593.97,-613.47 583.57,-615.47 592.95,-620.39 593.97,-613.47"/>
 </a>
 </g>
 </g>
@@ -188,10 +188,10 @@
 <!-- Node115 -->
 <g id="Node000115" class="node">
 <title>Node115</title>
-<g id="a_Node000115"><a xlink:href="navier__stokes__vof__assemblers_8h.html" target="_top" xlink:title=" ">
+<g id="a_Node000115"><a xlink:href="navier__stokes__cls__assemblers_8h.html" target="_top" xlink:title=" ">
 <polygon fill="white" stroke="#666666" points="777,-618.5 655,-618.5 655,-588.5 777,-588.5 777,-618.5"/>
 <text text-anchor="start" x="663" y="-606.5" font-family="Helvetica,sans-Serif" font-size="10.00">solvers/navier_stokes</text>
-<text text-anchor="middle" x="716" y="-595.5" font-family="Helvetica,sans-Serif" font-size="10.00">_vof_assemblers.h</text>
+<text text-anchor="middle" x="716" y="-595.5" font-family="Helvetica,sans-Serif" font-size="10.00">_cls_assemblers.h</text>
 </a>
 </g>
 </g>
@@ -1010,7 +1010,7 @@
 <g id="edge61_Node000060_Node000051" class="edge">
 <title>Node60&#45;&gt;Node51</title>
 <g id="a_edge61_Node000060_Node000051"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M584.65,-588.79C610.88,-580.54 639.14,-567.49 659,-547 675.21,-530.28 682.08,-503.66 684.96,-485.77"/>
+<path fill="none" stroke="#63b8ff" d="M583.54,-589.13C610.09,-580.9 638.86,-567.78 659,-547 675.21,-530.28 682.08,-503.66 684.96,-485.77"/>
 <polygon fill="#63b8ff" stroke="#63b8ff" points="688.45,-486.07 686.31,-475.7 681.51,-485.14 688.45,-486.07"/>
 </a>
 </g>
@@ -1162,20 +1162,20 @@
 </a>
 </g>
 </g>
-<!-- Node78 -->
-<g id="Node000078" class="node">
-<title>Node78</title>
-<g id="a_Node000078"><a xlink:href="physical__properties__manager_8h.html" target="_top" xlink:title=" ">
+<!-- Node79 -->
+<g id="Node000079" class="node">
+<title>Node79</title>
+<g id="a_Node000079"><a xlink:href="physical__properties__manager_8h.html" target="_top" xlink:title=" ">
 <polygon fill="#fff0f0" stroke="red" points="691,-349 541,-349 541,-319 691,-319 691,-349"/>
 <text text-anchor="start" x="549" y="-337" font-family="Helvetica,sans-Serif" font-size="10.00">solvers/physical_properties</text>
 <text text-anchor="middle" x="616" y="-326" font-family="Helvetica,sans-Serif" font-size="10.00">_manager.h</text>
 </a>
 </g>
 </g>
-<!-- Node71&#45;&gt;Node78 -->
-<g id="edge69_Node000071_Node000078" class="edge">
-<title>Node71&#45;&gt;Node78</title>
-<g id="a_edge69_Node000071_Node000078"><a xlink:title=" ">
+<!-- Node71&#45;&gt;Node79 -->
+<g id="edge69_Node000071_Node000079" class="edge">
+<title>Node71&#45;&gt;Node79</title>
+<g id="a_edge69_Node000071_Node000079"><a xlink:title=" ">
 <path fill="none" stroke="#63b8ff" d="M589.55,-384.8C593.68,-377.01 598.92,-367.16 603.63,-358.28"/>
 <polygon fill="#63b8ff" stroke="#63b8ff" points="606.87,-359.64 608.48,-349.16 600.69,-356.35 606.87,-359.64"/>
 </a>
@@ -1271,10 +1271,10 @@
 </a>
 </g>
 </g>
-<!-- Node102&#45;&gt;Node78 -->
-<g id="edge83_Node000102_Node000078" class="edge">
-<title>Node102&#45;&gt;Node78</title>
-<g id="a_edge83_Node000102_Node000078"><a xlink:title=" ">
+<!-- Node102&#45;&gt;Node79 -->
+<g id="edge83_Node000102_Node000079" class="edge">
+<title>Node102&#45;&gt;Node79</title>
+<g id="a_edge83_Node000102_Node000079"><a xlink:title=" ">
 <path fill="none" stroke="#63b8ff" d="M244.91,-450.96C321.73,-426.96 478.08,-378.1 561.2,-352.13"/>
 <polygon fill="#63b8ff" stroke="#63b8ff" points="562.46,-355.4 570.96,-349.08 560.37,-348.72 562.46,-355.4"/>
 </a>
@@ -1370,10 +1370,10 @@
 </a>
 </g>
 </g>
-<!-- Node117&#45;&gt;Node78 -->
-<g id="edge95_Node000117_Node000078" class="edge">
-<title>Node117&#45;&gt;Node78</title>
-<g id="a_edge95_Node000117_Node000078"><a xlink:title=" ">
+<!-- Node117&#45;&gt;Node79 -->
+<g id="edge95_Node000117_Node000079" class="edge">
+<title>Node117&#45;&gt;Node79</title>
+<g id="a_edge95_Node000117_Node000079"><a xlink:title=" ">
 <path fill="none" stroke="#63b8ff" d="M1105.76,-390.62C1090.45,-388.69 1074.15,-386.71 1059,-385 902.93,-367.34 860.67,-370.07 701.24,-349.11"/>
 <polygon fill="#63b8ff" stroke="#63b8ff" points="701.44,-345.61 691.07,-347.76 700.52,-352.54 701.44,-345.61"/>
 </a>

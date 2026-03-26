@@ -98,7 +98,7 @@ $(function() {
 <div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="multiphysics_8h__dep__incl.svg" width="4816" height="872"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="multiphysics_8h__dep__incl.svg" width="5187" height="872"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="multiphysics_8h_source.html">Go to the source code of this file.</a></p>
@@ -109,7 +109,7 @@ Enumerations</h2></td></tr>
 &#160;&#160;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">fluid_dynamics</a> = 0
 , <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ad4151ddbc1976755e1fcd118d2917fa8">heat_transfer</a> = 1
 , <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef">tracer</a> = 2
-, <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">VOF</a> = 3
+, <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2aa5e0d06ffc1b0ee32eda539e6528a3e6">CLS</a> = 3
 , <br />
 &#160;&#160;<a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd">cahn_hilliard</a> = 4
 , <a class="el" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ac7d22c326661ea68be0f32a25a45a666">void_fraction</a> = 5
@@ -141,7 +141,7 @@ Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Identifiers for multiphysics modules and their solution fields. </p>
-<p>This file defines the enumerations used to identify the different physics modules available in Lethe (fluid dynamics, heat transfer, VOF, etc.) and the solution fields they produce. It also provides a utility function to convert a physics name string into its corresponding PhysicsID. </p>
+<p>This file defines the enumerations used to identify the different physics modules available in Lethe (fluid dynamics, heat transfer, CLS, etc.) and the solution fields they produce. It also provides a utility function to convert a physics name string into its corresponding PhysicsID. </p>
 
 <p class="definition">Definition in file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
 </div><h2 class="groupheader">Enumeration Type Documentation</h2>
@@ -166,7 +166,7 @@ Functions</h2></td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef" name="ae14bb720bc9a37edc36fb8d90df712c2a50955dac125ab3c822a8f3bb4f6fcaef"></a>tracer&#160;</td><td class="fielddoc"><p>Passive scalar tracer (<a class="el" href="classTracer.html">Tracer</a>) </p>
 </td></tr>
-<tr><td class="fieldname"><a id="ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9" name="ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9"></a>VOF&#160;</td><td class="fielddoc"><p>Conservative level-set / Volume-of-Fluid (Phase indicator / phase fraction) </p>
+<tr><td class="fieldname"><a id="ae14bb720bc9a37edc36fb8d90df712c2aa5e0d06ffc1b0ee32eda539e6528a3e6" name="ae14bb720bc9a37edc36fb8d90df712c2aa5e0d06ffc1b0ee32eda539e6528a3e6"></a>CLS&#160;</td><td class="fielddoc"><p>Conservative level-set / Volume-of-Fluid (Phase indicator / phase fraction) </p>
 </td></tr>
 <tr><td class="fieldname"><a id="ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd" name="ae14bb720bc9a37edc36fb8d90df712c2adb9b8e35efba351d474020dd829e49dd"></a>cahn_hilliard&#160;</td><td class="fielddoc"><p>Cahn-Hilliard (Phase indicator, Potential) </p>
 </td></tr>
@@ -206,7 +206,7 @@ Functions</h2></td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="a2cbb04ef215561a69b48772159577fddad99fad96a5d0a7cb2eb41341ea556093" name="a2cbb04ef215561a69b48772159577fddad99fad96a5d0a7cb2eb41341ea556093"></a>pressure&#160;</td><td class="fielddoc"><p>Pressure scalar field from fluid dynamics. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f" name="a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f"></a>phase&#160;</td><td class="fielddoc"><p>Phase fraction scalar field from VOF. </p>
+<tr><td class="fieldname"><a id="a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f" name="a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f"></a>phase&#160;</td><td class="fielddoc"><p>Phase fraction scalar field from CLS. </p>
 </td></tr>
 <tr><td class="fieldname"><a id="a2cbb04ef215561a69b48772159577fddaeef438f7e448aa48c1f8db568d27b591" name="a2cbb04ef215561a69b48772159577fddaeef438f7e448aa48c1f8db568d27b591"></a>temperature&#160;</td><td class="fielddoc"><p>Temperature scalar field from heat transfer. </p>
 </td></tr>
@@ -257,7 +257,7 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics_8h_source.html#l00076">76</a> of file <a class="el" href="multiphysics_8h_source.html">multiphysics.h</a>.</p>
 
-<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00035">cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00039">electromagnetics</a>, <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, <a class="el" href="multiphysics_8h_source.html#l00028">heat_transfer</a>, <a class="el" href="multiphysics_8h_source.html#l00030">tracer</a>, <a class="el" href="multiphysics_8h_source.html#l00033">VOF</a>, and <a class="el" href="multiphysics_8h_source.html#l00037">void_fraction</a>.</p>
+<p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00035">cahn_hilliard</a>, <a class="el" href="multiphysics_8h_source.html#l00033">CLS</a>, <a class="el" href="multiphysics_8h_source.html#l00039">electromagnetics</a>, <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, <a class="el" href="multiphysics_8h_source.html#l00028">heat_transfer</a>, <a class="el" href="multiphysics_8h_source.html#l00030">tracer</a>, and <a class="el" href="multiphysics_8h_source.html#l00037">void_fraction</a>.</p>
 
 </div>
 </div>

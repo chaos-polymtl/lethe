@@ -1151,11 +1151,11 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01023" name="l01023"></a><span class="lineno"> 1023</span>          <span class="comment">/* We want to find a cell-wise correction to apply to the cell&#39;s dof</span></div>
 <div class="line"><a id="l01024" name="l01024"></a><span class="lineno"> 1024</span><span class="comment">          values of the signed_distance so that the geometric cell-wise volume</span></div>
 <div class="line"><a id="l01025" name="l01025"></a><span class="lineno"> 1025</span><span class="comment">          encompassed by the level 0 of the signed_distance V_K and by the</span></div>
-<div class="line"><a id="l01026" name="l01026"></a><span class="lineno"> 1026</span><span class="comment">          iso-contour 0.5 of the phase fraction V_K,VOF match. This is</span></div>
+<div class="line"><a id="l01026" name="l01026"></a><span class="lineno"> 1026</span><span class="comment">          iso-contour 0.5 of the phase fraction V_K,CLS match. This is</span></div>
 <div class="line"><a id="l01027" name="l01027"></a><span class="lineno"> 1027</span><span class="comment">          required because the computed distance doesn&#39;t belong to the Q1</span></div>
 <div class="line"><a id="l01028" name="l01028"></a><span class="lineno"> 1028</span><span class="comment">          approximation space.</span></div>
 <div class="line"><a id="l01029" name="l01029"></a><span class="lineno"> 1029</span><span class="comment"></span> </div>
-<div class="line"><a id="l01030" name="l01030"></a><span class="lineno"> 1030</span><span class="comment">          We solve the non-linear problem: DeltaV_K(phi* + eta_K) = V_K,VOF -</span></div>
+<div class="line"><a id="l01030" name="l01030"></a><span class="lineno"> 1030</span><span class="comment">          We solve the non-linear problem: DeltaV_K(phi* + eta_K) = V_K,CLS -</span></div>
 <div class="line"><a id="l01031" name="l01031"></a><span class="lineno"> 1031</span><span class="comment">          V_K(phi* + eta_K) = 0, where phi* is the current</span></div>
 <div class="line"><a id="l01032" name="l01032"></a><span class="lineno"> 1032</span><span class="comment">          signed distance, eta_K is the correction on the signed_distance that</span></div>
 <div class="line"><a id="l01033" name="l01033"></a><span class="lineno"> 1033</span><span class="comment">          we are looking for. We use the secant method to do so. See Ausas et</span></div>
@@ -1300,9 +1300,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01170" name="l01170"></a><span class="lineno"> 1170</span>  <span class="comment">/* We want to find a global correction function to apply to the dof value of</span></div>
 <div class="line"><a id="l01171" name="l01171"></a><span class="lineno"> 1171</span><span class="comment">     the signed_distance so that the geometric global volume encompassed by the</span></div>
 <div class="line"><a id="l01172" name="l01172"></a><span class="lineno"> 1172</span><span class="comment">     level 0 of the signed_distance V and by the iso-contour 0.5 of the phase</span></div>
-<div class="line"><a id="l01173" name="l01173"></a><span class="lineno"> 1173</span><span class="comment">     fraction V_VOF match. This is required because the computed distance</span></div>
+<div class="line"><a id="l01173" name="l01173"></a><span class="lineno"> 1173</span><span class="comment">     fraction V_CLS match. This is required because the computed distance</span></div>
 <div class="line"><a id="l01174" name="l01174"></a><span class="lineno"> 1174</span><span class="comment">     doesn&#39;t belong to the Q1 approximation space. We solve the non-linear</span></div>
-<div class="line"><a id="l01175" name="l01175"></a><span class="lineno"> 1175</span><span class="comment">     problem: DeltaV(phi* + xi) = V_VOF - V(phi* + xi) = 0, where phi* is the</span></div>
+<div class="line"><a id="l01175" name="l01175"></a><span class="lineno"> 1175</span><span class="comment">     problem: DeltaV(phi* + xi) = V_CLS - V(phi* + xi) = 0, where phi* is the</span></div>
 <div class="line"><a id="l01176" name="l01176"></a><span class="lineno"> 1176</span><span class="comment">     current signed distance, xi = C*eta is the correction function on</span></div>
 <div class="line"><a id="l01177" name="l01177"></a><span class="lineno"> 1177</span><span class="comment">     the signed_distance that we are looking for, with eta being the cell-wise</span></div>
 <div class="line"><a id="l01178" name="l01178"></a><span class="lineno"> 1178</span><span class="comment">     correction computed with compute_cell_wise_volume_correction() and C being</span></div>
@@ -1332,7 +1332,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01202" name="l01202"></a><span class="lineno"> 1202</span>  <span class="keywordtype">double</span> global_delta_volume_prime = 0.0;</div>
 <div class="line"><a id="l01203" name="l01203"></a><span class="lineno"> 1203</span> </div>
 <div class="line"><a id="l01204" name="l01204"></a><span class="lineno"> 1204</span>  <span class="comment">/* Global constant C that we are solving for to obtain</span></div>
-<div class="line"><a id="l01205" name="l01205"></a><span class="lineno"> 1205</span><span class="comment">      DeltaV(phi* + C*eta) = V_VOF - V(phi* + C*eta) = 0</span></div>
+<div class="line"><a id="l01205" name="l01205"></a><span class="lineno"> 1205</span><span class="comment">      DeltaV(phi* + C*eta) = V_CLS - V(phi* + C*eta) = 0</span></div>
 <div class="line"><a id="l01206" name="l01206"></a><span class="lineno"> 1206</span><span class="comment">  where eta is the cell-wise correction computed with</span></div>
 <div class="line"><a id="l01207" name="l01207"></a><span class="lineno"> 1207</span><span class="comment">  compute_cell_wise_volume_correction()*/</span></div>
 <div class="line"><a id="l01208" name="l01208"></a><span class="lineno"> 1208</span>  <span class="keywordtype">double</span> C_nm1 = 0.0;</div>

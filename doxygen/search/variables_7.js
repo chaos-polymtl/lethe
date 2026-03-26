@@ -25,7 +25,7 @@ var searchData=
   ['heat_5ftransfer_5frate_22',['heat_transfer_rate',['../classParticleInteractionOutcomes.html#a20510edc4683fa1b6d2f5dfbb1321dad',1,'ParticleInteractionOutcomes']]],
   ['heat_5ftransfer_5fsource_23',['heat_transfer_source',['../classSourceTerms_1_1SourceTerm.html#a20350da74b95a09838932a894ef15405',1,'SourceTerms::SourceTerm']]],
   ['height_24',['height',['../classCone.html#a739dc61dfe0c8b42ab9f761ae8c0d25a',1,'Cone::height'],['../classUniformChannelWithMeshedCylinderGrid.html#a46de5fa562d4a4111393918c53209c8e',1,'UniformChannelWithMeshedCylinderGrid::height'],['../classCylindricalHelix.html#ad510a10aaed5955ddbfe6cf552f09d88',1,'CylindricalHelix::height'],['../classCylindricalTube.html#ab927ca8d0deb63b0f2e7fabf19ae0917',1,'CylindricalTube::height']]],
-  ['hess_5fphi_25',['hess_phi',['../classTracerScratchData.html#a943a8ce7d78704878f1440c5ececc6f2',1,'TracerScratchData::hess_phi'],['../classVOFScratchData.html#a51c41d7ce633f56d4122e0d4fd38d1e3',1,'VOFScratchData::hess_phi']]],
+  ['hess_5fphi_25',['hess_phi',['../classCLSScratchData.html#a52d7f8153c34b9ffa58a7aea1d6691b6',1,'CLSScratchData::hess_phi'],['../classTracerScratchData.html#a943a8ce7d78704878f1440c5ececc6f2',1,'TracerScratchData::hess_phi']]],
   ['hess_5fphi_5fphase_26',['hess_phi_phase',['../classCahnHilliardScratchData.html#a606bb0ae05283ddb02efb0c9cb5241fd',1,'CahnHilliardScratchData']]],
   ['hess_5fphi_5fpotential_27',['hess_phi_potential',['../classCahnHilliardScratchData.html#a40537b193f67757e6aa99a019e8c74f6',1,'CahnHilliardScratchData']]],
   ['hess_5fphi_5ft_28',['hess_phi_T',['../classHeatTransferScratchData.html#a781b323bc8a63c5ad9a446a55e035fe9',1,'HeatTransferScratchData']]],

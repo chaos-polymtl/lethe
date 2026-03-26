@@ -391,27 +391,27 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>  <span class="comment">// Laser heat source</span></div>
 <div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.laser_parameters-&gt;activate_laser)</div>
 <div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>    {</div>
-<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>      <span class="keywordflow">if</span> (this-&gt;simulation_parameters.multiphysics.VOF)</div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>      <span class="keywordflow">if</span> (this-&gt;simulation_parameters.multiphysics.CLS)</div>
 <div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>        {</div>
 <div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>          <span class="comment">// Call for the specific assembler of the laser source term</span></div>
 <div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>          <span class="comment">// Laser source is applied at the interface (surface flux)</span></div>
 <div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>          <span class="keywordflow">if</span> (this-&gt;simulation_parameters.laser_parameters-&gt;laser_type ==</div>
 <div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>              <a class="code hl_class" href="classParameters_1_1Laser.html">Parameters::Laser</a>&lt;</div>
-<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>                dim&gt;::LaserType::gaussian_heat_flux_vof_interface)</div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>                dim&gt;::LaserType::gaussian_heat_flux_cls_interface)</div>
 <div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>            {</div>
 <div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>              this-&gt;assemblers.emplace_back(</div>
 <div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>                std::make_shared&lt;</div>
-<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>                  <a class="code hl_class" href="classHeatTransferAssemblerLaserGaussianHeatFluxVOFInterface.html">HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface&lt;dim&gt;</a>&gt;(</div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>                  <a class="code hl_class" href="classHeatTransferAssemblerLaserGaussianHeatFluxCLSInterface.html">HeatTransferAssemblerLaserGaussianHeatFluxCLSInterface&lt;dim&gt;</a>&gt;(</div>
 <div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>                  this-&gt;simulation_control,</div>
 <div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>                  this-&gt;simulation_parameters.laser_parameters));</div>
 <div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>            }</div>
 <div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>          <span class="keywordflow">else</span> <span class="keywordflow">if</span> (this-&gt;simulation_parameters.laser_parameters-&gt;laser_type ==</div>
 <div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>                   <a class="code hl_class" href="classParameters_1_1Laser.html">Parameters::Laser</a>&lt;</div>
-<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>                     dim&gt;::LaserType::uniform_heat_flux_vof_interface)</div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>                     dim&gt;::LaserType::uniform_heat_flux_cls_interface)</div>
 <div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>            {</div>
 <div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>              this-&gt;assemblers.emplace_back(</div>
 <div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>                std::make_shared&lt;</div>
-<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>                  <a class="code hl_class" href="classHeatTransferAssemblerLaserUniformHeatFluxVOFInterface.html">HeatTransferAssemblerLaserUniformHeatFluxVOFInterface&lt;dim&gt;</a>&gt;(</div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>                  <a class="code hl_class" href="classHeatTransferAssemblerLaserUniformHeatFluxCLSInterface.html">HeatTransferAssemblerLaserUniformHeatFluxCLSInterface&lt;dim&gt;</a>&gt;(</div>
 <div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>                  this-&gt;simulation_control,</div>
 <div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>                  this-&gt;simulation_parameters.laser_parameters));</div>
 <div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>            }</div>
@@ -419,7 +419,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>            {</div>
 <div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>              this-&gt;assemblers.emplace_back(</div>
 <div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>                std::make_shared&lt;</div>
-<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>                  <a class="code hl_class" href="classHeatTransferAssemblerLaserExponentialDecayVOF.html">HeatTransferAssemblerLaserExponentialDecayVOF&lt;dim&gt;</a>&gt;(</div>
+<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>                  <a class="code hl_class" href="classHeatTransferAssemblerLaserExponentialDecayCLS.html">HeatTransferAssemblerLaserExponentialDecayCLS&lt;dim&gt;</a>&gt;(</div>
 <div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>                  this-&gt;simulation_control,</div>
 <div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>                  this-&gt;simulation_parameters.laser_parameters));</div>
 <div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>            }</div>
@@ -432,7 +432,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>            {</div>
 <div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span>              this-&gt;assemblers.emplace_back(</div>
 <div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>                std::make_shared&lt;</div>
-<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>                  <a class="code hl_class" href="classHeatTransferAssemblerFreeSurfaceRadiationVOF.html">HeatTransferAssemblerFreeSurfaceRadiationVOF&lt;dim&gt;</a>&gt;(</div>
+<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>                  <a class="code hl_class" href="classHeatTransferAssemblerFreeSurfaceRadiationCLS.html">HeatTransferAssemblerFreeSurfaceRadiationCLS&lt;dim&gt;</a>&gt;(</div>
 <div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>                  this-&gt;simulation_control,</div>
 <div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>                  this-&gt;simulation_parameters.laser_parameters));</div>
 <div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>            }</div>
@@ -447,12 +447,12 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>    }</div>
 <div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span> </div>
 <div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>  <span class="comment">// Evaporation cooling</span></div>
-<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.multiphysics.VOF)</div>
+<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.multiphysics.CLS)</div>
 <div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>    {</div>
 <div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span>      <span class="keywordflow">if</span> (this-&gt;simulation_parameters.evaporation.enable_evaporation_cooling)</div>
 <div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span>        {</div>
 <div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span>          this-&gt;assemblers.emplace_back(</div>
-<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>            std::make_shared&lt;<a class="code hl_class" href="classHeatTransferAssemblerVOFEvaporation.html">HeatTransferAssemblerVOFEvaporation&lt;dim&gt;</a>&gt;(</div>
+<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>            std::make_shared&lt;<a class="code hl_class" href="classHeatTransferAssemblerCLSEvaporation.html">HeatTransferAssemblerCLSEvaporation&lt;dim&gt;</a>&gt;(</div>
 <div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span>              this-&gt;simulation_control,</div>
 <div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span>              this-&gt;simulation_parameters.evaporation));</div>
 <div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>        }</div>
@@ -471,13 +471,13 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span> </div>
 <div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.multiphysics.viscous_dissipation)</div>
 <div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span>    {</div>
-<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>      <span class="keywordflow">if</span> (this-&gt;simulation_parameters.multiphysics.VOF)</div>
+<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>      <span class="keywordflow">if</span> (this-&gt;simulation_parameters.multiphysics.CLS)</div>
 <div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span>        {</div>
 <div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span>          <span class="comment">// Call for the specific assembler</span></div>
 <div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span>          this-&gt;assemblers.emplace_back(</div>
-<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>            std::make_shared&lt;<a class="code hl_class" href="classHeatTransferAssemblerViscousDissipationVOF.html">HeatTransferAssemblerViscousDissipationVOF&lt;dim&gt;</a>&gt;(</div>
+<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>            std::make_shared&lt;<a class="code hl_class" href="classHeatTransferAssemblerViscousDissipationCLS.html">HeatTransferAssemblerViscousDissipationCLS&lt;dim&gt;</a>&gt;(</div>
 <div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>              this-&gt;simulation_control,</div>
-<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>              this-&gt;simulation_parameters.multiphysics.vof_parameters</div>
+<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>              this-&gt;simulation_parameters.multiphysics.cls_parameters</div>
 <div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>                .viscous_dissipative_fluid));</div>
 <div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>        }</div>
 <div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>      <span class="keywordflow">else</span></div>
@@ -534,15 +534,15 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span>    *this-&gt;face_quadrature,</div>
 <div class="line"><a id="l00425" name="l00425"></a><span class="lineno">  425</span>    delta_T_ref);</div>
 <div class="line"><a id="l00426" name="l00426"></a><span class="lineno">  426</span> </div>
-<div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.multiphysics.VOF)</div>
+<div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.multiphysics.CLS)</div>
 <div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span>    {</div>
-<div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span>      <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;dof_handler_vof =</div>
-<div class="line"><a id="l00430" name="l00430"></a><span class="lineno">  430</span>        this-&gt;multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>);</div>
-<div class="line"><a id="l00431" name="l00431"></a><span class="lineno">  431</span>      scratch_data.enable_vof(</div>
-<div class="line"><a id="l00432" name="l00432"></a><span class="lineno">  432</span>        dof_handler_vof.get_fe(),</div>
+<div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span>      <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;dof_handler_cls =</div>
+<div class="line"><a id="l00430" name="l00430"></a><span class="lineno">  430</span>        this-&gt;multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2aa5e0d06ffc1b0ee32eda539e6528a3e6">PhysicsID::CLS</a>);</div>
+<div class="line"><a id="l00431" name="l00431"></a><span class="lineno">  431</span>      scratch_data.enable_cls(</div>
+<div class="line"><a id="l00432" name="l00432"></a><span class="lineno">  432</span>        dof_handler_cls.get_fe(),</div>
 <div class="line"><a id="l00433" name="l00433"></a><span class="lineno">  433</span>        *this-&gt;cell_quadrature,</div>
 <div class="line"><a id="l00434" name="l00434"></a><span class="lineno">  434</span>        *this-&gt;temperature_mapping,</div>
-<div class="line"><a id="l00435" name="l00435"></a><span class="lineno">  435</span>        this-&gt;simulation_parameters.multiphysics.vof_parameters.phase_filter);</div>
+<div class="line"><a id="l00435" name="l00435"></a><span class="lineno">  435</span>        this-&gt;simulation_parameters.multiphysics.cls_parameters.phase_filter);</div>
 <div class="line"><a id="l00436" name="l00436"></a><span class="lineno">  436</span>    }</div>
 <div class="line"><a id="l00437" name="l00437"></a><span class="lineno">  437</span> </div>
 <div class="line"><a id="l00438" name="l00438"></a><span class="lineno">  438</span>  WorkStream::run(this-&gt;dof_handler-&gt;begin_active(),</div>
@@ -642,18 +642,18 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00530" name="l00530"></a><span class="lineno">  530</span>        }</div>
 <div class="line"><a id="l00531" name="l00531"></a><span class="lineno">  531</span>    }</div>
 <div class="line"><a id="l00532" name="l00532"></a><span class="lineno">  532</span> </div>
-<div class="line"><a id="l00533" name="l00533"></a><span class="lineno">  533</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.multiphysics.VOF)</div>
+<div class="line"><a id="l00533" name="l00533"></a><span class="lineno">  533</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.multiphysics.CLS)</div>
 <div class="line"><a id="l00534" name="l00534"></a><span class="lineno">  534</span>    {</div>
-<div class="line"><a id="l00535" name="l00535"></a><span class="lineno">  535</span>      <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;dof_handler_vof =</div>
-<div class="line"><a id="l00536" name="l00536"></a><span class="lineno">  536</span>        this-&gt;multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>);</div>
+<div class="line"><a id="l00535" name="l00535"></a><span class="lineno">  535</span>      <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;dof_handler_cls =</div>
+<div class="line"><a id="l00536" name="l00536"></a><span class="lineno">  536</span>        this-&gt;multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2aa5e0d06ffc1b0ee32eda539e6528a3e6">PhysicsID::CLS</a>);</div>
 <div class="line"><a id="l00537" name="l00537"></a><span class="lineno">  537</span>      <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator phase_cell(</div>
 <div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span>        &amp;(*(this-&gt;triangulation)),</div>
 <div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span>        cell-&gt;level(),</div>
 <div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span>        cell-&gt;index(),</div>
-<div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span>        &amp;dof_handler_vof);</div>
+<div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span>        &amp;dof_handler_cls);</div>
 <div class="line"><a id="l00542" name="l00542"></a><span class="lineno">  542</span> </div>
-<div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span>      scratch_data.<a class="code hl_function" href="classHeatTransferScratchData.html#ad75b096501fe6ee0f3aec67a9b31ee27">reinit_vof</a>(</div>
-<div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>        phase_cell, this-&gt;multiphysics-&gt;get_filtered_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>));</div>
+<div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span>      scratch_data.<a class="code hl_function" href="classHeatTransferScratchData.html#aef21c856237186f8f7cd74f3c48153ea">reinit_cls</a>(</div>
+<div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>        phase_cell, this-&gt;multiphysics-&gt;get_filtered_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2aa5e0d06ffc1b0ee32eda539e6528a3e6">PhysicsID::CLS</a>));</div>
 <div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span>    }</div>
 <div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span> </div>
 <div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span>  scratch_data.<a class="code hl_function" href="classHeatTransferScratchData.html#a3734c97bfddf5bab0a5f9a68c8f52a2c">calculate_physical_properties</a>();</div>
@@ -711,15 +711,15 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>    *this-&gt;face_quadrature,</div>
 <div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>    delta_T_ref);</div>
 <div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span> </div>
-<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.multiphysics.VOF)</div>
+<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.multiphysics.CLS)</div>
 <div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>    {</div>
-<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>      <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;dof_handler_vof =</div>
-<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>        this-&gt;multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>);</div>
-<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span>      scratch_data.enable_vof(</div>
-<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span>        dof_handler_vof.get_fe(),</div>
+<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>      <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;dof_handler_cls =</div>
+<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>        this-&gt;multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2aa5e0d06ffc1b0ee32eda539e6528a3e6">PhysicsID::CLS</a>);</div>
+<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span>      scratch_data.enable_cls(</div>
+<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span>        dof_handler_cls.get_fe(),</div>
 <div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span>        *this-&gt;cell_quadrature,</div>
 <div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>        *this-&gt;temperature_mapping,</div>
-<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>        this-&gt;simulation_parameters.multiphysics.vof_parameters.phase_filter);</div>
+<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>        this-&gt;simulation_parameters.multiphysics.cls_parameters.phase_filter);</div>
 <div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span>    }</div>
 <div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span> </div>
 <div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span>  WorkStream::run(this-&gt;dof_handler-&gt;begin_active(),</div>
@@ -823,18 +823,18 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span>        multiphysics-&gt;get_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>));</div>
 <div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span>    }</div>
 <div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span> </div>
-<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.multiphysics.VOF)</div>
+<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.multiphysics.CLS)</div>
 <div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span>    {</div>
-<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span>      <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;dof_handler_vof =</div>
-<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span>        this-&gt;multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>);</div>
+<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span>      <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;dof_handler_cls =</div>
+<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span>        this-&gt;multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2aa5e0d06ffc1b0ee32eda539e6528a3e6">PhysicsID::CLS</a>);</div>
 <div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span>      <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator phase_cell(</div>
 <div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span>        &amp;(*(this-&gt;triangulation)),</div>
 <div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span>        cell-&gt;level(),</div>
 <div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span>        cell-&gt;index(),</div>
-<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span>        &amp;dof_handler_vof);</div>
+<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span>        &amp;dof_handler_cls);</div>
 <div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span> </div>
-<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span>      scratch_data.<a class="code hl_function" href="classHeatTransferScratchData.html#ad75b096501fe6ee0f3aec67a9b31ee27">reinit_vof</a>(</div>
-<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span>        phase_cell, this-&gt;multiphysics-&gt;get_filtered_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>));</div>
+<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span>      scratch_data.<a class="code hl_function" href="classHeatTransferScratchData.html#aef21c856237186f8f7cd74f3c48153ea">reinit_cls</a>(</div>
+<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span>        phase_cell, this-&gt;multiphysics-&gt;get_filtered_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2aa5e0d06ffc1b0ee32eda539e6528a3e6">PhysicsID::CLS</a>));</div>
 <div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span>    }</div>
 <div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span> </div>
 <div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span>  scratch_data.<a class="code hl_function" href="classHeatTransferScratchData.html#a3734c97bfddf5bab0a5f9a68c8f52a2c">calculate_physical_properties</a>();</div>
@@ -1149,13 +1149,13 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01017" name="l01017"></a><span class="lineno"> 1017</span>    this-&gt;simulation_parameters.post_processing.postprocessed_fluid;</div>
 <div class="line"><a id="l01018" name="l01018"></a><span class="lineno"> 1018</span>  <span class="comment">// default: monophase simulations</span></div>
 <div class="line"><a id="l01019" name="l01019"></a><span class="lineno"> 1019</span>  std::string domain_name(<span class="stringliteral">&quot;fluid&quot;</span>);</div>
-<div class="line"><a id="l01020" name="l01020"></a><span class="lineno"> 1020</span>  <span class="keywordtype">bool</span>        gather_vof(<span class="keyword">false</span>);</div>
+<div class="line"><a id="l01020" name="l01020"></a><span class="lineno"> 1020</span>  <span class="keywordtype">bool</span>        gather_cls(<span class="keyword">false</span>);</div>
 <div class="line"><a id="l01021" name="l01021"></a><span class="lineno"> 1021</span> </div>
 <div class="line"><a id="l01022" name="l01022"></a><span class="lineno"> 1022</span>  <span class="keywordflow">if</span> (this-&gt;simulation_parameters.physical_properties_manager</div>
 <div class="line"><a id="l01023" name="l01023"></a><span class="lineno"> 1023</span>        .get_number_of_fluids() == 2)</div>
 <div class="line"><a id="l01024" name="l01024"></a><span class="lineno"> 1024</span>    {</div>
 <div class="line"><a id="l01025" name="l01025"></a><span class="lineno"> 1025</span>      <span class="comment">// Multiphase flow</span></div>
-<div class="line"><a id="l01026" name="l01026"></a><span class="lineno"> 1026</span>      gather_vof = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l01026" name="l01026"></a><span class="lineno"> 1026</span>      gather_cls = <span class="keyword">true</span>;</div>
 <div class="line"><a id="l01027" name="l01027"></a><span class="lineno"> 1027</span>      <span class="keywordflow">switch</span> (monitored_fluid)</div>
 <div class="line"><a id="l01028" name="l01028"></a><span class="lineno"> 1028</span>        {</div>
 <div class="line"><a id="l01029" name="l01029"></a><span class="lineno"> 1029</span>          <span class="keywordflow">default</span>:</div>
@@ -1179,7 +1179,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01047" name="l01047"></a><span class="lineno"> 1047</span>  <span class="comment">// Temperature statistics</span></div>
 <div class="line"><a id="l01048" name="l01048"></a><span class="lineno"> 1048</span>  <span class="keywordflow">if</span> (simulation_parameters.post_processing.calculate_temperature_statistics)</div>
 <div class="line"><a id="l01049" name="l01049"></a><span class="lineno"> 1049</span>    {</div>
-<div class="line"><a id="l01050" name="l01050"></a><span class="lineno"> 1050</span>      postprocess_temperature_statistics(gather_vof,</div>
+<div class="line"><a id="l01050" name="l01050"></a><span class="lineno"> 1050</span>      postprocess_temperature_statistics(gather_cls,</div>
 <div class="line"><a id="l01051" name="l01051"></a><span class="lineno"> 1051</span>                                         monitored_fluid,</div>
 <div class="line"><a id="l01052" name="l01052"></a><span class="lineno"> 1052</span>                                         domain_name,</div>
 <div class="line"><a id="l01053" name="l01053"></a><span class="lineno"> 1053</span>                                         <span class="keyword">false</span>);</div>
@@ -1188,7 +1188,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01056" name="l01056"></a><span class="lineno"> 1056</span>      <span class="comment">// true.</span></div>
 <div class="line"><a id="l01057" name="l01057"></a><span class="lineno"> 1057</span>      <span class="keywordflow">if</span> (simulation_parameters.post_processing.calculate_average_temp_and_hf)</div>
 <div class="line"><a id="l01058" name="l01058"></a><span class="lineno"> 1058</span>        {</div>
-<div class="line"><a id="l01059" name="l01059"></a><span class="lineno"> 1059</span>          postprocess_temperature_statistics(gather_vof,</div>
+<div class="line"><a id="l01059" name="l01059"></a><span class="lineno"> 1059</span>          postprocess_temperature_statistics(gather_cls,</div>
 <div class="line"><a id="l01060" name="l01060"></a><span class="lineno"> 1060</span>                                             monitored_fluid,</div>
 <div class="line"><a id="l01061" name="l01061"></a><span class="lineno"> 1061</span>                                             domain_name,</div>
 <div class="line"><a id="l01062" name="l01062"></a><span class="lineno"> 1062</span>                                             <span class="keyword">true</span>);</div>
@@ -1206,11 +1206,11 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01074" name="l01074"></a><span class="lineno"> 1074</span>      <span class="comment">// Parse fluid present solution</span></div>
 <div class="line"><a id="l01075" name="l01075"></a><span class="lineno"> 1075</span>      <span class="keywordflow">if</span> (multiphysics-&gt;fluid_dynamics_is_block())</div>
 <div class="line"><a id="l01076" name="l01076"></a><span class="lineno"> 1076</span>        {</div>
-<div class="line"><a id="l01077" name="l01077"></a><span class="lineno"> 1077</span>          postprocess_heat_flux_on_bc(gather_vof,</div>
+<div class="line"><a id="l01077" name="l01077"></a><span class="lineno"> 1077</span>          postprocess_heat_flux_on_bc(gather_cls,</div>
 <div class="line"><a id="l01078" name="l01078"></a><span class="lineno"> 1078</span>                                      multiphysics-&gt;get_block_solution(</div>
 <div class="line"><a id="l01079" name="l01079"></a><span class="lineno"> 1079</span>                                        <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>));</div>
 <div class="line"><a id="l01080" name="l01080"></a><span class="lineno"> 1080</span> </div>
-<div class="line"><a id="l01081" name="l01081"></a><span class="lineno"> 1081</span>          postprocess_thermal_energy_in_fluid(gather_vof,</div>
+<div class="line"><a id="l01081" name="l01081"></a><span class="lineno"> 1081</span>          postprocess_thermal_energy_in_fluid(gather_cls,</div>
 <div class="line"><a id="l01082" name="l01082"></a><span class="lineno"> 1082</span>                                              monitored_fluid,</div>
 <div class="line"><a id="l01083" name="l01083"></a><span class="lineno"> 1083</span>                                              domain_name,</div>
 <div class="line"><a id="l01084" name="l01084"></a><span class="lineno"> 1084</span>                                              multiphysics-&gt;get_block_solution(</div>
@@ -1219,9 +1219,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01087" name="l01087"></a><span class="lineno"> 1087</span>      <span class="keywordflow">else</span></div>
 <div class="line"><a id="l01088" name="l01088"></a><span class="lineno"> 1088</span>        {</div>
 <div class="line"><a id="l01089" name="l01089"></a><span class="lineno"> 1089</span>          postprocess_heat_flux_on_bc(</div>
-<div class="line"><a id="l01090" name="l01090"></a><span class="lineno"> 1090</span>            gather_vof, multiphysics-&gt;get_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>));</div>
+<div class="line"><a id="l01090" name="l01090"></a><span class="lineno"> 1090</span>            gather_cls, multiphysics-&gt;get_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">PhysicsID::fluid_dynamics</a>));</div>
 <div class="line"><a id="l01091" name="l01091"></a><span class="lineno"> 1091</span> </div>
-<div class="line"><a id="l01092" name="l01092"></a><span class="lineno"> 1092</span>          postprocess_thermal_energy_in_fluid(gather_vof,</div>
+<div class="line"><a id="l01092" name="l01092"></a><span class="lineno"> 1092</span>          postprocess_thermal_energy_in_fluid(gather_cls,</div>
 <div class="line"><a id="l01093" name="l01093"></a><span class="lineno"> 1093</span>                                              monitored_fluid,</div>
 <div class="line"><a id="l01094" name="l01094"></a><span class="lineno"> 1094</span>                                              domain_name,</div>
 <div class="line"><a id="l01095" name="l01095"></a><span class="lineno"> 1095</span>                                              multiphysics-&gt;get_solution(</div>
@@ -1243,7 +1243,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01111" name="l01111"></a><span class="lineno"> 1111</span>      AssertThrow(</div>
 <div class="line"><a id="l01112" name="l01112"></a><span class="lineno"> 1112</span>        simulation_parameters.physical_properties_manager.has_phase_change(),</div>
 <div class="line"><a id="l01113" name="l01113"></a><span class="lineno"> 1113</span>        LiquidFractionRequiresPhaseChange());</div>
-<div class="line"><a id="l01114" name="l01114"></a><span class="lineno"> 1114</span>      postprocess_liquid_fraction(gather_vof);</div>
+<div class="line"><a id="l01114" name="l01114"></a><span class="lineno"> 1114</span>      postprocess_liquid_fraction(gather_cls);</div>
 <div class="line"><a id="l01115" name="l01115"></a><span class="lineno"> 1115</span> </div>
 <div class="line"><a id="l01116" name="l01116"></a><span class="lineno"> 1116</span>      <span class="keywordflow">if</span> (simulation_control-&gt;get_step_number() %</div>
 <div class="line"><a id="l01117" name="l01117"></a><span class="lineno"> 1117</span>            this-&gt;simulation_parameters.post_processing.output_frequency ==</div>
@@ -1824,8 +1824,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01669" name="l01669"></a><span class="lineno"> 1669</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
 <div class="line"><a id="l01670" name="l01670"></a><span class="lineno"> 1670</span><span class="keywordtype">void</span></div>
 <div class="foldopen" id="foldopen01671" data-start="{" data-end="}">
-<div class="line"><a id="l01671" name="l01671"></a><span class="lineno"><a class="line" href="classHeatTransfer.html#a7ff114068319d0f41a69eb1b1b1c0df7"> 1671</a></span><a class="code hl_function" href="classHeatTransfer.html#a7ff114068319d0f41a69eb1b1b1c0df7">HeatTransfer&lt;dim&gt;::postprocess_temperature_statistics</a>(</div>
-<div class="line"><a id="l01672" name="l01672"></a><span class="lineno"> 1672</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>                       gather_vof,</div>
+<div class="line"><a id="l01671" name="l01671"></a><span class="lineno"><a class="line" href="classHeatTransfer.html#ab1ed586f4c193bb05f6e3212a1a59e24"> 1671</a></span><a class="code hl_function" href="classHeatTransfer.html#ab1ed586f4c193bb05f6e3212a1a59e24">HeatTransfer&lt;dim&gt;::postprocess_temperature_statistics</a>(</div>
+<div class="line"><a id="l01672" name="l01672"></a><span class="lineno"> 1672</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>                       gather_cls,</div>
 <div class="line"><a id="l01673" name="l01673"></a><span class="lineno"> 1673</span>  <span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2f">Parameters::FluidIndicator</a> monitored_fluid,</div>
 <div class="line"><a id="l01674" name="l01674"></a><span class="lineno"> 1674</span>  <span class="keyword">const</span> std::string                domain_name,</div>
 <div class="line"><a id="l01675" name="l01675"></a><span class="lineno"> 1675</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>                       time_average)</div>
@@ -1840,20 +1840,20 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01684" name="l01684"></a><span class="lineno"> 1684</span>                             *this-&gt;cell_quadrature,</div>
 <div class="line"><a id="l01685" name="l01685"></a><span class="lineno"> 1685</span>                             update_values | update_JxW_values);</div>
 <div class="line"><a id="l01686" name="l01686"></a><span class="lineno"> 1686</span> </div>
-<div class="line"><a id="l01687" name="l01687"></a><span class="lineno"> 1687</span>  <span class="comment">// Initialize VOF information</span></div>
-<div class="line"><a id="l01688" name="l01688"></a><span class="lineno"> 1688</span>  std::shared_ptr&lt;const DoFHandler&lt;dim&gt;&gt; dof_handler_vof;</div>
-<div class="line"><a id="l01689" name="l01689"></a><span class="lineno"> 1689</span>  std::shared_ptr&lt;FEValues&lt;dim&gt;&gt;         fe_values_vof;</div>
+<div class="line"><a id="l01687" name="l01687"></a><span class="lineno"> 1687</span>  <span class="comment">// Initialize CLS information</span></div>
+<div class="line"><a id="l01688" name="l01688"></a><span class="lineno"> 1688</span>  std::shared_ptr&lt;const DoFHandler&lt;dim&gt;&gt; dof_handler_cls;</div>
+<div class="line"><a id="l01689" name="l01689"></a><span class="lineno"> 1689</span>  std::shared_ptr&lt;FEValues&lt;dim&gt;&gt;         fe_values_cls;</div>
 <div class="line"><a id="l01690" name="l01690"></a><span class="lineno"> 1690</span>  std::vector&lt;double&gt;                    filtered_phase_values(n_q_points);</div>
 <div class="line"><a id="l01691" name="l01691"></a><span class="lineno"> 1691</span> </div>
-<div class="line"><a id="l01692" name="l01692"></a><span class="lineno"> 1692</span>  <span class="keywordflow">if</span> (gather_vof)</div>
+<div class="line"><a id="l01692" name="l01692"></a><span class="lineno"> 1692</span>  <span class="keywordflow">if</span> (gather_cls)</div>
 <div class="line"><a id="l01693" name="l01693"></a><span class="lineno"> 1693</span>    {</div>
-<div class="line"><a id="l01694" name="l01694"></a><span class="lineno"> 1694</span>      dof_handler_vof = std::shared_ptr&lt;const DoFHandler&lt;dim&gt;&gt;(</div>
-<div class="line"><a id="l01695" name="l01695"></a><span class="lineno"> 1695</span>        &amp;this-&gt;multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>),</div>
+<div class="line"><a id="l01694" name="l01694"></a><span class="lineno"> 1694</span>      dof_handler_cls = std::shared_ptr&lt;const DoFHandler&lt;dim&gt;&gt;(</div>
+<div class="line"><a id="l01695" name="l01695"></a><span class="lineno"> 1695</span>        &amp;this-&gt;multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2aa5e0d06ffc1b0ee32eda539e6528a3e6">PhysicsID::CLS</a>),</div>
 <div class="line"><a id="l01696" name="l01696"></a><span class="lineno"> 1696</span>        [](<span class="keyword">const</span> DoFHandler&lt;dim&gt; *) {});</div>
 <div class="line"><a id="l01697" name="l01697"></a><span class="lineno"> 1697</span>      ;</div>
-<div class="line"><a id="l01698" name="l01698"></a><span class="lineno"> 1698</span>      fe_values_vof =</div>
+<div class="line"><a id="l01698" name="l01698"></a><span class="lineno"> 1698</span>      fe_values_cls =</div>
 <div class="line"><a id="l01699" name="l01699"></a><span class="lineno"> 1699</span>        std::make_shared&lt;FEValues&lt;dim&gt;&gt;(*this-&gt;temperature_mapping,</div>
-<div class="line"><a id="l01700" name="l01700"></a><span class="lineno"> 1700</span>                                        dof_handler_vof-&gt;get_fe(),</div>
+<div class="line"><a id="l01700" name="l01700"></a><span class="lineno"> 1700</span>                                        dof_handler_cls-&gt;get_fe(),</div>
 <div class="line"><a id="l01701" name="l01701"></a><span class="lineno"> 1701</span>                                        *this-&gt;cell_quadrature,</div>
 <div class="line"><a id="l01702" name="l01702"></a><span class="lineno"> 1702</span>                                        update_values);</div>
 <div class="line"><a id="l01703" name="l01703"></a><span class="lineno"> 1703</span>    }</div>
@@ -1890,26 +1890,26 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01734" name="l01734"></a><span class="lineno"> 1734</span>                local_temperature_values);</div>
 <div class="line"><a id="l01735" name="l01735"></a><span class="lineno"> 1735</span>            }</div>
 <div class="line"><a id="l01736" name="l01736"></a><span class="lineno"> 1736</span> </div>
-<div class="line"><a id="l01737" name="l01737"></a><span class="lineno"> 1737</span>          <span class="keywordflow">if</span> (gather_vof)</div>
+<div class="line"><a id="l01737" name="l01737"></a><span class="lineno"> 1737</span>          <span class="keywordflow">if</span> (gather_cls)</div>
 <div class="line"><a id="l01738" name="l01738"></a><span class="lineno"> 1738</span>            {</div>
-<div class="line"><a id="l01739" name="l01739"></a><span class="lineno"> 1739</span>              <span class="comment">// Get VOF active cell iterator</span></div>
-<div class="line"><a id="l01740" name="l01740"></a><span class="lineno"> 1740</span>              <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator cell_vof(</div>
+<div class="line"><a id="l01739" name="l01739"></a><span class="lineno"> 1739</span>              <span class="comment">// Get CLS active cell iterator</span></div>
+<div class="line"><a id="l01740" name="l01740"></a><span class="lineno"> 1740</span>              <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator cell_cls(</div>
 <div class="line"><a id="l01741" name="l01741"></a><span class="lineno"> 1741</span>                &amp;(*(this-&gt;triangulation)),</div>
 <div class="line"><a id="l01742" name="l01742"></a><span class="lineno"> 1742</span>                cell-&gt;level(),</div>
 <div class="line"><a id="l01743" name="l01743"></a><span class="lineno"> 1743</span>                cell-&gt;index(),</div>
-<div class="line"><a id="l01744" name="l01744"></a><span class="lineno"> 1744</span>                &amp;(*dof_handler_vof));</div>
+<div class="line"><a id="l01744" name="l01744"></a><span class="lineno"> 1744</span>                &amp;(*dof_handler_cls));</div>
 <div class="line"><a id="l01745" name="l01745"></a><span class="lineno"> 1745</span> </div>
-<div class="line"><a id="l01746" name="l01746"></a><span class="lineno"> 1746</span>              <span class="comment">// Gather VOF information</span></div>
-<div class="line"><a id="l01747" name="l01747"></a><span class="lineno"> 1747</span>              fe_values_vof-&gt;reinit(cell_vof);</div>
-<div class="line"><a id="l01748" name="l01748"></a><span class="lineno"> 1748</span>              fe_values_vof-&gt;get_function_values(</div>
-<div class="line"><a id="l01749" name="l01749"></a><span class="lineno"> 1749</span>                this-&gt;multiphysics-&gt;get_filtered_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>),</div>
+<div class="line"><a id="l01746" name="l01746"></a><span class="lineno"> 1746</span>              <span class="comment">// Gather CLS information</span></div>
+<div class="line"><a id="l01747" name="l01747"></a><span class="lineno"> 1747</span>              fe_values_cls-&gt;reinit(cell_cls);</div>
+<div class="line"><a id="l01748" name="l01748"></a><span class="lineno"> 1748</span>              fe_values_cls-&gt;get_function_values(</div>
+<div class="line"><a id="l01749" name="l01749"></a><span class="lineno"> 1749</span>                this-&gt;multiphysics-&gt;get_filtered_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2aa5e0d06ffc1b0ee32eda539e6528a3e6">PhysicsID::CLS</a>),</div>
 <div class="line"><a id="l01750" name="l01750"></a><span class="lineno"> 1750</span>                filtered_phase_values);</div>
 <div class="line"><a id="l01751" name="l01751"></a><span class="lineno"> 1751</span>            }</div>
 <div class="line"><a id="l01752" name="l01752"></a><span class="lineno"> 1752</span> </div>
 <div class="line"><a id="l01753" name="l01753"></a><span class="lineno"> 1753</span>          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; q++)</div>
 <div class="line"><a id="l01754" name="l01754"></a><span class="lineno"> 1754</span>            {</div>
 <div class="line"><a id="l01755" name="l01755"></a><span class="lineno"> 1755</span>              std::tie(phase_coefficient, point_is_in_postprocessed_fluid) =</div>
-<div class="line"><a id="l01756" name="l01756"></a><span class="lineno"> 1756</span>                set_phase_coefficient(gather_vof,</div>
+<div class="line"><a id="l01756" name="l01756"></a><span class="lineno"> 1756</span>                set_phase_coefficient(gather_cls,</div>
 <div class="line"><a id="l01757" name="l01757"></a><span class="lineno"> 1757</span>                                      monitored_fluid,</div>
 <div class="line"><a id="l01758" name="l01758"></a><span class="lineno"> 1758</span>                                      filtered_phase_values[q]);</div>
 <div class="line"><a id="l01759" name="l01759"></a><span class="lineno"> 1759</span> </div>
@@ -1959,26 +1959,26 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01803" name="l01803"></a><span class="lineno"> 1803</span>                local_temperature_values);</div>
 <div class="line"><a id="l01804" name="l01804"></a><span class="lineno"> 1804</span>            }</div>
 <div class="line"><a id="l01805" name="l01805"></a><span class="lineno"> 1805</span> </div>
-<div class="line"><a id="l01806" name="l01806"></a><span class="lineno"> 1806</span>          <span class="keywordflow">if</span> (gather_vof)</div>
+<div class="line"><a id="l01806" name="l01806"></a><span class="lineno"> 1806</span>          <span class="keywordflow">if</span> (gather_cls)</div>
 <div class="line"><a id="l01807" name="l01807"></a><span class="lineno"> 1807</span>            {</div>
-<div class="line"><a id="l01808" name="l01808"></a><span class="lineno"> 1808</span>              <span class="comment">// Get VOF active cell iterator</span></div>
-<div class="line"><a id="l01809" name="l01809"></a><span class="lineno"> 1809</span>              <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator cell_vof(</div>
+<div class="line"><a id="l01808" name="l01808"></a><span class="lineno"> 1808</span>              <span class="comment">// Get CLS active cell iterator</span></div>
+<div class="line"><a id="l01809" name="l01809"></a><span class="lineno"> 1809</span>              <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator cell_cls(</div>
 <div class="line"><a id="l01810" name="l01810"></a><span class="lineno"> 1810</span>                &amp;(*(this-&gt;triangulation)),</div>
 <div class="line"><a id="l01811" name="l01811"></a><span class="lineno"> 1811</span>                cell-&gt;level(),</div>
 <div class="line"><a id="l01812" name="l01812"></a><span class="lineno"> 1812</span>                cell-&gt;index(),</div>
-<div class="line"><a id="l01813" name="l01813"></a><span class="lineno"> 1813</span>                &amp;(*dof_handler_vof));</div>
+<div class="line"><a id="l01813" name="l01813"></a><span class="lineno"> 1813</span>                &amp;(*dof_handler_cls));</div>
 <div class="line"><a id="l01814" name="l01814"></a><span class="lineno"> 1814</span> </div>
-<div class="line"><a id="l01815" name="l01815"></a><span class="lineno"> 1815</span>              <span class="comment">// Gather VOF information</span></div>
-<div class="line"><a id="l01816" name="l01816"></a><span class="lineno"> 1816</span>              fe_values_vof-&gt;reinit(cell_vof);</div>
-<div class="line"><a id="l01817" name="l01817"></a><span class="lineno"> 1817</span>              fe_values_vof-&gt;get_function_values(</div>
-<div class="line"><a id="l01818" name="l01818"></a><span class="lineno"> 1818</span>                this-&gt;multiphysics-&gt;get_filtered_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>),</div>
+<div class="line"><a id="l01815" name="l01815"></a><span class="lineno"> 1815</span>              <span class="comment">// Gather CLS information</span></div>
+<div class="line"><a id="l01816" name="l01816"></a><span class="lineno"> 1816</span>              fe_values_cls-&gt;reinit(cell_cls);</div>
+<div class="line"><a id="l01817" name="l01817"></a><span class="lineno"> 1817</span>              fe_values_cls-&gt;get_function_values(</div>
+<div class="line"><a id="l01818" name="l01818"></a><span class="lineno"> 1818</span>                this-&gt;multiphysics-&gt;get_filtered_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2aa5e0d06ffc1b0ee32eda539e6528a3e6">PhysicsID::CLS</a>),</div>
 <div class="line"><a id="l01819" name="l01819"></a><span class="lineno"> 1819</span>                filtered_phase_values);</div>
 <div class="line"><a id="l01820" name="l01820"></a><span class="lineno"> 1820</span>            }</div>
 <div class="line"><a id="l01821" name="l01821"></a><span class="lineno"> 1821</span> </div>
 <div class="line"><a id="l01822" name="l01822"></a><span class="lineno"> 1822</span>          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; q++)</div>
 <div class="line"><a id="l01823" name="l01823"></a><span class="lineno"> 1823</span>            {</div>
 <div class="line"><a id="l01824" name="l01824"></a><span class="lineno"> 1824</span>              phase_coefficient =</div>
-<div class="line"><a id="l01825" name="l01825"></a><span class="lineno"> 1825</span>                set_phase_coefficient(gather_vof,</div>
+<div class="line"><a id="l01825" name="l01825"></a><span class="lineno"> 1825</span>                set_phase_coefficient(gather_cls,</div>
 <div class="line"><a id="l01826" name="l01826"></a><span class="lineno"> 1826</span>                                      monitored_fluid,</div>
 <div class="line"><a id="l01827" name="l01827"></a><span class="lineno"> 1827</span>                                      filtered_phase_values[q])</div>
 <div class="line"><a id="l01828" name="l01828"></a><span class="lineno"> 1828</span>                  .first;</div>
@@ -2055,7 +2055,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01896" name="l01896"></a><span class="lineno"> 1896</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
 <div class="line"><a id="l01897" name="l01897"></a><span class="lineno"> 1897</span><span class="keywordtype">void</span></div>
 <div class="foldopen" id="foldopen01898" data-start="{" data-end="}">
-<div class="line"><a id="l01898" name="l01898"></a><span class="lineno"><a class="line" href="classHeatTransfer.html#a7c42d40b5cbb4d2bd779819315bad8c0"> 1898</a></span><a class="code hl_function" href="classHeatTransfer.html#a7c42d40b5cbb4d2bd779819315bad8c0">HeatTransfer&lt;dim&gt;::postprocess_liquid_fraction</a>(<span class="keyword">const</span> <span class="keywordtype">bool</span> gather_vof)</div>
+<div class="line"><a id="l01898" name="l01898"></a><span class="lineno"><a class="line" href="classHeatTransfer.html#a97ce11f98c46f89a836b1d64d19fad00"> 1898</a></span><a class="code hl_function" href="classHeatTransfer.html#a97ce11f98c46f89a836b1d64d19fad00">HeatTransfer&lt;dim&gt;::postprocess_liquid_fraction</a>(<span class="keyword">const</span> <span class="keywordtype">bool</span> gather_cls)</div>
 <div class="line"><a id="l01899" name="l01899"></a><span class="lineno"> 1899</span>{</div>
 <div class="line"><a id="l01900" name="l01900"></a><span class="lineno"> 1900</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_q_points   = this-&gt;cell_quadrature-&gt;size();</div>
 <div class="line"><a id="l01901" name="l01901"></a><span class="lineno"> 1901</span>  <span class="keyword">const</span> MPI_Comm mpi_communicator = this-&gt;dof_handler-&gt;get_mpi_communicator();</div>
@@ -2067,9 +2067,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01907" name="l01907"></a><span class="lineno"> 1907</span>                             *this-&gt;cell_quadrature,</div>
 <div class="line"><a id="l01908" name="l01908"></a><span class="lineno"> 1908</span>                             update_values | update_JxW_values);</div>
 <div class="line"><a id="l01909" name="l01909"></a><span class="lineno"> 1909</span> </div>
-<div class="line"><a id="l01910" name="l01910"></a><span class="lineno"> 1910</span>  <span class="comment">// Initialize VOF information</span></div>
-<div class="line"><a id="l01911" name="l01911"></a><span class="lineno"> 1911</span>  std::shared_ptr&lt;const DoFHandler&lt;dim&gt;&gt; dof_handler_vof;</div>
-<div class="line"><a id="l01912" name="l01912"></a><span class="lineno"> 1912</span>  std::shared_ptr&lt;FEValues&lt;dim&gt;&gt;         fe_values_vof;</div>
+<div class="line"><a id="l01910" name="l01910"></a><span class="lineno"> 1910</span>  <span class="comment">// Initialize CLS information</span></div>
+<div class="line"><a id="l01911" name="l01911"></a><span class="lineno"> 1911</span>  std::shared_ptr&lt;const DoFHandler&lt;dim&gt;&gt; dof_handler_cls;</div>
+<div class="line"><a id="l01912" name="l01912"></a><span class="lineno"> 1912</span>  std::shared_ptr&lt;FEValues&lt;dim&gt;&gt;         fe_values_cls;</div>
 <div class="line"><a id="l01913" name="l01913"></a><span class="lineno"> 1913</span>  std::vector&lt;double&gt;                    filtered_phase_values(n_q_points);</div>
 <div class="line"><a id="l01914" name="l01914"></a><span class="lineno"> 1914</span> </div>
 <div class="line"><a id="l01915" name="l01915"></a><span class="lineno"> 1915</span>  <span class="comment">// Get the raw physical properties parameters to calculate the liquid fraction</span></div>
@@ -2078,14 +2078,14 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01918" name="l01918"></a><span class="lineno"> 1918</span>    this-&gt;simulation_parameters.physical_properties_manager</div>
 <div class="line"><a id="l01919" name="l01919"></a><span class="lineno"> 1919</span>      .get_physical_properties_parameters();</div>
 <div class="line"><a id="l01920" name="l01920"></a><span class="lineno"> 1920</span> </div>
-<div class="line"><a id="l01921" name="l01921"></a><span class="lineno"> 1921</span>  <span class="keywordflow">if</span> (gather_vof)</div>
+<div class="line"><a id="l01921" name="l01921"></a><span class="lineno"> 1921</span>  <span class="keywordflow">if</span> (gather_cls)</div>
 <div class="line"><a id="l01922" name="l01922"></a><span class="lineno"> 1922</span>    {</div>
-<div class="line"><a id="l01923" name="l01923"></a><span class="lineno"> 1923</span>      dof_handler_vof = std::shared_ptr&lt;const DoFHandler&lt;dim&gt;&gt;(</div>
-<div class="line"><a id="l01924" name="l01924"></a><span class="lineno"> 1924</span>        &amp;this-&gt;multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>),</div>
+<div class="line"><a id="l01923" name="l01923"></a><span class="lineno"> 1923</span>      dof_handler_cls = std::shared_ptr&lt;const DoFHandler&lt;dim&gt;&gt;(</div>
+<div class="line"><a id="l01924" name="l01924"></a><span class="lineno"> 1924</span>        &amp;this-&gt;multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2aa5e0d06ffc1b0ee32eda539e6528a3e6">PhysicsID::CLS</a>),</div>
 <div class="line"><a id="l01925" name="l01925"></a><span class="lineno"> 1925</span>        [](<span class="keyword">const</span> DoFHandler&lt;dim&gt; *) {});</div>
-<div class="line"><a id="l01926" name="l01926"></a><span class="lineno"> 1926</span>      fe_values_vof =</div>
+<div class="line"><a id="l01926" name="l01926"></a><span class="lineno"> 1926</span>      fe_values_cls =</div>
 <div class="line"><a id="l01927" name="l01927"></a><span class="lineno"> 1927</span>        std::make_shared&lt;FEValues&lt;dim&gt;&gt;(*this-&gt;temperature_mapping,</div>
-<div class="line"><a id="l01928" name="l01928"></a><span class="lineno"> 1928</span>                                        dof_handler_vof-&gt;get_fe(),</div>
+<div class="line"><a id="l01928" name="l01928"></a><span class="lineno"> 1928</span>                                        dof_handler_cls-&gt;get_fe(),</div>
 <div class="line"><a id="l01929" name="l01929"></a><span class="lineno"> 1929</span>                                        *this-&gt;cell_quadrature,</div>
 <div class="line"><a id="l01930" name="l01930"></a><span class="lineno"> 1930</span>                                        update_values);</div>
 <div class="line"><a id="l01931" name="l01931"></a><span class="lineno"> 1931</span>    }</div>
@@ -2104,27 +2104,27 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01944" name="l01944"></a><span class="lineno"> 1944</span>          fe_values_ht.get_function_values(*this-&gt;present_solution,</div>
 <div class="line"><a id="l01945" name="l01945"></a><span class="lineno"> 1945</span>                                           local_temperature_values);</div>
 <div class="line"><a id="l01946" name="l01946"></a><span class="lineno"> 1946</span> </div>
-<div class="line"><a id="l01947" name="l01947"></a><span class="lineno"> 1947</span>          <span class="keywordflow">if</span> (gather_vof)</div>
+<div class="line"><a id="l01947" name="l01947"></a><span class="lineno"> 1947</span>          <span class="keywordflow">if</span> (gather_cls)</div>
 <div class="line"><a id="l01948" name="l01948"></a><span class="lineno"> 1948</span>            {</div>
-<div class="line"><a id="l01949" name="l01949"></a><span class="lineno"> 1949</span>              <span class="comment">// Get VOF active cell iterator</span></div>
-<div class="line"><a id="l01950" name="l01950"></a><span class="lineno"> 1950</span>              <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator cell_vof(</div>
+<div class="line"><a id="l01949" name="l01949"></a><span class="lineno"> 1949</span>              <span class="comment">// Get CLS active cell iterator</span></div>
+<div class="line"><a id="l01950" name="l01950"></a><span class="lineno"> 1950</span>              <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator cell_cls(</div>
 <div class="line"><a id="l01951" name="l01951"></a><span class="lineno"> 1951</span>                &amp;(*(this-&gt;triangulation)),</div>
 <div class="line"><a id="l01952" name="l01952"></a><span class="lineno"> 1952</span>                cell-&gt;level(),</div>
 <div class="line"><a id="l01953" name="l01953"></a><span class="lineno"> 1953</span>                cell-&gt;index(),</div>
-<div class="line"><a id="l01954" name="l01954"></a><span class="lineno"> 1954</span>                &amp;(*dof_handler_vof));</div>
+<div class="line"><a id="l01954" name="l01954"></a><span class="lineno"> 1954</span>                &amp;(*dof_handler_cls));</div>
 <div class="line"><a id="l01955" name="l01955"></a><span class="lineno"> 1955</span> </div>
-<div class="line"><a id="l01956" name="l01956"></a><span class="lineno"> 1956</span>              <span class="comment">// Gather VOF information</span></div>
-<div class="line"><a id="l01957" name="l01957"></a><span class="lineno"> 1957</span>              fe_values_vof-&gt;reinit(cell_vof);</div>
-<div class="line"><a id="l01958" name="l01958"></a><span class="lineno"> 1958</span>              fe_values_vof-&gt;get_function_values(</div>
-<div class="line"><a id="l01959" name="l01959"></a><span class="lineno"> 1959</span>                this-&gt;multiphysics-&gt;get_filtered_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>),</div>
+<div class="line"><a id="l01956" name="l01956"></a><span class="lineno"> 1956</span>              <span class="comment">// Gather CLS information</span></div>
+<div class="line"><a id="l01957" name="l01957"></a><span class="lineno"> 1957</span>              fe_values_cls-&gt;reinit(cell_cls);</div>
+<div class="line"><a id="l01958" name="l01958"></a><span class="lineno"> 1958</span>              fe_values_cls-&gt;get_function_values(</div>
+<div class="line"><a id="l01959" name="l01959"></a><span class="lineno"> 1959</span>                this-&gt;multiphysics-&gt;get_filtered_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2aa5e0d06ffc1b0ee32eda539e6528a3e6">PhysicsID::CLS</a>),</div>
 <div class="line"><a id="l01960" name="l01960"></a><span class="lineno"> 1960</span>                filtered_phase_values);</div>
 <div class="line"><a id="l01961" name="l01961"></a><span class="lineno"> 1961</span>            }</div>
 <div class="line"><a id="l01962" name="l01962"></a><span class="lineno"> 1962</span> </div>
 <div class="line"><a id="l01963" name="l01963"></a><span class="lineno"> 1963</span>          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; q++)</div>
 <div class="line"><a id="l01964" name="l01964"></a><span class="lineno"> 1964</span>            {</div>
-<div class="line"><a id="l01965" name="l01965"></a><span class="lineno"> 1965</span>              <span class="comment">// If VOF is enabled, gather the liquid fraction if the fluid has</span></div>
+<div class="line"><a id="l01965" name="l01965"></a><span class="lineno"> 1965</span>              <span class="comment">// If CLS is enabled, gather the liquid fraction if the fluid has</span></div>
 <div class="line"><a id="l01966" name="l01966"></a><span class="lineno"> 1966</span>              <span class="comment">// a phase fraction</span></div>
-<div class="line"><a id="l01967" name="l01967"></a><span class="lineno"> 1967</span>              <span class="keywordflow">if</span> (!gather_vof)</div>
+<div class="line"><a id="l01967" name="l01967"></a><span class="lineno"> 1967</span>              <span class="keywordflow">if</span> (!gather_cls)</div>
 <div class="line"><a id="l01968" name="l01968"></a><span class="lineno"> 1968</span>                {</div>
 <div class="line"><a id="l01969" name="l01969"></a><span class="lineno"> 1969</span>                  liquid_volume_integral +=</div>
 <div class="line"><a id="l01970" name="l01970"></a><span class="lineno"> 1970</span>                    <a class="code hl_function" href="phase__change_8h.html#a42e019a8aec393ea26cc629ae8376e03">calculate_liquid_fraction</a>(local_temperature_values[q],</div>
@@ -2220,8 +2220,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02057" name="l02057"></a><span class="lineno"> 2057</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> VectorType&gt;</div>
 <div class="line"><a id="l02058" name="l02058"></a><span class="lineno"> 2058</span><span class="keywordtype">void</span></div>
 <div class="foldopen" id="foldopen02059" data-start="{" data-end="}">
-<div class="line"><a id="l02059" name="l02059"></a><span class="lineno"><a class="line" href="classHeatTransfer.html#a81e930b130b3dbf4fda567923b6be172"> 2059</a></span><a class="code hl_function" href="classHeatTransfer.html#a81e930b130b3dbf4fda567923b6be172">HeatTransfer&lt;dim&gt;::postprocess_heat_flux_on_bc</a>(</div>
-<div class="line"><a id="l02060" name="l02060"></a><span class="lineno"> 2060</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>        gather_vof,</div>
+<div class="line"><a id="l02059" name="l02059"></a><span class="lineno"><a class="line" href="classHeatTransfer.html#ad85300cacfed01d84b1c4b9d66aa50bc"> 2059</a></span><a class="code hl_function" href="classHeatTransfer.html#ad85300cacfed01d84b1c4b9d66aa50bc">HeatTransfer&lt;dim&gt;::postprocess_heat_flux_on_bc</a>(</div>
+<div class="line"><a id="l02060" name="l02060"></a><span class="lineno"> 2060</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>        gather_cls,</div>
 <div class="line"><a id="l02061" name="l02061"></a><span class="lineno"> 2061</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_solution_fd)</div>
 <div class="line"><a id="l02062" name="l02062"></a><span class="lineno"> 2062</span>{</div>
 <div class="line"><a id="l02063" name="l02063"></a><span class="lineno"> 2063</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> n_q_points_face = this-&gt;face_quadrature-&gt;size();</div>
@@ -2247,19 +2247,19 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02083" name="l02083"></a><span class="lineno"> 2083</span>                                      *this-&gt;face_quadrature,</div>
 <div class="line"><a id="l02084" name="l02084"></a><span class="lineno"> 2084</span>                                      update_values);</div>
 <div class="line"><a id="l02085" name="l02085"></a><span class="lineno"> 2085</span> </div>
-<div class="line"><a id="l02086" name="l02086"></a><span class="lineno"> 2086</span>  <span class="comment">// Initialize VOF information</span></div>
-<div class="line"><a id="l02087" name="l02087"></a><span class="lineno"> 2087</span>  std::shared_ptr&lt;const DoFHandler&lt;dim&gt;&gt; dof_handler_vof;</div>
-<div class="line"><a id="l02088" name="l02088"></a><span class="lineno"> 2088</span>  std::shared_ptr&lt;FEFaceValues&lt;dim&gt;&gt;     fe_face_values_vof;</div>
+<div class="line"><a id="l02086" name="l02086"></a><span class="lineno"> 2086</span>  <span class="comment">// Initialize CLS information</span></div>
+<div class="line"><a id="l02087" name="l02087"></a><span class="lineno"> 2087</span>  std::shared_ptr&lt;const DoFHandler&lt;dim&gt;&gt; dof_handler_cls;</div>
+<div class="line"><a id="l02088" name="l02088"></a><span class="lineno"> 2088</span>  std::shared_ptr&lt;FEFaceValues&lt;dim&gt;&gt;     fe_face_values_cls;</div>
 <div class="line"><a id="l02089" name="l02089"></a><span class="lineno"> 2089</span>  std::vector&lt;double&gt;                    filtered_phase_values(n_q_points_face);</div>
 <div class="line"><a id="l02090" name="l02090"></a><span class="lineno"> 2090</span> </div>
-<div class="line"><a id="l02091" name="l02091"></a><span class="lineno"> 2091</span>  <span class="keywordflow">if</span> (gather_vof)</div>
+<div class="line"><a id="l02091" name="l02091"></a><span class="lineno"> 2091</span>  <span class="keywordflow">if</span> (gather_cls)</div>
 <div class="line"><a id="l02092" name="l02092"></a><span class="lineno"> 2092</span>    {</div>
-<div class="line"><a id="l02093" name="l02093"></a><span class="lineno"> 2093</span>      dof_handler_vof = std::shared_ptr&lt;const DoFHandler&lt;dim&gt;&gt;(</div>
-<div class="line"><a id="l02094" name="l02094"></a><span class="lineno"> 2094</span>        &amp;this-&gt;multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>),</div>
+<div class="line"><a id="l02093" name="l02093"></a><span class="lineno"> 2093</span>      dof_handler_cls = std::shared_ptr&lt;const DoFHandler&lt;dim&gt;&gt;(</div>
+<div class="line"><a id="l02094" name="l02094"></a><span class="lineno"> 2094</span>        &amp;this-&gt;multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2aa5e0d06ffc1b0ee32eda539e6528a3e6">PhysicsID::CLS</a>),</div>
 <div class="line"><a id="l02095" name="l02095"></a><span class="lineno"> 2095</span>        [](<span class="keyword">const</span> DoFHandler&lt;dim&gt; *) {});</div>
-<div class="line"><a id="l02096" name="l02096"></a><span class="lineno"> 2096</span>      fe_face_values_vof =</div>
+<div class="line"><a id="l02096" name="l02096"></a><span class="lineno"> 2096</span>      fe_face_values_cls =</div>
 <div class="line"><a id="l02097" name="l02097"></a><span class="lineno"> 2097</span>        std::make_shared&lt;FEFaceValues&lt;dim&gt;&gt;(*this-&gt;temperature_mapping,</div>
-<div class="line"><a id="l02098" name="l02098"></a><span class="lineno"> 2098</span>                                            dof_handler_vof-&gt;get_fe(),</div>
+<div class="line"><a id="l02098" name="l02098"></a><span class="lineno"> 2098</span>                                            dof_handler_cls-&gt;get_fe(),</div>
 <div class="line"><a id="l02099" name="l02099"></a><span class="lineno"> 2099</span>                                            *this-&gt;face_quadrature,</div>
 <div class="line"><a id="l02100" name="l02100"></a><span class="lineno"> 2100</span>                                            update_values);</div>
 <div class="line"><a id="l02101" name="l02101"></a><span class="lineno"> 2101</span>    }</div>
@@ -2369,20 +2369,20 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02205" name="l02205"></a><span class="lineno"> 2205</span>                  fe_face_values_fd[velocities].get_function_values(</div>
 <div class="line"><a id="l02206" name="l02206"></a><span class="lineno"> 2206</span>                    current_solution_fd, local_velocity_values);</div>
 <div class="line"><a id="l02207" name="l02207"></a><span class="lineno"> 2207</span> </div>
-<div class="line"><a id="l02208" name="l02208"></a><span class="lineno"> 2208</span>                  <span class="keywordflow">if</span> (gather_vof)</div>
+<div class="line"><a id="l02208" name="l02208"></a><span class="lineno"> 2208</span>                  <span class="keywordflow">if</span> (gather_cls)</div>
 <div class="line"><a id="l02209" name="l02209"></a><span class="lineno"> 2209</span>                    {</div>
-<div class="line"><a id="l02210" name="l02210"></a><span class="lineno"> 2210</span>                      <span class="comment">// Get VOF active cell iterator</span></div>
-<div class="line"><a id="l02211" name="l02211"></a><span class="lineno"> 2211</span>                      <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator cell_vof(</div>
+<div class="line"><a id="l02210" name="l02210"></a><span class="lineno"> 2210</span>                      <span class="comment">// Get CLS active cell iterator</span></div>
+<div class="line"><a id="l02211" name="l02211"></a><span class="lineno"> 2211</span>                      <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator cell_cls(</div>
 <div class="line"><a id="l02212" name="l02212"></a><span class="lineno"> 2212</span>                        &amp;(*(this-&gt;triangulation)),</div>
 <div class="line"><a id="l02213" name="l02213"></a><span class="lineno"> 2213</span>                        cell-&gt;level(),</div>
 <div class="line"><a id="l02214" name="l02214"></a><span class="lineno"> 2214</span>                        cell-&gt;index(),</div>
-<div class="line"><a id="l02215" name="l02215"></a><span class="lineno"> 2215</span>                        &amp;(*dof_handler_vof));</div>
+<div class="line"><a id="l02215" name="l02215"></a><span class="lineno"> 2215</span>                        &amp;(*dof_handler_cls));</div>
 <div class="line"><a id="l02216" name="l02216"></a><span class="lineno"> 2216</span> </div>
-<div class="line"><a id="l02217" name="l02217"></a><span class="lineno"> 2217</span>                      <span class="comment">// Gather VOF information</span></div>
-<div class="line"><a id="l02218" name="l02218"></a><span class="lineno"> 2218</span>                      fe_face_values_vof-&gt;reinit(cell_vof, face);</div>
-<div class="line"><a id="l02219" name="l02219"></a><span class="lineno"> 2219</span>                      fe_face_values_vof-&gt;get_function_values(</div>
+<div class="line"><a id="l02217" name="l02217"></a><span class="lineno"> 2217</span>                      <span class="comment">// Gather CLS information</span></div>
+<div class="line"><a id="l02218" name="l02218"></a><span class="lineno"> 2218</span>                      fe_face_values_cls-&gt;reinit(cell_cls, face);</div>
+<div class="line"><a id="l02219" name="l02219"></a><span class="lineno"> 2219</span>                      fe_face_values_cls-&gt;get_function_values(</div>
 <div class="line"><a id="l02220" name="l02220"></a><span class="lineno"> 2220</span>                        this-&gt;multiphysics-&gt;get_filtered_solution(</div>
-<div class="line"><a id="l02221" name="l02221"></a><span class="lineno"> 2221</span>                          <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>),</div>
+<div class="line"><a id="l02221" name="l02221"></a><span class="lineno"> 2221</span>                          <a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2aa5e0d06ffc1b0ee32eda539e6528a3e6">PhysicsID::CLS</a>),</div>
 <div class="line"><a id="l02222" name="l02222"></a><span class="lineno"> 2222</span>                        filtered_phase_values);</div>
 <div class="line"><a id="l02223" name="l02223"></a><span class="lineno"> 2223</span>                    }</div>
 <div class="line"><a id="l02224" name="l02224"></a><span class="lineno"> 2224</span> </div>
@@ -2391,7 +2391,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02227" name="l02227"></a><span class="lineno"> 2227</span>                    {</div>
 <div class="line"><a id="l02228" name="l02228"></a><span class="lineno"> 2228</span>                      <span class="keywordflow">if</span> (properties_manager.get_number_of_fluids() == 2)</div>
 <div class="line"><a id="l02229" name="l02229"></a><span class="lineno"> 2229</span>                        {</div>
-<div class="line"><a id="l02230" name="l02230"></a><span class="lineno"> 2230</span>                          <span class="comment">// Blend the physical properties using the VOF</span></div>
+<div class="line"><a id="l02230" name="l02230"></a><span class="lineno"> 2230</span>                          <span class="comment">// Blend the physical properties using the CLS</span></div>
 <div class="line"><a id="l02231" name="l02231"></a><span class="lineno"> 2231</span>                          <span class="comment">// field</span></div>
 <div class="line"><a id="l02232" name="l02232"></a><span class="lineno"> 2232</span>                          thermal_conductivity =</div>
 <div class="line"><a id="l02233" name="l02233"></a><span class="lineno"> 2233</span>                            <a class="code hl_function" href="utilities_8h.html#a955c2851894d041727c14dff59686f0d">calculate_point_property</a>(filtered_phase_values[q],</div>
@@ -2480,30 +2480,30 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02315" name="l02315"></a><span class="lineno"> 2315</span> </div>
 <div class="line"><a id="l02316" name="l02316"></a><span class="lineno"> 2316</span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
 <div class="line"><a id="l02317" name="l02317"></a><span class="lineno"> 2317</span><a class="code hl_class" href="classHeatTransfer.html">HeatTransfer&lt;2&gt;::postprocess_heat_flux_on_bc&lt;GlobalVectorType&gt;</a>(</div>
-<div class="line"><a id="l02318" name="l02318"></a><span class="lineno"> 2318</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>              gather_vof,</div>
+<div class="line"><a id="l02318" name="l02318"></a><span class="lineno"> 2318</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>              gather_cls,</div>
 <div class="line"><a id="l02319" name="l02319"></a><span class="lineno"> 2319</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;current_solution_fd);</div>
 <div class="line"><a id="l02320" name="l02320"></a><span class="lineno"> 2320</span> </div>
 <div class="line"><a id="l02321" name="l02321"></a><span class="lineno"> 2321</span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
 <div class="line"><a id="l02322" name="l02322"></a><span class="lineno"> 2322</span><a class="code hl_class" href="classHeatTransfer.html">HeatTransfer&lt;3&gt;::postprocess_heat_flux_on_bc&lt;GlobalVectorType&gt;</a>(</div>
-<div class="line"><a id="l02323" name="l02323"></a><span class="lineno"> 2323</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>              gather_vof,</div>
+<div class="line"><a id="l02323" name="l02323"></a><span class="lineno"> 2323</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>              gather_cls,</div>
 <div class="line"><a id="l02324" name="l02324"></a><span class="lineno"> 2324</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;current_solution_fd);</div>
 <div class="line"><a id="l02325" name="l02325"></a><span class="lineno"> 2325</span> </div>
 <div class="line"><a id="l02326" name="l02326"></a><span class="lineno"> 2326</span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
 <div class="line"><a id="l02327" name="l02327"></a><span class="lineno"> 2327</span><a class="code hl_class" href="classHeatTransfer.html">HeatTransfer&lt;2&gt;::postprocess_heat_flux_on_bc&lt;GlobalBlockVectorType&gt;</a>(</div>
-<div class="line"><a id="l02328" name="l02328"></a><span class="lineno"> 2328</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>                   gather_vof,</div>
+<div class="line"><a id="l02328" name="l02328"></a><span class="lineno"> 2328</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>                   gather_cls,</div>
 <div class="line"><a id="l02329" name="l02329"></a><span class="lineno"> 2329</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &amp;current_solution_fd);</div>
 <div class="line"><a id="l02330" name="l02330"></a><span class="lineno"> 2330</span> </div>
 <div class="line"><a id="l02331" name="l02331"></a><span class="lineno"> 2331</span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
 <div class="line"><a id="l02332" name="l02332"></a><span class="lineno"> 2332</span><a class="code hl_class" href="classHeatTransfer.html">HeatTransfer&lt;3&gt;::postprocess_heat_flux_on_bc&lt;GlobalBlockVectorType&gt;</a>(</div>
-<div class="line"><a id="l02333" name="l02333"></a><span class="lineno"> 2333</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>                   gather_vof,</div>
+<div class="line"><a id="l02333" name="l02333"></a><span class="lineno"> 2333</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>                   gather_cls,</div>
 <div class="line"><a id="l02334" name="l02334"></a><span class="lineno"> 2334</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a> &amp;current_solution_fd);</div>
 <div class="line"><a id="l02335" name="l02335"></a><span class="lineno"> 2335</span> </div>
 <div class="line"><a id="l02336" name="l02336"></a><span class="lineno"> 2336</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
 <div class="line"><a id="l02337" name="l02337"></a><span class="lineno"> 2337</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> VectorType&gt;</div>
 <div class="line"><a id="l02338" name="l02338"></a><span class="lineno"> 2338</span><span class="keywordtype">void</span></div>
 <div class="foldopen" id="foldopen02339" data-start="{" data-end="}">
-<div class="line"><a id="l02339" name="l02339"></a><span class="lineno"><a class="line" href="classHeatTransfer.html#ab70fe9d2931fbf1ddbadc881a747f44a"> 2339</a></span><a class="code hl_function" href="classHeatTransfer.html#ab70fe9d2931fbf1ddbadc881a747f44a">HeatTransfer&lt;dim&gt;::postprocess_thermal_energy_in_fluid</a>(</div>
-<div class="line"><a id="l02340" name="l02340"></a><span class="lineno"> 2340</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>                       gather_vof,</div>
+<div class="line"><a id="l02339" name="l02339"></a><span class="lineno"><a class="line" href="classHeatTransfer.html#a76195f93949196f3b9d1c7392276183a"> 2339</a></span><a class="code hl_function" href="classHeatTransfer.html#a76195f93949196f3b9d1c7392276183a">HeatTransfer&lt;dim&gt;::postprocess_thermal_energy_in_fluid</a>(</div>
+<div class="line"><a id="l02340" name="l02340"></a><span class="lineno"> 2340</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>                       gather_cls,</div>
 <div class="line"><a id="l02341" name="l02341"></a><span class="lineno"> 2341</span>  <span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2f">Parameters::FluidIndicator</a> monitored_fluid,</div>
 <div class="line"><a id="l02342" name="l02342"></a><span class="lineno"> 2342</span>  <span class="keyword">const</span> std::string                domain_name,</div>
 <div class="line"><a id="l02343" name="l02343"></a><span class="lineno"> 2343</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>                &amp;current_solution_fd)</div>
@@ -2529,19 +2529,19 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02363" name="l02363"></a><span class="lineno"> 2363</span>                             *this-&gt;cell_quadrature,</div>
 <div class="line"><a id="l02364" name="l02364"></a><span class="lineno"> 2364</span>                             update_values);</div>
 <div class="line"><a id="l02365" name="l02365"></a><span class="lineno"> 2365</span> </div>
-<div class="line"><a id="l02366" name="l02366"></a><span class="lineno"> 2366</span>  <span class="comment">// Initialize VOF information</span></div>
-<div class="line"><a id="l02367" name="l02367"></a><span class="lineno"> 2367</span>  std::shared_ptr&lt;const DoFHandler&lt;dim&gt;&gt; dof_handler_vof;</div>
-<div class="line"><a id="l02368" name="l02368"></a><span class="lineno"> 2368</span>  std::shared_ptr&lt;FEValues&lt;dim&gt;&gt;         fe_values_vof;</div>
+<div class="line"><a id="l02366" name="l02366"></a><span class="lineno"> 2366</span>  <span class="comment">// Initialize CLS information</span></div>
+<div class="line"><a id="l02367" name="l02367"></a><span class="lineno"> 2367</span>  std::shared_ptr&lt;const DoFHandler&lt;dim&gt;&gt; dof_handler_cls;</div>
+<div class="line"><a id="l02368" name="l02368"></a><span class="lineno"> 2368</span>  std::shared_ptr&lt;FEValues&lt;dim&gt;&gt;         fe_values_cls;</div>
 <div class="line"><a id="l02369" name="l02369"></a><span class="lineno"> 2369</span>  std::vector&lt;double&gt;                    filtered_phase_values(n_q_points);</div>
 <div class="line"><a id="l02370" name="l02370"></a><span class="lineno"> 2370</span> </div>
-<div class="line"><a id="l02371" name="l02371"></a><span class="lineno"> 2371</span>  <span class="keywordflow">if</span> (gather_vof)</div>
+<div class="line"><a id="l02371" name="l02371"></a><span class="lineno"> 2371</span>  <span class="keywordflow">if</span> (gather_cls)</div>
 <div class="line"><a id="l02372" name="l02372"></a><span class="lineno"> 2372</span>    {</div>
-<div class="line"><a id="l02373" name="l02373"></a><span class="lineno"> 2373</span>      dof_handler_vof = std::shared_ptr&lt;const DoFHandler&lt;dim&gt;&gt;(</div>
-<div class="line"><a id="l02374" name="l02374"></a><span class="lineno"> 2374</span>        &amp;this-&gt;multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>),</div>
+<div class="line"><a id="l02373" name="l02373"></a><span class="lineno"> 2373</span>      dof_handler_cls = std::shared_ptr&lt;const DoFHandler&lt;dim&gt;&gt;(</div>
+<div class="line"><a id="l02374" name="l02374"></a><span class="lineno"> 2374</span>        &amp;this-&gt;multiphysics-&gt;get_dof_handler(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2aa5e0d06ffc1b0ee32eda539e6528a3e6">PhysicsID::CLS</a>),</div>
 <div class="line"><a id="l02375" name="l02375"></a><span class="lineno"> 2375</span>        [](<span class="keyword">const</span> DoFHandler&lt;dim&gt; *) {});</div>
-<div class="line"><a id="l02376" name="l02376"></a><span class="lineno"> 2376</span>      fe_values_vof =</div>
+<div class="line"><a id="l02376" name="l02376"></a><span class="lineno"> 2376</span>      fe_values_cls =</div>
 <div class="line"><a id="l02377" name="l02377"></a><span class="lineno"> 2377</span>        std::make_shared&lt;FEValues&lt;dim&gt;&gt;(*this-&gt;temperature_mapping,</div>
-<div class="line"><a id="l02378" name="l02378"></a><span class="lineno"> 2378</span>                                        dof_handler_vof-&gt;get_fe(),</div>
+<div class="line"><a id="l02378" name="l02378"></a><span class="lineno"> 2378</span>                                        dof_handler_cls-&gt;get_fe(),</div>
 <div class="line"><a id="l02379" name="l02379"></a><span class="lineno"> 2379</span>                                        *this-&gt;cell_quadrature,</div>
 <div class="line"><a id="l02380" name="l02380"></a><span class="lineno"> 2380</span>                                        update_values);</div>
 <div class="line"><a id="l02381" name="l02381"></a><span class="lineno"> 2381</span>    }</div>
@@ -2620,19 +2620,19 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02454" name="l02454"></a><span class="lineno"> 2454</span>          fe_values_fd[velocities].get_function_values(current_solution_fd,</div>
 <div class="line"><a id="l02455" name="l02455"></a><span class="lineno"> 2455</span>                                                       local_velocity_values);</div>
 <div class="line"><a id="l02456" name="l02456"></a><span class="lineno"> 2456</span> </div>
-<div class="line"><a id="l02457" name="l02457"></a><span class="lineno"> 2457</span>          <span class="keywordflow">if</span> (gather_vof)</div>
+<div class="line"><a id="l02457" name="l02457"></a><span class="lineno"> 2457</span>          <span class="keywordflow">if</span> (gather_cls)</div>
 <div class="line"><a id="l02458" name="l02458"></a><span class="lineno"> 2458</span>            {</div>
-<div class="line"><a id="l02459" name="l02459"></a><span class="lineno"> 2459</span>              <span class="comment">// Get VOF active cell iterator</span></div>
-<div class="line"><a id="l02460" name="l02460"></a><span class="lineno"> 2460</span>              <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator cell_vof(</div>
+<div class="line"><a id="l02459" name="l02459"></a><span class="lineno"> 2459</span>              <span class="comment">// Get CLS active cell iterator</span></div>
+<div class="line"><a id="l02460" name="l02460"></a><span class="lineno"> 2460</span>              <span class="keyword">typename</span> DoFHandler&lt;dim&gt;::active_cell_iterator cell_cls(</div>
 <div class="line"><a id="l02461" name="l02461"></a><span class="lineno"> 2461</span>                &amp;(*(this-&gt;triangulation)),</div>
 <div class="line"><a id="l02462" name="l02462"></a><span class="lineno"> 2462</span>                cell-&gt;level(),</div>
 <div class="line"><a id="l02463" name="l02463"></a><span class="lineno"> 2463</span>                cell-&gt;index(),</div>
-<div class="line"><a id="l02464" name="l02464"></a><span class="lineno"> 2464</span>                &amp;(*dof_handler_vof));</div>
+<div class="line"><a id="l02464" name="l02464"></a><span class="lineno"> 2464</span>                &amp;(*dof_handler_cls));</div>
 <div class="line"><a id="l02465" name="l02465"></a><span class="lineno"> 2465</span> </div>
-<div class="line"><a id="l02466" name="l02466"></a><span class="lineno"> 2466</span>              <span class="comment">// Gather VOF information</span></div>
-<div class="line"><a id="l02467" name="l02467"></a><span class="lineno"> 2467</span>              fe_values_vof-&gt;reinit(cell_vof);</div>
-<div class="line"><a id="l02468" name="l02468"></a><span class="lineno"> 2468</span>              fe_values_vof-&gt;get_function_values(</div>
-<div class="line"><a id="l02469" name="l02469"></a><span class="lineno"> 2469</span>                this-&gt;multiphysics-&gt;get_filtered_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">PhysicsID::VOF</a>),</div>
+<div class="line"><a id="l02466" name="l02466"></a><span class="lineno"> 2466</span>              <span class="comment">// Gather CLS information</span></div>
+<div class="line"><a id="l02467" name="l02467"></a><span class="lineno"> 2467</span>              fe_values_cls-&gt;reinit(cell_cls);</div>
+<div class="line"><a id="l02468" name="l02468"></a><span class="lineno"> 2468</span>              fe_values_cls-&gt;get_function_values(</div>
+<div class="line"><a id="l02469" name="l02469"></a><span class="lineno"> 2469</span>                this-&gt;multiphysics-&gt;get_filtered_solution(<a class="code hl_enumvalue" href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2aa5e0d06ffc1b0ee32eda539e6528a3e6">PhysicsID::CLS</a>),</div>
 <div class="line"><a id="l02470" name="l02470"></a><span class="lineno"> 2470</span>                filtered_phase_values);</div>
 <div class="line"><a id="l02471" name="l02471"></a><span class="lineno"> 2471</span>            }</div>
 <div class="line"><a id="l02472" name="l02472"></a><span class="lineno"> 2472</span> </div>
@@ -2640,14 +2640,14 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02474" name="l02474"></a><span class="lineno"> 2474</span>          <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> q = 0; q &lt; n_q_points; q++)</div>
 <div class="line"><a id="l02475" name="l02475"></a><span class="lineno"> 2475</span>            {</div>
 <div class="line"><a id="l02476" name="l02476"></a><span class="lineno"> 2476</span>              phase_coefficient =</div>
-<div class="line"><a id="l02477" name="l02477"></a><span class="lineno"> 2477</span>                set_phase_coefficient(gather_vof,</div>
+<div class="line"><a id="l02477" name="l02477"></a><span class="lineno"> 2477</span>                set_phase_coefficient(gather_cls,</div>
 <div class="line"><a id="l02478" name="l02478"></a><span class="lineno"> 2478</span>                                      monitored_fluid,</div>
 <div class="line"><a id="l02479" name="l02479"></a><span class="lineno"> 2479</span>                                      filtered_phase_values[q])</div>
 <div class="line"><a id="l02480" name="l02480"></a><span class="lineno"> 2480</span>                  .first;</div>
 <div class="line"><a id="l02481" name="l02481"></a><span class="lineno"> 2481</span> </div>
 <div class="line"><a id="l02482" name="l02482"></a><span class="lineno"> 2482</span>              <span class="keywordflow">if</span> (properties_manager.get_number_of_fluids() == 2)</div>
 <div class="line"><a id="l02483" name="l02483"></a><span class="lineno"> 2483</span>                {</div>
-<div class="line"><a id="l02484" name="l02484"></a><span class="lineno"> 2484</span>                  <span class="comment">// Blend the physical properties using the VOF</span></div>
+<div class="line"><a id="l02484" name="l02484"></a><span class="lineno"> 2484</span>                  <span class="comment">// Blend the physical properties using the CLS</span></div>
 <div class="line"><a id="l02485" name="l02485"></a><span class="lineno"> 2485</span>                  <span class="comment">// field</span></div>
 <div class="line"><a id="l02486" name="l02486"></a><span class="lineno"> 2486</span>                  density = <a class="code hl_function" href="utilities_8h.html#a955c2851894d041727c14dff59686f0d">calculate_point_property</a>(filtered_phase_values[q],</div>
 <div class="line"><a id="l02487" name="l02487"></a><span class="lineno"> 2487</span>                                                     density_0[q],</div>
@@ -2685,28 +2685,28 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02518" name="l02518"></a><span class="lineno"> 2518</span> </div>
 <div class="line"><a id="l02519" name="l02519"></a><span class="lineno"> 2519</span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
 <div class="line"><a id="l02520" name="l02520"></a><span class="lineno"> 2520</span><a class="code hl_class" href="classHeatTransfer.html">HeatTransfer&lt;2&gt;::postprocess_thermal_energy_in_fluid&lt;GlobalVectorType&gt;</a>(</div>
-<div class="line"><a id="l02521" name="l02521"></a><span class="lineno"> 2521</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>                       gather_vof,</div>
+<div class="line"><a id="l02521" name="l02521"></a><span class="lineno"> 2521</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>                       gather_cls,</div>
 <div class="line"><a id="l02522" name="l02522"></a><span class="lineno"> 2522</span>  <span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2f">Parameters::FluidIndicator</a> monitored_fluid,</div>
 <div class="line"><a id="l02523" name="l02523"></a><span class="lineno"> 2523</span>  <span class="keyword">const</span> std::string                domain_name,</div>
 <div class="line"><a id="l02524" name="l02524"></a><span class="lineno"> 2524</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>          &amp;current_solution_fd);</div>
 <div class="line"><a id="l02525" name="l02525"></a><span class="lineno"> 2525</span> </div>
 <div class="line"><a id="l02526" name="l02526"></a><span class="lineno"> 2526</span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
 <div class="line"><a id="l02527" name="l02527"></a><span class="lineno"> 2527</span><a class="code hl_class" href="classHeatTransfer.html">HeatTransfer&lt;3&gt;::postprocess_thermal_energy_in_fluid&lt;GlobalVectorType&gt;</a>(</div>
-<div class="line"><a id="l02528" name="l02528"></a><span class="lineno"> 2528</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>                       gather_vof,</div>
+<div class="line"><a id="l02528" name="l02528"></a><span class="lineno"> 2528</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>                       gather_cls,</div>
 <div class="line"><a id="l02529" name="l02529"></a><span class="lineno"> 2529</span>  <span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2f">Parameters::FluidIndicator</a> monitored_fluid,</div>
 <div class="line"><a id="l02530" name="l02530"></a><span class="lineno"> 2530</span>  <span class="keyword">const</span> std::string                domain_name,</div>
 <div class="line"><a id="l02531" name="l02531"></a><span class="lineno"> 2531</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a>          &amp;current_solution_fd);</div>
 <div class="line"><a id="l02532" name="l02532"></a><span class="lineno"> 2532</span> </div>
 <div class="line"><a id="l02533" name="l02533"></a><span class="lineno"> 2533</span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
 <div class="line"><a id="l02534" name="l02534"></a><span class="lineno"> 2534</span><a class="code hl_class" href="classHeatTransfer.html">HeatTransfer&lt;2&gt;::postprocess_thermal_energy_in_fluid&lt;GlobalBlockVectorType&gt;</a>(</div>
-<div class="line"><a id="l02535" name="l02535"></a><span class="lineno"> 2535</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>                       gather_vof,</div>
+<div class="line"><a id="l02535" name="l02535"></a><span class="lineno"> 2535</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>                       gather_cls,</div>
 <div class="line"><a id="l02536" name="l02536"></a><span class="lineno"> 2536</span>  <span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2f">Parameters::FluidIndicator</a> monitored_fluid,</div>
 <div class="line"><a id="l02537" name="l02537"></a><span class="lineno"> 2537</span>  <span class="keyword">const</span> std::string                domain_name,</div>
 <div class="line"><a id="l02538" name="l02538"></a><span class="lineno"> 2538</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a>     &amp;current_solution_fd);</div>
 <div class="line"><a id="l02539" name="l02539"></a><span class="lineno"> 2539</span> </div>
 <div class="line"><a id="l02540" name="l02540"></a><span class="lineno"> 2540</span><span class="keyword">template</span> <span class="keywordtype">void</span></div>
 <div class="line"><a id="l02541" name="l02541"></a><span class="lineno"> 2541</span><a class="code hl_class" href="classHeatTransfer.html">HeatTransfer&lt;3&gt;::postprocess_thermal_energy_in_fluid&lt;GlobalBlockVectorType&gt;</a>(</div>
-<div class="line"><a id="l02542" name="l02542"></a><span class="lineno"> 2542</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>                       gather_vof,</div>
+<div class="line"><a id="l02542" name="l02542"></a><span class="lineno"> 2542</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>                       gather_cls,</div>
 <div class="line"><a id="l02543" name="l02543"></a><span class="lineno"> 2543</span>  <span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2f">Parameters::FluidIndicator</a> monitored_fluid,</div>
 <div class="line"><a id="l02544" name="l02544"></a><span class="lineno"> 2544</span>  <span class="keyword">const</span> std::string                domain_name,</div>
 <div class="line"><a id="l02545" name="l02545"></a><span class="lineno"> 2545</span>  <span class="keyword">const</span> <a class="code hl_typedef" href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a>     &amp;current_solution_fd);</div>
@@ -2734,8 +2734,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02565" name="l02565"></a><span class="lineno"> 2565</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim&gt;</div>
 <div class="line"><a id="l02566" name="l02566"></a><span class="lineno"> 2566</span>std::pair&lt;double, bool&gt;</div>
 <div class="foldopen" id="foldopen02567" data-start="{" data-end="}">
-<div class="line"><a id="l02567" name="l02567"></a><span class="lineno"><a class="line" href="classHeatTransfer.html#af942f57eb949d35aadc77d28a84adebe"> 2567</a></span><a class="code hl_function" href="classHeatTransfer.html#af942f57eb949d35aadc77d28a84adebe">HeatTransfer&lt;dim&gt;::set_phase_coefficient</a>(</div>
-<div class="line"><a id="l02568" name="l02568"></a><span class="lineno"> 2568</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>                       gather_vof,</div>
+<div class="line"><a id="l02567" name="l02567"></a><span class="lineno"><a class="line" href="classHeatTransfer.html#a7e8fb30a42d3432218b9ecf7d49b2475"> 2567</a></span><a class="code hl_function" href="classHeatTransfer.html#a7e8fb30a42d3432218b9ecf7d49b2475">HeatTransfer&lt;dim&gt;::set_phase_coefficient</a>(</div>
+<div class="line"><a id="l02568" name="l02568"></a><span class="lineno"> 2568</span>  <span class="keyword">const</span> <span class="keywordtype">bool</span>                       gather_cls,</div>
 <div class="line"><a id="l02569" name="l02569"></a><span class="lineno"> 2569</span>  <span class="keyword">const</span> <a class="code hl_enumeration" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2f">Parameters::FluidIndicator</a> monitored_fluid,</div>
 <div class="line"><a id="l02570" name="l02570"></a><span class="lineno"> 2570</span>  <span class="keyword">const</span> <span class="keywordtype">double</span>                     phase_value_q)</div>
 <div class="line"><a id="l02571" name="l02571"></a><span class="lineno"> 2571</span>{</div>
@@ -2753,7 +2753,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02583" name="l02583"></a><span class="lineno"> 2583</span>        }</div>
 <div class="line"><a id="l02584" name="l02584"></a><span class="lineno"> 2584</span>      <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e86df18a83727e4a5dc8dc2859a097c">Parameters::FluidIndicator::fluid0</a>:</div>
 <div class="line"><a id="l02585" name="l02585"></a><span class="lineno"> 2585</span>        {</div>
-<div class="line"><a id="l02586" name="l02586"></a><span class="lineno"> 2586</span>          <span class="keywordflow">if</span> (gather_vof)</div>
+<div class="line"><a id="l02586" name="l02586"></a><span class="lineno"> 2586</span>          <span class="keywordflow">if</span> (gather_cls)</div>
 <div class="line"><a id="l02587" name="l02587"></a><span class="lineno"> 2587</span>            {</div>
 <div class="line"><a id="l02588" name="l02588"></a><span class="lineno"> 2588</span>              phase_coefficient = 1. - phase_value_q;</div>
 <div class="line"><a id="l02589" name="l02589"></a><span class="lineno"> 2589</span>              <span class="keywordflow">if</span> (phase_value_q &lt; 0.5)</div>
@@ -2770,7 +2770,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02600" name="l02600"></a><span class="lineno"> 2600</span>        }</div>
 <div class="line"><a id="l02601" name="l02601"></a><span class="lineno"> 2601</span>      <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e04d9b58aa70e6fb6501fde7608fd13">Parameters::FluidIndicator::fluid1</a>:</div>
 <div class="line"><a id="l02602" name="l02602"></a><span class="lineno"> 2602</span>        {</div>
-<div class="line"><a id="l02603" name="l02603"></a><span class="lineno"> 2603</span>          <span class="keywordflow">if</span> (gather_vof)</div>
+<div class="line"><a id="l02603" name="l02603"></a><span class="lineno"> 2603</span>          <span class="keywordflow">if</span> (gather_cls)</div>
 <div class="line"><a id="l02604" name="l02604"></a><span class="lineno"> 2604</span>            {</div>
 <div class="line"><a id="l02605" name="l02605"></a><span class="lineno"> 2605</span>              phase_coefficient = phase_value_q;</div>
 <div class="line"><a id="l02606" name="l02606"></a><span class="lineno"> 2606</span>              <span class="keywordflow">if</span> (phase_value_q &gt; 0.5)</div>
@@ -2798,23 +2798,23 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="abdf_8h_html"><div class="ttname"><a href="bdf_8h.html">bdf.h</a></div></div>
 <div class="ttc" id="aclassHeatFluxPostprocessor_html"><div class="ttname"><a href="classHeatFluxPostprocessor.html">HeatFluxPostprocessor</a></div><div class="ttdoc">Compute the local heat flux vector field within a domain.</div><div class="ttdef"><b>Definition</b> <a href="postprocessors_8h_source.html#l00789">postprocessors.h:790</a></div></div>
 <div class="ttc" id="aclassHeatTransferAssemblerBDF_html"><div class="ttname"><a href="classHeatTransferAssemblerBDF.html">HeatTransferAssemblerBDF</a></div><div class="ttdoc">Class that assembles the transient time arising from BDF time integration for the heat transfer solve...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__assemblers_8h_source.html#l00088">heat_transfer_assemblers.h:89</a></div></div>
+<div class="ttc" id="aclassHeatTransferAssemblerCLSEvaporation_html"><div class="ttname"><a href="classHeatTransferAssemblerCLSEvaporation.html">HeatTransferAssemblerCLSEvaporation</a></div><div class="ttdoc">Class that assembles the evaporation sink for the heat transfer solver at the free surface (air/metal...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__assemblers_8h_source.html#l00572">heat_transfer_assemblers.h:574</a></div></div>
 <div class="ttc" id="aclassHeatTransferAssemblerCore_html"><div class="ttname"><a href="classHeatTransferAssemblerCore.html">HeatTransferAssemblerCore</a></div><div class="ttdoc">Class that assembles the core of the heat transfer equation. This class assembles the weak form of:  ...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__assemblers_8h_source.html#l00045">heat_transfer_assemblers.h:46</a></div></div>
 <div class="ttc" id="aclassHeatTransferAssemblerDCDDstabilization_html"><div class="ttname"><a href="classHeatTransferAssemblerDCDDstabilization.html">HeatTransferAssemblerDCDDstabilization</a></div><div class="ttdoc">Class that assembles the Discontinuity-Capturing Directional Dissipation stabilization term for the h...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__assemblers_8h_source.html#l00273">heat_transfer_assemblers.h:275</a></div></div>
-<div class="ttc" id="aclassHeatTransferAssemblerFreeSurfaceRadiationVOF_html"><div class="ttname"><a href="classHeatTransferAssemblerFreeSurfaceRadiationVOF.html">HeatTransferAssemblerFreeSurfaceRadiationVOF</a></div><div class="ttdoc">Class that assembles the radiation sink for the heat transfer solver at the free surface (air/metal i...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__assemblers_8h_source.html#l00523">heat_transfer_assemblers.h:525</a></div></div>
-<div class="ttc" id="aclassHeatTransferAssemblerLaserExponentialDecayVOF_html"><div class="ttname"><a href="classHeatTransferAssemblerLaserExponentialDecayVOF.html">HeatTransferAssemblerLaserExponentialDecayVOF</a></div><div class="ttdoc">Class that assembles the laser heating as a volumetric source for the heat transfer solver when VOF i...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__assemblers_8h_source.html#l00468">heat_transfer_assemblers.h:470</a></div></div>
+<div class="ttc" id="aclassHeatTransferAssemblerFreeSurfaceRadiationCLS_html"><div class="ttname"><a href="classHeatTransferAssemblerFreeSurfaceRadiationCLS.html">HeatTransferAssemblerFreeSurfaceRadiationCLS</a></div><div class="ttdoc">Class that assembles the radiation sink for the heat transfer solver at the free surface (air/metal i...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__assemblers_8h_source.html#l00523">heat_transfer_assemblers.h:525</a></div></div>
+<div class="ttc" id="aclassHeatTransferAssemblerLaserExponentialDecayCLS_html"><div class="ttname"><a href="classHeatTransferAssemblerLaserExponentialDecayCLS.html">HeatTransferAssemblerLaserExponentialDecayCLS</a></div><div class="ttdoc">Class that assembles the laser heating as a volumetric source for the heat transfer solver when CLS i...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__assemblers_8h_source.html#l00468">heat_transfer_assemblers.h:470</a></div></div>
 <div class="ttc" id="aclassHeatTransferAssemblerLaserExponentialDecay_html"><div class="ttname"><a href="classHeatTransferAssemblerLaserExponentialDecay.html">HeatTransferAssemblerLaserExponentialDecay</a></div><div class="ttdoc">Class that assembles the laser heating as a volumetric source for the heat transfer solver....</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__assemblers_8h_source.html#l00315">heat_transfer_assemblers.h:317</a></div></div>
-<div class="ttc" id="aclassHeatTransferAssemblerLaserGaussianHeatFluxVOFInterface_html"><div class="ttname"><a href="classHeatTransferAssemblerLaserGaussianHeatFluxVOFInterface.html">HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface</a></div><div class="ttdoc">Class that assembles the laser heating as a surface flux for the heat transfer solver when VOF is ena...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__assemblers_8h_source.html#l00365">heat_transfer_assemblers.h:367</a></div></div>
-<div class="ttc" id="aclassHeatTransferAssemblerLaserUniformHeatFluxVOFInterface_html"><div class="ttname"><a href="classHeatTransferAssemblerLaserUniformHeatFluxVOFInterface.html">HeatTransferAssemblerLaserUniformHeatFluxVOFInterface</a></div><div class="ttdoc">Class that assembles the laser heating as a uniform surface flux for the heat transfer solver when VO...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__assemblers_8h_source.html#l00414">heat_transfer_assemblers.h:416</a></div></div>
+<div class="ttc" id="aclassHeatTransferAssemblerLaserGaussianHeatFluxCLSInterface_html"><div class="ttname"><a href="classHeatTransferAssemblerLaserGaussianHeatFluxCLSInterface.html">HeatTransferAssemblerLaserGaussianHeatFluxCLSInterface</a></div><div class="ttdoc">Class that assembles the laser heating as a surface flux for the heat transfer solver when CLS is ena...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__assemblers_8h_source.html#l00365">heat_transfer_assemblers.h:367</a></div></div>
+<div class="ttc" id="aclassHeatTransferAssemblerLaserUniformHeatFluxCLSInterface_html"><div class="ttname"><a href="classHeatTransferAssemblerLaserUniformHeatFluxCLSInterface.html">HeatTransferAssemblerLaserUniformHeatFluxCLSInterface</a></div><div class="ttdoc">Class that assembles the laser heating as a uniform surface flux for the heat transfer solver when CL...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__assemblers_8h_source.html#l00414">heat_transfer_assemblers.h:416</a></div></div>
 <div class="ttc" id="aclassHeatTransferAssemblerRobinBC_html"><div class="ttname"><a href="classHeatTransferAssemblerRobinBC.html">HeatTransferAssemblerRobinBC</a></div><div class="ttdoc">Class that assembles the Robin boundary condition for the heat transfer solver.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__assemblers_8h_source.html#l00135">heat_transfer_assemblers.h:136</a></div></div>
-<div class="ttc" id="aclassHeatTransferAssemblerVOFEvaporation_html"><div class="ttname"><a href="classHeatTransferAssemblerVOFEvaporation.html">HeatTransferAssemblerVOFEvaporation</a></div><div class="ttdoc">Class that assembles the evaporation sink for the heat transfer solver at the free surface (air/metal...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__assemblers_8h_source.html#l00572">heat_transfer_assemblers.h:574</a></div></div>
-<div class="ttc" id="aclassHeatTransferAssemblerViscousDissipationVOF_html"><div class="ttname"><a href="classHeatTransferAssemblerViscousDissipationVOF.html">HeatTransferAssemblerViscousDissipationVOF</a></div><div class="ttdoc">Class that assembles the viscous dissipation for the heat transfer solver, for the specific case of V...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__assemblers_8h_source.html#l00225">heat_transfer_assemblers.h:227</a></div></div>
+<div class="ttc" id="aclassHeatTransferAssemblerViscousDissipationCLS_html"><div class="ttname"><a href="classHeatTransferAssemblerViscousDissipationCLS.html">HeatTransferAssemblerViscousDissipationCLS</a></div><div class="ttdoc">Class that assembles the viscous dissipation for the heat transfer solver, for the specific case of C...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__assemblers_8h_source.html#l00225">heat_transfer_assemblers.h:227</a></div></div>
 <div class="ttc" id="aclassHeatTransferAssemblerViscousDissipation_html"><div class="ttname"><a href="classHeatTransferAssemblerViscousDissipation.html">HeatTransferAssemblerViscousDissipation</a></div><div class="ttdoc">Class that assembles the viscous dissipation for the heat transfer solver.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__assemblers_8h_source.html#l00182">heat_transfer_assemblers.h:184</a></div></div>
 <div class="ttc" id="aclassHeatTransferScratchData_html"><div class="ttname"><a href="classHeatTransferScratchData.html">HeatTransferScratchData</a></div><div class="ttdoc">Class that stores the information required by the assembly procedure for a heat transfer advection-di...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__scratch__data_8h_source.html#l00047">heat_transfer_scratch_data.h:48</a></div></div>
 <div class="ttc" id="aclassHeatTransferScratchData_html_a31b9944e07f9916921feab53f6d292b6"><div class="ttname"><a href="classHeatTransferScratchData.html#a31b9944e07f9916921feab53f6d292b6">HeatTransferScratchData::reinit_fluid_dynamics</a></div><div class="ttdeci">void reinit_fluid_dynamics(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const VectorType &amp;current_solution, const Parameters::ALE&lt; dim &gt; &amp;ale)</div><div class="ttdoc">Reinitialize cell's velocity and pressure values with values calculated in the Fluid Dynamics (FD) ph...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__scratch__data_8h_source.html#l00290">heat_transfer_scratch_data.h:290</a></div></div>
 <div class="ttc" id="aclassHeatTransferScratchData_html_a3734c97bfddf5bab0a5f9a68c8f52a2c"><div class="ttname"><a href="classHeatTransferScratchData.html#a3734c97bfddf5bab0a5f9a68c8f52a2c">HeatTransferScratchData::calculate_physical_properties</a></div><div class="ttdeci">void calculate_physical_properties()</div><div class="ttdoc">Calculates the physical properties. This method calculates the physical properties that may be requir...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__scratch__data_8cc_source.html#l00143">heat_transfer_scratch_data.cc:143</a></div></div>
 <div class="ttc" id="aclassHeatTransferScratchData_html_aba6e01472137f7cbbe80ec3c92675d44"><div class="ttname"><a href="classHeatTransferScratchData.html#aba6e01472137f7cbbe80ec3c92675d44">HeatTransferScratchData::reinit_velocity_gradient</a></div><div class="ttdeci">void reinit_velocity_gradient(const VectorType &amp;current_solution)</div><div class="ttdoc">Reinitialize the velocity gradient, calculated by the Fluid Dynamics.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__scratch__data_8h_source.html#l00334">heat_transfer_scratch_data.h:334</a></div></div>
-<div class="ttc" id="aclassHeatTransferScratchData_html_ad75b096501fe6ee0f3aec67a9b31ee27"><div class="ttname"><a href="classHeatTransferScratchData.html#ad75b096501fe6ee0f3aec67a9b31ee27">HeatTransferScratchData::reinit_vof</a></div><div class="ttdeci">void reinit_vof(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const VectorType &amp;current_filtered_solution)</div><div class="ttdoc">Reinitialize the content of the scratch for VOF.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__scratch__data_8h_source.html#l00392">heat_transfer_scratch_data.h:392</a></div></div>
 <div class="ttc" id="aclassHeatTransferScratchData_html_ae9c04687dab523855f69361986866a2f"><div class="ttname"><a href="classHeatTransferScratchData.html#ae9c04687dab523855f69361986866a2f">HeatTransferScratchData::reinit</a></div><div class="ttdeci">void reinit(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const VectorType &amp;current_solution, const std::vector&lt; GlobalVectorType &gt; &amp;previous_solutions, Function&lt; dim &gt; *source_function)</div><div class="ttdoc">Reinitializes the content of the scratch.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__scratch__data_8h_source.html#l00174">heat_transfer_scratch_data.h:174</a></div></div>
+<div class="ttc" id="aclassHeatTransferScratchData_html_aef21c856237186f8f7cd74f3c48153ea"><div class="ttname"><a href="classHeatTransferScratchData.html#aef21c856237186f8f7cd74f3c48153ea">HeatTransferScratchData::reinit_cls</a></div><div class="ttdeci">void reinit_cls(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const VectorType &amp;current_filtered_solution)</div><div class="ttdoc">Reinitialize the content of the scratch for CLS.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer__scratch__data_8h_source.html#l00392">heat_transfer_scratch_data.h:392</a></div></div>
 <div class="ttc" id="aclassHeatTransfer_html"><div class="ttname"><a href="classHeatTransfer.html">HeatTransfer</a></div><div class="ttdoc">Implementation of heat transfer as an auxiliary physics. The heat equation is weakly coupled to the v...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8h_source.html#l00052">heat_transfer.h:53</a></div></div>
 <div class="ttc" id="aclassHeatTransfer_html_a040566235155e688bb20b8124871e9a8"><div class="ttname"><a href="classHeatTransfer.html#a040566235155e688bb20b8124871e9a8">HeatTransfer::percolate_time_vectors</a></div><div class="ttdeci">void percolate_time_vectors() override</div><div class="ttdoc">Rearrange vector solution correctly for transient simulations.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l00976">heat_transfer.cc:976</a></div></div>
 <div class="ttc" id="aclassHeatTransfer_html_a108b901abfa86278bc44606211be2abc"><div class="ttname"><a href="classHeatTransfer.html#a108b901abfa86278bc44606211be2abc">HeatTransfer::assemble_nitsche_heat_restriction</a></div><div class="ttdeci">void assemble_nitsche_heat_restriction(const bool assemble_matrix)</div><div class="ttdoc">Call for the assembly of the matrix and the right-hand side of the Nitsche restriction for the heat t...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l00051">heat_transfer.cc:51</a></div></div>
@@ -2830,28 +2830,28 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassHeatTransfer_html_a647057ca3043ee2d38e880e1366be62d"><div class="ttname"><a href="classHeatTransfer.html#a647057ca3043ee2d38e880e1366be62d">HeatTransfer::post_mesh_adaptation</a></div><div class="ttdeci">void post_mesh_adaptation() override</div><div class="ttdoc">Interpolate the auxiliary physics variables to the new mesh.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l01151">heat_transfer.cc:1151</a></div></div>
 <div class="ttc" id="aclassHeatTransfer_html_a690a8c744e24846ba38e898af1c1e116"><div class="ttname"><a href="classHeatTransfer.html#a690a8c744e24846ba38e898af1c1e116">HeatTransfer::assemble_local_system_matrix</a></div><div class="ttdeci">virtual void assemble_local_system_matrix(const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, HeatTransferScratchData&lt; dim &gt; &amp;scratch_data, StabilizedMethodsCopyData &amp;copy_data)</div><div class="ttdoc">Assemble the local matrix for a given cell.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l00455">heat_transfer.cc:455</a></div></div>
 <div class="ttc" id="aclassHeatTransfer_html_a7447e2540ba5d2c11c4320c8388fa0fa"><div class="ttname"><a href="classHeatTransfer.html#a7447e2540ba5d2c11c4320c8388fa0fa">HeatTransfer::gather_output_hook</a></div><div class="ttdeci">std::vector&lt; OutputStruct&lt; dim, GlobalVectorType &gt; &gt; gather_output_hook() override</div><div class="ttdoc">Gather and return vector of output structs that are particular to some applications.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l00750">heat_transfer.cc:750</a></div></div>
-<div class="ttc" id="aclassHeatTransfer_html_a7c42d40b5cbb4d2bd779819315bad8c0"><div class="ttname"><a href="classHeatTransfer.html#a7c42d40b5cbb4d2bd779819315bad8c0">HeatTransfer::postprocess_liquid_fraction</a></div><div class="ttdeci">void postprocess_liquid_fraction(const bool gather_vof)</div><div class="ttdoc">Post-processing. Calculate liquid fraction on the domain.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l01898">heat_transfer.cc:1898</a></div></div>
-<div class="ttc" id="aclassHeatTransfer_html_a7ff114068319d0f41a69eb1b1b1c0df7"><div class="ttname"><a href="classHeatTransfer.html#a7ff114068319d0f41a69eb1b1b1c0df7">HeatTransfer::postprocess_temperature_statistics</a></div><div class="ttdeci">void postprocess_temperature_statistics(const bool gather_vof, const Parameters::FluidIndicator monitored_fluid, const std::string domain_name, const bool time_average)</div><div class="ttdoc">Post-processing. Calculate temperature statistics on the domain : Max, min, average and standard-devi...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l01671">heat_transfer.cc:1671</a></div></div>
-<div class="ttc" id="aclassHeatTransfer_html_a81e930b130b3dbf4fda567923b6be172"><div class="ttname"><a href="classHeatTransfer.html#a81e930b130b3dbf4fda567923b6be172">HeatTransfer::postprocess_heat_flux_on_bc</a></div><div class="ttdeci">void postprocess_heat_flux_on_bc(const bool gather_vof, const VectorType &amp;current_solution_fd)</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l02059">heat_transfer.cc:2059</a></div></div>
+<div class="ttc" id="aclassHeatTransfer_html_a76195f93949196f3b9d1c7392276183a"><div class="ttname"><a href="classHeatTransfer.html#a76195f93949196f3b9d1c7392276183a">HeatTransfer::postprocess_thermal_energy_in_fluid</a></div><div class="ttdeci">void postprocess_thermal_energy_in_fluid(const bool gather_cls, const Parameters::FluidIndicator monitored_fluid, const std::string domain_name, const VectorType &amp;current_solution_fd)</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l02339">heat_transfer.cc:2339</a></div></div>
+<div class="ttc" id="aclassHeatTransfer_html_a7e8fb30a42d3432218b9ecf7d49b2475"><div class="ttname"><a href="classHeatTransfer.html#a7e8fb30a42d3432218b9ecf7d49b2475">HeatTransfer::set_phase_coefficient</a></div><div class="ttdeci">std::pair&lt; double, bool &gt; set_phase_coefficient(const bool gather_cls, const Parameters::FluidIndicator monitored_fluid, const double phase_value_q)</div><div class="ttdoc">Set a phase_coefficient that is used in the postprocessing, to account for multiphase flow.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l02567">heat_transfer.cc:2567</a></div></div>
 <div class="ttc" id="aclassHeatTransfer_html_a8c6326ec43216315de0b0a66078b9631"><div class="ttname"><a href="classHeatTransfer.html#a8c6326ec43216315de0b0a66078b9631">HeatTransfer::assemble_rhs</a></div><div class="ttdeci">void assemble_rhs()</div><div class="ttdoc">Call for the assembly of the right-hand side.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l00042">heat_transfer.cc:42</a></div></div>
 <div class="ttc" id="aclassHeatTransfer_html_a8e4d76beacb77c787c9079c5a0ca7c55"><div class="ttname"><a href="classHeatTransfer.html#a8e4d76beacb77c787c9079c5a0ca7c55">HeatTransfer::read_checkpoint</a></div><div class="ttdeci">void read_checkpoint() override</div><div class="ttdoc">Allow Heat Transfer to set up solution vector from checkpoint file.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l01305">heat_transfer.cc:1305</a></div></div>
 <div class="ttc" id="aclassHeatTransfer_html_a900850f6c5346a85f740fa2a218e223a"><div class="ttname"><a href="classHeatTransfer.html#a900850f6c5346a85f740fa2a218e223a">HeatTransfer::finish_simulation</a></div><div class="ttdeci">void finish_simulation() override</div><div class="ttdoc">Carry out the operations required to finish a simulation correctly.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l00940">heat_transfer.cc:940</a></div></div>
 <div class="ttc" id="aclassHeatTransfer_html_a9424b244231895ee5b12f1fd16c6a09c"><div class="ttname"><a href="classHeatTransfer.html#a9424b244231895ee5b12f1fd16c6a09c">HeatTransfer::pre_mesh_adaptation</a></div><div class="ttdeci">void pre_mesh_adaptation() override</div><div class="ttdoc">Prepare the auxiliary physics variables for a mesh refinement/coarsening.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l01135">heat_transfer.cc:1135</a></div></div>
+<div class="ttc" id="aclassHeatTransfer_html_a97ce11f98c46f89a836b1d64d19fad00"><div class="ttname"><a href="classHeatTransfer.html#a97ce11f98c46f89a836b1d64d19fad00">HeatTransfer::postprocess_liquid_fraction</a></div><div class="ttdeci">void postprocess_liquid_fraction(const bool gather_cls)</div><div class="ttdoc">Post-processing. Calculate liquid fraction on the domain.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l01898">heat_transfer.cc:1898</a></div></div>
 <div class="ttc" id="aclassHeatTransfer_html_a9ea757a6ef815943cde9807f01679023"><div class="ttname"><a href="classHeatTransfer.html#a9ea757a6ef815943cde9807f01679023">HeatTransfer::write_heat_flux</a></div><div class="ttdeci">void write_heat_flux(const std::string domain_name)</div><div class="ttdoc">Post-processing. Write the heat transfer values to an output file.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l02549">heat_transfer.cc:2549</a></div></div>
 <div class="ttc" id="aclassHeatTransfer_html_aa6ea50a26cfc0edd3ed18276e0793053"><div class="ttname"><a href="classHeatTransfer.html#aa6ea50a26cfc0edd3ed18276e0793053">HeatTransfer::compute_error_estimate</a></div><div class="ttdeci">void compute_error_estimate(const std::pair&lt; const Variable, Parameters::MultipleAdaptationParameters &gt; &amp;ivar, dealii::Vector&lt; float &gt; &amp;estimated_error_per_cell) override</div><div class="ttdoc">Compute the error estimator for mesh refinement.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l01184">heat_transfer.cc:1184</a></div></div>
 <div class="ttc" id="aclassHeatTransfer_html_aa9c2709cdfc0013a0216e61d312cc7a9"><div class="ttname"><a href="classHeatTransfer.html#aa9c2709cdfc0013a0216e61d312cc7a9">HeatTransfer::calculate_delta_T_ref</a></div><div class="ttdeci">double calculate_delta_T_ref(double minimum_delta_T_ref=1.)</div><div class="ttdoc">Calculate delta_T_ref for the DCDD shock capture mechanism. delta_T_ref = T_max - T_min.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l00869">heat_transfer.cc:869</a></div></div>
 <div class="ttc" id="aclassHeatTransfer_html_aaa7662383d9bbbba61db49dfad67f4f8"><div class="ttname"><a href="classHeatTransfer.html#aaa7662383d9bbbba61db49dfad67f4f8">HeatTransfer::gather_tables</a></div><div class="ttdeci">std::vector&lt; OutputStructTableHandler &gt; gather_tables() override</div><div class="ttdoc">Returns a vector of references to TableHandler objects that needs to be serialized/deserialized for t...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l01224">heat_transfer.cc:1224</a></div></div>
 <div class="ttc" id="aclassHeatTransfer_html_aae39576731dcd9328bf2c3b7c72db6ac"><div class="ttname"><a href="classHeatTransfer.html#aae39576731dcd9328bf2c3b7c72db6ac">HeatTransfer::update_boundary_conditions</a></div><div class="ttdeci">void update_boundary_conditions() override</div><div class="ttdoc">Update non zero constraints if the boundary is time-dependent.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l01516">heat_transfer.cc:1516</a></div></div>
-<div class="ttc" id="aclassHeatTransfer_html_ab70fe9d2931fbf1ddbadc881a747f44a"><div class="ttname"><a href="classHeatTransfer.html#ab70fe9d2931fbf1ddbadc881a747f44a">HeatTransfer::postprocess_thermal_energy_in_fluid</a></div><div class="ttdeci">void postprocess_thermal_energy_in_fluid(const bool gather_vof, const Parameters::FluidIndicator monitored_fluid, const std::string domain_name, const VectorType &amp;current_solution_fd)</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l02339">heat_transfer.cc:2339</a></div></div>
+<div class="ttc" id="aclassHeatTransfer_html_ab1ed586f4c193bb05f6e3212a1a59e24"><div class="ttname"><a href="classHeatTransfer.html#ab1ed586f4c193bb05f6e3212a1a59e24">HeatTransfer::postprocess_temperature_statistics</a></div><div class="ttdeci">void postprocess_temperature_statistics(const bool gather_cls, const Parameters::FluidIndicator monitored_fluid, const std::string domain_name, const bool time_average)</div><div class="ttdoc">Post-processing. Calculate temperature statistics on the domain : Max, min, average and standard-devi...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l01671">heat_transfer.cc:1671</a></div></div>
 <div class="ttc" id="aclassHeatTransfer_html_ab8b8c17211654416df6da0ddf54e91ad"><div class="ttname"><a href="classHeatTransfer.html#ab8b8c17211654416df6da0ddf54e91ad">HeatTransfer::postprocess</a></div><div class="ttdeci">void postprocess(bool first_iteration) override</div><div class="ttdoc">Postprocess the auxiliary physics results. Post-processing this case implies the calculation of all d...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l00987">heat_transfer.cc:987</a></div></div>
 <div class="ttc" id="aclassHeatTransfer_html_ac1df90eac6ba3018476e093af21e3899"><div class="ttname"><a href="classHeatTransfer.html#ac1df90eac6ba3018476e093af21e3899">HeatTransfer::assemble_system_matrix</a></div><div class="ttdeci">void assemble_system_matrix() override</div><div class="ttdoc">Assemble the matrix associated with the solver.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l00406">heat_transfer.cc:406</a></div></div>
 <div class="ttc" id="aclassHeatTransfer_html_ac6daf4b154211a7ba283dc66c3380d51"><div class="ttname"><a href="classHeatTransfer.html#ac6daf4b154211a7ba283dc66c3380d51">HeatTransfer::assemble_system_rhs</a></div><div class="ttdeci">void assemble_system_rhs() override</div><div class="ttdoc">Assemble the rhs associated with the solver.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l00577">heat_transfer.cc:577</a></div></div>
 <div class="ttc" id="aclassHeatTransfer_html_aca8c8523ca5b4d9df7c1ed977ed7d113"><div class="ttname"><a href="classHeatTransfer.html#aca8c8523ca5b4d9df7c1ed977ed7d113">HeatTransfer::setup_dofs</a></div><div class="ttdeci">void setup_dofs() override</div><div class="ttdoc">Set up the DofHandler and the degrees of freedom associated with the physics.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l01376">heat_transfer.cc:1376</a></div></div>
+<div class="ttc" id="aclassHeatTransfer_html_ad85300cacfed01d84b1c4b9d66aa50bc"><div class="ttname"><a href="classHeatTransfer.html#ad85300cacfed01d84b1c4b9d66aa50bc">HeatTransfer::postprocess_heat_flux_on_bc</a></div><div class="ttdeci">void postprocess_heat_flux_on_bc(const bool gather_cls, const VectorType &amp;current_solution_fd)</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l02059">heat_transfer.cc:2059</a></div></div>
 <div class="ttc" id="aclassHeatTransfer_html_ae5d4296410bc22c1564ab2ebbc359f16"><div class="ttname"><a href="classHeatTransfer.html#ae5d4296410bc22c1564ab2ebbc359f16">HeatTransfer::copy_local_rhs_to_global_rhs</a></div><div class="ttdeci">virtual void copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &amp;copy_data)</div><div class="ttdoc">Copy local cell rhs information to global rhs.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l00736">heat_transfer.cc:736</a></div></div>
 <div class="ttc" id="aclassHeatTransfer_html_ae9604a96e042f07d3f9aeb41a60da33c"><div class="ttname"><a href="classHeatTransfer.html#ae9604a96e042f07d3f9aeb41a60da33c">HeatTransfer::assemble_matrix_and_rhs</a></div><div class="ttdeci">void assemble_matrix_and_rhs()</div><div class="ttdoc">Call for the assembly of the matrix and the right-hand side.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l00030">heat_transfer.cc:30</a></div></div>
 <div class="ttc" id="aclassHeatTransfer_html_af57f85e05f840178f1da1a9305f41704"><div class="ttname"><a href="classHeatTransfer.html#af57f85e05f840178f1da1a9305f41704">HeatTransfer::postprocess_heat_flux_on_nitsche_ib</a></div><div class="ttdeci">void postprocess_heat_flux_on_nitsche_ib()</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l00172">heat_transfer.cc:172</a></div></div>
 <div class="ttc" id="aclassHeatTransfer_html_af7e209dda017e39d3988b1e3f3751857"><div class="ttname"><a href="classHeatTransfer.html#af7e209dda017e39d3988b1e3f3751857">HeatTransfer::set_initial_conditions</a></div><div class="ttdeci">void set_initial_conditions() override</div><div class="ttdoc">Set up the initial conditions associated with the physics. heat_transfer allows a temperature functio...</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l01576">heat_transfer.cc:1576</a></div></div>
-<div class="ttc" id="aclassHeatTransfer_html_af942f57eb949d35aadc77d28a84adebe"><div class="ttname"><a href="classHeatTransfer.html#af942f57eb949d35aadc77d28a84adebe">HeatTransfer::set_phase_coefficient</a></div><div class="ttdeci">std::pair&lt; double, bool &gt; set_phase_coefficient(const bool gather_vof, const Parameters::FluidIndicator monitored_fluid, const double phase_value_q)</div><div class="ttdoc">Set a phase_coefficient that is used in the postprocessing, to account for multiphase flow.</div><div class="ttdef"><b>Definition</b> <a href="heat__transfer_8cc_source.html#l02567">heat_transfer.cc:2567</a></div></div>
 <div class="ttc" id="aclassParameters_1_1Laser_html"><div class="ttname"><a href="classParameters_1_1Laser.html">Parameters::Laser</a></div><div class="ttdoc">Laser parameters - Defines the parameters for the laser heat source.</div><div class="ttdef"><b>Definition</b> <a href="parameters_8h_source.html#l00922">parameters.h:923</a></div></div>
 <div class="ttc" id="aclassParameters_1_1Material_html_a5d7278c8988f690439744f0b9404e95fad0b50e5bdf6e59d6f8ce448465e09069"><div class="ttname"><a href="classParameters_1_1Material.html#a5d7278c8988f690439744f0b9404e95fad0b50e5bdf6e59d6f8ce448465e09069">Parameters::Material::SpecificHeatModel::phase_change</a></div><div class="ttdeci">@ phase_change</div></div>
 <div class="ttc" id="aclassStabilizedMethodsCopyData_html"><div class="ttname"><a href="classStabilizedMethodsCopyData.html">StabilizedMethodsCopyData</a></div><div class="ttdoc">Class responsible for storing the information calculated using the assembly of stabilized scalar equa...</div><div class="ttdef"><b>Definition</b> <a href="copy__data_8h_source.html#l00065">copy_data.h:66</a></div></div>
@@ -2864,7 +2864,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aheat__transfer_8h_html"><div class="ttname"><a href="heat__transfer_8h.html">heat_transfer.h</a></div></div>
 <div class="ttc" id="amultiphysics_8h_html_a2cbb04ef215561a69b48772159577fddaeef438f7e448aa48c1f8db568d27b591"><div class="ttname"><a href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaeef438f7e448aa48c1f8db568d27b591">Variable::temperature</a></div><div class="ttdeci">@ temperature</div><div class="ttdoc">Temperature scalar field from heat transfer.</div></div>
 <div class="ttc" id="amultiphysics_8h_html_ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2"><div class="ttname"><a href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2a0bb34d58a3e8914bc47bf4b415f206c2">fluid_dynamics</a></div><div class="ttdeci">@ fluid_dynamics</div><div class="ttdoc">Fluid Dynamics (Velocity,Pressure)</div><div class="ttdef"><b>Definition</b> <a href="multiphysics_8h_source.html#l00026">multiphysics.h:26</a></div></div>
-<div class="ttc" id="amultiphysics_8h_html_ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9"><div class="ttname"><a href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2acbc0ad67f70aa071fb58cc555ff266f9">VOF</a></div><div class="ttdeci">@ VOF</div><div class="ttdef"><b>Definition</b> <a href="multiphysics_8h_source.html#l00033">multiphysics.h:33</a></div></div>
+<div class="ttc" id="amultiphysics_8h_html_ae14bb720bc9a37edc36fb8d90df712c2aa5e0d06ffc1b0ee32eda539e6528a3e6"><div class="ttname"><a href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2aa5e0d06ffc1b0ee32eda539e6528a3e6">CLS</a></div><div class="ttdeci">@ CLS</div><div class="ttdef"><b>Definition</b> <a href="multiphysics_8h_source.html#l00033">multiphysics.h:33</a></div></div>
 <div class="ttc" id="amultiphysics_8h_html_ae14bb720bc9a37edc36fb8d90df712c2ad4151ddbc1976755e1fcd118d2917fa8"><div class="ttname"><a href="multiphysics_8h.html#ae14bb720bc9a37edc36fb8d90df712c2ad4151ddbc1976755e1fcd118d2917fa8">heat_transfer</a></div><div class="ttdeci">@ heat_transfer</div><div class="ttdoc">Heat transfer (Temperature)</div><div class="ttdef"><b>Definition</b> <a href="multiphysics_8h_source.html#l00028">multiphysics.h:28</a></div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::BoundaryType::periodic</a></div><div class="ttdeci">@ periodic</div></div>
 <div class="ttc" id="anamespaceBoundaryConditions_html_a07df76d63cde5cb5bcbea0d9c25a54b8aeef438f7e448aa48c1f8db568d27b591"><div class="ttname"><a href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8aeef438f7e448aa48c1f8db568d27b591">BoundaryConditions::BoundaryType::temperature</a></div><div class="ttdeci">@ temperature</div></div>
@@ -2889,7 +2889,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="atime__integration__utilities_8h_html_aba8873b6f6bc70d76112567aae738058"><div class="ttname"><a href="time__integration__utilities_8h.html#aba8873b6f6bc70d76112567aae738058">time_stepping_is_sdirk</a></div><div class="ttdeci">bool time_stepping_is_sdirk(const Parameters::SimulationControl::TimeSteppingMethod method)</div><div class="ttdoc">Determines if the time integration method is within the sdirk family.</div><div class="ttdef"><b>Definition</b> <a href="time__integration__utilities_8h_source.html#l00060">time_integration_utilities.h:60</a></div></div>
 <div class="ttc" id="autilities_8h_html_a83d25a54c0d722fd5843a5f27a01e99a"><div class="ttname"><a href="utilities_8h.html#a83d25a54c0d722fd5843a5f27a01e99a">serialize_tables_vector</a></div><div class="ttdeci">void serialize_tables_vector(const std::vector&lt; OutputStructTableHandler &gt; &amp;table_output_structs, const MPI_Comm mpi_communicator)</div><div class="ttdoc">Serializes all the TableHandler objects in table_output_structs.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00570">utilities.h:570</a></div></div>
 <div class="ttc" id="autilities_8h_html_a9329b0f36d22e7ab552519cfd2846612"><div class="ttname"><a href="utilities_8h.html#a9329b0f36d22e7ab552519cfd2846612">announce_string</a></div><div class="ttdeci">void announce_string(const ConditionalOStream &amp;pcout, const std::string &amp;expression, const char delimiter='-')</div><div class="ttdoc">Prints a string and then adds a line above and below made with dashes containing as many dashes as th...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00468">utilities.h:468</a></div></div>
-<div class="ttc" id="autilities_8h_html_a955c2851894d041727c14dff59686f0d"><div class="ttname"><a href="utilities_8h.html#a955c2851894d041727c14dff59686f0d">calculate_point_property</a></div><div class="ttdeci">double calculate_point_property(const double phase, const double property0, const double property1)</div><div class="ttdoc">Calculate the equivalent properties for a given phase. Method called in quadrature points loops in VO...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00297">utilities.h:297</a></div></div>
+<div class="ttc" id="autilities_8h_html_a955c2851894d041727c14dff59686f0d"><div class="ttname"><a href="utilities_8h.html#a955c2851894d041727c14dff59686f0d">calculate_point_property</a></div><div class="ttdeci">double calculate_point_property(const double phase, const double property0, const double property1)</div><div class="ttdoc">Calculate the equivalent properties for a given phase. Method called in quadrature points loops in CL...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00297">utilities.h:297</a></div></div>
 <div class="ttc" id="autilities_8h_html_afcfe4de1afd73ea594f9e79b64c3b1c0"><div class="ttname"><a href="utilities_8h.html#afcfe4de1afd73ea594f9e79b64c3b1c0">deserialize_tables_vector</a></div><div class="ttdeci">void deserialize_tables_vector(std::vector&lt; OutputStructTableHandler &gt; &amp;table_output_structs, const MPI_Comm mpi_communicator)</div><div class="ttdoc">Deserializes all the TableHandler objects in table_output_structs.</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00592">utilities.h:592</a></div></div>
 <div class="ttc" id="avector_8h_html_a4ea4005d75c88e60bee47d4e79a13a39"><div class="ttname"><a href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a></div><div class="ttdeci">dealii::TrilinosWrappers::MPI::Vector GlobalVectorType</div><div class="ttdef"><b>Definition</b> <a href="vector_8h_source.html#l00017">vector.h:17</a></div></div>
 <div class="ttc" id="avector_8h_html_ac71ba75c5119edae876800f9e80b59e7"><div class="ttname"><a href="vector_8h.html#ac71ba75c5119edae876800f9e80b59e7">GlobalBlockVectorType</a></div><div class="ttdeci">dealii::TrilinosWrappers::MPI::BlockVector GlobalBlockVectorType</div><div class="ttdef"><b>Definition</b> <a href="vector_8h_source.html#l00018">vector.h:18</a></div></div>

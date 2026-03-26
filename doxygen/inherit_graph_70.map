@@ -1,7 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classMortarManagerBase.html" title="Base class for the mortar manager." alt="" coords="5,37,171,77"/>
-<area shape="rect" id="Node000001" href="$classMortarManagerCircle.html" title="Mortar manager class for circular interface." alt="" coords="221,5,379,45"/>
-<area shape="poly" id="edge89_Node000000_Node000001" title=" " alt="" coords="184,40,220,35,221,40,185,45"/>
-<area shape="rect" id="Node000002" href="$classMortarManagerLinear.html" title="Mortar manager class for linear interface." alt="" coords="219,69,381,109"/>
-<area shape="poly" id="edge90_Node000000_Node000002" title=" " alt="" coords="185,69,219,74,218,80,184,74"/>
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,20,153,45"/>
+<area shape="rect" id="Node000001" href="$classdealii_1_1MGCoarseGridApplyPreconditioner.html" title=" " alt="" coords="201,5,408,60"/>
+<area shape="poly" id="edge89_Node000000_Node000001" title=" " alt="" coords="167,30,201,30,201,35,167,35"/>
 </map>

@@ -32,7 +32,7 @@ var searchData=
   ['periodichillspullback_29',['PeriodicHillsPullBack',['../classPeriodicHillsPullBack.html',1,'']]],
   ['periodichillspushforward_30',['PeriodicHillsPushForward',['../classPeriodicHillsPushForward.html',1,'']]],
   ['phasechange_31',['PhaseChange',['../structParameters_1_1PhaseChange.html',1,'Parameters']]],
-  ['phasechangedarcyvofassembler_32',['PhaseChangeDarcyVOFAssembler',['../classPhaseChangeDarcyVOFAssembler.html',1,'']]],
+  ['phasechangedarcyclsassembler_32',['PhaseChangeDarcyCLSAssembler',['../classPhaseChangeDarcyCLSAssembler.html',1,'']]],
   ['phasechangerheology_33',['PhaseChangeRheology',['../classPhaseChangeRheology.html',1,'']]],
   ['phasechangespecificheat_34',['PhaseChangeSpecificHeat',['../classPhaseChangeSpecificHeat.html',1,'']]],
   ['physicalproperties_35',['PhysicalProperties',['../classParameters_1_1PhysicalProperties.html',1,'Parameters']]],

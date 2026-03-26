@@ -1,0 +1,5 @@
+<map id="HeatTransferAssemblerLaserGaussianHeatFluxCLSInterface&lt; dim &gt;" name="HeatTransferAssemblerLaserGaussianHeatFluxCLSInterface&lt; dim &gt;">
+<area shape="rect" id="Node000001" title="Class that assembles the laser heating as a surface flux for the heat transfer solver when CLS is ena..." alt="" coords="5,93,284,133"/>
+<area shape="rect" id="Node000002" href="$classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="41,5,248,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="147,59,147,93,142,93,142,59"/>
+</map>

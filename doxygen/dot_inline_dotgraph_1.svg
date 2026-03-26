@@ -123,17 +123,17 @@
 <!-- auxiliary_physics_1 -->
 <g id="node9" class="node">
 <title>auxiliary_physics_1</title>
-<g id="a_node9"><a xlink:href="https://chaos-polymtl.github.io/lethe/doxygen/classVolumeOfFluid.html" target="_top" xlink:title="VolumeOfFluid">
-<polygon fill="white" stroke="royalblue" points="581,-248.5 581,-273.5 708,-273.5 708,-248.5 581,-248.5"/>
-<text text-anchor="middle" x="644.5" y="-257.5" font-family="FreeSans" font-size="15.00">VolumeOfFluid</text>
+<g id="a_node9"><a xlink:href="https://chaos-polymtl.github.io/lethe/doxygen/classConservativeLevelSet.html" target="_top" xlink:title="ConservativeLevelSet">
+<polygon fill="white" stroke="royalblue" points="555,-248.5 555,-273.5 734,-273.5 734,-248.5 555,-248.5"/>
+<text text-anchor="middle" x="644.5" y="-257.5" font-family="FreeSans" font-size="15.00">ConservativeLevelSet</text>
 </a>
 </g>
 </g>
 <!-- auxiliary_physics&#45;&gt;auxiliary_physics_1 -->
 <g id="edge6" class="edge">
 <title>auxiliary_physics:e&#45;&gt;auxiliary_physics_1:w</title>
-<path fill="none" stroke="royalblue" d="M452.78,-168.81C485.89,-174.45 485.48,-208.17 519,-230 544.32,-246.49 549.29,-261 579.5,-261"/>
-<polygon fill="royalblue" stroke="royalblue" points="452.74,-165.3 442.5,-168 452.19,-172.28 452.74,-165.3"/>
+<path fill="none" stroke="royalblue" d="M452.68,-168.86C505.12,-178.24 492.79,-261 553.5,-261"/>
+<polygon fill="royalblue" stroke="royalblue" points="452.76,-165.36 442.5,-168 452.17,-172.33 452.76,-165.36"/>
 </g>
 <!-- auxiliary_physics_2 -->
 <g id="node10" class="node">

@@ -466,10 +466,10 @@
 </a>
 </g>
 </g>
-<!-- Node70 -->
-<g id="Node000070" class="node">
-<title>Node70</title>
-<g id="a_Node000070"><a xlink:href="time__harmonic__maxwell_8h.html" target="_top" xlink:title=" ">
+<!-- Node86 -->
+<g id="Node000086" class="node">
+<title>Node86</title>
+<g id="a_Node000086"><a xlink:href="time__harmonic__maxwell_8h.html" target="_top" xlink:title=" ">
 <polygon fill="#fff0f0" stroke="red" points="2278,-41 2129,-41 2129,0 2278,0 2278,-41"/>
 <text text-anchor="start" x="2137" y="-29" font-family="Helvetica,sans-Serif" font-size="10.00">/home/runner/work/lethe</text>
 <text text-anchor="start" x="2137" y="-18" font-family="Helvetica,sans-Serif" font-size="10.00">/lethe/include/solvers</text>
@@ -477,10 +477,10 @@
 </a>
 </g>
 </g>
-<!-- Node6&#45;&gt;Node70 -->
-<g id="edge95_Node000006_Node000070" class="edge">
-<title>Node6&#45;&gt;Node70</title>
-<g id="a_edge95_Node000006_Node000070"><a xlink:title=" ">
+<!-- Node6&#45;&gt;Node86 -->
+<g id="edge95_Node000006_Node000086" class="edge">
+<title>Node6&#45;&gt;Node86</title>
+<g id="a_edge95_Node000006_Node000086"><a xlink:title=" ">
 <path fill="none" stroke="#63b8ff" d="M1885.86,-399.67C1894.46,-398.2 1903.16,-396.92 1911.5,-396 2092.55,-375.97 3374.51,-406.99 3550.5,-360 3619.49,-341.58 3655.07,-344.41 3691.5,-283 3840.81,-31.34 2599.48,-19.71 2278.2,-20.88"/>
 <polygon fill="#63b8ff" stroke="#63b8ff" points="1885.04,-396.26 1875.82,-401.47 1886.28,-403.15 1885.04,-396.26"/>
 </a>
@@ -1058,10 +1058,10 @@
 </a>
 </g>
 </g>
-<!-- Node8&#45;&gt;Node70 -->
-<g id="edge21_Node000008_Node000070" class="edge">
-<title>Node8&#45;&gt;Node70</title>
-<g id="a_edge21_Node000008_Node000070"><a xlink:title=" ">
+<!-- Node8&#45;&gt;Node86 -->
+<g id="edge21_Node000008_Node000086" class="edge">
+<title>Node8&#45;&gt;Node86</title>
+<g id="a_edge21_Node000008_Node000086"><a xlink:title=" ">
 <path fill="none" stroke="#63b8ff" d="M1573.31,-233C1636.38,-209.73 1731.22,-169.82 1803.5,-118 1823.94,-103.35 1820.21,-88.65 1842.5,-77 1890.97,-51.67 2038.03,-35.28 2128.81,-27.28"/>
 <polygon fill="#63b8ff" stroke="#63b8ff" points="1572.05,-229.73 1563.86,-236.45 1574.45,-236.31 1572.05,-229.73"/>
 </a>
@@ -1184,10 +1184,10 @@
 </a>
 </g>
 </g>
-<!-- Node160&#45;&gt;Node70 -->
-<g id="edge36_Node000160_Node000070" class="edge">
-<title>Node160&#45;&gt;Node70</title>
-<g id="a_edge36_Node000160_Node000070"><a xlink:title=" ">
+<!-- Node160&#45;&gt;Node86 -->
+<g id="edge36_Node000160_Node000086" class="edge">
+<title>Node160&#45;&gt;Node86</title>
+<g id="a_edge36_Node000160_Node000086"><a xlink:title=" ">
 <path fill="none" stroke="#63b8ff" d="M2107.14,-143.59C2108.83,-123.37 2113.64,-96.83 2126.5,-77 2136,-62.34 2150.84,-50.31 2164.96,-41.24"/>
 <polygon fill="#63b8ff" stroke="#63b8ff" points="2103.63,-143.61 2106.49,-153.81 2110.61,-144.05 2103.63,-143.61"/>
 </a>
@@ -1202,10 +1202,10 @@
 </a>
 </g>
 </g>
-<!-- Node62&#45;&gt;Node70 -->
-<g id="edge34_Node000062_Node000070" class="edge">
-<title>Node62&#45;&gt;Node70</title>
-<g id="a_edge34_Node000062_Node000070"><a xlink:title=" ">
+<!-- Node62&#45;&gt;Node86 -->
+<g id="edge34_Node000062_Node000086" class="edge">
+<title>Node62&#45;&gt;Node86</title>
+<g id="a_edge34_Node000062_Node000086"><a xlink:title=" ">
 <path fill="none" stroke="#63b8ff" d="M2203.5,-66.69C2203.5,-58.08 2203.5,-48.9 2203.5,-41.07"/>
 <polygon fill="#63b8ff" stroke="#63b8ff" points="2200,-66.79 2203.5,-76.79 2207,-66.79 2200,-66.79"/>
 </a>
@@ -1283,10 +1283,10 @@
 </a>
 </g>
 </g>
-<!-- Node59&#45;&gt;Node70 -->
-<g id="edge51_Node000059_Node000070" class="edge">
-<title>Node59&#45;&gt;Node70</title>
-<g id="a_edge51_Node000059_Node000070"><a xlink:title=" ">
+<!-- Node59&#45;&gt;Node86 -->
+<g id="edge51_Node000059_Node000086" class="edge">
+<title>Node59&#45;&gt;Node86</title>
+<g id="a_edge51_Node000059_Node000086"><a xlink:title=" ">
 <path fill="none" stroke="#63b8ff" d="M2704.7,-232.51C2594.71,-186.2 2351.78,-83.93 2249.9,-41.03"/>
 <polygon fill="#63b8ff" stroke="#63b8ff" points="2703.39,-235.76 2713.97,-236.41 2706.11,-229.3 2703.39,-235.76"/>
 </a>

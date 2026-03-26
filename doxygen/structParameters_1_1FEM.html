@@ -124,10 +124,10 @@ Public Attributes</h2></td></tr>
 <tr class="separator:acc7735a5cdb0edfa0ccc365f82ecaad2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a07f68f66e7d0a9e4853985233d0a8a48" id="r_a07f68f66e7d0a9e4853985233d0a8a48"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1FEM.html#a07f68f66e7d0a9e4853985233d0a8a48">tracer_uses_dg</a></td></tr>
 <tr class="separator:a07f68f66e7d0a9e4853985233d0a8a48"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa231f91d8f98d86c73d9b654f8bca636" id="r_aa231f91d8f98d86c73d9b654f8bca636"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1FEM.html#aa231f91d8f98d86c73d9b654f8bca636">VOF_order</a></td></tr>
-<tr class="separator:aa231f91d8f98d86c73d9b654f8bca636"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0d0b5e7a5f1abd3f1b53f82a9babd11" id="r_ad0d0b5e7a5f1abd3f1b53f82a9babd11"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1FEM.html#ad0d0b5e7a5f1abd3f1b53f82a9babd11">VOF_uses_dg</a></td></tr>
-<tr class="separator:ad0d0b5e7a5f1abd3f1b53f82a9babd11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4f43e177bd7adc833e011567652eeb1" id="r_aa4f43e177bd7adc833e011567652eeb1"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1FEM.html#aa4f43e177bd7adc833e011567652eeb1">CLS_order</a></td></tr>
+<tr class="separator:aa4f43e177bd7adc833e011567652eeb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5054955797e8313f35feb0a7aaaaa7a5" id="r_a5054955797e8313f35feb0a7aaaaa7a5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1FEM.html#a5054955797e8313f35feb0a7aaaaa7a5">CLS_uses_dg</a></td></tr>
+<tr class="separator:a5054955797e8313f35feb0a7aaaaa7a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a44257122ea767efddf5385f698591efe" id="r_a44257122ea767efddf5385f698591efe"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1FEM.html#a44257122ea767efddf5385f698591efe">phase_cahn_hilliard_order</a></td></tr>
 <tr class="separator:a44257122ea767efddf5385f698591efe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad455d960df990fb708a6e7a1d63cbc4a" id="r_ad455d960df990fb708a6e7a1d63cbc4a"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1FEM.html#ad455d960df990fb708a6e7a1d63cbc4a">potential_cahn_hilliard_order</a></td></tr>
@@ -192,11 +192,43 @@ Public Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l01803">1803</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l01229">electromagnetics_test_order</a>, <a class="el" href="parameters_8h_source.html#l01228">electromagnetics_trial_order</a>, <a class="el" href="parameters_8h_source.html#l01222">enable_bubble_function_pressure</a>, <a class="el" href="parameters_8h_source.html#l01221">enable_bubble_function_velocity</a>, <a class="el" href="parameters_8h_source.html#l01217">phase_cahn_hilliard_order</a>, <a class="el" href="parameters_8h_source.html#l01218">potential_cahn_hilliard_order</a>, <a class="el" href="parameters_8h_source.html#l01196">pressure_order</a>, <a class="el" href="parameters_8h_source.html#l01202">temperature_order</a>, <a class="el" href="parameters_8h_source.html#l01205">tracer_order</a>, <a class="el" href="parameters_8h_source.html#l01208">tracer_uses_dg</a>, <a class="el" href="parameters_8h_source.html#l01193">velocity_order</a>, <a class="el" href="parameters_8h_source.html#l01211">VOF_order</a>, <a class="el" href="parameters_8h_source.html#l01214">VOF_uses_dg</a>, and <a class="el" href="parameters_8h_source.html#l01199">void_fraction_order</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l01211">CLS_order</a>, <a class="el" href="parameters_8h_source.html#l01214">CLS_uses_dg</a>, <a class="el" href="parameters_8h_source.html#l01229">electromagnetics_test_order</a>, <a class="el" href="parameters_8h_source.html#l01228">electromagnetics_trial_order</a>, <a class="el" href="parameters_8h_source.html#l01222">enable_bubble_function_pressure</a>, <a class="el" href="parameters_8h_source.html#l01221">enable_bubble_function_velocity</a>, <a class="el" href="parameters_8h_source.html#l01217">phase_cahn_hilliard_order</a>, <a class="el" href="parameters_8h_source.html#l01218">potential_cahn_hilliard_order</a>, <a class="el" href="parameters_8h_source.html#l01196">pressure_order</a>, <a class="el" href="parameters_8h_source.html#l01202">temperature_order</a>, <a class="el" href="parameters_8h_source.html#l01205">tracer_order</a>, <a class="el" href="parameters_8h_source.html#l01208">tracer_uses_dg</a>, <a class="el" href="parameters_8h_source.html#l01193">velocity_order</a>, and <a class="el" href="parameters_8h_source.html#l01199">void_fraction_order</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="aa4f43e177bd7adc833e011567652eeb1" name="aa4f43e177bd7adc833e011567652eeb1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa4f43e177bd7adc833e011567652eeb1">&#9670;&#160;</a></span>CLS_order</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int Parameters::FEM::CLS_order</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01211">1211</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="a5054955797e8313f35feb0a7aaaaa7a5" name="a5054955797e8313f35feb0a7aaaaa7a5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5054955797e8313f35feb0a7aaaaa7a5">&#9670;&#160;</a></span>CLS_uses_dg</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Parameters::FEM::CLS_uses_dg</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01214">1214</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
 <a id="a193f395a990407a6126659376ee31001" name="a193f395a990407a6126659376ee31001"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a193f395a990407a6126659376ee31001">&#9670;&#160;</a></span>electromagnetics_test_order</h2>
 
@@ -371,38 +403,6 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01193">1193</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
-
-</div>
-</div>
-<a id="aa231f91d8f98d86c73d9b654f8bca636" name="aa231f91d8f98d86c73d9b654f8bca636"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa231f91d8f98d86c73d9b654f8bca636">&#9670;&#160;</a></span>VOF_order</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">unsigned int Parameters::FEM::VOF_order</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01211">1211</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
-
-</div>
-</div>
-<a id="ad0d0b5e7a5f1abd3f1b53f82a9babd11" name="ad0d0b5e7a5f1abd3f1b53f82a9babd11"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad0d0b5e7a5f1abd3f1b53f82a9babd11">&#9670;&#160;</a></span>VOF_uses_dg</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool Parameters::FEM::VOF_uses_dg</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01214">1214</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>

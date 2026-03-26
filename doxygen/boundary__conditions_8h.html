@@ -111,7 +111,7 @@ Include dependency graph for boundary_conditions.h:</div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="boundary__conditions_8h__dep__incl.svg" width="4568" height="755"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="boundary__conditions_8h__dep__incl.svg" width="4562" height="755"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="boundary__conditions_8h_source.html">Go to the source code of this file.</a></p>
@@ -134,7 +134,7 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1CahnHilliardBoundaryConditions.html">BoundaryConditions::CahnHilliardBoundaryConditions&lt; dim &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1VOFBoundaryConditions.html">BoundaryConditions::VOFBoundaryConditions&lt; dim &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1CLSBoundaryConditions.html">BoundaryConditions::CLSBoundaryConditions&lt; dim &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classBoundaryConditions_1_1TimeHarmonicMaxwellBoundaryConditions.html">BoundaryConditions::TimeHarmonicMaxwellBoundaryConditions&lt; dim &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -174,7 +174,7 @@ Enumerations</h2></td></tr>
 , <br />
 &#160;&#160;<a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8aa4ce007979d6464c66498b96d4ce5b74">BoundaryConditions::convection_radiation</a>
 , <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a73b05af1b2487b24f8027cf106e0651f">BoundaryConditions::tracer_dirichlet</a>
-, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a5a19e60e01f033270d00a46bd121b3c5">BoundaryConditions::vof_dirichlet</a>
+, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a0e931ce0fe014e165a0fb534be71d2ad">BoundaryConditions::cls_dirichlet</a>
 , <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a1940f9f2a34c8894367379761bf6ae11">BoundaryConditions::cahn_hilliard_noflux</a>
 , <br />
 &#160;&#160;<a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8acfe4f2ec5a0912a19c266d141ccf58bf">BoundaryConditions::cahn_hilliard_dirichlet_phase_order</a>
@@ -205,8 +205,8 @@ Functions</h2></td></tr>
 <tr class="separator:ab5706bedb33658cec03813b9bd01ec64"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5499f92f8678097a530c972e003a08bf" id="r_a5499f92f8678097a530c972e003a08bf"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="boundary__conditions_8h.html#a5499f92f8678097a530c972e003a08bf">DeclException1</a> (CahnHilliardBoundaryDuplicated, types::boundary_id,&lt;&lt; &quot;Cahn Hilliard boundary id: &quot;&lt;&lt; arg1&lt;&lt; &quot; has already been declared as a boundary condition&quot;)</td></tr>
 <tr class="separator:a5499f92f8678097a530c972e003a08bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c3e43e3ecfd1354f8261f0e3bb69d63" id="r_a7c3e43e3ecfd1354f8261f0e3bb69d63"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="boundary__conditions_8h.html#a7c3e43e3ecfd1354f8261f0e3bb69d63">DeclException1</a> (VOFBoundaryDuplicated, types::boundary_id,&lt;&lt; &quot;CLS boundary id: &quot;&lt;&lt; arg1&lt;&lt; &quot; has already been declared as a boundary condition&quot;)</td></tr>
-<tr class="separator:a7c3e43e3ecfd1354f8261f0e3bb69d63"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb8cd1ae6cf785bad5299541f0237b0c" id="r_aeb8cd1ae6cf785bad5299541f0237b0c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="boundary__conditions_8h.html#aeb8cd1ae6cf785bad5299541f0237b0c">DeclException1</a> (CLSBoundaryDuplicated, types::boundary_id,&lt;&lt; &quot;CLS boundary id: &quot;&lt;&lt; arg1&lt;&lt; &quot; has already been declared as a boundary condition&quot;)</td></tr>
+<tr class="separator:aeb8cd1ae6cf785bad5299541f0237b0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e5a7f2b20720ebe1c95736b63ba5ade" id="r_a1e5a7f2b20720ebe1c95736b63ba5ade"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="boundary__conditions_8h.html#a1e5a7f2b20720ebe1c95736b63ba5ade">DeclException1</a> (TimeHarmonicMaxwellDuplicated, types::boundary_id,&lt;&lt; &quot;Time Harmonic Maxwell boundary id: &quot;&lt;&lt; arg1&lt;&lt; &quot; has already been declared as a boundary condition&quot;)</td></tr>
 <tr class="separator:a1e5a7f2b20720ebe1c95736b63ba5ade"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -245,8 +245,42 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="aeb8cd1ae6cf785bad5299541f0237b0c" name="aeb8cd1ae6cf785bad5299541f0237b0c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb8cd1ae6cf785bad5299541f0237b0c">&#9670;&#160;</a></span>DeclException1() <span class="overload">[2/7]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DeclException1 </td>
+          <td>(</td>
+          <td class="paramtype">CLSBoundaryDuplicated&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">types::boundary_id&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&lt;&lt; &quot;CLS boundary id: &quot;&lt;&lt; arg1&lt;&lt; &quot; has already been declared as a boundary condition&quot;&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a5fcd305334cb05e8a032b84fcfbf3918" name="a5fcd305334cb05e8a032b84fcfbf3918"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5fcd305334cb05e8a032b84fcfbf3918">&#9670;&#160;</a></span>DeclException1() <span class="overload">[2/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a5fcd305334cb05e8a032b84fcfbf3918">&#9670;&#160;</a></span>DeclException1() <span class="overload">[3/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -280,7 +314,7 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a id="a4c1df402b0c124629faf2d693b48d1b1" name="a4c1df402b0c124629faf2d693b48d1b1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4c1df402b0c124629faf2d693b48d1b1">&#9670;&#160;</a></span>DeclException1() <span class="overload">[3/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c1df402b0c124629faf2d693b48d1b1">&#9670;&#160;</a></span>DeclException1() <span class="overload">[4/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -314,7 +348,7 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a id="a0001250ae6b13fc779df7b5d31a1a0cd" name="a0001250ae6b13fc779df7b5d31a1a0cd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0001250ae6b13fc779df7b5d31a1a0cd">&#9670;&#160;</a></span>DeclException1() <span class="overload">[4/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a0001250ae6b13fc779df7b5d31a1a0cd">&#9670;&#160;</a></span>DeclException1() <span class="overload">[5/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -348,7 +382,7 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a id="a1e5a7f2b20720ebe1c95736b63ba5ade" name="a1e5a7f2b20720ebe1c95736b63ba5ade"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1e5a7f2b20720ebe1c95736b63ba5ade">&#9670;&#160;</a></span>DeclException1() <span class="overload">[5/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e5a7f2b20720ebe1c95736b63ba5ade">&#9670;&#160;</a></span>DeclException1() <span class="overload">[6/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -382,7 +416,7 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a id="ab5706bedb33658cec03813b9bd01ec64" name="ab5706bedb33658cec03813b9bd01ec64"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab5706bedb33658cec03813b9bd01ec64">&#9670;&#160;</a></span>DeclException1() <span class="overload">[6/7]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5706bedb33658cec03813b9bd01ec64">&#9670;&#160;</a></span>DeclException1() <span class="overload">[7/7]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -403,40 +437,6 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&lt;&lt; &quot;Tracer boundary id: &quot;&lt;&lt; arg1&lt;&lt; &quot; has already been declared as a boundary condition&quot;&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a7c3e43e3ecfd1354f8261f0e3bb69d63" name="a7c3e43e3ecfd1354f8261f0e3bb69d63"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7c3e43e3ecfd1354f8261f0e3bb69d63">&#9670;&#160;</a></span>DeclException1() <span class="overload">[7/7]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">DeclException1 </td>
-          <td>(</td>
-          <td class="paramtype">VOFBoundaryDuplicated&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">types::boundary_id&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&lt;&lt; &quot;CLS boundary id: &quot;&lt;&lt; arg1&lt;&lt; &quot; has already been declared as a boundary condition&quot;&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>

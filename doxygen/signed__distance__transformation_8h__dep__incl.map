@@ -1,11 +1,11 @@
 <map id="/home/runner/work/lethe/lethe/include/solvers/signed_distance_transformation.h" name="/home/runner/work/lethe/lethe/include/solvers/signed_distance_transformation.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="207,5,454,60"/>
-<area shape="rect" id="Node000002" href="$vof_8h.html" title=" " alt="" coords="108,115,305,155"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="289,71,232,117,228,113,286,67"/>
-<area shape="rect" id="Node000005" href="$signed__distance__transformation_8cc.html" title=" " alt="" coords="329,108,583,163"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="376,67,425,106,422,110,373,71"/>
-<area shape="rect" id="Node000003" href="$multiphysics__interface_8cc.html" title=" " alt="" coords="5,211,197,265"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="179,167,131,212,127,208,175,163"/>
-<area shape="rect" id="Node000004" href="$vof_8cc.html" title=" " alt="" coords="222,211,405,265"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="239,163,287,208,283,212,235,167"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="203,5,449,60"/>
+<area shape="rect" id="Node000002" href="$cls_8h.html" title=" " alt="" coords="105,115,299,155"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="285,71,227,117,224,113,281,67"/>
+<area shape="rect" id="Node000005" href="$signed__distance__transformation_8cc.html" title=" " alt="" coords="323,108,577,163"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="371,67,419,106,416,110,368,71"/>
+<area shape="rect" id="Node000003" href="$cls_8cc.html" title=" " alt="" coords="5,211,188,265"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="174,167,126,212,123,208,171,163"/>
+<area shape="rect" id="Node000004" href="$multiphysics__interface_8cc.html" title=" " alt="" coords="213,211,405,265"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="234,163,282,208,279,212,230,167"/>
 </map>

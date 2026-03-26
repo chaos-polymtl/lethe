@@ -109,11 +109,11 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a6641c1164376eae934df66a2c4e0567b" id="r_a6641c1164376eae934df66a2c4e0567b"><td class="memItemLeft" align="right" valign="top">static std::shared_ptr&lt; <a class="el" href="classSignedDistanceTransformationBase.html">SignedDistanceTransformationBase</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSignedDistanceTransformationBase.html#a6641c1164376eae934df66a2c4e0567b">model_cast</a> (const <a class="el" href="structParameters_1_1VOF__GeometricInterfaceReinitialization.html">Parameters::VOF_GeometricInterfaceReinitialization</a> &amp;geometric_redistanciation_parameters)</td></tr>
-<tr class="separator:a6641c1164376eae934df66a2c4e0567b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac832a674aef703a862e387a1e76488e2" id="r_ac832a674aef703a862e387a1e76488e2"><td class="memItemLeft" align="right" valign="top">static std::shared_ptr&lt; <a class="el" href="classSignedDistanceTransformationBase.html">SignedDistanceTransformationBase</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSignedDistanceTransformationBase.html#ac832a674aef703a862e387a1e76488e2">model_cast</a> (const <a class="el" href="structParameters_1_1CLS__GeometricInterfaceReinitialization.html">Parameters::CLS_GeometricInterfaceReinitialization</a> &amp;geometric_redistanciation_parameters)</td></tr>
+<tr class="separator:ac832a674aef703a862e387a1e76488e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Abstract class for the transformation of the signed distance to the phase fraction for the VOF solver when geometric redistanciation is used. </p>
+<div class="textblock"><p>Abstract class for the transformation of the signed distance to the phase fraction for the CLS solver when geometric redistanciation is used. </p>
 
 <p class="definition">Definition at line <a class="el" href="signed__distance__transformation_8h_source.html#l00014">14</a> of file <a class="el" href="signed__distance__transformation_8h_source.html">signed_distance_transformation.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -145,8 +145,8 @@ Static Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a6641c1164376eae934df66a2c4e0567b" name="a6641c1164376eae934df66a2c4e0567b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6641c1164376eae934df66a2c4e0567b">&#9670;&#160;</a></span>model_cast()</h2>
+<a id="ac832a674aef703a862e387a1e76488e2" name="ac832a674aef703a862e387a1e76488e2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac832a674aef703a862e387a1e76488e2">&#9670;&#160;</a></span>model_cast()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -157,7 +157,7 @@ Static Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">std::shared_ptr&lt; <a class="el" href="classSignedDistanceTransformationBase.html">SignedDistanceTransformationBase</a> &gt; SignedDistanceTransformationBase::model_cast </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structParameters_1_1VOF__GeometricInterfaceReinitialization.html">Parameters::VOF_GeometricInterfaceReinitialization</a> &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="structParameters_1_1CLS__GeometricInterfaceReinitialization.html">Parameters::CLS_GeometricInterfaceReinitialization</a> &amp;&#160;</td>
           <td class="paramname"><em>geometric_redistanciation_parameters</em></td><td>)</td>
           <td></td>
         </tr>
@@ -169,18 +169,18 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Instantiate and return a pointer to a <a class="el" href="classSignedDistanceTransformationBase.html" title="Abstract class for the transformation of the signed distance to the phase fraction for the VOF solver...">SignedDistanceTransformationBase</a> object by casting it to the proper child class. </p>
+<p>Instantiate and return a pointer to a <a class="el" href="classSignedDistanceTransformationBase.html" title="Abstract class for the transformation of the signed distance to the phase fraction for the CLS solver...">SignedDistanceTransformationBase</a> object by casting it to the proper child class. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">geometric_redistanciation_parameters</td><td>VOF geometric redistanciation parameters.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">geometric_redistanciation_parameters</td><td>CLS geometric redistanciation parameters.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Casted <a class="el" href="classSignedDistanceTransformationBase.html" title="Abstract class for the transformation of the signed distance to the phase fraction for the VOF solver...">SignedDistanceTransformationBase</a> child class object. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Casted <a class="el" href="classSignedDistanceTransformationBase.html" title="Abstract class for the transformation of the signed distance to the phase fraction for the CLS solver...">SignedDistanceTransformationBase</a> child class object. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="signed__distance__transformation_8cc_source.html#l00007">7</a> of file <a class="el" href="signed__distance__transformation_8cc_source.html">signed_distance_transformation.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters__multiphysics_8h_source.html#l00277">Parameters::VOF_GeometricInterfaceReinitialization::max_reinitialization_distance</a>, <a class="el" href="namespaceParameters.html#a34edd9cb3faad925234f73958172eb84a338eb4303c1c9e5f2b2eed4bce1fd873">Parameters::piecewise_polynomial</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00281">Parameters::VOF_GeometricInterfaceReinitialization::tanh_thickness</a>, and <a class="el" href="parameters__multiphysics_8h_source.html#l00279">Parameters::VOF_GeometricInterfaceReinitialization::transformation_type</a>.</p>
+<p class="reference">References <a class="el" href="parameters__multiphysics_8h_source.html#l00277">Parameters::CLS_GeometricInterfaceReinitialization::max_reinitialization_distance</a>, <a class="el" href="namespaceParameters.html#a34edd9cb3faad925234f73958172eb84a338eb4303c1c9e5f2b2eed4bce1fd873">Parameters::piecewise_polynomial</a>, <a class="el" href="parameters__multiphysics_8h_source.html#l00281">Parameters::CLS_GeometricInterfaceReinitialization::tanh_thickness</a>, and <a class="el" href="parameters__multiphysics_8h_source.html#l00279">Parameters::CLS_GeometricInterfaceReinitialization::transformation_type</a>.</p>
 
 </div>
 </div>

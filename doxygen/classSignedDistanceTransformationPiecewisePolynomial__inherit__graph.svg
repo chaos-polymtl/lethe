@@ -21,7 +21,7 @@
 <!-- Node2 -->
 <g id="Node000002" class="node">
 <title>Node2</title>
-<g id="a_Node000002"><a xlink:href="classSignedDistanceTransformationBase.html" target="_top" xlink:title="Abstract class for the transformation of the signed distance to the phase fraction for the VOF solver...">
+<g id="a_Node000002"><a xlink:href="classSignedDistanceTransformationBase.html" target="_top" xlink:title="Abstract class for the transformation of the signed distance to the phase fraction for the CLS solver...">
 <polygon fill="white" stroke="#666666" points="190,-85 0,-85 0,-66 190,-66 190,-85"/>
 <text text-anchor="middle" x="95" y="-73" font-family="Helvetica,sans-Serif" font-size="10.00">SignedDistanceTransformationBase</text>
 </a>

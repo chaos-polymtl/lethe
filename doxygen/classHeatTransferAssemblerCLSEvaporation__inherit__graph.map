@@ -1,0 +1,5 @@
+<map id="HeatTransferAssemblerCLSEvaporation&lt; dim &gt;" name="HeatTransferAssemblerCLSEvaporation&lt; dim &gt;">
+<area shape="rect" id="Node000001" title="Class that assembles the evaporation sink for the heat transfer solver at the free surface (air/metal..." alt="" coords="5,93,281,133"/>
+<area shape="rect" id="Node000002" href="$classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="40,5,247,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="146,59,146,93,141,93,141,59"/>
+</map>

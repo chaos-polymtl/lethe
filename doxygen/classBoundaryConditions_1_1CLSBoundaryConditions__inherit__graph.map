@@ -1,0 +1,5 @@
+<map id="BoundaryConditions::CLSBoundaryConditions&lt; dim &gt;" name="BoundaryConditions::CLSBoundaryConditions&lt; dim &gt;">
+<area shape="rect" id="Node000001" title="This class manages the boundary conditions for CLS solver It introduces the boundary functions and de..." alt="" coords="5,93,191,148"/>
+<area shape="rect" id="Node000002" href="$classBoundaryConditions_1_1BoundaryConditions.html" title="This class is the base class for all boundary conditions. It stores the general information that all ..." alt="" coords="17,5,179,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="101,59,101,93,95,93,95,59"/>
+</map>

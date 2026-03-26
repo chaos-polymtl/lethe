@@ -1,0 +1,5 @@
+<map id="CLSAssemblerSIPG&lt; dim &gt;" name="CLSAssemblerSIPG&lt; dim &gt;">
+<area shape="rect" id="Node000001" title="Assembles the symmetric interior penalty Galerkin (SIPG) method (or Nitsche&#39;s method) for internal fa..." alt="" coords="5,93,207,119"/>
+<area shape="rect" id="Node000002" href="$classPhysicsFaceAssemblerBase.html" title="Base class for assembler objects of physics and subequations that require a face assembly...." alt="" coords="18,5,194,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="109,59,109,93,103,93,103,59"/>
+</map>

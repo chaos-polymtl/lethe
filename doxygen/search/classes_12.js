@@ -3,7 +3,7 @@ var searchData=
   ['tanhlevelsettracerdiffusivity_0',['TanhLevelsetTracerDiffusivity',['../classTanhLevelsetTracerDiffusivity.html',1,'']]],
   ['tanhlevelsettracerreactionprefactor_1',['TanhLevelsetTracerReactionPrefactor',['../classTanhLevelsetTracerReactionPrefactor.html',1,'']]],
   ['testing_2',['Testing',['../structParameters_1_1Testing.html',1,'Parameters']]],
-  ['thermalbuoyancyassemblyvof_3',['ThermalBuoyancyAssemblyVOF',['../classThermalBuoyancyAssemblyVOF.html',1,'']]],
+  ['thermalbuoyancyassemblycls_3',['ThermalBuoyancyAssemblyCLS',['../classThermalBuoyancyAssemblyCLS.html',1,'']]],
   ['thermalconductivitylinear_4',['ThermalConductivityLinear',['../classThermalConductivityLinear.html',1,'']]],
   ['thermalconductivitymodel_5',['ThermalConductivityModel',['../classThermalConductivityModel.html',1,'']]],
   ['thermalconductivityphasechange_6',['ThermalConductivityPhaseChange',['../classThermalConductivityPhaseChange.html',1,'']]],

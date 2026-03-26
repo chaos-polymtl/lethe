@@ -1,3 +1,62 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classPhysicsSolverStrategy.html" title=" " alt="" coords="5,5,172,45"/>
+<area shape="rect" id="Node000000" href="$classPhysicsSolver.html" title="Contain all the common elements of a physics solver. It creates the non&#45;linear solver as specified by..." alt="" coords="15,276,228,301"/>
+<area shape="rect" id="Node000001" href="$classAuxiliaryPhysics.html" title=" " alt="" coords="318,233,491,273"/>
+<area shape="poly" id="edge199_Node000000_Node000001" title=" " alt="" coords="235,272,318,261,318,266,235,277"/>
+<area shape="rect" id="Node000006" href="$classNavierStokesBase.html" title=" " alt="" coords="306,297,503,352"/>
+<area shape="poly" id="edge204_Node000000_Node000006" title=" " alt="" coords="236,300,306,310,305,315,235,306"/>
+<area shape="rect" id="Node000008" href="$classNavierStokesBase.html" title=" " alt="" coords="295,377,514,417"/>
+<area shape="poly" id="edge206_Node000000_Node000008" title=" " alt="" coords="161,305,219,333,286,361,326,374,325,379,284,366,217,338,158,310"/>
+<area shape="rect" id="Node000014" href="$classNavierStokesBase.html" title=" " alt="" coords="292,5,517,60"/>
+<area shape="poly" id="edge212_Node000000_Node000014" title=" " alt="" coords="134,263,157,223,191,174,234,122,284,77,317,58,319,62,287,81,238,126,196,177,162,226,138,266"/>
+<area shape="rect" id="Node000018" href="$classPhysicsNonlinearSubequationsSolver.html" title=" " alt="" coords="285,505,524,545"/>
+<area shape="poly" id="edge216_Node000000_Node000018" title=" " alt="" coords="138,312,161,352,194,400,237,449,287,490,309,502,306,507,284,495,233,453,190,403,156,354,133,315"/>
+<area shape="rect" id="Node000027" href="$classAuxiliaryPhysics.html" title=" " alt="" coords="318,91,491,131"/>
+<area shape="poly" id="edge218_Node000000_Node000027" title=" " alt="" coords="144,264,204,211,243,181,284,154,339,129,341,134,287,159,246,185,208,215,147,268"/>
+<area shape="rect" id="Node000029" href="$classNavierStokesBase.html" title=" " alt="" coords="313,169,497,209"/>
+<area shape="poly" id="edge220_Node000000_Node000029" title=" " alt="" coords="161,268,284,218,323,206,324,211,286,223,163,273"/>
+<area shape="rect" id="Node000026" href="$classPhysicsNonlinearSubequationsSolver.html" title="Non&#45;linear subequations solved inside a physics (or auxiliary physics) that are not part of the main ..." alt="" coords="293,441,516,481"/>
+<area shape="poly" id="edge221_Node000000_Node000026" title=" " alt="" coords="145,310,205,368,244,400,287,426,314,438,312,443,284,431,241,404,201,372,141,313"/>
+<area shape="rect" id="Node000002" href="$classCahnHilliard.html" title=" " alt="" coords="625,187,783,212"/>
+<area shape="poly" id="edge200_Node000001_Node000002" title=" " alt="" coords="504,232,631,209,632,215,505,238"/>
+<area shape="rect" id="Node000003" href="$classConservativeLevelSet.html" title=" " alt="" coords="622,237,786,277"/>
+<area shape="poly" id="edge201_Node000001_Node000003" title=" " alt="" coords="505,251,622,253,622,258,505,257"/>
+<area shape="rect" id="Node000004" href="$classHeatTransfer.html" title="Implementation of heat transfer as an auxiliary physics. The heat equation is weakly coupled to the v..." alt="" coords="624,301,784,327"/>
+<area shape="poly" id="edge202_Node000001_Node000004" title=" " alt="" coords="506,272,573,286,636,299,635,304,571,291,505,277"/>
+<area shape="rect" id="Node000005" href="$classTracer.html" title=" " alt="" coords="646,137,762,163"/>
+<area shape="poly" id="edge203_Node000001_Node000005" title=" " alt="" coords="504,228,523,218,537,207,546,195,555,183,571,172,608,158,645,151,646,156,609,163,573,176,559,187,550,199,541,211,525,223,506,232"/>
+<area shape="rect" id="Node000007" href="$classFluidDynamicsBlock.html" title=" " alt="" coords="627,351,781,391"/>
+<area shape="poly" id="edge205_Node000006_Node000007" title=" " alt="" coords="517,339,627,357,626,362,516,345"/>
+<area shape="rect" id="Node000009" href="$classFluidDynamicsMatrixBased.html" title="A solver class for the Navier&#45;Stokes equation using GLS stabilization." alt="" coords="603,415,805,455"/>
+<area shape="poly" id="edge207_Node000008_Node000009" title=" " alt="" coords="528,410,603,420,603,425,527,415"/>
+<area shape="rect" id="Node000010" href="$classFluidDynamicsNitsche.html" title=" " alt="" coords="912,415,1080,455"/>
+<area shape="poly" id="edge208_Node000009_Node000010" title=" " alt="" coords="819,433,912,433,912,438,819,438"/>
+<area shape="rect" id="Node000011" href="$classFluidDynamicsSharp.html" title=" " alt="" coords="918,479,1074,519"/>
+<area shape="poly" id="edge209_Node000009_Node000011" title=" " alt="" coords="810,456,918,480,917,485,809,461"/>
+<area shape="rect" id="Node000012" href="$classFluidDynamicsVANS.html" title="Solver class for Volume&#45;Averaged Navier&#45;Stokes (VANS) equations with GLS stabilization." alt="" coords="913,351,1079,391"/>
+<area shape="poly" id="edge210_Node000009_Node000012" title=" " alt="" coords="809,410,912,387,914,392,810,415"/>
+<area shape="rect" id="Node000013" href="$classCFDDEMSolver.html" title="Solver class for coupled Computational Fluid Dynamics and Discrete Element Method (CFD&#45;DEM) simulatio..." alt="" coords="1171,359,1345,384"/>
+<area shape="poly" id="edge211_Node000012_Node000013" title=" " alt="" coords="1092,369,1170,369,1170,374,1092,374"/>
+<area shape="rect" id="Node000015" href="$classFluidDynamicsMatrixFree.html" title="A solver for the incompressible Navier&#45;Stokes equations implemented in a matrix&#45;free fashion." alt="" coords="609,9,799,49"/>
+<area shape="poly" id="edge213_Node000014_Node000015" title=" " alt="" coords="531,28,609,27,609,33,531,34"/>
+<area shape="rect" id="Node000016" href="$classFluidDynamicsVANSMatrixFree.html" title="A solver for the Volume&#45;Averaged incompressible Navier&#45;Stokes equations implemented in a matrix&#45;free ..." alt="" coords="884,9,1108,49"/>
+<area shape="poly" id="edge214_Node000015_Node000016" title=" " alt="" coords="812,26,884,26,884,31,812,31"/>
+<area shape="rect" id="Node000017" href="$classCFDDEMMatrixFree.html" title="Solver class for coupled Computational Fluid Dynamics and Discrete Element Method (CFD&#45;DEM) simulatio..." alt="" coords="1156,16,1360,41"/>
+<area shape="poly" id="edge215_Node000016_Node000017" title=" " alt="" coords="1121,26,1156,26,1156,31,1121,31"/>
+<area shape="rect" id="Node000019" href="$classCLSAlgebraicInterfaceReinitialization.html" title="CLS algebraic reinitialization solver." alt="" coords="572,505,836,545"/>
+<area shape="poly" id="edge217_Node000018_Node000019" title=" " alt="" coords="538,522,572,522,572,527,538,527"/>
+<area shape="rect" id="Node000028" href="$classTimeHarmonicMaxwell.html" title=" " alt="" coords="617,73,791,113"/>
+<area shape="poly" id="edge219_Node000027_Node000028" title=" " alt="" coords="505,102,617,95,617,101,505,108"/>
+<area shape="rect" id="Node000020" href="$classPhysicsSubequationsSolverBase.html" title="Base class to solve subequations solved inside a physics (or auxiliary physics) that are not part of ..." alt="" coords="5,512,237,537"/>
+<area shape="poly" id="edge222_Node000020_Node000018" title=" " alt="" coords="251,522,285,522,285,527,251,527"/>
+<area shape="poly" id="edge228_Node000020_Node000026" title=" " alt="" coords="191,506,315,478,316,483,192,512"/>
+<area shape="rect" id="Node000021" href="$classPhysicsLinearSubequationsSolver.html" title="Linear subequations solved inside a physics (or auxiliary physics) that are not part of the main set ..." alt="" coords="305,569,504,609"/>
+<area shape="poly" id="edge223_Node000020_Node000021" title=" " alt="" coords="192,538,316,566,315,571,191,543"/>
+<area shape="rect" id="Node000022" href="$classCLSLinearSubequationsSolver.html" title="Generalized solver for CLS linear subequations." alt="" coords="597,569,811,609"/>
+<area shape="poly" id="edge224_Node000021_Node000022" title=" " alt="" coords="518,586,596,586,596,591,518,591"/>
+<area shape="rect" id="Node000025" href="$classParticleProjector.html" title="Particle information projection. This class manages the calculation of the projection of the particle..." alt="" coords="635,633,773,673"/>
+<area shape="poly" id="edge227_Node000021_Node000025" title=" " alt="" coords="513,609,635,635,634,641,512,614"/>
+<area shape="rect" id="Node000023" href="$classCLSCurvatureProjection.html" title="CLS curvature L2 projection solver." alt="" coords="909,558,1083,598"/>
+<area shape="poly" id="edge225_Node000022_Node000023" title=" " alt="" coords="825,582,908,579,909,584,825,587"/>
+<area shape="rect" id="Node000024" href="$classCLSPhaseGradientProjection.html" title="CLS phase fraction gradient L2 projection solver." alt="" coords="893,622,1099,662"/>
+<area shape="poly" id="edge226_Node000022_Node000024" title=" " alt="" coords="825,608,893,621,892,626,824,613"/>
 </map>
