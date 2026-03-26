@@ -6,6 +6,15 @@ add_library(lethe-solvers
   cahn_hilliard_assemblers.cc
   cahn_hilliard_filter.cc
   cahn_hilliard_scratch_data.cc
+  cls.cc
+  cls_algebraic_interface_reinitialization.cc
+  cls_assemblers.cc
+  cls_curvature_projection.cc
+  cls_filter.cc
+  cls_linear_subequations_solver.cc
+  cls_phase_gradient_projection.cc
+  cls_scratch_data.cc
+  cls_subequations_interface.cc
   flow_control.cc
   fluid_dynamics_block.cc
   fluid_dynamics_matrix_based.cc
@@ -37,15 +46,6 @@ add_library(lethe-solvers
   tracer_assemblers.cc
   tracer_drift_velocity.cc
   tracer_scratch_data.cc
-  cls.cc
-  cls_algebraic_interface_reinitialization.cc
-  cls_assemblers.cc
-  cls_curvature_projection.cc
-  cls_filter.cc
-  cls_linear_subequations_solver.cc
-  cls_phase_gradient_projection.cc
-  cls_scratch_data.cc
-  cls_subequations_interface.cc
   # Headers
   ../../include/solvers/analytical_solutions.h
   ../../include/solvers/auxiliary_physics.h
@@ -54,6 +54,16 @@ add_library(lethe-solvers
   ../../include/solvers/cahn_hilliard_assemblers.h
   ../../include/solvers/cahn_hilliard_filter.h
   ../../include/solvers/cahn_hilliard_scratch_data.h
+  ../../include/solvers/cls.h
+  ../../include/solvers/cls_algebraic_interface_reinitialization.h
+  ../../include/solvers/cls_assemblers.h
+  ../../include/solvers/cls_curvature_projection.h
+  ../../include/solvers/cls_filter.h
+  ../../include/solvers/cls_linear_subequations_solver.h
+  ../../include/solvers/cls_phase_gradient_projection.h
+  ../../include/solvers/cls_scratch_data.h
+  ../../include/solvers/cls_subequations.h
+  ../../include/solvers/cls_subequations_interface.h
   ../../include/solvers/copy_data.h
   ../../include/solvers/flow_control.h
   ../../include/solvers/fluid_dynamics_block.h
@@ -89,16 +99,6 @@ add_library(lethe-solvers
   ../../include/solvers/tracer_assemblers.h
   ../../include/solvers/tracer_drift_velocity.h
   ../../include/solvers/tracer_scratch_data.h
-  ../../include/solvers/cls.h
-  ../../include/solvers/cls_algebraic_interface_reinitialization.h
-  ../../include/solvers/cls_assemblers.h
-  ../../include/solvers/cls_curvature_projection.h
-  ../../include/solvers/cls_filter.h
-  ../../include/solvers/cls_linear_subequations_solver.h
-  ../../include/solvers/cls_phase_gradient_projection.h
-  ../../include/solvers/cls_scratch_data.h
-  ../../include/solvers/cls_subequations.h
-  ../../include/solvers/cls_subequations_interface.h
   )
 
 deal_ii_setup_target(lethe-solvers)
