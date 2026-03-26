@@ -3430,7 +3430,7 @@ NavierStokesBase<dim, VectorType, DofsType>::connect_mortar_weight_signals()
              dim>::cell_iterator &cell,
            const CellStatus       status) -> unsigned int {
       // Default cell weight used for all cells
-      unsigned int base_weight = 1000;
+      const unsigned int base_weight = 1000;
 
       // Check if this cell touches a mortar boundary
       const unsigned int rotor_bid =
