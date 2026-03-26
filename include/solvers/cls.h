@@ -675,11 +675,11 @@ private:
                      GlobalVectorType       &filtered_solution);
 
   /**
-   * @brief Reinitialize the interface between fluids using the algebraic
+   * @brief Reinitialize the interface between fluids using the PDE-based
    * approach.
    */
   void
-  reinitialize_interface_with_algebraic_method();
+  reinitialize_interface_with_pde_based_method();
 
   /**
    * @brief Compute level-set field from the phase indicator field using an
@@ -809,7 +809,7 @@ private:
   TrilinosWrappers::SparseMatrix mass_matrix_phase_indicator;
 
   // For projected phase indicator gradient (pfg), projected curvature, and
-  // algebraic interface reinitialization
+  // PDE-based interface reinitialization
   std::shared_ptr<CLSSubequationsInterface<dim>> cls_subequations_interface;
 
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;

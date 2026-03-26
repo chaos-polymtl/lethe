@@ -20,7 +20,7 @@ def parse_args():
   parser = argparse.ArgumentParser(description='Arguments for the validation of the 3D rising bubble benchmark')
   parser.add_argument("-p", "--pro", type=str, help="Path to the output folder for the projecting results. This is the folder that contains the results of the simulation (.vtu, .pvtu, .dat and .pvd files)", required=False)
   parser.add_argument("-g", "--geo", type=str, help="Path to the output folder for the geometric results. This is the folder that contains the results of the simulation (.vtu, .pvtu, .dat and .pvd files)", required=False)
-  parser.add_argument("-a", "--pde", type=str, help="Path to the output folder for the algebraic results. This is the folder that contains the results of the simulation (.vtu, .pvtu, .dat and .pvd files)", required=False)
+  parser.add_argument("-a", "--pde", type=str, help="Path to the output folder for the PDE-based results. This is the folder that contains the results of the simulation (.vtu, .pvtu, .dat and .pvd files)", required=False)
   parser.add_argument("-n", "--none", type=str, help="Path to the output folder for the none results. This is the folder that contains the results of the simulation (.vtu, .pvtu, .dat and .pvd files)", required=False)
   parser.add_argument("-l", "--lethe_path", type=str, help="Path to the Lethe's main folder", required=True)
   parser.add_argument("-sf", "--save_figure_path", type=str, help="Path to where figure should be saved", required=False, default="./")

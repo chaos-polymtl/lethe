@@ -114,9 +114,9 @@ test()
         }
   }
 
-  // Enable algebraic interface reinitialization
+  // Enable PDE-based interface reinitialization
   solver_parameters.multiphysics.cls_parameters.reinitialization_method
-    .algebraic_interface_reinitialization.enable = true;
+    .pde_based_interface_reinitialization.enable = true;
   {
     subequations_interface.initialize_subequations(solver_parameters,
                                                    tria,
@@ -126,7 +126,7 @@ test()
       subequations_interface.get_active_subequations();
 
     deallog
-      << "Active subequations [expected: phase_gradient_projection (0), curvature_projection (1), algebraic_interface_reinitialization (2)]"
+      << "Active subequations [expected: phase_gradient_projection (0), curvature_projection (1), pde_based_interface_reinitialization (2)]"
       << std::endl;
     for (const auto &subequation_id : active_subequations)
       {

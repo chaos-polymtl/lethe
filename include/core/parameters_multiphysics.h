@@ -22,14 +22,14 @@ namespace Parameters
    * @brief Different interface reinitialization method types:
    *  - none
    *  - sharpening: projection-based interface sharpening
-   *  - algebraic: PDE-based reinitialization
+   *  - pde_based: PDE-based reinitialization
    *  - geometric: geometric redistanciation
    */
   enum class ReinitializationMethodType : std::int8_t
   {
     none,
     sharpening,
-    algebraic,
+    pde_based,
     geometric
   };
 
@@ -216,18 +216,18 @@ namespace Parameters
   };
 
   /**
-   * @brief Parameters for algebraic reinitialization of the interface
+   * @brief Parameters for PDE-based reinitialization of the interface
    * used with the CLS solver.
    */
-  struct CLS_AlgebraicInterfaceReinitialization
+  struct CLS_PDEBasedInterfaceReinitialization
   {
-    /// Enables/Disables the algebraic interface reinitialization.
+    /// Enables/Disables the PDE-based interface reinitialization.
     bool enable = false;
     /**
-     * Enables/Disables @p pvtu format outputs of the algebraic interface
+     * Enables/Disables @p pvtu format outputs of the PDE-based interface
      * reinitialization steps of the last simulated time step.
      * The files are stored in a folder named
-     * @p algebraic-reinitialization-steps-output located inside the
+     * @p pde-based-reinitialization-steps-output located inside the
      * <tt>output path</tt> folder specified in the <tt>simulation control</tt>
      * subsection.
      * */
@@ -300,7 +300,7 @@ namespace Parameters
   /**
    * @brief Parameters for interface reinitialization methods
    * used within the CLS solver. It stores the parameters for the three
-   * available methods (projection-, algebraic-, and geometric based
+   * available methods (projection-, PDE-, and geometric based
    * reinitialization).
    */
   struct CLS_ReinitializationMethod
@@ -312,15 +312,15 @@ namespace Parameters
     /// fraction field will be regularized
     int frequency;
 
-    /// Type of verbosity of the algebraic interface reinitialization solver.
+    /// Type of verbosity of the PDE-based interface reinitialization solver.
     Parameters::Verbosity verbosity;
 
     /// Interface sharpening parameters
     Parameters::CLS_InterfaceSharpening sharpening;
 
-    /// Algebraic interface reinitialization parameters
-    Parameters::CLS_AlgebraicInterfaceReinitialization
-      algebraic_interface_reinitialization;
+    /// PDE-based interface reinitialization parameters
+    Parameters::CLS_PDEBasedInterfaceReinitialization
+      pde_based_interface_reinitialization;
 
     /// Geometric interface reinitialization parameters
     Parameters::CLS_GeometricInterfaceReinitialization

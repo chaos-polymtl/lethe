@@ -745,7 +745,7 @@ ConservativeLevelSet<dim>::gather_output_hook()
 
   if ((cls_parameters.surface_tension_force.enable &&
        cls_parameters.surface_tension_force.output_cls_auxiliary_fields) ||
-      cls_parameters.reinitialization_method.algebraic_interface_reinitialization
+      cls_parameters.reinitialization_method.pde_based_interface_reinitialization
         .enable)
     {
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
@@ -1861,14 +1861,14 @@ ConservativeLevelSet<dim>::modify_solution()
       }
   }
 
-  // Apply algebraic interface reinitialization
+  // Apply PDE-based interface reinitialization
   if (simulation_parameters.multiphysics.cls_parameters.reinitialization_method
-        .algebraic_interface_reinitialization.enable &&
+        .pde_based_interface_reinitialization.enable &&
       (simulation_control->get_step_number() %
          simulation_parameters.multiphysics.cls_parameters.reinitialization_method
            .frequency ==
        0))
-    reinitialize_interface_with_algebraic_method();
+    reinitialize_interface_with_pde_based_method();
 
   // Apply geometric interface reinitialization
   if (simulation_parameters.multiphysics.cls_parameters.reinitialization_method
@@ -2780,7 +2780,7 @@ ConservativeLevelSet<dim>::set_initial_conditions()
        simulation_parameters.multiphysics.cls_parameters.surface_tension_force
          .output_cls_auxiliary_fields) ||
       simulation_parameters.multiphysics.cls_parameters.reinitialization_method
-        .algebraic_interface_reinitialization.enable)
+        .pde_based_interface_reinitialization.enable)
     {
       this->cls_subequations_interface->set_cls_solution_and_dof_handler(
         *this->present_solution, *this->dof_handler);
@@ -2790,12 +2790,12 @@ ConservativeLevelSet<dim>::set_initial_conditions()
         CLSSubequationsID::curvature_projection);
     }
 
-  // Reset algebraic interface reinitialization output directory;
+  // Reset PDE-based interface reinitialization output directory;
   // if it does not exist, create it.
   if (simulation_parameters.multiphysics.cls_parameters.reinitialization_method
-        .algebraic_interface_reinitialization.enable &&
+        .pde_based_interface_reinitialization.enable &&
       simulation_parameters.multiphysics.cls_parameters.reinitialization_method
-        .algebraic_interface_reinitialization.output_reinitialization_steps)
+        .pde_based_interface_reinitialization.output_reinitialization_steps)
     {
       auto mpi_communicator = this->triangulation->get_mpi_communicator();
       const std::string folder =
@@ -3227,7 +3227,7 @@ ConservativeLevelSet<dim>::apply_phase_filter(
 
 template <int dim>
 void
-ConservativeLevelSet<dim>::reinitialize_interface_with_algebraic_method()
+ConservativeLevelSet<dim>::reinitialize_interface_with_pde_based_method()
 {
   TimerOutput::Scope t(this->computing_timer, "PDE-based reinitialization");
 
@@ -3245,19 +3245,19 @@ ConservativeLevelSet<dim>::reinitialize_interface_with_algebraic_method()
       this->cls_subequations_interface->set_cls_solution_and_dof_handler(
         (*this->previous_solutions)[0], *this->dof_handler);
 
-      // Solve phase gradient projection followed by algebraic interface
+      // Solve phase gradient projection followed by PDE-based interface
       // reinitialization steps
       this->cls_subequations_interface->solve_specific_subequation(
         CLSSubequationsID::phase_gradient_projection);
       this->cls_subequations_interface->solve_specific_subequation(
-        CLSSubequationsID::algebraic_interface_reinitialization);
+        CLSSubequationsID::pde_based_interface_reinitialization);
 
       // Overwrite CLS previous solution with the reinitialized result
       FETools::interpolate(
         this->cls_subequations_interface->get_dof_handler(
-          CLSSubequationsID::algebraic_interface_reinitialization),
+          CLSSubequationsID::pde_based_interface_reinitialization),
         this->cls_subequations_interface->get_solution(
-          CLSSubequationsID::algebraic_interface_reinitialization),
+          CLSSubequationsID::pde_based_interface_reinitialization),
         *this->dof_handler,
         this->nonzero_constraints,
         previous_reinitialized_solution_owned);
@@ -3268,19 +3268,19 @@ ConservativeLevelSet<dim>::reinitialize_interface_with_algebraic_method()
   this->cls_subequations_interface->set_cls_solution_and_dof_handler(
     *this->present_solution, *this->dof_handler);
 
-  // Solve phase gradient projection followed by algebraic interface
+  // Solve phase gradient projection followed by PDE-based interface
   // reinitialization steps
   this->cls_subequations_interface->solve_specific_subequation(
     CLSSubequationsID::phase_gradient_projection);
   this->cls_subequations_interface->solve_specific_subequation(
-    CLSSubequationsID::algebraic_interface_reinitialization);
+    CLSSubequationsID::pde_based_interface_reinitialization);
 
-  // Overwrite the CLS solution with the algebraic interface reinitialization
+  // Overwrite the CLS solution with the PDE-based interface reinitialization
   FETools::interpolate(
     this->cls_subequations_interface->get_dof_handler(
-      CLSSubequationsID::algebraic_interface_reinitialization),
+      CLSSubequationsID::pde_based_interface_reinitialization),
     this->cls_subequations_interface->get_solution(
-      CLSSubequationsID::algebraic_interface_reinitialization),
+      CLSSubequationsID::pde_based_interface_reinitialization),
     *this->dof_handler,
     this->nonzero_constraints,
     this->local_evaluation_point);

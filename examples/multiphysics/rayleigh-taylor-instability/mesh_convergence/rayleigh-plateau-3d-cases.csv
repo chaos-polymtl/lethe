@@ -4,7 +4,7 @@ CASE_NUMBER,CASE_NAME,MAX_REFINEMENT,MAX_TIMESTEP,REINITIALIZATION_TYPE,REINITIA
 02,rayleigh-plateau-3d-AMR-geo-f0010-ref_max08-e6h,8,1.124e-05,geometric interface reinitialization,10,0.000536718,0.000268359,0.5
 03,rayleigh-plateau-3d-AMR-geo-f0010-ref_max09-e6h,9,3.976e-06,geometric interface reinitialization,10,0.000268359,0.000134179,0.5
 
-04,rayleigh-plateau-3d-AMR-pde-f0010-ref_max06-e2h,6,8.996e-05,algebraic interface reinitialization,10,0.000715625,0.000357812,0.81633
-05,rayleigh-plateau-3d-AMR-pde-f0010-ref_max07-e2h,7,3.180e-05,algebraic interface reinitialization,10,0.000357812,0.000178906,0.81633
-06,rayleigh-plateau-3d-AMR-pde-f0010-ref_max08-e2h,8,1.124e-05,algebraic interface reinitialization,10,0.000178906,0.000089453,0.81633
-07,rayleigh-plateau-3d-AMR-pde-f0010-ref_max09-e2h,9,3.976e-06,algebraic interface reinitialization,10,0.000089453,0.000044726,0.81633
+04,rayleigh-plateau-3d-AMR-pde-f0010-ref_max06-e2h,6,8.996e-05,pde-based interface reinitialization,10,0.000715625,0.000357812,0.81633
+05,rayleigh-plateau-3d-AMR-pde-f0010-ref_max07-e2h,7,3.180e-05,pde-based interface reinitialization,10,0.000357812,0.000178906,0.81633
+06,rayleigh-plateau-3d-AMR-pde-f0010-ref_max08-e2h,8,1.124e-05,pde-based interface reinitialization,10,0.000178906,0.000089453,0.81633
+07,rayleigh-plateau-3d-AMR-pde-f0010-ref_max09-e2h,9,3.976e-06,pde-based interface reinitialization,10,0.000089453,0.000044726,0.81633

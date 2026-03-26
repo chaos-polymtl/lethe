@@ -810,7 +810,7 @@ identify_minimum_cell_size(const Mapping<dim>    &mapping,
                            const Quadrature<dim> &cell_quadrature,
                            const MPI_Comm        &mpi_communicator)
 {
-  // Initialize FEValues for interface algebraic reinitialization
+  // Initialize FEValues for interface PDE-based reinitialization
   FEValues<dim> fe_values(mapping,
                           dof_handler.get_fe(),
                           cell_quadrature,

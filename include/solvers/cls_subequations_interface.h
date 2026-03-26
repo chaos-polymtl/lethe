@@ -271,13 +271,13 @@ public:
     else if (subequation_id == CLSSubequationsID::curvature_projection)
       subequation_string = "CLS curvature L2 projection";
     else if (subequation_id ==
-             CLSSubequationsID::algebraic_interface_reinitialization)
+             CLSSubequationsID::pde_based_interface_reinitialization)
       subequation_string = "CLS PDE-based interface reinitialization";
     else
       throw(std::invalid_argument("Invalid CLSSubequationID. Options are: \n"
                                   " <phase_gradient_projection>\n"
                                   " <curvature_projection>\n"
-                                  " <algebraic_interface_reinitialization>"));
+                                  " <pde_based_interface_reinitialization>"));
 
     return subequation_string;
   }
@@ -402,7 +402,7 @@ private:
   std::optional<std::reference_wrapper<const DoFHandler<dim>>> dof_handler_cls;
 
   /** CLS solution field associated with solved equations
-   * @note Serves as initial condition in algebraic reinitialization */
+   * @note Serves as initial condition in PDE-based reinitialization */
   std::optional<std::reference_wrapper<const GlobalVectorType>>
     cls_solution_vector;
 
@@ -436,7 +436,7 @@ private:
    * and then start solving equations making sure that dependencies are met
    * (CLSPhaseGradientProjection<dim>::check_dependencies_validity,
    * CLSCurvatureProjection<dim>::check_dependencies_validity, and
-   * CLSAlgebraicInterfaceReinitialization<dim>::check_dependencies_validity).
+   * CLSPDEBasedInterfaceReinitialization<dim>::check_dependencies_validity).
    * For instance, to solve the curvature projection subequation, the phase
    * gradient projection subequation has to be solved before as the projected
    * phase gradient is used in the curvature projection subequation.

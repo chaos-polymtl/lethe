@@ -747,7 +747,7 @@ namespace Parameters
                       "conjunction with CLS simulations to select the cells "
                       "on which the constraint is applied.");
     prm.declare_alias("phase indicator tolerance",
-                      "phase indicator tolerance",
+                      "phase fraction tolerance",
                       true);
     prm.declare_entry("min temperature",
                       "-999",

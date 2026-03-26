@@ -3,9 +3,9 @@ CASE_NUMBER,CASE_NAME,ENABLE_AMR,REINITIALIZATION_TYPE,REINITIALIZATION_FREQUENC
 01,rising-bubble-3d-AMR-pro-f010-eps06,projection-based interface sharpening,10,2.45,0.1875,0.046875
 02,rising-bubble-3d-AMR-pro-f100-eps06,projection-based interface sharpening,100,2.45,0.1875,0.046875
 
-03,rising-bubble-3d-AMR-pde-f001-eps02,algebraic interface reinitialization,1,0.8163,0.0625,0.015625
-04,rising-bubble-3d-AMR-pde-f010-eps02,algebraic interface reinitialization,10,0.8163,0.0625,0.015625
-05,rising-bubble-3d-AMR-pde-f100-eps02,algebraic interface reinitialization,100,0.8163,0.0625,0.015625
+03,rising-bubble-3d-AMR-pde-f001-eps02,pde-based interface reinitialization,1,0.8163,0.0625,0.015625
+04,rising-bubble-3d-AMR-pde-f010-eps02,pde-based interface reinitialization,10,0.8163,0.0625,0.015625
+05,rising-bubble-3d-AMR-pde-f100-eps02,pde-based interface reinitialization,100,0.8163,0.0625,0.015625
 
 06,rising-bubble-3d-AMR-geo-f001-eps06,geometric interface reinitialization,1,2.45,0.1875,0.046875
 07,rising-bubble-3d-AMR-geo-f010-eps06,geometric interface reinitialization,10,2.45,0.1875,0.046875

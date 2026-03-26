@@ -201,7 +201,7 @@ Parameters::CLS_ReinitializationMethod::declare_parameters(
       "Choices are <quiet|verbose|extra verbose>.");
 
     sharpening.declare_parameters(prm);
-    algebraic_interface_reinitialization.declare_parameters(prm);
+    pde_based_interface_reinitialization.declare_parameters(prm);
     geometric_interface_reinitialization.declare_parameters(prm);
   }
   prm.leave_subsection();
@@ -225,8 +225,8 @@ Parameters::CLS_ReinitializationMethod::parse_parameters(ParameterHandler &prm)
     else if (t == "pde-based interface reinitialization")
       {
         this->reinitialization_method_type =
-          Parameters::ReinitializationMethodType::algebraic;
-        algebraic_interface_reinitialization.enable = true;
+          Parameters::ReinitializationMethodType::pde_based;
+        pde_based_interface_reinitialization.enable = true;
       }
     else if (t == "geometric interface reinitialization")
       {
@@ -255,7 +255,7 @@ Parameters::CLS_ReinitializationMethod::parse_parameters(ParameterHandler &prm)
                                   " <quiet|verbose|extra verbose>"));
 
     this->sharpening.parse_parameters(prm);
-    this->algebraic_interface_reinitialization.parse_parameters(prm);
+    this->pde_based_interface_reinitialization.parse_parameters(prm);
     this->geometric_interface_reinitialization.parse_parameters(prm);
   }
   prm.leave_subsection();
@@ -391,7 +391,7 @@ Parameters::CLS_SurfaceTensionForce::declare_parameters(ParameterHandler &prm)
       Patterns::Double(),
       "Factor applied to the filter for phase indicator gradient calculations to damp high-frequency errors");
     prm.declare_alias("phase indicator gradient diffusion factor",
-                      "phase indicator gradient diffusion factor",
+                      "phase fraction gradient diffusion factor",
                       true);
 
     prm.declare_entry(
@@ -503,7 +503,7 @@ Parameters::CLS_PhaseFilter::parse_parameters(ParameterHandler &prm)
 }
 
 void
-Parameters::CLS_AlgebraicInterfaceReinitialization::declare_parameters(
+Parameters::CLS_PDEBasedInterfaceReinitialization::declare_parameters(
   dealii::ParameterHandler &prm)
 {
   prm.enter_subsection("PDE-based interface reinitialization");
@@ -548,7 +548,7 @@ Parameters::CLS_AlgebraicInterfaceReinitialization::declare_parameters(
 }
 
 void
-Parameters::CLS_AlgebraicInterfaceReinitialization::parse_parameters(
+Parameters::CLS_PDEBasedInterfaceReinitialization::parse_parameters(
   dealii::ParameterHandler &prm)
 {
   prm.enter_subsection("PDE-based interface reinitialization");
