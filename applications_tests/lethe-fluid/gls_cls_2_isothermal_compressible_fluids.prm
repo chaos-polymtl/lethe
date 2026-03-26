@@ -14,7 +14,6 @@ subsection simulation control
   set method           = bdf1
   set time end         = 0.2
   set time step        = 0.1
-  set output name      = NSCLS_2_isothermal_compressible_fluids
   set output frequency = 0
 end
 

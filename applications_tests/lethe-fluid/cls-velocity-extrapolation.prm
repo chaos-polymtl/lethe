@@ -16,7 +16,6 @@ subsection simulation control
   set time step                      = 0.1
   set adapt time step to respect CFL = true
   set max cfl                        = 0.4
-  set output name                    = cls-velocity-extrapolation
   set output frequency               = 0
 end
 

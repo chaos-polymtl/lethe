@@ -25,7 +25,6 @@ subsection simulation control
   set time end                       = 0.012
   set time step                      = 0.01
   set adapt time step to respect CFL = true
-  set output name                    = cls-capillary-time-step-constraint-marangoni-flow
   set output frequency               = 0
   set adapt time step to respect CTR = true
 end

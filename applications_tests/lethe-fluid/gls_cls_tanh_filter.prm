@@ -15,7 +15,6 @@ subsection simulation control
   set number mesh adapt = 0
   set time end          = 0.1
   set time step         = 0.05
-  set output name       = cls_tanh_filter
   set output frequency  = 0
 end
 

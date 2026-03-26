@@ -24,7 +24,6 @@ subsection simulation control
   set time step                      = 0.1
   set adapt time step to respect CFL = true
   set output frequency               = 0
-  set output name                    = cls-capillary-time-step-constraint-phase-change-flow
   set adapt time step to respect CTR = true
 end
 

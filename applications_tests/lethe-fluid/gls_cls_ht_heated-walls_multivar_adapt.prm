@@ -15,7 +15,6 @@ subsection simulation control
   set number mesh adapt = 0
   set time end          = 1
   set time step         = 0.2
-  set output name       = cls_ht_heated-walls_multivar_adapt
   set output frequency  = 0
 end
 

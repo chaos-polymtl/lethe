@@ -14,7 +14,6 @@ subsection simulation control
   set method           = bdf1
   set time end         = 0.01
   set time step        = 0.005
-  set output name      = laser-heat-flux-cls-interface
   set output frequency = 0
 end
 

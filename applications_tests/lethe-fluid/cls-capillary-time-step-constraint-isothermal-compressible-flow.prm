@@ -22,7 +22,6 @@ subsection simulation control
   set method                         = bdf1
   set time end                       = 0.04
   set time step                      = 0.04
-  set output name                    = cls-capillary-time-step-constraint-isothermal-compressible-flow
   set output frequency               = 0
   set adapt time step to respect CTR = true
 end

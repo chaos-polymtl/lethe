@@ -14,7 +14,6 @@ subsection simulation control
   set method           = bdf1
   set time end         = 0.1
   set time step        = 0.02
-  set output name      = hydrostat_CLS
   set output frequency = 0
 end
 

@@ -22,7 +22,6 @@ subsection simulation control
   set method                         = bdf2
   set time end                       = 0.15
   set time step                      = 0.15
-  set output name                    = cls-capillary-time-step-constraint-CTR-10
   set output frequency               = 0
   set adapt time step to respect CTR = true
   set max capillary time-step ratio  = 10
