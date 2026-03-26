@@ -1975,10 +1975,10 @@ namespace Parameters
     unsigned int oversampling_factor;
     /// Tolerance used for rotor-stator interface radius computation
     double radius_tolerance;
+    /// Cell weight for load balancing of cells with mortar interfaces
+    unsigned int cell_weight;
     /// Type of verbosity for mortar
     Verbosity verbosity;
-    /// Cell weight for load balancing of cells with mortar interfaces
-    unsigned int cell_weight = 2000;
 
     void
     declare_parameters(ParameterHandler &prm);

@@ -4559,16 +4559,16 @@ namespace Parameters
                         "1e-8",
                         Patterns::Double(),
                         "Tolerance used for the interface radius computation");
+      prm.declare_entry("cell weight",
+                        "1000",
+                        Patterns::Integer(),
+                        "Cell weight for load balancing of mortar cells");
       prm.declare_entry(
         "verbosity",
         "quiet",
         Patterns::Selection("quiet|verbose|extra verbose"),
         "State whether from the mortar information should be printed "
         "Choices are <quiet|verbose|extra verbose>.");
-      prm.declare_entry("cell weight",
-                        "1000",
-                        Patterns::Integer(),
-                        "Cell weight for load balancing of mortar cells");
     }
     prm.leave_subsection();
   }

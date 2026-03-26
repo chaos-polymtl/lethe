@@ -2784,7 +2784,7 @@ FluidDynamicsMatrixFree<dim>::solve()
     {
       // Mortar load balancing
       this->connect_mortar_weight_signals();
-      
+
       read_mesh_and_manifolds_for_stator_and_rotor(
         *this->triangulation,
         this->simulation_parameters.mesh,

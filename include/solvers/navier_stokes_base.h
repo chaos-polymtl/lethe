@@ -513,6 +513,14 @@ protected:
   rotate_rotor_mapping(const bool is_first);
 
   /**
+   * @brief Connect weight signals for load balancing of mortar cells.
+   * Cells touching mortar boundaries can be assigned assigned higher weight for
+   * better load distribution across processors.
+   */
+  void
+  connect_mortar_weight_signals();
+
+  /**
    * @brief Update non-zero constraints if the boundary is time dependent.
    * Note: not implemented for the block fluid dynamics application.
    */
@@ -959,14 +967,6 @@ protected:
                     FluidDynamicsBoundaryConditionMissing(boundary_id_in_tria));
       }
   }
-
-  /**
-   * @brief Connect weight signals for load balancing of mortar cells.
-   * Cells touching mortar boundaries are assigned higher weight for better
-   * load distribution across processors.
-   */
-  void
-  connect_mortar_weight_signals();
 
 
   DofsType locally_owned_dofs;

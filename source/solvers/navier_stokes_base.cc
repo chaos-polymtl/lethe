@@ -1061,8 +1061,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_adaptive()
   auto &tria = *dynamic_cast<parallel::distributed::Triangulation<dim> *>(
     this->triangulation.get());
 
-  // Connect mortar cell weight signals for load balancing
-  connect_mortar_weight_signals();
+  // If mortar is enabled, connect mortar cell weight signals for load balancing
+  this->connect_mortar_weight_signals();
 
   // Time monitoring
   TimerOutput::Scope t(this->computing_timer, "Refine");
@@ -1307,8 +1307,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
                          "simplex meshes."));
   TimerOutput::Scope t(this->computing_timer, "Refine");
 
-  // Connect mortar cell weight signals for load balancing
-  connect_mortar_weight_signals();
+  // If mortar is enabled, connect mortar cell weight signals for load balancing
+  this->connect_mortar_weight_signals();
 
   // Solution transfer objects for all the solutions
   SolutionTransfer<dim, VectorType> solution_transfer(*this->dof_handler, true);
@@ -3426,10 +3426,10 @@ NavierStokesBase<dim, VectorType, DofsType>::connect_mortar_weight_signals()
     this->triangulation.get());
 
   tria.signals.weight.connect(
-    [this](const typename parallel::distributed::Triangulation<dim>::cell_iterator
-             &cell,
-           const CellStatus status) -> unsigned int {
-
+    [this](const typename parallel::distributed::Triangulation<
+             dim>::cell_iterator &cell,
+           const CellStatus       status) -> unsigned int {
+      // Default cell weight used for all cells
       unsigned int base_weight = 1000;
 
       // Check if this cell touches a mortar boundary
@@ -3443,9 +3443,8 @@ NavierStokesBase<dim, VectorType, DofsType>::connect_mortar_weight_signals()
           for (const auto face_no : cell->face_indices())
             {
               const auto face = cell->face(face_no);
-              if (face->at_boundary() &&
-                  (face->boundary_id() == rotor_bid ||
-                   face->boundary_id() == stator_bid))
+              if (face->at_boundary() && (face->boundary_id() == rotor_bid ||
+                                          face->boundary_id() == stator_bid))
                 {
                   // Return higher weight for mortar cells
                   return simulation_parameters.mortar_parameters.cell_weight;
