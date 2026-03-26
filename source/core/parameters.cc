@@ -905,7 +905,7 @@ namespace Parameters
       // DCDD stabilization activation parameters
       heat_transfer_dcdd_stabilization =
         prm.get_bool("heat transfer dcdd stabilization");
-      vof_dcdd_stabilization = prm.get_bool("cls dcdd stabilization");
+      cls_dcdd_stabilization = prm.get_bool("cls dcdd stabilization");
       dcdd_diffusion_coeff   = prm.get_double("cls dcdd diffusion factor");
 
       pressure_scaling_factor = prm.get_double("pressure scaling factor");
@@ -1810,8 +1810,8 @@ namespace Parameters
       temperature_order         = prm.get_integer("temperature order");
       tracer_order              = prm.get_integer("tracer order");
       tracer_uses_dg            = prm.get_bool("tracer uses dg");
-      VOF_order                 = prm.get_integer("cls order");
-      VOF_uses_dg               = prm.get_bool("cls uses dg");
+      CLS_order                 = prm.get_integer("cls order");
+      CLS_uses_dg               = prm.get_bool("cls uses dg");
       phase_cahn_hilliard_order = prm.get_integer("phase cahn hilliard order");
       potential_cahn_hilliard_order =
         prm.get_integer("potential cahn hilliard order");
@@ -2010,9 +2010,9 @@ namespace Parameters
       if (type_string == "exponential_decay")
         laser_type = LaserType::exponential_decay;
       else if (type_string == "gaussian_heat_flux_cls_interface")
-        laser_type = LaserType::gaussian_heat_flux_vof_interface;
+        laser_type = LaserType::gaussian_heat_flux_cls_interface;
       else
-        laser_type = LaserType::uniform_heat_flux_vof_interface;
+        laser_type = LaserType::uniform_heat_flux_cls_interface;
       concentration_factor = prm.get_double("concentration factor");
       laser_power          = prm.get_double("power");
       laser_absorptivity   = prm.get_double("absorptivity");

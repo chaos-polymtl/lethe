@@ -126,7 +126,7 @@ end
 subsection post-processing
   set calculate mass conservation = true
   set calculate barycenter        = true
-  set barycenter name             = vof_barycenter_information
+  set barycenter name             = cls_barycenter_information
 end
 
 #---------------------------------------------------

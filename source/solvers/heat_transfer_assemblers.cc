@@ -560,7 +560,7 @@ template class HeatTransferAssemblerViscousDissipation<3>;
 
 template <int dim>
 void
-HeatTransferAssemblerViscousDissipationVOF<dim>::assemble_matrix(
+HeatTransferAssemblerViscousDissipationCLS<dim>::assemble_matrix(
   const HeatTransferScratchData<dim> & /*scratch_data*/,
   StabilizedMethodsCopyData &
   /*copy_data*/)
@@ -568,7 +568,7 @@ HeatTransferAssemblerViscousDissipationVOF<dim>::assemble_matrix(
 
 template <int dim>
 void
-HeatTransferAssemblerViscousDissipationVOF<dim>::assemble_rhs(
+HeatTransferAssemblerViscousDissipationCLS<dim>::assemble_rhs(
   const HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData          &copy_data)
 {
@@ -645,8 +645,8 @@ HeatTransferAssemblerViscousDissipationVOF<dim>::assemble_rhs(
     }
 }
 
-template class HeatTransferAssemblerViscousDissipationVOF<2>;
-template class HeatTransferAssemblerViscousDissipationVOF<3>;
+template class HeatTransferAssemblerViscousDissipationCLS<2>;
+template class HeatTransferAssemblerViscousDissipationCLS<3>;
 
 template <int dim>
 void
@@ -977,14 +977,14 @@ template class HeatTransferAssemblerLaserExponentialDecay<3>;
 
 template <int dim>
 void
-HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<dim>::assemble_matrix(
+HeatTransferAssemblerLaserGaussianHeatFluxCLSInterface<dim>::assemble_matrix(
   const HeatTransferScratchData<dim> & /*scratch_data*/,
   StabilizedMethodsCopyData & /*copy_data*/)
 {}
 
 template <int dim>
 void
-HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<dim>::assemble_rhs(
+HeatTransferAssemblerLaserGaussianHeatFluxCLSInterface<dim>::assemble_rhs(
   const HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData          &copy_data)
 {
@@ -1084,19 +1084,19 @@ HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<dim>::assemble_rhs(
     }
 }
 
-template class HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<2>;
-template class HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<3>;
+template class HeatTransferAssemblerLaserGaussianHeatFluxCLSInterface<2>;
+template class HeatTransferAssemblerLaserGaussianHeatFluxCLSInterface<3>;
 
 template <int dim>
 void
-HeatTransferAssemblerLaserExponentialDecayVOF<dim>::assemble_matrix(
+HeatTransferAssemblerLaserExponentialDecayCLS<dim>::assemble_matrix(
   const HeatTransferScratchData<dim> & /*scratch_data*/,
   StabilizedMethodsCopyData & /*copy_data*/)
 {}
 
 template <int dim>
 void
-HeatTransferAssemblerLaserExponentialDecayVOF<dim>::assemble_rhs(
+HeatTransferAssemblerLaserExponentialDecayCLS<dim>::assemble_rhs(
   const HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData          &copy_data)
 {
@@ -1225,7 +1225,7 @@ HeatTransferAssemblerLaserExponentialDecayVOF<dim>::assemble_rhs(
 
               // rhs for : phase * eta * alpha * P / (pi * R^2 * mu) *
               // exp(-eta * r^2 / R^2) * exp(-|z| / mu) where phase, eta, alpha,
-              // P, R, mu, r and z denote the phase (from the VOF) concentration
+              // P, R, mu, r and z denote the phase (from the CLS) concentration
               // factor, absorptivity, laser power, beam radius, penetration
               // depth, radial distance from the laser focal point, and axial
               // distance from the laser focal point, respectively. The phase
@@ -1239,19 +1239,19 @@ HeatTransferAssemblerLaserExponentialDecayVOF<dim>::assemble_rhs(
     }
 }
 
-template class HeatTransferAssemblerLaserExponentialDecayVOF<2>;
-template class HeatTransferAssemblerLaserExponentialDecayVOF<3>;
+template class HeatTransferAssemblerLaserExponentialDecayCLS<2>;
+template class HeatTransferAssemblerLaserExponentialDecayCLS<3>;
 
 template <int dim>
 void
-HeatTransferAssemblerLaserUniformHeatFluxVOFInterface<dim>::assemble_matrix(
+HeatTransferAssemblerLaserUniformHeatFluxCLSInterface<dim>::assemble_matrix(
   const HeatTransferScratchData<dim> & /*scratch_data*/,
   StabilizedMethodsCopyData & /*copy_data*/)
 {}
 
 template <int dim>
 void
-HeatTransferAssemblerLaserUniformHeatFluxVOFInterface<dim>::assemble_rhs(
+HeatTransferAssemblerLaserUniformHeatFluxCLSInterface<dim>::assemble_rhs(
   const HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData          &copy_data)
 {
@@ -1350,12 +1350,12 @@ HeatTransferAssemblerLaserUniformHeatFluxVOFInterface<dim>::assemble_rhs(
     }
 }
 
-template class HeatTransferAssemblerLaserUniformHeatFluxVOFInterface<2>;
-template class HeatTransferAssemblerLaserUniformHeatFluxVOFInterface<3>;
+template class HeatTransferAssemblerLaserUniformHeatFluxCLSInterface<2>;
+template class HeatTransferAssemblerLaserUniformHeatFluxCLSInterface<3>;
 
 template <int dim>
 void
-HeatTransferAssemblerFreeSurfaceRadiationVOF<dim>::assemble_matrix(
+HeatTransferAssemblerFreeSurfaceRadiationCLS<dim>::assemble_matrix(
   const HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData          &copy_data)
 {
@@ -1408,7 +1408,7 @@ HeatTransferAssemblerFreeSurfaceRadiationVOF<dim>::assemble_matrix(
 
 template <int dim>
 void
-HeatTransferAssemblerFreeSurfaceRadiationVOF<dim>::assemble_rhs(
+HeatTransferAssemblerFreeSurfaceRadiationCLS<dim>::assemble_rhs(
   const HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData          &copy_data)
 {
@@ -1457,12 +1457,12 @@ HeatTransferAssemblerFreeSurfaceRadiationVOF<dim>::assemble_rhs(
     } // end loop on quadrature points
 }
 
-template class HeatTransferAssemblerFreeSurfaceRadiationVOF<2>;
-template class HeatTransferAssemblerFreeSurfaceRadiationVOF<3>;
+template class HeatTransferAssemblerFreeSurfaceRadiationCLS<2>;
+template class HeatTransferAssemblerFreeSurfaceRadiationCLS<3>;
 
 template <int dim>
 void
-HeatTransferAssemblerVOFEvaporation<dim>::assemble_matrix(
+HeatTransferAssemblerCLSEvaporation<dim>::assemble_matrix(
   const HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData          &copy_data)
 {
@@ -1509,7 +1509,7 @@ HeatTransferAssemblerVOFEvaporation<dim>::assemble_matrix(
 
 template <int dim>
 void
-HeatTransferAssemblerVOFEvaporation<dim>::assemble_rhs(
+HeatTransferAssemblerCLSEvaporation<dim>::assemble_rhs(
   const HeatTransferScratchData<dim> &scratch_data,
   StabilizedMethodsCopyData          &copy_data)
 {
@@ -1546,5 +1546,5 @@ HeatTransferAssemblerVOFEvaporation<dim>::assemble_rhs(
     } // end loop on quadrature points
 }
 
-template class HeatTransferAssemblerVOFEvaporation<2>;
-template class HeatTransferAssemblerVOFEvaporation<3>;
+template class HeatTransferAssemblerCLSEvaporation<2>;
+template class HeatTransferAssemblerCLSEvaporation<3>;

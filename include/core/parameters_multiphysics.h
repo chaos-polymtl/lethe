@@ -133,14 +133,14 @@ namespace Parameters
   };
 
   /**
-   * @brief VOF_InterfaceSharpening - Defines the parameters for
-   * interface sharpening in the VOF solver.
+   * @brief CLS_InterfaceSharpening - Defines the parameters for
+   * interface sharpening in the CLS solver.
    */
-  struct VOF_InterfaceSharpening
+  struct CLS_InterfaceSharpening
   {
     // Interface sharpening parameters. The sharpening method and parameters are
-    // explained in the dam break VOF example:
-    // https://chaos-polymtl.github.io/lethe/examples/multiphysics/dam-break-VOF/dam-break-VOF.html
+    // explained in the dam break CLS example:
+    // https://chaos-polymtl.github.io/lethe/examples/multiphysics/dam-break-CLS/dam-break-CLS.html
 
     bool enable = false;
 
@@ -172,16 +172,16 @@ namespace Parameters
 
   /**
    * @brief Parameters for the calculation of surface tension
-   * force in the VOF solver.
+   * force in the CLS solver.
    */
-  struct VOF_SurfaceTensionForce
+  struct CLS_SurfaceTensionForce
   {
     bool enable;
 
     double phase_fraction_gradient_diffusion_factor;
     double curvature_diffusion_factor;
 
-    bool output_vof_auxiliary_fields;
+    bool output_cls_auxiliary_fields;
 
     // Type of verbosity for the surface tension force calculation
     Parameters::Verbosity verbosity;
@@ -198,7 +198,7 @@ namespace Parameters
   /**
    * @brief Parameters for the phase filtration
    */
-  struct VOF_PhaseFilter
+  struct CLS_PhaseFilter
   {
     // Type of filter
     Parameters::FilterType type;
@@ -217,9 +217,9 @@ namespace Parameters
 
   /**
    * @brief Parameters for algebraic reinitialization of the interface
-   * used with the VOF solver.
+   * used with the CLS solver.
    */
-  struct VOF_AlgebraicInterfaceReinitialization
+  struct CLS_AlgebraicInterfaceReinitialization
   {
     /// Enables/Disables the algebraic interface reinitialization.
     bool enable = false;
@@ -265,9 +265,9 @@ namespace Parameters
 
   /**
    * @brief Parameters for geometric reinitialization of the interface
-   * used with the VOF solver.
+   * used with the CLS solver.
    */
-  struct VOF_GeometricInterfaceReinitialization
+  struct CLS_GeometricInterfaceReinitialization
   {
     /// Enables/Disables the geometric interface reinitialization.
     bool enable = false;
@@ -299,16 +299,16 @@ namespace Parameters
 
   /**
    * @brief Parameters for interface regularization methods
-   * used within the VOF solver. It stores the parameters for the three
+   * used within the CLS solver. It stores the parameters for the three
    * available methods (projection-, algebraic-, and geometric based
    * regularization).
    */
-  struct VOF_RegularizationMethod
+  struct CLS_RegularizationMethod
   {
     /// Regularization method type
     Parameters::RegularizationMethodType regularization_method_type;
 
-    /// Regularization frequency at every \f$x\f$ time steps the VOF phase
+    /// Regularization frequency at every \f$x\f$ time steps the CLS phase
     /// fraction field will be regularized
     int frequency;
 
@@ -316,14 +316,14 @@ namespace Parameters
     Parameters::Verbosity verbosity;
 
     /// Interface sharpening parameters
-    Parameters::VOF_InterfaceSharpening sharpening;
+    Parameters::CLS_InterfaceSharpening sharpening;
 
     /// Algebraic interface reinitialization parameters
-    Parameters::VOF_AlgebraicInterfaceReinitialization
+    Parameters::CLS_AlgebraicInterfaceReinitialization
       algebraic_interface_reinitialization;
 
     /// Geometric interface reinitialization parameters
-    Parameters::VOF_GeometricInterfaceReinitialization
+    Parameters::CLS_GeometricInterfaceReinitialization
       geometric_interface_reinitialization;
 
     /**
@@ -344,20 +344,20 @@ namespace Parameters
   };
 
   /**
-   * @brief VOF - Defines the parameters for free surface simulations
-   * using the VOF method.
+   * @brief CLS - Defines the parameters for free surface simulations
+   * using the CLS method.
    * Has to be declared before member creation in Multiphysics structure.
    */
-  struct VOF
+  struct CLS
   {
-    Parameters::VOF_SurfaceTensionForce  surface_tension_force;
-    Parameters::VOF_PhaseFilter          phase_filter;
-    Parameters::VOF_RegularizationMethod regularization_method;
+    Parameters::CLS_SurfaceTensionForce  surface_tension_force;
+    Parameters::CLS_PhaseFilter          phase_filter;
+    Parameters::CLS_RegularizationMethod regularization_method;
 
     Parameters::FluidIndicator viscous_dissipative_fluid;
 
     // artificial diffusivity (diffusion coefficient) (in L^2/s) added to the
-    // VOF transport equation. This parameter is zero by default, and can be
+    // CLS transport equation. This parameter is zero by default, and can be
     // increased to improve the wetting of the phases in the vicinity of
     // boundaries
     double diffusivity;
@@ -441,7 +441,7 @@ namespace Parameters
     bool fluid_dynamics;
     bool heat_transfer;
     bool tracer;
-    bool VOF;
+    bool CLS;
     bool cahn_hilliard;
     bool electromagnetics;
 
@@ -449,7 +449,7 @@ namespace Parameters
     bool viscous_dissipation;
     bool thermal_buoyancy_force;
 
-    Parameters::VOF                      vof_parameters;
+    Parameters::CLS                      cls_parameters;
     Parameters::CahnHilliard             cahn_hilliard_parameters;
     Parameters::TimeHarmonicMaxwell<dim> time_harmonic_maxwell_parameters;
 

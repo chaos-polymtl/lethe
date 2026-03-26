@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/boundary_conditions.h>
@@ -11,8 +11,8 @@ namespace BoundaryConditions
   extern template class HTBoundaryConditions<3>;
   extern template class TracerBoundaryConditions<2>;
   extern template class TracerBoundaryConditions<3>;
-  extern template class VOFBoundaryConditions<2>;
-  extern template class VOFBoundaryConditions<3>;
+  extern template class CLSBoundaryConditions<2>;
+  extern template class CLSBoundaryConditions<3>;
   extern template class CahnHilliardBoundaryConditions<2>;
   extern template class CahnHilliardBoundaryConditions<3>;
   extern template class TimeHarmonicMaxwellBoundaryConditions<2>;
