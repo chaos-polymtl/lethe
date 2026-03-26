@@ -135,8 +135,7 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set preconditioner              = amg
-    set amg preconditioner ilu fill = 3
-    set verbosity                   = quiet
+    set preconditioner = amg
+    set verbosity      = quiet
   end
 end

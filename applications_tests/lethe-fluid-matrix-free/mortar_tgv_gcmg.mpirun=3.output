@@ -47,9 +47,9 @@ Rotor grid velocity: 3.000000e-02 rad/time
 
 
   -Eigenvalue estimation level 3:
-    Relaxation parameter: 7.066852e-01
-    Minimum eigenvalue: 1.965357e+00
-    Maximum eigenvalue: 2.358429e+00
+    Relaxation parameter: 7.077106e-01
+    Minimum eigenvalue: 1.962510e+00
+    Maximum eigenvalue: 2.355012e+00
 
 
   -Eigenvalue estimation level 0:
@@ -71,9 +71,9 @@ Rotor grid velocity: 3.000000e-02 rad/time
 
 
   -Eigenvalue estimation level 3:
-    Relaxation parameter: 7.069630e-01
-    Minimum eigenvalue: 1.964585e+00
-    Maximum eigenvalue: 2.357502e+00
+    Relaxation parameter: 7.080218e-01
+    Minimum eigenvalue: 1.961647e+00
+    Maximum eigenvalue: 2.353977e+00
 
 Enstrophy: 4.286653e-01
 Kinetic energy: 2.143296e-01
@@ -115,9 +115,9 @@ Rotor grid velocity: 3.000000e-02 rad/time
 
 
   -Eigenvalue estimation level 3:
-    Relaxation parameter: 7.081431e-01
-    Minimum eigenvalue: 1.961311e+00
-    Maximum eigenvalue: 2.353573e+00
+    Relaxation parameter: 7.093963e-01
+    Minimum eigenvalue: 1.957846e+00
+    Maximum eigenvalue: 2.349416e+00
 
 
   -Eigenvalue estimation level 0:
@@ -139,9 +139,9 @@ Rotor grid velocity: 3.000000e-02 rad/time
 
 
   -Eigenvalue estimation level 3:
-    Relaxation parameter: 7.084727e-01
-    Minimum eigenvalue: 1.960399e+00
-    Maximum eigenvalue: 2.352478e+00
+    Relaxation parameter: 7.097702e-01
+    Minimum eigenvalue: 1.956815e+00
+    Maximum eigenvalue: 2.348178e+00
 
 Enstrophy: 3.383037e-01
 Kinetic energy: 1.691495e-01
@@ -183,9 +183,9 @@ Rotor grid velocity: 3.000000e-02 rad/time
 
 
   -Eigenvalue estimation level 3:
-    Relaxation parameter: 7.091783e-01
-    Minimum eigenvalue: 1.958448e+00
-    Maximum eigenvalue: 2.350138e+00
+    Relaxation parameter: 7.110586e-01
+    Minimum eigenvalue: 1.953269e+00
+    Maximum eigenvalue: 2.343923e+00
 
 
   -Eigenvalue estimation level 0:
@@ -207,9 +207,9 @@ Rotor grid velocity: 3.000000e-02 rad/time
 
 
   -Eigenvalue estimation level 3:
-    Relaxation parameter: 7.095604e-01
-    Minimum eigenvalue: 1.957393e+00
-    Maximum eigenvalue: 2.348872e+00
+    Relaxation parameter: 7.115037e-01
+    Minimum eigenvalue: 1.952047e+00
+    Maximum eigenvalue: 2.342457e+00
 
 Enstrophy: 2.267484e-01
 Kinetic energy: 1.133726e-01
@@ -251,9 +251,9 @@ Rotor grid velocity: 3.000000e-02 rad/time
 
 
   -Eigenvalue estimation level 3:
-    Relaxation parameter: 7.109067e-01
-    Minimum eigenvalue: 1.953686e+00
-    Maximum eigenvalue: 2.344424e+00
+    Relaxation parameter: 7.131639e-01
+    Minimum eigenvalue: 1.947503e+00
+    Maximum eigenvalue: 2.337004e+00
 
 
   -Eigenvalue estimation level 0:
@@ -275,9 +275,9 @@ Rotor grid velocity: 3.000000e-02 rad/time
 
 
   -Eigenvalue estimation level 3:
-    Relaxation parameter: 7.111191e-01
-    Minimum eigenvalue: 1.953103e+00
-    Maximum eigenvalue: 2.343724e+00
+    Relaxation parameter: 7.134247e-01
+    Minimum eigenvalue: 1.946791e+00
+    Maximum eigenvalue: 2.336149e+00
 
 Enstrophy: 1.514320e-01
 Kinetic energy: 7.571491e-02
@@ -319,9 +319,9 @@ Rotor grid velocity: 3.000000e-02 rad/time
 
 
   -Eigenvalue estimation level 3:
-    Relaxation parameter: 7.123112e-01
-    Minimum eigenvalue: 1.949834e+00
-    Maximum eigenvalue: 2.339801e+00
+    Relaxation parameter: 7.148437e-01
+    Minimum eigenvalue: 1.942927e+00
+    Maximum eigenvalue: 2.331512e+00
 
 
   -Eigenvalue estimation level 0:
@@ -343,16 +343,16 @@ Rotor grid velocity: 3.000000e-02 rad/time
 
 
   -Eigenvalue estimation level 3:
-    Relaxation parameter: 7.124139e-01
-    Minimum eigenvalue: 1.949553e+00
-    Maximum eigenvalue: 2.339464e+00
+    Relaxation parameter: 7.149836e-01
+    Minimum eigenvalue: 1.942546e+00
+    Maximum eigenvalue: 2.331056e+00
 
 Enstrophy: 1.009723e-01
 Kinetic energy: 5.048543e-02
-L2 error velocity: 4.395655e-04
+L2 error velocity: 4.395657e-04
  time  error_velocity 
 0.0400   1.245708e-02 
 0.1000   1.700730e-02 
 0.2000   1.377048e-02 
 0.3000   6.746918e-03 
-0.4000   4.395655e-04 
+0.4000   4.395657e-04 
