@@ -133,7 +133,7 @@ namespace Parameters
       prm.leave_subsection();
 
       prm.enter_subsection("CLS");
-      VOF.declare_parameters(prm);
+      CLS.declare_parameters(prm);
       prm.declare_entry(
         "smoothing type",
         "none",
@@ -205,14 +205,14 @@ namespace Parameters
 
       prm.enter_subsection("CLS");
       {
-        VOF.parse_parameters(prm);
+        CLS.parse_parameters(prm);
         const std::string op = prm.get("smoothing type");
         if (op == "none")
-          vof_initial_condition_smoothing = VOFInitialConditionType::none;
+          cls_initial_condition_smoothing = CLSInitialConditionType::none;
         else if (op == "diffusive")
-          vof_initial_condition_smoothing = VOFInitialConditionType::diffusive;
+          cls_initial_condition_smoothing = CLSInitialConditionType::diffusive;
         else if (op == "geometric")
-          vof_initial_condition_smoothing = VOFInitialConditionType::geometric;
+          cls_initial_condition_smoothing = CLSInitialConditionType::geometric;
         else
           throw(
             std::runtime_error("Unknown CLS initial condition smoothing type"));

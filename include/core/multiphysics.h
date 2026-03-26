@@ -6,7 +6,7 @@
  * @brief Identifiers for multiphysics modules and their solution fields.
  *
  * This file defines the enumerations used to identify the different physics
- * modules available in Lethe (fluid dynamics, heat transfer, VOF, etc.) and
+ * modules available in Lethe (fluid dynamics, heat transfer, CLS, etc.) and
  * the solution fields they produce. It also provides a utility function to
  * convert a physics name string into its corresponding PhysicsID.
  */
@@ -30,7 +30,7 @@ enum PhysicsID : unsigned int
   tracer = 2,
   /// Conservative level-set / Volume-of-Fluid (Phase indicator / phase
   /// fraction)
-  VOF = 3,
+  CLS = 3,
   /// Cahn-Hilliard (Phase indicator, Potential)
   cahn_hilliard = 4,
   /// Void fraction
@@ -49,7 +49,7 @@ enum class Variable : unsigned int
   velocity = 0,
   /// Pressure scalar field from fluid dynamics
   pressure = 1,
-  /// Phase fraction scalar field from VOF
+  /// Phase fraction scalar field from CLS
   phase = 2,
   /// Temperature scalar field from heat transfer
   temperature = 3,
@@ -82,7 +82,7 @@ get_physics_id(std::string physics_name)
   else if (physics_name == "tracer")
     return PhysicsID::tracer;
   else if (physics_name == "CLS")
-    return PhysicsID::VOF;
+    return PhysicsID::CLS;
   else if (physics_name == "cahn hilliard")
     return PhysicsID::cahn_hilliard;
   else if (physics_name == "void fraction")

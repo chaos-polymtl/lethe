@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2019-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_initial_conditions_h
@@ -23,8 +23,8 @@ namespace Parameters
     average_velocity_profile
   };
 
-  // Type of initial conditions for VOF
-  enum class VOFInitialConditionType
+  // Type of initial conditions for CLS
+  enum class CLSInitialConditionType
   {
     none,      // Uses the function as is
     diffusive, // Uses a L2 projection with a smoothing coefficient
@@ -88,11 +88,11 @@ namespace Parameters
     // Tracer
     Functions::ParsedFunction<dim> tracer;
 
-    // VOF
-    Functions::ParsedFunction<dim> VOF;
+    // CLS
+    Functions::ParsedFunction<dim> CLS;
 
 
-    VOFInitialConditionType vof_initial_condition_smoothing;
+    CLSInitialConditionType cls_initial_condition_smoothing;
     double                  projection_step_diffusion_factor;
 
     // Non-Newtonian

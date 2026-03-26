@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2024, 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_physical_properties_manager_h
@@ -475,7 +475,7 @@ private:
    *  the properties of the fluids, then the properties of the solid. Fluids
    * need to have a material id of 0, then solids are consequential.
    *
-   * @param fluid_id the id of the fluid (0 for single phase simulations, 0 or 1 for VOF simulations)
+   * @param fluid_id the id of the fluid (0 for single phase simulations, 0 or 1 for CLS simulations)
    *
    * @param material_id the material id of the cell. Cells with material_id=0 are fluid cells (0 or 1) and cells with material_id>0 are solid cells
    */

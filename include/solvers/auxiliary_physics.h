@@ -103,7 +103,7 @@ public:
 
   /**
    * @brief Carry out modifications on the auxiliary physic solution.
-   * To be defined for some physics only (eg. free surface, see vof.h).
+   * To be defined for some physics only (eg. free surface, see cls.h).
    */
   virtual void
   modify_solution(){};

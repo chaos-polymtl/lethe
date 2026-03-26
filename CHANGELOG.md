@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/03/24
+
+### Changed
+
+- MAJOR Following PRs [#1937](https://github.com/chaos-polymtl/lethe/pull/1937), [#1938](https://github.com/chaos-polymtl/lethe/pull/1938), and [#1944](https://github.com/chaos-polymtl/lethe/pull/1944), this PR renames all occurrences of "VOF" with "CLS" in the code. [#1944](https://github.com/chaos-polymtl/lethe/pull/1944).
+
 ## [Master] - 2026/03/19
 
 ### Removed

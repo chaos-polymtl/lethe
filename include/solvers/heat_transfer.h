@@ -534,8 +534,8 @@ private:
    * Calculate temperature statistics on the domain : Max, min, average and
    * standard-deviation.
    *
-   * @param gather_vof Boolean true when VOF=true (multiphase flow), used to gather
-   * VOF information.
+   * @param gather_cls Boolean true when CLS=true (multiphase flow), used to gather
+   * CLS information.
    *
    * @param monitored_fluid Fluid indicator (fluid0 or fluid1 or both) corresponding
    * to the phase of interest.
@@ -547,7 +547,7 @@ private:
 
   void
   postprocess_temperature_statistics(
-    const bool                       gather_vof,
+    const bool                       gather_cls,
     const Parameters::FluidIndicator monitored_fluid,
     const std::string                domain_name,
     const bool                       time_average);
@@ -566,12 +566,12 @@ private:
    * @brief Post-processing.
    * Calculate liquid fraction on the domain.
    *
-   * @param gather_vof boolean true when VOF=true (multiphase flow), used to gather
-   * VOF information
+   * @param gather_cls boolean true when CLS=true (multiphase flow), used to gather
+   * CLS information
    */
 
   void
-  postprocess_liquid_fraction(const bool gather_vof);
+  postprocess_liquid_fraction(const bool gather_cls);
 
   /**
    * @brief Post-processing. Write the liquid fraction to an output file.
@@ -584,8 +584,8 @@ private:
    * Post-processing. Calculate the heat flux at heat transfer boundary
    * conditions.
    *
-   * @param gather_vof boolean true when VOF=true (multiphase flow), used to gather
-   * VOF information
+   * @param gather_cls boolean true when CLS=true (multiphase flow), used to gather
+   * CLS information
    *
    * @param current_solution_fd current solution for the fluid dynamics, parsed
    * by postprocess
@@ -593,7 +593,7 @@ private:
 
   template <typename VectorType>
   void
-  postprocess_heat_flux_on_bc(const bool        gather_vof,
+  postprocess_heat_flux_on_bc(const bool        gather_cls,
                               const VectorType &current_solution_fd);
 
   /**
@@ -607,8 +607,8 @@ private:
    * Post-processing. Calculate the thermal energy \f$ (\rho \cdot C_p \cdot T)
    * \f$ in a fluid domain.
    *
-   * @param gather_vof Boolean true when VOF=true (multiphase flow), used to gather
-   * VOF information.
+   * @param gather_cls Boolean true when CLS=true (multiphase flow), used to gather
+   * CLS information.
    *
    * @param monitored_fluid Fluid indicator (fluid0 or fluid1 or both) corresponding
    * to the phase of interest.
@@ -623,7 +623,7 @@ private:
   template <typename VectorType>
   void
   postprocess_thermal_energy_in_fluid(
-    const bool                       gather_vof,
+    const bool                       gather_cls,
     const Parameters::FluidIndicator monitored_fluid,
     const std::string                domain_name,
     const VectorType                &current_solution_fd);
@@ -643,13 +643,13 @@ private:
    * account for multiphase flow.
    *
    * Returns
-   * - a double: phase_coefficient from 0 to 1, see the documentation on VOF for
+   * - a double: phase_coefficient from 0 to 1, see the documentation on CLS for
    * more information,
    * - a boolean: point_is_in_postprocessed_fluid, true if the quadrature point
    * is in the postprocessed_fluid (used for min_max_temperature calculation)
    *
-   * @param gather_vof boolean true when VOF=true (multiphase flow), used to gather
-   * VOF information
+   * @param gather_cls boolean true when CLS=true (multiphase flow), used to gather
+   * CLS information
    *
    * @param monitored_fluid Fluid indicator (fluid0 or fluid1 or both) corresponding
    * to the phase of interest.
@@ -658,7 +658,7 @@ private:
    */
 
   std::pair<double, bool>
-  set_phase_coefficient(const bool                       gather_vof,
+  set_phase_coefficient(const bool                       gather_cls,
                         const Parameters::FluidIndicator monitored_fluid,
                         const double                     phase_value_q);
 
