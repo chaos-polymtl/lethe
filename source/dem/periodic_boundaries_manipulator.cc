@@ -295,7 +295,9 @@ PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
           auto cell          = boundaries_cells_content.cell;
           auto periodic_cell = boundaries_cells_content.periodic_cell;
 
-          // Main cell (pb0 side)
+          // Check and execute displacement of particles crossing a periodic
+          // wall.
+          // Case when particle goes from periodic boundary 0 to 1
           if (cell->is_locally_owned())
             {
               typename Particles::ParticleHandler<dim>::particle_iterator_range
@@ -313,7 +315,7 @@ PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
                 }
             }
 
-          // Periodic neighbor (pb1 side)
+          // Case when particle goes from periodic boundary 1 to 0
           if (periodic_cell->is_locally_owned())
             {
               typename Particles::ParticleHandler<dim>::particle_iterator_range
