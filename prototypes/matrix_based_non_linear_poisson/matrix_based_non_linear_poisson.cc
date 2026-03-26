@@ -150,7 +150,7 @@ Settings::try_parse(const std::string &prm_filename)
         << "****  directory, or use the following default values\n"
         << "****  to create an input file:\n";
       if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
-        prm.print_parameters(std::cout, ParameterHandler::DefaultStyle);
+        prm.print_parameters(std::cout, ParameterHandler::PRM);
 
       return false;
     }
@@ -512,30 +512,41 @@ MatrixBasedPoissonProblem<dim, fe_degree>::setup_gmg()
         DoFTools::extract_locally_relevant_level_dofs(dof_handler, level);
 
       {
-        TrilinosWrappers::SparsityPattern dsp(
-          dof_handler.locally_owned_mg_dofs(level),
-          dof_handler.locally_owned_mg_dofs(level),
-          dof_set,
-          mpi_communicator);
+        DynamicSparsityPattern dsp(dof_set);
         MGTools::make_sparsity_pattern(dof_handler, dsp, level);
-
         dsp.compress();
-        mg_matrix[level].reinit(dsp);
+
+        SparsityTools::distribute_sparsity_pattern(
+          dsp,
+          dof_handler.locally_owned_mg_dofs(level),
+          mpi_communicator,
+          dof_set);
+
+        mg_matrix[level].reinit(dof_handler.locally_owned_mg_dofs(level),
+                                dof_handler.locally_owned_mg_dofs(level),
+                                dsp,
+                                mpi_communicator);
       }
 
       {
-        TrilinosWrappers::SparsityPattern dsp(
-          dof_handler.locally_owned_mg_dofs(level),
-          dof_handler.locally_owned_mg_dofs(level),
-          dof_set,
-          mpi_communicator);
+        DynamicSparsityPattern dsp(dof_set);
 
         MGTools::make_interface_sparsity_pattern(dof_handler,
                                                  mg_constrained_dofs,
                                                  dsp,
                                                  level);
         dsp.compress();
-        mg_interface_in[level].reinit(dsp);
+
+        SparsityTools::distribute_sparsity_pattern(
+          dsp,
+          dof_handler.locally_owned_mg_dofs(level),
+          mpi_communicator,
+          dof_set);
+
+        mg_interface_in[level].reinit(dof_handler.locally_owned_mg_dofs(level),
+                                      dof_handler.locally_owned_mg_dofs(level),
+                                      dsp,
+                                      mpi_communicator);
       }
       {
         const IndexSet locally_owned_mg_dofs =
