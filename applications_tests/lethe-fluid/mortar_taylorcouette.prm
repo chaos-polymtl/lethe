@@ -13,9 +13,9 @@ set dimension = 2
 
 subsection simulation control
   set method            = steady
-  set output name       = taylor-couette-mortar_output
   set subdivision       = 2
   set number mesh adapt = 2
+  set output frequency  = 0
 end
 
 #---------------------------------------------------
