@@ -346,18 +346,22 @@ private:
                 << "% of Rayleigh time step" << std::endl;
   }
 
-
-
   /**
-   * @brief Perform contact detection and build contact lists.
-   *
-   * Checks if a contact search should be performed based on the contact
-   * detection frequency and executes the appropriate contact detection
-   * algorithm to identify particle-particle and particle-wall contacts.
-   *
+   * @brief Reports the ratio between the minimum cell size and the maximum 
+   * particle diameter
    */
   void
-  dem_contact_build();
+  report_cell_size_to_particle_diameter_ratio();
+
+    /**
+     * @brief Perform contact detection and build contact lists.
+     *
+     * Checks if a contact search should be performed based on the contact
+     * detection frequency and executes the appropriate contact detection
+     * algorithm to identify particle-particle and particle-wall contacts.
+     *
+     */
+    void dem_contact_build();
 
   /// Sub simulation control object used to control the DEM sub iterations for
   /// each CFD time step.

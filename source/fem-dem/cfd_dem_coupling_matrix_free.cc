@@ -46,6 +46,34 @@ CFDDEMMatrixFree<dim>::setup_distribution_type()
 
 template <int dim>
 void
+CFDDEMMatrixFree<dim>::report_cell_size_to_particle_diameter_ratio()
+{
+  // Calculate the ratio between the minimum cell size and the maximum particle
+  // diameter
+  double min_vertex_distance = std::numeric_limits<double>::max();
+  for (const auto &cell : this->triangulation->active_cell_iterators())
+    if (cell->is_locally_owned())
+      min_vertex_distance =
+        std::min(min_vertex_distance, cell->minimum_vertex_distance());
+  min_vertex_distance =
+    Utilities::MPI::min(min_vertex_distance, this->mpi_communicator);
+  this->pcout << "Minimum vertex distance " << min_vertex_distance << std::endl;
+  double ratio = min_vertex_distance / maximum_particle_diameter;
+  this->pcout << "Minimum cell size to particle diameter ratio: " << ratio
+              << std::endl;
+
+  if (ratio < 1.0)
+    {
+      AssertThrow(
+        false,
+        ExcMessage(
+          "Minimum cell size is smaller than the maximum particle diameter. "
+          "Consider coarsening the mesh to achieve a ratio larger than 1.2."));
+    }
+}
+
+template <int dim>
+void
 CFDDEMMatrixFree<dim>::dem_setup_parameters()
 {
   dem_action_manager = DEMActionManager::get_action_manager();
@@ -1511,6 +1539,7 @@ CFDDEMMatrixFree<dim>::solve()
       !this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
          .restart)
     read_dem();
+  report_cell_size_to_particle_diameter_ratio();
 
   this->computing_timer.leave_subsection("Read mesh, manifolds and particles");
 

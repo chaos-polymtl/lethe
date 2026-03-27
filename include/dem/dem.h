@@ -63,6 +63,12 @@ private:
    */
   void
   setup_parameters();
+  
+  /**
+   * @brief Report the ratio between the minimum cell size and the maximum particle diameter
+   */
+  void
+  report_cell_size_to_particle_diameter_ratio();
 
   /**
    * @brief Initialize the distribution type for the particles, and sets the

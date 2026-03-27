@@ -322,6 +322,13 @@ private:
   }
 
   /**
+   * @brief Reports the ratio between the minimum cell size and the maximum 
+   * particle diameter
+   */
+  void
+  report_cell_size_to_particle_diameter_ratio();
+
+  /**
    * @brief Perform contact detection and build contact lists.
    *
    * Checks if a contact search should be performed based on the contact
