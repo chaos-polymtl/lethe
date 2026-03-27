@@ -644,7 +644,7 @@ GLSNavierStokesCLSAssemblerSTF<dim>::assemble_rhs(
       // Surface tension coefficient
       const double surface_tension_coef = scratch_data.surface_tension[q];
 
-      // Gather pfg and curvature values
+      // Gather PIG and curvature values
       const double &curvature_value = scratch_data.curvature_values[q];
 
       // Gather phase indicator gradient

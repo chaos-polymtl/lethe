@@ -558,7 +558,7 @@ public:
 
   /**
    * @brief Request the reference to the present solution vector of the
-   * projected phase indicator gradient (PFG)
+   * projected phase indicator gradient (PIG)
    */
   const GlobalVectorType &
   get_projected_phase_indicator_gradient_solution();
@@ -576,7 +576,7 @@ public:
   get_curvature_dof_handler();
 
   /**
-   * @brief Request the reference to the projected phase indicator gradient (PFG)
+   * @brief Request the reference to the projected phase indicator gradient (PIG)
    * DOF handler
    */
   const DoFHandler<dim> &

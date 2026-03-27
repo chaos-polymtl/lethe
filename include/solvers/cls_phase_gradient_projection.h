@@ -40,7 +40,7 @@ class CLSPhaseGradientProjection : public CLSLinearSubequationsSolver<dim>
 public:
   /**
    * @brief Constructor for the L2 projection of the CLS phase indicator gradient
-   * (pfg).
+   * (PIG).
    *
    * @param[in] p_simulation_parameters Simulation parameters.
    *

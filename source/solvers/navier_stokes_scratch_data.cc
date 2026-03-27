@@ -287,7 +287,7 @@ NavierStokesScratchData<dim>::enable_projected_phase_indicator_gradient(
                                     quadrature,
                                     update_values | update_gradients);
 
-  // phase indicator gradient (PFG)
+  // phase indicator gradient (PIG)
   projected_phase_indicator_gradient_values =
     std::vector<Tensor<1, dim>>(this->n_q_points);
 }

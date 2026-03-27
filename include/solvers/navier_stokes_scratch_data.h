@@ -598,9 +598,9 @@ public:
     this->fe_values_projected_phase_indicator_gradient->reinit(
       projected_phase_indicator_gradient_cell);
 
-    FEValuesExtractors::Vector pfg(0);
+    FEValuesExtractors::Vector pig(0);
     // Gather phase indicator gradient
-    (*fe_values_projected_phase_indicator_gradient)[pfg].get_function_values(
+    (*fe_values_projected_phase_indicator_gradient)[pig].get_function_values(
       current_projected_phase_indicator_gradient_solution,
       this->projected_phase_indicator_gradient_values);
   }

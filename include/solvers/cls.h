@@ -808,7 +808,7 @@ private:
   GlobalVectorType               complete_system_rhs_phase_indicator;
   TrilinosWrappers::SparseMatrix mass_matrix_phase_indicator;
 
-  // For projected phase indicator gradient (pfg), projected curvature, and
+  // For projected phase indicator gradient (PIG), projected curvature, and
   // PDE-based interface reinitialization
   std::shared_ptr<CLSSubequationsInterface<dim>> cls_subequations_interface;
 
