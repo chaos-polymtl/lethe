@@ -3428,7 +3428,7 @@ NavierStokesBase<dim, VectorType, DofsType>::connect_mortar_weight_signals()
   tria.signals.weight.connect(
     [this](const typename parallel::distributed::Triangulation<
              dim>::cell_iterator &cell,
-           const CellStatus       status) -> unsigned int {
+           const CellStatus /*status*/) -> unsigned int {
       // Default cell weight used for all cells
       const unsigned int base_weight = 1000;
 
