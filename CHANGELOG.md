@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2026/03/31
 
+### Changed
+
+- MAJOR Following PRs [#1937](https://github.com/chaos-polymtl/lethe/pull/1937), [#1938](https://github.com/chaos-polymtl/lethe/pull/1938), [#1944](https://github.com/chaos-polymtl/lethe/pull/1944) and [#1950](https://github.com/chaos-polymtl/lethe/pull/1950) this PR renames all occurrences of "interface regularization", "algebraic interface reinitialization", and "phase fraction" with "interface reinitialization", "pde-based interface reinitialization", and "phase indicator" in the code.[#1954](https://github.com/chaos-polymtl/lethe/pull/1954).
+
 ### Added
 
 - MINOR This PR adds the option to assign a different weight for the cells located at the mortar interface, which is taken into consideration for the workload partitioning. [#1953](https://github.com/chaos-polymtl/lethe/pull/1953)
