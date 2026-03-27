@@ -342,26 +342,28 @@ private:
 
     const double time_step_rayleigh_ratio =
       dem_simulation_control->get_time_step() / rayleigh_time_step;
-    this->pcout << "DEM time step is " << time_step_rayleigh_ratio * 100
-                << "% of Rayleigh time step" << std::endl;
+    this->pcout << "DEM time step is " << std::fixed << std::setprecision(1)
+                << time_step_rayleigh_ratio * 100 << "% of Rayleigh time step"
+                << std::endl;
   }
 
   /**
-   * @brief Reports the ratio between the minimum cell size and the maximum 
+   * @brief Reports the ratio between the minimum cell size and the maximum
    * particle diameter
    */
   void
   report_cell_size_to_particle_diameter_ratio();
 
-    /**
-     * @brief Perform contact detection and build contact lists.
-     *
-     * Checks if a contact search should be performed based on the contact
-     * detection frequency and executes the appropriate contact detection
-     * algorithm to identify particle-particle and particle-wall contacts.
-     *
-     */
-    void dem_contact_build();
+  /**
+   * @brief Perform contact detection and build contact lists.
+   *
+   * Checks if a contact search should be performed based on the contact
+   * detection frequency and executes the appropriate contact detection
+   * algorithm to identify particle-particle and particle-wall contacts.
+   *
+   */
+  void
+  dem_contact_build();
 
   /// Sub simulation control object used to control the DEM sub iterations for
   /// each CFD time step.

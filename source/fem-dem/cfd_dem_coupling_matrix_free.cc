@@ -57,10 +57,12 @@ CFDDEMMatrixFree<dim>::report_cell_size_to_particle_diameter_ratio()
         std::min(min_vertex_distance, cell->minimum_vertex_distance());
   min_vertex_distance =
     Utilities::MPI::min(min_vertex_distance, this->mpi_communicator);
-  this->pcout << "Minimum vertex distance " << min_vertex_distance << std::endl;
+  this->pcout << "Minimum vertex distance between cell vertices: "
+              << std::scientific << std::setprecision(3) << min_vertex_distance
+              << ", ";
   double ratio = min_vertex_distance / maximum_particle_diameter;
-  this->pcout << "Minimum cell size to particle diameter ratio: " << ratio
-              << std::endl;
+  this->pcout << "Minimum cell size to maximum particle diameter ratio: "
+              << std::fixed << std::setprecision(2) << ratio << std::endl;
 
   if (ratio < 1.0)
     {

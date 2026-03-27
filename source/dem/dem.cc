@@ -160,16 +160,19 @@ DEMSolver<dim, PropertiesIndex>::report_cell_size_to_particle_diameter_ratio()
         std::min(min_vertex_distance, cell->minimum_vertex_distance());
   min_vertex_distance =
     Utilities::MPI::min(min_vertex_distance, mpi_communicator);
-  pcout << "Minimum vertex distance " << min_vertex_distance << std::endl;
+  pcout << "Minimum vertex distance between cell vertices: " << std::scientific
+        << std::setprecision(3) << min_vertex_distance << ", ";
   double ratio = min_vertex_distance / maximum_particle_diameter;
-  pcout << "Minimum cell size to particle diameter ratio: " << ratio
-        << std::endl;
+  pcout << "Minimum cell size to maximum particle diameter ratio: "
+        << std::fixed << std::setprecision(2) << ratio << std::endl;
 
   if (ratio < 1.0)
     {
-        AssertThrow(false,
-                    ExcMessage("Minimum cell size is smaller than the maximum particle diameter. "
-                              "Consider coarsening the mesh to achieve a ratio larger than 1.2."));
+      AssertThrow(
+        false,
+        ExcMessage(
+          "Minimum cell size is smaller than the maximum particle diameter. "
+          "Consider coarsening the mesh to achieve a ratio larger than 1.2."));
     }
 }
 
@@ -850,7 +853,7 @@ DEMSolver<dim, PropertiesIndex>::solve()
             pcout,
             triangulation,
             parameters.boundary_conditions);
-  
+
   report_cell_size_to_particle_diameter_ratio();
 
   // Set up functions and pointers according to parameters

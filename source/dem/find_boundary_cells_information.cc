@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/tensors_and_points_dimension_manipulation.h>
@@ -65,7 +65,6 @@ BoundaryCellsInformation<dim>::build(
         {
           pcout
             << "Warning: expansion of particle-wall contact list is enabled. "
-            << std::endl
             << "This feature should only be activated in geometries with concave boundaries. "
                "(For example, for particles flow inside a cylinder or sphere). In geometries with "
                "convex boundaries, this feature MUST NOT be activated."
@@ -85,7 +84,6 @@ BoundaryCellsInformation<dim>::build(
         {
           pcout
             << "Warning: expansion of particle-wall contact list is disabled. "
-            << std::endl
             << "This feature is useful in geometries with concave boundaries. "
             << std::endl;
           display_pw_contact_expansion_warning = false;
@@ -606,7 +604,7 @@ BoundaryCellsInformation<dim>::add_cells_with_boundary_lines_to_boundary_cells(
                                             {
                                               pcout
                                                 << std::endl
-                                                << "Warning: There are diamond-shaped cells in the input triangulation. It is strongly recommended to use a different triangulation without such cells. It should be mentioned that these cells are not detected if you have grid motion"
+                                                << "Warning: Diamond-shaped cells were detected in the input triangulation. These cells have a vertex or edge shared with a wall, but not a face. It is strongly recommended to use a triangulation without such cells. If you wish to include them in the particle-wall contact list, set check_diamond_cells = true in the .prm file. Note: these cells are not detected when grid motion is enabled."
                                                 << std::endl;
                                               display_diamond_cells_warning =
                                                 false;

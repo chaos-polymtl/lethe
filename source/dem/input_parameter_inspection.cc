@@ -34,8 +34,9 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
 
   const double time_step_rayleigh_ratio =
     parameters.simulation_control.dt / rayleigh_time_step;
-  pcout << "DEM time step is " << time_step_rayleigh_ratio * 100
-        << "% of Rayleigh time step" << std::endl;
+  pcout << "DEM time step is " << std::fixed << std::setprecision(1)
+        << time_step_rayleigh_ratio * 100 << "% of Rayleigh time step"
+        << std::endl;
 
   if (time_step_rayleigh_ratio > 0.15)
     {

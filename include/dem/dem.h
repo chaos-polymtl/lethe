@@ -63,7 +63,7 @@ private:
    */
   void
   setup_parameters();
-  
+
   /**
    * @brief Report the ratio between the minimum cell size and the maximum particle diameter
    */
