@@ -317,9 +317,8 @@ private:
 
     const double time_step_rayleigh_ratio =
       dem_simulation_control->get_time_step() / rayleigh_time_step;
-    this->pcout << "DEM time step is " << std::fixed << std::setprecision(1)
-                << time_step_rayleigh_ratio * 100 << "% of Rayleigh time step"
-                << std::endl;
+    this->pcout << "DEM time step is " << time_step_rayleigh_ratio * 100 
+                << "% of Rayleigh time step" << std::endl;
   }
 
   /**
