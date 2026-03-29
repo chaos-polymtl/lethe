@@ -8,8 +8,8 @@ Warning: It is recommended to decrease the time step
 Reading triangulation
 
 Finished reading triangulation
-Warning: expansion of particle-wall contact list is disabled. 
-This feature is useful in geometries with concave boundaries. 
+Minimum vertex distance between cell vertices: 4.167e-02, Minimum cell size to maximum particle diameter ratio: 1.04
+Warning: expansion of particle-wall contact list is disabled. This feature is useful in geometries with concave boundaries. 
 ***********************************************************************
 132 particles of type 0 were inserted, 0 particles of type 0 remaining
 ***********************************************************************

@@ -8,8 +8,8 @@ Warning: It is recommended to decrease the time step
 Reading triangulation
 
 Finished reading triangulation
-Warning: expansion of particle-wall contact list is disabled. 
-This feature is useful in geometries with concave boundaries. 
+Minimum vertex distance between cell vertices: 4.167e-02, Minimum cell size to maximum particle diameter ratio: 1.04
+Warning: expansion of particle-wall contact list is disabled. This feature is useful in geometries with concave boundaries. 
 ***********************************************************************
 132 particles of type 0 were inserted, 0 particles of type 0 remaining
 ***********************************************************************
@@ -55,8 +55,8 @@ Transient iteration: 400      Time: 0.4      Time step: 0.001
 | Rotational kinetic energy    | 3.4339e-09 | 9.7407e-03 | 6.9569e-04 | 9.1832e-02 | 
 -->Repartitioning triangulation
 Load balance finished 
-Average, minimum and maximum number of particles on the processors are 66 , 62 and 70
-Minimum and maximum number of cells owned by the processors are 48 and 48
+Average, minimum and maximum number of particles on the processors are 66.00 , 62.00 and 70.00
+Minimum and maximum number of cells owned by the processors are 48.00 and 48.00
 
 *****************************************************************
 Transient iteration: 500      Time: 0.5      Time step: 0.001   
@@ -79,8 +79,8 @@ Transient iteration: 600      Time: 0.6      Time step: 0.001
 | Rotational kinetic energy    | 5.0222e-08 | 3.9711e-03 | 1.4555e-04 | 1.9212e-02 | 
 -->Repartitioning triangulation
 Load balance finished 
-Average, minimum and maximum number of particles on the processors are 66 , 44 and 88
-Minimum and maximum number of cells owned by the processors are 48 and 48
+Average, minimum and maximum number of particles on the processors are 66.00 , 44.00 and 88.00
+Minimum and maximum number of cells owned by the processors are 48.00 and 48.00
 
 *****************************************************************
 Transient iteration: 700      Time: 0.7      Time step: 0.001   
