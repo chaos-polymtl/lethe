@@ -92,7 +92,7 @@ The ``multiphysics`` subsection is used to enable the CLS solver.
 .. code-block:: text
 
     subsection multiphysics
-      set CLS  = true
+      set cls  = true
     end 
 
 Initial Conditions
