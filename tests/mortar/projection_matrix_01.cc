@@ -52,7 +52,7 @@ get_projection_matrix(const FiniteElement<dim, spacedim> &fe1,
   const unsigned int degree = fe1.tensor_degree();
   Assert(degree != numbers::invalid_unsigned_int, ExcNotImplemented());
   const auto quadrature_2 =
-    reference_cell.template get_gauss_type_quadrature<dim>(degree + 1);
+    reference_cell.get_gauss_type_quadrature(degree + 1);
 
   std::vector<Point<dim>> points;
   for (const auto p : quadrature_2.get_points())
