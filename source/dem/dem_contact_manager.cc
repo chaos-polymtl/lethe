@@ -419,7 +419,7 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_particle_fine_search(
         local_local_periodic_adjacent_particles,
         local_contact_pair_periodic_candidates,
         neighborhood_threshold,
-        combined_offsets);
+        combined_periodic_offsets);
 
       // Fine search for local-ghost periodic particle-particle
       particle_particle_fine_search<dim>(
@@ -427,7 +427,7 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_particle_fine_search(
         local_ghost_periodic_adjacent_particles,
         ghost_contact_pair_periodic_candidates,
         neighborhood_threshold,
-        combined_offsets);
+        combined_periodic_offsets);
 
       // Fine search for ghost-local periodic particle-particle
       particle_particle_fine_search<dim>(
@@ -435,7 +435,7 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_particle_fine_search(
         ghost_local_periodic_adjacent_particles,
         ghost_local_contact_pair_periodic_candidates,
         neighborhood_threshold,
-        combined_offsets);
+        combined_periodic_offsets);
     }
 }
 

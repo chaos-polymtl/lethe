@@ -25,7 +25,7 @@ particle_particle_fine_search(
   const typename DEM::dem_data_structures<dim>::particle_particle_candidates
                                     &contact_pair_candidates,
   const double                       neighborhood_threshold,
-  const std::vector<Tensor<1, dim>> &combined_offsets)
+  const std::vector<Tensor<1, dim>> &combined_periodic_offsets)
 {
   // First iterating over adjacent_particles
   for (auto &&adjacent_particles_list :
@@ -60,7 +60,7 @@ particle_particle_fine_search(
           double min_square_distance = std::numeric_limits<double>::max();
           Tensor<1, dim> nearest_translation;
 
-          for (const auto &translation : combined_offsets)
+          for (const auto &translation : combined_periodic_offsets)
             {
               // Check particle 1 against every periodic image of particle 2
               double current_square_distance =
@@ -75,7 +75,7 @@ particle_particle_fine_search(
             }
 
           // If simulation is well defined, there should be at most one
-          // translation from combined_offsets that brings a periodic image
+          // translation from combined_periodic_offsets that brings a periodic image
           // within a neighborhood threshold
           if (min_square_distance > neighborhood_threshold)
             {
@@ -119,7 +119,7 @@ particle_particle_fine_search(
           double min_square_distance = std::numeric_limits<double>::max();
           Tensor<1, dim> nearest_translation;
 
-          for (const auto &translation : combined_offsets)
+          for (const auto &translation : combined_periodic_offsets)
             {
               double current_square_distance =
                 particle_one_location.distance_square(
@@ -164,7 +164,7 @@ particle_particle_fine_search<2>(
   const typename DEM::dem_data_structures<2>::particle_particle_candidates
                                   &contact_pair_candidates,
   const double                     neighborhood_threshold,
-  const std::vector<Tensor<1, 2>> &combined_offsets = {Tensor<1, 2>()});
+  const std::vector<Tensor<1, 2>> &combined_periodic_offsets = {Tensor<1, 2>()});
 
 template void
 particle_particle_fine_search<3>(
@@ -175,4 +175,4 @@ particle_particle_fine_search<3>(
   const typename DEM::dem_data_structures<3>::particle_particle_candidates
                                   &contact_pair_candidates,
   const double                     neighborhood_threshold,
-  const std::vector<Tensor<1, 3>> &combined_offsets = {Tensor<1, 3>()});
+  const std::vector<Tensor<1, 3>> &combined_periodic_offsets = {Tensor<1, 3>()});

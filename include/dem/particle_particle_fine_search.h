@@ -46,6 +46,6 @@ particle_particle_fine_search(
   const typename DEM::dem_data_structures<dim>::particle_particle_candidates
                                     &contact_pair_candidates,
   const double                       neighborhood_threshold,
-  const std::vector<Tensor<1, dim>> &combined_offsets = {Tensor<1, dim>()});
+  const std::vector<Tensor<1, dim>> &combined_periodic_offsets = {Tensor<1, dim>()});
 
 #endif
