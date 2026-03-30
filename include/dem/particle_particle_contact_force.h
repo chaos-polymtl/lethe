@@ -72,6 +72,14 @@ public:
     const double dt,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) = 0;
 
+  /**
+   * @brief Set the distance between a principal periodic boundary pn0 (with 
+   * mesh ID boundary_id) and its associated periodic boundary pb1 in the
+   * periodic_offsets map.
+   * 
+   * @param offset Distance between the pair of periodic boundaries.
+   * @param boundary_id Mesh ID of the principal periodic boundary of the pair.
+   */
   inline void
   set_periodic_offset(const Tensor<1, dim>    &offset,
                       const types::boundary_id boundary_id)
@@ -80,15 +88,15 @@ public:
   }
 
   inline void
-  set_combined_offsets(const std::vector<Tensor<1, dim>> &offsets)
+  set_combined_periodic_offsets(const std::vector<Tensor<1, dim>> &offsets)
   {
-    this->combined_offsets = offsets;
+    this->combined_periodic_offsets = offsets;
   }
 
 protected:
   std::unordered_map<types::boundary_id, Tensor<1, dim>> periodic_offsets;
 
-  std::vector<Tensor<1, dim>> combined_offsets{Tensor<1, dim>()};
+  std::vector<Tensor<1, dim>> combined_periodic_offsets{Tensor<1, dim>()};
 };
 
 /**

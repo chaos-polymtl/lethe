@@ -195,9 +195,9 @@ public:
    * boundaries, used for determining periodic contacts
    */
   inline void
-  set_combined_offsets(const std::vector<Tensor<1, dim>> &offsets)
+  set_combined_periodic_offsets(const std::vector<Tensor<1, dim>> &offsets)
   {
-    this->combined_offsets = offsets;
+    this->combined_periodic_offsets = offsets;
   }
 
   /**
@@ -390,7 +390,7 @@ private:
    * Initialized to identity (zero offset) for compatibility with non-periodic
    * geometry
    */
-  std::vector<Tensor<1, dim>> combined_offsets{Tensor<1, dim>()};
+  std::vector<Tensor<1, dim>> combined_periodic_offsets{Tensor<1, dim>()};
 };
 
 #endif

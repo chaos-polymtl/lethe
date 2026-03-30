@@ -171,7 +171,7 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
     }
 
   // Once periodic offsets calculated, combine them
-  this->compute_combined_offsets();
+  this->compute_combined_periodic_offsets();
 }
 
 template <int dim>
@@ -250,19 +250,19 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
 
 template <int dim>
 void
-PeriodicBoundariesManipulator<dim>::compute_combined_offsets()
+PeriodicBoundariesManipulator<dim>::compute_combined_periodic_offsets()
 {
-  this->combined_offsets.clear();
-  this->combined_offsets.push_back(Tensor<1, dim>()); // Initialized as zeros
+  this->combined_periodic_offsets.clear();
+  this->combined_periodic_offsets.push_back(Tensor<1, dim>()); // Initialized as zeros
 
   for (auto const &[id, offset] : this->periodic_offsets)
     {
-      size_t current_size = this->combined_offsets.size();
+      size_t current_size = this->combined_periodic_offsets.size();
 
       for (size_t i = 0; i < current_size; ++i)
         {
-          this->combined_offsets.push_back(this->combined_offsets[i] + offset);
-          this->combined_offsets.push_back(this->combined_offsets[i] - offset);
+          this->combined_periodic_offsets.push_back(this->combined_periodic_offsets[i] + offset);
+          this->combined_periodic_offsets.push_back(this->combined_periodic_offsets[i] - offset);
         }
     }
 }

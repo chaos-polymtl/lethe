@@ -137,9 +137,9 @@ public:
    * @brief Return the combined periodic offsets
    */
   inline const std::vector<Tensor<1, dim>> &
-  get_combined_offsets() const
+  get_combined_periodic_offsets() const
   {
-    return combined_offsets;
+    return combined_periodic_offsets;
   }
 
 private:
@@ -181,10 +181,10 @@ private:
 
   /**
    * @brief Computes the combined periodic offsets and stores them in
-   * combined_offsets.
+   * combined_periodic_offsets.
    */
   void
-  compute_combined_offsets();
+  compute_combined_periodic_offsets();
 
   /**
    * @brief Flag for periodic boundary conditions in simulation. Useful to
@@ -227,7 +227,7 @@ private:
    * vectors. Calculated from periodic_offsets. Initialized to identity (zero
    * offset) for compatibility with non-periodic geometry
    */
-  std::vector<Tensor<1, dim>> combined_offsets{Tensor<1, dim>()};
+  std::vector<Tensor<1, dim>> combined_periodic_offsets{Tensor<1, dim>()};
 };
 
 #endif
