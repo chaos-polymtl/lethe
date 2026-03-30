@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MINOR This PR adds the possibility to scale the solution of the time-harmonic Maxwell solver (which is always solved in a dimensionless form) with three different method `electric_field`, `magnetic_field` or `power` to recover the dimensionality according to user input. Prior to this PR the outputted solution was always dimensionless. This behavior can still be obtain by using the sclaing method `none`.[#1942](https://github.com/chaos-polymtl/lethe/pull/1942)
+- MINOR This PR adds the possibility to scale the solution of the time-harmonic Maxwell solver (which is always solved in a dimensionless form) with three different method `electric_field`, `magnetic_field` or `power` to recover the dimensionality according to user input. Prior to this PR the outputted solution was always dimensionless. This behavior can still be obtain by using the scaling method `none`.[#1942](https://github.com/chaos-polymtl/lethe/pull/1942)
 
 ### Added
 

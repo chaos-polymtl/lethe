@@ -112,9 +112,9 @@ namespace Parameters
    */
   enum class WaveguideMode : std::int8_t
   {
-    // Transverse Electric mode
+    /// Transverse Electric mode
     TE,
-    // Transverse Magnetic mode
+    /// Transverse Magnetic mode
     TM
   };
 
@@ -130,7 +130,7 @@ namespace Parameters
    * dimensionality of the problem.
    * - power: the solution will be scaled by the power given from the user input
    * parameter in waveguide inlets. This option is only relevant when there is
-   * at least one waveguide inlet in the problem. Note that it is the user
+   * at least one waveguide inlet in the problem. Note that it is the user's
    * responsibility to ensure that if the problem also applies non-zero electric
    * or magnetic field Dirichlet boundary conditions, those need to be scaled
    * accordingly.

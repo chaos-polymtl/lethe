@@ -795,7 +795,7 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
     prm.declare_entry(
       "electromagnetic scaling type",
       "none",
-      Patterns::Selection("none|electric_field|magnetic_field|power"),
+      Patterns::Selection("none|electric field|magnetic field|power"),
       "The type of electromagnetic scaling to apply to the solution of the time-harmonic Maxwell solver after solving the linear system. This is relevant when the user wants to recover the physical solution in dimensional units instead of the dimensionless solution used for better conditioning of the linear system.");
 
     prm.declare_entry(
@@ -974,7 +974,7 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
           AssertThrow(
             TimeHarmonicMaxwell::waveguide_power[inlet] > 0,
             ExcMessage(
-              "The waveguide power for inlet " + std::to_string(inlet) +
+              "The waveguide power for the inlet " + std::to_string(inlet) +
               " is zero. Please check the waveguide power parameter in the input prm file for this inlet. If you really want to have no excitation but an open boundary condition at this inlet, you should change the boundary condition type to the impedance boundary condition with zero excitation and the desired admittance."));
 
           prm.enter_subsection("waveguide mode");

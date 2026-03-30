@@ -596,7 +596,7 @@ private:
    * @param[in] boundary_id_index Index to identify to which waveguide port
    * condition we are applying the excitation. The default value is 0, which can
    * be used when there is only one waveguide port defined in the input file.
-   * @return This function returns a std::pair containing the waveguide excitation boundary condition Tensor<1, dim, std::complex<double>> and the surface admittance at the given position scaled by the maximum electric field intensity associated with the input power of the waveguide ports condition. If the
+   * @return This function returns a std::pair containing the waveguide excitation boundary condition Tensor<1, dim, std::complex<double>> and the surface admittance at the given position scaled by the maximum electric field intensity associated with the input power of the waveguide ports condition.
    */
   std::pair<Tensor<1, dim, std::complex<double>>, std::complex<double>>
   compute_waveguide_port_excitation(
@@ -635,7 +635,7 @@ private:
 
 
   /**
-   * @brief Compute the electromagnetic scaling factor used to non-dimensionalize the time-harmonic Maxwell system from the type of scaling required from the user. This is factor will be the electric field obtained :
+   * @brief Compute the electromagnetic scaling factor used to non-dimensionalize the time-harmonic Maxwell system from the type of scaling required from the user. This is factor will be based on the electric field and obtained :
    * - directly from parameters (if ElectromagneticScalingType::electric_field);
    * - by converting the magnetic field also obtained from parameters (if
    * ElectromagneticScalingType::magnetic_field);
@@ -864,14 +864,14 @@ private:
    */
   const FEValuesExtractors::Vector extractor_H_imag;
 
-  /*
+  /**
    * @brief The time-harmonic Maxwell DPG system of equation is solved in dimensionless form. However, to be able to recover the physical solution, the physical amplitude of the electromagnetic fields needs to be calculated from the input power provided and the associated scaling factor is the maximum of those field amplitudes across all the inlets in the problem. This way, the electromagnetic fields remain with an amplitude of order 1 (for the inlet with the highest input power) or less (for the other inlets) in the dimensionless system.
    *
    */
   double electromagnetic_scaling;
 
-  /*
-   * @brief A vector containing the electric amplitudes of the waveguide ports all the waveguide ports. It is define as the : \f$ \sqrt{P_input/P_port} \f$, where \f$P_input\f$ is the input power provided by the user for a given waveguide port and \f$P_port\f$ is the power computed from integrating the Poynting vector of the electromagnetic fields at the inlet associated with the waveguide port condition.
+  /**
+   * @brief A vector containing the electric amplitudes of all the waveguide ports. It is define as the : \f$ \sqrt{P_input/P_port} \f$, where \f$P_input\f$ is the input power provided by the user for a given waveguide port and \f$P_port\f$ is the power computed from integrating the Poynting vector of the electromagnetic fields at the inlet associated with the waveguide port condition.
    */
   std::vector<double> waveguide_ports_electric_amplitudes;
 };
