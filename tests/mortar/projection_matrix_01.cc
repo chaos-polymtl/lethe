@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -46,13 +46,13 @@ get_projection_matrix(const FiniteElement<dim, spacedim> &fe1,
   GridTools::scale(factor, tr_2);
 
   const auto &mapping =
-    reference_cell.template get_default_linear_mapping<dim, spacedim>();
+    reference_cell.template get_default_linear_mapping<spacedim>();
 
   // Choose a Gauss quadrature rule that is exact up to degree 2n-1
   const unsigned int degree = fe1.tensor_degree();
   Assert(degree != numbers::invalid_unsigned_int, ExcNotImplemented());
   const auto quadrature_2 =
-    reference_cell.get_gauss_type_quadrature<dim>(degree + 1);
+    reference_cell.template get_gauss_type_quadrature<dim>(degree + 1);
 
   std::vector<Point<dim>> points;
   for (const auto p : quadrature_2.get_points())
@@ -123,7 +123,7 @@ get_interpolation_matrix(const FiniteElement<dim, spacedim> &fe1,
   GridGenerator::reference_cell(tr_2, reference_cell);
 
   const auto &mapping =
-    reference_cell.template get_default_linear_mapping<dim, spacedim>();
+    reference_cell.template get_default_linear_mapping<spacedim>();
 
   const unsigned int nq = quadrature.size();
 
