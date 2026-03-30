@@ -18,6 +18,7 @@
 #include <dem/set_insertion_method.h>
 #include <dem/set_particle_particle_contact_force_model.h>
 #include <dem/set_particle_wall_contact_force_model.h>
+#include <dem/utilities.h>
 #include <dem/velocity_verlet_integrator.h>
 #include <dem/write_checkpoint.h>
 
@@ -147,32 +148,6 @@ DEMSolver<dim, PropertiesIndex>::setup_parameters()
   // Disable position integration
   disable_position_integration =
     parameters.model_parameters.disable_position_integration;
-}
-
-template <int dim, typename PropertiesIndex>
-void
-DEMSolver<dim, PropertiesIndex>::report_cell_size_to_particle_diameter_ratio()
-{
-  double min_vertex_distance = std::numeric_limits<double>::max();
-  for (const auto &cell : triangulation.active_cell_iterators())
-    if (cell->is_locally_owned())
-      min_vertex_distance =
-        std::min(min_vertex_distance, cell->minimum_vertex_distance());
-  min_vertex_distance =
-    Utilities::MPI::min(min_vertex_distance, mpi_communicator);
-  pcout << "Minimum vertex distance between cell vertices: " << std::scientific
-        << std::setprecision(3) << min_vertex_distance << ", ";
-  double ratio = min_vertex_distance / maximum_particle_diameter;
-  pcout << "Minimum cell size to maximum particle diameter ratio: "
-        << std::fixed << std::setprecision(2) << ratio << std::endl;
-
-  if (ratio < 1.0)
-    {
-      this->pcout
-        << "Warning: Minimum cell size is smaller than the maximum particle diameter. "
-        << "Consider coarsening the mesh to achieve a ratio larger than 1.2."
-        << std::endl;
-    }
 }
 
 template <int dim, typename PropertiesIndex>
@@ -853,7 +828,10 @@ DEMSolver<dim, PropertiesIndex>::solve()
             triangulation,
             parameters.boundary_conditions);
 
-  report_cell_size_to_particle_diameter_ratio();
+  report_cell_size_to_particle_diameter_ratio(triangulation,
+                                              maximum_particle_diameter,
+                                              pcout,
+                                              mpi_communicator);
 
   // Set up functions and pointers according to parameters
   setup_functions_and_pointers();
