@@ -7,10 +7,12 @@ DEM time step is 8.58114% of Rayleigh time step
 Reading triangulation
 
 Finished reading triangulation
-Minimum vertex distance between cell vertices: 7.997e-04, Minimum cell size to maximum particle diameter ratio: 4.00
+Minimum vertex distance between cell vertices: 0.000799721
+Minimum cell size to maximum particle diameter ratio: 3.9986
 
 Warning: Diamond-shaped cells were detected in the input triangulation. These cells have a vertex or edge shared with a wall, but not a face. It is strongly recommended to use a triangulation without such cells. If you wish to include them in the particle-wall contact list, set check_diamond_cells = true in the .prm file. Note: these cells are not detected when grid motion is enabled.
-Warning: expansion of particle-wall contact list is disabled. This feature is useful in geometries with concave boundaries. 
+Warning: expansion of particle-wall contact list is disabled. 
+This feature is useful in geometries with concave boundaries. 
 
 *****************************************************************
 Transient iteration: 1        Time: 1.5e-06  Time step: 1.5e-06 

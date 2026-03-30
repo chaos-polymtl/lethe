@@ -7,8 +7,10 @@ DEM time step is 2.31107% of Rayleigh time step
 Reading triangulation
 
 Finished reading triangulation
-Minimum vertex distance between cell vertices: 2.762e-02, Minimum cell size to maximum particle diameter ratio: 5.52
-Warning: expansion of particle-wall contact list is disabled. This feature is useful in geometries with concave boundaries. 
+Minimum vertex distance between cell vertices: 0.027625
+Minimum cell size to maximum particle diameter ratio: 5.525
+Warning: expansion of particle-wall contact list is disabled. 
+This feature is useful in geometries with concave boundaries. 
 *********************************************************************
 3 particles of type 0 were inserted, 6 particles of type 0 remaining
 *********************************************************************

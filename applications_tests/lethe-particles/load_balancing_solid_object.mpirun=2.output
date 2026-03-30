@@ -7,8 +7,10 @@ DEM time step is 2.78488% of Rayleigh time step
 Reading triangulation
 
 Finished reading triangulation
-Minimum vertex distance between cell vertices: 1.250e-02, Minimum cell size to maximum particle diameter ratio: 4.17
-Warning: expansion of particle-wall contact list is disabled. This feature is useful in geometries with concave boundaries. 
+Minimum vertex distance between cell vertices: 0.0125
+Minimum cell size to maximum particle diameter ratio: 4.16667
+Warning: expansion of particle-wall contact list is disabled. 
+This feature is useful in geometries with concave boundaries. 
 ************************************************************************
 1000 particles of type 0 were inserted, 0 particles of type 0 remaining
 ************************************************************************
@@ -24,8 +26,8 @@ Transient iteration: 1000     Time: 0.01     Time step: 1e-05
 | Rotational kinetic energy    | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 -->Repartitioning triangulation
 Load balance finished 
-Average, minimum and maximum number of particles on the processors are 500.00 , 0.00 and 1000.00
-Minimum and maximum number of cells owned by the processors are 2040.00 and 4028.00
+Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
+Minimum and maximum number of cells owned by the processors are 2040 and 4028
 
 *****************************************************************
 Transient iteration: 2000     Time: 0.02     Time step: 1e-05   
@@ -38,8 +40,8 @@ Transient iteration: 2000     Time: 0.02     Time step: 1e-05
 | Rotational kinetic energy    | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 -->Repartitioning triangulation
 Load balance finished 
-Average, minimum and maximum number of particles on the processors are 500.00 , 0.00 and 1000.00
-Minimum and maximum number of cells owned by the processors are 2040.00 and 4028.00
+Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
+Minimum and maximum number of cells owned by the processors are 2040 and 4028
 
 *****************************************************************
 Transient iteration: 3000     Time: 0.03     Time step: 1e-05   
@@ -52,8 +54,8 @@ Transient iteration: 3000     Time: 0.03     Time step: 1e-05
 | Rotational kinetic energy    | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
 -->Repartitioning triangulation
 Load balance finished 
-Average, minimum and maximum number of particles on the processors are 500.00 , 0.00 and 1000.00
-Minimum and maximum number of cells owned by the processors are 2040.00 and 4028.00
+Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
+Minimum and maximum number of cells owned by the processors are 2040 and 4028
 
 *****************************************************************
 Transient iteration: 4000     Time: 0.04     Time step: 1e-05   
@@ -66,8 +68,8 @@ Transient iteration: 4000     Time: 0.04     Time step: 1e-05
 | Rotational kinetic energy    | 0.0000e+00 | 7.9867e-07 | 1.4833e-08 | 1.4833e-05 | 
 -->Repartitioning triangulation
 Load balance finished 
-Average, minimum and maximum number of particles on the processors are 500.00 , 0.00 and 1000.00
-Minimum and maximum number of cells owned by the processors are 2040.00 and 4028.00
+Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
+Minimum and maximum number of cells owned by the processors are 2040 and 4028
 
 *****************************************************************
 Transient iteration: 5000     Time: 0.05     Time step: 1e-05   
@@ -80,8 +82,8 @@ Transient iteration: 5000     Time: 0.05     Time step: 1e-05
 | Rotational kinetic energy    | 0.0000e+00 | 1.2450e-06 | 5.3860e-08 | 5.3860e-05 | 
 -->Repartitioning triangulation
 Load balance finished 
-Average, minimum and maximum number of particles on the processors are 500.00 , 0.00 and 1000.00
-Minimum and maximum number of cells owned by the processors are 2040.00 and 4028.00
+Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
+Minimum and maximum number of cells owned by the processors are 2040 and 4028
 
 *****************************************************************
 Transient iteration: 6000     Time: 0.06     Time step: 1e-05   
@@ -94,8 +96,8 @@ Transient iteration: 6000     Time: 0.06     Time step: 1e-05
 | Rotational kinetic energy    | 0.0000e+00 | 1.2627e-06 | 6.2461e-08 | 6.2461e-05 | 
 -->Repartitioning triangulation
 Load balance finished 
-Average, minimum and maximum number of particles on the processors are 500.00 , 0.00 and 1000.00
-Minimum and maximum number of cells owned by the processors are 2040.00 and 4028.00
+Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
+Minimum and maximum number of cells owned by the processors are 2040 and 4028
 
 *****************************************************************
 Transient iteration: 7000     Time: 0.07     Time step: 1e-05   
@@ -108,8 +110,8 @@ Transient iteration: 7000     Time: 0.07     Time step: 1e-05
 | Rotational kinetic energy    | 0.0000e+00 | 1.7327e-06 | 7.3864e-08 | 7.3864e-05 | 
 -->Repartitioning triangulation
 Load balance finished 
-Average, minimum and maximum number of particles on the processors are 500.00 , 0.00 and 1000.00
-Minimum and maximum number of cells owned by the processors are 2040.00 and 4028.00
+Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
+Minimum and maximum number of cells owned by the processors are 2040 and 4028
 
 *****************************************************************
 Transient iteration: 8000     Time: 0.08     Time step: 1e-05   
@@ -122,8 +124,8 @@ Transient iteration: 8000     Time: 0.08     Time step: 1e-05
 | Rotational kinetic energy    | 0.0000e+00 | 1.8814e-06 | 1.0362e-07 | 1.0362e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
-Average, minimum and maximum number of particles on the processors are 500.00 , 0.00 and 1000.00
-Minimum and maximum number of cells owned by the processors are 2040.00 and 4028.00
+Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
+Minimum and maximum number of cells owned by the processors are 2040 and 4028
 
 *****************************************************************
 Transient iteration: 9000     Time: 0.09     Time step: 1e-05   
@@ -136,8 +138,8 @@ Transient iteration: 9000     Time: 0.09     Time step: 1e-05
 | Rotational kinetic energy    | 0.0000e+00 | 2.2478e-06 | 1.5445e-07 | 1.5445e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
-Average, minimum and maximum number of particles on the processors are 500.00 , 0.00 and 1000.00
-Minimum and maximum number of cells owned by the processors are 2040.00 and 4028.00
+Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
+Minimum and maximum number of cells owned by the processors are 2040 and 4028
 
 *****************************************************************
 Transient iteration: 10000    Time: 0.1      Time step: 1e-05   
@@ -150,8 +152,8 @@ Transient iteration: 10000    Time: 0.1      Time step: 1e-05
 | Rotational kinetic energy    | 4.1673e-18 | 3.0515e-06 | 1.9231e-07 | 1.9231e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
-Average, minimum and maximum number of particles on the processors are 500.00 , 0.00 and 1000.00
-Minimum and maximum number of cells owned by the processors are 2040.00 and 4028.00
+Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
+Minimum and maximum number of cells owned by the processors are 2040 and 4028
 
 *****************************************************************
 Transient iteration: 11000    Time: 0.11     Time step: 1e-05   
@@ -164,8 +166,8 @@ Transient iteration: 11000    Time: 0.11     Time step: 1e-05
 | Rotational kinetic energy    | 1.8283e-17 | 3.2506e-06 | 2.5938e-07 | 2.5938e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
-Average, minimum and maximum number of particles on the processors are 500.00 , 0.00 and 1000.00
-Minimum and maximum number of cells owned by the processors are 2040.00 and 4028.00
+Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
+Minimum and maximum number of cells owned by the processors are 2040 and 4028
 
 *****************************************************************
 Transient iteration: 12000    Time: 0.12     Time step: 1e-05   
@@ -178,8 +180,8 @@ Transient iteration: 12000    Time: 0.12     Time step: 1e-05
 | Rotational kinetic energy    | 1.8283e-17 | 4.5672e-06 | 3.0364e-07 | 3.0364e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
-Average, minimum and maximum number of particles on the processors are 500.00 , 0.00 and 1000.00
-Minimum and maximum number of cells owned by the processors are 2040.00 and 4028.00
+Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
+Minimum and maximum number of cells owned by the processors are 2040 and 4028
 
 *****************************************************************
 Transient iteration: 13000    Time: 0.13     Time step: 1e-05   
@@ -192,8 +194,8 @@ Transient iteration: 13000    Time: 0.13     Time step: 1e-05
 | Rotational kinetic energy    | 1.8283e-17 | 4.8521e-06 | 3.9046e-07 | 3.9046e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
-Average, minimum and maximum number of particles on the processors are 500.00 , 0.00 and 1000.00
-Minimum and maximum number of cells owned by the processors are 2040.00 and 4028.00
+Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
+Minimum and maximum number of cells owned by the processors are 2040 and 4028
 
 *****************************************************************
 Transient iteration: 14000    Time: 0.14     Time step: 1e-05   
@@ -206,8 +208,8 @@ Transient iteration: 14000    Time: 0.14     Time step: 1e-05
 | Rotational kinetic energy    | 1.8283e-17 | 3.7387e-06 | 4.6760e-07 | 4.6760e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
-Average, minimum and maximum number of particles on the processors are 500.00 , 0.00 and 1000.00
-Minimum and maximum number of cells owned by the processors are 2040.00 and 4028.00
+Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
+Minimum and maximum number of cells owned by the processors are 2040 and 4028
 
 *****************************************************************
 Transient iteration: 15000    Time: 0.15     Time step: 1e-05   
@@ -220,8 +222,8 @@ Transient iteration: 15000    Time: 0.15     Time step: 1e-05
 | Rotational kinetic energy    | 1.8283e-17 | 3.4488e-06 | 5.3411e-07 | 5.3411e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
-Average, minimum and maximum number of particles on the processors are 500.00 , 0.00 and 1000.00
-Minimum and maximum number of cells owned by the processors are 2040.00 and 4028.00
+Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
+Minimum and maximum number of cells owned by the processors are 2040 and 4028
 
 *****************************************************************
 Transient iteration: 16000    Time: 0.16     Time step: 1e-05   
@@ -234,8 +236,8 @@ Transient iteration: 16000    Time: 0.16     Time step: 1e-05
 | Rotational kinetic energy    | 8.6500e-10 | 4.0494e-06 | 5.2288e-07 | 5.2288e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
-Average, minimum and maximum number of particles on the processors are 500.00 , 0.00 and 1000.00
-Minimum and maximum number of cells owned by the processors are 2040.00 and 4028.00
+Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
+Minimum and maximum number of cells owned by the processors are 2040 and 4028
 
 *****************************************************************
 Transient iteration: 17000    Time: 0.17     Time step: 1e-05   
@@ -248,8 +250,8 @@ Transient iteration: 17000    Time: 0.17     Time step: 1e-05
 | Rotational kinetic energy    | 1.8858e-09 | 2.2955e-06 | 4.2702e-07 | 4.2702e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
-Average, minimum and maximum number of particles on the processors are 500.00 , 0.00 and 1000.00
-Minimum and maximum number of cells owned by the processors are 2040.00 and 4028.00
+Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
+Minimum and maximum number of cells owned by the processors are 2040 and 4028
 
 *****************************************************************
 Transient iteration: 18000    Time: 0.18     Time step: 1e-05   
@@ -262,8 +264,8 @@ Transient iteration: 18000    Time: 0.18     Time step: 1e-05
 | Rotational kinetic energy    | 1.0428e-09 | 2.5621e-06 | 3.8307e-07 | 3.8307e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
-Average, minimum and maximum number of particles on the processors are 500.00 , 0.00 and 1000.00
-Minimum and maximum number of cells owned by the processors are 2040.00 and 4028.00
+Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
+Minimum and maximum number of cells owned by the processors are 2040 and 4028
 
 *****************************************************************
 Transient iteration: 19000    Time: 0.19     Time step: 1e-05   
@@ -276,8 +278,8 @@ Transient iteration: 19000    Time: 0.19     Time step: 1e-05
 | Rotational kinetic energy    | 9.1404e-11 | 2.3828e-06 | 3.7784e-07 | 3.7784e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
-Average, minimum and maximum number of particles on the processors are 500.00 , 0.00 and 1000.00
-Minimum and maximum number of cells owned by the processors are 2040.00 and 4028.00
+Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
+Minimum and maximum number of cells owned by the processors are 2040 and 4028
 
 *****************************************************************
 Transient iteration: 20000    Time: 0.2      Time step: 1e-05   
@@ -290,5 +292,5 @@ Transient iteration: 20000    Time: 0.2      Time step: 1e-05
 | Rotational kinetic energy    | 3.5572e-10 | 2.9196e-06 | 3.7829e-07 | 3.7829e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
-Average, minimum and maximum number of particles on the processors are 500.00 , 0.00 and 1000.00
-Minimum and maximum number of cells owned by the processors are 2040.00 and 4028.00
+Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
+Minimum and maximum number of cells owned by the processors are 2040 and 4028
