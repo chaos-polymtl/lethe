@@ -10,8 +10,8 @@ Features
 
 - Solver: ``lethe-fluid`` (with Q1-Q1) 
 - Transient problem
-- Usage of different parameters related to the mortar method
-- Setup of boundary conditions in a gmsh file before using the mortar method 
+- Mortar method for rotating geometry
+- Usage of gmsh files with mortar method 
 
 
 
@@ -90,17 +90,17 @@ When using the mortar method, only the static mesh needs to be included in the `
 Mortar
 ~~~~~~
 
-The ``mortar`` subsection specifies all the parameters required to simulate a rotor-stator geometry using mortar elements to attach the two meshes. The ``mesh`` subsection embedded in the ``mortar`` subsection refers to the rotor domain and contains the same parameters described in :doc:`../../../parameters/cfd/mesh`. Due to the current implementation, it is important that the number of cells on both sides of the mortar interface, as well as the angular lenght of these cells, are equal, as different amount of cells will fail the mortar cells generation step.
+The ``mortar`` subsection specifies all the parameters required to simulate a rotor-stator geometry using mortar elements to attach the two meshes. The ``mesh`` subsection embedded in the ``mortar`` subsection refers to the rotor domain and contains the same parameters described in :doc:`../../../parameters/cfd/mesh`. Due to the current implementation, it is important that the number of cells on both sides of the mortar interface, as well as the angular length of these cells, are equal. The interface discretizations must also be geometrically aligned, which means each cell has a one-to-one match with aligned vertices on the other side. Different amount of cells on both sides or misalignment will fail the mortar cells generation step. 
 After the rotor geometry configuration, the boundary ids at the rotor-stator interface need to be specified. Other parameters related to the rotation of the rotor domain can also be modified (see the :doc:`../../../parameters/cfd/mortar` section for more details):
 
 - The ``center of rotation`` represents the coordinates around which the rotor domain will be rotating.
 - The ``rotor rotation angle`` subsection contains the expression for the rotation angle, which can either be constant or time-dependent.
 - The ``rotor angular velocity`` subsection contains the expression for the angular velocity of the rotor and needs to correspond to the time derivative of the ``rotor rotation angle``.
 
-We can now set ``verbosity`` to ``verbose`` to print information about the rotor rotation at every iteration. Lastly, we set the ``radius tolerance`` to 1e-6; every iteration, the radial distance between the center of rotation and every node at the rotor-stator interface is calculated to ensure that the difference between the maximum and minimum value is less than the tolerance. If this value exceeds the tolerance, the simulation will stop and an error message will be printed.
+We can now set ``verbosity`` to ``verbose`` to print information about the rotor rotation at every iteration. Lastly, we set the ``radius tolerance`` to 1e-6; every iteration, the radial distance between the center of rotation and every node at the rotor-stator interface is calculated to ensure that the difference between the maximum and minimum value is less than the tolerance. If this value exceeds the tolerance, the simulation will stop and an error message will be printed. This constraint serves as a sanity check : theoretically, all nodes at the rotor-stator interface should be at the same distance from the center of rotation. This check could fail for multiple reasons, such as a missing manifold setup for the circular interface, a misassignment of the mortar boundary ids or a insufficient precision in the mesh file.
 
 .. note::
-    When creating the ``.msh`` files from the ``.step`` files, the boundary ids need to be unique for the rotor and stator domains. For example, if the boundary id for the rotor-stator interface is 3 in the rotor mesh, it should be 4 in the stator mesh. This way, both boundaries can be specified in the ``mortar`` subsection without any conflict. As of today, a manual modification of the ``.msh`` files may be required to achieve this. It is important to note that the boundary ids at the rotor-stator interface do not need to be sequential, as the only requirement is that they are different on each side of the interface.
+    When creating the ``.msh`` files from the ``.step`` files, the boundary ids need to be unique for the rotor and stator domains. For example, if the boundary id for the rotor-stator interface is 3 in the rotor mesh, it should be 4 in the stator mesh. This way, both boundaries can be specified in the ``mortar`` subsection without any conflict. As of today, a manual modification of the ``.msh`` files may be required to achieve this. It is important to note that the boundary ids for the rotor and stator interface do not need to be sequential, as the only requirement is that they are unique.
 
 .. code-block:: text
 
@@ -126,7 +126,7 @@ We can now set ``verbosity`` to ``verbose`` to print information about the rotor
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~
 
-Both the outside wall (ID 5) and the baffle (ID 6) have a no-slip Dirichlet boundary condition. The mortar boundaries (ID 3 and 4) are already defined in the ``mortar`` subsection, so a ``none`` boundary condition is assigned to them here. Finally, the velocity of the fluid at the impeller (ID 2) is defined with the functions :math:`u=-\Omega y` and :math:`v=\Omega x`, where :math:`\Omega` is the angular velocity of the impeller, defined as 1 in the ``mortar`` subsection. 
+Both the outside wall (ID 5) and the baffle (ID 6) have a no-slip Dirichlet boundary condition. The mortar boundaries (ID 3 and 4) are already defined in the ``mortar`` subsection, so a ``none`` boundary condition is assigned to them here. Finally, the velocity of the fluid at the impeller (ID 2) is defined with the functions :math:`u=-\omega y` and :math:`v=\omega x`, where :math:`\omega` is the angular velocity of the impeller, defined as 1 in the ``mortar`` subsection. 
 
 .. code-block:: text
 
@@ -206,7 +206,7 @@ Assuming that the ``lethe-fluid`` executable is within your path, the simulation
 
   mpirun -np X lethe-fluid paddle_mixer_mortar.prm
 
-with X the number of processors used to run it.
+with X the number of processors used to run it. The simulation is not extensively long; it takes approximately 8 minutes on 1 core of a AMD Ryzen 9 5900X 12-Core Processor.
 Lethe will generate a number of files. The most important one bears the extension ``.pvd``. It can be read by visualization programs such as `Paraview <https://www.paraview.org/>`_.
 
 
