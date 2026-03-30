@@ -97,6 +97,23 @@ NewtonNonLinearSolverStrategy<VectorType>::solve()
                         << "  - Residual:  " << current_res << std::endl;
         }
 
+      {
+        const double assembled_res =
+          solver->get_system_rhs().l2_norm() / rescale_metric;
+        if (assembled_res <= this->params.tolerance)
+          {
+            current_res = assembled_res;
+            auto &newton_update = solver->get_newton_update();
+            newton_update       = 0;
+
+            global_res       = solver->get_current_residual() / rescale_metric;
+            present_solution = evaluation_point;
+            last_res         = current_res;
+            ++this->outer_iteration;
+            continue;
+          }
+      }
+
       solver->solve_linear_system();
       double last_alpha_res = current_res;
 
