@@ -4079,9 +4079,8 @@ namespace Parameters
       prm.enter_subsection("local mesh refinement");
       {
         initial_refinement = prm.get_integer("initial refinement");
-        enable_coarsening =
-          prm.get_bool("enable distance based coarsening");
-        inside_radius = prm.get_double("refine mesh inside radius factor");
+        enable_coarsening  = prm.get_bool("enable distance based coarsening");
+        inside_radius      = prm.get_double("refine mesh inside radius factor");
         outside_radius = prm.get_double("refine mesh outside radius factor");
         coarsening_factor =
           prm.get_double("coarsen mesh outside radius factor");
