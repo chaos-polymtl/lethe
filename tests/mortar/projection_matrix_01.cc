@@ -56,7 +56,7 @@ get_projection_matrix(const FiniteElement<dim, spacedim> &fe1,
     reference_cell.get_gauss_type_quadrature(degree + 1);
 #else
   const auto quadrature_2 =
-    reference_cell.get_gauss_type_quadrature<dim>(degree + 1);
+    reference_cell.template get_gauss_type_quadrature<dim>(degree + 1);
 #endif
 
   std::vector<Point<dim>> points;
