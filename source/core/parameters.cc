@@ -4086,10 +4086,13 @@ namespace Parameters
           prm.get_double("coarsen mesh outside radius factor");
         time_extrapolation_of_refinement_zone =
           prm.get_bool("refinement zone extrapolation");
-        AssertThrow(
-          coarsening_factor >= outside_radius,
-          ExcMessage(
-            "The parameter 'coarsen mesh outside radius factor' must be greater than or equal to 'refine mesh outside radius factor'."));
+        if (enable_coarsening)
+          {
+            AssertThrow(
+              coarsening_factor >= outside_radius,
+              ExcMessage(
+                "The parameter 'coarsen mesh outside radius factor' must be greater than or equal to 'refine mesh outside radius factor'."));
+          }
         prm.leave_subsection();
       }
 
