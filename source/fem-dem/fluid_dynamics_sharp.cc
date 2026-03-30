@@ -882,6 +882,9 @@ FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
     {
       if (cell->is_locally_owned())
         {
+          bool cell_can_be_coarsened =
+            this->simulation_parameters.particlesParameters->enable_coarsening;
+
           cell->get_dof_indices(local_dof_indices);
           for (unsigned int p = 0; p < particles.size(); ++p)
             {
@@ -918,6 +921,8 @@ FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
               // point on the boundary is contained in the cell.
               bool cell_as_ib_inside =
                 cell->point_inside(particles[p].position + r);
+              bool cell_is_near_particle_for_coarsening = false;
+
               for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
                 {
                   // Only check the dof of velocity in x.
@@ -958,8 +963,26 @@ FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
                                    // radius relative distance definition
                             cell);
                         }
+
+                      if (cell_can_be_coarsened)
+                        {
+                          const double coarsening_distance =
+                            particles[p].shape->value_with_cell_guess(
+                              support_points[local_dof_indices[j]], cell);
+                          const double coarsening_threshold =
+                            particles[p].shape->effective_radius *
+                            (this->simulation_parameters.particlesParameters
+                               ->coarsening_factor -
+                             1);
+
+                          if (coarsening_distance <= coarsening_threshold)
+                            cell_is_near_particle_for_coarsening = true;
+                        }
+
                       if (is_inside_crown)
-                        ++count_small;
+                        {
+                          ++count_small;
+                        }
                     }
                 }
 
@@ -970,12 +993,19 @@ FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
                   particles[p].set_position(particles[p].position);
                   particles[p].set_orientation(particles[p].orientation);
                 }
+
+              if (cell_as_ib_inside || cell_is_near_particle_for_coarsening)
+                cell_can_be_coarsened = false;
+
               if (count_small > 0 || cell_as_ib_inside)
                 {
                   cell->set_refine_flag();
                   break;
                 }
             }
+
+          if (cell_can_be_coarsened && !cell->refine_flag_set())
+            cell->set_coarsen_flag();
         }
     }
 }
