@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MINOR This PR adds a 2 dimensional example using the mortar method, named "Paddle Mixer Using the Mortar Method". [#1939](https://github.com/chaos-polymtl/lethe/pull/1939)
+- MAJOR This PR adds a 2 dimensional example using the mortar method, named "Paddle Mixer Using the Mortar Method". [#1939](https://github.com/chaos-polymtl/lethe/pull/1939)
 
 ### Fixed
 
