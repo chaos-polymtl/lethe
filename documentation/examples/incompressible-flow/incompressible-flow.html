@@ -238,6 +238,7 @@
 <li class="toctree-l3"><a class="reference internal" href="2d-naca0012-low-reynolds/2d-naca0012-low-reynolds.html">Flow around NACA0012 at Low Reynolds Number</a></li>
 <li class="toctree-l3"><a class="reference internal" href="2d-taylor-couette-flow-nitsche/2d-taylor-couette-flow-nitsche.html">Taylor-Couette Flow Using Nitsche Immersed Boundary</a></li>
 <li class="toctree-l3"><a class="reference internal" href="2d-sudden-expansion-flow/2d-sudden-expansion-flow.html">Sudden-Expansion Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2d-paddle-mixer-mortar/2d-paddle-mixer-mortar.html">Paddle Mixer Using the Mortar Method</a></li>
 <li class="toctree-l3"><a class="reference internal" href="3d-flow-around-sphere/flow-around-sphere.html">Flow around a Sphere</a></li>
 <li class="toctree-l3"><a class="reference internal" href="3d-taylor-green-vortex/3d-taylor-green-vortex.html">Taylor-Green Vortex</a></li>
 <li class="toctree-l3"><a class="reference internal" href="3d-turbulent-taylor-couette/3d-turbulent-taylor-couette.html">Turbulent Taylor-Couette Flow</a></li>
@@ -446,7 +447,7 @@
 <h1>Incompressible Flow<a class="headerlink" href="#incompressible-flow" title="Link to this heading">#</a></h1>
 <div class="toctree-wrapper compound">
 </div>
-<div class="graphviz"><img src="../../_images/graphviz-9e554544c4e94d363d8cc3d740be40ca287477bd.png" alt="digraph incompressible_diagram {
+<div class="graphviz"><img src="../../_images/graphviz-3d3a59b805c7fcc3190c8ee09c7be7a60a6fe66b.png" alt="digraph incompressible_diagram {
   graph [bgcolor=&quot;transparent&quot;, align=true, ranksep=1.5];
   node [fontname=Arial, fontsize=20, shape=box, fontcolor=royalblue, color=royalblue,height=1];
   edge [color=royalblue];
@@ -487,6 +488,8 @@
 
   incompressible_1_10 [label=&quot;Sudden-Expansion Flow&quot;, href=&quot;https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-sudden-expansion-flow/2d-sudden-expansion-flow.html&quot;];
 
+  incompressible_1_11 [label=&quot;Paddle Mixer Using \nthe Mortar Method&quot;, href=&quot;https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-paddle-mixer-mortar/2d-paddle-mixer-mortar.html&quot;, tooltip=&quot;Paddle Mixer Mortar Method&quot;];
+
 
   incompressible_2 [label=&quot;3D&quot;,shape=polygon,sides=4];
 
@@ -517,6 +520,7 @@
   incompressible_1 -&gt; incompressible_1_8:w;
   incompressible_1 -&gt; incompressible_1_9:w;
   incompressible_1 -&gt; incompressible_1_10:w;
+  incompressible_1 -&gt; incompressible_1_11:w;
   incompressible_2 -&gt; incompressible_2_1:w;
   incompressible_2 -&gt; incompressible_2_2:w;
   incompressible_2 -&gt; incompressible_2_3:w;
@@ -526,24 +530,25 @@
   incompressible_2 -&gt; incompressible_2_7:w;
 }" usemap="#incompressible_diagram" class="graphviz" /></div>
 <map id="incompressible_diagram" name="incompressible_diagram">
-<area shape="rect" id="node2" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/incompressible-flow.html" title="Incompressible \nFlow" alt="" coords="19,450,108,491"/>
-<area shape="rect" id="node5" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-lid-driven-cavity-flow/lid-driven-cavity-flow.html" title="Lid&#45;Driven Cavity Flow" alt="" coords="329,2,451,43"/>
-<area shape="rect" id="node6" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html" title="Flow around a Cylinder" alt="" coords="327,53,453,94"/>
-<area shape="rect" id="node7" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html" title="Taylor&#45;Couette Flow" alt="" coords="335,105,445,146"/>
-<area shape="rect" id="node8" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-mms/2d-mms.html" title="Method of Manufactured Solutions" alt="" coords="299,156,481,197"/>
-<area shape="rect" id="node9" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-backward-facing-step/2d-backward-facing-step.html" title="Flow past a Backward&#45;Facing Step" alt="" coords="298,207,482,248"/>
-<area shape="rect" id="node10" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-transient-flow-around-ahmed-body/2d-transient-flow-around-ahmed-body.html" title="Transient Flow around an Ahmed Body" alt="" coords="287,258,493,299"/>
-<area shape="rect" id="node11" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-transient-flow-around-cylinder/2d-transient-flow-around-cylinder.html" title="Transient Flow around a Cylinder" alt="" coords="302,309,478,350"/>
-<area shape="rect" id="node12" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-naca0012-low-reynolds/2d-naca0012-low-reynolds.html" title="Flow around NACA0012 at low Reynolds number" alt="" coords="322,360,457,401"/>
-<area shape="rect" id="node13" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-taylor-couette-flow-nitsche/2d-taylor-couette-flow-nitsche.html" title="Taylor&#45;Couette flow using Nitsche immersed boundary" alt="" coords="313,412,466,452"/>
-<area shape="rect" id="node14" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-sudden-expansion-flow/2d-sudden-expansion-flow.html" title="Sudden&#45;Expansion Flow" alt="" coords="323,463,456,504"/>
-<area shape="rect" id="node16" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-flow-around-sphere/flow-around-sphere.html" title="Flow around a Sphere" alt="" coords="329,514,450,555"/>
-<area shape="rect" id="node17" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-taylor-green-vortex/3d-taylor-green-vortex.html" title="Taylor&#45;Green Vortex" alt="" coords="335,565,445,606"/>
-<area shape="rect" id="node18" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-turbulent-taylor-couette/3d-turbulent-taylor-couette.html" title="Turbulent Taylor&#45;Couette" alt="" coords="323,616,457,657"/>
-<area shape="rect" id="node19" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-flow-over-periodic-hills/3d-flow-over-periodic-hills.html" title="Flow over Periodic Hills" alt="" coords="326,667,453,708"/>
-<area shape="rect" id="node20" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-turbulent-flow-around-cylinder/3d-turbulent-flow-around-cylinder.html" title="Turblent Flow Around a Cylinder" alt="" coords="304,718,475,759"/>
-<area shape="rect" id="node21" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-mixer-using-single-rotating-frame/3d-mixer-using-single-rotating-frame.html" title="Ribbon mixer using a single rotating reference frame" alt="" coords="312,770,468,811"/>
-<area shape="rect" id="node22" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller.html" title="Mixer with pitched&#45;blade turbine impeller using Nitsche immersed boundary" alt="" coords="279,821,501,862"/>
+<area shape="rect" id="node2" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/incompressible-flow.html" title="Incompressible \nFlow" alt="" coords="18,449,102,487"/>
+<area shape="rect" id="node5" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-lid-driven-cavity-flow/lid-driven-cavity-flow.html" title="Lid&#45;Driven Cavity Flow" alt="" coords="310,2,426,41"/>
+<area shape="rect" id="node6" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html" title="Flow around a Cylinder" alt="" coords="308,50,427,89"/>
+<area shape="rect" id="node7" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html" title="Taylor&#45;Couette Flow" alt="" coords="316,99,420,137"/>
+<area shape="rect" id="node8" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-mms/2d-mms.html" title="Method of Manufactured Solutions" alt="" coords="282,147,454,186"/>
+<area shape="rect" id="node9" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-backward-facing-step/2d-backward-facing-step.html" title="Flow past a Backward&#45;Facing Step" alt="" coords="281,195,455,234"/>
+<area shape="rect" id="node10" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-transient-flow-around-ahmed-body/2d-transient-flow-around-ahmed-body.html" title="Transient Flow around an Ahmed Body" alt="" coords="271,244,465,282"/>
+<area shape="rect" id="node11" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-transient-flow-around-cylinder/2d-transient-flow-around-cylinder.html" title="Transient Flow around a Cylinder" alt="" coords="285,292,451,331"/>
+<area shape="rect" id="node12" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-naca0012-low-reynolds/2d-naca0012-low-reynolds.html" title="Flow around NACA0012 at low Reynolds number" alt="" coords="304,340,432,379"/>
+<area shape="rect" id="node13" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-taylor-couette-flow-nitsche/2d-taylor-couette-flow-nitsche.html" title="Taylor&#45;Couette flow using Nitsche immersed boundary" alt="" coords="296,389,440,427"/>
+<area shape="rect" id="node14" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-sudden-expansion-flow/2d-sudden-expansion-flow.html" title="Sudden&#45;Expansion Flow" alt="" coords="305,437,431,475"/>
+<area shape="rect" id="node15" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-paddle-mixer-mortar/2d-paddle-mixer-mortar.html" title="Paddle Mixer Mortar Method" alt="" coords="316,485,420,524"/>
+<area shape="rect" id="node17" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-flow-around-sphere/flow-around-sphere.html" title="Flow around a Sphere" alt="" coords="310,533,425,572"/>
+<area shape="rect" id="node18" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-taylor-green-vortex/3d-taylor-green-vortex.html" title="Taylor&#45;Green Vortex" alt="" coords="316,582,420,620"/>
+<area shape="rect" id="node19" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-turbulent-taylor-couette/3d-turbulent-taylor-couette.html" title="Turbulent Taylor&#45;Couette" alt="" coords="305,630,431,669"/>
+<area shape="rect" id="node20" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-flow-over-periodic-hills/3d-flow-over-periodic-hills.html" title="Flow over Periodic Hills" alt="" coords="308,678,428,717"/>
+<area shape="rect" id="node21" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-turbulent-flow-around-cylinder/3d-turbulent-flow-around-cylinder.html" title="Turblent Flow Around a Cylinder" alt="" coords="287,727,449,765"/>
+<area shape="rect" id="node22" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-mixer-using-single-rotating-frame/3d-mixer-using-single-rotating-frame.html" title="Ribbon mixer using a single rotating reference frame" alt="" coords="294,775,441,814"/>
+<area shape="rect" id="node23" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-nitsche-mixer-with-pbt-impeller/nitsche-mixer-with-pbt-impeller.html" title="Mixer with pitched&#45;blade turbine impeller using Nitsche immersed boundary" alt="" coords="263,823,473,862"/>
 </map></section>
 
         </article>

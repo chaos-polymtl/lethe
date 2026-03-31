@@ -238,6 +238,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../2d-naca0012-low-reynolds/2d-naca0012-low-reynolds.html">Flow around NACA0012 at Low Reynolds Number</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../2d-taylor-couette-flow-nitsche/2d-taylor-couette-flow-nitsche.html">Taylor-Couette Flow Using Nitsche Immersed Boundary</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../2d-sudden-expansion-flow/2d-sudden-expansion-flow.html">Sudden-Expansion Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../2d-paddle-mixer-mortar/2d-paddle-mixer-mortar.html">Paddle Mixer Using the Mortar Method</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../3d-flow-around-sphere/flow-around-sphere.html">Flow around a Sphere</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../3d-taylor-green-vortex/3d-taylor-green-vortex.html">Taylor-Green Vortex</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../3d-turbulent-taylor-couette/3d-turbulent-taylor-couette.html">Turbulent Taylor-Couette Flow</a></li>
@@ -465,7 +466,7 @@
 <section id="description-of-the-case">
 <h2>Description of the Case<a class="headerlink" href="#description-of-the-case" title="Link to this heading">#</a></h2>
 <p>We simulate the flow around a fixed cylinder with a constant upstream fluid velocity. We re-use the geometry and mesh presented in <a class="reference external" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-flow-around-cylinder/2d-flow-around-cylinder.html">2D Flow around a cylinder</a>, which were taken from Blais <em>et al.</em> <a class="footnote-reference brackets" href="#blais2016" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>:</p>
-<img alt="The geometry" class="align-center" id="geometry-description" src="../../../_images/geometry-description1.png" />
+<img alt="The geometry" class="align-center" id="geometry-description" src="../../../_images/geometry-description2.png" />
 <p>The flow field features a stable laminar boundary layer at the cylinder leading edge and a recirculation zone behind it formed by two unstable vortices of opposite signs. These vortices successively detach from the cylinder in a periodic manner (vortex shedding), leading to the generation of the von Kármán vortex street pattern in the wake. This vortex shedding causes a fluctuating pressure force acting on the cylinder, resulting in oscillations of the drag and lift coefficients in time. The frequency of vortex shedding is related to the Strouhal number:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
