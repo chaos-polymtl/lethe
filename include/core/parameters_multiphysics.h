@@ -14,6 +14,8 @@
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/utilities.h>
 
+#include <algorithm>
+
 using namespace dealii;
 
 namespace Parameters
@@ -102,14 +104,43 @@ namespace Parameters
   };
 
   /**
-   * @brief Types of waveguide port mode.
+   * @brief Types of waveguide port modes:
+   * - Transverse Electric (TE): the electric field is transverse to the
+   * direction of propagation.
+   * - Transverse Magnetic (TM): the magnetic field is transverse to the
+   * direction of propagation.
    */
   enum class WaveguideMode : std::int8_t
   {
-    // Transverse Electric mode
+    /// Transverse Electric mode
     TE,
-    // Transverse Magnetic mode
+    /// Transverse Magnetic mode
     TM
+  };
+
+  /**
+   * @brief Type of electromagnetic scaling to apply to the solution of the time-harmonic Maxwell solver after solving the linear system. This is relevant when the user wants to recover the physical solution in dimensional units from  the dimensionless solution.
+   * - none: no scaling will be applied to the solution after solving the linear
+   * system, so the solution will be in dimensionless units.
+   * - electric_field: the solution will be scaled by the electric scaling
+   * factor given from the user input parameter. This factor needs to match the
+   * dimensionality of the problem.
+   * - magnetic_field: the solution will be scaled by the magnetic scaling
+   * factor given from the user input parameter. This factor needs to match the
+   * dimensionality of the problem.
+   * - power: the solution will be scaled by the power given from the user input
+   * parameter in waveguide inlets. This option is only relevant when there is
+   * at least one waveguide inlet in the problem. Note that it is the user's
+   * responsibility to ensure that if the problem also applies non-zero electric
+   * or magnetic field Dirichlet boundary conditions, those need to be scaled
+   * accordingly.
+   */
+  enum class ElectromagneticScalingType : std::int8_t
+  {
+    none,
+    electric_field,
+    magnetic_field,
+    power
   };
 
   /**
@@ -411,6 +442,26 @@ namespace Parameters
     // Boundary ids where waveguide ports are applied so the port can be linked
     // to the right boundary
     std::vector<int> waveguide_boundary_ids;
+
+    // Waveguide power (in W) to be able to link the amplitude of the
+    // electromagnetic wave to the power injected in the waveguide
+    std::vector<double> waveguide_power;
+
+    // Electric field amplitude used for the normalization of the solution
+    double electric_field_amplitude;
+
+    // Magnetic field amplitude used for the normalization of the solution
+    double magnetic_field_amplitude;
+
+    // Type of scaling to apply to the solution after solving the linear system
+    Parameters::ElectromagneticScalingType electromagnetic_scaling_type;
+
+    // When the scaling is applied, we need to know the dimensionality of the
+    // electric and magnetic fields to be able to recover the physical solution
+    // from the dimensionless one. Those parameters are used for that purpose
+    // and stores the value obtain from the dimensionality class.
+    double electric_field_dimensionality;
+    double magnetic_field_dimensionality;
 
     // Waveguide mode to simulate (TE|TM)
     std::vector<Parameters::WaveguideMode> waveguide_mode;
