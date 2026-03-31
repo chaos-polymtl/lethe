@@ -4,7 +4,8 @@
 #-------------------------------------------------------------------------------
 # DESCRIPTION:
 # This test checks that Sharp-IB particle-wall contact uses translational DEM
-# wall boundary conditions.
+# wall boundary conditions by applying tangential wall motion to a frictional
+# particle-wall contact.
 #-------------------------------------------------------------------------------
 
 set dimension = 2
@@ -123,6 +124,9 @@ subsection particles
     subsection gravity
       set Function expression = 0;0
     end
+    subsection wall physical properties
+      set wall friction coefficient = 0.5
+    end
   end
 
   subsection particle info 0
@@ -141,7 +145,8 @@ subsection particles
     set shape arguments   = 0.75
 
     subsection physical properties
-      set density = 0.0011
+      set density              = 0.0011
+      set friction coefficient = 0.5
     end
   end
 end
@@ -151,16 +156,16 @@ end
 #---------------------------------------------------
 
 subsection mesh adaptation
-  set fraction coarsening = 0.4
-  set fraction refinement = 0.05
-  set fraction type       = number
-  set frequency           = 1
-  set max number elements = 75000
+  set fraction coarsening  = 0.4
+  set fraction refinement  = 0.05
+  set fraction type        = number
+  set frequency            = 1
+  set max number elements  = 75000
   set max refinement level = 3
   set min refinement level = 0
-  set type                = adaptive
-  set error estimator     = kelly
-  set variable            = velocity
+  set type                 = adaptive
+  set error estimator      = kelly
+  set variable             = velocity
 end
 
 #---------------------------------------------------
