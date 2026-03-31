@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/03/30
+
+### Added
+
+- MINOR Added optional distance-based coarsening for Sharp-IB local mesh refinement through the parameters `enable distance based coarsening` and `coarsen mesh outside radius factor`, together with documentation and an application test. [#1956](https://github.com/chaos-polymtl/lethe/pull/1956)
+
 ## [Master] - 2026/03/26
 
 ### Added
@@ -157,4 +163,3 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 
 - MAJOR/MINOR/PATCH Description (#PR).
-
