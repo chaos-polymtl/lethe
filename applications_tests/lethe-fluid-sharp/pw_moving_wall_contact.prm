@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2022-2023, 2026 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #-------------------------------------------------------------------------------
@@ -7,7 +7,7 @@
 # wall boundary conditions.
 #-------------------------------------------------------------------------------
 
-set dimension = 3
+set dimension = 2
 
 #---------------------------------------------------
 # Simulation Control
@@ -56,7 +56,7 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
-  set grid arguments     = 5,8,5: 0,0,0 : 10 , 16 ,10 : true
+  set grid arguments     = 5,8: 0,0 : 10,16 : true
   set initial refinement = 1
 end
 
@@ -65,7 +65,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 6
+  set number = 4
   subsection bc 0
     set id   = 0
     set type = noslip
@@ -79,14 +79,6 @@ subsection boundary conditions
     set type = noslip
   end
   subsection bc 3
-    set id   = 4
-    set type = noslip
-  end
-  subsection bc 4
-    set id   = 5
-    set type = noslip
-  end
-  subsection bc 5
     set id   = 3
     set type = outlet
     set beta = 0
@@ -102,7 +94,7 @@ subsection DEM boundary conditions
   subsection boundary condition 0
     set boundary id = 2
     set type        = translational
-    set speed x     = 1
+    set speed x     = 10
     set speed y     = 0
     set speed z     = 0
   end
@@ -121,7 +113,7 @@ subsection particles
   end
 
   subsection local mesh refinement
-    set initial refinement                = 3
+    set initial refinement                = 2
     set refine mesh inside radius factor  = 0.5
     set refine mesh outside radius factor = 1.5
   end
@@ -129,22 +121,22 @@ subsection particles
   subsection DEM
     set enable lubrication force = false
     subsection gravity
-      set Function expression = 0;-981;0
+      set Function expression = 0;0
     end
   end
 
   subsection particle info 0
     set integrate motion = true
     subsection position
-      set Function expression = 5;0.82;5
+      set Function expression = 5;0.72
     end
     subsection velocity
-      set Function expression = 0;-12;0
+      set Function expression = 0;0
     end
     subsection omega
       set Function expression = 0;0;0
     end
-    set pressure location = 0.00001; 0.00001; 0.00001
+    set pressure location = 0.00001; 0.00001
     set type              = sphere
     set shape arguments   = 0.75
 
@@ -210,23 +202,4 @@ subsection restart
   set filename   = check_point
   set frequency  = 1
   set restart    = false
-end
-
-#---------------------------------------------------
-# Linear Solver Control
-#---------------------------------------------------
-
-subsection linear solver
-  subsection fluid dynamics
-    set method                                    = gmres
-    set max iters                                 = 1000
-    set relative residual                         = 1e-3
-    set minimum residual                          = 1e-11
-    set preconditioner                            = ilu
-    set ilu preconditioner fill                   = 0
-    set ilu preconditioner absolute tolerance     = 1e-20
-    set ilu preconditioner relative tolerance     = 1.00
-    set verbosity                                 = quiet
-    set max krylov vectors                        = 1000
-  end
 end

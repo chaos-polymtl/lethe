@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_ib_particles_dem_h
@@ -84,9 +84,9 @@ public:
   void
   initialize(const std::shared_ptr<Parameters::IBParticles<dim>> &p_nsparam,
              const std::shared_ptr<Parameters::Lagrangian::FloatingWalls<dim>>
-                                                 floating_walls_parameters,
+               floating_walls_parameters,
              const std::shared_ptr<Parameters::Lagrangian::BCDEM>
-                                                 &boundary_conditions_parameters,
+                                                &boundary_conditions_parameters,
              const MPI_Comm                     &mpi_communicator_input,
              const std::vector<IBParticle<dim>> &particles);
 
@@ -233,9 +233,12 @@ public:
                                  std::vector<Tensor<1, 3>> &lubrication_torque);
 
   /**
-   * @brief  Updates the boundary cells that are contact candidates for each of the particles.The force is based on the formula from
-   *  Microhydrodynamics: Principles and Selected Applications by Kim, Sangtae;
-   * Karrila, Seppo J. ISBN 13: 9780750691734
+   * @brief Update the boundary cells that are contact candidates for each
+   * particle.
+   *
+   * The wall-contact search relies on the lubrication/contact model described
+   * in Microhydrodynamics: Principles and Selected Applications by Kim,
+   * Sangtae and Karrila, Seppo J. ISBN 13: 9780750691734.
    *
    * @param particles The particles vector containing all the IB particles.
    * @param dof_handler The dof handler of the mesh used for the fluid simulation.
@@ -283,10 +286,10 @@ private:
    */
   void
   get_wall_motion(const types::boundary_id boundary_id,
-                  const Point<dim>  &point_on_boundary,
-                  Tensor<1, 3>      &wall_velocity,
-                  Tensor<1, 3>      &wall_angular_velocity,
-                  Point<dim>        &wall_center_of_rotation) const;
+                  const Point<dim>        &point_on_boundary,
+                  Tensor<1, 3>            &wall_velocity,
+                  Tensor<1, 3>            &wall_angular_velocity,
+                  Point<dim>              &wall_center_of_rotation) const;
 
   // A struct to store boundary cells' information
   struct BoundaryCellsInfo
@@ -303,8 +306,8 @@ private:
         }
     }
 
-    Tensor<1, dim> normal_vector;
-    Point<dim>     point_on_boundary;
+    Tensor<1, dim>     normal_vector;
+    Point<dim>         point_on_boundary;
     types::boundary_id boundary_index;
   };
 
@@ -314,11 +317,6 @@ private:
   {
     double value = DBL_MAX;
   };
-  struct DefaultUINT_MAX
-  {
-    int value = UINT_MAX;
-  };
-
   // This enum defines the lowest index of a floating wall in the particle wall
   // contact. This prevents a wall floating wall from shearing the same index as
   // a standard boundary.
@@ -329,11 +327,10 @@ private:
 
   std::shared_ptr<Parameters::IBParticles<dim>> parameters;
   std::shared_ptr<Parameters::Lagrangian::FloatingWalls<dim>>
-                           floating_walls_parameters;
-  std::shared_ptr<Parameters::Lagrangian::BCDEM>
-    boundary_conditions_parameters;
-  DEMSolverParameters<dim> dem_parameters{};
-  MPI_Comm                 mpi_communicator;
+                                                 floating_walls_parameters;
+  std::shared_ptr<Parameters::Lagrangian::BCDEM> boundary_conditions_parameters;
+  DEMSolverParameters<dim>                       dem_parameters{};
+  MPI_Comm                                       mpi_communicator;
 
   std::vector<std::set<unsigned int>> particles_contact_candidates;
 
@@ -345,10 +342,11 @@ private:
 
   // Particles contact history
   std::map<unsigned int, std::map<unsigned int, ContactInfo>> pp_contact_map;
-  std::map<unsigned int, std::map<unsigned int, ContactInfo>> pw_contact_map;
+  std::map<unsigned int, std::map<types::boundary_id, ContactInfo>>
+    pw_contact_map;
 
   // A vector of vectors of candidate cells for each of the particle.
-  std::vector<std::map<unsigned int, BoundaryCellsInfo>> boundary_cells;
+  std::vector<std::map<types::boundary_id, BoundaryCellsInfo>> boundary_cells;
 
   double cfd_time;
 };

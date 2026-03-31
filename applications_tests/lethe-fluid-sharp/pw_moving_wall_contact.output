@@ -1,0 +1,36 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       160
+   Number of degrees of freedom: 561
+   Volume of triangulation:      1.6000e+02
+Initial refinement around IB particles - Step : 1 of 2
+   Number of active cells:       184
+   Number of degrees of freedom: 651
+   Volume of triangulation:      1.6000e+02
+Initial refinement around IB particles - Step : 2 of 2
+   Number of active cells:       262
+   Number of degrees of freedom: 918
+   Volume of triangulation:      1.6000e+02
+
+*******************************************************************************
+Transient iteration: 1        Time: 0.0025   Time step: 0.0025   CFL: 0
+*******************************************************************************
+---------------
+Fluid Dynamics
+---------------
+  -Tolerance of iterative solver is : 1.6964e+03
+  -Iterative solver took : 10 steps to reach a residual norm of 1.0590e+03
+  -Tolerance of iterative solver is : 3.4114e+04
+  -Iterative solver took : 2 steps to reach a residual norm of 1.9004e+04
+  -Tolerance of iterative solver is : 9.6212e+04
+  -Iterative solver took : 2 steps to reach a residual norm of 1.1997e+04
+  -Tolerance of iterative solver is : 3.0959e+05
+  -Iterative solver took : 2 steps to reach a residual norm of 1.4176e+04
+  -Tolerance of iterative solver is : 2.0941e+05
+  -Iterative solver took : 1 steps to reach a residual norm of 1.0367e+05
+particle 0 position 4.9967e+00 5.1401e+00
+particle 0 velocity -5.3349e+00 1.0404e+03
++------------------------------------------+
+|  Force summary particles                 |
++------------------------------------------+
+particle_ID  time   T_z   omega_z theta_z  f_x     v_x    p_x      f_y        v_y     p_y    f_xv   f_yv    f_xp     f_yp
+          0 0.0025 0.2473  0.0004  0.0000 7.2294 -5.3349 4.9967 -1228.0726 1040.3825 5.1401 0.0083 -3.6009 7.2211 -1224.4717

@@ -15,24 +15,24 @@ void
 IBParticlesDEM<dim>::initialize(
   const std::shared_ptr<Parameters::IBParticles<dim>> &p_nsparam,
   const std::shared_ptr<Parameters::Lagrangian::FloatingWalls<dim>>
-                                      fw_parameters,
+    fw_parameters,
   const std::shared_ptr<Parameters::Lagrangian::BCDEM>
-    &boundary_conditions_parameters_input,
+                                     &boundary_conditions_parameters_input,
   const MPI_Comm                     &mpi_communicator_input,
   const std::vector<IBParticle<dim>> &particles)
 {
-  parameters                = p_nsparam;
-  floating_walls_parameters = fw_parameters;
+  parameters                     = p_nsparam;
+  floating_walls_parameters      = fw_parameters;
   boundary_conditions_parameters = boundary_conditions_parameters_input;
-  mpi_communicator          = mpi_communicator_input;
-  dem_particles             = particles;
+  mpi_communicator               = mpi_communicator_input;
+  dem_particles                  = particles;
   boundary_cells.resize(dem_particles.size());
 }
 
 template <int dim>
 bool
-IBParticlesDEM<dim>::is_boundary_excluded(const types::boundary_id boundary_id)
-  const
+IBParticlesDEM<dim>::is_boundary_excluded(
+  const types::boundary_id boundary_id) const
 {
   if (!boundary_conditions_parameters)
     return false;
@@ -60,15 +60,14 @@ IBParticlesDEM<dim>::is_boundary_excluded(const types::boundary_id boundary_id)
 
 template <int dim>
 void
-IBParticlesDEM<dim>::get_wall_motion(
-  const types::boundary_id boundary_id,
-  const Point<dim>  &point_on_boundary,
-  Tensor<1, 3>      &wall_velocity,
-  Tensor<1, 3>      &wall_angular_velocity,
-  Point<dim>        &wall_center_of_rotation) const
+IBParticlesDEM<dim>::get_wall_motion(const types::boundary_id boundary_id,
+                                     const Point<dim>        &point_on_boundary,
+                                     Tensor<1, 3>            &wall_velocity,
+                                     Tensor<1, 3> &wall_angular_velocity,
+                                     Point<dim> &wall_center_of_rotation) const
 {
-  wall_velocity         = Tensor<1, 3>();
-  wall_angular_velocity = Tensor<1, 3>();
+  wall_velocity           = Tensor<1, 3>();
+  wall_angular_velocity   = Tensor<1, 3>();
   wall_center_of_rotation = point_on_boundary;
 
   if (!boundary_conditions_parameters)
@@ -84,10 +83,8 @@ IBParticlesDEM<dim>::get_wall_motion(
     boundary_conditions_parameters->boundary_rotational_speed;
   const auto &rotational_vector_map =
     boundary_conditions_parameters->boundary_rotational_vector;
-  const auto rotational_speed_it =
-    rotational_speed_map.find(boundary_id);
-  const auto rotational_vector_it =
-    rotational_vector_map.find(boundary_id);
+  const auto rotational_speed_it  = rotational_speed_map.find(boundary_id);
+  const auto rotational_vector_it = rotational_vector_map.find(boundary_id);
   if (rotational_speed_it != rotational_speed_map.end() &&
       rotational_vector_it != rotational_vector_map.end())
     {
@@ -106,6 +103,7 @@ IBParticlesDEM<dim>::get_wall_motion(
         wall_center_of_rotation[2] = rotation_axis_it->second[2];
     }
 }
+
 template <int dim>
 void
 IBParticlesDEM<dim>::update_particles(
@@ -481,8 +479,8 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
   const Quadrature<dim - 1>    &face_quadrature_formula,
   const Mapping<dim>           &mapping)
 {
-  const FESystem<dim, dim>                    fe = dof_handler.get_fe();
-  std::vector<std::map<unsigned int, double>> best_contact_candidate(
+  const FESystem<dim, dim>                          fe = dof_handler.get_fe();
+  std::vector<std::map<types::boundary_id, double>> best_contact_candidate(
     particles.size());
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
@@ -574,8 +572,6 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
         }
     }
 }
-
-
 template <int dim>
 void
 IBParticlesDEM<dim>::calculate_pw_contact_force(
@@ -601,10 +597,8 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
       if (particle.integrate_motion)
         {
           // Defines map with default values.
-          unsigned int                              boundary_index = 0;
-          std::map<unsigned int, DefaultDBL_MAX>    best_dist;
-          std::map<unsigned int, DefaultUINT_MAX>   best_indices;
-          std::map<unsigned int, BoundaryCellsInfo> best_cells;
+          std::map<types::boundary_id, DefaultDBL_MAX>    best_dist;
+          std::map<types::boundary_id, BoundaryCellsInfo> best_cells;
           // Loop over the point and normal identified as
           // potential contact candidate.
           for (auto boundary_cell_iter =
@@ -626,12 +620,9 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                 {
                   best_dist[boundary_cell_iter->second.boundary_index].value =
                     dist;
-                  best_indices[boundary_cell_iter->second.boundary_index]
-                    .value = boundary_index;
                   best_cells[boundary_cell_iter->second.boundary_index] =
                     boundary_cell_iter->second;
                 }
-              boundary_index += 1;
             }
 
           // Add all the floating walls as contact candidates. Their indices
@@ -639,22 +630,26 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
           // lowest_floating_wall_indices). This prevents a floating wall
           // from sharing the same indices as a normal boundary of the
           // domain in the contact candidates list.
-          for (unsigned int i = 0;
-               i < floating_walls_parameters->points_on_walls.size();
-               ++i)
+          if (floating_walls_parameters)
             {
-              if (floating_walls_parameters->time_start[i] < cfd_time &&
-                  floating_walls_parameters->time_end[i] > cfd_time)
+              for (unsigned int i = 0;
+                   i < floating_walls_parameters->points_on_walls.size();
+                   ++i)
                 {
-                  BoundaryCellsInfo floating_wall_cell_info;
-                  floating_wall_cell_info.point_on_boundary =
-                    floating_walls_parameters->points_on_walls[i];
-                  floating_wall_cell_info.normal_vector =
-                    floating_walls_parameters->floating_walls_normal_vectors[i];
-                  floating_wall_cell_info.boundary_index =
-                    lowest_floating_wall_indices + i + 1;
-                  best_cells[floating_wall_cell_info.boundary_index] =
-                    floating_wall_cell_info;
+                  if (floating_walls_parameters->time_start[i] < cfd_time &&
+                      floating_walls_parameters->time_end[i] > cfd_time)
+                    {
+                      BoundaryCellsInfo floating_wall_cell_info;
+                      floating_wall_cell_info.point_on_boundary =
+                        floating_walls_parameters->points_on_walls[i];
+                      floating_wall_cell_info.normal_vector =
+                        floating_walls_parameters
+                          ->floating_walls_normal_vectors[i];
+                      floating_wall_cell_info.boundary_index =
+                        lowest_floating_wall_indices + i + 1;
+                      best_cells[floating_wall_cell_info.boundary_index] =
+                        floating_wall_cell_info;
+                    }
                 }
             }
 
@@ -767,10 +762,9 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
               double   normal_overlap = -2 * std::get<double>(contact_state);
               Point<3> contact_point =
                 point_nd_to_3d(std::get<Point<dim>>(contact_state));
-              // The normal vector goes from particle one to particle two.
-              // Here, particle two is the wall. As such, we flip the
-              // normal. Here, particle two is the wall. As such, we flip
-              // the normal.
+              // The shape distance routine returns the wall-to-particle
+              // normal. Flip it so the normal points from the particle toward
+              // the wall, consistent with the contact model.
               Tensor<1, 3> contact_normal = -normal;
 
 
@@ -816,10 +810,10 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
 
                   pw_contact_map[particle.particle_id]
                                 [boundary_cell.boundary_index]
-                    .normal_overlap = normal_overlap;
+                                  .normal_overlap = normal_overlap;
                   pw_contact_map[particle.particle_id]
                                 [boundary_cell.boundary_index]
-                    .normal_vector = normal;
+                                  .normal_vector = normal;
 
                   ObjectProperties particle_properties;
                   particle_properties.object_friction_coefficient =
@@ -883,8 +877,6 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
         }
     }
 }
-
-
 template <int dim>
 void
 IBParticlesDEM<dim>::calculate_pw_lubrication_force(
@@ -903,10 +895,8 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
       if (particle.integrate_motion)
         {
           // Defines map with default values.
-          unsigned int                              boundary_index = 0;
-          std::map<unsigned int, DefaultDBL_MAX>    best_dist;
-          std::map<unsigned int, DefaultUINT_MAX>   best_indices;
-          std::map<unsigned int, BoundaryCellsInfo> best_cells;
+          std::map<types::boundary_id, DefaultDBL_MAX>    best_dist;
+          std::map<types::boundary_id, BoundaryCellsInfo> best_cells;
           // For each particle loop over the point and normal identified as
           // potential contact candidate.
           for (auto boundary_cell_iter =
@@ -929,35 +919,36 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
                 {
                   best_dist[boundary_cell_iter->second.boundary_index].value =
                     dist;
-                  best_indices[boundary_cell_iter->second.boundary_index]
-                    .value = boundary_index;
                   best_cells[boundary_cell_iter->second.boundary_index] =
                     boundary_cell_iter->second;
                 }
-              boundary_index += 1;
             }
 
           // Add all the floating walls as contact candidates. Their indices
-          // start from 1M (define in the definition of:
+          // start from 1M (defined in the definition of:
           // lowest_floating_wall_indices). This prevents a floating wall
           // from sharing the same indices as a normal boundary of the
           // domain in the contact candidates list.
-          for (unsigned int i = 0;
-               i < floating_walls_parameters->points_on_walls.size();
-               ++i)
+          if (floating_walls_parameters)
             {
-              if (floating_walls_parameters->time_start[i] < cfd_time &&
-                  floating_walls_parameters->time_end[i] > cfd_time)
+              for (unsigned int i = 0;
+                   i < floating_walls_parameters->points_on_walls.size();
+                   ++i)
                 {
-                  BoundaryCellsInfo floating_wall_cell_info;
-                  floating_wall_cell_info.point_on_boundary =
-                    floating_walls_parameters->points_on_walls[i];
-                  floating_wall_cell_info.normal_vector =
-                    floating_walls_parameters->floating_walls_normal_vectors[i];
-                  floating_wall_cell_info.boundary_index =
-                    lowest_floating_wall_indices + i + 1;
-                  best_cells[floating_wall_cell_info.boundary_index] =
-                    floating_wall_cell_info;
+                  if (floating_walls_parameters->time_start[i] < cfd_time &&
+                      floating_walls_parameters->time_end[i] > cfd_time)
+                    {
+                      BoundaryCellsInfo floating_wall_cell_info;
+                      floating_wall_cell_info.point_on_boundary =
+                        floating_walls_parameters->points_on_walls[i];
+                      floating_wall_cell_info.normal_vector =
+                        floating_walls_parameters
+                          ->floating_walls_normal_vectors[i];
+                      floating_wall_cell_info.boundary_index =
+                        lowest_floating_wall_indices + i + 1;
+                      best_cells[floating_wall_cell_info.boundary_index] =
+                        floating_wall_cell_info;
+                    }
                 }
             }
 
