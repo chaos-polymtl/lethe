@@ -9,17 +9,16 @@
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
+#include <solvers/isothermal_compressible_navier_stokes_cls_assembler.h>
+#include <solvers/navier_stokes_cls_assemblers.h>
+#include <solvers/postprocessing_cfd.h>
+
 #include <dem/force_chains_visualization.h>
 #include <dem/lagrangian_post_processing.h>
 #include <dem/log_collision_data.h>
 #include <dem/set_particle_particle_contact_force_model.h>
 #include <dem/update_local_particle_containers.h>
 #include <dem/visualization.h>
-
-#include <solvers/isothermal_compressible_navier_stokes_cls_assembler.h>
-#include <solvers/navier_stokes_cls_assemblers.h>
-#include <solvers/postprocessing_cfd.h>
-
 #include <fem-dem/fluid_dynamics_sharp.h>
 
 #include <deal.II/base/work_stream.h>
@@ -3095,43 +3094,38 @@ FluidDynamicsSharp<dim>::fill_particle_properties(
   const IBParticle<dim> &particle,
   std::vector<double>   &properties) const
 {
-  properties.assign(DEM::CFDDEMProperties::PropertiesIndex::n_properties, 0.);
+  using PropertiesIndex = DEM::CFDDEMProperties::PropertiesIndex;
 
-  properties[DEM::CFDDEMProperties::PropertiesIndex::type] = 0.;
-  properties[DEM::CFDDEMProperties::PropertiesIndex::dp]   = particle.radius *
-                                                          2.0;
-  properties[DEM::CFDDEMProperties::PropertiesIndex::mass] = particle.mass;
+  properties.assign(PropertiesIndex::n_properties, 0.);
 
-  properties[DEM::CFDDEMProperties::PropertiesIndex::v_x] = particle.velocity[0];
-  properties[DEM::CFDDEMProperties::PropertiesIndex::v_y] = particle.velocity[1];
-  properties[DEM::CFDDEMProperties::PropertiesIndex::omega_x] = particle.omega[0];
-  properties[DEM::CFDDEMProperties::PropertiesIndex::omega_y] = particle.omega[1];
-  properties[DEM::CFDDEMProperties::PropertiesIndex::omega_z] = particle.omega[2];
+  properties[PropertiesIndex::type] = 0.;
+  properties[PropertiesIndex::dp]   = 2.0 * particle.radius;
+  properties[PropertiesIndex::mass] = particle.mass;
 
-  properties[DEM::CFDDEMProperties::PropertiesIndex::fem_force_two_way_coupling_x] =
+  properties[PropertiesIndex::v_x]     = particle.velocity[0];
+  properties[PropertiesIndex::v_y]     = particle.velocity[1];
+  properties[PropertiesIndex::omega_x] = particle.omega[0];
+  properties[PropertiesIndex::omega_y] = particle.omega[1];
+  properties[PropertiesIndex::omega_z] = particle.omega[2];
+
+  properties[PropertiesIndex::fem_force_two_way_coupling_x] =
     particle.fluid_forces[0];
-  properties[DEM::CFDDEMProperties::PropertiesIndex::fem_force_two_way_coupling_y] =
+  properties[PropertiesIndex::fem_force_two_way_coupling_y] =
     particle.fluid_forces[1];
-  properties[DEM::CFDDEMProperties::PropertiesIndex::fem_torque_x] =
-    particle.fluid_torque[0];
-  properties[DEM::CFDDEMProperties::PropertiesIndex::fem_torque_y] =
-    particle.fluid_torque[1];
-  properties[DEM::CFDDEMProperties::PropertiesIndex::fem_torque_z] =
-    particle.fluid_torque[2];
+  properties[PropertiesIndex::fem_torque_x] = particle.fluid_torque[0];
+  properties[PropertiesIndex::fem_torque_y] = particle.fluid_torque[1];
+  properties[PropertiesIndex::fem_torque_z] = particle.fluid_torque[2];
 
-  if (dim == 2)
+  if constexpr (dim == 2)
     {
-      properties[DEM::CFDDEMProperties::PropertiesIndex::v_z] = 0.;
-      properties
-        [DEM::CFDDEMProperties::PropertiesIndex::fem_force_two_way_coupling_z] =
-          0.;
+      properties[PropertiesIndex::v_z]                          = 0.;
+      properties[PropertiesIndex::fem_force_two_way_coupling_z] = 0.;
     }
-  if (dim == 3)
+  else
     {
-      properties[DEM::CFDDEMProperties::PropertiesIndex::v_z] = particle.velocity[2];
-      properties
-        [DEM::CFDDEMProperties::PropertiesIndex::fem_force_two_way_coupling_z] =
-          particle.fluid_forces[2];
+      properties[PropertiesIndex::v_z] = particle.velocity[2];
+      properties[PropertiesIndex::fem_force_two_way_coupling_z] =
+        particle.fluid_forces[2];
     }
 }
 
@@ -3140,23 +3134,26 @@ void
 FluidDynamicsSharp<dim>::build_ib_particle_handler(
   Particles::ParticleHandler<dim, dim> &particle_handler,
   typename DEM::dem_data_structures<dim>::particle_index_iterator_map
-                                     &particle_container,
-  std::unordered_set<unsigned int>   &local_particle_ids) const
+                                   &particle_container,
+  std::unordered_set<unsigned int> &local_particle_ids) const
 {
   particle_handler.clear();
   particle_container.clear();
   local_particle_ids.clear();
 
-  Point<dim> ref_point;
+  Point<dim>          ref_point;
   std::vector<double> properties;
 
+  // Rebuild a DEM particle handler from the Sharp-IB particles so that DEM
+  // output and post-processing can reuse the same code path.
   for (const auto &particle : particles)
     {
       typename DoFHandler<dim>::active_cell_iterator cell;
       try
         {
-          cell = LetheGridTools::find_cell_around_point_with_tree(
-            *this->dof_handler, particle.position);
+          cell =
+            LetheGridTools::find_cell_around_point_with_tree(*this->dof_handler,
+                                                             particle.position);
         }
       catch (...)
         {
@@ -3167,11 +3164,8 @@ FluidDynamicsSharp<dim>::build_ib_particle_handler(
         continue;
 
       fill_particle_properties(particle, properties);
-      particle_handler.insert_particle(particle.position,
-                                       ref_point,
-                                       particle.particle_id,
-                                       cell,
-                                       properties);
+      particle_handler.insert_particle(
+        particle.position, ref_point, particle.particle_id, cell, properties);
       local_particle_ids.insert(particle.particle_id);
     }
 
@@ -3185,19 +3179,21 @@ template <int dim>
 void
 FluidDynamicsSharp<dim>::build_contact_containers(
   const typename DEM::dem_data_structures<dim>::particle_index_iterator_map
-                                    &particle_container,
+                                         &particle_container,
   const std::unordered_set<unsigned int> &local_particle_ids,
   typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
     &local_adjacent_particles,
   typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
-                        &ghost_adjacent_particles,
+    &ghost_adjacent_particles,
   typename DEM::dem_data_structures<dim>::particle_wall_in_contact
-                        &particle_wall_in_contact) const
+    &particle_wall_in_contact) const
 {
   local_adjacent_particles.clear();
   ghost_adjacent_particles.clear();
   particle_wall_in_contact.clear();
 
+  // Convert the Sharp-IB contact maps into the DEM containers expected by the
+  // existing DEM post-processing utilities.
   const auto &pp_contact_map = ib_dem.get_particle_particle_contact_map();
   for (const auto &[particle_id, contacts] : pp_contact_map)
     {
@@ -3248,17 +3244,16 @@ FluidDynamicsSharp<dim>::build_contact_containers(
             continue;
 
           particle_wall_contact_info<dim> dem_contact_info;
-          dem_contact_info.particle   = particle_it->second;
-          dem_contact_info.normal_vector = contact_info.normal_vector;
+          dem_contact_info.particle          = particle_it->second;
+          dem_contact_info.normal_vector     = contact_info.normal_vector;
           dem_contact_info.point_on_boundary = contact_info.contact_point;
-          dem_contact_info.boundary_id = boundary_id;
+          dem_contact_info.boundary_id       = boundary_id;
           dem_contact_info.tangential_displacement =
             contact_info.tangential_displacement;
           dem_contact_info.rolling_resistance_spring_torque =
             contact_info.rolling_resistance_spring_torque;
 
-          particle_wall_in_contact[particle_id][boundary_id] =
-            dem_contact_info;
+          particle_wall_in_contact[particle_id][boundary_id] = dem_contact_info;
         }
     }
 }
@@ -3268,8 +3263,11 @@ void
 FluidDynamicsSharp<dim>::handle_dem_particle_output_and_postprocessing()
 {
   const auto &dem_parameters = cfd_dem_parameters.dem_parameters;
+
+  // Mirror DEM output cadence for Sharp-IB particles and any DEM-style
+  // post-processing derived from them.
   const bool output_iteration = this->simulation_control->is_output_iteration();
-  const bool write_particles_output = output_iteration;
+  const bool write_particle_output = output_iteration;
   const bool write_force_chains =
     output_iteration && dem_parameters.post_processing.force_chains;
   const bool write_lagrangian_post_processing =
@@ -3278,7 +3276,7 @@ FluidDynamicsSharp<dim>::handle_dem_particle_output_and_postprocessing()
   const bool log_particle_wall_collisions =
     dem_parameters.post_processing.particle_wall_collision_statistics;
 
-  if (!(write_particles_output || write_force_chains ||
+  if (!(write_particle_output || write_force_chains ||
         write_lagrangian_post_processing || log_particle_wall_collisions))
     return;
 
@@ -3287,7 +3285,7 @@ FluidDynamicsSharp<dim>::handle_dem_particle_output_and_postprocessing()
     *this->mapping,
     DEM::CFDDEMProperties::PropertiesIndex::n_properties);
   typename DEM::dem_data_structures<dim>::particle_index_iterator_map
-    particle_container;
+                                   particle_container;
   std::unordered_set<unsigned int> local_particle_ids;
 
   build_ib_particle_handler(particle_handler,
@@ -3318,21 +3316,22 @@ FluidDynamicsSharp<dim>::handle_dem_particle_output_and_postprocessing()
         collision_event_log);
     }
 
-  if (write_particles_output)
+  if (write_particle_output)
     {
-      const std::string folder = dem_parameters.simulation_control.output_folder;
+      const std::string folder =
+        this->simulation_parameters.simulation_control.output_folder;
       const std::string particles_solution_name =
-        dem_parameters.simulation_control.output_name + "_particles";
+        this->simulation_parameters.particlesParameters->ib_particles_pvd_file;
       const unsigned int iter = this->simulation_control->get_step_number();
       const double       time = this->simulation_control->get_current_time();
       const unsigned int group_files =
-        dem_parameters.simulation_control.group_files;
+        this->simulation_parameters.simulation_control.group_files;
 
-      Visualization<dim, DEM::CFDDEMProperties::PropertiesIndex> particle_data_out;
+      Visualization<dim, DEM::CFDDEMProperties::PropertiesIndex>
+        particle_data_out;
       particle_data_out.build_patches(
         particle_handler,
-        DEM::ParticleProperties<dim,
-                                DEM::CFDDEMProperties::PropertiesIndex>::
+        DEM::ParticleProperties<dim, DEM::CFDDEMProperties::PropertiesIndex>::
           get_properties_name());
 
       write_vtu_and_pvd<0, dim>(ib_particles_pvdhandler,
@@ -3354,7 +3353,7 @@ FluidDynamicsSharp<dim>::handle_dem_particle_output_and_postprocessing()
             dem_parameters,
             ib_particles_pvdhandler_force_chains,
             this->mpi_communicator,
-            folder,
+            dem_parameters.simulation_control.output_folder,
             iter,
             time,
             local_adjacent_particles,
@@ -3371,9 +3370,8 @@ FluidDynamicsSharp<dim>::handle_dem_particle_output_and_postprocessing()
             ExcMessage(
               "Sharp-IB post-processing requires a parallel triangulation."));
 
-          write_post_processing_results<
-            dim,
-            DEM::CFDDEMProperties::PropertiesIndex>(
+          write_post_processing_results<dim,
+                                        DEM::CFDDEMProperties::PropertiesIndex>(
             *parallel_triangulation,
             ib_grid_pvdhandler,
             *this->dof_handler,
@@ -5149,6 +5147,8 @@ FluidDynamicsSharp<dim>::solve()
   if (this->simulation_parameters.restart_parameters.restart == false &&
       this->simulation_control->is_output_iteration())
     {
+      // Match the fluid solver by writing the initial Sharp-IB particle output
+      // on step 0 whenever the current iteration is an output iteration.
       handle_dem_particle_output_and_postprocessing();
     }
 

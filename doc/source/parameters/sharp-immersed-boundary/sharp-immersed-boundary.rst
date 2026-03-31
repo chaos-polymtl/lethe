@@ -126,7 +126,7 @@ This subsection contains the parameters related to the sharp immersed boundary s
 
     * The ``ib force output file`` parameter is the file name where the variables associated with each particle are stored. One file will be created for each particle in the simulation.
 
-    * The ``ib particles pvd file`` parameter is the file's name that will be created to animate the particles. This file stores all the variables calculated for each of the particles. This file is compatible with Paraview.
+    * The ``ib particles pvd file`` parameter is the file's name that will be created to animate the particles. This file stores all the variables calculated for each of the particles. This file is compatible with Paraview. When outputs are enabled, this particle output is written on the same output iterations as the fluid results, including the initial step 0.
     
     * The ``print DEM`` parameter is a boolean that define if particles' information are printed on the terminal when particles' time step is finished.
 
