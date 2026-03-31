@@ -39,16 +39,14 @@ IBParticlesDEM<dim>::is_boundary_excluded(
 
   const auto &outlet_boundaries =
     boundary_conditions_parameters->outlet_boundaries;
-  if (std::find(outlet_boundaries.begin(),
-                outlet_boundaries.end(),
-                boundary_id) != outlet_boundaries.end())
+  if (std::ranges::find(outlet_boundaries, boundary_id) !=
+      outlet_boundaries.end())
     return true;
 
   const auto &bc_types = boundary_conditions_parameters->bc_types;
-  const bool  has_periodic =
-    std::find(bc_types.begin(),
-              bc_types.end(),
-              Parameters::Lagrangian::BCDEM::BoundaryType::periodic) !=
+  const bool has_periodic =
+    std::ranges::find(bc_types,
+                      Parameters::Lagrangian::BCDEM::BoundaryType::periodic) !=
     bc_types.end();
   if (has_periodic &&
       (boundary_id == boundary_conditions_parameters->periodic_boundary_0 ||
