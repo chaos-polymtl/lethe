@@ -42,14 +42,14 @@ public:
         ((p_simulation_parameters.multiphysics.cls_parameters
             .surface_tension_force.verbosity != Parameters::Verbosity::quiet) ||
          ((p_simulation_parameters.multiphysics.cls_parameters
-             .regularization_method.algebraic_interface_reinitialization
+             .reinitialization_method.pde_based_interface_reinitialization
              .enable) &&
           (p_simulation_parameters.multiphysics.cls_parameters
-             .regularization_method.verbosity !=
+             .reinitialization_method.verbosity !=
            Parameters::Verbosity::quiet))) ?
           Parameters::Verbosity::verbose :
           Parameters::Verbosity::quiet, // Set to verbose if surface tension
-                                        // verbosity is enabled or if algebraic
+                                        // verbosity is enabled or if PDE-based
                                         // interface reinitialization is enabled
                                         // and set to verbose
         p_pcout,

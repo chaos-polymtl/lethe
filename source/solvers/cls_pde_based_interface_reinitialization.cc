@@ -3,8 +3,8 @@
 
 #include <core/solutions_output.h>
 
-#include <solvers/cls_algebraic_interface_reinitialization.h>
 #include <solvers/cls_assemblers.h>
+#include <solvers/cls_pde_based_interface_reinitialization.h>
 
 #include <deal.II/lac/solver_control.h>
 #include <deal.II/lac/sparsity_tools.h>
@@ -13,7 +13,7 @@
 
 template <int dim>
 void
-CLSAlgebraicInterfaceReinitialization<dim>::setup_dofs()
+CLSPDEBasedInterfaceReinitialization<dim>::setup_dofs()
 {
   // Get MPI communicator
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
@@ -83,7 +83,7 @@ CLSAlgebraicInterfaceReinitialization<dim>::setup_dofs()
 
 template <int dim>
 void
-CLSAlgebraicInterfaceReinitialization<dim>::define_zero_constraints()
+CLSPDEBasedInterfaceReinitialization<dim>::define_zero_constraints()
 {
   this->zero_constraints.clear();
   this->zero_constraints.reinit(this->locally_owned_dofs,
@@ -125,7 +125,7 @@ CLSAlgebraicInterfaceReinitialization<dim>::define_zero_constraints()
 
 template <int dim>
 void
-CLSAlgebraicInterfaceReinitialization<dim>::define_non_zero_constraints()
+CLSPDEBasedInterfaceReinitialization<dim>::define_non_zero_constraints()
 {
   this->nonzero_constraints.clear();
   this->nonzero_constraints.reinit(this->locally_owned_dofs,
@@ -157,7 +157,7 @@ CLSAlgebraicInterfaceReinitialization<dim>::define_non_zero_constraints()
           VectorTools::interpolate_boundary_values(
             *this->dof_handler,
             id,
-            *this->simulation_parameters.boundary_conditions_cls.phase_fraction
+            *this->simulation_parameters.boundary_conditions_cls.phase_indicator
                .at(id),
             this->nonzero_constraints);
         }
@@ -168,13 +168,13 @@ CLSAlgebraicInterfaceReinitialization<dim>::define_non_zero_constraints()
 
 template <int dim>
 void
-CLSAlgebraicInterfaceReinitialization<dim>::set_initial_conditions()
+CLSPDEBasedInterfaceReinitialization<dim>::set_initial_conditions()
 {
   // Get CLS DoFHandler
   const DoFHandler<dim> &dof_handler_cls =
     this->subequations_interface.get_cls_dof_handler();
 
-  // Interpolate CLS solution to algebraic interface reinitialization
+  // Interpolate CLS solution to PDE-based interface reinitialization
   FETools::interpolate(dof_handler_cls,
                        this->subequations_interface.get_cls_solution(),
                        *this->dof_handler,
@@ -189,7 +189,7 @@ CLSAlgebraicInterfaceReinitialization<dim>::set_initial_conditions()
 
   // Initial condition
   if (this->simulation_parameters.multiphysics.cls_parameters
-        .regularization_method.algebraic_interface_reinitialization
+        .reinitialization_method.pde_based_interface_reinitialization
         .output_reinitialization_steps)
     {
       this->pvdhandler.times_and_names.clear();
@@ -200,19 +200,19 @@ CLSAlgebraicInterfaceReinitialization<dim>::set_initial_conditions()
 
 template <int dim>
 void
-CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
+CLSPDEBasedInterfaceReinitialization<dim>::assemble_system_matrix()
 {
   // Reinitialize system matrix
   this->system_matrix = 0;
 
   // Get projected CLS phase gradient DoFHandler
-  const DoFHandler<dim> &dof_handler_cls_phase_fraction_gradient =
+  const DoFHandler<dim> &dof_handler_cls_phase_indicator_gradient =
     this->subequations_interface.get_dof_handler(
       CLSSubequationsID::phase_gradient_projection);
 
-  // Initialize FEValues for algebraic interface reinitialization and CLS
-  // phase fraction gradient projection
-  FEValues<dim> fe_values_algebraic_reinitialization(*this->mapping,
+  // Initialize FEValues for PDE-based interface reinitialization and CLS
+  // phase indicator gradient projection
+  FEValues<dim> fe_values_pde_based_reinitialization(*this->mapping,
                                                      *this->fe,
                                                      *this->cell_quadrature,
                                                      update_values |
@@ -220,15 +220,15 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
                                                        update_JxW_values);
   FEValues<dim> fe_values_phase_gradient_projection(
     *this->mapping,
-    dof_handler_cls_phase_fraction_gradient.get_fe(),
+    dof_handler_cls_phase_indicator_gradient.get_fe(),
     *this->cell_quadrature,
     update_values);
 
   // Initialize size of arrays
   const unsigned int n_q_points =
-    fe_values_algebraic_reinitialization.get_quadrature().size();
+    fe_values_pde_based_reinitialization.get_quadrature().size();
   const unsigned int n_dofs_per_cell =
-    fe_values_algebraic_reinitialization.get_fe().n_dofs_per_cell();
+    fe_values_pde_based_reinitialization.get_fe().n_dofs_per_cell();
 
   // Initialize local matrix
   FullMatrix<double> local_matrix(n_dofs_per_cell, n_dofs_per_cell);
@@ -236,11 +236,11 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
   // Initialize local dof indices array
   std::vector<types::global_dof_index> local_dof_indices(n_dofs_per_cell);
 
-  // Extractor for phase fraction gradient vector
-  FEValuesExtractors::Vector phase_fraction_gradients(0);
+  // Extractor for phase indicator gradient vector
+  FEValuesExtractors::Vector phase_indicator_gradients(0);
 
-  // Initialize phase fraction and projected phase gradient solution arrays
-  std::vector<double>         present_phase_fraction_values(n_q_points);
+  // Initialize phase indicator and projected phase gradient solution arrays
+  std::vector<double>         present_phase_indicator_values(n_q_points);
   std::vector<Tensor<1, dim>> present_phase_gradient_projection_values(
     n_q_points);
   std::vector<Tensor<1, dim>> present_reinitialized_phase_gradient_values(
@@ -254,7 +254,7 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
   const double h_min = identify_minimum_cell_size(
     *this->mapping,
     this->subequations_interface.get_dof_handler(
-      CLSSubequationsID::algebraic_interface_reinitialization),
+      CLSSubequationsID::pde_based_interface_reinitialization),
     *this->cell_quadrature,
     this->triangulation->get_mpi_communicator());
   const double diffusivity_coefficient = compute_diffusivity(h_min);
@@ -284,21 +284,21 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
               &(*this->triangulation),
               cell->level(),
               cell->index(),
-              &dof_handler_cls_phase_fraction_gradient);
+              &dof_handler_cls_phase_indicator_gradient);
 
           // Reinitialize FEValues with corresponding cell
-          fe_values_algebraic_reinitialization.reinit(cell);
+          fe_values_pde_based_reinitialization.reinit(cell);
           fe_values_phase_gradient_projection.reinit(
             cls_phase_gradient_projection_cell);
 
           // Get vector of JxW
           std::vector<double> JxW_vec =
-            fe_values_algebraic_reinitialization.get_JxW_values();
+            fe_values_pde_based_reinitialization.get_JxW_values();
 
-          // Get present phase fraction and projected CLS phase gradient
-          fe_values_algebraic_reinitialization.get_function_values(
-            this->evaluation_point, present_phase_fraction_values);
-          fe_values_phase_gradient_projection[phase_fraction_gradients]
+          // Get present phase indicator and projected CLS phase gradient
+          fe_values_pde_based_reinitialization.get_function_values(
+            this->evaluation_point, present_phase_indicator_values);
+          fe_values_phase_gradient_projection[phase_indicator_gradients]
             .get_function_values(present_phase_gradient_projection_solution,
                                  present_phase_gradient_projection_values);
 
@@ -312,14 +312,14 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
               for (unsigned int k = 0; k < n_dofs_per_cell; ++k)
                 {
                   phi[k] =
-                    fe_values_algebraic_reinitialization.shape_value(k, q);
+                    fe_values_pde_based_reinitialization.shape_value(k, q);
                   grad_phi[k] =
-                    fe_values_algebraic_reinitialization.shape_grad(k, q);
+                    fe_values_pde_based_reinitialization.shape_grad(k, q);
                 }
 
-              // Extract phase fraction value and projected phase fraction
+              // Extract phase indicator value and projected phase indicator
               // gradient
-              const double phase_fraction = present_phase_fraction_values[q];
+              const double phase_indicator = present_phase_indicator_values[q];
               const Tensor<1, dim> projected_cls_phase_gradient =
                 present_phase_gradient_projection_values[q];
 
@@ -342,7 +342,7 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
                           // Compressive term
                           scalar_product(grad_phi[i],
                                          (phi[j] -
-                                          2 * phase_fraction * phi[j]) *
+                                          2 * phase_indicator * phi[j]) *
                                            interface_normal) +
                           // Diffusive term
                           scalar_product(grad_phi[i],
@@ -366,19 +366,19 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_matrix()
 
 template <int dim>
 void
-CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
+CLSPDEBasedInterfaceReinitialization<dim>::assemble_system_rhs()
 {
   // Reinitialize system right-hand side (rhs)
   this->system_rhs = 0;
 
   // Get projected phase gradient DoFHandler
-  const DoFHandler<dim> &dof_handler_cls_phase_fraction_gradient =
+  const DoFHandler<dim> &dof_handler_cls_phase_indicator_gradient =
     this->subequations_interface.get_dof_handler(
       CLSSubequationsID::phase_gradient_projection);
 
-  // Initialize FEValues for algebraic interface reinitialization and CLS phase
-  // fraction gradient projection
-  FEValues<dim> fe_values_algebraic_reinitialization(*this->mapping,
+  // Initialize FEValues for PDE-based interface reinitialization and CLS phase
+  // indicator gradient projection
+  FEValues<dim> fe_values_pde_based_reinitialization(*this->mapping,
                                                      *this->fe,
                                                      *this->cell_quadrature,
                                                      update_values |
@@ -386,15 +386,15 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
                                                        update_JxW_values);
   FEValues<dim> fe_values_phase_gradient_projection(
     *this->mapping,
-    dof_handler_cls_phase_fraction_gradient.get_fe(),
+    dof_handler_cls_phase_indicator_gradient.get_fe(),
     *this->cell_quadrature,
     update_values);
 
   // Initialize size of arrays
   const unsigned int n_q_points =
-    fe_values_algebraic_reinitialization.get_quadrature().size();
+    fe_values_pde_based_reinitialization.get_quadrature().size();
   const unsigned int n_dofs_per_cell =
-    fe_values_algebraic_reinitialization.get_fe().n_dofs_per_cell();
+    fe_values_pde_based_reinitialization.get_fe().n_dofs_per_cell();
 
   //  Initialize local rhs
   Vector<double> local_rhs(n_dofs_per_cell);
@@ -402,13 +402,13 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
   // Initialize local dof indices array
   std::vector<types::global_dof_index> local_dof_indices(n_dofs_per_cell);
 
-  // Extractor for phase fraction gradient vector
-  FEValuesExtractors::Vector phase_fraction_gradients(0);
+  // Extractor for phase indicator gradient vector
+  FEValuesExtractors::Vector phase_indicator_gradients(0);
 
-  // Initialize phase fraction and projected phase fraction gradient solution
+  // Initialize phase indicator and projected phase indicator gradient solution
   // arrays
-  std::vector<double>         present_phase_fraction_values(n_q_points);
-  std::vector<double>         previous_phase_fraction_values(n_q_points);
+  std::vector<double>         present_phase_indicator_values(n_q_points);
+  std::vector<double>         previous_phase_indicator_values(n_q_points);
   std::vector<Tensor<1, dim>> present_cls_phase_gradient_projection_values(
     n_q_points);
   std::vector<Tensor<1, dim>> present_reinitialized_phase_gradient_values(
@@ -422,7 +422,7 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
   const double h_min = identify_minimum_cell_size(
     *this->mapping,
     this->subequations_interface.get_dof_handler(
-      CLSSubequationsID::algebraic_interface_reinitialization),
+      CLSSubequationsID::pde_based_interface_reinitialization),
     *this->cell_quadrature,
     this->triangulation->get_mpi_communicator());
   const double diffusivity_coefficient = compute_diffusivity(h_min);
@@ -449,28 +449,28 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
               &(*this->triangulation),
               cell->level(),
               cell->index(),
-              &dof_handler_cls_phase_fraction_gradient);
+              &dof_handler_cls_phase_indicator_gradient);
 
           // Reinitialize FEValues with corresponding cells
-          fe_values_algebraic_reinitialization.reinit(cell);
+          fe_values_pde_based_reinitialization.reinit(cell);
           fe_values_phase_gradient_projection.reinit(
             cls_phase_gradient_projection_cell);
 
           // Get vector of Jacobi determinant times the quadrature weights
           std::vector<double> JxW_vec =
-            fe_values_algebraic_reinitialization.get_JxW_values();
+            fe_values_pde_based_reinitialization.get_JxW_values();
 
-          // Get CLS phase fraction and projected phase gradient values
-          fe_values_algebraic_reinitialization.get_function_values(
-            this->evaluation_point, present_phase_fraction_values);
-          fe_values_algebraic_reinitialization.get_function_values(
-            this->previous_solution, previous_phase_fraction_values);
-          fe_values_phase_gradient_projection[phase_fraction_gradients]
+          // Get CLS phase indicator and projected phase gradient values
+          fe_values_pde_based_reinitialization.get_function_values(
+            this->evaluation_point, present_phase_indicator_values);
+          fe_values_pde_based_reinitialization.get_function_values(
+            this->previous_solution, previous_phase_indicator_values);
+          fe_values_phase_gradient_projection[phase_indicator_gradients]
             .get_function_values(
               this->subequations_interface.get_solution(
                 CLSSubequationsID::phase_gradient_projection),
               present_cls_phase_gradient_projection_values);
-          fe_values_algebraic_reinitialization.get_function_gradients(
+          fe_values_pde_based_reinitialization.get_function_gradients(
             this->evaluation_point,
             present_reinitialized_phase_gradient_values);
 
@@ -481,17 +481,17 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
               for (unsigned int k = 0; k < n_dofs_per_cell; ++k)
                 {
                   phi[k] =
-                    fe_values_algebraic_reinitialization.shape_value(k, q);
+                    fe_values_pde_based_reinitialization.shape_value(k, q);
                   grad_phi[k] =
-                    fe_values_algebraic_reinitialization.shape_grad(k, q);
+                    fe_values_pde_based_reinitialization.shape_grad(k, q);
                 }
 
-              // Extract present and previous phase fraction values and
+              // Extract present and previous phase indicator values and
               // projected phase gradient values
-              std::vector<double> phase_fraction_values(2);
-              phase_fraction_values[0]    = present_phase_fraction_values[q];
-              const double phase_fraction = phase_fraction_values[0];
-              phase_fraction_values[1]    = previous_phase_fraction_values[q];
+              std::vector<double> phase_indicator_values(2);
+              phase_indicator_values[0]    = present_phase_indicator_values[q];
+              const double phase_indicator = phase_indicator_values[0];
+              phase_indicator_values[1]    = previous_phase_indicator_values[q];
               const Tensor<1, dim> projected_cls_phase_gradient =
                 present_cls_phase_gradient_projection_values[q];
               const Tensor<1, dim> reinitialized_phase_gradient =
@@ -511,16 +511,16 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
                   for (unsigned int p = 0; p < 2; ++p)
                     {
                       local_rhs(i) -= bdf_coefficient_vector[p] *
-                                      (phase_fraction_values[p] * phi[i]) *
+                                      (phase_indicator_values[p] * phi[i]) *
                                       JxW_vec[q];
                     }
                   local_rhs(i) -=
                     (
                       // Compressive term
                       -scalar_product(grad_phi[i],
-                                      (phase_fraction -
+                                      (phase_indicator -
                                        Utilities::fixed_power<2>(
-                                         phase_fraction)) *
+                                         phase_indicator)) *
                                         interface_normal) +
                       // Diffusive term
                       scalar_product(
@@ -545,7 +545,7 @@ CLSAlgebraicInterfaceReinitialization<dim>::assemble_system_rhs()
 
 template <int dim>
 void
-CLSAlgebraicInterfaceReinitialization<dim>::solve_linear_system()
+CLSPDEBasedInterfaceReinitialization<dim>::solve_linear_system()
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
@@ -553,17 +553,17 @@ CLSAlgebraicInterfaceReinitialization<dim>::solve_linear_system()
 
   const bool verbose(
     this->simulation_parameters.cls_subequations_linear_solvers
-      .at(CLSSubequationsID::algebraic_interface_reinitialization)
+      .at(CLSSubequationsID::pde_based_interface_reinitialization)
       .verbosity != Parameters::Verbosity::quiet);
 
   // Get residual conditions
   const double absolute_residual =
     this->simulation_parameters.cls_subequations_linear_solvers
-      .at(CLSSubequationsID::algebraic_interface_reinitialization)
+      .at(CLSSubequationsID::pde_based_interface_reinitialization)
       .minimum_residual;
   const double relative_residual =
     this->simulation_parameters.cls_subequations_linear_solvers
-      .at(CLSSubequationsID::algebraic_interface_reinitialization)
+      .at(CLSSubequationsID::pde_based_interface_reinitialization)
       .relative_residual;
 
   // Set linear solver tolerance
@@ -583,15 +583,15 @@ CLSAlgebraicInterfaceReinitialization<dim>::solve_linear_system()
   // ILU preconditioner
   const unsigned int ilu_fill =
     this->simulation_parameters.cls_subequations_linear_solvers
-      .at(CLSSubequationsID::algebraic_interface_reinitialization)
+      .at(CLSSubequationsID::pde_based_interface_reinitialization)
       .ilu_precond_fill;
   const double ilu_atol =
     this->simulation_parameters.cls_subequations_linear_solvers
-      .at(CLSSubequationsID::algebraic_interface_reinitialization)
+      .at(CLSSubequationsID::pde_based_interface_reinitialization)
       .ilu_precond_atol;
   const double ilu_rtol =
     this->simulation_parameters.cls_subequations_linear_solvers
-      .at(CLSSubequationsID::algebraic_interface_reinitialization)
+      .at(CLSSubequationsID::pde_based_interface_reinitialization)
       .ilu_precond_rtol;
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     ilu_fill, ilu_atol, ilu_rtol, 0);
@@ -605,7 +605,7 @@ CLSAlgebraicInterfaceReinitialization<dim>::solve_linear_system()
 
   SolverControl solver_control(
     this->simulation_parameters.cls_subequations_linear_solvers
-      .at(CLSSubequationsID::algebraic_interface_reinitialization)
+      .at(CLSSubequationsID::pde_based_interface_reinitialization)
       .max_iterations,
     non_rescaled_linear_solver_tolerance,
     true,
@@ -614,7 +614,7 @@ CLSAlgebraicInterfaceReinitialization<dim>::solve_linear_system()
   TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
     false,
     this->simulation_parameters.cls_subequations_linear_solvers
-      .at(CLSSubequationsID::algebraic_interface_reinitialization)
+      .at(CLSSubequationsID::pde_based_interface_reinitialization)
       .max_krylov_vectors);
 
   TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);
@@ -639,7 +639,7 @@ CLSAlgebraicInterfaceReinitialization<dim>::solve_linear_system()
 
 template <int dim>
 void
-CLSAlgebraicInterfaceReinitialization<dim>::solve()
+CLSPDEBasedInterfaceReinitialization<dim>::solve()
 {
   // Check if all required solutions are valid
   check_dependencies_validity();
@@ -658,7 +658,7 @@ CLSAlgebraicInterfaceReinitialization<dim>::solve()
   const bool verbose(
     this->subequation_verbosity != Parameters::Verbosity::quiet ||
     this->simulation_parameters.cls_subequations_non_linear_solvers
-        .at(CLSSubequationsID::algebraic_interface_reinitialization)
+        .at(CLSSubequationsID::pde_based_interface_reinitialization)
         .verbosity != Parameters::Verbosity::quiet);
   std::string subequation_string =
     this->subequations_interface.get_subequation_string(this->subequation_id);
@@ -673,7 +673,7 @@ CLSAlgebraicInterfaceReinitialization<dim>::solve()
 
   // For debugging purposes
   if (this->simulation_parameters.multiphysics.cls_parameters
-        .regularization_method.algebraic_interface_reinitialization
+        .reinitialization_method.pde_based_interface_reinitialization
         .output_reinitialization_steps)
     write_output_results(step);
 
@@ -698,7 +698,7 @@ CLSAlgebraicInterfaceReinitialization<dim>::solve()
 
       // For debugging purposes
       if (this->simulation_parameters.multiphysics.cls_parameters
-            .regularization_method.algebraic_interface_reinitialization
+            .reinitialization_method.pde_based_interface_reinitialization
             .output_reinitialization_steps)
         write_output_results(step);
 
@@ -715,7 +715,7 @@ CLSAlgebraicInterfaceReinitialization<dim>::solve()
 
 template <int dim>
 void
-CLSAlgebraicInterfaceReinitialization<dim>::write_output_results(
+CLSPDEBasedInterfaceReinitialization<dim>::write_output_results(
   const unsigned int step)
 {
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
@@ -741,10 +741,10 @@ CLSAlgebraicInterfaceReinitialization<dim>::write_output_results(
 
   // Attach solution data to DataOut object
   data_out.attach_dof_handler(*this->dof_handler);
-  data_out.add_data_vector(*this->present_solution, "reinit_phase_fraction");
+  data_out.add_data_vector(*this->present_solution, "reinit_phase_indicator");
   data_out.add_data_vector(this->subequations_interface.get_cls_dof_handler(),
                            this->subequations_interface.get_cls_solution(),
-                           "cls_phase_fraction",
+                           "cls_phase_indicator",
                            data_component_interpretation);
   std::vector<std::string> cls_gradient_solution_names(dim,
                                                        "cls_phase_gradient");
@@ -773,7 +773,7 @@ CLSAlgebraicInterfaceReinitialization<dim>::write_output_results(
 
 template <int dim>
 void
-CLSAlgebraicInterfaceReinitialization<dim>::check_dependencies_validity()
+CLSPDEBasedInterfaceReinitialization<dim>::check_dependencies_validity()
 {
   AssertThrow(this->subequations_interface.get_solution_validity(
                 CLSSubequationsID::phase_gradient_projection),
@@ -784,5 +784,5 @@ CLSAlgebraicInterfaceReinitialization<dim>::check_dependencies_validity()
                   this->subequation_id)));
 }
 
-template class CLSAlgebraicInterfaceReinitialization<2>;
-template class CLSAlgebraicInterfaceReinitialization<3>;
+template class CLSPDEBasedInterfaceReinitialization<2>;
+template class CLSPDEBasedInterfaceReinitialization<3>;

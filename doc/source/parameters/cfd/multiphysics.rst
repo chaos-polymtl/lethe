@@ -19,7 +19,7 @@ This subsection defines the multiphysics interface of Lethe and enables the solu
 
     # Multiphase flow
     # Conservative Level-Set method
-    set CLS                             = false
+    set cls                             = false
     # Cahn-Hilliard equations
     set cahn hilliard                   = false
   end

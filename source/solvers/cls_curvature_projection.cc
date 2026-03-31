@@ -12,11 +12,11 @@ CLSCurvatureProjection<dim>::assemble_system_matrix_and_rhs()
   this->system_rhs    = 0;
 
   // Get phase gradient L2 projection DoFHandler
-  const DoFHandler<dim> &dof_handler_phase_fraction_gradient =
+  const DoFHandler<dim> &dof_handler_phase_indicator_gradient =
     this->subequations_interface.get_dof_handler(
       CLSSubequationsID::phase_gradient_projection);
 
-  // Initialize FEValues for curvature and phase fraction gradient projection
+  // Initialize FEValues for curvature and phase indicator gradient projection
   FEValues<dim> fe_values_curvature_projection(*this->mapping,
                                                *this->fe,
                                                *this->cell_quadrature,
@@ -25,7 +25,7 @@ CLSCurvatureProjection<dim>::assemble_system_matrix_and_rhs()
                                                  update_JxW_values);
   FEValues<dim> fe_values_phase_gradient_projection(
     *this->mapping,
-    dof_handler_phase_fraction_gradient.get_fe(),
+    dof_handler_phase_indicator_gradient.get_fe(),
     *this->cell_quadrature,
     update_values);
 
@@ -42,10 +42,10 @@ CLSCurvatureProjection<dim>::assemble_system_matrix_and_rhs()
   // Initialize the local dof indices array
   std::vector<types::global_dof_index> local_dof_indices(n_dofs_per_cell);
 
-  // Extractor for phase fraction gradient vector
-  FEValuesExtractors::Vector phase_fraction_gradients(0);
+  // Extractor for phase indicator gradient vector
+  FEValuesExtractors::Vector phase_indicator_gradients(0);
 
-  // Initialize projected phase fraction gradient solution array
+  // Initialize projected phase indicator gradient solution array
   std::vector<Tensor<1, dim>> present_phase_gradient_projection_values(
     n_q_points);
 
@@ -78,7 +78,7 @@ CLSCurvatureProjection<dim>::assemble_system_matrix_and_rhs()
               &(*this->triangulation),
               cell->level(),
               cell->index(),
-              &dof_handler_phase_fraction_gradient);
+              &dof_handler_phase_indicator_gradient);
 
           // Reinitialize FEValues with corresponding cells
           fe_values_curvature_projection.reinit(cell);
@@ -96,8 +96,8 @@ CLSCurvatureProjection<dim>::assemble_system_matrix_and_rhs()
             compute_cell_diameter<dim>(compute_cell_measure_with_JxW(JxW_vec),
                                        fe_curvature_projection.degree);
 
-          // Get projected fraction gradient values
-          fe_values_phase_gradient_projection[phase_fraction_gradients]
+          // Get projected indicator gradient values
+          fe_values_phase_gradient_projection[phase_indicator_gradients]
             .get_function_values(present_phase_gradient_projection_solution,
                                  present_phase_gradient_projection_values);
 

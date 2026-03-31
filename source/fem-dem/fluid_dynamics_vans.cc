@@ -395,13 +395,14 @@ FluidDynamicsVANS<dim>::assemble_system_matrix()
       if (this->simulation_parameters.multiphysics.cls_parameters
             .surface_tension_force.enable)
         {
-          const DoFHandler<dim> &projected_phase_fraction_gradient_dof_handler =
-            this->multiphysics
-              ->get_projected_phase_fraction_gradient_dof_handler();
+          const DoFHandler<dim>
+            &projected_phase_indicator_gradient_dof_handler =
+              this->multiphysics
+                ->get_projected_phase_indicator_gradient_dof_handler();
           const DoFHandler<dim> &curvature_dof_handler =
             this->multiphysics->get_curvature_dof_handler();
-          scratch_data.enable_projected_phase_fraction_gradient(
-            projected_phase_fraction_gradient_dof_handler.get_fe(),
+          scratch_data.enable_projected_phase_indicator_gradient(
+            projected_phase_indicator_gradient_dof_handler.get_fe(),
             *this->cell_quadrature,
             *this->mapping);
           scratch_data.enable_curvature(curvature_dof_handler.get_fe(),

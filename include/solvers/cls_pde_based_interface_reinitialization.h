@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2024-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#ifndef lethe_cls_algebraic_interface_reinitialization_h
-#define lethe_cls_algebraic_interface_reinitialization_h
+#ifndef lethe_cls_pde_based_interface_reinitialization_h
+#define lethe_cls_pde_based_interface_reinitialization_h
 
 #include <core/pvd_handler.h>
 
@@ -26,17 +26,17 @@
 #include <deal.II/lac/trilinos_vector.h>
 
 /**
- * @brief CLS algebraic reinitialization solver.
+ * @brief CLS PDE-based reinitialization solver.
  *
  * @tparam dim Number of dimensions of the problem.
  */
 template <int dim>
-class CLSAlgebraicInterfaceReinitialization
+class CLSPDEBasedInterfaceReinitialization
   : public PhysicsNonlinearSubequationsSolver<dim, GlobalVectorType>
 {
 public:
   /**
-   * @brief Constructor of the CLS algebraic interface reinitialization.
+   * @brief Constructor of the CLS PDE-based interface reinitialization.
    *
    * @param[in] p_simulation_parameters Simulation parameters.
    *
@@ -50,7 +50,7 @@ public:
    * to get information from other subequations and store information from the
    * current one.
    */
-  CLSAlgebraicInterfaceReinitialization(
+  CLSPDEBasedInterfaceReinitialization(
     const SimulationParameters<dim> &p_simulation_parameters,
     const ConditionalOStream        &p_pcout,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
@@ -59,16 +59,16 @@ public:
     CLSSubequationsInterface<dim>            &p_subequations_interface)
     : PhysicsNonlinearSubequationsSolver<dim, GlobalVectorType>(
         p_simulation_parameters.cls_subequations_non_linear_solvers.at(
-          CLSSubequationsID::algebraic_interface_reinitialization),
+          CLSSubequationsID::pde_based_interface_reinitialization),
         p_pcout)
-    , subequation_id(CLSSubequationsID::algebraic_interface_reinitialization)
+    , subequation_id(CLSSubequationsID::pde_based_interface_reinitialization)
     , subequations_interface(p_subequations_interface)
     , simulation_parameters(p_simulation_parameters)
     , simulation_control(p_simulation_control)
     , triangulation(p_triangulation)
     , dof_handler(std::make_shared<DoFHandler<dim>>(*this->triangulation))
     , subequation_verbosity(p_simulation_parameters.multiphysics.cls_parameters
-                              .regularization_method.verbosity)
+                              .reinitialization_method.verbosity)
   {
     this->pcout << std::setprecision(simulation_control->get_log_precision())
                 << std::scientific;
@@ -99,7 +99,7 @@ public:
   /**
    * @brief Default destructor.
    */
-  ~CLSAlgebraicInterfaceReinitialization() = default;
+  ~CLSPDEBasedInterfaceReinitialization() = default;
 
   /**
    * @brief Set up the DofHandler and the degree of freedom associated with
@@ -109,7 +109,7 @@ public:
   setup_dofs() override;
 
   /**
-   * @brief Solve interface algebraic reinitialization process until one of the
+   * @brief Solve interface PDE-based reinitialization process until one of the
    * stop criteria is met.
    */
   void
@@ -223,7 +223,7 @@ public:
 private:
   /**
    * @brief Write parallel VTU files of quantities of interest for
-   * the algebraic interface reinitialization process.
+   * the PDE-based interface reinitialization process.
    *
    * @param[in] step Integer indicating the reinitialization step number.
    *
@@ -245,20 +245,20 @@ private:
   {
     const double multiplier =
       this->simulation_parameters.multiphysics.cls_parameters
-        .regularization_method.algebraic_interface_reinitialization
+        .reinitialization_method.pde_based_interface_reinitialization
         .diffusivity_multiplier;
     const double power =
       this->simulation_parameters.multiphysics.cls_parameters
-        .regularization_method.algebraic_interface_reinitialization
+        .reinitialization_method.pde_based_interface_reinitialization
         .diffusivity_power;
     return multiplier * std::pow(min_cell_size, power);
   }
 
   /**
-   * @brief Computes algebraic reinitialization time step value with
+   * @brief Computes PDE-based reinitialization time step value with
    * user-imposed CFL and minimum cell size.
    *
-   * @return Algebraic reinitialization time step.
+   * @return PDE-based reinitialization time step.
    */
   inline double
   compute_time_step()
@@ -266,7 +266,8 @@ private:
     // Get artificial time-step factor
     const double dtau_factor =
       this->simulation_parameters.multiphysics.cls_parameters
-        .regularization_method.algebraic_interface_reinitialization.dtau_factor;
+        .reinitialization_method.pde_based_interface_reinitialization
+        .dtau_factor;
 
     // Get the minimum cell size
     const double h_min =
@@ -323,13 +324,13 @@ private:
   solve_linear_system() override;
 
   /**
-   * @brief Indicate if the algebraic reinitialization should continue by
+   * @brief Indicate if the PDE-based reinitialization should continue by
    * checking if at least one of the two stop criteria (steady-state criterion
    * or maximum number of reinitialization steps) is met.
    *
-   * @param[in] step_number Algebraic interface reinitialization step number.
+   * @param[in] step_number PDE-based interface reinitialization step number.
    *
-   * @return Boolean indicating if the algebraic reinitialization should
+   * @return Boolean indicating if the PDE-based reinitialization should
    * continue
    */
   inline bool
@@ -339,8 +340,8 @@ private:
       {
         return (step_number <
                 this->simulation_parameters.multiphysics.cls_parameters
-                    .regularization_method.algebraic_interface_reinitialization
-                    .max_steps_number +
+                    .reinitialization_method
+                    .pde_based_interface_reinitialization.max_steps_number +
                   1);
       }
     else
@@ -348,7 +349,7 @@ private:
         // Get the stop criterion of the artificial time-stepping scheme
         double steady_state_criterion =
           this->simulation_parameters.multiphysics.cls_parameters
-            .regularization_method.algebraic_interface_reinitialization
+            .reinitialization_method.pde_based_interface_reinitialization
             .steady_state_criterion;
 
         // Evaluate the solution difference between the 2 last solutions
@@ -376,8 +377,8 @@ private:
         return ((stop_criterion > steady_state_criterion) &&
                 (step_number <
                  this->simulation_parameters.multiphysics.cls_parameters
-                     .regularization_method.algebraic_interface_reinitialization
-                     .max_steps_number +
+                     .reinitialization_method
+                     .pde_based_interface_reinitialization.max_steps_number +
                    1));
       }
   }
@@ -398,7 +399,7 @@ private:
   // Simulation control object for simulation iteration number
   std::shared_ptr<SimulationControl> simulation_control;
 
-  // Handler to output algebraic reinitialization steps
+  // Handler to output PDE-based reinitialization steps
   PVDHandler pvdhandler;
 
   // Time-stepping with BDF1

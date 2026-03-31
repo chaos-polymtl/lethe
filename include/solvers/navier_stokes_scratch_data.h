@@ -105,15 +105,15 @@ public:
 
     // By default, the assembly of variables belonging to auxiliary physics is
     // disabled.
-    gather_cls                               = false;
-    gather_projected_phase_fraction_gradient = false;
-    gather_curvature                         = false;
-    gather_void_fraction                     = false;
-    gather_particles_information             = false;
-    gather_temperature                       = false;
-    gather_cahn_hilliard                     = false;
-    gather_mortar                            = false;
-    gather_particle_field_project            = false;
+    gather_cls                                = false;
+    gather_projected_phase_indicator_gradient = false;
+    gather_curvature                          = false;
+    gather_void_fraction                      = false;
+    gather_particles_information              = false;
+    gather_temperature                        = false;
+    gather_cahn_hilliard                      = false;
+    gather_mortar                             = false;
+    gather_particle_field_project             = false;
     gather_hessian = properties_manager.is_non_newtonian();
   }
 
@@ -146,15 +146,15 @@ public:
 
     // By default, the assembly of variables belonging to auxiliary physics is
     // disabled.
-    gather_cls                               = false;
-    gather_projected_phase_fraction_gradient = false;
-    gather_curvature                         = false;
-    gather_void_fraction                     = false;
-    gather_particles_information             = false;
-    gather_temperature                       = false;
-    gather_cahn_hilliard                     = false;
-    gather_mortar                            = false;
-    gather_particle_field_project            = false;
+    gather_cls                                = false;
+    gather_projected_phase_indicator_gradient = false;
+    gather_curvature                          = false;
+    gather_void_fraction                      = false;
+    gather_particles_information              = false;
+    gather_temperature                        = false;
+    gather_cahn_hilliard                      = false;
+    gather_mortar                             = false;
+    gather_particle_field_project             = false;
     gather_hessian = properties_manager.is_non_newtonian();
 
     if (sd.gather_cls)
@@ -162,11 +162,11 @@ public:
                  sd.fe_values_cls->get_quadrature(),
                  sd.fe_values_cls->get_mapping(),
                  sd.filter);
-    if (sd.gather_projected_phase_fraction_gradient)
-      enable_projected_phase_fraction_gradient(
-        sd.fe_values_projected_phase_fraction_gradient->get_fe(),
-        sd.fe_values_projected_phase_fraction_gradient->get_quadrature(),
-        sd.fe_values_projected_phase_fraction_gradient->get_mapping());
+    if (sd.gather_projected_phase_indicator_gradient)
+      enable_projected_phase_indicator_gradient(
+        sd.fe_values_projected_phase_indicator_gradient->get_fe(),
+        sd.fe_values_projected_phase_indicator_gradient->get_quadrature(),
+        sd.fe_values_projected_phase_indicator_gradient->get_mapping());
     if (sd.gather_curvature)
       enable_curvature(sd.fe_values_curvature->get_fe(),
                        sd.fe_values_curvature->get_quadrature(),
@@ -505,7 +505,7 @@ public:
    *
    * @param mapping Mapping used for the Navier-Stokes problem assembly
    *
-   * @param phase_filter_parameters Parameters for phase fraction filtering
+   * @param phase_filter_parameters Parameters for phase indicator filtering
    */
 
   void
@@ -523,7 +523,7 @@ public:
    *
    * @param mapping Mapping used for the Navier-Stokes problem assembly
    *
-   * @param filter Filter that is applied on the phase fraction
+   * @param filter Filter that is applied on the phase indicator
    */
 
   void
@@ -533,8 +533,8 @@ public:
              const std::shared_ptr<ConservativeLevelSetFilterBase> &filter);
 
   void
-  enable_projected_phase_fraction_gradient(
-    const FiniteElement<dim> &fe_projected_phase_fraction_gradient,
+  enable_projected_phase_indicator_gradient(
+    const FiniteElement<dim> &fe_projected_phase_indicator_gradient,
     const Quadrature<dim>    &quadrature,
     const Mapping<dim>       &mapping);
 
@@ -570,7 +570,7 @@ public:
         "You are trying to reinit the CLS model in a cell, but you did not enable CLS for the scratch data (gather_cls=false)."));
 
     this->fe_values_cls->reinit(cell);
-    // Gather phase fraction (values, gradient)
+    // Gather phase indicator (values, gradient)
     this->fe_values_cls->get_function_values(current_solution,
                                              this->phase_values);
     this->fe_values_cls->get_function_values(current_filtered_solution,
@@ -580,7 +580,7 @@ public:
     this->fe_values_cls->get_function_gradients(current_solution,
                                                 this->phase_gradient_values);
 
-    // Gather previous phase fraction values
+    // Gather previous phase indicator values
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
       {
         this->fe_values_cls->get_function_values(previous_solutions[p],
@@ -590,19 +590,19 @@ public:
 
   template <typename VectorType>
   void
-  reinit_projected_phase_fraction_gradient(
+  reinit_projected_phase_indicator_gradient(
     const typename DoFHandler<dim>::active_cell_iterator
-                     &projected_phase_fraction_gradient_cell,
-    const VectorType &current_projected_phase_fraction_gradient_solution)
+                     &projected_phase_indicator_gradient_cell,
+    const VectorType &current_projected_phase_indicator_gradient_solution)
   {
-    this->fe_values_projected_phase_fraction_gradient->reinit(
-      projected_phase_fraction_gradient_cell);
+    this->fe_values_projected_phase_indicator_gradient->reinit(
+      projected_phase_indicator_gradient_cell);
 
-    FEValuesExtractors::Vector pfg(0);
-    // Gather phase fraction gradient
-    (*fe_values_projected_phase_fraction_gradient)[pfg].get_function_values(
-      current_projected_phase_fraction_gradient_solution,
-      this->projected_phase_fraction_gradient_values);
+    FEValuesExtractors::Vector pig(0);
+    // Gather phase indicator gradient
+    (*fe_values_projected_phase_indicator_gradient)[pig].get_function_values(
+      current_projected_phase_indicator_gradient_solution,
+      this->projected_phase_indicator_gradient_values);
   }
 
   template <typename VectorType>
@@ -618,7 +618,7 @@ public:
 
     this->fe_values_curvature->reinit(curvature_cell);
 
-    // Gather phase fraction gradient
+    // Gather phase indicator gradient
     this->fe_values_curvature->get_function_values(current_curvature_solution,
                                                    this->curvature_values);
   }
@@ -1304,7 +1304,7 @@ public:
     this->phase_order.component        = 0;
     this->chemical_potential.component = 1;
 
-    // Gather phase fraction (values, gradients)
+    // Gather phase indicator (values, gradients)
     this->fe_values_cahn_hilliard->operator[](phase_order)
       .get_function_values(current_solution,
                            this->phase_order_cahn_hilliard_values);
@@ -1557,13 +1557,13 @@ public:
   // This is stored as a shared_ptr because it is only instantiated when needed
   std::shared_ptr<FEValues<dim>> fe_values_cls;
   std::shared_ptr<ConservativeLevelSetFilterBase>
-    filter; // Phase fraction filter
+    filter; // Phase indicator filter
 
-  bool                           gather_projected_phase_fraction_gradient;
+  bool                           gather_projected_phase_indicator_gradient;
   bool                           gather_curvature;
-  std::shared_ptr<FEValues<dim>> fe_values_projected_phase_fraction_gradient;
+  std::shared_ptr<FEValues<dim>> fe_values_projected_phase_indicator_gradient;
   std::shared_ptr<FEValues<dim>> fe_values_curvature;
-  std::vector<Tensor<1, dim>>    projected_phase_fraction_gradient_values;
+  std::vector<Tensor<1, dim>>    projected_phase_indicator_gradient_values;
   std::vector<double>            curvature_values;
 
   /**

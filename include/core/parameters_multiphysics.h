@@ -21,17 +21,17 @@ using namespace dealii;
 namespace Parameters
 {
   /**
-   * @brief Different interface regularization method types:
+   * @brief Different interface reinitialization method types:
    *  - none
    *  - sharpening: projection-based interface sharpening
-   *  - algebraic: PDE-based reinitialization
+   *  - pde_based: PDE-based reinitialization
    *  - geometric: geometric redistanciation
    */
-  enum class RegularizationMethodType : std::int8_t
+  enum class ReinitializationMethodType : std::int8_t
   {
     none,
     sharpening,
-    algebraic,
+    pde_based,
     geometric
   };
 
@@ -72,9 +72,9 @@ namespace Parameters
   };
 
   /**
-   * @brief Different phase fraction filtering types:
-   * - none: no filter wil be applied on the calculated phase fraction
-   * - tanh: the tanh filter function will be applied to the phase fraction,
+   * @brief Different phase indicator filtering types:
+   * - none: no filter wil be applied on the calculated phase indicator
+   * - tanh: the tanh filter function will be applied to the phase indicator,
    * a \f$\beta\f$ parameter influencing the interface definition must be
    * defined
    */
@@ -209,7 +209,7 @@ namespace Parameters
   {
     bool enable;
 
-    double phase_fraction_gradient_diffusion_factor;
+    double phase_indicator_gradient_diffusion_factor;
     double curvature_diffusion_factor;
 
     bool output_cls_auxiliary_fields;
@@ -247,18 +247,18 @@ namespace Parameters
   };
 
   /**
-   * @brief Parameters for algebraic reinitialization of the interface
+   * @brief Parameters for PDE-based reinitialization of the interface
    * used with the CLS solver.
    */
-  struct CLS_AlgebraicInterfaceReinitialization
+  struct CLS_PDEBasedInterfaceReinitialization
   {
-    /// Enables/Disables the algebraic interface reinitialization.
+    /// Enables/Disables the PDE-based interface reinitialization.
     bool enable = false;
     /**
-     * Enables/Disables @p pvtu format outputs of the algebraic interface
+     * Enables/Disables @p pvtu format outputs of the PDE-based interface
      * reinitialization steps of the last simulated time step.
      * The files are stored in a folder named
-     * @p algebraic-reinitialization-steps-output located inside the
+     * @p pde-based-reinitialization-steps-output located inside the
      * <tt>output path</tt> folder specified in the <tt>simulation control</tt>
      * subsection.
      * */
@@ -306,7 +306,8 @@ namespace Parameters
     bool output_signed_distance;
     /// Maximum reinitialization distance value
     double max_reinitialization_distance;
-    /// Transformation type transforming the signed distance to a phase fraction
+    /// Transformation type transforming the signed distance to a phase
+    /// indicator
     RedistanciationTransformationType transformation_type;
     /// Interface thickness for the tanh transformation
     double tanh_thickness;
@@ -329,29 +330,29 @@ namespace Parameters
   };
 
   /**
-   * @brief Parameters for interface regularization methods
+   * @brief Parameters for interface reinitialization methods
    * used within the CLS solver. It stores the parameters for the three
-   * available methods (projection-, algebraic-, and geometric based
-   * regularization).
+   * available methods (projection-, PDE-, and geometric based
+   * reinitialization).
    */
-  struct CLS_RegularizationMethod
+  struct CLS_ReinitializationMethod
   {
-    /// Regularization method type
-    Parameters::RegularizationMethodType regularization_method_type;
+    /// Reinitialization method type
+    Parameters::ReinitializationMethodType reinitialization_method_type;
 
-    /// Regularization frequency at every \f$x\f$ time steps the CLS phase
+    /// Reinitialization frequency at every \f$x\f$ time steps the CLS phase
     /// fraction field will be regularized
     int frequency;
 
-    /// Type of verbosity of the algebraic interface reinitialization solver.
+    /// Type of verbosity of the PDE-based interface reinitialization solver.
     Parameters::Verbosity verbosity;
 
     /// Interface sharpening parameters
     Parameters::CLS_InterfaceSharpening sharpening;
 
-    /// Algebraic interface reinitialization parameters
-    Parameters::CLS_AlgebraicInterfaceReinitialization
-      algebraic_interface_reinitialization;
+    /// PDE-based interface reinitialization parameters
+    Parameters::CLS_PDEBasedInterfaceReinitialization
+      pde_based_interface_reinitialization;
 
     /// Geometric interface reinitialization parameters
     Parameters::CLS_GeometricInterfaceReinitialization
@@ -381,9 +382,9 @@ namespace Parameters
    */
   struct CLS
   {
-    Parameters::CLS_SurfaceTensionForce  surface_tension_force;
-    Parameters::CLS_PhaseFilter          phase_filter;
-    Parameters::CLS_RegularizationMethod regularization_method;
+    Parameters::CLS_SurfaceTensionForce    surface_tension_force;
+    Parameters::CLS_PhaseFilter            phase_filter;
+    Parameters::CLS_ReinitializationMethod reinitialization_method;
 
     Parameters::FluidIndicator viscous_dissipative_fluid;
 

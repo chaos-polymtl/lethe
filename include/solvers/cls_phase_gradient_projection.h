@@ -30,7 +30,7 @@ DeclException1(
        "before solving the subequation.");
 
 /**
- * @brief CLS phase fraction gradient L2 projection solver.
+ * @brief CLS phase indicator gradient L2 projection solver.
  *
  * @tparam dim Number of dimensions of the problem.
  */
@@ -39,8 +39,8 @@ class CLSPhaseGradientProjection : public CLSLinearSubequationsSolver<dim>
 {
 public:
   /**
-   * @brief Constructor for the L2 projection of the CLS phase fraction gradient
-   * (pfg).
+   * @brief Constructor for the L2 projection of the CLS phase indicator gradient
+   * (PIG).
    *
    * @param[in] p_simulation_parameters Simulation parameters.
    *
@@ -64,14 +64,14 @@ public:
         ((p_simulation_parameters.multiphysics.cls_parameters
             .surface_tension_force.verbosity != Parameters::Verbosity::quiet) ||
          ((p_simulation_parameters.multiphysics.cls_parameters
-             .regularization_method.algebraic_interface_reinitialization
+             .reinitialization_method.pde_based_interface_reinitialization
              .enable) &&
           (p_simulation_parameters.multiphysics.cls_parameters
-             .regularization_method.verbosity !=
+             .reinitialization_method.verbosity !=
            Parameters::Verbosity::quiet))) ?
           Parameters::Verbosity::verbose :
           Parameters::Verbosity::quiet, // Set to verbose if surface tension
-                                        // verbosity is enabled or if algebraic
+                                        // verbosity is enabled or if PDE-based
                                         // interface reinitialization is enabled
                                         // and set to verbose
         p_pcout,

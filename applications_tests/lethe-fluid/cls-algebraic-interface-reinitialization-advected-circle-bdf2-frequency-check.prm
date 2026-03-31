@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # This application-test tests the PDE-based interface reinitialization of
-# previous solutions for a BDF2 time integration scheme. A regularization
+# previous solutions for a BDF2 time integration scheme. A reinitialization
 # frequency higher than 1 is used to ensure that the mechanism for regularizing
 # previous solutions is used. The test simulates a circle advected to the left
 # at a constant velocity and the terminal outputs track among other quantities

@@ -42,7 +42,7 @@ variation.
 Arguments:
     - fluids: lethe_pyvista_tools object containing all postprocessing 
                information and simulation results
-    - phase_limit: FLOAT phase fraction value representing the interface
+    - phase_limit: phase indicator value representing the interface
     
 Returns lists of breakup times and lengths.
 '''
@@ -147,8 +147,8 @@ with sides of 2*r_jet m.
 Arguments:
     - df: DATAFRAME object of the current time step
     - drop_df: DATAFRAME object of the drop contour
-    - sample_box_area: FLOAT area of the sample box
-    - phase_limit: FLOAT phase fraction value representing the interface
+    - sample_box_area: area of the sample box
+    - phase_limit: phase indicator value representing the interface
 
 Returns a BOOLEAN. If TRUE, the drop is a satellite drop and the breakup
     length will not be saved.

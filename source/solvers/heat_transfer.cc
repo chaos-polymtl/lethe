@@ -1963,7 +1963,7 @@ HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_cls)
           for (unsigned int q = 0; q < n_q_points; q++)
             {
               // If CLS is enabled, gather the liquid fraction if the fluid has
-              // a phase fraction
+              // a phase indicator
               if (!gather_cls)
                 {
                   liquid_volume_integral +=
