@@ -99,7 +99,7 @@ In the ``multiphysics`` subsection, we enable both the CLS and HT solvers.
 .. code-block:: text
 
     subsection multiphysics
-      set CLS           = true
+      set cls           = true
       set heat transfer = true
     end
     

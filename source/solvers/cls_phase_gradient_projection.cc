@@ -15,7 +15,7 @@ CLSPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
   const DoFHandler<dim> &dof_handler_cls =
     this->subequations_interface.get_cls_dof_handler();
 
-  // Initialize FEValues for phase fraction gradient projection and CLS
+  // Initialize FEValues for phase indicator gradient projection and CLS
   FEValues<dim> fe_values_phase_gradient_projection(*this->mapping,
                                                     *this->fe,
                                                     *this->cell_quadrature,
@@ -40,10 +40,10 @@ CLSPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
   // Initialize local dof indices array
   std::vector<types::global_dof_index> local_dof_indices(n_dofs_per_cell);
 
-  // Extractor for phase fraction gradient vector
-  FEValuesExtractors::Vector phase_fraction_gradients(0);
+  // Extractor for phase indicator gradient vector
+  FEValuesExtractors::Vector phase_indicator_gradients(0);
 
-  // Initialize phase fraction gradient solution array
+  // Initialize phase indicator gradient solution array
   std::vector<Tensor<1, dim>> present_cls_phase_gradients(n_q_points);
 
   // Initialize shape function arrays
@@ -53,7 +53,7 @@ CLSPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
   // Get the diffusion factor
   const double diffusion_factor =
     this->simulation_parameters.multiphysics.cls_parameters
-      .surface_tension_force.phase_fraction_gradient_diffusion_factor;
+      .surface_tension_force.phase_indicator_gradient_diffusion_factor;
 
   // Get present cls solution
   auto &present_cls_solution = this->subequations_interface.get_cls_solution();
@@ -89,7 +89,7 @@ CLSPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
             compute_cell_diameter<dim>(compute_cell_measure_with_JxW(JxW_vec),
                                        fe_phase_gradient_projection.degree);
 
-          // Get CLS phase fraction gradients
+          // Get CLS phase indicator gradients
           fe_values_cls.get_function_gradients(present_cls_solution,
                                                present_cls_phase_gradients);
 
@@ -100,10 +100,10 @@ CLSPhaseGradientProjection<dim>::assemble_system_matrix_and_rhs()
               for (unsigned int k = 0; k < n_dofs_per_cell; ++k)
                 {
                   phi[k] = fe_values_phase_gradient_projection
-                             [phase_fraction_gradients]
+                             [phase_indicator_gradients]
                                .value(k, q);
                   grad_phi[k] = fe_values_phase_gradient_projection
-                                  [phase_fraction_gradients]
+                                  [phase_indicator_gradients]
                                     .gradient(k, q);
                 }
 

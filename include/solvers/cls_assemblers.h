@@ -145,7 +145,7 @@ public:
 
 /**
  * @brief Assemble the Discontinuity-Capturing Directional Dissipation (DCDD)
- * stabilization term for the CLS phase fraction.
+ * stabilization term for the CLS phase indicator.
  *
  * @note For more information see Tezduyar, T. E. (2003). Computation of
  * moving boundaries and interfaces and stabilization parameters. International

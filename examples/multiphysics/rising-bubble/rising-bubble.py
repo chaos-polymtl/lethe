@@ -57,7 +57,7 @@ parser = argparse.ArgumentParser(description='Arguments for the validation of th
 parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
 parser.add_argument("-p", "--proj", type=str, help="Path to the output folder for the projening results. This is the folder that contains the results of the simulation (.vtu, .pvtu, .dat and .pvd files)", required=False)
 parser.add_argument("-g", "--geo", type=str, help="Path to the output folder for the geometric results. This is the folder that contains the results of the simulation (.vtu, .pvtu, .dat and .pvd files)", required=False)
-parser.add_argument("-a", "--alge", type=str, help="Path to the output folder for the algebraic results. This is the folder that contains the results of the simulation (.vtu, .pvtu, .dat and .pvd files)", required=False)
+parser.add_argument("-a", "--alge", type=str, help="Path to the output folder for the PDE-based results. This is the folder that contains the results of the simulation (.vtu, .pvtu, .dat and .pvd files)", required=False)
 
 parser.add_argument("-c", "--case", type=int, choices=[1, 2], help="Test case number. Can be either 1 or 2", required=True)
 args, leftovers=parser.parse_known_args()

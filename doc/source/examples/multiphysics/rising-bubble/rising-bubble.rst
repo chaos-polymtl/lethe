@@ -83,7 +83,7 @@ and off (``false``) the physics of interest. Here ``CLS`` is chosen.
 .. code-block:: text
 
     subsection multiphysics
-      set CLS = true
+      set cls = true
     end
 
 Source Term

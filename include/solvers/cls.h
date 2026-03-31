@@ -45,11 +45,11 @@ DeclException1(
   << " is defined in the triangulation, but not as a boundary condition for the CLS physics. Lethe does not assign a default boundary condition to boundary ids. Every boundary id defined within the triangulation must have a corresponding boundary condition defined in the input file.");
 
 DeclExceptionMsg(
-  UnsupportedRegularization,
+  UnsupportedReinitialization,
   "The CLS physics has been set to use DG and the latter implementation currently does not support any interface reinitialization mechanism.");
 
 DeclExceptionMsg(
-  UnsupportedRegularizationWithSimplex,
+  UnsupportedReinitializationWithSimplex,
   "The CLS physics has been set to use simplex and the latter implementation currently does not support the geometric interface reinitialization mechanism.");
 
 DeclExceptionMsg(
@@ -103,7 +103,7 @@ public:
    * @brief Calculates the volume and mass for a given fluid phase.
    * Used for conservation monitoring.
    *
-   * @param solution CLS solution (phase fraction)
+   * @param solution CLS solution (phase indicator)
    *
    * @param current_solution_fd current solution for the fluid dynamics
    *
@@ -120,7 +120,7 @@ public:
    * @brief Calculates the momentum for a given fluid phase.
    * Used for conservation monitoring.
    *
-   * @param[in] solution CLS solution (phase fraction)
+   * @param[in] solution CLS solution (phase indicator)
    *
    * @param[in] current_solution_fd current solution for the fluid dynamics
    *
@@ -364,7 +364,7 @@ public:
   }
 
   const DoFHandler<dim> &
-  get_projected_phase_fraction_gradient_dof_handler()
+  get_projected_phase_indicator_gradient_dof_handler()
   {
     return this->cls_subequations_interface->get_dof_handler(
       CLSSubequationsID::phase_gradient_projection);
@@ -378,7 +378,7 @@ public:
   }
 
   const GlobalVectorType &
-  get_projected_phase_fraction_gradient_solution()
+  get_projected_phase_indicator_gradient_solution()
   {
     return this->cls_subequations_interface->get_solution(
       CLSSubequationsID::phase_gradient_projection);
@@ -541,7 +541,7 @@ private:
   copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
   /**
-   * @brief Limit the phase fractions between 0 and 1. This is necessary before interface sharpening.
+   * @brief Limit the phase indicators between 0 and 1. This is necessary before interface sharpening.
    * More information can be found in step_41 of deal.II tutorials:
    * https://www.dealii.org/current/doxygen/deal.II/step_41.html
    */
@@ -558,7 +558,7 @@ private:
    * Reference for sharpening method
    * https://www.sciencedirect.com/science/article/pii/S0045782500002000
    *
-   * @param solution CLS solution (phase fraction)
+   * @param solution CLS solution (phase indicator)
    *
    * @param sharpening_threshold Interface sharpening threshold that represents
    * the mass conservation level
@@ -574,14 +574,14 @@ private:
    * is hardcoded = 1e-15, and an ILU Preconditioner is used. After solving the
    * system, this function overwrites the solution with the sharpened solution
    *
-   * @param solution CLS solution (phase fraction)
+   * @param solution CLS solution (phase indicator)
    */
   void
   solve_interface_sharpening(GlobalVectorType &solution);
 
   /**
    * @brief Assembles a mass_matrix which is used in update_solution_and_constraints function
-   * to limit the phase fractions of cells in the range of [0,1] before
+   * to limit the phase indicators of cells in the range of [0,1] before
    * sharpening the interface. More information can be found in step_41 of
    * deal.II tutorials:
    * https://www.dealii.org/current/doxygen/deal.II/step_41.html
@@ -626,7 +626,7 @@ private:
   /**
    * @brief Carries out interface sharpening. It is called in the modify solution function.
    *
-   * @param solution CLS solution (phase fraction)
+   * @param solution CLS solution (phase indicator)
    *
    * @param sharpening_threshold Interface sharpening threshold that represents the mass conservation level
    *
@@ -641,33 +641,33 @@ private:
                     const bool        sharpen_previous_solutions);
 
   /**
-   * @brief Carries out the smoothing phase fraction with a projection step (to avoid a staircase interface).
+   * @brief Carries out the smoothing phase indicator with a projection step (to avoid a staircase interface).
    */
   void
-  smooth_phase_fraction(GlobalVectorType &solution);
+  smooth_phase_indicator(GlobalVectorType &solution);
 
   /**
-   * @brief Assembles the matrix and rhs for calculation of a smooth phase fraction using a projection.
+   * @brief Assembles the matrix and rhs for calculation of a smooth phase indicator using a projection.
    *
-   * @param solution CLS solution (phase fraction)
+   * @param solution CLS solution (phase indicator)
    */
   void
-  assemble_projection_phase_fraction(GlobalVectorType &solution);
+  assemble_projection_phase_indicator(GlobalVectorType &solution);
 
   /**
-   * @brief Solves smooth phase fraction system.
-   * @param solution CLS solution (phase fraction)
+   * @brief Solves smooth phase indicator system.
+   * @param solution CLS solution (phase indicator)
    */
   void
-  solve_projection_phase_fraction(GlobalVectorType &solution);
+  solve_projection_phase_indicator(GlobalVectorType &solution);
 
   /**
-   * @brief Apply filter on phase fraction values.
+   * @brief Apply filter on phase indicator values.
    *
    * @param[in] original_solution CLS solution vector to which the filter is to
    * be applied.
    *
-   * @param[out] filtered_solution Solution vector with filtered phase fraction
+   * @param[out] filtered_solution Solution vector with filtered phase indicator
    * values.
    */
   void
@@ -675,36 +675,36 @@ private:
                      GlobalVectorType       &filtered_solution);
 
   /**
-   * @brief Reinitialize the interface between fluids using the algebraic
+   * @brief Reinitialize the interface between fluids using the PDE-based
    * approach.
    */
   void
-  reinitialize_interface_with_algebraic_method();
+  reinitialize_interface_with_pde_based_method();
 
   /**
-   * @brief Compute level-set field from the phase fraction field using an
+   * @brief Compute level-set field from the phase indicator field using an
    * inverse tanh-based transformation.
    *
-   * @param[in] solution Phase fraction solution field
+   * @param[in] solution Phase indicator solution field
    *
    * @param[out] level_set_solution Level-set solution field
    */
   void
-  compute_level_set_from_phase_fraction(const GlobalVectorType &solution,
-                                        GlobalVectorType &level_set_solution);
+  compute_level_set_from_phase_indicator(const GlobalVectorType &solution,
+                                         GlobalVectorType &level_set_solution);
 
   /**
-   * @brief Compute the phase fraction field from level-set field using a
+   * @brief Compute the phase indicator field from level-set field using a
    * tanh-based transformation.
    *
    * @param[in] level_set_solution Level-set solution field
    *
-   * @param[out] phase_fraction_solution Phase fraction solution field
+   * @param[out] phase_indicator_solution Phase indicator solution field
    */
   void
-  compute_phase_fraction_from_level_set(
+  compute_phase_indicator_from_level_set(
     const GlobalVectorType &level_set_solution,
-    GlobalVectorType       &phase_fraction_solution);
+    GlobalVectorType       &phase_indicator_solution);
 
   /**
    * @brief Reinitialize the interface between fluids using the geometric
@@ -754,7 +754,7 @@ private:
   }
 
 
-  GlobalVectorType nodal_phase_fraction_owned;
+  GlobalVectorType nodal_phase_indicator_owned;
 
   MultiphysicsInterface<dim> *multiphysics;
 
@@ -789,7 +789,7 @@ private:
   TrilinosWrappers::SparseMatrix    system_matrix;
   std::shared_ptr<GlobalVectorType> filtered_solution;
 
-  /// Level-set field obtained from the phase fraction field using a tanh-based
+  /// Level-set field obtained from the phase indicator field using a tanh-based
   /// transformation
   GlobalVectorType level_set;
 
@@ -801,20 +801,20 @@ private:
   std::vector<SolutionTransfer<dim, GlobalVectorType>>
     previous_solutions_transfer;
 
-  // Phase fraction matrices for interface sharpening
-  TrilinosWrappers::SparseMatrix system_matrix_phase_fraction;
-  TrilinosWrappers::SparseMatrix complete_system_matrix_phase_fraction;
-  GlobalVectorType               system_rhs_phase_fraction;
-  GlobalVectorType               complete_system_rhs_phase_fraction;
-  TrilinosWrappers::SparseMatrix mass_matrix_phase_fraction;
+  // Phase indicator matrices for interface sharpening
+  TrilinosWrappers::SparseMatrix system_matrix_phase_indicator;
+  TrilinosWrappers::SparseMatrix complete_system_matrix_phase_indicator;
+  GlobalVectorType               system_rhs_phase_indicator;
+  GlobalVectorType               complete_system_rhs_phase_indicator;
+  TrilinosWrappers::SparseMatrix mass_matrix_phase_indicator;
 
-  // For projected phase fraction gradient (pfg), projected curvature, and
-  // algebraic interface reinitialization
+  // For projected phase indicator gradient (PIG), projected curvature, and
+  // PDE-based interface reinitialization
   std::shared_ptr<CLSSubequationsInterface<dim>> cls_subequations_interface;
 
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
 
-  // Lower and upper bounds of phase fraction
+  // Lower and upper bounds of phase indicator
   const double phase_upper_bound = 1.0;
   const double phase_lower_bound = 0.0;
 
@@ -834,14 +834,14 @@ private:
   // Face assemblers, used only for DG methods
   std::shared_ptr<CLSAssemblerSIPG<dim>> inner_face_assembler;
 
-  // Phase fraction filter
+  // Phase indicator filter
   std::shared_ptr<ConservativeLevelSetFilterBase> filter;
 
   // Signed distance solver for geometric redistanciation
   std::shared_ptr<InterfaceTools::SignedDistanceSolver<dim, GlobalVectorType>>
     signed_distance_solver;
 
-  // Signed distance transformation function to a phase fraction
+  // Signed distance transformation function to a phase indicator
   std::shared_ptr<SignedDistanceTransformationBase>
     signed_distance_transformation;
 };

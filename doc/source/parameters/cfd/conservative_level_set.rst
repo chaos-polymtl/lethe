@@ -8,7 +8,7 @@ In this method, the two fluids considered are given index of :math:`0` and :math
 
 .. note::
 
-  At the moment, a maximum of two fluids is supported. By convention, air is usually the ``fluid 0`` and the other fluid of interest is the ``fluid 1``.    See :doc:`initial_conditions` for the definition of the CLS initial conditions and :ref:`Physical properties - Two Phase Simulations<two phase simulations>` for the definition of the physical properties of both fluids.  Do not forget to ``set CLS = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
+  At the moment, a maximum of two fluids is supported. By convention, air is usually the ``fluid 0`` and the other fluid of interest is the ``fluid 1``.    See :doc:`initial_conditions` for the definition of the CLS initial conditions and :ref:`Physical properties - Two Phase Simulations<two phase simulations>` for the definition of the physical properties of both fluids.  Do not forget to ``set cls = true`` in the :doc:`multiphysics` subsection of the ``.prm``.
 
 
 The default values of the CLS parameters are given in the text box below.

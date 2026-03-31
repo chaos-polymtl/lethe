@@ -7,11 +7,11 @@ add_library(lethe-solvers
   cahn_hilliard_filter.cc
   cahn_hilliard_scratch_data.cc
   cls.cc
-  cls_algebraic_interface_reinitialization.cc
   cls_assemblers.cc
   cls_curvature_projection.cc
   cls_filter.cc
   cls_linear_subequations_solver.cc
+  cls_pde_based_interface_reinitialization.cc
   cls_phase_gradient_projection.cc
   cls_scratch_data.cc
   cls_subequations_interface.cc
@@ -55,11 +55,11 @@ add_library(lethe-solvers
   ../../include/solvers/cahn_hilliard_filter.h
   ../../include/solvers/cahn_hilliard_scratch_data.h
   ../../include/solvers/cls.h
-  ../../include/solvers/cls_algebraic_interface_reinitialization.h
   ../../include/solvers/cls_assemblers.h
   ../../include/solvers/cls_curvature_projection.h
   ../../include/solvers/cls_filter.h
   ../../include/solvers/cls_linear_subequations_solver.h
+  ../../include/solvers/cls_pde_based_interface_reinitialization.h
   ../../include/solvers/cls_phase_gradient_projection.h
   ../../include/solvers/cls_scratch_data.h
   ../../include/solvers/cls_subequations.h

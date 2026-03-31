@@ -9,12 +9,12 @@
  */
 enum class CLSSubequationsID : unsigned int
 {
-  /// CLS phase fraction gradient L2 projection
+  /// CLS phase indicator gradient L2 projection
   phase_gradient_projection = 0,
   /// CLS curvature L2 projection
   curvature_projection = 1,
-  /// CLS algebraic interface reinitialization
-  algebraic_interface_reinitialization = 2
+  /// CLS PDE-based interface reinitialization
+  pde_based_interface_reinitialization = 2
 };
 
 /**
@@ -34,7 +34,7 @@ get_cls_subequation_id(const std::string &cls_subequation_name)
   else if (cls_subequation_name == "CLS curvature L2 projection")
     return CLSSubequationsID::curvature_projection;
   else if (cls_subequation_name == "CLS PDE-based interface reinitialization")
-    return CLSSubequationsID::algebraic_interface_reinitialization;
+    return CLSSubequationsID::pde_based_interface_reinitialization;
   else
     throw(std::invalid_argument("Invalid CLS subequation name. Options are: \n"
                                 " <CLS phase gradient L2 projection>\n"

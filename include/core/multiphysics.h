@@ -49,7 +49,7 @@ enum class Variable : unsigned int
   velocity = 0,
   /// Pressure scalar field from fluid dynamics
   pressure = 1,
-  /// Phase fraction scalar field from CLS
+  /// Phase indicator scalar field from CLS
   phase = 2,
   /// Temperature scalar field from heat transfer
   temperature = 3,

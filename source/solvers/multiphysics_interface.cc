@@ -166,7 +166,7 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
 
 template <int dim>
 const GlobalVectorType &
-MultiphysicsInterface<dim>::get_projected_phase_fraction_gradient_solution()
+MultiphysicsInterface<dim>::get_projected_phase_indicator_gradient_solution()
 {
   // Throw error if CLS is not enabled
   AssertThrow((std::ranges::find(active_physics, PhysicsID::CLS) !=
@@ -178,7 +178,7 @@ MultiphysicsInterface<dim>::get_projected_phase_fraction_gradient_solution()
     ExcInternalError());
 
   return dynamic_cast<ConservativeLevelSet<dim> &>(*physics[PhysicsID::CLS])
-    .get_projected_phase_fraction_gradient_solution();
+    .get_projected_phase_indicator_gradient_solution();
 }
 
 template <int dim>
@@ -217,7 +217,7 @@ MultiphysicsInterface<dim>::get_curvature_dof_handler()
 
 template <int dim>
 const DoFHandler<dim> &
-MultiphysicsInterface<dim>::get_projected_phase_fraction_gradient_dof_handler()
+MultiphysicsInterface<dim>::get_projected_phase_indicator_gradient_dof_handler()
 {
   // Throw error if CLS is not enabled
   AssertThrow((std::ranges::find(active_physics, PhysicsID::CLS) !=
@@ -229,7 +229,7 @@ MultiphysicsInterface<dim>::get_projected_phase_fraction_gradient_dof_handler()
     ExcInternalError());
 
   return dynamic_cast<ConservativeLevelSet<dim> &>(*physics[PhysicsID::CLS])
-    .get_projected_phase_fraction_gradient_dof_handler();
+    .get_projected_phase_indicator_gradient_dof_handler();
 }
 
 template <int dim>
@@ -264,7 +264,8 @@ MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
     nsparam.multiphysics.cls_parameters.surface_tension_force.enable;
   bool fluid_dynamics_enabled = nsparam.multiphysics.fluid_dynamics;
   bool interface_sharpening_enabled =
-    nsparam.multiphysics.cls_parameters.regularization_method.sharpening.enable;
+    nsparam.multiphysics.cls_parameters.reinitialization_method.sharpening
+      .enable;
   bool CLS_enabled           = nsparam.multiphysics.CLS;
   bool cahn_hilliard_enabled = nsparam.multiphysics.cahn_hilliard;
 

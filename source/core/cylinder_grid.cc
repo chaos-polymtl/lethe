@@ -124,7 +124,7 @@ CylinderGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
       if (cylinder_type == CylinderType::regularized)
         {
           // Pre-refinement to reduce mesh size at corners before
-          // regularization
+          // reinitialization
           temporary_triangulation.refine_global(2);
           GridTools::regularize_corner_cells(temporary_triangulation);
 

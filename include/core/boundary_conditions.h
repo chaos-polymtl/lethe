@@ -1301,7 +1301,7 @@ namespace BoundaryConditions
   public:
     std::map<types::boundary_id,
              std::shared_ptr<Functions::ParsedFunction<dim>>>
-      phase_fraction;
+      phase_indicator;
 
     void
     declare_default_entry(ParameterHandler  &prm,
@@ -1435,9 +1435,9 @@ namespace BoundaryConditions
           {
             this->type[boundary_id] = BoundaryType::cls_dirichlet;
             prm.enter_subsection("dirichlet");
-            phase_fraction[boundary_id] =
+            phase_indicator[boundary_id] =
               std::make_shared<Functions::ParsedFunction<dim>>();
-            phase_fraction[boundary_id]->parse_parameters(prm);
+            phase_indicator[boundary_id]->parse_parameters(prm);
             prm.leave_subsection();
           }
         if (auto const option = prm.get("type"); option == "periodic")

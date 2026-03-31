@@ -66,12 +66,12 @@ test()
                                                        tria,
                                                        simulation_control);
 
-  // Phase fraction gradient and curvature L2 projection enabled
+  // Phase indicator gradient and curvature L2 projection enabled
   {
     // CLS is required when enabling surface_tension_force
     solver_parameters.multiphysics.CLS = true;
 
-    // To test with the phase fraction gradient and the curvature L2 projection
+    // To test with the phase indicator gradient and the curvature L2 projection
     solver_parameters.multiphysics.cls_parameters.surface_tension_force.enable =
       true;
 
@@ -91,7 +91,7 @@ test()
       }
   }
 
-  // Disable phase fraction gradient and curvature L2 projection
+  // Disable phase indicator gradient and curvature L2 projection
   {
     solver_parameters.multiphysics.cls_parameters.surface_tension_force.enable =
       false;
@@ -114,9 +114,9 @@ test()
         }
   }
 
-  // Enable algebraic interface reinitialization
-  solver_parameters.multiphysics.cls_parameters.regularization_method
-    .algebraic_interface_reinitialization.enable = true;
+  // Enable PDE-based interface reinitialization
+  solver_parameters.multiphysics.cls_parameters.reinitialization_method
+    .pde_based_interface_reinitialization.enable = true;
   {
     subequations_interface.initialize_subequations(solver_parameters,
                                                    tria,
@@ -126,7 +126,7 @@ test()
       subequations_interface.get_active_subequations();
 
     deallog
-      << "Active subequations [expected: phase_gradient_projection (0), curvature_projection (1), algebraic_interface_reinitialization (2)]"
+      << "Active subequations [expected: phase_gradient_projection (0), curvature_projection (1), pde_based_interface_reinitialization (2)]"
       << std::endl;
     for (const auto &subequation_id : active_subequations)
       {

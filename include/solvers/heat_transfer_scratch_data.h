@@ -346,7 +346,7 @@ public:
    *
    * @param mapping Mapping used for the Navier-Stokes problem assembly
    *
-   * @param phase_filter_parameters Parameters for phase fraction filtering.
+   * @param phase_filter_parameters Parameters for phase indicator filtering.
    */
 
   void
@@ -364,7 +364,7 @@ public:
    *
    * @param mapping Mapping used for the Navier-Stokes problem assembly
    *
-   * @param filter Filter that is applied on the phase fraction
+   * @param filter Filter that is applied on the phase indicator
    */
 
   void
@@ -393,7 +393,7 @@ public:
              const VectorType &current_filtered_solution)
   {
     this->fe_values_cls->reinit(cell);
-    // Gather phase fraction (values, gradient)
+    // Gather phase indicator (values, gradient)
     this->fe_values_cls->get_function_values(current_filtered_solution,
                                              this->filtered_phase_values);
     this->fe_values_cls->get_function_gradients(
@@ -476,7 +476,7 @@ public:
   // This is stored as a shared_ptr because it is only instantiated when needed
   std::shared_ptr<FEValues<dim>> fe_values_cls;
   std::shared_ptr<ConservativeLevelSetFilterBase>
-    filter; // Phase fraction filter
+    filter; // Phase indicator filter
 
   /**
    * Scratch component for the Navier-Stokes components
