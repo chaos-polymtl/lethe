@@ -44,7 +44,7 @@ IBParticlesDEM<dim>::is_boundary_excluded(
     return true;
 
   const auto &bc_types = boundary_conditions_parameters->bc_types;
-  const bool has_periodic =
+  const bool  has_periodic =
     std::ranges::find(bc_types,
                       Parameters::Lagrangian::BCDEM::BoundaryType::periodic) !=
     bc_types.end();
