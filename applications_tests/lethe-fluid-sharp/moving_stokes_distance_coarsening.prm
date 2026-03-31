@@ -18,11 +18,10 @@ set dimension = 2
 
 subsection simulation control
   set method            = bdf1
-  set time step         = 1    # Time step
-  set number mesh adapt = 2    # If steady, nb mesh adaptation
-  set time end          = 3    # End time of simulation
-  set output name       = test # Prefix for VTU outputs
-  set output frequency  = 0    # Frequency of simulation output
+  set time step         = 1 # Time step
+  set number mesh adapt = 2 # If steady, nb mesh adaptation
+  set time end          = 3 # End time of simulation
+  set output frequency  = 0 # Frequency of simulation output
 end
 
 #---------------------------------------------------

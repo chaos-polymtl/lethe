@@ -402,7 +402,7 @@ FluidDynamicsSharp<dim>::refinement_control(const bool initial_refinement)
                       << this->simulation_parameters.particlesParameters
                            ->initial_refinement
                       << std::endl;
-          refine_ib(initial_refinement);
+          mesh_adapt_ib(initial_refinement);
           NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
           if (update_precalculations_flag)
             {
@@ -418,7 +418,7 @@ FluidDynamicsSharp<dim>::refinement_control(const bool initial_refinement)
   if (initial_refinement == false)
     {
       update_precalculations_flag = false;
-      refine_ib(initial_refinement);
+      mesh_adapt_ib(initial_refinement);
       NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
       if (update_precalculations_flag)
         {
@@ -812,7 +812,7 @@ FluidDynamicsSharp<dim>::define_particles()
 
 template <int dim>
 void
-FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
+FluidDynamicsSharp<dim>::mesh_adapt_ib(const bool initial_refinement)
 {
   bool refinement_step;
   if (this->simulation_parameters.mesh_adaptation.refinement_at_frequency)
@@ -860,10 +860,12 @@ FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
 
   double smallest_cut_cell = std::numeric_limits<double>::max();
   bool   minimal_crown_refinement_enabled =
-    abs(this->simulation_parameters.particlesParameters->outside_radius - 1) <
-      1e-16 &&
-    abs(this->simulation_parameters.particlesParameters->inside_radius - 1) <
-      1e-16;
+    abs(this->simulation_parameters.particlesParameters
+          ->refinement_outside_distance_factor -
+        1) < 1e-16 &&
+    abs(this->simulation_parameters.particlesParameters
+          ->refinement_inside_distance_factor -
+        1) < 1e-16;
   if (minimal_crown_refinement_enabled)
     {
       const auto &cell_iterator_smallest_cell =
@@ -956,9 +958,9 @@ FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
                           is_inside_crown = particles[p].is_inside_crown(
                             support_points[local_dof_indices[j]],
                             this->simulation_parameters.particlesParameters
-                              ->outside_radius,
+                              ->refinement_outside_distance_factor,
                             this->simulation_parameters.particlesParameters
-                              ->inside_radius,
+                              ->refinement_inside_distance_factor,
                             false, // indicates that we use the
                                    // radius relative distance definition
                             cell);
@@ -972,7 +974,7 @@ FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
                           const double coarsening_threshold =
                             particles[p].shape->effective_radius *
                             (this->simulation_parameters.particlesParameters
-                               ->coarsening_factor -
+                               ->coarsening_distance_factor -
                              1);
 
                           if (coarsening_distance <= coarsening_threshold)

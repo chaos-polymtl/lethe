@@ -1800,12 +1800,13 @@ namespace Parameters
     unsigned int initial_refinement;
     // Boolean to enable distance-based coarsening away from particles
     bool enable_coarsening;
-    // Inner radius factor of the refinement zone
-    double inside_radius;
-    // Outer radius factor of the refinement zone
-    double outside_radius;
-    // Outer radius factor beyond which distance-based coarsening is allowed
-    double coarsening_factor;
+    // Inner distance factor of the refinement zone
+    double refinement_inside_distance_factor;
+    // Outer distance factor of the refinement zone
+    double refinement_outside_distance_factor;
+    // Outer distance factor beyond which distance-based coarsening is
+    // allowed
+    double coarsening_distance_factor;
     // Boolean for time-dependent mesh refinement according to the particle's
     // current position the refinement zone.
     bool time_extrapolation_of_refinement_zone;

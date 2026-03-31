@@ -4080,16 +4080,18 @@ namespace Parameters
       {
         initial_refinement = prm.get_integer("initial refinement");
         enable_coarsening  = prm.get_bool("enable distance based coarsening");
-        inside_radius      = prm.get_double("refine mesh inside radius factor");
-        outside_radius = prm.get_double("refine mesh outside radius factor");
-        coarsening_factor =
+        refinement_inside_distance_factor =
+          prm.get_double("refine mesh inside radius factor");
+        refinement_outside_distance_factor =
+          prm.get_double("refine mesh outside radius factor");
+        coarsening_distance_factor =
           prm.get_double("coarsen mesh outside radius factor");
         time_extrapolation_of_refinement_zone =
           prm.get_bool("refinement zone extrapolation");
         if (enable_coarsening)
           {
             AssertThrow(
-              coarsening_factor >= outside_radius,
+              coarsening_distance_factor >= refinement_outside_distance_factor,
               ExcMessage(
                 "The parameter 'coarsen mesh outside radius factor' must be greater than or equal to 'refine mesh outside radius factor'."));
           }

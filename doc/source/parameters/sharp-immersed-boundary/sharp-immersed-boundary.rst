@@ -28,12 +28,12 @@ This subsection contains the parameters related to the sharp immersed boundary s
       end
       
       subsection local mesh refinement
-        set initial refinement                = 0
-        set enable distance based coarsening  = false
-        set refine mesh inside radius factor  = 0.5
-        set refine mesh outside radius factor = 1.5
+        set initial refinement                 = 0
+        set enable distance based coarsening   = false
+        set refine mesh inside radius factor   = 0.5
+        set refine mesh outside radius factor  = 1.5
         set coarsen mesh outside radius factor = 2.0
-        set refinement zone extrapolation     = false
+        set refinement zone extrapolation      = false
       end
 
       subsection DEM
