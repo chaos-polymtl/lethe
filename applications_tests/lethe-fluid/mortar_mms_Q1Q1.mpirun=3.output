@@ -3,8 +3,8 @@ Running on 3 MPI rank(s)...
 Mortar Interface
 -----------------
 Workload imbalance: 1.218750e+00
-Number of cells per process - Min.: 1.800000e+01
-                              Max.: 2.600000e+01
+Number of cells per process - Min.: 18
+                              Max.: 26
 Rotor grid angle:    0.000000e+00 rad 
 Rotor grid velocity: 0.000000e+00 rad/time 
 
@@ -19,8 +19,8 @@ Steady iteration:        1/3
 Mortar Interface
 -----------------
 Workload imbalance: 1.218750e+00
-Number of cells per process - Min.: 1.800000e+01
-                              Max.: 2.600000e+01
+Number of cells per process - Min.: 18
+                              Max.: 26
 Rotor grid angle:    0.000000e+00 rad 
 Rotor grid velocity: 0.000000e+00 rad/time 
 
@@ -32,8 +32,8 @@ Steady iteration:        2/3
 Mortar Interface
 -----------------
 Workload imbalance: 1.171875e+00
-Number of cells per process - Min.: 3.600000e+01
-                              Max.: 5.000000e+01
+Number of cells per process - Min.: 36
+                              Max.: 50
 Rotor grid angle:    0.000000e+00 rad 
 Rotor grid velocity: 0.000000e+00 rad/time 
 
@@ -48,8 +48,8 @@ Steady iteration:        3/3
 Mortar Interface
 -----------------
 Workload imbalance: 1.148438e+00
-Number of cells per process - Min.: 7.200000e+01
-                              Max.: 9.800000e+01
+Number of cells per process - Min.: 72
+                              Max.: 98
 Rotor grid angle:    0.000000e+00 rad 
 Rotor grid velocity: 0.000000e+00 rad/time 
 

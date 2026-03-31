@@ -13,8 +13,8 @@ set dimension = 2
 
 subsection simulation control
   set method            = steady
-  set output name       = mms-mortar_output
   set number mesh adapt = 2
+  set output frequency  = 0
 end
 
 #---------------------------------------------------
@@ -135,8 +135,7 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set preconditioner              = amg
-    set amg preconditioner ilu fill = 3
-    set verbosity                   = quiet
+    set preconditioner = amg
+    set verbosity      = quiet
   end
 end

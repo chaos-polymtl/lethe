@@ -14,9 +14,9 @@ Steady iteration:        1/3
 
 
   -Eigenvalue estimation level 1:
-    Relaxation parameter: 6.084573e-01
-    Minimum eigenvalue: 2.282640e+00
-    Maximum eigenvalue: 2.739168e+00
+    Relaxation parameter: 6.101496e-01
+    Minimum eigenvalue: 2.276309e+00
+    Maximum eigenvalue: 2.731570e+00
 
 
   -Eigenvalue estimation level 0:
@@ -26,9 +26,9 @@ Steady iteration:        1/3
 
 
   -Eigenvalue estimation level 1:
-    Relaxation parameter: 6.084661e-01
-    Minimum eigenvalue: 2.282607e+00
-    Maximum eigenvalue: 2.739128e+00
+    Relaxation parameter: 6.101346e-01
+    Minimum eigenvalue: 2.276365e+00
+    Maximum eigenvalue: 2.731638e+00
 
 
   -Eigenvalue estimation level 0:
@@ -38,9 +38,9 @@ Steady iteration:        1/3
 
 
   -Eigenvalue estimation level 1:
-    Relaxation parameter: 6.084660e-01
-    Minimum eigenvalue: 2.282607e+00
-    Maximum eigenvalue: 2.739128e+00
+    Relaxation parameter: 6.101345e-01
+    Minimum eigenvalue: 2.276365e+00
+    Maximum eigenvalue: 2.731638e+00
 
 
 *****************************
@@ -63,9 +63,9 @@ Steady iteration:        2/3
 
 
   -Eigenvalue estimation level 2:
-    Relaxation parameter: 6.539242e-01
-    Minimum eigenvalue: 2.123929e+00
-    Maximum eigenvalue: 2.548715e+00
+    Relaxation parameter: 6.483476e-01
+    Minimum eigenvalue: 2.142198e+00
+    Maximum eigenvalue: 2.570638e+00
 
 
   -Eigenvalue estimation level 0:
@@ -81,9 +81,9 @@ Steady iteration:        2/3
 
 
   -Eigenvalue estimation level 2:
-    Relaxation parameter: 6.539228e-01
-    Minimum eigenvalue: 2.123934e+00
-    Maximum eigenvalue: 2.548721e+00
+    Relaxation parameter: 6.483474e-01
+    Minimum eigenvalue: 2.142199e+00
+    Maximum eigenvalue: 2.570638e+00
 
 
 *****************************
@@ -112,9 +112,9 @@ Steady iteration:        3/3
 
 
   -Eigenvalue estimation level 3:
-    Relaxation parameter: 6.541477e-01
-    Minimum eigenvalue: 2.123204e+00
-    Maximum eigenvalue: 2.547845e+00
+    Relaxation parameter: 6.574550e-01
+    Minimum eigenvalue: 2.112523e+00
+    Maximum eigenvalue: 2.535028e+00
 
 
   -Eigenvalue estimation level 0:
@@ -136,9 +136,9 @@ Steady iteration:        3/3
 
 
   -Eigenvalue estimation level 3:
-    Relaxation parameter: 6.541477e-01
-    Minimum eigenvalue: 2.123204e+00
-    Maximum eigenvalue: 2.547845e+00
+    Relaxation parameter: 6.574550e-01
+    Minimum eigenvalue: 2.112523e+00
+    Maximum eigenvalue: 2.535028e+00
 
 cells  error_velocity    error_pressure   
    32 3.528672e-04    - 6.996453e-05    - 
