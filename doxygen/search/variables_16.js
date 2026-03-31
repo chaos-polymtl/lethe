@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['w_0',['w',['../classBoundaryConditions_1_1NSBoundaryFunctions.html#a001101f1afbfc6adfae4f195e8bfa254',1,'BoundaryConditions::NSBoundaryFunctions::w'],['../classNavierStokesFunctionDefined.html#aee00e964756cb793506e8f5db17abe65',1,'NavierStokesFunctionDefined::w']]],
+  ['w_0',['w',['../classNavierStokesFunctionDefined.html#aee00e964756cb793506e8f5db17abe65',1,'NavierStokesFunctionDefined::w'],['../classBoundaryConditions_1_1NSBoundaryFunctions.html#a001101f1afbfc6adfae4f195e8bfa254',1,'BoundaryConditions::NSBoundaryFunctions::w']]],
   ['wall_5ffriction_5fcoefficient_1',['wall_friction_coefficient',['../classParameters_1_1IBParticles.html#afbec6bf829e8bd730915f2850938a396',1,'Parameters::IBParticles']]],
   ['wall_5fpoisson_5fratio_2',['wall_poisson_ratio',['../classParameters_1_1IBParticles.html#a2f6beb3ee6d2314b6c8118a3e2186deb',1,'Parameters::IBParticles']]],
   ['wall_5frestitution_5fcoefficient_3',['wall_restitution_coefficient',['../classParameters_1_1IBParticles.html#ad1ae14a462083b89d26607662084da42',1,'Parameters::IBParticles']]],
@@ -10,7 +10,9 @@ var searchData=
   ['waveguide_5fboundary_5fids_7',['waveguide_boundary_ids',['../structParameters_1_1TimeHarmonicMaxwell.html#a431ed966e330ee824ff949dc7f86268f',1,'Parameters::TimeHarmonicMaxwell']]],
   ['waveguide_5fcorners_8',['waveguide_corners',['../structParameters_1_1TimeHarmonicMaxwell.html#a3dc2a007d2932b3b12dddb0a42e84fca',1,'Parameters::TimeHarmonicMaxwell']]],
   ['waveguide_5fmode_9',['waveguide_mode',['../structParameters_1_1TimeHarmonicMaxwell.html#a79dccedd0710d6998becd7df5e4ebd4e',1,'Parameters::TimeHarmonicMaxwell']]],
-  ['weighting_5ftype_10',['weighting_type',['../classDistribution.html#a7e09273b70dd38a97eb39f621a406bf3',1,'Distribution::weighting_type'],['../classPreconditionASM.html#a8d85fcf5a96522fc5c8361b980f2d5f4',1,'PreconditionASM::weighting_type']]],
-  ['weights_11',['weights',['../classRBFShape.html#a8cc4d4b1396d905f163cfa5851c27e48',1,'RBFShape::weights'],['../classPreconditionASM.html#abefaf957da70a206468f2ded86e84a7d',1,'PreconditionASM::weights']]],
-  ['write_5ftime_5fin_5ferror_5ftable_12',['write_time_in_error_table',['../structParameters_1_1Timer.html#a9dd988af6e082f56fe0fbce35a09addf',1,'Parameters::Timer']]]
+  ['waveguide_5fports_5felectric_5famplitudes_10',['waveguide_ports_electric_amplitudes',['../classTimeHarmonicMaxwell.html#a6397d270ce6e1b0dbd340c8cf090137c',1,'TimeHarmonicMaxwell']]],
+  ['waveguide_5fpower_11',['waveguide_power',['../structParameters_1_1TimeHarmonicMaxwell.html#ad1b34565996151b57f8dd56839901357',1,'Parameters::TimeHarmonicMaxwell']]],
+  ['weighting_5ftype_12',['weighting_type',['../classDistribution.html#a7e09273b70dd38a97eb39f621a406bf3',1,'Distribution::weighting_type'],['../classPreconditionASM.html#a8d85fcf5a96522fc5c8361b980f2d5f4',1,'PreconditionASM::weighting_type']]],
+  ['weights_13',['weights',['../classRBFShape.html#a8cc4d4b1396d905f163cfa5851c27e48',1,'RBFShape::weights'],['../classPreconditionASM.html#abefaf957da70a206468f2ded86e84a7d',1,'PreconditionASM::weights']]],
+  ['write_5ftime_5fin_5ferror_5ftable_14',['write_time_in_error_table',['../structParameters_1_1Timer.html#a9dd988af6e082f56fe0fbce35a09addf',1,'Parameters::Timer']]]
 ];
