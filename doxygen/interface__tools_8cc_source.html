@@ -1151,7 +1151,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01023" name="l01023"></a><span class="lineno"> 1023</span>          <span class="comment">/* We want to find a cell-wise correction to apply to the cell&#39;s dof</span></div>
 <div class="line"><a id="l01024" name="l01024"></a><span class="lineno"> 1024</span><span class="comment">          values of the signed_distance so that the geometric cell-wise volume</span></div>
 <div class="line"><a id="l01025" name="l01025"></a><span class="lineno"> 1025</span><span class="comment">          encompassed by the level 0 of the signed_distance V_K and by the</span></div>
-<div class="line"><a id="l01026" name="l01026"></a><span class="lineno"> 1026</span><span class="comment">          iso-contour 0.5 of the phase fraction V_K,CLS match. This is</span></div>
+<div class="line"><a id="l01026" name="l01026"></a><span class="lineno"> 1026</span><span class="comment">          iso-contour 0.5 of the phase indicator V_K,CLS match. This is</span></div>
 <div class="line"><a id="l01027" name="l01027"></a><span class="lineno"> 1027</span><span class="comment">          required because the computed distance doesn&#39;t belong to the Q1</span></div>
 <div class="line"><a id="l01028" name="l01028"></a><span class="lineno"> 1028</span><span class="comment">          approximation space.</span></div>
 <div class="line"><a id="l01029" name="l01029"></a><span class="lineno"> 1029</span><span class="comment"></span> </div>
@@ -1313,7 +1313,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01183" name="l01183"></a><span class="lineno"> 1183</span> </div>
 <div class="line"><a id="l01184" name="l01184"></a><span class="lineno"> 1184</span>  <span class="comment">/* Compute targeted global volume. It corresponds to the one enclosed by</span></div>
 <div class="line"><a id="l01185" name="l01185"></a><span class="lineno"> 1185</span><span class="comment">  the level 0 of the level_set vector (same volume as the one enclosed</span></div>
-<div class="line"><a id="l01186" name="l01186"></a><span class="lineno"> 1186</span><span class="comment">  by iso-contour 0.5 of the phase fraction).*/</span></div>
+<div class="line"><a id="l01186" name="l01186"></a><span class="lineno"> 1186</span><span class="comment">  by iso-contour 0.5 of the phase indicator).*/</span></div>
 <div class="line"><a id="l01187" name="l01187"></a><span class="lineno"> 1187</span>  <span class="keywordtype">double</span> global_volume, surface;</div>
 <div class="line"><a id="l01188" name="l01188"></a><span class="lineno"> 1188</span> </div>
 <div class="line"><a id="l01189" name="l01189"></a><span class="lineno"> 1189</span>  std::tie(global_volume, surface) = <a class="code hl_function" href="namespaceInterfaceTools.html#a9ccc3916532b0c8bb3f6908a5d9b23da">compute_surface_and_volume</a>(</div>

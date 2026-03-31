@@ -195,8 +195,8 @@ This subsection controls the post-processing other than the forces and torque on
     * ``tracer statistics name``: output filename for tracer statistics calculations.
 
 * ``postprocessed fluid``: fluid domain used for thermal postprocesses. Choices are : ``fluid 0``, ``fluid 1``, or ``both`` (default).
-    * For monophasic simulations (``set CLS = false`` in :doc:`multiphysics`), ``both`` and ``fluid 0`` are equivalent and the temperature statistics are computed over the entire domain.
-    * For multiphasic simulations (``set CLS = true`` in :doc:`multiphysics`), temperature statistics can be computed over the entire domain (``both``) or inside a given fluid only (``fluid 0`` or ``fluid 1``), with the fluid IDs defined in Physical properties - :ref:`two phase simulations`.
+    * For monophasic simulations (``set cls = false`` in :doc:`multiphysics`), ``both`` and ``fluid 0`` are equivalent and the temperature statistics are computed over the entire domain.
+    * For multiphasic simulations (``set cls = true`` in :doc:`multiphysics`), temperature statistics can be computed over the entire domain (``both``) or inside a given fluid only (``fluid 0`` or ``fluid 1``), with the fluid IDs defined in Physical properties - :ref:`two phase simulations`.
 
     .. note::
 

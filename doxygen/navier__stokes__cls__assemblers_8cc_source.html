@@ -758,14 +758,14 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span>      <span class="comment">// Surface tension coefficient</span></div>
 <div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span>      <span class="keyword">const</span> <span class="keywordtype">double</span> surface_tension_coef = scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a5f65155a6dcfa12516d5357049ecba5b">surface_tension</a>[q];</div>
 <div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span> </div>
-<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>      <span class="comment">// Gather pfg and curvature values</span></div>
+<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>      <span class="comment">// Gather PIG and curvature values</span></div>
 <div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span>      <span class="keyword">const</span> <span class="keywordtype">double</span> &amp;curvature_value = scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a963f460a1a06ad5969f0ae5a21c2b5ca">curvature_values</a>[q];</div>
 <div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span> </div>
-<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span>      <span class="comment">// Gather phase fraction gradient</span></div>
+<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span>      <span class="comment">// Gather phase indicator gradient</span></div>
 <div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span>      <span class="keyword">const</span> Tensor&lt;1, dim&gt; &amp;phase_gradient_value_q =</div>
 <div class="line"><a id="l00652" name="l00652"></a><span class="lineno">  652</span>        scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a402dc7a9c4c505cb09842b649fbf0c81">phase_gradient_values</a>[q];</div>
 <div class="line"><a id="l00653" name="l00653"></a><span class="lineno">  653</span> </div>
-<div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span>      <span class="comment">// Gather filtered phase fraction gradient</span></div>
+<div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span>      <span class="comment">// Gather filtered phase indicator gradient</span></div>
 <div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span>      <span class="keyword">const</span> Tensor&lt;1, dim&gt; &amp;filtered_phase_gradient_value_q =</div>
 <div class="line"><a id="l00656" name="l00656"></a><span class="lineno">  656</span>        scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#ab42fb46ce7737929c7b76f6faa1a8a86">filtered_phase_gradient_values</a>[q];</div>
 <div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span> </div>
@@ -774,14 +774,14 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span>      <span class="keyword">const</span> <span class="keywordtype">double</span> filtered_phase_gradient_norm =</div>
 <div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span>        filtered_phase_gradient_value_q.norm();</div>
 <div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span> </div>
-<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>      <span class="keyword">const</span> Tensor&lt;1, dim&gt; normalized_phase_fraction_gradient =</div>
+<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>      <span class="keyword">const</span> Tensor&lt;1, dim&gt; normalized_phase_indicator_gradient =</div>
 <div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>        phase_gradient_value_q / (phase_gradient_norm + 1e-15);</div>
 <div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span> </div>
 <div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>      <span class="keyword">const</span> <span class="keywordtype">double</span> JxW_value = JxW[q];</div>
 <div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span> </div>
 <div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span>      <span class="keyword">const</span> Tensor&lt;1, dim&gt; surface_tension_force =</div>
 <div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span>        -surface_tension_coef * curvature_value *</div>
-<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span>        normalized_phase_fraction_gradient * filtered_phase_gradient_norm;</div>
+<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span>        normalized_phase_indicator_gradient * filtered_phase_gradient_norm;</div>
 <div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span> </div>
 <div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span>      strong_residual[q] += surface_tension_force;</div>
 <div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span> </div>
@@ -842,11 +842,11 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span> </div>
 <div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span>      <span class="keyword">const</span> <span class="keywordtype">double</span> &amp;curvature_value = scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a963f460a1a06ad5969f0ae5a21c2b5ca">curvature_values</a>[q];</div>
 <div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span> </div>
-<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span>      <span class="comment">// Gather phase fraction gradient</span></div>
+<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span>      <span class="comment">// Gather phase indicator gradient</span></div>
 <div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>      <span class="keyword">const</span> Tensor&lt;1, dim&gt; &amp;phase_gradient_value_q =</div>
 <div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span>        scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a402dc7a9c4c505cb09842b649fbf0c81">phase_gradient_values</a>[q];</div>
 <div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span> </div>
-<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>      <span class="comment">// Gather filtered phase fraction gradient</span></div>
+<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>      <span class="comment">// Gather filtered phase indicator gradient</span></div>
 <div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>      <span class="keyword">const</span> Tensor&lt;1, dim&gt; &amp;filtered_phase_gradient_value_q =</div>
 <div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>        scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#ab42fb46ce7737929c7b76f6faa1a8a86">filtered_phase_gradient_values</a>[q];</div>
 <div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span> </div>
@@ -855,7 +855,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>      <span class="keyword">const</span> <span class="keywordtype">double</span> filtered_phase_gradient_norm =</div>
 <div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>        filtered_phase_gradient_value_q.norm();</div>
 <div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span> </div>
-<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>      <span class="keyword">const</span> Tensor&lt;1, dim&gt; normalized_phase_fraction_gradient =</div>
+<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>      <span class="keyword">const</span> Tensor&lt;1, dim&gt; normalized_phase_indicator_gradient =</div>
 <div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>        phase_gradient_value_q / (phase_gradient_norm + 1e-15);</div>
 <div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span> </div>
 <div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>      <span class="comment">// Gather temperature gradient</span></div>
@@ -867,13 +867,13 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span> </div>
 <div class="line"><a id="l00750" name="l00750"></a><span class="lineno">  750</span>      <span class="keyword">const</span> Tensor&lt;1, dim&gt; surface_tension_force =</div>
 <div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>        -surface_tension * curvature_value *</div>
-<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>        normalized_phase_fraction_gradient * filtered_phase_gradient_norm;</div>
+<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>        normalized_phase_indicator_gradient * filtered_phase_gradient_norm;</div>
 <div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span> </div>
 <div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>      <span class="keyword">const</span> Tensor&lt;1, dim&gt; marangoni_effect =</div>
 <div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>        -surface_tension_gradient *</div>
 <div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span>        (temperature_gradient -</div>
-<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>         normalized_phase_fraction_gradient *</div>
-<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>           (normalized_phase_fraction_gradient * temperature_gradient)) *</div>
+<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>         normalized_phase_indicator_gradient *</div>
+<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>           (normalized_phase_indicator_gradient * temperature_gradient)) *</div>
 <div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>        filtered_phase_gradient_norm;</div>
 <div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span> </div>
 <div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>      strong_residual[q] += marangoni_effect + surface_tension_force;</div>
@@ -934,7 +934,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span>      <span class="keyword">const</span> <span class="keywordtype">double</span> recoil_pressure =</div>
 <div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>        this-&gt;evaporation_model-&gt;momentum_flux(field_value);</div>
 <div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span> </div>
-<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>      <span class="comment">// Gather phase fraction gradient</span></div>
+<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>      <span class="comment">// Gather phase indicator gradient</span></div>
 <div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>      <span class="keyword">const</span> Tensor&lt;1, dim&gt; &amp;phase_gradient_value_q =</div>
 <div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>        scratch_data.<a class="code hl_variable" href="classNavierStokesScratchData.html#a402dc7a9c4c505cb09842b649fbf0c81">phase_gradient_values</a>[q];</div>
 <div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span> </div>
@@ -946,14 +946,14 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>      <span class="keyword">const</span> <span class="keywordtype">double</span> filtered_phase_gradient_norm =</div>
 <div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>        filtered_phase_gradient_value_q.norm();</div>
 <div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span> </div>
-<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>      <span class="keyword">const</span> Tensor&lt;1, dim&gt; normalized_phase_fraction_gradient =</div>
+<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>      <span class="keyword">const</span> Tensor&lt;1, dim&gt; normalized_phase_indicator_gradient =</div>
 <div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>        phase_gradient_value_q / (phase_gradient_norm + 1e-15);</div>
 <div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span> </div>
 <div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span> </div>
 <div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span>      <span class="keyword">const</span> <span class="keywordtype">double</span> JxW_value = JxW[q];</div>
 <div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span> </div>
 <div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span>      <span class="keyword">const</span> Tensor&lt;1, dim&gt; recoil_pressure_force =</div>
-<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>        recoil_pressure * normalized_phase_fraction_gradient *</div>
+<div class="line"><a id="l00834" name="l00834"></a><span class="lineno">  834</span>        recoil_pressure * normalized_phase_indicator_gradient *</div>
 <div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span>        filtered_phase_gradient_norm;</div>
 <div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span> </div>
 <div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span>      strong_residual[q] -= recoil_pressure_force;</div>

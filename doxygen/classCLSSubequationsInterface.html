@@ -361,8 +361,8 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Get a reference to the phase fraction solution vector. </p>
-<dl class="section return"><dt>Returns</dt><dd>Reference to the phase fraction solution vector. </dd></dl>
+<p>Get a reference to the phase indicator solution vector. </p>
+<dl class="section return"><dt>Returns</dt><dd>Reference to the phase indicator solution vector. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="cls__subequations__interface_8h_source.html#l00220">220</a> of file <a class="el" href="cls__subequations__interface_8h_source.html">cls_subequations_interface.h</a>.</p>
 
@@ -535,7 +535,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="cls__subequations__interface_8h_source.html#l00260">260</a> of file <a class="el" href="cls__subequations__interface_8h_source.html">cls_subequations_interface.h</a>.</p>
 
-<p class="reference">References <a class="el" href="cls__subequations__interface_8h_source.html#l00410">CLSSubequationsInterface&lt; dim &gt;::active_subequations</a>, <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba95a3deae4fb177241e3f65f1193835cd">algebraic_interface_reinitialization</a>, <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba039fcc8d0c5faa96965d91e8d069958f">curvature_projection</a>, and <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba9940c4a3bfe89c505b3e4b825d8ef89b">phase_gradient_projection</a>.</p>
+<p class="reference">References <a class="el" href="cls__subequations__interface_8h_source.html#l00410">CLSSubequationsInterface&lt; dim &gt;::active_subequations</a>, <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba039fcc8d0c5faa96965d91e8d069958f">curvature_projection</a>, <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba5568bf4910132c541952981e114c047d">pde_based_interface_reinitialization</a>, and <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba9940c4a3bfe89c505b3e4b825d8ef89b">phase_gradient_projection</a>.</p>
 
 </div>
 </div>
@@ -585,7 +585,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="cls__subequations__interface_8cc_source.html#l00012">12</a> of file <a class="el" href="cls__subequations__interface_8cc_source.html">cls_subequations_interface.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba95a3deae4fb177241e3f65f1193835cd">algebraic_interface_reinitialization</a>, <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba039fcc8d0c5faa96965d91e8d069958f">curvature_projection</a>, <a class="el" href="simulation__parameters_8h_source.html#l00060">SimulationParameters&lt; dim &gt;::multiphysics</a>, and <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba9940c4a3bfe89c505b3e4b825d8ef89b">phase_gradient_projection</a>.</p>
+<p class="reference">References <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba039fcc8d0c5faa96965d91e8d069958f">curvature_projection</a>, <a class="el" href="simulation__parameters_8h_source.html#l00060">SimulationParameters&lt; dim &gt;::multiphysics</a>, <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba5568bf4910132c541952981e114c047d">pde_based_interface_reinitialization</a>, and <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba9940c4a3bfe89c505b3e4b825d8ef89b">phase_gradient_projection</a>.</p>
 
 </div>
 </div>
@@ -1049,7 +1049,7 @@ template&lt;int dim&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>CLS solution field associated with solved equations </p><dl class="section note"><dt>Note</dt><dd>Serves as initial condition in algebraic reinitialization </dd></dl>
+<p>CLS solution field associated with solved equations </p><dl class="section note"><dt>Note</dt><dd>Serves as initial condition in PDE-based reinitialization </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="cls__subequations__interface_8h_source.html#l00407">407</a> of file <a class="el" href="cls__subequations__interface_8h_source.html">cls_subequations_interface.h</a>.</p>
 
@@ -1217,7 +1217,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Booleans indicating if the subequation has been solved with the set CLS solution vector. The CLS solution vector is set with <a class="el" href="classCLSSubequationsInterface.html#a2fd19b9b9ca00db9e963b85a03c73af5" title="Set a new CLS solution vector and DoFHandler for the subequations to be solved and reset their validi...">CLSSubequationsInterface&lt;dim&gt;::set_cls_solution_and_dof_handler</a>.</p>
 <p>During initialization (<a class="el" href="classCLSSubequationsInterface.html#a6f75bde19b1cd17b84e549f7a15f4b25" title="Initialize subequations necessary for the simulation and reset subeqaution validation map.">CLSSubequationsInterface&lt;dim&gt;::initialize_subequations</a>), all boolean are set to <code>false</code>.</p>
-<p>We start by setting a CLS solution and DOFHandler (<a class="el" href="classCLSSubequationsInterface.html#a2fd19b9b9ca00db9e963b85a03c73af5" title="Set a new CLS solution vector and DoFHandler for the subequations to be solved and reset their validi...">CLSSubequationsInterface&lt;dim&gt;::set_cls_solution_and_dof_handler</a>), and then start solving equations making sure that dependencies are met (<a class="el" href="classCLSPhaseGradientProjection.html#aef871a82c94a4ca867e161366ac96686" title="Check if a new CLS solution has been set.">CLSPhaseGradientProjection&lt;dim&gt;::check_dependencies_validity</a>, <a class="el" href="classCLSCurvatureProjection.html#a5331595e2d23914ea356ff746005eecc" title="Check if the phase gradient L2 projection has been solved.">CLSCurvatureProjection&lt;dim&gt;::check_dependencies_validity</a>, and <a class="el" href="classCLSAlgebraicInterfaceReinitialization.html#a4565309b1a08ff66b89eeed06dbd0de2" title="Check if the phase gradient and curvature L2 projections have been solved.">CLSAlgebraicInterfaceReinitialization&lt;dim&gt;::check_dependencies_validity</a>). For instance, to solve the curvature projection subequation, the phase gradient projection subequation has to be solved before as the projected phase gradient is used in the curvature projection subequation.</p>
+<p>We start by setting a CLS solution and DOFHandler (<a class="el" href="classCLSSubequationsInterface.html#a2fd19b9b9ca00db9e963b85a03c73af5" title="Set a new CLS solution vector and DoFHandler for the subequations to be solved and reset their validi...">CLSSubequationsInterface&lt;dim&gt;::set_cls_solution_and_dof_handler</a>), and then start solving equations making sure that dependencies are met (<a class="el" href="classCLSPhaseGradientProjection.html#aef871a82c94a4ca867e161366ac96686" title="Check if a new CLS solution has been set.">CLSPhaseGradientProjection&lt;dim&gt;::check_dependencies_validity</a>, <a class="el" href="classCLSCurvatureProjection.html#a5331595e2d23914ea356ff746005eecc" title="Check if the phase gradient L2 projection has been solved.">CLSCurvatureProjection&lt;dim&gt;::check_dependencies_validity</a>, and <a class="el" href="classCLSPDEBasedInterfaceReinitialization.html#a93ddb94c72198a0ddb8f80074b3e4229" title="Check if the phase gradient and curvature L2 projections have been solved.">CLSPDEBasedInterfaceReinitialization&lt;dim&gt;::check_dependencies_validity</a>). For instance, to solve the curvature projection subequation, the phase gradient projection subequation has to be solved before as the projected phase gradient is used in the curvature projection subequation.</p>
 <p>A subequation in the validity map is to <code>true</code> only when it is solved, and it remains valid until a new CLS solution and/or DOFHandler are set through <a class="el" href="classCLSSubequationsInterface.html#a2fd19b9b9ca00db9e963b85a03c73af5" title="Set a new CLS solution vector and DoFHandler for the subequations to be solved and reset their validi...">CLSSubequationsInterface&lt;dim&gt;::set_cls_solution_and_dof_handler</a>.</p>
 <p>This validation mechanism allows, to check if:</p><ul>
 <li>A new CLS solution has been set;</li>

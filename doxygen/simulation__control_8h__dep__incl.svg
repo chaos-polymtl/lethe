@@ -464,10 +464,10 @@
 </a>
 </g>
 </g>
-<!-- Node68 -->
-<g id="Node000068" class="node">
-<title>Node68</title>
-<g id="a_Node000068"><a xlink:href="cls__assemblers_8h.html" target="_top" xlink:title=" ">
+<!-- Node65 -->
+<g id="Node000065" class="node">
+<title>Node65</title>
+<g id="a_Node000065"><a xlink:href="cls__assemblers_8h.html" target="_top" xlink:title=" ">
 <polygon fill="#fff0f0" stroke="red" points="1585.52,-376.5 1448.52,-376.5 1448.52,-335.5 1585.52,-335.5 1585.52,-376.5"/>
 <text text-anchor="start" x="1456.52" y="-364.5" font-family="Helvetica,sans-Serif" font-size="10.00">/home/runner/work/lethe</text>
 <text text-anchor="start" x="1456.52" y="-353.5" font-family="Helvetica,sans-Serif" font-size="10.00">/lethe/include/solvers</text>
@@ -475,10 +475,10 @@
 </a>
 </g>
 </g>
-<!-- Node1&#45;&gt;Node68 -->
-<g id="edge56_Node000001_Node000068" class="edge">
-<title>Node1&#45;&gt;Node68</title>
-<g id="a_edge56_Node000001_Node000068"><a xlink:title=" ">
+<!-- Node1&#45;&gt;Node65 -->
+<g id="edge56_Node000001_Node000065" class="edge">
+<title>Node1&#45;&gt;Node65</title>
+<g id="a_edge56_Node000001_Node000065"><a xlink:title=" ">
 <path fill="none" stroke="#63b8ff" d="M1369.71,-414.29C1400.45,-402.33 1437.52,-387.92 1466.78,-376.54"/>
 <polygon fill="#63b8ff" stroke="#63b8ff" points="1368.44,-411.02 1360.39,-417.91 1370.98,-417.55 1368.44,-411.02"/>
 </a>
@@ -1247,10 +1247,10 @@
 </a>
 </g>
 </g>
-<!-- Node68&#45;&gt;Node58 -->
-<g id="edge57_Node000068_Node000058" class="edge">
-<title>Node68&#45;&gt;Node58</title>
-<g id="a_edge57_Node000068_Node000058"><a xlink:title=" ">
+<!-- Node65&#45;&gt;Node58 -->
+<g id="edge57_Node000065_Node000058" class="edge">
+<title>Node65&#45;&gt;Node58</title>
+<g id="a_edge57_Node000065_Node000058"><a xlink:title=" ">
 <path fill="none" stroke="#63b8ff" d="M1529.32,-325.87C1534.63,-313.29 1540.62,-299.13 1544.95,-288.87"/>
 <polygon fill="#63b8ff" stroke="#63b8ff" points="1526.09,-324.53 1525.42,-335.1 1532.54,-327.25 1526.09,-324.53"/>
 </a>

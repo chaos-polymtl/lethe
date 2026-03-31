@@ -11,7 +11,7 @@
 <!-- Node1 -->
 <g id="Node000001" class="node">
 <title>Node1</title>
-<g id="a_Node000001"><a xlink:title="CLS phase fraction gradient L2 projection solver.">
+<g id="a_Node000001"><a xlink:title="CLS phase indicator gradient L2 projection solver.">
 <polygon fill="#999999" stroke="#666666" points="164.5,-30 9.5,-30 9.5,0 164.5,0 164.5,-30"/>
 <text text-anchor="start" x="17.5" y="-18" font-family="Helvetica,sans-Serif" font-size="10.00">CLSPhaseGradientProjection</text>
 <text text-anchor="middle" x="87" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">&lt; dim &gt;</text>

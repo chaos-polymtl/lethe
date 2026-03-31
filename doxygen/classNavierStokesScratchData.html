@@ -115,16 +115,16 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a90dbc29e954fa6bef9f2a561b1d763d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac49e50f234a83d835144c6968c509891" id="r_ac49e50f234a83d835144c6968c509891"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#ac49e50f234a83d835144c6968c509891">enable_cls</a> (const FiniteElement&lt; dim &gt; &amp;fe, const Quadrature&lt; dim &gt; &amp;quadrature, const Mapping&lt; dim &gt; &amp;mapping, const std::shared_ptr&lt; <a class="el" href="classConservativeLevelSetFilterBase.html">ConservativeLevelSetFilterBase</a> &gt; &amp;<a class="el" href="classNavierStokesScratchData.html#a80a929feaf1f5edcce97985b17773514">filter</a>)</td></tr>
 <tr class="separator:ac49e50f234a83d835144c6968c509891"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6937a49938e44bf91ff473c99e176561" id="r_a6937a49938e44bf91ff473c99e176561"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a6937a49938e44bf91ff473c99e176561">enable_projected_phase_fraction_gradient</a> (const FiniteElement&lt; dim &gt; &amp;fe_projected_phase_fraction_gradient, const Quadrature&lt; dim &gt; &amp;quadrature, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
-<tr class="separator:a6937a49938e44bf91ff473c99e176561"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a014f6c4295cda8a7269496cfea389491" id="r_a014f6c4295cda8a7269496cfea389491"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a014f6c4295cda8a7269496cfea389491">enable_projected_phase_indicator_gradient</a> (const FiniteElement&lt; dim &gt; &amp;fe_projected_phase_indicator_gradient, const Quadrature&lt; dim &gt; &amp;quadrature, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
+<tr class="separator:a014f6c4295cda8a7269496cfea389491"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f3a9b09303fb38071eba70e6392dc0c" id="r_a9f3a9b09303fb38071eba70e6392dc0c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a9f3a9b09303fb38071eba70e6392dc0c">enable_curvature</a> (const FiniteElement&lt; dim &gt; &amp;fe_curvature, const Quadrature&lt; dim &gt; &amp;quadrature, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
 <tr class="separator:a9f3a9b09303fb38071eba70e6392dc0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad9b7b6cd4703f8f9a9b02c8966eb86c2" id="r_ad9b7b6cd4703f8f9a9b02c8966eb86c2"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
 <tr class="memitem:ad9b7b6cd4703f8f9a9b02c8966eb86c2"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#ad9b7b6cd4703f8f9a9b02c8966eb86c2">reinit_cls</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_solution, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_filtered_solution, const std::vector&lt; <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; &amp;previous_solutions)</td></tr>
 <tr class="separator:ad9b7b6cd4703f8f9a9b02c8966eb86c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0e506238dac667b6c23647eb1b237120" id="r_a0e506238dac667b6c23647eb1b237120"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
-<tr class="memitem:a0e506238dac667b6c23647eb1b237120"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a0e506238dac667b6c23647eb1b237120">reinit_projected_phase_fraction_gradient</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;projected_phase_fraction_gradient_cell, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_projected_phase_fraction_gradient_solution)</td></tr>
-<tr class="separator:a0e506238dac667b6c23647eb1b237120"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d39ff8c084f2ed75e18ad7579c324f8" id="r_a2d39ff8c084f2ed75e18ad7579c324f8"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a2d39ff8c084f2ed75e18ad7579c324f8"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a2d39ff8c084f2ed75e18ad7579c324f8">reinit_projected_phase_indicator_gradient</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;projected_phase_indicator_gradient_cell, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_projected_phase_indicator_gradient_solution)</td></tr>
+<tr class="separator:a2d39ff8c084f2ed75e18ad7579c324f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ada4d466d38ae48bee70c5b562e4a74af" id="r_ada4d466d38ae48bee70c5b562e4a74af"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
 <tr class="memitem:ada4d466d38ae48bee70c5b562e4a74af"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#ada4d466d38ae48bee70c5b562e4a74af">reinit_curvature</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;curvature_cell, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_curvature_solution)</td></tr>
 <tr class="separator:ada4d466d38ae48bee70c5b562e4a74af"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -355,16 +355,16 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a29209f96f913601b4f513926e0a5b681"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a80a929feaf1f5edcce97985b17773514" id="r_a80a929feaf1f5edcce97985b17773514"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classConservativeLevelSetFilterBase.html">ConservativeLevelSetFilterBase</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a80a929feaf1f5edcce97985b17773514">filter</a></td></tr>
 <tr class="separator:a80a929feaf1f5edcce97985b17773514"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3ea0ab72226feac5c12b4c018b2e7672" id="r_a3ea0ab72226feac5c12b4c018b2e7672"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a3ea0ab72226feac5c12b4c018b2e7672">gather_projected_phase_fraction_gradient</a></td></tr>
-<tr class="separator:a3ea0ab72226feac5c12b4c018b2e7672"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4fc5bfc50dc40c195c1283d40211d212" id="r_a4fc5bfc50dc40c195c1283d40211d212"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a4fc5bfc50dc40c195c1283d40211d212">gather_projected_phase_indicator_gradient</a></td></tr>
+<tr class="separator:a4fc5bfc50dc40c195c1283d40211d212"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6ecba60f4ef7a7c6e0c49c688464d990" id="r_a6ecba60f4ef7a7c6e0c49c688464d990"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a6ecba60f4ef7a7c6e0c49c688464d990">gather_curvature</a></td></tr>
 <tr class="separator:a6ecba60f4ef7a7c6e0c49c688464d990"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a5de95e31fb3562e2ceaf0970fda02e" id="r_a7a5de95e31fb3562e2ceaf0970fda02e"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; FEValues&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a7a5de95e31fb3562e2ceaf0970fda02e">fe_values_projected_phase_fraction_gradient</a></td></tr>
-<tr class="separator:a7a5de95e31fb3562e2ceaf0970fda02e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab93766df7f73904e77c688e68fc5d21c" id="r_ab93766df7f73904e77c688e68fc5d21c"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; FEValues&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#ab93766df7f73904e77c688e68fc5d21c">fe_values_projected_phase_indicator_gradient</a></td></tr>
+<tr class="separator:ab93766df7f73904e77c688e68fc5d21c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aebaf071ef8a3e9f6e878f11d7a94be66" id="r_aebaf071ef8a3e9f6e878f11d7a94be66"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; FEValues&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#aebaf071ef8a3e9f6e878f11d7a94be66">fe_values_curvature</a></td></tr>
 <tr class="separator:aebaf071ef8a3e9f6e878f11d7a94be66"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a77a8a872036804121a9eb9f73a23b7f5" id="r_a77a8a872036804121a9eb9f73a23b7f5"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Tensor&lt; 1, dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a77a8a872036804121a9eb9f73a23b7f5">projected_phase_fraction_gradient_values</a></td></tr>
-<tr class="separator:a77a8a872036804121a9eb9f73a23b7f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f81fb38f2f5db2bd222ad54cf77490e" id="r_a1f81fb38f2f5db2bd222ad54cf77490e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Tensor&lt; 1, dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a1f81fb38f2f5db2bd222ad54cf77490e">projected_phase_indicator_gradient_values</a></td></tr>
+<tr class="separator:a1f81fb38f2f5db2bd222ad54cf77490e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a963f460a1a06ad5969f0ae5a21c2b5ca" id="r_a963f460a1a06ad5969f0ae5a21c2b5ca"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#a963f460a1a06ad5969f0ae5a21c2b5ca">curvature_values</a></td></tr>
 <tr class="separator:a963f460a1a06ad5969f0ae5a21c2b5ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac56d38ff514f674f06df2d66d50ae980" id="r_ac56d38ff514f674f06df2d66d50ae980"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesScratchData.html#ac56d38ff514f674f06df2d66d50ae980">gather_void_fraction</a></td></tr>
@@ -616,7 +616,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00079">79</a> of file <a class="el" href="navier__stokes__scratch__data_8h_source.html">navier_stokes_scratch_data.h</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00011">NavierStokesScratchData&lt; dim &gt;::allocate()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01635">NavierStokesScratchData&lt; dim &gt;::gather_cahn_hilliard</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01549">NavierStokesScratchData&lt; dim &gt;::gather_cls</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01563">NavierStokesScratchData&lt; dim &gt;::gather_curvature</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01662">NavierStokesScratchData&lt; dim &gt;::gather_hessian</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01653">NavierStokesScratchData&lt; dim &gt;::gather_mortar</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01592">NavierStokesScratchData&lt; dim &gt;::gather_particle_field_project</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01583">NavierStokesScratchData&lt; dim &gt;::gather_particles_information</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01562">NavierStokesScratchData&lt; dim &gt;::gather_projected_phase_fraction_gradient</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01623">NavierStokesScratchData&lt; dim &gt;::gather_temperature</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01572">NavierStokesScratchData&lt; dim &gt;::gather_void_fraction</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00398">PhysicalPropertiesManager::is_non_newtonian()</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01444">NavierStokesScratchData&lt; dim &gt;::properties_manager</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00011">NavierStokesScratchData&lt; dim &gt;::allocate()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01635">NavierStokesScratchData&lt; dim &gt;::gather_cahn_hilliard</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01549">NavierStokesScratchData&lt; dim &gt;::gather_cls</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01563">NavierStokesScratchData&lt; dim &gt;::gather_curvature</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01662">NavierStokesScratchData&lt; dim &gt;::gather_hessian</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01653">NavierStokesScratchData&lt; dim &gt;::gather_mortar</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01592">NavierStokesScratchData&lt; dim &gt;::gather_particle_field_project</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01583">NavierStokesScratchData&lt; dim &gt;::gather_particles_information</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01562">NavierStokesScratchData&lt; dim &gt;::gather_projected_phase_indicator_gradient</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01623">NavierStokesScratchData&lt; dim &gt;::gather_temperature</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01572">NavierStokesScratchData&lt; dim &gt;::gather_void_fraction</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00398">PhysicalPropertiesManager::is_non_newtonian()</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01444">NavierStokesScratchData&lt; dim &gt;::properties_manager</a>.</p>
 
 </div>
 </div>
@@ -656,7 +656,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00129">129</a> of file <a class="el" href="navier__stokes__scratch__data_8h_source.html">navier_stokes_scratch_data.h</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00011">NavierStokesScratchData&lt; dim &gt;::allocate()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01643">NavierStokesScratchData&lt; dim &gt;::cahn_hilliard_filter</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00181">NavierStokesScratchData&lt; dim &gt;::enable_cahn_hilliard()</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00099">NavierStokesScratchData&lt; dim &gt;::enable_cls()</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00298">NavierStokesScratchData&lt; dim &gt;::enable_curvature()</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00454">NavierStokesScratchData&lt; dim &gt;::enable_heat_transfer()</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00404">NavierStokesScratchData&lt; dim &gt;::enable_mortar()</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00343">NavierStokesScratchData&lt; dim &gt;::enable_particle_field_projection()</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00379">NavierStokesScratchData&lt; dim &gt;::enable_particle_fluid_interactions()</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00278">NavierStokesScratchData&lt; dim &gt;::enable_projected_phase_fraction_gradient()</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00314">NavierStokesScratchData&lt; dim &gt;::enable_void_fraction()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01501">NavierStokesScratchData&lt; dim &gt;::fe_values</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01646">NavierStokesScratchData&lt; dim &gt;::fe_values_cahn_hilliard</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01558">NavierStokesScratchData&lt; dim &gt;::fe_values_cls</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01565">NavierStokesScratchData&lt; dim &gt;::fe_values_curvature</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01586">NavierStokesScratchData&lt; dim &gt;::fe_values_particle_drag</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01590">NavierStokesScratchData&lt; dim &gt;::fe_values_particle_momentum_transfer_coefficient</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01587">NavierStokesScratchData&lt; dim &gt;::fe_values_particle_two_way_coupling_force</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01588">NavierStokesScratchData&lt; dim &gt;::fe_values_particle_velocity</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01564">NavierStokesScratchData&lt; dim &gt;::fe_values_projected_phase_fraction_gradient</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01630">NavierStokesScratchData&lt; dim &gt;::fe_values_temperature</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01578">NavierStokesScratchData&lt; dim &gt;::fe_values_void_fraction</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01560">NavierStokesScratchData&lt; dim &gt;::filter</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01635">NavierStokesScratchData&lt; dim &gt;::gather_cahn_hilliard</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01549">NavierStokesScratchData&lt; dim &gt;::gather_cls</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01563">NavierStokesScratchData&lt; dim &gt;::gather_curvature</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01662">NavierStokesScratchData&lt; dim &gt;::gather_hessian</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01653">NavierStokesScratchData&lt; dim &gt;::gather_mortar</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01592">NavierStokesScratchData&lt; dim &gt;::gather_particle_field_project</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01583">NavierStokesScratchData&lt; dim &gt;::gather_particles_information</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01562">NavierStokesScratchData&lt; dim &gt;::gather_projected_phase_fraction_gradient</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01623">NavierStokesScratchData&lt; dim &gt;::gather_temperature</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01572">NavierStokesScratchData&lt; dim &gt;::gather_void_fraction</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01584">NavierStokesScratchData&lt; dim &gt;::interpolated_void_fraction</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00398">PhysicalPropertiesManager::is_non_newtonian()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01611">NavierStokesScratchData&lt; dim &gt;::max_number_of_particles_per_cell</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01444">NavierStokesScratchData&lt; dim &gt;::properties_manager</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00011">NavierStokesScratchData&lt; dim &gt;::allocate()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01643">NavierStokesScratchData&lt; dim &gt;::cahn_hilliard_filter</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00181">NavierStokesScratchData&lt; dim &gt;::enable_cahn_hilliard()</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00099">NavierStokesScratchData&lt; dim &gt;::enable_cls()</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00298">NavierStokesScratchData&lt; dim &gt;::enable_curvature()</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00454">NavierStokesScratchData&lt; dim &gt;::enable_heat_transfer()</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00404">NavierStokesScratchData&lt; dim &gt;::enable_mortar()</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00343">NavierStokesScratchData&lt; dim &gt;::enable_particle_field_projection()</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00379">NavierStokesScratchData&lt; dim &gt;::enable_particle_fluid_interactions()</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00278">NavierStokesScratchData&lt; dim &gt;::enable_projected_phase_indicator_gradient()</a>, <a class="el" href="navier__stokes__scratch__data_8cc_source.html#l00314">NavierStokesScratchData&lt; dim &gt;::enable_void_fraction()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01501">NavierStokesScratchData&lt; dim &gt;::fe_values</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01646">NavierStokesScratchData&lt; dim &gt;::fe_values_cahn_hilliard</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01558">NavierStokesScratchData&lt; dim &gt;::fe_values_cls</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01565">NavierStokesScratchData&lt; dim &gt;::fe_values_curvature</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01586">NavierStokesScratchData&lt; dim &gt;::fe_values_particle_drag</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01590">NavierStokesScratchData&lt; dim &gt;::fe_values_particle_momentum_transfer_coefficient</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01587">NavierStokesScratchData&lt; dim &gt;::fe_values_particle_two_way_coupling_force</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01588">NavierStokesScratchData&lt; dim &gt;::fe_values_particle_velocity</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01564">NavierStokesScratchData&lt; dim &gt;::fe_values_projected_phase_indicator_gradient</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01630">NavierStokesScratchData&lt; dim &gt;::fe_values_temperature</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01578">NavierStokesScratchData&lt; dim &gt;::fe_values_void_fraction</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01560">NavierStokesScratchData&lt; dim &gt;::filter</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01635">NavierStokesScratchData&lt; dim &gt;::gather_cahn_hilliard</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01549">NavierStokesScratchData&lt; dim &gt;::gather_cls</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01563">NavierStokesScratchData&lt; dim &gt;::gather_curvature</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01662">NavierStokesScratchData&lt; dim &gt;::gather_hessian</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01653">NavierStokesScratchData&lt; dim &gt;::gather_mortar</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01592">NavierStokesScratchData&lt; dim &gt;::gather_particle_field_project</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01583">NavierStokesScratchData&lt; dim &gt;::gather_particles_information</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01562">NavierStokesScratchData&lt; dim &gt;::gather_projected_phase_indicator_gradient</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01623">NavierStokesScratchData&lt; dim &gt;::gather_temperature</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01572">NavierStokesScratchData&lt; dim &gt;::gather_void_fraction</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01584">NavierStokesScratchData&lt; dim &gt;::interpolated_void_fraction</a>, <a class="el" href="physical__properties__manager_8h_source.html#l00398">PhysicalPropertiesManager::is_non_newtonian()</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01611">NavierStokesScratchData&lt; dim &gt;::max_number_of_particles_per_cell</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01444">NavierStokesScratchData&lt; dim &gt;::properties_manager</a>.</p>
 
 </div>
 </div>
@@ -1274,7 +1274,7 @@ template&lt;int dim&gt; </div>
     <tr><td class="paramname">fe</td><td>FiniteElement associated with the CLS.</td></tr>
     <tr><td class="paramname">quadrature</td><td>Quadrature rule of the Navier-Stokes problem assembly</td></tr>
     <tr><td class="paramname">mapping</td><td>Mapping used for the Navier-Stokes problem assembly</td></tr>
-    <tr><td class="paramname">phase_filter_parameters</td><td><a class="el" href="namespaceParameters.html">Parameters</a> for phase fraction filtering </td></tr>
+    <tr><td class="paramname">phase_filter_parameters</td><td><a class="el" href="namespaceParameters.html">Parameters</a> for phase indicator filtering </td></tr>
   </table>
   </dd>
 </dl>
@@ -1331,7 +1331,7 @@ template&lt;int dim&gt; </div>
     <tr><td class="paramname">fe</td><td>FiniteElement associated with the CLS.</td></tr>
     <tr><td class="paramname">quadrature</td><td>Quadrature rule of the Navier-Stokes problem assembly</td></tr>
     <tr><td class="paramname">mapping</td><td>Mapping used for the Navier-Stokes problem assembly</td></tr>
-    <tr><td class="paramname">filter</td><td>Filter that is applied on the phase fraction </td></tr>
+    <tr><td class="paramname">filter</td><td>Filter that is applied on the phase indicator </td></tr>
   </table>
   </dd>
 </dl>
@@ -1564,8 +1564,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a6937a49938e44bf91ff473c99e176561" name="a6937a49938e44bf91ff473c99e176561"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6937a49938e44bf91ff473c99e176561">&#9670;&#160;</a></span>enable_projected_phase_fraction_gradient()</h2>
+<a id="a014f6c4295cda8a7269496cfea389491" name="a014f6c4295cda8a7269496cfea389491"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a014f6c4295cda8a7269496cfea389491">&#9670;&#160;</a></span>enable_projected_phase_indicator_gradient()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1573,10 +1573,10 @@ template&lt;int dim&gt; </div>
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt;::enable_projected_phase_fraction_gradient </td>
+          <td class="memname">void <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt;::enable_projected_phase_indicator_gradient </td>
           <td>(</td>
           <td class="paramtype">const FiniteElement&lt; dim &gt; &amp;&#160;</td>
-          <td class="paramname"><em>fe_projected_phase_fraction_gradient</em>, </td>
+          <td class="paramname"><em>fe_projected_phase_indicator_gradient</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -2283,8 +2283,8 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
 
 </div>
 </div>
-<a id="a0e506238dac667b6c23647eb1b237120" name="a0e506238dac667b6c23647eb1b237120"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0e506238dac667b6c23647eb1b237120">&#9670;&#160;</a></span>reinit_projected_phase_fraction_gradient()</h2>
+<a id="a2d39ff8c084f2ed75e18ad7579c324f8" name="a2d39ff8c084f2ed75e18ad7579c324f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d39ff8c084f2ed75e18ad7579c324f8">&#9670;&#160;</a></span>reinit_projected_phase_indicator_gradient()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2297,16 +2297,16 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt;::reinit_projected_phase_fraction_gradient </td>
+          <td class="memname">void <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt;::reinit_projected_phase_indicator_gradient </td>
           <td>(</td>
           <td class="paramtype">const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;&#160;</td>
-          <td class="paramname"><em>projected_phase_fraction_gradient_cell</em>, </td>
+          <td class="paramname"><em>projected_phase_indicator_gradient_cell</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
-          <td class="paramname"><em>current_projected_phase_fraction_gradient_solution</em>&#160;</td>
+          <td class="paramname"><em>current_projected_phase_indicator_gradient_solution</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -2323,7 +2323,7 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__scratch__data_8h_source.html#l00593">593</a> of file <a class="el" href="navier__stokes__scratch__data_8h_source.html">navier_stokes_scratch_data.h</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01564">NavierStokesScratchData&lt; dim &gt;::fe_values_projected_phase_fraction_gradient</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01566">NavierStokesScratchData&lt; dim &gt;::projected_phase_fraction_gradient_values</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01564">NavierStokesScratchData&lt; dim &gt;::fe_values_projected_phase_indicator_gradient</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01566">NavierStokesScratchData&lt; dim &gt;::projected_phase_indicator_gradient_values</a>.</p>
 
 </div>
 </div>
@@ -3472,8 +3472,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a7a5de95e31fb3562e2ceaf0970fda02e" name="a7a5de95e31fb3562e2ceaf0970fda02e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7a5de95e31fb3562e2ceaf0970fda02e">&#9670;&#160;</a></span>fe_values_projected_phase_fraction_gradient</h2>
+<a id="ab93766df7f73904e77c688e68fc5d21c" name="ab93766df7f73904e77c688e68fc5d21c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab93766df7f73904e77c688e68fc5d21c">&#9670;&#160;</a></span>fe_values_projected_phase_indicator_gradient</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3481,7 +3481,7 @@ template&lt;int dim&gt; </div>
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt;FEValues&lt;dim&gt; &gt; <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt;::fe_values_projected_phase_fraction_gradient</td>
+          <td class="memname">std::shared_ptr&lt;FEValues&lt;dim&gt; &gt; <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt;::fe_values_projected_phase_indicator_gradient</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -3890,8 +3890,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a3ea0ab72226feac5c12b4c018b2e7672" name="a3ea0ab72226feac5c12b4c018b2e7672"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3ea0ab72226feac5c12b4c018b2e7672">&#9670;&#160;</a></span>gather_projected_phase_fraction_gradient</h2>
+<a id="a4fc5bfc50dc40c195c1283d40211d212" name="a4fc5bfc50dc40c195c1283d40211d212"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4fc5bfc50dc40c195c1283d40211d212">&#9670;&#160;</a></span>gather_projected_phase_indicator_gradient</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3899,7 +3899,7 @@ template&lt;int dim&gt; </div>
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt;::gather_projected_phase_fraction_gradient</td>
+          <td class="memname">bool <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt;::gather_projected_phase_indicator_gradient</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -4943,8 +4943,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a77a8a872036804121a9eb9f73a23b7f5" name="a77a8a872036804121a9eb9f73a23b7f5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a77a8a872036804121a9eb9f73a23b7f5">&#9670;&#160;</a></span>projected_phase_fraction_gradient_values</h2>
+<a id="a1f81fb38f2f5db2bd222ad54cf77490e" name="a1f81fb38f2f5db2bd222ad54cf77490e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f81fb38f2f5db2bd222ad54cf77490e">&#9670;&#160;</a></span>projected_phase_indicator_gradient_values</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -4952,7 +4952,7 @@ template&lt;int dim&gt; </div>
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;Tensor&lt;1, dim&gt; &gt; <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt;::projected_phase_fraction_gradient_values</td>
+          <td class="memname">std::vector&lt;Tensor&lt;1, dim&gt; &gt; <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt;::projected_phase_indicator_gradient_values</td>
         </tr>
       </table>
 </div><div class="memdoc">

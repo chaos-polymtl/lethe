@@ -11,7 +11,7 @@
 <!-- Node1 -->
 <g id="Node000001" class="node">
 <title>Node1</title>
-<g id="a_Node000001"><a xlink:title="Filter phase fraction with a hyperbolic tangent function for CLS simulations.">
+<g id="a_Node000001"><a xlink:title="Filter phase indicator with a hyperbolic tangent function for CLS simulations.">
 <polygon fill="#999999" stroke="#666666" points="159,-30 13,-30 13,0 159,0 159,-30"/>
 <text text-anchor="start" x="21" y="-18" font-family="Helvetica,sans-Serif" font-size="10.00">ConservativeLevelSetTanh</text>
 <text text-anchor="middle" x="86" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">Filter</text>
@@ -21,7 +21,7 @@
 <!-- Node2 -->
 <g id="Node000002" class="node">
 <title>Node2</title>
-<g id="a_Node000002"><a xlink:href="classConservativeLevelSetFilterBase.html" target="_top" xlink:title="Abstract class for filtering phase fraction in Conservative Level Set (CLS) simulations.">
+<g id="a_Node000002"><a xlink:href="classConservativeLevelSetFilterBase.html" target="_top" xlink:title="Abstract class for filtering phase indicator in Conservative Level Set (CLS) simulations.">
 <polygon fill="white" stroke="#666666" points="172,-85 0,-85 0,-66 172,-66 172,-85"/>
 <text text-anchor="middle" x="86" y="-73" font-family="Helvetica,sans-Serif" font-size="10.00">ConservativeLevelSetFilterBase</text>
 </a>

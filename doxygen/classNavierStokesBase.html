@@ -210,8 +210,8 @@ Protected Member Functions</h2></td></tr>
 <tr class="separator:ad6cd7c62fe8074731e2db18cf9b0fd71"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a16b7d2fed1bbdaeab299ef6955f2e007" id="r_a16b7d2fed1bbdaeab299ef6955f2e007"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a16b7d2fed1bbdaeab299ef6955f2e007">get_cell_temperature_values</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const DoFHandler&lt; dim &gt; *dof_handler_ht, const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;temperature_solution, std::vector&lt; double &gt; &amp;local_temperature_values)</td></tr>
 <tr class="separator:a16b7d2fed1bbdaeab299ef6955f2e007"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a69ab930e9a16b38960bce1e3e4541c62" id="r_a69ab930e9a16b38960bce1e3e4541c62"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a69ab930e9a16b38960bce1e3e4541c62">get_cell_filtered_phase_fraction_values</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const DoFHandler&lt; dim &gt; *dof_handler_cls, const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;filtered_phase_fraction_solution, std::vector&lt; double &gt; &amp;local_filtered_phase_fraction_values)</td></tr>
-<tr class="separator:a69ab930e9a16b38960bce1e3e4541c62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af24c308e77cff578387c9fa077adac6b" id="r_af24c308e77cff578387c9fa077adac6b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#af24c308e77cff578387c9fa077adac6b">get_cell_filtered_phase_indicator_values</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const DoFHandler&lt; dim &gt; *dof_handler_cls, const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;filtered_phase_indicator_solution, std::vector&lt; double &gt; &amp;local_filtered_phase_indicator_values)</td></tr>
+<tr class="separator:af24c308e77cff578387c9fa077adac6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7e650e71ee42e4afc19a6c3de676d47" id="r_ae7e650e71ee42e4afc19a6c3de676d47"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#ae7e650e71ee42e4afc19a6c3de676d47">identify_cell_and_constrain_velocity</a> (const std::vector&lt; types::global_dof_index &gt; &amp;local_dof_indices, const std::vector&lt; double &gt; &amp;local_temperature_values, <a class="el" href="structStasisConstraintWithTemperature.html">StasisConstraintWithTemperature</a> &amp;stasis_constraint_struct)</td></tr>
 <tr class="separator:ae7e650e71ee42e4afc19a6c3de676d47"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab68cac0c814ef26ab6413a9aa19a5cf7" id="r_ab68cac0c814ef26ab6413a9aa19a5cf7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#ab68cac0c814ef26ab6413a9aa19a5cf7">constrain_solid_cell_velocity_dofs</a> (const bool &amp;non_zero_constraints, const std::vector&lt; types::global_dof_index &gt; &amp;local_dof_indices, AffineConstraints&lt; double &gt; &amp;<a class="el" href="classNavierStokesBase.html#ad84ef5b823440dbbdd65779d60a07788">zero_constraints</a>)</td></tr>
@@ -1394,8 +1394,8 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 
 </div>
 </div>
-<a id="a69ab930e9a16b38960bce1e3e4541c62" name="a69ab930e9a16b38960bce1e3e4541c62"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a69ab930e9a16b38960bce1e3e4541c62">&#9670;&#160;</a></span>get_cell_filtered_phase_fraction_values()</h2>
+<a id="af24c308e77cff578387c9fa077adac6b" name="af24c308e77cff578387c9fa077adac6b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af24c308e77cff578387c9fa077adac6b">&#9670;&#160;</a></span>get_cell_filtered_phase_indicator_values()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1406,7 +1406,7 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classNavierStokesBase.html">NavierStokesBase</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>, DofsType &gt;::get_cell_filtered_phase_fraction_values </td>
+          <td class="memname">void <a class="el" href="classNavierStokesBase.html">NavierStokesBase</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>, DofsType &gt;::get_cell_filtered_phase_indicator_values </td>
           <td>(</td>
           <td class="paramtype">const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;&#160;</td>
           <td class="paramname"><em>cell</em>, </td>
@@ -1421,13 +1421,13 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;&#160;</td>
-          <td class="paramname"><em>filtered_phase_fraction_solution</em>, </td>
+          <td class="paramname"><em>filtered_phase_indicator_solution</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">std::vector&lt; double &gt; &amp;&#160;</td>
-          <td class="paramname"><em>local_filtered_phase_fraction_values</em>&#160;</td>
+          <td class="paramname"><em>local_filtered_phase_indicator_values</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1442,13 +1442,13 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 </table>
 </div><div class="memdoc">
 
-<p>Get cell's local filtered phase fraction values at quadrature points. </p>
+<p>Get cell's local filtered phase indicator values at quadrature points. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">cell</td><td>Pointer to an active cell of the fluid dynamics DoFHandler.</td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">dof_handler_cls</td><td>DoFHandler of the Conservative Level Set (CLS) auxiliary physic.</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">filtered_phase_fraction_solution</td><td>Filtered phase fraction solution vector from the CLS auxiliary physic.</td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">local_filtered_phase_fraction_values</td><td>Cell's local filtered phase fraction values at quadrature points. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">filtered_phase_indicator_solution</td><td>Filtered phase indicator solution vector from the CLS auxiliary physic.</td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">local_filtered_phase_indicator_values</td><td>Cell's local filtered phase indicator values at quadrature points. </td></tr>
   </table>
   </dd>
 </dl>

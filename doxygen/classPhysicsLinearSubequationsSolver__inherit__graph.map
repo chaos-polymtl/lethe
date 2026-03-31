@@ -8,6 +8,6 @@
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="302,44,302,79,297,79,297,44"/>
 <area shape="rect" id="Node000004" href="$classCLSCurvatureProjection.html" title="CLS curvature L2 projection solver." alt="" coords="5,255,180,295"/>
 <area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="167,217,118,257,115,252,163,213"/>
-<area shape="rect" id="Node000005" href="$classCLSPhaseGradientProjection.html" title="CLS phase fraction gradient L2 projection solver." alt="" coords="204,255,411,295"/>
+<area shape="rect" id="Node000005" href="$classCLSPhaseGradientProjection.html" title="CLS phase indicator gradient L2 projection solver." alt="" coords="204,255,411,295"/>
 <area shape="poly" id="edge4_Node000003_Node000005" title=" " alt="" coords="236,213,285,252,282,257,232,217"/>
 </map>

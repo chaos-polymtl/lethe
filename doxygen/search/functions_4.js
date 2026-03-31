@@ -10,7 +10,7 @@ var searchData=
   ['enable_5fmortar_7',['enable_mortar',['../classNavierStokesScratchData.html#a51cadf33b64ca212d6b49e6bfa7be9e1',1,'NavierStokesScratchData']]],
   ['enable_5fparticle_5ffield_5fprojection_8',['enable_particle_field_projection',['../classNavierStokesScratchData.html#ae2a3ed127e245590945df2e30f5fa331',1,'NavierStokesScratchData']]],
   ['enable_5fparticle_5ffluid_5finteractions_9',['enable_particle_fluid_interactions',['../classNavierStokesScratchData.html#a661e62ccc078b9798322641b2c56655c',1,'NavierStokesScratchData']]],
-  ['enable_5fprojected_5fphase_5ffraction_5fgradient_10',['enable_projected_phase_fraction_gradient',['../classNavierStokesScratchData.html#a6937a49938e44bf91ff473c99e176561',1,'NavierStokesScratchData']]],
+  ['enable_5fprojected_5fphase_5findicator_5fgradient_10',['enable_projected_phase_indicator_gradient',['../classNavierStokesScratchData.html#a014f6c4295cda8a7269496cfea389491',1,'NavierStokesScratchData']]],
   ['enable_5fvoid_5ffraction_11',['enable_void_fraction',['../classNavierStokesScratchData.html#a2c271b97942ba7a74d7f4e9e0c545b6b',1,'NavierStokesScratchData']]],
   ['enabled_12',['enabled',['../classParameters_1_1ALE.html#a80b415d5841494c1d8dc7f8ddd0c76d3',1,'Parameters::ALE']]],
   ['end_5fcollision_13',['end_collision',['../classOngoingCollisionLog.html#a90c11c8d9837c270074e93b7a4220f03',1,'OngoingCollisionLog']]],

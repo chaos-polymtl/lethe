@@ -223,7 +223,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>      <span class="keywordflow">if</span> (cylinder_type == CylinderType::regularized)</div>
 <div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>        {</div>
 <div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>          <span class="comment">// Pre-refinement to reduce mesh size at corners before</span></div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>          <span class="comment">// regularization</span></div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>          <span class="comment">// reinitialization</span></div>
 <div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>          temporary_triangulation.refine_global(2);</div>
 <div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>          GridTools::regularize_corner_cells(temporary_triangulation);</div>
 <div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span> </div>

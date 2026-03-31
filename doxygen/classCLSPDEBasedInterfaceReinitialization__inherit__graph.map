@@ -1,5 +1,5 @@
-<map id="CLSAlgebraicInterfaceReinitialization&lt; dim &gt;" name="CLSAlgebraicInterfaceReinitialization&lt; dim &gt;">
-<area shape="rect" id="Node000001" title="CLS algebraic reinitialization solver." alt="" coords="112,167,376,207"/>
+<map id="CLSPDEBasedInterfaceReinitialization&lt; dim &gt;" name="CLSPDEBasedInterfaceReinitialization&lt; dim &gt;">
+<area shape="rect" id="Node000001" title="CLS PDE&#45;based reinitialization solver." alt="" coords="110,167,378,207"/>
 <area shape="rect" id="Node000002" href="$classPhysicsNonlinearSubequationsSolver.html" title=" " alt="" coords="125,79,363,119"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="247,133,247,166,241,166,241,133"/>
 <area shape="rect" id="Node000003" href="$classPhysicsSubequationsSolverBase.html" title="Base class to solve subequations solved inside a physics (or auxiliary physics) that are not part of ..." alt="" coords="5,5,237,31"/>

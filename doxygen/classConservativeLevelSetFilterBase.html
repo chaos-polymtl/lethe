@@ -113,7 +113,7 @@ Static Public Member Functions</h2></td></tr>
 <tr class="separator:a5d4cc9e48c488da03e63317691c16e44"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Abstract class for filtering phase fraction in Conservative Level Set (CLS) simulations. </p>
+<div class="textblock"><p>Abstract class for filtering phase indicator in Conservative Level Set (CLS) simulations. </p>
 
 <p class="definition">Definition at line <a class="el" href="cls__filter_8h_source.html#l00014">14</a> of file <a class="el" href="cls__filter_8h_source.html">cls_filter.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -169,14 +169,14 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Compute the value of the filtered phase fraction. </p>
+<p>Compute the value of the filtered phase indicator. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">unfiltered_phase</td><td>Value of the phase fraction before applying the filter.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">unfiltered_phase</td><td>Value of the phase indicator before applying the filter.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Value of the computed phase fraction after applying the filter. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Value of the computed phase indicator after applying the filter. </dd></dl>
 
 <p>Implemented in <a class="el" href="classConservativeLevelSetNoFilter.html#afdd4425c48dca72f8cf4f204d0cf16a0">ConservativeLevelSetNoFilter</a>, and <a class="el" href="classConservativeLevelSetTanhFilter.html#a94b6fd7b4856a67329df6bae0f147e46">ConservativeLevelSetTanhFilter</a>.</p>
 
@@ -206,14 +206,14 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Instantiate and return a pointer to a <a class="el" href="classConservativeLevelSetFilterBase.html" title="Abstract class for filtering phase fraction in Conservative Level Set (CLS) simulations.">ConservativeLevelSetFilterBase</a> object by casting it to the proper child class. </p>
+<p>Instantiate and return a pointer to a <a class="el" href="classConservativeLevelSetFilterBase.html" title="Abstract class for filtering phase indicator in Conservative Level Set (CLS) simulations.">ConservativeLevelSetFilterBase</a> object by casting it to the proper child class. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">phase_filter_parameters</td><td>CLS filtration parameters.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Casted <a class="el" href="classConservativeLevelSetFilterBase.html" title="Abstract class for filtering phase fraction in Conservative Level Set (CLS) simulations.">ConservativeLevelSetFilterBase</a> child class object. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Casted <a class="el" href="classConservativeLevelSetFilterBase.html" title="Abstract class for filtering phase indicator in Conservative Level Set (CLS) simulations.">ConservativeLevelSetFilterBase</a> child class object. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="cls__filter_8cc_source.html#l00007">7</a> of file <a class="el" href="cls__filter_8cc_source.html">cls_filter.cc</a>.</p>
 

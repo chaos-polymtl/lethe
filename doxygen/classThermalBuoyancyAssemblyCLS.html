@@ -128,7 +128,7 @@ Private Attributes</h2></td></tr>
 class ThermalBuoyancyAssemblyCLS&lt; dim &gt;</div><p>Assembles the thermal buoyancy source term for CLS simulations. This assembler includes density explicitly in the buoyancy term since the CLS momentum equation is written as:  \( \rho \frac{\partial \mathbf{u}}{\partial t} + \rho \mathbf{u} \cdot
 \nabla \mathbf{u} = ... \). </p>
 <p>The weak form assembled is: \( -\rho \mathbf{g} \beta (T - T_0) \)</p>
-<p>where \( \rho \) is the phase-fraction-weighted density.</p>
+<p>where \( \rho \) is the phase-indicator-weighted density.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">dim</td><td>An integer that denotes the number of spatial dimensions </td></tr>

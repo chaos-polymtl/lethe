@@ -122,11 +122,11 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:a5d4cc9e48c488da03e63317691c16e44 inherit pub_static_methods_classConservativeLevelSetFilterBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Filter phase fraction with a hyperbolic tangent function for CLS simulations. </p>
+<div class="textblock"><p>Filter phase indicator with a hyperbolic tangent function for CLS simulations. </p>
 <p>The filtered phase is defined as:</p>
 <p>\(\phi&#39; = 0.5 \tanh(\beta(\phi-0.5)) + 0.5\)</p>
-<p>where \(\phi&#39;\) is the filtered phase fraction value and \(\beta\) is a model parameter that enables sharper definition when increased.</p>
-<p>The filter allows a sharper definition of the interface and clamps the value of the phase fraction between 0 and 1. </p>
+<p>where \(\phi&#39;\) is the filtered phase indicator value and \(\beta\) is a model parameter that enables sharper definition when increased.</p>
+<p>The filter allows a sharper definition of the interface and clamps the value of the phase indicator between 0 and 1. </p>
 
 <p class="definition">Definition at line <a class="el" href="cls__filter_8h_source.html#l00093">93</a> of file <a class="el" href="cls__filter_8h_source.html">cls_filter.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -154,7 +154,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Constructor of the hyperbolic tangent phase fraction filter. </p>
+<p>Constructor of the hyperbolic tangent phase indicator filter. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">beta</td><td>Value of the \(\beta\) parameter modulating the interface sharpness. </td></tr>
@@ -191,14 +191,14 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Computes the value of the filtered phase fraction. </p>
+<p>Computes the value of the filtered phase indicator. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">unfiltered_phase</td><td>Value of the phase fraction before applying the filter.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">unfiltered_phase</td><td>Value of the phase indicator before applying the filter.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Value of the computed phase fraction after applying the filter. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Value of the computed phase indicator after applying the filter. </dd></dl>
 
 <p>Implements <a class="el" href="classConservativeLevelSetFilterBase.html#aca7a5f143d3b2ff30ebd1e9394ddd966">ConservativeLevelSetFilterBase</a>.</p>
 

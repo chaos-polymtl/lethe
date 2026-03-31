@@ -11,7 +11,7 @@
 <!-- Node1 -->
 <g id="Node000001" class="node">
 <title>Node1</title>
-<g id="a_Node000001"><a xlink:title="Default filter applied to phase fraction. The ConservativeLevelSetNoFilter filter does not modify the...">
+<g id="a_Node000001"><a xlink:title="Default filter applied to phase indicator. The ConservativeLevelSetNoFilter filter does not modify th...">
 <polygon fill="#999999" stroke="#666666" points="166.5,-19 5.5,-19 5.5,0 166.5,0 166.5,-19"/>
 <text text-anchor="middle" x="86" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">ConservativeLevelSetNoFilter</text>
 </a>
@@ -20,7 +20,7 @@
 <!-- Node2 -->
 <g id="Node000002" class="node">
 <title>Node2</title>
-<g id="a_Node000002"><a xlink:href="classConservativeLevelSetFilterBase.html" target="_top" xlink:title="Abstract class for filtering phase fraction in Conservative Level Set (CLS) simulations.">
+<g id="a_Node000002"><a xlink:href="classConservativeLevelSetFilterBase.html" target="_top" xlink:title="Abstract class for filtering phase indicator in Conservative Level Set (CLS) simulations.">
 <polygon fill="white" stroke="#666666" points="172,-74 0,-74 0,-55 172,-55 172,-74"/>
 <text text-anchor="middle" x="86" y="-62" font-family="Helvetica,sans-Serif" font-size="10.00">ConservativeLevelSetFilterBase</text>
 </a>

@@ -11,7 +11,7 @@
 <!-- Node1 -->
 <g id="Node000001" class="node">
 <title>Node1</title>
-<g id="a_Node000001"><a xlink:title="Abstract class for filtering phase fraction in Conservative Level Set (CLS) simulations.">
+<g id="a_Node000001"><a xlink:title="Abstract class for filtering phase indicator in Conservative Level Set (CLS) simulations.">
 <polygon fill="#999999" stroke="#666666" points="252.5,-85 80.5,-85 80.5,-66 252.5,-66 252.5,-85"/>
 <text text-anchor="middle" x="166.5" y="-73" font-family="Helvetica,sans-Serif" font-size="10.00">ConservativeLevelSetFilterBase</text>
 </a>
@@ -20,7 +20,7 @@
 <!-- Node2 -->
 <g id="Node000002" class="node">
 <title>Node2</title>
-<g id="a_Node000002"><a xlink:href="classConservativeLevelSetNoFilter.html" target="_top" xlink:title="Default filter applied to phase fraction. The ConservativeLevelSetNoFilter filter does not modify the...">
+<g id="a_Node000002"><a xlink:href="classConservativeLevelSetNoFilter.html" target="_top" xlink:title="Default filter applied to phase indicator. The ConservativeLevelSetNoFilter filter does not modify th...">
 <polygon fill="white" stroke="#666666" points="161,-24.5 0,-24.5 0,-5.5 161,-5.5 161,-24.5"/>
 <text text-anchor="middle" x="80.5" y="-12.5" font-family="Helvetica,sans-Serif" font-size="10.00">ConservativeLevelSetNoFilter</text>
 </a>
@@ -38,7 +38,7 @@
 <!-- Node3 -->
 <g id="Node000003" class="node">
 <title>Node3</title>
-<g id="a_Node000003"><a xlink:href="classConservativeLevelSetTanhFilter.html" target="_top" xlink:title="Filter phase fraction with a hyperbolic tangent function for CLS simulations.">
+<g id="a_Node000003"><a xlink:href="classConservativeLevelSetTanhFilter.html" target="_top" xlink:title="Filter phase indicator with a hyperbolic tangent function for CLS simulations.">
 <polygon fill="white" stroke="#666666" points="325.5,-30 179.5,-30 179.5,0 325.5,0 325.5,-30"/>
 <text text-anchor="start" x="187.5" y="-18" font-family="Helvetica,sans-Serif" font-size="10.00">ConservativeLevelSetTanh</text>
 <text text-anchor="middle" x="252.5" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">Filter</text>

@@ -4,7 +4,7 @@ var searchData=
   ['sdirk33_1',['sdirk33',['../structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8aaeba79e7430a4815eb11453c271ce6f4',1,'Parameters::SimulationControl']]],
   ['sdirk43_2',['sdirk43',['../structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a7d1d28e0c34d45b88cd359397ba4ab23',1,'Parameters::SimulationControl']]],
   ['semi_5fimplicit_3',['semi_implicit',['../namespaceParameters.html#ab888bbb141fede015eec33a09e2a5e46a39bb015dfcfb544585920f86387836b7',1,'Parameters']]],
-  ['sharpening_4',['sharpening',['../namespaceParameters.html#a4b8b20935ce059c0194e32df6a2c76e7a4fbfd3d5262f90798bc383f9920a9ac7',1,'Parameters']]],
+  ['sharpening_4',['sharpening',['../namespaceParameters.html#aa2e0fb6073129a03752879571fee0f3fa4fbfd3d5262f90798bc383f9920a9ac7',1,'Parameters']]],
   ['shear_5frate_5',['shear_rate',['../physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a9c093e9ca22af8657a0bf5280a298a55',1,'physical_property_model.h']]],
   ['silver_5fmuller_6',['silver_muller',['../namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae00c4bcecdb269fd409e0a19d07b0dc9',1,'BoundaryConditions']]],
   ['slip_7',['slip',['../namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a3daec8dea85232fa2baef18aeb2334d8',1,'BoundaryConditions']]],

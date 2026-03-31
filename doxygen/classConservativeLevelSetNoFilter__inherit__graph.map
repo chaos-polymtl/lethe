@@ -1,5 +1,5 @@
 <map id="ConservativeLevelSetNoFilter" name="ConservativeLevelSetNoFilter">
-<area shape="rect" id="Node000001" title="Default filter applied to phase fraction. The ConservativeLevelSetNoFilter filter does not modify the..." alt="" coords="13,79,227,104"/>
-<area shape="rect" id="Node000002" href="$classConservativeLevelSetFilterBase.html" title="Abstract class for filtering phase fraction in Conservative Level Set (CLS) simulations." alt="" coords="5,5,235,31"/>
+<area shape="rect" id="Node000001" title="Default filter applied to phase indicator. The ConservativeLevelSetNoFilter filter does not modify th..." alt="" coords="13,79,227,104"/>
+<area shape="rect" id="Node000002" href="$classConservativeLevelSetFilterBase.html" title="Abstract class for filtering phase indicator in Conservative Level Set (CLS) simulations." alt="" coords="5,5,235,31"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="123,44,123,79,117,79,117,44"/>
 </map>

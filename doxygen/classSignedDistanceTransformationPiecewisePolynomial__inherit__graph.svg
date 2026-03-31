@@ -11,7 +11,7 @@
 <!-- Node1 -->
 <g id="Node000001" class="node">
 <title>Node1</title>
-<g id="a_Node000001"><a xlink:title="Transforms the signed distance to the phase fraction with a piecewise polynomial function (degree 4).">
+<g id="a_Node000001"><a xlink:title="Transforms the signed distance to the phase indicator with a piecewise polynomial function (degree 4)...">
 <polygon fill="#999999" stroke="#666666" points="178,-30 12,-30 12,0 178,0 178,-30"/>
 <text text-anchor="start" x="20" y="-18" font-family="Helvetica,sans-Serif" font-size="10.00">SignedDistanceTransformation</text>
 <text text-anchor="middle" x="95" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">PiecewisePolynomial</text>
@@ -21,7 +21,7 @@
 <!-- Node2 -->
 <g id="Node000002" class="node">
 <title>Node2</title>
-<g id="a_Node000002"><a xlink:href="classSignedDistanceTransformationBase.html" target="_top" xlink:title="Abstract class for the transformation of the signed distance to the phase fraction for the CLS solver...">
+<g id="a_Node000002"><a xlink:href="classSignedDistanceTransformationBase.html" target="_top" xlink:title="Abstract class for the transformation of the signed distance to the phase indicator for the CLS solve...">
 <polygon fill="white" stroke="#666666" points="190,-85 0,-85 0,-66 190,-66 190,-85"/>
 <text text-anchor="middle" x="95" y="-73" font-family="Helvetica,sans-Serif" font-size="10.00">SignedDistanceTransformationBase</text>
 </a>

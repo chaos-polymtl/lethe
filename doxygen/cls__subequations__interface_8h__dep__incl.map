@@ -1,32 +1,32 @@
 <map id="/home/runner/work/lethe/lethe/include/solvers/cls_subequations_interface.h" name="/home/runner/work/lethe/lethe/include/solvers/cls_subequations_interface.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="754,5,969,60"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="973,5,1187,60"/>
 <area shape="rect" id="Node000002" href="$cls_8h.html" title=" " alt="" coords="215,240,409,280"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="779,67,669,110,356,242,354,237,667,106,777,63"/>
-<area shape="rect" id="Node000005" href="$cls__algebraic__interface__reinitialization_8h.html" title=" " alt="" coords="1145,108,1327,177"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="966,61,1145,113,1144,118,965,66"/>
-<area shape="rect" id="Node000007" href="$cls__subequations__interface_8cc.html" title=" " alt="" coords="791,343,1012,397"/>
-<area shape="poly" id="edge17_Node000001_Node000007" title=" " alt="" coords="872,73,877,108,893,239,902,342,897,343,887,240,872,108,866,74"/>
-<area shape="rect" id="Node000008" href="$cls__linear__subequations__solver_8h.html" title=" " alt="" coords="681,108,863,177"/>
-<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="833,73,802,109,798,106,828,69"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="960,63,770,111,543,181,365,242,363,237,542,176,769,105,958,58"/>
+<area shape="rect" id="Node000005" href="$cls__linear__subequations__solver_8h.html" title=" " alt="" coords="782,108,965,177"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="1019,69,939,110,937,105,1016,64"/>
+<area shape="rect" id="Node000008" href="$cls__subequations__interface_8cc.html" title=" " alt="" coords="1024,343,1245,397"/>
+<area shape="poly" id="edge17_Node000001_Node000008" title=" " alt="" coords="1201,59,1265,84,1328,118,1357,140,1384,165,1406,193,1424,224,1436,261,1434,278,1423,296,1396,317,1353,333,1246,357,1245,352,1351,328,1393,312,1419,293,1429,277,1430,262,1419,226,1402,196,1380,168,1354,144,1325,123,1263,89,1199,64"/>
+<area shape="rect" id="Node000012" href="$cls__pde__based__interface__reinitialization_8h.html" title=" " alt="" coords="1092,108,1279,177"/>
+<area shape="poly" id="edge14_Node000001_Node000012" title=" " alt="" coords="1118,68,1154,106,1151,110,1114,72"/>
 <area shape="rect" id="Node000003" href="$cls_8cc.html" title=" " alt="" coords="222,343,405,397"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="315,293,316,343,310,343,310,293"/>
 <area shape="rect" id="Node000004" href="$multiphysics__interface_8cc.html" title=" " alt="" coords="5,343,197,397"/>
 <area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="264,289,154,345,151,340,262,284"/>
-<area shape="rect" id="Node000006" href="$cls__algebraic__interface__reinitialization_8cc.html" title=" " alt="" coords="1274,225,1457,295"/>
-<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="1286,184,1329,223,1326,227,1282,188"/>
-<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="1243,192,1238,246,1229,273,1212,297,1142,318,1013,348,1011,343,1140,313,1209,293,1224,270,1233,245,1238,191"/>
-<area shape="poly" id="edge8_Node000008_Node000002" title=" " alt="" coords="668,169,422,228,372,242,370,237,421,223,667,164"/>
-<area shape="poly" id="edge16_Node000008_Node000007" title=" " alt="" coords="821,186,852,224,881,286,898,342,893,343,876,288,847,227,817,189"/>
-<area shape="rect" id="Node000009" href="$cls__curvature__projection_8h.html" title=" " alt="" coords="433,233,631,287"/>
-<area shape="poly" id="edge9_Node000008_Node000009" title=" " alt="" coords="691,186,588,235,585,230,688,181"/>
-<area shape="rect" id="Node000011" href="$cls__phase__gradient__projection_8h.html" title=" " alt="" coords="964,233,1199,287"/>
-<area shape="poly" id="edge12_Node000008_Node000011" title=" " alt="" coords="876,180,1012,230,1010,235,874,185"/>
-<area shape="rect" id="Node000013" href="$cls__linear__subequations__solver_8cc.html" title=" " alt="" coords="655,225,838,295"/>
-<area shape="poly" id="edge15_Node000008_Node000013" title=" " alt="" coords="764,191,757,226,751,225,759,190"/>
-<area shape="poly" id="edge11_Node000009_Node000007" title=" " alt="" coords="632,289,643,292,810,340,808,345,642,297,631,294"/>
-<area shape="rect" id="Node000010" href="$cls__curvature__projection_8cc.html" title=" " alt="" coords="431,343,633,397"/>
-<area shape="poly" id="edge10_Node000009_Node000010" title=" " alt="" coords="535,302,535,342,529,342,529,302"/>
-<area shape="poly" id="edge14_Node000011_Node000007" title=" " alt="" coords="1027,297,947,345,944,340,1024,292"/>
-<area shape="rect" id="Node000012" href="$cls__phase__gradient__projection_8cc.html" title=" " alt="" coords="1037,343,1278,397"/>
-<area shape="poly" id="edge13_Node000011_Node000012" title=" " alt="" coords="1110,297,1141,341,1137,344,1106,300"/>
+<area shape="poly" id="edge5_Node000005_Node000002" title=" " alt="" coords="769,162,605,190,422,228,370,242,368,237,421,223,604,184,768,157"/>
+<area shape="rect" id="Node000006" href="$cls__curvature__projection_8h.html" title=" " alt="" coords="433,233,631,287"/>
+<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="770,182,611,235,609,230,768,177"/>
+<area shape="poly" id="edge13_Node000005_Node000008" title=" " alt="" coords="979,154,1014,164,1049,178,1082,198,1110,224,1127,252,1136,284,1140,315,1140,343,1134,343,1135,316,1131,285,1122,254,1106,227,1079,202,1047,183,1013,169,978,159"/>
+<area shape="rect" id="Node000009" href="$cls__phase__gradient__projection_8h.html" title=" " alt="" coords="655,233,889,287"/>
+<area shape="poly" id="edge9_Node000005_Node000009" title=" " alt="" coords="837,190,797,234,793,231,833,186"/>
+<area shape="rect" id="Node000011" href="$cls__linear__subequations__solver_8cc.html" title=" " alt="" coords="914,225,1097,295"/>
+<area shape="poly" id="edge12_Node000005_Node000011" title=" " alt="" coords="924,184,968,223,965,227,920,189"/>
+<area shape="rect" id="Node000007" href="$cls__curvature__projection_8cc.html" title=" " alt="" coords="431,343,633,397"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="535,302,535,342,529,342,529,302"/>
+<area shape="poly" id="edge8_Node000006_Node000008" title=" " alt="" coords="628,288,643,292,845,329,1024,354,1024,359,844,335,642,297,626,293"/>
+<area shape="poly" id="edge11_Node000009_Node000008" title=" " alt="" coords="874,289,1047,340,1046,345,872,294"/>
+<area shape="rect" id="Node000010" href="$cls__phase__gradient__projection_8cc.html" title=" " alt="" coords="658,343,899,397"/>
+<area shape="poly" id="edge10_Node000009_Node000010" title=" " alt="" coords="777,301,780,342,774,343,772,302"/>
+<area shape="poly" id="edge16_Node000012_Node000008" title=" " alt="" coords="1178,192,1156,295,1144,343,1139,342,1151,294,1173,190"/>
+<area shape="rect" id="Node000013" href="$cls__pde__based__interface__reinitialization_8cc.html" title=" " alt="" coords="1223,225,1409,295"/>
+<area shape="poly" id="edge15_Node000012_Node000013" title=" " alt="" coords="1236,184,1279,223,1276,227,1232,188"/>
 </map>

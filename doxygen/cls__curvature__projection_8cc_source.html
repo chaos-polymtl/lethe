@@ -112,11 +112,11 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>  this-&gt;system_rhs    = 0;</div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>  <span class="comment">// Get phase gradient L2 projection DoFHandler</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;dof_handler_phase_fraction_gradient =</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>  <span class="keyword">const</span> DoFHandler&lt;dim&gt; &amp;dof_handler_phase_indicator_gradient =</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    this-&gt;subequations_interface.get_dof_handler(</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>      <a class="code hl_enumvalue" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba9940c4a3bfe89c505b3e4b825d8ef89b">CLSSubequationsID::phase_gradient_projection</a>);</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>  <span class="comment">// Initialize FEValues for curvature and phase fraction gradient projection</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>  <span class="comment">// Initialize FEValues for curvature and phase indicator gradient projection</span></div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>  FEValues&lt;dim&gt; fe_values_curvature_projection(*this-&gt;mapping,</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>                                               *this-&gt;fe,</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>                                               *this-&gt;cell_quadrature,</div>
@@ -125,7 +125,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>                                                 update_JxW_values);</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>  FEValues&lt;dim&gt; fe_values_phase_gradient_projection(</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    *this-&gt;mapping,</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    dof_handler_phase_fraction_gradient.get_fe(),</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    dof_handler_phase_indicator_gradient.get_fe(),</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    *this-&gt;cell_quadrature,</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    update_values);</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
@@ -142,10 +142,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>  <span class="comment">// Initialize the local dof indices array</span></div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>  std::vector&lt;types::global_dof_index&gt; local_dof_indices(n_dofs_per_cell);</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>  <span class="comment">// Extractor for phase fraction gradient vector</span></div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>  FEValuesExtractors::Vector phase_fraction_gradients(0);</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>  <span class="comment">// Extractor for phase indicator gradient vector</span></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>  FEValuesExtractors::Vector phase_indicator_gradients(0);</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>  <span class="comment">// Initialize projected phase fraction gradient solution array</span></div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>  <span class="comment">// Initialize projected phase indicator gradient solution array</span></div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>  std::vector&lt;Tensor&lt;1, dim&gt;&gt; present_phase_gradient_projection_values(</div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    n_q_points);</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
@@ -178,7 +178,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>              &amp;(*this-&gt;triangulation),</div>
 <div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>              cell-&gt;level(),</div>
 <div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>              cell-&gt;index(),</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>              &amp;dof_handler_phase_fraction_gradient);</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>              &amp;dof_handler_phase_indicator_gradient);</div>
 <div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span> </div>
 <div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>          <span class="comment">// Reinitialize FEValues with corresponding cells</span></div>
 <div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>          fe_values_curvature_projection.reinit(cell);</div>
@@ -196,8 +196,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>            compute_cell_diameter&lt;dim&gt;(<a class="code hl_function" href="utilities_8h.html#a3d02cb065c32b672c94bb862ecff4431">compute_cell_measure_with_JxW</a>(JxW_vec),</div>
 <div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>                                       fe_curvature_projection.degree);</div>
 <div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span> </div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>          <span class="comment">// Get projected fraction gradient values</span></div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>          fe_values_phase_gradient_projection[phase_fraction_gradients]</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>          <span class="comment">// Get projected indicator gradient values</span></div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>          fe_values_phase_gradient_projection[phase_indicator_gradients]</div>
 <div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>            .get_function_values(present_phase_gradient_projection_solution,</div>
 <div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>                                 present_phase_gradient_projection_values);</div>
 <div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span> </div>
@@ -275,7 +275,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassCLSCurvatureProjection_html_a399c5ae39cd21f7ec7ad3d91ffc64312"><div class="ttname"><a href="classCLSCurvatureProjection.html#a399c5ae39cd21f7ec7ad3d91ffc64312">CLSCurvatureProjection::assemble_system_matrix_and_rhs</a></div><div class="ttdeci">void assemble_system_matrix_and_rhs() override</div><div class="ttdoc">Assemble system matrix and right-hand side (rhs).</div><div class="ttdef"><b>Definition</b> <a href="cls__curvature__projection_8cc_source.html#l00008">cls_curvature_projection.cc:8</a></div></div>
 <div class="ttc" id="aclassCLSCurvatureProjection_html_a5331595e2d23914ea356ff746005eecc"><div class="ttname"><a href="classCLSCurvatureProjection.html#a5331595e2d23914ea356ff746005eecc">CLSCurvatureProjection::check_dependencies_validity</a></div><div class="ttdeci">void check_dependencies_validity() override</div><div class="ttdoc">Check if the phase gradient L2 projection has been solved.</div><div class="ttdef"><b>Definition</b> <a href="cls__curvature__projection_8cc_source.html#l00158">cls_curvature_projection.cc:158</a></div></div>
 <div class="ttc" id="acls__curvature__projection_8h_html"><div class="ttname"><a href="cls__curvature__projection_8h.html">cls_curvature_projection.h</a></div></div>
-<div class="ttc" id="acls__subequations_8h_html_adc294680c5240ed4f2abd7c72e1cd0dba9940c4a3bfe89c505b3e4b825d8ef89b"><div class="ttname"><a href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba9940c4a3bfe89c505b3e4b825d8ef89b">CLSSubequationsID::phase_gradient_projection</a></div><div class="ttdeci">@ phase_gradient_projection</div><div class="ttdoc">CLS phase fraction gradient L2 projection.</div></div>
+<div class="ttc" id="acls__subequations_8h_html_adc294680c5240ed4f2abd7c72e1cd0dba9940c4a3bfe89c505b3e4b825d8ef89b"><div class="ttname"><a href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba9940c4a3bfe89c505b3e4b825d8ef89b">CLSSubequationsID::phase_gradient_projection</a></div><div class="ttdeci">@ phase_gradient_projection</div><div class="ttdoc">CLS phase indicator gradient L2 projection.</div></div>
 <div class="ttc" id="autilities_8h_html_a3d02cb065c32b672c94bb862ecff4431"><div class="ttname"><a href="utilities_8h.html#a3d02cb065c32b672c94bb862ecff4431">compute_cell_measure_with_JxW</a></div><div class="ttdeci">double compute_cell_measure_with_JxW(const std::vector&lt; double &gt; &amp;JxW_values)</div><div class="ttdoc">Computes the area (2D) or volume (3D) of the cell by integrating 1 over the cell, by summing JxW valu...</div><div class="ttdef"><b>Definition</b> <a href="utilities_8h_source.html#l00781">utilities.h:781</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!--

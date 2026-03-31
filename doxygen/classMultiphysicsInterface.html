@@ -150,14 +150,14 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a10f9f67e6e654cd537e9f123d767c3e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae9fdd065251330837764899f4865988e" id="r_ae9fdd065251330837764899f4865988e"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classSolidBase.html">SolidBase</a>&lt; dim, dim &gt; &gt; &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#ae9fdd065251330837764899f4865988e">get_solids</a> (const int number_solids)</td></tr>
 <tr class="separator:ae9fdd065251330837764899f4865988e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa7b23d559fd4322f3e30723f2bb8874c" id="r_aa7b23d559fd4322f3e30723f2bb8874c"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#aa7b23d559fd4322f3e30723f2bb8874c">get_projected_phase_fraction_gradient_solution</a> ()</td></tr>
-<tr class="separator:aa7b23d559fd4322f3e30723f2bb8874c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3293b7019245614036fbde7fcacf9008" id="r_a3293b7019245614036fbde7fcacf9008"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a3293b7019245614036fbde7fcacf9008">get_projected_phase_indicator_gradient_solution</a> ()</td></tr>
+<tr class="separator:a3293b7019245614036fbde7fcacf9008"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a711ce06986740c92d8b5ac15bfd49964" id="r_a711ce06986740c92d8b5ac15bfd49964"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a711ce06986740c92d8b5ac15bfd49964">get_curvature_solution</a> ()</td></tr>
 <tr class="separator:a711ce06986740c92d8b5ac15bfd49964"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a42dda4a84b218a2ab19ba6ed323ad283" id="r_a42dda4a84b218a2ab19ba6ed323ad283"><td class="memItemLeft" align="right" valign="top">const DoFHandler&lt; dim &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a42dda4a84b218a2ab19ba6ed323ad283">get_curvature_dof_handler</a> ()</td></tr>
 <tr class="separator:a42dda4a84b218a2ab19ba6ed323ad283"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac76eac3059bd87155d3583136b760756" id="r_ac76eac3059bd87155d3583136b760756"><td class="memItemLeft" align="right" valign="top">const DoFHandler&lt; dim &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#ac76eac3059bd87155d3583136b760756">get_projected_phase_fraction_gradient_dof_handler</a> ()</td></tr>
-<tr class="separator:ac76eac3059bd87155d3583136b760756"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf81d5fdb8a66f4c8a4c4260a733c5c2" id="r_abf81d5fdb8a66f4c8a4c4260a733c5c2"><td class="memItemLeft" align="right" valign="top">const DoFHandler&lt; dim &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#abf81d5fdb8a66f4c8a4c4260a733c5c2">get_projected_phase_indicator_gradient_dof_handler</a> ()</td></tr>
+<tr class="separator:abf81d5fdb8a66f4c8a4c4260a733c5c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a80bd632a48bb2f058693459dd6f047c6" id="r_a80bd632a48bb2f058693459dd6f047c6"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a80bd632a48bb2f058693459dd6f047c6">get_immersed_solid_shape</a> ()</td></tr>
 <tr class="separator:a80bd632a48bb2f058693459dd6f047c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a616d9aa02101f700b767cc740bfb1ed9" id="r_a616d9aa02101f700b767cc740bfb1ed9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMultiphysicsInterface.html#a616d9aa02101f700b767cc740bfb1ed9">set_immersed_solid_shape</a> (const std::shared_ptr&lt; <a class="el" href="classShape.html">Shape</a>&lt; dim &gt; &gt; &amp;shape)</td></tr>
@@ -894,8 +894,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="ac76eac3059bd87155d3583136b760756" name="ac76eac3059bd87155d3583136b760756"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac76eac3059bd87155d3583136b760756">&#9670;&#160;</a></span>get_projected_phase_fraction_gradient_dof_handler()</h2>
+<a id="abf81d5fdb8a66f4c8a4c4260a733c5c2" name="abf81d5fdb8a66f4c8a4c4260a733c5c2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf81d5fdb8a66f4c8a4c4260a733c5c2">&#9670;&#160;</a></span>get_projected_phase_indicator_gradient_dof_handler()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -903,7 +903,7 @@ template&lt;int dim&gt; </div>
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">const DoFHandler&lt; dim &gt; &amp; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_projected_phase_fraction_gradient_dof_handler </td>
+          <td class="memname">const DoFHandler&lt; dim &gt; &amp; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_projected_phase_indicator_gradient_dof_handler </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -911,7 +911,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Request the reference to the projected phase fraction gradient (PFG) DOF handler. </p>
+<p>Request the reference to the projected phase indicator gradient (PIG) DOF handler. </p>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8cc_source.html#l00220">220</a> of file <a class="el" href="multiphysics__interface_8cc_source.html">multiphysics_interface.cc</a>.</p>
 
@@ -919,8 +919,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="aa7b23d559fd4322f3e30723f2bb8874c" name="aa7b23d559fd4322f3e30723f2bb8874c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa7b23d559fd4322f3e30723f2bb8874c">&#9670;&#160;</a></span>get_projected_phase_fraction_gradient_solution()</h2>
+<a id="a3293b7019245614036fbde7fcacf9008" name="a3293b7019245614036fbde7fcacf9008"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3293b7019245614036fbde7fcacf9008">&#9670;&#160;</a></span>get_projected_phase_indicator_gradient_solution()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -928,7 +928,7 @@ template&lt;int dim&gt; </div>
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_projected_phase_fraction_gradient_solution </td>
+          <td class="memname">const <a class="el" href="vector_8h.html#a4ea4005d75c88e60bee47d4e79a13a39">GlobalVectorType</a> &amp; <a class="el" href="classMultiphysicsInterface.html">MultiphysicsInterface</a>&lt; dim &gt;::get_projected_phase_indicator_gradient_solution </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -936,7 +936,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Request the reference to the present solution vector of the projected phase fraction gradient (PFG) </p>
+<p>Request the reference to the present solution vector of the projected phase indicator gradient (PIG) </p>
 
 <p class="definition">Definition at line <a class="el" href="multiphysics__interface_8cc_source.html#l00169">169</a> of file <a class="el" href="multiphysics__interface_8cc_source.html">multiphysics_interface.cc</a>.</p>
 
