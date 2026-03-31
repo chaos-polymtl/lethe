@@ -4559,6 +4559,10 @@ namespace Parameters
                         "1e-8",
                         Patterns::Double(),
                         "Tolerance used for the interface radius computation");
+      prm.declare_entry("cell weight",
+                        "1000",
+                        Patterns::Integer(),
+                        "Cell weight for load balancing of mortar cells");
       prm.declare_entry(
         "verbosity",
         "quiet",
@@ -4607,6 +4611,7 @@ namespace Parameters
       sip_factor          = prm.get_double("penalty factor");
       oversampling_factor = prm.get_integer("oversampling factor");
       radius_tolerance    = prm.get_double("radius tolerance");
+      cell_weight         = prm.get_integer("cell weight");
 
       // Enable printing of mortar information
       const std::string op = prm.get("verbosity");

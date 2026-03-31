@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 # Checks the global coarsening multigrid preconditioner for a mortar MMS example.
+# Also tests the use of a different mortar cell weight with respect to the other
+# cells, which affects the load balancing.
 
 # Listing of Parameters
 #----------------------
@@ -55,7 +57,8 @@ subsection mortar
   subsection rotor rotation angle
     set Function expression = 0.47
   end
-  set verbosity = verbose
+  set cell weight = 2000
+  set verbosity   = extra verbose
 end
 
 #---------------------------------------------------

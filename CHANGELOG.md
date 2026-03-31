@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/03/31
+
+### Added
+
+- MINOR This PR adds the option to assign a different weight for the cells located at the mortar interface, which is taken into consideration for the workload partitioning. [#1953](https://github.com/chaos-polymtl/lethe/pull/1953)
+
 ## [Master] - 2026/03/30
 
 ### Added

@@ -812,10 +812,12 @@ mortar_workload_imbalance(const Triangulation<dim>      &triangulation,
   const double workload_imbalance = n_mortar_cells_max / ideal_work;
 
   pcout << "Workload imbalance: " << workload_imbalance << std::endl;
+  pcout << std::defaultfloat;
   pcout << "Number of cells per process - Min.: " << n_mortar_cells_min
         << std::endl;
   pcout << "                              Max.: " << n_mortar_cells_max
         << std::endl;
+  pcout << std::scientific;
 }
 
 /*-------------- MortarManagerCircle -------------------------------*/
