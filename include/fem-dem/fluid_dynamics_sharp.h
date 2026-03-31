@@ -286,17 +286,18 @@ private:
 
   /**
    * @brief
-   * Allow a refinement around each of the particles.
-   * The zone where the cells will be refined is defined by a ring in 2D and a
-   *shell in 3D. The outside and inside radius of the ring\shell is defined in
-   *relation to the diameter of the particle by the immersed boundaries
-   *parameter: "refine mesh inside radius factor" and "refine mesh outside
-   *radius factor". These factors multiply the radius of the particle to define
-   *the outside and inside radius of the ring\shell.
-   * @param initial_refinement, A bool that indicate if this is the initial refinement.
+   * Adapt the mesh around each immersed-boundary particle.
+   * The refinement zone is defined by a ring in 2D and a shell in 3D. The
+   * outside and inside radius of this ring\shell are defined relative to the
+   * particle radius by the immersed-boundary parameters
+   * "refine mesh inside radius factor" and
+   * "refine mesh outside radius factor". When enabled, distance-based
+   * coarsening is also applied outside the corresponding coarsening threshold.
+   * @param initial_refinement A bool that indicates if this is the initial
+   * refinement cycle.
    */
   void
-  refine_ib(const bool initial_refinement);
+  mesh_adapt_ib(const bool initial_refinement);
 
 
   /**

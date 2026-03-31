@@ -3880,6 +3880,11 @@ namespace Parameters
           Patterns::Integer(),
           "Number of refinements around the particles before the start of the simulation ");
         prm.declare_entry(
+          "enable distance based coarsening",
+          "false",
+          Patterns::Bool(),
+          "Enable distance-based coarsening away from immersed boundary particles");
+        prm.declare_entry(
           "refine mesh inside radius factor",
           "0.5",
           Patterns::Double(),
@@ -3889,6 +3894,11 @@ namespace Parameters
           "1.5",
           Patterns::Double(),
           "The factor that multiplies the radius to define the outside bound for the refinement of the mesh");
+        prm.declare_entry(
+          "coarsen mesh outside radius factor",
+          "2.0",
+          Patterns::Double(),
+          "The factor that multiplies the radius to define the outside bound beyond which distance-based coarsening is allowed");
         prm.declare_entry(
           "refinement zone extrapolation",
           "false",
@@ -4069,10 +4079,22 @@ namespace Parameters
       prm.enter_subsection("local mesh refinement");
       {
         initial_refinement = prm.get_integer("initial refinement");
-        inside_radius      = prm.get_double("refine mesh inside radius factor");
-        outside_radius = prm.get_double("refine mesh outside radius factor");
+        enable_coarsening  = prm.get_bool("enable distance based coarsening");
+        refinement_inside_distance_factor =
+          prm.get_double("refine mesh inside radius factor");
+        refinement_outside_distance_factor =
+          prm.get_double("refine mesh outside radius factor");
+        coarsening_distance_factor =
+          prm.get_double("coarsen mesh outside radius factor");
         time_extrapolation_of_refinement_zone =
           prm.get_bool("refinement zone extrapolation");
+        if (enable_coarsening)
+          {
+            AssertThrow(
+              coarsening_distance_factor >= refinement_outside_distance_factor,
+              ExcMessage(
+                "The parameter 'coarsen mesh outside radius factor' must be greater than or equal to 'refine mesh outside radius factor'."));
+          }
         prm.leave_subsection();
       }
 
