@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2026/03/26
 
+### Added
+
+- MAJOR This PR adds a 2 dimensional example using the mortar method, named "Paddle Mixer Using the Mortar Method". [#1939](https://github.com/chaos-polymtl/lethe/pull/1939)
+
 ### Fixed
 
 - MINOR The two prototype "matrix_based_advection_diffusion" and "matrix_based_non_linear_poisson" would not compile with the current deal.II master version.  Essentialy the changes to the Trilinos sparsity pattern prevented compilation. This has been fixed by adopting the process used in step-50. This has no consequence on the main Lethe software stack. [#1951](https://github.com/chaos-polymtl/lethe/pull/1951).
