@@ -89,6 +89,7 @@ Follow the instructions in the
 - Laura Prieto Saavedra
 - Catherine Radburn
 - Philippe Rivest
+- Jacob Tremblay
 - Mikael Vaillant
 
 ## License
