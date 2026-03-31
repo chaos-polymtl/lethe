@@ -86,7 +86,7 @@ public:
              const std::shared_ptr<Parameters::Lagrangian::FloatingWalls<dim>>
                                                  floating_walls_parameters,
              const std::shared_ptr<Parameters::Lagrangian::BCDEM>
-               &boundary_conditions_parameters,
+                                                 &boundary_conditions_parameters,
              const MPI_Comm                     &mpi_communicator_input,
              const std::vector<IBParticle<dim>> &particles);
 
@@ -254,11 +254,35 @@ public:
   std::vector<IBParticle<dim>> dem_particles;
 
 private:
+  /**
+   * @brief Check whether a boundary should be ignored for Sharp-IB particle
+   * wall interactions.
+   *
+   * Outlet and periodic DEM boundaries do not represent colliding walls and
+   * are therefore excluded from the wall-contact search.
+   *
+   * @param boundary_id Boundary id under consideration.
+   * @return `true` if the boundary must be excluded from contact handling.
+   */
   bool
-  is_boundary_excluded(const unsigned int boundary_id) const;
+  is_boundary_excluded(const types::boundary_id boundary_id) const;
 
+  /**
+   * @brief Get the DEM wall motion prescribed on a boundary.
+   *
+   * This converts the DEM boundary-condition parameters into the translational
+   * and angular wall velocities used by Sharp-IB particle-wall interaction
+   * models.
+   *
+   * @param boundary_id Boundary id under consideration.
+   * @param point_on_boundary Contact point on the boundary.
+   * @param wall_velocity Translational wall velocity.
+   * @param wall_angular_velocity Angular wall velocity.
+   * @param wall_center_of_rotation Point on the rotation axis used for
+   * rotational wall motion.
+   */
   void
-  get_wall_motion(const unsigned int boundary_id,
+  get_wall_motion(const types::boundary_id boundary_id,
                   const Point<dim>  &point_on_boundary,
                   Tensor<1, 3>      &wall_velocity,
                   Tensor<1, 3>      &wall_angular_velocity,
@@ -281,7 +305,7 @@ private:
 
     Tensor<1, dim> normal_vector;
     Point<dim>     point_on_boundary;
-    unsigned int   boundary_index;
+    types::boundary_id boundary_index;
   };
 
   // These structs are used to specify the default value of a variable in a map

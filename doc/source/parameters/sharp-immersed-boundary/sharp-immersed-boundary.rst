@@ -166,6 +166,9 @@ This subsection contains the parameters related to the sharp immersed boundary s
 * The ``DEM`` subsection contains all the parameters associated with the motion and contacts of spherical particles.
     * The ``DEM coupling frequency`` parameter controls the number of iterations done on the DEM side for each CFD time step. It's necessary to use a much smaller time step for the particle dynamics than for the fluid in case of contact between the particles. The particle collision happens at a much smaller time-scale than the fluid dynamics.
 
+    .. note::
+        The DEM boundary conditions documented in :doc:`../dem/boundary_conditions` also apply to Sharp resolved CFD-DEM simulations. In Sharp, translational and rotational DEM wall motion are taken into account in the particle-wall contact and lubrication models.
+
     * The ``alpha`` parameter is the relaxation parameter used when solving the dynamics equation of the particle.
     
     * The ``contact search frequency`` parameter is used to set the updating frequency of the contact search list. By default, it is set to 1, which means that the contact search list is updated at each time step.

@@ -27,13 +27,12 @@ IBParticlesDEM<dim>::initialize(
   mpi_communicator          = mpi_communicator_input;
   dem_particles             = particles;
   boundary_cells.resize(dem_particles.size());
-
-  std::vector<types::boundary_id> boundary_index(0);
 }
 
 template <int dim>
 bool
-IBParticlesDEM<dim>::is_boundary_excluded(const unsigned int boundary_id) const
+IBParticlesDEM<dim>::is_boundary_excluded(const types::boundary_id boundary_id)
+  const
 {
   if (!boundary_conditions_parameters)
     return false;
@@ -62,13 +61,13 @@ IBParticlesDEM<dim>::is_boundary_excluded(const unsigned int boundary_id) const
 template <int dim>
 void
 IBParticlesDEM<dim>::get_wall_motion(
-  const unsigned int boundary_id,
+  const types::boundary_id boundary_id,
   const Point<dim>  &point_on_boundary,
   Tensor<1, 3>      &wall_velocity,
   Tensor<1, 3>      &wall_angular_velocity,
   Point<dim>        &wall_center_of_rotation) const
 {
-  wall_velocity        = Tensor<1, 3>();
+  wall_velocity         = Tensor<1, 3>();
   wall_angular_velocity = Tensor<1, 3>();
   wall_center_of_rotation = point_on_boundary;
 
@@ -938,7 +937,7 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
               boundary_index += 1;
             }
 
-          // Add all the floating wall has contact candidate. Their indices
+          // Add all the floating walls as contact candidates. Their indices
           // start from 1M (define in the definition of:
           // lowest_floating_wall_indices). This prevents a floating wall
           // from sharing the same indices as a normal boundary of the
