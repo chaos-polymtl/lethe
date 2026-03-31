@@ -66,9 +66,9 @@ BoundaryCellsInformation<dim>::build(
           pcout
             << "Warning: expansion of particle-wall contact list is enabled. "
             << std::endl
-          << "This feature should only be activated in geometries with concave boundaries. "
-             "(For example, for particles flow inside a cylinder or sphere). In geometries with "
-             "convex boundaries, this feature MUST NOT be activated."
+            << "This feature should be used only in geometries with convex boundaries. "
+             "(For example, particles flowing inside a cylinder or sphere). For geometries with "
+             "concave boundaries, enabling this feature is unnecessary and increases computational cost."
           << std::endl;
           display_pw_contact_expansion_warning = false;
         }
@@ -86,7 +86,7 @@ BoundaryCellsInformation<dim>::build(
           pcout
             << "Warning: expansion of particle-wall contact list is disabled. "
             << std::endl
-            << "This feature is useful in geometries with concave boundaries. "
+            << "This feature is useful in geometries with convex boundaries. "
             << std::endl;
           display_pw_contact_expansion_warning = false;
         }

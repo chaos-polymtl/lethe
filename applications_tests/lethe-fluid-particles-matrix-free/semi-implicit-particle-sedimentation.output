@@ -1,15 +1,17 @@
 Running on 1 MPI rank(s)...
 The particle size distribution of particle type 0 is uniform.
 DEM time step is 2.203523e+03% of Rayleigh time step
-Minimum vertex distance between cell vertices: 1.250e-02, Minimum cell size to maximum particle diameter ratio: 5.00
+Minimum vertex distance between cell vertices: 1.250000e-02
+Minimum cell size to maximum particle diameter ratio: 5.000000e+00
    Number of active cells:       128
    Number of degrees of freedom: 900
-   Volume of triangulation:      0.00
+   Volume of triangulation:      2.500000e-04
 ---------------------------------------------------------------
 Initializing DEM parameters
-Warning: expansion of particle-wall contact list is disabled. This feature is useful in geometries with concave boundaries. 
+Warning: expansion of particle-wall contact list is disabled. 
+This feature is useful in geometries with convex boundaries. 
 Finished initializing DEM parameters
-DEM time step is 0.01 s
+DEM time step is 5.000000e-03 s
 --------------
 Void Fraction
 --------------

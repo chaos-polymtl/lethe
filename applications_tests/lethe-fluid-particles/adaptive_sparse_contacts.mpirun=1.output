@@ -4,15 +4,17 @@ DEM time step is 2.614682e+00% of Rayleigh time step
 Reading DEM checkpoint
 Finished reading DEM checkpoint
 350 particles are in the simulation
-Minimum vertex distance between cell vertices: 5.000e-02, Minimum cell size to maximum particle diameter ratio: 4.00
+Minimum vertex distance between cell vertices: 5.000000e-02
+Minimum cell size to maximum particle diameter ratio: 4.000000e+00
    Number of active cells:       8
    Number of degrees of freedom: 144
-   Volume of triangulation:      0.00
+   Volume of triangulation:      1.250000e-03
 ---------------------------------------------------------------
 Initializing DEM parameters
-Warning: expansion of particle-wall contact list is disabled. This feature is useful in geometries with concave boundaries. 
+Warning: expansion of particle-wall contact list is disabled. 
+This feature is useful in geometries with convex boundaries. 
 Finished initializing DEM parameters
-DEM time step is 0.00 s
+DEM time step is 2.000000e-05 s
 --------------
 Void Fraction
 --------------
@@ -34,8 +36,8 @@ DEM contact search at dem step 2
 DEM contact search at dem step 50
 Finished 50 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 0.00 s^-1
-Max local continuity error: 0.00 s^-1
+Global continuity equation error: 2.769270e-09 s^-1
+Max local continuity error: 6.887374e-08 s^-1
 
 **********************************************************************************
 Transient iteration: 2        Time: 0.002    Time step: 0.001    CFL: 7.47614e-05
@@ -137,5 +139,5 @@ DEM contact search at dem step 2
 DEM contact search at dem step 50
 Finished 50 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 0.00 s^-1
-Max local continuity error: 0.00 s^-1
+Global continuity equation error: 2.168967e-09 s^-1
+Max local continuity error: 6.354161e-07 s^-1

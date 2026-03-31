@@ -55,7 +55,7 @@ report_cell_size_to_particle_diameter_ratio(
     {
       pcout
         << "Warning: Minimum cell size is smaller than the maximum particle diameter."
-        << "Consider coarsening the mesh to achieve a ratio larger than 1.2."
+        << "Consider coarsening the mesh to achieve a ratio larger than 1"
         << std::endl;
     }
 }
