@@ -11,7 +11,12 @@ This section regroups preprints of journal articles already submitted, but which
 
 * `H. Papillon-Laroche, A. Alphonius, M. Schreter-Fleischhacker, J.-P. Harvey and B. Blais. "Geometric Reinitialization for Capillary Flows: a Comparative Study with State-of-the-Art Conservative Level-Set Methods," arXiv preprint arXiv:2602.00275, 2026. <https://doi.org/10.48550/arXiv.2602.00275>`_.
 
-* `O. Gaboriault, A. Timercan, R. Pelletier, L.-P. Lefebvre, D. Melançon, and B. Blais, “Increase in packing density during multi-layer powder spreading: An experimental and numerical study,” arXiv preprint arXiv:2509.26402, 2025. <https://arxiv.org/abs/2509.26402>`_.
+2026
+----
+
+* `O. Gaboriault, A. Timercan, R. Pelletier, L.-P. Lefebvre, D. Melancon, B. Blais, "Increase in packing density during multi-layer powder spreading: An experimental and numerical study", Powder Technology, pp. 122460, 2026 <https://doi.org/10.1016/j.powtec.2026.122460>`_.
+
+* `M. Vaillant, V. Oliveira Ferreira, W. Mainville, J.-M. Lamarre, V. Raymond, M. Chioua, B. Blais, "Surrogate model for heat transfer prediction in impinging jet arrays using dynamic inlet/outlet and flow rate control", International Communications in Heat and Mass Transfer, vol. 175, pp. 111046, 2026 <https://doi.org/10.1016/j.icheatmasstransfer.2026.111046>`_.
 
 2025
 ----
