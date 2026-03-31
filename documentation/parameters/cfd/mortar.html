@@ -468,6 +468,7 @@
   set penalty factor      = 1.0
   set oversampling factor = 2
   set radius tolerance    = 1e-8
+  set cell weight         = 1000
   set verbosity           = quiet
 end
 </pre></div>
@@ -519,6 +520,7 @@ To circumvent this, the rotor boundary IDs are shifted. The <code class="docutil
 <p>The default value for <code class="docutils literal notranslate"><span class="pre">radius</span> <span class="pre">tolerance</span></code> is <span class="math notranslate nohighlight">\(10^{-8}\)</span>, which should cover the precision range of deal.II-generated grids. The tolerance might need to be increased for some <code class="docutils literal notranslate"><span class="pre">gmsh</span></code> mesh type cases or for large simulations running in multiple cores, when the above verification fails even if the mesh discretization is coherent.</p>
 </div>
 <ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">cell</span> <span class="pre">weight</span></code> allows the imposition of a higher cell weight for the cells located at the mortar interface, which is then accounted for in the workload balancing between processors. The default value of <code class="docutils literal notranslate"><span class="pre">1000</span></code> assumes that mortar cells have the same weight as other cells.</p></li>
 <li><p>When enabling <code class="docutils literal notranslate"><span class="pre">verbosity</span></code> (<code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">verbosity</span> <span class="pre">=</span> <span class="pre">verbose</span></code>), the rotor rotation information is printed at every iteration. The option <code class="docutils literal notranslate"><span class="pre">extra</span> <span class="pre">verbose</span></code> also prints the workload imbalance of mortar cells. We consider that an ideal work imbalance is given by:</p></li>
 </ul>
 <div class="math-wrapper docutils container">

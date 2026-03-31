@@ -140,6 +140,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:ab1f0aeedf52050e9420a14c5894a094b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab4c9c82a2ca88d194e745f339dc73046" id="r_ab4c9c82a2ca88d194e745f339dc73046"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Mortar.html#ab4c9c82a2ca88d194e745f339dc73046">radius_tolerance</a></td></tr>
 <tr class="separator:ab4c9c82a2ca88d194e745f339dc73046"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76363cbe6fa8626b79a7b2177391f5ff" id="r_a76363cbe6fa8626b79a7b2177391f5ff"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Mortar.html#a76363cbe6fa8626b79a7b2177391f5ff">cell_weight</a></td></tr>
+<tr class="separator:a76363cbe6fa8626b79a7b2177391f5ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a93ebc4f0449e1c5d68f0444a8384c7c1" id="r_a93ebc4f0449e1c5d68f0444a8384c7c1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919">Verbosity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1Mortar.html#a93ebc4f0449e1c5d68f0444a8384c7c1">verbosity</a></td></tr>
 <tr class="separator:a93ebc4f0449e1c5d68f0444a8384c7c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -222,13 +224,33 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l04574">4574</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l04578">4578</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919ae5cbb8171b496f26a4488b9e15a0fe52">Parameters::extra_verbose</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="a76363cbe6fa8626b79a7b2177391f5ff" name="a76363cbe6fa8626b79a7b2177391f5ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a76363cbe6fa8626b79a7b2177391f5ff">&#9670;&#160;</a></span>cell_weight</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int <a class="el" href="structParameters_1_1Mortar.html">Parameters::Mortar</a>&lt; dim &gt;::cell_weight</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Cell weight for load balancing of cells with mortar interfaces. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01979">1979</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
 <a id="a01ab1689f9329a893329c90069073b86" name="a01ab1689f9329a893329c90069073b86"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a01ab1689f9329a893329c90069073b86">&#9670;&#160;</a></span>center_of_rotation</h2>
 
@@ -481,7 +503,7 @@ template&lt;int dim&gt; </div>
 
 <p>Type of verbosity for mortar. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01979">1979</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01981">1981</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>

@@ -292,6 +292,8 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:a615f24a6a6c089eaacc715f1e8ef0a14 inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6ae1c9c8f8ed38e840684b0007ff8359 inherit pro_methods_classNavierStokesBase" id="r_a6ae1c9c8f8ed38e840684b0007ff8359"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a6ae1c9c8f8ed38e840684b0007ff8359">rotate_rotor_mapping</a> (const bool is_first)</td></tr>
 <tr class="separator:a6ae1c9c8f8ed38e840684b0007ff8359 inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e6c8e17f92a97624914b5b3862ac3f9 inherit pro_methods_classNavierStokesBase" id="r_a0e6c8e17f92a97624914b5b3862ac3f9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a0e6c8e17f92a97624914b5b3862ac3f9">connect_mortar_weight_signals</a> ()</td></tr>
+<tr class="separator:a0e6c8e17f92a97624914b5b3862ac3f9 inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab16d1c2bea5ff819500595d94ef240ae inherit pro_methods_classNavierStokesBase" id="r_ab16d1c2bea5ff819500595d94ef240ae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#ab16d1c2bea5ff819500595d94ef240ae">update_boundary_conditions</a> ()</td></tr>
 <tr class="separator:ab16d1c2bea5ff819500595d94ef240ae inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a117c51c5894f115d42bdbd6e4ae78320 inherit pro_methods_classNavierStokesBase" id="r_a117c51c5894f115d42bdbd6e4ae78320"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a117c51c5894f115d42bdbd6e4ae78320">check_existance_of_bc</a> (<a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryConditions::BoundaryType</a> bc)</td></tr>
@@ -486,7 +488,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00024">24</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00171">FluidDynamicsNitsche&lt; dim, spacedim &gt;::pvdhandler_solid_particles</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00170">FluidDynamicsNitsche&lt; dim, spacedim &gt;::pvdhandler_solid_triangulation</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00977">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00173">FluidDynamicsNitsche&lt; dim, spacedim &gt;::solid_forces_table</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00174">FluidDynamicsNitsche&lt; dim, spacedim &gt;::solid_torques_table</a>, and <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00169">FluidDynamicsNitsche&lt; dim, spacedim &gt;::solids</a>.</p>
+<p class="reference">References <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00171">FluidDynamicsNitsche&lt; dim, spacedim &gt;::pvdhandler_solid_particles</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00170">FluidDynamicsNitsche&lt; dim, spacedim &gt;::pvdhandler_solid_triangulation</a>, <a class="el" href="navier__stokes__base_8h_source.html#l00985">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00173">FluidDynamicsNitsche&lt; dim, spacedim &gt;::solid_forces_table</a>, <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00174">FluidDynamicsNitsche&lt; dim, spacedim &gt;::solid_torques_table</a>, and <a class="el" href="fluid__dynamics__nitsche_8h_source.html#l00169">FluidDynamicsNitsche&lt; dim, spacedim &gt;::solids</a>.</p>
 
 </div>
 </div>
@@ -1025,7 +1027,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l01017">1017</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8h_source.html#l00592">deserialize_tables_vector()</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l03131">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::gather_tables()</a>, and <a class="el" href="navier__stokes__base_8cc_source.html#l02281">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::read_checkpoint()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00592">deserialize_tables_vector()</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l03137">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::gather_tables()</a>, and <a class="el" href="navier__stokes__base_8cc_source.html#l02287">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::read_checkpoint()</a>.</p>
 
 </div>
 </div>
@@ -1131,7 +1133,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__nitsche_8cc_source.html#l00966">966</a> of file <a class="el" href="fluid__dynamics__nitsche_8cc_source.html">fluid_dynamics_nitsche.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__base_8cc_source.html#l03131">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::gather_tables()</a>, <a class="el" href="utilities_8h_source.html#l00570">serialize_tables_vector()</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l03201">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::write_checkpoint()</a>, and <a class="el" href="write__checkpoint_8cc_source.html#l00016">write_checkpoint()</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__base_8cc_source.html#l03137">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::gather_tables()</a>, <a class="el" href="utilities_8h_source.html#l00570">serialize_tables_vector()</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l03207">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::write_checkpoint()</a>, and <a class="el" href="write__checkpoint_8cc_source.html#l00016">write_checkpoint()</a>.</p>
 
 </div>
 </div>

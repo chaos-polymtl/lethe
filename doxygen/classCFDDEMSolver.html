@@ -397,6 +397,8 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:a615f24a6a6c089eaacc715f1e8ef0a14 inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6ae1c9c8f8ed38e840684b0007ff8359 inherit pro_methods_classNavierStokesBase" id="r_a6ae1c9c8f8ed38e840684b0007ff8359"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a6ae1c9c8f8ed38e840684b0007ff8359">rotate_rotor_mapping</a> (const bool is_first)</td></tr>
 <tr class="separator:a6ae1c9c8f8ed38e840684b0007ff8359 inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e6c8e17f92a97624914b5b3862ac3f9 inherit pro_methods_classNavierStokesBase" id="r_a0e6c8e17f92a97624914b5b3862ac3f9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a0e6c8e17f92a97624914b5b3862ac3f9">connect_mortar_weight_signals</a> ()</td></tr>
+<tr class="separator:a0e6c8e17f92a97624914b5b3862ac3f9 inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab16d1c2bea5ff819500595d94ef240ae inherit pro_methods_classNavierStokesBase" id="r_ab16d1c2bea5ff819500595d94ef240ae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#ab16d1c2bea5ff819500595d94ef240ae">update_boundary_conditions</a> ()</td></tr>
 <tr class="separator:ab16d1c2bea5ff819500595d94ef240ae inherit pro_methods_classNavierStokesBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a117c51c5894f115d42bdbd6e4ae78320 inherit pro_methods_classNavierStokesBase" id="r_a117c51c5894f115d42bdbd6e4ae78320"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesBase.html#a117c51c5894f115d42bdbd6e4ae78320">check_existance_of_bc</a> (<a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8">BoundaryConditions::BoundaryType</a> bc)</td></tr>
@@ -1142,7 +1144,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8cc_source.html#l01174">1174</a> of file <a class="el" href="cfd__dem__coupling_8cc_source.html">cfd_dem_coupling.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__base_8cc_source.html#l01400">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::postprocess_fd()</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__base_8cc_source.html#l01406">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::postprocess_fd()</a>.</p>
 
 </div>
 </div>
@@ -1212,7 +1214,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8cc_source.html#l00482">482</a> of file <a class="el" href="cfd__dem__coupling_8cc_source.html">cfd_dem_coupling.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="utilities_8h_source.html#l00592">deserialize_tables_vector()</a>, and <a class="el" href="navier__stokes__base_8cc_source.html#l03131">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::gather_tables()</a>.</p>
+<p class="reference">References <a class="el" href="utilities_8h_source.html#l00592">deserialize_tables_vector()</a>, and <a class="el" href="navier__stokes__base_8cc_source.html#l03137">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::gather_tables()</a>.</p>
 
 </div>
 </div>
@@ -1368,7 +1370,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8h_source.html#l00129">129</a> of file <a class="el" href="cfd__dem__coupling_8h_source.html">cfd_dem_coupling.h</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l01055">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::multiphysics</a>, <a class="el" href="physics__solver_8h_source.html#l00155">PhysicsSolver&lt; VectorType &gt;::pcout</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l00784">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::refine_mesh()</a>, <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html#l01149">FluidDynamicsMatrixBased&lt; dim &gt;::set_initial_condition_fd()</a>, and <a class="el" href="navier__stokes__base_8h_source.html#l00977">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__base_8h_source.html#l01063">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::multiphysics</a>, <a class="el" href="physics__solver_8h_source.html#l00155">PhysicsSolver&lt; VectorType &gt;::pcout</a>, <a class="el" href="navier__stokes__base_8cc_source.html#l00784">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::refine_mesh()</a>, <a class="el" href="fluid__dynamics__matrix__based_8cc_source.html#l01149">FluidDynamicsMatrixBased&lt; dim &gt;::set_initial_condition_fd()</a>, and <a class="el" href="navier__stokes__base_8h_source.html#l00985">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::simulation_parameters</a>.</p>
 
 </div>
 </div>
@@ -1540,7 +1542,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="cfd__dem__coupling_8cc_source.html#l00384">384</a> of file <a class="el" href="cfd__dem__coupling_8cc_source.html">cfd_dem_coupling.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__base_8cc_source.html#l03131">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::gather_tables()</a>, and <a class="el" href="utilities_8h_source.html#l00570">serialize_tables_vector()</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__base_8cc_source.html#l03137">NavierStokesBase&lt; dim, VectorType, DofsType &gt;::gather_tables()</a>, and <a class="el" href="utilities_8h_source.html#l00570">serialize_tables_vector()</a>.</p>
 
 </div>
 </div>
