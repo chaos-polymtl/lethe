@@ -102,7 +102,7 @@ NewtonNonLinearSolverStrategy<VectorType>::solve()
           solver->get_system_rhs().l2_norm() / rescale_metric;
         if (assembled_res <= this->params.tolerance)
           {
-            current_res = assembled_res;
+            current_res         = assembled_res;
             auto &newton_update = solver->get_newton_update();
             newton_update       = 0;
 

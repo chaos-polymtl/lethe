@@ -29,6 +29,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- MINOR This PR skips unnecessary Newton linear solves when the assembled Sharp fluid residual is already below the nonlinear tolerance, and adds a dedicated 2D application test for that solver path. [#1961](https://github.com/chaos-polymtl/lethe/pull/1961)
+
+## [Master] - 2026/03/31
+
+### Changed
+
 - MAJOR Following PRs [#1937](https://github.com/chaos-polymtl/lethe/pull/1937), [#1938](https://github.com/chaos-polymtl/lethe/pull/1938), [#1944](https://github.com/chaos-polymtl/lethe/pull/1944) and [#1950](https://github.com/chaos-polymtl/lethe/pull/1950) this PR renames all occurrences of "interface regularization", "algebraic interface reinitialization", and "phase fraction" with "interface reinitialization", "pde-based interface reinitialization", and "phase indicator" in the code.[#1954](https://github.com/chaos-polymtl/lethe/pull/1954).
 
 ### Added
