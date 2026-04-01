@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/06/28
+
+### Changed
+
+- MINOR Sharp IB now skips unnecessary Newton linear solves when the freshly assembled fluid residual is already below the nonlinear tolerance, and adds a dedicated 2D application test for that solver path.
+
 ## [Master] - 2026/06/01
 
 ### Fixed
