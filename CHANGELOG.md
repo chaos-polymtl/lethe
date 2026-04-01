@@ -29,7 +29,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MINOR This PR skips unnecessary Newton linear solves when the assembled Sharp fluid residual is already below the nonlinear tolerance, and adds a dedicated 2D application test for that solver path. [#1961](https://github.com/chaos-polymtl/lethe/pull/1961)
+- MINOR This PR skips unnecessary Newton linear solves when the assembled Sharp fluid residual is already below the nonlinear tolerance, and adds a dedicated 2D application test for that solver path. [#1962](https://github.com/chaos-polymtl/lethe/pull/1962)
 
 ## [Master] - 2026/03/31
 
