@@ -3197,6 +3197,10 @@ FluidDynamicsSharp<dim>::build_contact_containers(
   const auto &pp_contact_map = ib_dem.get_particle_particle_contact_map();
   for (const auto &[particle_id, contacts] : pp_contact_map)
     {
+      // After ghost exchange, a contact near a subdomain boundary can be
+      // visible on more than one rank. To avoid duplicate DEM
+      // post-processing entries, each rank only contributes contacts whose
+      // first particle is locally owned here.
       if (local_particle_ids.find(particle_id) == local_particle_ids.end())
         continue;
 
@@ -3218,6 +3222,9 @@ FluidDynamicsSharp<dim>::build_contact_containers(
           dem_contact_info.rolling_resistance_spring_torque =
             contact_info.rolling_resistance_spring_torque;
 
+          // Keep the same convention as for DEM, contacts between two owned
+          // particles stay in the local container, while contacts involving a
+          // ghost neighbor go in the ghost container.
           if (local_particle_ids.find(particle_two_id) !=
               local_particle_ids.end())
             local_adjacent_particles[particle_id][particle_two_id] =
@@ -3231,6 +3238,10 @@ FluidDynamicsSharp<dim>::build_contact_containers(
   const auto &pw_contact_map = ib_dem.get_particle_wall_contact_map();
   for (const auto &[particle_id, contacts] : pw_contact_map)
     {
+      // The particle-wall contact map is also replicated through ghosted
+      // particles near subdomain boundaries. Restricting this loop to locally
+      // owned particles gives a single owner rank for each exported
+      // particle-wall contact.
       if (local_particle_ids.find(particle_id) == local_particle_ids.end())
         continue;
 
@@ -3240,6 +3251,10 @@ FluidDynamicsSharp<dim>::build_contact_containers(
 
       for (const auto &[boundary_id, contact_info] : contacts)
         {
+          // The contact map can keep history for contacts that have just ended
+          // so tangential displacement can be reset consistently. The DEM
+          // post-processing path only needs contacts that are still physically
+          // active (those with a positive overlap).
           if (contact_info.normal_overlap <= 0.)
             continue;
 
