@@ -17,6 +17,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR This PR adds the option to assign a different weight for the cells located at the mortar interface, which is taken into consideration for the workload partitioning. [#1953](https://github.com/chaos-polymtl/lethe/pull/1953)
 
+- MINOR This PR adds the capability to output the ratio of the minimum cell size to the maximum particle diameter in DEM and CFD-DEM simulations. It also updates the output related to diamond-shaped cells and the expand particle–wall contact parameter. Tests and documentation have been updated accordingly. [#1955](https://github.com/chaos-polymtl/lethe/pull/1955)
+
 ## [Master] - 2026/03/30
 
 ### Added

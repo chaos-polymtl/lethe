@@ -4,13 +4,15 @@ DEM time step is 1.8270648133e+01% of Rayleigh time step
 Reading DEM checkpoint
 Finished reading DEM checkpoint
 1 particles are in the simulation
+Minimum vertex distance between cell vertices: 1.4644660941e-02
+Minimum cell size to maximum particle diameter ratio: 7.3223304703e+00
    Number of active cells:       200
    Number of degrees of freedom: 1100
    Volume of triangulation:      1.4142135624e-03
 ---------------------------------------------------------------
 Initializing DEM parameters
 Warning: expansion of particle-wall contact list is disabled. 
-This feature is useful in geometries with concave boundaries. 
+This feature is useful in geometries with convex boundaries. 
 Finished initializing DEM parameters
 DEM time step is 5.0000000000e-05 s
 --------------
