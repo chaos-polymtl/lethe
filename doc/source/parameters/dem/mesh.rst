@@ -20,7 +20,7 @@ The mesh subsection of DEM simulations is almost identical to the `CFD <https://
     :width: 400
 
 
-* ``expand particle-wall contact search`` enables adding the neighboring cells of boundary cells to the particle-wall contact search list. This feature should only be activated in geometries with convex boundaries (for example, particles flowing inside a cylinder or sphere). The following image shows the boundary neighbor cells (colored in teal) of the red boundary cell. In concave geometries, enabling this feature leads to unnecessary computational overhead, since the closest boundary cell face to a particle will already belong to the cell containing that particle.
+* ``expand particle-wall contact search`` enables adding the neighboring cells of boundary cells to the particle-wall contact search list. This feature should only be activated in geometries with convex boundaries (for example, particles flowing inside a cylinder or sphere). The following image shows the boundary neighbor cells (colored in teal) of the red boundary cell. In concave geometries, enabling this feature leads to unphysical contacts between particles and the imaginary (unreal) extension of the boundary faces from neighboring cells.
 
 .. image:: images/expand_particle_wall.png
     :alt: Schematic

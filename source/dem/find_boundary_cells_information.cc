@@ -68,7 +68,7 @@ BoundaryCellsInformation<dim>::build(
             << std::endl
             << "This feature should be used only in geometries with convex boundaries. "
                "(For example, particles flowing inside a cylinder or sphere). For geometries with "
-               "concave boundaries, enabling this feature is unnecessary and increases computational cost."
+               "concave boundaries, this feature MUST NOT be activated."
             << std::endl;
           display_pw_contact_expansion_warning = false;
         }
