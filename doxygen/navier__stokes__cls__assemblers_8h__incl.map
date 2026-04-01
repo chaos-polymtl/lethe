@@ -26,7 +26,7 @@
 <area shape="poly" id="edge18_Node000003_Node000039" title=" " alt="" coords="1722,727,1584,750,1505,766,1427,785,1399,795,1377,806,1355,816,1325,825,1233,844,1139,859,952,879,783,889,652,892,652,887,783,884,951,874,1138,854,1232,839,1323,820,1353,811,1374,801,1396,791,1426,780,1504,760,1583,744,1721,722"/>
 <area shape="rect" id="Node000040" href="$multiphysics_8h.html" title="Identifiers for multiphysics modules and their solution fields." alt="" coords="2153,790,2303,815"/>
 <area shape="poly" id="edge11_Node000003_Node000040" title=" " alt="" coords="1854,725,2142,780,2164,785,2163,790,2141,785,1853,730"/>
-<area shape="rect" id="Node000014" href="$utilities_8h.html" title=" " alt="" coords="1721,790,1836,815"/>
+<area shape="rect" id="Node000014" href="$core_2utilities_8h.html" title=" " alt="" coords="1721,790,1836,815"/>
 <area shape="poly" id="edge12_Node000003_Node000014" title=" " alt="" coords="1793,728,1785,777,1780,776,1788,727"/>
 <area shape="rect" id="Node000041" title=" " alt="" coords="1911,783,2129,823"/>
 <area shape="poly" id="edge19_Node000003_Node000041" title=" " alt="" coords="1824,725,1958,775,1956,780,1822,730"/>

@@ -30,7 +30,7 @@
 <area shape="poly" id="edge13_Node000005_Node000041" title=" " alt="" coords="369,382,392,470,405,505,400,507,387,471,364,384"/>
 <area shape="rect" id="Node000042" href="$multiphysics_8h.html" title="Identifiers for multiphysics modules and their solution fields." alt="" coords="561,438,711,463"/>
 <area shape="poly" id="edge9_Node000005_Node000042" title=" " alt="" coords="404,380,584,432,582,437,403,385"/>
-<area shape="rect" id="Node000016" href="$utilities_8h.html" title=" " alt="" coords="212,438,327,463"/>
+<area shape="rect" id="Node000016" href="$core_2utilities_8h.html" title=" " alt="" coords="212,438,327,463"/>
 <area shape="poly" id="edge10_Node000005_Node000016" title=" " alt="" coords="352,385,296,431,292,427,348,381"/>
 <area shape="rect" id="Node000043" title=" " alt="" coords="735,431,953,471"/>
 <area shape="poly" id="edge14_Node000005_Node000043" title=" " alt="" coords="434,380,722,427,721,432,433,385"/>

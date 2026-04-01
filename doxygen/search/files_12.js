@@ -8,5 +8,5 @@ var searchData=
   ['update_5flocal_5fparticle_5fcontainers_2ecc_5',['update_local_particle_containers.cc',['../update__local__particle__containers_8cc.html',1,'']]],
   ['update_5flocal_5fparticle_5fcontainers_2eh_6',['update_local_particle_containers.h',['../update__local__particle__containers_8h.html',1,'']]],
   ['utilities_2ecc_7',['utilities.cc',['../utilities_8cc.html',1,'']]],
-  ['utilities_2eh_8',['utilities.h',['../utilities_8h.html',1,'']]]
+  ['utilities_2eh_8',['utilities.h',['../core_2utilities_8h.html',1,'(Global Namespace)'],['../dem_2utilities_8h.html',1,'(Global Namespace)']]]
 ];

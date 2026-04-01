@@ -51,7 +51,7 @@
 <area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="1669,642,1600,648,1525,658,1461,674,1437,685,1421,697,1407,714,1398,734,1388,778,1387,821,1391,857,1386,857,1382,821,1383,777,1393,732,1403,711,1417,693,1434,680,1459,669,1524,653,1599,643,1669,636"/>
 <area shape="rect" id="Node000010" href="$ib__particle_8h.html" title=" " alt="" coords="1898,702,2033,727"/>
 <area shape="poly" id="edge10_Node000008_Node000010" title=" " alt="" coords="1774,644,1921,695,1919,700,1772,649"/>
-<area shape="rect" id="Node000018" href="$utilities_8h.html" title=" " alt="" coords="2013,871,2128,896"/>
+<area shape="rect" id="Node000018" href="$core_2utilities_8h.html" title=" " alt="" coords="2013,871,2128,896"/>
 <area shape="poly" id="edge26_Node000008_Node000018" title=" " alt="" coords="1811,637,1877,644,1946,655,2006,671,2030,681,2046,693,2060,711,2070,732,2080,777,2081,821,2078,857,2073,857,2076,821,2075,778,2065,734,2055,714,2042,697,2027,685,2005,676,1945,660,1876,649,1811,643"/>
 <area shape="rect" id="Node000043" href="$multiphysics_8h.html" title="Identifiers for multiphysics modules and their solution fields." alt="" coords="1431,702,1580,727"/>
 <area shape="poly" id="edge25_Node000008_Node000043" title=" " alt="" coords="1707,649,1553,700,1551,695,1705,644"/>

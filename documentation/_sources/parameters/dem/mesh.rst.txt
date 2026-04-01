@@ -12,7 +12,7 @@ The mesh subsection of DEM simulations is almost identical to the `CFD <https://
     set expand particle-wall contact search = false
  end
 
-* ``check diamond cells`` parameter enables searching for diamond-shaped boundary cells and adding them to particle-wall contact search cells. The following image shows a diamond-shaped boundary cell colored in red.
+* ``check diamond cells`` parameter enables searching for diamond-shaped boundary cells and adding them to particle-wall contact search cells. The following image shows a diamond-shaped boundary cell colored in red. A diamond cell is defined as a cell that has a vertex or an edge on the boundary, but no face lying on the boundary.
 
 .. image:: images/diamond_cell.png
     :alt: Schematic
@@ -20,7 +20,7 @@ The mesh subsection of DEM simulations is almost identical to the `CFD <https://
     :width: 400
 
 
-* ``expand particle-wall contact search`` enables adding the boundary neighbor cells of boundary cells to the particle-wall contact search list. This feature should only be activated in geometries with concave boundaries. (For example, for particles flow inside a cylinder or sphere). In convex geometries, enabling this feature leads to unphysical contact between particles and imaginary (unreal) extension of the boundary faces. The following image shows the boundary neighbor cells (colored in teal) of the read boundary cell.
+* ``expand particle-wall contact search`` enables adding the neighboring cells of boundary cells to the particle-wall contact search list. This feature should only be activated in geometries with convex boundaries (for example, particles flowing inside a cylinder or sphere). The following image shows the boundary neighbor cells (colored in teal) of the red boundary cell. In concave geometries, enabling this feature leads to unphysical contacts between particles and the imaginary (unreal) extension of the boundary faces from neighboring cells.
 
 .. image:: images/expand_particle_wall.png
     :alt: Schematic
