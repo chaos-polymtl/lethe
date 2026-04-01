@@ -11,6 +11,7 @@
 #include <dem/set_insertion_method.h>
 #include <dem/set_particle_particle_contact_force_model.h>
 #include <dem/set_particle_wall_contact_force_model.h>
+#include <dem/utilities.h>
 #include <dem/velocity_verlet_integrator.h>
 #include <fem-dem/cfd_dem_coupling.h>
 #include <fem-dem/postprocessing_cfd_dem.h>
@@ -1557,6 +1558,11 @@ CFDDEMSolver<dim>::solve()
       !this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
          .restart)
     read_dem();
+
+  report_cell_size_to_particle_diameter_ratio(*this->triangulation,
+                                              maximum_particle_diameter,
+                                              this->pcout,
+                                              this->mpi_communicator);
 
   this->computing_timer.leave_subsection("Read mesh, manifolds and particles");
 

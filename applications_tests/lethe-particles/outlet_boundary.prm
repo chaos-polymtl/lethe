@@ -96,7 +96,7 @@ subsection mesh
   set type                                = dealii
   set grid type                           = cylinder
   set grid arguments                      = 0.07 : 0.07
-  set initial refinement                  = 3
+  set initial refinement                  = 2
   set expand particle-wall contact search = true
 end
 

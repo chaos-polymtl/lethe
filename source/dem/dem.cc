@@ -18,6 +18,7 @@
 #include <dem/set_insertion_method.h>
 #include <dem/set_particle_particle_contact_force_model.h>
 #include <dem/set_particle_wall_contact_force_model.h>
+#include <dem/utilities.h>
 #include <dem/velocity_verlet_integrator.h>
 #include <dem/write_checkpoint.h>
 
@@ -852,6 +853,11 @@ DEMSolver<dim, PropertiesIndex>::solve()
             pcout,
             triangulation,
             parameters.boundary_conditions);
+
+  report_cell_size_to_particle_diameter_ratio(triangulation,
+                                              maximum_particle_diameter,
+                                              pcout,
+                                              mpi_communicator);
 
   // Set up functions and pointers according to parameters
   setup_functions_and_pointers();

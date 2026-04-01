@@ -103,7 +103,7 @@ subsection mesh
   set type                                = dealii
   set grid type                           = hyper_cube
   set grid arguments                      = -1 : 1 : false
-  set initial refinement                  = 4
+  set initial refinement                  = 3
   set expand particle-wall contact search = false
 end
 

@@ -346,8 +346,6 @@ private:
                 << "% of Rayleigh time step" << std::endl;
   }
 
-
-
   /**
    * @brief Perform contact detection and build contact lists.
    *
