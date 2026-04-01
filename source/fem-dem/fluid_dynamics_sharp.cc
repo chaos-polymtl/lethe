@@ -14,7 +14,6 @@
 #include <solvers/postprocessing_cfd.h>
 
 #include <dem/force_chains_visualization.h>
-#include <dem/lagrangian_post_processing.h>
 #include <dem/log_collision_data.h>
 #include <dem/set_particle_particle_contact_force_model.h>
 #include <dem/update_local_particle_containers.h>
@@ -3285,14 +3284,11 @@ FluidDynamicsSharp<dim>::handle_dem_particle_output_and_postprocessing()
   const bool write_particle_output = output_iteration;
   const bool write_force_chains =
     output_iteration && dem_parameters.post_processing.force_chains;
-  const bool write_lagrangian_post_processing =
-    output_iteration &&
-    dem_parameters.post_processing.lagrangian_post_processing_enabled;
   const bool log_particle_wall_collisions =
     dem_parameters.post_processing.particle_wall_collision_statistics;
 
   if (!(write_particle_output || write_force_chains ||
-        write_lagrangian_post_processing || log_particle_wall_collisions))
+        log_particle_wall_collisions))
     return;
 
   Particles::ParticleHandler<dim, dim> particle_handler(
@@ -3373,29 +3369,6 @@ FluidDynamicsSharp<dim>::handle_dem_particle_output_and_postprocessing()
             time,
             local_adjacent_particles,
             ghost_adjacent_particles);
-        }
-
-      if (write_lagrangian_post_processing)
-        {
-          const auto parallel_triangulation =
-            dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-              &*this->triangulation);
-          AssertThrow(
-            parallel_triangulation != nullptr,
-            ExcMessage(
-              "Sharp-IB post-processing requires a parallel triangulation."));
-
-          write_post_processing_results<dim,
-                                        DEM::CFDDEMProperties::PropertiesIndex>(
-            *parallel_triangulation,
-            ib_grid_pvdhandler,
-            *this->dof_handler,
-            particle_handler,
-            dem_parameters,
-            time,
-            iter,
-            this->mpi_communicator,
-            sparse_contacts_object);
         }
     }
 }
@@ -5134,6 +5107,13 @@ template <int dim>
 void
 FluidDynamicsSharp<dim>::solve()
 {
+  AssertThrow(
+    !cfd_dem_parameters.dem_parameters.post_processing
+       .lagrangian_post_processing_enabled,
+    ExcMessage(
+      "DEM lagrangian post-processing is not supported for lethe-fluid-sharp. "
+      "Disable it in the DEM post-processing subsection."));
+
   read_mesh_and_manifolds(
     *this->triangulation,
     this->simulation_parameters.mesh,

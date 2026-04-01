@@ -11,9 +11,7 @@
 
 #include <solvers/fluid_dynamics_matrix_based.h>
 
-#include <dem/adaptive_sparse_contacts.h>
 #include <dem/data_containers.h>
-#include <dem/lagrangian_post_processing.h>
 #include <dem/log_collision_data.h>
 #include <dem/set_particle_particle_contact_force_model.h>
 #include <dem/visualization.h>
@@ -689,7 +687,6 @@ private:
   PVDHandler ib_particles_pvdhandler;
   // DEM-style post-processing handlers rebuilt from Sharp-IB particles.
   PVDHandler ib_particles_pvdhandler_force_chains;
-  PVDHandler ib_grid_pvdhandler;
 
   std::vector<IBParticle<dim>> particles;
   double                       particle_residual;
@@ -701,9 +698,7 @@ private:
   // particles.
   IBParticlesDEM<dim> ib_dem;
 
-  // DEM-style contact and collision data used by Sharp post-processing.
-  AdaptiveSparseContacts<dim, DEM::CFDDEMProperties::PropertiesIndex>
-                             sparse_contacts_object;
+  // DEM-style collision data used by Sharp post-processing.
   OngoingCollisionLog<dim>   ongoing_collision_log;
   CompletedCollisionLog<dim> collision_event_log;
 
