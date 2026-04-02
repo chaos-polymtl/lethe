@@ -281,7 +281,7 @@ private:
    * @param point_on_boundary Contact point on the boundary.
    * @param wall_velocity Translational wall velocity.
    * @param wall_angular_velocity Angular wall velocity.
-   * @param wall_center_of_rotation Point on the rotation axis used for
+   * @param wall_rotation_axis_point Point on the rotation axis used for
    * rotational wall motion.
    */
   void
@@ -289,7 +289,7 @@ private:
                   const Point<dim>        &point_on_boundary,
                   Tensor<1, 3>            &wall_velocity,
                   Tensor<1, 3>            &wall_angular_velocity,
-                  Point<dim>              &wall_center_of_rotation) const;
+                  Point<dim>              &wall_rotation_axis_point) const;
 
   // A struct to store boundary cells' information
   struct BoundaryCellsInfo

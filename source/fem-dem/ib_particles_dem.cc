@@ -62,11 +62,26 @@ IBParticlesDEM<dim>::get_wall_motion(const types::boundary_id boundary_id,
                                      const Point<dim>        &point_on_boundary,
                                      Tensor<1, 3>            &wall_velocity,
                                      Tensor<1, 3> &wall_angular_velocity,
-                                     Point<dim> &wall_center_of_rotation) const
+                                     Point<dim> &wall_rotation_axis_point) const
 {
-  wall_velocity           = Tensor<1, 3>();
-  wall_angular_velocity   = Tensor<1, 3>();
-  wall_center_of_rotation = point_on_boundary;
+  wall_velocity         = Tensor<1, 3>();
+  wall_angular_velocity = Tensor<1, 3>();
+
+  // Always return a defined point on the wall rotation axis.
+  //
+  // Two cases are possible:
+  // 1. A rotational DEM boundary condition is prescribed on this boundary.
+  //    In that case, the fallback value is overwritten below with the
+  //    user-specified point on the rotation axis and is then used together
+  //    with the angular velocity to reconstruct the wall velocity at the
+  //    contact or boundary point.
+  // 2. No rotational boundary condition is prescribed.
+  //    In that case, wall_angular_velocity remains zero, so the choice of
+  //    wall_rotation_axis_point is irrelevant because the rotational
+  //    contribution omega x (x - x_axis) vanishes identically. We still
+  //    initialize it here because get_wall_motion() always returns a complete
+  //    wall-motion state.
+  wall_rotation_axis_point = point_on_boundary;
 
   if (!boundary_conditions_parameters)
     return;
@@ -95,10 +110,10 @@ IBParticlesDEM<dim>::get_wall_motion(const types::boundary_id boundary_id,
   const auto rotation_axis_it = rotation_axis_map.find(boundary_id);
   if (rotation_axis_it != rotation_axis_map.end())
     {
-      wall_center_of_rotation[0] = rotation_axis_it->second[0];
-      wall_center_of_rotation[1] = rotation_axis_it->second[1];
+      wall_rotation_axis_point[0] = rotation_axis_it->second[0];
+      wall_rotation_axis_point[1] = rotation_axis_it->second[1];
       if constexpr (dim == 3)
-        wall_center_of_rotation[2] = rotation_axis_it->second[2];
+        wall_rotation_axis_point[2] = rotation_axis_it->second[2];
     }
 }
 
@@ -798,13 +813,13 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                   Tensor<1, 3> rolling_resistance_torque;
                   Tensor<1, 3> wall_velocity;
                   Tensor<1, 3> wall_angular_velocity;
-                  Point<dim>   wall_center_of_rotation;
+                  Point<dim>   wall_rotation_axis_point;
 
                   get_wall_motion(boundary_cell.boundary_index,
                                   point_on_boundary,
                                   wall_velocity,
                                   wall_angular_velocity,
-                                  wall_center_of_rotation);
+                                  wall_rotation_axis_point);
 
                   pw_contact_map[particle.particle_id]
                                 [boundary_cell.boundary_index]
@@ -846,7 +861,7 @@ IBParticlesDEM<dim>::calculate_pw_contact_force(
                                         particle_velocity_3d,
                                         particle.omega,
                                         particle_properties,
-                                        wall_center_of_rotation,
+                                        wall_rotation_axis_point,
                                         wall_velocity,
                                         wall_angular_velocity,
                                         wall_properties,
@@ -965,18 +980,18 @@ IBParticlesDEM<dim>::calculate_pw_lubrication_force(
                 boundary_cell_information.point_on_boundary;
               Tensor<1, 3> wall_velocity;
               Tensor<1, 3> wall_angular_velocity;
-              Point<dim>   wall_center_of_rotation;
+              Point<dim>   wall_rotation_axis_point;
 
               get_wall_motion(boundary_cell.boundary_index,
                               point_on_boundary,
                               wall_velocity,
                               wall_angular_velocity,
-                              wall_center_of_rotation);
+                              wall_rotation_axis_point);
               Tensor<1, 3> wall_velocity_at_point =
                 wall_velocity +
                 cross_product_3d(wall_angular_velocity,
                                  point_nd_to_3d(point_on_boundary) -
-                                   point_nd_to_3d(wall_center_of_rotation));
+                                   point_nd_to_3d(wall_rotation_axis_point));
 
               // Calculation of gap
               Point<3> particle_position_3d = point_nd_to_3d(particle.position);
