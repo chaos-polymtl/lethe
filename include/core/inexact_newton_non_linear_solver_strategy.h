@@ -115,8 +115,13 @@ InexactNewtonNonLinearSolverStrategy<VectorType>::solve()
       {
         const double assembled_res =
           solver->get_system_rhs().l2_norm() / rescale_metric;
-        if (assembled_res <= this->params.tolerance)
+        if (solver
+              ->allow_skip_linear_solve_when_residual_is_below_tolerance() &&
+            assembled_res <= this->params.tolerance)
           {
+            // This path is reserved for solvers whose outer nonlinear residual
+            // may remain active even after the assembled linear-system
+            // residual is already below tolerance.
             current_res         = assembled_res;
             auto &newton_update = solver->get_newton_update();
             newton_update       = 0;
