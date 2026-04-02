@@ -1,0 +1,39 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       160
+   Number of degrees of freedom: 561
+   Volume of triangulation:      1.6000e+02
+Initial refinement around IB particles - Step : 1 of 2
+   Number of active cells:       208
+   Number of degrees of freedom: 741
+   Volume of triangulation:      1.6000e+02
+Initial refinement around IB particles - Step : 2 of 2
+   Number of active cells:       364
+   Number of degrees of freedom: 1275
+   Volume of triangulation:      1.6000e+02
+
+*******************************************************************************
+Transient iteration: 1        Time: 0.0025   Time step: 0.0025   CFL: 0
+*******************************************************************************
+---------------
+Fluid Dynamics
+---------------
+  -Tolerance of iterative solver is : 2.3990e+03
+  -Iterative solver took : 5 steps to reach a residual norm of 1.7943e+03
+  -Tolerance of iterative solver is : 3.6898e+04
+  -Iterative solver took : 4 steps to reach a residual norm of 1.4807e+04
+  -Tolerance of iterative solver is : 9.9636e+04
+  -Iterative solver took : 2 steps to reach a residual norm of 2.8432e+04
+  -Tolerance of iterative solver is : 4.5862e+05
+  -Iterative solver took : 3 steps to reach a residual norm of 3.5599e+04
+  -Tolerance of iterative solver is : 2.1936e+05
+  -Iterative solver took : 3 steps to reach a residual norm of 6.7043e+03
+particle 0 position 5.0257e+00 4.4085e+00
+particle 0 velocity -2.8191e-01 9.9092e+02
+particle 1 position 4.9990e+00 1.1128e+01
+particle 1 velocity 4.3223e-01 -1.0186e+03
++------------------------------------------+
+|  Force summary particles                 |
++------------------------------------------+
+particle_ID  time    T_z   omega_z theta_z   f_x     v_x    p_x      f_y        v_y       p_y    f_xv   f_yv    f_xp      f_yp
+          0 0.0025 -0.1739  0.0004  0.0000  4.4644 -0.2819 5.0257 -1053.7872   990.9205  4.4085 0.0521 -3.5272  4.4123 -1050.2600
+          1 0.0025 -0.2375  0.0007  0.0000 -1.1966  0.4322 4.9990  1183.7891 -1018.6471 11.1278 0.0062  3.4477 -1.2027  1180.3414
