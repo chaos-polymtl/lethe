@@ -19,6 +19,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR This PR adds the capability to output the ratio of the minimum cell size to the maximum particle diameter in DEM and CFD-DEM simulations. It also updates the output related to diamond-shaped cells and the expand particle–wall contact parameter. Tests and documentation have been updated accordingly. [#1955](https://github.com/chaos-polymtl/lethe/pull/1955)
 
+- MINOR Sharp-IB now supports DEM moving wall boundary conditions in particle-wall contact and lubrication interactions, together with documentation and a dedicated application test. [#1960](https://github.com/chaos-polymtl/lethe/pull/1960)
+
 ## [Master] - 2026/03/30
 
 ### Added
