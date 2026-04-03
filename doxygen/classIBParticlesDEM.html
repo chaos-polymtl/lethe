@@ -90,6 +90,7 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#pri-types">Private Types</a> &#124;
+<a href="#pri-methods">Private Member Functions</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classIBParticlesDEM-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">IBParticlesDEM&lt; dim &gt; Class Template Reference</div></div>
@@ -106,15 +107,13 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIBParticlesDEM_1_1DefaultDBL__MAX.html">DefaultDBL_MAX</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIBParticlesDEM_1_1DefaultUINT__MAX.html">DefaultUINT_MAX</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIBParticlesDEM_1_1ObjectProperties.html">ObjectProperties</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a293be82c5c9bdf4f38dcbf5465b4d050" id="r_a293be82c5c9bdf4f38dcbf5465b4d050"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIBParticlesDEM.html#a293be82c5c9bdf4f38dcbf5465b4d050">initialize</a> (const std::shared_ptr&lt; <a class="el" href="classParameters_1_1IBParticles.html">Parameters::IBParticles</a>&lt; dim &gt; &gt; &amp;p_nsparam, const std::shared_ptr&lt; <a class="el" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls</a>&lt; dim &gt; &gt; <a class="el" href="classIBParticlesDEM.html#a7c87d9b0d197e1085826b0f2da52a711">floating_walls_parameters</a>, const MPI_Comm &amp;mpi_communicator_input, const std::vector&lt; <a class="el" href="classIBParticle.html">IBParticle</a>&lt; dim &gt; &gt; &amp;particles)</td></tr>
-<tr class="separator:a293be82c5c9bdf4f38dcbf5465b4d050"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f5b5de38b01e70fb62423e423258dc3" id="r_a4f5b5de38b01e70fb62423e423258dc3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIBParticlesDEM.html#a4f5b5de38b01e70fb62423e423258dc3">initialize</a> (const std::shared_ptr&lt; <a class="el" href="classParameters_1_1IBParticles.html">Parameters::IBParticles</a>&lt; dim &gt; &gt; &amp;p_nsparam, const std::shared_ptr&lt; <a class="el" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls</a>&lt; dim &gt; &gt; <a class="el" href="classIBParticlesDEM.html#a7c87d9b0d197e1085826b0f2da52a711">floating_walls_parameters</a>, const std::shared_ptr&lt; <a class="el" href="structParameters_1_1Lagrangian_1_1BCDEM.html">Parameters::Lagrangian::BCDEM</a> &gt; &amp;<a class="el" href="classIBParticlesDEM.html#a71ebc55d5e356a93affa49869079a451">boundary_conditions_parameters</a>, const MPI_Comm &amp;mpi_communicator_input, const std::vector&lt; <a class="el" href="classIBParticle.html">IBParticle</a>&lt; dim &gt; &gt; &amp;particles)</td></tr>
+<tr class="separator:a4f5b5de38b01e70fb62423e423258dc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad143470880bd7d1434897e9c8bbc1442" id="r_ad143470880bd7d1434897e9c8bbc1442"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIBParticlesDEM.html#ad143470880bd7d1434897e9c8bbc1442">update_particles</a> (const std::vector&lt; <a class="el" href="classIBParticle.html">IBParticle</a>&lt; dim &gt; &gt; &amp;particles, double time)</td></tr>
 <tr class="separator:ad143470880bd7d1434897e9c8bbc1442"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae3ea098fee4287bd0b878b32fbf311a0" id="r_ae3ea098fee4287bd0b878b32fbf311a0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIBParticlesDEM.html#ae3ea098fee4287bd0b878b32fbf311a0">integrate_particles_motion</a> (const double dt, const double h_max, const double h_min, const double rho, const double mu)</td></tr>
@@ -145,12 +144,21 @@ Private Types</h2></td></tr>
  }</td></tr>
 <tr class="separator:a893106eed57bce2dc8e7602cc58f3b56"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-methods" name="pri-methods"></a>
+Private Member Functions</h2></td></tr>
+<tr class="memitem:a1b88dcd02684c344040ebad98c8d9f23" id="r_a1b88dcd02684c344040ebad98c8d9f23"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIBParticlesDEM.html#a1b88dcd02684c344040ebad98c8d9f23">is_boundary_excluded</a> (const types::boundary_id boundary_id) const</td></tr>
+<tr class="separator:a1b88dcd02684c344040ebad98c8d9f23"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3b04d4cb20f0ef22de0d8ad5ef2df72" id="r_ab3b04d4cb20f0ef22de0d8ad5ef2df72"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIBParticlesDEM.html#ab3b04d4cb20f0ef22de0d8ad5ef2df72">get_wall_motion</a> (const types::boundary_id boundary_id, const Point&lt; dim &gt; &amp;point_on_boundary, Tensor&lt; 1, 3 &gt; &amp;wall_velocity, Tensor&lt; 1, 3 &gt; &amp;wall_angular_velocity, Point&lt; dim &gt; &amp;wall_rotation_axis_point) const</td></tr>
+<tr class="separator:ab3b04d4cb20f0ef22de0d8ad5ef2df72"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
 <tr class="memitem:ac906e78d2bef134e8652ed0cc1511343" id="r_ac906e78d2bef134e8652ed0cc1511343"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classParameters_1_1IBParticles.html">Parameters::IBParticles</a>&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIBParticlesDEM.html#ac906e78d2bef134e8652ed0cc1511343">parameters</a></td></tr>
 <tr class="separator:ac906e78d2bef134e8652ed0cc1511343"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c87d9b0d197e1085826b0f2da52a711" id="r_a7c87d9b0d197e1085826b0f2da52a711"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls</a>&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIBParticlesDEM.html#a7c87d9b0d197e1085826b0f2da52a711">floating_walls_parameters</a></td></tr>
 <tr class="separator:a7c87d9b0d197e1085826b0f2da52a711"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71ebc55d5e356a93affa49869079a451" id="r_a71ebc55d5e356a93affa49869079a451"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="structParameters_1_1Lagrangian_1_1BCDEM.html">Parameters::Lagrangian::BCDEM</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIBParticlesDEM.html#a71ebc55d5e356a93affa49869079a451">boundary_conditions_parameters</a></td></tr>
+<tr class="separator:a71ebc55d5e356a93affa49869079a451"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab11f4924385815079eeb14f8db3af97b" id="r_ab11f4924385815079eeb14f8db3af97b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIBParticlesDEM.html#ab11f4924385815079eeb14f8db3af97b">dem_parameters</a> {}</td></tr>
 <tr class="separator:ab11f4924385815079eeb14f8db3af97b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af15966bd42a420d254b0c41c4a74ca9d" id="r_af15966bd42a420d254b0c41c4a74ca9d"><td class="memItemLeft" align="right" valign="top">MPI_Comm&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIBParticlesDEM.html#af15966bd42a420d254b0c41c4a74ca9d">mpi_communicator</a></td></tr>
@@ -163,10 +171,10 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a67db1f9118341d04081c9378f631accb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a71310bd230b6cc15d733f660f19f0b26" id="r_a71310bd230b6cc15d733f660f19f0b26"><td class="memItemLeft" align="right" valign="top">std::map&lt; unsigned int, std::map&lt; unsigned int, <a class="el" href="structIBParticlesDEM_1_1ContactInfo.html">ContactInfo</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIBParticlesDEM.html#a71310bd230b6cc15d733f660f19f0b26">pp_contact_map</a></td></tr>
 <tr class="separator:a71310bd230b6cc15d733f660f19f0b26"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af001b80b1fd8c576f9531f5cce01aaac" id="r_af001b80b1fd8c576f9531f5cce01aaac"><td class="memItemLeft" align="right" valign="top">std::map&lt; unsigned int, std::map&lt; unsigned int, <a class="el" href="structIBParticlesDEM_1_1ContactInfo.html">ContactInfo</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIBParticlesDEM.html#af001b80b1fd8c576f9531f5cce01aaac">pw_contact_map</a></td></tr>
-<tr class="separator:af001b80b1fd8c576f9531f5cce01aaac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3d34e45792721525f65652647a935067" id="r_a3d34e45792721525f65652647a935067"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::map&lt; unsigned int, <a class="el" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html">BoundaryCellsInfo</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIBParticlesDEM.html#a3d34e45792721525f65652647a935067">boundary_cells</a></td></tr>
-<tr class="separator:a3d34e45792721525f65652647a935067"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa070121e86c70afd7028b25e5cd405f6" id="r_aa070121e86c70afd7028b25e5cd405f6"><td class="memItemLeft" align="right" valign="top">std::map&lt; unsigned int, std::map&lt; types::boundary_id, <a class="el" href="structIBParticlesDEM_1_1ContactInfo.html">ContactInfo</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIBParticlesDEM.html#aa070121e86c70afd7028b25e5cd405f6">pw_contact_map</a></td></tr>
+<tr class="separator:aa070121e86c70afd7028b25e5cd405f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75243934e6f01d3f3d3515854cea06ad" id="r_a75243934e6f01d3f3d3515854cea06ad"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::map&lt; types::boundary_id, <a class="el" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html">BoundaryCellsInfo</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIBParticlesDEM.html#a75243934e6f01d3f3d3515854cea06ad">boundary_cells</a></td></tr>
+<tr class="separator:a75243934e6f01d3f3d3515854cea06ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aafe80a0ef9727ddaeecbbae94278f92a" id="r_aafe80a0ef9727ddaeecbbae94278f92a"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIBParticlesDEM.html#aafe80a0ef9727ddaeecbbae94278f92a">cfd_time</a></td></tr>
 <tr class="separator:aafe80a0ef9727ddaeecbbae94278f92a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -180,7 +188,7 @@ class IBParticlesDEM&lt; dim &gt;</div><p>A solver class for the <a class="el" h
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00029">29</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00041">41</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="a893106eed57bce2dc8e7602cc58f3b56" name="a893106eed57bce2dc8e7602cc58f3b56"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a893106eed57bce2dc8e7602cc58f3b56">&#9670;&#160;</a></span>lowest_floating_wall_indices</h2>
@@ -207,7 +215,7 @@ template&lt;int dim&gt; </div>
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a893106eed57bce2dc8e7602cc58f3b56a405f5a3cdc35e4fb70cee27950c5a1c3" name="a893106eed57bce2dc8e7602cc58f3b56a405f5a3cdc35e4fb70cee27950c5a1c3"></a>lowest_floating_wall_indices&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00276">276</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00323">323</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
 
 </div>
 </div>
@@ -347,9 +355,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8cc_source.html#l00932">932</a> of file <a class="el" href="ib__particles__dem_8cc_source.html">ib_particles_dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8cc_source.html#l01047">1047</a> of file <a class="el" href="ib__particles__dem_8cc_source.html">ib_particles_dem.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="auxiliary__math__functions_8h_source.html#l00018">harmonic_mean()</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00057">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_friction_coefficient</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00052">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_mass</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00055">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_poisson_ratio</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00053">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_radius</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00056">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_restitution_coefficient</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00058">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_rolling_friction_coefficient</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00054">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_youngs_modulus</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00042">IBParticlesDEM&lt; dim &gt;::ContactInfo::tangential_displacement</a>, and <a class="el" href="ib__particles__dem_8h_source.html#l00045">IBParticlesDEM&lt; dim &gt;::ContactInfo::tangential_relative_velocity</a>.</p>
+<p class="reference">References <a class="el" href="auxiliary__math__functions_8h_source.html#l00018">harmonic_mean()</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00069">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_friction_coefficient</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00064">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_mass</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00067">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_poisson_ratio</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00065">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_radius</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00068">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_restitution_coefficient</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00070">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_rolling_friction_coefficient</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00066">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_youngs_modulus</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00054">IBParticlesDEM&lt; dim &gt;::ContactInfo::tangential_displacement</a>, and <a class="el" href="ib__particles__dem_8h_source.html#l00057">IBParticlesDEM&lt; dim &gt;::ContactInfo::tangential_relative_velocity</a>.</p>
 
 </div>
 </div>
@@ -397,9 +405,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8cc_source.html#l00100">100</a> of file <a class="el" href="ib__particles__dem_8cc_source.html">ib_particles_dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8cc_source.html#l00192">192</a> of file <a class="el" href="ib__particles__dem_8cc_source.html">ib_particles_dem.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ib__particles__dem_8h_source.html#l00057">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_friction_coefficient</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00052">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_mass</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00055">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_poisson_ratio</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00053">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_radius</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00056">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_restitution_coefficient</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00058">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_rolling_friction_coefficient</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00054">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_youngs_modulus</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00043">IBParticlesDEM&lt; dim &gt;::ContactInfo::rolling_resistance_spring_torque</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00042">IBParticlesDEM&lt; dim &gt;::ContactInfo::tangential_displacement</a>, and <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00024">tensor_nd_to_3d()</a>.</p>
+<p class="reference">References <a class="el" href="ib__particles__dem_8h_source.html#l00069">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_friction_coefficient</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00064">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_mass</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00067">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_poisson_ratio</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00065">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_radius</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00068">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_restitution_coefficient</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00070">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_rolling_friction_coefficient</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00066">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_youngs_modulus</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00055">IBParticlesDEM&lt; dim &gt;::ContactInfo::rolling_resistance_spring_torque</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00054">IBParticlesDEM&lt; dim &gt;::ContactInfo::tangential_displacement</a>, and <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00024">tensor_nd_to_3d()</a>.</p>
 
 </div>
 </div>
@@ -468,7 +476,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8cc_source.html#l00321">321</a> of file <a class="el" href="ib__particles__dem_8cc_source.html">ib_particles_dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8cc_source.html#l00413">413</a> of file <a class="el" href="ib__particles__dem_8cc_source.html">ib_particles_dem.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00024">tensor_nd_to_3d()</a>.</p>
 
@@ -518,9 +526,9 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8cc_source.html#l00497">497</a> of file <a class="el" href="ib__particles__dem_8cc_source.html">ib_particles_dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8cc_source.html#l00590">590</a> of file <a class="el" href="ib__particles__dem_8cc_source.html">ib_particles_dem.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ib__particles__dem_8h_source.html#l00040">IBParticlesDEM&lt; dim &gt;::ContactInfo::normal_overlap</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00041">IBParticlesDEM&lt; dim &gt;::ContactInfo::normal_relative_velocity</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00257">IBParticlesDEM&lt; dim &gt;::BoundaryCellsInfo::normal_vector</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00057">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_friction_coefficient</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00052">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_mass</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00055">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_poisson_ratio</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00053">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_radius</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00056">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_restitution_coefficient</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00058">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_rolling_friction_coefficient</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00054">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_youngs_modulus</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00258">IBParticlesDEM&lt; dim &gt;::BoundaryCellsInfo::point_on_boundary</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00043">IBParticlesDEM&lt; dim &gt;::ContactInfo::rolling_resistance_spring_torque</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00042">IBParticlesDEM&lt; dim &gt;::ContactInfo::tangential_displacement</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00045">IBParticlesDEM&lt; dim &gt;::ContactInfo::tangential_relative_velocity</a>, and <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00024">tensor_nd_to_3d()</a>.</p>
+<p class="reference">References <a class="el" href="ib__particles__dem_8h_source.html#l00311">IBParticlesDEM&lt; dim &gt;::BoundaryCellsInfo::boundary_index</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00052">IBParticlesDEM&lt; dim &gt;::ContactInfo::normal_overlap</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00053">IBParticlesDEM&lt; dim &gt;::ContactInfo::normal_relative_velocity</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00309">IBParticlesDEM&lt; dim &gt;::BoundaryCellsInfo::normal_vector</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00069">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_friction_coefficient</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00064">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_mass</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00067">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_poisson_ratio</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00065">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_radius</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00068">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_restitution_coefficient</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00070">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_rolling_friction_coefficient</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00066">IBParticlesDEM&lt; dim &gt;::ObjectProperties::object_youngs_modulus</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00310">IBParticlesDEM&lt; dim &gt;::BoundaryCellsInfo::point_on_boundary</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00055">IBParticlesDEM&lt; dim &gt;::ContactInfo::rolling_resistance_spring_torque</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00054">IBParticlesDEM&lt; dim &gt;::ContactInfo::tangential_displacement</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00057">IBParticlesDEM&lt; dim &gt;::ContactInfo::tangential_relative_velocity</a>, and <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00024">tensor_nd_to_3d()</a>.</p>
 
 </div>
 </div>
@@ -589,14 +597,85 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8cc_source.html#l00796">796</a> of file <a class="el" href="ib__particles__dem_8cc_source.html">ib_particles_dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8cc_source.html#l00895">895</a> of file <a class="el" href="ib__particles__dem_8cc_source.html">ib_particles_dem.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ib__particles__dem_8h_source.html#l00257">IBParticlesDEM&lt; dim &gt;::BoundaryCellsInfo::normal_vector</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00258">IBParticlesDEM&lt; dim &gt;::BoundaryCellsInfo::point_on_boundary</a>, and <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00024">tensor_nd_to_3d()</a>.</p>
+<p class="reference">References <a class="el" href="ib__particles__dem_8h_source.html#l00311">IBParticlesDEM&lt; dim &gt;::BoundaryCellsInfo::boundary_index</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00309">IBParticlesDEM&lt; dim &gt;::BoundaryCellsInfo::normal_vector</a>, <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00310">IBParticlesDEM&lt; dim &gt;::BoundaryCellsInfo::point_on_boundary</a>, and <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00024">tensor_nd_to_3d()</a>.</p>
 
 </div>
 </div>
-<a id="a293be82c5c9bdf4f38dcbf5465b4d050" name="a293be82c5c9bdf4f38dcbf5465b4d050"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a293be82c5c9bdf4f38dcbf5465b4d050">&#9670;&#160;</a></span>initialize()</h2>
+<a id="ab3b04d4cb20f0ef22de0d8ad5ef2df72" name="ab3b04d4cb20f0ef22de0d8ad5ef2df72"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab3b04d4cb20f0ef22de0d8ad5ef2df72">&#9670;&#160;</a></span>get_wall_motion()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classIBParticlesDEM.html">IBParticlesDEM</a>&lt; dim &gt;::get_wall_motion </td>
+          <td>(</td>
+          <td class="paramtype">const types::boundary_id&#160;</td>
+          <td class="paramname"><em>boundary_id</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Point&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>point_on_boundary</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Tensor&lt; 1, 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>wall_velocity</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Tensor&lt; 1, 3 &gt; &amp;&#160;</td>
+          <td class="paramname"><em>wall_angular_velocity</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Point&lt; dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>wall_rotation_axis_point</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> wall motion prescribed on a boundary. </p>
+<p>This converts the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> boundary-condition parameters into the translational and angular wall velocities used by Sharp-IB particle-wall interaction models.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">boundary_id</td><td>Boundary id under consideration. </td></tr>
+    <tr><td class="paramname">point_on_boundary</td><td>Contact point on the boundary. </td></tr>
+    <tr><td class="paramname">wall_velocity</td><td>Translational wall velocity. </td></tr>
+    <tr><td class="paramname">wall_angular_velocity</td><td>Angular wall velocity. </td></tr>
+    <tr><td class="paramname">wall_rotation_axis_point</td><td>Point on the rotation axis used for rotational wall motion. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8cc_source.html#l00061">61</a> of file <a class="el" href="ib__particles__dem_8cc_source.html">ib_particles_dem.cc</a>.</p>
+
+</div>
+</div>
+<a id="a4f5b5de38b01e70fb62423e423258dc3" name="a4f5b5de38b01e70fb62423e423258dc3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4f5b5de38b01e70fb62423e423258dc3">&#9670;&#160;</a></span>initialize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -614,6 +693,12 @@ template&lt;int dim&gt; </div>
           <td></td>
           <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="classParameters_1_1Lagrangian_1_1FloatingWalls.html">Parameters::Lagrangian::FloatingWalls</a>&lt; dim &gt; &gt;&#160;</td>
           <td class="paramname"><em>floating_walls_parameters</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="structParameters_1_1Lagrangian_1_1BCDEM.html">Parameters::Lagrangian::BCDEM</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>boundary_conditions_parameters</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -640,13 +725,14 @@ template&lt;int dim&gt; </div>
   <table class="params">
     <tr><td class="paramname">p_nsparam</td><td>The parameters for the immersed boundary particles </td></tr>
     <tr><td class="paramname">floating_walls_parameters</td><td>The parameters for the floating walls. </td></tr>
+    <tr><td class="paramname">boundary_conditions_parameters</td><td>The parameters for the <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> boundary conditions. </td></tr>
     <tr><td class="paramname">mpi_communicator_input</td><td>The mpi communicator of the simulation. </td></tr>
     <tr><td class="paramname">particles</td><td>The particles vector containing all the IB particles. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8cc_source.html#l00013">13</a> of file <a class="el" href="ib__particles__dem_8cc_source.html">ib_particles_dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8cc_source.html#l00015">15</a> of file <a class="el" href="ib__particles__dem_8cc_source.html">ib_particles_dem.cc</a>.</p>
 
 </div>
 </div>
@@ -708,9 +794,51 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8cc_source.html#l01124">1124</a> of file <a class="el" href="ib__particles__dem_8cc_source.html">ib_particles_dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8cc_source.html#l01239">1239</a> of file <a class="el" href="ib__particles__dem_8cc_source.html">ib_particles_dem.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2bac6d6bd7ebf806f43c76acc3681703b81">DEM::omega</a>, and <a class="el" href="namespaceDEM.html#af85feac59e2a3e30010cccde5bda5b2baac1a453d0cdc1f19d9479ccfaa8b082c">DEM::velocity</a>.</p>
+
+</div>
+</div>
+<a id="a1b88dcd02684c344040ebad98c8d9f23" name="a1b88dcd02684c344040ebad98c8d9f23"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b88dcd02684c344040ebad98c8d9f23">&#9670;&#160;</a></span>is_boundary_excluded()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classIBParticlesDEM.html">IBParticlesDEM</a>&lt; dim &gt;::is_boundary_excluded </td>
+          <td>(</td>
+          <td class="paramtype">const types::boundary_id&#160;</td>
+          <td class="paramname"><em>boundary_id</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Check whether a boundary should be ignored for Sharp-IB particle wall interactions. </p>
+<p>Outlet and periodic <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> boundaries do not represent colliding walls and are therefore excluded from the wall-contact search.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">boundary_id</td><td>Boundary id under consideration. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><code>true</code> if the boundary must be excluded from contact handling. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8cc_source.html#l00034">34</a> of file <a class="el" href="ib__particles__dem_8cc_source.html">ib_particles_dem.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="structParameters_1_1Lagrangian_1_1BCDEM.html#ac65d80d2721f9155291c2622d9261555ae6ffdec5e14fce371eb7ae99edebbbee">Parameters::Lagrangian::BCDEM::periodic</a>.</p>
 
 </div>
 </div>
@@ -733,7 +861,7 @@ template&lt;int dim&gt; </div>
 
 <p>Updates the contact candidates of all the particles. </p>
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8cc_source.html#l00040">40</a> of file <a class="el" href="ib__particles__dem_8cc_source.html">ib_particles_dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8cc_source.html#l00132">132</a> of file <a class="el" href="ib__particles__dem_8cc_source.html">ib_particles_dem.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="tensors__and__points__dimension__manipulation_8h_source.html#l00069">point_nd_to_3d()</a>.</p>
 
@@ -776,7 +904,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8cc_source.html#l00030">30</a> of file <a class="el" href="ib__particles__dem_8cc_source.html">ib_particles_dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8cc_source.html#l00122">122</a> of file <a class="el" href="ib__particles__dem_8cc_source.html">ib_particles_dem.cc</a>.</p>
 
 </div>
 </div>
@@ -820,7 +948,8 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Updates the boundary cells that are contact candidates for each of the particles.The force is based on the formula from Microhydrodynamics: Principles and Selected Applications by Kim, Sangtae; Karrila, Seppo J. ISBN 13: 9780750691734. </p>
+<p>Update the boundary cells that are contact candidates for each particle. </p>
+<p>The wall-contact search relies on the lubrication/contact model described in Microhydrodynamics: Principles and Selected Applications by Kim, Sangtae and Karrila, Seppo J. ISBN 13: 9780750691734.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">particles</td><td>The particles vector containing all the IB particles. </td></tr>
@@ -831,15 +960,15 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8cc_source.html#l00397">397</a> of file <a class="el" href="ib__particles__dem_8cc_source.html">ib_particles_dem.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8cc_source.html#l00489">489</a> of file <a class="el" href="ib__particles__dem_8cc_source.html">ib_particles_dem.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="ib__particles__dem_8h_source.html#l00259">IBParticlesDEM&lt; dim &gt;::BoundaryCellsInfo::boundary_index</a>, <a class="el" href="lethe__grid__tools_8cc_source.html#l00252">LetheGridTools::find_boundary_cells_in_sphere()</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00257">IBParticlesDEM&lt; dim &gt;::BoundaryCellsInfo::normal_vector</a>, and <a class="el" href="ib__particles__dem_8h_source.html#l00258">IBParticlesDEM&lt; dim &gt;::BoundaryCellsInfo::point_on_boundary</a>.</p>
+<p class="reference">References <a class="el" href="ib__particles__dem_8h_source.html#l00311">IBParticlesDEM&lt; dim &gt;::BoundaryCellsInfo::boundary_index</a>, <a class="el" href="lethe__grid__tools_8cc_source.html#l00252">LetheGridTools::find_boundary_cells_in_sphere()</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00309">IBParticlesDEM&lt; dim &gt;::BoundaryCellsInfo::normal_vector</a>, and <a class="el" href="ib__particles__dem_8h_source.html#l00310">IBParticlesDEM&lt; dim &gt;::BoundaryCellsInfo::point_on_boundary</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a3d34e45792721525f65652647a935067" name="a3d34e45792721525f65652647a935067"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3d34e45792721525f65652647a935067">&#9670;&#160;</a></span>boundary_cells</h2>
+<a id="a75243934e6f01d3f3d3515854cea06ad" name="a75243934e6f01d3f3d3515854cea06ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a75243934e6f01d3f3d3515854cea06ad">&#9670;&#160;</a></span>boundary_cells</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -850,7 +979,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;std::map&lt;unsigned int, <a class="el" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html">BoundaryCellsInfo</a>&gt; &gt; <a class="el" href="classIBParticlesDEM.html">IBParticlesDEM</a>&lt; dim &gt;::boundary_cells</td>
+          <td class="memname">std::vector&lt;std::map&lt;types::boundary_id, <a class="el" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html">BoundaryCellsInfo</a>&gt; &gt; <a class="el" href="classIBParticlesDEM.html">IBParticlesDEM</a>&lt; dim &gt;::boundary_cells</td>
         </tr>
       </table>
   </td>
@@ -860,7 +989,33 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00300">300</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00349">349</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
+
+</div>
+</div>
+<a id="a71ebc55d5e356a93affa49869079a451" name="a71ebc55d5e356a93affa49869079a451"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71ebc55d5e356a93affa49869079a451">&#9670;&#160;</a></span>boundary_conditions_parameters</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="structParameters_1_1Lagrangian_1_1BCDEM.html">Parameters::Lagrangian::BCDEM</a>&gt; <a class="el" href="classIBParticlesDEM.html">IBParticlesDEM</a>&lt; dim &gt;::boundary_conditions_parameters</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00331">331</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
 
 </div>
 </div>
@@ -886,7 +1041,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00302">302</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00351">351</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
 
 </div>
 </div>
@@ -912,7 +1067,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00284">284</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00332">332</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
 
 </div>
 </div>
@@ -930,7 +1085,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00239">239</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00257">257</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
 
 </div>
 </div>
@@ -956,7 +1111,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00283">283</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00330">330</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
 
 </div>
 </div>
@@ -982,7 +1137,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00285">285</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00333">333</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
 
 </div>
 </div>
@@ -1008,7 +1163,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00281">281</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00328">328</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
 
 </div>
 </div>
@@ -1034,7 +1189,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00287">287</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00335">335</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
 
 </div>
 </div>
@@ -1060,7 +1215,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00296">296</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00344">344</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
 
 </div>
 </div>
@@ -1086,7 +1241,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00293">293</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00341">341</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
 
 </div>
 </div>
@@ -1112,12 +1267,12 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00291">291</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00339">339</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
 
 </div>
 </div>
-<a id="af001b80b1fd8c576f9531f5cce01aaac" name="af001b80b1fd8c576f9531f5cce01aaac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af001b80b1fd8c576f9531f5cce01aaac">&#9670;&#160;</a></span>pw_contact_map</h2>
+<a id="aa070121e86c70afd7028b25e5cd405f6" name="aa070121e86c70afd7028b25e5cd405f6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa070121e86c70afd7028b25e5cd405f6">&#9670;&#160;</a></span>pw_contact_map</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1128,7 +1283,7 @@ template&lt;int dim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::map&lt;unsigned int, std::map&lt;unsigned int, <a class="el" href="structIBParticlesDEM_1_1ContactInfo.html">ContactInfo</a>&gt; &gt; <a class="el" href="classIBParticlesDEM.html">IBParticlesDEM</a>&lt; dim &gt;::pw_contact_map</td>
+          <td class="memname">std::map&lt;unsigned int, std::map&lt;types::boundary_id, <a class="el" href="structIBParticlesDEM_1_1ContactInfo.html">ContactInfo</a>&gt; &gt; <a class="el" href="classIBParticlesDEM.html">IBParticlesDEM</a>&lt; dim &gt;::pw_contact_map</td>
         </tr>
       </table>
   </td>
@@ -1138,7 +1293,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00297">297</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00346">346</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
 
 </div>
 </div>

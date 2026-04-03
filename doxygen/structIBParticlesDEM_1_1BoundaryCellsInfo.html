@@ -109,13 +109,13 @@ Public Attributes</h2></td></tr>
 <tr class="separator:aae39f588d4584f819144c4e7bc348e45"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86cc264f160c251b8c57287cc7f428b5" id="r_a86cc264f160c251b8c57287cc7f428b5"><td class="memItemLeft" align="right" valign="top">Point&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#a86cc264f160c251b8c57287cc7f428b5">point_on_boundary</a></td></tr>
 <tr class="separator:a86cc264f160c251b8c57287cc7f428b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a86990defec0343fbaecaeecc94088fa0" id="r_a86990defec0343fbaecaeecc94088fa0"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#a86990defec0343fbaecaeecc94088fa0">boundary_index</a></td></tr>
-<tr class="separator:a86990defec0343fbaecaeecc94088fa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3cc0c55fc3f46133646a7266d24bdeb9" id="r_a3cc0c55fc3f46133646a7266d24bdeb9"><td class="memItemLeft" align="right" valign="top">types::boundary_id&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structIBParticlesDEM_1_1BoundaryCellsInfo.html#a3cc0c55fc3f46133646a7266d24bdeb9">boundary_index</a></td></tr>
+<tr class="separator:a3cc0c55fc3f46133646a7266d24bdeb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
 struct IBParticlesDEM&lt; dim &gt;::BoundaryCellsInfo</div>
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00243">243</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00295">295</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a8d270579b00a9f5c632d32f1b4d47f52" name="a8d270579b00a9f5c632d32f1b4d47f52"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8d270579b00a9f5c632d32f1b4d47f52">&#9670;&#160;</a></span>serialize()</h2>
@@ -155,15 +155,15 @@ template&lt;class Archive &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00247">247</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00299">299</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
 
-<p class="reference">References <a class="el" href="ib__particles__dem_8h_source.html#l00259">IBParticlesDEM&lt; dim &gt;::BoundaryCellsInfo::boundary_index</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00257">IBParticlesDEM&lt; dim &gt;::BoundaryCellsInfo::normal_vector</a>, and <a class="el" href="ib__particles__dem_8h_source.html#l00258">IBParticlesDEM&lt; dim &gt;::BoundaryCellsInfo::point_on_boundary</a>.</p>
+<p class="reference">References <a class="el" href="ib__particles__dem_8h_source.html#l00311">IBParticlesDEM&lt; dim &gt;::BoundaryCellsInfo::boundary_index</a>, <a class="el" href="ib__particles__dem_8h_source.html#l00309">IBParticlesDEM&lt; dim &gt;::BoundaryCellsInfo::normal_vector</a>, and <a class="el" href="ib__particles__dem_8h_source.html#l00310">IBParticlesDEM&lt; dim &gt;::BoundaryCellsInfo::point_on_boundary</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a86990defec0343fbaecaeecc94088fa0" name="a86990defec0343fbaecaeecc94088fa0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a86990defec0343fbaecaeecc94088fa0">&#9670;&#160;</a></span>boundary_index</h2>
+<a id="a3cc0c55fc3f46133646a7266d24bdeb9" name="a3cc0c55fc3f46133646a7266d24bdeb9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3cc0c55fc3f46133646a7266d24bdeb9">&#9670;&#160;</a></span>boundary_index</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -171,12 +171,12 @@ template&lt;class Archive &gt; </div>
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">unsigned int <a class="el" href="classIBParticlesDEM.html">IBParticlesDEM</a>&lt; dim &gt;::BoundaryCellsInfo::boundary_index</td>
+          <td class="memname">types::boundary_id <a class="el" href="classIBParticlesDEM.html">IBParticlesDEM</a>&lt; dim &gt;::BoundaryCellsInfo::boundary_index</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00259">259</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00311">311</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
 
 </div>
 </div>
@@ -194,7 +194,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00257">257</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00309">309</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
 
 </div>
 </div>
@@ -212,7 +212,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00258">258</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ib__particles__dem_8h_source.html#l00310">310</a> of file <a class="el" href="ib__particles__dem_8h_source.html">ib_particles_dem.h</a>.</p>
 
 </div>
 </div>

@@ -11,10 +11,10 @@
 <!-- Node0 -->
 <g id="Node000000" class="node">
 <title>Node0</title>
-<g id="a_Node000000"><a xlink:href="structParameters_1_1CLS__ReinitializationMethod.html" target="_top" xlink:title="Parameters for interface reinitialization methods used within the CLS solver. It stores the parameter...">
+<g id="a_Node000000"><a xlink:href="structParameters_1_1CLS__SurfaceTensionForce.html" target="_top" xlink:title="Parameters for the calculation of surface tension force in the CLS solver.">
 <polygon fill="white" stroke="#666666" points="175,-30 0,-30 0,0 175,0 175,-30"/>
-<text text-anchor="start" x="8" y="-18" font-family="Helvetica,sans-Serif" font-size="10.00">Parameters::CLS_Reinitialization</text>
-<text text-anchor="middle" x="87.5" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">Method</text>
+<text text-anchor="start" x="8" y="-18" font-family="Helvetica,sans-Serif" font-size="10.00">Parameters::CLS_SurfaceTension</text>
+<text text-anchor="middle" x="87.5" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">Force</text>
 </a>
 </g>
 </g>

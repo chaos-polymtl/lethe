@@ -393,7 +393,7 @@ var searchData=
   ['potential_5fcahn_5fhilliard_5forder_390',['potential_cahn_hilliard_order',['../structParameters_1_1FEM.html#ad455d960df990fb708a6e7a1d63cbc4a',1,'Parameters::FEM']]],
   ['potential_5fsmoothing_5fcoefficient_391',['potential_smoothing_coefficient',['../structParameters_1_1CahnHilliard.html#a9a470cbe7f58b13fe0b5211d88665dea',1,'Parameters::CahnHilliard']]],
   ['power_392',['power',['../namespaceParameters.html#ae2409eaf7621323659ebf4a3ec3c77d2a62cd275989e78ee56a81f0265a87562e',1,'Parameters']]],
-  ['powerlaw_393',['powerlaw',['../classParameters_1_1Material.html#a78e253a535ca9d21466208edad15e5eaae9f7a4aafeda67a0dab579ba480c24d6',1,'Parameters::Material::powerlaw'],['../classPowerLaw.html#a4ae21d3099d9c0b8343ce62073519e20',1,'PowerLaw::PowerLaw()'],['../classPowerLaw.html',1,'PowerLaw']]],
+  ['powerlaw_393',['powerlaw',['../classPowerLaw.html#a4ae21d3099d9c0b8343ce62073519e20',1,'PowerLaw::PowerLaw()'],['../classParameters_1_1Material.html#a78e253a535ca9d21466208edad15e5eaae9f7a4aafeda67a0dab579ba480c24d6',1,'Parameters::Material::powerlaw'],['../classPowerLaw.html',1,'PowerLaw']]],
   ['powerlaw_5fparameters_394',['powerlaw_parameters',['../structParameters_1_1NonNewtonian.html#a40396ac89acdc7b56e94dec75ad11b0a',1,'Parameters::NonNewtonian']]],
   ['powerlawparameters_395',['PowerLawParameters',['../structParameters_1_1PowerLawParameters.html',1,'Parameters']]],
   ['pp_5fcontact_5fmap_396',['pp_contact_map',['../classIBParticlesDEM.html#a71310bd230b6cc15d733f660f19f0b26',1,'IBParticlesDEM']]],
@@ -509,5 +509,5 @@ var searchData=
   ['pvdhandler_5fboundary_506',['pvdhandler_boundary',['../classNavierStokesBase.html#a07c0b8d68da93af77cbaff4e95ebdf86',1,'NavierStokesBase']]],
   ['pvdhandler_5fsolid_5fparticles_507',['pvdhandler_solid_particles',['../classFluidDynamicsNitsche.html#abd838581c2d01afe8f02cef6efb62de2',1,'FluidDynamicsNitsche']]],
   ['pvdhandler_5fsolid_5ftriangulation_508',['pvdhandler_solid_triangulation',['../classFluidDynamicsNitsche.html#a6d9ca16aa669641e67d01a7e4b519c27',1,'FluidDynamicsNitsche']]],
-  ['pw_5fcontact_5fmap_509',['pw_contact_map',['../classIBParticlesDEM.html#af001b80b1fd8c576f9531f5cce01aaac',1,'IBParticlesDEM']]]
+  ['pw_5fcontact_5fmap_509',['pw_contact_map',['../classIBParticlesDEM.html#aa070121e86c70afd7028b25e5cd405f6',1,'IBParticlesDEM']]]
 ];
