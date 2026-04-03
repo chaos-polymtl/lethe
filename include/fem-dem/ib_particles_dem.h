@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_ib_particles_dem_h
@@ -12,6 +12,18 @@
 #include <deal.II/base/tensor.h>
 
 using namespace dealii;
+
+namespace Parameters
+{
+  template <int dim>
+  class IBParticles;
+  namespace Lagrangian
+  {
+    template <int dim>
+    class FloatingWalls;
+    struct BCDEM;
+  } // namespace Lagrangian
+} // namespace Parameters
 
 /**
  * @brief A solver class for the DEM used in conjunction with IB particles and
@@ -65,13 +77,16 @@ public:
    *
    * @param p_nsparam The parameters for the immersed boundary particles
    * @param floating_walls_parameters The parameters for the floating walls.
+   * @param boundary_conditions_parameters The parameters for the DEM boundary conditions.
    * @param mpi_communicator_input The mpi communicator of the simulation.
    * @param particles The particles vector containing all the IB particles.
    */
   void
   initialize(const std::shared_ptr<Parameters::IBParticles<dim>> &p_nsparam,
              const std::shared_ptr<Parameters::Lagrangian::FloatingWalls<dim>>
-                                                 floating_walls_parameters,
+               floating_walls_parameters,
+             const std::shared_ptr<Parameters::Lagrangian::BCDEM>
+                                                &boundary_conditions_parameters,
              const MPI_Comm                     &mpi_communicator_input,
              const std::vector<IBParticle<dim>> &particles);
 
@@ -218,9 +233,12 @@ public:
                                  std::vector<Tensor<1, 3>> &lubrication_torque);
 
   /**
-   * @brief  Updates the boundary cells that are contact candidates for each of the particles.The force is based on the formula from
-   *  Microhydrodynamics: Principles and Selected Applications by Kim, Sangtae;
-   * Karrila, Seppo J. ISBN 13: 9780750691734
+   * @brief Update the boundary cells that are contact candidates for each
+   * particle.
+   *
+   * The wall-contact search relies on the lubrication/contact model described
+   * in Microhydrodynamics: Principles and Selected Applications by Kim,
+   * Sangtae and Karrila, Seppo J. ISBN 13: 9780750691734.
    *
    * @param particles The particles vector containing all the IB particles.
    * @param dof_handler The dof handler of the mesh used for the fluid simulation.
@@ -239,6 +257,40 @@ public:
   std::vector<IBParticle<dim>> dem_particles;
 
 private:
+  /**
+   * @brief Check whether a boundary should be ignored for Sharp-IB particle
+   * wall interactions.
+   *
+   * Outlet and periodic DEM boundaries do not represent colliding walls and
+   * are therefore excluded from the wall-contact search.
+   *
+   * @param boundary_id Boundary id under consideration.
+   * @return `true` if the boundary must be excluded from contact handling.
+   */
+  bool
+  is_boundary_excluded(const types::boundary_id boundary_id) const;
+
+  /**
+   * @brief Get the DEM wall motion prescribed on a boundary.
+   *
+   * This converts the DEM boundary-condition parameters into the translational
+   * and angular wall velocities used by Sharp-IB particle-wall interaction
+   * models.
+   *
+   * @param boundary_id Boundary id under consideration.
+   * @param point_on_boundary Contact point on the boundary.
+   * @param wall_velocity Translational wall velocity.
+   * @param wall_angular_velocity Angular wall velocity.
+   * @param wall_rotation_axis_point Point on the rotation axis used for
+   * rotational wall motion.
+   */
+  void
+  get_wall_motion(const types::boundary_id boundary_id,
+                  const Point<dim>        &point_on_boundary,
+                  Tensor<1, 3>            &wall_velocity,
+                  Tensor<1, 3>            &wall_angular_velocity,
+                  Point<dim>              &wall_rotation_axis_point) const;
+
   // A struct to store boundary cells' information
   struct BoundaryCellsInfo
   {
@@ -254,9 +306,9 @@ private:
         }
     }
 
-    Tensor<1, dim> normal_vector;
-    Point<dim>     point_on_boundary;
-    unsigned int   boundary_index;
+    Tensor<1, dim>     normal_vector;
+    Point<dim>         point_on_boundary;
+    types::boundary_id boundary_index;
   };
 
   // These structs are used to specify the default value of a variable in a map
@@ -265,11 +317,6 @@ private:
   {
     double value = DBL_MAX;
   };
-  struct DefaultUINT_MAX
-  {
-    int value = UINT_MAX;
-  };
-
   // This enum defines the lowest index of a floating wall in the particle wall
   // contact. This prevents a wall floating wall from shearing the same index as
   // a standard boundary.
@@ -280,9 +327,10 @@ private:
 
   std::shared_ptr<Parameters::IBParticles<dim>> parameters;
   std::shared_ptr<Parameters::Lagrangian::FloatingWalls<dim>>
-                           floating_walls_parameters;
-  DEMSolverParameters<dim> dem_parameters{};
-  MPI_Comm                 mpi_communicator;
+                                                 floating_walls_parameters;
+  std::shared_ptr<Parameters::Lagrangian::BCDEM> boundary_conditions_parameters;
+  DEMSolverParameters<dim>                       dem_parameters{};
+  MPI_Comm                                       mpi_communicator;
 
   std::vector<std::set<unsigned int>> particles_contact_candidates;
 
@@ -294,10 +342,11 @@ private:
 
   // Particles contact history
   std::map<unsigned int, std::map<unsigned int, ContactInfo>> pp_contact_map;
-  std::map<unsigned int, std::map<unsigned int, ContactInfo>> pw_contact_map;
+  std::map<unsigned int, std::map<types::boundary_id, ContactInfo>>
+    pw_contact_map;
 
   // A vector of vectors of candidate cells for each of the particle.
-  std::vector<std::map<unsigned int, BoundaryCellsInfo>> boundary_cells;
+  std::vector<std::map<types::boundary_id, BoundaryCellsInfo>> boundary_cells;
 
   double cfd_time;
 };
