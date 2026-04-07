@@ -51,21 +51,20 @@ public:
     const std::vector<unsigned int>                      &periodic_bc_ind)
   {
     // If function is reached and vectors are not empty
-    if (!periodic_boundary_ids_0.empty())
-      {
-        periodic_boundaries_enabled = true;
+    if (periodic_boundary_ids_0.empty())
+      return;
 
-        // Communicate to the action manager that there are periodic boundaries
-        DEMActionManager::get_action_manager()
-          ->set_periodic_boundaries_enabled();
+    periodic_boundaries_enabled = true;
 
-        this->periodic_boundaries_ids = periodic_boundary_ids_0;
-        this->directions              = periodic_directions;
-        this->periodic_bc_index       = periodic_bc_ind;
+    // Communicate to the action manager that there are periodic boundaries
+    DEMActionManager::get_action_manager()->set_periodic_boundaries_enabled();
 
-        // Initialize offset map
-        this->periodic_offsets.clear();
-      }
+    this->periodic_boundaries_ids = periodic_boundary_ids_0;
+    this->directions              = periodic_directions;
+    this->periodic_bc_index       = periodic_bc_ind;
+
+    // Initialize offset map
+    this->periodic_offsets.clear();
   }
 
   /**
@@ -102,9 +101,9 @@ public:
       &periodic_boundaries_cells_information);
 
   /**
-   * @brief Return the periodic offset distance for a specific boundary ID.
-   * It is calculated from the first pair of cells on periodic boundaries,
-   * all pairs of cells on that boundary are assumed to have the same offset.
+   * @brief Return the periodic offset distance for a specific pb0 boundary ID.
+   * All pairs of cells on that pair of periodic boundaries are assumed to have
+   * the same offset.
    *
    * @param[in] boundary_id ID of the boundary to query
    * @return Offset distance between periodic boundaries.
@@ -116,7 +115,9 @@ public:
   }
 
   /**
-   * @brief Return the index of the periodic boundary conditions in the .prm
+   * @brief Return the index of the periodic boundary conditions in the .prm.
+   *
+   * @return Index of the periodic boundary conditions.
    */
   inline const std::vector<unsigned int> &
   get_periodic_bc_index() const
@@ -125,7 +126,9 @@ public:
   }
 
   /**
-   * @brief Return the mesh IDs of the periodic boundaries
+   * @brief Return the mesh IDs of the principal periodic boundaries
+   *
+   * @return Mesh IDS of the principal periodic boundaries.
    */
   inline const std::unordered_map<unsigned int, types::boundary_id> &
   get_periodic_boundaries_ids() const
@@ -135,6 +138,8 @@ public:
 
   /**
    * @brief Return the combined periodic offsets
+   *
+   * @return Combined periodic offsets.
    */
   inline const std::vector<Tensor<1, dim>> &
   get_combined_periodic_offsets() const
@@ -144,8 +149,8 @@ public:
 
 private:
   /**
-   * @brief Gets boundaries information related to the face at periodic
-   * boundaries and stores in periodic_boundaries_cells_info_struct
+   * @brief Get boundary information related to a face at a periodic
+   * boundary and stores it in a periodic_boundaries_cells_info_struct
    * object.
    *
    * @param[in] cell Current cell on boundary.
@@ -160,8 +165,9 @@ private:
     periodic_boundaries_cells_info_struct<dim> &boundaries_information);
 
   /**
-   * @brief Checks if particle is outside the cell, if so, modifies the
-   * location of the particle using the specific offset for boundary.
+   * @brief Check if particle is outside the cell, if so, modify the
+   * location of the particle using the relevant periodic offset for the
+   * boundary.
    *
    * @param[in] boundaries_cells_content Reference to the object with periodic
    * boundary information.
@@ -180,7 +186,7 @@ private:
     bool &particle_has_been_moved);
 
   /**
-   * @brief Computes the combined periodic offsets and stores them in
+   * @brief Compute the combined periodic offsets and store them in
    * combined_periodic_offsets.
    */
   void
@@ -218,7 +224,8 @@ private:
   /**
    * @brief Map storing offset distance between periodic boundaries, keyed by
    * the boundary ID (pb0). It is calculated from the first pair of cells on
-   * periodic boundaries, all pair of cells are assumed to have the same offset.
+   * periodic boundaries, so all pair of cells on a given peridodic  boundary
+   * are assumed to have the same offset.
    */
   std::unordered_map<types::boundary_id, Tensor<1, dim>> periodic_offsets;
 

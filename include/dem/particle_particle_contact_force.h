@@ -63,20 +63,20 @@ public:
       &local_adjacent_particles,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
       &ghost_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+    typename DEM::dem_data_structures<dim>::periodic_adjacent_particle_pairs
       &local_local_periodic_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+    typename DEM::dem_data_structures<dim>::periodic_adjacent_particle_pairs
       &local_ghost_periodic_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+    typename DEM::dem_data_structures<dim>::periodic_adjacent_particle_pairs
                 &ghost_local_periodic_adjacent_particles,
     const double dt,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) = 0;
 
   /**
-   * @brief Set the distance between a principal periodic boundary pn0 (with 
+   * @brief Set the distance between a principal periodic boundary pn0 (with
    * mesh ID boundary_id) and its associated periodic boundary pb1 in the
    * periodic_offsets map.
-   * 
+   *
    * @param offset Distance between the pair of periodic boundaries.
    * @param boundary_id Mesh ID of the principal periodic boundary of the pair.
    */
@@ -153,11 +153,11 @@ public:
       &local_adjacent_particles,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
       &ghost_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+    typename DEM::dem_data_structures<dim>::periodic_adjacent_particle_pairs
       &local_local_periodic_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+    typename DEM::dem_data_structures<dim>::periodic_adjacent_particle_pairs
       &local_ghost_periodic_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+    typename DEM::dem_data_structures<dim>::periodic_adjacent_particle_pairs
                 &ghost_local_periodic_adjacent_particles,
     const double dt,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) override;
@@ -259,12 +259,18 @@ protected:
   /**
    * @brief Get the location of the particle.
    *
-   * @param[in] particle The particle to get the location from.
+   * @param[in] particle The particle from which to get the location.
+   *
+   * @return The location of the particle.
    */
   inline Point<3>
   get_location(const Particles::ParticleIterator<dim> &particle) &
   {
-    return point_nd_to_3d(particle->get_location());
+    if constexpr (dim == 3)
+      return particle->get_location();
+
+    if constexpr (dim == 2)
+      return point_nd_to_3d(particle->get_location());
   }
 
   /**
@@ -273,12 +279,18 @@ protected:
    * @param[in] particle The particle to get the location from.
    * @param[in] periodic_offset The periodic offset with which to shift the
    * location.
+   *
+   * @return The offset periodic location of the particle.
    */
   inline Point<3>
   get_periodic_location(const Particles::ParticleIterator<dim> &particle,
                         const Tensor<1, 3> &periodic_offset) &
   {
-    return point_nd_to_3d(particle->get_location()) + periodic_offset;
+    if constexpr (dim == 3)
+      return (particle->get_location() + periodic_offset);
+
+    if constexpr (dim == 2)
+      return point_nd_to_3d(particle->get_location()) + periodic_offset;
   }
 
   /**
@@ -1690,15 +1702,15 @@ private:
    * contact according to the contact type
    *
    * @param[in] adjacent_particles_list Container of the adjacent particles of a
-   * particles
+   * particle.
    * @param[in] dt DEM time step.
    * @param[out] contact_outcome Interaction outcomes.
    */
-  template <ContactType contact_type>
+  template <ContactType contact_type, typename ContactInfoContainer>
   inline void
   execute_contact_calculation(
-    typename DEM::dem_data_structures<dim>::particle_contact_info
-                                                 &adjacent_particles_list,
+    // typename DEM::dem_data_structures<dim>::particle_contact_info
+    ContactInfoContainer                         &adjacent_particles_list,
     const double                                  dt,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome)
   {

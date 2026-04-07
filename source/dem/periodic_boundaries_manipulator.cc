@@ -184,9 +184,12 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
   bool &particle_has_been_moved)
 {
   // Retrieve correct offset for this specific boundary interaction.
-  // If particles are in pb0 cell, we use the stored offset map.
-  // If they are in the periodic neighbor (pb1), we infer the ID from
-  // the stored pb0 ID. The struct stores the 'boundary_id' of the face.
+  // boundaries_cells_content contains a single cell on a periodic boundary
+  // and its associated periodic cell. The offset between these cells is
+  // obtained from periodic_offsets to displace particles across these cells.
+  // relevant_offset is a vector pointing from pb0 to pb1, so we check on which
+  // side the current particles are and offset their positions accordingly
+  // (either +offset or -offset).
 
   Tensor<1, dim> relevant_offset;
 
@@ -253,7 +256,8 @@ void
 PeriodicBoundariesManipulator<dim>::compute_combined_periodic_offsets()
 {
   this->combined_periodic_offsets.clear();
-  this->combined_periodic_offsets.push_back(Tensor<1, dim>()); // Initialized as zeros
+  this->combined_periodic_offsets.push_back(
+    Tensor<1, dim>()); // Initialized as zeros
 
   for (auto const &[id, offset] : this->periodic_offsets)
     {
@@ -261,8 +265,13 @@ PeriodicBoundariesManipulator<dim>::compute_combined_periodic_offsets()
 
       for (size_t i = 0; i < current_size; ++i)
         {
-          this->combined_periodic_offsets.push_back(this->combined_periodic_offsets[i] + offset);
-          this->combined_periodic_offsets.push_back(this->combined_periodic_offsets[i] - offset);
+          // A particle next to a periodic boundary can be next to pb0 or pb1.
+          // We need to account for its periodic images across periodic
+          // directions, hence the +/- offset.
+          this->combined_periodic_offsets.push_back(
+            this->combined_periodic_offsets[i] + offset);
+          this->combined_periodic_offsets.push_back(
+            this->combined_periodic_offsets[i] - offset);
         }
     }
 }
@@ -281,8 +290,9 @@ PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
 
   if (!periodic_boundaries_cells_information.empty())
     {
-      // Iterate over all entries. If using multimap, this correctly handles
-      // corner cells twice :once for x-boundary, once for y-boundary (in 2D)
+      // Iterate over all entries. Multimap correctly handles periodic corner
+      // cells in higher dimensions. In 2D, a periodic corner cell would be
+      // iterated over twice:  once for x-boundary, once for y-boundary.
       for (auto boundaries_cells_information_iterator =
              periodic_boundaries_cells_information.begin();
            boundaries_cells_information_iterator !=

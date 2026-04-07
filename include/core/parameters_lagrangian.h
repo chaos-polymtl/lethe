@@ -795,7 +795,7 @@ namespace Parameters
       /// Boundary IDs designated as outlets.
       std::vector<unsigned int> outlet_boundaries;
 
-      /// Index of boundary conditions that are periodic
+      /// Index of boundary conditions that are periodic.
       std::vector<unsigned int> periodic_bc_index;
 
       /// Translational velocity of each moving boundary.
@@ -849,7 +849,7 @@ namespace Parameters
        * @brief Parse boundary condition parameters for a single boundary.
        *
        * @param[in] prm The parameter handler.
-       * @param[in] i_bc Index of the boundary condition subsection
+       * @param[in] i_bc Index of the boundary condition subsection.
        */
       void
       parse_boundary_conditions(const ParameterHandler &prm,

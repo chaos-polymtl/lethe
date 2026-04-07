@@ -267,7 +267,7 @@ public:
   /**
    * @brief Return the local-local periodic particle contact container.
    */
-  inline typename dem_data_structures<dim>::adjacent_particle_pairs &
+  inline typename dem_data_structures<dim>::periodic_adjacent_particle_pairs &
   get_local_local_periodic_adjacent_particles()
   {
     return local_local_periodic_adjacent_particles;
@@ -276,7 +276,7 @@ public:
   /**
    * @brief Return the local-ghost periodic particle contact container.
    */
-  inline typename dem_data_structures<dim>::adjacent_particle_pairs &
+  inline typename dem_data_structures<dim>::periodic_adjacent_particle_pairs &
   get_local_ghost_periodic_adjacent_particles()
   {
     return local_ghost_periodic_adjacent_particles;
@@ -285,7 +285,7 @@ public:
   /**
    * @brief Return the ghost-local periodic particle contact container.
    */
-  inline typename dem_data_structures<dim>::adjacent_particle_pairs &
+  inline typename dem_data_structures<dim>::periodic_adjacent_particle_pairs &
   get_ghost_local_periodic_adjacent_particles()
   {
     return ghost_local_periodic_adjacent_particles;
@@ -374,11 +374,11 @@ private:
     local_adjacent_particles;
   typename dem_data_structures<dim>::adjacent_particle_pairs
     ghost_adjacent_particles;
-  typename dem_data_structures<dim>::adjacent_particle_pairs
+  typename dem_data_structures<dim>::periodic_adjacent_particle_pairs
     local_local_periodic_adjacent_particles;
-  typename dem_data_structures<dim>::adjacent_particle_pairs
+  typename dem_data_structures<dim>::periodic_adjacent_particle_pairs
     local_ghost_periodic_adjacent_particles;
-  typename dem_data_structures<dim>::adjacent_particle_pairs
+  typename dem_data_structures<dim>::periodic_adjacent_particle_pairs
     ghost_local_periodic_adjacent_particles;
 
   // Containers with other information
@@ -386,7 +386,8 @@ private:
 
 private:
   /**
-   * @brief Storage for all precomputed periodic translation vectors.
+   * @brief Storage for all precomputed periodic translation vectors,
+   * representing translations between pairs of periodic faces and corners.
    * Initialized to identity (zero offset) for compatibility with non-periodic
    * geometry
    */

@@ -34,7 +34,6 @@ read_mesh(const Parameters::Mesh   &mesh_parameters,
 template <int dim, int spacedim>
 void
 match_periodic_boundaries(Triangulation<dim, spacedim>        &triangulation,
-                          const Parameters::Lagrangian::BCDEM &bc_params,
-                          const std::vector<unsigned int> &periodic_bc_indices);
+                          const Parameters::Lagrangian::BCDEM &bc_params);
 
 #endif
