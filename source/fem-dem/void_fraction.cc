@@ -1155,6 +1155,35 @@ VoidFractionBase<dim>::solve_linear_system_and_update_solution()
   void_fraction_locally_relevant = completely_distributed_solution;
 }
 
+template <int dim>
+void
+VoidFractionBase<dim>::set_void_fraction_field(
+  const GlobalVectorType &new_void_fraction)
+{
+  AssertThrow(
+    new_void_fraction.size() == void_fraction_locally_owned.size(),
+    ExcMessage(
+      "New void-fraction field does not match the current void-fraction size."));
+
+  void_fraction_locally_owned = 0.0;
+
+  for (const auto i : void_fraction_locally_owned.locally_owned_elements())
+    {
+      void_fraction_locally_owned[i] = new_void_fraction[i];
+    }
+
+  void_fraction_locally_owned.compress(VectorOperation::insert);
+  void_fraction_locally_relevant = void_fraction_locally_owned;
+}
+
+
+template <int dim>
+const GlobalVectorType &
+VoidFractionBase<dim>::get_void_fraction_field() const
+{
+  return void_fraction_locally_relevant;
+}
+
 // Pre-compile the 2D and 3D VoidFractionBase solver to ensure that the
 // library is valid before we actually compile the solver This greatly
 // helps with debugging

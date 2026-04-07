@@ -47,6 +47,7 @@
 #include <deal.II/lac/vector.h>
 
 #include <deal.II/numerics/data_out.h>
+#include <deal.II/numerics/fe_field_function.h>
 #include <deal.II/numerics/vector_tools.h>
 
 #include <sys/stat.h>
@@ -195,19 +196,51 @@ private:
   const Tensor<1, dim> u_in;
 };
 
+template <int dim>
+class SolidVelocityBoundaryFromFluid : public Function<dim>
+{
+public:
+  SolidVelocityBoundaryFromFluid(
+    const Mapping<dim>                  &fluid_mapping,
+    const DoFHandler<dim>               &fluid_dof_handler,
+    const TrilinosWrappers::MPI::Vector &fluid_solution)
+    : Function<dim>(dim + 1)
+    , fluid_field(fluid_dof_handler, fluid_solution, fluid_mapping)
+    , n_fluid_components(fluid_dof_handler.get_fe().n_components())
+  {}
+
+  virtual void
+  vector_value(const Point<dim> &p, Vector<double> &values) const override
+  {
+    values.reinit(dim + 1);
+    values = 0.0;
+
+    Vector<double> fluid_values(n_fluid_components);
+    fluid_field.vector_value(p, fluid_values);
+
+    for (unsigned int d = 0; d < dim; ++d)
+      values[d] = fluid_values[d];
+
+    values[dim] = 0.0;
+  }
+
+private:
+  Functions::FEFieldFunction<dim, TrilinosWrappers::MPI::Vector> fluid_field;
+  const unsigned int n_fluid_components;
+};
+
 
 
 template <int dim>
-SolidPhaseSolver<dim>::SolidPhaseSolver(const SolidPhaseParameters &p,
-                                        MPI_Comm                    comm)
+SolidPhaseSolver<dim>::SolidPhaseSolver(
+  const SolidPhaseParameters                &p,
+  parallel::distributed::Triangulation<dim> &tria,
+  MPI_Comm                                   comm)
   : parameters(p)
   , mpi_communicator(comm)
   , degree(parameters.degree)
   , fe(FE_Q<dim>(degree), dim, FE_Q<dim>(degree), 1)
-  , triangulation(mpi_communicator,
-                  typename Triangulation<dim>::MeshSmoothing(
-                    Triangulation<dim>::smoothing_on_refinement |
-                    Triangulation<dim>::smoothing_on_coarsening))
+  , triangulation(tria)
   , dof_handler(triangulation)
   , rho_s(parameters.rho_s)
   , beta(parameters.beta)
@@ -247,99 +280,100 @@ SolidPhaseSolver<dim>::SolidPhaseSolver(const SolidPhaseParameters &p,
 }
 
 
-template <int dim>
-void
-SolidPhaseSolver<dim>::make_grid()
-{
-  Point<dim> p1, p2;
+// template <int dim>
+// void
+// SolidPhaseSolver<dim>::make_grid()
+// {
+//   Point<dim> p1, p2;
 
 
-  for (unsigned int d = 0; d < dim; ++d)
-    {
-      p1[d] = 0.0;
-      p2[d] = 1.0;
-    }
-
-
-
-  // sub.assign(dim, 1);
-  // sub[0] = 10;           // x-direction
-  // if (dim > 1) sub[1] = 10;  // y-direction
-  // if (dim > 2) sub[2] = 10;   // z-direction
+//   for (unsigned int d = 0; d < dim; ++d)
+//     {
+//       p1[d] = 0.0;
+//       p2[d] = 1.0;
+//     }
 
 
 
-  GridGenerator::subdivided_hyper_rectangle(triangulation, sub, p1, p2);
-
-
-  triangulation.refine_global(parameters.global_refinement);
-
-
-  const double tol = 1e-12;
-
-
-  const auto axis_from = [&](const std::string &d) -> unsigned int {
-    if (d == "x")
-      return 0;
-    if (d == "y")
-      return 1;
-    if (d == "z")
-      return 2;
-    AssertThrow(false, ExcMessage("direction must be x, y, or z"));
-    return 0;
-  };
-
-  const unsigned int axis1 = axis_from(parameters.direction1);
-  const unsigned int axis2 = axis_from(parameters.direction2);
-
-  pcout << "dim = " << dim << std::endl;
-
-  for (const auto &cell : triangulation.active_cell_iterators())
-    {
-      for (unsigned int f = 0; f < GeometryInfo<dim>::faces_per_cell; ++f)
-        {
-          if (cell->face(f)->at_boundary())
-            {
-              const Point<dim> fc = cell->face(f)->center();
-
-              cell->face(f)->set_boundary_id(0);
-
-              if (std::fabs(fc[axis1]) < tol)
-                {
-                  cell->face(f)->set_boundary_id(1);
-                }
-
-              else if (std::fabs(fc[axis1] - 1.0) < tol)
-                {
-                  cell->face(f)->set_boundary_id(2);
-                }
-
-              else if (std::fabs(fc[axis2]) < tol)
-                {
-                  cell->face(f)->set_boundary_id(1);
-                }
-
-              else if (std::fabs(fc[axis2] - 1.0) < tol)
-                {
-                  cell->face(f)->set_boundary_id(2);
-                }
-            }
-        }
-    }
-
-  //  if (std::fabs(fc[0]) < tol || (dim >= 2 && std::fabs(fc[1]) < tol))
-  //    cell->face(f)->set_boundary_id(1);      // inlet
-  //  else if (std::fabs(fc[0] - 1.0) < tol || (dim >= 2 && std::fabs(fc[1]
-  //  - 1.0) < tol))
-  //    cell->face(f)->set_boundary_id(2);      // outlet
-  //  else
-  //    cell->face(f)->set_boundary_id(0);      // walls
+//   // sub.assign(dim, 1);
+//   // sub[0] = 10;           // x-direction
+//   // if (dim > 1) sub[1] = 10;  // y-direction
+//   // if (dim > 2) sub[2] = 10;   // z-direction
 
 
 
-  pcout << "active cells " << triangulation.n_global_active_cells()
-        << std::endl;
-}
+//   GridGenerator::subdivided_hyper_subdivided_hyper_rectangle(triangulation,
+//   sub, p1, p2);
+
+
+//   triangulation.refine_global(parameters.global_refinement);
+
+
+//   const double tol = 1e-12;
+
+
+//   const auto axis_from = [&](const std::string &d) -> unsigned int {
+//     if (d == "x")
+//       return 0;
+//     if (d == "y")
+//       return 1;
+//     if (d == "z")
+//       return 2;
+//     AssertThrow(false, ExcMessage("direction must be x, y, or z"));
+//     return 0;
+//   };
+
+//   const unsigned int axis1 = axis_from(parameters.direction1);
+//   const unsigned int axis2 = axis_from(parameters.direction2);
+
+//   pcout << "dim = " << dim << std::endl;
+
+//   for (const auto &cell : triangulation.active_cell_iterators())
+//     {
+//       for (unsigned int f = 0; f < GeometryInfo<dim>::faces_per_cell; ++f)
+//         {
+//           if (cell->face(f)->at_boundary())
+//             {
+//               const Point<dim> fc = cell->face(f)->center();
+
+//               cell->face(f)->set_boundary_id(0);
+
+//               if (std::fabs(fc[axis1]) < tol)
+//                 {
+//                   cell->face(f)->set_boundary_id(1);
+//                 }
+
+//               else if (std::fabs(fc[axis1] - 1.0) < tol)
+//                 {
+//                   cell->face(f)->set_boundary_id(2);
+//                 }
+
+//               else if (std::fabs(fc[axis2]) < tol)
+//                 {
+//                   cell->face(f)->set_boundary_id(1);
+//                 }
+
+//               else if (std::fabs(fc[axis2] - 1.0) < tol)
+//                 {
+//                   cell->face(f)->set_boundary_id(2);
+//                 }
+//             }
+//         }
+//     }
+
+//   //  if (std::fabs(fc[0]) < tol || (dim >= 2 && std::fabs(fc[1]) < tol))
+//   //    cell->face(f)->set_boundary_id(1);      // inlet
+//   //  else if (std::fabs(fc[0] - 1.0) < tol || (dim >= 2 && std::fabs(fc[1]
+//   //  - 1.0) < tol))
+//   //    cell->face(f)->set_boundary_id(2);      // outlet
+//   //  else
+//   //    cell->face(f)->set_boundary_id(0);      // walls
+
+
+
+//   pcout << "active cells " << triangulation.n_global_active_cells()
+//         << std::endl;
+// }
 
 
 template <int dim>
@@ -437,6 +471,69 @@ SolidPhaseSolver<dim>::setup_dofs()
 }
 
 
+template <int dim>
+void
+SolidPhaseSolver<dim>::update_constraints()
+{
+  AssertThrow(
+    has_fluid_velocity_field,
+    ExcMessage(
+      "Fluid velocity field must be set before updating solid constraints."));
+  AssertThrow(fluid_dof_handler_ptr != nullptr,
+              ExcMessage("fluid_dof_handler_ptr is null."));
+  AssertThrow(fluid_mapping_ptr != nullptr,
+              ExcMessage("fluid_mapping_ptr is null."));
+  AssertThrow(fluid_solution_ptr != nullptr,
+              ExcMessage("fluid_solution_ptr is null."));
+
+  constraints.clear();
+  constraints.reinit(locally_owned, locally_relevant);
+
+  DoFTools::make_hanging_node_constraints(dof_handler, constraints);
+
+  ComponentMask vel_mask(fe.n_components(), false);
+  for (unsigned int c = 0; c < dim; ++c)
+    vel_mask.set(c, true);
+
+  ComponentMask alpha_mask(fe.n_components(), false);
+  alpha_mask.set(dim, true);
+
+  SolidVelocityBoundaryFromFluid<dim> velocity_bc(*fluid_mapping_ptr,
+                                                  *fluid_dof_handler_ptr,
+                                                  *fluid_solution_ptr);
+
+  SolidBoundaryValues<dim> alpha_bc(parameters.alpha_inlet, inlet_velocity);
+
+  VectorTools::interpolate_boundary_values(
+    dof_handler, 1, velocity_bc, constraints, vel_mask);
+
+  VectorTools::interpolate_boundary_values(
+    dof_handler, 1, alpha_bc, constraints, alpha_mask);
+
+  std::set<types::boundary_id> no_normal_flux_boundaries;
+  no_normal_flux_boundaries.insert(0);
+
+  VectorTools::compute_no_normal_flux_constraints(dof_handler,
+                                                  0,
+                                                  no_normal_flux_boundaries,
+                                                  constraints);
+
+  constraints.close();
+}
+
+template <int dim>
+void
+SolidPhaseSolver<dim>::set_fluid_velocity_field(
+  const DoFHandler<dim>               &fluid_dh,
+  const Mapping<dim>                  &fluid_mapping,
+  const TrilinosWrappers::MPI::Vector &fluid_solution)
+{
+  fluid_dof_handler_ptr    = &fluid_dh;
+  fluid_mapping_ptr        = &fluid_mapping;
+  fluid_solution_ptr       = &fluid_solution;
+  has_fluid_velocity_field = true;
+}
+
 
 template <int dim>
 void
@@ -465,6 +562,27 @@ SolidPhaseSolver<dim>::assemble_system()
   const unsigned int dofs_per_cell = fe.dofs_per_cell;
   const unsigned int n_q           = quadrature.size();
 
+  AssertThrow(
+    has_fluid_velocity_field,
+    ExcMessage(
+      "Fluid velocity field must be set before assembling solid system."));
+  AssertThrow(fluid_dof_handler_ptr != nullptr,
+              ExcMessage("fluid_dof_handler_ptr is null."));
+  AssertThrow(fluid_mapping_ptr != nullptr,
+              ExcMessage("fluid_mapping_ptr is null."));
+  AssertThrow(fluid_solution_ptr != nullptr,
+              ExcMessage("fluid_solution_ptr is null."));
+
+  FEValues<dim> fluid_fe_values(*fluid_mapping_ptr,
+                                fluid_dof_handler_ptr->get_fe(),
+                                quadrature,
+                                update_values);
+
+  const FEValuesExtractors::Vector fluid_velocities(0);
+
+
+  std::vector<Tensor<1, dim>> fluid_velocity_values(n_q);
+
   FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
   Vector<double>     cell_rhs(dofs_per_cell);
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
@@ -477,7 +595,10 @@ SolidPhaseSolver<dim>::assemble_system()
   const double dt = time_step;
 
 
-  const Tensor<1, dim> u_f = inlet_velocity;
+
+  // const Tensor<1, dim> u_f = inlet_velocity;
+
+
 
   // Shape function caches
   std::vector<Tensor<1, dim>> phi_u(dofs_per_cell);
@@ -495,6 +616,8 @@ SolidPhaseSolver<dim>::assemble_system()
   locally_relevant_old_solution = old_solution;
   locally_relevant_old_solution.update_ghost_values();
 
+  bool printed_u_f_q = false;
+
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
@@ -502,6 +625,16 @@ SolidPhaseSolver<dim>::assemble_system()
           fe_values.reinit(cell);
           cell_matrix = 0.0;
           cell_rhs    = 0.0;
+
+          typename DoFHandler<dim>::active_cell_iterator fluid_cell(
+            &(fluid_dof_handler_ptr->get_triangulation()),
+            cell->level(),
+            cell->index(),
+            fluid_dof_handler_ptr);
+
+          fluid_fe_values.reinit(fluid_cell);
+          fluid_fe_values[fluid_velocities].get_function_values(
+            *fluid_solution_ptr, fluid_velocity_values);
 
           fe_values[velocities].get_function_values(
             locally_relevant_old_solution, u_old);
@@ -518,6 +651,19 @@ SolidPhaseSolver<dim>::assemble_system()
               const Tensor<1, dim> u_k     = u_old[q];
               const double         a_k     = a_old[q];
               const double         div_u_k = trace(grad_u_old[q]);
+
+              const Tensor<1, dim> u_f_q = fluid_velocity_values[q];
+
+              if (!printed_u_f_q &&
+                  Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+                {
+                  pcout << "u_f_q = ";
+                  for (unsigned int d = 0; d < dim; ++d)
+                    pcout << u_f_q[d] << ' ';
+                  pcout << std::endl;
+
+                  printed_u_f_q = true;
+                }
 
               // shape values at q
               for (unsigned int k = 0; k < dofs_per_cell; ++k)
@@ -598,7 +744,7 @@ SolidPhaseSolver<dim>::assemble_system()
                       // RHS
                       cell_rhs(i) +=
                         (rho_s * a_k / dt) * (v_i * u_k[comp_i]) * JxW;
-                      cell_rhs(i) += (beta * a_k) * (v_i * u_f[comp_i]) * JxW;
+                      cell_rhs(i) += (beta * a_k) * (v_i * u_f_q[comp_i]) * JxW;
                     }
                 }
             }
@@ -707,6 +853,20 @@ SolidPhaseSolver<dim>::solve()
 }
 
 
+template <int dim>
+const TrilinosWrappers::MPI::Vector &
+SolidPhaseSolver<dim>::get_solid_volume_fraction() const
+{
+  return locally_relevant_solution.block(1);
+}
+
+// template <int dim>
+// const TrilinosWrappers::MPI::Vector &
+// SolidPhaseSolver<dim>::get_solid_velocity() const
+// {
+//   return solid_velocity_solution;
+// }
+
 
 template <int dim>
 void
@@ -775,23 +935,97 @@ SolidPhaseSolver<dim>::output_results(const double /*time*/)
 
 
 
+// template <int dim>
+// void
+// SolidPhaseSolver<dim>::run()
+// {
+//   // make_grid();
+//   setup_dofs();
+
+//   make_output_dir();
+
+//   // --- IC
+//   SolidInitialValues<dim> ic(parameters.alpha0, 0.0);
+
+//   old_solution = 0.0;
+//   VectorTools::interpolate(dof_handler, ic, old_solution);
+//   constraints.distribute(old_solution);
+//   old_solution.compress(VectorOperation::insert);
+
+
+//   locally_relevant_old_solution = old_solution;
+//   locally_relevant_old_solution.update_ghost_values();
+
+//   solution = old_solution;
+//   solution.compress(VectorOperation::insert);
+
+//   locally_relevant_solution = solution;
+//   locally_relevant_solution.update_ghost_values();
+
+//   timestep_number = 0;
+//   output_results(0.0);
+
+//   const double L = 1.0;
+//   const double h = L / static_cast<double>(sub[0]);
+
+
+//   double max_velocity = 0.0;
+//   for (unsigned int d = 0; d < dim; ++d)
+//     {
+//       max_velocity = std::max(max_velocity, std::abs(inlet_velocity[d]));
+//     }
+//   for (timestep_number = 1; timestep_number <= parameters.n_steps;
+//        ++timestep_number)
+//     {
+//       const double time = timestep_number * time_step;
+
+//       assemble_system();
+//       solve();
+
+
+
+//       output_results(time);
+
+//       old_solution = solution;
+//       old_solution.compress(VectorOperation::insert);
+
+//       locally_relevant_old_solution = old_solution;
+//       locally_relevant_old_solution.update_ghost_values();
+
+//       const double CFL = max_velocity * time_step / h;
+
+//       pcout << "TimeStep " << timestep_number << " time = " << time
+//             << " CFL = " << CFL << " ||rhs|| = " << system_rhs.l2_norm()
+//             << "\n ";
+
+
+//       if (parameters.print_timer_each_step)
+//         computing_timer.print_summary();
+//     }
+
+//   if (parameters.print_timer_at_end)
+//     {
+//       computing_timer.print_summary();
+//     }
+// }
+
+
 template <int dim>
 void
-SolidPhaseSolver<dim>::run()
+SolidPhaseSolver<dim>::setup()
 {
-  make_grid();
+  // make_grid();
   setup_dofs();
 
   make_output_dir();
 
-  // --- IC
+  // Initial condition
   SolidInitialValues<dim> ic(parameters.alpha0, 0.0);
 
   old_solution = 0.0;
   VectorTools::interpolate(dof_handler, ic, old_solution);
   constraints.distribute(old_solution);
   old_solution.compress(VectorOperation::insert);
-
 
   locally_relevant_old_solution = old_solution;
   locally_relevant_old_solution.update_ghost_values();
@@ -805,48 +1039,93 @@ SolidPhaseSolver<dim>::run()
   timestep_number = 0;
   output_results(0.0);
 
-  const double L = 1.0;
-  const double h = L / static_cast<double>(sub[0]);
+  const double L   = 1.0;
+  cfl_length_scale = L / static_cast<double>(sub[0]);
 
-
-  double max_velocity = 0.0;
+  max_inlet_velocity = 0.0;
   for (unsigned int d = 0; d < dim; ++d)
     {
-      max_velocity = std::max(max_velocity, std::abs(inlet_velocity[d]));
+      max_inlet_velocity =
+        std::max(max_inlet_velocity, std::abs(inlet_velocity[d]));
     }
-  for (timestep_number = 1; timestep_number <= parameters.n_steps;
-       ++timestep_number)
-    {
-      const double time = timestep_number * time_step;
+}
 
-      assemble_system();
-      solve();
+template <int dim>
+bool
+SolidPhaseSolver<dim>::advance_one_step()
+{
+  if (timestep_number >= parameters.n_steps)
+    return false;
 
+  ++timestep_number;
+  const double time = timestep_number * time_step;
 
+  update_constraints();
+  assemble_system();
+  solve();
 
-      output_results(time);
+  output_results(time);
 
-      old_solution = solution;
-      old_solution.compress(VectorOperation::insert);
+  old_solution = solution;
+  old_solution.compress(VectorOperation::insert);
 
-      locally_relevant_old_solution = old_solution;
-      locally_relevant_old_solution.update_ghost_values();
+  locally_relevant_old_solution = old_solution;
+  locally_relevant_old_solution.update_ghost_values();
 
-      const double CFL = max_velocity * time_step / h;
+  const double CFL = max_inlet_velocity * time_step / cfl_length_scale;
 
-      pcout << "TimeStep " << timestep_number << " time = " << time
-            << " CFL = " << CFL << " ||rhs|| = " << system_rhs.l2_norm()
-            << "\n ";
+  pcout << "TimeStep " << timestep_number << " time = " << time
+        << " CFL = " << CFL << " ||rhs|| = " << system_rhs.l2_norm() << "\n ";
 
+  if (parameters.print_timer_each_step)
+    computing_timer.print_summary();
 
-      if (parameters.print_timer_each_step)
-        computing_timer.print_summary();
-    }
+  return true;
+}
 
+template <int dim>
+void
+SolidPhaseSolver<dim>::finalize()
+{
   if (parameters.print_timer_at_end)
     {
       computing_timer.print_summary();
     }
+}
+
+template <int dim>
+bool
+SolidPhaseSolver<dim>::finished() const
+{
+  return timestep_number >= parameters.n_steps;
+}
+
+template <int dim>
+unsigned int
+SolidPhaseSolver<dim>::get_step_number() const
+{
+  return timestep_number;
+}
+
+template <int dim>
+double
+SolidPhaseSolver<dim>::get_current_time() const
+{
+  return timestep_number * time_step;
+}
+
+
+template <int dim>
+void
+SolidPhaseSolver<dim>::run()
+{
+  setup();
+
+  while (advance_one_step())
+    {
+    }
+
+  finalize();
 }
 
 

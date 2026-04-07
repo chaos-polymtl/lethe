@@ -259,6 +259,12 @@ public:
   /// outside of the object for now.
   AffineConstraints<double> void_fraction_constraints;
 
+  void
+  set_void_fraction_field(const GlobalVectorType &new_void_fraction);
+
+  const GlobalVectorType &
+  get_void_fraction_field() const;
+
 
 
 private:

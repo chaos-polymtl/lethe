@@ -42,6 +42,33 @@ public:
   virtual void
   solve() override;
 
+  // for euler euler
+  void
+  set_alpha_f(const TrilinosWrappers::MPI::Vector &alpha_f_in);
+
+  parallel::distributed::Triangulation<dim> &
+  get_triangulation();
+
+  void
+  setup_for_external_stepping();
+
+  bool
+  advance_one_step_external();
+
+  void
+  finish_external_stepping();
+
+  const DoFHandler<dim> &
+  get_fluid_dof_handler() const;
+
+  const Mapping<dim> &
+  get_fluid_mapping() const;
+
+  const TrilinosWrappers::MPI::Vector &
+  get_fluid_solution() const;
+
+
+
 private:
   void
   assemble_mass_matrix_diagonal(TrilinosWrappers::SparseMatrix &mass_matrix);
@@ -51,6 +78,16 @@ private:
 
   void
   read_dem();
+
+  // for euler euler
+  void
+  apply_alpha_f_to_void_fraction_manager();
+
+  TrilinosWrappers::MPI::Vector alpha_f;
+  bool                          has_alpha_f           = false;
+  bool                          grid_is_already_built = false;
+
+
 
 protected:
   /**

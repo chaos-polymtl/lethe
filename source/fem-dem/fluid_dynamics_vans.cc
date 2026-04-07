@@ -171,6 +171,16 @@ FluidDynamicsVANS<dim>::calculate_void_fraction(const double time)
 
 template <int dim>
 void
+FluidDynamicsVANS<dim>::set_alpha_f(
+  const TrilinosWrappers::MPI::Vector &alpha_f_in) // for euler-euler
+{
+  alpha_f.reinit(alpha_f_in);
+  alpha_f     = alpha_f_in;
+  has_alpha_f = true;
+}
+
+template <int dim>
+void
 FluidDynamicsVANS<dim>::vertices_cell_mapping()
 {
   // Find all the cells around each vertex
@@ -402,6 +412,25 @@ FluidDynamicsVANS<dim>::assemble_system_matrix()
                                            this->cell_quadrature->size()));
     this->system_matrix.compress(VectorOperation::add);
   }
+}
+
+
+template <int dim>
+void
+FluidDynamicsVANS<dim>::apply_alpha_f_to_void_fraction_manager() // for
+                                                                 // euler-euler
+{
+  AssertThrow(
+    has_alpha_f,
+    ExcMessage(
+      "alpha_f was not set before applying it to the void-fraction field."));
+
+  AssertThrow(
+    alpha_f.size() == void_fraction_manager.get_void_fraction_field().size(),
+    ExcMessage(
+      "alpha_f and the VANS void-fraction field do not have the same size."));
+
+  void_fraction_manager.set_void_fraction_field(alpha_f);
 }
 
 template <int dim>
@@ -771,18 +800,141 @@ FluidDynamicsVANS<dim>::monitor_mass_conservation()
               << " s^-1" << std::endl;
 }
 
+
+template <int dim>
+parallel::distributed::Triangulation<dim> &
+FluidDynamicsVANS<dim>::get_triangulation()
+{
+  auto *distributed_tria =
+    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+      this->triangulation.get());
+
+  AssertThrow(distributed_tria != nullptr,
+              ExcMessage("FluidDynamicsVANS triangulation is not a "
+                         "parallel::distributed::Triangulation."));
+
+  return *distributed_tria;
+}
+
+template <int dim>
+const DoFHandler<dim> &
+FluidDynamicsVANS<dim>::get_fluid_dof_handler() const
+{
+  return this->dof_handler;
+}
+
+template <int dim>
+const Mapping<dim> &
+FluidDynamicsVANS<dim>::get_fluid_mapping() const
+{
+  return *this->mapping;
+}
+
+template <int dim>
+const TrilinosWrappers::MPI::Vector &
+FluidDynamicsVANS<dim>::get_fluid_solution() const
+{
+  return this->evaluation_point;
+}
+
+// template <int dim>
+// void
+// FluidDynamicsVANS<dim>::solve()
+// {
+//   if (this->triangulation->n_global_active_cells() == 0)
+//     {
+//       read_mesh_and_manifolds(
+//         *this->triangulation,
+//         this->cfd_dem_simulation_parameters.cfd_parameters.mesh,
+//         this->cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,
+//         this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
+//             .restart ||
+//           this->cfd_dem_simulation_parameters.void_fraction->read_dem ==
+//           true,
+//         this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
+//     }
+
+//   if (this->cfd_dem_simulation_parameters.void_fraction->read_dem == true &&
+//       this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
+//           .restart == false)
+//     read_dem();
+
+//   this->setup_dofs();
+
+//   this->set_initial_condition(
+//     this->cfd_dem_simulation_parameters.cfd_parameters.initial_condition->type,
+//     this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
+//       .restart);
+
+//   particle_handler.exchange_ghost_particles(true);
+
+//   while (this->simulation_control->integrate())
+//     {
+//       this->simulation_control->print_progression(this->pcout);
+
+//       // We allow the physics to update their boundary conditions
+//       // according to their own parameters
+//       this->update_boundary_conditions();
+//       this->multiphysics->update_boundary_conditions();
+
+//       this->dynamic_flow_control();
+
+//       if (this->simulation_control->is_at_start())
+//         {
+//           vertices_cell_mapping();
+//           if (has_alpha_f)
+//             {
+//               apply_alpha_f_to_void_fraction_manager();
+//             }
+//           else
+//             {
+//               void_fraction_manager.initialize_void_fraction(
+//                 this->simulation_control->get_current_time());
+//             }
+
+//           this->iterate();
+//         }
+//       else
+//         {
+//           NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
+//           vertices_cell_mapping();
+
+//           if (has_alpha_f)
+//             {
+//               apply_alpha_f_to_void_fraction_manager();
+//             }
+//           else
+//             {
+//               calculate_void_fraction(
+//                 this->simulation_control->get_current_time());
+//             }
+
+//           this->iterate();
+//         }
+
+//       this->postprocess(false);
+//       monitor_mass_conservation();
+//       finish_time_step_fd();
+//     }
+
+//   this->finish_simulation();
+// }
+
 template <int dim>
 void
-FluidDynamicsVANS<dim>::solve()
+FluidDynamicsVANS<dim>::setup_for_external_stepping()
 {
-  read_mesh_and_manifolds(
-    *this->triangulation,
-    this->cfd_dem_simulation_parameters.cfd_parameters.mesh,
-    this->cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,
-    this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
-        .restart ||
-      this->cfd_dem_simulation_parameters.void_fraction->read_dem == true,
-    this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
+  if (this->triangulation->n_global_active_cells() == 0)
+    {
+      read_mesh_and_manifolds(
+        *this->triangulation,
+        this->cfd_dem_simulation_parameters.cfd_parameters.mesh,
+        this->cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,
+        this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
+            .restart ||
+          this->cfd_dem_simulation_parameters.void_fraction->read_dem == true,
+        this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
+    }
 
   if (this->cfd_dem_simulation_parameters.void_fraction->read_dem == true &&
       this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
@@ -797,39 +949,117 @@ FluidDynamicsVANS<dim>::solve()
       .restart);
 
   particle_handler.exchange_ghost_particles(true);
+}
 
-  while (this->simulation_control->integrate())
+template <int dim>
+bool
+FluidDynamicsVANS<dim>::advance_one_step_external()
+{
+  if (!this->simulation_control->integrate())
+    return false;
+
+  this->simulation_control->print_progression(this->pcout);
+
+  this->update_boundary_conditions();
+  this->multiphysics->update_boundary_conditions();
+
+  this->dynamic_flow_control();
+
+  if (this->simulation_control->is_at_start())
     {
-      this->simulation_control->print_progression(this->pcout);
+      vertices_cell_mapping();
 
-      // We allow the physics to update their boundary conditions
-      // according to their own parameters
-      this->update_boundary_conditions();
-      this->multiphysics->update_boundary_conditions();
-
-      this->dynamic_flow_control();
-
-      if (this->simulation_control->is_at_start())
+      if (has_alpha_f)
         {
-          vertices_cell_mapping();
-          void_fraction_manager.initialize_void_fraction(
-            this->simulation_control->get_current_time());
-          this->iterate();
+          apply_alpha_f_to_void_fraction_manager();
         }
       else
         {
-          NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
-          vertices_cell_mapping();
-          calculate_void_fraction(this->simulation_control->get_current_time());
-          this->iterate();
+          void_fraction_manager.initialize_void_fraction(
+            this->simulation_control->get_current_time());
         }
 
-      this->postprocess(false);
-      monitor_mass_conservation();
-      finish_time_step_fd();
+
+      // const Point<dim> probe_point(0.5, 0.5, 0.5);
+
+      // double local_value = 0.0;
+      // int    found_here  = 0;
+
+      // try
+      //   {
+      //     local_value = VectorTools::point_value(
+      //       void_fraction_manager.dof_handler,
+      //       void_fraction_manager.get_void_fraction_field(),
+      //       probe_point);
+      //     found_here = 1;
+      //   }
+      // catch (...)
+      //   {
+      //     // This rank does not own the point
+      //   }
+
+      // const int found_global =
+      //   Utilities::MPI::sum(found_here, this->mpi_communicator);
+
+      // const double value_global =
+      //   Utilities::MPI::sum(local_value, this->mpi_communicator);
+
+      // if (found_global == 1)
+      //   {
+      //     this->pcout << "Initial fluid void fraction at " << probe_point
+      //                 << " = " << value_global << std::endl;
+      //   }
+      // else
+      //   {
+      //     this->pcout << "Could not evaluate fluid void fraction uniquely at
+      //     "
+      //                 << probe_point << std::endl;
+      //   }
+
+      this->iterate();
+    }
+  else
+    {
+      NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
+      vertices_cell_mapping();
+
+      if (has_alpha_f)
+        {
+          apply_alpha_f_to_void_fraction_manager();
+        }
+      else
+        {
+          calculate_void_fraction(this->simulation_control->get_current_time());
+        }
+
+      this->iterate();
     }
 
+  this->postprocess(false);
+  monitor_mass_conservation();
+  finish_time_step_fd();
+
+  return true;
+}
+
+template <int dim>
+void
+FluidDynamicsVANS<dim>::finish_external_stepping()
+{
   this->finish_simulation();
+}
+
+template <int dim>
+void
+FluidDynamicsVANS<dim>::solve()
+{
+  setup_for_external_stepping();
+
+  while (advance_one_step_external())
+    {
+    }
+
+  finish_external_stepping();
 }
 
 // Pre-compile the 2D and 3D solver to ensure that the

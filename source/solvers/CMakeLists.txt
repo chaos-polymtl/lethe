@@ -45,6 +45,8 @@ add_library(lethe-solvers
   vof_phase_gradient_projection.cc
   vof_scratch_data.cc
   vof_subequations_interface.cc
+  euler_euler_sf.cc
+  euler_void_fraction.cc
   # Headers
   ../../include/solvers/analytical_solutions.h
   ../../include/solvers/auxiliary_physics.h

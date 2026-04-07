@@ -1,3 +1,6 @@
+#ifndef lethe_solid_phase_h
+#define lethe_solid_phase_h
+
 #include <core/pvd_handler.h>
 
 #include <solvers/fluid_dynamics_matrix_based.h>
@@ -126,7 +129,7 @@ struct SolidPhaseParameters
       {
         prm.declare_entry("ilu overlap", "1", Patterns::Integer(0));
         prm.declare_entry("amg elliptic", "false", Patterns::Bool());
-        prm.declare_entry("amg sweeps", "2", Patterns::Integer(1));
+        prm.declare_entry("amg sweeps", "2", Patterns::Integer(0));
         prm.declare_entry("amg aggregation threshold",
                           "0.02",
                           Patterns::Double(0.0));
@@ -332,15 +335,48 @@ template <int dim>
 class SolidPhaseSolver
 {
 public:
-  SolidPhaseSolver(const SolidPhaseParameters &parameters,
-                   MPI_Comm                    comm = MPI_COMM_WORLD);
+  SolidPhaseSolver(const SolidPhaseParameters                &parameters,
+                   parallel::distributed::Triangulation<dim> &tria,
+                   MPI_Comm comm = MPI_COMM_WORLD);
+
 
   void
   run();
 
-private:
+
+  const TrilinosWrappers::MPI::Vector &
+  get_solid_volume_fraction() const;
+
+  // const TrilinosWrappers::MPI::Vector &
+  // get_solid_velocity() const;
+
   void
-  make_grid();
+  setup();
+
+  bool
+  advance_one_step();
+
+  void
+  finalize();
+
+  bool
+  finished() const;
+
+  unsigned int
+  get_step_number() const;
+
+  double
+  get_current_time() const;
+
+
+  void
+  set_fluid_velocity_field(const DoFHandler<dim>               &fluid_dh,
+                           const Mapping<dim>                  &fluid_mapping,
+                           const TrilinosWrappers::MPI::Vector &fluid_solution);
+
+private:
+  // void
+  // make_grid();
   void
   setup_dofs();
   void
@@ -360,6 +396,8 @@ private:
   void
   setup_AMG();
 
+  void
+  update_constraints();
 
 
   const SolidPhaseParameters parameters;
@@ -367,15 +405,15 @@ private:
 
   MPI_Comm mpi_communicator;
 
-  // mesh
+
   std::vector<unsigned int> sub;
 
 
   const unsigned int  degree;
   const FESystem<dim> fe;
 
-  parallel::distributed::Triangulation<dim> triangulation;
-  DoFHandler<dim>                           dof_handler;
+  parallel::distributed::Triangulation<dim> &triangulation;
+  DoFHandler<dim>                            dof_handler;
 
 
   AffineConstraints<double> constraints;
@@ -410,6 +448,9 @@ private:
   ConditionalOStream pcout;
   TimerOutput        computing_timer;
 
+  double max_inlet_velocity = 0.0;
+  double cfl_length_scale   = 1.0;
+
   // output
   PVDHandler   pvd_handler;
   unsigned int output_every;
@@ -417,4 +458,12 @@ private:
   unsigned int digits;
   std::string  output_folder;
   std::string  output_prefix;
+
+
+  const DoFHandler<dim>               *fluid_dof_handler_ptr    = nullptr;
+  const Mapping<dim>                  *fluid_mapping_ptr        = nullptr;
+  const TrilinosWrappers::MPI::Vector *fluid_solution_ptr       = nullptr;
+  bool                                 has_fluid_velocity_field = false;
 };
+
+#endif

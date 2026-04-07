@@ -80,7 +80,13 @@ main(int argc, char *argv[])
       parameters.parse_parameters(prm);
 
 
-      SolidPhaseSolver<3> solver(parameters, comm);
+      parallel::distributed::Triangulation<3> triangulation(
+        comm,
+        typename dealii::Triangulation<3>::MeshSmoothing(
+          dealii::Triangulation<3>::smoothing_on_refinement |
+          dealii::Triangulation<3>::smoothing_on_coarsening));
+
+      SolidPhaseSolver<3> solver(parameters, triangulation, comm);
       solver.run();
     }
   catch (std::exception &exc)

@@ -108,7 +108,7 @@ namespace Parameters
                       Patterns::Bool(),
                       "Choose whether or not to apply grad_div stabilization");
     prm.declare_entry("void fraction time derivative",
-                      "true",
+                      "false",
                       Patterns::Bool(),
                       "Choose whether or not to implement d(epsilon)/dt ");
     prm.declare_entry(
