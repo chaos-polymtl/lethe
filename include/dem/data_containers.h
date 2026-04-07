@@ -106,10 +106,20 @@ namespace DEM
                                          particle_particle_contact_info<dim>>
       particle_contact_info;
 
+    // <particle id, periodic particle-particle info>
+    typedef ankerl::unordered_dense::
+      map<types::particle_index, periodic_particle_particle_contact_info<dim>>
+        periodic_particle_contact_info;
+
     // <particle id, <particle id, particle-particle info>>
     typedef ankerl::unordered_dense::map<types::particle_index,
                                          particle_contact_info>
       adjacent_particle_pairs;
+
+    // <particle id, <particle id, periodic particle-particle info>>
+    typedef ankerl::unordered_dense::map<types::particle_index,
+                                         periodic_particle_contact_info>
+      periodic_adjacent_particle_pairs;
 
     // <cell iterator, <particle id, particle iterator>>
     typedef std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,

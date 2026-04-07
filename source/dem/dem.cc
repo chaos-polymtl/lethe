@@ -120,9 +120,8 @@ DEMSolver<dim, PropertiesIndex>::setup_parameters()
   // Set up the solid objects
   setup_solid_objects();
 
-  // Check if there are any periodic boundaries. Break loop if any periodic
-  // boundary is found, because quantitites in parameters.boundary_conditions
-  // have information on all periodic boundaries.
+  // Check if there are any periodic boundaries. If any periodic boundary is
+  // found, set the information for all periodic boundaries and break loop.
   for (unsigned int i_bc = 0;
        i_bc < parameters.boundary_conditions.bc_types.size();
        ++i_bc)

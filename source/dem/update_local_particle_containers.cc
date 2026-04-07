@@ -241,18 +241,20 @@ update_contact_container_iterators<
 template void
 update_contact_container_iterators<
   2,
-  DEM::dem_data_structures<2>::adjacent_particle_pairs,
+  DEM::dem_data_structures<2>::periodic_adjacent_particle_pairs,
   ContactType::local_periodic_particle_particle>(
-  DEM::dem_data_structures<2>::adjacent_particle_pairs &pairs_in_contact,
+  DEM::dem_data_structures<2>::periodic_adjacent_particle_pairs
+    &pairs_in_contact,
   const DEM::dem_data_structures<2>::particle_index_iterator_map
     &particle_container);
 
 template void
 update_contact_container_iterators<
   3,
-  DEM::dem_data_structures<3>::adjacent_particle_pairs,
+  DEM::dem_data_structures<3>::periodic_adjacent_particle_pairs,
   ContactType::local_periodic_particle_particle>(
-  DEM::dem_data_structures<3>::adjacent_particle_pairs &pairs_in_contact,
+  DEM::dem_data_structures<3>::periodic_adjacent_particle_pairs
+    &pairs_in_contact,
   const DEM::dem_data_structures<3>::particle_index_iterator_map
     &particle_container);
 
@@ -260,18 +262,20 @@ update_contact_container_iterators<
 template void
 update_contact_container_iterators<
   2,
-  DEM::dem_data_structures<2>::adjacent_particle_pairs,
+  DEM::dem_data_structures<2>::periodic_adjacent_particle_pairs,
   ContactType::ghost_periodic_particle_particle>(
-  DEM::dem_data_structures<2>::adjacent_particle_pairs &pairs_in_contact,
+  DEM::dem_data_structures<2>::periodic_adjacent_particle_pairs
+    &pairs_in_contact,
   const DEM::dem_data_structures<2>::particle_index_iterator_map
     &particle_container);
 
 template void
 update_contact_container_iterators<
   3,
-  DEM::dem_data_structures<3>::adjacent_particle_pairs,
+  DEM::dem_data_structures<3>::periodic_adjacent_particle_pairs,
   ContactType::ghost_periodic_particle_particle>(
-  DEM::dem_data_structures<3>::adjacent_particle_pairs &pairs_in_contact,
+  DEM::dem_data_structures<3>::periodic_adjacent_particle_pairs
+    &pairs_in_contact,
   const DEM::dem_data_structures<3>::particle_index_iterator_map
     &particle_container);
 
@@ -279,18 +283,20 @@ update_contact_container_iterators<
 template void
 update_contact_container_iterators<
   2,
-  DEM::dem_data_structures<2>::adjacent_particle_pairs,
+  DEM::dem_data_structures<2>::periodic_adjacent_particle_pairs,
   ContactType::ghost_local_periodic_particle_particle>(
-  DEM::dem_data_structures<2>::adjacent_particle_pairs &pairs_in_contact,
+  DEM::dem_data_structures<2>::periodic_adjacent_particle_pairs
+    &pairs_in_contact,
   const DEM::dem_data_structures<2>::particle_index_iterator_map
     &particle_container);
 
 template void
 update_contact_container_iterators<
   3,
-  DEM::dem_data_structures<3>::adjacent_particle_pairs,
+  DEM::dem_data_structures<3>::periodic_adjacent_particle_pairs,
   ContactType::ghost_local_periodic_particle_particle>(
-  DEM::dem_data_structures<3>::adjacent_particle_pairs &pairs_in_contact,
+  DEM::dem_data_structures<3>::periodic_adjacent_particle_pairs
+    &pairs_in_contact,
   const DEM::dem_data_structures<3>::particle_index_iterator_map
     &particle_container);
 
