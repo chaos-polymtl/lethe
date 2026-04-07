@@ -89,7 +89,6 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   std::shared_ptr<SimulationControl> p_simulation_control,
   ConditionalOStream                &p_pcout)
   : multiphysics_parameters(nsparam.multiphysics)
-  , simulation_control(p_simulation_control)
   , pcout(p_pcout)
 {
   inspect_multiphysics_models_dependencies(nsparam);
@@ -340,75 +339,6 @@ MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
     MicrowaveHeatingWithoutElectromagneticsError(microwave_heating_enabled));
 }
 
-template <int dim>
-bool
-MultiphysicsInterface<dim>::should_solve_electromagnetics() const
-{
-  const Parameters::TimeHarmonicMaxwell<dim> &thm_parameters =
-    this->multiphysics_parameters.time_harmonic_maxwell_parameters;
-
-  // For steady simulations, each outer iteration (e.g., mesh adaptation
-  // cycles) should solve electromagnetics regardless of time-coupling settings.
-  if (this->simulation_control->get_assembly_method() ==
-      Parameters::SimulationControl::TimeSteppingMethod::steady)
-    {
-      return true;
-    }
-
-  // Always solve at the first step of the simulation (simulation start as 0 but
-  // it is then incremented before solving the physics for the first time, so
-  // the first time this function is called, the step number is 1).
-  if (this->simulation_control->get_step_number() == 1)
-    {
-      return true;
-    }
-  else
-    {
-      switch (thm_parameters.time_coupling_method)
-        {
-          case Parameters::TimeCouplingMethod::none:
-            return false;
-
-
-          case Parameters::TimeCouplingMethod::iteration:
-            // Solve only if we are at a multiple of the specified iteration
-            // frequency. We substract 1 since the step number starts at 1.
-            if ((this->simulation_control->get_step_number() - 1) %
-                  thm_parameters.coupling_iteration ==
-                0)
-              return true;
-            else
-              return false;
-          case Parameters::TimeCouplingMethod::time:
-            // Solve only if the current time has passed a multiple of
-            // the specified time frequency since the last time the
-            // electromagnetics were solved. This is done by comparing the floor
-            // of the current time divided by the time coupling parameter to the
-            // floor of the previous time divided by the time coupling
-            // parameter. If they are different, it means we have passed a
-            // multiple of the time coupling parameter and we should solve the
-            // electromagnetics.
-            if (std::floor(this->simulation_control->get_current_time() /
-                           thm_parameters.coupling_time) >
-                std::floor(this->simulation_control->get_previous_time() /
-                           thm_parameters.coupling_time))
-              return true;
-            else
-              return false;
-          case Parameters::TimeCouplingMethod::threshold:
-            AssertThrow(
-              false,
-              ExcMessage(
-                "Time coupling method 'threshold' is not yet implemented "
-                "for the time-harmonic Maxwell solver since the physical "
-                "properties only support a constant model."));
-            return true;
-          default:
-            AssertThrow(false, ExcMessage("Unknown time coupling method."));
-            return false;
-        }
-    }
-}
 
 template class MultiphysicsInterface<2>;
 template class MultiphysicsInterface<3>;

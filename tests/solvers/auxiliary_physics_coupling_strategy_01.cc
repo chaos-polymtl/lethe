@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief This test checks the should_solve_electromagnetics() method
- * of MultiphysicsInterface with different time coupling strategies:
+ * @brief This test checks AuxiliaryPhysics::should_solve_auxiliary_physic(). At
+ * the moment, this function is only implemented for TimeHarmonicMaxwell, so we
+ * test the behavior of this function for TimeHarmonicMaxwell with different
+ * time coupling strategies of the TimeHarmonicMaxwellCouplingStrategy enum:
  *   - none: never solve after step 0
  *   - iteration: solve every N iterations
  *   - time: solve when crossing a time multiple
@@ -20,8 +22,8 @@
 #include <core/parameters_multiphysics.h>
 #include <core/simulation_control.h>
 
-#include <solvers/multiphysics_interface.h>
 #include <solvers/simulation_parameters.h>
+#include <solvers/time_harmonic_maxwell.h>
 
 // Tests
 #include <../tests/tests.h>
@@ -63,47 +65,46 @@ test()
   solver_parameters.simulation_control.adapt_with_capillary_time_step_ratio =
     false;
 
-  ConditionalOStream pcout(std::cout,
-                           Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
-                             0);
-
   // -------------------------------------------------------
-  // Test 1: TimeCouplingMethod::none
+  // Test 1: TimeHarmonicMaxwellCouplingStrategy::none
   //         Step 1 -> true, all subsequent steps -> false
   // -------------------------------------------------------
   {
     solver_parameters.multiphysics.time_harmonic_maxwell_parameters
-      .time_coupling_method = Parameters::TimeCouplingMethod::none;
+      .time_coupling_strategy =
+      Parameters::TimeHarmonicMaxwellCouplingStrategy::none;
 
     std::shared_ptr<SimulationControl> simulation_control =
       std::make_shared<SimulationControlTransient>(
         solver_parameters.simulation_control);
 
-    MultiphysicsInterface<dim> multiphysics(solver_parameters,
-                                            tria,
-                                            simulation_control,
-                                            pcout);
+    TimeHarmonicMaxwell<dim> electromagnetics_auxiliary_physics(
+      nullptr, solver_parameters, tria, simulation_control);
 
-    deallog << "--- Test: TimeCouplingMethod::none ---" << std::endl;
+    deallog << "--- Test: TimeHarmonicMaxwellCouplingStrategy::none ---"
+            << std::endl;
     // Advance a few steps
     for (int i = 0; i < 5; ++i)
       {
         simulation_control->integrate();
         deallog << "Step " << simulation_control->get_step_number() << ": "
-                << (multiphysics.should_solve_electromagnetics() ? "true" :
-                                                                   "false")
+                << (electromagnetics_auxiliary_physics
+                        .should_solve_auxiliary_physic() ?
+                      "true" :
+                      "false")
                 << std::endl;
       }
   }
 
   // -------------------------------------------------------
-  // Test 2: TimeCouplingMethod::iteration with frequency 3
+  // Test 2: TimeHarmonicMaxwellCouplingStrategy::iteration with frequency 3
   //         Step 1 -> true, 2 -> false, 3 -> false,
   //         4 -> true, 5 -> false, 6 -> false, 7 -> true
   // -------------------------------------------------------
   {
     solver_parameters.multiphysics.time_harmonic_maxwell_parameters
-      .time_coupling_method = Parameters::TimeCouplingMethod::iteration;
+      .time_coupling_strategy =
+      Parameters::TimeHarmonicMaxwellCouplingStrategy::iteration;
     solver_parameters.multiphysics.time_harmonic_maxwell_parameters
       .coupling_iteration = 3;
 
@@ -111,32 +112,34 @@ test()
       std::make_shared<SimulationControlTransient>(
         solver_parameters.simulation_control);
 
-    MultiphysicsInterface<dim> multiphysics(solver_parameters,
-                                            tria,
-                                            simulation_control,
-                                            pcout);
+    TimeHarmonicMaxwell<dim> electromagnetics_auxiliary_physics(
+      nullptr, solver_parameters, tria, simulation_control);
 
-    deallog << "--- Test: TimeCouplingMethod::iteration (every 3) ---"
-            << std::endl;
+    deallog
+      << "--- Test: TimeHarmonicMaxwellCouplingStrategy::iteration (every 3) ---"
+      << std::endl;
 
     for (int i = 0; i < 7; ++i)
       {
         simulation_control->integrate();
         deallog << "Step " << simulation_control->get_step_number() << ": "
-                << (multiphysics.should_solve_electromagnetics() ? "true" :
-                                                                   "false")
+                << (electromagnetics_auxiliary_physics
+                        .should_solve_auxiliary_physic() ?
+                      "true" :
+                      "false")
                 << std::endl;
       }
   }
 
   // -------------------------------------------------------
-  // Test 3: TimeCouplingMethod::time with coupling_time 0.24
+  // Test 3: TimeHarmonicMaxwellCouplingStrategy::time with coupling_time 0.24
   //         dt = 0.1, so we cross 0.24 between step 2→3,
   //         0.48 between step 4→5, 0.72 between step 7→8, etc.
   // -------------------------------------------------------
   {
     solver_parameters.multiphysics.time_harmonic_maxwell_parameters
-      .time_coupling_method = Parameters::TimeCouplingMethod::time;
+      .time_coupling_strategy =
+      Parameters::TimeHarmonicMaxwellCouplingStrategy::time;
     solver_parameters.multiphysics.time_harmonic_maxwell_parameters
       .coupling_time = 0.24;
 
@@ -144,21 +147,22 @@ test()
       std::make_shared<SimulationControlTransient>(
         solver_parameters.simulation_control);
 
-    MultiphysicsInterface<dim> multiphysics(solver_parameters,
-                                            tria,
-                                            simulation_control,
-                                            pcout);
+    TimeHarmonicMaxwell<dim> electromagnetics_auxiliary_physics(
+      nullptr, solver_parameters, tria, simulation_control);
 
-    deallog << "--- Test: TimeCouplingMethod::time (every 0.24s, dt=0.1) ---"
-            << std::endl;
+    deallog
+      << "--- Test: TimeHarmonicMaxwellCouplingStrategy::time (every 0.24s, dt=0.1) ---"
+      << std::endl;
 
     for (int i = 0; i < 10; ++i)
       {
         simulation_control->integrate();
         deallog << "Step " << simulation_control->get_step_number()
                 << " (t=" << simulation_control->get_current_time() << "): "
-                << (multiphysics.should_solve_electromagnetics() ? "true" :
-                                                                   "false")
+                << (electromagnetics_auxiliary_physics
+                        .should_solve_auxiliary_physic() ?
+                      "true" :
+                      "false")
                 << std::endl;
       }
   }

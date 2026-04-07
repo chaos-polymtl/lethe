@@ -1,11 +1,11 @@
 
-DEAL::--- Test: TimeCouplingMethod::none ---
+DEAL::--- Test: TimeHarmonicMaxwellCouplingStrategy::none ---
 DEAL::Step 1: true
 DEAL::Step 2: false
 DEAL::Step 3: false
 DEAL::Step 4: false
 DEAL::Step 5: false
-DEAL::--- Test: TimeCouplingMethod::iteration (every 3) ---
+DEAL::--- Test: TimeHarmonicMaxwellCouplingStrategy::iteration (every 3) ---
 DEAL::Step 1: true
 DEAL::Step 2: false
 DEAL::Step 3: false
@@ -13,7 +13,7 @@ DEAL::Step 4: true
 DEAL::Step 5: false
 DEAL::Step 6: false
 DEAL::Step 7: true
-DEAL::--- Test: TimeCouplingMethod::time (every 0.24s, dt=0.1) ---
+DEAL::--- Test: TimeHarmonicMaxwellCouplingStrategy::time (every 0.24s, dt=0.1) ---
 DEAL::Step 1 (t=0.100000): true
 DEAL::Step 2 (t=0.200000): false
 DEAL::Step 3 (t=0.300000): true

@@ -791,12 +791,12 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
 {
   prm.enter_subsection("time harmonic maxwell");
   {
-    prm.enter_subsection("time coupling method");
+    prm.enter_subsection("time coupling strategy");
     {
       prm.declare_entry("type",
                         "none",
-                        Patterns::Selection("none|iteration|time|treshold"),
-                        "The type of time coupling method to use.");
+                        Patterns::Selection("none|iteration|time|threshold"),
+                        "The type of time coupling strategy to use.");
 
       prm.declare_entry(
         "coupling iteration",
@@ -935,20 +935,25 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
 {
   prm.enter_subsection("time harmonic maxwell");
   {
-    prm.enter_subsection("time coupling method");
+    prm.enter_subsection("time coupling strategy");
     {
       const std::string op_coupling_type = prm.get("type");
       if (op_coupling_type == "none")
-        time_coupling_method = Parameters::TimeCouplingMethod::none;
+        time_coupling_strategy =
+          Parameters::TimeHarmonicMaxwellCouplingStrategy::none;
       else if (op_coupling_type == "iteration")
-        time_coupling_method = Parameters::TimeCouplingMethod::iteration;
+        time_coupling_strategy =
+          Parameters::TimeHarmonicMaxwellCouplingStrategy::iteration;
       else if (op_coupling_type == "time")
-        time_coupling_method = Parameters::TimeCouplingMethod::time;
+        time_coupling_strategy =
+          Parameters::TimeHarmonicMaxwellCouplingStrategy::time;
       else if (op_coupling_type == "threshold")
-        time_coupling_method = Parameters::TimeCouplingMethod::threshold;
+        time_coupling_strategy =
+          Parameters::TimeHarmonicMaxwellCouplingStrategy::threshold;
       else
-        throw(std::runtime_error("Invalid time coupling method type. Options "
-                                 "are <none|iteration|time|threshold>."));
+        AssertThrow(false,
+                    ExcMessage("Invalid time coupling strategy type. Options "
+                               "are <none|iteration|time|threshold>."));
 
       TimeHarmonicMaxwell::coupling_iteration =
         prm.get_integer("coupling iteration");
@@ -976,9 +981,10 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
       TimeHarmonicMaxwell::electromagnetic_scaling_type =
         Parameters::ElectromagneticScalingType::power;
     else
-      throw(std::runtime_error(
-        "Invalid electromagnetic scaling type. "
-        "Options are <none|electric field|magnetic field|power>."));
+      AssertThrow(false,
+                  ExcMessage(
+                    "Invalid electromagnetic scaling type. "
+                    "Options are <none|electric field|magnetic field|power>."));
 
     // By default, the electric field dimensionality is in V/m, but if the user
     // changed the dimensionality of the problem, we need to change the

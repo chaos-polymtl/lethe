@@ -1629,6 +1629,75 @@ TimeHarmonicMaxwell<dim>::solve_linear_system()
                             *this->present_solution_skeleton);
 }
 
+template <int dim>
+bool
+TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physic()
+{
+  const Parameters::TimeHarmonicMaxwell<dim> &thm_parameters =
+    this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
+  // For steady simulations, each outer iteration (e.g., mesh adaptation
+  // cycles) should solve electromagnetics regardless of time-coupling settings.
+  if (this->simulation_control->get_assembly_method() ==
+      Parameters::SimulationControl::TimeSteppingMethod::steady)
+    {
+      return true;
+    }
+
+  // Always solve at the first step of the simulation (simulation start as 0 but
+  // it is then incremented before solving the physics for the first time, so
+  // the first time this function is called, the step number is 1).
+  if (this->simulation_control->get_step_number() == 1)
+    {
+      return true;
+    }
+  else
+    {
+      switch (thm_parameters.time_coupling_strategy)
+        {
+          case Parameters::TimeHarmonicMaxwellCouplingStrategy::none:
+            return false;
+
+
+          case Parameters::TimeHarmonicMaxwellCouplingStrategy::iteration:
+            // Solve only if we are at a multiple of the specified iteration
+            // frequency. We substract 1 since the step number starts at 1.
+            if ((this->simulation_control->get_step_number() - 1) %
+                  thm_parameters.coupling_iteration ==
+                0)
+              return true;
+            else
+              return false;
+          case Parameters::TimeHarmonicMaxwellCouplingStrategy::time:
+            // Solve only if the current time has passed a multiple of
+            // the specified time frequency since the last time the
+            // electromagnetics were solved. This is done by comparing the floor
+            // of the current time divided by the time coupling parameter to the
+            // floor of the previous time divided by the time coupling
+            // parameter. If they are different, it means we have passed a
+            // multiple of the time coupling parameter and we should solve the
+            // electromagnetics.
+            if (std::floor(this->simulation_control->get_current_time() /
+                           thm_parameters.coupling_time) >
+                std::floor(this->simulation_control->get_previous_time() /
+                           thm_parameters.coupling_time))
+              return true;
+            else
+              return false;
+          case Parameters::TimeHarmonicMaxwellCouplingStrategy::threshold:
+            AssertThrow(
+              false,
+              ExcMessage(
+                "Time coupling strategy 'threshold' is not yet implemented "
+                "for the time-harmonic Maxwell solver since the physical "
+                "properties only support a constant model."));
+            return true;
+          default:
+            AssertThrow(false, ExcMessage("Unknown time coupling strategy."));
+            return false;
+        }
+    }
+}
+
 template <>
 void
 TimeHarmonicMaxwell<2>::assemble_system_matrix()

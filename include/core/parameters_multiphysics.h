@@ -142,10 +142,22 @@ namespace Parameters
   };
 
   /**
-   * @brief Parameters for the time coupling of the time-harmonic Maxwell solver
-   * with the other physics solvers.
+   * @brief Parameters for the time coupling strategy of the time-harmonic Maxwell solver with the other physics solvers.
+   * - none: the time-harmonic Maxwell solver will only be solved at the first
+   * iteration of the time integration and will not be solved in the subsequent
+   * iterations.
+   * - iteration: the time-harmonic Maxwell solver will be solved every N time
+   * iterations, where N is given by the user input parameter "coupling
+   * iteration".
+   * - time: the time-harmonic Maxwell solver will be solved when crossing a
+   * time multiple, e.g. every T seconds, where the time multiple is given by
+   * the user input parameter "coupling time".
+   * - threshold: the time-harmonic Maxwell solver will be solved when the
+   * maximum change in the material properties of the problem change beyond a
+   * certain threshold, where the threshold value is given by the user input
+   * parameter "coupling threshold". **This is not implemented yet.**
    */
-  enum class TimeCouplingMethod : std::int8_t
+  enum class TimeHarmonicMaxwellCouplingStrategy : std::int8_t
   {
     none,
     iteration,
@@ -445,11 +457,11 @@ namespace Parameters
   {
     // Integration method for the time coupling of the time-harmonic Maxwell
     // solver
-    Parameters::TimeCouplingMethod time_coupling_method;
+    Parameters::TimeHarmonicMaxwellCouplingStrategy time_coupling_strategy;
 
-    // Coupling paramter for the time coupling strategy. If the time coupling
-    // strategy is based on iteration, this parameter represents the number of
-    // time iterations between two consecutive resolutions of the
+    // Coupling parameter for the time coupling strategy. If the time coupling
+    // strategy is based on the iteration count, this parameter represents the
+    // number of time iterations between two consecutive resolutions of the
     // electromagnetic fields.
     unsigned int coupling_iteration;
 
@@ -475,8 +487,8 @@ namespace Parameters
     // to the right boundary
     std::vector<int> waveguide_boundary_ids;
 
-    // Waveguide power (in W) to be able to link the amplitude of the
-    // electromagnetic wave to the power injected in the waveguide
+    // Waveguide power (in W, time-averaged) to be able to link the amplitude
+    // of the electromagnetic wave to the power injected in the waveguide
     std::vector<double> waveguide_power;
 
     // Electric field amplitude used for the normalization of the solution
