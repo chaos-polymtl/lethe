@@ -1,7 +1,7 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       1024
    Number of degrees of freedom: 3267
-   Volume of triangulation:      1
+   Volume of triangulation:      1.000000e+00
    Number of Cahn-Hilliard degrees of freedom: 2178
 
 *******************************************************************************

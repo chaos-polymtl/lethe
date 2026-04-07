@@ -24,7 +24,6 @@ test()
       Parameters::NonLinearSolver::KinsolStrategy::normal_newton,
     .tolerance                    = 1e-8,
     .max_iterations               = 10,
-    .display_precision            = 4,
     .force_rhs_calculation        = false,
     .matrix_tolerance             = 0.1,
     .step_tolerance               = 0.99,

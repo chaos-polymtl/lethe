@@ -1,15 +1,15 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       4096
    Number of degrees of freedom: 12675
-   Volume of triangulation:      36
+   Volume of triangulation:      3.600000e+01
    Number of thermal degrees of freedom: 4225
    Number of CLS degrees of freedom: 4225
 
 ---------------
 CLS Barycenter
 ---------------
-  time     x_vof     y_vof    vx_vof   vy_vof  
-0.000000 -0.000000 -0.000000 0.000000 0.000000 
+    time         x_cls         y_cls        vx_cls       vy_cls    
+0.000000e+00 -1.232939e-13 -1.193416e-13 0.000000e+00 0.000000e+00 
 
 *******************************************************************************
 Transient iteration: 1        Time: 0.005    Time step: 0.005    CFL: 0       
@@ -18,8 +18,8 @@ Transient iteration: 1        Time: 0.005    Time step: 0.005    CFL: 0
 ---------------
 CLS Barycenter
 ---------------
-  time     x_vof     y_vof    vx_vof   vy_vof  
-0.005000 -0.000000 -0.000000 0.000000 0.000000 
+    time         x_cls         y_cls        vx_cls       vy_cls    
+5.000000e-03 -1.232939e-13 -1.193416e-13 0.000000e+00 0.000000e+00 
 
 *******************************************************************************
 Transient iteration: 2        Time: 0.01     Time step: 0.005    CFL: 0       
@@ -28,8 +28,8 @@ Transient iteration: 2        Time: 0.01     Time step: 0.005    CFL: 0
 ---------------
 CLS Barycenter
 ---------------
-  time     x_vof     y_vof    vx_vof   vy_vof  
-0.010000 -0.000000 -0.000000 0.000000 0.000000 
+    time         x_cls         y_cls        vx_cls       vy_cls    
+1.000000e-02 -1.232939e-13 -1.193416e-13 0.000000e+00 0.000000e+00 
 
 *******************************************************************************
 Transient iteration: 3        Time: 0.015    Time step: 0.005    CFL: 0       
@@ -38,8 +38,8 @@ Transient iteration: 3        Time: 0.015    Time step: 0.005    CFL: 0
 ---------------
 CLS Barycenter
 ---------------
-  time     x_vof     y_vof    vx_vof   vy_vof  
-0.015000 -0.000000 -0.000000 0.000000 0.000000 
+    time         x_cls         y_cls        vx_cls       vy_cls    
+1.500000e-02 -1.232939e-13 -1.193416e-13 0.000000e+00 0.000000e+00 
 
 *******************************************************************************
 Transient iteration: 4        Time: 0.02     Time step: 0.005    CFL: 0       
@@ -48,8 +48,8 @@ Transient iteration: 4        Time: 0.02     Time step: 0.005    CFL: 0
 ---------------
 CLS Barycenter
 ---------------
-  time     x_vof     y_vof    vx_vof   vy_vof  
-0.020000 -0.000000 -0.000000 0.000000 0.000000 
+    time         x_cls         y_cls        vx_cls       vy_cls    
+2.000000e-02 -1.232939e-13 -1.193416e-13 0.000000e+00 0.000000e+00 
 
 *******************************************************************************
 Transient iteration: 5        Time: 0.025    Time step: 0.005    CFL: 0       
@@ -58,5 +58,5 @@ Transient iteration: 5        Time: 0.025    Time step: 0.005    CFL: 0
 ---------------
 CLS Barycenter
 ---------------
-  time     x_vof     y_vof    vx_vof   vy_vof  
-0.025000 -0.000000 -0.000000 0.000000 0.000000 
+    time         x_cls         y_cls        vx_cls       vy_cls    
+2.500000e-02 -1.232939e-13 -1.193416e-13 0.000000e+00 0.000000e+00 

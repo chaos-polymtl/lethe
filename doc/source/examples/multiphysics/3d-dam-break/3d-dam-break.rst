@@ -121,7 +121,7 @@ Note that the fluid dynamics are solved by default.
 .. code-block:: text
 
     subsection multiphysics
-      set CLS = true
+      set cls = true
     end
 
 Physical Properties

@@ -81,7 +81,7 @@ The ``multiphysics`` subsection enables to turn on (``true``) and off (``false``
 .. code-block:: text
 
     subsection multiphysics
-      set CLS = true
+      set cls = true
     end
 
 

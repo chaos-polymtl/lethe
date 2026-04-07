@@ -1,28 +1,28 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       64
    Number of degrees of freedom: 243
-   Volume of triangulation:      1
+   Volume of triangulation:      1.000000e+00
    Number of tracer degrees of freedom: 81
-Tracer statistics : 
-	     Min : 0
-	     Max : 0.788675
-	 Average : 0.109375
-	 Std-Dev : 0.239753
+Tracer statistics: 
+	     Min: 0.000000e+00
+	     Max: 7.886751e-01
+	 Average: 1.093750e-01
+	 Std-Dev: 2.397531e-01
 
 *******************************************************************************
 Transient iteration: 1        Time: 0.5      Time step: 0.5      CFL: 2.79578 
 *******************************************************************************
-Tracer statistics : 
-	     Min : 0.436653
-	     Max : 0.499349
-	 Average : 0.470664
-	 Std-Dev : 0.019052
+Tracer statistics: 
+	     Min: 4.366531e-01
+	     Max: 4.993487e-01
+	 Average: 4.706636e-01
+	 Std-Dev: 1.905203e-02
 
 *******************************************************************************
-Transient iteration: 2        Time: 1        Time step: 0.5      CFL: 3.0594
+Transient iteration: 2        Time: 1        Time step: 0.5      CFL: 3.0594  
 *******************************************************************************
-Tracer statistics :
-	     Min : 0.0444703
-	     Max : 0.956999
-	 Average : 0.516871
-	 Std-Dev : 0.255247
+Tracer statistics: 
+	     Min: 4.447030e-02
+	     Max: 9.569990e-01
+	 Average: 5.168710e-01
+	 Std-Dev: 2.552470e-01

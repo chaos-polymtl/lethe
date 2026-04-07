@@ -177,9 +177,9 @@ do
     case_name=${case_parameters[1]}
     maximum_refinement=${case_parameters[2]}
     maximum_time_step=${case_parameters[3]}
-    regularization_type=${case_parameters[4]}
-    regularization_frequency=${case_parameters[5]}
-    regularization_distance=${case_parameters[6]}
+    reinitialization_type=${case_parameters[4]}
+    reinitialization_frequency=${case_parameters[5]}
+    reinitialization_distance=${case_parameters[6]}
     tanh_thickness=${case_parameters[7]}
     diffusivity=${case_parameters[8]}
     diffusivity="${diffusivity//[$'\t\r\n ']/}" # strip last argument of whitespace characters
@@ -212,9 +212,9 @@ do
   echo "  MIN_REFINEMENT:           $minimum_refinement"
   echo "  MAX_REFINEMENT:           $maximum_refinement"
   echo "  MAX_TIME_STEP:            $maximum_time_step"
-  echo "  REGULARIZATION_TYPE:      $regularization_type"
-  echo "  REGULARIZATION_FREQUENCY: $regularization_frequency"
-  echo "  REGULARIZATION_DISTANCE: $regularization_distance"
+  echo "  REINITIALIZATION_TYPE:      $reinitialization_type"
+  echo "  REINITIALIZATION_FREQUENCY: $reinitialization_frequency"
+  echo "  REINITIALIZATION_DISTANCE: $reinitialization_distance"
   echo "  TANH_THICKNESS: $tanh_thickness"
   echo "  DIFFUSIVITY_MULT: $diffusivity"
   echo "  BOX_REFINEMENT: $box_refinement"
@@ -228,9 +228,9 @@ do
   sed -i "s/MAX_REFINEMENT/$maximum_refinement/g" "$case_name/$case_parameter_file"
   sed -i "s/BOX_REFINEMENT/$box_refinement/g" "$case_name/$case_parameter_file"
   sed -i "s/MAX_TIME_STEP/$maximum_time_step/g" "$case_name/$case_parameter_file"
-  sed -i "s/REGULARIZATION_TYPE/$regularization_type/g" "$case_name/$case_parameter_file"
-  sed -i "s/REGULARIZATION_FREQUENCY/$regularization_frequency/g" "$case_name/$case_parameter_file"
-  sed -i "s/REGULARIZATION_DISTANCE/$regularization_distance/g" "$case_name/$case_parameter_file"
+  sed -i "s/REINITIALIZATION_TYPE/$reinitialization_type/g" "$case_name/$case_parameter_file"
+  sed -i "s/REINITIALIZATION_FREQUENCY/$reinitialization_frequency/g" "$case_name/$case_parameter_file"
+  sed -i "s/REINITIALIZATION_DISTANCE/$reinitialization_distance/g" "$case_name/$case_parameter_file"
   sed -i "s/TANH_THICKNESS/$tanh_thickness/g" "$case_name/$case_parameter_file"
   sed -i "s/DIFFUSIVITY_MULT/$diffusivity/g" "$case_name/$case_parameter_file"
 

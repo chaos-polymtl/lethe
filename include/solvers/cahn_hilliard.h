@@ -66,13 +66,16 @@ public:
     , multiphysics(multiphysics_interface)
     , computing_timer(p_triangulation->get_mpi_communicator(),
                       this->pcout,
-                      TimerOutput::summary,
+                      TimerOutput::never,
                       TimerOutput::wall_times)
     , simulation_parameters(p_simulation_parameters)
     , triangulation(p_triangulation)
     , simulation_control(p_simulation_control)
     , dof_handler(std::make_shared<DoFHandler<dim>>(*triangulation))
   {
+    this->pcout << std::setprecision(simulation_control->get_log_precision())
+                << std::scientific;
+
     if (simulation_parameters.mesh.simplex)
       {
         // for simplex meshes
@@ -145,11 +148,6 @@ public:
     // Initialize solutions shared_ptr
     present_solution  = std::make_shared<GlobalVectorType>();
     filtered_solution = std::make_shared<GlobalVectorType>();
-
-    // Change the behavior of the timer for situations when you don't want
-    // outputs
-    if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
-      this->computing_timer.disable_output();
   }
 
   /**
@@ -334,11 +332,9 @@ public:
 
   /**
    * @brief Output the L2 and Linfty norms of the correction vector.
-   *
-   * @param[in] display_precision Number of outputted digits.
    */
   void
-  output_newton_update_norms(const unsigned int display_precision) override;
+  output_newton_update_norms() override;
 
   /**
    * @brief Return the metric for residual rescaling. By default, should return 1.

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_heat_transfer_assemblers_h
@@ -207,7 +207,7 @@ public:
 
 /**
  * @brief Class that assembles the viscous dissipation for the heat transfer
- * solver, for the specific case of VOF simulations. The only difference
+ * solver, for the specific case of CLS simulations. The only difference
  * compared to the regular one is that the viscous dissipation can be applied in
  * one of the fluids rather than both, through the viscous_dissipative_fluid
  * parameter.
@@ -222,11 +222,11 @@ public:
  * @ingroup assemblers
  */
 template <int dim>
-class HeatTransferAssemblerViscousDissipationVOF
+class HeatTransferAssemblerViscousDissipationCLS
   : public HeatTransferAssemblerBase<dim>
 {
 public:
-  HeatTransferAssemblerViscousDissipationVOF(
+  HeatTransferAssemblerViscousDissipationCLS(
     const std::shared_ptr<SimulationControl> &simulation_control,
     Parameters::FluidIndicator                p_viscous_dissipative_fluid)
     : simulation_control(simulation_control)
@@ -350,8 +350,8 @@ protected:
 
 /**
  * @brief Class that assembles the laser heating as a surface flux for the
- * heat transfer solver when VOF is enabled. The laser heat flux is
- * applied at the VOF interface (where the phase gradient is non-null).
+ * heat transfer solver when CLS is enabled. The laser heat flux is
+ * applied at the CLS interface (where the phase gradient is non-null).
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -362,11 +362,11 @@ protected:
  * @ingroup assemblers
  */
 template <int dim>
-class HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface
+class HeatTransferAssemblerLaserGaussianHeatFluxCLSInterface
   : public HeatTransferAssemblerBase<dim>
 {
 public:
-  HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface(
+  HeatTransferAssemblerLaserGaussianHeatFluxCLSInterface(
     const std::shared_ptr<SimulationControl> &simulation_control,
     std::shared_ptr<Parameters::Laser<dim>>   p_laser_parameters)
     : simulation_control(simulation_control)
@@ -399,8 +399,8 @@ protected:
 
 /**
  * @brief Class that assembles the laser heating as a uniform surface flux for
- * the heat transfer solver when VOF is enabled. The laser heat flux is
- * applied at the VOF interface (where the phase gradient is non-null).
+ * the heat transfer solver when CLS is enabled. The laser heat flux is
+ * applied at the CLS interface (where the phase gradient is non-null).
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -411,11 +411,11 @@ protected:
  * @ingroup assemblers
  */
 template <int dim>
-class HeatTransferAssemblerLaserUniformHeatFluxVOFInterface
+class HeatTransferAssemblerLaserUniformHeatFluxCLSInterface
   : public HeatTransferAssemblerBase<dim>
 {
 public:
-  HeatTransferAssemblerLaserUniformHeatFluxVOFInterface(
+  HeatTransferAssemblerLaserUniformHeatFluxCLSInterface(
     const std::shared_ptr<SimulationControl> &simulation_control,
     std::shared_ptr<Parameters::Laser<dim>>   p_laser_parameters)
     : simulation_control(simulation_control)
@@ -448,7 +448,7 @@ protected:
 
 /**
  * @brief Class that assembles the laser heating as a volumetric source for
- * the heat transfer solver when VOF is enabled. Exponentially decaying model is
+ * the heat transfer solver when CLS is enabled. Exponentially decaying model is
  * used to simulate the laser heat source: "Liu, S., Zhu, H., Peng, G.,
  * Yin, J. and Zeng, X., 2018. Microstructure prediction of selective
  * laser melting AlSi10Mg using finite element analysis. Materials &
@@ -465,11 +465,11 @@ protected:
  * @ingroup assemblers
  */
 template <int dim>
-class HeatTransferAssemblerLaserExponentialDecayVOF
+class HeatTransferAssemblerLaserExponentialDecayCLS
   : public HeatTransferAssemblerBase<dim>
 {
 public:
-  HeatTransferAssemblerLaserExponentialDecayVOF(
+  HeatTransferAssemblerLaserExponentialDecayCLS(
     const std::shared_ptr<SimulationControl> &simulation_control,
     std::shared_ptr<Parameters::Laser<dim>>   p_laser_parameters)
     : simulation_control(simulation_control)
@@ -502,8 +502,8 @@ protected:
 
 /**
  * @brief Class that assembles the radiation sink for the heat
- * transfer solver at the free surface (air/metal interface) when VOF and the
- * laser are active. The phase gradient of the VOF solver is used to transform
+ * transfer solver at the free surface (air/metal interface) when CLS and the
+ * laser are active. The phase gradient of the CLS solver is used to transform
  * radiative boundary condition at free surface into a volumetric sink at the
  * air/metal interface: "Tao Yu, Jidong Zhao,Semi-coupled resolved CFD–DEM
  * simulation of powder-based selective laser melting for additive
@@ -520,11 +520,11 @@ protected:
  * @ingroup assemblers
  */
 template <int dim>
-class HeatTransferAssemblerFreeSurfaceRadiationVOF
+class HeatTransferAssemblerFreeSurfaceRadiationCLS
   : public HeatTransferAssemblerBase<dim>
 {
 public:
-  HeatTransferAssemblerFreeSurfaceRadiationVOF(
+  HeatTransferAssemblerFreeSurfaceRadiationCLS(
     const std::shared_ptr<SimulationControl> &simulation_control,
     std::shared_ptr<Parameters::Laser<dim>>   p_laser_parameters)
     : simulation_control(simulation_control)
@@ -557,7 +557,7 @@ protected:
 
 /**
  * @brief Class that assembles the evaporation sink for the heat
- * transfer solver at the free surface (air/metal interface) when VOF is
+ * transfer solver at the free surface (air/metal interface) when CLS is
  * enabled.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
@@ -569,11 +569,11 @@ protected:
  * @ingroup assemblers.
  */
 template <int dim>
-class HeatTransferAssemblerVOFEvaporation
+class HeatTransferAssemblerCLSEvaporation
   : public HeatTransferAssemblerBase<dim>
 {
 public:
-  HeatTransferAssemblerVOFEvaporation(
+  HeatTransferAssemblerCLSEvaporation(
     const std::shared_ptr<SimulationControl> &simulation_control,
     const Parameters::Evaporation            &p_evaporation)
     : simulation_control(simulation_control)

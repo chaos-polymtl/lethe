@@ -15,6 +15,7 @@
 #include <dem/set_insertion_method.h>
 #include <dem/set_particle_particle_contact_force_model.h>
 #include <dem/set_particle_wall_contact_force_model.h>
+#include <dem/utilities.h>
 #include <dem/velocity_verlet_integrator.h>
 #include <fem-dem/cfd_dem_coupling_matrix_free.h>
 #include <fem-dem/fluid_dynamics_vans_matrix_free_operators.h>
@@ -1213,15 +1214,11 @@ CFDDEMMatrixFree<dim>::postprocess_cfd_dem()
           Parameters::Verbosity::verbose)
         {
           this->pcout << "Total volume of fluid: "
-                      << std::setprecision(
-                           this->simulation_control->get_log_precision())
                       << this->simulation_parameters.physical_properties_manager
                              .get_density_scale() *
                            total_volume_fluid
                       << " m^3" << std::endl;
           this->pcout << "Total volume of particles: "
-                      << std::setprecision(
-                           this->simulation_control->get_log_precision())
                       << this->simulation_parameters.physical_properties_manager
                              .get_density_scale() *
                            total_volume_particles
@@ -1534,6 +1531,10 @@ CFDDEMMatrixFree<dim>::solve()
       !this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
          .restart)
     read_dem();
+  report_cell_size_to_particle_diameter_ratio(*this->triangulation,
+                                              maximum_particle_diameter,
+                                              this->pcout,
+                                              this->mpi_communicator);
 
   this->computing_timer.leave_subsection("Read mesh, manifolds and particles");
 

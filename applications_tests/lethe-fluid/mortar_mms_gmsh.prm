@@ -13,8 +13,8 @@ set dimension = 2
 
 subsection simulation control
   set method            = steady
-  set output name       = output
   set number mesh adapt = 2
+  set output frequency  = 0
 end
 
 #---------------------------------------------------

@@ -283,27 +283,27 @@ HeatTransfer<dim>::setup_assemblers()
   // Laser heat source
   if (this->simulation_parameters.laser_parameters->activate_laser)
     {
-      if (this->simulation_parameters.multiphysics.VOF)
+      if (this->simulation_parameters.multiphysics.CLS)
         {
           // Call for the specific assembler of the laser source term
           // Laser source is applied at the interface (surface flux)
           if (this->simulation_parameters.laser_parameters->laser_type ==
               Parameters::Laser<
-                dim>::LaserType::gaussian_heat_flux_vof_interface)
+                dim>::LaserType::gaussian_heat_flux_cls_interface)
             {
               this->assemblers.emplace_back(
                 std::make_shared<
-                  HeatTransferAssemblerLaserGaussianHeatFluxVOFInterface<dim>>(
+                  HeatTransferAssemblerLaserGaussianHeatFluxCLSInterface<dim>>(
                   this->simulation_control,
                   this->simulation_parameters.laser_parameters));
             }
           else if (this->simulation_parameters.laser_parameters->laser_type ==
                    Parameters::Laser<
-                     dim>::LaserType::uniform_heat_flux_vof_interface)
+                     dim>::LaserType::uniform_heat_flux_cls_interface)
             {
               this->assemblers.emplace_back(
                 std::make_shared<
-                  HeatTransferAssemblerLaserUniformHeatFluxVOFInterface<dim>>(
+                  HeatTransferAssemblerLaserUniformHeatFluxCLSInterface<dim>>(
                   this->simulation_control,
                   this->simulation_parameters.laser_parameters));
             }
@@ -311,7 +311,7 @@ HeatTransfer<dim>::setup_assemblers()
             {
               this->assemblers.emplace_back(
                 std::make_shared<
-                  HeatTransferAssemblerLaserExponentialDecayVOF<dim>>(
+                  HeatTransferAssemblerLaserExponentialDecayCLS<dim>>(
                   this->simulation_control,
                   this->simulation_parameters.laser_parameters));
             }
@@ -324,7 +324,7 @@ HeatTransfer<dim>::setup_assemblers()
             {
               this->assemblers.emplace_back(
                 std::make_shared<
-                  HeatTransferAssemblerFreeSurfaceRadiationVOF<dim>>(
+                  HeatTransferAssemblerFreeSurfaceRadiationCLS<dim>>(
                   this->simulation_control,
                   this->simulation_parameters.laser_parameters));
             }
@@ -339,12 +339,12 @@ HeatTransfer<dim>::setup_assemblers()
     }
 
   // Evaporation cooling
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
       if (this->simulation_parameters.evaporation.enable_evaporation_cooling)
         {
           this->assemblers.emplace_back(
-            std::make_shared<HeatTransferAssemblerVOFEvaporation<dim>>(
+            std::make_shared<HeatTransferAssemblerCLSEvaporation<dim>>(
               this->simulation_control,
               this->simulation_parameters.evaporation));
         }
@@ -363,13 +363,13 @@ HeatTransfer<dim>::setup_assemblers()
 
   if (this->simulation_parameters.multiphysics.viscous_dissipation)
     {
-      if (this->simulation_parameters.multiphysics.VOF)
+      if (this->simulation_parameters.multiphysics.CLS)
         {
           // Call for the specific assembler
           this->assemblers.emplace_back(
-            std::make_shared<HeatTransferAssemblerViscousDissipationVOF<dim>>(
+            std::make_shared<HeatTransferAssemblerViscousDissipationCLS<dim>>(
               this->simulation_control,
-              this->simulation_parameters.multiphysics.vof_parameters
+              this->simulation_parameters.multiphysics.cls_parameters
                 .viscous_dissipative_fluid));
         }
       else
@@ -424,15 +424,15 @@ HeatTransfer<dim>::assemble_system_matrix()
     *this->face_quadrature,
     delta_T_ref);
 
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
-      const DoFHandler<dim> &dof_handler_vof =
-        this->multiphysics->get_dof_handler(PhysicsID::VOF);
-      scratch_data.enable_vof(
-        dof_handler_vof.get_fe(),
+      const DoFHandler<dim> &dof_handler_cls =
+        this->multiphysics->get_dof_handler(PhysicsID::CLS);
+      scratch_data.enable_cls(
+        dof_handler_cls.get_fe(),
         *this->cell_quadrature,
         *this->temperature_mapping,
-        this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
+        this->simulation_parameters.multiphysics.cls_parameters.phase_filter);
     }
 
   WorkStream::run(this->dof_handler->begin_active(),
@@ -530,18 +530,18 @@ HeatTransfer<dim>::assemble_local_system_matrix(
         }
     }
 
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
-      const DoFHandler<dim> &dof_handler_vof =
-        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      const DoFHandler<dim> &dof_handler_cls =
+        this->multiphysics->get_dof_handler(PhysicsID::CLS);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        &dof_handler_vof);
+        &dof_handler_cls);
 
-      scratch_data.reinit_vof(
-        phase_cell, this->multiphysics->get_filtered_solution(PhysicsID::VOF));
+      scratch_data.reinit_cls(
+        phase_cell, this->multiphysics->get_filtered_solution(PhysicsID::CLS));
     }
 
   scratch_data.calculate_physical_properties();
@@ -595,15 +595,15 @@ HeatTransfer<dim>::assemble_system_rhs()
     *this->face_quadrature,
     delta_T_ref);
 
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
-      const DoFHandler<dim> &dof_handler_vof =
-        this->multiphysics->get_dof_handler(PhysicsID::VOF);
-      scratch_data.enable_vof(
-        dof_handler_vof.get_fe(),
+      const DoFHandler<dim> &dof_handler_cls =
+        this->multiphysics->get_dof_handler(PhysicsID::CLS);
+      scratch_data.enable_cls(
+        dof_handler_cls.get_fe(),
         *this->cell_quadrature,
         *this->temperature_mapping,
-        this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
+        this->simulation_parameters.multiphysics.cls_parameters.phase_filter);
     }
 
   WorkStream::run(this->dof_handler->begin_active(),
@@ -705,18 +705,18 @@ HeatTransfer<dim>::assemble_local_system_rhs(
         multiphysics->get_solution(PhysicsID::fluid_dynamics));
     }
 
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
-      const DoFHandler<dim> &dof_handler_vof =
-        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      const DoFHandler<dim> &dof_handler_cls =
+        this->multiphysics->get_dof_handler(PhysicsID::CLS);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        &dof_handler_vof);
+        &dof_handler_cls);
 
-      scratch_data.reinit_vof(
-        phase_cell, this->multiphysics->get_filtered_solution(PhysicsID::VOF));
+      scratch_data.reinit_cls(
+        phase_cell, this->multiphysics->get_filtered_solution(PhysicsID::CLS));
     }
 
   scratch_data.calculate_physical_properties();
@@ -961,6 +961,14 @@ HeatTransfer<dim>::finish_simulation()
                                 simulation_control->get_log_precision());
       error_table.write_text(std::cout);
     }
+
+  if (this->simulation_parameters.timer.type == Parameters::Timer::Type::end)
+    {
+      announce_string(this->pcout, "Heat Transfer");
+      this->pcout << std::defaultfloat;
+      this->computing_timer.print_summary();
+      this->pcout << std::scientific;
+    }
 }
 
 template <int dim>
@@ -1009,13 +1017,13 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
     this->simulation_parameters.post_processing.postprocessed_fluid;
   // default: monophase simulations
   std::string domain_name("fluid");
-  bool        gather_vof(false);
+  bool        gather_cls(false);
 
   if (this->simulation_parameters.physical_properties_manager
         .get_number_of_fluids() == 2)
     {
       // Multiphase flow
-      gather_vof = true;
+      gather_cls = true;
       switch (monitored_fluid)
         {
           default:
@@ -1039,7 +1047,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
   // Temperature statistics
   if (simulation_parameters.post_processing.calculate_temperature_statistics)
     {
-      postprocess_temperature_statistics(gather_vof,
+      postprocess_temperature_statistics(gather_cls,
                                          monitored_fluid,
                                          domain_name,
                                          false);
@@ -1048,7 +1056,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
       // true.
       if (simulation_parameters.post_processing.calculate_average_temp_and_hf)
         {
-          postprocess_temperature_statistics(gather_vof,
+          postprocess_temperature_statistics(gather_cls,
                                              monitored_fluid,
                                              domain_name,
                                              true);
@@ -1066,11 +1074,11 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
       // Parse fluid present solution
       if (multiphysics->fluid_dynamics_is_block())
         {
-          postprocess_heat_flux_on_bc(gather_vof,
+          postprocess_heat_flux_on_bc(gather_cls,
                                       multiphysics->get_block_solution(
                                         PhysicsID::fluid_dynamics));
 
-          postprocess_thermal_energy_in_fluid(gather_vof,
+          postprocess_thermal_energy_in_fluid(gather_cls,
                                               monitored_fluid,
                                               domain_name,
                                               multiphysics->get_block_solution(
@@ -1079,9 +1087,9 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
       else
         {
           postprocess_heat_flux_on_bc(
-            gather_vof, multiphysics->get_solution(PhysicsID::fluid_dynamics));
+            gather_cls, multiphysics->get_solution(PhysicsID::fluid_dynamics));
 
-          postprocess_thermal_energy_in_fluid(gather_vof,
+          postprocess_thermal_energy_in_fluid(gather_cls,
                                               monitored_fluid,
                                               domain_name,
                                               multiphysics->get_solution(
@@ -1103,7 +1111,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
       AssertThrow(
         simulation_parameters.physical_properties_manager.has_phase_change(),
         LiquidFractionRequiresPhaseChange());
-      postprocess_liquid_fraction(gather_vof);
+      postprocess_liquid_fraction(gather_cls);
 
       if (simulation_control->get_step_number() %
             this->simulation_parameters.post_processing.output_frequency ==
@@ -1115,7 +1123,9 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
       Parameters::Timer::Type::iteration)
     {
       announce_string(this->pcout, "Heat Transfer");
+      this->pcout << std::defaultfloat;
       this->computing_timer.print_summary();
+      this->pcout << std::scientific;
       this->computing_timer.reset();
     }
 }
@@ -1659,7 +1669,7 @@ HeatTransfer<dim>::solve_linear_system()
 template <int dim>
 void
 HeatTransfer<dim>::postprocess_temperature_statistics(
-  const bool                       gather_vof,
+  const bool                       gather_cls,
   const Parameters::FluidIndicator monitored_fluid,
   const std::string                domain_name,
   const bool                       time_average)
@@ -1674,20 +1684,20 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
                              *this->cell_quadrature,
                              update_values | update_JxW_values);
 
-  // Initialize VOF information
-  std::shared_ptr<const DoFHandler<dim>> dof_handler_vof;
-  std::shared_ptr<FEValues<dim>>         fe_values_vof;
+  // Initialize CLS information
+  std::shared_ptr<const DoFHandler<dim>> dof_handler_cls;
+  std::shared_ptr<FEValues<dim>>         fe_values_cls;
   std::vector<double>                    filtered_phase_values(n_q_points);
 
-  if (gather_vof)
+  if (gather_cls)
     {
-      dof_handler_vof = std::shared_ptr<const DoFHandler<dim>>(
-        &this->multiphysics->get_dof_handler(PhysicsID::VOF),
+      dof_handler_cls = std::shared_ptr<const DoFHandler<dim>>(
+        &this->multiphysics->get_dof_handler(PhysicsID::CLS),
         [](const DoFHandler<dim> *) {});
       ;
-      fe_values_vof =
+      fe_values_cls =
         std::make_shared<FEValues<dim>>(*this->temperature_mapping,
-                                        dof_handler_vof->get_fe(),
+                                        dof_handler_cls->get_fe(),
                                         *this->cell_quadrature,
                                         update_values);
     }
@@ -1724,26 +1734,26 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
                 local_temperature_values);
             }
 
-          if (gather_vof)
+          if (gather_cls)
             {
-              // Get VOF active cell iterator
-              typename DoFHandler<dim>::active_cell_iterator cell_vof(
+              // Get CLS active cell iterator
+              typename DoFHandler<dim>::active_cell_iterator cell_cls(
                 &(*(this->triangulation)),
                 cell->level(),
                 cell->index(),
-                &(*dof_handler_vof));
+                &(*dof_handler_cls));
 
-              // Gather VOF information
-              fe_values_vof->reinit(cell_vof);
-              fe_values_vof->get_function_values(
-                this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+              // Gather CLS information
+              fe_values_cls->reinit(cell_cls);
+              fe_values_cls->get_function_values(
+                this->multiphysics->get_filtered_solution(PhysicsID::CLS),
                 filtered_phase_values);
             }
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
               std::tie(phase_coefficient, point_is_in_postprocessed_fluid) =
-                set_phase_coefficient(gather_vof,
+                set_phase_coefficient(gather_cls,
                                       monitored_fluid,
                                       filtered_phase_values[q]);
 
@@ -1793,26 +1803,26 @@ HeatTransfer<dim>::postprocess_temperature_statistics(
                 local_temperature_values);
             }
 
-          if (gather_vof)
+          if (gather_cls)
             {
-              // Get VOF active cell iterator
-              typename DoFHandler<dim>::active_cell_iterator cell_vof(
+              // Get CLS active cell iterator
+              typename DoFHandler<dim>::active_cell_iterator cell_cls(
                 &(*(this->triangulation)),
                 cell->level(),
                 cell->index(),
-                &(*dof_handler_vof));
+                &(*dof_handler_cls));
 
-              // Gather VOF information
-              fe_values_vof->reinit(cell_vof);
-              fe_values_vof->get_function_values(
-                this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+              // Gather CLS information
+              fe_values_cls->reinit(cell_cls);
+              fe_values_cls->get_function_values(
+                this->multiphysics->get_filtered_solution(PhysicsID::CLS),
                 filtered_phase_values);
             }
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
               phase_coefficient =
-                set_phase_coefficient(gather_vof,
+                set_phase_coefficient(gather_cls,
                                       monitored_fluid,
                                       filtered_phase_values[q])
                   .first;
@@ -1885,7 +1895,7 @@ HeatTransfer<dim>::write_temperature_statistics(const std::string domain_name)
 
 template <int dim>
 void
-HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_vof)
+HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_cls)
 {
   const unsigned int n_q_points   = this->cell_quadrature->size();
   const MPI_Comm mpi_communicator = this->dof_handler->get_mpi_communicator();
@@ -1897,9 +1907,9 @@ HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_vof)
                              *this->cell_quadrature,
                              update_values | update_JxW_values);
 
-  // Initialize VOF information
-  std::shared_ptr<const DoFHandler<dim>> dof_handler_vof;
-  std::shared_ptr<FEValues<dim>>         fe_values_vof;
+  // Initialize CLS information
+  std::shared_ptr<const DoFHandler<dim>> dof_handler_cls;
+  std::shared_ptr<FEValues<dim>>         fe_values_cls;
   std::vector<double>                    filtered_phase_values(n_q_points);
 
   // Get the raw physical properties parameters to calculate the liquid fraction
@@ -1908,14 +1918,14 @@ HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_vof)
     this->simulation_parameters.physical_properties_manager
       .get_physical_properties_parameters();
 
-  if (gather_vof)
+  if (gather_cls)
     {
-      dof_handler_vof = std::shared_ptr<const DoFHandler<dim>>(
-        &this->multiphysics->get_dof_handler(PhysicsID::VOF),
+      dof_handler_cls = std::shared_ptr<const DoFHandler<dim>>(
+        &this->multiphysics->get_dof_handler(PhysicsID::CLS),
         [](const DoFHandler<dim> *) {});
-      fe_values_vof =
+      fe_values_cls =
         std::make_shared<FEValues<dim>>(*this->temperature_mapping,
-                                        dof_handler_vof->get_fe(),
+                                        dof_handler_cls->get_fe(),
                                         *this->cell_quadrature,
                                         update_values);
     }
@@ -1934,27 +1944,27 @@ HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_vof)
           fe_values_ht.get_function_values(*this->present_solution,
                                            local_temperature_values);
 
-          if (gather_vof)
+          if (gather_cls)
             {
-              // Get VOF active cell iterator
-              typename DoFHandler<dim>::active_cell_iterator cell_vof(
+              // Get CLS active cell iterator
+              typename DoFHandler<dim>::active_cell_iterator cell_cls(
                 &(*(this->triangulation)),
                 cell->level(),
                 cell->index(),
-                &(*dof_handler_vof));
+                &(*dof_handler_cls));
 
-              // Gather VOF information
-              fe_values_vof->reinit(cell_vof);
-              fe_values_vof->get_function_values(
-                this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+              // Gather CLS information
+              fe_values_cls->reinit(cell_cls);
+              fe_values_cls->get_function_values(
+                this->multiphysics->get_filtered_solution(PhysicsID::CLS),
                 filtered_phase_values);
             }
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              // If VOF is enabled, gather the liquid fraction if the fluid has
-              // a phase fraction
-              if (!gather_vof)
+              // If CLS is enabled, gather the liquid fraction if the fluid has
+              // a phase indicator
+              if (!gather_cls)
                 {
                   liquid_volume_integral +=
                     calculate_liquid_fraction(local_temperature_values[q],
@@ -2047,7 +2057,7 @@ template <int dim>
 template <typename VectorType>
 void
 HeatTransfer<dim>::postprocess_heat_flux_on_bc(
-  const bool        gather_vof,
+  const bool        gather_cls,
   const VectorType &current_solution_fd)
 {
   const unsigned int n_q_points_face = this->face_quadrature->size();
@@ -2073,19 +2083,19 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
                                       *this->face_quadrature,
                                       update_values);
 
-  // Initialize VOF information
-  std::shared_ptr<const DoFHandler<dim>> dof_handler_vof;
-  std::shared_ptr<FEFaceValues<dim>>     fe_face_values_vof;
+  // Initialize CLS information
+  std::shared_ptr<const DoFHandler<dim>> dof_handler_cls;
+  std::shared_ptr<FEFaceValues<dim>>     fe_face_values_cls;
   std::vector<double>                    filtered_phase_values(n_q_points_face);
 
-  if (gather_vof)
+  if (gather_cls)
     {
-      dof_handler_vof = std::shared_ptr<const DoFHandler<dim>>(
-        &this->multiphysics->get_dof_handler(PhysicsID::VOF),
+      dof_handler_cls = std::shared_ptr<const DoFHandler<dim>>(
+        &this->multiphysics->get_dof_handler(PhysicsID::CLS),
         [](const DoFHandler<dim> *) {});
-      fe_face_values_vof =
+      fe_face_values_cls =
         std::make_shared<FEFaceValues<dim>>(*this->temperature_mapping,
-                                            dof_handler_vof->get_fe(),
+                                            dof_handler_cls->get_fe(),
                                             *this->face_quadrature,
                                             update_values);
     }
@@ -2195,20 +2205,20 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
                   fe_face_values_fd[velocities].get_function_values(
                     current_solution_fd, local_velocity_values);
 
-                  if (gather_vof)
+                  if (gather_cls)
                     {
-                      // Get VOF active cell iterator
-                      typename DoFHandler<dim>::active_cell_iterator cell_vof(
+                      // Get CLS active cell iterator
+                      typename DoFHandler<dim>::active_cell_iterator cell_cls(
                         &(*(this->triangulation)),
                         cell->level(),
                         cell->index(),
-                        &(*dof_handler_vof));
+                        &(*dof_handler_cls));
 
-                      // Gather VOF information
-                      fe_face_values_vof->reinit(cell_vof, face);
-                      fe_face_values_vof->get_function_values(
+                      // Gather CLS information
+                      fe_face_values_cls->reinit(cell_cls, face);
+                      fe_face_values_cls->get_function_values(
                         this->multiphysics->get_filtered_solution(
-                          PhysicsID::VOF),
+                          PhysicsID::CLS),
                         filtered_phase_values);
                     }
 
@@ -2217,7 +2227,7 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
                     {
                       if (properties_manager.get_number_of_fluids() == 2)
                         {
-                          // Blend the physical properties using the VOF
+                          // Blend the physical properties using the CLS
                           // field
                           thermal_conductivity =
                             calculate_point_property(filtered_phase_values[q],
@@ -2305,29 +2315,29 @@ HeatTransfer<dim>::postprocess_heat_flux_on_bc(
 
 template void
 HeatTransfer<2>::postprocess_heat_flux_on_bc<GlobalVectorType>(
-  const bool              gather_vof,
+  const bool              gather_cls,
   const GlobalVectorType &current_solution_fd);
 
 template void
 HeatTransfer<3>::postprocess_heat_flux_on_bc<GlobalVectorType>(
-  const bool              gather_vof,
+  const bool              gather_cls,
   const GlobalVectorType &current_solution_fd);
 
 template void
 HeatTransfer<2>::postprocess_heat_flux_on_bc<GlobalBlockVectorType>(
-  const bool                   gather_vof,
+  const bool                   gather_cls,
   const GlobalBlockVectorType &current_solution_fd);
 
 template void
 HeatTransfer<3>::postprocess_heat_flux_on_bc<GlobalBlockVectorType>(
-  const bool                   gather_vof,
+  const bool                   gather_cls,
   const GlobalBlockVectorType &current_solution_fd);
 
 template <int dim>
 template <typename VectorType>
 void
 HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
-  const bool                       gather_vof,
+  const bool                       gather_cls,
   const Parameters::FluidIndicator monitored_fluid,
   const std::string                domain_name,
   const VectorType                &current_solution_fd)
@@ -2353,19 +2363,19 @@ HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
                              *this->cell_quadrature,
                              update_values);
 
-  // Initialize VOF information
-  std::shared_ptr<const DoFHandler<dim>> dof_handler_vof;
-  std::shared_ptr<FEValues<dim>>         fe_values_vof;
+  // Initialize CLS information
+  std::shared_ptr<const DoFHandler<dim>> dof_handler_cls;
+  std::shared_ptr<FEValues<dim>>         fe_values_cls;
   std::vector<double>                    filtered_phase_values(n_q_points);
 
-  if (gather_vof)
+  if (gather_cls)
     {
-      dof_handler_vof = std::shared_ptr<const DoFHandler<dim>>(
-        &this->multiphysics->get_dof_handler(PhysicsID::VOF),
+      dof_handler_cls = std::shared_ptr<const DoFHandler<dim>>(
+        &this->multiphysics->get_dof_handler(PhysicsID::CLS),
         [](const DoFHandler<dim> *) {});
-      fe_values_vof =
+      fe_values_cls =
         std::make_shared<FEValues<dim>>(*this->temperature_mapping,
-                                        dof_handler_vof->get_fe(),
+                                        dof_handler_cls->get_fe(),
                                         *this->cell_quadrature,
                                         update_values);
     }
@@ -2444,19 +2454,19 @@ HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
           fe_values_fd[velocities].get_function_values(current_solution_fd,
                                                        local_velocity_values);
 
-          if (gather_vof)
+          if (gather_cls)
             {
-              // Get VOF active cell iterator
-              typename DoFHandler<dim>::active_cell_iterator cell_vof(
+              // Get CLS active cell iterator
+              typename DoFHandler<dim>::active_cell_iterator cell_cls(
                 &(*(this->triangulation)),
                 cell->level(),
                 cell->index(),
-                &(*dof_handler_vof));
+                &(*dof_handler_cls));
 
-              // Gather VOF information
-              fe_values_vof->reinit(cell_vof);
-              fe_values_vof->get_function_values(
-                this->multiphysics->get_filtered_solution(PhysicsID::VOF),
+              // Gather CLS information
+              fe_values_cls->reinit(cell_cls);
+              fe_values_cls->get_function_values(
+                this->multiphysics->get_filtered_solution(PhysicsID::CLS),
                 filtered_phase_values);
             }
 
@@ -2464,14 +2474,14 @@ HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
           for (unsigned int q = 0; q < n_q_points; q++)
             {
               phase_coefficient =
-                set_phase_coefficient(gather_vof,
+                set_phase_coefficient(gather_cls,
                                       monitored_fluid,
                                       filtered_phase_values[q])
                   .first;
 
               if (properties_manager.get_number_of_fluids() == 2)
                 {
-                  // Blend the physical properties using the VOF
+                  // Blend the physical properties using the CLS
                   // field
                   density = calculate_point_property(filtered_phase_values[q],
                                                      density_0[q],
@@ -2508,28 +2518,28 @@ HeatTransfer<dim>::postprocess_thermal_energy_in_fluid(
 
 template void
 HeatTransfer<2>::postprocess_thermal_energy_in_fluid<GlobalVectorType>(
-  const bool                       gather_vof,
+  const bool                       gather_cls,
   const Parameters::FluidIndicator monitored_fluid,
   const std::string                domain_name,
   const GlobalVectorType          &current_solution_fd);
 
 template void
 HeatTransfer<3>::postprocess_thermal_energy_in_fluid<GlobalVectorType>(
-  const bool                       gather_vof,
+  const bool                       gather_cls,
   const Parameters::FluidIndicator monitored_fluid,
   const std::string                domain_name,
   const GlobalVectorType          &current_solution_fd);
 
 template void
 HeatTransfer<2>::postprocess_thermal_energy_in_fluid<GlobalBlockVectorType>(
-  const bool                       gather_vof,
+  const bool                       gather_cls,
   const Parameters::FluidIndicator monitored_fluid,
   const std::string                domain_name,
   const GlobalBlockVectorType     &current_solution_fd);
 
 template void
 HeatTransfer<3>::postprocess_thermal_energy_in_fluid<GlobalBlockVectorType>(
-  const bool                       gather_vof,
+  const bool                       gather_cls,
   const Parameters::FluidIndicator monitored_fluid,
   const std::string                domain_name,
   const GlobalBlockVectorType     &current_solution_fd);
@@ -2555,7 +2565,7 @@ HeatTransfer<dim>::write_heat_flux(const std::string domain_name)
 template <int dim>
 std::pair<double, bool>
 HeatTransfer<dim>::set_phase_coefficient(
-  const bool                       gather_vof,
+  const bool                       gather_cls,
   const Parameters::FluidIndicator monitored_fluid,
   const double                     phase_value_q)
 {
@@ -2573,7 +2583,7 @@ HeatTransfer<dim>::set_phase_coefficient(
         }
       case Parameters::FluidIndicator::fluid0:
         {
-          if (gather_vof)
+          if (gather_cls)
             {
               phase_coefficient = 1. - phase_value_q;
               if (phase_value_q < 0.5)
@@ -2590,7 +2600,7 @@ HeatTransfer<dim>::set_phase_coefficient(
         }
       case Parameters::FluidIndicator::fluid1:
         {
-          if (gather_vof)
+          if (gather_cls)
             {
               phase_coefficient = phase_value_q;
               if (phase_value_q > 0.5)

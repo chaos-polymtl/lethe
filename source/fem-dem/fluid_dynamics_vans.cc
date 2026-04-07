@@ -382,26 +382,27 @@ FluidDynamicsVANS<dim>::assemble_system_matrix()
     *this->mapping,
     *this->face_quadrature);
 
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
-      const DoFHandler<dim> &dof_handler_vof =
-        this->multiphysics->get_dof_handler(PhysicsID::VOF);
-      scratch_data.enable_vof(
-        dof_handler_vof.get_fe(),
+      const DoFHandler<dim> &dof_handler_cls =
+        this->multiphysics->get_dof_handler(PhysicsID::CLS);
+      scratch_data.enable_cls(
+        dof_handler_cls.get_fe(),
         *this->cell_quadrature,
         *this->mapping,
-        this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
+        this->simulation_parameters.multiphysics.cls_parameters.phase_filter);
 
-      if (this->simulation_parameters.multiphysics.vof_parameters
+      if (this->simulation_parameters.multiphysics.cls_parameters
             .surface_tension_force.enable)
         {
-          const DoFHandler<dim> &projected_phase_fraction_gradient_dof_handler =
-            this->multiphysics
-              ->get_projected_phase_fraction_gradient_dof_handler();
+          const DoFHandler<dim>
+            &projected_phase_indicator_gradient_dof_handler =
+              this->multiphysics
+                ->get_projected_phase_indicator_gradient_dof_handler();
           const DoFHandler<dim> &curvature_dof_handler =
             this->multiphysics->get_curvature_dof_handler();
-          scratch_data.enable_projected_phase_fraction_gradient(
-            projected_phase_fraction_gradient_dof_handler.get_fe(),
+          scratch_data.enable_projected_phase_indicator_gradient(
+            projected_phase_indicator_gradient_dof_handler.get_fe(),
             *this->cell_quadrature,
             *this->mapping);
           scratch_data.enable_curvature(curvature_dof_handler.get_fe(),
@@ -461,18 +462,18 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
 
   std::optional<typename DoFHandler<dim>::active_cell_iterator> phase_cell;
 
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
       phase_cell.emplace(&(*(this->triangulation)),
                          cell->level(),
                          cell->index(),
-                         &this->multiphysics->get_dof_handler(PhysicsID::VOF));
+                         &this->multiphysics->get_dof_handler(PhysicsID::CLS));
 
-      scratch_data.reinit_vof(
+      scratch_data.reinit_cls(
         *phase_cell,
-        this->multiphysics->get_solution(PhysicsID::VOF),
-        this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+        this->multiphysics->get_solution(PhysicsID::CLS),
+        this->multiphysics->get_filtered_solution(PhysicsID::CLS),
+        this->multiphysics->get_previous_solutions(PhysicsID::CLS));
     }
 
   typename DoFHandler<dim>::active_cell_iterator void_fraction_cell(
@@ -488,7 +489,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
 
   scratch_data.calculate_physical_properties();
 
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
       scratch_data.reinit_particle_fluid_interactions(
         cell,
@@ -499,7 +500,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_matrix(
         this->particle_projector.void_fraction_locally_relevant,
         particle_handler,
         cfd_dem_simulation_parameters.cfd_dem.drag_coupling,
-        this->multiphysics->get_filtered_solution(PhysicsID::VOF));
+        this->multiphysics->get_filtered_solution(PhysicsID::CLS));
     }
   else
     {
@@ -634,15 +635,15 @@ FluidDynamicsVANS<dim>::assemble_system_rhs()
 
   setup_assemblers();
 
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
-      const DoFHandler<dim> &dof_handler_vof =
-        this->multiphysics->get_dof_handler(PhysicsID::VOF);
-      scratch_data.enable_vof(
-        dof_handler_vof.get_fe(),
+      const DoFHandler<dim> &dof_handler_cls =
+        this->multiphysics->get_dof_handler(PhysicsID::CLS);
+      scratch_data.enable_cls(
+        dof_handler_cls.get_fe(),
         *this->cell_quadrature,
         *this->mapping,
-        this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
+        this->simulation_parameters.multiphysics.cls_parameters.phase_filter);
     }
   scratch_data.enable_void_fraction(*particle_projector.fe,
                                     *this->cell_quadrature,
@@ -689,18 +690,18 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
 
   std::optional<typename DoFHandler<dim>::active_cell_iterator> phase_cell;
 
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
       phase_cell.emplace(&(*(this->triangulation)),
                          cell->level(),
                          cell->index(),
-                         &this->multiphysics->get_dof_handler(PhysicsID::VOF));
+                         &this->multiphysics->get_dof_handler(PhysicsID::CLS));
 
-      scratch_data.reinit_vof(
+      scratch_data.reinit_cls(
         *phase_cell,
-        this->multiphysics->get_solution(PhysicsID::VOF),
-        this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+        this->multiphysics->get_solution(PhysicsID::CLS),
+        this->multiphysics->get_filtered_solution(PhysicsID::CLS),
+        this->multiphysics->get_previous_solutions(PhysicsID::CLS));
     }
 
   typename DoFHandler<dim>::active_cell_iterator void_fraction_cell(
@@ -716,7 +717,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
 
   scratch_data.calculate_physical_properties();
 
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
       scratch_data.reinit_particle_fluid_interactions(
         cell,
@@ -727,7 +728,7 @@ FluidDynamicsVANS<dim>::assemble_local_system_rhs(
         particle_projector.void_fraction_locally_relevant,
         particle_handler,
         cfd_dem_simulation_parameters.cfd_dem.drag_coupling,
-        this->multiphysics->get_filtered_solution(PhysicsID::VOF));
+        this->multiphysics->get_filtered_solution(PhysicsID::CLS));
     }
   else
     {
@@ -1116,9 +1117,6 @@ FluidDynamicsVANS<dim>::monitor_mass_conservation()
   continuity = Utilities::MPI::sum(continuity, this->mpi_communicator);
   max_local_continuity =
     Utilities::MPI::max(max_local_continuity, this->mpi_communicator);
-
-  this->pcout << std::setprecision(
-    this->simulation_control->get_log_precision());
 
   this->pcout << "Global continuity equation error: " << continuity << " s^-1"
               << std::endl;

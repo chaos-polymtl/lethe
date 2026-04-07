@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #############################################################################
@@ -57,7 +57,7 @@ parser = argparse.ArgumentParser(description='Arguments for the validation of th
 parser.add_argument("--validate", action="store_true", help="Launches the script in validation mode. This will log the content of the graph and prevent the display of figures", default=False)
 parser.add_argument("-p", "--proj", type=str, help="Path to the output folder for the projening results. This is the folder that contains the results of the simulation (.vtu, .pvtu, .dat and .pvd files)", required=False)
 parser.add_argument("-g", "--geo", type=str, help="Path to the output folder for the geometric results. This is the folder that contains the results of the simulation (.vtu, .pvtu, .dat and .pvd files)", required=False)
-parser.add_argument("-a", "--alge", type=str, help="Path to the output folder for the algebraic results. This is the folder that contains the results of the simulation (.vtu, .pvtu, .dat and .pvd files)", required=False)
+parser.add_argument("-a", "--alge", type=str, help="Path to the output folder for the PDE-based results. This is the folder that contains the results of the simulation (.vtu, .pvtu, .dat and .pvd files)", required=False)
 
 parser.add_argument("-c", "--case", type=int, choices=[1, 2], help="Test case number. Can be either 1 or 2", required=True)
 args, leftovers=parser.parse_known_args()
@@ -72,21 +72,21 @@ n = 0;
 
 if has_proj:
   output_dir_proj = args.proj
-  filename_barycenter_proj = output_dir_proj + "/vof_barycenter_information.dat"
+  filename_barycenter_proj = output_dir_proj + "/cls_barycenter_information.dat"
   filename_mass_proj = output_dir_proj + "/mass_conservation_information.dat"
   t_proj, x_proj, y_proj, vx_proj, vy_proj = np.loadtxt(filename_barycenter_proj, skiprows=1, unpack=True)
   n += 1
 
 if has_geo:
   output_dir_geo = args.geo
-  filename_barycenter_geo = output_dir_geo + "/vof_barycenter_information.dat"
+  filename_barycenter_geo = output_dir_geo + "/cls_barycenter_information.dat"
   filename_mass_geo = output_dir_geo + "/mass_conservation_information.dat"
   t_geo, x_geo, y_geo, vx_geo, vy_geo = np.loadtxt(filename_barycenter_geo, skiprows=1, unpack=True)
   n += 1
 
 if has_alge:
   output_dir_alge = args.alge
-  filename_barycenter_alge = output_dir_alge + "/vof_barycenter_information.dat"
+  filename_barycenter_alge = output_dir_alge + "/cls_barycenter_information.dat"
   filename_mass_alge = output_dir_alge + "/mass_conservation_information.dat"
   t_alge, x_alge, y_alge, vx_alge, vy_alge = np.loadtxt(filename_barycenter_alge, skiprows=1, unpack=True)
   n += 1

@@ -3,21 +3,69 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/03/31
+
+### Changed
+
+- MAJOR Following PRs [#1937](https://github.com/chaos-polymtl/lethe/pull/1937), [#1938](https://github.com/chaos-polymtl/lethe/pull/1938), [#1944](https://github.com/chaos-polymtl/lethe/pull/1944) and [#1950](https://github.com/chaos-polymtl/lethe/pull/1950) this PR renames all occurrences of "interface regularization", "algebraic interface reinitialization", and "phase fraction" with "interface reinitialization", "pde-based interface reinitialization", and "phase indicator" in the code.[#1954](https://github.com/chaos-polymtl/lethe/pull/1954).
+
+### Added
+
+- MINOR This PR adds the possibility to scale the solution of the time-harmonic Maxwell solver (which is always solved in a dimensionless form) with three different method `electric_field`, `magnetic_field` or `power` to recover the dimensionality according to user input. Prior to this PR the outputted solution was always dimensionless. This behavior can still be obtain by using the scaling method `none`.[#1942](https://github.com/chaos-polymtl/lethe/pull/1942)
+
+### Added
+
+- MINOR This PR adds the option to assign a different weight for the cells located at the mortar interface, which is taken into consideration for the workload partitioning. [#1953](https://github.com/chaos-polymtl/lethe/pull/1953)
+
+- MINOR This PR adds the capability to output the ratio of the minimum cell size to the maximum particle diameter in DEM and CFD-DEM simulations. It also updates the output related to diamond-shaped cells and the expand particle–wall contact parameter. Tests and documentation have been updated accordingly. [#1955](https://github.com/chaos-polymtl/lethe/pull/1955)
+
+- MINOR Sharp-IB now supports DEM moving wall boundary conditions in particle-wall contact and lubrication interactions, together with documentation and a dedicated application test. [#1960](https://github.com/chaos-polymtl/lethe/pull/1960)
+
+## [Master] - 2026/03/30
+
+### Added
+
+- MINOR Added optional distance-based coarsening for Sharp-IB local mesh refinement through the parameters `enable distance based coarsening` and `coarsen mesh outside radius factor`, together with documentation and an application test. [#1956](https://github.com/chaos-polymtl/lethe/pull/1956)
+
+## [Master] - 2026/03/26
+
+### Added
+
+- MAJOR This PR adds a 2 dimensional example using the mortar method, named "Paddle Mixer Using the Mortar Method". [#1939](https://github.com/chaos-polymtl/lethe/pull/1939)
+
+### Fixed
+
+- MINOR The two prototype "matrix_based_advection_diffusion" and "matrix_based_non_linear_poisson" would not compile with the current deal.II master version.  Essentialy the changes to the Trilinos sparsity pattern prevented compilation. This has been fixed by adopting the process used in step-50. This has no consequence on the main Lethe software stack. [#1951](https://github.com/chaos-polymtl/lethe/pull/1951).
+
+## [Master] - 2026/03/24
+
+### Changed
+
+- MAJOR Following PRs [#1937](https://github.com/chaos-polymtl/lethe/pull/1937), [#1938](https://github.com/chaos-polymtl/lethe/pull/1938), and [#1944](https://github.com/chaos-polymtl/lethe/pull/1944), this PR renames all occurrences of "VOF" with "CLS" in the code. [#1950](https://github.com/chaos-polymtl/lethe/pull/1950).
+
+## [Master] - 2026/03/19
+
+### Removed
+
+- MINOR The square gas–solid fluidized bed example is removed, as PR [#1844] introduced a more comprehensive cylindrical fluidized bed simulation. This closes issue [#1860]. [#1948](https://github.com/chaos-polymtl/lethe/pull/1948).
+
+- MAJOR The way we parametrized the display precision on the terminal in Lethe was incredibly messy. The log_precision parameter in the SimulationControl is supposed to control it, but we also have another display_precision in the non-linear solver which can overwrite it. This led to a lot of confusion. The simple thing should be that one parameter controls the log precision and that's it. This PR achieves this. It deletes the display_precision parameter from the non-linear solver parameters. Now, the usage of the log_precision is made uniform and the precision is set once at the start of the simulation. The documentation has been adapted as well.  [#1947](https://github.com/chaos-polymtl/lethe/pull/1947).
+
 ## [Master] - 2026/03/18
 
 ### Changed
 
-- MAJOR Following PRs [#1937](https://github.com/chaos-polymtl/7lethe/pull/1937) and [#1938](https://github.com/chaos-polymtl/7lethe/pull/1938), this PR renames all occurrences of "VOF", "interface regularization", "algebraic interface reinitialization", and "phase fraction" with "CLS", "interface reinitialization", "pde-based interface reinitialization", and "phase indicator" respectively in the example section of the documentation. [#1944](https://github.com/chaos-polymtl/7lethe/pull/1944).
+- MAJOR Following PRs [#1937](https://github.com/chaos-polymtl/lethe/pull/1937) and [#1938](https://github.com/chaos-polymtl/lethe/pull/1938), this PR renames all occurrences of "VOF", "interface regularization", "algebraic interface reinitialization", and "phase fraction" with "CLS", "interface reinitialization", "pde-based interface reinitialization", and "phase indicator" respectively in the example section of the documentation. [#1944](https://github.com/chaos-polymtl/lethe/pull/1944).
 
 ### Fixed
 
-- MAJOR The lethe-fluid-particles-matrix-free solver would not restart adequately. This was mainly caused by three factors. The first is that the vector used to project the forces was never reset to zero, and so the projection of the forces and the other variables became dependent on the history of this projection since this would affect the GMRES solver behavior. The second was that the void fraction time-history would get partially erased if a BDF2 time-stepping scheme was used. The last one was that some of the multigrid operators being used to transfer the particle-fluid force/drag information were not the correct ones. All these three things have been fixed. They don't changes tests (except a small one for some floating point error), but now the code restarts to machine precision. [#1943](https://github.com/chaos-polymtl/7lethe/pull/1943).
+- MAJOR The lethe-fluid-particles-matrix-free solver would not restart adequately. This was mainly caused by three factors. The first is that the vector used to project the forces was never reset to zero, and so the projection of the forces and the other variables became dependent on the history of this projection since this would affect the GMRES solver behavior. The second was that the void fraction time-history would get partially erased if a BDF2 time-stepping scheme was used. The last one was that some of the multigrid operators being used to transfer the particle-fluid force/drag information were not the correct ones. All these three things have been fixed. They don't changes tests (except a small one for some floating point error), but now the code restarts to machine precision. [#1943](https://github.com/chaos-polymtl/lethe/pull/1943).
 
 ## [Master] - 2026/03/17
 
 ### Changed
 
-- MAJOR Following PR [#1937](https://github.com/chaos-polymtl/7lethe/pull/1937), this PR renames all occurrences of "VOF", "interface regularization", "algebraic interface reinitialization", and "phase fraction" with "CLS", "interface reinitialization", "pde-based interface reinitialization", and "phase indicator" respectively in the parameters and theory sections of the documentation. [#1938](https://github.com/chaos-polymtl/7lethe/pull/1938).
+- MAJOR Following PR [#1937](https://github.com/chaos-polymtl/lethe/pull/1937), this PR renames all occurrences of "VOF", "interface regularization", "algebraic interface reinitialization", and "phase fraction" with "CLS", "interface reinitialization", "pde-based interface reinitialization", and "phase indicator" respectively in the parameters and theory sections of the documentation. [#1938](https://github.com/chaos-polymtl/7lethe/pull/1938).
 
 ## [Master] - 2026/03/15
 
@@ -133,4 +181,3 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 
 - MAJOR/MINOR/PATCH Description (#PR).
-

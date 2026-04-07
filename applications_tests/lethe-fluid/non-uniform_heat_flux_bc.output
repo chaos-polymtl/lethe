@@ -1,19 +1,19 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       64
    Number of degrees of freedom: 243
-   Volume of triangulation:      0.5
+   Volume of triangulation:      5.000000e-01
    Number of thermal degrees of freedom: 289
-Temperature statistics on fluid : 
-	     Min : -6.98387
-	     Max : 54.9839
-	 Average : 1.66667
-	 Std-Dev : 10.1926
+Temperature statistics on fluid: 
+	     Min: -6.983867e+00
+	     Max: 5.498387e+01
+	 Average: 1.666667e+00
+	 Std-Dev: 1.019259e+01
 
 *****************************
 Steady iteration:        1/1
 *****************************
-Temperature statistics on fluid : 
-	     Min : 45.9221
-	     Max : 79.7944
-	 Average : 68.7103
-	 Std-Dev : 7.72838
+Temperature statistics on fluid: 
+	     Min: 4.592214e+01
+	     Max: 7.979435e+01
+	 Average: 6.871031e+01
+	 Std-Dev: 7.728379e+00

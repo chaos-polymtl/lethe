@@ -59,6 +59,7 @@ Follow the instructions in the
 - Amishga Alphonius
 - Antoine Avrit
 - Lucka Barbeau
+- Freddie Barter
 - Valérie Bibeau
 - [Bruno Blais](https://www.polymtl.ca/expertises/en/blais-bruno)
 - Bianca Bugeaud
@@ -89,6 +90,7 @@ Follow the instructions in the
 - Laura Prieto Saavedra
 - Catherine Radburn
 - Philippe Rivest
+- Jacob Tremblay
 - Mikael Vaillant
 
 ## License

@@ -177,7 +177,6 @@ subsection non-linear solver
   subsection fluid dynamics
     set tolerance             = 1e-8
     set max iterations        = 10
-    set residual precision    = 15
     set verbosity             = quiet
     set force rhs calculation = true
   end

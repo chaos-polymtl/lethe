@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/bdf.h>
@@ -9,8 +9,8 @@
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
-#include <solvers/isothermal_compressible_navier_stokes_vof_assembler.h>
-#include <solvers/navier_stokes_vof_assemblers.h>
+#include <solvers/isothermal_compressible_navier_stokes_cls_assembler.h>
+#include <solvers/navier_stokes_cls_assemblers.h>
 #include <solvers/postprocessing_cfd.h>
 
 #include <fem-dem/fluid_dynamics_sharp.h>
@@ -402,7 +402,7 @@ FluidDynamicsSharp<dim>::refinement_control(const bool initial_refinement)
                       << this->simulation_parameters.particlesParameters
                            ->initial_refinement
                       << std::endl;
-          refine_ib(initial_refinement);
+          mesh_adapt_ib(initial_refinement);
           NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
           if (update_precalculations_flag)
             {
@@ -418,7 +418,7 @@ FluidDynamicsSharp<dim>::refinement_control(const bool initial_refinement)
   if (initial_refinement == false)
     {
       update_precalculations_flag = false;
-      refine_ib(initial_refinement);
+      mesh_adapt_ib(initial_refinement);
       NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
       if (update_precalculations_flag)
         {
@@ -794,6 +794,8 @@ FluidDynamicsSharp<dim>::define_particles()
     this->simulation_parameters.particlesParameters,
     std::make_shared<Parameters::Lagrangian::FloatingWalls<dim>>(
       cfd_dem_parameters.dem_parameters.floating_walls),
+    std::make_shared<Parameters::Lagrangian::BCDEM>(
+      cfd_dem_parameters.dem_parameters.boundary_conditions),
     this->mpi_communicator,
     particles);
 
@@ -812,7 +814,7 @@ FluidDynamicsSharp<dim>::define_particles()
 
 template <int dim>
 void
-FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
+FluidDynamicsSharp<dim>::mesh_adapt_ib(const bool initial_refinement)
 {
   bool refinement_step;
   if (this->simulation_parameters.mesh_adaptation.refinement_at_frequency)
@@ -860,10 +862,12 @@ FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
 
   double smallest_cut_cell = std::numeric_limits<double>::max();
   bool   minimal_crown_refinement_enabled =
-    abs(this->simulation_parameters.particlesParameters->outside_radius - 1) <
-      1e-16 &&
-    abs(this->simulation_parameters.particlesParameters->inside_radius - 1) <
-      1e-16;
+    abs(this->simulation_parameters.particlesParameters
+          ->refinement_outside_distance_factor -
+        1) < 1e-16 &&
+    abs(this->simulation_parameters.particlesParameters
+          ->refinement_inside_distance_factor -
+        1) < 1e-16;
   if (minimal_crown_refinement_enabled)
     {
       const auto &cell_iterator_smallest_cell =
@@ -882,6 +886,9 @@ FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
     {
       if (cell->is_locally_owned())
         {
+          bool cell_can_be_coarsened =
+            this->simulation_parameters.particlesParameters->enable_coarsening;
+
           cell->get_dof_indices(local_dof_indices);
           for (unsigned int p = 0; p < particles.size(); ++p)
             {
@@ -918,6 +925,8 @@ FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
               // point on the boundary is contained in the cell.
               bool cell_as_ib_inside =
                 cell->point_inside(particles[p].position + r);
+              bool cell_is_near_particle_for_coarsening = false;
+
               for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
                 {
                   // Only check the dof of velocity in x.
@@ -951,15 +960,33 @@ FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
                           is_inside_crown = particles[p].is_inside_crown(
                             support_points[local_dof_indices[j]],
                             this->simulation_parameters.particlesParameters
-                              ->outside_radius,
+                              ->refinement_outside_distance_factor,
                             this->simulation_parameters.particlesParameters
-                              ->inside_radius,
+                              ->refinement_inside_distance_factor,
                             false, // indicates that we use the
                                    // radius relative distance definition
                             cell);
                         }
+
+                      if (cell_can_be_coarsened)
+                        {
+                          const double coarsening_distance =
+                            particles[p].shape->value_with_cell_guess(
+                              support_points[local_dof_indices[j]], cell);
+                          const double coarsening_threshold =
+                            particles[p].shape->effective_radius *
+                            (this->simulation_parameters.particlesParameters
+                               ->coarsening_distance_factor -
+                             1);
+
+                          if (coarsening_distance <= coarsening_threshold)
+                            cell_is_near_particle_for_coarsening = true;
+                        }
+
                       if (is_inside_crown)
-                        ++count_small;
+                        {
+                          ++count_small;
+                        }
                     }
                 }
 
@@ -970,12 +997,19 @@ FluidDynamicsSharp<dim>::refine_ib(const bool initial_refinement)
                   particles[p].set_position(particles[p].position);
                   particles[p].set_orientation(particles[p].orientation);
                 }
+
+              if (cell_as_ib_inside || cell_is_near_particle_for_coarsening)
+                cell_can_be_coarsened = false;
+
               if (count_small > 0 || cell_as_ib_inside)
                 {
                   cell->set_refine_flag();
                   break;
                 }
             }
+
+          if (cell_can_be_coarsened && !cell->refine_flag_set())
+            cell->set_coarsen_flag();
         }
     }
 }
@@ -3874,7 +3908,7 @@ FluidDynamicsSharp<dim>::setup_assemblers()
           this->simulation_control,
           this->simulation_parameters.boundary_conditions));
     }
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
       // Time-stepping schemes
       if (time_stepping_is_bdf(
@@ -3883,7 +3917,7 @@ FluidDynamicsSharp<dim>::setup_assemblers()
             .density_is_constant())
         {
           this->assemblers.push_back(
-            std::make_shared<GLSNavierStokesVOFAssemblerBDF<dim>>(
+            std::make_shared<GLSNavierStokesCLSAssemblerBDF<dim>>(
               this->simulation_control));
         }
       else if (time_stepping_is_bdf(
@@ -3891,7 +3925,7 @@ FluidDynamicsSharp<dim>::setup_assemblers()
         {
           this->assemblers.push_back(
             std::make_shared<
-              GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF<dim>>(
+              GLSIsothermalCompressibleNavierStokesCLSAssemblerBDF<dim>>(
               this->simulation_control));
         }
 
@@ -3901,7 +3935,7 @@ FluidDynamicsSharp<dim>::setup_assemblers()
         {
           // Core assembler with Non newtonian viscosity
           this->assemblers.push_back(
-            std::make_shared<GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>>(
+            std::make_shared<GLSNavierStokesCLSAssemblerNonNewtonianCore<dim>>(
               this->simulation_control, this->simulation_parameters));
         }
       else if (!this->simulation_parameters.physical_properties_manager
@@ -3909,14 +3943,14 @@ FluidDynamicsSharp<dim>::setup_assemblers()
         {
           this->assemblers.push_back(
             std::make_shared<
-              GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<dim>>(
+              GLSIsothermalCompressibleNavierStokesCLSAssemblerCore<dim>>(
               this->simulation_control, this->simulation_parameters));
         }
       else
         {
           // Core assembler
           this->assemblers.push_back(
-            std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
+            std::make_shared<GLSNavierStokesCLSAssemblerCore<dim>>(
               this->simulation_control, this->simulation_parameters));
         }
     }
@@ -3996,21 +4030,21 @@ FluidDynamicsSharp<dim>::assemble_local_system_matrix(
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
 
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
-      const DoFHandler<dim> &dof_handler_vof =
-        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      const DoFHandler<dim> &dof_handler_cls =
+        this->multiphysics->get_dof_handler(PhysicsID::CLS);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        &dof_handler_vof);
+        &dof_handler_cls);
 
-      scratch_data.reinit_vof(
+      scratch_data.reinit_cls(
         phase_cell,
-        this->multiphysics->get_solution(PhysicsID::VOF),
-        this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+        this->multiphysics->get_solution(PhysicsID::CLS),
+        this->multiphysics->get_filtered_solution(PhysicsID::CLS),
+        this->multiphysics->get_previous_solutions(PhysicsID::CLS));
     }
 
   scratch_data.calculate_physical_properties();
@@ -4088,21 +4122,21 @@ FluidDynamicsSharp<dim>::assemble_local_system_rhs(
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
 
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
-      const DoFHandler<dim> &dof_handler_vof =
-        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      const DoFHandler<dim> &dof_handler_cls =
+        this->multiphysics->get_dof_handler(PhysicsID::CLS);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        &dof_handler_vof);
+        &dof_handler_cls);
 
-      scratch_data.reinit_vof(
+      scratch_data.reinit_cls(
         phase_cell,
-        this->multiphysics->get_solution(PhysicsID::VOF),
-        this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+        this->multiphysics->get_solution(PhysicsID::CLS),
+        this->multiphysics->get_filtered_solution(PhysicsID::CLS),
+        this->multiphysics->get_previous_solutions(PhysicsID::CLS));
     }
 
   scratch_data.calculate_physical_properties();
@@ -4499,6 +4533,8 @@ FluidDynamicsSharp<dim>::read_checkpoint()
     this->simulation_parameters.particlesParameters,
     std::make_shared<Parameters::Lagrangian::FloatingWalls<dim>>(
       cfd_dem_parameters.dem_parameters.floating_walls),
+    std::make_shared<Parameters::Lagrangian::BCDEM>(
+      cfd_dem_parameters.dem_parameters.boundary_conditions),
     this->mpi_communicator,
     particles);
   ib_dem.update_contact_candidates();

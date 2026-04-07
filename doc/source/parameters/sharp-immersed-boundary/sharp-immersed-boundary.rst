@@ -28,10 +28,12 @@ This subsection contains the parameters related to the sharp immersed boundary s
       end
       
       subsection local mesh refinement
-        set initial refinement                = 0
-        set refine mesh inside radius factor  = 0.5
-        set refine mesh outside radius factor = 1.5
-        set refinement zone extrapolation     = false
+        set initial refinement                 = 0
+        set enable distance based coarsening   = false
+        set refine mesh inside radius factor   = 0.5
+        set refine mesh outside radius factor  = 1.5
+        set coarsen mesh outside radius factor = 2.0
+        set refinement zone extrapolation      = false
       end
 
       subsection DEM
@@ -137,14 +139,21 @@ This subsection contains the parameters related to the sharp immersed boundary s
 
     * The ``refine mesh outside radius factor`` parameter defines how far outside the solid that cells can be refined. If the absolute distance between a cell's degree of freedom and the solid's surface is lower than :math:`(\textit{outside factor} - 1) * \textit{radius}`, the second of the two required conditions to refine this cell is met. For example: with a particle radius of 2 and the outside radius factor of 1.5, the outside reach of the refinement zone would be 1 (see example below).
 
+    * The ``enable distance based coarsening`` parameter controls whether the local mesh refinement zone can also coarsen based on the particle distance. When this parameter is set to ``true``, cells that are sufficiently far from every particle become eligible for coarsening during adaptive mesh refinement.
+
+    * The ``coarsen mesh outside radius factor`` parameter defines how far outside the solid a cell must be before it can be coarsened by the local distance-based criterion. This factor should be greater than or equal to the ``refine mesh outside radius factor`` to avoid immediately coarsening cells that still belong to the refinement zone.
+
     .. image:: images/particle_hypershell.png
 	    :align: center
 
     .. warning::
-	    The mesh adaptation ``type`` must be ``adaptive`` with the error estimator set to ``kelly`` to use the near-particle refinement around particles; otherwise, no near-particle refinement will happen. See :doc:`../cfd/mesh_adaptation_control` for more details on adaptative mesh refinement.
+	    The mesh adaptation ``type`` must be ``adaptive`` with the error estimator set to ``kelly`` to use the near-particle refinement or distance-based coarsening around particles; otherwise, this local mesh adaptation will not happen. See :doc:`../cfd/mesh_adaptation_control` for more details on adaptative mesh refinement.
 
     .. note::
 	    The refined cells are all those for which at least one of the degrees of freedom (dof) location satisfies both the ``refine mesh inside radius factor`` and the ``refine mesh outside radius factor`` thresholds. Each cycle of refinement reduces the length of the elements by a factor two.
+
+    .. note::
+        When ``enable distance based coarsening`` is set to ``true``, cells that are outside the ``coarsen mesh outside radius factor`` threshold can be coarsened by the local particle-distance criterion. Refinement still takes precedence over coarsening within the near-particle zone.
 
     .. note::
         Using values ``refine mesh outside radius factor = 1`` and ``refine mesh inside radius factor = 1`` activates a minimal refinement mode. This enables the solver to select automatically the smallest region near the particle that guarantees stability of the solution.
@@ -156,6 +165,9 @@ This subsection contains the parameters related to the sharp immersed boundary s
 
 * The ``DEM`` subsection contains all the parameters associated with the motion and contacts of spherical particles.
     * The ``DEM coupling frequency`` parameter controls the number of iterations done on the DEM side for each CFD time step. It's necessary to use a much smaller time step for the particle dynamics than for the fluid in case of contact between the particles. The particle collision happens at a much smaller time-scale than the fluid dynamics.
+
+    .. note::
+        The DEM boundary conditions documented in :doc:`../dem/boundary_conditions` also apply to Sharp resolved CFD-DEM simulations. In Sharp, translational and rotational DEM wall motion are taken into account in the particle-wall contact and lubrication models.
 
     * The ``alpha`` parameter is the relaxation parameter used when solving the dynamics equation of the particle.
     

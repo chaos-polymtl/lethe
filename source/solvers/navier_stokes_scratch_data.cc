@@ -96,17 +96,17 @@ NavierStokesScratchData<dim>::allocate()
 
 template <int dim>
 void
-NavierStokesScratchData<dim>::enable_vof(
+NavierStokesScratchData<dim>::enable_cls(
   const FiniteElement<dim>          &fe,
   const Quadrature<dim>             &quadrature,
   const Mapping<dim>                &mapping,
-  const Parameters::VOF_PhaseFilter &phase_filter_parameters)
+  const Parameters::CLS_PhaseFilter &phase_filter_parameters)
 {
-  gather_vof    = true;
-  fe_values_vof = std::make_shared<FEValues<dim>>(
+  gather_cls    = true;
+  fe_values_cls = std::make_shared<FEValues<dim>>(
     mapping, fe, quadrature, update_values | update_gradients);
 
-  // Allocate VOF values
+  // Allocate CLS values
   phase_values          = std::vector<double>(this->n_q_points);
   filtered_phase_values = std::vector<double>(this->n_q_points);
   previous_phase_values =
@@ -131,23 +131,23 @@ NavierStokesScratchData<dim>::enable_vof(
   compressibility_multiplier            = std::vector<double>(n_q_points);
 
   // Create filter
-  filter = VolumeOfFluidFilterBase::model_cast(phase_filter_parameters);
+  filter = ConservativeLevelSetFilterBase::model_cast(phase_filter_parameters);
 }
 
 
 template <int dim>
 void
-NavierStokesScratchData<dim>::enable_vof(
-  const FiniteElement<dim>                       &fe,
-  const Quadrature<dim>                          &quadrature,
-  const Mapping<dim>                             &mapping,
-  const std::shared_ptr<VolumeOfFluidFilterBase> &filter)
+NavierStokesScratchData<dim>::enable_cls(
+  const FiniteElement<dim>                              &fe,
+  const Quadrature<dim>                                 &quadrature,
+  const Mapping<dim>                                    &mapping,
+  const std::shared_ptr<ConservativeLevelSetFilterBase> &filter)
 {
-  gather_vof    = true;
-  fe_values_vof = std::make_shared<FEValues<dim>>(
+  gather_cls    = true;
+  fe_values_cls = std::make_shared<FEValues<dim>>(
     mapping, fe, quadrature, update_values | update_gradients);
 
-  // Allocate VOF values
+  // Allocate CLS values
   phase_values          = std::vector<double>(this->n_q_points);
   filtered_phase_values = std::vector<double>(this->n_q_points);
   previous_phase_values =
@@ -275,20 +275,20 @@ NavierStokesScratchData<dim>::enable_cahn_hilliard(
 
 template <int dim>
 void
-NavierStokesScratchData<dim>::enable_projected_phase_fraction_gradient(
-  const FiniteElement<dim> &fe_projected_phase_fraction_gradient,
+NavierStokesScratchData<dim>::enable_projected_phase_indicator_gradient(
+  const FiniteElement<dim> &fe_projected_phase_indicator_gradient,
   const Quadrature<dim>    &quadrature,
   const Mapping<dim>       &mapping)
 {
-  gather_projected_phase_fraction_gradient = true;
-  fe_values_projected_phase_fraction_gradient =
+  gather_projected_phase_indicator_gradient = true;
+  fe_values_projected_phase_indicator_gradient =
     std::make_shared<FEValues<dim>>(mapping,
-                                    fe_projected_phase_fraction_gradient,
+                                    fe_projected_phase_indicator_gradient,
                                     quadrature,
                                     update_values | update_gradients);
 
-  // phase fraction gradient (PFG)
-  projected_phase_fraction_gradient_values =
+  // phase indicator gradient (PIG)
+  projected_phase_indicator_gradient_values =
     std::vector<Tensor<1, dim>>(this->n_q_points);
 }
 
@@ -615,7 +615,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                                                       thermal_expansion_1);
             }
 
-          if (gather_vof && !gather_cahn_hilliard)
+          if (gather_cls && !gather_cahn_hilliard)
             {
               for (unsigned int q = 0; q < this->n_q_points; ++q)
                 {
@@ -673,7 +673,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
 
               for (unsigned p = 0; p < previous_phase_values.size(); ++p)
                 {
-                  // Blend the physical properties using the VOF field
+                  // Blend the physical properties using the CLS field
                   for (unsigned int q = 0; q < this->n_q_points; ++q)
                     {
                       // Calculate previous density (right now assumes constant
@@ -686,7 +686,7 @@ NavierStokesScratchData<dim>::calculate_physical_properties()
                 }
               break;
             }
-          else if (gather_cahn_hilliard && !gather_vof)
+          else if (gather_cahn_hilliard && !gather_cls)
             {
               // Blend the physical properties using the CahnHilliard field
               for (unsigned int q = 0; q < this->n_q_points; ++q)

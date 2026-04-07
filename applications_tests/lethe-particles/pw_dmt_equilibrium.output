@@ -7,20 +7,22 @@ DEM time step is 7.16634% of Rayleigh time step
 Reading triangulation
 
 Finished reading triangulation
-Warning: expansion of particle-wall contact list is disabled.
-This feature is useful in geometries with concave boundaries.
+Minimum vertex distance between cell vertices: 0.002
+Minimum cell size to maximum particle diameter ratio: 20
+Warning: expansion of particle-wall contact list is disabled. 
+This feature is useful in geometries with convex boundaries. 
 *********************************************************************
 1 particles of type 0 were inserted, 0 particles of type 0 remaining
 *********************************************************************
 
 *****************************************************************
-Transient iteration: 10000    Time: 0.1      Time step: 1e-05
+Transient iteration: 10000    Time: 0.1      Time step: 1e-05   
 *****************************************************************
-| Variable                     | Min        | Max         | Average    | Total      |
-| Contact list generation      | 0.0000e+00 | 3.0000e+00  | 3.0000e+00 | 3.0000e+00 |
-| Velocity magnitude           | 1.1486e-14 | 1.1486e-14  | 1.1486e-14 | 1.1486e-14 |
-| Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 |
-| Translational kinetic energy | 8.9806e-38 | 8.9806e-38  | 8.9806e-38 | 8.9806e-38 |
-| Rotational kinetic energy    | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 |
-id, type, dp, x, y, z
-0 0 0.00010 0.0000 0.0010 0.0010
+| Variable                     | Min        | Max         | Average    | Total      | 
+| Contact list generation      | 0.0000e+00 | 3.0000e+00  | 3.0000e+00 | 3.0000e+00 | 
+| Velocity magnitude           | 1.1486e-14 | 1.1486e-14  | 1.1486e-14 | 1.1486e-14 | 
+| Angular velocity magnitude   | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
+| Translational kinetic energy | 8.9806e-38 | 8.9806e-38  | 8.9806e-38 | 8.9806e-38 | 
+| Rotational kinetic energy    | 0.0000e+00 | 2.2251e-308 | 0.0000e+00 | 0.0000e+00 | 
+id, type, dp, x, y, z 
+0 0 0.00010 0.0000 0.0010 0.0010 

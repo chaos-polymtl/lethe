@@ -1,9 +1,9 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       640
    Number of degrees of freedom: 3300
-   Volume of triangulation:      5.656854249e-05
-Pressure drop: 0 Pa
-Total pressure drop: 0 Pa
+   Volume of triangulation:      5.6568542495e-05
+Pressure drop: 0.0000000000e+00 Pa
+Total pressure drop: 0.0000000000e+00 Pa
 
 ************************************************************************************
 Transient iteration: 1        Time: 0.002    Time step: 0.002    CFL: 0.06743077177
@@ -14,10 +14,10 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Pressure drop: 31.39649331 Pa
-Total pressure drop: 31.39650998 Pa
-Global continuity equation error: -2.523615464e-08 s^-1
-Max local continuity error: 2.744147006e-07 s^-1
+Pressure drop: 3.1396493308e+01 Pa
+Total pressure drop: 3.1396509979e+01 Pa
+Global continuity equation error: -2.5236154638e-08 s^-1
+Max local continuity error: 2.7441470062e-07 s^-1
 
 ***********************************************************************************
 Transient iteration: 2        Time: 0.004    Time step: 0.002    CFL: 0.2821987272
@@ -28,7 +28,7 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Pressure drop: 29.86059615 Pa
-Total pressure drop: 29.86059447 Pa
-Global continuity equation error: 2.455743765e-10 s^-1
-Max local continuity error: 2.398762237e-07 s^-1
+Pressure drop: 2.9860596151e+01 Pa
+Total pressure drop: 2.9860594468e+01 Pa
+Global continuity equation error: 2.4557437645e-10 s^-1
+Max local continuity error: 2.3987622371e-07 s^-1

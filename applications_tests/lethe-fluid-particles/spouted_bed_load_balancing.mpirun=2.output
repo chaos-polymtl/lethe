@@ -1,18 +1,20 @@
 Running on 2 MPI rank(s)...
 The particle size distribution of particle type 0 is uniform.
-DEM time step is 5.879363789% of Rayleigh time step
+DEM time step is 5.8793637888e+00% of Rayleigh time step
 Reading DEM checkpoint
 Finished reading DEM checkpoint
 31050 particles are in the simulation
+Minimum vertex distance between cell vertices: 9.9999999999e-03
+Minimum cell size to maximum particle diameter ratio: 4.0000000000e+00
    Number of active cells:       679
    Number of degrees of freedom: 5952
-   Volume of triangulation:      0.0010185
+   Volume of triangulation:      1.0185000000e-03
 ---------------------------------------------------------------
 Initializing DEM parameters
 Warning: expansion of particle-wall contact list is disabled. 
-This feature is useful in geometries with concave boundaries. 
+This feature is useful in geometries with convex boundaries. 
 Finished initializing DEM parameters
-DEM time step is 2e-05 s
+DEM time step is 2.0000000000e-05 s
 --------------
 Void Fraction
 --------------
@@ -31,20 +33,20 @@ DEM
 ----
 -->Repartitioning triangulation
 
-Warning: There are diamond-shaped cells in the input triangulation. It is strongly recommended to use a different triangulation without such cells. It should be mentioned that these cells are not detected if you have grid motion
+Warning: Diamond-shaped cells were detected in the input triangulation. These cells have a vertex or edge shared with a wall, but not a face. It is strongly recommended to use a triangulation without such cells. If you wish to include them in the particle-wall contact list, set check_diamond_cells = true in the .prm file. Note: these cells are not detected when grid motion is enabled.
 Load balance finished
-Average, minimum and maximum number of particles on the processors are 15525 , 1736 and 29314
-Minimum and maximum number of cells owned by the processors are 679 and 679
+Average, minimum and maximum number of particles on the processors are 1.5525000000e+04 , 1.7360000000e+03 and 2.9314000000e+04
+Minimum and maximum number of cells owned by the processors are 6.7900000000e+02 and 6.7900000000e+02
 Setup DOFs
    Number of active cells:       679
    Number of degrees of freedom: 5952
-   Volume of triangulation:      0.0010185
+   Volume of triangulation:      1.0185000000e-03
 DEM contact search at dem step 1
 DEM contact search at dem step 50
 Finished 50 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 0 s^-1
-Max local continuity error: 0 s^-1
+Global continuity equation error: 0.0000000000e+00 s^-1
+Max local continuity error: 0.0000000000e+00 s^-1
 --------------------
 Particle statistics
 --------------------
@@ -69,18 +71,18 @@ DEM
 ----
 -->Repartitioning triangulation
 Load balance finished
-Average, minimum and maximum number of particles on the processors are 15525 , 15433 and 15617
-Minimum and maximum number of cells owned by the processors are 679 and 679
+Average, minimum and maximum number of particles on the processors are 1.5525000000e+04 , 1.5433000000e+04 and 1.5617000000e+04
+Minimum and maximum number of cells owned by the processors are 6.7900000000e+02 and 6.7900000000e+02
 Setup DOFs
    Number of active cells:       679
    Number of degrees of freedom: 5952
-   Volume of triangulation:      0.0010185
+   Volume of triangulation:      1.0185000000e-03
 DEM contact search at dem step 1
 DEM contact search at dem step 50
 Finished 50 DEM iterations
 ---------------------------------------------------------------
-Global continuity equation error: 0 s^-1
-Max local continuity error: 0 s^-1
+Global continuity equation error: 0.0000000000e+00 s^-1
+Max local continuity error: 0.0000000000e+00 s^-1
 --------------------
 Particle statistics
 --------------------

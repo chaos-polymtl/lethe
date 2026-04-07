@@ -1,0 +1,79 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       1024
+   Number of degrees of freedom: 3267
+   Volume of triangulation:      1.000000e+00
+   Number of CLS degrees of freedom: 1089
+   Number of active cells:       688
+   Number of degrees of freedom: 2325
+   Volume of triangulation:      1.000000e+00
+   Number of CLS degrees of freedom: 775
+   Number of active cells:       1264
+   Number of degrees of freedom: 4254
+   Volume of triangulation:      1.000000e+00
+   Number of CLS degrees of freedom: 1418
+   Number of active cells:       2416
+   Number of degrees of freedom: 8103
+   Volume of triangulation:      1.000000e+00
+   Number of CLS degrees of freedom: 2701
+   Number of active cells:       2032
+   Number of degrees of freedom: 6948
+   Volume of triangulation:      1.000000e+00
+   Number of CLS degrees of freedom: 2316
+   Number of active cells:       2032
+   Number of degrees of freedom: 6948
+   Volume of triangulation:      1.000000e+00
+   Number of CLS degrees of freedom: 2316
+   Number of active cells:       2032
+   Number of degrees of freedom: 6948
+   Volume of triangulation:      1.000000e+00
+   Number of CLS degrees of freedom: 2316
+   Number of active cells:       2032
+   Number of degrees of freedom: 6948
+   Volume of triangulation:      1.000000e+00
+   Number of CLS degrees of freedom: 2316
+   Number of active cells:       2032
+   Number of degrees of freedom: 6948
+   Volume of triangulation:      1.000000e+00
+   Number of CLS degrees of freedom: 2316
+   Number of active cells:       2032
+   Number of degrees of freedom: 6948
+   Volume of triangulation:      1.000000e+00
+   Number of CLS degrees of freedom: 2316
+   Number of active cells:       2032
+   Number of degrees of freedom: 6948
+   Volume of triangulation:      1.000000e+00
+   Number of CLS degrees of freedom: 2316
+
+*******************************************************************************
+Transient iteration: 1        Time: 0.02     Time step: 0.02     CFL: 0       
+*******************************************************************************
+L2 error velocity: 1.095089e-07
+L2 error phase : 1.744461e-04
+
+**********************************************************************************
+Transient iteration: 2        Time: 0.04     Time step: 0.02     CFL: 7.71695e-06
+**********************************************************************************
+   Number of active cells:       2032
+   Number of degrees of freedom: 6948
+   Volume of triangulation:      1.000000e+00
+   Number of CLS degrees of freedom: 2316
+L2 error velocity: 1.095098e-07
+L2 error phase : 1.744515e-04
+
+********************************************************************************
+Transient iteration: 3        Time: 0.06     Time step: 0.02     CFL: 7.717e-06
+********************************************************************************
+   Number of active cells:       2032
+   Number of degrees of freedom: 6948
+   Volume of triangulation:      1.000000e+00
+   Number of CLS degrees of freedom: 2316
+L2 error velocity: 1.095081e-07
+L2 error phase : 1.744569e-04
+ time  error_velocity error_pressure 
+0.0200   1.095089e-07         0.0028 
+0.0400   1.095098e-07         0.0028 
+0.0600   1.095081e-07         0.0028 
+ time  error_phase  
+0.0200 1.744461e-04 
+0.0400 1.744515e-04 
+0.0600 1.744569e-04 

@@ -75,7 +75,7 @@ public:
       {
         announce_string(pcout, "Tracer");
       }
-    else if (physics_id == PhysicsID::VOF)
+    else if (physics_id == PhysicsID::CLS)
       {
         announce_string(pcout, "CLS");
       }
@@ -468,7 +468,7 @@ public:
 
   /**
    * @brief Request the reference to the present filtered solution of a given
-   * physics (used in VOF or CahnHilliard physics for STF calculation in the
+   * physics (used in CLS or CahnHilliard physics for STF calculation in the
    * momentum balance)
    *
    * @param[in] physics_id ID of the physics for which the filtered solution is
@@ -558,10 +558,10 @@ public:
 
   /**
    * @brief Request the reference to the present solution vector of the
-   * projected phase fraction gradient (PFG)
+   * projected phase indicator gradient (PIG)
    */
   const GlobalVectorType &
-  get_projected_phase_fraction_gradient_solution();
+  get_projected_phase_indicator_gradient_solution();
 
   /**
    * @brief Request the reference to the present solution of the curvature
@@ -576,11 +576,11 @@ public:
   get_curvature_dof_handler();
 
   /**
-   * @brief Request the reference to the projected phase fraction gradient (PFG)
+   * @brief Request the reference to the projected phase indicator gradient (PIG)
    * DOF handler
    */
   const DoFHandler<dim> &
-  get_projected_phase_fraction_gradient_dof_handler();
+  get_projected_phase_indicator_gradient_dof_handler();
 
   /**
    * @brief Request shared pointer to immersed solid shape
@@ -686,14 +686,14 @@ public:
 
   /**
    * @brief Sets the shared pointer to the filtered solution of the physics in
-   * the multiphysics interface (used in VOF or CahnHilliard physics for STF
+   * the multiphysics interface (used in CLS or CahnHilliard physics for STF
    * calculation in the momentum balance)
    *
    * @param[in] physics_id ID of the physics for which the filtered solution is
    * being set
    *
    * @param[in] filtered_solution_vector Shared pointer to the filtered solution
-   * vector of the physics; this was implemented for VOF and CahnHilliard
+   * vector of the physics; this was implemented for CLS and CahnHilliard
    * physics
    */
   void
@@ -881,7 +881,7 @@ private:
 
   // Map that states if the physics are solved before the fluid dynamics
   std::map<PhysicsID, bool> solve_pre_fluid{{fluid_dynamics, false},
-                                            {VOF, true},
+                                            {CLS, true},
                                             {heat_transfer, false},
                                             {tracer, false},
                                             {cahn_hilliard, true},
@@ -915,7 +915,7 @@ private:
 
   /**
    * Map of physics and shared pointers to their respective filtered
-   * solutions. These solutions are used with both VOF and Cahn-Hilliard
+   * solutions. These solutions are used with both CLS and Cahn-Hilliard
    * multiphase flow approaches for surface tension force calculation in the
    * momentum equation.
    */

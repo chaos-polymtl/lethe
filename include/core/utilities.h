@@ -285,7 +285,7 @@ make_table_tensors_scalars(
 
 /**
  * @brief Calculate the equivalent properties for a given phase. Method called
- * in quadrature points loops in VOF simulations.
+ * in quadrature points loops in CLS simulations.
  *
  * @param phase Phase value for the given quadrature point
  *
@@ -302,7 +302,7 @@ calculate_point_property(const double phase,
 
   // Limit parameters value (patch)
   // TODO see if necessary after compression term is added in the
-  // VOF advection equation
+  // CLS advection equation
   const double property_min = std::min(property0, property1);
   const double property_max = std::max(property0, property1);
   if (property_eq < property_min)
@@ -810,7 +810,7 @@ identify_minimum_cell_size(const Mapping<dim>    &mapping,
                            const Quadrature<dim> &cell_quadrature,
                            const MPI_Comm        &mpi_communicator)
 {
-  // Initialize FEValues for interface algebraic reinitialization
+  // Initialize FEValues for interface PDE-based reinitialization
   FEValues<dim> fe_values(mapping,
                           dof_handler.get_fe(),
                           cell_quadrature,

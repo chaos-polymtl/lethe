@@ -101,7 +101,7 @@ public:
       "A linear system is being solved, no newton update available.");
   };
   virtual void
-  output_newton_update_norms(const unsigned int display_precision) override
+  output_newton_update_norms() override
   {
     throw std::runtime_error(
       "A linear system is being solved, no newton update norms available.");

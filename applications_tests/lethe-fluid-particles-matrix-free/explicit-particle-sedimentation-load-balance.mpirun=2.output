@@ -1,15 +1,17 @@
 Running on 2 MPI rank(s)...
 The particle size distribution of particle type 0 is uniform.
-DEM time step is 2203.52% of Rayleigh time step
+DEM time step is 2.203523e+03% of Rayleigh time step
+Minimum vertex distance between cell vertices: 1.250000e-02
+Minimum cell size to maximum particle diameter ratio: 5.000000e+00
    Number of active cells:       128
    Number of degrees of freedom: 900
-   Volume of triangulation:      0.00025
+   Volume of triangulation:      2.500000e-04
 ---------------------------------------------------------------
 Initializing DEM parameters
 Warning: expansion of particle-wall contact list is disabled. 
-This feature is useful in geometries with concave boundaries. 
+This feature is useful in geometries with convex boundaries. 
 Finished initializing DEM parameters
-DEM time step is 0.005 s
+DEM time step is 5.000000e-03 s
 --------------
 Void Fraction
 --------------
@@ -226,12 +228,12 @@ DEM
 ----
 -->Repartitioning triangulation
 Load balance finished
-Average, minimum and maximum number of particles on the processors are 0.5 , 0 and 1
-Minimum and maximum number of cells owned by the processors are 128 and 128
+Average, minimum and maximum number of particles on the processors are 5.000000e-01 , 0.000000e+00 and 1.000000e+00
+Minimum and maximum number of cells owned by the processors are 1.280000e+02 and 1.280000e+02
 Setup DOFs
    Number of active cells:       128
    Number of degrees of freedom: 900
-   Volume of triangulation:      0.00025
+   Volume of triangulation:      2.500000e-04
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
@@ -454,12 +456,12 @@ DEM
 ----
 -->Repartitioning triangulation
 Load balance finished
-Average, minimum and maximum number of particles on the processors are 0.5 , 0 and 1
-Minimum and maximum number of cells owned by the processors are 128 and 128
+Average, minimum and maximum number of particles on the processors are 5.000000e-01 , 0.000000e+00 and 1.000000e+00
+Minimum and maximum number of cells owned by the processors are 1.280000e+02 and 1.280000e+02
 Setup DOFs
    Number of active cells:       128
    Number of degrees of freedom: 900
-   Volume of triangulation:      0.00025
+   Volume of triangulation:      2.500000e-04
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
@@ -682,12 +684,12 @@ DEM
 ----
 -->Repartitioning triangulation
 Load balance finished
-Average, minimum and maximum number of particles on the processors are 0.5 , 0 and 1
-Minimum and maximum number of cells owned by the processors are 128 and 128
+Average, minimum and maximum number of particles on the processors are 5.000000e-01 , 0.000000e+00 and 1.000000e+00
+Minimum and maximum number of cells owned by the processors are 1.280000e+02 and 1.280000e+02
 Setup DOFs
    Number of active cells:       128
    Number of degrees of freedom: 900
-   Volume of triangulation:      0.00025
+   Volume of triangulation:      2.500000e-04
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
@@ -910,12 +912,12 @@ DEM
 ----
 -->Repartitioning triangulation
 Load balance finished
-Average, minimum and maximum number of particles on the processors are 0.5 , 0 and 1
-Minimum and maximum number of cells owned by the processors are 128 and 128
+Average, minimum and maximum number of particles on the processors are 5.000000e-01 , 0.000000e+00 and 1.000000e+00
+Minimum and maximum number of cells owned by the processors are 1.280000e+02 and 1.280000e+02
 Setup DOFs
    Number of active cells:       128
    Number of degrees of freedom: 900
-   Volume of triangulation:      0.00025
+   Volume of triangulation:      2.500000e-04
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------
@@ -1138,12 +1140,12 @@ DEM
 ----
 -->Repartitioning triangulation
 Load balance finished
-Average, minimum and maximum number of particles on the processors are 0.5 , 0 and 1
-Minimum and maximum number of cells owned by the processors are 128 and 128
+Average, minimum and maximum number of particles on the processors are 5.000000e-01 , 0.000000e+00 and 1.000000e+00
+Minimum and maximum number of cells owned by the processors are 1.280000e+02 and 1.280000e+02
 Setup DOFs
    Number of active cells:       128
    Number of degrees of freedom: 900
-   Volume of triangulation:      0.00025
+   Volume of triangulation:      2.500000e-04
 DEM contact search at dem step 1
 Finished 1 DEM iterations
 ---------------------------------------------------------------

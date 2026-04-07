@@ -56,7 +56,7 @@ DeclException1(
   << " is defined in the triangulation, but not as a boundary condition for the fluid dynamics physics. Lethe does not assign a    default boundary condition to boundary ids. Every boundary id defined within the triangulation must have a corresponding boundary condition defined in the input file.");
 
 /**
- * @brief Struct containing fluid id, temperature and phase fraction range
+ * @brief Struct containing fluid id, temperature and phase indicator range
  * information, and flag containers for DOFs used in temperature-dependent
  * stasis constraints.
  */
@@ -73,18 +73,18 @@ struct StasisConstraintWithTemperature
    * @param[in] max_solid_temperature Upper threshold values of the constraining
    * field (temperature).
    *
-   * @param[in] filtered_phase_fraction_tolerance Tolerance applied on filtered
-   * phase fraction.
+   * @param[in] filtered_phase_indicator_tolerance Tolerance applied on filtered
+   * phase indicator.
    */
   StasisConstraintWithTemperature(
     const unsigned int fluid_id,
     const double       min_solid_temperature,
     const double       max_solid_temperature,
-    const double       filtered_phase_fraction_tolerance)
+    const double       filtered_phase_indicator_tolerance)
     : fluid_id(fluid_id)
     , min_solid_temperature(min_solid_temperature)
     , max_solid_temperature(max_solid_temperature)
-    , filtered_phase_fraction_tolerance(filtered_phase_fraction_tolerance)
+    , filtered_phase_indicator_tolerance(filtered_phase_indicator_tolerance)
   {}
   /// Identifier of the fluid that is constrained.
   const unsigned int fluid_id;
@@ -92,8 +92,8 @@ struct StasisConstraintWithTemperature
   const double min_solid_temperature;
   /// Upper threshold values of the constraining field (temperature)
   const double max_solid_temperature;
-  /// Tolerance applied on filtered phase fraction
-  const double filtered_phase_fraction_tolerance;
+  /// Tolerance applied on filtered phase indicator
+  const double filtered_phase_indicator_tolerance;
   /// Container of global DOF indices located in solid cells
   std::unordered_set<types::global_dof_index> dofs_are_in_solid;
   /// Container of global DOF indices connected to at least one fluid cell
@@ -166,11 +166,9 @@ protected:
 
   /**
    * @brief Output the L2 and Linfty norms of the correction vector.
-   *
-   * @param[in] display_precision Number of outputted digits.
    */
   virtual void
-  output_newton_update_norms(const unsigned int display_precision) override;
+  output_newton_update_norms() override;
 
   /**
    * @brief Return the metric for residual rescaling. By default, should return 1.
@@ -515,6 +513,14 @@ protected:
   rotate_rotor_mapping(const bool is_first);
 
   /**
+   * @brief Connect weight signals for load balancing of mortar cells.
+   * Cells touching mortar boundaries can be assigned assigned higher weight for
+   * better load distribution across processors.
+   */
+  void
+  connect_mortar_weight_signals();
+
+  /**
    * @brief Update non-zero constraints if the boundary is time dependent.
    * Note: not implemented for the block fluid dynamics application.
    */
@@ -618,33 +624,33 @@ protected:
   }
 
   /**
-   * @brief Get cell's local filtered phase fraction values at quadrature
+   * @brief Get cell's local filtered phase indicator values at quadrature
    * points.
    *
    * @param[in] cell Pointer to an active cell of the fluid dynamics DoFHandler.
    *
-   * @param[in] dof_handler_vof DoFHandler of the Volume of Fluid (VOF)
+   * @param[in] dof_handler_cls DoFHandler of the Conservative Level Set (CLS)
    * auxiliary physic.
    *
-   * @param[in] filtered_phase_fraction_solution Filtered phase fraction
-   * solution vector from the VOF auxiliary physic.
+   * @param[in] filtered_phase_indicator_solution Filtered phase indicator
+   * solution vector from the CLS auxiliary physic.
    *
-   * @param[out] local_filtered_phase_fraction_values Cell's local filtered
-   * phase fraction values at quadrature points.
+   * @param[out] local_filtered_phase_indicator_values Cell's local filtered
+   * phase indicator values at quadrature points.
    */
   inline void
-  get_cell_filtered_phase_fraction_values(
+  get_cell_filtered_phase_indicator_values(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
-    const DoFHandler<dim>                                *dof_handler_vof,
-    const GlobalVectorType &filtered_phase_fraction_solution,
-    std::vector<double>    &local_filtered_phase_fraction_values)
+    const DoFHandler<dim>                                *dof_handler_cls,
+    const GlobalVectorType &filtered_phase_indicator_solution,
+    std::vector<double>    &local_filtered_phase_indicator_values)
   {
-    const typename DoFHandler<dim>::active_cell_iterator vof_cell(
-      &(*(this->triangulation)), cell->level(), cell->index(), dof_handler_vof);
+    const typename DoFHandler<dim>::active_cell_iterator cls_cell(
+      &(*(this->triangulation)), cell->level(), cell->index(), dof_handler_cls);
 
-    this->fe_values_vof->reinit(vof_cell);
-    this->fe_values_vof->get_function_values(
-      filtered_phase_fraction_solution, local_filtered_phase_fraction_values);
+    this->fe_values_cls->reinit(cls_cell);
+    this->fe_values_cls->get_function_values(
+      filtered_phase_indicator_solution, local_filtered_phase_indicator_values);
   }
 
   /**
@@ -845,8 +851,8 @@ protected:
    * @brief Constrain a fluid's subdomains according to the temperature field to null
    * velocity and pressure fields to model solid subdomains.
    *
-   * @note Its equivalent for Volume of Fluid (VOF) simulations is
-   * NavierStokesBase<dim, VectorType, DofsType>::constrain_solid_domain_vof.
+   * @note Its equivalent for Conservative Level Set (CLS) simulations is
+   * NavierStokesBase<dim, VectorType, DofsType>::constrain_solid_domain_cls.
    *
    * @param[in] dof_handler_ht DoFHandler of the Heat Transfer (HT) auxiliary
    * physic.
@@ -857,15 +863,15 @@ protected:
   /**
    * @brief Constrain fluids' subdomains according to the temperature field to
    * null velocity and pressure fields to model solid subdomains in Volume of
-   * Fluid (VOF) simulations.
+   * Fluid (CLS) simulations.
    *
-   * @param[in] dof_handler_vof DoFHandler of the VOF auxiliary physic.
+   * @param[in] dof_handler_cls DoFHandler of the CLS auxiliary physic.
    *
    * @param[in] dof_handler_ht DoFHandler of the Heat Transfer (HT) auxiliary
    * physic.
    */
   void
-  constrain_stasis_with_temperature_vof(const DoFHandler<dim> *dof_handler_vof,
+  constrain_stasis_with_temperature_cls(const DoFHandler<dim> *dof_handler_cls,
                                         const DoFHandler<dim> *dof_handler_ht);
 
   /**
@@ -1086,10 +1092,10 @@ protected:
   /// FEValues object used for temperature-dependent solid domain constraints
   std::shared_ptr<FEValues<dim>> fe_values_temperature;
   /// FEValues object used for temperature-dependent solid domain constraints in
-  /// VOF simulations
-  std::shared_ptr<FEValues<dim>> fe_values_vof;
+  /// CLS simulations
+  std::shared_ptr<FEValues<dim>> fe_values_cls;
   /// Vector containing solid domain constraint structs for
-  /// temperature-dependent solid domain constraints in VOF simulations
+  /// temperature-dependent solid domain constraints in CLS simulations
   std::vector<StasisConstraintWithTemperature> stasis_constraint_structs;
   /// Dynamic homogeneous constraints used for temperature-dependent solid
   /// domain constraints

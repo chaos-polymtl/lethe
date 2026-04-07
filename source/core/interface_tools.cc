@@ -1023,11 +1023,11 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
           /* We want to find a cell-wise correction to apply to the cell's dof
           values of the signed_distance so that the geometric cell-wise volume
           encompassed by the level 0 of the signed_distance V_K and by the
-          iso-contour 0.5 of the phase fraction V_K,VOF match. This is
+          iso-contour 0.5 of the phase indicator V_K,CLS match. This is
           required because the computed distance doesn't belong to the Q1
           approximation space.
 
-          We solve the non-linear problem: DeltaV_K(phi* + eta_K) = V_K,VOF -
+          We solve the non-linear problem: DeltaV_K(phi* + eta_K) = V_K,CLS -
           V_K(phi* + eta_K) = 0, where phi* is the current
           signed distance, eta_K is the correction on the signed_distance that
           we are looking for. We use the secant method to do so. See Ausas et
@@ -1170,9 +1170,9 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
   /* We want to find a global correction function to apply to the dof value of
      the signed_distance so that the geometric global volume encompassed by the
      level 0 of the signed_distance V and by the iso-contour 0.5 of the phase
-     fraction V_VOF match. This is required because the computed distance
+     fraction V_CLS match. This is required because the computed distance
      doesn't belong to the Q1 approximation space. We solve the non-linear
-     problem: DeltaV(phi* + xi) = V_VOF - V(phi* + xi) = 0, where phi* is the
+     problem: DeltaV(phi* + xi) = V_CLS - V(phi* + xi) = 0, where phi* is the
      current signed distance, xi = C*eta is the correction function on
      the signed_distance that we are looking for, with eta being the cell-wise
      correction computed with compute_cell_wise_volume_correction() and C being
@@ -1183,7 +1183,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
 
   /* Compute targeted global volume. It corresponds to the one enclosed by
   the level 0 of the level_set vector (same volume as the one enclosed
-  by iso-contour 0.5 of the phase fraction).*/
+  by iso-contour 0.5 of the phase indicator).*/
   double global_volume, surface;
 
   std::tie(global_volume, surface) = compute_surface_and_volume(
@@ -1202,7 +1202,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
   double global_delta_volume_prime = 0.0;
 
   /* Global constant C that we are solving for to obtain
-      DeltaV(phi* + C*eta) = V_VOF - V(phi* + C*eta) = 0
+      DeltaV(phi* + C*eta) = V_CLS - V(phi* + C*eta) = 0
   where eta is the cell-wise correction computed with
   compute_cell_wise_volume_correction()*/
   double C_nm1 = 0.0;

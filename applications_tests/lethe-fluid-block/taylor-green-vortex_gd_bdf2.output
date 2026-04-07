@@ -1,86 +1,86 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       1024
    Number of degrees of freedom: 9539
-   Volume of triangulation:      39.4784
-Enstrophy  : 0.500001
-Kinetic energy : 0.25
+   Volume of triangulation:      3.947842e+01
+Enstrophy: 5.000005e-01
+Kinetic energy: 2.500000e-01
 
 *******************************************************************************
 Transient iteration: 1        Time: 0.04     Time step: 0.04     CFL: 0.902264
 *******************************************************************************
-Enstrophy  : 0.42867
-Kinetic energy : 0.214335
-L2 error velocity : 0.0124835
+Enstrophy: 4.286697e-01
+Kinetic energy: 2.143346e-01
+L2 error velocity: 1.248347e-02
 
 *******************************************************************************
 Transient iteration: 2        Time: 0.1      Time step: 0.06     CFL: 0.33417 
 *******************************************************************************
-Enstrophy  : 0.338308
-Kinetic energy : 0.169154
-L2 error velocity : 0.0170417
+Enstrophy: 3.383080e-01
+Kinetic energy: 1.691538e-01
+L2 error velocity: 1.704175e-02
 
 *******************************************************************************
 Transient iteration: 3        Time: 0.2      Time step: 0.1      CFL: 0.445301
 *******************************************************************************
-Enstrophy  : 0.226752
-Kinetic energy : 0.113376
-L2 error velocity : 0.0138032
+Enstrophy: 2.267520e-01
+Kinetic energy: 1.133759e-01
+L2 error velocity: 1.380319e-02
 
 *******************************************************************************
 Transient iteration: 4        Time: 0.3      Time step: 0.1      CFL: 0.607605
 *******************************************************************************
-Enstrophy  : 0.151435
-Kinetic energy : 0.0757172
-L2 error velocity : 0.00677022
+Enstrophy: 1.514346e-01
+Kinetic energy: 7.571721e-02
+L2 error velocity: 6.770220e-03
 
 *******************************************************************************
 Transient iteration: 5        Time: 0.4      Time step: 0.1      CFL: 0.496545
 *******************************************************************************
-Enstrophy  : 0.100974
-Kinetic energy : 0.050487
-L2 error velocity : 0.000274836
+Enstrophy: 1.009742e-01
+Kinetic energy: 5.048702e-02
+L2 error velocity: 2.748362e-04
 
 *******************************************************************************
 Transient iteration: 6        Time: 0.5      Time step: 0.1      CFL: 0.405463
 *******************************************************************************
-Enstrophy  : 0.0672809
-Kinetic energy : 0.0336404
-L2 error velocity : 0.00467928
+Enstrophy: 6.728087e-02
+Kinetic energy: 3.364040e-02
+L2 error velocity: 4.679280e-03
 
 *******************************************************************************
 Transient iteration: 7        Time: 0.6      Time step: 0.1      CFL: 0.330972
 *******************************************************************************
-Enstrophy  : 0.0448166
-Kinetic energy : 0.0224083
-L2 error velocity : 0.0080255
+Enstrophy: 4.481661e-02
+Kinetic energy: 2.240828e-02
+L2 error velocity: 8.025499e-03
 
 *******************************************************************************
 Transient iteration: 8        Time: 0.7      Time step: 0.1      CFL: 0.270125
 *******************************************************************************
-Enstrophy  : 0.0298488
-Kinetic energy : 0.0149244
-L2 error velocity : 0.0100682
+Enstrophy: 2.984882e-02
+Kinetic energy: 1.492439e-02
+L2 error velocity: 1.006820e-02
 
 *******************************************************************************
 Transient iteration: 9        Time: 0.8      Time step: 0.1      CFL: 0.22045 
 *******************************************************************************
-Enstrophy  : 0.0198788
-Kinetic energy : 0.00993937
-L2 error velocity : 0.0111241
+Enstrophy: 1.987875e-02
+Kinetic energy: 9.939365e-03
+L2 error velocity: 1.112413e-02
 
 *******************************************************************************
 Transient iteration: 10       Time: 0.9      Time step: 0.1      CFL: 0.179904
 *******************************************************************************
-Enstrophy  : 0.0132385
-Kinetic energy : 0.00661925
-L2 error velocity : 0.0114684
+Enstrophy: 1.323852e-02
+Kinetic energy: 6.619255e-03
+L2 error velocity: 1.146840e-02
 
 *******************************************************************************
 Transient iteration: 11       Time: 1        Time step: 0.1      CFL: 0.146813
 *******************************************************************************
-Enstrophy  : 0.00881627
-Kinetic energy : 0.00440813
-L2 error velocity : 0.0113195
+Enstrophy: 8.816270e-03
+Kinetic energy: 4.408131e-03
+L2 error velocity: 1.131951e-02
  time  error_velocity 
 0.0400   1.248347e-02 
 0.1000   1.704175e-02 

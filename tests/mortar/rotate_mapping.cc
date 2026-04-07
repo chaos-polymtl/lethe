@@ -78,6 +78,8 @@ test()
   mortar_parameters.radius_tolerance           = 1e-8;
   const double rotation_angle =
     2 * numbers::PI * mortar_parameters.rotor_mesh->rotation_angle / 360.0;
+  mortar_parameters.interface_type =
+    Parameters::Mortar<dim>::InterfaceType::circular;
 
   // Initialized merged triangulation
   parallel::distributed::Triangulation<dim> triangulation(comm);

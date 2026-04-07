@@ -18,6 +18,7 @@
 #include <dem/set_insertion_method.h>
 #include <dem/set_particle_particle_contact_force_model.h>
 #include <dem/set_particle_wall_contact_force_model.h>
+#include <dem/utilities.h>
 #include <dem/velocity_verlet_integrator.h>
 #include <dem/write_checkpoint.h>
 
@@ -45,7 +46,7 @@ DEMSolver<dim, PropertiesIndex>::DEMSolver(
   , particle_handler(triangulation, mapping, PropertiesIndex::n_properties)
   , computing_timer(this->mpi_communicator,
                     this->pcout,
-                    TimerOutput::summary,
+                    TimerOutput::never,
                     TimerOutput::wall_times)
   , contact_build_number(0)
   , background_dh(triangulation)
@@ -78,10 +79,6 @@ DEMSolver<dim, PropertiesIndex>::setup_parameters()
 
   // Get the pointer of the only instance of the action manager
   action_manager = DEMActionManager::get_action_manager();
-
-  // Change the behavior of the timer for situations when you don't want outputs
-  if (parameters.timer.type == Parameters::Timer::Type::none)
-    computing_timer.disable_output();
 
   // Set the simulation control as transient DEM
   simulation_control = std::make_shared<SimulationControlTransientDEM>(
@@ -581,7 +578,11 @@ DEMSolver<dim, PropertiesIndex>::finish_simulation()
 {
   // Timer output
   if (parameters.timer.type == Parameters::Timer::Type::end)
-    this->computing_timer.print_summary();
+    {
+      this->pcout << std::defaultfloat;
+      this->computing_timer.print_summary();
+      this->pcout << std::scientific;
+    }
 
   // Testing
   if (parameters.test.enabled)
@@ -797,7 +798,9 @@ DEMSolver<dim, PropertiesIndex>::report_statistics()
   // Timer output
   if (parameters.timer.type == Parameters::Timer::Type::iteration)
     {
+      this->pcout << std::defaultfloat;
       this->computing_timer.print_summary();
+      this->pcout << std::scientific;
     }
 }
 
@@ -850,6 +853,11 @@ DEMSolver<dim, PropertiesIndex>::solve()
             pcout,
             triangulation,
             parameters.boundary_conditions);
+
+  report_cell_size_to_particle_diameter_ratio(triangulation,
+                                              maximum_particle_diameter,
+                                              pcout,
+                                              mpi_communicator);
 
   // Set up functions and pointers according to parameters
   setup_functions_and_pointers();

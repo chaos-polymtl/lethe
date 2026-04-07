@@ -714,7 +714,8 @@ namespace Parameters
 
       // Resize vectors
       this->fluid_ids.resize(max_number_of_constraints);
-      this->filtered_phase_fraction_tolerance.resize(max_number_of_constraints);
+      this->filtered_phase_indicator_tolerance.resize(
+        max_number_of_constraints);
       this->temperature_min_values.resize(max_number_of_constraints);
       this->temperature_max_values.resize(max_number_of_constraints);
 
@@ -781,7 +782,7 @@ namespace Parameters
 
       // Resize vectors
       this->fluid_ids.resize(number_of_constraints);
-      this->filtered_phase_fraction_tolerance.resize(number_of_constraints);
+      this->filtered_phase_indicator_tolerance.resize(number_of_constraints);
       this->temperature_min_values.resize(number_of_constraints);
       this->temperature_max_values.resize(number_of_constraints);
 
@@ -805,7 +806,7 @@ namespace Parameters
     const unsigned int              constraint_id)
   {
     this->fluid_ids[constraint_id] = prm.get_integer("fluid id");
-    this->filtered_phase_fraction_tolerance[constraint_id] =
+    this->filtered_phase_indicator_tolerance[constraint_id] =
       prm.get_double("phase indicator tolerance");
     this->temperature_min_values[constraint_id] =
       prm.get_double("min temperature");
@@ -905,7 +906,7 @@ namespace Parameters
       // DCDD stabilization activation parameters
       heat_transfer_dcdd_stabilization =
         prm.get_bool("heat transfer dcdd stabilization");
-      vof_dcdd_stabilization = prm.get_bool("cls dcdd stabilization");
+      cls_dcdd_stabilization = prm.get_bool("cls dcdd stabilization");
       dcdd_diffusion_coeff   = prm.get_double("cls dcdd diffusion factor");
 
       pressure_scaling_factor = prm.get_double("pressure scaling factor");
@@ -1810,8 +1811,8 @@ namespace Parameters
       temperature_order         = prm.get_integer("temperature order");
       tracer_order              = prm.get_integer("tracer order");
       tracer_uses_dg            = prm.get_bool("tracer uses dg");
-      VOF_order                 = prm.get_integer("cls order");
-      VOF_uses_dg               = prm.get_bool("cls uses dg");
+      CLS_order                 = prm.get_integer("cls order");
+      CLS_uses_dg               = prm.get_bool("cls uses dg");
       phase_cahn_hilliard_order = prm.get_integer("phase cahn hilliard order");
       potential_cahn_hilliard_order =
         prm.get_integer("potential cahn hilliard order");
@@ -2010,9 +2011,9 @@ namespace Parameters
       if (type_string == "exponential_decay")
         laser_type = LaserType::exponential_decay;
       else if (type_string == "gaussian_heat_flux_cls_interface")
-        laser_type = LaserType::gaussian_heat_flux_vof_interface;
+        laser_type = LaserType::gaussian_heat_flux_cls_interface;
       else
-        laser_type = LaserType::uniform_heat_flux_vof_interface;
+        laser_type = LaserType::uniform_heat_flux_cls_interface;
       concentration_factor = prm.get_double("concentration factor");
       laser_power          = prm.get_double("power");
       laser_absorptivity   = prm.get_double("absorptivity");
@@ -2573,10 +2574,6 @@ namespace Parameters
           "The default value of this parameter is false.");
 
 
-        prm.declare_entry("residual precision",
-                          "4",
-                          Patterns::Integer(),
-                          "Number of digits displayed when showing residuals");
         prm.declare_entry(
           "reuse matrix",
           "false",
@@ -2641,7 +2638,6 @@ namespace Parameters
         step_tolerance        = prm.get_double("step tolerance");
         matrix_tolerance      = prm.get_double("matrix tolerance");
         max_iterations        = prm.get_integer("max iterations");
-        display_precision     = prm.get_integer("residual precision");
         force_rhs_calculation = prm.get_bool("force rhs calculation");
         reuse_matrix          = prm.get_bool("reuse matrix");
         reuse_preconditioner  = prm.get_bool("reuse preconditioner");
@@ -3885,6 +3881,11 @@ namespace Parameters
           Patterns::Integer(),
           "Number of refinements around the particles before the start of the simulation ");
         prm.declare_entry(
+          "enable distance based coarsening",
+          "false",
+          Patterns::Bool(),
+          "Enable distance-based coarsening away from immersed boundary particles");
+        prm.declare_entry(
           "refine mesh inside radius factor",
           "0.5",
           Patterns::Double(),
@@ -3894,6 +3895,11 @@ namespace Parameters
           "1.5",
           Patterns::Double(),
           "The factor that multiplies the radius to define the outside bound for the refinement of the mesh");
+        prm.declare_entry(
+          "coarsen mesh outside radius factor",
+          "2.0",
+          Patterns::Double(),
+          "The factor that multiplies the radius to define the outside bound beyond which distance-based coarsening is allowed");
         prm.declare_entry(
           "refinement zone extrapolation",
           "false",
@@ -4074,10 +4080,22 @@ namespace Parameters
       prm.enter_subsection("local mesh refinement");
       {
         initial_refinement = prm.get_integer("initial refinement");
-        inside_radius      = prm.get_double("refine mesh inside radius factor");
-        outside_radius = prm.get_double("refine mesh outside radius factor");
+        enable_coarsening  = prm.get_bool("enable distance based coarsening");
+        refinement_inside_distance_factor =
+          prm.get_double("refine mesh inside radius factor");
+        refinement_outside_distance_factor =
+          prm.get_double("refine mesh outside radius factor");
+        coarsening_distance_factor =
+          prm.get_double("coarsen mesh outside radius factor");
         time_extrapolation_of_refinement_zone =
           prm.get_bool("refinement zone extrapolation");
+        if (enable_coarsening)
+          {
+            AssertThrow(
+              coarsening_distance_factor >= refinement_outside_distance_factor,
+              ExcMessage(
+                "The parameter 'coarsen mesh outside radius factor' must be greater than or equal to 'refine mesh outside radius factor'."));
+          }
         prm.leave_subsection();
       }
 
@@ -4542,6 +4560,10 @@ namespace Parameters
                         "1e-8",
                         Patterns::Double(),
                         "Tolerance used for the interface radius computation");
+      prm.declare_entry("cell weight",
+                        "1000",
+                        Patterns::Integer(),
+                        "Cell weight for load balancing of mortar cells");
       prm.declare_entry(
         "verbosity",
         "quiet",
@@ -4590,6 +4612,7 @@ namespace Parameters
       sip_factor          = prm.get_double("penalty factor");
       oversampling_factor = prm.get_integer("oversampling factor");
       radius_tolerance    = prm.get_double("radius tolerance");
+      cell_weight         = prm.get_integer("cell weight");
 
       // Enable printing of mortar information
       const std::string op = prm.get("verbosity");

@@ -1,11 +1,11 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <solvers/signed_distance_transformation.h>
 
 std::shared_ptr<SignedDistanceTransformationBase>
 SignedDistanceTransformationBase::model_cast(
-  const Parameters::VOF_GeometricInterfaceReinitialization
+  const Parameters::CLS_GeometricInterfaceReinitialization
     &geometric_redistanciation_parameters)
 {
   if (geometric_redistanciation_parameters.transformation_type ==

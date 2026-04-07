@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022, 2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022, 2024, 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/dimensionality.h>
@@ -14,6 +14,7 @@ namespace Parameters
     const double M     = mass;
     const double theta = temperature;
     const double T     = time;
+    const double A     = electric_current;
 
     density_scaling                  = 1. * L * L * L / M;
     specific_gas_constant_scaling    = 1. / L / L * T * T * theta;
@@ -34,6 +35,8 @@ namespace Parameters
                    // necessary to rescale by time because in the time harmonic
                    // form the time scale cancels out as the solution is
                    // independent of it.
+    electric_amplitude_scaling = 1 * A * T * T * T / M / L;
+    magnetic_amplitude_scaling = 1 * L / A;
   }
 
   void
@@ -68,6 +71,13 @@ namespace Parameters
         Patterns::Double(),
         "Temperature scale. The default value assumed is Kelvin. If the simulation is carried out in kiloKelvin,"
         " a temperature of 1000 should be specified.");
+
+      prm.declare_entry(
+        "electric current",
+        "1",
+        Patterns::Double(),
+        "Electric current scale. The default value assumed is Amperes. If the simulation is carried out in milliamperes,"
+        " an electric current of 0.001 should be specified.");
     }
     prm.leave_subsection();
   }
@@ -78,10 +88,11 @@ namespace Parameters
   {
     prm.enter_subsection("dimensionality");
     {
-      length      = prm.get_double("length");
-      time        = prm.get_double("time");
-      mass        = prm.get_double("mass");
-      temperature = prm.get_double("temperature");
+      length           = prm.get_double("length");
+      time             = prm.get_double("time");
+      mass             = prm.get_double("mass");
+      temperature      = prm.get_double("temperature");
+      electric_current = prm.get_double("electric current");
     }
     prm.leave_subsection();
 

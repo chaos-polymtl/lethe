@@ -446,7 +446,8 @@ namespace InterfaceTools
      *
      * This function transfers the level-set field from the main solver to the
      * signed distance solver. For example, when using geometric redistanciation
-     * of the VOF phase fraction, the level-set field comes from the VOF solver.
+     * of the CLS phase indicator, the level-set field comes from the CLS
+     * solver.
      *
      * @param[in] background_dof_handler DoFHandler corresponding to the
      * level-set field solver.

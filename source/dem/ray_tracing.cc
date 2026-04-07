@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/grids.h>
@@ -33,7 +33,7 @@ RayTracingSolver<dim>::RayTracingSolver(
   , photon_handler(triangulation, mapping, 6)
   , computing_timer(this->mpi_communicator,
                     this->pcout,
-                    TimerOutput::summary,
+                    TimerOutput::never,
                     TimerOutput::wall_times)
   , background_dh(triangulation)
   , displacement_distance(0)
@@ -58,9 +58,6 @@ RayTracingSolver<dim>::setup_parameters()
   std::string msg =
     "Running on " + std::to_string(n_mpi_processes) + " rank(s)";
   announce_string(pcout, msg, '*');
-
-  if (parameters.timer.type == Parameters::Timer::Type::none)
-    computing_timer.disable_output();
 
   // Get the pointer of the only instance of the action manager
   action_manager = DEMActionManager::get_action_manager();
@@ -447,7 +444,11 @@ RayTracingSolver<dim>::finish_simulation(
 {
   // Timer output
   if (parameters.timer.type == Parameters::Timer::Type::end)
-    this->computing_timer.print_summary();
+    {
+      this->pcout << std::defaultfloat;
+      this->computing_timer.print_summary();
+      this->pcout << std::scientific;
+    }
 
   // Testing
   if (parameters.test.enabled)

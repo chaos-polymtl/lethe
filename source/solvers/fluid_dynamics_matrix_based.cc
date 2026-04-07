@@ -10,9 +10,9 @@
 
 #include <solvers/fluid_dynamics_matrix_based.h>
 #include <solvers/isothermal_compressible_navier_stokes_assembler.h>
-#include <solvers/isothermal_compressible_navier_stokes_vof_assembler.h>
+#include <solvers/isothermal_compressible_navier_stokes_cls_assembler.h>
 #include <solvers/navier_stokes_cahn_hilliard_assemblers.h>
-#include <solvers/navier_stokes_vof_assemblers.h>
+#include <solvers/navier_stokes_cls_assemblers.h>
 
 #include <deal.II/base/work_stream.h>
 
@@ -300,13 +300,13 @@ FluidDynamicsMatrixBased<dim>::define_dynamic_zero_constraints()
   const DoFHandler<dim> &dof_handler_ht =
     this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
 
-  if (!this->simulation_parameters.multiphysics.VOF)
+  if (!this->simulation_parameters.multiphysics.CLS)
     this->constrain_stasis_with_temperature(&dof_handler_ht);
   else
     {
-      const DoFHandler<dim> &dof_handler_vof =
-        this->multiphysics->get_dof_handler(PhysicsID::VOF);
-      this->constrain_stasis_with_temperature_vof(&dof_handler_vof,
+      const DoFHandler<dim> &dof_handler_cls =
+        this->multiphysics->get_dof_handler(PhysicsID::CLS);
+      this->constrain_stasis_with_temperature_cls(&dof_handler_cls,
                                                   &dof_handler_ht);
     }
 
@@ -417,12 +417,12 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
   // Thermal buoyancy force
   if (this->simulation_parameters.multiphysics.thermal_buoyancy_force)
     {
-      if (this->simulation_parameters.multiphysics.VOF)
+      if (this->simulation_parameters.multiphysics.CLS)
         {
-          // VOF formulation includes density explicitly in the momentum
+          // CLS formulation includes density explicitly in the momentum
           // equation
           this->assemblers.emplace_back(
-            std::make_shared<ThermalBuoyancyAssemblyVOF<dim>>(
+            std::make_shared<ThermalBuoyancyAssemblyCLS<dim>>(
               this->simulation_control,
               this->simulation_parameters.physical_properties_manager
                 .get_reference_temperature()));
@@ -464,7 +464,7 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
           this->simulation_control, this->simulation_parameters));
     }
 
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
       // Time-stepping schemes
       if (time_stepping_is_bdf(
@@ -473,7 +473,7 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
             .density_is_constant())
         {
           this->assemblers.emplace_back(
-            std::make_shared<GLSNavierStokesVOFAssemblerBDF<dim>>(
+            std::make_shared<GLSNavierStokesCLSAssemblerBDF<dim>>(
               this->simulation_control));
         }
       else if (time_stepping_is_bdf(
@@ -481,25 +481,25 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
         {
           this->assemblers.emplace_back(
             std::make_shared<
-              GLSIsothermalCompressibleNavierStokesVOFAssemblerBDF<dim>>(
+              GLSIsothermalCompressibleNavierStokesCLSAssemblerBDF<dim>>(
               this->simulation_control));
         }
 
       // Surface tension force (STF)
-      if (this->simulation_parameters.multiphysics.vof_parameters
+      if (this->simulation_parameters.multiphysics.cls_parameters
             .surface_tension_force.enable)
         {
-          if (this->simulation_parameters.multiphysics.vof_parameters
+          if (this->simulation_parameters.multiphysics.cls_parameters
                 .surface_tension_force.enable_marangoni_effect)
             this->assemblers.emplace_back(
-              std::make_shared<GLSNavierStokesVOFAssemblerMarangoni<dim>>(
+              std::make_shared<GLSNavierStokesCLSAssemblerMarangoni<dim>>(
                 this->simulation_control,
-                this->simulation_parameters.multiphysics.vof_parameters
+                this->simulation_parameters.multiphysics.cls_parameters
                   .surface_tension_force));
           else
             {
               this->assemblers.emplace_back(
-                std::make_shared<GLSNavierStokesVOFAssemblerSTF<dim>>(
+                std::make_shared<GLSNavierStokesCLSAssemblerSTF<dim>>(
                   this->simulation_control, this->simulation_parameters));
             }
         }
@@ -508,7 +508,7 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
       if (this->simulation_parameters.evaporation.enable_recoil_pressure)
         {
           this->assemblers.emplace_back(
-            std::make_shared<NavierStokesVOFAssemblerEvaporation<dim>>(
+            std::make_shared<NavierStokesCLSAssemblerEvaporation<dim>>(
               this->simulation_control,
               this->simulation_parameters.evaporation));
         }
@@ -520,7 +520,7 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
           AssertThrow(this->simulation_parameters.multiphysics.heat_transfer,
                       PhaseChangeDarcyModelRequiresTemperature());
           this->assemblers.emplace_back(
-            std::make_shared<PhaseChangeDarcyVOFAssembler<dim>>(
+            std::make_shared<PhaseChangeDarcyCLSAssembler<dim>>(
               this->simulation_parameters.physical_properties_manager
                 .get_phase_change_parameters_vector()));
         }
@@ -530,7 +530,7 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
         {
           // Core assembler with Non newtonian viscosity
           this->assemblers.emplace_back(
-            std::make_shared<GLSNavierStokesVOFAssemblerNonNewtonianCore<dim>>(
+            std::make_shared<GLSNavierStokesCLSAssemblerNonNewtonianCore<dim>>(
               this->simulation_control, this->simulation_parameters));
         }
       else if (!this->simulation_parameters.physical_properties_manager
@@ -538,19 +538,19 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
         {
           this->assemblers.emplace_back(
             std::make_shared<
-              GLSIsothermalCompressibleNavierStokesVOFAssemblerCore<dim>>(
+              GLSIsothermalCompressibleNavierStokesCLSAssemblerCore<dim>>(
               this->simulation_control, this->simulation_parameters));
         }
       else
         {
           // Core assembler
           this->assemblers.emplace_back(
-            std::make_shared<GLSNavierStokesVOFAssemblerCore<dim>>(
+            std::make_shared<GLSNavierStokesCLSAssemblerCore<dim>>(
               this->simulation_control, this->simulation_parameters));
         }
     }
 
-  if (!this->simulation_parameters.multiphysics.VOF &&
+  if (!this->simulation_parameters.multiphysics.CLS &&
       !this->simulation_parameters.multiphysics.cahn_hilliard)
     {
       // Time-stepping schemes
@@ -688,26 +688,27 @@ FluidDynamicsMatrixBased<dim>::assemble_system_matrix()
     *this->get_mapping(),
     *this->face_quadrature);
 
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
-      const DoFHandler<dim> &dof_handler_vof =
-        this->multiphysics->get_dof_handler(PhysicsID::VOF);
-      scratch_data.enable_vof(
-        dof_handler_vof.get_fe(),
+      const DoFHandler<dim> &dof_handler_cls =
+        this->multiphysics->get_dof_handler(PhysicsID::CLS);
+      scratch_data.enable_cls(
+        dof_handler_cls.get_fe(),
         *this->cell_quadrature,
         *this->get_mapping(),
-        this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
+        this->simulation_parameters.multiphysics.cls_parameters.phase_filter);
 
-      if (this->simulation_parameters.multiphysics.vof_parameters
+      if (this->simulation_parameters.multiphysics.cls_parameters
             .surface_tension_force.enable)
         {
-          const DoFHandler<dim> &projected_phase_fraction_gradient_dof_handler =
-            this->multiphysics
-              ->get_projected_phase_fraction_gradient_dof_handler();
+          const DoFHandler<dim>
+            &projected_phase_indicator_gradient_dof_handler =
+              this->multiphysics
+                ->get_projected_phase_indicator_gradient_dof_handler();
           const DoFHandler<dim> &curvature_dof_handler =
             this->multiphysics->get_curvature_dof_handler();
-          scratch_data.enable_projected_phase_fraction_gradient(
-            projected_phase_fraction_gradient_dof_handler.get_fe(),
+          scratch_data.enable_projected_phase_indicator_gradient(
+            projected_phase_indicator_gradient_dof_handler.get_fe(),
             *this->cell_quadrature,
             *this->get_mapping());
           scratch_data.enable_curvature(curvature_dof_handler.get_fe(),
@@ -780,40 +781,41 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
 
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
-      const DoFHandler<dim> &dof_handler_vof =
-        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      const DoFHandler<dim> &dof_handler_cls =
+        this->multiphysics->get_dof_handler(PhysicsID::CLS);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        &dof_handler_vof);
+        &dof_handler_cls);
 
-      scratch_data.reinit_vof(
+      scratch_data.reinit_cls(
         phase_cell,
-        this->multiphysics->get_solution(PhysicsID::VOF),
-        this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+        this->multiphysics->get_solution(PhysicsID::CLS),
+        this->multiphysics->get_filtered_solution(PhysicsID::CLS),
+        this->multiphysics->get_previous_solutions(PhysicsID::CLS));
 
-      if (this->simulation_parameters.multiphysics.vof_parameters
+      if (this->simulation_parameters.multiphysics.cls_parameters
             .surface_tension_force.enable)
         {
-          const DoFHandler<dim> &projected_phase_fraction_gradient_dof_handler =
-            this->multiphysics
-              ->get_projected_phase_fraction_gradient_dof_handler();
+          const DoFHandler<dim>
+            &projected_phase_indicator_gradient_dof_handler =
+              this->multiphysics
+                ->get_projected_phase_indicator_gradient_dof_handler();
 
           typename DoFHandler<dim>::active_cell_iterator
-            projected_phase_fraction_gradient_cell(
+            projected_phase_indicator_gradient_cell(
               &(*(this->triangulation)),
               cell->level(),
               cell->index(),
-              &projected_phase_fraction_gradient_dof_handler);
+              &projected_phase_indicator_gradient_dof_handler);
 
-          scratch_data.reinit_projected_phase_fraction_gradient(
-            projected_phase_fraction_gradient_cell,
+          scratch_data.reinit_projected_phase_indicator_gradient(
+            projected_phase_indicator_gradient_cell,
             this->multiphysics
-              ->get_projected_phase_fraction_gradient_solution());
+              ->get_projected_phase_indicator_gradient_solution());
 
 
 
@@ -918,27 +920,28 @@ FluidDynamicsMatrixBased<dim>::assemble_system_rhs()
     *this->get_mapping(),
     *this->face_quadrature);
 
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
-      const DoFHandler<dim> &dof_handler_vof =
-        this->multiphysics->get_dof_handler(PhysicsID::VOF);
-      scratch_data.enable_vof(
-        dof_handler_vof.get_fe(),
+      const DoFHandler<dim> &dof_handler_cls =
+        this->multiphysics->get_dof_handler(PhysicsID::CLS);
+      scratch_data.enable_cls(
+        dof_handler_cls.get_fe(),
         *this->cell_quadrature,
         *this->get_mapping(),
-        this->simulation_parameters.multiphysics.vof_parameters.phase_filter);
+        this->simulation_parameters.multiphysics.cls_parameters.phase_filter);
 
-      if (this->simulation_parameters.multiphysics.vof_parameters
+      if (this->simulation_parameters.multiphysics.cls_parameters
             .surface_tension_force.enable)
         {
-          const DoFHandler<dim> &projected_phase_fraction_gradient_dof_handler =
-            this->multiphysics
-              ->get_projected_phase_fraction_gradient_dof_handler();
+          const DoFHandler<dim>
+            &projected_phase_indicator_gradient_dof_handler =
+              this->multiphysics
+                ->get_projected_phase_indicator_gradient_dof_handler();
           const DoFHandler<dim> &curvature_dof_handler =
             this->multiphysics->get_curvature_dof_handler();
 
-          scratch_data.enable_projected_phase_fraction_gradient(
-            projected_phase_fraction_gradient_dof_handler.get_fe(),
+          scratch_data.enable_projected_phase_indicator_gradient(
+            projected_phase_indicator_gradient_dof_handler.get_fe(),
             *this->cell_quadrature,
             *this->get_mapping());
           scratch_data.enable_curvature(curvature_dof_handler.get_fe(),
@@ -1022,38 +1025,39 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_rhs(
     this->flow_control.get_beta(),
     this->simulation_parameters.stabilization.pressure_scaling_factor);
 
-  if (this->simulation_parameters.multiphysics.VOF)
+  if (this->simulation_parameters.multiphysics.CLS)
     {
-      const DoFHandler<dim> &dof_handler_vof =
-        this->multiphysics->get_dof_handler(PhysicsID::VOF);
+      const DoFHandler<dim> &dof_handler_cls =
+        this->multiphysics->get_dof_handler(PhysicsID::CLS);
       typename DoFHandler<dim>::active_cell_iterator phase_cell(
         &(*(this->triangulation)),
         cell->level(),
         cell->index(),
-        &dof_handler_vof);
+        &dof_handler_cls);
 
-      scratch_data.reinit_vof(
+      scratch_data.reinit_cls(
         phase_cell,
-        this->multiphysics->get_solution(PhysicsID::VOF),
-        this->multiphysics->get_filtered_solution(PhysicsID::VOF),
-        this->multiphysics->get_previous_solutions(PhysicsID::VOF));
+        this->multiphysics->get_solution(PhysicsID::CLS),
+        this->multiphysics->get_filtered_solution(PhysicsID::CLS),
+        this->multiphysics->get_previous_solutions(PhysicsID::CLS));
 
-      if (this->simulation_parameters.multiphysics.vof_parameters
+      if (this->simulation_parameters.multiphysics.cls_parameters
             .surface_tension_force.enable)
         {
-          const DoFHandler<dim> &projected_phase_fraction_gradient_dof_handler =
-            this->multiphysics
-              ->get_projected_phase_fraction_gradient_dof_handler();
+          const DoFHandler<dim>
+            &projected_phase_indicator_gradient_dof_handler =
+              this->multiphysics
+                ->get_projected_phase_indicator_gradient_dof_handler();
           typename DoFHandler<dim>::active_cell_iterator
-            projected_phase_fraction_gradient_cell(
+            projected_phase_indicator_gradient_cell(
               &(*(this->triangulation)),
               cell->level(),
               cell->index(),
-              &projected_phase_fraction_gradient_dof_handler);
-          scratch_data.reinit_projected_phase_fraction_gradient(
-            projected_phase_fraction_gradient_cell,
+              &projected_phase_indicator_gradient_dof_handler);
+          scratch_data.reinit_projected_phase_indicator_gradient(
+            projected_phase_indicator_gradient_cell,
             this->multiphysics
-              ->get_projected_phase_fraction_gradient_solution());
+              ->get_projected_phase_indicator_gradient_solution());
 
           const DoFHandler<dim> &curvature_dof_handler =
             this->multiphysics->get_curvature_dof_handler();
@@ -1241,8 +1245,7 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
       // Ramp on n
       for (int i = 0; i < n_iter_n; ++i)
         {
-          this->pcout << std::setprecision(4)
-                      << "********* Solution for n = " + std::to_string(n) +
+          this->pcout << "********* Solution for n = " + std::to_string(n) +
                            " and viscosity = " +
                            std::to_string(kinematic_viscosity) + " *********"
                       << std::endl;
@@ -1263,8 +1266,7 @@ FluidDynamicsMatrixBased<dim>::set_initial_condition_fd(
       // Ramp on kinematic viscosity
       for (int i = 0; i < n_iter_viscosity; ++i)
         {
-          this->pcout << std::setprecision(4)
-                      << "********* Solution for n = " + std::to_string(n_end) +
+          this->pcout << "********* Solution for n = " + std::to_string(n_end) +
                            " and viscosity = " +
                            std::to_string(kinematic_viscosity) + " *********"
                       << std::endl;
@@ -2107,6 +2109,9 @@ FluidDynamicsMatrixBased<dim>::solve()
 
   if (this->simulation_parameters.mortar_parameters.enable)
     {
+      // Mortar load balancing
+      this->connect_mortar_weight_signals();
+
       read_mesh_and_manifolds_for_stator_and_rotor(
         *this->triangulation,
         this->simulation_parameters.mesh,

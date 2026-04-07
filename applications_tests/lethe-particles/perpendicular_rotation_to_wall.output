@@ -8,8 +8,10 @@ Warning: It is recommended to increase the time step
 Reading triangulation
 
 Finished reading triangulation
+Minimum vertex distance between cell vertices: 0.292893
+Minimum cell size to maximum particle diameter ratio: 1.46447
 Warning: expansion of particle-wall contact list is enabled. 
-This feature should only be activated in geometries with concave boundaries. (For example, for particles flow inside a cylinder or sphere). In geometries with convex boundaries, this feature MUST NOT be activated.
+This feature should be used only in geometries with convex boundaries. (For example, particles flowing inside a cylinder or sphere). For geometries with concave boundaries, this feature MUST NOT be activated.
 *********************************************************************
 1 particles of type 0 were inserted, 0 particles of type 0 remaining
 *********************************************************************
@@ -214,4 +216,4 @@ Transient iteration: 200000   Time: 1        Time step: 5e-06
 | Translational kinetic energy | 1.3471e-01 | 1.3471e-01 | 1.3471e-01 | 1.3471e-01 | 
 | Rotational kinetic energy    | 6.7356e-01 | 6.7356e-01 | 6.7356e-01 | 6.7356e-01 | 
 id, type, dp, x, y, z 
-0 0 0.20000 -0.9001 0.1426 -0.7892
+0 0 0.20000 -0.9001 0.1426 -0.7892 

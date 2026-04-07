@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_heat_transfer_scratch_data_h
@@ -7,9 +7,9 @@
 #include <core/physical_property_model.h>
 #include <core/vector.h>
 
+#include <solvers/cls_filter.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/physics_scratch_data.h>
-#include <solvers/vof_filter.h>
 
 #include <deal.II/base/exceptions.h>
 
@@ -93,7 +93,7 @@ public:
     AssertThrow(delta_T_ref > 0,
                 ExcMessage("Reference temperature is invalid (< 0)."));
 
-    gather_vof = false;
+    gather_cls = false;
 
     allocate();
   }
@@ -131,12 +131,12 @@ public:
     AssertThrow(sd.global_delta_T_ref > 0,
                 ExcMessage("Reference temperature is invalid (< 0)."));
 
-    gather_vof = sd.gather_vof;
+    gather_cls = sd.gather_cls;
     allocate();
-    if (sd.gather_vof)
-      enable_vof(sd.fe_values_vof->get_fe(),
-                 sd.fe_values_vof->get_quadrature(),
-                 sd.fe_values_vof->get_mapping(),
+    if (sd.gather_cls)
+      enable_cls(sd.fe_values_cls->get_fe(),
+                 sd.fe_values_cls->get_quadrature(),
+                 sd.fe_values_cls->get_mapping(),
                  sd.filter);
   }
 
@@ -338,47 +338,47 @@ public:
   }
 
   /**
-   * @brief enable_vof Enables the collection of the VOF data by the scratch.
+   * @brief enable_cls Enables the collection of the CLS data by the scratch.
    *
-   * @param fe FiniteElement associated with the VOF.
+   * @param fe FiniteElement associated with the CLS.
    *
    * @param quadrature Quadrature rule of the Navier-Stokes problem assembly.
    *
    * @param mapping Mapping used for the Navier-Stokes problem assembly
    *
-   * @param phase_filter_parameters Parameters for phase fraction filtering.
+   * @param phase_filter_parameters Parameters for phase indicator filtering.
    */
 
   void
-  enable_vof(const FiniteElement<dim>          &fe,
+  enable_cls(const FiniteElement<dim>          &fe,
              const Quadrature<dim>             &quadrature,
              const Mapping<dim>                &mapping,
-             const Parameters::VOF_PhaseFilter &phase_filter_parameters);
+             const Parameters::CLS_PhaseFilter &phase_filter_parameters);
 
   /**
-   * @brief enable_vof Enables the collection of the VOF data by the scratch - function overload used in the copy constructor of HeatTransferScratchData
+   * @brief enable_cls Enables the collection of the CLS data by the scratch - function overload used in the copy constructor of HeatTransferScratchData
    *
-   * @param fe FiniteElement associated with the VOF.
+   * @param fe FiniteElement associated with the CLS.
    *
    * @param quadrature Quadrature rule of the Navier-Stokes problem assembly
    *
    * @param mapping Mapping used for the Navier-Stokes problem assembly
    *
-   * @param filter Filter that is applied on the phase fraction
+   * @param filter Filter that is applied on the phase indicator
    */
 
   void
-  enable_vof(const FiniteElement<dim>                       &fe,
-             const Quadrature<dim>                          &quadrature,
-             const Mapping<dim>                             &mapping,
-             const std::shared_ptr<VolumeOfFluidFilterBase> &filter);
+  enable_cls(const FiniteElement<dim>                              &fe,
+             const Quadrature<dim>                                 &quadrature,
+             const Mapping<dim>                                    &mapping,
+             const std::shared_ptr<ConservativeLevelSetFilterBase> &filter);
 
-  /** @brief Reinitialize the content of the scratch for VOF.
+  /** @brief Reinitialize the content of the scratch for CLS.
    *
    * @tparam VectorType The Vector type used for the solvers
    *
    * @param cell The cell over which the assembly is being carried.
-   * This cell must be compatible with the VOF FE and not the
+   * This cell must be compatible with the CLS FE and not the
    * Fluid Dynamics FE
    *
    * @param current_solution The present solution for the phase value
@@ -389,14 +389,14 @@ public:
 
   template <typename VectorType>
   void
-  reinit_vof(const typename DoFHandler<dim>::active_cell_iterator &cell,
+  reinit_cls(const typename DoFHandler<dim>::active_cell_iterator &cell,
              const VectorType &current_filtered_solution)
   {
-    this->fe_values_vof->reinit(cell);
-    // Gather phase fraction (values, gradient)
-    this->fe_values_vof->get_function_values(current_filtered_solution,
+    this->fe_values_cls->reinit(cell);
+    // Gather phase indicator (values, gradient)
+    this->fe_values_cls->get_function_values(current_filtered_solution,
                                              this->filtered_phase_values);
-    this->fe_values_vof->get_function_gradients(
+    this->fe_values_cls->get_function_gradients(
       current_filtered_solution, this->filtered_phase_gradient_values);
   }
 
@@ -424,7 +424,7 @@ public:
   // (dCp/dT)
   std::vector<double> grad_specific_heat_temperature;
 
-  // Auxiliary property vector for VOF simulations
+  // Auxiliary property vector for CLS simulations
   std::vector<double> specific_heat_0;
   std::vector<double> thermal_conductivity_0;
   std::vector<double> density_0;
@@ -467,15 +467,16 @@ public:
   std::vector<double> source;
 
   /**
-   * Scratch component for the VOF auxiliary physics
+   * Scratch component for the CLS auxiliary physics
    */
-  bool                        gather_vof;
-  unsigned int                n_dofs_vof;
+  bool                        gather_cls;
+  unsigned int                n_dofs_cls;
   std::vector<double>         filtered_phase_values;
   std::vector<Tensor<1, dim>> filtered_phase_gradient_values;
   // This is stored as a shared_ptr because it is only instantiated when needed
-  std::shared_ptr<FEValues<dim>>           fe_values_vof;
-  std::shared_ptr<VolumeOfFluidFilterBase> filter; // Phase fraction filter
+  std::shared_ptr<FEValues<dim>> fe_values_cls;
+  std::shared_ptr<ConservativeLevelSetFilterBase>
+    filter; // Phase indicator filter
 
   /**
    * Scratch component for the Navier-Stokes components

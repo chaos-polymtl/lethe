@@ -1,24 +1,24 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       4
    Number of degrees of freedom: 27
-   Volume of triangulation:      0.0001
+   Volume of triangulation:      1.000000e-04
    Number of thermal degrees of freedom: 9
-Temperature statistics on fluid : 
-	     Min : 1000
-	     Max : 1000
-	 Average : 1000
-	 Std-Dev : 8.03887e-14
+Temperature statistics on fluid: 
+	     Min: 1.000000e+03
+	     Max: 1.000000e+03
+	 Average: 1.000000e+03
+	 Std-Dev: 8.038873e-14
 
 *******************************************************************************
 Transient iteration: 1        Time: 0.01     Time step: 0.01     CFL: 0       
 *******************************************************************************
-L2 error velocity : 0
-L2 error temperature : 0.000338465
-Temperature statistics on fluid : 
-	     Min : 979.082
-	     Max : 979.232
-	 Average : 979.157
-	 Std-Dev : 0.0527873
+L2 error velocity: 0.000000e+00
+L2 error temperature : 3.384650e-04
+Temperature statistics on fluid: 
+	     Min: 9.790823e+02
+	     Max: 9.792316e+02
+	 Average: 9.791570e+02
+	 Std-Dev: 5.278733e-02
  time  error_velocity 
 0.0100   0.000000e+00 
 cells error_temperature 

@@ -2,12 +2,15 @@ Running on 3 MPI rank(s)...
 -----------------
 Mortar Interface
 -----------------
-Rotor grid angle:    0.47 rad 
-Rotor grid velocity: 0 rad/time 
+Workload imbalance: 1.125000e+00
+Number of cells per process - Min.: 10
+                              Max.: 12
+Rotor grid angle:    4.700000e-01 rad 
+Rotor grid velocity: 0.000000e+00 rad/time 
 
    Number of active cells:       80
    Number of degrees of freedom: 1107
-   Volume of triangulation:      4
+   Volume of triangulation:      4.000000e+00
 
 *****************************
 Steady iteration:        1/3
@@ -15,8 +18,11 @@ Steady iteration:        1/3
 -----------------
 Mortar Interface
 -----------------
-Rotor grid angle:    0.47 rad 
-Rotor grid velocity: 0 rad/time 
+Workload imbalance: 1.125000e+00
+Number of cells per process - Min.: 10
+                              Max.: 12
+Rotor grid angle:    4.700000e-01 rad 
+Rotor grid velocity: 0.000000e+00 rad/time 
 
 
 *****************************
@@ -25,12 +31,15 @@ Steady iteration:        2/3
 -----------------
 Mortar Interface
 -----------------
-Rotor grid angle:    0.47 rad 
-Rotor grid velocity: 0 rad/time 
+Workload imbalance: 1.125000e+00
+Number of cells per process - Min.: 18
+                              Max.: 24
+Rotor grid angle:    4.700000e-01 rad 
+Rotor grid velocity: 0.000000e+00 rad/time 
 
    Number of active cells:       320
    Number of degrees of freedom: 4131
-   Volume of triangulation:      4
+   Volume of triangulation:      4.000000e+00
 
 *****************************
 Steady iteration:        3/3
@@ -38,13 +47,16 @@ Steady iteration:        3/3
 -----------------
 Mortar Interface
 -----------------
-Rotor grid angle:    0.47 rad 
-Rotor grid velocity: 0 rad/time 
+Workload imbalance: 1.125000e+00
+Number of cells per process - Min.: 36
+                              Max.: 48
+Rotor grid angle:    4.700000e-01 rad 
+Rotor grid velocity: 0.000000e+00 rad/time 
 
    Number of active cells:       1280
    Number of degrees of freedom: 15939
-   Volume of triangulation:      4
-cells  error_velocity    error_pressure
-   80 9.373188e-02    - 5.081887e-01    -
-  320 1.095368e-02 3.10 1.272543e-01 2.00
- 1280 1.365468e-03 3.00 3.010183e-02 2.08
+   Volume of triangulation:      4.000000e+00
+cells  error_velocity    error_pressure   
+   80 9.373188e-02    - 5.081887e-01    - 
+  320 1.095368e-02 3.10 1.272543e-01 2.00 
+ 1280 1.365468e-03 3.00 3.010183e-02 2.08 

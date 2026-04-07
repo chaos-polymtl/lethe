@@ -2,12 +2,12 @@ Running on 3 MPI rank(s)...
 -----------------
 Mortar Interface
 -----------------
-Rotor grid angle:    0 rad 
-Rotor grid velocity: 0 rad/time 
+Rotor grid angle:    0.000000e+00 rad 
+Rotor grid velocity: 0.000000e+00 rad/time 
 
    Number of active cells:       32
    Number of degrees of freedom: 486
-   Volume of triangulation:      2
+   Volume of triangulation:      2.000000e+00
 
 *****************************
 Steady iteration:        1/3
@@ -15,10 +15,10 @@ Steady iteration:        1/3
 -----------------
 Mortar Interface
 -----------------
-Rotor grid angle:    0 rad 
-Rotor grid velocity: 0 rad/time 
+Rotor grid angle:    0.000000e+00 rad 
+Rotor grid velocity: 0.000000e+00 rad/time 
 
-L2 error velocity: 0.00950751
+L2 error velocity: 9.507513e-03
 
 *****************************
 Steady iteration:        2/3
@@ -26,13 +26,13 @@ Steady iteration:        2/3
 -----------------
 Mortar Interface
 -----------------
-Rotor grid angle:    0 rad 
-Rotor grid velocity: 0 rad/time 
+Rotor grid angle:    0.000000e+00 rad 
+Rotor grid velocity: 0.000000e+00 rad/time 
 
    Number of active cells:       128
    Number of degrees of freedom: 1734
-   Volume of triangulation:      2
-L2 error velocity: 0.0049737
+   Volume of triangulation:      2.000000e+00
+L2 error velocity: 4.973700e-03
 
 *****************************
 Steady iteration:        3/3
@@ -40,13 +40,13 @@ Steady iteration:        3/3
 -----------------
 Mortar Interface
 -----------------
-Rotor grid angle:    0 rad 
-Rotor grid velocity: 0 rad/time 
+Rotor grid angle:    0.000000e+00 rad 
+Rotor grid velocity: 0.000000e+00 rad/time 
 
    Number of active cells:       512
    Number of degrees of freedom: 6534
-   Volume of triangulation:      2
-L2 error velocity: 0.00254075
+   Volume of triangulation:      2.000000e+00
+L2 error velocity: 2.540745e-03
 cells  error_velocity    error_pressure   
    32 9.507513e-03    - 3.679412e-03    - 
   128 4.973700e-03 0.93 1.887264e-03 0.96 

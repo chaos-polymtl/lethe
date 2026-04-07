@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_signed_distance_transformation_h
@@ -9,7 +9,7 @@
 
 /**
  * @brief Abstract class for the transformation of the signed distance to the
- * phase fraction for the VOF solver when geometric redistanciation is used.
+ * phase indicator for the CLS solver when geometric redistanciation is used.
  */
 class SignedDistanceTransformationBase
 {
@@ -25,21 +25,21 @@ public:
    * SignedDistanceTransformationBase object by casting it to the proper child
    * class.
    *
-   * @param[in] geometric_redistanciation_parameters VOF geometric
+   * @param[in] geometric_redistanciation_parameters CLS geometric
    * redistanciation parameters.
    *
    * @return Casted SignedDistanceTransformationBase child class object.
    */
   static std::shared_ptr<SignedDistanceTransformationBase>
-  model_cast(const Parameters::VOF_GeometricInterfaceReinitialization
+  model_cast(const Parameters::CLS_GeometricInterfaceReinitialization
                &geometric_redistanciation_parameters);
 
   /**
-   * @brief Compute the value of the phase fraction from the signed distance.
+   * @brief Compute the value of the phase indicator from the signed distance.
    *
    * @param[in] signed_distance Value of the signed distance
    *
-   * @return Value of the computed phase fraction after applying the
+   * @return Value of the computed phase indicator after applying the
    * transformation.
    */
   inline virtual double
@@ -47,10 +47,10 @@ public:
 };
 
 /**
- * @brief Transforms the signed distance to the phase fraction with a hyperbolic
+ * @brief Transforms the signed distance to the phase indicator with a hyperbolic
  * tangent function.
  *
- * The phase fraction is defined as:
+ * The phase indicator is defined as:
  *
  * \f$\phi = 0.5 - 0.5 \tanh(d/\varepsilon)\f$
  *
@@ -72,11 +72,11 @@ public:
   {}
 
   /**
-   * @brief Computes the value of the phase fraction from the signed distance.
+   * @brief Computes the value of the phase indicator from the signed distance.
    *
    * @param[in] signed_distance Value of the signed distance
    *
-   * @return Value of the computed phase fraction after applying the
+   * @return Value of the computed phase indicator after applying the
    * transformation.
    */
   inline double
@@ -94,10 +94,10 @@ private:
 };
 
 /**
- * @brief Transforms the signed distance to the phase fraction with a piecewise
+ * @brief Transforms the signed distance to the phase indicator with a piecewise
  * polynomial function (degree 4).
  *
- * The phase fraction is defined as:
+ * The phase indicator is defined as:
  *
  * if \f$d < 0 \f$
  * \f$\phi = 0.5 - 0.5(4d' + 6d'^2 + 4*d'^3 + d'^4)\f$
@@ -107,7 +107,7 @@ private:
  *
  * with \f$d' = d/d_\mathrm{max}\f$, where \f$d\f$ the signed distance and
  * \f$d_\mathrm{max}\f$ the maximum redistanciation distance. This
- * transformation clamps the phase fraction to 0 or 1 when \f$d = \pm
+ * transformation clamps the phase indicator to 0 or 1 when \f$d = \pm
  * d_\mathrm{max}\f$.
  *
  */
@@ -127,11 +127,11 @@ public:
   {}
 
   /**
-   * @brief Computes the value of the phase fraction from the signed distance.
+   * @brief Computes the value of the phase indicator from the signed distance.
    *
    * @param[in] signed_distance Value of the signed distance
    *
-   * @return Value of the computed phase fraction after applying the transtion.
+   * @return Value of the computed phase indicator after applying the transtion.
    */
   inline double
   transform_signed_distance(const double signed_distance) override

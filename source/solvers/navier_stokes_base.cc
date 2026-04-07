@@ -54,7 +54,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   , dof_handler()
   , computing_timer(this->mpi_communicator,
                     this->pcout,
-                    TimerOutput::summary,
+                    TimerOutput::never,
                     TimerOutput::wall_times)
   , simulation_parameters(p_nsparam)
   , flow_control(simulation_parameters.flow_control)
@@ -189,11 +189,6 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   previous_solutions = std::make_shared<std::vector<VectorType>>(
     maximum_number_of_previous_solutions());
 
-  // Change the behavior of the timer for situations when you don't want
-  // outputs
-  if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
-    this->computing_timer.disable_output();
-
   // Get the exact solution from the parser
   exact_solution = &simulation_parameters.analytical_solution->uvwp;
 
@@ -213,7 +208,8 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
               << " MPI rank(s)..." << std::endl;
 
   this->pcout << std::setprecision(
-    simulation_parameters.simulation_control.log_precision);
+                   simulation_parameters.simulation_control.log_precision)
+              << std::scientific;
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -534,6 +530,14 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_simulation_fd()
           error_table.write_text(std::cout);
         }
     }
+
+  if (this->simulation_parameters.timer.type == Parameters::Timer::Type::end)
+    {
+      announce_string(this->pcout, "Fluid Dynamics");
+      this->pcout << std::defaultfloat;
+      this->computing_timer.print_summary();
+      this->pcout << std::scientific;
+    }
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -580,7 +584,9 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
       Parameters::Timer::Type::iteration)
     {
       announce_string(this->pcout, "Fluid Dynamics");
+      this->pcout << std::defaultfloat;
       this->computing_timer.print_summary();
+      this->pcout << std::scientific;
       this->computing_timer.reset();
     }
 }
@@ -745,7 +751,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
         this->simulation_parameters.constrain_solid_domain
           .temperature_max_values[c_id],
         this->simulation_parameters.constrain_solid_domain
-          .filtered_phase_fraction_tolerance[c_id]);
+          .filtered_phase_indicator_tolerance[c_id]);
       this->stasis_constraint_structs.emplace_back(stasis_constraint_struct);
     }
 
@@ -759,15 +765,15 @@ NavierStokesBase<dim, VectorType, DofsType>::
                                     *this->cell_quadrature,
                                     update_values);
 
-  // For VOF simulations
-  if (this->simulation_parameters.multiphysics.VOF)
+  // For CLS simulations
+  if (this->simulation_parameters.multiphysics.CLS)
     {
-      const DoFHandler<dim> &dof_handler_vof =
+      const DoFHandler<dim> &dof_handler_cls =
         this->multiphysics->get_dof_handler(PhysicsID::heat_transfer);
 
-      this->fe_values_vof =
+      this->fe_values_cls =
         std::make_shared<FEValues<dim>>(*this->get_mapping(),
-                                        dof_handler_vof.get_fe(),
+                                        dof_handler_cls.get_fe(),
                                         *this->cell_quadrature,
                                         update_values);
     }
@@ -1055,6 +1061,9 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_adaptive()
   auto &tria = *dynamic_cast<parallel::distributed::Triangulation<dim> *>(
     this->triangulation.get());
 
+  // If mortar is enabled, connect mortar cell weight signals for load balancing
+  this->connect_mortar_weight_signals();
+
   // Time monitoring
   TimerOutput::Scope t(this->computing_timer, "Refine");
 
@@ -1297,6 +1306,9 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
               ExcMessage("Uniform refinement is not supported for "
                          "simplex meshes."));
   TimerOutput::Scope t(this->computing_timer, "Refine");
+
+  // If mortar is enabled, connect mortar cell weight signals for load balancing
+  this->connect_mortar_weight_signals();
 
   // Solution transfer objects for all the solutions
   SolutionTransfer<dim, VectorType> solution_transfer(*this->dof_handler, true);
@@ -1630,15 +1642,11 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
           Parameters::Verbosity::verbose)
         {
           this->pcout << "Pressure drop: "
-                      << std::setprecision(
-                           simulation_control->get_log_precision())
                       << this->simulation_parameters.physical_properties_manager
                              .get_density_scale() *
                            pressure_drop
                       << " Pa" << std::endl;
           this->pcout << "Total pressure drop: "
-                      << std::setprecision(
-                           simulation_control->get_log_precision())
                       << this->simulation_parameters.physical_properties_manager
                              .get_density_scale() *
                            total_pressure_drop
@@ -1698,8 +1706,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
             {
               this->pcout << "Flow rate at boundary " +
                                std::to_string(boundary_id) + ": "
-                          << std::setprecision(
-                               simulation_control->get_log_precision())
                           << boundary_flow_rate.first << " m^3/s" << std::endl;
             }
         }
@@ -1819,25 +1825,21 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
                   this->error_table.add_value("total_time", total_time);
                 }
 
-              // Calculate error on pressure for VOF or Cahn-Hilliard
+              // Calculate error on pressure for CLS or Cahn-Hilliard
               // simulations
-              if (this->simulation_parameters.multiphysics.VOF ||
+              if (this->simulation_parameters.multiphysics.CLS ||
                   this->simulation_parameters.multiphysics.cahn_hilliard)
                 this->error_table.add_value("error_pressure", error_pressure);
             }
           if (this->simulation_parameters.analytical_solution->verbosity ==
               Parameters::Verbosity::verbose)
             {
-              this->pcout << "L2 error velocity: "
-                          << std::setprecision(
-                               simulation_control->get_log_precision())
-                          << error_velocity << std::endl;
+              this->pcout << "L2 error velocity: " << error_velocity
+                          << std::endl;
               if (this->simulation_parameters.multiphysics.cahn_hilliard)
                 {
-                  this->pcout << "L2 error pressure: "
-                              << std::setprecision(
-                                   simulation_control->get_log_precision())
-                              << error_pressure << std::endl;
+                  this->pcout << "L2 error pressure: " << error_pressure
+                              << std::endl;
                 }
             }
         }
@@ -2563,7 +2565,7 @@ NavierStokesBase<dim, VectorType, DofsType>::constrain_stasis_with_temperature(
 template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::
-  constrain_stasis_with_temperature_vof(const DoFHandler<dim> *dof_handler_vof,
+  constrain_stasis_with_temperature_cls(const DoFHandler<dim> *dof_handler_cls,
                                         const DoFHandler<dim> *dof_handler_ht)
 {
   const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
@@ -2579,10 +2581,10 @@ NavierStokesBase<dim, VectorType, DofsType>::
     this->simulation_parameters.constrain_solid_domain
       .restriction_plane_normal_vector);
 
-  // Get filtered phase fraction solution
-  const auto filtered_phase_fraction_solution =
-    this->multiphysics->get_filtered_solution(PhysicsID::VOF);
-  std::vector<double> local_filtered_phase_fraction_values(
+  // Get filtered phase indicator solution
+  const auto filtered_phase_indicator_solution =
+    this->multiphysics->get_filtered_solution(PhysicsID::CLS);
+  std::vector<double> local_filtered_phase_indicator_values(
     this->cell_quadrature->size());
 
   // Get temperature solution
@@ -2590,8 +2592,8 @@ NavierStokesBase<dim, VectorType, DofsType>::
     this->multiphysics->get_solution(PhysicsID::heat_transfer);
   std::vector<double> local_temperature_values(this->cell_quadrature->size());
 
-  // Loop over structs containing fluid id, temperature and phase fraction range
-  // information, and flag containers for DOFs.
+  // Loop over structs containing fluid id, temperature and phase indicator
+  // range information, and flag containers for DOFs.
   for (StasisConstraintWithTemperature &stasis_constraint_struct :
        this->stasis_constraint_structs)
     {
@@ -2609,22 +2611,22 @@ NavierStokesBase<dim, VectorType, DofsType>::
                                               plane_normal_vector))
                 {
                   bool cell_is_in_right_fluid = true;
-                  get_cell_filtered_phase_fraction_values(
+                  get_cell_filtered_phase_indicator_values(
                     cell,
-                    dof_handler_vof,
-                    filtered_phase_fraction_solution,
-                    local_filtered_phase_fraction_values);
+                    dof_handler_cls,
+                    filtered_phase_indicator_solution,
+                    local_filtered_phase_indicator_values);
 
                   // Check if cell is only in the fluid of interest. As soon as
-                  // one filtered phase fraction value is outside the tolerated
+                  // one filtered phase indicator value is outside the tolerated
                   // range, the cell is perceived as being in the wrong fluid.
-                  for (const double &filtered_phase_fraction :
-                       local_filtered_phase_fraction_values)
+                  for (const double &filtered_phase_indicator :
+                       local_filtered_phase_indicator_values)
                     {
                       if (abs(stasis_constraint_struct.fluid_id -
-                              filtered_phase_fraction) >=
+                              filtered_phase_indicator) >=
                           stasis_constraint_struct
-                            .filtered_phase_fraction_tolerance)
+                            .filtered_phase_indicator_tolerance)
                         {
                           cell_is_in_right_fluid = false;
                           break;
@@ -2856,7 +2858,7 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
       // Only output when density is not constant or if it is a multiphase
       // flow
       if (!density_models[f_id]->is_constant_density_model() ||
-          this->simulation_parameters.multiphysics.VOF ||
+          this->simulation_parameters.multiphysics.CLS ||
           this->simulation_parameters.multiphysics.cahn_hilliard)
         solution_output_structs.emplace_back(
           std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
@@ -2874,7 +2876,7 @@ NavierStokesBase<dim, VectorType, DofsType>::gather_output_results(
             kinematic_viscosity_postprocessors[f_id]);
 
           // Only output the dynamic viscosity for multiphase flows
-          if (this->simulation_parameters.multiphysics.VOF ||
+          if (this->simulation_parameters.multiphysics.CLS ||
               this->simulation_parameters.multiphysics.cahn_hilliard)
             solution_output_structs.emplace_back(
               std::in_place_type<OutputStructPostprocessor<dim, VectorType>>,
@@ -3315,8 +3317,7 @@ NavierStokesBase<dim, VectorType, DofsType>::
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::output_newton_update_norms(
-  const unsigned int display_precision)
+NavierStokesBase<dim, VectorType, DofsType>::output_newton_update_norms()
 {
   TimerOutput::Scope t(this->computing_timer,
                        "Calculate and output norms after Newton its");
@@ -3369,31 +3370,24 @@ NavierStokesBase<dim, VectorType, DofsType>::output_newton_update_norms(
       double global_pressure_linfty_norm =
         Utilities::MPI::max(local_max, this->mpi_communicator);
 
-      this->pcout << std::setprecision(display_precision)
-                  << "\n\t||du||_L2 = " << std::setw(6)
+      this->pcout << "\n\t  ||du||_L2 = " << std::setw(6)
                   << global_velocity_l2_norm << std::setw(6)
-                  << "\t||du||_Linfty = "
-                  << std::setprecision(display_precision)
-                  << global_velocity_linfty_norm << std::endl;
-      this->pcout << std::setprecision(display_precision)
-                  << "\t||dp||_L2 = " << std::setw(6) << global_pressure_l2_norm
-                  << std::setw(6) << "\t||dp||_Linfty = "
-                  << std::setprecision(display_precision)
-                  << global_pressure_linfty_norm << std::endl;
+                  << "\t  ||du||_Linfty = " << global_velocity_linfty_norm
+                  << std::endl;
+      this->pcout << "\t  ||dp||_L2 = " << std::setw(6)
+                  << global_pressure_l2_norm << std::setw(6)
+                  << "\t  ||dp||_Linfty = " << global_pressure_linfty_norm
+                  << std::endl;
     }
   if constexpr (std::is_same_v<VectorType, GlobalBlockVectorType>)
     {
-      this->pcout << std::setprecision(display_precision)
-                  << "\t||du||_L2 = " << std::setw(6)
+      this->pcout << "\t  ||du||_L2 = " << std::setw(6)
                   << newton_update.block(0).l2_norm() << std::setw(6)
-                  << "\t||du||_Linfty = "
-                  << std::setprecision(display_precision)
+                  << "\t  ||du||_Linfty = "
                   << newton_update.block(0).linfty_norm() << std::endl;
-      this->pcout << std::setprecision(display_precision)
-                  << "\t||dp||_L2 = " << std::setw(6)
+      this->pcout << "\t  ||dp||_L2 = " << std::setw(6)
                   << newton_update.block(1).l2_norm() << std::setw(6)
-                  << "\t||dp||_Linfty = "
-                  << std::setprecision(display_precision)
+                  << "\t  ||dp||_Linfty = "
                   << newton_update.block(1).linfty_norm() << std::endl;
     }
 }
@@ -3415,6 +3409,51 @@ NavierStokesBase<dim, VectorType, DofsType>::init_temporary_vector()
                this->mpi_communicator);
 
   return tmp;
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::connect_mortar_weight_signals()
+{
+  if (!this->simulation_parameters.mortar_parameters.enable)
+    return;
+
+  if (dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+        this->triangulation.get()) == nullptr)
+    return;
+
+  auto &tria = *dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+    this->triangulation.get());
+
+  tria.signals.weight.connect(
+    [this](const typename parallel::distributed::Triangulation<
+             dim>::cell_iterator &cell,
+           const CellStatus /*status*/) -> unsigned int {
+      // Default cell weight used for all cells
+      const unsigned int base_weight = 1000;
+
+      // Check if this cell touches a mortar boundary
+      const unsigned int rotor_bid =
+        simulation_parameters.mortar_parameters.rotor_boundary_id;
+      const unsigned int stator_bid =
+        simulation_parameters.mortar_parameters.stator_boundary_id;
+
+      if (cell->is_locally_owned())
+        {
+          for (const auto face_no : cell->face_indices())
+            {
+              const auto face = cell->face(face_no);
+              if (face->at_boundary() && (face->boundary_id() == rotor_bid ||
+                                          face->boundary_id() == stator_bid))
+                {
+                  // Return higher weight for mortar cells
+                  return simulation_parameters.mortar_parameters.cell_weight;
+                }
+            }
+        }
+
+      return base_weight;
+    });
 }
 
 // Pre-compile the 2D and 3D version with the types that can occur

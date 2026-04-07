@@ -86,7 +86,7 @@ def load_barycenter_series(folder: str):
   :param folder:
   :return:
   '''
-  fname = os.path.join(folder, "vof_barycenter_information.dat")
+  fname = os.path.join(folder, "cls_barycenter_information.dat")
   t, x, y, z, vx, vy, vz = np.loadtxt(fname, skiprows=1, unpack=True)
   return {
     "t": t,

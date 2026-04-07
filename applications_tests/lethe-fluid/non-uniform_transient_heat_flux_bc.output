@@ -1,55 +1,55 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       64
    Number of degrees of freedom: 243
-   Volume of triangulation:      0.5
+   Volume of triangulation:      5.000000e-01
    Number of thermal degrees of freedom: 289
-Temperature statistics on fluid : 
-	     Min : -6.98387
-	     Max : 54.9839
-	 Average : 1.66667
-	 Std-Dev : 10.1926
+Temperature statistics on fluid: 
+	     Min: -6.983867e+00
+	     Max: 5.498387e+01
+	 Average: 1.666667e+00
+	 Std-Dev: 1.019259e+01
 
 *******************************************************************************
 Transient iteration: 1        Time: 0.4      Time step: 0.4      CFL: 0       
 *******************************************************************************
-Temperature statistics on fluid : 
-	     Min : 59.0177
-	     Max : 79.4152
-	 Average : 66.2991
-	 Std-Dev : 6.07187
+Temperature statistics on fluid: 
+	     Min: 5.901774e+01
+	     Max: 7.941521e+01
+	 Average: 6.629910e+01
+	 Std-Dev: 6.071874e+00
 
 *******************************************************************************
 Transient iteration: 2        Time: 1        Time step: 0.6      CFL: 0       
 *******************************************************************************
-Temperature statistics on fluid : 
-	     Min : 80.1504
-	     Max : 84.0266
-	 Average : 82.529
-	 Std-Dev : 0.95031
+Temperature statistics on fluid: 
+	     Min: 8.015044e+01
+	     Max: 8.402661e+01
+	 Average: 8.252900e+01
+	 Std-Dev: 9.503098e-01
 
 *******************************************************************************
 Transient iteration: 3        Time: 2        Time step: 1        CFL: 0       
 *******************************************************************************
-Temperature statistics on fluid : 
-	     Min : 76.5036
-	     Max : 81.1492
-	 Average : 79.8468
-	 Std-Dev : 0.897986
+Temperature statistics on fluid: 
+	     Min: 7.650360e+01
+	     Max: 8.114917e+01
+	 Average: 7.984676e+01
+	 Std-Dev: 8.979863e-01
 
 *******************************************************************************
 Transient iteration: 4        Time: 3        Time step: 1        CFL: 0       
 *******************************************************************************
-Temperature statistics on fluid : 
-	     Min : 70.3221
-	     Max : 79.9482
-	 Average : 76.9288
-	 Std-Dev : 2.18037
+Temperature statistics on fluid: 
+	     Min: 7.032208e+01
+	     Max: 7.994819e+01
+	 Average: 7.692883e+01
+	 Std-Dev: 2.180368e+00
 
 *******************************************************************************
 Transient iteration: 5        Time: 4        Time step: 1        CFL: 0       
 *******************************************************************************
-Temperature statistics on fluid : 
-	     Min : 66.5185
-	     Max : 79.9191
-	 Average : 75.5495
-	 Std-Dev : 3.05313
+Temperature statistics on fluid: 
+	     Min: 6.651848e+01
+	     Max: 7.991907e+01
+	 Average: 7.554951e+01
+	 Std-Dev: 3.053128e+00

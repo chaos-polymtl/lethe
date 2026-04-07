@@ -46,6 +46,7 @@
 
 #include <memory.h>
 
+#include <algorithm>
 #include <complex>
 #include <ranges>
 
@@ -81,6 +82,7 @@
 ///   [ ] write_checkpoint
 ///   [ ] read_checkpoint
 ///   [ ] gather_tables()
+///   [ ] fix dimensionality of power scaling
 ///   [x] compute_kelly
 ///   [x] compute_dpg_error
 ///   [x] Setup_dofs
@@ -190,7 +192,7 @@ public:
 
   /**
    * @brief Carry out modifications on the auxiliary physics solution.
-   * To be defined for some physics only (eg. free surface, see vof.h).
+   * To be defined for some physics only (eg. free surface, see cls.h).
    */
   virtual void
   modify_solution() override;
@@ -440,12 +442,9 @@ public:
 
   /**
    * @brief Output the L2 and Linfty norms of the correction vector.
-   *
-   * @param[in] display_precision Number of outputted digits.
    */
   void
-  output_newton_update_norms(
-    [[maybe_unused]] const unsigned int display_precision) override
+  output_newton_update_norms() override
   {
     AssertThrow(
       false,
@@ -463,7 +462,7 @@ public:
   double
   get_residual_rescale_metric() const override
   {
-    return simulation_parameters.linear_solver.at(PhysicsID::VOF)
+    return simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
                .rescale_residual_by_volume ?
              std::sqrt(
                GridTools::volume(*this->triangulation, *this->mapping)) :
@@ -552,15 +551,52 @@ private:
 
 
   /**
+   * @brief This helper function computes the incident electromagnetic fields
+   * for a waveguide port dynamically from the input parameters. It is only
+   * implemented for 3D problems.
+   *
+   * @tparam dim Spatial dimension.
+   * @param[in] p Input position where to compute the incident fields.
+   * @param[in] normal Unit normal vector defining the face orientation of the
+   * waveguide port.
+   * @param[in] effective_electric_permittivity Effective electric permittivity
+   * at the point p.
+   * @param[in] effective_magnetic_permeability Effective magnetic permeability
+   * at the point p.
+   * @param[in] boundary_id_index Index to identify to which waveguide port
+   * condition we are applying the excitation. The default value is 0, which
+   * can be used when there is only one waveguide port defined in the input
+   * file.
+   * @return This function returns a std::pair containing the electric field
+   * Tensor<1, dim, std::complex<double>> and the magnetic field Tensor<1, dim,
+   * std::complex<double>> computed at the given position.
+   */
+  std::pair<Tensor<1, dim, std::complex<double>>,
+            Tensor<1, dim, std::complex<double>>>
+  compute_waveguide_port_incident_fields(
+    const Point<dim>           &p,
+    const Tensor<1, dim>       &normal,
+    const std::complex<double> &local_effective_electric_permittivity,
+    const std::complex<double> &local_effective_magnetic_permeability,
+    const types::boundary_id    boundary_id_index = 0);
+
+
+  /**
    * @brief This helper function compute a waveguide excitation boundary condition dynamically from the input parameters. It is only implemented for 3D problems.
    *
    * @tparam dim Spatial dimension.
-   * @param p Input position where to compute the electromagnetic excitation amplitude.
-   * @param normal Unit normal vector defining the face orientation of the waveguide port.
-   * @param effective_electric_permittivity Effective electric permittivity at the point p.
-   * @param effective_magnetic_permeability Effective magnetic permeability at the point p.
-   * @param boundary_id_index Index to identify to which waveguide port condition we are applying the excitation. The default value is 0, which can be used when there is only one waveguide port defined in the input file.
-   * @return The value of the waveguide excitation boundary condition Tensor<1, dim, std::complex<double>> and the surface admittance at the given position in a std::pair format.
+   * @param[in] p Input position where to compute the electromagnetic excitation
+   * amplitude.
+   * @param[in] normal Unit normal vector defining the face orientation of the
+   * waveguide port.
+   * @param[in] effective_electric_permittivity Effective electric permittivity
+   * at the point p.
+   * @param[in] effective_magnetic_permeability Effective magnetic permeability
+   * at the point p.
+   * @param[in] boundary_id_index Index to identify to which waveguide port
+   * condition we are applying the excitation. The default value is 0, which can
+   * be used when there is only one waveguide port defined in the input file.
+   * @return This function returns a std::pair containing the waveguide excitation boundary condition Tensor<1, dim, std::complex<double>> and the surface admittance at the given position scaled by the maximum electric field intensity associated with the input power of the waveguide ports condition.
    */
   std::pair<Tensor<1, dim, std::complex<double>>, std::complex<double>>
   compute_waveguide_port_excitation(
@@ -568,8 +604,7 @@ private:
     const Tensor<1, dim>       &normal,
     const std::complex<double> &local_effective_electric_permittivity,
     const std::complex<double> &local_effective_magnetic_permeability,
-    const unsigned int          boundary_id_index = 0);
-
+    const types::boundary_id    boundary_id_index = 0);
 
   /**
    * @brief Update the material properties during the assembly of the system matrix.
@@ -598,6 +633,34 @@ private:
     std::complex<double>            &effective_magnetic_permeability,
     const unsigned int               material_id);
 
+
+  /**
+   * @brief Compute the electromagnetic scaling factor used to non-dimensionalize the time-harmonic Maxwell system from the type of scaling required from the user. This is factor will be based on the electric field and obtained :
+   * - directly from parameters (if ElectromagneticScalingType::electric_field);
+   * - by converting the magnetic field also obtained from parameters (if
+   * ElectromagneticScalingType::magnetic_field);
+   * - or by taking the maximum of all the electric field intensity across all
+   * inlets in the problem, calculated from each inlet's input power (if
+   * ElectromagneticScalingType::power). The scaling factor will be stored in
+   * the class attribute electromagnetic_scaling.
+   *
+   * @param[in] physical_properties_manager The object that manages the physical
+   * properties of the problem and provides them at any given position of the
+   * domain.
+   */
+  void
+  compute_electromagnetic_scaling(
+    const PhysicalPropertiesManager &physical_properties_manager);
+
+  /**
+   * @brief Scale the solution components by the electromagnetic scaling factor to recover the physical values of the solution after solving the non-dimensionalized system. This function is called at the end of the solve_linear_system method after reconstructing the interior solution from the skeleton solution.
+   * @param[in] dof_handler The degree of freedom handler for the mesh
+   * associated with the solution.
+   * @param[in,out] solution The solution vector to be scaled.
+   */
+  void
+  scale_solution_components(const DoFHandler<dim> &dof_handler,
+                            GlobalVectorType      &solution);
 
   /**
    * @brief Pointer to the multiphysics interface that manages the coupling
@@ -800,6 +863,17 @@ private:
    * @brief Extractor for the imaginary part of the magnetic field vector.
    */
   const FEValuesExtractors::Vector extractor_H_imag;
+
+  /**
+   * @brief The time-harmonic Maxwell DPG system of equation is solved in dimensionless form. However, to be able to recover the physical solution, the physical amplitude of the electromagnetic fields needs to be calculated from the input power provided and the associated scaling factor is the maximum of those field amplitudes across all the inlets in the problem. This way, the electromagnetic fields remain with an amplitude of order 1 (for the inlet with the highest input power) or less (for the other inlets) in the dimensionless system.
+   *
+   */
+  double electromagnetic_scaling;
+
+  /**
+   * @brief A vector containing the electric amplitudes of all the waveguide ports. It is define as the : \f$ \sqrt{P_input/P_port} \f$, where \f$P_input\f$ is the input power provided by the user for a given waveguide port and \f$P_port\f$ is the power computed from integrating the Poynting vector of the electromagnetic fields at the inlet associated with the waveguide port condition.
+   */
+  std::vector<double> waveguide_ports_electric_amplitudes;
 };
 
 

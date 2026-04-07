@@ -2782,6 +2782,9 @@ FluidDynamicsMatrixFree<dim>::solve()
 
   if (this->simulation_parameters.mortar_parameters.enable)
     {
+      // Mortar load balancing
+      this->connect_mortar_weight_signals();
+
       read_mesh_and_manifolds_for_stator_and_rotor(
         *this->triangulation,
         this->simulation_parameters.mesh,
@@ -3219,8 +3222,7 @@ FluidDynamicsMatrixFree<dim>::set_initial_condition_fd(
       // Ramp on kinematic viscosity
       for (int i = 0; i < n_iter_viscosity; ++i)
         {
-          this->pcout << std::setprecision(4)
-                      << "********* Solution for kinematic viscosity = " +
+          this->pcout << "********* Solution for kinematic viscosity = " +
                            std::to_string(kinematic_viscosity) + " *********"
                       << std::endl;
 
@@ -3460,6 +3462,8 @@ FluidDynamicsMatrixFree<dim>::print_mg_setup_times()
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .mg_verbosity == Parameters::Verbosity::extra_verbose)
     {
+      this->pcout << std::defaultfloat;
+
       announce_string(this->pcout, "Multigrid setup times");
       this->gmg_preconditioner->mg_setup_timer.print_wall_time_statistics(
         MPI_COMM_WORLD);
@@ -3502,6 +3506,8 @@ FluidDynamicsMatrixFree<dim>::print_mg_setup_times()
       // Reset timers if output is set to every iteration
       this->gmg_preconditioner->mg_setup_timer.reset();
       this->gmg_preconditioner->mg_vmult_timer.reset();
+
+      this->pcout << std::scientific;
     }
 }
 

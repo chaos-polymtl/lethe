@@ -28,6 +28,7 @@ The mortar section is used when simulating rotor-stator geometries, in which the
     set penalty factor      = 1.0
     set oversampling factor = 2
     set radius tolerance    = 1e-8
+    set cell weight         = 1000
     set verbosity           = quiet
   end
 
@@ -71,6 +72,8 @@ where :math:`r_{max}`, :math:`r_{min}` are the maximum and minimum values obtain
 
 .. note::
   The default value for ``radius tolerance`` is :math:`10^{-8}`, which should cover the precision range of deal.II-generated grids. The tolerance might need to be increased for some ``gmsh`` mesh type cases or for large simulations running in multiple cores, when the above verification fails even if the mesh discretization is coherent.
+
+* The ``cell weight`` allows the imposition of a higher cell weight for the cells located at the mortar interface, which is then accounted for in the workload balancing between processors. The default value of ``1000`` assumes that mortar cells have the same weight as other cells.
 
 * When enabling ``verbosity`` (``set verbosity = verbose``), the rotor rotation information is printed at every iteration. The option ``extra verbose`` also prints the workload imbalance of mortar cells. We consider that an ideal work imbalance is given by:
 

@@ -1,7 +1,7 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       4096
    Number of degrees of freedom: 12675
-   Volume of triangulation:      4
+   Volume of triangulation:      4.000000e+00
 
 *******************************************************************************
 Transient iteration: 1        Time: 0.1      Time step: 0.1      CFL: 4.00888 
@@ -12,8 +12,8 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Global continuity equation error: 1.14871e-10 s^-1
-Max local continuity error: 3.61405e-05 s^-1
+Global continuity equation error: 1.185918e-10 s^-1
+Max local continuity error: 3.614049e-05 s^-1
 
 *******************************************************************************
 Transient iteration: 2        Time: 0.2      Time step: 0.1      CFL: 3.7299  
@@ -24,8 +24,8 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Global continuity equation error: 9.53448e-11 s^-1
-Max local continuity error: 1.46032e-05 s^-1
+Global continuity equation error: 1.051245e-09 s^-1
+Max local continuity error: 1.460318e-05 s^-1
 
 *******************************************************************************
 Transient iteration: 3        Time: 0.3      Time step: 0.1      CFL: 1.38787 
@@ -36,8 +36,8 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Global continuity equation error: -2.12197e-10 s^-1
-Max local continuity error: 1.47897e-05 s^-1
+Global continuity equation error: 4.244137e-11 s^-1
+Max local continuity error: 1.478972e-05 s^-1
 
 *******************************************************************************
 Transient iteration: 4        Time: 0.4      Time step: 0.1      CFL: 1.30555 
@@ -48,8 +48,8 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Global continuity equation error: -4.34767e-10 s^-1
-Max local continuity error: 3.9545e-05 s^-1
+Global continuity equation error: 3.352941e-10 s^-1
+Max local continuity error: 3.954500e-05 s^-1
 
 *******************************************************************************
 Transient iteration: 5        Time: 0.5      Time step: 0.1      CFL: 3.45387 
@@ -60,8 +60,8 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Global continuity equation error: -5.43854e-10 s^-1
-Max local continuity error: 4.94902e-05 s^-1
+Global continuity equation error: -3.078292e-10 s^-1
+Max local continuity error: 4.949016e-05 s^-1
 
 *******************************************************************************
 Transient iteration: 6        Time: 0.6      Time step: 0.1      CFL: 4.3892  
@@ -72,8 +72,8 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Global continuity equation error: 2.12264e-10 s^-1
-Max local continuity error: 3.99936e-05 s^-1
+Global continuity equation error: -4.350478e-10 s^-1
+Max local continuity error: 3.999364e-05 s^-1
 
 *******************************************************************************
 Transient iteration: 7        Time: 0.7      Time step: 0.1      CFL: 3.61979 
@@ -84,8 +84,8 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Global continuity equation error: -2.98669e-10 s^-1
-Max local continuity error: 1.50891e-05 s^-1
+Global continuity equation error: -4.328404e-10 s^-1
+Max local continuity error: 1.508905e-05 s^-1
 
 *******************************************************************************
 Transient iteration: 8        Time: 0.8      Time step: 0.1      CFL: 1.44135 
@@ -96,8 +96,8 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Global continuity equation error: 4.63716e-11 s^-1
-Max local continuity error: 1.45037e-05 s^-1
+Global continuity equation error: -1.817004e-10 s^-1
+Max local continuity error: 1.450365e-05 s^-1
 
 *******************************************************************************
 Transient iteration: 9        Time: 0.9      Time step: 0.1      CFL: 1.34324 
@@ -108,8 +108,8 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Global continuity equation error: -1.5259e-10 s^-1
-Max local continuity error: 3.71452e-05 s^-1
+Global continuity equation error: -6.433197e-10 s^-1
+Max local continuity error: 3.714518e-05 s^-1
 
 *******************************************************************************
 Transient iteration: 10       Time: 1        Time step: 0.1      CFL: 3.38484 
@@ -120,8 +120,8 @@ Void Fraction
 -------------------------------
 Volume-Averaged Fluid Dynamics
 -------------------------------
-Global continuity equation error: -1.08571e-10 s^-1
-Max local continuity error: 4.52676e-05 s^-1
+Global continuity equation error: -1.261645e-10 s^-1
+Max local continuity error: 4.526757e-05 s^-1
  time  error_velocity 
 0.1000   3.907086e-01 
 0.2000   1.099941e-01 
