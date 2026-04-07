@@ -535,7 +535,8 @@ public:
     const BoundaryConditions::NSBoundaryConditions<dim>
       &neumann_traction_boundary_conditions_input)
     : simulation_control(simulation_control)
-    , neumann_traction_boundary_conditions(neumann_traction_boundary_conditions_input)
+    , neumann_traction_boundary_conditions(
+        neumann_traction_boundary_conditions_input)
   {}
 
   /**

@@ -819,64 +819,62 @@ NavierStokesOperatorBase<dim, number>::get_element_size() const
 
 template <int dim, typename number>
 void
-NavierStokesOperatorBase<dim, number>::
-  evaluate_prescribed_neumann_traction()
+NavierStokesOperatorBase<dim, number>::evaluate_prescribed_neumann_traction()
 {
   if (enable_face_terms)
-  {
-  //Change the timer subsection name.
-  this->timer.enter_subsection("operator::evaluate_prescribed_neumann_traction");
-  const unsigned int n_inner_faces    = matrix_free.n_inner_face_batches();
-  const unsigned int n_boundary_faces = matrix_free.n_boundary_face_batches();
- 
-  FEFaceIntegrator face_integrator(matrix_free, true, 0);
-  
-  prescribed_neumann_traction.reinit(
-    n_boundary_faces, face_integrator.n_q_points);
+    {
+      // Change the timer subsection name.
+      this->timer.enter_subsection(
+        "operator::evaluate_prescribed_neumann_traction");
+      const unsigned int n_inner_faces = matrix_free.n_inner_face_batches();
+      const unsigned int n_boundary_faces =
+        matrix_free.n_boundary_face_batches();
 
-  for (unsigned int face = n_inner_faces;
+      FEFaceIntegrator face_integrator(matrix_free, true, 0);
+
+      prescribed_neumann_traction.reinit(n_boundary_faces,
+                                         face_integrator.n_q_points);
+
+      for (unsigned int face = n_inner_faces;
            face < n_inner_faces + n_boundary_faces;
            ++face)
-  {
+        {
           face_integrator.reinit(face);
 
           for (const auto q : face_integrator.quadrature_point_indices())
-          {
-            //std::cout << "Boundary ID: " << face_integrator.boundary_id() << std::endl;
-            //std::cout << prescribed_neumann_traction[face- n_inner_faces,q][0] << prescribed_neumann_traction[face- n_inner_faces,q][0] << std::endl;
-            if (this->boundary_conditions.type.at(
+            {
+              if (this->boundary_conditions.type.at(
                     face_integrator.boundary_id()) ==
                   BoundaryConditions::BoundaryType::Neumann_traction)
-            {
+                {
                   Point<dim, VectorizedArray<number>> point_batch =
                     face_integrator.quadrature_point(q);
 
+                  /*
+                  Neumann traction is of type Tensor<1, dim+1,
+                  VectorizedArray<number>> where the first dim components
+                  correspond to the traction vector and the last component
+                  corresponds to the pressure value at the boundary. The dummy
+                  pressure component is needed to properly assemble the traction
+                  term as FEFaceIntegrator uses MatrixFree which in turn is
+                  based on the DoFHandler which in turn is based on the FE
+                  system that has dim velocity components and 1 pressure
+                  component.
+                  */
 
-                  prescribed_neumann_traction(face- n_inner_faces,q)[0] = evaluate_function<dim, number>(
-                    this->boundary_conditions.navier_stokes_functions
-                      .at(face_integrator.boundary_id())
-                      ->t_x,
-                    point_batch);
-
-                  prescribed_neumann_traction(face- n_inner_faces,q)[1] = evaluate_function<dim, number>(
-                    this->boundary_conditions.navier_stokes_functions
-                      .at(face_integrator.boundary_id())
-                      ->t_y,
-                    point_batch);
-
-                  if constexpr (dim == 3)
-                    prescribed_neumann_traction(face- n_inner_faces,q)[2] = evaluate_function<dim, number>(
+                  prescribed_neumann_traction(face - n_inner_faces, q) =
+                    evaluate_function<dim, number, dim + 1>(
                       this->boundary_conditions.navier_stokes_functions
                         .at(face_integrator.boundary_id())
-                        ->t_z,
+                        ->t,
                       point_batch);
+                }
             }
-          }
-  }
-  this->timer.leave_subsection("operator::evaluate_prescribed_neumann_traction");
+        }
+      this->timer.leave_subsection(
+        "operator::evaluate_prescribed_neumann_traction");
+    }
 }
-}
-
 
 
 
@@ -1406,8 +1404,7 @@ NavierStokesOperatorBase<dim, number>::do_internal_face_integral_range(
 template <int dim, typename number>
 template <bool assemble_residual>
 void
-NavierStokesOperatorBase<dim, number>::
-do_boundary_face_integral_range(
+NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_range(
   const MatrixFree<dim, number>               &matrix_free,
   VectorType                                  &dst,
   const VectorType                            &src,
@@ -1450,8 +1447,8 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
 
   // If the boundary condition is not in our list of boundary
   // conditions or the boundary condition that is set in the list is
-  // not a weak function or outlet BC or Neumann traction, there is nothing to do, so we set the
-  // values to zero and return
+  // not a weak function or outlet BC or Neumann traction, there is nothing to
+  // do, so we set the values to zero and return
   if (this->boundary_conditions.type.at(integrator.boundary_id()) !=
         BoundaryConditions::BoundaryType::function_weak &&
       this->boundary_conditions.type.at(integrator.boundary_id()) !=
@@ -1518,31 +1515,36 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
       integrator.integrate(EvaluationFlags::EvaluationFlags::values |
                            EvaluationFlags::EvaluationFlags::gradients);
     }
-    // This part assembles the prescribed Neumann traction boundary condition  (σ . n , v)  = (t, v)
-    // only on the RHS (residual) since it does not depend on the solution
-    else if(this->boundary_conditions.type.at(integrator.boundary_id()) ==
-            BoundaryConditions::BoundaryType::Neumann_traction)
+  // This part assembles the prescribed Neumann traction boundary condition  (σ
+  // . n , v)  = (t, v) only on the RHS (residual) since it does not depend on
+  // the solution
+  else if (this->boundary_conditions.type.at(integrator.boundary_id()) ==
+           BoundaryConditions::BoundaryType::Neumann_traction)
     {
       integrator.evaluate(EvaluationFlags::values);
       {
-         for (const auto q : integrator.quadrature_point_indices())
-        {
-             typename FEFaceIntegrator::value_type    value_result    = {};
-             for (int d = 0; d < dim; ++d)
-               {
-                 // Because we have enabled submission of the value for the faces, a value must be provided
-                 // even when the operator is assembled. When the RHS is being assembled, we provide the value of the traction,
-                 // and when the operator is assembled, we provide a zero value. This contexpr if has zero cost.
-                 if constexpr(assemble_residual)
-                   // The matrix free solver assembles the residual and not - the residual, so a minus sign here is necessary.
-                 value_result[d] = -this->prescribed_neumann_traction(face_index,q)[d];
-                 else
-                   value_result[d] = 0;
-               }
-          integrator.submit_value(value_result, q);
-        }
-        
-          integrator.integrate(EvaluationFlags::EvaluationFlags::values);
+        for (const auto q : integrator.quadrature_point_indices())
+          {
+            typename FEFaceIntegrator::value_type value_result = {};
+            for (int d = 0; d < dim; ++d)
+              {
+                // Because we have enabled submission of the value for the
+                // faces, a value must be provided even when the operator is
+                // assembled. When the RHS is being assembled, we provide the
+                // value of the traction, and when the operator is assembled, we
+                // provide a zero value. This contexpr if has zero cost.
+                if constexpr (assemble_residual)
+                  // The matrix free solver assembles the residual and not - the
+                  // residual, so a minus sign here is necessary.
+                  value_result[d] =
+                    -this->prescribed_neumann_traction(face_index, q)[d];
+                else
+                  value_result[d] = 0;
+              }
+            integrator.submit_value(value_result, q);
+          }
+
+        integrator.integrate(EvaluationFlags::EvaluationFlags::values);
       }
     }
 

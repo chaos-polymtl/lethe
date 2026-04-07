@@ -406,7 +406,7 @@ public:
   void
   compute_inverse_diagonal(VectorType &diagonal) const;
 
-   /**
+  /**
    * @brief Store the values of the prescribed Neumann traction boundary condition to use it
    * (σ . n , v)  = (t, v)
    * in the residual assembly and Jacobian ?
@@ -780,13 +780,15 @@ protected:
    * @brief Table with correct alignment for vectorization to store the values
    * of the prescribed Neumann traction boundary condition values.
    *
-   * $\sigma \cdot n = g_{N}$ 
+   * σ = 2με(u)− pI , σ.n = (2με(u)− pI).n = g_N
    * assembled (v, g_N) on boundary faces where Neumann traction is prescribed.
    * our test function v involves both velocity and pressure components. Hence,
-   * the prescribed_neumann_traction has dim components corresponding to velocity
-   * and 1 component corresponding to pressure (which is dummy), totalling dim+1 components.
+   * the prescribed_neumann_traction has dim components corresponding to
+   * velocity and 1 component corresponding to pressure (which is dummy),
+   * totalling dim+1 components.
    */
-  Table<2, Tensor<1, dim+1, VectorizedArray<number>>> prescribed_neumann_traction;
+  Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>
+    prescribed_neumann_traction;
 
   /**
    * @brief Table with correct alignment for vectorization to store the values
