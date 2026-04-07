@@ -1084,8 +1084,6 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
           else if (type == BoundaryConditions::BoundaryType::noslip ||
                    type == BoundaryConditions::BoundaryType::function)
             {
-              std::cout << "Applying Dirichlet BCs on boundary id " << id
-                        << std::endl;
               std::set<types::boundary_id> dirichlet_boundary_id = {id};
 
               for (const auto [_, l] : p_map)
@@ -1094,7 +1092,6 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                   dirichlet_boundary_id,
                   fe->component_mask(velocities));
             }
-
           else
             {
               AssertThrow(
@@ -1628,10 +1625,11 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                   /*The directional do-nothing boundary condition is implemented
                    * in the operators*/
                 }
-              else if (type == BoundaryConditions::BoundaryType::Neumann_traction)
+              else if (type ==
+                       BoundaryConditions::BoundaryType::Neumann_traction)
                 {
-              /*The Neumann traction boundary condition is implemented in the
-               * operators*/
+                  /*The Neumann traction boundary condition is implemented in
+                   * the operators*/
                 }
               else if (type == BoundaryConditions::BoundaryType::noslip ||
                        type == BoundaryConditions::BoundaryType::function)
@@ -3326,8 +3324,10 @@ FluidDynamicsMatrixFree<dim>::assemble_system_rhs()
     this->evaluation_point);
 
   /*
-    (σ . n , v)  = (t, v) on Γ_N. computes traction vector for the prescribed Neumann traction
+    (σ . n , v)  = (t, v) on Γ_N. computes traction vector for the prescribed
+    Neumann traction σ = 2με(u)− pI
   */
+
   this->system_operator->evaluate_prescribed_neumann_traction();
 
   this->system_operator->evaluate_residual(this->system_rhs,
