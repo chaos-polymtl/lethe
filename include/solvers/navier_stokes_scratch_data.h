@@ -55,6 +55,14 @@ template <int dim>
 class NavierStokesScratchData : public PhysicsScratchDataBase
 {
 public:
+  // Store the curl using deal.II's own view-dependent result type. This keeps
+  // the scratch data compatible with the deal.II versions used in CI, where
+  // the 2D curl may be exposed either as a scalar or as Tensor<1,1>.
+  using velocity_curl_type_2d =
+    typename FEValuesViews::Vector<2>::template solution_curl_type<double>;
+  using velocity_curl_type_3d =
+    typename FEValuesViews::Vector<3>::template solution_curl_type<double>;
+
   /**
    * @brief Constructor. The constructor creates the fe_values that will be used
    * to fill the member variables of the scratch. It also allocated the
@@ -1602,14 +1610,19 @@ public:
   Tensor<1, dim> average_fluid_particle_relative_velocity;
   std::vector<Tensor<1, dim>> fluid_pressure_gradients_at_particle_location;
   std::vector<Tensor<1, dim>> fluid_velocity_laplacian_at_particle_location;
-  std::vector<Tensor<1, 1>>   fluid_velocity_curls_at_particle_location_2d;
-  std::vector<Tensor<1, 3>>   fluid_velocity_curls_at_particle_location_3d;
-  std::vector<Point<dim>>     particle_reference_location;
-  std::vector<double>         particle_weights;
-  std::vector<double>         cell_void_fraction;
-  std::vector<double>         Re_particle;
-  unsigned int                max_number_of_particles_per_cell;
-  unsigned int                number_of_particles;
+  // Store the particle-location curls with the aliases above so the call to
+  // FEValuesViews::Vector::get_function_curls() receives the exact curl type
+  // expected by the installed deal.II version.
+  std::vector<velocity_curl_type_2d>
+    fluid_velocity_curls_at_particle_location_2d;
+  std::vector<velocity_curl_type_3d>
+                          fluid_velocity_curls_at_particle_location_3d;
+  std::vector<Point<dim>> particle_reference_location;
+  std::vector<double>     particle_weights;
+  std::vector<double>     cell_void_fraction;
+  std::vector<double>     Re_particle;
+  unsigned int            max_number_of_particles_per_cell;
+  unsigned int            number_of_particles;
   typename Particles::ParticleHandler<dim>::particle_iterator_range pic;
   double         total_particle_volume;
   double         cell_volume;

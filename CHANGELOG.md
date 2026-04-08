@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/04/08
+
+### Fixed
+
+- MINOR Fixed the VANS 2D particle-location curl handling so it matches deal.II's curl result type and remains compatible with the supported deal.II versions. [#1963](https://github.com/chaos-polymtl/lethe/pull/1963)
+
 ## [Master] - 2026/03/31
 
 ### Changed
