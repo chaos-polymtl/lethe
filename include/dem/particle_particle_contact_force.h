@@ -96,7 +96,7 @@ public:
 protected:
   std::unordered_map<types::boundary_id, Tensor<1, dim>> periodic_offsets;
 
-  std::vector<Tensor<1, dim>> combined_periodic_offsets{Tensor<1, dim>()};
+  std::vector<Tensor<1, dim>> combined_periodic_offsets;
 };
 
 /**
@@ -1709,7 +1709,6 @@ private:
   template <ContactType contact_type, typename ContactInfoContainer>
   inline void
   execute_contact_calculation(
-    // typename DEM::dem_data_structures<dim>::particle_contact_info
     ContactInfoContainer                         &adjacent_particles_list,
     const double                                  dt,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome)

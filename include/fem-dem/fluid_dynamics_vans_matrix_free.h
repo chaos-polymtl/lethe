@@ -240,8 +240,8 @@ protected:
 
   /// Member variables which are used to manage boundary conditions
   bool           has_periodic_boundaries;
-  Tensor<1, dim> periodic_offset;
-  unsigned int   periodic_direction;
+  std::map<types::boundary_id, Tensor<1, dim>> cfd_periodic_offsets;
+  std::map<types::boundary_id, unsigned int> cfd_periodic_directions;
 
   /// Vector to store the time derivative of the void fraction
   VectorType time_derivative_void_fraction;

@@ -194,7 +194,6 @@ private:
   template <ContactType contact_type, typename ContactInfoContainer>
   inline void
   execute_contact_calculation(
-    // typename DEM::dem_data_structures<dim>::particle_contact_info
     ContactInfoContainer  &adjacent_particles_list,
     std::vector<Point<3>> &vertices,
     std::vector<double>   &normal_forces_vector)
