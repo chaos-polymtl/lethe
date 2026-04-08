@@ -1,0 +1,236 @@
+Running on 2 MPI rank(s)...
+   Number of active cells:       256
+   Number of degrees of freedom: 3267
+   Volume of triangulation:      4.000000e+00
+---------------
+Fluid Dynamics
+---------------
+
+
++---------------------------------------------+------------+------------+
+| Total wallclock time elapsed since start    |    0.0108s |            |
+|                                             |            |            |
+| Section                         | no. calls |  wall time | % of total |
++---------------------------------+-----------+------------+------------+
+| Read mesh and manifolds         |         1 |   0.00417s |        39% |
+| Setup DoFs                      |         1 |   0.00519s |        48% |
++---------------------------------+-----------+------------+------------+
+
+
+*****************************
+Steady iteration:        1/5
+*****************************
+---------------
+Fluid Dynamics
+---------------
+Newton iteration: 0  - Residual:  4.921108e+00
+	alpha =      1	res = 2.886004e-01
+	  ||du||_L2 = 1.959796e+01	  ||du||_Linfty = 1.000470e+00
+	  ||dp||_L2 = 1.929150e+01	  ||dp||_Linfty = 2.139170e+00
+Newton iteration: 1  - Residual:  2.886004e-01
+	alpha =      1	res = 2.245917e-05
+	  ||du||_L2 = 5.602017e-02	  ||du||_Linfty = 6.607806e-03
+	  ||dp||_L2 = 1.072813e+01	  ||dp||_Linfty = 1.140078e+00
+Newton iteration: 2  - Residual:  2.245917e-05
+	alpha =      1	res = 1.870098e-09
+	  ||du||_L2 = 2.693195e-05	  ||du||_Linfty = 2.737145e-06
+	  ||dp||_L2 = 1.249407e-03	  ||dp||_Linfty = 1.032675e-04
+Newton iteration: 3  - Residual:  1.870098e-09
+	alpha =      1	res = 9.516880e-10
+	  ||du||_L2 = 2.133458e-09	  ||du||_Linfty = 2.617533e-10
+	  ||dp||_L2 = 7.186127e-08	  ||dp||_Linfty = 6.164753e-09
+---------------
+Fluid Dynamics
+---------------
+
+
++---------------------------------------------------------+------------+------------+
+| Total wallclock time elapsed since start                |    0.0936s |            |
+|                                                         |            |            |
+| Section                                     | no. calls |  wall time | % of total |
++---------------------------------------------+-----------+------------+------------+
+| Assemble RHS                                |         5 |  0.000751s |       0.8% |
+| Assemble matrix                             |         4 |  1.95e-06s |         0% |
+| Calculate and output norms after Newton its |         4 |  0.000477s |      0.51% |
+| Calculate error w.r.t. analytical solution  |         1 |   0.00112s |       1.2% |
+| Distribute constraints after linear solver  |         4 |  0.000163s |      0.17% |
+| Evaluate non linear term and tau            |         4 |  0.000255s |      0.27% |
+| Output results                              |         2 |   0.00853s |       9.1% |
+| Setup GMG                                   |         4 |    0.0177s |        19% |
+| Solve linear system                         |         4 |    0.0639s |        68% |
++---------------------------------------------+-----------+------------+------------+
+
+
+*****************************
+Steady iteration:        2/5
+*****************************
+   Number of active cells:       1024
+   Number of degrees of freedom: 12675
+   Volume of triangulation:      4.000000e+00
+---------------
+Fluid Dynamics
+---------------
+Newton iteration: 0  - Residual:  3.246378e-01
+	alpha =      1	res = 1.720924e-05
+	  ||du||_L2 = 1.213921e-01	  ||du||_Linfty = 3.658942e-03
+	  ||dp||_L2 = 1.423364e+00	  ||dp||_Linfty = 7.890827e-02
+Newton iteration: 1  - Residual:  1.720924e-05
+	alpha =      1	res = 1.361698e-09
+	  ||du||_L2 = 1.768012e-05	  ||du||_Linfty = 1.303832e-06
+	  ||dp||_L2 = 1.554364e-03	  ||dp||_Linfty = 8.532362e-05
+Newton iteration: 2  - Residual:  1.361698e-09
+	alpha =      1	res = 7.142801e-10
+	  ||du||_L2 = 2.177194e-09	  ||du||_Linfty = 9.234946e-11
+	  ||dp||_L2 = 1.501864e-07	  ||dp||_Linfty = 6.760917e-09
+---------------
+Fluid Dynamics
+---------------
+
+
++---------------------------------------------------------+------------+------------+
+| Total wallclock time elapsed since start                |     0.212s |            |
+|                                                         |            |            |
+| Section                                     | no. calls |  wall time | % of total |
++---------------------------------------------+-----------+------------+------------+
+| Assemble RHS                                |         4 |   0.00215s |         1% |
+| Assemble matrix                             |         3 |  1.28e-06s |         0% |
+| Calculate and output norms after Newton its |         3 |   0.00114s |      0.54% |
+| Calculate error w.r.t. analytical solution  |         1 |   0.00307s |       1.5% |
+| Distribute constraints after linear solver  |         3 |  0.000245s |      0.12% |
+| Evaluate non linear term and tau            |         3 |   0.00079s |      0.37% |
+| Output results                              |         1 |   0.00689s |       3.3% |
+| Refine                                      |         1 |    0.0129s |       6.1% |
+| Setup DoFs                                  |         1 |   0.00909s |       4.3% |
+| Setup GMG                                   |         3 |    0.0409s |        19% |
+| Solve linear system                         |         3 |     0.143s |        67% |
++---------------------------------------------+-----------+------------+------------+
+
+
+*****************************
+Steady iteration:        3/5
+*****************************
+   Number of active cells:       4096
+   Number of degrees of freedom: 49923
+   Volume of triangulation:      4.000000e+00
+---------------
+Fluid Dynamics
+---------------
+Newton iteration: 0  - Residual:  7.921272e-02
+	alpha =      1	res = 5.173454e-06
+	  ||du||_L2 = 3.030965e-02	  ||du||_Linfty = 4.691827e-04
+	  ||dp||_L2 = 7.172915e-01	  ||dp||_Linfty = 2.176704e-02
+Newton iteration: 1  - Residual:  5.173454e-06
+	alpha =      1	res = 6.495442e-10
+	  ||du||_L2 = 8.991217e-06	  ||du||_Linfty = 1.974751e-07
+	  ||dp||_L2 = 1.247178e-03	  ||dp||_Linfty = 3.406613e-05
+---------------
+Fluid Dynamics
+---------------
+
+
++---------------------------------------------------------+------------+------------+
+| Total wallclock time elapsed since start                |     0.702s |            |
+|                                                         |            |            |
+| Section                                     | no. calls |  wall time | % of total |
++---------------------------------------------+-----------+------------+------------+
+| Assemble RHS                                |         3 |    0.0068s |      0.97% |
+| Assemble matrix                             |         2 |  8.86e-07s |         0% |
+| Calculate and output norms after Newton its |         2 |   0.00242s |      0.35% |
+| Calculate error w.r.t. analytical solution  |         1 |    0.0106s |       1.5% |
+| Distribute constraints after linear solver  |         2 |   0.00022s |         0% |
+| Evaluate non linear term and tau            |         2 |   0.00283s |       0.4% |
+| Output results                              |         1 |    0.0177s |       2.5% |
+| Refine                                      |         1 |     0.046s |       6.6% |
+| Setup DoFs                                  |         1 |    0.0331s |       4.7% |
+| Setup GMG                                   |         2 |      0.12s |        17% |
+| Solve linear system                         |         2 |     0.495s |        70% |
++---------------------------------------------+-----------+------------+------------+
+
+
+*****************************
+Steady iteration:        4/5
+*****************************
+   Number of active cells:       16384
+   Number of degrees of freedom: 198147
+   Volume of triangulation:      4.000000e+00
+---------------
+Fluid Dynamics
+---------------
+Newton iteration: 0  - Residual:  1.966215e-02
+	alpha =      1	res = 1.679407e-06
+	  ||du||_L2 = 7.572035e-03	  ||du||_Linfty = 5.904383e-05
+	  ||dp||_L2 = 3.596805e-01	  ||dp||_Linfty = 5.585243e-03
+Newton iteration: 1  - Residual:  1.679407e-06
+	alpha =      1	res = 8.726783e-10
+	  ||du||_L2 = 6.195730e-06	  ||du||_Linfty = 8.500166e-08
+	  ||dp||_L2 = 1.268744e-03	  ||dp||_Linfty = 1.608983e-05
+---------------
+Fluid Dynamics
+---------------
+
+
++---------------------------------------------------------+------------+------------+
+| Total wallclock time elapsed since start                |      2.66s |            |
+|                                                         |            |            |
+| Section                                     | no. calls |  wall time | % of total |
++---------------------------------------------+-----------+------------+------------+
+| Assemble RHS                                |         3 |    0.0416s |       1.6% |
+| Assemble matrix                             |         2 |  1.67e-06s |         0% |
+| Calculate and output norms after Newton its |         2 |    0.0105s |       0.4% |
+| Calculate error w.r.t. analytical solution  |         1 |    0.0527s |         2% |
+| Distribute constraints after linear solver  |         2 |  0.000469s |         0% |
+| Evaluate non linear term and tau            |         2 |    0.0213s |       0.8% |
+| Output results                              |         1 |     0.067s |       2.5% |
+| Refine                                      |         1 |     0.176s |       6.6% |
+| Setup DoFs                                  |         1 |     0.128s |       4.8% |
+| Setup GMG                                   |         2 |     0.499s |        19% |
+| Solve linear system                         |         2 |      1.79s |        67% |
++---------------------------------------------+-----------+------------+------------+
+
+
+*****************************
+Steady iteration:        5/5
+*****************************
+   Number of active cells:       65536
+   Number of degrees of freedom: 789507
+   Volume of triangulation:      4.000000e+00
+---------------
+Fluid Dynamics
+---------------
+Newton iteration: 0  - Residual:  4.905447e-03
+	alpha =      1	res = 3.201463e-07
+	  ||du||_L2 = 1.892624e-03	  ||du||_Linfty = 7.394404e-06
+	  ||dp||_L2 = 1.800238e-01	  ||dp||_Linfty = 1.407276e-03
+Newton iteration: 1  - Residual:  3.201463e-07
+	alpha =      1	res = 6.917585e-10
+	  ||du||_L2 = 2.397865e-06	  ||du||_Linfty = 1.458132e-08
+	  ||dp||_L2 = 7.634072e-04	  ||dp||_Linfty = 5.250579e-06
+---------------
+Fluid Dynamics
+---------------
+
+
++---------------------------------------------------------+------------+------------+
+| Total wallclock time elapsed since start                |      10.3s |            |
+|                                                         |            |            |
+| Section                                     | no. calls |  wall time | % of total |
++---------------------------------------------+-----------+------------+------------+
+| Assemble RHS                                |         3 |     0.326s |       3.2% |
+| Assemble matrix                             |         2 |  2.82e-06s |         0% |
+| Calculate and output norms after Newton its |         2 |    0.0413s |       0.4% |
+| Calculate error w.r.t. analytical solution  |         1 |     0.172s |       1.7% |
+| Distribute constraints after linear solver  |         2 |    0.0018s |         0% |
+| Evaluate non linear term and tau            |         2 |     0.203s |         2% |
+| Output results                              |         1 |     0.263s |       2.6% |
+| Refine                                      |         1 |     0.718s |         7% |
+| Setup DoFs                                  |         1 |     0.519s |       5.1% |
+| Setup GMG                                   |         2 |      2.11s |        21% |
+| Solve linear system                         |         2 |      6.43s |        63% |
++---------------------------------------------+-----------+------------+------------+
+
+cells  error_velocity    error_pressure   
+  256 3.317975e-03    - 3.838465e-02    - 
+ 1024 4.129689e-04 3.01 9.520320e-03 2.01 
+ 4096 5.153815e-05 3.00 2.374603e-03 2.00 
+16384 6.439346e-06 3.00 5.932831e-04 2.00 
+65536 8.048229e-07 3.00 1.482971e-04 2.00 
