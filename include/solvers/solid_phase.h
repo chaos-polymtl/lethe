@@ -283,53 +283,53 @@ struct SolidPhaseParameters
   }
 };
 
-template <int dim>
-class SolidPreconditioner : public Subscriptor
-{
-public:
-  std::shared_ptr<TrilinosWrappers::PreconditionAMG> amg_u;
-  std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_u;
-  std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_a;
+// template <int dim>
+// class SolidPreconditioner : public Subscriptor
+// {
+// public:
+//   std::shared_ptr<TrilinosWrappers::PreconditionAMG> amg_u;
+//   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_u;
+//   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_a;
 
-  enum class Mode
-  {
-    ilu,
-    amg
-  } mode = Mode::ilu;
+//   enum class Mode
+//   {
+//     ilu,
+//     amg
+//   } mode = Mode::ilu;
 
-  void
-  vmult(TrilinosWrappers::MPI::BlockVector       &dst,
-        const TrilinosWrappers::MPI::BlockVector &src) const
-  {
-    if (dst.block(0).size() > 0)
-      {
-        if (mode == Mode::amg && amg_u)
-          {
-            amg_u->vmult(dst.block(0), src.block(0));
-          }
-        else if (ilu_u)
-          {
-            ilu_u->vmult(dst.block(0), src.block(0));
-          }
-        else
-          {
-            dst.block(0) = src.block(0);
-          }
-      }
+//   void
+//   vmult(TrilinosWrappers::MPI::BlockVector       &dst,
+//         const TrilinosWrappers::MPI::BlockVector &src) const
+//   {
+//     if (dst.block(0).size() > 0)
+//       {
+//         if (mode == Mode::amg && amg_u)
+//           {
+//             amg_u->vmult(dst.block(0), src.block(0));
+//           }
+//         else if (ilu_u)
+//           {
+//             ilu_u->vmult(dst.block(0), src.block(0));
+//           }
+//         else
+//           {
+//             dst.block(0) = src.block(0);
+//           }
+//       }
 
-    if (dst.block(1).size() > 0)
-      {
-        if (ilu_a)
-          {
-            ilu_a->vmult(dst.block(1), src.block(1));
-          }
-        else
-          {
-            dst.block(1) = src.block(1);
-          }
-      }
-  }
-};
+//     if (dst.block(1).size() > 0)
+//       {
+//         if (ilu_a)
+//           {
+//             ilu_a->vmult(dst.block(1), src.block(1));
+//           }
+//         else
+//           {
+//             dst.block(1) = src.block(1);
+//           }
+//       }
+//   }
+// };
 
 template <int dim>
 class SolidPhaseSolver
@@ -389,15 +389,22 @@ private:
   void
   make_output_dir() const;
 
-  void
-  setup_preconditioner();
-  void
-  setup_ILU();
-  void
-  setup_AMG();
+  // void
+  // setup_preconditioner();
+  // void
+  // setup_ILU();
+  // void
+  // setup_AMG();
+
+  // void
+  // update_constraints();
 
   void
-  update_constraints();
+  setup_linear_preconditioners();
+
+  std::shared_ptr<TrilinosWrappers::PreconditionAMG> velocity_amg;
+  std::shared_ptr<TrilinosWrappers::PreconditionILU> velocity_ilu;
+  std::shared_ptr<TrilinosWrappers::PreconditionILU> alpha_ilu;
 
 
   const SolidPhaseParameters parameters;
@@ -434,11 +441,11 @@ private:
   TrilinosWrappers::MPI::BlockVector locally_relevant_solution;
   TrilinosWrappers::MPI::BlockVector locally_relevant_old_solution;
 
-  std::shared_ptr<SolidPreconditioner<dim>> preconditioner;
+  // std::shared_ptr<SolidPreconditioner<dim>> preconditioner;
 
   // time
-  double       time_step;
-  double       old_time_step;
+  double time_step;
+  // double       old_time_step;
   unsigned int timestep_number;
 
   // BC data
@@ -448,8 +455,8 @@ private:
   ConditionalOStream pcout;
   TimerOutput        computing_timer;
 
-  double max_inlet_velocity = 0.0;
-  double cfl_length_scale   = 1.0;
+  // double max_inlet_velocity = 0.0;
+  double cfl_length_scale = 1.0;
 
   // output
   PVDHandler   pvd_handler;

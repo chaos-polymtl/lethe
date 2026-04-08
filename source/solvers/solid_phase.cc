@@ -62,75 +62,89 @@
 
 
 
+class SolidBlockDiagonalPreconditioner : public Subscriptor
+{
+public:
+  SolidBlockDiagonalPreconditioner(
+    const std::shared_ptr<TrilinosWrappers::PreconditionAMG> &velocity_amg,
+    const std::shared_ptr<TrilinosWrappers::PreconditionILU> &velocity_ilu,
+    const std::shared_ptr<TrilinosWrappers::PreconditionILU> &alpha_ilu,
+    const bool                                                use_amg)
+    : velocity_amg(velocity_amg)
+    , velocity_ilu(velocity_ilu)
+    , alpha_ilu(alpha_ilu)
+    , use_amg(use_amg)
+  {}
+
+  void
+  vmult(TrilinosWrappers::MPI::BlockVector       &dst,
+        const TrilinosWrappers::MPI::BlockVector &src) const
+  {
+    if (dst.block(0).size() > 0)
+      {
+        if (use_amg && velocity_amg)
+          velocity_amg->vmult(dst.block(0), src.block(0));
+        else if (velocity_ilu)
+          velocity_ilu->vmult(dst.block(0), src.block(0));
+        else
+          dst.block(0) = src.block(0);
+      }
+
+    if (dst.block(1).size() > 0)
+      {
+        if (alpha_ilu)
+          alpha_ilu->vmult(dst.block(1), src.block(1));
+        else
+          dst.block(1) = src.block(1);
+      }
+  }
+
+private:
+  std::shared_ptr<TrilinosWrappers::PreconditionAMG> velocity_amg;
+  std::shared_ptr<TrilinosWrappers::PreconditionILU> velocity_ilu;
+  std::shared_ptr<TrilinosWrappers::PreconditionILU> alpha_ilu;
+  bool                                               use_amg;
+};
+
 template <int dim>
 void
-SolidPhaseSolver<dim>::setup_preconditioner()
+SolidPhaseSolver<dim>::setup_linear_preconditioners()
 {
-  this->preconditioner = std::make_shared<SolidPreconditioner<dim>>();
-
+  velocity_amg.reset();
+  velocity_ilu.reset();
+  alpha_ilu.reset();
 
   const bool use_amg = (parameters.amg_sweeps > 0);
 
   if (use_amg)
     {
-      setup_AMG();
+      velocity_amg = std::make_shared<TrilinosWrappers::PreconditionAMG>();
+
+      TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
+      amg_data.elliptic              = parameters.amg_elliptic;
+      amg_data.higher_order_elements = (degree > 1);
+      amg_data.smoother_type         = parameters.amg_smoother_type.c_str();
+      amg_data.smoother_sweeps       = parameters.amg_sweeps;
+      amg_data.aggregation_threshold = parameters.amg_agg_threshold;
+      amg_data.output_details        = false;
+
+      velocity_amg->initialize(system_matrix.block(0, 0), amg_data);
     }
   else
     {
-      setup_ILU();
+      velocity_ilu = std::make_shared<TrilinosWrappers::PreconditionILU>();
+
+      TrilinosWrappers::PreconditionILU::AdditionalData ilu_data;
+      ilu_data.overlap = parameters.ilu_overlap;
+
+      velocity_ilu->initialize(system_matrix.block(0, 0), ilu_data);
     }
-}
 
-template <int dim>
-void
-SolidPhaseSolver<dim>::setup_ILU()
-{
-  this->preconditioner->mode = SolidPreconditioner<dim>::Mode::ilu;
+  alpha_ilu = std::make_shared<TrilinosWrappers::PreconditionILU>();
 
-  // velocity block ILU
-  preconditioner->ilu_u = std::make_shared<TrilinosWrappers::PreconditionILU>();
-  {
-    TrilinosWrappers::PreconditionILU::AdditionalData ilu_data;
-    ilu_data.overlap = parameters.ilu_overlap;
-    preconditioner->ilu_u->initialize(system_matrix.block(0, 0), ilu_data);
-  }
-
-  // alpha block ILU
-  preconditioner->ilu_a = std::make_shared<TrilinosWrappers::PreconditionILU>();
-  {
-    TrilinosWrappers::PreconditionILU::AdditionalData ilu_data;
-    ilu_data.overlap = parameters.ilu_overlap;
-    preconditioner->ilu_a->initialize(system_matrix.block(1, 1), ilu_data);
-  }
-}
-
-template <int dim>
-void
-SolidPhaseSolver<dim>::setup_AMG()
-{
-  this->preconditioner->mode = SolidPreconditioner<dim>::Mode::amg;
-
-  // AMG on velocity block (0,0)
-  preconditioner->amg_u = std::make_shared<TrilinosWrappers::PreconditionAMG>();
-  {
-    TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
-    amg_data.elliptic              = parameters.amg_elliptic;
-    amg_data.higher_order_elements = (degree > 1);
-    amg_data.smoother_type         = "ILU";
-    amg_data.smoother_sweeps       = parameters.amg_sweeps;
-    amg_data.aggregation_threshold = parameters.amg_agg_threshold;
-    amg_data.output_details        = false;
-
-    preconditioner->amg_u->initialize(system_matrix.block(0, 0), amg_data);
-  }
-
-  // ILU on alpha block (1,1)
-  preconditioner->ilu_a = std::make_shared<TrilinosWrappers::PreconditionILU>();
-  {
-    TrilinosWrappers::PreconditionILU::AdditionalData ilu_data;
-    ilu_data.overlap = parameters.ilu_overlap;
-    preconditioner->ilu_a->initialize(system_matrix.block(1, 1), ilu_data);
-  }
+  TrilinosWrappers::PreconditionILU::AdditionalData ilu_data;
+  ilu_data.overlap = parameters.ilu_overlap;
+  alpha_ilu->initialize(system_matrix.block(1, 1), ilu_data);
 }
 
 
@@ -194,39 +208,6 @@ public:
 private:
   const double         alpha_in;
   const Tensor<1, dim> u_in;
-};
-
-template <int dim>
-class SolidVelocityBoundaryFromFluid : public Function<dim>
-{
-public:
-  SolidVelocityBoundaryFromFluid(
-    const Mapping<dim>                  &fluid_mapping,
-    const DoFHandler<dim>               &fluid_dof_handler,
-    const TrilinosWrappers::MPI::Vector &fluid_solution)
-    : Function<dim>(dim + 1)
-    , fluid_field(fluid_dof_handler, fluid_solution, fluid_mapping)
-    , n_fluid_components(fluid_dof_handler.get_fe().n_components())
-  {}
-
-  virtual void
-  vector_value(const Point<dim> &p, Vector<double> &values) const override
-  {
-    values.reinit(dim + 1);
-    values = 0.0;
-
-    Vector<double> fluid_values(n_fluid_components);
-    fluid_field.vector_value(p, fluid_values);
-
-    for (unsigned int d = 0; d < dim; ++d)
-      values[d] = fluid_values[d];
-
-    values[dim] = 0.0;
-  }
-
-private:
-  Functions::FEFieldFunction<dim, TrilinosWrappers::MPI::Vector> fluid_field;
-  const unsigned int n_fluid_components;
 };
 
 
@@ -380,6 +361,11 @@ template <int dim>
 void
 SolidPhaseSolver<dim>::setup_dofs()
 {
+  if (parameters.verbose_assembly)
+    {
+      pcout << "setting up dofs...\n" << std::endl;
+    }
+
   TimerOutput::Scope t(computing_timer, "setup");
 
   dof_handler.distribute_dofs(fe);
@@ -390,6 +376,8 @@ SolidPhaseSolver<dim>::setup_dofs()
 
   const auto dofs_per_block =
     DoFTools::count_dofs_per_fe_block(dof_handler, block_component);
+
+  AssertDimension(dofs_per_block.size(), 2);
 
   const types::global_dof_index n_u = dofs_per_block[0];
   const types::global_dof_index n_a = dofs_per_block[1];
@@ -416,15 +404,11 @@ SolidPhaseSolver<dim>::setup_dofs()
 
   SolidBoundaryValues<dim> bc(parameters.alpha_inlet, inlet_velocity);
 
-  ComponentMask vel_mask(fe.n_components(), false);
-  for (unsigned int c = 0; c < dim; ++c)
-    {
-      vel_mask.set(c, true);
-    }
+  const FEValuesExtractors::Vector velocities(0);
+  const FEValuesExtractors::Scalar alpha(dim);
 
-  ComponentMask alpha_mask(fe.n_components(), false);
-  alpha_mask.set(dim, true);
-
+  const ComponentMask vel_mask   = fe.component_mask(velocities);
+  const ComponentMask alpha_mask = fe.component_mask(alpha);
 
   VectorTools::interpolate_boundary_values(
     dof_handler, 1, bc, constraints, vel_mask);
@@ -432,13 +416,10 @@ SolidPhaseSolver<dim>::setup_dofs()
     dof_handler, 1, bc, constraints, alpha_mask);
 
 
-  std::set<types::boundary_id> no_normal_flux_boundaries;
-  no_normal_flux_boundaries.insert(0);
+  Functions::ZeroFunction<dim> zero_bc(dim + 1);
 
-  VectorTools::compute_no_normal_flux_constraints(dof_handler,
-                                                  0,
-                                                  no_normal_flux_boundaries,
-                                                  constraints);
+  VectorTools::interpolate_boundary_values(
+    dof_handler, 0, zero_bc, constraints, vel_mask);
 
   constraints.close();
 
@@ -459,6 +440,7 @@ SolidPhaseSolver<dim>::setup_dofs()
   sp.compress();
   system_matrix.reinit(sp);
 
+  solution.reinit(owned_partitioning, mpi_communicator);
   old_solution.reinit(owned_partitioning, mpi_communicator);
   system_rhs.reinit(owned_partitioning, mpi_communicator);
 
@@ -470,56 +452,6 @@ SolidPhaseSolver<dim>::setup_dofs()
                                        mpi_communicator);
 }
 
-
-template <int dim>
-void
-SolidPhaseSolver<dim>::update_constraints()
-{
-  AssertThrow(
-    has_fluid_velocity_field,
-    ExcMessage(
-      "Fluid velocity field must be set before updating solid constraints."));
-  AssertThrow(fluid_dof_handler_ptr != nullptr,
-              ExcMessage("fluid_dof_handler_ptr is null."));
-  AssertThrow(fluid_mapping_ptr != nullptr,
-              ExcMessage("fluid_mapping_ptr is null."));
-  AssertThrow(fluid_solution_ptr != nullptr,
-              ExcMessage("fluid_solution_ptr is null."));
-
-  constraints.clear();
-  constraints.reinit(locally_owned, locally_relevant);
-
-  DoFTools::make_hanging_node_constraints(dof_handler, constraints);
-
-  ComponentMask vel_mask(fe.n_components(), false);
-  for (unsigned int c = 0; c < dim; ++c)
-    vel_mask.set(c, true);
-
-  ComponentMask alpha_mask(fe.n_components(), false);
-  alpha_mask.set(dim, true);
-
-  SolidVelocityBoundaryFromFluid<dim> velocity_bc(*fluid_mapping_ptr,
-                                                  *fluid_dof_handler_ptr,
-                                                  *fluid_solution_ptr);
-
-  SolidBoundaryValues<dim> alpha_bc(parameters.alpha_inlet, inlet_velocity);
-
-  VectorTools::interpolate_boundary_values(
-    dof_handler, 1, velocity_bc, constraints, vel_mask);
-
-  VectorTools::interpolate_boundary_values(
-    dof_handler, 1, alpha_bc, constraints, alpha_mask);
-
-  std::set<types::boundary_id> no_normal_flux_boundaries;
-  no_normal_flux_boundaries.insert(0);
-
-  VectorTools::compute_no_normal_flux_constraints(dof_handler,
-                                                  0,
-                                                  no_normal_flux_boundaries,
-                                                  constraints);
-
-  constraints.close();
-}
 
 template <int dim>
 void
@@ -769,7 +701,6 @@ SolidPhaseSolver<dim>::assemble_system()
 }
 
 
-
 template <int dim>
 void
 SolidPhaseSolver<dim>::solve()
@@ -777,14 +708,11 @@ SolidPhaseSolver<dim>::solve()
   TimerOutput::Scope t(computing_timer, "solve");
 
   if (parameters.solver_verbose)
-    {
-      pcout << "Solving solid system... " << std::flush;
-    }
+    pcout << "Solving solid system... " << std::flush;
 
   TrilinosWrappers::MPI::BlockVector distributed_solution(owned_partitioning,
                                                           mpi_communicator);
   distributed_solution = solution;
-
 
   constraints.distribute(distributed_solution);
   distributed_solution.compress(VectorOperation::insert);
@@ -797,8 +725,14 @@ SolidPhaseSolver<dim>::solve()
 
   SolverControl solver_control(parameters.solver_max_it, tol);
 
+  setup_linear_preconditioners();
 
-  setup_preconditioner();
+  const bool use_amg = (parameters.amg_sweeps > 0);
+
+  SolidBlockDiagonalPreconditioner preconditioner(velocity_amg,
+                                                  velocity_ilu,
+                                                  alpha_ilu,
+                                                  use_amg);
 
   SolverFGMRES<TrilinosWrappers::MPI::BlockVector> solver(
     solver_control,
@@ -811,28 +745,28 @@ SolidPhaseSolver<dim>::solve()
       solver.solve(system_matrix,
                    distributed_solution,
                    system_rhs,
-                   *preconditioner);
+                   preconditioner);
     }
   catch (SolverControl::NoConvergence &)
     {
       if (parameters.solver_verbose)
-        {
-          pcout << "\nNoConvergence: retrying with relaxed settings...\n";
-        }
-      SolverControl solver_control_refined(system_matrix.m(), tol);
+        pcout << "\nNoConvergence: retrying with relaxed settings...\n";
 
-      SolverFGMRES<TrilinosWrappers::MPI::BlockVector> solver_refined(
-        solver_control_refined,
+      SolverControl retry_control(parameters.solver_max_it, tol);
+
+      SolverFGMRES<TrilinosWrappers::MPI::BlockVector> retry_solver(
+        retry_control,
         mem,
         SolverFGMRES<TrilinosWrappers::MPI::BlockVector>::AdditionalData(
           std::max(parameters.solver_restart, 200u)));
 
-      solver_refined.solve(system_matrix,
-                           distributed_solution,
-                           system_rhs,
-                           *preconditioner);
-    }
+      retry_solver.solve(system_matrix,
+                         distributed_solution,
+                         system_rhs,
+                         preconditioner);
 
+      solver_control = retry_control;
+    }
 
   constraints.distribute(distributed_solution);
   distributed_solution.compress(VectorOperation::insert);
@@ -840,16 +774,13 @@ SolidPhaseSolver<dim>::solve()
   solution = distributed_solution;
   solution.compress(VectorOperation::insert);
 
-
   locally_relevant_solution = solution;
   locally_relevant_solution.update_ghost_values();
 
   if (parameters.solver_verbose)
-    {
-      pcout << solver_control.last_step()
-            << " iterations. residual=" << solver_control.last_value()
-            << std::endl;
-    }
+    pcout << solver_control.last_step()
+          << " iterations. residual=" << solver_control.last_value()
+          << std::endl;
 }
 
 
@@ -1041,13 +972,6 @@ SolidPhaseSolver<dim>::setup()
 
   const double L   = 1.0;
   cfl_length_scale = L / static_cast<double>(sub[0]);
-
-  max_inlet_velocity = 0.0;
-  for (unsigned int d = 0; d < dim; ++d)
-    {
-      max_inlet_velocity =
-        std::max(max_inlet_velocity, std::abs(inlet_velocity[d]));
-    }
 }
 
 template <int dim>
@@ -1060,7 +984,7 @@ SolidPhaseSolver<dim>::advance_one_step()
   ++timestep_number;
   const double time = timestep_number * time_step;
 
-  update_constraints();
+
   assemble_system();
   solve();
 
@@ -1072,7 +996,11 @@ SolidPhaseSolver<dim>::advance_one_step()
   locally_relevant_old_solution = old_solution;
   locally_relevant_old_solution.update_ghost_values();
 
-  const double CFL = max_inlet_velocity * time_step / cfl_length_scale;
+  const double max_solid_component =
+    locally_relevant_solution.block(0).linfty_norm();
+
+  const double CFL = max_solid_component * time_step / cfl_length_scale;
+
 
   pcout << "TimeStep " << timestep_number << " time = " << time
         << " CFL = " << CFL << " ||rhs|| = " << system_rhs.l2_norm() << "\n ";

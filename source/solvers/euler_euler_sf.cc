@@ -138,14 +138,14 @@ void
 EulerEulerOneWay<dim>::run()
 {
   if (verbose)
-    pcout << "Running one-way Euler-Euler coupling" << std::endl;
+    pcout << "Running Euler-Euler coupling" << std::endl;
 
   auto &shared_triangulation = fluid_solver.get_triangulation();
 
   if (shared_triangulation.n_global_active_cells() == 0)
     {
       if (verbose)
-        pcout << "Building shared Euler-Euler grid" << std::endl;
+        pcout << "Building Euler-Euler grid" << std::endl;
 
       EulerEulerGridParameters<dim> grid_parameters;
       grid_parameters.p1 = mesh_parameters.p1;
@@ -172,6 +172,8 @@ EulerEulerOneWay<dim>::run()
 
   while (!solid_solver->finished())
     {
+      pcout << "Coupled step = " << solid_solver->get_step_number() << std::endl;
+      
       void_fraction_solver.set_solid_volume_fraction(
         solid_solver->get_solid_volume_fraction());
 

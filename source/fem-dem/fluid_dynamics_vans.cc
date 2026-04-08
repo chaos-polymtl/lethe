@@ -979,43 +979,6 @@ FluidDynamicsVANS<dim>::advance_one_step_external()
             this->simulation_control->get_current_time());
         }
 
-
-      // const Point<dim> probe_point(0.5, 0.5, 0.5);
-
-      // double local_value = 0.0;
-      // int    found_here  = 0;
-
-      // try
-      //   {
-      //     local_value = VectorTools::point_value(
-      //       void_fraction_manager.dof_handler,
-      //       void_fraction_manager.get_void_fraction_field(),
-      //       probe_point);
-      //     found_here = 1;
-      //   }
-      // catch (...)
-      //   {
-      //     // This rank does not own the point
-      //   }
-
-      // const int found_global =
-      //   Utilities::MPI::sum(found_here, this->mpi_communicator);
-
-      // const double value_global =
-      //   Utilities::MPI::sum(local_value, this->mpi_communicator);
-
-      // if (found_global == 1)
-      //   {
-      //     this->pcout << "Initial fluid void fraction at " << probe_point
-      //                 << " = " << value_global << std::endl;
-      //   }
-      // else
-      //   {
-      //     this->pcout << "Could not evaluate fluid void fraction uniquely at
-      //     "
-      //                 << probe_point << std::endl;
-      //   }
-
       this->iterate();
     }
   else

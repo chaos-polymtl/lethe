@@ -3,7 +3,34 @@
 #include <deal.II/base/exceptions.h>
 #include <deal.II/base/utilities.h>
 
-using namespace dealii;
+#include <limits>
+
+namespace
+{
+  double
+  global_min_owned(const TrilinosWrappers::MPI::Vector &vec,
+                   const MPI_Comm                      &mpi_communicator)
+  {
+    double local_min = std::numeric_limits<double>::max();
+
+    for (const auto i : vec.locally_owned_elements())
+      local_min = std::min(local_min, vec[i]);
+
+    return Utilities::MPI::min(local_min, mpi_communicator);
+  }
+
+  double
+  global_max_owned(const TrilinosWrappers::MPI::Vector &vec,
+                   const MPI_Comm                      &mpi_communicator)
+  {
+    double local_max = -std::numeric_limits<double>::max();
+
+    for (const auto i : vec.locally_owned_elements())
+      local_max = std::max(local_max, vec[i]);
+
+    return Utilities::MPI::max(local_max, mpi_communicator);
+  }
+} // namespace
 
 template <int dim>
 EulerEulerVoidFraction<dim>::EulerEulerVoidFraction(
@@ -25,11 +52,19 @@ EulerEulerVoidFraction<dim>::set_solid_volume_fraction(
   alpha_s.reinit(alpha_s_in);
   alpha_s = alpha_s_in;
 
-
   alpha_f.reinit(alpha_s_in.locally_owned_elements(), mpi_communicator);
 
   has_alpha_s = true;
   has_alpha_f = false;
+
+  if (verbose)
+    {
+      const double alpha_s_min = global_min_owned(alpha_s, mpi_communicator);
+      const double alpha_s_max = global_max_owned(alpha_s, mpi_communicator);
+
+      pcout << "alpha_s range: [" << alpha_s_min << ", " << alpha_s_max << "]"
+            << std::endl;
+    }
 }
 
 
@@ -53,6 +88,15 @@ EulerEulerVoidFraction<dim>::calculate_alpha_f()
 
   alpha_f.compress(VectorOperation::insert);
   has_alpha_f = true;
+
+  if (verbose)
+    {
+      const double alpha_f_min = global_min_owned(alpha_f, mpi_communicator);
+      const double alpha_f_max = global_max_owned(alpha_f, mpi_communicator);
+
+      pcout << "alpha_f range: [" << alpha_f_min << ", " << alpha_f_max << "]"
+            << std::endl;
+    }
 }
 
 
