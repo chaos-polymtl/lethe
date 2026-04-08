@@ -1,7 +1,9 @@
 <map id="/home/runner/work/lethe/lethe/include/dem/update_local_particle_containers.h" name="/home/runner/work/lethe/lethe/include/dem/update_local_particle_containers.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="105,5,307,60"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="215,5,418,60"/>
 <area shape="rect" id="Node000002" href="$dem__contact__manager_8cc.html" title=" " alt="" coords="5,108,188,163"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="169,72,127,110,123,106,165,68"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="248,68,155,110,153,106,246,63"/>
 <area shape="rect" id="Node000003" href="$update__local__particle__containers_8cc.html" title=" " alt="" coords="212,108,421,163"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="247,67,290,106,286,110,243,71"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="319,74,319,108,314,108,314,74"/>
+<area shape="rect" id="Node000004" href="$fluid__dynamics__sharp_8cc.html" title=" " alt="" coords="445,108,631,163"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="388,63,481,106,479,110,385,68"/>
 </map>

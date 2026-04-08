@@ -126,7 +126,7 @@ This subsection contains the parameters related to the sharp immersed boundary s
 
     * The ``ib force output file`` parameter is the file name where the variables associated with each particle are stored. One file will be created for each particle in the simulation.
 
-    * The ``ib particles pvd file`` parameter is the file's name that will be created to animate the particles. This file stores all the variables calculated for each of the particles. This file is compatible with Paraview.
+    * The ``ib particles pvd file`` parameter is the file's name that will be created to animate the particles. This file stores all the variables calculated for each of the particles. This file is compatible with Paraview. When outputs are enabled, this particle output is written on the same output iterations as the fluid results, including the initial step 0.
     
     * The ``print DEM`` parameter is a boolean that define if particles' information are printed on the terminal when particles' time step is finished.
 
@@ -167,7 +167,10 @@ This subsection contains the parameters related to the sharp immersed boundary s
     * The ``DEM coupling frequency`` parameter controls the number of iterations done on the DEM side for each CFD time step. It's necessary to use a much smaller time step for the particle dynamics than for the fluid in case of contact between the particles. The particle collision happens at a much smaller time-scale than the fluid dynamics.
 
     .. note::
-        The DEM boundary conditions documented in :doc:`../dem/boundary_conditions` also apply to Sharp resolved CFD-DEM simulations. In Sharp, translational and rotational DEM wall motion are taken into account in the particle-wall contact and lubrication models.
+        The DEM ``post-processing`` subsection documented in :doc:`../dem/post-processing` is partially available for Sharp resolved CFD-DEM simulations. Force-chain output is rebuilt from the current Sharp-IB particles and follows the same output cadence as the fluid results. Particle-wall collision statistics are also available for Sharp-IB and are accumulated throughout the run before being written at the end of the simulation.
+
+    .. note::
+        DEM lagrangian post-processing is not supported for ``lethe-fluid-sharp``. If it is enabled in the input file, the solver throws an error at startup.
 
     * The ``alpha`` parameter is the relaxation parameter used when solving the dynamics equation of the particle.
     

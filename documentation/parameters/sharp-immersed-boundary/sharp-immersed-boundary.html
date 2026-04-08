@@ -575,7 +575,7 @@ end
 <dt>The <code class="docutils literal notranslate"><span class="pre">output</span></code> subsection contains the parameters controlling the information printed in the terminal and output files.</dt><dd><ul class="simple">
 <li><p>The <code class="docutils literal notranslate"><span class="pre">calculate</span> <span class="pre">force</span></code> parameter controls if the force is evaluated on each particle.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">ib</span> <span class="pre">force</span> <span class="pre">output</span> <span class="pre">file</span></code> parameter is the file name where the variables associated with each particle are stored. One file will be created for each particle in the simulation.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">ib</span> <span class="pre">particles</span> <span class="pre">pvd</span> <span class="pre">file</span></code> parameter is the file’s name that will be created to animate the particles. This file stores all the variables calculated for each of the particles. This file is compatible with Paraview.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">ib</span> <span class="pre">particles</span> <span class="pre">pvd</span> <span class="pre">file</span></code> parameter is the file’s name that will be created to animate the particles. This file stores all the variables calculated for each of the particles. This file is compatible with Paraview. When outputs are enabled, this particle output is written on the same output iterations as the fluid results, including the initial step 0.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">print</span> <span class="pre">DEM</span></code> parameter is a boolean that define if particles’ information are printed on the terminal when particles’ time step is finished.</p></li>
 <li><p>When the <code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">extra</span> <span class="pre">sharp</span> <span class="pre">interface</span> <span class="pre">vtu</span> <span class="pre">output</span> <span class="pre">field</span></code> parameter is set to <code class="docutils literal notranslate"><span class="pre">true</span></code>, it enables the output of additional value fields in the vtu file produced by the simulation. Currently, these additional output fields consist of: the id of the cell that cuts a specific cell (<code class="docutils literal notranslate"><span class="pre">cell_cut</span></code>).</p></li>
 </ul>
@@ -623,7 +623,11 @@ end
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The DEM boundary conditions documented in <a class="reference internal" href="../dem/boundary_conditions.html"><span class="doc">Boundary Conditions</span></a> also apply to Sharp resolved CFD-DEM simulations. In Sharp, translational and rotational DEM wall motion are taken into account in the particle-wall contact and lubrication models.</p>
+<p>The DEM <code class="docutils literal notranslate"><span class="pre">post-processing</span></code> subsection documented in <a class="reference internal" href="../dem/post-processing.html"><span class="doc">Post-processing</span></a> is partially available for Sharp resolved CFD-DEM simulations. Force-chain output is rebuilt from the current Sharp-IB particles and follows the same output cadence as the fluid results. Particle-wall collision statistics are also available for Sharp-IB and are accumulated throughout the run before being written at the end of the simulation.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>DEM lagrangian post-processing is not supported for <code class="docutils literal notranslate"><span class="pre">lethe-fluid-sharp</span></code>. If it is enabled in the input file, the solver throws an error at startup.</p>
 </div>
 <ul class="simple">
 <li><p>The <code class="docutils literal notranslate"><span class="pre">alpha</span></code> parameter is the relaxation parameter used when solving the dynamics equation of the particle.</p></li>
