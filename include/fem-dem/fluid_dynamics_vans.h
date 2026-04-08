@@ -313,11 +313,11 @@ protected:
   /// Flag indicating whether the domain has periodic boundary conditions
   bool has_periodic_boundaries;
 
-  /// Offset vector for periodic boundary condition calculations
-  Tensor<1, dim> periodic_offset;
+  /// Map of offset vectors for periodic boundary condition calculations
+  std::map<types::boundary_id, Tensor<1, dim>> cfd_periodic_offsets;
 
-  /// Direction index for periodic boundary conditions
-  unsigned int periodic_direction;
+  /// Map of direction indices for periodic boundary conditions
+  std::map<types::boundary_id, unsigned int> cfd_periodic_directions;
 };
 
 #endif

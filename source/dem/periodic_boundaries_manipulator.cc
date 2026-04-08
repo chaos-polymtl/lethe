@@ -176,7 +176,14 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
   else
     {
       // Fallback/error, map_periodic_cells should populate this
-      return;
+      // return;
+      AssertThrow(false,
+                  ExcMessage(
+                    "PeriodicBoundariesManipulator: no periodic offset found "
+                    "for boundary id " +
+                    std::to_string(boundaries_cells_content.boundary_id) +
+                    ". This means map_periodic_cells() did not populate "
+                    "periodic_offsets for this boundary."));
     }
 
   for (auto particle = particles_in_cell.begin();
@@ -229,23 +236,31 @@ void
 PeriodicBoundariesManipulator<dim>::compute_combined_periodic_offsets()
 {
   this->combined_periodic_offsets.clear();
-  this->combined_periodic_offsets.push_back(
-    Tensor<1, dim>()); // Initialized as zeros
 
   for (auto const &[id, offset] : this->periodic_offsets)
     {
       size_t current_size = this->combined_periodic_offsets.size();
 
-      for (size_t i = 0; i < current_size; ++i)
+      if (current_size == 0)
         {
-          // A particle next to a periodic boundary can be next to pb0 or pb1.
-          // We need to account for its periodic images across periodic
-          // directions, hence the +/- offset.
-          this->combined_periodic_offsets.push_back(
-            this->combined_periodic_offsets[i] + offset);
-          this->combined_periodic_offsets.push_back(
-            this->combined_periodic_offsets[i] - offset);
+          // Seed with +/- offest for first PB pair
+          this->combined_periodic_offsets.push_back(offset);
+          this->combined_periodic_offsets.push_back(-offset);
         }
+      else
+        {
+          for (size_t i = 0; i < current_size; ++i)
+            {
+              // A particle next to a periodic boundary can be next to pb0 or
+              // pb1. We need to account for its periodic images across periodic
+              // directions, hence the +/- offset.
+              this->combined_periodic_offsets.push_back(
+                this->combined_periodic_offsets[i] + offset);
+              this->combined_periodic_offsets.push_back(
+                this->combined_periodic_offsets[i] - offset);
+            }
+        }
+      
     }
 }
 

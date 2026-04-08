@@ -391,7 +391,7 @@ private:
    * Initialized to identity (zero offset) for compatibility with non-periodic
    * geometry
    */
-  std::vector<Tensor<1, dim>> combined_periodic_offsets{Tensor<1, dim>()};
+  std::vector<Tensor<1, dim>> combined_periodic_offsets;
 };
 
 #endif
