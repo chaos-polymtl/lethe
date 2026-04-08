@@ -510,11 +510,11 @@ namespace BoundaryConditions
               prm);
             prm.leave_subsection();
 
-          
+
             prm.enter_subsection("t");
             navier_stokes_functions[boundary_id]->t.parse_parameters(prm);
             prm.leave_subsection();
-          
+
 
             prm.enter_subsection("p");
             navier_stokes_functions[periodic_boundary_id]->p.parse_parameters(

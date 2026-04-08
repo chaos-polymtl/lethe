@@ -768,7 +768,7 @@ protected:
    *
    */
   Table<2, Tensor<1, dim, VectorizedArray<number>>> face_target_velocity;
- 
+
   /**
    * @brief Table with correct alignment for vectorization to store the values
    * of the target pressure of a pressure boundary condition.
@@ -776,7 +776,7 @@ protected:
    */
   Table<2, VectorizedArray<number>> face_target_pressure;
 
-   /**
+  /**
    * @brief Table with correct alignment for vectorization to store the values
    * of the prescribed Neumann traction boundary condition values.
    *
