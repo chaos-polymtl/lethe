@@ -878,7 +878,6 @@ public:
       }
   };
 
-
 private:
   const Parameters::Multiphysics<dim>        multiphysics_parameters;
   std::map<PhysicsID, Parameters::Verbosity> verbosity;
