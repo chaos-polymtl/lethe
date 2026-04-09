@@ -1668,37 +1668,39 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
             else
               return false;
           case Parameters::TimeHarmonicMaxwellCouplingStrategy::time:
-            // Solve only if the current time has passed a multiple of
-            // the specified time frequency since the last time the
-            // electromagnetics were solved. This is done by comparing the floor
-            // of the current time divided by the time coupling parameter to the
-            // floor of the previous time divided by the time coupling
-            // parameter. If they are different, it means we have passed a
-            // multiple of the time coupling parameter and we should solve the
-            // electromagnetics.
-            int difference_in_time_steps =
-              std::floor(this->simulation_control->get_current_time() /
-                         thm_parameters.coupling_time) -
-              std::floor(this->simulation_control->get_previous_time() /
-                         thm_parameters.coupling_time);
-            if (difference_in_time_steps == 1)
-              return true;
-            else if (difference_in_time_steps > 1)
-              {
-                AssertThrow(
-                  false,
-                  ExcMessage(
-                    "The time coupling strategy for the time-harmonic Maxwell solver is set to 'time' with a coupling time of " +
-                    std::to_string(thm_parameters.coupling_time) +
-                    ", but the simulation time has advanced by " +
-                    std::to_string(
-                      this->simulation_control->get_current_time() -
-                      this->simulation_control->get_previous_time()) +
-                    " since the last time the electromagnetics were solved. Please either reduce the simulation time step or increase the coupling time to avoid missing coupling points."));
+            {
+              // Solve only if the current time has passed a multiple of
+              // the specified time frequency since the last time the
+              // electromagnetics were solved. This is done by comparing the
+              // floor of the current time divided by the time coupling
+              // parameter to the floor of the previous time divided by the time
+              // coupling parameter. If they are different, it means we have
+              // passed a multiple of the time coupling parameter and we should
+              // solve the electromagnetics.
+              int difference_in_time_steps =
+                std::floor(this->simulation_control->get_current_time() /
+                           thm_parameters.coupling_time) -
+                std::floor(this->simulation_control->get_previous_time() /
+                           thm_parameters.coupling_time);
+              if (difference_in_time_steps == 1)
                 return true;
-              }
-            else
-              return false;
+              else if (difference_in_time_steps > 1)
+                {
+                  AssertThrow(
+                    false,
+                    ExcMessage(
+                      "The time coupling strategy for the time-harmonic Maxwell solver is set to 'time' with a coupling time of " +
+                      std::to_string(thm_parameters.coupling_time) +
+                      ", but the simulation time has advanced by " +
+                      std::to_string(
+                        this->simulation_control->get_current_time() -
+                        this->simulation_control->get_previous_time()) +
+                      " since the last time the electromagnetics were solved. Please either reduce the simulation time step or increase the coupling time to avoid missing coupling points."));
+                  return true;
+                }
+              else
+                return false;
+            }
           case Parameters::TimeHarmonicMaxwellCouplingStrategy::threshold:
             AssertThrow(
               false,
