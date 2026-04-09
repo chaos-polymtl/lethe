@@ -647,16 +647,21 @@ FluidDynamicsSharp<dim>::optimized_generate_cut_cells_map()
           bool         empty    = true;
           unsigned int lvl_iter = 0;
 
-          // Fix max level search
-          unsigned int max_lvl_search =
-            this->dof_handler->get_triangulation().n_levels() - 2;
-          if (max_lvl_search < 4)
-            max_lvl_search =
-              this->dof_handler->get_triangulation().n_levels();
+          // Keep this level search consistent with
+          // LetheGridTools::find_cell_around_point_with_tree(). The periodic
+          // Sharp path can search from ranks that do not own cells on every
+          // global refinement level, so a rank-local n_levels() - 2 bound is
+          // unsafe and can underflow. This logic was originally present on the
+          // combined periodic-sharp-ib branch and should have been carried into
+          // the standalone periodic branch when that work was split out.
+          const unsigned int n_global_levels =
+            this->dof_handler->get_triangulation().n_global_levels();
+          const unsigned int max_lvl_search =
+            (n_global_levels > 4 ? n_global_levels - 2 : n_global_levels);
 
           // Search for candidates until at least one is found or until the
           // max_lvl_search is reached
-          while (empty || lvl_iter < max_lvl_search)
+          while (empty && lvl_iter < max_lvl_search)
             {
               const auto &cell_iterator =
                 this->dof_handler->cell_iterators_on_level(lvl_iter);
