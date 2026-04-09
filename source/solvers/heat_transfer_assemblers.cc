@@ -1572,7 +1572,6 @@ HeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell<dim>::assemble_rhs(
       // |E|^2 = |E_real|^2 + |E_imag|^2
       const double electric_field_squared_amplitude =
         scratch_data.electric_field_real_values[q].norm_square() +
-
         scratch_data.electric_field_imag_values[q].norm_square();
 
       // |H|^2 = |H_real|^2 + |H_imag|^2

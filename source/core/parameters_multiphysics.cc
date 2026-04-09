@@ -809,7 +809,7 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
       prm.declare_entry(
         "coupling time",
         "1",
-        Patterns::Double(0),
+        Patterns::Double(DBL_MIN),
         "Coupling parameter for the time coupling strategy based on time. "
         "This parameter represents the real time interval between two "
         "consecutive resolutions of the electromagnetic fields.");

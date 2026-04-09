@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
- * @brief This test checks AuxiliaryPhysics::should_solve_auxiliary_physic(). At
+ * @brief This test checks AuxiliaryPhysics::should_solve_auxiliary_physics(). At
  * the moment, this function is only implemented for TimeHarmonicMaxwell, so we
  * test the behavior of this function for TimeHarmonicMaxwell with different
  * time coupling strategies of the TimeHarmonicMaxwellCouplingStrategy enum:
@@ -89,7 +89,7 @@ test()
         simulation_control->integrate();
         deallog << "Step " << simulation_control->get_step_number() << ": "
                 << (electromagnetics_auxiliary_physics
-                        .should_solve_auxiliary_physic() ?
+                        .should_solve_auxiliary_physics() ?
                       "true" :
                       "false")
                 << std::endl;
@@ -124,7 +124,7 @@ test()
         simulation_control->integrate();
         deallog << "Step " << simulation_control->get_step_number() << ": "
                 << (electromagnetics_auxiliary_physics
-                        .should_solve_auxiliary_physic() ?
+                        .should_solve_auxiliary_physics() ?
                       "true" :
                       "false")
                 << std::endl;
@@ -160,7 +160,7 @@ test()
         deallog << "Step " << simulation_control->get_step_number()
                 << " (t=" << simulation_control->get_current_time() << "): "
                 << (electromagnetics_auxiliary_physics
-                        .should_solve_auxiliary_physic() ?
+                        .should_solve_auxiliary_physics() ?
                       "true" :
                       "false")
                 << std::endl;

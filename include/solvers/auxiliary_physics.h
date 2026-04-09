@@ -205,10 +205,10 @@ public:
   setup_preconditioner() override{};
 
   /**
-   * @brief Manage if the auxiliary physics should be solved at the current iteration. By default, auxiliary physics are solved at every iteration.
+   * @brief Manage if this auxiliary physics should be solved at the current iteration. By default, auxiliary physics are solved at every iteration.
    */
   virtual bool
-  should_solve_auxiliary_physic()
+  should_solve_auxiliary_physics()
   {
     return true;
   }

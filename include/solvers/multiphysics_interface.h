@@ -117,7 +117,7 @@ public:
     for (auto &iphys : physics)
       {
         // Skip physics if not required from the coupling strategy
-        if (!iphys.second->should_solve_auxiliary_physic())
+        if (!iphys.second->should_solve_auxiliary_physics())
           continue;
 
         // If iphys.first should be solved BEFORE fluid dynamics
@@ -135,7 +135,7 @@ public:
     for (auto &iphys : block_physics)
       {
         // Skip physics if not required from the coupling strategy
-        if (!iphys.second->should_solve_auxiliary_physic())
+        if (!iphys.second->should_solve_auxiliary_physics())
           continue;
 
         // If iphys.first should be solved BEFORE fluid dynamics

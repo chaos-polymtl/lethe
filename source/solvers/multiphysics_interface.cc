@@ -335,7 +335,8 @@ MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
 
   // Dependence of Microwave heating in heat transfer on electromagnetics
   AssertThrow(
-    !(microwave_heating_enabled == true && electromagnetics_enabled == false),
+    !(microwave_heating_enabled == true &&
+      (electromagnetics_enabled == false || heat_transfer_enabled == false)),
     MicrowaveHeatingWithoutElectromagneticsError(microwave_heating_enabled));
 }
 

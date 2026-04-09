@@ -1631,7 +1631,7 @@ TimeHarmonicMaxwell<dim>::solve_linear_system()
 
 template <int dim>
 bool
-TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physic()
+TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
 {
   const Parameters::TimeHarmonicMaxwell<dim> &thm_parameters =
     this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
