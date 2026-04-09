@@ -260,7 +260,6 @@ PeriodicBoundariesManipulator<dim>::compute_combined_periodic_offsets()
                 this->combined_periodic_offsets[i] - offset);
             }
         }
-      
     }
 }
 

@@ -52,8 +52,13 @@ IBParticlesDEM<dim>::is_boundary_excluded(
     {
       const auto &pb0 = boundary_conditions_parameters->periodic_boundary_0;
       const auto &pb1 = boundary_conditions_parameters->periodic_boundary_1;
-      if (std::ranges::any_of(pb0, [boundary_id](const auto &p) { return p.second == boundary_id; }) ||
-          std::ranges::any_of(pb1, [boundary_id](const auto &p) { return p.second == boundary_id; }))
+      if (std::ranges::any_of(pb0,
+                              [boundary_id](const auto &p) {
+                                return p.second == boundary_id;
+                              }) ||
+          std::ranges::any_of(pb1, [boundary_id](const auto &p) {
+            return p.second == boundary_id;
+          }))
         return true;
     }
   return false;
