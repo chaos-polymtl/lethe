@@ -193,10 +193,9 @@ private:
    */
   template <ContactType contact_type, typename ContactInfoContainer>
   inline void
-  execute_contact_calculation(
-    ContactInfoContainer  &adjacent_particles_list,
-    std::vector<Point<3>> &vertices,
-    std::vector<double>   &normal_forces_vector)
+  execute_contact_calculation(ContactInfoContainer  &adjacent_particles_list,
+                              std::vector<Point<3>> &vertices,
+                              std::vector<double>   &normal_forces_vector)
   {
     // No contact calculation if no adjacent particles
     if (adjacent_particles_list.empty())
