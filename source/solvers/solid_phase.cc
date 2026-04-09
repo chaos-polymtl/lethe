@@ -421,6 +421,9 @@ SolidPhaseSolver<dim>::setup_dofs()
   VectorTools::interpolate_boundary_values(
     dof_handler, 0, zero_bc, constraints, vel_mask);
 
+  VectorTools::interpolate_boundary_values(
+    dof_handler, 0, zero_bc, constraints, alpha_mask);
+
   constraints.close();
 
   system_matrix.clear();

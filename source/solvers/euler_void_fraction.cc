@@ -82,8 +82,8 @@ EulerEulerVoidFraction<dim>::calculate_alpha_f()
 
   for (const auto i : alpha_f.locally_owned_elements())
     {
-      const double value = 1.0 - alpha_s[i];
-      alpha_f[i]         = std::max(min_alpha_f_value, std::min(1.0, value));
+      alpha_f[i] = 1.0 - alpha_s[i];
+      // alpha_f[i]         = std::max(min_alpha_f_value, std::min(1.0, value));
     }
 
   alpha_f.compress(VectorOperation::insert);
@@ -109,7 +109,7 @@ EulerEulerVoidFraction<dim>::pass_alpha_f_to_fluid()
                 "alpha_f must be calculated before passing to fluid."));
 
   if (verbose)
-    pcout << "Passing alpha_f to FluidDynamicsVANS" << std::endl;
+    pcout << "Passing alpha_f to Fluid" << std::endl;
 
   fluid_solver.set_alpha_f(alpha_f);
 }
