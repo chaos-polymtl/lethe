@@ -52,11 +52,11 @@ public:
       Patterns::Anything(),
       "Print a comment at the beginning of the console output.");
 
-    Parameters::SimulationControl::declare_parameters(prm);
-    Parameters::Mesh::declare_parameters(prm);
-    Parameters::Restart::declare_parameters(prm);
-    Parameters::Timer::declare_parameters(prm);
-    Parameters::Testing::declare_parameters(prm);
+    simulation_control.declare_parameters(prm);
+    mesh.declare_parameters(prm);
+    restart.declare_parameters(prm);
+    timer.declare_parameters(prm);
+    test.declare_parameters(prm);
     lagrangian_physical_properties.declare_parameters(prm);
     insertion_info.declare_parameters(prm);
     model_parameters.declare_parameters(prm);

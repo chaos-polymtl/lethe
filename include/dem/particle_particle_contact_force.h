@@ -245,7 +245,7 @@ protected:
 
     // Calculation of new tangential_displacement, since this value is history
     // dependent it needs the value at previous time step. This variable is the
-    // main reason that we have iteration over  two different vectors :
+    // main reason that we have iteration over two different vectors :
     // tangential_displacement of the particles which were already in contact
     // needs to be modified using its history, while the
     // tangential_displacements of new particles are equal to zero
