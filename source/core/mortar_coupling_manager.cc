@@ -389,11 +389,6 @@ MortarManagerBase<dim>::set_z_min()
     this->z_min = 0.0;
 }
 
-
-
-
-
-
 template <int dim>
 std::vector<Tensor<1, dim, double>>
 MortarManagerBase<dim>::get_normals(const Point<dim> &face_center,

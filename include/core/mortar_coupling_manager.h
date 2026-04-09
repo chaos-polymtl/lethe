@@ -135,7 +135,7 @@ public:
    * rotor (inner) side of the mortar interface
    *
    * @return points Angular weights of quadrature points of the cell
-   */n_quadrature_points
+   */
   std::vector<double>
   get_weights(const Point<dim> &face_center, const bool is_inner) const;
 
