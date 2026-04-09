@@ -218,7 +218,6 @@ private:
    *    Map key: index of BC from .prm
    *    Map value: ID of a primary periodic boundary
    */
-<<<<<<< HEAD
   std::unordered_map<unsigned int, types::boundary_id> periodic_boundaries_ids;
 
   /**
