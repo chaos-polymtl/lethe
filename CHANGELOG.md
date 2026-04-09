@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/04/15
+
+### Changed
+
+- MINOR This PR skips unnecessary Newton linear solves when the assembled Sharp fluid residual is already below the nonlinear tolerance, and adds a dedicated 2D application test for that solver path. [#1962](https://github.com/chaos-polymtl/lethe/pull/1962)
+
 ## [Master] - 2026/04/10
 
 ### Fixed
@@ -24,12 +30,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 - MINOR Sharp-IB now mirrors DEM-style particle output and post-processing more closely: IB particle PVD output follows the fluid output cadence, including step 0, and DEM force-chain and lagrangian post-processing can now be rebuilt from Sharp-IB particles. Application tests and documentation were added for the new output paths. [#1958](https://github.com/chaos-polymtl/lethe/pull/1958)
-
-## [Master] - 2026/03/31
-
-### Changed
-
-- MINOR This PR skips unnecessary Newton linear solves when the assembled Sharp fluid residual is already below the nonlinear tolerance, and adds a dedicated 2D application test for that solver path. [#1962](https://github.com/chaos-polymtl/lethe/pull/1962)
 
 ## [Master] - 2026/03/31
 
