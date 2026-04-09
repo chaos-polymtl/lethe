@@ -154,12 +154,25 @@ LetheGridTools::find_cell_around_point_with_tree(
 
   bool         cell_found_on_level_search = false;
   unsigned int lvl                        = 0;
-  unsigned int max_lvl_search = dof_handler.get_triangulation().n_levels() - 2;
 
-  if (max_lvl_search < 4)
-    max_lvl_search = dof_handler.get_triangulation().n_levels();
+  // This search is used by the Sharp periodic work when particles or stencil
+  // points need to be mapped back to cells after wrapping across the periodic
+  // boundary. The safe bound here is the globally valid number of refinement
+  // levels, not the rank-local n_levels(): on a distributed triangulation, a
+  // rank can own fewer local levels than the global mesh, and the old
+  // n_levels() - 2 logic could underflow on ranks with only one local level.
+  //
+  // This fix belongs with the Sharp periodic branch because that branch is
+  // what exposed the issue in practice, but it was accidentally missed when
+  // the original periodic-sharp-ib development branch was split into smaller
+  // topic branches. Keeping the explanation here makes it clear why this
+  // generic helper is being adjusted as part of Sharp periodic support.
+  const unsigned int n_global_levels =
+    dof_handler.get_triangulation().n_global_levels();
+  const unsigned int max_lvl_search =
+    (n_global_levels > 4 ? n_global_levels - 2 : n_global_levels);
 
-  while (lvl < max_lvl_search)
+  while (lvl < max_lvl_search && !cell_found_on_level_search)
     {
       const auto &cell_iterator = dof_handler.cell_iterators_on_level(lvl);
 
