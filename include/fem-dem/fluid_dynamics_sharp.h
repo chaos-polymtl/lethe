@@ -11,8 +11,16 @@
 
 #include <solvers/fluid_dynamics_matrix_based.h>
 
+#include <dem/data_containers.h>
+#include <dem/log_collision_data.h>
+#include <dem/set_particle_particle_contact_force_model.h>
+#include <dem/visualization.h>
 #include <fem-dem/cfd_dem_simulation_parameters.h>
 #include <fem-dem/ib_particles_dem.h>
+
+#include <deal.II/particles/particle_handler.h>
+
+#include <unordered_set>
 
 using namespace dealii;
 
@@ -251,6 +259,67 @@ private:
    */
   void
   finish_time_step_particles();
+
+  /**
+   * @brief Mirror DEM-style particle output and post-processing for
+   * Sharp-IB particles.
+   */
+  void
+  handle_dem_particle_output_and_postprocessing();
+
+  /**
+   * @brief Build a temporary DEM particle handler from the current Sharp-IB
+   * particles.
+   *
+   * @param particle_handler Particle handler that stores the locally owned and
+   * ghosted Sharp-IB particles.
+   * @param particle_container Map from particle ids to particle iterators in
+   * the temporary particle handler.
+   * @param local_particle_ids Set of locally owned particle ids on the current
+   * MPI rank.
+   */
+  void
+  build_ib_particle_handler(
+    Particles::ParticleHandler<dim, dim> &particle_handler,
+    typename DEM::dem_data_structures<dim>::particle_index_iterator_map
+                                     &particle_container,
+    std::unordered_set<unsigned int> &local_particle_ids) const;
+
+  /**
+   * @brief Build DEM-style contact containers for Sharp-IB particles.
+   *
+   * @param particle_container Map from particle ids to particle iterators in
+   * the temporary particle handler.
+   * @param local_particle_ids Set of locally owned particle ids on the current
+   * MPI rank.
+   * @param local_adjacent_particles Particle-particle contacts where both
+   * particles are locally owned.
+   * @param ghost_adjacent_particles Particle-particle contacts involving a
+   * ghost particle.
+   * @param particle_wall_in_contact Particle-wall contacts for locally owned
+   * particles.
+   */
+  void
+  build_contact_containers(
+    const typename DEM::dem_data_structures<dim>::particle_index_iterator_map
+                                           &particle_container,
+    const std::unordered_set<unsigned int> &local_particle_ids,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &local_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+      &ghost_adjacent_particles,
+    typename DEM::dem_data_structures<dim>::particle_wall_in_contact
+      &particle_wall_in_contact) const;
+
+  /**
+   * @brief Fill DEM particle properties from a Sharp-IB particle state.
+   *
+   * @param particle Sharp-IB particle whose properties are exported.
+   * @param properties DEM property vector to populate.
+   */
+  void
+  fill_particle_properties(const IBParticle<dim> &particle,
+                           std::vector<double>   &properties) const;
 
   /**
    * @brief
@@ -616,6 +685,8 @@ private:
     assemblers_inside_ib;
 
   PVDHandler ib_particles_pvdhandler;
+  // DEM-style post-processing handlers rebuilt from Sharp-IB particles.
+  PVDHandler ib_particles_pvdhandler_force_chains;
 
   std::vector<IBParticle<dim>> particles;
   double                       particle_residual;
@@ -626,6 +697,10 @@ private:
   // Object used to sub-time step the particle dynamics to allow contact between
   // particles.
   IBParticlesDEM<dim> ib_dem;
+
+  // DEM-style collision data used by Sharp post-processing.
+  OngoingCollisionLog<dim>   ongoing_collision_log;
+  CompletedCollisionLog<dim> collision_event_log;
 
   // Function that describes all solids signed distance functions together
   std::shared_ptr<Shape<dim>> combined_shapes;

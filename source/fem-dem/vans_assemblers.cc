@@ -11,6 +11,24 @@
 
 #include <deal.II/base/tensor.h>
 
+#include <type_traits>
+
+namespace
+{
+  // Normalize the deal.II curl result to the scalar out-of-plane vorticity
+  // needed by the 2D VANS lift model. This accepts both currently-supported
+  // deal.II representations: a scalar curl and Tensor<1,1>.
+  template <typename CurlType>
+  double
+  extract_out_of_plane_vorticity(const CurlType &curl)
+  {
+    if constexpr (std::is_arithmetic_v<std::decay_t<CurlType>>)
+      return curl;
+    else
+      return curl[0];
+  }
+} // namespace
+
 template <int dim>
 void
 VANSAssemblerCoreModelB<dim>::assemble_matrix(
@@ -1603,13 +1621,18 @@ VANSAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
       for (auto &particle : pic)
         {
           auto particle_properties = particle.get_properties();
+          // The 2D Saffman-Mei formulation only needs the scalar out-of-plane
+          // vorticity. Extract it once here so the rest of the branch is
+          // independent of the deal.II curl storage type.
+          const double vorticity_z =
+            extract_out_of_plane_vorticity(vorticity_2d[i_particle]);
 
           // Saffman-Mei coefficient
           alpha =
             0.5 *
             particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] /
             relative_velocity[i_particle].norm() *
-            abs(vorticity_2d[i_particle][0] + 1e-12);
+            (std::abs(vorticity_z) + 1e-12);
 
           if (Re_p[i_particle] <= 40)
             C_s = (1 - 0.3314 * sqrt(alpha)) * exp(-0.1 * Re_p[i_particle]) +
@@ -1617,20 +1640,17 @@ VANSAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
           else if (Re_p[i_particle] > 40)
             C_s = 0.0524 * sqrt(alpha * Re_p[i_particle]);
 
-          // Vorticity vector
-          Tensor<1, 2> vorticity;
-          vorticity[0] = vorticity_2d[i_particle][0];
-          vorticity[1] = vorticity_2d[i_particle][1];
-
-          // Saffman Lift force
+          // In 2D, the curl of the fluid velocity is a scalar aligned with the
+          // out-of-plane direction. The lift force is therefore the in-plane
+          // cross product u_rel x (0, 0, omega_z).
           lift_force[0] =
             C_s * 1.61 *
             particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] *
             particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] *
             density[i_particle] *
             sqrt(kinematic_viscosity[i_particle] + DBL_MIN) /
-            sqrt(vorticity_2d[i_particle].norm()) *
-            (relative_velocity[i_particle][0] * vorticity[1]);
+            sqrt(std::abs(vorticity_z) + 1e-12) *
+            (relative_velocity[i_particle][1] * vorticity_z);
 
           lift_force[1] =
             C_s * 1.61 *
@@ -1638,8 +1658,8 @@ VANSAssemblerSaffmanMei<dim>::calculate_particle_fluid_interactions(
             particle_properties[DEM::CFDDEMProperties::PropertiesIndex::dp] *
             density[i_particle] *
             sqrt(kinematic_viscosity[i_particle] + DBL_MIN) /
-            sqrt(vorticity.norm() + 1e-12) *
-            (relative_velocity[i_particle][1] * vorticity[0]);
+            sqrt(std::abs(vorticity_z) + 1e-12) *
+            (-relative_velocity[i_particle][0] * vorticity_z);
 
           for (int d = 0; d < dim; ++d)
             {

@@ -3,6 +3,16 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/04/08
+
+### Fixed
+
+- MINOR Fixed the VANS 2D particle-location curl handling so it matches deal.II's curl result type and remains compatible with the supported deal.II versions. [#1963](https://github.com/chaos-polymtl/lethe/pull/1963)
+
+### Added
+
+- MINOR Sharp-IB now mirrors DEM-style particle output and post-processing more closely: IB particle PVD output follows the fluid output cadence, including step 0, and DEM force-chain and lagrangian post-processing can now be rebuilt from Sharp-IB particles. Application tests and documentation were added for the new output paths. [#1958](https://github.com/chaos-polymtl/lethe/pull/1958)
+
 ## [Master] - 2026/03/31
 
 ### Changed
@@ -13,13 +23,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR This PR adds the possibility to scale the solution of the time-harmonic Maxwell solver (which is always solved in a dimensionless form) with three different method `electric_field`, `magnetic_field` or `power` to recover the dimensionality according to user input. Prior to this PR the outputted solution was always dimensionless. This behavior can still be obtain by using the scaling method `none`.[#1942](https://github.com/chaos-polymtl/lethe/pull/1942)
 
-### Added
-
 - MINOR This PR adds the option to assign a different weight for the cells located at the mortar interface, which is taken into consideration for the workload partitioning. [#1953](https://github.com/chaos-polymtl/lethe/pull/1953)
 
 - MINOR This PR adds the capability to output the ratio of the minimum cell size to the maximum particle diameter in DEM and CFD-DEM simulations. It also updates the output related to diamond-shaped cells and the expand particle–wall contact parameter. Tests and documentation have been updated accordingly. [#1955](https://github.com/chaos-polymtl/lethe/pull/1955)
-
-- MINOR Sharp-IB now supports DEM moving wall boundary conditions in particle-wall contact and lubrication interactions, together with documentation and a dedicated application test. [#1960](https://github.com/chaos-polymtl/lethe/pull/1960)
 
 ## [Master] - 2026/03/30
 

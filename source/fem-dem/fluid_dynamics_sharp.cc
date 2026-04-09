@@ -13,6 +13,11 @@
 #include <solvers/navier_stokes_cls_assemblers.h>
 #include <solvers/postprocessing_cfd.h>
 
+#include <dem/force_chains_visualization.h>
+#include <dem/log_collision_data.h>
+#include <dem/set_particle_particle_contact_force_model.h>
+#include <dem/update_local_particle_containers.h>
+#include <dem/visualization.h>
 #include <fem-dem/fluid_dynamics_sharp.h>
 
 #include <deal.II/base/work_stream.h>
@@ -2789,49 +2794,6 @@ FluidDynamicsSharp<dim>::finish_time_step_particles()
   // Store information about the particle used for the integration and print the
   // results if requested.
 
-  const std::string folder =
-    this->simulation_parameters.simulation_control.output_folder;
-  const std::string particles_solution_name =
-    this->simulation_parameters.particlesParameters->ib_particles_pvd_file;
-  const unsigned int iter = this->simulation_control->get_step_number();
-  const double       time = this->simulation_control->get_current_time();
-  const unsigned int group_files =
-    this->simulation_parameters.simulation_control.group_files;
-
-  // We only write the particle pvd when outputs are enabled
-  if (this->simulation_control->output_enabled())
-    {
-      // If the processor id is id=0 we write the particles pvd
-      if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
-        {
-          Visualization_IB ib_particles_data;
-          ib_particles_data.build_patches(particles);
-          write_vtu_and_pvd<0, dim>(ib_particles_pvdhandler,
-                                    ib_particles_data,
-                                    folder,
-                                    particles_solution_name,
-                                    time,
-                                    iter,
-                                    group_files,
-                                    this->mpi_communicator);
-        }
-      else
-        {
-          // If the processor id is not id=0 we add an empty particle vector.
-          Visualization_IB             ib_particles_data;
-          std::vector<IBParticle<dim>> empty_particle_vector(0);
-          ib_particles_data.build_patches(empty_particle_vector);
-          write_vtu_and_pvd<0, dim>(ib_particles_pvdhandler,
-                                    ib_particles_data,
-                                    folder,
-                                    particles_solution_name,
-                                    time,
-                                    iter,
-                                    group_files,
-                                    this->mpi_communicator);
-        }
-    }
-
   table_all_p.clear();
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
@@ -3121,6 +3083,292 @@ FluidDynamicsSharp<dim>::finish_time_step_particles()
           std::cout << "+------------------------------------------+"
                     << std::endl;
           table_all_p.write_text(std::cout);
+        }
+    }
+}
+
+template <int dim>
+void
+FluidDynamicsSharp<dim>::fill_particle_properties(
+  const IBParticle<dim> &particle,
+  std::vector<double>   &properties) const
+{
+  using PropertiesIndex = DEM::CFDDEMProperties::PropertiesIndex;
+
+  properties.assign(PropertiesIndex::n_properties, 0.);
+
+  properties[PropertiesIndex::type] = 0.;
+  properties[PropertiesIndex::dp]   = 2.0 * particle.radius;
+  properties[PropertiesIndex::mass] = particle.mass;
+
+  properties[PropertiesIndex::v_x]     = particle.velocity[0];
+  properties[PropertiesIndex::v_y]     = particle.velocity[1];
+  properties[PropertiesIndex::omega_x] = particle.omega[0];
+  properties[PropertiesIndex::omega_y] = particle.omega[1];
+  properties[PropertiesIndex::omega_z] = particle.omega[2];
+
+  properties[PropertiesIndex::fem_force_two_way_coupling_x] =
+    particle.fluid_forces[0];
+  properties[PropertiesIndex::fem_force_two_way_coupling_y] =
+    particle.fluid_forces[1];
+  properties[PropertiesIndex::fem_torque_x] = particle.fluid_torque[0];
+  properties[PropertiesIndex::fem_torque_y] = particle.fluid_torque[1];
+  properties[PropertiesIndex::fem_torque_z] = particle.fluid_torque[2];
+
+  if constexpr (dim == 2)
+    {
+      properties[PropertiesIndex::v_z]                          = 0.;
+      properties[PropertiesIndex::fem_force_two_way_coupling_z] = 0.;
+    }
+  else
+    {
+      properties[PropertiesIndex::v_z] = particle.velocity[2];
+      properties[PropertiesIndex::fem_force_two_way_coupling_z] =
+        particle.fluid_forces[2];
+    }
+}
+
+template <int dim>
+void
+FluidDynamicsSharp<dim>::build_ib_particle_handler(
+  Particles::ParticleHandler<dim, dim> &particle_handler,
+  typename DEM::dem_data_structures<dim>::particle_index_iterator_map
+                                   &particle_container,
+  std::unordered_set<unsigned int> &local_particle_ids) const
+{
+  particle_handler.clear();
+  particle_container.clear();
+  local_particle_ids.clear();
+
+  Point<dim>          ref_point;
+  std::vector<double> properties;
+
+  // Rebuild a DEM particle handler from the Sharp-IB particles so that DEM
+  // output and post-processing can reuse the same code path.
+  for (const auto &particle : particles)
+    {
+      typename DoFHandler<dim>::active_cell_iterator cell;
+      try
+        {
+          cell =
+            LetheGridTools::find_cell_around_point_with_tree(*this->dof_handler,
+                                                             particle.position);
+        }
+      catch (...)
+        {
+          continue;
+        }
+
+      if (!cell->is_locally_owned())
+        continue;
+
+      fill_particle_properties(particle, properties);
+      particle_handler.insert_particle(
+        particle.position, ref_point, particle.particle_id, cell, properties);
+      local_particle_ids.insert(particle.particle_id);
+    }
+
+  particle_handler.sort_particles_into_subdomains_and_cells();
+  particle_handler.exchange_ghost_particles(true);
+
+  update_particle_container(particle_container, &particle_handler);
+}
+
+template <int dim>
+void
+FluidDynamicsSharp<dim>::build_contact_containers(
+  const typename DEM::dem_data_structures<dim>::particle_index_iterator_map
+                                         &particle_container,
+  const std::unordered_set<unsigned int> &local_particle_ids,
+  typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+    &local_adjacent_particles,
+  typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+    &ghost_adjacent_particles,
+  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
+    &particle_wall_in_contact) const
+{
+  local_adjacent_particles.clear();
+  ghost_adjacent_particles.clear();
+  particle_wall_in_contact.clear();
+
+  // Convert the Sharp-IB contact maps into the DEM containers expected by the
+  // existing DEM post-processing utilities.
+  const auto &pp_contact_map = ib_dem.get_particle_particle_contact_map();
+  for (const auto &[particle_id, contacts] : pp_contact_map)
+    {
+      // After ghost exchange, a contact near a subdomain boundary can be
+      // visible on more than one rank. To avoid duplicate DEM
+      // post-processing entries, each rank only contributes contacts whose
+      // first particle is locally owned here.
+      if (local_particle_ids.find(particle_id) == local_particle_ids.end())
+        continue;
+
+      const auto particle_one_it = particle_container.find(particle_id);
+      if (particle_one_it == particle_container.end())
+        continue;
+
+      for (const auto &[particle_two_id, contact_info] : contacts)
+        {
+          const auto particle_two_it = particle_container.find(particle_two_id);
+          if (particle_two_it == particle_container.end())
+            continue;
+
+          particle_particle_contact_info<dim> dem_contact_info;
+          dem_contact_info.particle_one = particle_one_it->second;
+          dem_contact_info.particle_two = particle_two_it->second;
+          dem_contact_info.tangential_displacement =
+            contact_info.tangential_displacement;
+          dem_contact_info.rolling_resistance_spring_torque =
+            contact_info.rolling_resistance_spring_torque;
+
+          // Keep the same convention as for DEM, contacts between two owned
+          // particles stay in the local container, while contacts involving a
+          // ghost neighbor go in the ghost container.
+          if (local_particle_ids.find(particle_two_id) !=
+              local_particle_ids.end())
+            local_adjacent_particles[particle_id][particle_two_id] =
+              dem_contact_info;
+          else
+            ghost_adjacent_particles[particle_id][particle_two_id] =
+              dem_contact_info;
+        }
+    }
+
+  const auto &pw_contact_map = ib_dem.get_particle_wall_contact_map();
+  for (const auto &[particle_id, contacts] : pw_contact_map)
+    {
+      // The particle-wall contact map is also replicated through ghosted
+      // particles near subdomain boundaries. Restricting this loop to locally
+      // owned particles gives a single owner rank for each exported
+      // particle-wall contact.
+      if (local_particle_ids.find(particle_id) == local_particle_ids.end())
+        continue;
+
+      const auto particle_it = particle_container.find(particle_id);
+      if (particle_it == particle_container.end())
+        continue;
+
+      for (const auto &[boundary_id, contact_info] : contacts)
+        {
+          // The contact map can keep history for contacts that have just ended
+          // so tangential displacement can be reset consistently. The DEM
+          // post-processing path only needs contacts that are still physically
+          // active (those with a positive overlap).
+          if (contact_info.normal_overlap <= 0.)
+            continue;
+
+          particle_wall_contact_info<dim> dem_contact_info;
+          dem_contact_info.particle          = particle_it->second;
+          dem_contact_info.normal_vector     = contact_info.normal_vector;
+          dem_contact_info.point_on_boundary = contact_info.contact_point;
+          dem_contact_info.boundary_id       = boundary_id;
+          dem_contact_info.tangential_displacement =
+            contact_info.tangential_displacement;
+          dem_contact_info.rolling_resistance_spring_torque =
+            contact_info.rolling_resistance_spring_torque;
+
+          particle_wall_in_contact[particle_id][boundary_id] = dem_contact_info;
+        }
+    }
+}
+
+template <int dim>
+void
+FluidDynamicsSharp<dim>::handle_dem_particle_output_and_postprocessing()
+{
+  const auto &dem_parameters = cfd_dem_parameters.dem_parameters;
+
+  // Mirror DEM output cadence for Sharp-IB particles and any DEM-style
+  // post-processing derived from them.
+  const bool output_iteration = this->simulation_control->is_output_iteration();
+  const bool write_particle_output = output_iteration;
+  const bool write_force_chains =
+    output_iteration && dem_parameters.post_processing.force_chains;
+  const bool log_particle_wall_collisions =
+    dem_parameters.post_processing.particle_wall_collision_statistics;
+
+  if (!(write_particle_output || write_force_chains ||
+        log_particle_wall_collisions))
+    return;
+
+  Particles::ParticleHandler<dim, dim> particle_handler(
+    *this->triangulation,
+    *this->mapping,
+    DEM::CFDDEMProperties::PropertiesIndex::n_properties);
+  typename DEM::dem_data_structures<dim>::particle_index_iterator_map
+                                   particle_container;
+  std::unordered_set<unsigned int> local_particle_ids;
+
+  build_ib_particle_handler(particle_handler,
+                            particle_container,
+                            local_particle_ids);
+
+  typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+    local_adjacent_particles;
+  typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+    ghost_adjacent_particles;
+  typename DEM::dem_data_structures<dim>::particle_wall_in_contact
+    particle_wall_in_contact;
+
+  if (write_force_chains || log_particle_wall_collisions)
+    build_contact_containers(particle_container,
+                             local_particle_ids,
+                             local_adjacent_particles,
+                             ghost_adjacent_particles,
+                             particle_wall_in_contact);
+
+  if (log_particle_wall_collisions)
+    {
+      log_collision_data<dim, DEM::CFDDEMProperties::PropertiesIndex>(
+        dem_parameters,
+        particle_wall_in_contact,
+        this->simulation_control->get_current_time(),
+        ongoing_collision_log,
+        collision_event_log);
+    }
+
+  if (write_particle_output)
+    {
+      const std::string folder =
+        this->simulation_parameters.simulation_control.output_folder;
+      const std::string particles_solution_name =
+        this->simulation_parameters.particlesParameters->ib_particles_pvd_file;
+      const unsigned int iter = this->simulation_control->get_step_number();
+      const double       time = this->simulation_control->get_current_time();
+      const unsigned int group_files =
+        this->simulation_parameters.simulation_control.group_files;
+
+      Visualization<dim, DEM::CFDDEMProperties::PropertiesIndex>
+        particle_data_out;
+      particle_data_out.build_patches(
+        particle_handler,
+        DEM::ParticleProperties<dim, DEM::CFDDEMProperties::PropertiesIndex>::
+          get_properties_name());
+
+      write_vtu_and_pvd<0, dim>(ib_particles_pvdhandler,
+                                particle_data_out,
+                                folder,
+                                particles_solution_name,
+                                time,
+                                iter,
+                                group_files,
+                                this->mpi_communicator);
+
+      if (write_force_chains)
+        {
+          auto particles_force_chains_object =
+            set_force_chains_contact_force_model<
+              dim,
+              DEM::CFDDEMProperties::PropertiesIndex>(dem_parameters);
+          particles_force_chains_object->write_force_chains(
+            dem_parameters,
+            ib_particles_pvdhandler_force_chains,
+            this->mpi_communicator,
+            dem_parameters.simulation_control.output_folder,
+            iter,
+            time,
+            local_adjacent_particles,
+            ghost_adjacent_particles);
         }
     }
 }
@@ -4859,6 +5107,13 @@ template <int dim>
 void
 FluidDynamicsSharp<dim>::solve()
 {
+  AssertThrow(
+    !cfd_dem_parameters.dem_parameters.post_processing
+       .lagrangian_post_processing_enabled,
+    ExcMessage(
+      "DEM lagrangian post-processing is not supported for lethe-fluid-sharp. "
+      "Disable it in the DEM post-processing subsection."));
+
   read_mesh_and_manifolds(
     *this->triangulation,
     this->simulation_parameters.mesh,
@@ -4884,6 +5139,13 @@ FluidDynamicsSharp<dim>::solve()
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
   this->update_multiphysics_time_average_solution();
+  if (this->simulation_parameters.restart_parameters.restart == false &&
+      this->simulation_control->is_output_iteration())
+    {
+      // Match the fluid solver by writing the initial Sharp-IB particle output
+      // on step 0 whenever the current iteration is an output iteration.
+      handle_dem_particle_output_and_postprocessing();
+    }
 
   while (this->simulation_control->integrate())
     {
@@ -4936,12 +5198,21 @@ FluidDynamicsSharp<dim>::solve()
         }
 
       this->postprocess(false);
+      handle_dem_particle_output_and_postprocessing();
 
       if (this->simulation_parameters.particlesParameters->calculate_force_ib)
         force_on_ib();
       finish_time_step_particles();
       write_force_ib();
       this->finish_time_step();
+    }
+
+  if (cfd_dem_parameters.dem_parameters.post_processing
+        .particle_wall_collision_statistics)
+    {
+      write_collision_stats(cfd_dem_parameters.dem_parameters,
+                            collision_event_log,
+                            this->mpi_communicator);
     }
 
   if (this->simulation_parameters.particlesParameters->calculate_force_ib)

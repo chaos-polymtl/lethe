@@ -1,0 +1,5 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Run-only test: this case exercises Sharp-IB particle output on step 0 and on
+# later output iterations.
