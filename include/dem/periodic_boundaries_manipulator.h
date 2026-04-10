@@ -103,14 +103,22 @@ public:
   /**
    * @brief Return the periodic offset distance for a specific pb0 boundary ID.
    * All pairs of cells on that pair of periodic boundaries are assumed to have
-   * the same offset.
+   * the same offset. If no periodic offset has been identified for the
+   * boundary id, a zero tensor is inserted as a default value.
    *
    * @param[in] boundary_id ID of the boundary to query
    * @return Offset distance between periodic boundaries.
    */
   inline const Tensor<1, dim> &
-  get_periodic_offset_distance(const types::boundary_id boundary_id) const
+  get_periodic_offset_distance(const types::boundary_id boundary_id)
   {
+    // No offset were identified during looping over the cell. Build
+    // a default offset which is a zero tensor
+    if (!periodic_offsets.contains(boundary_id))
+      {
+        Tensor<1, dim> zero_tensor;
+        periodic_offsets.insert(std::make_pair(boundary_id, zero_tensor));
+      }
     return periodic_offsets.at(boundary_id);
   }
 

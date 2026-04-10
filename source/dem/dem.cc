@@ -321,6 +321,7 @@ DEMSolver<dim, PropertiesIndex>::setup_triangulation_dependent_parameters()
       if (it != periodic_boundaries_ids.end())
         {
           auto const &pb_id = it->second;
+
           particle_particle_contact_force_object->set_periodic_offset(
             periodic_boundaries_object.get_periodic_offset_distance(pb_id),
             pb_id);
