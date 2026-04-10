@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/04/09
+
+### Added
+
+- MAJOR This PR couples the time-harmonic electromagnetic solver with heat transfer to perform microwave-heating multiphysics simulations. In addition, it enables more complex time integration coupling strategies between the fluid dynamics and auxiliary physics solvers. At the moment, only the time-harmonic electromagnetic solver does not use the default behaviour of solving the physics at every time step. This physics has three time coupling strategies implemented: none, iteration, and time. The choice of strategy instructs the multiphysics interface on when to compute the electromagnetic field during time integration. [#1961](https://github.com/chaos-polymtl/lethe/pull/1961)
+
 ## [Master] - 2026/04/08
 
 ### Fixed

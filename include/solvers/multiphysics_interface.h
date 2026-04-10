@@ -116,6 +116,10 @@ public:
     // sequentially.
     for (auto &iphys : physics)
       {
+        // Skip physics if not required from the coupling strategy
+        if (!iphys.second->should_solve_auxiliary_physics())
+          continue;
+
         // If iphys.first should be solved BEFORE fluid dynamics
         if (!fluid_dynamics_has_been_solved && solve_pre_fluid[iphys.first])
           solve_physics(iphys.first, time_stepping_method);
@@ -130,6 +134,10 @@ public:
 
     for (auto &iphys : block_physics)
       {
+        // Skip physics if not required from the coupling strategy
+        if (!iphys.second->should_solve_auxiliary_physics())
+          continue;
+
         // If iphys.first should be solved BEFORE fluid dynamics
         if (!fluid_dynamics_has_been_solved && solve_pre_fluid[iphys.first])
           solve_block_physics(iphys.first, time_stepping_method);

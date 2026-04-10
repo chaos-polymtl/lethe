@@ -6,7 +6,6 @@
 
 #include <solvers/heat_transfer_scratch_data.h>
 
-
 template <int dim>
 void
 HeatTransferScratchData<dim>::allocate()
@@ -140,6 +139,39 @@ HeatTransferScratchData<dim>::enable_cls(
 
 template <int dim>
 void
+HeatTransferScratchData<dim>::enable_time_harmonic_maxwell(
+  const FiniteElement<dim> &fe,
+  const Quadrature<dim>    &quadrature,
+  const Mapping<dim>       &mapping)
+{
+  gather_time_harmonic_maxwell = true;
+  fe_values_time_harmonic_maxwell =
+    std::make_shared<FEValues<dim>>(mapping, fe, quadrature, update_values);
+
+  // Allocate time-harmonic Maxwell values
+  this->electric_field_real_values =
+    std::vector<Tensor<1, dim>>(this->n_q_points);
+  this->electric_field_imag_values =
+    std::vector<Tensor<1, dim>>(this->n_q_points);
+  this->magnetic_field_real_values =
+    std::vector<Tensor<1, dim>>(this->n_q_points);
+  this->magnetic_field_imag_values =
+    std::vector<Tensor<1, dim>>(this->n_q_points);
+
+  // Allocate physical properties
+  this->electric_conductivity      = std::vector<double>(this->n_q_points);
+  this->magnetic_permeability_imag = std::vector<double>(this->n_q_points);
+  this->electric_permittivity_imag = std::vector<double>(this->n_q_points);
+
+  // Define extractors for the time-harmonic Maxwell fields
+  this->extractor_E_real = FEValuesExtractors::Vector(0);
+  this->extractor_E_imag = FEValuesExtractors::Vector(dim);
+  this->extractor_H_real = FEValuesExtractors::Vector(2 * dim);
+  this->extractor_H_imag = FEValuesExtractors::Vector(3 * dim);
+}
+
+template <int dim>
+void
 HeatTransferScratchData<dim>::calculate_physical_properties()
 {
   set_field_vector(field::temperature,
@@ -199,6 +231,23 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
                                                        thermal_conductivity);
               rheology_model->get_dynamic_viscosity_vector(
                 density_model->get_density_ref(), fields, dynamic_viscosity);
+
+              if (gather_time_harmonic_maxwell)
+                {
+                  const auto electric_conductivity_model =
+                    properties_manager.get_electric_conductivity();
+                  const auto magnetic_permeability_model =
+                    properties_manager.get_magnetic_permeability_imag();
+                  const auto electric_permittivity_model =
+                    properties_manager.get_electric_permittivity_imag();
+
+                  electric_conductivity_model->vector_value(
+                    fields, electric_conductivity);
+                  magnetic_permeability_model->vector_value(
+                    fields, magnetic_permeability_imag);
+                  electric_permittivity_model->vector_value(
+                    fields, electric_permittivity_imag);
+                }
 
               break;
             }
@@ -288,9 +337,25 @@ HeatTransferScratchData<dim>::calculate_physical_properties()
       thermal_conductivity_model->vector_value(fields, thermal_conductivity);
       rheology_model->get_dynamic_viscosity_vector(
         density_model->get_density_ref(), fields, dynamic_viscosity);
+
+      if (gather_time_harmonic_maxwell)
+        {
+          const auto electric_conductivity_model =
+            properties_manager.get_electric_conductivity(0, material_id);
+          const auto magnetic_permeability_model =
+            properties_manager.get_magnetic_permeability_imag(0, material_id);
+          const auto electric_permittivity_model =
+            properties_manager.get_electric_permittivity_imag(0, material_id);
+
+          electric_conductivity_model->vector_value(fields,
+                                                    electric_conductivity);
+          magnetic_permeability_model->vector_value(fields,
+                                                    magnetic_permeability_imag);
+          electric_permittivity_model->vector_value(fields,
+                                                    electric_permittivity_imag);
+        }
     }
 }
-
 
 template class HeatTransferScratchData<2>;
 template class HeatTransferScratchData<3>;

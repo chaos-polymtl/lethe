@@ -26,6 +26,13 @@ DeclException1(
   << "Thermal buoyancy force cannot be activated without activating heat transfer.");
 
 DeclException1(
+  MicrowaveHeatingWithoutElectromagneticsError,
+  bool,
+  << std::boolalpha << "Microwave heating is activated (" << arg1
+  << "), while electromagnetics is not activated (false)." << std::endl
+  << "Microwave heating cannot be activated without activating electromagnetics.");
+
+DeclException1(
   MarangoniWithoutFluidDynamicsError,
   bool,
   << std::boolalpha << "Marangoni effect is activated (" << arg1
@@ -256,7 +263,8 @@ MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
 {
   bool thermal_buoyancy_force_enabled =
     nsparam.multiphysics.thermal_buoyancy_force;
-  bool heat_transfer_enabled = nsparam.multiphysics.heat_transfer;
+  bool heat_transfer_enabled     = nsparam.multiphysics.heat_transfer;
+  bool microwave_heating_enabled = nsparam.multiphysics.microwave_heating;
   bool marangoni_effect_enabled =
     nsparam.multiphysics.cls_parameters.surface_tension_force
       .enable_marangoni_effect;
@@ -266,14 +274,15 @@ MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
   bool interface_sharpening_enabled =
     nsparam.multiphysics.cls_parameters.reinitialization_method.sharpening
       .enable;
-  bool CLS_enabled           = nsparam.multiphysics.CLS;
-  bool cahn_hilliard_enabled = nsparam.multiphysics.cahn_hilliard;
+  bool CLS_enabled              = nsparam.multiphysics.CLS;
+  bool cahn_hilliard_enabled    = nsparam.multiphysics.cahn_hilliard;
+  bool electromagnetics_enabled = nsparam.multiphysics.electromagnetics;
 
   // To avoid getting unused parameter warning
   _unused(thermal_buoyancy_force_enabled && heat_transfer_enabled &&
           marangoni_effect_enabled && surface_tension_force_enabled &&
           fluid_dynamics_enabled && interface_sharpening_enabled &&
-          CLS_enabled && cahn_hilliard_enabled);
+          CLS_enabled && cahn_hilliard_enabled && electromagnetics_enabled);
 
   // Dependence of thermal buoyancy force on fluid dynamics
   AssertThrow(!(thermal_buoyancy_force_enabled == true &&
@@ -323,7 +332,14 @@ MultiphysicsInterface<dim>::inspect_multiphysics_models_dependencies(
   AssertThrow(!(cahn_hilliard_enabled == true &&
                 thermal_buoyancy_force_enabled == true),
               CahnHilliardWithThermalBuoyancyForceError());
+
+  // Dependence of Microwave heating in heat transfer on electromagnetics
+  AssertThrow(
+    !(microwave_heating_enabled == true &&
+      (electromagnetics_enabled == false || heat_transfer_enabled == false)),
+    MicrowaveHeatingWithoutElectromagneticsError(microwave_heating_enabled));
 }
+
 
 template class MultiphysicsInterface<2>;
 template class MultiphysicsInterface<3>;

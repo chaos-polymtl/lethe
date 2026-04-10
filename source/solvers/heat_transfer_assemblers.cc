@@ -23,7 +23,6 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
   const std::vector<double> &thermal_conductivity =
     scratch_data.thermal_conductivity;
 
-
   // Loop and quadrature information
   const auto        &JxW_vec    = scratch_data.JxW;
   const unsigned int n_q_points = scratch_data.n_q_points;
@@ -87,11 +86,9 @@ HeatTransferAssemblerCore<dim>::assemble_matrix(
           const auto phi_T_i      = scratch_data.phi_T[q][i];
           const auto grad_phi_T_i = scratch_data.grad_phi_T[q][i];
 
-
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
               const Tensor<1, dim> grad_phi_T_j = scratch_data.grad_phi_T[q][j];
-
 
               // Weak form for : - k * laplacian T + rho * cp *
               //                  u * gradT - f -
@@ -128,7 +125,6 @@ HeatTransferAssemblerCore<dim>::assemble_rhs(
   const std::vector<double> &specific_heat = scratch_data.specific_heat;
   const std::vector<double> &thermal_conductivity =
     scratch_data.thermal_conductivity;
-
 
   // Time steps and inverse time steps which is used for stabilization
   // constant
@@ -234,7 +230,6 @@ HeatTransferAssemblerBDF<dim>::assemble_matrix(
     this->simulation_control->get_bdf_coefficients();
   std::vector<double> temperature(1 + number_of_previous_solutions(method));
 
-
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -273,13 +268,11 @@ HeatTransferAssemblerBDF<dim>::assemble_matrix(
               const double phi_T_j      = scratch_data.phi_T[q][j];
               const auto   grad_phi_T_j = scratch_data.grad_phi_T[q][j];
 
-
               local_matrix(i, j) +=
                 rho_cp * phi_T_j * phi_T_i * bdf_coefs[0] * JxW[q];
 
               local_matrix(i, j) += rho * grad_specific_heat_temperature[q] *
                                     phi_T_j * phi_T_i * dT_dt * JxW[q];
-
 
               if (GGLS)
                 {
@@ -331,7 +324,6 @@ HeatTransferAssemblerBDF<dim>::assemble_rhs(
         std::pow(h, scratch_data.fe_values_T.get_fe().degree + 1) / 6. /
         (rho_cp + DBL_MIN);
 
-
       temperature[0]          = scratch_data.present_temperature_values[q];
       temperature_gradient[0] = scratch_data.temperature_gradients[q];
 
@@ -372,7 +364,6 @@ HeatTransferAssemblerBDF<dim>::assemble_rhs(
 
 template class HeatTransferAssemblerBDF<2>;
 template class HeatTransferAssemblerBDF<3>;
-
 
 template <int dim>
 void
@@ -499,7 +490,6 @@ HeatTransferAssemblerRobinBC<dim>::assemble_rhs(
 
 template class HeatTransferAssemblerRobinBC<2>;
 template class HeatTransferAssemblerRobinBC<3>;
-
 
 template <int dim>
 void
@@ -723,7 +713,6 @@ HeatTransferAssemblerDCDDstabilization<dim>::assemble_matrix(
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto grad_phi_T_i = scratch_data.grad_phi_T[q][i];
-
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
@@ -1548,3 +1537,72 @@ HeatTransferAssemblerCLSEvaporation<dim>::assemble_rhs(
 
 template class HeatTransferAssemblerCLSEvaporation<2>;
 template class HeatTransferAssemblerCLSEvaporation<3>;
+
+template <int dim>
+void
+HeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell<dim>::assemble_matrix(
+  const HeatTransferScratchData<dim> & /*scratch_data*/,
+  StabilizedMethodsCopyData &
+  /*copy_data*/)
+{}
+
+template <int dim>
+void
+HeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell<dim>::assemble_rhs(
+  const HeatTransferScratchData<dim> &scratch_data,
+  StabilizedMethodsCopyData          &copy_data)
+{
+  // Loop and quadrature informations
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &local_rhs = copy_data.local_rhs;
+
+  // Right hand side
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      const double electric_conductivity =
+        scratch_data.electric_conductivity[q];
+      const double electric_permittivity_imag =
+        scratch_data.electric_permittivity_imag[q];
+      const double magnetic_permeability_imag =
+        scratch_data.magnetic_permeability_imag[q];
+
+      // |E|^2 = |E_real|^2 + |E_imag|^2
+      const double electric_field_squared_amplitude =
+        scratch_data.electric_field_real_values[q].norm_square() +
+        scratch_data.electric_field_imag_values[q].norm_square();
+
+      // |H|^2 = |H_real|^2 + |H_imag|^2
+      const double magnetic_field_squared_amplitude =
+        scratch_data.magnetic_field_real_values[q].norm_square() +
+        scratch_data.magnetic_field_imag_values[q].norm_square();
+
+      // Joule heating: 0.5 * sigma * |E|^2
+      const double joule_heating =
+        0.5 * electric_conductivity * electric_field_squared_amplitude;
+
+      // Dielectric loss heating: 0.5 * omega * epsilon_0 * epsilon_r'' * |E|^2
+      const double dielectric_loss_heating =
+        0.5 * angular_frequency * vacuum_permittivity *
+        electric_permittivity_imag * electric_field_squared_amplitude;
+
+      // Magnetic loss heating: 0.5 * omega * mu_0 * mu_r'' * |H|^2
+      const double magnetic_loss_heating =
+        0.5 * angular_frequency * vacuum_permeability *
+        magnetic_permeability_imag * magnetic_field_squared_amplitude;
+
+      const double JxW = scratch_data.JxW[q];
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          local_rhs(i) +=
+            (joule_heating + dielectric_loss_heating + magnetic_loss_heating) *
+            scratch_data.phi_T[q][i] * JxW;
+        }
+    } // end loop on quadrature points
+}
+
+template class HeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell<2>;
+template class HeatTransferAssemblerMicrowaveHeatingTimeHarmonicMaxwell<3>;

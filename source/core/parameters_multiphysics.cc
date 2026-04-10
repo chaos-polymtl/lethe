@@ -79,6 +79,10 @@ Parameters::Multiphysics<dim>::declare_parameters(ParameterHandler &prm) const
     prm.declare_alias("thermal buoyancy force",
                       "buoyancy force",
                       true); // temporary alias for backward compatibility
+    prm.declare_entry("microwave heating",
+                      "false",
+                      Patterns::Bool(),
+                      "Microwave heating calculation <true|false>");
   }
   prm.leave_subsection();
 
@@ -105,6 +109,7 @@ Parameters::Multiphysics<dim>::parse_parameters(
     // subparameters for heat_transfer
     viscous_dissipation    = prm.get_bool("viscous dissipation");
     thermal_buoyancy_force = prm.get_bool("thermal buoyancy force");
+    microwave_heating      = prm.get_bool("microwave heating");
   }
   prm.leave_subsection();
   cls_parameters.parse_parameters(prm);
@@ -786,6 +791,42 @@ Parameters::TimeHarmonicMaxwell<dim>::declare_parameters(
 {
   prm.enter_subsection("time harmonic maxwell");
   {
+    prm.enter_subsection("time coupling strategy");
+    {
+      prm.declare_entry("type",
+                        "none",
+                        Patterns::Selection("none|iteration|time|threshold"),
+                        "The type of time coupling strategy to use.");
+
+      prm.declare_entry(
+        "coupling iteration",
+        "1",
+        Patterns::Integer(1),
+        "Coupling parameter for the time coupling strategy based on "
+        "iteration, this parameter represents the number of time iterations "
+        "between two consecutive resolutions of the electromagnetic fields.");
+
+      prm.declare_entry(
+        "coupling time",
+        "1",
+        Patterns::Double(DBL_MIN),
+        "Coupling parameter for the time coupling strategy based on time. "
+        "This parameter represents the real time interval between two "
+        "consecutive resolutions of the electromagnetic fields.");
+
+      prm.declare_entry(
+        "coupling threshold",
+        "0.1",
+        Patterns::Double(0),
+        "Coupling parameter for the time coupling strategy based on a "
+        "threshold. This parameter represents the change in the "
+        "electromagnetic properties of the medium (i.e., permittivity, "
+        "permeability or conductivity) that triggers the recomputation of "
+        "the electromagnetic fields.)");
+    }
+    prm.leave_subsection();
+
+
     prm.declare_entry(
       "electromagnetic frequency",
       "1",
@@ -894,6 +935,34 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
 {
   prm.enter_subsection("time harmonic maxwell");
   {
+    prm.enter_subsection("time coupling strategy");
+    {
+      const std::string op_coupling_type = prm.get("type");
+      if (op_coupling_type == "none")
+        time_coupling_strategy =
+          Parameters::TimeHarmonicMaxwellCouplingStrategy::none;
+      else if (op_coupling_type == "iteration")
+        time_coupling_strategy =
+          Parameters::TimeHarmonicMaxwellCouplingStrategy::iteration;
+      else if (op_coupling_type == "time")
+        time_coupling_strategy =
+          Parameters::TimeHarmonicMaxwellCouplingStrategy::time;
+      else if (op_coupling_type == "threshold")
+        time_coupling_strategy =
+          Parameters::TimeHarmonicMaxwellCouplingStrategy::threshold;
+      else
+        AssertThrow(false,
+                    ExcMessage("Invalid time coupling strategy type. Options "
+                               "are <none|iteration|time|threshold>."));
+
+      TimeHarmonicMaxwell::coupling_iteration =
+        prm.get_integer("coupling iteration");
+      TimeHarmonicMaxwell::coupling_time = prm.get_double("coupling time");
+      TimeHarmonicMaxwell::coupling_threshold =
+        prm.get_double("coupling threshold");
+    }
+    prm.leave_subsection();
+
     TimeHarmonicMaxwell::electromagnetic_frequency =
       prm.get_double("electromagnetic frequency") *
       dimensions.electromagnetic_frequency_scaling;
@@ -912,9 +981,10 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
       TimeHarmonicMaxwell::electromagnetic_scaling_type =
         Parameters::ElectromagneticScalingType::power;
     else
-      throw(std::runtime_error(
-        "Invalid electromagnetic scaling type. "
-        "Options are <none|electric field|magnetic field|power>."));
+      AssertThrow(false,
+                  ExcMessage(
+                    "Invalid electromagnetic scaling type. "
+                    "Options are <none|electric field|magnetic field|power>."));
 
     // By default, the electric field dimensionality is in V/m, but if the user
     // changed the dimensionality of the problem, we need to change the

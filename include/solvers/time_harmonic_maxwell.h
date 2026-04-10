@@ -469,6 +469,12 @@ public:
              1.;
   }
 
+  /**
+   * @brief Manage if the auxiliary physics should be solved at the current iteration. By default, auxiliary physics are solved at every iteration.
+   */
+  bool
+  should_solve_auxiliary_physics() override;
+
 private:
   /**
    * @brief Verify consistency of the input parameters for boundary

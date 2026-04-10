@@ -1,0 +1,26 @@
+
+DEAL::--- Test: TimeHarmonicMaxwellCouplingStrategy::none ---
+DEAL::Step 1: true
+DEAL::Step 2: false
+DEAL::Step 3: false
+DEAL::Step 4: false
+DEAL::Step 5: false
+DEAL::--- Test: TimeHarmonicMaxwellCouplingStrategy::iteration (every 3) ---
+DEAL::Step 1: true
+DEAL::Step 2: false
+DEAL::Step 3: false
+DEAL::Step 4: true
+DEAL::Step 5: false
+DEAL::Step 6: false
+DEAL::Step 7: true
+DEAL::--- Test: TimeHarmonicMaxwellCouplingStrategy::time (every 0.24s, dt=0.1) ---
+DEAL::Step 1 (t=0.100000): true
+DEAL::Step 2 (t=0.200000): false
+DEAL::Step 3 (t=0.300000): true
+DEAL::Step 4 (t=0.400000): false
+DEAL::Step 5 (t=0.500000): true
+DEAL::Step 6 (t=0.600000): false
+DEAL::Step 7 (t=0.700000): false
+DEAL::Step 8 (t=0.800000): true
+DEAL::Step 9 (t=0.900000): false
+DEAL::Step 10 (t=1.00000): true
