@@ -876,12 +876,9 @@ namespace Parameters
         std::unordered_map<unsigned int, double>       &boundary_rot_speed,
         std::unordered_map<unsigned int, Tensor<1, 3>> &boundary_rot_vector,
         std::unordered_map<unsigned int, Point<3>>     &point_on_rot_axis,
-        std::unordered_map<unsigned int, types::boundary_id> &periodic_bndry_0,
-        std::unordered_map<unsigned int, types::boundary_id> &periodic_bndry_1,
-        std::unordered_map<unsigned int, unsigned int>       &periodic_dir,
-        std::vector<unsigned int> &outlet_boundaries_id,
-        std::vector<BoundaryType> &boundaries_types,
-        std::vector<unsigned int> &periodic_bc_ind) const;
+        std::vector<unsigned int>                      &outlet_boundaries_id,
+        std::vector<BoundaryType>                      &boundaries_types,
+        std::vector<unsigned int>                      &periodic_bc_ind) const;
     };
 
     /**
