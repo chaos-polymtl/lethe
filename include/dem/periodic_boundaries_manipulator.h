@@ -238,10 +238,9 @@ private:
 
   /**
    * @brief Storage for all 9 (2D) or 27 (3D) precomputed periodic translation
-   * vectors. Calculated from periodic_offsets. Initialized to identity (zero
-   * offset) for compatibility with non-periodic geometry
+   * vectors. Calculated from periodic_offsets.
    */
-  std::vector<Tensor<1, dim>> combined_periodic_offsets{Tensor<1, dim>()};
+  std::vector<Tensor<1, dim>> combined_periodic_offsets;
 };
 
 #endif
