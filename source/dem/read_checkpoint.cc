@@ -3,7 +3,7 @@
 
 #include <core/checkpoint_control.h>
 
-#include <dem/dem_action_manager.h>
+#include <dem/adaptive_sparse_contacts.h>
 #include <dem/read_checkpoint.h>
 
 #include <boost/archive/text_iarchive.hpp>
@@ -24,7 +24,10 @@ read_checkpoint(
   Particles::ParticleHandler<dim>                         &particle_handler,
   std::shared_ptr<Insertion<dim, PropertiesIndex>>        &insertion_object,
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_surfaces,
-  CheckpointControl &checkpoint_controller)
+  AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object,
+  DoFHandler<dim>                              &background_dh,
+  const MPI_Comm                               &mpi_communicator,
+  CheckpointControl                            &checkpoint_controller)
 {
   if (!DEMActionManager::get_action_manager()->check_restart_simulation())
     return;
@@ -104,6 +107,14 @@ read_checkpoint(
     {
       solid_surfaces[i]->read_checkpoint(prefix);
     }
+
+  // Force compute the cell mobility for ASC. Otherwise, this will crash if
+  // it is a load balancing including ASC is tried.
+  sparse_contacts_object.identify_mobility_status(
+    background_dh,
+    particle_handler,
+    triangulation.n_active_cells(),
+    mpi_communicator);
 }
 
 template void
@@ -118,7 +129,11 @@ read_checkpoint(
   std::shared_ptr<Insertion<2, DEM::DEMProperties::PropertiesIndex>>
                                                   &insertion_object,
   std::vector<std::shared_ptr<SerialSolid<1, 2>>> &solid_surfaces,
-  CheckpointControl                               &checkpoint_controller);
+  AdaptiveSparseContacts<2, DEM::DEMProperties::PropertiesIndex>
+                    &sparse_contacts_object,
+  DoFHandler<2>     &background_dh,
+  const MPI_Comm    &mpi_communicator,
+  CheckpointControl &checkpoint_controller);
 
 template void
 read_checkpoint(
@@ -132,7 +147,11 @@ read_checkpoint(
   std::shared_ptr<Insertion<3, DEM::DEMProperties::PropertiesIndex>>
                                                   &insertion_object,
   std::vector<std::shared_ptr<SerialSolid<2, 3>>> &solid_surfaces,
-  CheckpointControl                               &checkpoint_controller);
+  AdaptiveSparseContacts<3, DEM::DEMProperties::PropertiesIndex>
+                    &sparse_contacts_object,
+  DoFHandler<3>     &background_dh,
+  const MPI_Comm    &mpi_communicator,
+  CheckpointControl &checkpoint_controller);
 
 template void
 read_checkpoint(
@@ -146,7 +165,11 @@ read_checkpoint(
   std::shared_ptr<Insertion<2, DEM::CFDDEMProperties::PropertiesIndex>>
                                                   &insertion_object,
   std::vector<std::shared_ptr<SerialSolid<1, 2>>> &solid_surfaces,
-  CheckpointControl                               &checkpoint_controller);
+  AdaptiveSparseContacts<2, DEM::CFDDEMProperties::PropertiesIndex>
+                    &sparse_contacts_object,
+  DoFHandler<2>     &background_dh,
+  const MPI_Comm    &mpi_communicator,
+  CheckpointControl &checkpoint_controller);
 
 template void
 read_checkpoint(
@@ -160,7 +183,11 @@ read_checkpoint(
   std::shared_ptr<Insertion<3, DEM::CFDDEMProperties::PropertiesIndex>>
                                                   &insertion_object,
   std::vector<std::shared_ptr<SerialSolid<2, 3>>> &solid_surfaces,
-  CheckpointControl                               &checkpoint_controller);
+  AdaptiveSparseContacts<3, DEM::CFDDEMProperties::PropertiesIndex>
+                    &sparse_contacts_object,
+  DoFHandler<3>     &background_dh,
+  const MPI_Comm    &mpi_communicator,
+  CheckpointControl &checkpoint_controller);
 
 template void
 read_checkpoint(
@@ -174,7 +201,11 @@ read_checkpoint(
   std::shared_ptr<Insertion<2, DEM::DEMMPProperties::PropertiesIndex>>
                                                   &insertion_object,
   std::vector<std::shared_ptr<SerialSolid<1, 2>>> &solid_surfaces,
-  CheckpointControl                               &checkpoint_controller);
+  AdaptiveSparseContacts<2, DEM::DEMMPProperties::PropertiesIndex>
+                    &sparse_contacts_object,
+  DoFHandler<2>     &background_dh,
+  const MPI_Comm    &mpi_communicator,
+  CheckpointControl &checkpoint_controller);
 
 template void
 read_checkpoint(
@@ -188,4 +219,8 @@ read_checkpoint(
   std::shared_ptr<Insertion<3, DEM::DEMMPProperties::PropertiesIndex>>
                                                   &insertion_object,
   std::vector<std::shared_ptr<SerialSolid<2, 3>>> &solid_surfaces,
-  CheckpointControl                               &checkpoint_controller);
+  AdaptiveSparseContacts<3, DEM::DEMMPProperties::PropertiesIndex>
+                    &sparse_contacts_object,
+  DoFHandler<3>     &background_dh,
+  const MPI_Comm    &mpi_communicator,
+  CheckpointControl &checkpoint_controller);

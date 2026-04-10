@@ -27,6 +27,10 @@
  * @param particle_handler Particle handler
  * @param insertion_object Shared pointer of Insertion type.
  * @param solid_surfaces Vector of solids surfaces used in DEM simulations
+ * @param sparse_contacts_object The object that contains the
+ * information about the mobility status of cells
+ * @param background_dh The DoFHandler of the background grid.
+ * @param mpi_communicator The MPI communicator.
  * @param checkpoint_controller Checkpoint controller
  */
 template <int dim, typename PropertiesIndex>
@@ -41,6 +45,9 @@ read_checkpoint(
   Particles::ParticleHandler<dim>                         &particle_handler,
   std::shared_ptr<Insertion<dim, PropertiesIndex>>        &insertion_object,
   std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solid_surfaces,
-  CheckpointControl &checkpoint_controller);
+  AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object,
+  DoFHandler<dim>                              &background_dh,
+  const MPI_Comm                               &mpi_communicator,
+  CheckpointControl                            &checkpoint_controller);
 
 #endif
