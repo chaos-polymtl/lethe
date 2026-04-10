@@ -78,7 +78,8 @@ public:
    * periodic_offsets map.
    *
    * @param[in] offset Distance between the pair of periodic boundaries.
-   * @param[in] boundary_id Mesh ID of the principal periodic boundary of the pair.
+   * @param[in] boundary_id Mesh ID of the principal periodic boundary of the
+   * pair.
    */
   inline void
   set_periodic_offset(const Tensor<1, dim>    &offset,
@@ -89,8 +90,8 @@ public:
 
   /**
    * @brief Set the value of the combined periodic offsets for this class
-   * 
-   * @param [in] offsets Combined periodic offsets from the 
+   *
+   * @param [in] offsets Combined periodic offsets from the
    * PeriodicBoundariesManipulator class
    */
   inline void
@@ -107,7 +108,7 @@ protected:
    * are assumed to have the same offset.
    */
   std::unordered_map<types::boundary_id, Tensor<1, dim>> periodic_offsets;
-  
+
   /**
    * @brief Storage for all 9 (2D) or 27 (3D) precomputed periodic translation
    * vectors. Calculated from periodic_offsets.
