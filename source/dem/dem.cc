@@ -363,8 +363,16 @@ DEMSolver<dim, PropertiesIndex>::setup_background_dofs()
           const unsigned int direction =
             parameters.boundary_conditions.periodic_direction.at(bc_index);
 
-          DoFTools::make_periodicity_constraints(
-            background_dh, id0, id1, direction, background_constraints);
+          // Default boundaries contain information for periodic boundary
+          // conditions that indicate id0 and id1 are 0 as default value To
+          // ensure these default values are not parsed, only make the
+          // periodicity constraints if id0 and id1 are distinct
+          // TODO - Refactor the way the DEM boundary conditions are stored to
+          // get rid of the vectors storage structure and use a map directly
+          // instead.
+          if (id0 != id1)
+            DoFTools::make_periodicity_constraints(
+              background_dh, id0, id1, direction, background_constraints);
         }
 
       background_constraints.close();
