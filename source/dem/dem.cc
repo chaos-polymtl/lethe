@@ -890,6 +890,16 @@ DEMSolver<dim, PropertiesIndex>::solve()
       find_floating_mesh_mapping_step(smallest_solid_object_mapping_criterion,
                                       this->solid_surfaces);
 
+      // If this is a restart simulation, force compute the cell mobility
+      // for ASC. Otherwise this will crash if it a load balancing
+      // including ASC is tried.
+      if (DEMActionManager::get_action_manager()->check_restart_simulation())
+        sparse_contacts_object.identify_mobility_status(
+          background_dh,
+          particle_handler,
+          triangulation.n_active_cells(),
+          mpi_communicator);
+
       // Map solid objects if the action was triggered (if solid object)
       if (action_manager->check_solid_object_search())
         {
