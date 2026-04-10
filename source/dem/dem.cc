@@ -357,6 +357,18 @@ DEMSolver<dim, PropertiesIndex>::load_balance()
     return;
 
   TimerOutput::Scope t(this->computing_timer, "Load balancing");
+
+  // If the load balancing uses the sparse_contact object to calculate the
+  // weight, make sure that the sparse contact object has all mobility status
+  // correctly identified and refreshed.
+  if (parameters.model_parameters.load_balance_method ==
+      ModelParameters<dim>::LoadBalanceMethod::dynamic_with_sparse_contacts)
+    sparse_contacts_object.identify_mobility_status(
+      background_dh,
+      particle_handler,
+      triangulation.n_active_cells(),
+      mpi_communicator);
+
   // Prepare particle handler for the adaptation of the triangulation to the
   // load
   particle_handler.prepare_for_coarsening_and_refinement();
@@ -372,6 +384,8 @@ DEMSolver<dim, PropertiesIndex>::load_balance()
     triangulation, periodic_boundaries_cells_information);
 
   // If ASC is enabled, update the local and ghost cell set
+
+
   sparse_contacts_object.update_local_and_ghost_cell_set(background_dh);
 
   // Update neighbors of cells after load balance
@@ -889,16 +903,6 @@ DEMSolver<dim, PropertiesIndex>::solve()
       // (if solid object)
       find_floating_mesh_mapping_step(smallest_solid_object_mapping_criterion,
                                       this->solid_surfaces);
-
-      // If this is a restart simulation, force compute the cell mobility
-      // for ASC. Otherwise this will crash if it a load balancing
-      // including ASC is tried.
-      if (DEMActionManager::get_action_manager()->check_restart_simulation())
-        sparse_contacts_object.identify_mobility_status(
-          background_dh,
-          particle_handler,
-          triangulation.n_active_cells(),
-          mpi_communicator);
 
       // Map solid objects if the action was triggered (if solid object)
       if (action_manager->check_solid_object_search())
