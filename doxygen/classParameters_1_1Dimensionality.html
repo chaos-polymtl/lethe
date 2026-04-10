@@ -156,6 +156,10 @@ Public Attributes</h2></td></tr>
 <tr class="separator:aeb4b8e95c83d2f28ddc6f31601babd5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac23941d6b4b045d5e2e1bf8867bbb783" id="r_ac23941d6b4b045d5e2e1bf8867bbb783"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1Dimensionality.html#ac23941d6b4b045d5e2e1bf8867bbb783">magnetic_amplitude_scaling</a></td></tr>
 <tr class="separator:ac23941d6b4b045d5e2e1bf8867bbb783"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab32216ab06c5b20270e1f75723dc0040" id="r_ab32216ab06c5b20270e1f75723dc0040"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1Dimensionality.html#ab32216ab06c5b20270e1f75723dc0040">vacuum_permittivity_scaling</a></td></tr>
+<tr class="separator:ab32216ab06c5b20270e1f75723dc0040"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad72b3c7e441c655c55b9ec301f5102be" id="r_ad72b3c7e441c655c55b9ec301f5102be"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1Dimensionality.html#ad72b3c7e441c655c55b9ec301f5102be">vacuum_permeability_scaling</a></td></tr>
+<tr class="separator:ad72b3c7e441c655c55b9ec301f5102be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Class used to rescale physical properties for cases where the main dimensions of the problems (Length, Mass, Time and Temperature) are not expressed in SI, but are expressed in another set of units. For example, this can be used to carry out a simulation where the mesh is expressed in millimeters instead of meters. This class is currently only used to rescale the physical properties in the FEM-based physics (e.g. all of those that are solvers). Support for <a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a>, CFD-DEM and rescaling of boundary conditions is planned in the midterm. </p>
@@ -226,7 +230,7 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="dimensionality_8cc_source.html#l00043">43</a> of file <a class="el" href="dimensionality_8cc_source.html">dimensionality.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dimensionality_8cc_source.html#l00045">45</a> of file <a class="el" href="dimensionality_8cc_source.html">dimensionality.cc</a>.</p>
 
 </div>
 </div>
@@ -249,7 +253,7 @@ Public Attributes</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="dimensionality_8cc_source.html#l00010">10</a> of file <a class="el" href="dimensionality_8cc_source.html">dimensionality.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="dimensionality_8h_source.html#l00097">cahn_hilliard_epsilon_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00096">cahn_hilliard_mobility_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00086">density_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00092">diffusivity_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00099">electric_amplitude_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00077">electric_current</a>, <a class="el" href="dimensionality_8h_source.html#l00098">electromagnetic_frequency_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00091">enthalpy_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00073">length</a>, <a class="el" href="dimensionality_8h_source.html#l00100">magnetic_amplitude_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00074">mass</a>, <a class="el" href="dimensionality_8h_source.html#l00087">specific_gas_constant_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00089">specific_heat_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00095">surface_tension_gradient_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00094">surface_tension_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00076">temperature</a>, <a class="el" href="dimensionality_8h_source.html#l00090">thermal_conductivity_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00093">thermal_expansion_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00075">time</a>, and <a class="el" href="dimensionality_8h_source.html#l00088">viscosity_scaling</a>.</p>
+<p class="reference">References <a class="el" href="dimensionality_8h_source.html#l00097">cahn_hilliard_epsilon_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00096">cahn_hilliard_mobility_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00086">density_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00092">diffusivity_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00099">electric_amplitude_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00077">electric_current</a>, <a class="el" href="dimensionality_8h_source.html#l00098">electromagnetic_frequency_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00091">enthalpy_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00073">length</a>, <a class="el" href="dimensionality_8h_source.html#l00100">magnetic_amplitude_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00074">mass</a>, <a class="el" href="dimensionality_8h_source.html#l00087">specific_gas_constant_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00089">specific_heat_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00095">surface_tension_gradient_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00094">surface_tension_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00076">temperature</a>, <a class="el" href="dimensionality_8h_source.html#l00090">thermal_conductivity_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00093">thermal_expansion_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00075">time</a>, <a class="el" href="dimensionality_8h_source.html#l00102">vacuum_permeability_scaling</a>, <a class="el" href="dimensionality_8h_source.html#l00101">vacuum_permittivity_scaling</a>, and <a class="el" href="dimensionality_8h_source.html#l00088">viscosity_scaling</a>.</p>
 
 </div>
 </div>
@@ -277,7 +281,7 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="dimensionality_8cc_source.html#l00087">87</a> of file <a class="el" href="dimensionality_8cc_source.html">dimensionality.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dimensionality_8cc_source.html#l00089">89</a> of file <a class="el" href="dimensionality_8cc_source.html">dimensionality.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="dimensionality_8cc_source.html#l00010">define_all_scales()</a>, <a class="el" href="dimensionality_8h_source.html#l00077">electric_current</a>, <a class="el" href="dimensionality_8h_source.html#l00073">length</a>, <a class="el" href="dimensionality_8h_source.html#l00074">mass</a>, <a class="el" href="dimensionality_8h_source.html#l00076">temperature</a>, and <a class="el" href="dimensionality_8h_source.html#l00075">time</a>.</p>
 
@@ -585,6 +589,38 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="dimensionality_8h_source.html#l00075">75</a> of file <a class="el" href="dimensionality_8h_source.html">dimensionality.h</a>.</p>
+
+</div>
+</div>
+<a id="ad72b3c7e441c655c55b9ec301f5102be" name="ad72b3c7e441c655c55b9ec301f5102be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad72b3c7e441c655c55b9ec301f5102be">&#9670;&#160;</a></span>vacuum_permeability_scaling</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double Parameters::Dimensionality::vacuum_permeability_scaling</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="dimensionality_8h_source.html#l00102">102</a> of file <a class="el" href="dimensionality_8h_source.html">dimensionality.h</a>.</p>
+
+</div>
+</div>
+<a id="ab32216ab06c5b20270e1f75723dc0040" name="ab32216ab06c5b20270e1f75723dc0040"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab32216ab06c5b20270e1f75723dc0040">&#9670;&#160;</a></span>vacuum_permittivity_scaling</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">double Parameters::Dimensionality::vacuum_permittivity_scaling</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="dimensionality_8h_source.html#l00101">101</a> of file <a class="el" href="dimensionality_8h_source.html">dimensionality.h</a>.</p>
 
 </div>
 </div>

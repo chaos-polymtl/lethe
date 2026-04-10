@@ -139,6 +139,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aeecb470de43133aa878a5e9499509b31"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a664990d705edc069f7676ac5e575e3c8" id="r_a664990d705edc069f7676ac5e575e3c8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAuxiliaryPhysics.html#a664990d705edc069f7676ac5e575e3c8">setup_preconditioner</a> () override</td></tr>
 <tr class="separator:a664990d705edc069f7676ac5e575e3c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aadfc7f9c22afe74fe283deb52d794b13" id="r_aadfc7f9c22afe74fe283deb52d794b13"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAuxiliaryPhysics.html#aadfc7f9c22afe74fe283deb52d794b13">should_solve_auxiliary_physics</a> ()</td></tr>
+<tr class="separator:aadfc7f9c22afe74fe283deb52d794b13"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classPhysicsSolver"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classPhysicsSolver')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classPhysicsSolver.html">PhysicsSolver&lt; VectorType &gt;</a></td></tr>
 <tr class="memitem:a1b5dd7b4e42a885ef133816445eb3a15 inherit pub_methods_classPhysicsSolver" id="r_a1b5dd7b4e42a885ef133816445eb3a15"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolver.html#a1b5dd7b4e42a885ef133816445eb3a15">PhysicsSolver</a> (const <a class="el" href="structParameters_1_1NonLinearSolver.html">Parameters::NonLinearSolver</a> non_linear_solver_parameters)</td></tr>
 <tr class="separator:a1b5dd7b4e42a885ef133816445eb3a15 inherit pub_methods_classPhysicsSolver"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -761,6 +763,39 @@ template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.htm
 <p>Reimplemented in <a class="el" href="classTimeHarmonicMaxwell.html#a19bce29a7b265f24d66bbead2898be6b">TimeHarmonicMaxwell&lt; dim &gt;</a>.</p>
 
 <p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00205">205</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
+
+</div>
+</div>
+<a id="aadfc7f9c22afe74fe283deb52d794b13" name="aadfc7f9c22afe74fe283deb52d794b13"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aadfc7f9c22afe74fe283deb52d794b13">&#9670;&#160;</a></span>should_solve_auxiliary_physics()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool <a class="el" href="classAuxiliaryPhysics.html">AuxiliaryPhysics</a>&lt; dim, <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::should_solve_auxiliary_physics </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Manage if this auxiliary physics should be solved at the current iteration. By default, auxiliary physics are solved at every iteration. </p>
+
+<p>Reimplemented in <a class="el" href="classTimeHarmonicMaxwell.html#a2d3c064b6bf670746350109f43b90062">TimeHarmonicMaxwell&lt; dim &gt;</a>.</p>
+
+<p class="definition">Definition at line <a class="el" href="auxiliary__physics_8h_source.html#l00211">211</a> of file <a class="el" href="auxiliary__physics_8h_source.html">auxiliary_physics.h</a>.</p>
 
 </div>
 </div>
