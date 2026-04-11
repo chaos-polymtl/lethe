@@ -1111,6 +1111,13 @@ ParticleProjector<dim>::calculate_field_projection(
               ExcMessage(
                 "QCM projection of a field only supports 1 or dim components"));
 
+  AssertThrow(
+    has_periodic_boundaries == false,
+    ExcMessage(
+      "The QCM projection of a particle field is not currently supported "
+      "with periodic boundary conditions. The periodic constraints are not "
+      "applied to the particle field constraints."));
+
   FEValues<dim> fe_values_field(*mapping,
                                 *field_qcm.fe,
                                 *quadrature,
