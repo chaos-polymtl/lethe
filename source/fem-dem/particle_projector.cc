@@ -862,8 +862,8 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
                       const Point<dim> particle_location =
                         (active_periodic_neighbors[m]->center()[neighbor_dir] >
                          cell->center()[neighbor_dir]) ?
-                          particle.get_location() - neighbor_offset :
-                          particle.get_location() + neighbor_offset;
+                          particle.get_location() + neighbor_offset :
+                          particle.get_location() - neighbor_offset;
 
 
                       // Distance between particle and quadrature point
