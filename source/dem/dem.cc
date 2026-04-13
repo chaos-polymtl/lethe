@@ -384,8 +384,6 @@ DEMSolver<dim, PropertiesIndex>::load_balance()
     triangulation, periodic_boundaries_cells_information);
 
   // If ASC is enabled, update the local and ghost cell set
-
-
   sparse_contacts_object.update_local_and_ghost_cell_set(background_dh);
 
   // Update neighbors of cells after load balance

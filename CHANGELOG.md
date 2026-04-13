@@ -9,7 +9,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The dynamic_with_sparse_contacts load balance method could crash if load balancing was triggered at the first iteration of a restart (yes this is oddly specific). This PR fixes this by refreshing the ASC structures when the DEM is restarted. [#1964](https://github.com/chaos-polymtl/lethe/pull/1964)
 
-
 ## [Master] - 2026/04/09
 
 ### Added
