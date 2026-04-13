@@ -45,6 +45,7 @@ add_library(lethe-core
   tracer_diffusivity_model.cc
   tracer_reaction_model.cc
   uniform_channel_with_meshed_cylinder_grid.cc
+  uniform_channel_with_meshed_square_prism_grid.cc
   utilities.cc
   # Headers
   ../../include/core/ale.h
@@ -107,6 +108,7 @@ add_library(lethe-core
   ../../include/core/tracer_diffusivity_model.h
   ../../include/core/tracer_reaction_model.h
   ../../include/core/uniform_channel_with_meshed_cylinder_grid.h
+  ../../include/core/uniform_channel_with_meshed_square_prism_grid.h
   ../../include/core/utilities.h)
 
 deal_ii_setup_target(lethe-core)

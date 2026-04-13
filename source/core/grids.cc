@@ -8,6 +8,7 @@
 #include <core/grid_periodic_hills.h>
 #include <core/grids.h>
 #include <core/uniform_channel_with_meshed_cylinder_grid.h>
+#include <core/uniform_channel_with_meshed_square_prism_grid.h>
 
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_in.h>
@@ -204,6 +205,19 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
               "Unsupported mesh type - uniform channel with meshed cylinder mesh with simplex is not supported"));
 
           UniformChannelWithMeshedCylinderGrid<dim, spacedim> grid(
+            mesh_parameters.grid_arguments);
+          grid.make_grid(triangulation);
+
+          GridTools::scale(mesh_parameters.scale, triangulation);
+        }
+      else if (grid_type == "uniform_channel_with_meshed_square_prism")
+        {
+          AssertThrow(
+            !mesh_parameters.simplex,
+            ExcMessage(
+              "Unsupported mesh type - uniform channel with rotated meshed rectangle mesh with simplex is not supported"));
+
+          UniformChannelWithMeshedSquarePrismGrid<dim, spacedim> grid(
             mesh_parameters.grid_arguments);
           grid.make_grid(triangulation);
 
