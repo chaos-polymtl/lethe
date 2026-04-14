@@ -50,21 +50,20 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 2
+  set number                = 2
   set fix pressure constant = true
   subsection bc 0
-   set id   = 0, 1, 2
-   set type = noslip
+    set id   = 0, 1, 2
+    set type = noslip
   end
   subsection bc 1
-    set id   =  3
+    set id   = 3
     set type = Neumann traction
     subsection t
       set Function expression = -2.0*pi*sin(pi*x)*sin(pi*x)*cos(2*pi*y); sin(pi*x)*sin(pi*y) - 4*pi*sin(pi*x)*sin(pi*y)*cos(pi*x)*cos(pi*y); 0.0
     end
   end
 end
-
 
 # --------------------------------------------------
 # Source term
@@ -106,18 +105,15 @@ subsection mesh adaptation
   set type = uniform
 end
 
-
-
 #---------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
 
 subsection non-linear solver
   subsection fluid dynamics
-    set tolerance          = 1e-9
-    set max iterations     = 50
-    set residual precision = 2
-    set verbosity          = verbose
+    set tolerance      = 1e-9
+    set max iterations = 50
+    set verbosity      = verbose
   end
 end
 
@@ -143,4 +139,3 @@ subsection linear solver
     set mg smoother relaxation = 0.5
   end
 end
-
