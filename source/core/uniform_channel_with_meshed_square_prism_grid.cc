@@ -120,10 +120,15 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
 
   // Parse optional parameters if provided
   this->inner_rotation_angle =
-    (arguments.size() > 5) ?
-      std::remainder(Utilities::string_to_double(arguments[5]), 90.0) *
-        numbers::PI / 180.0 :
-      0.0;
+    (arguments.size() > 5) ? Utilities::string_to_double(arguments[5]) : 0.0;
+
+  AssertThrow(
+    (inner_rotation_angle >= 0.0) && (inner_rotation_angle < 90.0),
+    ExcMessage(
+      "The rotation angle needs to be in the range [0, 90) degrees. Different values will result in the same mesh pattern due to symmetry."));
+
+  inner_rotation_angle = inner_rotation_angle * std::numbers::pi / 180.0;
+
   this->pad_bottom =
     (arguments.size() > 6) ? Utilities::string_to_int(arguments[6]) : 0;
   this->pad_top =
@@ -224,43 +229,71 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
         obstacle_tria);
     }
 
-  // Pre-compute the 8 analytical L∞ projected positions on the outer square.
+  // Pre-compute the 8 projected positions on the outer square.
   // The outer ring of hyper_ball_balanced has vertices at angles k*pi/4.
-  // After rotation they sit at inner_rotation_angle + k*pi/4.
-  // L∞ projection maps each direction onto the outer square along the same ray.
+  // After rotation they sit at inner_rotation_angle + k*pi/4. The projection
+  // maps each direction onto the outer square along the same line. To avoid
+  // having voids in the corners we choose the subset of the 4 target points
+  // that are closest to  corners and change the target projection to
+  // attach there instead.
   std::array<Point<2>, 8> outer_targets;
   for (unsigned int k = 0; k < 8; ++k)
     {
-      const double theta = inner_rotation_angle + k * std::numbers::pi / 4.0;
-      const double cx    = std::cos(theta);
-      const double cy    = std::sin(theta);
+      double theta = inner_rotation_angle + k * std::numbers::pi / 4.0;
+
+      // If the remaining value of theta after dividing by pi/2 and scaled by
+      // pi/2 is higher than pi/8, but lower than 3*pi/8, then the vertex is
+      // closer to the corner than to the face. In that case we change the
+      // target to be the corner instead of the face.
+      const double divided = theta / (std::numbers::pi / 2.0);
+      const double remainder_scaled =
+        (divided - std::floor(divided)) * (std::numbers::pi / 2.0);
+      if ((remainder_scaled >= std::numbers::pi / 8.0) &&
+          (remainder_scaled < 3 * std::numbers::pi / 8.0))
+        {
+          double factor =
+            (remainder_scaled >= std::numbers::pi / 4.0) ? 0 : 1.0;
+          theta = (factor + std::trunc(theta / (std::numbers::pi / 4.0))) *
+                  (std::numbers::pi / 4.0);
+        }
+
+      const double cx = std::cos(theta);
+      const double cy = std::sin(theta);
       const double scale =
         outer_half_side / std::max(std::abs(cx), std::abs(cy));
       outer_targets[k] = center + Point<2>(scale * cx, scale * cy);
     }
 
-  // Snap each outer ring vertex to its analytical target (closest by angle).
-  // Using angle difference with wrap-around avoids the Euclidean distance
-  // ambiguity and ensures exact vertex matching with the padding meshes.
+  std::cout << "Outer targets: " << std::endl;
+  for (const auto &target : outer_targets)
+    std::cout << target << std::endl;
+
+  // Attach each outer ring vertex to its analytical target (closest by angle).
+  // Using angle difference avoids the Euclidean distance ambiguity and ensures
+  // exact vertex matching with the padding meshes.
   GridTools::transform(
     [&](const Point<2> &p) {
       const double dist = p.distance(center);
+      // Check if the vertex is the one inside, none of the inside vertices can
+      // be further than sqrt2 * inner_half_side from the center.
       if (dist <= std::numbers::sqrt2 * inner_half_side + tol_inner)
         return p;
 
-      const double angle     = std::atan2(p[1] - center[1], p[0] - center[0]);
-      double       best_diff = std::numeric_limits<double>::max();
-      Point<2>     closest   = outer_targets[0];
-      for (const Point<2> &t : outer_targets)
+      double             min_angle   = -1.0;
+      Point<2>           closest     = outer_targets[0];
+      const Tensor<1, 2> p_normalize = (p - center) / (p - center).norm();
+      for (const Point<2> &candidate : outer_targets)
         {
-          const double t_ang = std::atan2(t[1] - center[1], t[0] - center[0]);
-          double       diff  = std::abs(angle - t_ang);
-          if (diff > std::numbers::pi)
-            diff = 2.0 * std::numbers::pi - diff; // wrap-around fix
-          if (diff < best_diff)
+          const Tensor<1, 2> target_normalize =
+            (candidate - center) / (candidate - center).norm();
+          const double cos_angle = p_normalize * target_normalize;
+          // When the orientation is superposed, the cosine is 1, when it is
+          // orthogonal, the cosine is 0, and when it is opposite, the cosine is
+          // -1. We want to find the candidate with the largest cosine.
+          if (cos_angle > min_angle)
             {
-              best_diff = diff;
-              closest   = t;
+              min_angle = cos_angle;
+              closest   = candidate;
             }
         }
       return closest;
@@ -270,24 +303,34 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
   // Collect the projected x/y coordinates per outer-square face.
   // Vertices landing exactly on a corner (|cos θ| == |sin θ|) are skipped
   // because they already coincide with the corner of the padding rectangle.
+  // This is used to get the padding meshes to have vertices at the exact same
+  // positions so that merge_triangulations can merge them without needing to
+  // introduce new vertices.
   std::vector<double> top_x, bottom_x, left_y, right_y;
   for (unsigned int k = 0; k < 8; ++k)
     {
-      const double theta  = inner_rotation_angle + k * std::numbers::pi / 4.0;
-      const double abs_cx = std::abs(std::cos(theta));
-      const double abs_cy = std::abs(std::sin(theta));
-      if (std::abs(abs_cx - abs_cy) < 1e-12)
-        continue; // exact corner — already a rectangle vertex, no split needed
+      const Point<2> &q      = outer_targets[k];
+      const double    theta  = std::atan2(q[1] - center[1], q[0] - center[0]);
+      const double    abs_cx = std::abs(std::cos(theta));
+      const double    abs_cy = std::abs(std::sin(theta));
 
-      const Point<2> &q = outer_targets[k];
-      if (abs_cx > abs_cy) // lands on left or right face
+      // If the vertex lands on the corner, we do not need to add a breakpoint
+      // for the padding meshes because they already have a vertex there.
+      if (std::abs(abs_cx - abs_cy) < 1e-12)
+        continue;
+
+      // If cos θ is larger than sin θ, then the vertex is either on the left or
+      // right face.
+      if (abs_cx > abs_cy)
         {
           if (std::cos(theta) > 0.0)
             right_y.push_back(q[1]);
           else
             left_y.push_back(q[1]);
         }
-      else // lands on top or bottom face
+      // If sin θ is larger than cos θ, then the vertex is either on the top or
+      // bottom face.
+      else
         {
           if (std::sin(theta) > 0.0)
             top_x.push_back(q[0]);
