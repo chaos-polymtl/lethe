@@ -280,19 +280,25 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::generate_2d_channel_mesh(
         top_right);
     }
 
-  // Merge all sub-triangulations into the final channel mesh
-  GridGenerator::merge_triangulations({&cylinder_tria,
-                                       &box_tria,
-                                       &pad_bottom_tria,
-                                       &pad_top_tria,
-                                       &pad_left_tria,
-                                       &pad_right_tria,
-                                       &pad_bottom_left_corner_tria,
-                                       &pad_bottom_right_corner_tria,
-                                       &pad_top_left_corner_tria,
-                                       &pad_top_right_corner_tria},
-                                      triangulation);
-
+  // Merge only non-empty triangulations
+  std::vector<const Triangulation<2> *> trias = {&cylinder_tria, &box_tria};
+  if (pad_bottom > 0)
+    trias.push_back(&pad_bottom_tria);
+  if (pad_top > 0)
+    trias.push_back(&pad_top_tria);
+  if (pad_left > 0)
+    trias.push_back(&pad_left_tria);
+  if (pad_right > 0)
+    trias.push_back(&pad_right_tria);
+  if (pad_bottom > 0 && pad_left > 0)
+    trias.push_back(&pad_bottom_left_corner_tria);
+  if (pad_bottom > 0 && pad_right > 0)
+    trias.push_back(&pad_bottom_right_corner_tria);
+  if (pad_top > 0 && pad_left > 0)
+    trias.push_back(&pad_top_left_corner_tria);
+  if (pad_top > 0 && pad_right > 0)
+    trias.push_back(&pad_top_right_corner_tria);
+  GridGenerator::merge_triangulations(trias, triangulation);
 
 
   // Assign material and manifold IDs:

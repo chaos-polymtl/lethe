@@ -264,10 +264,6 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
       outer_targets[k] = center + Point<2>(scale * cx, scale * cy);
     }
 
-  std::cout << "Outer targets: " << std::endl;
-  for (const auto &target : outer_targets)
-    std::cout << target << std::endl;
-
   // Attach each outer ring vertex to its analytical target (closest by angle).
   // Using angle difference avoids the Euclidean distance ambiguity and ensures
   // exact vertex matching with the padding meshes.
