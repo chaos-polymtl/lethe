@@ -426,22 +426,41 @@ NavierStokesScratchData<dim>::reinit_mortar(
     cell_center.distance(mortar_parameters.center_of_rotation);
 
   // Use prescribed rotor angular velocity only if cell is part of the rotor
-  double cell_rotor_angular_velocity;
+  double omega;
   if (radius_current > radius)
-    cell_rotor_angular_velocity = 0.0;
+    omega = 0.0;
   else
-    cell_rotor_angular_velocity = rotor_angular_velocity;
+    omega = rotor_angular_velocity;
 
   // Compute rotor linear velocity at quadrature points
   rotor_linear_velocity_values = std::vector<Tensor<1, dim>>(this->n_q_points);
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      // Assumption in 3D case: rotation axis is in z
-      // TODO generalize rotation axis
-      const auto x                       = fe_values.quadrature_point(q)[0];
-      const auto y                       = fe_values.quadrature_point(q)[1];
-      rotor_linear_velocity_values[q][0] = -cell_rotor_angular_velocity * y;
-      rotor_linear_velocity_values[q][1] = cell_rotor_angular_velocity * x;
+      const auto x = fe_values.quadrature_point(q)[0];
+      const auto y = fe_values.quadrature_point(q)[1];
+
+      if constexpr (dim == 2)
+        {
+          rotor_linear_velocity_values[q][0] = -omega * y;
+          rotor_linear_velocity_values[q][1] = omega * x;
+        }
+
+      if constexpr (dim == 3)
+        {
+          const auto z = fe_values.quadrature_point(q)[2];
+
+          // Store angular velocity according to unit vector that defines the
+          // rotation axis
+          const auto omega_vec = omega * mortar_parameters.rotation_axis;
+
+          // Compute terms of u = omega_vec x [x, y, z]
+          rotor_linear_velocity_values[q][0] =
+            omega_vec[1] * z - omega_vec[2] * y;
+          rotor_linear_velocity_values[q][1] =
+            omega_vec[2] * x - omega_vec[0] * z;
+          rotor_linear_velocity_values[q][2] =
+            omega_vec[0] * y - omega_vec[1] * x;
+        }
 
       // Update velocity for stabilization
       this->velocity_for_stabilization[q] -= rotor_linear_velocity_values[q];
