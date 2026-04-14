@@ -11,8 +11,7 @@
 
 template <int dim, int spacedim>
 UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
-  UniformChannelWithMeshedSquarePrismGrid(
-    const std::string &grid_arguments)
+  UniformChannelWithMeshedSquarePrismGrid(const std::string &grid_arguments)
 {
   if constexpr (dim == 1 || spacedim == 1)
     {
@@ -121,9 +120,10 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
 
   // Parse optional parameters if provided
   this->inner_rotation_angle =
-    (arguments.size() > 5) ? std::remainder(Utilities::string_to_double(arguments[5]), 90.0) *
-                               numbers::PI / 180.0 :
-                             0.0;
+    (arguments.size() > 5) ?
+      std::remainder(Utilities::string_to_double(arguments[5]), 90.0) *
+        numbers::PI / 180.0 :
+      0.0;
   this->pad_bottom =
     (arguments.size() > 6) ? Utilities::string_to_int(arguments[6]) : 0;
   this->pad_top =
@@ -139,16 +139,16 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
                                                bottom_left[1]) > 1e-12)),
               ExcMessage("Bottom padding is required because the transition "
                          "region does not reach the bottom channel boundary."));
-  AssertThrow(!((pad_top == 0) &&
-                (std::abs((center[1] + outer_half_side) - top_right[1]) > 1e-12)),
+  AssertThrow(!((pad_top == 0) && (std::abs((center[1] + outer_half_side) -
+                                            top_right[1]) > 1e-12)),
               ExcMessage("Top padding is required because the transition "
                          "region does not reach the top channel boundary."));
   AssertThrow(!((pad_left == 0) && (std::abs((center[0] - outer_half_side) -
                                              bottom_left[0]) > 1e-12)),
               ExcMessage("Left padding is required because the transition "
                          "region does not reach the left channel boundary."));
-  AssertThrow(!((pad_right == 0) &&
-                (std::abs((center[0] + outer_half_side) - top_right[0]) > 1e-12)),
+  AssertThrow(!((pad_right == 0) && (std::abs((center[0] + outer_half_side) -
+                                              top_right[0]) > 1e-12)),
               ExcMessage("Right padding is required because the transition "
                          "region does not reach the right channel boundary."));
 
@@ -180,17 +180,21 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
   const types::material_id obstacle_id = 1;
   const double             tol_inner   = 1e-12 * inner_half_side;
 
-  //Verify that the inner square can be created with the desired rotation without exceeding the outer square.
-  const double max_diagonal_half =
-    inner_half_side * std::numbers::sqrt2 * std::abs(std::sin(inner_rotation_angle));
-  AssertThrow(max_diagonal_half <= outer_half_side,
-              ExcMessage(
-                "The inner square cannot be inscribed in the outer square with the desired rotation. Increase the outer_half_side or decrease the rotation angle."));
+  // Verify that the inner square can be created with the desired rotation
+  // without exceeding the outer square.
+  const double max_diagonal_half = inner_half_side * std::numbers::sqrt2 *
+                                   std::abs(std::sin(inner_rotation_angle));
+  AssertThrow(
+    max_diagonal_half <= outer_half_side,
+    ExcMessage(
+      "The inner square cannot be inscribed in the outer square with the desired rotation. Increase the outer_half_side or decrease the rotation angle."));
 
   // Create a balanced disk triangulation that the inner square obstacle is
   // inscribed in. This provides a structured inner mesh before square shaping.
   Triangulation<2> obstacle_tria;
-  GridGenerator::hyper_ball_balanced(obstacle_tria, center, 2 * inner_half_side);
+  GridGenerator::hyper_ball_balanced(obstacle_tria,
+                                     center,
+                                     2 * inner_half_side);
 
   // Move inside vertices to form the inner square.
   GridTools::transform(
@@ -199,15 +203,17 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
       if (dist <= tol_inner)
         return p;
 
-      // Vertices that lie inside the circle and that are on diagonals needs to be moved by sqrt2 * inner_half_side to reach the square boundary.
-      if (( dist < std::numbers::sqrt2 * inner_half_side) &&
+      // Vertices that lie inside the circle and that are on diagonals needs to
+      // be moved by sqrt2 * inner_half_side to reach the square boundary.
+      if ((dist < std::numbers::sqrt2 * inner_half_side) &&
           (std::abs(std::abs(p[0] - center[0]) - std::abs(p[1] - center[1])) <
            tol_inner))
         {
           return center +
                  std::numbers::sqrt2 * inner_half_side * (p - center) / dist;
         }
-      // Vertices that lie inside the circle and that are not on diagonals needs to be moved by inner_half_side to reach the square boundary.
+      // Vertices that lie inside the circle and that are not on diagonals needs
+      // to be moved by inner_half_side to reach the square boundary.
       if ((dist < std::numbers::sqrt2 * inner_half_side) &&
           (std::abs(std::abs(p[0] - center[0]) - std::abs(p[1] - center[1])) >=
            tol_inner))
@@ -234,21 +240,11 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
         obstacle_tria);
     }
 
-  // Scale vertices on the circle to the outer square boundary max length.
-  GridTools::transform(
-    [&](const Point<2> &p) {
-      const double dist = p.distance(center);
-      if (std::abs(dist - 2 * inner_half_side) < tol_inner){
-        std::cout << "Vertex " << p << " and move to " <<
-                  center +  std::numbers::sqrt2 *  (outer_half_side / dist) * (p - center) << std::endl;
-        return center + std::numbers::sqrt2 * outer_half_side * (p - center) / dist;
-      }
-      return p;
-    },
-    obstacle_tria);
 
   // Associate each outer-ring vertex to the closest target point on the outer
-  // square boundary.
+  // square boundary. This is done using the cosine of the angle between the
+  // vertex and the target point (cos theta = dot(p-center, candidate-center) /
+  // (|p-center|*|candidate-center|)).
   const std::array<Point<2>, 8> target_points = {{
     center + Point<2>(outer_half_side, outer_half_side),
     center + Point<2>(-outer_half_side, outer_half_side),
@@ -258,28 +254,35 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
     center + Point<2>(-outer_half_side, 0.0),
     center + Point<2>(0.0, outer_half_side),
     center + Point<2>(0.0, -outer_half_side),
-              }};
+  }};
   GridTools::transform(
     [&](const Point<2> &p) {
       const double dist = p.distance(center);
-      if ( dist <= std::numbers::sqrt2 * inner_half_side)
+      // Check if the vertex is the one inside, none of the inside vertices can
+      // be further than sqrt2 * inner_half_side from the center.
+      if (dist <= std::numbers::sqrt2 * inner_half_side + tol_inner)
         return p;
 
-      double   min_dist_sq = std::numeric_limits<double>::max();
-      Point<2> closest     = target_points[0];
+
+      double             min_angle   = -1.0;
+      Point<2>           closest     = target_points[0];
+      const Tensor<1, 2> p_normalize = (p - center) / (p - center).norm();
       for (const Point<2> &candidate : target_points)
         {
-          const double dx   = p[0] - candidate[0];
-          const double dy   = p[1] - candidate[1];
-          const double d_sq = dx * dx + dy * dy;
-          if (d_sq < min_dist_sq)
+          const Tensor<1, 2> target_normalize =
+            (candidate - center) / (candidate - center).norm();
+          const double cos_angle = p_normalize * target_normalize;
+          // When the orientation is superposed, the cosine is 1, when it is
+          // orthogonal, the cosine is 0, and when it is opposite, the cosine is
+          // -1. We want to find the candidate with the largest cosine.
+          if (cos_angle > min_angle)
             {
-              min_dist_sq = d_sq;
-              closest     = candidate;
+              min_angle = cos_angle;
+              closest   = candidate;
             }
         }
-        std::cout << "Vertex " << p << " is moved to " << closest << " with distance "
-                  << std::sqrt(min_dist_sq) << std::endl;
+      std::cout << "Vertex " << p << " is associated to target point "
+                << closest << std::endl;
       return closest;
     },
     obstacle_tria);
@@ -384,7 +387,8 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
   triangulation.reset_all_manifolds();
   triangulation.set_all_manifold_ids(0);
 
-  // Mark obstacle cells with material_id=1 based on the inner square region. If we are inside the inner square, we are in the obstacle.
+  // Mark obstacle cells with material_id=1 based on the inner square region. If
+  // we are inside the inner square, we are in the obstacle.
   for (const auto &cell : triangulation.active_cell_iterators())
     {
       const Point<2> cell_center = cell->center();
@@ -397,7 +401,7 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
         {
           cell->set_material_id(fluid_id);
         }
-      }
+    }
 
   // Assign boundary IDs following the subdivided_hyper_rectangle convention:
   //   0: left (-x),  1: right (+x),  2: bottom (-y),  3: top (+y)
@@ -458,7 +462,7 @@ UniformChannelWithMeshedSquarePrismGrid<3, 3>::make_grid(
                            Point<2>(center[0], center[1]),
                            inner_half_side,
                            outer_half_side,
-                            inner_rotation_angle,
+                           inner_rotation_angle,
                            pad_bottom,
                            pad_top,
                            pad_left,

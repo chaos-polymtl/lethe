@@ -17,7 +17,9 @@ using namespace dealii;
 
 /**
  * @brief Generates a rectangular channel mesh with a meshed square obstacle
- * in 2D (extruded to a square prism in 3D). By default, this geometry defines two material IDs. The obstacle is assigned the material_id = 1 and the remaining domain is assigned material_id = 0.
+ * in 2D (extruded to a square prism in 3D). By default, this geometry defines
+ * two material IDs. The obstacle is assigned the material_id = 1 and the
+ * remaining domain is assigned material_id = 0.
  *
  * The mesh consists of three nested regions around the obstacle center:
  * -# An inner square of half-side @p inner_half_side (material_id = 1).
@@ -50,10 +52,10 @@ public:
    * |----|--------------|------------|----------|----------------------------------------------------|
    * |  0 | bottom_left  | x,y        | yes      | Bottom-left corner of the channel before extrusion |
    * |  1 | top_right    | x,y        | yes      | Top-right corner of the channel before extrusion   |
-  * |  2 | center       | x,y        | yes      | Center of the square obstacle                      |
-  * |  3 | inner_half_side | double     | yes      | Half-side of the inner square obstacle             |
-  * |  4 | outer_half_side | double     | yes      | Half-side of the outer transition square           |
-  * |  5 | rotation_deg | double     | no       | In-plane rotation (degrees) applied to the inner region (default: 0) |
+   * |  2 | center       | x,y        | yes      | Center of the square obstacle                      |
+   * |  3 | inner_half_side | double     | yes      | Half-side of the inner square obstacle             |
+   * |  4 | outer_half_side | double     | yes      | Half-side of the outer transition square           |
+   * |  5 | rotation_deg | double     | no       | In-plane rotation (degrees) applied to the inner region (default: 0) |
    * |  6 | pad_bottom   | int        | no       | N cells below the transition (default: 0)          |
    * |  7 | pad_top      | int        | no       | N cells above the transition (default: 0)          |
    * |  8 | pad_left     | int        | no       | N cells left of the transition (default: 0)        |
@@ -62,30 +64,29 @@ public:
    * | 11 | n_slices     | int        | no       | Number of z-layers, 3D only (default and min: 2)   |
    * | 12 | colorize     | true/false | no       | Assign distinct boundary IDs (default: false)      |
    *
-   * Example: @code "0,0 : 10,2 : 5,1 : 0.1 : 0.3 : 15 : 2 : 2 : 5 : 5 : 2. : 2 :
-    * true "
+   * Example: @code "0,0 : 10,2 : 5,1 : 0.1 : 0.3 : 15 : 2 : 2 : 5 : 5 : 2. : 2
+   * : true "
    * @endcode
    *
    * When @p colorize is true, boundary IDs follow the
    * subdivided_hyper_rectangle convention: 0 (-x), 1 (+x), 2 (-y), 3 (+y).
    * In 3D, the extruded bottom (z=0) gets id 4 and top (z=height) gets id 5.
    */
-  UniformChannelWithMeshedSquarePrismGrid(
-    const std::string &grid_arguments);
+  UniformChannelWithMeshedSquarePrismGrid(const std::string &grid_arguments);
 
   /**
-  * @brief Generate the 2D/3D channel mesh with a meshed square obstacle.
+   * @brief Generate the 2D/3D channel mesh with a meshed square obstacle.
    *
    * For 2D: Delegates geometry construction to generate_2d_channel_mesh(), then
    * attaches:
-  * - TransfiniteInterpolationManifold on manifold_id = 0.
+   * - TransfiniteInterpolationManifold on manifold_id = 0.
    * The boundary IDs are assigned following the subdivided_hyper_rectangle
    * convention when colorize is enabled: 0 (-x), 1 (+x), 2 (-y), 3 (+y).
    *
    * For 3D: Delegates geometry construction to generate_2d_channel_mesh(), then
    * extrudes the mesh along the z-axis and attaches:
-  * - TransfiniteInterpolationManifold on manifold_id = 0.
-  * The lateral boundary IDs are inherited from the 2D mesh when colorize
+   * - TransfiniteInterpolationManifold on manifold_id = 0.
+   * The lateral boundary IDs are inherited from the 2D mesh when colorize
    * is enabled. The extruded bottom (z = 0) gets boundary_id = 4 and the top (z
    * = height) gets boundary_id = 5.
    *
@@ -96,16 +97,16 @@ public:
 
 private:
   /**
-  * @brief Generate the 2D channel mesh geometry with a meshed square obstacle.
+   * @brief Generate the 2D channel mesh geometry with a meshed square obstacle.
    *
    * This private helper creates the composite 2D triangulation by merging:
-  * - An inner square of half-side @p inner_half_side.
-  * - A transition ring between @p inner_half_side and @p outer_half_side.
+   * - An inner square of half-side @p inner_half_side.
+   * - A transition ring between @p inner_half_side and @p outer_half_side.
    * - Up to 8 rectangular padding sub-meshes filling the gap between the
    *   transition square and the channel boundary.
    *
-  * Material IDs are assigned as follows: 1 for the inner obstacle and 0 for
-  * the rest of the channel.
+   * Material IDs are assigned as follows: 1 for the inner obstacle and 0 for
+   * the rest of the channel.
    *
    * If @p colorize is true, boundary IDs are set following the
    * subdivided_hyper_rectangle convention: 0 (-x), 1 (+x), 2 (-y), 3 (+y).
@@ -113,9 +114,9 @@ private:
    * @param[out] triangulation  The triangulation to fill.
    * @param[in]  bottom_left    Bottom-left corner of the channel.
    * @param[in]  top_right      Top-right corner of the channel.
-  * @param[in]  center         Center of the square obstacle.
-  * @param[in]  inner_half_side   Half-side of the inner square obstacle.
-  * @param[in]  outer_half_side   Half-side of the outer transition square.
+   * @param[in]  center         Center of the square obstacle.
+   * @param[in]  inner_half_side   Half-side of the inner square obstacle.
+   * @param[in]  outer_half_side   Half-side of the outer transition square.
    * @param[in]  inner_rotation_angle In-plane rotation angle in radians.
    * @param[in]  pad_bottom     Number of subdivisions in the bottom padding.
    * @param[in]  pad_top        Number of subdivisions in the top padding.
@@ -149,21 +150,25 @@ private:
   double inner_half_side;
   /// Half-side of the outer transition square.
   double outer_half_side;
-    /// In-plane rotation angle in radians applied to the inner mesh pattern.
+  /// In-plane rotation angle in radians applied to the inner mesh pattern.
   /// The rotation is blended to zero at outer_half_side so the channel boundary
   /// remains aligned with the rectangular domain.
   double inner_rotation_angle;
   /// Number of additional cells to be added to pad the channel from center -
-  /// inner_half_side - outer_half_side to the channel bottom boundary (-y direction).
+  /// inner_half_side - outer_half_side to the channel bottom boundary (-y
+  /// direction).
   unsigned int pad_bottom;
   /// Number of additional cells to be added to pad the channel from center +
-  /// inner_half_side + outer_half_side to the channel top boundary (+y direction).
+  /// inner_half_side + outer_half_side to the channel top boundary (+y
+  /// direction).
   unsigned int pad_top;
   /// Number of additional cells to be added to pad the channel from center -
-  /// inner_half_side - outer_half_side to the channel left boundary (-x direction).
+  /// inner_half_side - outer_half_side to the channel left boundary (-x
+  /// direction).
   unsigned int pad_left;
   /// Number of additional cells to be added to pad the channel from center +
-  /// inner_half_side + outer_half_side to the channel right boundary (+x direction).
+  /// inner_half_side + outer_half_side to the channel right boundary (+x
+  /// direction).
   unsigned int pad_right;
   /// Extrusion height in the z direction, 3D only.
   double height;
