@@ -159,7 +159,6 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
   this->colorize =
     (arguments.size() > 12 && arguments[12] == "true") ? true : false;
 }
-
 template <int dim, int spacedim>
 void
 UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
@@ -180,250 +179,285 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
   const types::material_id obstacle_id = 1;
   const double             tol_inner   = 1e-12 * inner_half_side;
 
-  // Verify that the inner square can be created with the desired rotation
-  // without exceeding the outer square.
-  const double max_diagonal_half = inner_half_side * std::numbers::sqrt2 *
-                                   std::abs(std::sin(inner_rotation_angle));
-  AssertThrow(
-    max_diagonal_half <= outer_half_side,
-    ExcMessage(
-      "The inner square cannot be inscribed in the outer square with the desired rotation. Increase the outer_half_side or decrease the rotation angle."));
+  const double max_extent =
+    inner_half_side * (std::abs(std::cos(inner_rotation_angle)) +
+                       std::abs(std::sin(inner_rotation_angle)));
+  AssertThrow(max_extent <= outer_half_side,
+              ExcMessage("Rotated inner square exceeds outer square."));
 
-  // Create a balanced disk triangulation that the inner square obstacle is
-  // inscribed in. This provides a structured inner mesh before square shaping.
   Triangulation<2> obstacle_tria;
   GridGenerator::hyper_ball_balanced(obstacle_tria,
                                      center,
                                      2 * inner_half_side);
 
-  // Move inside vertices to form the inner square.
+  // Shape inner vertices to form the inner square
   GridTools::transform(
     [&](const Point<2> &p) {
       const double dist = p.distance(center);
       if (dist <= tol_inner)
         return p;
-
-      // Vertices that lie inside the circle and that are on diagonals needs to
-      // be moved by sqrt2 * inner_half_side to reach the square boundary.
       if ((dist < std::numbers::sqrt2 * inner_half_side) &&
           (std::abs(std::abs(p[0] - center[0]) - std::abs(p[1] - center[1])) <
            tol_inner))
-        {
-          return center +
-                 std::numbers::sqrt2 * inner_half_side * (p - center) / dist;
-        }
-      // Vertices that lie inside the circle and that are not on diagonals needs
-      // to be moved by inner_half_side to reach the square boundary.
+        return center +
+               std::numbers::sqrt2 * inner_half_side * (p - center) / dist;
       if ((dist < std::numbers::sqrt2 * inner_half_side) &&
           (std::abs(std::abs(p[0] - center[0]) - std::abs(p[1] - center[1])) >=
            tol_inner))
-        {
-          return center + (inner_half_side / dist) * (p - center);
-        }
-
+        return center + (inner_half_side / dist) * (p - center);
       return p;
     },
     obstacle_tria);
 
-  // Rotate the obstacle triangulation once by the requested angle.
+  // Rotate
   if (inner_rotation_angle != 0.0)
     {
-      const double cos_angle = std::cos(inner_rotation_angle);
-      const double sin_angle = std::sin(inner_rotation_angle);
+      const double cos_a = std::cos(inner_rotation_angle);
+      const double sin_a = std::sin(inner_rotation_angle);
       GridTools::transform(
         [&](const Point<2> &p) {
           const double x_rel = p[0] - center[0];
           const double y_rel = p[1] - center[1];
-          return Point<2>(center[0] + cos_angle * x_rel - sin_angle * y_rel,
-                          center[1] + sin_angle * x_rel + cos_angle * y_rel);
+          return Point<2>(center[0] + cos_a * x_rel - sin_a * y_rel,
+                          center[1] + sin_a * x_rel + cos_a * y_rel);
         },
         obstacle_tria);
     }
 
+  // Pre-compute the 8 analytical L∞ projected positions on the outer square.
+  // The outer ring of hyper_ball_balanced has vertices at angles k*pi/4.
+  // After rotation they sit at inner_rotation_angle + k*pi/4.
+  // L∞ projection maps each direction onto the outer square along the same ray.
+  std::array<Point<2>, 8> outer_targets;
+  for (unsigned int k = 0; k < 8; ++k)
+    {
+      const double theta = inner_rotation_angle + k * std::numbers::pi / 4.0;
+      const double cx    = std::cos(theta);
+      const double cy    = std::sin(theta);
+      const double scale =
+        outer_half_side / std::max(std::abs(cx), std::abs(cy));
+      outer_targets[k] = center + Point<2>(scale * cx, scale * cy);
+    }
 
-  // Associate each outer-ring vertex to the closest target point on the outer
-  // square boundary. This is done using the cosine of the angle between the
-  // vertex and the target point (cos theta = dot(p-center, candidate-center) /
-  // (|p-center|*|candidate-center|)).
-  const std::array<Point<2>, 8> target_points = {{
-    center + Point<2>(outer_half_side, outer_half_side),
-    center + Point<2>(-outer_half_side, outer_half_side),
-    center + Point<2>(outer_half_side, -outer_half_side),
-    center + Point<2>(-outer_half_side, -outer_half_side),
-    center + Point<2>(outer_half_side, 0.0),
-    center + Point<2>(-outer_half_side, 0.0),
-    center + Point<2>(0.0, outer_half_side),
-    center + Point<2>(0.0, -outer_half_side),
-  }};
+  // Snap each outer ring vertex to its analytical target (closest by angle).
+  // Using angle difference with wrap-around avoids the Euclidean distance
+  // ambiguity and ensures exact vertex matching with the padding meshes.
   GridTools::transform(
     [&](const Point<2> &p) {
       const double dist = p.distance(center);
-      // Check if the vertex is the one inside, none of the inside vertices can
-      // be further than sqrt2 * inner_half_side from the center.
       if (dist <= std::numbers::sqrt2 * inner_half_side + tol_inner)
         return p;
 
-
-      double             min_angle   = -1.0;
-      Point<2>           closest     = target_points[0];
-      const Tensor<1, 2> p_normalize = (p - center) / (p - center).norm();
-      for (const Point<2> &candidate : target_points)
+      const double angle     = std::atan2(p[1] - center[1], p[0] - center[0]);
+      double       best_diff = std::numeric_limits<double>::max();
+      Point<2>     closest   = outer_targets[0];
+      for (const Point<2> &t : outer_targets)
         {
-          const Tensor<1, 2> target_normalize =
-            (candidate - center) / (candidate - center).norm();
-          const double cos_angle = p_normalize * target_normalize;
-          // When the orientation is superposed, the cosine is 1, when it is
-          // orthogonal, the cosine is 0, and when it is opposite, the cosine is
-          // -1. We want to find the candidate with the largest cosine.
-          if (cos_angle > min_angle)
+          const double t_ang = std::atan2(t[1] - center[1], t[0] - center[0]);
+          double       diff  = std::abs(angle - t_ang);
+          if (diff > std::numbers::pi)
+            diff = 2.0 * std::numbers::pi - diff; // wrap-around fix
+          if (diff < best_diff)
             {
-              min_angle = cos_angle;
-              closest   = candidate;
+              best_diff = diff;
+              closest   = t;
             }
         }
-      std::cout << "Vertex " << p << " is associated to target point "
-                << closest << std::endl;
       return closest;
     },
     obstacle_tria);
 
+  // Collect the projected x/y coordinates per outer-square face.
+  // Vertices landing exactly on a corner (|cos θ| == |sin θ|) are skipped
+  // because they already coincide with the corner of the padding rectangle.
+  std::vector<double> top_x, bottom_x, left_y, right_y;
+  for (unsigned int k = 0; k < 8; ++k)
+    {
+      const double theta  = inner_rotation_angle + k * std::numbers::pi / 4.0;
+      const double abs_cx = std::abs(std::cos(theta));
+      const double abs_cy = std::abs(std::sin(theta));
+      if (std::abs(abs_cx - abs_cy) < 1e-12)
+        continue; // exact corner — already a rectangle vertex, no split needed
 
-  // Create the padding with up to 8 rectangles that fill the gap between the
-  // transition square and the channel boundary. The four sides and four
-  // corners are meshed independently.
+      const Point<2> &q = outer_targets[k];
+      if (abs_cx > abs_cy) // lands on left or right face
+        {
+          if (std::cos(theta) > 0.0)
+            right_y.push_back(q[1]);
+          else
+            left_y.push_back(q[1]);
+        }
+      else // lands on top or bottom face
+        {
+          if (std::sin(theta) > 0.0)
+            top_x.push_back(q[0]);
+          else
+            bottom_x.push_back(q[0]);
+        }
+    }
+  std::sort(top_x.begin(), top_x.end());
+  std::sort(bottom_x.begin(), bottom_x.end());
+  std::sort(left_y.begin(), left_y.end());
+  std::sort(right_y.begin(), right_y.end());
+
+  // Build a vector of step sizes from sorted breakpoints + outer bounds.
+  // This lets subdivided_hyper_rectangle place vertices exactly at the
+  // projected positions so merge_triangulations sees coincident nodes.
+  auto make_steps = [](const std::vector<double> &inner_coords,
+                       const double               lo,
+                       const double               hi) {
+    std::vector<double> coords = {lo};
+    for (const double c : inner_coords)
+      coords.push_back(c);
+    coords.push_back(hi);
+    std::vector<double> steps;
+    for (std::size_t i = 1; i < coords.size(); ++i)
+      steps.push_back(coords[i] - coords[i - 1]);
+    return steps;
+  };
+
+  auto uniform = [](const unsigned int n, const double total) {
+    return std::vector<double>(n, total / static_cast<double>(n));
+  };
+
+  // Bottom pad: columns split at bottom_x projected coords
   Triangulation<2> pad_bottom_tria;
   if (pad_bottom > 0)
-    {
-      GridGenerator::subdivided_hyper_rectangle(
-        pad_bottom_tria,
-        {2, pad_bottom},
-        Point<2>(center[0] - outer_half_side, bottom_left[1]),
-        Point<2>(center[0] + outer_half_side, center[1] - outer_half_side));
-    }
+    GridGenerator::subdivided_hyper_rectangle(
+      pad_bottom_tria,
+      {make_steps(bottom_x,
+                  center[0] - outer_half_side,
+                  center[0] + outer_half_side),
+       uniform(pad_bottom, center[1] - outer_half_side - bottom_left[1])},
+      Point<2>(center[0] - outer_half_side, bottom_left[1]),
+      Point<2>(center[0] + outer_half_side, center[1] - outer_half_side));
 
+  // Top pad: columns split at top_x projected coords
   Triangulation<2> pad_top_tria;
   if (pad_top > 0)
-    {
-      GridGenerator::subdivided_hyper_rectangle(
-        pad_top_tria,
-        {2, pad_top},
-        Point<2>(center[0] - outer_half_side, center[1] + outer_half_side),
-        Point<2>(center[0] + outer_half_side, top_right[1]));
-    }
+    GridGenerator::subdivided_hyper_rectangle(
+      pad_top_tria,
+      {make_steps(top_x,
+                  center[0] - outer_half_side,
+                  center[0] + outer_half_side),
+       uniform(pad_top, top_right[1] - (center[1] + outer_half_side))},
+      Point<2>(center[0] - outer_half_side, center[1] + outer_half_side),
+      Point<2>(center[0] + outer_half_side, top_right[1]));
 
+  // Left pad: rows split at left_y projected coords
   Triangulation<2> pad_left_tria;
   if (pad_left > 0)
-    {
-      GridGenerator::subdivided_hyper_rectangle(
-        pad_left_tria,
-        {pad_left, 2},
-        Point<2>(bottom_left[0], center[1] - outer_half_side),
-        Point<2>(center[0] - outer_half_side, center[1] + outer_half_side));
-    }
+    GridGenerator::subdivided_hyper_rectangle(
+      pad_left_tria,
+      {uniform(pad_left, center[0] - outer_half_side - bottom_left[0]),
+       make_steps(left_y,
+                  center[1] - outer_half_side,
+                  center[1] + outer_half_side)},
+      Point<2>(bottom_left[0], center[1] - outer_half_side),
+      Point<2>(center[0] - outer_half_side, center[1] + outer_half_side));
 
+  // Right pad: rows split at right_y projected coords
   Triangulation<2> pad_right_tria;
   if (pad_right > 0)
-    {
-      GridGenerator::subdivided_hyper_rectangle(
-        pad_right_tria,
-        {pad_right, 2},
-        Point<2>(center[0] + outer_half_side, center[1] - outer_half_side),
-        Point<2>(top_right[0], center[1] + outer_half_side));
-    }
+    GridGenerator::subdivided_hyper_rectangle(
+      pad_right_tria,
+      {uniform(pad_right, top_right[0] - (center[0] + outer_half_side)),
+       make_steps(right_y,
+                  center[1] - outer_half_side,
+                  center[1] + outer_half_side)},
+      Point<2>(center[0] + outer_half_side, center[1] - outer_half_side),
+      Point<2>(top_right[0], center[1] + outer_half_side));
 
+  // Corner pads never touch the obstacle tria boundary, so no special split
+  // needed
   Triangulation<2> pad_bottom_left_corner_tria;
   if (pad_bottom > 0 && pad_left > 0)
-    {
-      GridGenerator::subdivided_hyper_rectangle(
-        pad_bottom_left_corner_tria,
-        {pad_left, pad_bottom},
-        bottom_left,
-        Point<2>(center[0] - outer_half_side, center[1] - outer_half_side));
-    }
+    GridGenerator::subdivided_hyper_rectangle(
+      pad_bottom_left_corner_tria,
+      {pad_left, pad_bottom},
+      bottom_left,
+      Point<2>(center[0] - outer_half_side, center[1] - outer_half_side));
 
   Triangulation<2> pad_bottom_right_corner_tria;
   if (pad_bottom > 0 && pad_right > 0)
-    {
-      GridGenerator::subdivided_hyper_rectangle(
-        pad_bottom_right_corner_tria,
-        {pad_right, pad_bottom},
-        Point<2>(center[0] + outer_half_side, bottom_left[1]),
-        Point<2>(top_right[0], center[1] - outer_half_side));
-    }
+    GridGenerator::subdivided_hyper_rectangle(
+      pad_bottom_right_corner_tria,
+      {pad_right, pad_bottom},
+      Point<2>(center[0] + outer_half_side, bottom_left[1]),
+      Point<2>(top_right[0], center[1] - outer_half_side));
 
   Triangulation<2> pad_top_left_corner_tria;
   if (pad_top > 0 && pad_left > 0)
-    {
-      GridGenerator::subdivided_hyper_rectangle(
-        pad_top_left_corner_tria,
-        {pad_left, pad_top},
-        Point<2>(bottom_left[0], center[1] + outer_half_side),
-        Point<2>(center[0] - outer_half_side, top_right[1]));
-    }
+    GridGenerator::subdivided_hyper_rectangle(
+      pad_top_left_corner_tria,
+      {pad_left, pad_top},
+      Point<2>(bottom_left[0], center[1] + outer_half_side),
+      Point<2>(center[0] - outer_half_side, top_right[1]));
 
   Triangulation<2> pad_top_right_corner_tria;
   if (pad_top > 0 && pad_right > 0)
-    {
-      GridGenerator::subdivided_hyper_rectangle(
-        pad_top_right_corner_tria,
-        {pad_right, pad_top},
-        Point<2>(center[0] + outer_half_side, center[1] + outer_half_side),
-        top_right);
-    }
+    GridGenerator::subdivided_hyper_rectangle(
+      pad_top_right_corner_tria,
+      {pad_right, pad_top},
+      Point<2>(center[0] + outer_half_side, center[1] + outer_half_side),
+      top_right);
 
-  // Merge all sub-triangulations into the final channel mesh
-  GridGenerator::merge_triangulations({&obstacle_tria,
-                                       &pad_bottom_tria,
-                                       &pad_top_tria,
-                                       &pad_left_tria,
-                                       &pad_right_tria,
-                                       &pad_bottom_left_corner_tria,
-                                       &pad_bottom_right_corner_tria,
-                                       &pad_top_left_corner_tria,
-                                       &pad_top_right_corner_tria},
-                                      triangulation);
-
+  // Merge only non-empty triangulations
+  std::vector<const Triangulation<2> *> trias = {&obstacle_tria};
+  if (pad_bottom > 0)
+    trias.push_back(&pad_bottom_tria);
+  if (pad_top > 0)
+    trias.push_back(&pad_top_tria);
+  if (pad_left > 0)
+    trias.push_back(&pad_left_tria);
+  if (pad_right > 0)
+    trias.push_back(&pad_right_tria);
+  if (pad_bottom > 0 && pad_left > 0)
+    trias.push_back(&pad_bottom_left_corner_tria);
+  if (pad_bottom > 0 && pad_right > 0)
+    trias.push_back(&pad_bottom_right_corner_tria);
+  if (pad_top > 0 && pad_left > 0)
+    trias.push_back(&pad_top_left_corner_tria);
+  if (pad_top > 0 && pad_right > 0)
+    trias.push_back(&pad_top_right_corner_tria);
+  GridGenerator::merge_triangulations(trias, triangulation);
 
   triangulation.reset_all_manifolds();
   triangulation.set_all_manifold_ids(0);
 
-  // Mark obstacle cells with material_id=1 based on the inner square region. If
-  // we are inside the inner square, we are in the obstacle.
+  // Mark obstacle cells by rotating the cell center back to the axis-aligned
+  // frame
   for (const auto &cell : triangulation.active_cell_iterators())
     {
-      const Point<2> cell_center = cell->center();
-      if ((std::abs(cell_center[0] - center[0]) <= inner_half_side) &&
-          (std::abs(cell_center[1] - center[1]) <= inner_half_side + 1e-12))
-        {
-          cell->set_material_id(obstacle_id);
-        }
-      else
-        {
-          cell->set_material_id(fluid_id);
-        }
+      const Point<2> c     = cell->center();
+      const double   cos_a = std::cos(-inner_rotation_angle);
+      const double   sin_a = std::sin(-inner_rotation_angle);
+      const double   x_rot =
+        cos_a * (c[0] - center[0]) - sin_a * (c[1] - center[1]);
+      const double y_rot =
+        sin_a * (c[0] - center[0]) + cos_a * (c[1] - center[1]);
+      cell->set_material_id((std::abs(x_rot) <= inner_half_side + tol_inner &&
+                             std::abs(y_rot) <= inner_half_side + tol_inner) ?
+                              obstacle_id :
+                              fluid_id);
     }
 
-  // Assign boundary IDs following the subdivided_hyper_rectangle convention:
-  //   0: left (-x),  1: right (+x),  2: bottom (-y),  3: top (+y)
   if (colorize)
     {
       const double tol_x = 1e-10 * (top_right[0] - bottom_left[0]);
       const double tol_y = 1e-10 * (top_right[1] - bottom_left[1]);
-
       for (const auto &face : triangulation.active_face_iterators())
         {
           if (!face->at_boundary())
             continue;
-
-          const Point<2> face_center = face->center();
-
-          if (std::abs(face_center[0] - bottom_left[0]) < tol_x)
+          const Point<2> fc = face->center();
+          if (std::abs(fc[0] - bottom_left[0]) < tol_x)
             face->set_boundary_id(0);
-          else if (std::abs(face_center[0] - top_right[0]) < tol_x)
+          else if (std::abs(fc[0] - top_right[0]) < tol_x)
             face->set_boundary_id(1);
-          else if (std::abs(face_center[1] - bottom_left[1]) < tol_y)
+          else if (std::abs(fc[1] - bottom_left[1]) < tol_y)
             face->set_boundary_id(2);
-          else if (std::abs(face_center[1] - top_right[1]) < tol_y)
+          else if (std::abs(fc[1] - top_right[1]) < tol_y)
             face->set_boundary_id(3);
         }
     }
