@@ -334,10 +334,10 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
             bottom_x.push_back(q[0]);
         }
     }
-  std::sort(top_x.begin(), top_x.end());
-  std::sort(bottom_x.begin(), bottom_x.end());
-  std::sort(left_y.begin(), left_y.end());
-  std::sort(right_y.begin(), right_y.end());
+  std::ranges::sort(top_x);
+  std::ranges::sort(bottom_x);
+  std::ranges::sort(left_y);
+  std::ranges::sort(right_y);
 
   // Build a vector of step sizes from sorted breakpoints + outer bounds.
   // This lets subdivided_hyper_rectangle place vertices exactly at the
