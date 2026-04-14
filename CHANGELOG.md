@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/04/10
+
+### Fixed
+
+- MINOR The dynamic_with_sparse_contacts load balance method could crash if load balancing was triggered at the first iteration of a restart (yes this is oddly specific). This PR fixes this by refreshing the ASC structures when the DEM is restarted. [#1964](https://github.com/chaos-polymtl/lethe/pull/1964)
+
 ## [Master] - 2026/04/09
 
 ### Added

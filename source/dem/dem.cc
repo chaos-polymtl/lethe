@@ -357,6 +357,18 @@ DEMSolver<dim, PropertiesIndex>::load_balance()
     return;
 
   TimerOutput::Scope t(this->computing_timer, "Load balancing");
+
+  // If the load balancing uses the sparse_contact object to calculate the
+  // weight, make sure that the sparse contact object has all mobility status
+  // correctly identified and refreshed.
+  if (parameters.model_parameters.load_balance_method ==
+      ModelParameters<dim>::LoadBalanceMethod::dynamic_with_sparse_contacts)
+    sparse_contacts_object.identify_mobility_status(
+      background_dh,
+      particle_handler,
+      triangulation.n_active_cells(),
+      mpi_communicator);
+
   // Prepare particle handler for the adaptation of the triangulation to the
   // load
   particle_handler.prepare_for_coarsening_and_refinement();
