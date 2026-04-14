@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/04/21
+
+### Fixed
+
+- MINOR The linear velocity computation for the rotor domain (within the mortar feature) assumed that, in 3D, the rotation axis was always z. This PR fixes this by using the complete equation to transform an angular velocity into a linear velocity. [#1967](https://github.com/chaos-polymtl/lethe/pull/1967)
+
 ## [Master] - 2026/04/20
 
 ### Added
