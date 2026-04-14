@@ -2101,6 +2101,8 @@ NeumannTractionBoundaryCondition<dim>::assemble_matrix(
   StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
   // This method is just for compilation purpose and no assembly is done.
+  (void)scratch_data;
+  (void)copy_data;
 }
 
 template <int dim>
