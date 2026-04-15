@@ -1,34 +1,21 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_sharp_ib_periodic_boundaries_h
 #define lethe_sharp_ib_periodic_boundaries_h
 
 #include <core/boundary_conditions.h>
+#include <core/parameters_lagrangian.h>
 
-#include <dem/periodic_boundaries_manipulator.h>
-
-#include <deal.II/distributed/tria.h>
-
-#include <deal.II/dofs/dof_handler.h>
-
-using namespace dealii;
+#include <deal.II/base/conditional_ostream.h>
+#include <deal.II/base/tensor.h>
 
 /**
  * @brief Combined periodic boundary handler for sharp IB coupling.
  *
- * This class provides a unified interface for periodic boundary conditions
- * that is aware of both DEM particle periodicity and CFD field periodicity.
- * It ensures consistent periodic wrapping/mapping across the fluid-particle
- * coupling in the sharp immersed boundary solver.
- *
- * Key responsibilities:
- * - Detect and warn about DEM/CFD periodicity mismatches
- * - Provide periodic offset tensor for coupling operations
- * - Generate periodic image points for stencil support
- * - Map points across periodic boundaries consistently
- * - Enable periodic-aware cell/DoF traversal for refinement, interpolation,
- *   and forcing
+ * This class validates the periodic configuration required by Sharp-IB and
+ * exposes the minimal geometric helpers needed once that configuration has
+ * been accepted.
  *
  * @tparam dim Spatial dimension
  */
@@ -37,41 +24,54 @@ class SharpIBPeriodicBoundaries
 {
 public:
   /**
+   * @brief Validated periodic configuration for Sharp-IB coupling.
+   *
+   * Sharp currently supports at most one periodic boundary pair. The two
+   * boundaries are treated as an ordered pair whose direction is the normal
+   * direction used for wrapping and image generation.
+   */
+  struct PeriodicConfiguration
+  {
+    bool                       enabled    = false;
+    dealii::types::boundary_id boundary_0 = 0;
+    dealii::types::boundary_id boundary_1 = 0;
+    unsigned int               direction  = 0;
+  };
+
+  /**
    * @brief Default constructor. Periodicity is disabled until configured.
    */
   SharpIBPeriodicBoundaries();
 
   /**
-   * @brief Configure combined periodic boundaries.
+   * @brief Validate and store the periodic configuration used by Sharp-IB.
    *
-   * This function must be called during solver initialization, after both
-   * DEM and CFD periodic boundary conditions have been parsed.
+   * Sharp-IB periodic coupling only supports one periodic boundary pair and
+   * requires the DEM and CFD configurations to match exactly. Unsupported or
+   * inconsistent configurations throw immediately so the solver never enters a
+   * partially periodic state.
    *
-   * @param dem_periodic_enabled True if DEM has periodic boundaries enabled
-   * @param dem_periodic_boundary_0 DEM periodic boundary ID (first)
-   * @param dem_periodic_boundary_1 DEM periodic boundary ID (second)
-   * @param dem_periodic_direction DEM periodic direction (0=x, 1=y, 2=z)
+   * @param dem_boundary_conditions DEM particle boundary conditions.
    * @param cfd_boundary_conditions CFD boundary conditions object
-   * @param pcout Parallel output stream for warnings
+   * @param pcout Parallel output stream used to report the accepted
+   * configuration.
    */
   void
-  setup(const bool                                        dem_periodic_enabled,
-        const types::boundary_id                          dem_periodic_boundary_0,
-        const types::boundary_id                          dem_periodic_boundary_1,
-        const unsigned int                                dem_periodic_direction,
-        const BoundaryConditions::BoundaryConditions     &cfd_boundary_conditions,
-        const ConditionalOStream                         &pcout);
+  initialize(
+    const Parameters::Lagrangian::BCDEM          &dem_boundary_conditions,
+    const BoundaryConditions::BoundaryConditions &cfd_boundary_conditions,
+    const dealii::ConditionalOStream             &pcout);
 
   /**
    * @brief Set the periodic offset after triangulation setup.
    *
-   * Must be called after periodic cells have been mapped and the offset
-   * distance computed (typically from PeriodicBoundariesManipulator).
+   * Must be called after the domain bounds of the active triangulation have
+   * been computed.
    *
    * @param offset Periodic offset tensor (displacement from boundary 0 to 1)
    */
   void
-  set_periodic_offset(const Tensor<1, dim> &offset);
+  set_periodic_offset(const dealii::Tensor<1, dim> &offset);
 
   /**
    * @brief Check if periodic boundaries are enabled for sharp IB coupling.
@@ -81,40 +81,51 @@ public:
   inline bool
   is_periodic_enabled() const
   {
-    return periodic_enabled;
+    return configuration.enabled;
+  }
+
+  /**
+   * @brief Get the validated periodic configuration.
+   *
+   * @return Active periodic configuration.
+   */
+  inline const PeriodicConfiguration &
+  get_configuration() const
+  {
+    return configuration;
   }
 
   /**
    * @brief Get the periodic offset tensor.
    *
-   * @return Offset vector from periodic boundary 0 to boundary 1
+   * @return Offset vector from periodic boundary 0 to boundary 1.
    */
-  inline Tensor<1, dim>
+  inline dealii::Tensor<1, dim>
   get_periodic_offset() const
   {
     return periodic_offset;
   }
 
   /**
+   * @brief Get the periodic boundary IDs.
+   *
+   * @return Pair of (boundary_0_id, boundary_1_id).
+   */
+  inline std::pair<dealii::types::boundary_id, dealii::types::boundary_id>
+  get_periodic_boundary_ids() const
+  {
+    return {configuration.boundary_0, configuration.boundary_1};
+  }
+
+  /**
    * @brief Get the periodic direction (0=x, 1=y, 2=z).
    *
-   * @return Periodic direction index
+   * @return Periodic direction index.
    */
   inline unsigned int
   get_periodic_direction() const
   {
-    return periodic_direction;
-  }
-
-  /**
-   * @brief Get the periodic boundary IDs.
-   *
-   * @return Pair of (boundary_0_id, boundary_1_id)
-   */
-  inline std::pair<types::boundary_id, types::boundary_id>
-  get_periodic_boundary_ids() const
-  {
-    return {periodic_boundary_0, periodic_boundary_1};
+    return configuration.direction;
   }
 
   /**
@@ -128,10 +139,10 @@ public:
    * @param domain_upper Upper bound of domain in periodic direction
    * @return Wrapped point
    */
-  Point<dim>
-  wrap_point(const Point<dim> &point,
-             const double      domain_lower,
-             const double      domain_upper) const;
+  dealii::Point<dim>
+  wrap_point(const dealii::Point<dim> &point,
+             const double              domain_lower,
+             const double              domain_upper) const;
 
   /**
    * @brief Generate periodic image points for a stencil support region.
@@ -146,64 +157,60 @@ public:
    * @param domain_upper Upper bound of domain in periodic direction
    * @return Vector of image points (may be empty if no images needed)
    */
-  std::vector<Point<dim>>
-  generate_periodic_image_points(const Point<dim> &point,
-                                 const double      support_radius,
-                                 const double      domain_lower,
-                                 const double      domain_upper) const;
-
-  /**
-   * @brief Check if a point is near a periodic boundary (within tolerance).
-   *
-   * @param point Point to check
-   * @param tolerance Distance tolerance for "near"
-   * @param domain_lower Lower bound of domain in periodic direction
-   * @param domain_upper Upper bound of domain in periodic direction
-   * @return True if point is within tolerance of either periodic boundary
-   */
-  bool
-  is_point_near_periodic_boundary(const Point<dim> &point,
-                                  const double      tolerance,
-                                  const double      domain_lower,
-                                  const double      domain_upper) const;
-
-  /**
-   * @brief Map a DoF location across the periodic boundary.
-   *
-   * Given a DoF support point, returns its periodic image if it exists.
-   *
-   * @param dof_location DoF support point
-   * @return Periodic image of the DoF location
-   */
-  Point<dim>
-  map_dof_across_periodic_boundary(const Point<dim> &dof_location) const;
+  std::vector<dealii::Point<dim>>
+  generate_periodic_image_points(const dealii::Point<dim> &point,
+                                 const double              support_radius,
+                                 const double              domain_lower,
+                                 const double              domain_upper) const;
 
 private:
   /**
-   * @brief Check consistency between DEM and CFD periodicity and issue
-   * warnings.
+   * @brief Read the DEM periodic configuration.
    *
-   * @param pcout Parallel output stream for warnings
+   * @param dem_boundary_conditions DEM boundary conditions.
+   * @return Parsed DEM periodic configuration.
+   */
+  PeriodicConfiguration
+  parse_dem_periodic_configuration(
+    const Parameters::Lagrangian::BCDEM &dem_boundary_conditions) const;
+
+  /**
+   * @brief Read the CFD periodic configuration.
+   *
+   * @param cfd_boundary_conditions CFD boundary conditions.
+   * @return Parsed CFD periodic configuration.
+   */
+  PeriodicConfiguration
+  parse_cfd_periodic_configuration(const BoundaryConditions::BoundaryConditions
+                                     &cfd_boundary_conditions) const;
+
+  /**
+   * @brief Validate that the DEM and CFD periodic configurations are both
+   * supported and identical.
+   *
+   * @param dem_configuration Parsed DEM periodic configuration.
+   * @param cfd_configuration Parsed CFD periodic configuration.
    */
   void
-  check_consistency_and_warn(const ConditionalOStream &pcout);
+  validate_matching_configurations(
+    const PeriodicConfiguration &dem_configuration,
+    const PeriodicConfiguration &cfd_configuration) const;
 
-  // Configuration flags
-  bool periodic_enabled;
-  bool dem_periodic_enabled;
-  bool cfd_periodic_enabled;
-  bool periodicity_mismatch_detected;
+  /**
+   * @brief Report the validated periodic configuration used by Sharp-IB.
+   *
+   * @param pcout Parallel output stream for informational output.
+   */
+  void
+  report_configuration(const dealii::ConditionalOStream &pcout) const;
 
-  // Periodic boundary information
-  types::boundary_id periodic_boundary_0;
-  types::boundary_id periodic_boundary_1;
-  unsigned int       periodic_direction; // 0=x, 1=y, 2=z
+  // Validated periodic configuration.
+  PeriodicConfiguration configuration;
 
-  // Periodic offset (displacement from boundary 0 to boundary 1)
-  Tensor<1, dim> periodic_offset;
-
-  // Magnitude of periodic offset
-  double periodic_offset_magnitude;
+  // Periodic offset vector: the displacement from the lower periodic face to
+  // the upper periodic face along the periodic direction. Applied as a
+  // translation to map points or particles across the periodic boundary.
+  dealii::Tensor<1, dim> periodic_offset;
 };
 
 #endif

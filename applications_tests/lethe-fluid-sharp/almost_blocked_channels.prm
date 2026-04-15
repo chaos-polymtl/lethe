@@ -97,8 +97,22 @@ subsection source term
 end
 
 #---------------------------------------------------
-# IB Particles
+# IB particles / DEM boundary conditions
 #---------------------------------------------------
+
+subsection DEM boundary conditions
+  # Sharp periodic coupling requires the DEM and CFD periodic definitions to
+  # match exactly. This test uses the same x-periodic pair on both sides so the
+  # periodic refinement/wrapping path is exercised in a supported setup.
+  set number of boundary conditions = 1
+
+  subsection boundary condition 0
+    set type               = periodic
+    set periodic id 0      = 0
+    set periodic id 1      = 1
+    set periodic direction = 0
+  end
+end
 
 subsection particles
   set number of particles = 3
