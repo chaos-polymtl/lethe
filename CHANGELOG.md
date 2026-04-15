@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/04/15
+
+### Changed
+
+- MINOR This PR skips unnecessary Newton linear solves when the assembled Sharp fluid residual is already below the nonlinear tolerance, and adds a dedicated 2D application test for that solver path. [#1962](https://github.com/chaos-polymtl/lethe/pull/1962)
+
 ## [Master] - 2026/04/10
 
 ### Fixed

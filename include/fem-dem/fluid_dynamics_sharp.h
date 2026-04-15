@@ -61,7 +61,7 @@ public:
   assemble_system_rhs() override
   {
     assemble_rhs();
-    sharp_edge();
+    sharp_edge(true);
   }
 
 
@@ -177,7 +177,7 @@ private:
       }
     this->FluidDynamicsMatrixBased<dim>::assemble_system_matrix();
 
-    sharp_edge();
+    sharp_edge(false);
   }
 
 
@@ -232,9 +232,13 @@ private:
    * Galerkin sharp-interface immersed boundary method and its application to
    * incompressible flow problems,» Computers & Fluids, 2020, in press, ref.
    * CAF-D-20-00773
+   *
+   * @param assemble_rhs_terms If true, overwrite the Sharp-IB RHS entries in
+   * addition to the matrix rows. Matrix assembly paths should pass false so
+   * they do not touch a stale residual vector.
    */
   void
-  sharp_edge();
+  sharp_edge(const bool assemble_rhs_terms);
 
   /**
    * @brief
@@ -544,6 +548,25 @@ Return a bool that describes  if a cell contains a specific point
                        ->particle_nonlinear_tolerance;
     return std::max(this->system_rhs.l2_norm(), particle_residual * scaling);
   }
+
+  /**
+   * @brief Sharp may keep the outer nonlinear iteration active because of the
+   * particle-coupling residual even when the assembled fluid residual is
+   * already below tolerance.
+   *
+   * In that situation, the inner fluid linear solve is unnecessary and may be
+   * skipped while the outer coupled iteration continues.
+   *
+   * @return `true` because Sharp allows skipping the inner fluid linear solve
+   * once the assembled fluid residual is already below the nonlinear
+   * tolerance.
+   */
+  bool
+  allow_skip_linear_solve_when_residual_is_below_tolerance() const override
+  {
+    return true;
+  }
+
   /**
    * @brief
    *This function updates the precalculations for every immersed particle
