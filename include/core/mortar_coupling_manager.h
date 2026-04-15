@@ -39,7 +39,8 @@ public:
   MortarManagerBase(unsigned int            n_subdivisions,
                     double                  radius,
                     const Quadrature<dim2> &quadrature,
-                    const double            rotation_angle);
+                    const double            rotation_angle,
+                    const double            z_min = 0.0);
 
   /**
    * @brief Mortar manager base constructor used in 3D problems
@@ -56,7 +57,8 @@ public:
   MortarManagerBase(const std::vector<unsigned int> &n_subdivisions,
                     const std::vector<double>       &radius,
                     const Quadrature<dim2>          &quadrature,
-                    const double                     rotation_angle);
+                    const double                     rotation_angle,
+                    const double                     z_min = 0.0);
 
   /**
    * @brief Default destructor
@@ -140,12 +142,6 @@ public:
   get_weights(const Point<dim> &face_center, const bool is_inner) const;
 
   /**
-   * @brief Sets the minimum z value of cell centers at the mortar interface
-   */
-  void
-  set_z_min();
-
-  /**
    * @brief Returns the normal vector for the quadrature points
    *
    * @param[in] face_center Face center
@@ -218,7 +214,7 @@ protected:
   /// Rotation angle for the inner domain
   const double rotation_angle;
   /// Minimum z value in 3D problems
-  double z_min;
+  const double z_min;
 };
 
 /**
@@ -287,6 +283,19 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
                      const Parameters::Mortar<dim> &mortar_parameters);
 
 /**
+ * @brief Sets the minimum z value of cell centers at the mortar interface
+ * @param[in] triangulation The triangulation object
+ * @param[in] stator_boundary_id Boundary ID corresponding to the stator side 
+ * of the mortar interface
+ *
+ * @return Minimum z value of cell centers at the mortar interface
+ */
+template <int dim>
+double
+compute_z_min(const Triangulation<dim>      &triangulation,
+              const Parameters::Mortar<dim> &mortar_parameters);
+
+/**
  * @brief Compute workload imbalance of mortar cells
  *
  * @param[in] triangulation The triangulation object
@@ -328,6 +337,7 @@ public:
                       double                  radius,
                       const Quadrature<dim2> &quadrature,
                       const double            rotation_angle,
+                      const double            z_min,
                       const Point<dim>       &center_of_rotation = Point<dim>(),
                       const double            pre_rotation_angle = 0.0);
 
@@ -352,6 +362,7 @@ public:
                       std::vector<double>       radius,
                       const Quadrature<dim2>   &quadrature,
                       const double              rotation_angle,
+                      const double              z_min,
                       const Point<dim> &center_of_rotation = Point<dim>(),
                       const double      pre_rotation_angle = 0.0);
 
@@ -433,11 +444,13 @@ template <int dim2>
 MortarManagerBase<dim>::MortarManagerBase(unsigned int n_subdivisions,
                                           double       radius,
                                           const Quadrature<dim2> &quadrature_in,
-                                          const double rotation_angle)
+                                          const double rotation_angle,
+                                          const double z_min)
   : MortarManagerBase(std::vector<unsigned int>{n_subdivisions, 1},
                       std::vector<double>{radius, 1.0},
                       quadrature_in,
-                      rotation_angle)
+                      rotation_angle,
+                      z_min)
 {}
 
 
@@ -447,12 +460,14 @@ MortarManagerBase<dim>::MortarManagerBase(
   const std::vector<unsigned int> &n_subdivisions,
   const std::vector<double>       &radius,
   const Quadrature<dim2>          &quadrature_in,
-  const double                     rotation_angle)
+  const double                     rotation_angle,
+  const double                     z_min)
   : n_subdivisions(n_subdivisions)
   , radius(radius)
   , quadrature(quadrature_in.get_tensor_basis()[0])
   , n_quadrature_points(quadrature.size())
   , rotation_angle(rotation_angle)
+  , z_min(z_min)
 {}
 
 
@@ -463,9 +478,14 @@ MortarManagerCircle<dim>::MortarManagerCircle(
   double                  radius,
   const Quadrature<dim2> &quadrature,
   const double            rotation_angle,
+  const double            z_min,
   const Point<dim>       &center_of_rotation,
   const double            pre_rotation_angle)
-  : MortarManagerBase<dim>(n_subdivisions, radius, quadrature, rotation_angle)
+  : MortarManagerBase<dim>(n_subdivisions,
+                           radius,
+                           quadrature,
+                           rotation_angle,
+                           z_min)
   , pre_rotation_angle(pre_rotation_angle)
   , center_of_rotation(center_of_rotation)
 {}
@@ -477,9 +497,14 @@ MortarManagerCircle<dim>::MortarManagerCircle(
   std::vector<double>       radius,
   const Quadrature<dim2>   &quadrature,
   const double              rotation_angle,
+  const double              z_min,
   const Point<dim>         &center_of_rotation,
   const double              pre_rotation_angle)
-  : MortarManagerBase<dim>(n_subdivisions, radius, quadrature, rotation_angle)
+  : MortarManagerBase<dim>(n_subdivisions,
+                           radius,
+                           quadrature,
+                           rotation_angle,
+                           z_min)
   , pre_rotation_angle(pre_rotation_angle)
   , center_of_rotation(center_of_rotation)
 {}
@@ -501,6 +526,8 @@ MortarManagerCircle<dim>::MortarManagerCircle(
                                               mortar_parameters)),
       construct_quadrature(quadrature, mortar_parameters),
       mortar_parameters.rotor_rotation_angle->value(Point<dim>()),
+      compute_z_min(dof_handler.get_triangulation(),
+                    mortar_parameters),
       mortar_parameters.center_of_rotation,
       std::get<1>(
         compute_interface_dimensions_circular(dof_handler.get_triangulation(),
@@ -528,7 +555,9 @@ MortarManagerLinear<dim>::MortarManagerLinear(
                                              mortar_parameters))) /
         (2.0 * numbers::PI),
       quadrature,
-      0.0)
+      0.0,
+      compute_z_min(dof_handler.get_triangulation(),
+                    mortar_parameters))
 {
   std::tie(this->coord_min, this->coord_max) =
     compute_interface_dimensions_linear(dof_handler.get_triangulation(),
