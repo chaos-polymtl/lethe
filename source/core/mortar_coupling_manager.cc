@@ -771,8 +771,8 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
 
 template <int dim>
 double
-MortarManagerBase<dim>::compute_z_min(const Triangulation<dim> &triangulation,
-                                      const Parameters::Mortar<dim> &mortar_parameters)
+compute_z_min(const Triangulation<dim> &triangulation,
+              const Parameters::Mortar<dim> &mortar_parameters)
 {
   if constexpr (dim == 3)
     {
@@ -788,7 +788,7 @@ MortarManagerBase<dim>::compute_z_min(const Triangulation<dim> &triangulation,
                   face->boundary_id() == mortar_parameters.stator_boundary_id)
                 z_min_local = std::min(z_min_local, cell->center()[2]);
             }
-
+            
       return Utilities::MPI::min(z_min_local, triangulation.get_mpi_communicator());
     }
   else
@@ -2115,6 +2115,14 @@ construct_quadrature(const Quadrature<2>         &quadrature,
 template Quadrature<3>
 construct_quadrature(const Quadrature<3>         &quadrature,
                      const Parameters::Mortar<3> &mortar_parameters);
+
+template double
+compute_z_min<2>(const Triangulation<2>      &triangulation,
+                 const Parameters::Mortar<2> &mortar_parameters);
+
+template double
+compute_z_min<3>(const Triangulation<3>      &triangulation,
+                 const Parameters::Mortar<3> &mortar_parameters);
 
 template void
 mortar_workload_imbalance(const Triangulation<2>      &triangulation,
