@@ -6,6 +6,7 @@
 
 #include <deal.II/base/config.h>
 
+#include <core/lethe_grid_tools.h>
 #include <core/parameters.h>
 #include <core/utilities.h>
 

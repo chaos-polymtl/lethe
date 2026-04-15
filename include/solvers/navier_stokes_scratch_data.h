@@ -7,6 +7,7 @@
 #include "core/parameters_cfd_dem.h"
 #include <core/bdf.h>
 #include <core/dem_properties.h>
+#include <core/lethe_grid_tools.h>
 #include <core/parameters.h>
 #include <core/physical_property_model.h>
 #include <core/sdirk_stage_data.h>

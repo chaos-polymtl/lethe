@@ -2552,6 +2552,7 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
              .mapping,
           this->mg_operators[level]->mortar_manager_mf->radius[0],
           this->simulation_parameters.mortar_parameters.center_of_rotation,
+          this->simulation_parameters.mortar_parameters.rotation_axis,
           this->simulation_parameters.mortar_parameters.rotor_angular_velocity);
 
       this->mg_operators[level]->evaluate_non_linear_term_and_calculate_tau(
@@ -3290,6 +3291,7 @@ FluidDynamicsMatrixFree<dim>::assemble_system_rhs()
       *this->get_mapping(),
       this->system_operator->mortar_manager_mf->radius[0],
       this->simulation_parameters.mortar_parameters.center_of_rotation,
+      this->simulation_parameters.mortar_parameters.rotation_axis,
       this->simulation_parameters.mortar_parameters.rotor_angular_velocity);
 
   this->system_operator->evaluate_non_linear_term_and_calculate_tau(
@@ -3619,6 +3621,7 @@ FluidDynamicsMatrixFree<dim>::setup_preconditioner()
       *this->get_mapping(),
       this->system_operator->mortar_manager_mf->radius[0],
       this->simulation_parameters.mortar_parameters.center_of_rotation,
+      this->simulation_parameters.mortar_parameters.rotation_axis,
       this->simulation_parameters.mortar_parameters.rotor_angular_velocity);
 
   this->computing_timer.enter_subsection("Evaluate non linear term and tau");

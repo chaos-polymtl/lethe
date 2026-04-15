@@ -422,8 +422,16 @@ NavierStokesScratchData<dim>::reinit_mortar(
     mortar_parameters.rotor_angular_velocity->value(Point<dim>());
 
   // Compute radius between center of rotation and current cell center
-  const double radius_current =
-    cell_center.distance(mortar_parameters.center_of_rotation);
+  double radius_current;
+
+  if constexpr (dim == 2)
+    radius_current = cell_center.distance(mortar_parameters.center_of_rotation);
+
+  if constexpr (dim == 3)
+    radius_current = LetheGridTools::compute_radial_distance_3d(
+      cell_center,
+      mortar_parameters.rotation_axis,
+      mortar_parameters.center_of_rotation);
 
   // Use prescribed rotor angular velocity only if cell is part of the rotor
   double omega;
@@ -453,7 +461,7 @@ NavierStokesScratchData<dim>::reinit_mortar(
           // rotation axis
           const auto omega_vec = omega * mortar_parameters.rotation_axis;
 
-          // Compute terms of u = omega_vec x [x, y, z]
+          // Compute terms of u_ale = omega_vec x [x, y, z]
           rotor_linear_velocity_values[q][0] =
             omega_vec[1] * z - omega_vec[2] * y;
           rotor_linear_velocity_values[q][1] =

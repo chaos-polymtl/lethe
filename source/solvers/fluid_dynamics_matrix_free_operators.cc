@@ -1160,6 +1160,7 @@ NavierStokesOperatorBase<dim, number>::evaluate_velocity_ale(
   const Mapping<dim>                             &mapping,
   const double                                    radius,
   const Point<dim>                                center_of_rotation,
+  const Tensor<1, dim>                            rotation_axis,
   std::shared_ptr<Functions::ParsedFunction<dim>> rotor_angular_velocity)
 {
   this->timer.enter_subsection("operator::evaluate_velocity_ale");
@@ -1191,28 +1192,55 @@ NavierStokesOperatorBase<dim, number>::evaluate_velocity_ale(
           // Compute radial distance from the current cell
           const auto cell_center =
             matrix_free.get_cell_iterator(cell, lane)->center();
-          const auto radius_current = cell_center.distance(center_of_rotation);
+          double radius_current;
+
+          if constexpr (dim == 2)
+            radius_current = cell_center.distance(center_of_rotation);
+
+          if constexpr (dim == 3)
+            {
+              radius_current =
+                LetheGridTools::compute_radial_distance_3d(cell_center,
+                                                           rotation_axis,
+                                                           center_of_rotation);
+            }
 
           // Use prescribed rotor angular velocity only if cell is part of the
           // rotor
-          double cell_rotor_angular_velocity;
+          double omega;
           if (radius_current > radius)
-            cell_rotor_angular_velocity = 0.0;
+            omega = 0.0;
           else
-            cell_rotor_angular_velocity = rotor_angular_velocity_value;
+            omega = rotor_angular_velocity_value;
 
           // Compute linear velocity at quadrature points
           for (const auto q : integrator.quadrature_point_indices())
             {
-              // Assumption in 3D case: rotation axis is in z
-              // TODO generalize rotation axis
               const auto x = integrator.quadrature_point(q)[0][lane];
               const auto y = integrator.quadrature_point(q)[1][lane];
 
-              this->velocity_ale[cell][q][0][lane] =
-                -cell_rotor_angular_velocity * y;
-              this->velocity_ale[cell][q][1][lane] =
-                cell_rotor_angular_velocity * x;
+              if constexpr (dim == 2)
+                {
+                  this->velocity_ale[cell][q][0][lane] = -omega * y;
+                  this->velocity_ale[cell][q][1][lane] = omega * x;
+                }
+
+              if constexpr (dim == 3)
+                {
+                  const auto z = integrator.quadrature_point(q)[2][lane];
+
+                  // Store angular velocity according to unit vector that
+                  // defines the rotation axis
+                  const auto omega_vec = omega * rotation_axis;
+
+                  // Compute terms of u_ale = omega_vec x [x, y, z]
+                  this->velocity_ale[cell][q][0][lane] =
+                    omega_vec[1] * z - omega_vec[2] * y;
+                  this->velocity_ale[cell][q][1][lane] =
+                    omega_vec[2] * x - omega_vec[0] * z;
+                  this->velocity_ale[cell][q][2][lane] =
+                    omega_vec[0] * y - omega_vec[1] * x;
+                }
             }
         }
     }

@@ -637,14 +637,11 @@ compute_interface_dimensions_circular(
                               vertex_min = std::min(vertex_min, v[direction]);
                               vertex_max = std::max(vertex_max, v[direction]);
 
-                              const auto aux = cross_product_3d(
-                                (v - mortar_parameters.center_of_rotation),
-                                mortar_parameters.rotation_axis /
-                                  mortar_parameters.rotation_axis.norm());
-                              const double num = aux.norm();
-                              const double den =
-                                mortar_parameters.rotation_axis.norm();
-                              radius_current = num / den;
+                              radius_current =
+                                LetheGridTools::compute_radial_distance_3d(
+                                  v,
+                                  mortar_parameters.rotation_axis,
+                                  mortar_parameters.center_of_rotation);
                             }
 
                           radius_min = std::min(radius_min, radius_current);
