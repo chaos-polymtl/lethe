@@ -61,7 +61,7 @@ public:
   assemble_system_rhs() override
   {
     assemble_rhs();
-    sharp_edge();
+    sharp_edge(true);
   }
 
 
@@ -177,7 +177,7 @@ private:
       }
     this->FluidDynamicsMatrixBased<dim>::assemble_system_matrix();
 
-    sharp_edge();
+    sharp_edge(false);
   }
 
 
@@ -232,9 +232,13 @@ private:
    * Galerkin sharp-interface immersed boundary method and its application to
    * incompressible flow problems,» Computers & Fluids, 2020, in press, ref.
    * CAF-D-20-00773
+   *
+   * @param assemble_rhs_terms If true, overwrite the Sharp-IB RHS entries in
+   * addition to the matrix rows. Matrix assembly paths should pass false so
+   * they do not touch a stale residual vector.
    */
   void
-  sharp_edge();
+  sharp_edge(const bool assemble_rhs_terms);
 
   /**
    * @brief
