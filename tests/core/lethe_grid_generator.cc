@@ -113,16 +113,15 @@ test()
   run_test<2>("Case 2: 2D half-unit square, no rotation, no padding",
               "0,0:1,1:0.5,0.5:0.25:0.5");
 
-  run_test<2>("Case 3: 2D 2x1 channel, 22.5 deg rotation, padded",
-              "0,0:2,1:1,0.5:0.125:0.25:22.5:1:1:1:1");
+  run_test<2>("Case 3: 2D 2x1 channel, 10 deg rotation, padded",
+              "0,0:2,1:1,0.5:0.125:0.25:10:1:1:1:1");
 
   run_test<2>("Case 4: 2D 2x1 channel, 45 deg rotation, padded, refined once",
               "0,0:2,1:1,0.5:0.125:0.25:45:1:1:1:1",
               1);
 
-  run_test<3>(
-    "Case 5: 3D 2x1x1 channel, 67.5 deg rotation, padded, material ids",
-    "0,0:2,1:1,0.5:0.2:0.3:67.5:1:1:1:1:1.0:2:true");
+  run_test<3>("Case 5: 3D 2x1x1 channel, 80 deg rotation, padded, material ids",
+              "0,0:2,1:1,0.5:0.2:0.3:80:1:1:1:1:1.0:2:true");
 
   deallog << "OK" << std::endl;
 }

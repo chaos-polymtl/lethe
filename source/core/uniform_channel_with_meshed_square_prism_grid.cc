@@ -107,8 +107,16 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
   this->inner_half_side = Utilities::string_to_double(arguments[3]);
   this->outer_half_side = Utilities::string_to_double(arguments[4]);
 
-  AssertThrow(inner_half_side > 0.0 && outer_half_side >= inner_half_side,
-              ExcMessage("Require outer_half_side >= inner_half_side > 0."));
+  AssertThrow(
+    inner_half_side > 0.0 && outer_half_side >= inner_half_side,
+    ExcMessage(
+      " The inner_half_side must be greater than 0 to have an object in the channel."));
+
+  AssertThrow(
+    outer_half_side >= 1.5 * inner_half_side - 1e-12 * inner_half_side,
+    ExcMessage(
+      "The outer half-side must be at least 1.5 times the inner half-side, if not the elements in the transition region will be too distorted."));
+
 
   // Check if the outer transition square fits in the channel
   AssertThrow((center[0] - outer_half_side >= bottom_left[0]) &&
@@ -128,14 +136,6 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
       "The rotation angle needs to be in the range [0, 90) degrees. Different values will result in the same mesh pattern due to symmetry."));
 
   inner_rotation_angle = inner_rotation_angle * std::numbers::pi / 180.0;
-
-  const double max_extent =
-    inner_half_side * (std::abs(std::cos(inner_rotation_angle)) +
-                       std::abs(std::sin(inner_rotation_angle)));
-  AssertThrow(
-    max_extent <= outer_half_side,
-    ExcMessage(
-      "Rotated inner square exceeds outer square dimensions. Please reduce the rotation angle or increase the outer half-side."));
 
   this->pad_bottom =
     (arguments.size() > 6) ? Utilities::string_to_int(arguments[6]) : 0;
@@ -264,26 +264,38 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
     {
       double theta = inner_rotation_angle + k * std::numbers::pi / 4.0;
 
-      // If the remaining value of theta after dividing by pi/2 and scaled by
-      // pi/2 is higher than pi/8, but lower than 3*pi/8, then the vertex is
-      // closer to the corner than to the face. In that case we change the
-      // target to be the corner instead of the face.
-      const double divided = theta / (std::numbers::pi / 2.0);
-      const double remainder_scaled =
-        (divided - std::floor(divided)) * (std::numbers::pi / 2.0);
-      if ((remainder_scaled >= std::numbers::pi / 8.0) &&
-          (remainder_scaled < 3 * std::numbers::pi / 8.0))
+
+      // If the rotation angle is between pi/18 and 4*pi/9, we want to project
+      // the vertices at the square middle points to the corners.
+      if (inner_rotation_angle >= std::numbers::pi / 18.0 - tol_inner &&
+          inner_rotation_angle < 4 * std::numbers::pi / 9.0 - tol_inner)
         {
-          // The factor is use to determine if the vertex is closer to the
-          // corner but below it (i.e., the angle is between pi/8 and pi/4) or
-          // if it is closer to the corner but above it (i.e., the angle is
-          // between 3*pi/8 and pi/2). In the first case we want to project to
-          // the next corner so the factor is 1, in the second case we want to
-          // project to the previous corner so the factor is 0.
-          double factor =
-            (remainder_scaled >= std::numbers::pi / 4.0) ? 0 : 1.0;
-          theta = (factor + std::trunc(theta / (std::numbers::pi / 4.0))) *
-                  (std::numbers::pi / 4.0);
+          // The even k are associated to the vertices at the square middle
+          // points.
+          if (k % 2 == 0)
+            {
+              theta = (k + 1) * std::numbers::pi / 4.0;
+            }
+        }
+      // If the rotation angle is between 0 and pi/18 or between 4*pi/9 and
+      // pi/2, we want to project the vertices at the square corners to the
+      // corners.
+      else if (inner_rotation_angle >= 0.0 - tol_inner &&
+               inner_rotation_angle < std::numbers::pi / 18.0 - tol_inner)
+        {
+          // The odd k are associated to the vertices at the square corners.
+          if (k % 2 == 1)
+            {
+              theta = k * std::numbers::pi / 4.0;
+            }
+        }
+      else if (inner_rotation_angle >= 4 * std::numbers::pi / 9.0 - tol_inner &&
+               inner_rotation_angle < std::numbers::pi / 2.0 - tol_inner)
+        {
+          if (k % 2 == 1)
+            {
+              theta = (k + 2) * std::numbers::pi / 4.0;
+            }
         }
 
       const double cx = std::cos(theta);
