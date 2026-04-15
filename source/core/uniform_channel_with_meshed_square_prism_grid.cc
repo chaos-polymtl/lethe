@@ -381,9 +381,9 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
   //   inner = {x1, x2}, lo = a, hi = b
   //   coords = {a, x1, x2, b}
   //   steps  = {x1-a, x2-x1, b-x2}
-  std::vector<double> make_steps = [](const std::vector<double> &inner_coords,
-                                      const double               lo,
-                                      const double               hi) {
+  auto make_steps = [](const std::vector<double> &inner_coords,
+                       const double               lo,
+                       const double               hi) {
     // Create the coordinates list
     std::vector<double> coords = {lo};
     for (const double c : inner_coords)
@@ -399,7 +399,7 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
 
   // Similar as above, this lambda function create a vector of uniform step
   // sizes given the number of steps n and the total length to cover.
-  std::vector<double> uniform = [](const unsigned int n, const double length) {
+  auto uniform = [](const unsigned int n, const double length) {
     return std::vector<double>(n, length / static_cast<double>(n));
   };
 
@@ -513,17 +513,25 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
   // frame temporarily and checking if it is within the inner square dimensions.
   for (const auto &cell : triangulation.active_cell_iterators())
     {
-      const Point<2> c     = cell->center();
-      const double   cos_a = std::cos(-inner_rotation_angle);
-      const double   sin_a = std::sin(-inner_rotation_angle);
-      const double   x_rot =
-        cos_a * (c[0] - center[0]) - sin_a * (c[1] - center[1]);
-      const double y_rot =
-        sin_a * (c[0] - center[0]) + cos_a * (c[1] - center[1]);
-      cell->set_material_id((std::abs(x_rot) <= inner_half_side + tol_inner &&
-                             std::abs(y_rot) <= inner_half_side + tol_inner) ?
-                              obstacle_id :
-                              fluid_id);
+      const Point<2> c = cell->center();
+
+      // Translate to obstacle-centered coordinates
+      const double dx = c[0] - center[0];
+      const double dy = c[1] - center[1];
+
+      // Rotate point back to axis-aligned frame
+      const double cos_a = std::cos(inner_rotation_angle);
+      const double sin_a = std::sin(inner_rotation_angle);
+
+      const double x_local = cos_a * dx + sin_a * dy;
+      const double y_local = -sin_a * dx + cos_a * dy;
+
+      // Axis-aligned square test
+      const bool inside_obstacle =
+        (std::abs(x_local) <= inner_half_side + tol_inner) &&
+        (std::abs(y_local) <= inner_half_side + tol_inner);
+
+      cell->set_material_id(inside_obstacle ? obstacle_id : fluid_id);
     }
 
   if (colorize)
