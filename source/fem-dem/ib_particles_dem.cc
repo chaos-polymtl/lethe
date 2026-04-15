@@ -494,13 +494,17 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
   const Quadrature<dim - 1>    &face_quadrature_formula,
   const Mapping<dim>           &mapping)
 {
-  const FESystem<dim, dim>                          fe = dof_handler.get_fe();
-  std::vector<std::map<types::boundary_id, double>> best_contact_candidate(
-    particles.size());
+  const FESystem<dim, dim> fe = dof_handler.get_fe();
   for (unsigned int p_i = 0; p_i < particles.size(); ++p_i)
     {
       // Clear the last boundary cell candidates.
       boundary_cells[p_i].clear();
+      // Keep the boundary point and its levelset together locally so the
+      // "best candidate" metric cannot drift away from the stored point. The
+      // subsequent MPI merge relies on every local candidate carrying a
+      // physically consistent (point, levelset) pair.
+      std::map<unsigned int, std::pair<BoundaryCellsInfo, double>>
+        local_boundary_candidates;
 
       // Find the new cells that are at a boundary and in proximity of the
       // particle.
@@ -545,50 +549,25 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
                       if (is_boundary_excluded(
                             boundary_information.boundary_index))
                         continue;
-                      auto iterator = best_contact_candidate[p_i].find(
+                      const double level_set = particles[p_i].get_levelset(
+                        boundary_information.point_on_boundary);
+                      auto iterator = local_boundary_candidates.find(
                         boundary_information.boundary_index);
 
-                      double level_set = particles[p_i].get_levelset(
-                        boundary_information.point_on_boundary);
-                      if (iterator != best_contact_candidate[p_i].end())
-                        {
-                          if (level_set <
-                              best_contact_candidate[p_i][boundary_information
-                                                            .boundary_index])
-                            {
-                              boundary_cells[p_i][boundary_information
-                                                    .boundary_index] =
-                                boundary_information;
-                              best_contact_candidate[p_i][boundary_information
-                                                            .boundary_index] =
-                                level_set;
-                            }
-                        }
-                      else
-                        boundary_cells[p_i]
-                                      [boundary_information.boundary_index] =
-                                        boundary_information;
-                      best_contact_candidate[p_i][boundary_information
-                                                    .boundary_index] =
-                        level_set;
+                      if (iterator == local_boundary_candidates.end() ||
+                          level_set < iterator->second.second)
+                        local_boundary_candidates[boundary_information
+                                                    .boundary_index] = {
+                          boundary_information, level_set};
                     }
                 }
             }
         }
 
-      // Gather local candidates with their levelset so global merge can keep
-      // the physically closest boundary candidate per boundary id.
-      std::map<unsigned int, std::pair<BoundaryCellsInfo, double>>
-        local_boundary_candidates;
-      for (const auto &[boundary_id, boundary_info] : boundary_cells[p_i])
-        {
-          const double levelset = best_contact_candidate[p_i][boundary_id];
-          local_boundary_candidates[boundary_id] = {boundary_info, levelset};
-        }
-
       // Regroup the information of all processors.
-      const auto global_boundary_candidates = Utilities::MPI::all_gather(
-        this->mpi_communicator, local_boundary_candidates);
+      const auto global_boundary_candidates =
+        Utilities::MPI::all_gather(this->mpi_communicator,
+                                   local_boundary_candidates);
 
       boundary_cells[p_i].clear();
       std::map<unsigned int, double> global_best_levelset;
@@ -596,9 +575,9 @@ IBParticlesDEM<dim>::update_particles_boundary_contact(
         {
           for (const auto &[boundary_id, candidate] : rank_candidates)
             {
-              const auto  &candidate_info    = candidate.first;
+              const auto  &candidate_info     = candidate.first;
               const double candidate_levelset = candidate.second;
-              const auto current_best_level =
+              const auto   current_best_level =
                 global_best_levelset.find(boundary_id);
 
               bool accept_candidate = false;

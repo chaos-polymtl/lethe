@@ -1,253 +1,222 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <fem-dem/sharp_ib_periodic_boundaries.h>
 
-#include <limits>
+#include <algorithm>
+#include <sstream>
 
 template <int dim>
 SharpIBPeriodicBoundaries<dim>::SharpIBPeriodicBoundaries()
-  : periodic_enabled(false)
-  , dem_periodic_enabled(false)
-  , cfd_periodic_enabled(false)
-  , periodicity_mismatch_detected(false)
-  , periodic_boundary_0(0)
-  , periodic_boundary_1(0)
-  , periodic_direction(0)
-  , periodic_offset_magnitude(0.0)
+  : configuration()
 {}
 
 template <int dim>
 void
-SharpIBPeriodicBoundaries<dim>::setup(
-  const bool                                    dem_periodic_enabled_input,
-  const types::boundary_id                      dem_periodic_boundary_0_input,
-  const types::boundary_id                      dem_periodic_boundary_1_input,
-  const unsigned int                            dem_periodic_direction_input,
+SharpIBPeriodicBoundaries<dim>::initialize(
+  const Parameters::Lagrangian::BCDEM          &dem_boundary_conditions,
   const BoundaryConditions::BoundaryConditions &cfd_boundary_conditions,
-  const ConditionalOStream                     &pcout)
+  const dealii::ConditionalOStream             &pcout)
 {
-  dem_periodic_enabled = dem_periodic_enabled_input;
+  // Sharp-IB periodic support is intentionally strict: the fluid and particle
+  // sides must describe the same single periodic pair. Allowing CFD-only or
+  // DEM-only periodicity would leave refinement, wrapping, particle-wall
+  // contact, and cut-cell assembly operating in incompatible frames. This was
+  // an implicit assumption throughout the original periodic implementation, so
+  // we enforce it explicitly here instead of trying to guess which subsystem
+  // should define the "real" periodic configuration.
+  const PeriodicConfiguration dem_configuration =
+    parse_dem_periodic_configuration(dem_boundary_conditions);
+  const PeriodicConfiguration cfd_configuration =
+    parse_cfd_periodic_configuration(cfd_boundary_conditions);
 
-  // Check if CFD has periodic boundaries
-  cfd_periodic_enabled = false;
-  types::boundary_id cfd_periodic_boundary_0 = 0;
-  types::boundary_id cfd_periodic_boundary_1 = 0;
-  unsigned int       cfd_periodic_direction  = 0;
+  validate_matching_configurations(dem_configuration, cfd_configuration);
 
-  for (auto const &[id, type] : cfd_boundary_conditions.type)
+  if (!dem_configuration.enabled && !cfd_configuration.enabled)
     {
-      if (type == BoundaryConditions::BoundaryType::periodic)
-        {
-          cfd_periodic_enabled      = true;
-          cfd_periodic_boundary_0   = id;
-          cfd_periodic_boundary_1   = cfd_boundary_conditions.periodic_neighbor_id.at(id);
-          cfd_periodic_direction    = cfd_boundary_conditions.periodic_direction.at(id);
-          break; // Currently support only one periodic direction
-        }
-    }
-
-  // Determine if we can enable periodicity for sharp IB coupling
-  periodic_enabled = dem_periodic_enabled || cfd_periodic_enabled;
-
-  if (!periodic_enabled)
-    {
-      // No periodicity configured anywhere
+      configuration = {};
+      periodic_offset.clear();
       return;
     }
 
-  // Check consistency
-  if (dem_periodic_enabled && cfd_periodic_enabled)
-    {
-      // Both are enabled - check if they match
-      if (dem_periodic_boundary_0_input != cfd_periodic_boundary_0 ||
-          dem_periodic_boundary_1_input != cfd_periodic_boundary_1 ||
-          dem_periodic_direction_input != cfd_periodic_direction)
-        {
-          periodicity_mismatch_detected = true;
-        }
-      else
-        {
-          periodicity_mismatch_detected = false;
-        }
-
-      // Use CFD configuration as the source of truth for coupling
-      // (since refinement is on the fluid mesh)
-      periodic_boundary_0 = cfd_periodic_boundary_0;
-      periodic_boundary_1 = cfd_periodic_boundary_1;
-      periodic_direction  = cfd_periodic_direction;
-    }
-  else if (cfd_periodic_enabled)
-    {
-      // Only CFD is periodic - use its configuration
-      periodic_boundary_0           = cfd_periodic_boundary_0;
-      periodic_boundary_1           = cfd_periodic_boundary_1;
-      periodic_direction            = cfd_periodic_direction;
-      periodicity_mismatch_detected = true; // DEM not periodic
-    }
-  else
-    {
-      // Only DEM is periodic - use its configuration
-      periodic_boundary_0           = dem_periodic_boundary_0_input;
-      periodic_boundary_1           = dem_periodic_boundary_1_input;
-      periodic_direction            = dem_periodic_direction_input;
-      periodicity_mismatch_detected = true; // CFD not periodic
-    }
-
-  check_consistency_and_warn(pcout);
+  configuration = dem_configuration;
+  report_configuration(pcout);
 }
 
 template <int dim>
 void
 SharpIBPeriodicBoundaries<dim>::set_periodic_offset(
-  const Tensor<1, dim> &offset)
+  const dealii::Tensor<1, dim> &offset)
 {
-  periodic_offset           = offset;
-  periodic_offset_magnitude = offset.norm();
+  periodic_offset = offset;
+}
+
+template <int dim>
+typename SharpIBPeriodicBoundaries<dim>::PeriodicConfiguration
+SharpIBPeriodicBoundaries<dim>::parse_dem_periodic_configuration(
+  const Parameters::Lagrangian::BCDEM &dem_boundary_conditions) const
+{
+  PeriodicConfiguration parsed_configuration;
+
+  const unsigned int periodic_boundary_count =
+    std::ranges::count(dem_boundary_conditions.bc_types,
+                       Parameters::Lagrangian::BCDEM::BoundaryType::periodic);
+
+  AssertThrow(
+    periodic_boundary_count <= 1,
+    dealii::ExcMessage(
+      "Sharp-IB periodic coupling currently supports exactly one DEM periodic "
+      "boundary pair."));
+
+  if (periodic_boundary_count == 0)
+    return parsed_configuration;
+
+  parsed_configuration.enabled    = true;
+  parsed_configuration.boundary_0 = dem_boundary_conditions.periodic_boundary_0;
+  parsed_configuration.boundary_1 = dem_boundary_conditions.periodic_boundary_1;
+  parsed_configuration.direction  = dem_boundary_conditions.periodic_direction;
+
+  return parsed_configuration;
+}
+
+template <int dim>
+typename SharpIBPeriodicBoundaries<dim>::PeriodicConfiguration
+SharpIBPeriodicBoundaries<dim>::parse_cfd_periodic_configuration(
+  const BoundaryConditions::BoundaryConditions &cfd_boundary_conditions) const
+{
+  PeriodicConfiguration parsed_configuration;
+
+  std::vector<dealii::types::boundary_id> periodic_boundary_ids;
+  periodic_boundary_ids.reserve(cfd_boundary_conditions.type.size());
+
+  for (const auto &[boundary_id, boundary_type] : cfd_boundary_conditions.type)
+    {
+      if (boundary_type == BoundaryConditions::BoundaryType::periodic)
+        periodic_boundary_ids.push_back(boundary_id);
+    }
+
+  AssertThrow(
+    periodic_boundary_ids.size() <= 1,
+    dealii::ExcMessage(
+      "Sharp-IB periodic coupling currently supports exactly one CFD periodic "
+      "boundary pair."));
+
+  if (periodic_boundary_ids.empty())
+    return parsed_configuration;
+
+  const auto boundary_id = periodic_boundary_ids.front();
+
+  parsed_configuration.enabled    = true;
+  parsed_configuration.boundary_0 = boundary_id;
+  parsed_configuration.boundary_1 =
+    cfd_boundary_conditions.periodic_neighbor_id.at(boundary_id);
+  parsed_configuration.direction =
+    cfd_boundary_conditions.periodic_direction.at(boundary_id);
+
+  return parsed_configuration;
 }
 
 template <int dim>
 void
-SharpIBPeriodicBoundaries<dim>::check_consistency_and_warn(
-  const ConditionalOStream &pcout)
+SharpIBPeriodicBoundaries<dim>::validate_matching_configurations(
+  const PeriodicConfiguration &dem_configuration,
+  const PeriodicConfiguration &cfd_configuration) const
 {
-  if (!periodic_enabled)
+  if (!dem_configuration.enabled && !cfd_configuration.enabled)
     return;
 
-  if (periodicity_mismatch_detected)
-    {
-      pcout << "***********************************************" << std::endl;
-      pcout << "WARNING: Sharp IB Periodic Boundary Mismatch" << std::endl;
-      pcout << "***********************************************" << std::endl;
-      pcout << "DEM periodic enabled: " << dem_periodic_enabled << std::endl;
-      pcout << "CFD periodic enabled: " << cfd_periodic_enabled << std::endl;
+  std::ostringstream error_message;
+  error_message
+    << "Sharp-IB periodic coupling requires DEM and CFD periodic boundary "
+       "conditions to both be enabled with exactly matching boundary ids and "
+       "direction.\n"
+    << "DEM periodic: enabled=" << dem_configuration.enabled;
 
-      if (dem_periodic_enabled && cfd_periodic_enabled)
-        {
-          pcout << "Periodic boundaries are enabled for both DEM and CFD, but "
-                   "with different configurations."
-                << std::endl;
-        }
-      else if (dem_periodic_enabled)
-        {
-          pcout << "Periodic boundaries enabled for DEM but NOT for CFD."
-                << std::endl;
-        }
-      else
-        {
-          pcout << "Periodic boundaries enabled for CFD but NOT for DEM."
-                << std::endl;
-        }
-
-      pcout
-        << "This mismatch may lead to physically inconsistent coupling behavior."
-        << std::endl;
-      pcout << "For proper sharp IB coupling with periodicity, ensure both DEM "
-               "and CFD"
-            << std::endl;
-      pcout << "periodic boundaries are configured identically." << std::endl;
-      pcout << "***********************************************" << std::endl;
-    }
-  else
+  if (dem_configuration.enabled)
     {
-      pcout << "Sharp IB periodic boundaries configured successfully."
-            << std::endl;
-      pcout << "  Periodic direction: " << periodic_direction << std::endl;
-      pcout << "  Periodic boundary IDs: " << periodic_boundary_0 << ", "
-            << periodic_boundary_1 << std::endl;
+      error_message << ", pair=(" << dem_configuration.boundary_0 << ", "
+                    << dem_configuration.boundary_1
+                    << "), direction=" << dem_configuration.direction;
     }
+
+  error_message << "\nCFD periodic: enabled=" << cfd_configuration.enabled;
+  if (cfd_configuration.enabled)
+    {
+      error_message << ", pair=(" << cfd_configuration.boundary_0 << ", "
+                    << cfd_configuration.boundary_1
+                    << "), direction=" << cfd_configuration.direction;
+    }
+
+  AssertThrow(dem_configuration.enabled == cfd_configuration.enabled,
+              dealii::ExcMessage(error_message.str()));
+
+  AssertThrow(dem_configuration.boundary_0 == cfd_configuration.boundary_0 &&
+                dem_configuration.boundary_1 == cfd_configuration.boundary_1 &&
+                dem_configuration.direction == cfd_configuration.direction,
+              dealii::ExcMessage(error_message.str()));
 }
 
 template <int dim>
-Point<dim>
-SharpIBPeriodicBoundaries<dim>::wrap_point(const Point<dim> &point,
-                                            const double      domain_lower,
-                                            const double      domain_upper) const
+void
+SharpIBPeriodicBoundaries<dim>::report_configuration(
+  const dealii::ConditionalOStream &pcout) const
 {
-  if (!periodic_enabled)
+  if (!configuration.enabled)
+    return;
+
+  pcout << "Sharp IB periodic boundaries configured successfully." << std::endl;
+  pcout << "  Periodic direction: " << configuration.direction << std::endl;
+  pcout << "  Periodic boundary IDs: " << configuration.boundary_0 << ", "
+        << configuration.boundary_1 << std::endl;
+}
+
+template <int dim>
+dealii::Point<dim>
+SharpIBPeriodicBoundaries<dim>::wrap_point(const dealii::Point<dim> &point,
+                                           const double domain_lower,
+                                           const double domain_upper) const
+{
+  if (!configuration.enabled)
     return point;
 
-  Point<dim> wrapped_point = point;
+  dealii::Point<dim> wrapped_point = point;
+  const double       coordinate    = point[configuration.direction];
 
-  // Check if point is outside periodic domain
-  const double coord = point[periodic_direction];
-
-  if (coord < domain_lower)
-    {
-      // Wrap from lower to upper
-      wrapped_point += periodic_offset;
-    }
-  else if (coord > domain_upper)
-    {
-      // Wrap from upper to lower
-      wrapped_point -= periodic_offset;
-    }
+  // Points that strictly overshoot the lower boundary are wrapped upward
+  // (toward the upper face), and points that strictly overshoot the upper
+  // boundary are wrapped downward. Points that land exactly on either boundary
+  // face are left in place because they are still inside the domain.
+  if (coordinate < domain_lower)
+    wrapped_point += periodic_offset;
+  else if (coordinate > domain_upper)
+    wrapped_point -= periodic_offset;
 
   return wrapped_point;
 }
 
 template <int dim>
-std::vector<Point<dim>>
+std::vector<dealii::Point<dim>>
 SharpIBPeriodicBoundaries<dim>::generate_periodic_image_points(
-  const Point<dim> &point,
-  const double      support_radius,
-  const double      domain_lower,
-  const double      domain_upper) const
+  const dealii::Point<dim> &point,
+  const double              support_radius,
+  const double              domain_lower,
+  const double              domain_upper) const
 {
-  std::vector<Point<dim>> images;
+  std::vector<dealii::Point<dim>> image_points;
 
-  if (!periodic_enabled)
-    return images;
+  if (!configuration.enabled)
+    return image_points;
 
-  const double coord = point[periodic_direction];
+  const double coordinate = point[configuration.direction];
 
-  // Check if stencil support crosses lower periodic boundary
-  if (coord - support_radius < domain_lower)
-    {
-      // Need an image on the upper side
-      Point<dim> image_upper = point + periodic_offset;
-      images.push_back(image_upper);
-    }
+  if (coordinate - support_radius < domain_lower)
+    image_points.push_back(point + periodic_offset);
 
-  // Check if stencil support crosses upper periodic boundary
-  if (coord + support_radius > domain_upper)
-    {
-      // Need an image on the lower side
-      Point<dim> image_lower = point - periodic_offset;
-      images.push_back(image_lower);
-    }
+  if (coordinate + support_radius > domain_upper)
+    image_points.push_back(point - periodic_offset);
 
-  return images;
+  return image_points;
 }
 
-template <int dim>
-bool
-SharpIBPeriodicBoundaries<dim>::is_point_near_periodic_boundary(
-  const Point<dim> &point,
-  const double      tolerance,
-  const double      domain_lower,
-  const double      domain_upper) const
-{
-  if (!periodic_enabled)
-    return false;
-
-  const double coord = point[periodic_direction];
-
-  return (std::abs(coord - domain_lower) < tolerance ||
-          std::abs(coord - domain_upper) < tolerance);
-}
-
-template <int dim>
-Point<dim>
-SharpIBPeriodicBoundaries<dim>::map_dof_across_periodic_boundary(
-  const Point<dim> &dof_location) const
-{
-  // For now, just add the periodic offset
-  // The direction is determined by which boundary we're crossing
-  // This is a simplified version - more sophisticated mapping may be needed
-  return dof_location + periodic_offset;
-}
-
-// Explicit template instantiations
 template class SharpIBPeriodicBoundaries<2>;
 template class SharpIBPeriodicBoundaries<3>;

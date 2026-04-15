@@ -70,17 +70,29 @@ protected:
    * @brief Override to extend the sparsity pattern for periodic IB coupling.
    *
    * The base class builds the sparsity pattern with
-   * keep_constrained_dofs=false, which excludes constrained (slave) DoF
-   * rows entirely. sharp_edge() re-imposes constraints on slave rows
-   * for cut cells, so we add the diagonal (slave, slave) entry needed
-   * for that re-imposition. We do NOT use keep_constrained_dofs=true
-   * because that adds full element coupling for all hanging node slaves,
-   * massively inflating the sparsity pattern.
+   * keep_constrained_dofs=false, which omits constrained (periodic slave) DoF
+   * rows entirely. sharp_edge() re-imposes constraint equations on slave rows
+   * for cut cells near the periodic boundary, writing two types of entry:
+   *
+   *   A(slave, slave) += sum_line           — diagonal identity scaling
+   *   A(slave, master) += weight * sum_line  — off-diagonal coupling term
+   *
+   * Both must be in the sparsity pattern. We add them here for every
+   * constrained DoF, since cut-cell membership is not yet known at sparsity
+   * setup time. We do NOT use keep_constrained_dofs=true because that adds
+   * the full element coupling for all hanging-node slave rows, which would
+   * massively inflate the sparsity pattern.
    */
   void
   setup_dofs_fd() override;
 
 private:
+  struct ParticlePeriodicFrame;
+  struct CutCellInfo;
+  struct OverconstrainedFluidCellInfo;
+  struct InsideCellInfo;
+  struct PeriodicFrameDofCacheKey;
+
   /**
    * @brief Assemble the local matrix for a given cell.
    *
@@ -586,14 +598,23 @@ Return a bool that describes  if a cell contains a specific point
   update_precalculations_for_ib();
 
   /**
-   * @brief Setup periodic boundaries for sharp IB coupling.
+   * @brief Validate and cache the periodic configuration used by Sharp-IB.
    *
-   * This function must be called after both DEM and CFD boundary conditions
-   * have been initialized. It configures the combined periodic boundary
-   * handler and computes domain bounds for periodic wrapping.
+   * This phase depends only on DEM/CFD boundary-condition definitions. It must
+   * run before setup_dofs_fd() so the sparsity pattern knows whether periodic
+   * Sharp-specific entries are required.
    */
   void
-  setup_sharp_ib_periodic_boundaries();
+  initialize_sharp_ib_periodic_configuration();
+
+  /**
+   * @brief Update periodic domain bounds and offset for the active mesh.
+   *
+   * This phase depends on the current triangulation and must be called after
+   * the mesh exists in its current refinement state.
+   */
+  void
+  update_sharp_ib_periodic_geometry();
 
   /**
    * @brief Add matrix entry, expanding column constraints for periodic DoFs.
@@ -631,6 +652,97 @@ Return a bool that describes  if a cell contains a specific point
   std::vector<Point<dim>>
   get_periodic_particle_images(const Point<dim> &particle_position,
                                const double      particle_radius) const;
+
+  /**
+   * @brief Get the periodic shifts needed to evaluate all relevant particle
+   * frames for a given support region.
+   *
+   * The returned list always begins with the zero shift corresponding to the
+   * physical (primary) particle position. Callers must not prepend or skip
+   * this zero shift: iterating the full returned list covers both the primary
+   * frame and any periodic images that overlap the support region.
+   *
+   * When periodic boundaries are disabled or the support region does not cross
+   * the periodic boundary, the list contains only the zero shift.
+   *
+   * @param particle_position Particle centroid in the primary domain.
+   * @param support_radius Radius used to detect whether a periodic image can
+   * influence the current operation.
+   * @return List of periodic shifts, starting with the zero shift for the
+   * primary frame.
+   */
+  std::vector<Tensor<1, dim>>
+  get_periodic_particle_shifts(const Point<dim> &particle_position,
+                               const double      support_radius) const;
+
+  /**
+   * @brief Convert a periodic particle shift into a discrete cache-frame
+   * index.
+   *
+   * Sharp-IB currently supports a single periodic pair, so every particle
+   * evaluation frame is either the primary frame (`0`) or one wrapped image on
+   * the positive/negative side of the periodic direction (`+1` or `-1`).
+   * Cache keys use this discrete index instead of the raw shift tensor so
+   * stencil/force reuse remains stable and unambiguous.
+   *
+   * @param periodic_shift Particle-frame shift relative to the primary
+   * position.
+   * @return `0` for the primary frame, `+1` or `-1` for wrapped periodic
+   * images.
+   */
+  int
+  get_periodic_frame_index(const Tensor<1, dim> &periodic_shift) const;
+
+  /**
+   * @brief Apply a periodic shift to a particle position for temporary
+   * geometric evaluations.
+   *
+   * This function mutates the particle's position. Every call must be paired
+   * with a matching restore of @p primary_particle_position before the
+   * particle is used for any purpose other than the immediate evaluation.
+   * Failing to restore leaves the particle in a shifted frame for all
+   * subsequent operations in the current time step.
+   *
+   * @param particle_id Particle index.
+   * @param primary_particle_position Particle centroid in the primary domain.
+   * @param periodic_shift Shift relative to @p primary_particle_position.
+   * Pass a zero-initialized tensor to restore the particle to its primary
+   * frame position.
+   */
+  void
+  set_particle_position_from_periodic_shift(
+    const unsigned int    particle_id,
+    const Point<dim>     &primary_particle_position,
+    const Tensor<1, dim> &periodic_shift);
+
+  /**
+   * @brief Register the periodic frame that cut a cell.
+   *
+   * Sharp-IB currently supports exactly one periodic pair. A cell should
+   * therefore be cut by at most one periodic frame of a given particle.
+   * Storing the frame explicitly here keeps later assembly/force paths from
+   * re-guessing which wrapped particle image generated the cut-cell data.
+   *
+   * @param cut_cell_info Cut-cell metadata to update.
+   * @param particle_id Particle index.
+   * @param periodic_shift Shift of the periodic frame that cut the cell.
+   */
+  void
+  register_cutting_particle_frame(CutCellInfo          &cut_cell_info,
+                                  const unsigned int    particle_id,
+                                  const Tensor<1, dim> &periodic_shift);
+
+  /**
+   * @brief Recover the stored periodic frame for a particle that cuts a cell.
+   *
+   * @param cut_cell_info Cut-cell metadata for the cell under consideration.
+   * @param particle_id Particle index.
+   * @return Periodic shift used when that particle was classified as cutting
+   * the cell.
+   */
+  Tensor<1, dim>
+  get_periodic_shift_for_particle_frame(const CutCellInfo &cut_cell_info,
+                                        const unsigned int particle_id) const;
 
   /**
    * @brief Defines a struct with methods that allow the generation of a visualisation of the IB_particles. This is equivalent to the corresponding class in the DEM solver.
@@ -708,6 +820,51 @@ Return a bool that describes  if a cell contains a specific point
    */
 
 private:
+  struct ParticlePeriodicFrame
+  {
+    unsigned int   particle_id = 0;
+    Tensor<1, dim> periodic_shift;
+  };
+
+  struct CutCellInfo
+  {
+    bool                               is_cut              = false;
+    unsigned int                       primary_particle_id = 0;
+    std::vector<ParticlePeriodicFrame> cutting_particle_frames;
+  };
+
+  struct OverconstrainedFluidCellInfo
+  {
+    bool           is_overconstrained  = false;
+    unsigned int   particle_id         = 0;
+    double         distance_to_surface = 0.0;
+    Tensor<1, dim> periodic_shift;
+  };
+
+  struct InsideCellInfo
+  {
+    bool           is_inside   = false;
+    unsigned int   particle_id = 0;
+    Tensor<1, dim> periodic_shift;
+  };
+
+  struct PeriodicFrameDofCacheKey
+  {
+    types::global_dof_index dof_index   = 0;
+    unsigned int            particle_id = numbers::invalid_unsigned_int;
+    int                     periodic_frame_index = 0;
+
+    bool
+    operator<(const PeriodicFrameDofCacheKey &other) const
+    {
+      if (dof_index != other.dof_index)
+        return dof_index < other.dof_index;
+      if (particle_id != other.particle_id)
+        return particle_id < other.particle_id;
+      return periodic_frame_index < other.periodic_frame_index;
+    }
+  };
+
   // Parameters
   CFDDEMSimulationParameters<dim> cfd_dem_parameters;
 
@@ -726,8 +883,7 @@ private:
    * particle that cut the cell is the id of the particle with the lowest
    * particle index.
    */
-  std::map<typename DoFHandler<dim>::active_cell_iterator,
-           std::tuple<bool, unsigned int, std::vector<unsigned int>>>
+  std::map<typename DoFHandler<dim>::active_cell_iterator, CutCellInfo>
     cut_cells_map;
 
   /*
@@ -738,7 +894,7 @@ private:
    * is the id of the particle closest to the cell barycenter.
    */
   std::map<typename DoFHandler<dim>::active_cell_iterator,
-           std::tuple<bool, unsigned int, double>>
+           OverconstrainedFluidCellInfo>
     overconstrained_fluid_cell_map;
 
   /*
@@ -750,15 +906,18 @@ private:
   std::map<unsigned int, bool> dof_with_more_then_one_particle;
 
 
-  std::map<typename DoFHandler<dim>::active_cell_iterator,
-           std::tuple<bool, unsigned int>>
+  std::map<typename DoFHandler<dim>::active_cell_iterator, InsideCellInfo>
     cells_inside_map;
   /*
-   * This map is used to keep in memory which DOFs already have an IB equation
-   * imposed on them in order to avoid writing multiple time the same equation.
+   * Cache of stencil cells already located for a specific
+   * (DoF, particle, periodic frame) tuple during sharp_edge().
+   *
+   * The periodic frame is part of the key because the same DoF can be reached
+   * from different wrapped images of the same particle near the periodic
+   * interface, and those frames can require different stencil cells.
    */
-  std::map<unsigned int,
-           std::pair<bool, typename DoFHandler<dim>::active_cell_iterator>>
+  std::map<PeriodicFrameDofCacheKey,
+           typename DoFHandler<dim>::active_cell_iterator>
     ib_done;
 
   // Special assembler of the cells inside an IB particle
