@@ -1216,8 +1216,10 @@ NavierStokesOperatorBase<dim, number>::evaluate_velocity_ale(
           // Compute linear velocity at quadrature points
           for (const auto q : integrator.quadrature_point_indices())
             {
-              const auto x = integrator.quadrature_point(q)[0][lane];
-              const auto y = integrator.quadrature_point(q)[1][lane];
+              const auto x =
+                integrator.quadrature_point(q)[0][lane] - center_of_rotation[0];
+              const auto y =
+                integrator.quadrature_point(q)[1][lane] - center_of_rotation[1];
 
               if constexpr (dim == 2)
                 {
@@ -1227,7 +1229,8 @@ NavierStokesOperatorBase<dim, number>::evaluate_velocity_ale(
 
               if constexpr (dim == 3)
                 {
-                  const auto z = integrator.quadrature_point(q)[2][lane];
+                  const auto z = integrator.quadrature_point(q)[2][lane] -
+                                 center_of_rotation[2];
 
                   // Store angular velocity according to unit vector that
                   // defines the rotation axis

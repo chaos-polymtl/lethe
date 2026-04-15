@@ -444,30 +444,29 @@ NavierStokesScratchData<dim>::reinit_mortar(
   rotor_linear_velocity_values = std::vector<Tensor<1, dim>>(this->n_q_points);
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
-      const auto x = fe_values.quadrature_point(q)[0];
-      const auto y = fe_values.quadrature_point(q)[1];
+      // Shift quadrature point by the center of rotation
+      const auto p =
+        fe_values.quadrature_point(q) - mortar_parameters.center_of_rotation;
 
       if constexpr (dim == 2)
         {
-          rotor_linear_velocity_values[q][0] = -omega * y;
-          rotor_linear_velocity_values[q][1] = omega * x;
+          rotor_linear_velocity_values[q][0] = -omega * p[1];
+          rotor_linear_velocity_values[q][1] = omega * p[0];
         }
 
       if constexpr (dim == 3)
         {
-          const auto z = fe_values.quadrature_point(q)[2];
-
           // Store angular velocity according to unit vector that defines the
           // rotation axis
           const auto omega_vec = omega * mortar_parameters.rotation_axis;
 
           // Compute terms of u_ale = omega_vec x [x, y, z]
           rotor_linear_velocity_values[q][0] =
-            omega_vec[1] * z - omega_vec[2] * y;
+            omega_vec[1] * p[2] - omega_vec[2] * p[1];
           rotor_linear_velocity_values[q][1] =
-            omega_vec[2] * x - omega_vec[0] * z;
+            omega_vec[2] * p[0] - omega_vec[0] * p[2];
           rotor_linear_velocity_values[q][2] =
-            omega_vec[0] * y - omega_vec[1] * x;
+            omega_vec[0] * p[1] - omega_vec[1] * p[0];
         }
 
       // Update velocity for stabilization
