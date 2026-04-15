@@ -1858,6 +1858,30 @@ LetheGridTools::rotate_mapping(const DoFHandler<3> &dof_handler,
                                const Point<3>      &center_of_rotation,
                                const Tensor<1, 3>  &rotation_axis);
 
+template <int dim>
+double
+LetheGridTools::compute_radial_distance_3d(const Point<dim>     &point,
+                                           const Tensor<1, dim> &rotation_axis,
+                                           const Point<dim> &center_of_rotation)
+{
+  // Compute distance =  ||VC x d||/||d||, where d is the rotation axis and VC
+  // is the distance between the current point and the center of rotation
+  const auto axis = rotation_axis / rotation_axis.norm();
+  const auto aux  = cross_product_3d((point - center_of_rotation), axis);
+
+  return aux.norm();
+}
+
+template double
+LetheGridTools::compute_radial_distance_3d(const Point<2>     &point,
+                                           const Tensor<1, 2> &rotation_axis,
+                                           const Point<2> &center_of_rotation);
+
+template double
+LetheGridTools::compute_radial_distance_3d(const Point<3>     &point,
+                                           const Tensor<1, 3> &rotation_axis,
+                                           const Point<3> &center_of_rotation);
+
 template <int dim, int spacedim>
 void
 LetheGridTools::vertices_cell_mapping(
