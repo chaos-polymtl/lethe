@@ -18,7 +18,7 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
       AssertThrow(
         false,
         ExcMessage(
-          "The uniform channel with rotated meshed rectangle obstacle is only supported in 2D and 3D space."));
+          "The uniform channel with a square prism obstacle is only supported in 2D and 3D space."));
       return;
     }
   else if constexpr (dim == 2 && spacedim == 3)
@@ -26,7 +26,7 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
       AssertThrow(
         false,
         ExcMessage(
-          "The uniform channel with rotated meshed rectangle obstacle is only supported in 3D space with 3D elements."));
+          "The uniform channel with a square prism obstacle is only supported in 3D space with 3D elements."));
       return;
     }
 
@@ -39,7 +39,7 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
       AssertThrow(
         false,
         ExcMessage(
-          "Mandatory parameters are (bottom left point : top right point : center of the obstacle : inner half-side : outer half-side). The points should be given as x,y and the half-sides should be single numbers. The optional parameters are (rotation_deg : pad bottom : pad top : pad left : pad right : height : n_slices : colorize )."));
+          "Mandatory parameters are (bottom left point : top right point : center of the obstacle : inner half-side : outer half-side). The points should be given as x,y and the half-sides should be single numbers. The optional parameters are (rotation_deg : pad_bottom : pad_top : pad_left : pad_right : height : n_slices : colorize )."));
     }
 
   // Parse bottom_left point
@@ -129,6 +129,14 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
 
   inner_rotation_angle = inner_rotation_angle * std::numbers::pi / 180.0;
 
+  const double max_extent =
+    inner_half_side * (std::abs(std::cos(inner_rotation_angle)) +
+                       std::abs(std::sin(inner_rotation_angle)));
+  AssertThrow(
+    max_extent <= outer_half_side,
+    ExcMessage(
+      "Rotated inner square exceeds outer square dimensions. Please reduce the rotation angle or increase the outer half-side."));
+
   this->pad_bottom =
     (arguments.size() > 6) ? Utilities::string_to_int(arguments[6]) : 0;
   this->pad_top =
@@ -164,6 +172,7 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
   this->colorize =
     (arguments.size() > 12 && arguments[12] == "true") ? true : false;
 }
+
 template <int dim, int spacedim>
 void
 UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
@@ -184,29 +193,43 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
   const types::material_id obstacle_id = 1;
   const double             tol_inner   = 1e-12 * inner_half_side;
 
-  const double max_extent =
-    inner_half_side * (std::abs(std::cos(inner_rotation_angle)) +
-                       std::abs(std::sin(inner_rotation_angle)));
-  AssertThrow(max_extent <= outer_half_side,
-              ExcMessage("Rotated inner square exceeds outer square."));
-
   Triangulation<2> obstacle_tria;
+  // Start with a circular obstacle mesh, which helps define the edges and
+  // vertices links. The circular shape is then transformed to the square
+  // obstacle by moving the vertices. The outer ring of the circular mesh is
+  // used to define the transition region and is attached to the outer square by
+  // vertex projection, the inner vertices are shaped to form the inner square.
+  // To ensure that the inner square vertices can be easily identified  even
+  // when rotated, the initial circular mesh is generated using twice the
+  // inner_half_side as radius and every vertex can be identified using a
+  // distance criterion.
   GridGenerator::hyper_ball_balanced(obstacle_tria,
                                      center,
                                      2 * inner_half_side);
 
-  // Shape inner vertices to form the inner square
+  // We apply a transformation to shape inner vertices to form the inner square
   GridTools::transform(
     [&](const Point<2> &p) {
       const double dist = p.distance(center);
+
+      // If the vertex is the one in the center, we keep it fixed.
       if (dist <= tol_inner)
         return p;
-      if ((dist < std::numbers::sqrt2 * inner_half_side) &&
+
+      // If the vertex is within sqrt(2)*inner_half_side, it cannot be on the
+      // outer ring as we defined it to be 2*inner_half_side, so it is an inner
+      // vertex. We move it to the inner square by scaling the vector from the
+      // center to the vertex. The second condition checks if the vertex is on
+      // the diagonal (within a tolerance) in which case we need to scale it to
+      // the corner instead of the face of the inner square.
+      if ((dist < std::numbers::sqrt2 * inner_half_side + tol_inner) &&
           (std::abs(std::abs(p[0] - center[0]) - std::abs(p[1] - center[1])) <
            tol_inner))
         return center +
                std::numbers::sqrt2 * inner_half_side * (p - center) / dist;
-      if ((dist < std::numbers::sqrt2 * inner_half_side) &&
+      // This is for non corner inner vertices, we scale them to the face of the
+      // inner square.
+      if ((dist < std::numbers::sqrt2 * inner_half_side + tol_inner) &&
           (std::abs(std::abs(p[0] - center[0]) - std::abs(p[1] - center[1])) >=
            tol_inner))
         return center + (inner_half_side / dist) * (p - center);
@@ -214,7 +237,7 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
     },
     obstacle_tria);
 
-  // Rotate
+  // We apply the rotation to the whole mesh if a rotation angle is specified.
   if (inner_rotation_angle != 0.0)
     {
       const double cos_a = std::cos(inner_rotation_angle);
@@ -229,13 +252,13 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
         obstacle_tria);
     }
 
-  // Pre-compute the 8 projected positions on the outer square.
-  // The outer ring of hyper_ball_balanced has vertices at angles k*pi/4.
-  // After rotation they sit at inner_rotation_angle + k*pi/4. The projection
-  // maps each direction onto the outer square along the same line. To avoid
-  // having voids in the corners we choose the subset of the 4 target points
-  // that are closest to  corners and change the target projection to
-  // attach there instead.
+  // Here we pre-compute the 8 projected positions of vertices that we want for
+  // the outer square. The outer ring of hyper_ball_balanced has vertices at
+  // angles k*pi/4. After rotation they sit at inner_rotation_angle + k*pi/4.
+  // The projection maps each direction onto the outer square along the same
+  // line. To avoid having voids in the corners we choose the subset of the 4
+  // target points that are closest to  corners and change the target projection
+  // to attach them there instead.
   std::array<Point<2>, 8> outer_targets;
   for (unsigned int k = 0; k < 8; ++k)
     {
@@ -251,6 +274,12 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
       if ((remainder_scaled >= std::numbers::pi / 8.0) &&
           (remainder_scaled < 3 * std::numbers::pi / 8.0))
         {
+          // The factor is use to determine if the vertex is closer to the
+          // corner but below it (i.e., the angle is between pi/8 and pi/4) or
+          // if it is closer to the corner but above it (i.e., the angle is
+          // between 3*pi/8 and pi/2). In the first case we want to project to
+          // the next corner so the factor is 1, in the second case we want to
+          // project to the previous corner so the factor is 0.
           double factor =
             (remainder_scaled >= std::numbers::pi / 4.0) ? 0 : 1.0;
           theta = (factor + std::trunc(theta / (std::numbers::pi / 4.0))) *
@@ -270,22 +299,28 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
   GridTools::transform(
     [&](const Point<2> &p) {
       const double dist = p.distance(center);
-      // Check if the vertex is the one inside, none of the inside vertices can
-      // be further than sqrt2 * inner_half_side from the center.
+
+      // Check if the vertex is an inside vertex. The outer vertex still lies on
+      // the circle defined by the hyper_ball_balanced, so we can use the same
+      // distance criterion as before to identify them.
       if (dist <= std::numbers::sqrt2 * inner_half_side + tol_inner)
         return p;
 
-      double             min_angle   = -1.0;
-      Point<2>           closest     = outer_targets[0];
+      double   min_angle = -1.0;
+      Point<2> closest   = outer_targets[0];
+      // We compute the unitary vector from the center to the vertex and do the
+      // dot product with the unitary vector from the center to each target. The
+      // one with the highest cosine is the closest by angle and we project to
+      // that one (when the orientation is superposed, the cosine is 1, when it
+      // is orthogonal, the cosine is 0, and when it is opposite, the cosine is
+      // -1).
       const Tensor<1, 2> p_normalize = (p - center) / (p - center).norm();
       for (const Point<2> &candidate : outer_targets)
         {
           const Tensor<1, 2> target_normalize =
             (candidate - center) / (candidate - center).norm();
           const double cos_angle = p_normalize * target_normalize;
-          // When the orientation is superposed, the cosine is 1, when it is
-          // orthogonal, the cosine is 0, and when it is opposite, the cosine is
-          // -1. We want to find the candidate with the largest cosine.
+
           if (cos_angle > min_angle)
             {
               min_angle = cos_angle;
@@ -342,21 +377,30 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
   // Build a vector of step sizes from sorted breakpoints + outer bounds.
   // This lets subdivided_hyper_rectangle place vertices exactly at the
   // projected positions so merge_triangulations sees coincident nodes.
-  auto make_steps = [](const std::vector<double> &inner_coords,
-                       const double               lo,
-                       const double               hi) {
+  // Example:
+  //   inner = {x1, x2}, lo = a, hi = b
+  //   coords = {a, x1, x2, b}
+  //   steps  = {x1-a, x2-x1, b-x2}
+  std::vector<double> make_steps = [](const std::vector<double> &inner_coords,
+                                      const double               lo,
+                                      const double               hi) {
+    // Create the coordinates list
     std::vector<double> coords = {lo};
     for (const double c : inner_coords)
       coords.push_back(c);
     coords.push_back(hi);
+
+    // Create the steps list
     std::vector<double> steps;
     for (std::size_t i = 1; i < coords.size(); ++i)
       steps.push_back(coords[i] - coords[i - 1]);
     return steps;
   };
 
-  auto uniform = [](const unsigned int n, const double total) {
-    return std::vector<double>(n, total / static_cast<double>(n));
+  // Similar as above, this lambda function create a vector of uniform step
+  // sizes given the number of steps n and the total length to cover.
+  std::vector<double> uniform = [](const unsigned int n, const double length) {
+    return std::vector<double>(n, length / static_cast<double>(n));
   };
 
   // Bottom pad: columns split at bottom_x projected coords
@@ -464,8 +508,9 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
   triangulation.reset_all_manifolds();
   triangulation.set_all_manifold_ids(0);
 
-  // Mark obstacle cells by rotating the cell center back to the axis-aligned
-  // frame
+  // Here we mark obstacle cells with the obstacle material ID. This is done in
+  // the unrotated frame by rotating the cell center back to the axis-aligned
+  // frame temporarily and checking if it is within the inner square dimensions.
   for (const auto &cell : triangulation.active_cell_iterators())
     {
       const Point<2> c     = cell->center();
