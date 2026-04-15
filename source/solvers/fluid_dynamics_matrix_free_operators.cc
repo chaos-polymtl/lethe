@@ -1189,29 +1189,13 @@ NavierStokesOperatorBase<dim, number>::evaluate_velocity_ale(
            lane < matrix_free.n_active_entries_per_cell_batch(cell);
            lane++)
         {
-          // Compute radial distance from the current cell
-          const auto cell_center =
-            matrix_free.get_cell_iterator(cell, lane)->center();
-          double radius_current;
-
-          if constexpr (dim == 2)
-            radius_current = cell_center.distance(center_of_rotation);
-
-          if constexpr (dim == 3)
-            {
-              radius_current =
-                LetheGridTools::compute_radial_distance_3d(cell_center,
-                                                           rotation_axis,
-                                                           center_of_rotation);
-            }
-
-          // Use prescribed rotor angular velocity only if cell is part of the
-          // rotor
+          // Use prescribed rotor angular velocity and verify if cells are part
+          // of the stator (user_index = 0) or the rotor (user_index = 1)
           double omega;
-          if (radius_current > radius)
-            omega = 0.0;
-          else
+          if (matrix_free.get_cell_iterator(cell, lane)->user_index() == 1)
             omega = rotor_angular_velocity_value;
+          else
+            omega = 0.0;
 
           // Compute linear velocity at quadrature points
           for (const auto q : integrator.quadrature_point_indices())

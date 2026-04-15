@@ -413,32 +413,19 @@ NavierStokesScratchData<dim>::reinit_mortar(
   const Parameters::Mortar<dim>                        &mortar_parameters,
   const double                                         &radius)
 {
-  const auto cell_center = cell->center();
-
   // Get updated rotor angular velocity
   mortar_parameters.rotor_angular_velocity->set_time(
     this->simulation_control->get_current_time());
   const double rotor_angular_velocity =
     mortar_parameters.rotor_angular_velocity->value(Point<dim>());
 
-  // Compute radius between center of rotation and current cell center
-  double radius_current;
-
-  if constexpr (dim == 2)
-    radius_current = cell_center.distance(mortar_parameters.center_of_rotation);
-
-  if constexpr (dim == 3)
-    radius_current = LetheGridTools::compute_radial_distance_3d(
-      cell_center,
-      mortar_parameters.rotation_axis,
-      mortar_parameters.center_of_rotation);
-
-  // Use prescribed rotor angular velocity only if cell is part of the rotor
+  // Use prescribed rotor angular velocity and verify if cells are part of the
+  // stator (user_index = 0) or the rotor (user_index = 1)
   double omega;
-  if (radius_current > radius)
-    omega = 0.0;
-  else
+  if (cell->user_index() == 1)
     omega = rotor_angular_velocity;
+  else
+    omega = 0.0;
 
   // Compute rotor linear velocity at quadrature points
   rotor_linear_velocity_values = std::vector<Tensor<1, dim>>(this->n_q_points);

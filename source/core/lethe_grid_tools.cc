@@ -1800,7 +1800,9 @@ LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
         mapping,
         dof_handler.get_triangulation(),
         [&](const auto &cell, const auto &point) {
-          if ((cell->center() - center_of_rotation).norm() > radius)
+          // Verify if cells are part of the stator (user_index = 0) or the
+          // rotor (user_index = 1)
+          if (cell->user_index() == 0)
             return point;
 
           // Shift point by the center of rotation
@@ -1821,13 +1823,9 @@ LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
         mapping,
         dof_handler.get_triangulation(),
         [&](const auto &cell, const auto &point) {
-          // Compute point radial distance with respect to the rotation axis
-          const double point_radial_distance =
-            compute_radial_distance_3d(cell->center(),
-                                       rotation_axis,
-                                       center_of_rotation);
-
-          if (point_radial_distance > radius)
+          // Verify if cells are part of the stator (user_index = 0) or the
+          // rotor (user_index = 1)
+          if (cell->user_index() == 0)
             return point;
 
           // Shift point by the center of rotation
