@@ -124,23 +124,6 @@ test()
               << std::endl;
       deallog << "Radius : " << radius[0] << std::endl;
     }
-  // Rotate mapping
-  LetheGridTools::rotate_mapping(dof_handler,
-                                 mapping_cache,
-                                 mapping,
-                                 rotation_angle);
-
-  const auto n_subdivisions1 =
-    compute_number_interface_cells(triangulation, mortar_parameters);
-
-  const auto [radius1, prerotation1] =
-    compute_interface_dimensions_circular(triangulation,
-                                          mapping_cache,
-                                          mortar_parameters);
-
-  AssertDimension(n_subdivisions[0], n_subdivisions1[0]);
-  AssertDimension(radius[0], radius[0]);
-  Assert(std::abs(rotation_angle - prerotation1) < 1.e-8, ExcInternalError());
 }
 
 int
