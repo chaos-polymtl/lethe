@@ -2121,7 +2121,164 @@ HeatTransfer<dim>::write_liquid_fraction()
     }
 }
 
+template <int dim>
+void
+HeatTransfer<dim>::postprocess_melt_volume(const bool gather_cls)
+{
+  // const unsigned int n_q_points   = this->cell_quadrature->size();
+  const MPI_Comm mpi_communicator = this->dof_handler->get_mpi_communicator();
 
+  // Initialize CLS DoFHandler
+  std::shared_ptr<const DoFHandler<dim>> dof_handler_cls;
+
+  // Get CLS DoFHandler and FEValues if it is a multiphase simulation
+  if (gather_cls)
+    {
+      dof_handler_cls = std::shared_ptr<const DoFHandler<dim>>(
+        &this->multiphysics->get_dof_handler(PhysicsID::CLS),
+        [](const DoFHandler<dim> *) {});
+    }
+
+  // Get the raw physical properties parameters to calculate the enthalpy
+  // in-situ
+  const auto &physical_properties_parameters =
+    this->simulation_parameters.physical_properties_manager
+      .get_physical_properties_parameters();
+
+  // Get liquidus temperature
+  double liquidus_temperature;
+  bool   fluid_0_hase_phase_change = true;
+  if (gather_cls)
+    { // Fluid 0 has phase change
+      if (physical_properties_parameters.fluids[0].specific_heat_model ==
+          Parameters::Material::SpecificHeatModel::phase_change)
+        {
+          liquidus_temperature = physical_properties_parameters.fluids[0]
+                                   .phase_change_parameters.T_liquidus;
+        }
+      else // Fluid 1 has phase change
+        {
+          liquidus_temperature = physical_properties_parameters.fluids[1]
+                                   .phase_change_parameters.T_liquidus;
+          fluid_0_hase_phase_change = false;
+        }
+    }
+  else
+    {
+      liquidus_temperature = physical_properties_parameters.fluids[0]
+                               .phase_change_parameters.T_liquidus;
+    }
+
+  // Transpose temperature to get volume over liquidus temperature
+  GlobalVectorType temperature_vector_owned_copy(
+    this->dof_handler->locally_owned_dofs(), mpi_communicator);
+  temperature_vector_owned_copy = *this->present_solution;
+  temperature_vector_owned_copy.add(-liquidus_temperature);
+  temperature_vector_owned_copy.operator*=(-1);
+
+  // Classify active cells as being inside/outside/intersected
+  GlobalVectorType temperature_vector_relevant_copy(
+    this->dof_handler->locally_owned_dofs(),
+    DoFTools::extract_locally_relevant_dofs(*this->dof_handler),
+    mpi_communicator);
+  temperature_vector_relevant_copy = temperature_vector_owned_copy;
+  NonMatching::MeshClassifier<dim> mesh_classifier(
+    *this->dof_handler, temperature_vector_relevant_copy);
+  mesh_classifier.reclassify();
+
+  // Initialize NonMatching FeValues
+  const hp::FECollection<dim>    fe_collection(*this->fe);
+  const QGauss<1>                quadrature_1D(this->fe->degree + 1);
+  NonMatching::RegionUpdateFlags region_update_flags;
+  region_update_flags.inside = update_JxW_values;
+  NonMatching::FEValues<dim> non_matching_fe_values(
+    fe_collection,
+    quadrature_1D,
+    region_update_flags,
+    mesh_classifier,
+    *this->dof_handler,
+    temperature_vector_relevant_copy);
+
+  // Initialize melt volume
+  double melt_volume = 0.0;
+
+  // Loop over cells to get inside cells that are locally owned and compute
+  // volume
+  for (const auto &cell : this->dof_handler->active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          // Reinitialize to current cell
+          non_matching_fe_values.reinit(cell);
+
+          const std::optional<FEValues<dim>> &inside_fe_values =
+            non_matching_fe_values.get_inside_fe_values();
+
+          // Only go on if temperature is above liquidus temperature
+          if (!inside_fe_values)
+            continue;
+
+          if (gather_cls) // Two-fluid flow
+            {
+              // Get CLS active cell iterator
+              typename DoFHandler<dim>::active_cell_iterator cell_cls(
+                &(*(this->triangulation)),
+                cell->level(),
+                cell->index(),
+                &(*dof_handler_cls));
+
+              // Get phase indicator values
+              const auto &inside_q_points =
+                inside_fe_values->get_quadrature_points();
+              Quadrature<dim> inside_quadrature = (inside_q_points);
+
+              FEValues<dim> inside_fe_values_cls(*this->temperature_mapping,
+                                                 dof_handler_cls->get_fe(),
+                                                 inside_quadrature,
+                                                 update_values);
+              inside_fe_values_cls.reinit(cell_cls);
+
+              std::vector<double> phase_indicator_values(
+                inside_q_points.size());
+              inside_fe_values_cls.get_function_values(
+                this->multiphysics->get_solution(PhysicsID::CLS),
+                phase_indicator_values);
+
+              if (fluid_0_hase_phase_change)
+                {
+                  for (const unsigned int q :
+                       inside_fe_values->quadrature_point_indices())
+                    {
+                      melt_volume += (1 - phase_indicator_values[q]) *
+                                     inside_fe_values->JxW(q);
+                    }
+                }
+              else // Fluid 1 has phase change
+                {
+                  for (const unsigned int q :
+                       inside_fe_values->quadrature_point_indices())
+                    {
+                      melt_volume +=
+                        phase_indicator_values[q] * inside_fe_values->JxW(q);
+                    }
+                }
+            }
+          else // Single fluid flow
+            {
+              for (const unsigned int q :
+                   inside_fe_values->quadrature_point_indices())
+                {
+                  melt_volume += inside_fe_values->JxW(q);
+                }
+            }
+        }
+    }
+
+  // Sum over all processes
+  melt_volume = Utilities::MPI::sum(melt_volume, mpi_communicator);
+
+  // TODO AA table (check liquid fraction)
+}
 
 template <int dim>
 template <typename VectorType>
