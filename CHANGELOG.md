@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/04/16
+
+### Changed
+
+- MINOR The mortar TGV tests were not robust enough, and some were failing in debug only but not in release mode. This PR decreases the tolerance of both linear and non-linear solvers in the 3 mortar TGV tests. [#1970](https://github.com/chaos-polymtl/lethe/pull/1970)
+
 ## [Master] - 2026/04/10
 
 ### Fixed
