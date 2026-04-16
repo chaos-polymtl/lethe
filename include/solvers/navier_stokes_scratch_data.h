@@ -1345,13 +1345,10 @@ public:
    * FeValues.
    *
    * @param[in] mortar_parameters Parameters for the mortar method
-   *
-   * @param[in] radius Radius of the rotor domain
    */
   void
   reinit_mortar(const typename DoFHandler<dim>::active_cell_iterator &cell,
-                const Parameters::Mortar<dim> &mortar_parameters,
-                const double                  &radius);
+                const Parameters::Mortar<dim> &mortar_parameters);
 
   /**
    * @brief Calculates the physical properties. This function calculates the

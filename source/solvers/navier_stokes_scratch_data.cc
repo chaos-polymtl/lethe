@@ -410,8 +410,7 @@ template <int dim>
 void
 NavierStokesScratchData<dim>::reinit_mortar(
   const typename DoFHandler<dim>::active_cell_iterator &cell,
-  const Parameters::Mortar<dim>                        &mortar_parameters,
-  const double                                         &radius)
+  const Parameters::Mortar<dim>                        &mortar_parameters)
 {
   // Get updated rotor angular velocity
   mortar_parameters.rotor_angular_velocity->set_time(

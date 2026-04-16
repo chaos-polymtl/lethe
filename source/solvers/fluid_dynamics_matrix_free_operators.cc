@@ -1158,7 +1158,6 @@ template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::evaluate_velocity_ale(
   const Mapping<dim>                             &mapping,
-  const double                                    radius,
   const Point<dim>                                center_of_rotation,
   const Tensor<1, dim>                            rotation_axis,
   std::shared_ptr<Functions::ParsedFunction<dim>> rotor_angular_velocity)

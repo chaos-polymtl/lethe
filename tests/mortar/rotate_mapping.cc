@@ -111,8 +111,10 @@ test()
   Assert(prerotation == 0.0, ExcInternalError());
 
   // Rotate mapping
-  LetheGridTools::rotate_mapping(
-    dof_handler, mapping_cache, mapping, radius[0], rotation_angle);
+  LetheGridTools::rotate_mapping(dof_handler,
+                                 mapping_cache,
+                                 mapping,
+                                 rotation_angle);
 
   // Print information
   if (Utilities::MPI::this_mpi_process(comm) == 0)
@@ -123,8 +125,10 @@ test()
       deallog << "Radius : " << radius[0] << std::endl;
     }
   // Rotate mapping
-  LetheGridTools::rotate_mapping(
-    dof_handler, mapping_cache, mapping, radius[0] * 10, rotation_angle);
+  LetheGridTools::rotate_mapping(dof_handler,
+                                 mapping_cache,
+                                 mapping,
+                                 rotation_angle);
 
   const auto n_subdivisions1 =
     compute_number_interface_cells(triangulation, mortar_parameters);
