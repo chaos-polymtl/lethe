@@ -588,10 +588,18 @@ private:
    * @param[in] gather_cls Boolean indicating if a CLS multiphase flow is being
    * simulated.
    *
-   * @remark If two-phase flow, only one of the fluids can have phase change.
+   * @remark If CLS multiphase flow, only one of the fluids can have phase
+   * change. The volume is computed as the geometrical volume with respect to
+   * the phase indicator iso-curve of value 0.5.
    */
   void
   postprocess_melt_volume(const bool gather_cls);
+
+  /**
+   * @brief Post-processing: write the melt volume to an output file.
+   */
+  void
+  write_melt_volume();
 
   /**
    * Post-processing. Calculate the heat flux at heat transfer boundary

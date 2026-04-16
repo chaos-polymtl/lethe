@@ -2334,6 +2334,17 @@ namespace Parameters
                         Patterns::FileName(),
                         "File name output liquid fraction");
 
+      prm.declare_entry(
+        "calculate melt volume",
+        "false",
+        Patterns::Bool(),
+        "Enable calculation of the melt volume. The melt volume is computed as the volume of liquid over the liquidus temperature. In the case of CLS simulations, the volume is the geometrical volume within the fluid with phase change.");
+
+      prm.declare_entry("melt volume name",
+                        "melt_volume",
+                        Patterns::FileName(),
+                        "Filename of the melt volume output file");
+
       prm.declare_entry("calculate heat flux",
                         "false",
                         Patterns::Bool(),
@@ -2475,6 +2486,8 @@ namespace Parameters
         prm.get_bool("calculate temperature statistics");
       calculate_liquid_fraction   = prm.get_bool("calculate liquid fraction");
       liquid_fraction_output_name = prm.get("liquid fraction name");
+      calculate_melt_volume       = prm.get_bool("calculate melt volume");
+      melt_volume_output_name     = prm.get("melt volume name");
       temperature_output_name     = prm.get("temperature statistics name");
       calculate_heat_flux         = prm.get_bool("calculate heat flux");
       heat_flux_output_name       = prm.get("heat flux name");
