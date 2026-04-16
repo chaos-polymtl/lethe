@@ -12,7 +12,46 @@ Enstrophy: 5.648592e-01
 Kinetic energy: 2.499992e-01
 
 *******************************************************************************
-Transient iteration: 1        Time: 0.04     Time step: 0.04     CFL: 1.43871 
+Transient iteration: 1        Time: 0.01     Time step: 0.01     CFL: 0.143871
+*******************************************************************************
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    3.000000e-04 rad 
+Rotor grid velocity: 3.000000e-02 rad/time 
+
+Enstrophy: 4.812877e-01
+Kinetic energy: 2.402707e-01
+L2 error velocity: 2.147183e-03
+
+*******************************************************************************
+Transient iteration: 2        Time: 0.02     Time step: 0.01     CFL: 0.141049
+*******************************************************************************
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    6.000000e-04 rad 
+Rotor grid velocity: 3.000000e-02 rad/time 
+
+Enstrophy: 4.625586e-01
+Kinetic energy: 2.309209e-01
+L2 error velocity: 2.557261e-03
+
+*******************************************************************************
+Transient iteration: 3        Time: 0.03     Time step: 0.01     CFL: 0.138278
+*******************************************************************************
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    9.000000e-04 rad 
+Rotor grid velocity: 3.000000e-02 rad/time 
+
+Enstrophy: 4.445584e-01
+Kinetic energy: 2.219349e-01
+L2 error velocity: 3.011242e-03
+
+*******************************************************************************
+Transient iteration: 4        Time: 0.04     Time step: 0.01     CFL: 0.13556 
 *******************************************************************************
 -----------------
 Mortar Interface
@@ -20,12 +59,77 @@ Mortar Interface
 Rotor grid angle:    1.200000e-03 rad 
 Rotor grid velocity: 3.000000e-02 rad/time 
 
-Enstrophy: 4.291935e-01
-Kinetic energy: 2.142643e-01
-L2 error velocity: 1.203312e-02
+Enstrophy: 4.272589e-01
+Kinetic energy: 2.132985e-01
+L2 error velocity: 3.498525e-03
 
 *******************************************************************************
-Transient iteration: 2        Time: 0.1      Time step: 0.06     CFL: 0.532788
+Transient iteration: 5        Time: 0.05     Time step: 0.01     CFL: 0.132895
+*******************************************************************************
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    1.500000e-03 rad 
+Rotor grid velocity: 3.000000e-02 rad/time 
+
+Enstrophy: 4.106325e-01
+Kinetic energy: 2.049983e-01
+L2 error velocity: 3.996958e-03
+
+*******************************************************************************
+Transient iteration: 6        Time: 0.06     Time step: 0.01     CFL: 0.130283
+*******************************************************************************
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    1.800000e-03 rad 
+Rotor grid velocity: 3.000000e-02 rad/time 
+
+Enstrophy: 3.946532e-01
+Kinetic energy: 1.970210e-01
+L2 error velocity: 4.493124e-03
+
+*******************************************************************************
+Transient iteration: 7        Time: 0.07     Time step: 0.01     CFL: 0.127723
+*******************************************************************************
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    2.100000e-03 rad 
+Rotor grid velocity: 3.000000e-02 rad/time 
+
+Enstrophy: 3.792957e-01
+Kinetic energy: 1.893542e-01
+L2 error velocity: 4.979550e-03
+
+*******************************************************************************
+Transient iteration: 8        Time: 0.08     Time step: 0.01     CFL: 0.125213
+*******************************************************************************
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    2.400000e-03 rad 
+Rotor grid velocity: 3.000000e-02 rad/time 
+
+Enstrophy: 3.645358e-01
+Kinetic energy: 1.819857e-01
+L2 error velocity: 5.452124e-03
+
+*******************************************************************************
+Transient iteration: 9        Time: 0.09     Time step: 0.01     CFL: 0.122753
+*******************************************************************************
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    2.700000e-03 rad 
+Rotor grid velocity: 3.000000e-02 rad/time 
+
+Enstrophy: 3.503503e-01
+Kinetic energy: 1.749040e-01
+L2 error velocity: 5.908618e-03
+
+*******************************************************************************
+Transient iteration: 10       Time: 0.1      Time step: 0.01     CFL: 0.120341
 *******************************************************************************
 -----------------
 Mortar Interface
@@ -33,135 +137,157 @@ Mortar Interface
 Rotor grid angle:    3.000000e-03 rad 
 Rotor grid velocity: 3.000000e-02 rad/time 
 
-Enstrophy: 3.385479e-01
-Kinetic energy: 1.690119e-01
-L2 error velocity: 1.578481e-02
+Enstrophy: 3.367168e-01
+Kinetic energy: 1.680978e-01
+L2 error velocity: 6.347891e-03
 
 *******************************************************************************
-Transient iteration: 3        Time: 0.2      Time step: 0.1      CFL: 0.709792
+Transient iteration: 11       Time: 0.11     Time step: 0.01     CFL: 0.117977
 *******************************************************************************
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    3.300000e-03 rad 
+Rotor grid velocity: 3.000000e-02 rad/time 
+
+Enstrophy: 3.236139e-01
+Kinetic energy: 1.615565e-01
+L2 error velocity: 6.769442e-03
+
+*******************************************************************************
+Transient iteration: 12       Time: 0.12     Time step: 0.01     CFL: 0.11566 
+*******************************************************************************
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    3.600000e-03 rad 
+Rotor grid velocity: 3.000000e-02 rad/time 
+
+Enstrophy: 3.110208e-01
+Kinetic energy: 1.552697e-01
+L2 error velocity: 7.173160e-03
+
+*******************************************************************************
+Transient iteration: 13       Time: 0.13     Time step: 0.01     CFL: 0.113388
+*******************************************************************************
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    3.900000e-03 rad 
+Rotor grid velocity: 3.000000e-02 rad/time 
+
+Enstrophy: 2.989178e-01
+Kinetic energy: 1.492276e-01
+L2 error velocity: 7.559171e-03
+
+*******************************************************************************
+Transient iteration: 14       Time: 0.14     Time step: 0.01     CFL: 0.111161
+*******************************************************************************
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    4.200000e-03 rad 
+Rotor grid velocity: 3.000000e-02 rad/time 
+
+Enstrophy: 2.872857e-01
+Kinetic energy: 1.434206e-01
+L2 error velocity: 7.927747e-03
+
+*******************************************************************************
+Transient iteration: 15       Time: 0.15     Time step: 0.01     CFL: 0.108977
+*******************************************************************************
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    4.500000e-03 rad 
+Rotor grid velocity: 3.000000e-02 rad/time 
+
+Enstrophy: 2.761063e-01
+Kinetic energy: 1.378395e-01
+L2 error velocity: 8.279253e-03
+
+*******************************************************************************
+Transient iteration: 16       Time: 0.16     Time step: 0.01     CFL: 0.106837
+*******************************************************************************
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    4.800000e-03 rad 
+Rotor grid velocity: 3.000000e-02 rad/time 
+
+Enstrophy: 2.653619e-01
+Kinetic energy: 1.324757e-01
+L2 error velocity: 8.614104e-03
+
+*******************************************************************************
+Transient iteration: 17       Time: 0.17     Time step: 0.01     CFL: 0.104739
+*******************************************************************************
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    5.100000e-03 rad 
+Rotor grid velocity: 3.000000e-02 rad/time 
+
+Enstrophy: 2.550356e-01
+Kinetic energy: 1.273205e-01
+L2 error velocity: 8.932750e-03
+
+*******************************************************************************
+Transient iteration: 18       Time: 0.18     Time step: 0.01     CFL: 0.102682
+*******************************************************************************
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    5.400000e-03 rad 
+Rotor grid velocity: 3.000000e-02 rad/time 
+
+Enstrophy: 2.451112e-01
+Kinetic energy: 1.223660e-01
+L2 error velocity: 9.235655e-03
+
+*******************************************************************************
+Transient iteration: 19       Time: 0.19     Time step: 0.01     CFL: 0.100666
+*******************************************************************************
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    5.700000e-03 rad 
+Rotor grid velocity: 3.000000e-02 rad/time 
+
+Enstrophy: 2.355729e-01
+Kinetic energy: 1.176042e-01
+L2 error velocity: 9.523288e-03
+
+********************************************************************************
+Transient iteration: 20       Time: 0.2      Time step: 0.01     CFL: 0.0986889
+********************************************************************************
 -----------------
 Mortar Interface
 -----------------
 Rotor grid angle:    6.000000e-03 rad 
 Rotor grid velocity: 3.000000e-02 rad/time 
 
-Enstrophy: 2.267129e-01
-Kinetic energy: 1.131811e-01
-L2 error velocity: 1.174553e-02
-
-*******************************************************************************
-Transient iteration: 4        Time: 0.3      Time step: 0.1      CFL: 0.968151
-*******************************************************************************
------------------
-Mortar Interface
------------------
-Rotor grid angle:    9.000000e-03 rad 
-Rotor grid velocity: 3.000000e-02 rad/time 
-
-Enstrophy: 1.512715e-01
-Kinetic energy: 7.551882e-02
-L2 error velocity: 4.997832e-03
-
-*******************************************************************************
-Transient iteration: 5        Time: 0.4      Time step: 0.1      CFL: 0.790963
-*******************************************************************************
------------------
-Mortar Interface
------------------
-Rotor grid angle:    1.200000e-02 rad 
-Rotor grid velocity: 3.000000e-02 rad/time 
-
-Enstrophy: 1.007726e-01
-Kinetic energy: 5.030847e-02
-L2 error velocity: 4.724237e-03
-
-*******************************************************************************
-Transient iteration: 6        Time: 0.5      Time step: 0.1      CFL: 0.645724
-*******************************************************************************
------------------
-Mortar Interface
------------------
-Rotor grid angle:    1.500000e-02 rad 
-Rotor grid velocity: 3.000000e-02 rad/time 
-
-Enstrophy: 6.708397e-02
-Kinetic energy: 3.349023e-02
-L2 error velocity: 8.936345e-03
-
-*******************************************************************************
-Transient iteration: 7        Time: 0.6      Time step: 0.1      CFL: 0.526988
-*******************************************************************************
------------------
-Mortar Interface
------------------
-Rotor grid angle:    1.800000e-02 rad 
-Rotor grid velocity: 3.000000e-02 rad/time 
-
-Enstrophy: 4.464330e-02
-Kinetic energy: 2.228725e-02
-L2 error velocity: 1.203395e-02
-
-*******************************************************************************
-Transient iteration: 8        Time: 0.7      Time step: 0.1      CFL: 0.43003 
-*******************************************************************************
------------------
-Mortar Interface
------------------
-Rotor grid angle:    2.100000e-02 rad 
-Rotor grid velocity: 3.000000e-02 rad/time 
-
-Enstrophy: 2.970504e-02
-Kinetic energy: 1.482967e-02
-L2 error velocity: 1.384440e-02
-
-*******************************************************************************
-Transient iteration: 9        Time: 0.8      Time step: 0.1      CFL: 0.350894
-*******************************************************************************
------------------
-Mortar Interface
------------------
-Rotor grid angle:    2.400000e-02 rad 
-Rotor grid velocity: 3.000000e-02 rad/time 
-
-Enstrophy: 1.976395e-02
-Kinetic energy: 9.866797e-03
-L2 error velocity: 1.464445e-02
-
-*******************************************************************************
-Transient iteration: 10       Time: 0.9      Time step: 0.1      CFL: 0.286318
-*******************************************************************************
------------------
-Mortar Interface
------------------
-Rotor grid angle:    2.700000e-02 rad 
-Rotor grid velocity: 3.000000e-02 rad/time 
-
-Enstrophy: 1.314927e-02
-Kinetic energy: 6.564559e-03
-L2 error velocity: 1.471424e-02
-
-*******************************************************************************
-Transient iteration: 11       Time: 1        Time step: 0.1      CFL: 0.233628
-*******************************************************************************
------------------
-Mortar Interface
------------------
-Rotor grid angle:    3.000000e-02 rad 
-Rotor grid velocity: 3.000000e-02 rad/time 
-
-Enstrophy: 8.748240e-03
-Kinetic energy: 4.367434e-03
-L2 error velocity: 1.428325e-02
+Enstrophy: 2.264058e-01
+Kinetic energy: 1.130278e-01
+L2 error velocity: 9.796119e-03
  time  error_velocity 
-0.0400   1.203312e-02 
-0.1000   1.578481e-02 
-0.2000   1.174553e-02 
-0.3000   4.997832e-03 
-0.4000   4.724237e-03 
-0.5000   8.936345e-03 
-0.6000   1.203395e-02 
-0.7000   1.384440e-02 
-0.8000   1.464445e-02 
-0.9000   1.471424e-02 
-1.0000   1.428325e-02 
+0.0100   2.147183e-03 
+0.0200   2.557261e-03 
+0.0300   3.011242e-03 
+0.0400   3.498525e-03 
+0.0500   3.996958e-03 
+0.0600   4.493124e-03 
+0.0700   4.979550e-03 
+0.0800   5.452124e-03 
+0.0900   5.908618e-03 
+0.1000   6.347891e-03 
+0.1100   6.769442e-03 
+0.1200   7.173160e-03 
+0.1300   7.559171e-03 
+0.1400   7.927747e-03 
+0.1500   8.279253e-03 
+0.1600   8.614104e-03 
+0.1700   8.932750e-03 
+0.1800   9.235655e-03 
+0.1900   9.523288e-03 
+0.2000   9.796119e-03 
