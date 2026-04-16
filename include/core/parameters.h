@@ -1122,8 +1122,14 @@ namespace Parameters
     /// Enable calculation of liquid fraction in phase change problems
     bool calculate_liquid_fraction;
 
-    /// Prefix for the temperature output
+    /// Prefix for the liquid fraction output
     std::string liquid_fraction_output_name;
+
+    /// Enable calculation of melt volume in phase change problems
+    bool calculate_melt_volume;
+
+    /// Prefix for the melt volume output
+    std::string melt_volume_output_name;
 
     /// Enable heat flux calculation
     bool calculate_heat_flux;
