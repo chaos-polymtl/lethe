@@ -32,6 +32,9 @@
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
+#include <deal.II/non_matching/fe_values.h>
+#include <deal.II/non_matching/mesh_classifier.h>
+
 
 DeclException1(
   HeatTransferBoundaryConditionMissing,
@@ -569,16 +572,26 @@ private:
    * @param gather_cls boolean true when CLS=true (multiphase flow), used to gather
    * CLS information
    */
-
   void
   postprocess_liquid_fraction(const bool gather_cls);
 
   /**
    * @brief Post-processing. Write the liquid fraction to an output file.
    */
-
   void
   write_liquid_fraction();
+
+  /**
+   * @brief Computes the melt volume (3D) or surface (2D) in a domain. The mushy
+   * zone is excluded from the melt region.
+   *
+   * @param[in] gather_cls Boolean indicating if a CLS multiphase flow is being
+   * simulated.
+   *
+   * @remark If two-phase flow, only one of the fluids can have phase change.
+   */
+  void
+  postprocess_melt_volume(const bool gather_cls);
 
   /**
    * Post-processing. Calculate the heat flux at heat transfer boundary
@@ -590,7 +603,6 @@ private:
    * @param current_solution_fd current solution for the fluid dynamics, parsed
    * by postprocess
    */
-
   template <typename VectorType>
   void
   postprocess_heat_flux_on_bc(const bool        gather_cls,
@@ -868,6 +880,11 @@ private:
    * @brief Liquid fraction in the domain.
    */
   TableHandler liquid_fraction_table;
+
+  /**
+   * @brief Melt volume in the domain.
+   */
+  TableHandler melt_volume_table;
 };
 
 
