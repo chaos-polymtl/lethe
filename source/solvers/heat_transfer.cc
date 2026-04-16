@@ -2128,16 +2128,9 @@ HeatTransfer<dim>::postprocess_melt_volume(const bool gather_cls)
   // const unsigned int n_q_points   = this->cell_quadrature->size();
   const MPI_Comm mpi_communicator = this->dof_handler->get_mpi_communicator();
 
-  // Initialize CLS DoFHandler
-  std::shared_ptr<const DoFHandler<dim>> dof_handler_cls;
-
-  // Get CLS DoFHandler and FEValues if it is a multiphase simulation
-  if (gather_cls)
-    {
-      dof_handler_cls = std::shared_ptr<const DoFHandler<dim>>(
-        &this->multiphysics->get_dof_handler(PhysicsID::CLS),
-        [](const DoFHandler<dim> *) {});
-    }
+  // Initialize CLS DoFHandler and FEValues
+  std::shared_ptr<const DoFHandler<dim>>      dof_handler_cls;
+  std::shared_ptr<NonMatching::FEValues<dim>> non_matching_fe_values_cls;
 
   // Get the raw physical properties parameters to calculate the enthalpy
   // in-situ
@@ -2199,6 +2192,27 @@ HeatTransfer<dim>::postprocess_melt_volume(const bool gather_cls)
     *this->dof_handler,
     temperature_vector_relevant_copy);
 
+  // Get CLS DoFHandler and NonMatching FEValues if it is a multiphase
+  // simulation
+  if (gather_cls)
+    {
+      dof_handler_cls = std::shared_ptr<const DoFHandler<dim>>(
+        &this->multiphysics->get_dof_handler(PhysicsID::CLS),
+        [](const DoFHandler<dim> *) {});
+
+      const hp::FECollection<dim> fe_collection_cls(dof_handler_cls->get_fe());
+
+      NonMatching::RegionUpdateFlags region_update_flags_cls;
+      region_update_flags_cls.inside = update_values;
+      non_matching_fe_values_cls = std::make_shared<NonMatching::FEValues<dim>>(
+        fe_collection_cls,
+        quadrature_1D,
+        region_update_flags_cls,
+        mesh_classifier,
+        *dof_handler_cls,
+        temperature_vector_relevant_copy);
+    }
+
   // Initialize melt volume
   double melt_volume = 0.0;
 
@@ -2228,19 +2242,12 @@ HeatTransfer<dim>::postprocess_melt_volume(const bool gather_cls)
                 &(*dof_handler_cls));
 
               // Get phase indicator values
-              const auto &inside_q_points =
-                inside_fe_values->get_quadrature_points();
-              Quadrature<dim> inside_quadrature = (inside_q_points);
-
-              FEValues<dim> inside_fe_values_cls(*this->temperature_mapping,
-                                                 dof_handler_cls->get_fe(),
-                                                 inside_quadrature,
-                                                 update_values);
-              inside_fe_values_cls.reinit(cell_cls);
-
+              non_matching_fe_values_cls->reinit(cell_cls);
+              const std::optional<FEValues<dim>> &inside_fe_values_cls =
+                non_matching_fe_values_cls->get_inside_fe_values();
               std::vector<double> phase_indicator_values(
-                inside_q_points.size());
-              inside_fe_values_cls.get_function_values(
+                inside_fe_values->quadrature_point_indices().size());
+              inside_fe_values_cls->get_function_values(
                 this->multiphysics->get_solution(PhysicsID::CLS),
                 phase_indicator_values);
 
