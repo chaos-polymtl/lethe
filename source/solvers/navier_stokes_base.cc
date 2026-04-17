@@ -1292,13 +1292,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_adaptive()
 
   // If mortar is enabled, update mapping cache with refined triangulation
   if (this->simulation_parameters.mortar_parameters.enable)
-    {
-      this->mapping_cache->initialize(*this->mapping, tria);
-      // Propagate cell index to refined cells
-      for (const auto &cell : tria.active_cell_iterators())
-        if (cell->level() > 0)
-          cell->set_user_index(cell->parent()->user_index());
-    }
+    this->mapping_cache->initialize(*this->mapping, tria);
 
   setup_dofs();
 
@@ -1364,13 +1358,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
 
   // If mortar is enabled, update mapping cache with refined triangulation
   if (this->simulation_parameters.mortar_parameters.enable)
-    {
-      this->mapping_cache->initialize(*this->mapping, *this->triangulation);
-      // Propagate cell index to refined cells
-      for (const auto &cell : this->triangulation->active_cell_iterators())
-        if (cell->level() > 0)
-          cell->set_user_index(cell->parent()->user_index());
-    }
+    this->mapping_cache->initialize(*this->mapping, *this->triangulation);
 
   setup_dofs();
 

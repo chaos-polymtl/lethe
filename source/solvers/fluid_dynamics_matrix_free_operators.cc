@@ -1189,9 +1189,9 @@ NavierStokesOperatorBase<dim, number>::evaluate_velocity_ale(
            lane++)
         {
           // Use prescribed rotor angular velocity and verify if cells are part
-          // of the stator (user_index = 0) or the rotor (user_index = 1)
+          // of the rotor (material_id = 1) or the stator (material_id = 2)
           double omega;
-          if (matrix_free.get_cell_iterator(cell, lane)->user_index() == 1)
+          if (matrix_free.get_cell_iterator(cell, lane)->material_id() == 1)
             omega = rotor_angular_velocity_value;
           else
             omega = 0.0;

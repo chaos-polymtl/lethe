@@ -419,9 +419,9 @@ NavierStokesScratchData<dim>::reinit_mortar(
     mortar_parameters.rotor_angular_velocity->value(Point<dim>());
 
   // Use prescribed rotor angular velocity and verify if cells are part of the
-  // stator (user_index = 0) or the rotor (user_index = 1)
+  // the rotor (material_id = 1) or the stator (material_id = 2)
   double omega;
-  if (cell->user_index() == 1)
+  if (cell->material_id() == 1)
     omega = rotor_angular_velocity;
   else
     omega = 0.0;

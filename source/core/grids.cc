@@ -363,12 +363,14 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   Triangulation<dim> rotor_temp_tria;
   attach_grid_to_triangulation(rotor_temp_tria, *mortar_parameters.rotor_mesh);
 
-  // Add a user flag to cells on the rotor triangulation; this will be needed
-  // when attributing them an angular velocity. We use the material_id because
-  // it won't be erased when the triangulation is merged. After the merge, this
-  // id is copied to a user_index
+  // Add a user flag to cells on the rotor and stator triangulations; this will
+  // be needed when attributing them an angular velocity. We use the material_id
+  // flag because it won't be erased when the triangulations are merged.
   for (const auto &cell : rotor_temp_tria.active_cell_iterators())
     cell->set_material_id(1);
+
+  for (const auto &cell : stator_temp_tria.active_cell_iterators())
+    cell->set_material_id(2);
 
   if (mesh_parameters.type == Parameters::Mesh::Type::dealii)
     {
@@ -541,17 +543,6 @@ read_mesh_and_manifolds_for_stator_and_rotor(
                 mortar_parameters.stator_boundary_id)
               n_faces_stator_interface++;
           }
-
-  // Copy the flags identifying the rotor domain from material_id() to
-  // user_index()
-  for (const auto &cell : triangulation.active_cell_iterators())
-    {
-      if (cell->material_id() == 1)
-        cell->set_user_index(1);
-
-      // Return material_id() to 0, as is done in attach_grid_to_triangulation()
-      cell->set_material_id(0);
-    }
 
   // Total number of faces
   const unsigned int n_faces_rotor_interface_total =
