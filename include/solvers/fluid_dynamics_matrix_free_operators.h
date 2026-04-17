@@ -433,6 +433,7 @@ public:
    *
    * @param[in] mapping Describes the transformations from unit to real cell.
    * @param[in] center_of_rotation Center of rotation of the rotor domain.
+   * @param[in] rotation_axis Rotation axis of the rotor domain for 3D case.
    * @param[in] rotor_angular_velocity  Angular velocity of the rotor domain.
    */
   void

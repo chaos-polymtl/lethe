@@ -1193,7 +1193,8 @@ NavierStokesOperatorBase<dim, number>::evaluate_velocity_ale(
           double omega;
           if (matrix_free.get_cell_iterator(cell, lane)->material_id() == 1)
             omega = rotor_angular_velocity_value;
-          else
+          else if (matrix_free.get_cell_iterator(cell, lane)->material_id() ==
+                   2)
             omega = 0.0;
 
           // Compute linear velocity at quadrature points

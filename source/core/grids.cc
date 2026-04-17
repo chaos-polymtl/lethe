@@ -363,8 +363,8 @@ read_mesh_and_manifolds_for_stator_and_rotor(
   Triangulation<dim> rotor_temp_tria;
   attach_grid_to_triangulation(rotor_temp_tria, *mortar_parameters.rotor_mesh);
 
-  // Add a user flag to cells on the rotor and stator triangulations; this will
-  // be needed when attributing them an angular velocity. We use the material_id
+  // Add a flag to cells on the rotor and stator triangulations; this will be
+  // needed when attributing them an angular velocity. We use the material_id
   // flag because it won't be erased when the triangulations are merged.
   for (const auto &cell : rotor_temp_tria.active_cell_iterators())
     cell->set_material_id(1);

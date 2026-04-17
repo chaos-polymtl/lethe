@@ -423,7 +423,7 @@ NavierStokesScratchData<dim>::reinit_mortar(
   double omega;
   if (cell->material_id() == 1)
     omega = rotor_angular_velocity;
-  else
+  else if (cell->material_id() == 2)
     omega = 0.0;
 
   // Compute rotor linear velocity at quadrature points

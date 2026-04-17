@@ -1799,8 +1799,7 @@ LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
         mapping,
         dof_handler.get_triangulation(),
         [&](const auto &cell, const auto &point) {
-          // Verify if cells are part of the rotor (material_id = 1) or the
-          // stator (material_id = 2)
+          // Do not rotate the point if current cell is part of the stator
           if (cell->material_id() == 2)
             return point;
 
@@ -1822,8 +1821,7 @@ LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
         mapping,
         dof_handler.get_triangulation(),
         [&](const auto &cell, const auto &point) {
-          // Verify if cells are part of the rotor (material_id = 1) or the
-          // stator (material_id = 2)
+          // Do not rotate point if current cell is part of the stator
           if (cell->material_id() == 2)
             return point;
 
