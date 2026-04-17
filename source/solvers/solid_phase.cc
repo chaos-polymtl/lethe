@@ -954,7 +954,7 @@ SolidPhaseSolver<dim>::setup()
   make_output_dir();
 
   // Initial condition
-  SolidInitialValues<dim> ic(parameters.alpha0, 0.0);
+  SolidInitialValues<dim> ic(parameters.alpha0, 1.0);
 
   old_solution = 0.0;
   VectorTools::interpolate(dof_handler, ic, old_solution);

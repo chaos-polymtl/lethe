@@ -82,8 +82,8 @@ EulerEulerVoidFraction<dim>::calculate_alpha_f()
 
   for (const auto i : alpha_f.locally_owned_elements())
     {
-      alpha_f[i] = 1.0 - alpha_s[i];
-      // alpha_f[i]         = std::max(min_alpha_f_value, std::min(1.0, value));
+      const double value = 1.0 - alpha_s[i];
+      alpha_f[i]         = std::max(min_alpha_f_value, std::min(1.0, value));
     }
 
   alpha_f.compress(VectorOperation::insert);

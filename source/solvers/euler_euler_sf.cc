@@ -33,7 +33,7 @@ make_euler_euler_grid(parallel::distributed::Triangulation<dim> &tria,
   };
 
   const unsigned int axis1 = axis_from(grid_parameters.direction1);
-  const unsigned int axis2 = axis_from(grid_parameters.direction2);
+  // const unsigned int axis2 = axis_from(grid_parameters.direction2);
 
   for (const auto &cell : tria.active_cell_iterators())
     {
@@ -49,10 +49,12 @@ make_euler_euler_grid(parallel::distributed::Triangulation<dim> &tria,
                 cell->face(f)->set_boundary_id(1);
               else if (std::fabs(fc[axis1] - grid_parameters.p2[axis1]) < tol)
                 cell->face(f)->set_boundary_id(2);
-              else if (std::fabs(fc[axis2] - grid_parameters.p1[axis2]) < tol)
-                cell->face(f)->set_boundary_id(1);
-              else if (std::fabs(fc[axis2] - grid_parameters.p2[axis2]) < tol)
-                cell->face(f)->set_boundary_id(2);
+              //   else if (std::fabs(fc[axis2] - grid_parameters.p1[axis2]) <
+              //   tol)
+              //     cell->face(f)->set_boundary_id(1);
+              //   else if (std::fabs(fc[axis2] - grid_parameters.p2[axis2]) <
+              //   tol)
+              //     cell->face(f)->set_boundary_id(2);
             }
         }
     }
@@ -172,8 +174,9 @@ EulerEulerOneWay<dim>::run()
 
   while (!solid_solver->finished())
     {
-      pcout << "Coupled step = " << solid_solver->get_step_number() << std::endl;
-      
+      pcout << "Coupled step = " << solid_solver->get_step_number()
+            << std::endl;
+
       void_fraction_solver.set_solid_volume_fraction(
         solid_solver->get_solid_volume_fraction());
 
