@@ -81,14 +81,16 @@ This subsection controls the post-processing other than the forces and torque on
     set temperature statistics name      = temperature_statistics
     set calculate heat flux              = false
     set heat flux name                   = heat_flux
+    set calculate liquid fraction        = false
+    set liquid fraction name             = liquid_fraction
+    set calculate melt volume            = false
+    set melt volume name                 = melt_volume
 
     # Multiphase postprocessing
     set calculate barycenter             = false
     set barycenter name                  = barycenter_information
     set calculate mass conservation      = true
     set mass conservation name           = mass_conservation_information
-    set calculate liquid fraction        = false
-    set liquid fraction name             = liquid_fraction
 
     # Other Cahn-Hilliard postprocessing
     set calculate phase statistics       = false
@@ -254,6 +256,18 @@ This subsection controls the post-processing other than the forces and torque on
 		0.0000          0.0000               0.0000               0.0000            1000.0000 
 		1.0000         -0.9732               0.0000               1.4856               0.9732 
 
+* ``calculate liquid fraction``: calculates the liquid fraction in simulations with phase change. The liquid fraction corresponds to the volume (area) integral of the liquid divided by the volume (area) of the domain.
+
+  * ``liquid fraction name``: name of the output file containing the time evolution of the liquid fraction.
+
+* ``calculate melt volume``: calculates the melt volume in simulations with phase change. The melt volume corresponds to the volume (area) integral of the liquid phase of the fluid with phase change. The region is described by temperatures above the liquidus temperature of the fluid.
+
+  .. warning::
+
+    This is compatible with CLS two-phase flows. A geometrical volume is computed delimited by the :math:`0.5` phase indicator iso-curve. However, only one of the two fluids can have a ``phase_change`` specific heat model.
+
+  * ``melt volume name``: name of the output file containing the time evolution of the melt volume.
+
 * ``calculate barycenter``: calculates the barycenter of ``fluid 1`` and its velocity in CLS and Cahn-Hilliard simulations. The barycenter :math:`\mathbf{x}_b` and its velocity :math:`\mathbf{v}_b` are defined as:
 
   .. math::
@@ -284,10 +298,6 @@ This subsection controls the post-processing other than the forces and torque on
 * ``calculate mass conservation``: calculates the mass and momentum of both fluids for CLS simulations.
 
 * ``mass conservation name``: name of the output file containing the mass of both fluids for CLS simulations. The default file name is ``mass_conservation_information``.
-
-* ``calculate liquid fraction``: calculates the liquid fraction in simulations with phase change. The liquid fraction corresponds to the volume (area) integral of the liquid divided by the volume (area) of the domain.
-
-* ``liquid fraction name``: name of the output file containing the time evolution of the liquid fraction.
   
 * ``calculate phase statistics``: outputs Cahn-Hilliard phase statistics, including minimum, maximum, average, integral of the phase order parameter, and the volume of each phase.
 
