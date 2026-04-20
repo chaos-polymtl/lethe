@@ -626,22 +626,20 @@ compute_interface_dimensions_circular(
                           double     radius_current =
                             v.distance(mortar_parameters.center_of_rotation);
 
-                          // In 3D, the interface radius to be computed is
-                          // actually with respect to the rotation axis. For
-                          // this computation, we use the relation:
-                          // radius_current = ||VC x d||/||d||, where VC is the
-                          // current vertex minus the center of rotation, and d
-                          // is the rotation axis
+                          // In 3D, the interface radius is computed as the
+                          // minimum distance between the current vertex and the
+                          // rotation axis, assuming that the center of rotation
+                          // point is contained within the rotation axis line
                           if constexpr (dim == 3)
                             {
                               vertex_min = std::min(vertex_min, v[direction]);
                               vertex_max = std::max(vertex_max, v[direction]);
 
                               radius_current =
-                                LetheGridTools::compute_radial_distance_3d(
-                                  v,
+                                LetheGridTools::find_point_line_distance(
+                                  mortar_parameters.center_of_rotation,
                                   mortar_parameters.rotation_axis,
-                                  mortar_parameters.center_of_rotation);
+                                  v);
                             }
 
                           radius_min = std::min(radius_min, radius_current);

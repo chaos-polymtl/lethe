@@ -422,22 +422,6 @@ namespace LetheGridTools
                  const Tensor<1, dim>  &rotation_axis      = Tensor<1, dim>());
 
   /**
-   * @brief Computes the radial distance between a given point and a center of rotation
-   *
-   * @param[in] point Current point from which the radial distance is computed
-   * @param[in] rotation_axis Rotation axis of the domain
-   * @param[in] center_of_rotation Center of rotation of the domain
-   *
-   * @return Radial distance
-   */
-  template <int dim>
-  double
-  compute_radial_distance_3d(
-    const Point<dim>     &point,
-    const Tensor<1, dim> &rotation_axis,
-    const Point<dim>     &center_of_rotation = Point<dim>());
-
-  /**
    * @brief
    * A functor that provides a way to check if two cells are the same cell.
    * Used to store cells in hash sets.
