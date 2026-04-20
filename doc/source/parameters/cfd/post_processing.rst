@@ -260,7 +260,12 @@ This subsection controls the post-processing other than the forces and torque on
 
   * ``liquid fraction name``: name of the output file containing the time evolution of the liquid fraction.
 
-* ``calculate melt volume``: calculates the melt volume in simulations with phase change. The melt volume corresponds to the volume (area) integral of the liquid phase of the fluid with phase change. The region is described by temperatures above the liquidus temperature of the fluid.
+* ``calculate melt volume``: calculates the melt volume in simulations with phase change. The melt volume corresponds to the volume (area) integral of the liquid phase of the fluid with phase change. The melt region (:math:`\Omega_\mathrm{melt}`) is described by temperatures above the fluid's liquidus temperature (:math:`T_\mathrm{liquidus}`):
+
+  .. math::
+    \Omega_\mathrm{0,melt} = \{\vec{x} \in \Omega_0 | T > T_\mathrm{liquidus} \}
+
+  here, fluid 0 is a fluid a with phase change and :math:`\Omega_0` corresponds to the subdomain occupied by fluid 0.
 
   .. warning::
 

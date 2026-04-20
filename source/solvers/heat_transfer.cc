@@ -2157,8 +2157,8 @@ HeatTransfer<dim>::postprocess_melt_volume(const bool gather_cls)
   std::shared_ptr<GlobalVectorType>           intersection_vector_relevant_copy;
   const double phase_indicator_interface_value = 0.5;
 
-  // Get the raw physical properties parameters to calculate get the liquidus
-  // temperature
+  // Get the reference to physical properties parameters to get the
+  // liquidus temperature of fluids
   const auto &physical_properties_parameters =
     this->simulation_parameters.physical_properties_manager
       .get_physical_properties_parameters();
@@ -2209,14 +2209,15 @@ HeatTransfer<dim>::postprocess_melt_volume(const bool gather_cls)
             -1); // Make fluid 1 'inside' (negative values)
         }
     }
-  else
+  else // Single fluid flow
     {
       // Get liquidus temperature
       liquidus_temperature = physical_properties_parameters.fluids[0]
                                .phase_change_parameters.T_liquidus;
     }
 
-  // Transpose temperature to get volume over liquidus temperature
+  // Transpose temperature to get volume of the region where the temperature is
+  // over the liquidus temperature
   GlobalVectorType temperature_vector_owned_copy(
     this->dof_handler->locally_owned_dofs(), mpi_communicator);
   temperature_vector_owned_copy = *this->present_solution;
