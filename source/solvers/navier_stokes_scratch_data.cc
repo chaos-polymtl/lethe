@@ -418,13 +418,19 @@ NavierStokesScratchData<dim>::reinit_mortar(
   const double rotor_angular_velocity =
     mortar_parameters.rotor_angular_velocity->value(Point<dim>());
 
-  // Use prescribed rotor angular velocity and verify if cells are part of the
-  // the rotor (material_id = 1) or the stator (material_id = 2)
-  double omega;
+  // Apply prescribed rotor angular velocity only at rotor cells
+  // (material_id = 1)
+  double omega = 0.0;
   if (cell->material_id() == 1)
     omega = rotor_angular_velocity;
-  else if (cell->material_id() == 2)
-    omega = 0.0;
+
+  // The mortar implementation is not defined for more than two
+  // materials. Throw when running debug mode as a security measure to prevent
+  // this case
+  Assert(
+    cell->material_id() < 2,
+    ExcMessage(
+      "The material id in a cell was identified as equal or greater than 2, however the mortar implementation is not defined for more than two materials."));
 
   // Compute rotor linear velocity at quadrature points
   rotor_linear_velocity_values = std::vector<Tensor<1, dim>>(this->n_q_points);

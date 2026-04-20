@@ -1800,7 +1800,7 @@ LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
         dof_handler.get_triangulation(),
         [&](const auto &cell, const auto &point) {
           // Do not rotate the point if current cell is part of the stator
-          if (cell->material_id() == 2)
+          if (cell->material_id() == 0)
             return point;
 
           // Shift point by the center of rotation
@@ -1822,7 +1822,7 @@ LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
         dof_handler.get_triangulation(),
         [&](const auto &cell, const auto &point) {
           // Do not rotate point if current cell is part of the stator
-          if (cell->material_id() == 2)
+          if (cell->material_id() == 0)
             return point;
 
           // Shift point by the center of rotation
@@ -1832,7 +1832,7 @@ LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
             Physics::Transformations::Rotations::rotation_matrix_3d(
               rotation_axis, rotation_angle) *
             shift_point;
-          // Returnn rotated point according to the center of rotation
+          // Return rotated point according to the center of rotation
           return static_cast<Point<dim>>(rotate_point + center_of_rotation);
         },
         false);
@@ -1861,6 +1861,11 @@ LetheGridTools::compute_radial_distance_3d(const Point<dim>     &point,
                                            const Tensor<1, dim> &rotation_axis,
                                            const Point<dim> &center_of_rotation)
 {
+  Assert(
+    rotation_axis.norm() > 0,
+    ExcMessage(
+      "To compute the radial distance, the rotation axis must be non-zero."));
+
   // Compute distance =  ||VC x d||/||d||, where d is the rotation axis and VC
   // is the distance between the current point and the center of rotation
   const auto axis = rotation_axis / rotation_axis.norm();

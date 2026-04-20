@@ -370,7 +370,7 @@ read_mesh_and_manifolds_for_stator_and_rotor(
     cell->set_material_id(1);
 
   for (const auto &cell : stator_temp_tria.active_cell_iterators())
-    cell->set_material_id(2);
+    cell->set_material_id(0);
 
   if (mesh_parameters.type == Parameters::Mesh::Type::dealii)
     {
