@@ -1205,33 +1205,20 @@ NavierStokesOperatorBase<dim, number>::evaluate_velocity_ale(
           // Compute linear velocity at quadrature points
           for (const auto q : integrator.quadrature_point_indices())
             {
-              const auto x =
-                integrator.quadrature_point(q)[0][lane] - center_of_rotation[0];
-              const auto y =
-                integrator.quadrature_point(q)[1][lane] - center_of_rotation[1];
+              // Store point coordinates in tensor format
+              Tensor<1, dim> p;
+              for (int i = 0; i < dim; i++)
+                p[i] = integrator.quadrature_point(q)[i][lane] -
+                       center_of_rotation[i];
 
-              if constexpr (dim == 2)
-                {
-                  this->velocity_ale[cell][q][0][lane] = -omega * y;
-                  this->velocity_ale[cell][q][1][lane] = omega * x;
-                }
+              // Compute terms of u_ale
+              const auto product =
+                LetheGridTools::angular_to_linear_velocity(omega,
+                                                           p,
+                                                           rotation_axis);
 
-              if constexpr (dim == 3)
-                {
-                  const auto z = integrator.quadrature_point(q)[2][lane] -
-                                 center_of_rotation[2];
-
-                  // Store angular velocity according to unit vector that
-                  // defines the rotation axis
-                  const auto omega_vec = omega * rotation_axis;
-
-                  // Compute terms of u_ale = omega_vec x [x, y, z]
-                  const auto product =
-                    cross_product_3d(omega_vec, Tensor<1, dim>({x, y, z}));
-
-                  for (int i = 0; i < dim; i++)
-                    this->velocity_ale[cell][q][i][lane] = product[i];
-                }
+              for (int i = 0; i < dim; i++)
+                this->velocity_ale[cell][q][i][lane] = product[i];
             }
         }
     }

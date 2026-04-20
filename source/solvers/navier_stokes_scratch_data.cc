@@ -440,21 +440,10 @@ NavierStokesScratchData<dim>::reinit_mortar(
       const auto p =
         fe_values.quadrature_point(q) - mortar_parameters.center_of_rotation;
 
-      if constexpr (dim == 2)
-        {
-          rotor_linear_velocity_values[q][0] = -omega * p[1];
-          rotor_linear_velocity_values[q][1] = omega * p[0];
-        }
-
-      if constexpr (dim == 3)
-        {
-          // Store angular velocity according to unit vector that defines the
-          // rotation axis
-          const auto omega_vec = omega * mortar_parameters.rotation_axis;
-
-          // Compute terms of u_ale = omega_vec x [x, y, z]
-          rotor_linear_velocity_values[q] = cross_product_3d(omega_vec, p);
-        }
+      // Compute terms of u_ale
+      rotor_linear_velocity_values[q] =
+        LetheGridTools::angular_to_linear_velocity(
+          omega, p, mortar_parameters.rotation_axis);
 
       // Update velocity for stabilization
       this->velocity_for_stabilization[q] -= rotor_linear_velocity_values[q];

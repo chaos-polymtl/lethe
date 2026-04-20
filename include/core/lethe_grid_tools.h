@@ -402,6 +402,45 @@ namespace LetheGridTools
   };
 
   /**
+   * @brief Transform angular velocity into linear velocity considering that the
+   * angular velocity @p omega is constant in all directions.
+   *
+   * @param[in] omega Angular velocity value
+   * @param[in] point Coordinates of the point in which the linear velocity is
+   * being calculated
+   * @param[in] rotation_axis Rotation axis used in 3D cases, so that the
+   * angular velocity vector is given by omega_vec = omega * rotation_axis
+   *
+   * @return Linear velocity at @p point
+   */
+  template <int dim>
+  inline Tensor<1, dim>
+  angular_to_linear_velocity(
+    const double          omega,
+    const Tensor<1, dim> &point,
+    const Tensor<1, dim> &rotation_axis = Tensor<1, dim>())
+  {
+    Tensor<1, dim> result;
+
+    if constexpr (dim == 2)
+      {
+        result[0] = -omega * point[1];
+        result[1] = omega * point[0];
+      }
+
+    if constexpr (dim == 3)
+      {
+        // Store angular velocity according to unit vector that defines the
+        // rotation axis
+        const auto omega_vec = omega * rotation_axis;
+        // Compute cross product
+        result = cross_product_3d(omega_vec, point);
+      }
+
+    return result;
+  }
+
+  /**
    * @brief Rotate the mapping according to the rotation angle in a rotor-stator configuration
    *
    * @param[in] dof_handler DofHandler of the triangulation
