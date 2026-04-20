@@ -107,8 +107,9 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity             = verbose
-  set calculate melt volume = true
+  set verbosity                   = verbose
+  set calculate melt volume       = true
+  set calculate mass conservation = false
 end
 
 #---------------------------------------------------
@@ -167,6 +168,16 @@ end
 
 subsection linear solver
   subsection heat transfer
+    set verbosity                             = quiet
+    set method                                = gmres
+    set relative residual                     = 1e-13
+    set minimum residual                      = 1e-13
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-14
+    set ilu preconditioner relative tolerance = 1.00
+  end
+  subsection fluid dynamics
     set verbosity                             = quiet
     set method                                = gmres
     set relative residual                     = 1e-13
