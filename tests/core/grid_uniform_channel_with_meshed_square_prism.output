@@ -1,16 +1,6 @@
 
 DEAL::Beginning
-DEAL::Case 1: Unsupported specialization
-DEAL::  Caught expected exception: 
---------------------------------------------------------
-An error occurred in file <uniform_channel_with_meshed_square_prism_grid.cc> in function
-    UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::UniformChannelWithMeshedSquarePrismGrid(const std::string&) [with int dim = 2; int spacedim = 3; std::string = std::__cxx11::basic_string<char>]
-Additional information: 
-    The uniform channel with a square prism obstacle is only supported in
-    3D space with 3D elements.
---------------------------------------------------------
-
-DEAL::Case 2: 2D half-unit square, no rotation, no padding
+DEAL::Case 1: 2D half-unit square, no rotation, no padding
 DEAL::Active cells: 12
 DEAL::Triangulation has : 12 faces.
 DEAL::  Face 0 has vertices : (0.500000000000 0.500000000000), (0.750000000000 0.500000000000), (0.500000000000 0.750000000000), (0.750000000000 0.750000000000)
@@ -25,7 +15,7 @@ DEAL::  Face 8 has vertices : (0.250000000000 0.500000000000), (0.250000000000 0
 DEAL::  Face 9 has vertices : (0.250000000000 0.500000000000), (0.00000000000 0.500000000000), (0.250000000000 0.250000000000), (0.00000000000 1.66533453694e-16)
 DEAL::  Face 10 has vertices : (0.500000000000 0.250000000000), (0.250000000000 0.250000000000), (0.500000000000 0.00000000000), (0.00000000000 1.66533453694e-16)
 DEAL::  Face 11 has vertices : (0.500000000000 0.250000000000), (0.500000000000 0.00000000000), (0.750000000000 0.250000000000), (1.00000000000 0.00000000000)
-DEAL::Case 3: 2D 2x1 channel, 10 deg rotation, padded
+DEAL::Case 2: 2D 2x1 channel, 10 deg rotation, padded
 DEAL::Active cells: 24
 DEAL::Triangulation has : 24 faces.
 DEAL::  Face 0 has vertices : (1.00000000000 0.500000000000), (1.12310096913 0.521706022208), (0.978293977792 0.623100969127), (1.10139494692 0.644806991335)
@@ -52,7 +42,7 @@ DEAL::  Face 20 has vertices : (1.02170602221 0.376899030873), (1.25000000000 0.
 DEAL::  Face 21 has vertices : (1.25000000000 0.250000000000), (0.824948115448 0.250000000000), (0.824948115448 0.00000000000), (1.25000000000 0.00000000000)
 DEAL::  Face 22 has vertices : (1.25000000000 0.250000000000), (1.25000000000 0.324948115448), (2.00000000000 0.250000000000), (2.00000000000 0.324948115448)
 DEAL::  Face 23 has vertices : (1.25000000000 0.250000000000), (1.25000000000 0.00000000000), (2.00000000000 0.250000000000), (2.00000000000 0.00000000000)
-DEAL::Case 4: 2D 2x1 channel, 45 deg rotation, padded, refined once
+DEAL::Case 3: 2D 2x1 channel, 45 deg rotation, padded, refined once
 DEAL::Active cells: 96
 DEAL::Triangulation has : 96 faces.
 DEAL::  Face 0 has vertices : (1.00000000000 0.500000000000), (1.04419417382 0.544194173824), (0.955805826176 0.544194173824), (1.00000000000 0.588388347648)
@@ -151,7 +141,7 @@ DEAL::  Face 92 has vertices : (0.00000000000 0.00000000000), (0.375000000000 0.
 DEAL::  Face 93 has vertices : (2.00000000000 0.00000000000), (2.00000000000 0.125000000000), (1.62500000000 0.00000000000), (1.62500000000 0.125000000000)
 DEAL::  Face 94 has vertices : (0.00000000000 1.00000000000), (0.375000000000 1.00000000000), (0.00000000000 0.875000000000), (0.375000000000 0.875000000000)
 DEAL::  Face 95 has vertices : (2.00000000000 1.00000000000), (1.62500000000 1.00000000000), (2.00000000000 0.875000000000), (1.62500000000 0.875000000000)
-DEAL::Case 5: 3D 2x1x1 channel, 80 deg rotation, padded, material ids
+DEAL::Case 4: 3D 2x1x1 channel, 80 deg rotation, padded, material ids
 DEAL::Active cells: 24
 DEAL::Triangulation has : 104 faces.
 DEAL::  Face 0 has vertices : (1.00000000000 0.500000000000 0.00000000000), (1.03472963553 0.696961550602 0.00000000000), (0.803038449398 0.534729635533 0.00000000000), (0.837768084931 0.731691186136 0.00000000000)

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 // Lethe
-#include <core/uniform_channel_with_meshed_square_prism_grid.h>
+#include <core/grid_uniform_channel_with_meshed_square_prism.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -96,31 +96,17 @@ test()
   deallog << std::setprecision(12);
   deallog << "Beginning" << std::endl;
 
-  deallog << "Case 1: Unsupported specialization" << std::endl;
-  try
-    {
-      Triangulation<2, 3>                           triangulation;
-      UniformChannelWithMeshedSquarePrismGrid<2, 3> grid(
-        "0,0:1,1:0.5,0.5:0.25:0.3");
-      grid.make_grid(triangulation);
-      deallog << "  Unexpected success" << std::endl;
-    }
-  catch (const std::exception &exc)
-    {
-      deallog << "  Caught expected exception: " << exc.what() << std::endl;
-    }
-
-  run_test<2>("Case 2: 2D half-unit square, no rotation, no padding",
+  run_test<2>("Case 1: 2D half-unit square, no rotation, no padding",
               "0,0:1,1:0.5,0.5:0.25:0.5");
 
-  run_test<2>("Case 3: 2D 2x1 channel, 10 deg rotation, padded",
+  run_test<2>("Case 2: 2D 2x1 channel, 10 deg rotation, padded",
               "0,0:2,1:1,0.5:0.125:0.25:10:1:1:1:1");
 
-  run_test<2>("Case 4: 2D 2x1 channel, 45 deg rotation, padded, refined once",
+  run_test<2>("Case 3: 2D 2x1 channel, 45 deg rotation, padded, refined once",
               "0,0:2,1:1,0.5:0.125:0.25:45:1:1:1:1",
               1);
 
-  run_test<3>("Case 5: 3D 2x1x1 channel, 80 deg rotation, padded, material ids",
+  run_test<3>("Case 4: 3D 2x1x1 channel, 80 deg rotation, padded, material ids",
               "0,0:2,1:1,0.5:0.2:0.3:80:1:1:1:1:1.0:2:true");
 
   deallog << "OK" << std::endl;

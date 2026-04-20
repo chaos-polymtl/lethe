@@ -7,8 +7,9 @@
 #include <core/grid_cylinder.h>
 #include <core/grid_periodic_hills.h>
 #include <core/grids.h>
-#include <core/uniform_channel_with_meshed_cylinder_grid.h>
-#include <core/uniform_channel_with_meshed_square_prism_grid.h>
+#include <core/periodic_hills_grid.h>
+#include <core/grid_uniform_channel_with_meshed_cylinder.h>
+#include <core/grid_uniform_channel_with_meshed_square_prism.h>
 
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_in.h>

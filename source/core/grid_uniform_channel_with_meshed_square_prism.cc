@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include <core/uniform_channel_with_meshed_square_prism_grid.h>
+#include <core/grid_uniform_channel_with_meshed_square_prism.h>
 
 #include <algorithm>
 #include <array>
@@ -10,15 +10,15 @@
 #include <numbers>
 
 template <int dim, int spacedim>
-UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
-  UniformChannelWithMeshedSquarePrismGrid(const std::string &grid_arguments)
+GridUniformChannelWithMeshedSquarePrism<dim, spacedim>::
+  GridUniformChannelWithMeshedSquarePrism(const std::string &grid_arguments)
 {
   if constexpr (dim == 1 || spacedim == 1)
     {
       AssertThrow(
         false,
         ExcMessage(
-          "The uniform channel with a square prism obstacle is only supported in 2D and 3D space."));
+          "GridUniformChannelWithMeshedSquarePrism is only supported for <2,2> and <3,3> <dim,spacedim> specializations."));
       return;
     }
   else if constexpr (dim == 2 && spacedim == 3)
@@ -26,11 +26,10 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
       AssertThrow(
         false,
         ExcMessage(
-          "The uniform channel with a square prism obstacle is only supported in 3D space with 3D elements."));
+          "GridUniformChannelWithMeshedSquarePrism is only supported for <2,2> and <3,3> <dim,spacedim> specializations."));
       return;
     }
 
-  this->grid_arguments = grid_arguments;
   const std::vector<std::string> arguments =
     Utilities::split_string_list(grid_arguments, ':');
 
@@ -133,7 +132,7 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
   AssertThrow(
     (inner_rotation_angle >= 0.0) && (inner_rotation_angle < 90.0),
     ExcMessage(
-      "The rotation angle needs to be in the range [0, 90) degrees. Different values will result in the same mesh pattern due to symmetry."));
+      "The rotation angle needs to be in the range [0, 90) degrees."));
 
   inner_rotation_angle = inner_rotation_angle * std::numbers::pi / 180.0;
 
@@ -175,7 +174,7 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
 
 template <int dim, int spacedim>
 void
-UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
+GridUniformChannelWithMeshedSquarePrism<dim, spacedim>::
   generate_2d_channel_mesh(Triangulation<2>  &triangulation,
                            const Point<2>    &bottom_left,
                            const Point<2>    &top_right,
@@ -263,7 +262,6 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
   for (unsigned int k = 0; k < 8; ++k)
     {
       double theta = inner_rotation_angle + k * std::numbers::pi / 4.0;
-
 
       // If the rotation angle is between pi/18 and 4*pi/9, we want to project
       // the vertices at the square middle points to the corners.
@@ -569,7 +567,7 @@ UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::
 
 template <>
 void
-UniformChannelWithMeshedSquarePrismGrid<2, 2>::make_grid(
+GridUniformChannelWithMeshedSquarePrism<2, 2>::make_grid(
   Triangulation<2, 2> &triangulation)
 {
   generate_2d_channel_mesh(triangulation,
@@ -589,7 +587,7 @@ UniformChannelWithMeshedSquarePrismGrid<2, 2>::make_grid(
 
 template <>
 void
-UniformChannelWithMeshedSquarePrismGrid<3, 3>::make_grid(
+GridUniformChannelWithMeshedSquarePrism<3, 3>::make_grid(
   Triangulation<3, 3> &triangulation)
 {
   // Generate the 2D cross-section (geometry + material IDs + boundary IDs)
@@ -632,16 +630,16 @@ UniformChannelWithMeshedSquarePrismGrid<3, 3>::make_grid(
 // Fallback make_grid definition for unsupported template parameters.
 template <int dim, int spacedim>
 void
-UniformChannelWithMeshedSquarePrismGrid<dim, spacedim>::make_grid(
+GridUniformChannelWithMeshedSquarePrism<dim, spacedim>::make_grid(
   Triangulation<dim, spacedim> & /*triangulation*/)
 {
   AssertThrow(
     false,
     ExcMessage(
-      "UniformChannelWithMeshedSquarePrismGrid is only supported for <2,2> and <3,3> <dim,spacedim> specializations."));
+      "GridUniformChannelWithMeshedSquarePrism is only supported for <2,2> and <3,3> <dim,spacedim> specializations."));
 }
 
 // Explicit template instantiations
-template class UniformChannelWithMeshedSquarePrismGrid<2, 2>;
-template class UniformChannelWithMeshedSquarePrismGrid<2, 3>;
-template class UniformChannelWithMeshedSquarePrismGrid<3, 3>;
+template class GridUniformChannelWithMeshedSquarePrism<2, 2>;
+template class GridUniformChannelWithMeshedSquarePrism<2, 3>;
+template class GridUniformChannelWithMeshedSquarePrism<3, 3>;

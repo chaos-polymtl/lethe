@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#ifndef lethe_uniform_channel_with_meshed_square_prism_grid_h
-#define lethe_uniform_channel_with_meshed_square_prism_grid_h
+#ifndef lethe_grid_uniform_channel_with_meshed_square_prism_h
+#define lethe_grid_uniform_channel_with_meshed_square_prism_h
 
 #include <deal.II/base/utilities.h>
 
@@ -38,7 +38,7 @@ using namespace dealii;
  *
  */
 template <int dim, int spacedim>
-class UniformChannelWithMeshedSquarePrismGrid
+class GridUniformChannelWithMeshedSquarePrism
 {
 public:
   /**
@@ -72,7 +72,7 @@ public:
    * subdivided_hyper_rectangle convention: 0 (-x), 1 (+x), 2 (-y), 3 (+y).
    * In 3D, the extruded bottom (z=0) gets id 4 and top (z=height) gets id 5.
    */
-  UniformChannelWithMeshedSquarePrismGrid(const std::string &grid_arguments);
+  GridUniformChannelWithMeshedSquarePrism(const std::string &grid_arguments);
 
   /**
    * @brief Generate the 2D/3D channel mesh with a meshed square obstacle.
@@ -145,8 +145,6 @@ private:
                            const unsigned int pad_right,
                            const bool         colorize);
 
-  /// The original input string with the geometry parameters.
-  std::string grid_arguments;
   /// Point that define the bottom-left of the channel in the xy-plane.
   Point<dim> bottom_left;
   /// Point that define the top-right of the channel in the xy-plane.
