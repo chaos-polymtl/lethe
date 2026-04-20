@@ -11,13 +11,8 @@
 
 #include <dem/dem.h>
 #include <fem-dem/cfd_dem_simulation_parameters.h>
-#include <fem-dem/particle_projector.h>
 #include <fem-dem/vans_assemblers.h>
-
-#include <deal.II/fe/mapping_q.h>
-
-#include <deal.II/particles/particle_handler.h>
-#include <deal.II/particles/property_pool.h>
+#include <fem-dem/vans_particle_state.h>
 
 using namespace dealii;
 
@@ -274,8 +269,9 @@ protected:
   /// CFD-DEM simulation parameters containing all configuration options
   CFDDEMSimulationParameters<dim> cfd_dem_simulation_parameters;
 
-  /// Mapping object for particle position calculations and projections
-  MappingQGeneric<dim> particle_mapping;
+  /// Particle-side state (mapping, handler, projector, periodic flags)
+  /// shared between the matrix-based and matrix-free VANS solvers.
+  VANSParticleState<dim> vans_particle_state;
 
   /// Vector of assembler objects for particle-fluid interaction terms
   std::vector<std::shared_ptr<ParticleFluidAssemblerBase<dim>>>
@@ -303,21 +299,6 @@ protected:
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     vertices_to_periodic_cell;
-
-  /// Particle handler for managing particle data and operations
-  Particles::ParticleHandler<dim, dim> particle_handler;
-
-  /// Particle projector for calculating void fraction and particle effects
-  ParticleProjector<dim> particle_projector;
-
-  /// Flag indicating whether the domain has periodic boundary conditions
-  bool has_periodic_boundaries;
-
-  /// Offset vector for periodic boundary condition calculations
-  Tensor<1, dim> periodic_offset;
-
-  /// Direction index for periodic boundary conditions
-  unsigned int periodic_direction;
 };
 
 #endif

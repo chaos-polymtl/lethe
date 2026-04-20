@@ -8,6 +8,7 @@
 
 #include <fem-dem/cfd_dem_simulation_parameters.h>
 #include <fem-dem/particle_projector.h>
+#include <fem-dem/vans_particle_state.h>
 
 
 /**
@@ -228,20 +229,9 @@ protected:
   /// Simulation parameters for CFD-DEM simulations
   CFDDEMSimulationParameters<dim> cfd_dem_simulation_parameters;
 
-  /// Mapping used for the particles
-  MappingQGeneric<dim> particle_mapping;
-
-  /// Particle-handler used to store particles in CFD-DEM simulations
-  Particles::ParticleHandler<dim, dim> particle_handler;
-
-  /// Object that manages the void fraction calculation from functions
-  /// or from parameters.
-  ParticleProjector<dim> particle_projector;
-
-  /// Member variables which are used to manage boundary conditions
-  bool           has_periodic_boundaries;
-  Tensor<1, dim> periodic_offset;
-  unsigned int   periodic_direction;
+  /// Particle-side state (mapping, handler, projector, periodic flags)
+  /// shared between the matrix-based and matrix-free VANS solvers.
+  VANSParticleState<dim> vans_particle_state;
 
   /// Vector to store the time derivative of the void fraction
   VectorType time_derivative_void_fraction;

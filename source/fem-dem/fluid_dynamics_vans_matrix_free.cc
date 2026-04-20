@@ -344,39 +344,18 @@ FluidDynamicsVANSMatrixFree<dim>::FluidDynamicsVANSMatrixFree(
   CFDDEMSimulationParameters<dim> &param)
   : FluidDynamicsMatrixFree<dim>(param.cfd_parameters)
   , cfd_dem_simulation_parameters(param)
-  , particle_mapping(1)
-  , particle_handler(*this->triangulation,
-                     particle_mapping,
-                     DEM::CFDDEMProperties::n_properties)
-  , particle_projector(
+  , vans_particle_state(
       &(*this->triangulation),
       param.void_fraction,
       this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver.at(
         PhysicsID::void_fraction),
-      &particle_handler,
       this->cfd_dem_simulation_parameters.cfd_parameters.fem_parameters
         .void_fraction_order,
       this->cfd_dem_simulation_parameters.cfd_parameters.mesh.simplex,
       this->pcout)
-  , has_periodic_boundaries(false)
 {
-  unsigned int n_pbc = 0;
-  for (auto const &[id, type] :
-       cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions.type)
-    {
-      if (type == BoundaryConditions::BoundaryType::periodic)
-        {
-          if (n_pbc++ > 1)
-            {
-              throw std::runtime_error(
-                "GLS VANS solver does not support more than one periodic boundary condition.");
-            }
-          else
-            {
-              has_periodic_boundaries = true;
-            }
-        }
-    }
+  vans_particle_state.scan_periodic_boundaries(
+    cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
 
   // The default MatrixFree solver sets a system_operator. We override the
   // Navier-Stokes operator with the volume-averaged Navier-Stokes operator.
@@ -390,14 +369,14 @@ FluidDynamicsVANSMatrixFree<dim>::setup_dofs()
 {
   FluidDynamicsMatrixFree<dim>::setup_dofs();
 
-  particle_projector.setup_dofs();
-  particle_projector.setup_constraints(
+  vans_particle_state.setup_dofs(
     this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
 
   // Initialize the time derivative of the void fraction.
   this->time_derivative_void_fraction.reinit(
-    particle_projector.dof_handler.locally_owned_dofs(),
-    DoFTools::extract_locally_relevant_dofs(particle_projector.dof_handler),
+    vans_particle_state.particle_projector.dof_handler.locally_owned_dofs(),
+    DoFTools::extract_locally_relevant_dofs(
+      vans_particle_state.particle_projector.dof_handler),
     this->mpi_communicator);
 }
 
@@ -405,92 +384,10 @@ template <int dim>
 void
 FluidDynamicsVANSMatrixFree<dim>::read_dem()
 {
-  AssertThrow(
-    dim == 3,
-    ExcMessage(
-      "The DEM coupling capabilities of the VANS solver only support 3D calculations. All of the CFD-DEM closure terms rely on the usage of 3D spherical particles and, consequently, 2D CFD-DEM simulations are currently not supported"));
-
-
-  std::string prefix =
-    this->cfd_dem_simulation_parameters.void_fraction->dem_file_name;
-
-  // Load checkpoint controller
-  std::string checkpoint_controller_object_filename =
-    prefix + ".checkpoint_controller";
-  std::ifstream iss_checkpoint_controller_obj(
-    checkpoint_controller_object_filename);
-  boost::archive::text_iarchive ia_checkpoint_controller_obj(
-    iss_checkpoint_controller_obj, boost::archive::no_header);
-
-  unsigned int checkpoint_id;
-  ia_checkpoint_controller_obj >> checkpoint_id;
-
-  // New prefix for the remaining files
-  prefix = prefix + "_" + Utilities::int_to_string(checkpoint_id);
-
-  // Gather particle serialization information
-  std::string   particle_filename = prefix + ".particles";
-  std::ifstream input(particle_filename.c_str());
-  AssertThrow(input, ExcFileNotOpen(particle_filename));
-
-  std::string buffer;
-  std::getline(input, buffer);
-  std::istringstream            iss(buffer);
-  boost::archive::text_iarchive ia(iss, boost::archive::no_header);
-
-  // Create a temporary particle_handler with DEM properties
-  Particles::ParticleHandler<dim> temporary_particle_handler(
-    *this->triangulation, particle_mapping, DEM::DEMProperties::n_properties);
-
-  ia >> temporary_particle_handler;
-
-  const std::string filename = prefix + ".triangulation";
-  std::ifstream     in(filename.c_str());
-  if (!in)
-    AssertThrow(false,
-                ExcMessage(
-                  std::string(
-                    "You are trying to restart a previous computation, "
-                    "but the restart file <") +
-                  filename + "> does not appear to exist!"));
-
-  if (auto parallel_triangulation =
-        dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-          &*this->triangulation))
-    {
-      try
-        {
-          this->triangulation->load(filename.c_str());
-
-          // Deserialize particles have the triangulation has been read
-          temporary_particle_handler.deserialize();
-        }
-      catch (...)
-        {
-          AssertThrow(false,
-                      ExcMessage("Cannot open snapshot mesh file or read the"
-                                 "triangulation stored there."));
-        }
-
-      // Fill the existing particle handler using the temporary one
-      // This is done during the dynamic cast for the convert_particle_handler
-      // function which requires a pararallel::distributed::triangulation
-      convert_particle_handler<dim,
-                               DEM::DEMProperties::PropertiesIndex,
-                               DEM::CFDDEMProperties::PropertiesIndex>(
-        *parallel_triangulation, temporary_particle_handler, particle_handler);
-
-      // Exchange the ghost particles so that the particle handler is ready to
-      // be used to calculate the initial conditions of the void fraction or
-      // anything that requires the ghost particles.
-      particle_handler.exchange_ghost_particles(true);
-    }
-  else
-    {
-      throw std::runtime_error(
-        "The VANS application currently does not support "
-        "triangulations other than parallel::distributed");
-    }
+  vans_particle_state.read_dem(
+    this->cfd_dem_simulation_parameters.void_fraction->dem_file_name,
+    /*require_3d=*/true,
+    /*exchange_ghosts=*/true);
 }
 
 template <int dim>
@@ -512,36 +409,41 @@ FluidDynamicsVANSMatrixFree<dim>::assemble_system_rhs()
         {
           this->computing_timer.enter_subsection(
             "Calculate particle-fluid forces projection");
-          particle_projector.calculate_particle_fluid_forces_projection(
-            this->cfd_dem_simulation_parameters.cfd_dem,
-            *this->dof_handler,
-            this->evaluation_point,
-            *this->previous_solutions,
-            this->cfd_dem_simulation_parameters.dem_parameters
-              .lagrangian_physical_properties.g,
-            NavierStokesScratchData<dim>(
-              this->simulation_control,
-              this->simulation_parameters.physical_properties_manager,
-              *this->fe,
-              *this->cell_quadrature,
-              *this->mapping,
-              *this->face_quadrature));
+          vans_particle_state.particle_projector
+            .calculate_particle_fluid_forces_projection(
+              this->cfd_dem_simulation_parameters.cfd_dem,
+              *this->dof_handler,
+              this->evaluation_point,
+              *this->previous_solutions,
+              this->cfd_dem_simulation_parameters.dem_parameters
+                .lagrangian_physical_properties.g,
+              NavierStokesScratchData<dim>(
+                this->simulation_control,
+                this->simulation_parameters.physical_properties_manager,
+                *this->fe,
+                *this->cell_quadrature,
+                *this->mapping,
+                *this->face_quadrature));
           this->computing_timer.leave_subsection(
             "Calculate particle-fluid forces projection");
         }
 
       this->computing_timer.enter_subsection("Prepare MF operator for VANS");
       mf_operator->compute_particle_fluid_interaction(
-        particle_projector.fluid_force_on_particles_two_way_coupling
+        vans_particle_state.particle_projector
+          .fluid_force_on_particles_two_way_coupling.dof_handler,
+        vans_particle_state.particle_projector
+          .fluid_force_on_particles_two_way_coupling.particle_field_solution,
+        vans_particle_state.particle_projector.fluid_drag_on_particles
           .dof_handler,
-        particle_projector.fluid_force_on_particles_two_way_coupling
+        vans_particle_state.particle_projector.fluid_drag_on_particles
           .particle_field_solution,
-        particle_projector.fluid_drag_on_particles.dof_handler,
-        particle_projector.fluid_drag_on_particles.particle_field_solution,
-        particle_projector.particle_velocity.dof_handler,
-        particle_projector.particle_velocity.particle_field_solution,
-        particle_projector.momentum_transfer_coefficient.dof_handler,
-        particle_projector.momentum_transfer_coefficient
+        vans_particle_state.particle_projector.particle_velocity.dof_handler,
+        vans_particle_state.particle_projector.particle_velocity
+          .particle_field_solution,
+        vans_particle_state.particle_projector.momentum_transfer_coefficient
+          .dof_handler,
+        vans_particle_state.particle_projector.momentum_transfer_coefficient
           .particle_field_solution);
       this->computing_timer.leave_subsection("Prepare MF operator for VANS");
     }
@@ -583,7 +485,7 @@ FluidDynamicsVANSMatrixFree<dim>::finish_time_step_fd()
 {
   // Void fraction percolation must be done before the time step is finished to
   // ensure that the checkpointed information is correct
-  particle_projector.percolate_void_fraction();
+  vans_particle_state.particle_projector.percolate_void_fraction();
 
   FluidDynamicsMatrixFree<dim>::finish_time_step();
 }
@@ -593,23 +495,25 @@ std::vector<OutputStruct<dim, LinearAlgebra::distributed::Vector<double>>>
 FluidDynamicsVANSMatrixFree<dim>::gather_output_hook()
 {
   // Make sure all of the particle-related vectors have adequate ghost values.
-  particle_projector.void_fraction_solution.update_ghost_values();
-  particle_projector.fluid_drag_on_particles.particle_field_solution
+  vans_particle_state.particle_projector.void_fraction_solution
     .update_ghost_values();
-  particle_projector.particle_velocity.particle_field_solution
-    .update_ghost_values();
-  particle_projector.momentum_transfer_coefficient.particle_field_solution
-    .update_ghost_values();
+  vans_particle_state.particle_projector.fluid_drag_on_particles
+    .particle_field_solution.update_ghost_values();
+  vans_particle_state.particle_projector.particle_velocity
+    .particle_field_solution.update_ghost_values();
+  vans_particle_state.particle_projector.momentum_transfer_coefficient
+    .particle_field_solution.update_ghost_values();
 
   std::vector<std::string> name = {"void_fraction"};
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     component_interpretation = {
       DataComponentInterpretation::component_is_scalar};
   OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
-    void_fraction_struct(particle_projector.dof_handler,
-                         particle_projector.void_fraction_solution,
-                         name,
-                         component_interpretation);
+    void_fraction_struct(
+      vans_particle_state.particle_projector.dof_handler,
+      vans_particle_state.particle_projector.void_fraction_solution,
+      name,
+      component_interpretation);
 
   // Since the information related to the particles are always 3-dimensional
   // (e.g. the velocity of the particles, the drag, etc.) we prevent the output
@@ -625,8 +529,10 @@ FluidDynamicsVANSMatrixFree<dim>::gather_output_hook()
 
       OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
         particle_fluid_drag_struct(
-          particle_projector.fluid_drag_on_particles.dof_handler,
-          particle_projector.fluid_drag_on_particles.particle_field_solution,
+          vans_particle_state.particle_projector.fluid_drag_on_particles
+            .dof_handler,
+          vans_particle_state.particle_projector.fluid_drag_on_particles
+            .particle_field_solution,
           force_names,
           force_component_interpretation);
 
@@ -638,8 +544,9 @@ FluidDynamicsVANSMatrixFree<dim>::gather_output_hook()
 
       OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
         particle_velocity_struct(
-          particle_projector.particle_velocity.dof_handler,
-          particle_projector.particle_velocity.particle_field_solution,
+          vans_particle_state.particle_projector.particle_velocity.dof_handler,
+          vans_particle_state.particle_projector.particle_velocity
+            .particle_field_solution,
           particle_velocity_names,
           particle_velocity_component_interpretation);
 
@@ -649,9 +556,10 @@ FluidDynamicsVANSMatrixFree<dim>::gather_output_hook()
           1, DataComponentInterpretation::component_is_scalar);
 
       OutputStructSolution<dim, LinearAlgebra::distributed::Vector<double>>
-        mtc_struct(particle_projector.momentum_transfer_coefficient.dof_handler,
-                   particle_projector.momentum_transfer_coefficient
-                     .particle_field_solution,
+        mtc_struct(vans_particle_state.particle_projector
+                     .momentum_transfer_coefficient.dof_handler,
+                   vans_particle_state.particle_projector
+                     .momentum_transfer_coefficient.particle_field_solution,
                    mtc_name,
                    mtc_component_interpretation);
 
@@ -688,12 +596,14 @@ FluidDynamicsVANSMatrixFree<dim>::evaluate_time_derivative_void_fraction()
     this->simulation_control->get_bdf_coefficients();
 
   this->time_derivative_void_fraction.add(
-    bdf_coefs[0], this->particle_projector.void_fraction_solution);
+    bdf_coefs[0],
+    this->vans_particle_state.particle_projector.void_fraction_solution);
   for (unsigned int p = 0; p < number_of_previous_solutions(method); ++p)
     {
       this->time_derivative_void_fraction.add(
         bdf_coefs[p + 1],
-        this->particle_projector.void_fraction_previous_solution[p]);
+        this->vans_particle_state.particle_projector
+          .void_fraction_previous_solution[p]);
     }
 
   // After the void fraction time derivative is calculated, we update its ghost
@@ -730,7 +640,7 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
   // initialize_void_fraction before read_checkpoint would crash because the
   // particle handler has not been deserialized yet.
   if (!this->simulation_parameters.restart_parameters.restart)
-    particle_projector.initialize_void_fraction(
+    vans_particle_state.particle_projector.initialize_void_fraction(
       this->simulation_control->get_current_time());
 
   this->set_initial_condition(
@@ -781,26 +691,27 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
                              "Calculate particle-fluid projection");
 
         // Calculate the new void fraction
-        particle_projector.calculate_void_fraction(
+        vans_particle_state.particle_projector.calculate_void_fraction(
           this->simulation_control->get_current_time());
 
         // and its derivative
         evaluate_time_derivative_void_fraction();
 
-        particle_projector.calculate_particle_fluid_forces_projection(
-          this->cfd_dem_simulation_parameters.cfd_dem,
-          *this->dof_handler,
-          *this->present_solution,
-          *this->previous_solutions,
-          cfd_dem_simulation_parameters.dem_parameters
-            .lagrangian_physical_properties.g,
-          NavierStokesScratchData<dim>(
-            this->simulation_control,
-            this->simulation_parameters.physical_properties_manager,
-            *this->fe,
-            *this->cell_quadrature,
-            *this->mapping,
-            *this->face_quadrature));
+        vans_particle_state.particle_projector
+          .calculate_particle_fluid_forces_projection(
+            this->cfd_dem_simulation_parameters.cfd_dem,
+            *this->dof_handler,
+            *this->present_solution,
+            *this->previous_solutions,
+            cfd_dem_simulation_parameters.dem_parameters
+              .lagrangian_physical_properties.g,
+            NavierStokesScratchData<dim>(
+              this->simulation_control,
+              this->simulation_parameters.physical_properties_manager,
+              *this->fe,
+              *this->cell_quadrature,
+              *this->mapping,
+              *this->face_quadrature));
 
         // The base matrix-free operator is not aware of the various VANS
         // coupling term. We must do a cast here to ensure that the operator is
@@ -812,23 +723,28 @@ FluidDynamicsVANSMatrixFree<dim>::solve()
                                  "Prepare MF operator for VANS");
 
             mf_operator->compute_void_fraction(
-              particle_projector.dof_handler,
-              particle_projector.void_fraction_solution,
+              vans_particle_state.particle_projector.dof_handler,
+              vans_particle_state.particle_projector.void_fraction_solution,
               this->time_derivative_void_fraction);
 
             mf_operator->compute_particle_fluid_interaction(
-              particle_projector.fluid_force_on_particles_two_way_coupling
+              vans_particle_state.particle_projector
+                .fluid_force_on_particles_two_way_coupling.dof_handler,
+              vans_particle_state.particle_projector
+                .fluid_force_on_particles_two_way_coupling
+                .particle_field_solution,
+              vans_particle_state.particle_projector.fluid_drag_on_particles
                 .dof_handler,
-              particle_projector.fluid_force_on_particles_two_way_coupling
+              vans_particle_state.particle_projector.fluid_drag_on_particles
                 .particle_field_solution,
-              particle_projector.fluid_drag_on_particles.dof_handler,
-              particle_projector.fluid_drag_on_particles
+              vans_particle_state.particle_projector.particle_velocity
+                .dof_handler,
+              vans_particle_state.particle_projector.particle_velocity
                 .particle_field_solution,
-              particle_projector.particle_velocity.dof_handler,
-              particle_projector.particle_velocity.particle_field_solution,
-              particle_projector.momentum_transfer_coefficient.dof_handler,
-              particle_projector.momentum_transfer_coefficient
-                .particle_field_solution);
+              vans_particle_state.particle_projector
+                .momentum_transfer_coefficient.dof_handler,
+              vans_particle_state.particle_projector
+                .momentum_transfer_coefficient.particle_field_solution);
           }
       }
 
@@ -876,7 +792,7 @@ FluidDynamicsVANSMatrixFree<dim>::initialize_GMG()
                  *this->present_solution,
                  this->time_derivative_previous_solutions,
                  this->time_derivative_void_fraction,
-                 this->particle_projector);
+                 this->vans_particle_state.particle_projector);
 }
 
 // Pre-compile the 2D and 3D solver to ensure that the
