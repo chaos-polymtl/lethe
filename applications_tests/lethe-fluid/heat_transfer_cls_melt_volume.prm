@@ -4,8 +4,8 @@
 #-------------------------------------------------------------------------------
 # DESCRIPTION:
 # This test checks that the melt volume computation works well in a CLS
-# simulation. Two superposed fluids are subject to heat on the left side of the
-# domain (this is set with the initial condition).
+# simulation. Two superposed fluids are subject to a higher temperature on the
+# left side of the domain (this is set with the initial condition).
 # Only fluid 1 has a phase change specific heat model, therefore it is the only
 # fluid that melts. The melt volume corresponds to the region at the
 # intersection of the temperature above the liquidus temperature and the fluid 1

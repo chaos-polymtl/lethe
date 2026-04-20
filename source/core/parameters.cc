@@ -2338,7 +2338,7 @@ namespace Parameters
         "calculate melt volume",
         "false",
         Patterns::Bool(),
-        "Enable calculation of the melt volume. The melt volume is computed as the volume of liquid over the liquidus temperature. In the case of CLS simulations, the volume is the geometrical volume within the fluid with phase change.");
+        "Enable calculation of the melt volume. The melt volume is computed as the volume of fluid over the liquidus temperature. In the case of CLS simulations, the volume is the geometrical volume within the fluid with phase change.");
 
       prm.declare_entry("melt volume name",
                         "melt_volume",

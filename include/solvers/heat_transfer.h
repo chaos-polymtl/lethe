@@ -582,21 +582,21 @@ private:
   write_liquid_fraction();
 
   /**
-   * @brief Computes the melt volume (3D) or surface (2D) in a domain. The mushy
+   * @brief Compute the melt volume (3D) or surface (2D) in a domain. The mushy
    * zone is excluded from the melt region.
    *
-   * @param[in] gather_cls Boolean indicating if a CLS multiphase flow is being
+   * @param[in] gather_cls Boolean indicating when a CLS multiphase flow is being
    * simulated.
    *
-   * @remark If CLS multiphase flow, only one of the fluids can have phase
+   * @remark For CLS multiphase flow, only one of the fluids can have phase
    * change. The volume is computed as the geometrical volume with respect to
-   * the phase indicator iso-curve of value 0.5.
+   * the phase indicator isocurve (isosurface) of value 0.5.
    */
   void
   postprocess_melt_volume(const bool gather_cls);
 
   /**
-   * @brief Post-processing: write the melt volume to an output file.
+   * @brief Write the melt volume to an output file.
    */
   void
   write_melt_volume();
@@ -890,7 +890,7 @@ private:
   TableHandler liquid_fraction_table;
 
   /**
-   * @brief Melt volume in the domain.
+   * @brief Evolution of the melt volume in the simulated domain.
    */
   TableHandler melt_volume_table;
 };
