@@ -146,8 +146,8 @@ end
 
 subsection boundary conditions
   set number = 1
-  subsection bc 0,1,2,3
-    set id   = 0
+  subsection bc 0
+    set id   = 0,1,2,3
     set type = noslip
   end
 end
@@ -161,8 +161,8 @@ subsection boundary conditions heat transfer
       set Function expression = 1
     end
   end
-  subsection bc 1,2,3
-    set id   = 1
+  subsection bc 1
+    set id   = 1,2,3
     set type = noflux
   end
 end
