@@ -52,14 +52,9 @@ test(const std::string &grid_arguments, const std::string &case_name)
     deallog << "Boundary id " << static_cast<int>(id)
             << " face count : " << count << std::endl;
 
-  // Write the grid in UCD format to the deallog for comparison with the
-  // reference output, and in VTK format to a separate file so that it can
+  // Write in VTK format to a separate file so that it can
   // be opened in ParaView as a visual double-check.
-  GridOut go;
-  go.set_flags(GridOutFlags::Ucd(false, true));
-
-  go.write_ucd(triangulation, deallog.get_file_stream());
-
+  GridOut           go;
   const std::string vtk_filename =
     "grid_birmingham_fluidized_bed_" + case_name + ".vtk";
   std::ofstream vtk_out(vtk_filename);
