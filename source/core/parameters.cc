@@ -4598,11 +4598,7 @@ namespace Parameters
       stator_boundary_id = prm.get_integer("stator boundary id");
       center_of_rotation =
         value_string_to_tensor<dim>(prm.get("center of rotation"));
-
       rotation_axis = value_string_to_tensor<dim>(prm.get("rotation axis"));
-      Assert(rotation_axis.norm() > 0,
-             ExcMessage("The rotation axis must be non-zero."));
-
       prm.enter_subsection("rotor rotation angle");
       rotor_rotation_angle->parse_parameters(prm);
       rotor_rotation_angle->set_time(0);

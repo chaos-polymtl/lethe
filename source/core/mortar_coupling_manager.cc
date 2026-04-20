@@ -576,6 +576,9 @@ compute_interface_dimensions_circular(
   double vertex_min = std::numeric_limits<double>::max();
   double vertex_max = 0;
 
+  Assert(mortar_parameters.rotation_axis.norm() > 0,
+         ExcMessage("The rotation axis must be non-zero."));
+
   // Verify if rotation axis is a unit vector in x, y, or z
   if constexpr (dim == 3)
     {
