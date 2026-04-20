@@ -3,7 +3,7 @@
 
 /**
  * @brief Tests the generation of the Birmingham fluidized bed mesh. The
- * grid is only implemented in 3D, so only dim = spacedim = 3 is exercised.
+ * grid is only implemented in 3D, so only dim = spacedim = 3 is tested.
  * For each configuration, the number of active cells, the number of
  * vertices, the mesh volume and the number of faces carrying each
  * boundary id are reported.
