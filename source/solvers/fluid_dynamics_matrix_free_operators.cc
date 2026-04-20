@@ -1226,12 +1226,11 @@ NavierStokesOperatorBase<dim, number>::evaluate_velocity_ale(
                   const auto omega_vec = omega * rotation_axis;
 
                   // Compute terms of u_ale = omega_vec x [x, y, z]
-                  this->velocity_ale[cell][q][0][lane] =
-                    omega_vec[1] * z - omega_vec[2] * y;
-                  this->velocity_ale[cell][q][1][lane] =
-                    omega_vec[2] * x - omega_vec[0] * z;
-                  this->velocity_ale[cell][q][2][lane] =
-                    omega_vec[0] * y - omega_vec[1] * x;
+                  const auto product =
+                    cross_product_3d(omega_vec, Tensor<1, dim>({x, y, z}));
+
+                  for (int i = 0; i < dim; i++)
+                    this->velocity_ale[cell][q][i][lane] = product[i];
                 }
             }
         }

@@ -453,12 +453,7 @@ NavierStokesScratchData<dim>::reinit_mortar(
           const auto omega_vec = omega * mortar_parameters.rotation_axis;
 
           // Compute terms of u_ale = omega_vec x [x, y, z]
-          rotor_linear_velocity_values[q][0] =
-            omega_vec[1] * p[2] - omega_vec[2] * p[1];
-          rotor_linear_velocity_values[q][1] =
-            omega_vec[2] * p[0] - omega_vec[0] * p[2];
-          rotor_linear_velocity_values[q][2] =
-            omega_vec[0] * p[1] - omega_vec[1] * p[0];
+          rotor_linear_velocity_values[q] = cross_product_3d(omega_vec, p);
         }
 
       // Update velocity for stabilization
