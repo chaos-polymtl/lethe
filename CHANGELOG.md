@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- MINOR This PR fixes the computation of cell radial distance for 3D mortar cases, and improves the indentification of the rotor/stator domains by using a material_id() flag (as opposed to comparing the radial distance of the cell center with the computed interface radius). The linear velocity computation is also generalized for 3D cases with rotation axis other than z. [#1967](https://github.com/chaos-polymtl/lethe/pull/1967)
+- MINOR This PR fixes the computation of cell radial distance for 3D mortar cases, and improves the identification of the rotor/stator domains by using a material_id() flag (as opposed to comparing the radial distance between the cell center and the computed interface radius). The linear velocity computation is also generalized for 3D cases with rotation axis other than z. [#1967](https://github.com/chaos-polymtl/lethe/pull/1967)
 
 ## [Master] - 2026/04/20
 
