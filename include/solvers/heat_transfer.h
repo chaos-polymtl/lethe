@@ -585,8 +585,8 @@ private:
    * @brief Compute the melt volume (3D) or surface (2D) in a domain. The mushy
    * zone is excluded from the melt region.
    *
-   * @param[in] gather_cls Boolean indicating when a CLS multiphase flow is being
-   * simulated.
+   * @param[in] gather_cls Boolean indicating when a CLS multiphase flow is
+   * being simulated.
    *
    * @remark For CLS multiphase flow, only one of the fluids can have phase
    * change. The volume is computed as the geometrical volume with respect to
