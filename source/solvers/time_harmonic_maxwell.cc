@@ -1017,22 +1017,75 @@ template <int dim>
 void
 TimeHarmonicMaxwell<dim>::write_checkpoint()
 {
-  // TODO
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
+  std::vector<const GlobalVectorType *> sol_set_transfer;
+
+  solution_transfer = std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(
+    *dof_handler_trial_interior);
+
+  sol_set_transfer.emplace_back(&(*present_solution));
+
+  std::string checkpoint_file_prefix =
+    this->simulation_parameters.simulation_control.output_folder +
+    this->simulation_parameters.restart_parameters.filename;
+
+  solution_transfer->prepare_for_serialization(sol_set_transfer);
+
+  // Serialize all post-processing tables that are currently used with the
+  // TimeHarmonicMaxwell solver
+  const std::vector<OutputStructTableHandler> &table_output_structs =
+    this->gather_tables();
+  serialize_tables_vector(table_output_structs, mpi_communicator);
 }
 
 template <int dim>
 void
 TimeHarmonicMaxwell<dim>::read_checkpoint()
 {
-  // TODO
+  auto mpi_communicator = triangulation->get_mpi_communicator();
+  this->pcout << "Reading time-harmonic Maxwell checkpoint" << std::endl;
+
+  std::vector<GlobalVectorType *> input_vectors(1);
+  GlobalVectorType distributed_system(locally_owned_dofs_trial_interior,
+                                      mpi_communicator);
+  input_vectors[0] = &distributed_system;
+
+  SolutionTransfer<dim, GlobalVectorType> system_trans_vectors(
+    *this->dof_handler_trial_interior);
+
+  std::string checkpoint_file_prefix =
+    this->simulation_parameters.simulation_control.output_folder +
+    this->simulation_parameters.restart_parameters.filename;
+
+  solution_transfer->deserialize(input_vectors);
+
+  *present_solution = distributed_system;
+
+  // Deserialize all post-processing tables that are currently used with the
+  // TimeHarmonicMaxwell solver
+  std::vector<OutputStructTableHandler> table_output_structs =
+    this->gather_tables();
+  deserialize_tables_vector(table_output_structs, mpi_communicator);
 }
 
 template <int dim>
 std::vector<OutputStructTableHandler>
 TimeHarmonicMaxwell<dim>::gather_tables()
 {
-  // TODO
-  return std::vector<OutputStructTableHandler>();
+  std::vector<OutputStructTableHandler> table_output_structs;
+
+  std::string prefix =
+    this->simulation_parameters.simulation_control.output_folder;
+  std::string suffix = ".checkpoint";
+
+  if (this->simulation_parameters.analytical_solution->calculate_error())
+    table_output_structs.emplace_back(
+      this->error_table,
+      prefix + this->simulation_parameters.analytical_solution->get_filename() +
+        "_THM" + suffix);
+
+
+  return table_output_structs;
 }
 
 template <int dim>

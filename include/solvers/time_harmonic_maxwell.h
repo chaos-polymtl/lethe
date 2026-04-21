@@ -79,10 +79,10 @@
 ///   [x] postprocess
 ///   [x] pre_mesh_adaptation
 ///   [x] post_mesh_adaptation
-///   [ ] write_checkpoint
+///   [x] write_checkpoint
 ///   [ ] read_checkpoint
-///   [ ] gather_tables()
-///   [ ] fix dimensionality of power scaling
+///   [x] gather_tables()
+///   [x] fix dimensionality of power scaling
 ///   [x] compute_kelly
 ///   [x] compute_dpg_error
 ///   [x] Setup_dofs
