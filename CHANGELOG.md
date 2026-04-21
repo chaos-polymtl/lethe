@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/04/20
+
+### Added
+
+- MINOR Added a unit test for the Birmingham fluidized bed grid generator (`GridBirminghamFluidizedBed`). The test exercises the 3D mesh with and without the chimney and with a non-zero inlet offset, reports the number of active cells, vertices, mesh volume and boundary-id face counts, and writes the generated mesh both in UCD format to the deallog and in VTK format for visual inspection. [#1971](https://github.com/chaos-polymtl/lethe/pull/1971)
+
 ## [Master] - 2026/04/16
 
 ### Changed

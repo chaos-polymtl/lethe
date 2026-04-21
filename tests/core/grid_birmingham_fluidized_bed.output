@@ -1,0 +1,37 @@
+
+DEAL::==================================================
+DEAL::Case: chimney_default
+DEAL::Grid arguments: ""
+DEAL::Number of active cells : 682
+DEAL::Number of vertices     : 883
+DEAL::Mesh volume            : 0.0470512
+DEAL::Boundary id 0 face count : 299
+DEAL::Boundary id 1 face count : 20
+DEAL::Boundary id 2 face count : 1
+DEAL::==================================================
+DEAL::Case: chimney_offset
+DEAL::Grid arguments: "true:0.1"
+DEAL::Number of active cells : 722
+DEAL::Number of vertices     : 933
+DEAL::Mesh volume            : 0.0487282
+DEAL::Boundary id 0 face count : 315
+DEAL::Boundary id 1 face count : 20
+DEAL::Boundary id 2 face count : 1
+DEAL::==================================================
+DEAL::Case: no_chimney_default
+DEAL::Grid arguments: "false"
+DEAL::Number of active cells : 85
+DEAL::Number of vertices     : 144
+DEAL::Mesh volume            : 0.0331348
+DEAL::Boundary id 0 face count : 68
+DEAL::Boundary id 1 face count : 5
+DEAL::Boundary id 2 face count : 5
+DEAL::==================================================
+DEAL::Case: no_chimney_offset
+DEAL::Grid arguments: "false:0.05"
+DEAL::Number of active cells : 90
+DEAL::Number of vertices     : 152
+DEAL::Mesh volume            : 0.0337277
+DEAL::Boundary id 0 face count : 72
+DEAL::Boundary id 1 face count : 5
+DEAL::Boundary id 2 face count : 5

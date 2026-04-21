@@ -4,7 +4,7 @@
 #include <core/grid_birmingham_fluidized_bed.h>
 
 template <int dim, int spacedim>
-BirminghamFluidizedBedGrid<dim, spacedim>::BirminghamFluidizedBedGrid(
+GridBirminghamFluidizedBed<dim, spacedim>::GridBirminghamFluidizedBed(
   const std::string &grid_arguments)
 {
   if constexpr (!(dim == 3 && spacedim == 3))
@@ -35,7 +35,7 @@ BirminghamFluidizedBedGrid<dim, spacedim>::BirminghamFluidizedBedGrid(
 
 template <>
 void
-BirminghamFluidizedBedGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
+GridBirminghamFluidizedBed<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
 {
   const double       r_small               = 0.154 / 2;
   const double       r_large               = 0.254 / 2;
@@ -370,16 +370,16 @@ BirminghamFluidizedBedGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
 // specialized above.
 template <int dim, int spacedim>
 void
-BirminghamFluidizedBedGrid<dim, spacedim>::make_grid(
+GridBirminghamFluidizedBed<dim, spacedim>::make_grid(
   Triangulation<dim, spacedim> & /*triangulation*/)
 {
   AssertThrow(
     false,
     ExcMessage(
-      "BirminghamFluidizedBedGrid is only implemented for dim = 3 and spacedim = 3."));
+      "GridBirminghamFluidizedBed is only implemented for dim = 3 and spacedim = 3."));
 }
 
 // Explicit template instantiations
-template class BirminghamFluidizedBedGrid<2, 2>;
-template class BirminghamFluidizedBedGrid<2, 3>;
-template class BirminghamFluidizedBedGrid<3, 3>;
+template class GridBirminghamFluidizedBed<2, 2>;
+template class GridBirminghamFluidizedBed<2, 3>;
+template class GridBirminghamFluidizedBed<3, 3>;

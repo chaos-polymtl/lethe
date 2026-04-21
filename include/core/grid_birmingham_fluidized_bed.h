@@ -51,7 +51,7 @@ using namespace dealii;
  * @tparam spacedim The dimension of the space, must be 3.
  */
 template <int dim, int spacedim>
-class BirminghamFluidizedBedGrid
+class GridBirminghamFluidizedBed
 {
 public:
   /**
@@ -68,7 +68,7 @@ public:
    *
    * Example: @code "true : 0.1" @endcode
    */
-  BirminghamFluidizedBedGrid(const std::string &grid_arguments);
+  GridBirminghamFluidizedBed(const std::string &grid_arguments);
 
   /**
    * @brief Generate the Birmingham fluidized bed mesh.

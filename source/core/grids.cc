@@ -190,7 +190,7 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
             ExcMessage(
               "Unsupported mesh type - Birmingham fluidized bed mesh with simplex is not supported"));
 
-          BirminghamFluidizedBedGrid<dim, spacedim> grid(
+          GridBirminghamFluidizedBed<dim, spacedim> grid(
             mesh_parameters.grid_arguments);
           grid.make_grid(triangulation);
 
