@@ -96,6 +96,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;deal.II/base/config.h&gt;</code><br />
+<code>#include &lt;<a class="el" href="lethe__grid__tools_8h_source.html">core/lethe_grid_tools.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="parameters_8h_source.html">core/parameters.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="core_2utilities_8h_source.html">core/utilities.h</a>&gt;</code><br />
 <code>#include &lt;deal.II/base/mpi_noncontiguous_partitioner.h&gt;</code><br />
@@ -104,7 +105,7 @@ $(function() {
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for mortar_coupling_manager.h:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="mortar__coupling__manager_8h__incl.svg" width="3354" height="594"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="mortar__coupling__manager_8h__incl.svg" width="1912" height="667"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
@@ -230,7 +231,7 @@ pre_rotation_angle Rotation angle of the initial mesh configuration </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l00559">559</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l01965">Parameters::Mortar&lt; dim &gt;::center_of_rotation</a>, <a class="el" href="core_2utilities_8h_source.html#l00995">point_to_angle()</a>, <a class="el" href="parameters_8h_source.html#l01977">Parameters::Mortar&lt; dim &gt;::radius_tolerance</a>, <a class="el" href="parameters_8h_source.html#l01967">Parameters::Mortar&lt; dim &gt;::rotation_axis</a>, <a class="el" href="parameters_8h_source.html#l01961">Parameters::Mortar&lt; dim &gt;::rotor_boundary_id</a>, and <a class="el" href="parameters_8h_source.html#l01963">Parameters::Mortar&lt; dim &gt;::stator_boundary_id</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l01965">Parameters::Mortar&lt; dim &gt;::center_of_rotation</a>, <a class="el" href="lethe__grid__tools_8h_source.html#l00374">LetheGridTools::find_point_line_distance()</a>, <a class="el" href="core_2utilities_8h_source.html#l00995">point_to_angle()</a>, <a class="el" href="parameters_8h_source.html#l01977">Parameters::Mortar&lt; dim &gt;::radius_tolerance</a>, <a class="el" href="parameters_8h_source.html#l01967">Parameters::Mortar&lt; dim &gt;::rotation_axis</a>, <a class="el" href="parameters_8h_source.html#l01961">Parameters::Mortar&lt; dim &gt;::rotor_boundary_id</a>, and <a class="el" href="parameters_8h_source.html#l01963">Parameters::Mortar&lt; dim &gt;::stator_boundary_id</a>.</p>
 
 </div>
 </div>
@@ -279,7 +280,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>interface_dimensions Vector containing the minimum and maximum y coordinates of the vertices at the extremeties of the mortar interface </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l00709">709</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l00707">707</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="parameters_8h_source.html#l01961">Parameters::Mortar&lt; dim &gt;::rotor_boundary_id</a>.</p>
 
@@ -367,7 +368,7 @@ template&lt;int dim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Quadrature oversampled </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l00759">759</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l00757">757</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="parameters_8h_source.html#l01975">Parameters::Mortar&lt; dim &gt;::oversampling_factor</a>.</p>
 
@@ -419,7 +420,7 @@ template&lt;int dim, typename Number &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Rank-0 tensor </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00540">540</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00541">541</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -469,7 +470,7 @@ template&lt;int n_components, int dim, typename Number &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Rank-0 tensor </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00573">573</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00574">574</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -519,7 +520,7 @@ template&lt;int dim, typename Number &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Rank-1 tensor </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00556">556</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00557">557</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -567,7 +568,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l00776">776</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l00774">774</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="parameters_8h_source.html#l01961">Parameters::Mortar&lt; dim &gt;::rotor_boundary_id</a>, and <a class="el" href="parameters_8h_source.html#l01963">Parameters::Mortar&lt; dim &gt;::stator_boundary_id</a>.</p>
 
@@ -619,7 +620,7 @@ template&lt;int dim, typename Number &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Rank-1 tensor </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00594">594</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00595">595</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -669,7 +670,7 @@ template&lt;int dim, typename Number &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Rank-2 tensor </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00610">610</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00611">611</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -719,7 +720,7 @@ template&lt;int n_components, int dim, typename Number &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Rank-2 tensor for n_components </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00630">630</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00631">631</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -775,7 +776,7 @@ template&lt;typename Number &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00701">701</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00702">702</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -831,7 +832,7 @@ template&lt;int dim, int dim_, typename Number &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00651">651</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00652">652</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
@@ -887,7 +888,7 @@ template&lt;int dim, typename Number &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00676">676</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l00677">677</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 
 </div>
 </div>
