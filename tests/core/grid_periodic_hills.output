@@ -1,0 +1,49 @@
+
+DEAL::==================================================
+DEAL::Dimension     : 2
+DEAL::Case          : default
+DEAL::Grid arguments: "0;1;10;2"
+DEAL::Number of active cells : 20
+DEAL::Number of vertices     : 33
+DEAL::Mesh volume            : 25.4500
+DEAL::Boundary id 0 face count : 2
+DEAL::Boundary id 1 face count : 2
+DEAL::Boundary id 2 face count : 10
+DEAL::Boundary id 3 face count : 10
+DEAL::==================================================
+DEAL::Dimension     : 2
+DEAL::Case          : stretched
+DEAL::Grid arguments: "0;1.5;1;1"
+DEAL::Number of active cells : 16
+DEAL::Number of vertices     : 25
+DEAL::Mesh volume            : 25.0955
+DEAL::Boundary id 0 face count : 4
+DEAL::Boundary id 1 face count : 4
+DEAL::Boundary id 2 face count : 4
+DEAL::Boundary id 3 face count : 4
+DEAL::==================================================
+DEAL::Dimension     : 3
+DEAL::Case          : default
+DEAL::Grid arguments: "0;1;10;2;1"
+DEAL::Number of active cells : 20
+DEAL::Number of vertices     : 66
+DEAL::Mesh volume            : 114.525
+DEAL::Boundary id 0 face count : 2
+DEAL::Boundary id 1 face count : 2
+DEAL::Boundary id 2 face count : 10
+DEAL::Boundary id 3 face count : 10
+DEAL::Boundary id 4 face count : 20
+DEAL::Boundary id 5 face count : 20
+DEAL::==================================================
+DEAL::Dimension     : 3
+DEAL::Case          : stretched
+DEAL::Grid arguments: "0;1.5;1;1;1"
+DEAL::Number of active cells : 64
+DEAL::Number of vertices     : 125
+DEAL::Mesh volume            : 112.930
+DEAL::Boundary id 0 face count : 16
+DEAL::Boundary id 1 face count : 16
+DEAL::Boundary id 2 face count : 16
+DEAL::Boundary id 3 face count : 16
+DEAL::Boundary id 4 face count : 16
+DEAL::Boundary id 5 face count : 16
