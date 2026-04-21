@@ -4,7 +4,7 @@
 #include <core/grid_cylinder.h>
 
 template <int dim, int spacedim>
-CylinderGrid<dim, spacedim>::CylinderGrid(const std::string &grid_type,
+GridCylinder<dim, spacedim>::GridCylinder(const std::string &grid_type,
                                           const std::string &grid_arguments)
 {
   if constexpr (!(dim == 3 && spacedim == 3))
@@ -63,7 +63,7 @@ CylinderGrid<dim, spacedim>::CylinderGrid(const std::string &grid_type,
 
 template <>
 void
-CylinderGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
+GridCylinder<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
 {
   if (cylinder_type == CylinderType::classic)
     {
@@ -168,16 +168,16 @@ CylinderGrid<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
 // specialized above.
 template <int dim, int spacedim>
 void
-CylinderGrid<dim, spacedim>::make_grid(
+GridCylinder<dim, spacedim>::make_grid(
   Triangulation<dim, spacedim> & /*triangulation*/)
 {
   AssertThrow(
     false,
     ExcMessage(
-      "CylinderGrid is only implemented for dim = 3 and spacedim = 3."));
+      "GridCylinder is only implemented for dim = 3 and spacedim = 3."));
 }
 
 // Explicit template instantiations
-template class CylinderGrid<2, 2>;
-template class CylinderGrid<2, 3>;
-template class CylinderGrid<3, 3>;
+template class GridCylinder<2, 2>;
+template class GridCylinder<2, 3>;
+template class GridCylinder<3, 3>;

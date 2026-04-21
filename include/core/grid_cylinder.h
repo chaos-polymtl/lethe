@@ -22,7 +22,7 @@ using namespace dealii;
  */
 
 template <int dim, int spacedim>
-class CylinderGrid
+class GridCylinder
 {
 public:
   /**
@@ -39,7 +39,7 @@ public:
    * radius of the cylinder and the half height parameter is half the height of
    * the cylinder.
    */
-  CylinderGrid(const std::string &grid_type, const std::string &grid_arguments);
+  GridCylinder(const std::string &grid_type, const std::string &grid_arguments);
 
   /**
    * @brief make_grid. The make_grid function generates cylindrical meshes with different meshing strategies for the circular part of the geometry, depending on the cylinder type specified in the constructor. It also constructs the geometry manifold with SphericalManifold.

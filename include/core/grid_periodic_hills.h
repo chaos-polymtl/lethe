@@ -20,7 +20,7 @@ using namespace dealii;
  */
 
 template <int dim, int spacedim>
-class PeriodicHillsGrid
+class GridPeriodicHills
 {
 public:
   /**
@@ -33,7 +33,7 @@ public:
    *  repetitions_y : number of separation of cells in y before refinement
    *  repetitions_z : number of separation of cells in z before refinement
    */
-  PeriodicHillsGrid(const std::string &grid_arguments);
+  GridPeriodicHills(const std::string &grid_arguments);
 
   /**
    * @brief The hill_geometry function calculates all the domain of the geometry with 6

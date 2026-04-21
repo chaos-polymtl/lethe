@@ -33,7 +33,7 @@ test(const std::string &grid_arguments, const std::string &case_name)
   deallog << "Grid arguments: \"" << grid_arguments << "\"" << std::endl;
 
   Triangulation<dim>          triangulation;
-  PeriodicHillsGrid<dim, dim> grid(grid_arguments);
+  GridPeriodicHills<dim, dim> grid(grid_arguments);
   grid.make_grid(triangulation);
 
   // The stretched case starts from a very coarse mesh (1 x 1 repetitions);

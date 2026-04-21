@@ -152,7 +152,7 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
             ExcMessage(
               "Unsupported mesh type - custom cylinder mesh with simplex is not supported. Use a dealii cylinder to use simplex mesh."));
 
-          CylinderGrid<dim, spacedim> grid(grid_type,
+          GridCylinder<dim, spacedim> grid(grid_type,
                                            mesh_parameters.grid_arguments);
           grid.make_grid(triangulation);
 
@@ -166,7 +166,7 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
             ExcMessage(
               "Unsupported mesh type - periodic hills mesh with simplex is not supported"));
 
-          PeriodicHillsGrid<dim, spacedim> grid(mesh_parameters.grid_arguments);
+          GridPeriodicHills<dim, spacedim> grid(mesh_parameters.grid_arguments);
           grid.make_grid(triangulation);
 
           GridTools::scale(mesh_parameters.scale, triangulation);

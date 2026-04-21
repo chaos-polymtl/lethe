@@ -4,7 +4,7 @@
 #include <core/grid_periodic_hills.h>
 
 template <int dim, int spacedim>
-PeriodicHillsGrid<dim, spacedim>::PeriodicHillsGrid(
+GridPeriodicHills<dim, spacedim>::GridPeriodicHills(
   const std::string &grid_arguments)
 {
   this->grid_arguments = grid_arguments;
@@ -40,7 +40,7 @@ PeriodicHillsPushForward<dim, spacedim>::vector_value(
   Vector<double>        &values) const
 {
   const Point<spacedim> np =
-    PeriodicHillsGrid<dim, spacedim>::hill_geometry(op, spacing_y, alpha);
+    GridPeriodicHills<dim, spacedim>::hill_geometry(op, spacing_y, alpha);
 
   values(0) = np[0];
   values(1) = np[1];
@@ -57,7 +57,7 @@ PeriodicHillsPushForward<dim, spacedim>::value(
   const unsigned int     component) const
 {
   const Point<spacedim> np =
-    PeriodicHillsGrid<dim, spacedim>::hill_geometry(op, spacing_y, alpha);
+    GridPeriodicHills<dim, spacedim>::hill_geometry(op, spacing_y, alpha);
   return np[component];
 }
 
@@ -102,13 +102,13 @@ PeriodicHillsPullBack<dim, spacedim>::vector_value(const Point<spacedim> &np,
   if (spacedim == 2)
     {
       min_y =
-        PeriodicHillsGrid<dim, spacedim>::hill_geometry(Point<spacedim>(x, 0),
+        GridPeriodicHills<dim, spacedim>::hill_geometry(Point<spacedim>(x, 0),
                                                         spacing_y,
                                                         alpha)[1];
     }
   else if (spacedim == 3)
     {
-      min_y = PeriodicHillsGrid<dim, spacedim>::hill_geometry(
+      min_y = GridPeriodicHills<dim, spacedim>::hill_geometry(
         Point<spacedim>(x, 0, np[2]), spacing_y, alpha)[1];
       values(2) = np[2];
     }
@@ -168,11 +168,11 @@ PeriodicHillsPullBack<dim, spacedim>::value(const Point<spacedim> &np,
 
   if (spacedim == 2)
     min_y =
-      PeriodicHillsGrid<dim, spacedim>::hill_geometry(Point<spacedim>(x, 0),
+      GridPeriodicHills<dim, spacedim>::hill_geometry(Point<spacedim>(x, 0),
                                                       spacing_y,
                                                       alpha)[1];
   else if (spacedim == 3)
-    min_y = PeriodicHillsGrid<dim, spacedim>::hill_geometry(
+    min_y = GridPeriodicHills<dim, spacedim>::hill_geometry(
       Point<spacedim>(x, 0, np[2]), spacing_y, alpha)[1];
 
 
@@ -201,7 +201,7 @@ PeriodicHillsPullBack<dim, spacedim>::value(const Point<spacedim> &np,
 
 template <int dim, int spacedim>
 Point<spacedim>
-PeriodicHillsGrid<dim, spacedim>::hill_geometry(const Point<spacedim> &p,
+GridPeriodicHills<dim, spacedim>::hill_geometry(const Point<spacedim> &p,
                                                 double spacing_y,
                                                 double alpha)
 {
@@ -344,7 +344,7 @@ PeriodicHillsGrid<dim, spacedim>::hill_geometry(const Point<spacedim> &p,
 
 template <int dim, int spacedim>
 void
-PeriodicHillsGrid<dim, spacedim>::make_grid(
+GridPeriodicHills<dim, spacedim>::make_grid(
   Triangulation<dim, spacedim> &triangulation)
 {
   std::vector<unsigned int> repetitions(2);
@@ -393,6 +393,6 @@ PeriodicHillsGrid<dim, spacedim>::make_grid(
 }
 
 // Explicit template instantiations
-template class PeriodicHillsGrid<2, 2>;
-template class PeriodicHillsGrid<2, 3>;
-template class PeriodicHillsGrid<3, 3>;
+template class GridPeriodicHills<2, 2>;
+template class GridPeriodicHills<2, 3>;
+template class GridPeriodicHills<3, 3>;
