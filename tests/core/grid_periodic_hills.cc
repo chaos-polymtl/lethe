@@ -15,7 +15,7 @@
 #include <deal.II/grid/tria.h>
 
 // Lethe
-#include <core/periodic_hills_grid.h>
+#include <core/grid_periodic_hills.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>

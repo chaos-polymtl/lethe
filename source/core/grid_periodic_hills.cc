@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include <core/periodic_hills_grid.h>
+#include <core/grid_periodic_hills.h>
 
 template <int dim, int spacedim>
 PeriodicHillsGrid<dim, spacedim>::PeriodicHillsGrid(

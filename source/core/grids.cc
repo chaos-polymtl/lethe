@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/boundary_conditions.h>
-#include <core/cylinder_grid.h>
 #include <core/fichera_oven_grid.h>
 #include <core/grid_birmingham_fluidized_bed.h>
+#include <core/grid_cylinder.h>
+#include <core/grid_periodic_hills.h>
 #include <core/grids.h>
-#include <core/periodic_hills_grid.h>
 #include <core/uniform_channel_with_meshed_cylinder_grid.h>
 
 #include <deal.II/grid/grid_generator.h>

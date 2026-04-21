@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include <core/cylinder_grid.h>
+#include <core/grid_cylinder.h>
 
 template <int dim, int spacedim>
 CylinderGrid<dim, spacedim>::CylinderGrid(const std::string &grid_type,

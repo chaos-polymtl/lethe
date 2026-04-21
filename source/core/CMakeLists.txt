@@ -2,7 +2,6 @@ add_library(lethe-core
   # Sources
   bdf.cc
   boundary_conditions.cc
-  cylinder_grid.cc
   dem_properties.cc
   density_model.cc
   dimensionality.cc
@@ -12,6 +11,8 @@ add_library(lethe-core
   fichera_oven_grid.cc
   grids.cc
   grid_birmingham_fluidized_bed.cc
+  grid_cylinder.cc
+  grid_periodic_hills.cc
   ib_particle.cc
   ib_stencil.cc
   interface_tools.cc
@@ -26,7 +27,6 @@ add_library(lethe-core
   parameters_cfd_dem.cc
   parameters_lagrangian.cc
   parameters_multiphysics.cc
-  periodic_hills_grid.cc
   pvd_handler.cc
   rheological_model.cc
   sdirk_stage_data.cc
@@ -52,7 +52,6 @@ add_library(lethe-core
   ../../include/core/bdf.h
   ../../include/core/boundary_conditions.h
   ../../include/core/checkpoint_control.h
-  ../../include/core/cylinder_grid.h
   ../../include/core/dem_properties.h
   ../../include/core/density_model.h
   ../../include/core/dimensionality.h
@@ -63,6 +62,8 @@ add_library(lethe-core
   ../../include/core/fichera_oven_grid.h
   ../../include/core/grids.h
   ../../include/core/grid_birmingham_fluidized_bed.h
+  ../../include/core/grid_cylinder.h
+  ../../include/core/grid_periodic_hills.h
   ../../include/core/ib_particle.h
   ../../include/core/ib_stencil.h
   ../../include/core/inexact_newton_non_linear_solver_strategy.h
@@ -83,7 +84,6 @@ add_library(lethe-core
   ../../include/core/parameters_cfd_dem.h
   ../../include/core/parameters_lagrangian.h
   ../../include/core/parameters_multiphysics.h
-  ../../include/core/periodic_hills_grid.h
   ../../include/core/phase_change.h
   ../../include/core/physical_property_model.h
   ../../include/core/physics_solver.h

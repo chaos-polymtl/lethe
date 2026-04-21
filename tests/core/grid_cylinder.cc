@@ -16,7 +16,7 @@
 #include <deal.II/grid/tria.h>
 
 // Lethe
-#include <core/cylinder_grid.h>
+#include <core/grid_.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -31,8 +31,8 @@ test(const std::string &grid_type, const std::string &grid_arguments)
   deallog << "Grid type     : " << grid_type << std::endl;
   deallog << "Grid arguments: \"" << grid_arguments << "\"" << std::endl;
 
-  Triangulation<3, 3>    triangulation;
-  CylinderGrid<3, 3>     grid(grid_type, grid_arguments);
+  Triangulation<3, 3> triangulation;
+  CylinderGrid<3, 3>  grid(grid_type, grid_arguments);
   grid.make_grid(triangulation);
 
   deallog << "Number of active cells : " << triangulation.n_active_cells()
