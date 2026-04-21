@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/grid_uniform_channel_with_meshed_cylinder.h>
+#include <core/utilities.h>
 
 #include <numbers>
 
@@ -36,17 +37,16 @@ GridUniformChannelWithMeshedCylinder<dim, spacedim>::
         ExcMessage(
           "Mandatory uniform channel with meshed cylinder parameters are (bottom left point : top right point : center of the cylinder : inner radius : outer radius). The points should be given as x,y and the radii should be given as a single number. The optional parameters are (pad bottom : pad top : pad left : pad right : height : n_slices : colorize). The padding parameters should be given as a single integer, the height should be given as a single double, the n_slices should be given as a single integer and the colorize parameter should be given as true/false."));
     }
-
   // Parse bottom_left point
-  std::stringstream   bottom_left_stream(arguments[0]);
-  std::vector<double> bottom_left_coords;
-  std::string         coord_str;
-  while (getline(bottom_left_stream, coord_str, ','))
+  try
     {
-      bottom_left_coords.push_back(Utilities::string_to_double(coord_str));
+      Tensor<1, 2> bottom_left_coords = value_string_to_tensor<2>(arguments[0]);
+      this->bottom_left =
+        (dim == 2) ?
+          Point<dim>(bottom_left_coords[0], bottom_left_coords[1]) :
+          Point<dim>(bottom_left_coords[0], bottom_left_coords[1], 0.0);
     }
-
-  if (bottom_left_coords.size() != 2)
+  catch (const std::exception &e)
     {
       AssertThrow(
         false,
@@ -54,19 +54,15 @@ GridUniformChannelWithMeshedCylinder<dim, spacedim>::
           "The bottom left point should have 2 components coordinates (x,y format) because the channel is extruded in the z direction."));
     }
 
-  this->bottom_left =
-    (dim == 2) ? Point<dim>(bottom_left_coords[0], bottom_left_coords[1]) :
-                 Point<dim>(bottom_left_coords[0], bottom_left_coords[1], 0.0);
-
   // Parse top_right point
-  std::stringstream   top_right_stream(arguments[1]);
-  std::vector<double> top_right_coords;
-  while (getline(top_right_stream, coord_str, ','))
+  try
     {
-      top_right_coords.push_back(Utilities::string_to_double(coord_str));
+      Tensor<1, 2> top_right_coords = value_string_to_tensor<2>(arguments[1]);
+      this->top_right =
+        (dim == 2) ? Point<dim>(top_right_coords[0], top_right_coords[1]) :
+                     Point<dim>(top_right_coords[0], top_right_coords[1], 0.0);
     }
-
-  if (top_right_coords.size() != 2)
+  catch (const std::exception &e)
     {
       AssertThrow(
         false,
@@ -74,29 +70,22 @@ GridUniformChannelWithMeshedCylinder<dim, spacedim>::
           "The top right point should have 2 components coordinates (x,y format) because the channel is extruded in the z direction."));
     }
 
-  this->top_right = (dim == 2) ?
-                      Point<dim>(top_right_coords[0], top_right_coords[1]) :
-                      Point<dim>(top_right_coords[0], top_right_coords[1], 0.0);
 
   // Parse center point
-  std::stringstream   center_stream(arguments[2]);
-  std::vector<double> center_coords;
-  while (getline(center_stream, coord_str, ','))
+  try
     {
-      center_coords.push_back(Utilities::string_to_double(coord_str));
+      Tensor<1, 2> center_coords = value_string_to_tensor<2>(arguments[2]);
+      this->center               = (dim == 2) ?
+                                     Point<dim>(center_coords[0], center_coords[1]) :
+                                     Point<dim>(center_coords[0], center_coords[1], 0.0);
     }
-
-  if (center_coords.size() != 2)
+  catch (const std::exception &e)
     {
       AssertThrow(
         false,
         ExcMessage(
           "The center point should have 2 components coordinates (x,y format) because the channel is extruded in the z direction."));
     }
-
-  this->center = (dim == 2) ?
-                   Point<dim>(center_coords[0], center_coords[1]) :
-                   Point<dim>(center_coords[0], center_coords[1], 0.0);
 
   // Parse inner_radius
   this->inner_radius = Utilities::string_to_double(arguments[3]);
@@ -395,8 +384,8 @@ GridUniformChannelWithMeshedCylinder<3, 3>::make_grid(
   Triangulation<3, 3> &triangulation)
 {
   // Generate the 2D cross-section (geometry + manifold IDs + boundary IDs)
-  Triangulation<2> tria_D;
-  generate_2d_channel_mesh(tria_D,
+  Triangulation<2> tria_2D;
+  generate_2d_channel_mesh(tria_2D,
                            Point<2>(bottom_left[0], bottom_left[1]),
                            Point<2>(top_right[0], top_right[1]),
                            Point<2>(center[0], center[1]),
@@ -411,7 +400,7 @@ GridUniformChannelWithMeshedCylinder<3, 3>::make_grid(
   // Extrude the 2D cross-section along the z-axis. Manifold  and material IDs
   // from the 2D mesh are copied to the lateral faces of the 3D mesh.
   GridGenerator::extrude_triangulation(
-    tria_D, n_slices, height, triangulation, true);
+    tria_2D, n_slices, height, triangulation, true);
 
   // Attach 3D manifold objects. The manifold IDs (0 for TFI, 1 for
   // cylindrical) were inherited from the 2D mesh during extrusion.

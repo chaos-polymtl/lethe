@@ -6,10 +6,9 @@
 #include <core/grid_birmingham_fluidized_bed.h>
 #include <core/grid_cylinder.h>
 #include <core/grid_periodic_hills.h>
-#include <core/grids.h>
-#include <core/periodic_hills_grid.h>
 #include <core/grid_uniform_channel_with_meshed_cylinder.h>
 #include <core/grid_uniform_channel_with_meshed_square_prism.h>
+#include <core/grids.h>
 
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_in.h>
@@ -205,7 +204,7 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
             ExcMessage(
               "Unsupported mesh type - uniform channel with meshed cylinder mesh with simplex is not supported"));
 
-          UniformChannelWithMeshedCylinderGrid<dim, spacedim> grid(
+          GridUniformChannelWithMeshedCylinder<dim, spacedim> grid(
             mesh_parameters.grid_arguments);
           grid.make_grid(triangulation);
 
@@ -218,7 +217,7 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
             ExcMessage(
               "Unsupported mesh type - uniform channel with rotated meshed rectangle mesh with simplex is not supported"));
 
-          UniformChannelWithMeshedSquarePrismGrid<dim, spacedim> grid(
+          GridUniformChannelWithMeshedSquarePrism<dim, spacedim> grid(
             mesh_parameters.grid_arguments);
           grid.make_grid(triangulation);
 

@@ -1,115 +1,61 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+// Deal.II
+#include <deal.II/grid/grid_out.h>
+#include <deal.II/grid/grid_tools.h>
+#include <deal.II/grid/tria.h>
+
 // Lethe
 #include <core/grid_uniform_channel_with_meshed_square_prism.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
 
-#include <array>
-#include <set>
-#include <string>
+#include <fstream>
+#include <map>
 
-namespace
-{
-  template <int dim>
-  void
-  print_faces(const Triangulation<dim> &tria)
-  {
-    if constexpr (dim == 2)
-      {
-        std::set<std::array<unsigned int, 4>> faces;
-        for (const auto &cell : tria.active_cell_iterators())
-          {
-            std::array<unsigned int, 4> face = {{cell->vertex_index(0),
-                                                 cell->vertex_index(1),
-                                                 cell->vertex_index(2),
-                                                 cell->vertex_index(3)}};
-            std::ranges::sort(face);
-            faces.insert(face);
-          }
-
-        deallog << "Triangulation has : " << faces.size() << " faces."
-                << std::endl;
-        const auto  &vertices = tria.get_vertices();
-        unsigned int face_id  = 0;
-        for (const auto &face : faces)
-          deallog << "  Face " << face_id++ << " has vertices : ("
-                  << vertices[face[0]] << "), (" << vertices[face[1]] << "), ("
-                  << vertices[face[2]] << "), (" << vertices[face[3]] << ")"
-                  << std::endl;
-      }
-    else if constexpr (dim == 3)
-      {
-        std::set<std::array<unsigned int, 4>> faces;
-        for (const auto &cell : tria.active_cell_iterators())
-          {
-            for (const auto f : cell->face_indices())
-              {
-                std::array<unsigned int, 4> face = {
-                  {cell->face(f)->vertex_index(0),
-                   cell->face(f)->vertex_index(1),
-                   cell->face(f)->vertex_index(2),
-                   cell->face(f)->vertex_index(3)}};
-                std::ranges::sort(face);
-                faces.insert(face);
-              }
-          }
-
-        deallog << "Triangulation has : " << faces.size() << " faces."
-                << std::endl;
-        const auto  &vertices = tria.get_vertices();
-        unsigned int face_id  = 0;
-        for (const auto &face : faces)
-          deallog << "  Face " << face_id++ << " has vertices : ("
-                  << vertices[face[0]] << "), (" << vertices[face[1]] << "), ("
-                  << vertices[face[2]] << "), (" << vertices[face[3]] << ")"
-                  << std::endl;
-      }
-  }
-
-
-  template <int dim>
-  void
-  run_test(const std::string &name,
-           const std::string &grid_arguments,
-           const unsigned int global_refinement = 0)
-  {
-    Triangulation<dim>                                triangulation;
-    UniformChannelWithMeshedSquarePrismGrid<dim, dim> grid(grid_arguments);
-    grid.make_grid(triangulation);
-
-    if (global_refinement > 0)
-      triangulation.refine_global(global_refinement);
-
-    deallog << name << std::endl;
-    deallog << "Active cells: " << triangulation.n_active_cells() << std::endl;
-    print_faces(triangulation);
-  }
-} // namespace
-
-
+template <int dim>
 void
-test()
+run_test(const std::string &case_name,
+         const std::string &grid_arguments,
+         const unsigned int global_refinement = 0)
 {
-  deallog << std::setprecision(12);
-  deallog << "Beginning" << std::endl;
+  deallog << "==================================================" << std::endl;
+  deallog << "Case: " << case_name << std::endl;
+  deallog << "Grid arguments: \"" << grid_arguments << "\"" << std::endl;
 
-  run_test<2>("Case 1: 2D half-unit square, no rotation, no padding",
-              "0,0:1,1:0.5,0.5:0.25:0.5");
+  Triangulation<dim, dim>                           triangulation;
+  GridUniformChannelWithMeshedSquarePrism<dim, dim> grid(grid_arguments);
+  grid.make_grid(triangulation);
 
-  run_test<2>("Case 2: 2D 2x1 channel, 10 deg rotation, padded",
-              "0,0:2,1:1,0.5:0.125:0.25:10:1:1:1:1");
+  if (global_refinement > 0)
+    triangulation.refine_global(global_refinement);
 
-  run_test<2>("Case 3: 2D 2x1 channel, 45 deg rotation, padded, refined once",
-              "0,0:2,1:1,0.5:0.125:0.25:45:1:1:1:1",
-              1);
+  deallog << "Number of active cells : " << triangulation.n_active_cells()
+          << std::endl;
+  deallog << "Number of vertices     : " << triangulation.n_vertices()
+          << std::endl;
+  deallog << "Mesh volume            : " << GridTools::volume(triangulation)
+          << std::endl;
 
-  run_test<3>("Case 4: 3D 2x1x1 channel, 80 deg rotation, padded, material ids",
-              "0,0:2,1:1,0.5:0.2:0.3:80:1:1:1:1:1.0:2:true");
+  // Count the number of faces per boundary id.
+  std::map<types::boundary_id, unsigned int> boundary_face_count;
+  for (const auto &cell : triangulation.active_cell_iterators())
+    for (unsigned int f = 0; f < GeometryInfo<dim>::faces_per_cell; ++f)
+      if (cell->face(f)->at_boundary())
+        boundary_face_count[cell->face(f)->boundary_id()]++;
 
-  deallog << "OK" << std::endl;
+  for (const auto &[id, count] : boundary_face_count)
+    deallog << "Boundary id " << static_cast<int>(id)
+            << " face count : " << count << std::endl;
+
+  // Write one VTK file per case for visual checks.
+  GridOut           go;
+  const std::string vtk_filename =
+    "grid_uniform_channel_with_meshed_square_prism_" + case_name + ".vtk";
+  std::ofstream vtk_out(vtk_filename);
+  go.write_vtk(triangulation, vtk_out);
 }
 
 
@@ -119,7 +65,18 @@ main()
   try
     {
       initlog();
-      test();
+      run_test<2>("2D half-unit square, no rotation, no padding",
+                  "0,0:1,1:0.5,0.5:0.25:0.5");
+
+      run_test<2>("2D 2x1 channel, 10 deg rotation, padded",
+                  "0,0:2,1:1,0.5:0.125:0.25:10:1:1:1:1");
+
+      run_test<2>("2D 2x1 channel, 45 deg rotation, padded, refined once",
+                  "0,0:2,1:1,0.5:0.125:0.25:45:1:1:1:1",
+                  1);
+
+      run_test<3>("3D 2x1x1 channel, 80 deg rotation, padded, boundary ids",
+                  "0,0:2,1:1,0.5:0.2:0.3:80:1:1:1:1:1.0:2:true");
     }
   catch (std::exception &exc)
     {
