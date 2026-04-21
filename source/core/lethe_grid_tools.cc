@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/dem_properties.h>
@@ -1789,7 +1789,6 @@ void
 LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
                                MappingQCache<dim>    &mapping_cache,
                                const Mapping<dim>    &mapping,
-                               const double          &radius,
                                const double          &rotation_angle,
                                const Point<dim>      &center_of_rotation,
                                const Tensor<1, dim>  &rotation_axis)
@@ -1800,7 +1799,8 @@ LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
         mapping,
         dof_handler.get_triangulation(),
         [&](const auto &cell, const auto &point) {
-          if ((cell->center() - center_of_rotation).norm() > radius)
+          // Do not rotate the point if current cell is part of the stator
+          if (cell->material_id() == 0)
             return point;
 
           // Shift point by the center of rotation
@@ -1821,20 +1821,19 @@ LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
         mapping,
         dof_handler.get_triangulation(),
         [&](const auto &cell, const auto &point) {
-          // Compute point radial distance with respect to the rotation axis
-          const auto aux =
-            cross_product_3d((cell->center() - center_of_rotation),
-                             rotation_axis);
-          const double point_radial_distance =
-            aux.norm() / rotation_axis.norm();
-
-          if (point_radial_distance > radius)
+          // Do not rotate point if current cell is part of the stator
+          if (cell->material_id() == 0)
             return point;
 
-          return static_cast<Point<dim>>(
+          // Shift point by the center of rotation
+          const auto shift_point = point - center_of_rotation;
+          // Rotate
+          const auto rotate_point =
             Physics::Transformations::Rotations::rotation_matrix_3d(
               rotation_axis, rotation_angle) *
-            point);
+            shift_point;
+          // Return rotated point according to the center of rotation
+          return static_cast<Point<dim>>(rotate_point + center_of_rotation);
         },
         false);
     }
@@ -1844,7 +1843,6 @@ template void
 LetheGridTools::rotate_mapping(const DoFHandler<2> &dof_handler,
                                MappingQCache<2>    &mapping_cache,
                                const Mapping<2>    &mapping,
-                               const double        &radius,
                                const double        &rotation_angle,
                                const Point<2>      &center_of_rotation,
                                const Tensor<1, 2>  &rotation_axis);
@@ -1853,7 +1851,6 @@ template void
 LetheGridTools::rotate_mapping(const DoFHandler<3> &dof_handler,
                                MappingQCache<3>    &mapping_cache,
                                const Mapping<3>    &mapping,
-                               const double        &radius,
                                const double        &rotation_angle,
                                const Point<3>      &center_of_rotation,
                                const Tensor<1, 3>  &rotation_axis);

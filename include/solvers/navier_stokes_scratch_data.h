@@ -7,6 +7,7 @@
 #include "core/parameters_cfd_dem.h"
 #include <core/bdf.h>
 #include <core/dem_properties.h>
+#include <core/lethe_grid_tools.h>
 #include <core/parameters.h>
 #include <core/physical_property_model.h>
 #include <core/sdirk_stage_data.h>
@@ -1344,13 +1345,10 @@ public:
    * FeValues.
    *
    * @param[in] mortar_parameters Parameters for the mortar method
-   *
-   * @param[in] radius Radius of the rotor domain
    */
   void
   reinit_mortar(const typename DoFHandler<dim>::active_cell_iterator &cell,
-                const Parameters::Mortar<dim> &mortar_parameters,
-                const double                  &radius);
+                const Parameters::Mortar<dim> &mortar_parameters);
 
   /**
    * @brief Calculates the physical properties. This function calculates the

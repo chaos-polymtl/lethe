@@ -579,6 +579,9 @@ compute_interface_dimensions_circular(
   // Verify if rotation axis is a unit vector in x, y, or z
   if constexpr (dim == 3)
     {
+      Assert(mortar_parameters.rotation_axis.norm() > 0,
+             ExcMessage("The rotation axis must be non-zero."));
+
       // First check if the vector has a unit norm
       bool is_unit_axis =
         mortar_parameters.rotation_axis.norm() == 1 ? true : false;
@@ -626,25 +629,20 @@ compute_interface_dimensions_circular(
                           double     radius_current =
                             v.distance(mortar_parameters.center_of_rotation);
 
-                          // In 3D, the interface radius to be computed is
-                          // actually with respect to the rotation axis. For
-                          // this computation, we use the relation:
-                          // radius_current = ||VC x d||/||d||, where VC is the
-                          // current vertex minus the center of rotation, and d
-                          // is the rotation axis
+                          // In 3D, the interface radius is computed as the
+                          // minimum distance between the current vertex and the
+                          // rotation axis, assuming that the center of rotation
+                          // point is contained within the rotation axis line
                           if constexpr (dim == 3)
                             {
                               vertex_min = std::min(vertex_min, v[direction]);
                               vertex_max = std::max(vertex_max, v[direction]);
 
-                              const auto aux = cross_product_3d(
-                                (v - mortar_parameters.center_of_rotation),
-                                mortar_parameters.rotation_axis /
-                                  mortar_parameters.rotation_axis.norm());
-                              const double num = aux.norm();
-                              const double den =
-                                mortar_parameters.rotation_axis.norm();
-                              radius_current = num / den;
+                              radius_current =
+                                LetheGridTools::find_point_line_distance(
+                                  mortar_parameters.center_of_rotation,
+                                  mortar_parameters.rotation_axis,
+                                  v);
                             }
 
                           radius_min = std::min(radius_min, radius_current);

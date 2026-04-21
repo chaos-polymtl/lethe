@@ -1158,8 +1158,8 @@ template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::evaluate_velocity_ale(
   const Mapping<dim>                             &mapping,
-  const double                                    radius,
   const Point<dim>                                center_of_rotation,
+  const Tensor<1, dim>                            rotation_axis,
   std::shared_ptr<Functions::ParsedFunction<dim>> rotor_angular_velocity)
 {
   this->timer.enter_subsection("operator::evaluate_velocity_ale");
@@ -1188,31 +1188,37 @@ NavierStokesOperatorBase<dim, number>::evaluate_velocity_ale(
            lane < matrix_free.n_active_entries_per_cell_batch(cell);
            lane++)
         {
-          // Compute radial distance from the current cell
-          const auto cell_center =
-            matrix_free.get_cell_iterator(cell, lane)->center();
-          const auto radius_current = cell_center.distance(center_of_rotation);
+          // Apply prescribed rotor angular velocity only at rotor cells
+          // (material_id = 1)
+          double omega = 0.0;
+          if (matrix_free.get_cell_iterator(cell, lane)->material_id() == 1)
+            omega = rotor_angular_velocity_value;
 
-          // Use prescribed rotor angular velocity only if cell is part of the
-          // rotor
-          double cell_rotor_angular_velocity;
-          if (radius_current > radius)
-            cell_rotor_angular_velocity = 0.0;
-          else
-            cell_rotor_angular_velocity = rotor_angular_velocity_value;
+          // The mortar implementation is not defined for more than two
+          // materials. Throw when running debug mode as a security measure to
+          // prevent this case
+          Assert(
+            matrix_free.get_cell_iterator(cell, lane)->material_id() < 2,
+            ExcMessage(
+              "The material id in a cell was identified as equal or greater than 2, however the mortar implementation is not defined for more than two materials."));
 
           // Compute linear velocity at quadrature points
           for (const auto q : integrator.quadrature_point_indices())
             {
-              // Assumption in 3D case: rotation axis is in z
-              // TODO generalize rotation axis
-              const auto x = integrator.quadrature_point(q)[0][lane];
-              const auto y = integrator.quadrature_point(q)[1][lane];
+              // Store point coordinates in tensor format
+              Tensor<1, dim> p;
+              for (int i = 0; i < dim; i++)
+                p[i] = integrator.quadrature_point(q)[i][lane] -
+                       center_of_rotation[i];
 
-              this->velocity_ale[cell][q][0][lane] =
-                -cell_rotor_angular_velocity * y;
-              this->velocity_ale[cell][q][1][lane] =
-                cell_rotor_angular_velocity * x;
+              // Compute terms of u_ale
+              const auto product =
+                LetheGridTools::angular_to_linear_velocity(omega,
+                                                           p,
+                                                           rotation_axis);
+
+              for (int i = 0; i < dim; i++)
+                this->velocity_ale[cell][q][i][lane] = product[i];
             }
         }
     }

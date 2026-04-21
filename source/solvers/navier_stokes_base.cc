@@ -1289,6 +1289,11 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_adaptive()
     average_velocities->prepare_for_mesh_adaptation();
 
   tria.execute_coarsening_and_refinement();
+
+  // If mortar is enabled, update mapping cache with refined triangulation
+  if (this->simulation_parameters.mortar_parameters.enable)
+    this->mapping_cache->initialize(*this->mapping, tria);
+
   setup_dofs();
 
   // Transfer solution
@@ -2222,10 +2227,6 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_rotor_mapping(
       *this->dof_handler,
       *this->mapping_cache,
       *this->mapping,
-      std::get<0>(compute_interface_dimensions_circular(
-        *this->triangulation,
-        *this->mapping,
-        this->simulation_parameters.mortar_parameters))[0],
       rotation_angle,
       this->simulation_parameters.mortar_parameters.center_of_rotation,
       this->simulation_parameters.mortar_parameters.rotation_axis);

@@ -118,7 +118,6 @@ test()
   LetheGridTools::rotate_mapping(dof_handler,
                                  mapping_cache,
                                  mapping,
-                                 radius[0],
                                  rotation_angle,
                                  mortar_parameters.center_of_rotation,
                                  mortar_parameters.rotation_axis);

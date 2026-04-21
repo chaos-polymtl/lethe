@@ -1473,21 +1473,9 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                       << std::endl;
         }
 
-      // Initialize variable needed when mortar is enabled
-      double interface_radius = 0;
+      // Create mappings for each level
       if (this->simulation_parameters.mortar_parameters.enable)
-        {
-          // Create mappings for each level
-          this->mappings.resize(this->minlevel, this->maxlevel);
-          // Compute interface radius (same for all levels)
-          if (this->simulation_parameters.mortar_parameters.interface_type ==
-              Parameters::Mortar<dim>::InterfaceType::circular)
-            interface_radius =
-              std::get<0>(compute_interface_dimensions_circular(
-                *this->coarse_grid_triangulations[0],
-                *mapping,
-                this->simulation_parameters.mortar_parameters))[0];
-        }
+        this->mappings.resize(this->minlevel, this->maxlevel);
 
       // Apply constraints and create mg operators for each level
       for (unsigned int level = this->minlevel; level <= this->maxlevel;
@@ -1513,7 +1501,6 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                   this->dof_handlers[level],
                   *this->mappings[level],
                   *mapping,
-                  interface_radius,
                   this->simulation_parameters.mortar_parameters
                     .rotor_rotation_angle->value(Point<dim>()),
                   this->simulation_parameters.mortar_parameters
@@ -2550,8 +2537,8 @@ MFNavierStokesPreconditionGMG<dim>::initialize(
              ->get_system_matrix_free()
              .get_mapping_info()
              .mapping,
-          this->mg_operators[level]->mortar_manager_mf->radius[0],
           this->simulation_parameters.mortar_parameters.center_of_rotation,
+          this->simulation_parameters.mortar_parameters.rotation_axis,
           this->simulation_parameters.mortar_parameters.rotor_angular_velocity);
 
       this->mg_operators[level]->evaluate_non_linear_term_and_calculate_tau(
@@ -3288,8 +3275,8 @@ FluidDynamicsMatrixFree<dim>::assemble_system_rhs()
   if (this->simulation_parameters.mortar_parameters.enable)
     this->system_operator->evaluate_velocity_ale(
       *this->get_mapping(),
-      this->system_operator->mortar_manager_mf->radius[0],
       this->simulation_parameters.mortar_parameters.center_of_rotation,
+      this->simulation_parameters.mortar_parameters.rotation_axis,
       this->simulation_parameters.mortar_parameters.rotor_angular_velocity);
 
   this->system_operator->evaluate_non_linear_term_and_calculate_tau(
@@ -3617,8 +3604,8 @@ FluidDynamicsMatrixFree<dim>::setup_preconditioner()
   if (this->simulation_parameters.mortar_parameters.enable)
     this->system_operator->evaluate_velocity_ale(
       *this->get_mapping(),
-      this->system_operator->mortar_manager_mf->radius[0],
       this->simulation_parameters.mortar_parameters.center_of_rotation,
+      this->simulation_parameters.mortar_parameters.rotation_axis,
       this->simulation_parameters.mortar_parameters.rotor_angular_velocity);
 
   this->computing_timer.enter_subsection("Evaluate non linear term and tau");
