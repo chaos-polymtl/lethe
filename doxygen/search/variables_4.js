@@ -51,7 +51,7 @@ var searchData=
   ['enable_5fbeta_5fparticle_48',['enable_beta_particle',['../structParameters_1_1DynamicFlowControl.html#a442a9f7244734af10f292a3dcdfd9d4f',1,'Parameters::DynamicFlowControl']]],
   ['enable_5fbubble_5ffunction_5fpressure_49',['enable_bubble_function_pressure',['../structParameters_1_1FEM.html#afcc97be9f143dbe3671f81f67bf266bf',1,'Parameters::FEM']]],
   ['enable_5fbubble_5ffunction_5fvelocity_50',['enable_bubble_function_velocity',['../structParameters_1_1FEM.html#a1f1bb52821d2a0f932f44349a0db1251',1,'Parameters::FEM']]],
-  ['enable_5fchimney_51',['enable_chimney',['../classBirminghamFluidizedBedGrid.html#af68acb5997ff296533651d4cbae755d1',1,'BirminghamFluidizedBedGrid']]],
+  ['enable_5fchimney_51',['enable_chimney',['../classGridBirminghamFluidizedBed.html#ae75e0c08251f4248d9da0fe476acc77b',1,'GridBirminghamFluidizedBed']]],
   ['enable_5fcoarsening_52',['enable_coarsening',['../classParameters_1_1IBParticles.html#a505572b01e651320a444de147c079f5b',1,'Parameters::IBParticles']]],
   ['enable_5fdomain_5frestriction_5fwith_5fplane_53',['enable_domain_restriction_with_plane',['../structParameters_1_1ConstrainSolidDomain.html#a559edda60af9e3f280520d17428c6a98',1,'Parameters::ConstrainSolidDomain']]],
   ['enable_5fevaporation_5fcooling_54',['enable_evaporation_cooling',['../structParameters_1_1Evaporation.html#a8462500c96b3c31e8eacccb457d71d8a',1,'Parameters::Evaporation']]],

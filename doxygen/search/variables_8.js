@@ -34,7 +34,7 @@ var searchData=
   ['initial_5ftime_5fstep_31',['initial_time_step',['../classSimulationControl.html#a3e05bb11139f31bf28cbce8a3a435cf6',1,'SimulationControl']]],
   ['initial_5fvel_32',['initial_vel',['../classParameters_1_1Lagrangian_1_1InsertionInfo.html#ac81cd3315761db3ac5878325254dca1b',1,'Parameters::Lagrangian::InsertionInfo']]],
   ['inlet_5fboundary_5fid_33',['inlet_boundary_id',['../structParameters_1_1PostProcessing.html#ae2551d81581291954da5b54d2feccce1',1,'Parameters::PostProcessing']]],
-  ['inlet_5foffset_34',['inlet_offset',['../classBirminghamFluidizedBedGrid.html#a5bc71ba9a42ed9b73f104a87791f1fc3',1,'BirminghamFluidizedBedGrid']]],
+  ['inlet_5foffset_34',['inlet_offset',['../classGridBirminghamFluidizedBed.html#a5660d8ecaad063c7ce430d698e862688',1,'GridBirminghamFluidizedBed']]],
   ['inner_5fface_5fassembler_35',['inner_face_assembler',['../classConservativeLevelSet.html#a55afa5859297e43a71c970658b280064',1,'ConservativeLevelSet::inner_face_assembler'],['../classTracer.html#abefd11428a340613811b3f1ee78cf4e4',1,'Tracer::inner_face_assembler']]],
   ['inner_5fradius_36',['inner_radius',['../classUniformChannelWithMeshedCylinderGrid.html#aa754b029b89464c21ad58445e48a90a7',1,'UniformChannelWithMeshedCylinderGrid']]],
   ['inserted_5fthis_5fstep_37',['inserted_this_step',['../classParameters_1_1Lagrangian_1_1InsertionInfo.html#a0e1b506eff95f1ba9dc88da300195768',1,'Parameters::Lagrangian::InsertionInfo::inserted_this_step'],['../classInsertion.html#a01163ffcd1355a03ae5c1257cec57aff',1,'Insertion::inserted_this_step']]],
