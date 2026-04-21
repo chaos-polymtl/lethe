@@ -1,3 +1,4 @@
+
 DEAL::==================================================
 DEAL::Case: 2D half-unit square, no rotation, no padding
 DEAL::Grid arguments: "0,0:1,1:0.5,0.5:0.25:0.5"

@@ -98,7 +98,7 @@ GridUniformChannelWithMeshedSquarePrism<dim, spacedim>::
   this->outer_half_side = Utilities::string_to_double(arguments[4]);
 
   AssertThrow(
-    inner_half_side > 0.0 && outer_half_side >= inner_half_side,
+    inner_half_side > 0.0,
     ExcMessage(
       " The inner_half_side must be greater than 0 to have an object in the channel."));
 
@@ -397,7 +397,7 @@ GridUniformChannelWithMeshedSquarePrism<dim, spacedim>::
     return steps;
   };
 
-  // Similar as above, this lambda function create a vector of uniform step
+  // Similar as above, this lambda function creates a vector of uniform step
   // sizes given the number of steps n and the total length to cover.
   auto uniform = [](const unsigned int n, const double length) {
     return std::vector<double>(n, length / static_cast<double>(n));

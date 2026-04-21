@@ -108,7 +108,7 @@ private:
    *   closest-angle basis to minimize the distortion of the transition cells.
    * - Up to 8 rectangular padding sub-meshes filling the gap between the
    *   transition square and the channel boundary. Those are set up in a way
-   *   that their vertices lines up with the vertices projected from the
+   *   that their vertices line up with the vertices projected from the
    *   transition region to avoid the need of introducing new vertices when
    *   merging the triangulations.
    *
@@ -124,7 +124,7 @@ private:
    * @param[in]  center         Center of the square obstacle.
    * @param[in]  inner_half_side   Half-side of the inner square obstacle.
    * @param[in]  outer_half_side   Half-side of the outer transition square.
-   * @param[in]  inner_rotation_angle In-plane rotation angle in radians.
+   * @param[in]  inner_rotation_angle In-plane rotation angle in degrees.
    * @param[in]  pad_bottom     Number of subdivisions in the bottom padding.
    * @param[in]  pad_top        Number of subdivisions in the top padding.
    * @param[in]  pad_left       Number of subdivisions in the left padding.
@@ -155,7 +155,7 @@ private:
   double inner_half_side;
   /// Half-side of the outer transition square.
   double outer_half_side;
-  /// In-plane rotation angle in degrees applied to the inner mesh pattern.
+  /// In-plane rotation angle in radians applied to the inner mesh pattern.
   double inner_rotation_angle;
   /// Number of additional cells to be added to pad the channel from center -
   /// inner_half_side - outer_half_side to the channel bottom boundary (-y
