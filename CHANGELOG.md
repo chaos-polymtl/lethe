@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR This PR fixes the computation of cell radial distance for 3D mortar cases, and improves the identification of the rotor/stator domains by using a material_id() flag (as opposed to comparing the radial distance between the cell center and the computed interface radius). The linear velocity computation is also generalized for 3D cases with rotation axis other than z. [#1967](https://github.com/chaos-polymtl/lethe/pull/1967)
 
+### Added
+
+- MINOR Added unit tests for the custom cylinder grid generator (`CylinderGrid`) and the periodic hills grid generator (`PeriodicHillsGrid`). The cylinder test exercises the four cylinder types (`cylinder_classic`, `cylinder_balanced`, `cylinder_squared`, `cylinder_regularized`) in 3D, while the periodic hills test exercises a default and a stretched configuration in both 2D and 3D (the stretched case is uniformly refined to make the stretching transformation visible in the statistics). Both tests report the number of active cells, vertices, mesh volume and boundary-id face counts, and write a VTK file per case for visual inspection. [#1973](https://github.com/chaos-polymtl/lethe/pull/1973)
+
 ## [Master] - 2026/04/20
 
 ### Added
