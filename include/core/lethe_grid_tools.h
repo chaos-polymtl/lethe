@@ -406,10 +406,11 @@ namespace LetheGridTools
    * angular velocity @p omega is constant in all directions.
    *
    * @param[in] omega Angular velocity value
-   * @param[in] point Coordinates of the point in which the linear velocity is
+   * @param[in] point Coordinates of the point at which the linear velocity is
    * being calculated
    * @param[in] rotation_axis Rotation axis used in 3D cases, so that the
-   * angular velocity vector is given by omega_vec = omega * rotation_axis
+   * angular velocity vector is given by omega_vec = omega * rotation_axis. In
+   * 2D, we apply a rotation around the z-axis.
    *
    * @return Linear velocity at @p point
    */
