@@ -1,0 +1,37 @@
+
+DEAL::==================================================
+DEAL::Grid type     : cylinder_classic
+DEAL::Grid arguments: "4:0.5:1.0"
+DEAL::Number of active cells : 20
+DEAL::Number of vertices     : 40
+DEAL::Mesh volume            : 1.00000
+DEAL::Boundary id 0 face count : 16
+DEAL::Boundary id 1 face count : 5
+DEAL::Boundary id 2 face count : 5
+DEAL::==================================================
+DEAL::Grid type     : cylinder_balanced
+DEAL::Grid arguments: "4:0.5:1.0"
+DEAL::Number of active cells : 48
+DEAL::Number of vertices     : 85
+DEAL::Mesh volume            : 1.41421
+DEAL::Boundary id 0 face count : 32
+DEAL::Boundary id 1 face count : 12
+DEAL::Boundary id 2 face count : 12
+DEAL::==================================================
+DEAL::Grid type     : cylinder_squared
+DEAL::Grid arguments: "4:0.5:1.0"
+DEAL::Number of active cells : 4
+DEAL::Number of vertices     : 20
+DEAL::Mesh volume            : 1.00000
+DEAL::Boundary id 0 face count : 16
+DEAL::Boundary id 1 face count : 1
+DEAL::Boundary id 2 face count : 1
+DEAL::==================================================
+DEAL::Grid type     : cylinder_regularized
+DEAL::Grid arguments: "4:0.5:1.0"
+DEAL::Number of active cells : 240
+DEAL::Number of vertices     : 365
+DEAL::Mesh volume            : 1.54573
+DEAL::Boundary id 0 face count : 96
+DEAL::Boundary id 1 face count : 60
+DEAL::Boundary id 2 face count : 60
