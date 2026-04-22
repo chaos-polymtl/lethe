@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/boundary_conditions.h>
-#include <core/cylinder_grid.h>
 #include <core/fichera_oven_grid.h>
 #include <core/grid_birmingham_fluidized_bed.h>
+#include <core/grid_cylinder.h>
+#include <core/grid_periodic_hills.h>
 #include <core/grids.h>
-#include <core/periodic_hills_grid.h>
 #include <core/uniform_channel_with_meshed_cylinder_grid.h>
 
 #include <deal.II/grid/grid_generator.h>
@@ -152,7 +152,7 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
             ExcMessage(
               "Unsupported mesh type - custom cylinder mesh with simplex is not supported. Use a dealii cylinder to use simplex mesh."));
 
-          CylinderGrid<dim, spacedim> grid(grid_type,
+          GridCylinder<dim, spacedim> grid(grid_type,
                                            mesh_parameters.grid_arguments);
           grid.make_grid(triangulation);
 
@@ -166,7 +166,7 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
             ExcMessage(
               "Unsupported mesh type - periodic hills mesh with simplex is not supported"));
 
-          PeriodicHillsGrid<dim, spacedim> grid(mesh_parameters.grid_arguments);
+          GridPeriodicHills<dim, spacedim> grid(mesh_parameters.grid_arguments);
           grid.make_grid(triangulation);
 
           GridTools::scale(mesh_parameters.scale, triangulation);
