@@ -527,7 +527,7 @@ MortarManagerCircle<dim>::MortarManagerCircle(
       construct_quadrature(quadrature, mortar_parameters),
       mortar_parameters.rotor_rotation_angle->value(Point<dim>()),
       compute_height_min(dof_handler.get_triangulation(),
-                    mortar_parameters),
+                         mortar_parameters),
       mortar_parameters.center_of_rotation,
       std::get<1>(
         compute_interface_dimensions_circular(dof_handler.get_triangulation(),
@@ -557,7 +557,7 @@ MortarManagerLinear<dim>::MortarManagerLinear(
       quadrature,
       0.0,
       compute_height_min(dof_handler.get_triangulation(),
-                    mortar_parameters))
+                         mortar_parameters))
 {
   std::tie(this->coord_min, this->coord_max) =
     compute_interface_dimensions_linear(dof_handler.get_triangulation(),

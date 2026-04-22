@@ -169,9 +169,10 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
           const auto x =
             from_1D((id_in_plane + quadrature.point(q)[0]) * delta_0);
 
-          if constexpr (dim == 3)
+          if constexpr (dim == 3) {
+            std::cout << "point_z : " << height_min + (id_out_plane + quadrature.point(q)[1]) * delta_1 << std::endl;
             points.emplace_back(
-              x[0], x[1], (id_out_plane + quadrature.point(q)[1]) * delta_1);
+              x[0], x[1], height_min + (id_out_plane + quadrature.point(q)[1]) * delta_1); }
           else
             points.emplace_back(x);
         }
@@ -211,7 +212,7 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
 
           if constexpr (dim == 3)
             points.emplace_back(
-              x[0], x[1], (id_out_plane + quadrature.point(q)[1]) * delta_1);
+              x[0], x[1], height_min + (id_out_plane + quadrature.point(q)[1]) * delta_1);
           else
             points.emplace_back(x);
         }
@@ -223,7 +224,7 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
 
           if constexpr (dim == 3)
             points.emplace_back(
-              x[0], x[1], (id_out_plane + quadrature.point(q)[1]) * delta_1);
+              x[0], x[1], height_min + (id_out_plane + quadrature.point(q)[1]) * delta_1);
           else
             points.emplace_back(x);
         }
@@ -574,7 +575,7 @@ compute_interface_dimensions_circular(
   // Min and max vertex coordinates for length computation in the axial
   // direction. Used in 3D case
   double vertex_min = std::numeric_limits<double>::max();
-  double vertex_max = 0;
+  double vertex_max = std::numeric_limits<double>::max() * -1;
 
   // Verify if rotation axis is a unit vector in x, y, or z
   if constexpr (dim == 3)
@@ -802,8 +803,7 @@ compute_height_min(const Triangulation<dim> &triangulation,
             }
         }
       // Return the minimum value across all processes
-      return 7.0;
-      // return Utilities::MPI::min(height_min_local, triangulation.get_mpi_communicator());
+      return Utilities::MPI::min(height_min_local, triangulation.get_mpi_communicator());
     }
   else
     return 0.0;
