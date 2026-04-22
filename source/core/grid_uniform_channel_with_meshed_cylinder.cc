@@ -1,13 +1,14 @@
 // SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#include <core/uniform_channel_with_meshed_cylinder_grid.h>
+#include <core/grid_uniform_channel_with_meshed_cylinder.h>
+#include <core/utilities.h>
 
 #include <numbers>
 
 template <int dim, int spacedim>
-UniformChannelWithMeshedCylinderGrid<dim, spacedim>::
-  UniformChannelWithMeshedCylinderGrid(const std::string &grid_arguments)
+GridUniformChannelWithMeshedCylinder<dim, spacedim>::
+  GridUniformChannelWithMeshedCylinder(const std::string &grid_arguments)
 {
   if constexpr (dim == 1 || spacedim == 1)
     {
@@ -26,7 +27,6 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::
       return;
     }
 
-  this->grid_arguments = grid_arguments;
   const std::vector<std::string> arguments =
     Utilities::split_string_list(grid_arguments, ':');
 
@@ -37,17 +37,16 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::
         ExcMessage(
           "Mandatory uniform channel with meshed cylinder parameters are (bottom left point : top right point : center of the cylinder : inner radius : outer radius). The points should be given as x,y and the radii should be given as a single number. The optional parameters are (pad bottom : pad top : pad left : pad right : height : n_slices : colorize). The padding parameters should be given as a single integer, the height should be given as a single double, the n_slices should be given as a single integer and the colorize parameter should be given as true/false."));
     }
-
   // Parse bottom_left point
-  std::stringstream   bottom_left_stream(arguments[0]);
-  std::vector<double> bottom_left_coords;
-  std::string         coord_str;
-  while (getline(bottom_left_stream, coord_str, ','))
+  try
     {
-      bottom_left_coords.push_back(Utilities::string_to_double(coord_str));
+      Tensor<1, 2> bottom_left_coords = value_string_to_tensor<2>(arguments[0]);
+      this->bottom_left =
+        (dim == 2) ?
+          Point<dim>(bottom_left_coords[0], bottom_left_coords[1]) :
+          Point<dim>(bottom_left_coords[0], bottom_left_coords[1], 0.0);
     }
-
-  if (bottom_left_coords.size() != 2)
+  catch (const std::exception &e)
     {
       AssertThrow(
         false,
@@ -55,19 +54,15 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::
           "The bottom left point should have 2 components coordinates (x,y format) because the channel is extruded in the z direction."));
     }
 
-  this->bottom_left =
-    (dim == 2) ? Point<dim>(bottom_left_coords[0], bottom_left_coords[1]) :
-                 Point<dim>(bottom_left_coords[0], bottom_left_coords[1], 0.0);
-
   // Parse top_right point
-  std::stringstream   top_right_stream(arguments[1]);
-  std::vector<double> top_right_coords;
-  while (getline(top_right_stream, coord_str, ','))
+  try
     {
-      top_right_coords.push_back(Utilities::string_to_double(coord_str));
+      Tensor<1, 2> top_right_coords = value_string_to_tensor<2>(arguments[1]);
+      this->top_right =
+        (dim == 2) ? Point<dim>(top_right_coords[0], top_right_coords[1]) :
+                     Point<dim>(top_right_coords[0], top_right_coords[1], 0.0);
     }
-
-  if (top_right_coords.size() != 2)
+  catch (const std::exception &e)
     {
       AssertThrow(
         false,
@@ -75,29 +70,22 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::
           "The top right point should have 2 components coordinates (x,y format) because the channel is extruded in the z direction."));
     }
 
-  this->top_right = (dim == 2) ?
-                      Point<dim>(top_right_coords[0], top_right_coords[1]) :
-                      Point<dim>(top_right_coords[0], top_right_coords[1], 0.0);
 
   // Parse center point
-  std::stringstream   center_stream(arguments[2]);
-  std::vector<double> center_coords;
-  while (getline(center_stream, coord_str, ','))
+  try
     {
-      center_coords.push_back(Utilities::string_to_double(coord_str));
+      Tensor<1, 2> center_coords = value_string_to_tensor<2>(arguments[2]);
+      this->center               = (dim == 2) ?
+                                     Point<dim>(center_coords[0], center_coords[1]) :
+                                     Point<dim>(center_coords[0], center_coords[1], 0.0);
     }
-
-  if (center_coords.size() != 2)
+  catch (const std::exception &e)
     {
       AssertThrow(
         false,
         ExcMessage(
           "The center point should have 2 components coordinates (x,y format) because the channel is extruded in the z direction."));
     }
-
-  this->center = (dim == 2) ?
-                   Point<dim>(center_coords[0], center_coords[1]) :
-                   Point<dim>(center_coords[0], center_coords[1], 0.0);
 
   // Parse inner_radius
   this->inner_radius = Utilities::string_to_double(arguments[3]);
@@ -154,7 +142,7 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::
 
 template <int dim, int spacedim>
 void
-UniformChannelWithMeshedCylinderGrid<dim, spacedim>::generate_2d_channel_mesh(
+GridUniformChannelWithMeshedCylinder<dim, spacedim>::generate_2d_channel_mesh(
   Triangulation<2>  &triangulation,
   const Point<2>    &bottom_left,
   const Point<2>    &top_right,
@@ -280,19 +268,25 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::generate_2d_channel_mesh(
         top_right);
     }
 
-  // Merge all sub-triangulations into the final channel mesh
-  GridGenerator::merge_triangulations({&cylinder_tria,
-                                       &box_tria,
-                                       &pad_bottom_tria,
-                                       &pad_top_tria,
-                                       &pad_left_tria,
-                                       &pad_right_tria,
-                                       &pad_bottom_left_corner_tria,
-                                       &pad_bottom_right_corner_tria,
-                                       &pad_top_left_corner_tria,
-                                       &pad_top_right_corner_tria},
-                                      triangulation);
-
+  // Merge only non-empty triangulations
+  std::vector<const Triangulation<2> *> trias = {&cylinder_tria, &box_tria};
+  if (pad_bottom > 0)
+    trias.push_back(&pad_bottom_tria);
+  if (pad_top > 0)
+    trias.push_back(&pad_top_tria);
+  if (pad_left > 0)
+    trias.push_back(&pad_left_tria);
+  if (pad_right > 0)
+    trias.push_back(&pad_right_tria);
+  if (pad_bottom > 0 && pad_left > 0)
+    trias.push_back(&pad_bottom_left_corner_tria);
+  if (pad_bottom > 0 && pad_right > 0)
+    trias.push_back(&pad_bottom_right_corner_tria);
+  if (pad_top > 0 && pad_left > 0)
+    trias.push_back(&pad_top_left_corner_tria);
+  if (pad_top > 0 && pad_right > 0)
+    trias.push_back(&pad_top_right_corner_tria);
+  GridGenerator::merge_triangulations(trias, triangulation);
 
 
   // Assign material and manifold IDs:
@@ -359,7 +353,7 @@ UniformChannelWithMeshedCylinderGrid<dim, spacedim>::generate_2d_channel_mesh(
 
 template <>
 void
-UniformChannelWithMeshedCylinderGrid<2, 2>::make_grid(
+GridUniformChannelWithMeshedCylinder<2, 2>::make_grid(
   Triangulation<2, 2> &triangulation)
 {
   generate_2d_channel_mesh(triangulation,
@@ -386,12 +380,12 @@ UniformChannelWithMeshedCylinderGrid<2, 2>::make_grid(
 
 template <>
 void
-UniformChannelWithMeshedCylinderGrid<3, 3>::make_grid(
+GridUniformChannelWithMeshedCylinder<3, 3>::make_grid(
   Triangulation<3, 3> &triangulation)
 {
   // Generate the 2D cross-section (geometry + manifold IDs + boundary IDs)
-  Triangulation<2> tria_D;
-  generate_2d_channel_mesh(tria_D,
+  Triangulation<2> tria_2D;
+  generate_2d_channel_mesh(tria_2D,
                            Point<2>(bottom_left[0], bottom_left[1]),
                            Point<2>(top_right[0], top_right[1]),
                            Point<2>(center[0], center[1]),
@@ -406,7 +400,7 @@ UniformChannelWithMeshedCylinderGrid<3, 3>::make_grid(
   // Extrude the 2D cross-section along the z-axis. Manifold  and material IDs
   // from the 2D mesh are copied to the lateral faces of the 3D mesh.
   GridGenerator::extrude_triangulation(
-    tria_D, n_slices, height, triangulation, true);
+    tria_2D, n_slices, height, triangulation, true);
 
   // Attach 3D manifold objects. The manifold IDs (0 for TFI, 1 for
   // cylindrical) were inherited from the 2D mesh during extrusion.
@@ -443,16 +437,16 @@ UniformChannelWithMeshedCylinderGrid<3, 3>::make_grid(
 // specialized above.
 template <int dim, int spacedim>
 void
-UniformChannelWithMeshedCylinderGrid<dim, spacedim>::make_grid(
+GridUniformChannelWithMeshedCylinder<dim, spacedim>::make_grid(
   Triangulation<dim, spacedim> & /*triangulation*/)
 {
   AssertThrow(
     false,
     ExcMessage(
-      "UniformChannelWithMeshedCylinderGrid is only supported for <2,2> and <3,3> <dim,spacedim> specializations."));
+      "GridUniformChannelWithMeshedCylinder is only supported for <2,2> and <3,3> <dim,spacedim> specializations."));
 }
 
 // Explicit template instantiations
-template class UniformChannelWithMeshedCylinderGrid<2, 2>;
-template class UniformChannelWithMeshedCylinderGrid<2, 3>;
-template class UniformChannelWithMeshedCylinderGrid<3, 3>;
+template class GridUniformChannelWithMeshedCylinder<2, 2>;
+template class GridUniformChannelWithMeshedCylinder<2, 3>;
+template class GridUniformChannelWithMeshedCylinder<3, 3>;

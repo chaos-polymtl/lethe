@@ -44,7 +44,8 @@ add_library(lethe-core
   thermal_expansion_model.cc
   tracer_diffusivity_model.cc
   tracer_reaction_model.cc
-  uniform_channel_with_meshed_cylinder_grid.cc
+  grid_uniform_channel_with_meshed_cylinder.cc
+  grid_uniform_channel_with_meshed_square_prism.cc
   utilities.cc
   # Headers
   ../../include/core/ale.h
@@ -106,7 +107,8 @@ add_library(lethe-core
   ../../include/core/time_integration_utilities.h
   ../../include/core/tracer_diffusivity_model.h
   ../../include/core/tracer_reaction_model.h
-  ../../include/core/uniform_channel_with_meshed_cylinder_grid.h
+  ../../include/core/grid_uniform_channel_with_meshed_cylinder.h
+  ../../include/core/grid_uniform_channel_with_meshed_square_prism.h
   ../../include/core/utilities.h)
 
 deal_ii_setup_target(lethe-core)

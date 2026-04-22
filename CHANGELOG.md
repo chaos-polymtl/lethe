@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/04/22
+
+### Added
+
+- MINOR This PR adds a new mesh to simulate a channel with an object in it. Here the object is a rectangular prism with a square base. The name of this new mesh is "uniform_channel_with_meshed_square_prism". This will be used for benchmark and test the multiphysic microwave-heating capabilities of Lethe. The square prism can rotate and the size of its side can be adjusted in addition to the channel dimension. [#1968](https://github.com/chaos-polymtl/lethe/pull/196
+
 ## [Master] - 2026/04/21
 
 ### Fixed

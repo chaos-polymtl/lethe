@@ -1,0 +1,34 @@
+
+DEAL::==================================================
+DEAL::Case: 2D half-unit square, no rotation, no padding
+DEAL::Grid arguments: "0,0:1,1:0.5,0.5:0.25:0.5"
+DEAL::Number of active cells : 12
+DEAL::Number of vertices     : 17
+DEAL::Mesh volume            : 1.00000
+DEAL::Boundary id 0 face count : 8
+DEAL::==================================================
+DEAL::Case: 2D 2x1 channel, 10 deg rotation, padded
+DEAL::Grid arguments: "0,0:2,1:1,0.5:0.125:0.25:10:1:1:1:1"
+DEAL::Number of active cells : 24
+DEAL::Number of vertices     : 33
+DEAL::Mesh volume            : 2.00000
+DEAL::Boundary id 0 face count : 16
+DEAL::==================================================
+DEAL::Case: 2D 2x1 channel, 45 deg rotation, padded, refined once
+DEAL::Grid arguments: "0,0:2,1:1,0.5:0.125:0.25:45:1:1:1:1"
+DEAL::Number of active cells : 96
+DEAL::Number of vertices     : 113
+DEAL::Mesh volume            : 2.00000
+DEAL::Boundary id 0 face count : 32
+DEAL::==================================================
+DEAL::Case: 3D 2x1x1 channel, 80 deg rotation, padded, boundary ids
+DEAL::Grid arguments: "0,0:2,1:1,0.5:0.2:0.3:80:1:1:1:1:1.0:2:true"
+DEAL::Number of active cells : 24
+DEAL::Number of vertices     : 66
+DEAL::Mesh volume            : 2.00000
+DEAL::Boundary id 0 face count : 4
+DEAL::Boundary id 1 face count : 4
+DEAL::Boundary id 2 face count : 4
+DEAL::Boundary id 3 face count : 4
+DEAL::Boundary id 4 face count : 24
+DEAL::Boundary id 5 face count : 24
