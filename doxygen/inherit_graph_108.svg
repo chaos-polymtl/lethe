@@ -11,10 +11,10 @@
 <!-- Node0 -->
 <g id="Node000000" class="node">
 <title>Node0</title>
-<g id="a_Node000000"><a xlink:href="classParameters_1_1Lagrangian_1_1GridMotion.html" target="_top" xlink:title="Parameters for grid (mesh) motion in DEM simulations.">
+<g id="a_Node000000"><a xlink:href="classParameters_1_1Lagrangian_1_1FloatingWalls.html" target="_top" xlink:title="Parameters for floating walls in DEM simulations.">
 <polygon fill="white" stroke="#666666" points="132,-30 0,-30 0,0 132,0 132,-30"/>
 <text text-anchor="start" x="8" y="-18" font-family="Helvetica,sans-Serif" font-size="10.00">Parameters::Lagrangian</text>
-<text text-anchor="middle" x="66" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">::GridMotion&lt; dim &gt;</text>
+<text text-anchor="middle" x="66" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">::FloatingWalls&lt; dim &gt;</text>
 </a>
 </g>
 </g>

@@ -1,12 +1,10 @@
 var searchData=
 [
-  ['uniform_5fchannel_5fwith_5fmeshed_5fcylinder_5fgrid_2ecc_0',['uniform_channel_with_meshed_cylinder_grid.cc',['../uniform__channel__with__meshed__cylinder__grid_8cc.html',1,'']]],
-  ['uniform_5fchannel_5fwith_5fmeshed_5fcylinder_5fgrid_2eh_1',['uniform_channel_with_meshed_cylinder_grid.h',['../uniform__channel__with__meshed__cylinder__grid_8h.html',1,'']]],
-  ['unordered_5fdense_2eh_2',['unordered_dense.h',['../unordered__dense_8h.html',1,'']]],
-  ['update_5ffine_5fsearch_5fcandidates_2ecc_3',['update_fine_search_candidates.cc',['../update__fine__search__candidates_8cc.html',1,'']]],
-  ['update_5ffine_5fsearch_5fcandidates_2eh_4',['update_fine_search_candidates.h',['../update__fine__search__candidates_8h.html',1,'']]],
-  ['update_5flocal_5fparticle_5fcontainers_2ecc_5',['update_local_particle_containers.cc',['../update__local__particle__containers_8cc.html',1,'']]],
-  ['update_5flocal_5fparticle_5fcontainers_2eh_6',['update_local_particle_containers.h',['../update__local__particle__containers_8h.html',1,'']]],
-  ['utilities_2ecc_7',['utilities.cc',['../utilities_8cc.html',1,'']]],
-  ['utilities_2eh_8',['utilities.h',['../core_2utilities_8h.html',1,'(Global Namespace)'],['../dem_2utilities_8h.html',1,'(Global Namespace)']]]
+  ['unordered_5fdense_2eh_0',['unordered_dense.h',['../unordered__dense_8h.html',1,'']]],
+  ['update_5ffine_5fsearch_5fcandidates_2ecc_1',['update_fine_search_candidates.cc',['../update__fine__search__candidates_8cc.html',1,'']]],
+  ['update_5ffine_5fsearch_5fcandidates_2eh_2',['update_fine_search_candidates.h',['../update__fine__search__candidates_8h.html',1,'']]],
+  ['update_5flocal_5fparticle_5fcontainers_2ecc_3',['update_local_particle_containers.cc',['../update__local__particle__containers_8cc.html',1,'']]],
+  ['update_5flocal_5fparticle_5fcontainers_2eh_4',['update_local_particle_containers.h',['../update__local__particle__containers_8h.html',1,'']]],
+  ['utilities_2ecc_5',['utilities.cc',['../utilities_8cc.html',1,'']]],
+  ['utilities_2eh_6',['utilities.h',['../core_2utilities_8h.html',1,'(Global Namespace)'],['../dem_2utilities_8h.html',1,'(Global Namespace)']]]
 ];

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['b_0',['b',['../structSDIRKTable.html#a8dffb0a6775b20ebc05ab9950fd83948',1,'SDIRKTable::b'],['../classThermalConductivityLinear.html#a65bdace70d96173f07f99231031daeb6',1,'ThermalConductivityLinear::B']]],
+  ['b_0',['b',['../classThermalConductivityLinear.html#a65bdace70d96173f07f99231031daeb6',1,'ThermalConductivityLinear::B'],['../structSDIRKTable.html#a8dffb0a6775b20ebc05ab9950fd83948',1,'SDIRKTable::b']]],
   ['b_201_20b_20gamma_20gamma_1',['|   b    1-b-gamma  gamma|',['../sdirk_8cc.html#autotoc_md1',1,'']]],
   ['b_5fi_2',['b_i',['../classSDIRKStageData.html#a3d7c3a736a0cdc2529e9d705e84ea427',1,'SDIRKStageData']]],
   ['background_5fconstraints_3',['background_constraints',['../classDEMSolver.html#a3926006d70a9fb14cfffe6f79bdce0d4',1,'DEMSolver']]],
@@ -55,7 +55,7 @@ var searchData=
   ['bool_5fdof_5fmask_52',['bool_dof_mask',['../classNavierStokesOperatorBase.html#a19396fe6188e28386b2edcbd7869dd14',1,'NavierStokesOperatorBase']]],
   ['booleanoperation_53',['BooleanOperation',['../classCompositeShape.html#a531c7c1de9061dbb243d31f8d9a9b987',1,'CompositeShape']]],
   ['both_54',['both',['../namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2faf6cb3e816496528d4187db53bc66567f',1,'Parameters']]],
-  ['bottom_5fleft_55',['bottom_left',['../classFicheraOvenGrid.html#a691a4cebfc12a351e727e710263e64b6',1,'FicheraOvenGrid::bottom_left'],['../classUniformChannelWithMeshedCylinderGrid.html#a0f536600e58edd975396ad1b23a7266c',1,'UniformChannelWithMeshedCylinderGrid::bottom_left']]],
+  ['bottom_5fleft_55',['bottom_left',['../classFicheraOvenGrid.html#a691a4cebfc12a351e727e710263e64b6',1,'FicheraOvenGrid::bottom_left'],['../classGridUniformChannelWithMeshedCylinder.html#ab0803fc9cbb455b17d72725f1779c158',1,'GridUniformChannelWithMeshedCylinder::bottom_left'],['../classGridUniformChannelWithMeshedSquarePrism.html#a6f6545d023fb328150192189329c8237',1,'GridUniformChannelWithMeshedSquarePrism::bottom_left']]],
   ['boundaries_5fto_5ffix_56',['boundaries_to_fix',['../structParameters_1_1MeshAdaptation.html#acdbb0259a02aeb4f0900ce6fab57d8cd',1,'Parameters::MeshAdaptation']]],
   ['boundaries_5fto_5frefine_57',['boundaries_to_refine',['../structParameters_1_1Mesh.html#a88553c9d1dd7239a33d0c53b7d0bcae9',1,'Parameters::Mesh']]],
   ['boundary_5fcell_5fobject_58',['boundary_cell_object',['../classCFDDEMMatrixFree.html#a0a3d9b147613fda7046fa89c2205fd70',1,'CFDDEMMatrixFree::boundary_cell_object'],['../classDEMSolver.html#a541a0864bcd4bc87d52042aca547efaa',1,'DEMSolver::boundary_cell_object'],['../classCFDDEMSolver.html#aedf8168ad937f17c24bd4ef7d93cecc6',1,'CFDDEMSolver::boundary_cell_object']]],

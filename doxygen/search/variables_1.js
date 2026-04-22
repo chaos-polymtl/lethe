@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['b_0',['b',['../structSDIRKTable.html#a8dffb0a6775b20ebc05ab9950fd83948',1,'SDIRKTable::b'],['../classThermalConductivityLinear.html#a65bdace70d96173f07f99231031daeb6',1,'ThermalConductivityLinear::B']]],
+  ['b_0',['b',['../classThermalConductivityLinear.html#a65bdace70d96173f07f99231031daeb6',1,'ThermalConductivityLinear::B'],['../structSDIRKTable.html#a8dffb0a6775b20ebc05ab9950fd83948',1,'SDIRKTable::b']]],
   ['b_5fi_1',['b_i',['../classSDIRKStageData.html#a3d7c3a736a0cdc2529e9d705e84ea427',1,'SDIRKStageData']]],
   ['background_5fconstraints_2',['background_constraints',['../classDEMSolver.html#a3926006d70a9fb14cfffe6f79bdce0d4',1,'DEMSolver']]],
   ['background_5fdh_3',['background_dh',['../classDEMSolver.html#a3f17096d0118455699306606ec86e66a',1,'DEMSolver::background_dh'],['../classRayTracingSolver.html#a9a62c44febba6fc0e9f3ab22bd943487',1,'RayTracingSolver::background_dh']]],
@@ -38,7 +38,7 @@ var searchData=
   ['boiling_5ftemperature_35',['boiling_temperature',['../structParameters_1_1Evaporation.html#ae99dfdbd7b47f3bcfffc27243fb8412b',1,'Parameters::Evaporation']]],
   ['boiling_5ftemperature_5finv_36',['boiling_temperature_inv',['../classEvaporationModelTemperature.html#a58e2f73de0801f8db20289fa3bf6a4ef',1,'EvaporationModelTemperature']]],
   ['bool_5fdof_5fmask_37',['bool_dof_mask',['../classNavierStokesOperatorBase.html#a19396fe6188e28386b2edcbd7869dd14',1,'NavierStokesOperatorBase']]],
-  ['bottom_5fleft_38',['bottom_left',['../classUniformChannelWithMeshedCylinderGrid.html#a0f536600e58edd975396ad1b23a7266c',1,'UniformChannelWithMeshedCylinderGrid::bottom_left'],['../classFicheraOvenGrid.html#a691a4cebfc12a351e727e710263e64b6',1,'FicheraOvenGrid::bottom_left']]],
+  ['bottom_5fleft_38',['bottom_left',['../classGridUniformChannelWithMeshedSquarePrism.html#a6f6545d023fb328150192189329c8237',1,'GridUniformChannelWithMeshedSquarePrism::bottom_left'],['../classGridUniformChannelWithMeshedCylinder.html#ab0803fc9cbb455b17d72725f1779c158',1,'GridUniformChannelWithMeshedCylinder::bottom_left'],['../classFicheraOvenGrid.html#a691a4cebfc12a351e727e710263e64b6',1,'FicheraOvenGrid::bottom_left']]],
   ['boundaries_5fto_5ffix_39',['boundaries_to_fix',['../structParameters_1_1MeshAdaptation.html#acdbb0259a02aeb4f0900ce6fab57d8cd',1,'Parameters::MeshAdaptation']]],
   ['boundaries_5fto_5frefine_40',['boundaries_to_refine',['../structParameters_1_1Mesh.html#a88553c9d1dd7239a33d0c53b7d0bcae9',1,'Parameters::Mesh']]],
   ['boundary_5fcell_5fobject_41',['boundary_cell_object',['../classDEMSolver.html#a541a0864bcd4bc87d52042aca547efaa',1,'DEMSolver::boundary_cell_object'],['../classCFDDEMSolver.html#aedf8168ad937f17c24bd4ef7d93cecc6',1,'CFDDEMSolver::boundary_cell_object'],['../classCFDDEMMatrixFree.html#a0a3d9b147613fda7046fa89c2205fd70',1,'CFDDEMMatrixFree::boundary_cell_object']]],
