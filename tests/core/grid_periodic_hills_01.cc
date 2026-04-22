@@ -10,6 +10,8 @@
  */
 
 // Deal.II
+#include <deal.II/fe/mapping_q.h>
+
 #include <deal.II/grid/grid_out.h>
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/tria.h>
@@ -47,8 +49,13 @@ test(const std::string &grid_arguments, const std::string &case_name)
           << std::endl;
   deallog << "Number of vertices     : " << triangulation.n_vertices()
           << std::endl;
-  deallog << "Mesh volume            : " << GridTools::volume(triangulation)
-          << std::endl;
+  // Use a Q2 mapping so that the mesh volume is integrated
+  // consistently with the curved FunctionManifold that describes the
+  // hill profile; a linear mapping would not capture the curvature of
+  // the boundary cells.
+  const MappingQ<dim> mapping(2);
+  deallog << "Mesh volume            : "
+          << GridTools::volume(triangulation, mapping) << std::endl;
 
   // Count the number of faces per boundary id
   std::map<types::boundary_id, unsigned int> boundary_face_count;
