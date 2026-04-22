@@ -285,7 +285,7 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
 /**
  * @brief Sets the minimum z value of cell centers at the mortar interface
  * @param[in] triangulation The triangulation object
- * @param[in] stator_boundary_id Boundary ID corresponding to the stator side 
+ * @param[in] stator_boundary_id Boundary ID corresponding to the stator side
  * of the mortar interface
  *
  * @return Minimum z value of cell centers at the mortar interface
@@ -293,7 +293,7 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
 template <int dim>
 double
 compute_height_min(const Triangulation<dim>      &triangulation,
-              const Parameters::Mortar<dim> &mortar_parameters);
+                   const Parameters::Mortar<dim> &mortar_parameters);
 
 /**
  * @brief Compute workload imbalance of mortar cells
@@ -526,8 +526,7 @@ MortarManagerCircle<dim>::MortarManagerCircle(
                                               mortar_parameters)),
       construct_quadrature(quadrature, mortar_parameters),
       mortar_parameters.rotor_rotation_angle->value(Point<dim>()),
-      compute_height_min(dof_handler.get_triangulation(),
-                         mortar_parameters),
+      compute_height_min(dof_handler.get_triangulation(), mortar_parameters),
       mortar_parameters.center_of_rotation,
       std::get<1>(
         compute_interface_dimensions_circular(dof_handler.get_triangulation(),
@@ -556,8 +555,7 @@ MortarManagerLinear<dim>::MortarManagerLinear(
         (2.0 * numbers::PI),
       quadrature,
       0.0,
-      compute_height_min(dof_handler.get_triangulation(),
-                         mortar_parameters))
+      compute_height_min(dof_handler.get_triangulation(), mortar_parameters))
 {
   std::tie(this->coord_min, this->coord_max) =
     compute_interface_dimensions_linear(dof_handler.get_triangulation(),

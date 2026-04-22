@@ -169,10 +169,18 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
           const auto x =
             from_1D((id_in_plane + quadrature.point(q)[0]) * delta_0);
 
-          if constexpr (dim == 3) {
-            std::cout << "point_z : " << height_min + (id_out_plane + quadrature.point(q)[1]) * delta_1 << std::endl;
-            points.emplace_back(
-              x[0], x[1], height_min + (id_out_plane + quadrature.point(q)[1]) * delta_1); }
+          if constexpr (dim == 3)
+            {
+              std::cout << "point_z : "
+                        << height_min +
+                             (id_out_plane + quadrature.point(q)[1]) * delta_1
+                        << std::endl;
+              points.emplace_back(x[0],
+                                  x[1],
+                                  height_min +
+                                    (id_out_plane + quadrature.point(q)[1]) *
+                                      delta_1);
+            }
           else
             points.emplace_back(x);
         }
@@ -211,8 +219,11 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
             from_1D(rad_0 + quadrature.point(q)[0] * (rad_1 - rad_0));
 
           if constexpr (dim == 3)
-            points.emplace_back(
-              x[0], x[1], height_min + (id_out_plane + quadrature.point(q)[1]) * delta_1);
+            points.emplace_back(x[0],
+                                x[1],
+                                height_min +
+                                  (id_out_plane + quadrature.point(q)[1]) *
+                                    delta_1);
           else
             points.emplace_back(x);
         }
@@ -223,8 +234,11 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
             from_1D(rad_1 + quadrature.point(q)[0] * (rad_2 - rad_1));
 
           if constexpr (dim == 3)
-            points.emplace_back(
-              x[0], x[1], height_min + (id_out_plane + quadrature.point(q)[1]) * delta_1);
+            points.emplace_back(x[0],
+                                x[1],
+                                height_min +
+                                  (id_out_plane + quadrature.point(q)[1]) *
+                                    delta_1);
           else
             points.emplace_back(x);
         }
@@ -772,8 +786,8 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
 
 template <int dim>
 double
-compute_height_min(const Triangulation<dim> &triangulation,
-              const Parameters::Mortar<dim> &mortar_parameters)
+compute_height_min(const Triangulation<dim>      &triangulation,
+                   const Parameters::Mortar<dim> &mortar_parameters)
 {
   if constexpr (dim == 3)
     {
@@ -785,7 +799,8 @@ compute_height_min(const Triangulation<dim> &triangulation,
       // Minimum coordinate in the direction of the rotation axis
       double height_min_local = std::numeric_limits<double>::max();
 
-      // Loop over the cells to find the minimum coordinate in the rotation axis direction
+      // Loop over the cells to find the minimum coordinate in the rotation axis
+      // direction
       for (const auto &cell : triangulation.active_cell_iterators())
         {
           if (cell->is_locally_owned())
@@ -793,17 +808,21 @@ compute_height_min(const Triangulation<dim> &triangulation,
               for (const auto face_no : cell->face_indices())
                 {
                   const auto face = cell->face(face_no);
-                  
-                  // Check if the face is at the boundary and belongs to the stator boundary
-                  // The choice of the stator boundary is arbitrary
+
+                  // Check if the face is at the boundary and belongs to the
+                  // stator boundary The choice of the stator boundary is
+                  // arbitrary
                   if (face->at_boundary() &&
-                      face->boundary_id() == mortar_parameters.stator_boundary_id)
-                    height_min_local = std::min(height_min_local, cell->center()[direction]);
+                      face->boundary_id() ==
+                        mortar_parameters.stator_boundary_id)
+                    height_min_local =
+                      std::min(height_min_local, cell->center()[direction]);
                 }
             }
         }
       // Return the minimum value across all processes
-      return Utilities::MPI::min(height_min_local, triangulation.get_mpi_communicator());
+      return Utilities::MPI::min(height_min_local,
+                                 triangulation.get_mpi_communicator());
     }
   else
     return 0.0;
@@ -2132,11 +2151,11 @@ construct_quadrature(const Quadrature<3>         &quadrature,
 
 template double
 compute_height_min<2>(const Triangulation<2>      &triangulation,
-                 const Parameters::Mortar<2> &mortar_parameters);
+                      const Parameters::Mortar<2> &mortar_parameters);
 
 template double
 compute_height_min<3>(const Triangulation<3>      &triangulation,
-                 const Parameters::Mortar<3> &mortar_parameters);
+                      const Parameters::Mortar<3> &mortar_parameters);
 
 template void
 mortar_workload_imbalance(const Triangulation<2>      &triangulation,
