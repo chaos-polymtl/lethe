@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Lethe Open-Source Library: Member List</title>
+<title>Lethe Open-Source Library: /home/runner/work/lethe/lethe/include/core/grid_periodic_hills.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -83,24 +83,45 @@ $(function() {
 </div>
 </div>
 
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_3d69f64eaf81436fe2b22361382717e5.html">core</a></li>  </ul>
+</div>
 </div><!-- top -->
 <div class="header">
-  <div class="headertitle"><div class="title">PeriodicHillsGrid&lt; dim, spacedim &gt; Member List</div></div>
+  <div class="summary">
+<a href="#nested-classes">Classes</a>  </div>
+  <div class="headertitle"><div class="title">grid_periodic_hills.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-
-<p>This is the complete list of members for <a class="el" href="classPeriodicHillsGrid.html">PeriodicHillsGrid&lt; dim, spacedim &gt;</a>, including all inherited members.</p>
-<table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="classPeriodicHillsGrid.html#ab8742e5c3021f9a894e63fdcb6b587a1">alpha</a></td><td class="entry"><a class="el" href="classPeriodicHillsGrid.html">PeriodicHillsGrid&lt; dim, spacedim &gt;</a></td><td class="entry"><span class="mlabel">private</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classPeriodicHillsGrid.html#a30da6c29ca885ec6d53d532e63846d7f">grid_arguments</a></td><td class="entry"><a class="el" href="classPeriodicHillsGrid.html">PeriodicHillsGrid&lt; dim, spacedim &gt;</a></td><td class="entry"><span class="mlabel">private</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classPeriodicHillsGrid.html#ac2ebbe3b29d8072ec2c43f0b95cfe4b6">hill_geometry</a>(const Point&lt; spacedim &gt; &amp;p, double spacing_y, double alpha)</td><td class="entry"><a class="el" href="classPeriodicHillsGrid.html">PeriodicHillsGrid&lt; dim, spacedim &gt;</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classPeriodicHillsGrid.html#ab4b24f516396fc735795fabc8eee7ddd">make_grid</a>(Triangulation&lt; dim, spacedim &gt; &amp;triangulation)</td><td class="entry"><a class="el" href="classPeriodicHillsGrid.html">PeriodicHillsGrid&lt; dim, spacedim &gt;</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classPeriodicHillsGrid.html#a6ceb4f1b6c86a2b25c243e35fb5beb1d">PeriodicHillsGrid</a>(const std::string &amp;grid_arguments)</td><td class="entry"><a class="el" href="classPeriodicHillsGrid.html">PeriodicHillsGrid&lt; dim, spacedim &gt;</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classPeriodicHillsGrid.html#a2e476bfd541c990af8d20396d7fc36f3">repetitions_x</a></td><td class="entry"><a class="el" href="classPeriodicHillsGrid.html">PeriodicHillsGrid&lt; dim, spacedim &gt;</a></td><td class="entry"><span class="mlabel">private</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classPeriodicHillsGrid.html#aa650312af76f1b9e6c166d0d2f18a59a">repetitions_y</a></td><td class="entry"><a class="el" href="classPeriodicHillsGrid.html">PeriodicHillsGrid&lt; dim, spacedim &gt;</a></td><td class="entry"><span class="mlabel">private</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classPeriodicHillsGrid.html#a8eefd055e0c70d87854494b507bd9a4c">repetitions_z</a></td><td class="entry"><a class="el" href="classPeriodicHillsGrid.html">PeriodicHillsGrid&lt; dim, spacedim &gt;</a></td><td class="entry"><span class="mlabel">private</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classPeriodicHillsGrid.html#ae91c98809946fdbc43197f419632fdb5">spacing_y</a></td><td class="entry"><a class="el" href="classPeriodicHillsGrid.html">PeriodicHillsGrid&lt; dim, spacedim &gt;</a></td><td class="entry"><span class="mlabel">private</span></td></tr>
-</table></div><!-- contents -->
+<div class="textblock"><code>#include &lt;deal.II/base/utilities.h&gt;</code><br />
+<code>#include &lt;deal.II/grid/grid_generator.h&gt;</code><br />
+<code>#include &lt;deal.II/grid/grid_tools.h&gt;</code><br />
+<code>#include &lt;deal.II/grid/manifold_lib.h&gt;</code><br />
+<code>#include &lt;sstream&gt;</code><br />
+</div><div class="textblock"><div class="dynheader">
+Include dependency graph for grid_periodic_hills.h:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="grid__periodic__hills_8h__incl.svg" width="872" height="154"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+</div><div class="textblock"><div class="dynheader">
+This graph shows which files directly or indirectly include this file:</div>
+<div class="dyncontent">
+<div class="center"><iframe scrolling="no" frameborder="0" src="grid__periodic__hills_8h__dep__incl.svg" width="411" height="168"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+</div>
+</div>
+<p><a href="grid__periodic__hills_8h_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGridPeriodicHills.html">GridPeriodicHills&lt; dim, spacedim &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPeriodicHillsPushForward.html">PeriodicHillsPushForward&lt; dim, spacedim &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPeriodicHillsPullBack.html">PeriodicHillsPullBack&lt; dim, spacedim &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+</div><!-- contents -->
 <!--
 SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later

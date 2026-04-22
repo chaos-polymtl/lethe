@@ -67,7 +67,7 @@ var searchData=
   ['hess_5fphi_5fu_64',['hess_phi_u',['../classNavierStokesScratchData.html#a981c3e639a7e753c867a48d835f2b9b9',1,'NavierStokesScratchData']]],
   ['hessian_65',['hessian',['../classInterfaceTools_1_1CellWiseFunction.html#a80cbb30376899c78d07a5795b1b5f464',1,'InterfaceTools::CellWiseFunction']]],
   ['hessian_5fmatrix_66',['hessian_matrix',['../classInterfaceTools_1_1SignedDistanceSolver.html#af521620b08068be6e9f9bbd22b69ca5f',1,'InterfaceTools::SignedDistanceSolver']]],
-  ['hill_5fgeometry_67',['hill_geometry',['../classPeriodicHillsGrid.html#ac2ebbe3b29d8072ec2c43f0b95cfe4b6',1,'PeriodicHillsGrid']]],
+  ['hill_5fgeometry_67',['hill_geometry',['../classGridPeriodicHills.html#a45e04a00bffb274c496f8a62ec7fbc33',1,'GridPeriodicHills']]],
   ['hole_5fradius_68',['hole_radius',['../classDeathStar.html#a871728bde6ff92de7ae7240cb11ea772',1,'DeathStar']]],
   ['hp_69',['hp',['../structParameters_1_1LinearSolver.html#a6fad820fb2de28065c95f3511cf78935ad2ccda10db94c2b5d51beed10484c025',1,'Parameters::LinearSolver']]],
   ['htboundaryconditions_70',['HTBoundaryConditions',['../classBoundaryConditions_1_1HTBoundaryConditions.html',1,'BoundaryConditions']]],

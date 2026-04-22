@@ -1,6 +1,6 @@
-<map id="/home/runner/work/lethe/lethe/source/core/cylinder_grid.cc" name="/home/runner/work/lethe/lethe/source/core/cylinder_grid.cc">
-<area shape="rect" id="Node000001" title=" " alt="" coords="407,5,601,60"/>
-<area shape="rect" id="Node000002" href="$cylinder__grid_8h.html" title=" " alt="" coords="429,108,579,133"/>
+<map id="/home/runner/work/lethe/lethe/source/core/grid_cylinder.cc" name="/home/runner/work/lethe/lethe/source/core/grid_cylinder.cc">
+<area shape="rect" id="Node000001" title=" " alt="" coords="413,5,595,60"/>
+<area shape="rect" id="Node000002" href="$grid__cylinder_8h.html" title=" " alt="" coords="429,108,579,133"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="507,60,507,94,501,94,501,60"/>
 <area shape="rect" id="Node000003" title=" " alt="" coords="5,189,168,214"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="440,136,180,184,157,189,156,183,180,179,440,131"/>

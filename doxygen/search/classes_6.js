@@ -19,5 +19,6 @@ var searchData=
   ['glsnavierstokesclsassemblerstf_16',['GLSNavierStokesCLSAssemblerSTF',['../classGLSNavierStokesCLSAssemblerSTF.html',1,'']]],
   ['gradientpostprocessor_17',['GradientPostprocessor',['../classGradientPostprocessor.html',1,'']]],
   ['gridbirminghamfluidizedbed_18',['GridBirminghamFluidizedBed',['../classGridBirminghamFluidizedBed.html',1,'']]],
-  ['gridmotion_19',['gridmotion',['../classGridMotion.html',1,'GridMotion&lt; dim, spacedim &gt;'],['../classParameters_1_1Lagrangian_1_1GridMotion.html',1,'Parameters::Lagrangian::GridMotion&lt; dim &gt;']]]
+  ['gridmotion_19',['gridmotion',['../classGridMotion.html',1,'GridMotion&lt; dim, spacedim &gt;'],['../classParameters_1_1Lagrangian_1_1GridMotion.html',1,'Parameters::Lagrangian::GridMotion&lt; dim &gt;']]],
+  ['gridperiodichills_20',['GridPeriodicHills',['../classGridPeriodicHills.html',1,'']]]
 ];

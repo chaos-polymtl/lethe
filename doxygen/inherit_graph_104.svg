@@ -11,10 +11,10 @@
 <!-- Node0 -->
 <g id="Node000000" class="node">
 <title>Node0</title>
-<g id="a_Node000000"><a xlink:href="classParameters_1_1Lagrangian_1_1FloatingGrid.html" target="_top" xlink:title="Parameters for a floating grid in DEM simulations.">
+<g id="a_Node000000"><a xlink:href="structParameters_1_1Lagrangian_1_1BCDEM.html" target="_top" xlink:title="Boundary conditions for DEM simulations.">
 <polygon fill="white" stroke="#666666" points="132,-30 0,-30 0,0 132,0 132,-30"/>
 <text text-anchor="start" x="8" y="-18" font-family="Helvetica,sans-Serif" font-size="10.00">Parameters::Lagrangian</text>
-<text text-anchor="middle" x="66" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">::FloatingGrid&lt; dim &gt;</text>
+<text text-anchor="middle" x="66" y="-7" font-family="Helvetica,sans-Serif" font-size="10.00">::BCDEM</text>
 </a>
 </g>
 </g>
