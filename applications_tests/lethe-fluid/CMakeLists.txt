@@ -101,6 +101,14 @@ file(COPY mortar_tgv_restart_files/enstrophy.checkpoint DESTINATION "${CMAKE_CUR
 file(COPY mortar_tgv_restart_files/kinetic_energy.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/mortar_tgv_restart.${_build_type}/mpirun=1/")
 file(COPY mortar_tgv_restart_files/L2Error_FD.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/mortar_tgv_restart.${_build_type}/mpirun=1/")
 
+file(COPY time_harmonic_maxwell_waveguide_dirichlet_restart_files/time_harmonic_maxwell_waveguide_dirichlet_restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/time_harmonic_maxwell_waveguide_dirichlet_restart.${_build_type}/mpirun=2/")
+file(COPY time_harmonic_maxwell_waveguide_dirichlet_restart_files/time_harmonic_maxwell_waveguide_dirichlet_restart.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/time_harmonic_maxwell_waveguide_dirichlet_restart.${_build_type}/mpirun=2/")
+file(COPY time_harmonic_maxwell_waveguide_dirichlet_restart_files/time_harmonic_maxwell_waveguide_dirichlet_restart.triangulation DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/time_harmonic_maxwell_waveguide_dirichlet_restart.${_build_type}/mpirun=2/")
+file(COPY time_harmonic_maxwell_waveguide_dirichlet_restart_files/time_harmonic_maxwell_waveguide_dirichlet_restart.triangulation_fixed.data DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/time_harmonic_maxwell_waveguide_dirichlet_restart.${_build_type}/mpirun=2/")
+file(COPY time_harmonic_maxwell_waveguide_dirichlet_restart_files/time_harmonic_maxwell_waveguide_dirichlet_restart.triangulation.info DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/time_harmonic_maxwell_waveguide_dirichlet_restart.${_build_type}/mpirun=2/")
+file(COPY time_harmonic_maxwell_waveguide_dirichlet_restart_files/L2Error_FD.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/time_harmonic_maxwell_waveguide_dirichlet_restart.${_build_type}/mpirun=2/")
+file(COPY time_harmonic_maxwell_waveguide_dirichlet_restart_files/L2Error_THM.checkpoint DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/time_harmonic_maxwell_waveguide_dirichlet_restart.${_build_type}/mpirun=2/")
+
 deal_ii_pickup_tests()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
