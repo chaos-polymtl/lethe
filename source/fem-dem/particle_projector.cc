@@ -291,7 +291,6 @@ ParticleProjector<dim>::calculate_void_fraction(const double time)
 
   solve_linear_system_and_update_solution();
 
-
   if (void_fraction_parameters->project_particle_velocity)
     {
       calculate_field_projection(particle_velocity);
@@ -749,7 +748,6 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
           auto active_periodic_neighbors =
             LetheGridTools::find_cells_around_cell<dim>(
               vertices_to_periodic_cell, cell);
-
 
           // Array of real locations for the quadrature points
           std::vector<std::vector<Point<dim>>>

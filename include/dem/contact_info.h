@@ -15,7 +15,7 @@ using namespace dealii;
  * @brief Handle the information related to the calculation of the
  * particle-particle contact force. Notably it is responsible for storing
  * information that has to be preserved over multiple iterations of a contact,
- * namely everything related to tangential displacements
+ * namely everything related to tangential displacements.
  */
 template <int dim>
 struct particle_particle_contact_info
@@ -29,7 +29,7 @@ struct particle_particle_contact_info
 /**
  * @brief Derived struct of the base struct particle_particle_contact_info for
  * periodic particle-particle contacts. Adds a translation vector that brings
- * particle_two into contact with particle_one
+ * particle_two into contact with particle_one.
  */
 template <int dim>
 struct periodic_particle_particle_contact_info

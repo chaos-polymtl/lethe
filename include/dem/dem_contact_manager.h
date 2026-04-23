@@ -188,11 +188,10 @@ public:
     const double                                      neighborhood_threshold);
 
   /**
-   * @brief Set the combined offsets for periodic boundaries. If
-   * they are no periodic boundaries, the default offset is zeros;
+   * @brief Set the combined offsets for periodic boundaries.
    *
    * @param[in] offsets Combined periodic offsets for periodic
-   * boundaries, used for determining periodic contacts
+   * boundaries, used for determining periodic contacts.
    */
   inline void
   set_combined_periodic_offsets(const std::vector<Tensor<1, dim>> &offsets)

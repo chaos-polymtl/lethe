@@ -42,6 +42,7 @@ public:
    * @param[in] periodic_boundary_ids_0 Map of IDs of the first boundary of each
    * PB pair.
    * @param[in] periodic_directions Map of perpendicular axes of each PB pair.
+   * @param[in] periodic_bc_ind Index of the PB conditions in the .prm file.
    */
   void
   set_periodic_boundaries_information(
@@ -106,14 +107,15 @@ public:
    * the same offset. If no periodic offset has been identified for the
    * boundary id, a zero tensor is inserted as a default value.
    *
-   * @param[in] boundary_id ID of the boundary to query
+   * @param[in] boundary_id ID of the boundary to query.
+   *
    * @return Offset distance between periodic boundaries.
    */
   inline const Tensor<1, dim> &
   get_periodic_offset_distance(const types::boundary_id boundary_id)
   {
-    // No offset were identified during looping over the cell. Build
-    // a default offset which is a zero tensor
+    // If no offset was identified during looping over the cell, a zero
+    // tensor is returned as a default offset.
     if (!periodic_offsets.contains(boundary_id))
       {
         Tensor<1, dim> zero_tensor;
@@ -158,7 +160,7 @@ public:
 private:
   /**
    * @brief Get boundary information related to a face at a periodic
-   * boundary and stores it in a periodic_boundaries_cells_info_struct
+   * boundary and store it in a periodic_boundaries_cells_info_struct
    * object.
    *
    * @param[in] cell Current cell on boundary.
@@ -231,7 +233,7 @@ private:
   /**
    * @brief Map storing offset distance between periodic boundaries, keyed by
    * the boundary ID (pb0). It is calculated from the first pair of cells on
-   * periodic boundaries, so all pair of cells on a given peridodic  boundary
+   * periodic boundaries, so all pair of cells on a given peridodic boundary
    * are assumed to have the same offset.
    */
   std::unordered_map<types::boundary_id, Tensor<1, dim>> periodic_offsets;

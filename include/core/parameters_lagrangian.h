@@ -811,13 +811,13 @@ namespace Parameters
       /// Point on the rotational axis of each rotating boundary.
       std::unordered_map<unsigned int, Point<3>> point_on_rotation_axis;
 
-      /// Principal periodic boundary IDs
+      /// Principal periodic boundary IDs.
       std::unordered_map<unsigned int, types::boundary_id> periodic_boundary_0;
 
-      /// Secondary periodic boundary IDs
+      /// Secondary periodic boundary IDs.
       std::unordered_map<unsigned int, types::boundary_id> periodic_boundary_1;
 
-      /// Directions of periodicity
+      /// Directions of periodicity.
       std::unordered_map<unsigned int, unsigned int> periodic_direction;
 
       /**

@@ -73,7 +73,7 @@ public:
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) = 0;
 
   /**
-   * @brief Set the distance between a principal periodic boundary pn0 (with
+   * @brief Set the distance between a principal periodic boundary pb0 (with
    * mesh ID boundary_id) and its associated periodic boundary pb1 in the
    * periodic_offsets map.
    *
@@ -89,10 +89,10 @@ public:
   }
 
   /**
-   * @brief Set the value of the combined periodic offsets for this class
+   * @brief Set the value of the combined periodic offsets for this class.
    *
    * @param [in] offsets Combined periodic offsets from the
-   * PeriodicBoundariesManipulator class
+   * PeriodicBoundariesManipulator class.
    */
   inline void
   set_combined_periodic_offsets(const std::vector<Tensor<1, dim>> &offsets)
@@ -104,7 +104,7 @@ protected:
   /**
    * @brief Map storing offset distance between periodic boundaries, keyed by
    * the boundary ID (pb0). It is calculated from the first pair of cells on
-   * periodic boundaries, so all pair of cells on a given peridodic  boundary
+   * periodic boundaries, so all pairs of cells on a given peridodic boundary
    * are assumed to have the same offset.
    */
   std::unordered_map<types::boundary_id, Tensor<1, dim>> periodic_offsets;

@@ -35,16 +35,16 @@ using adjacent_pairs_for_contact_t = std::conditional_t<
  * they already exist in the pairs_in_contact or not, if they are not in the
  * pairs_in_contact and have an overlap, the pair will be added to the
  * pairs_in_contact and its contact information will be stored in the
- * corresponding element of the pairs_in_contact_info
+ * corresponding element of the pairs_in_contact_info.
  *
  * @param particle_container A container that is used to obtain iterators to
- * particles using their ids
+ * particles using their ids.
  * @param adjacent_particles A map of maps which stores all the required
  * information for calculation of the contact force of particle pairs. Can
- * either be for non-periodic or periodic contact types
+ * either be for non-periodic or periodic contact types.
  * @param contact_pair_candidates The output of broad search which shows
- * contact pair candidates
- * @param neighborhood_threshold A value which defines the neighbor particles
+ * contact pair candidates.
+ * @param neighborhood_threshold A value which defines the neighbor particles.
  * @param combined_periodic_offsets A vector of tensors of the periodic offsets
  * to change the location of the particles crossing periodic boundaries.
  */
