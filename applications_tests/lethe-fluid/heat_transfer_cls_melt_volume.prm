@@ -8,7 +8,7 @@
 # left side of the domain (this is set with the initial condition).
 # Only fluid 1 has a phase change specific heat model, therefore it is the only
 # fluid that melts. The melt volume corresponds to the region at the
-# intersection of the temperature above the liquidus temperature and the fluid 1
+# intersection of the temperature above the melting temperature and the fluid 1
 # subdomains.
 #-------------------------------------------------------------------------------
 
@@ -107,9 +107,11 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity                   = verbose
-  set calculate melt volume       = true
-  set calculate mass conservation = false
+  set verbosity                         = verbose
+  set calculate melt volume             = true
+  set monitored fluid with phase change = fluid 1
+  set melting temperature               = 0.02
+  set calculate mass conservation       = false
 end
 
 #---------------------------------------------------
@@ -191,6 +193,6 @@ subsection linear solver
     set verbosity               = quiet
     set relative residual       = 1e-3
     set minimum residual        = 1e-10
-    set ilu preconditioner fill = 1
+    set ilu preconditioner fill = 0
   end
 end

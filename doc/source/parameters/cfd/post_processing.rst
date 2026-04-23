@@ -76,15 +76,17 @@ This subsection controls the post-processing other than the forces and torque on
     set tracer flow rate name            = tracer_flow_rate
 
     # Thermal postprocessing
-    set postprocessed fluid              = both
-    set calculate temperature statistics = false
-    set temperature statistics name      = temperature_statistics
-    set calculate heat flux              = false
-    set heat flux name                   = heat_flux
-    set calculate liquid fraction        = false
-    set liquid fraction name             = liquid_fraction
-    set calculate melt volume            = false
-    set melt volume name                 = melt_volume
+    set postprocessed fluid               = both
+    set calculate temperature statistics  = false
+    set temperature statistics name       = temperature_statistics
+    set calculate heat flux               = false
+    set heat flux name                    = heat_flux
+    set calculate liquid fraction         = false
+    set liquid fraction name              = liquid_fraction
+    set calculate melt volume             = false
+    set melt volume name                  = melt_volume
+    set monitored fluid with phase change = fluid 0
+    set melting temperature               = 0
 
     # Multiphase postprocessing
     set calculate barycenter             = false
@@ -260,18 +262,20 @@ This subsection controls the post-processing other than the forces and torque on
 
   * ``liquid fraction name``: name of the output file containing the time evolution of the liquid fraction.
 
-* ``calculate melt volume``: calculates the melt volume in simulations with phase change. The melt volume corresponds to the volume (area) integral of the liquid phase of the fluid with phase change. The melt region (:math:`\Omega_\mathrm{melt}`) is described by temperatures above the fluid's liquidus temperature (:math:`T_\mathrm{liquidus}`):
+* ``calculate melt volume``: computes the melt volume in simulations with phase change. The melt volume corresponds to the volume (area, in 2D) integral of the melted phase of the fluid with phase change. The melt region (:math:`\Omega_\mathrm{i,melt}` with :math:`i \in \{0,1\}` depending on the fluid) is characterized by temperatures above the fluid's melting temperature (:math:`T_\mathrm{melt}`):
 
   .. math::
-    \Omega_\mathrm{0,melt} = \{\vec{x} \in \Omega_0 | T > T_\mathrm{liquidus} \}
+    \Omega_\mathrm{0,melt} = \{\vec{x} \in \Omega_0 | T > T_\mathrm{melt} \}
 
-  here, fluid 0 is a fluid a with phase change and :math:`\Omega_0` corresponds to the subdomain occupied by fluid 0.
+  here, ``fluid 0`` is considered as a fluid a with phase change, hence the index :math:`0` and :math:`\Omega_0` corresponds to the subdomain occupied by fluid 0.
 
   .. warning::
 
-    This is compatible with CLS two-phase flows. A geometrical volume is computed delimited by the :math:`0.5` phase indicator iso-curve. However, only one of the two fluids can have a ``phase_change`` specific heat model.
+    This is compatible with CLS two-phase flows. A geometrical volume is computed delimited by the :math:`0.5` phase indicator iso-curve. However, only one of the two fluids can be a fluid identified with phase change using the parameter ``monitored fluid with phase change``.
 
   * ``melt volume name``: name of the output file containing the time evolution of the melt volume.
+  * ``monitored fluid with phase change``:  fluid with phase change properties, either ``fluid 0`` or ``fluid 1`` (for CLS multiphase flows). The current implementation does not track two melt volumes simultaneously.
+  * ``melting temperature``: temperature in Kelvin above which the fluid is considered melted.
 
 * ``calculate barycenter``: calculates the barycenter of ``fluid 1`` and its velocity in CLS and Cahn-Hilliard simulations. The barycenter :math:`\mathbf{x}_b` and its velocity :math:`\mathbf{v}_b` are defined as:
 

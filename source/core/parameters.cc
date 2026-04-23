@@ -2345,6 +2345,17 @@ namespace Parameters
                         Patterns::FileName(),
                         "Filename of the melt volume output file");
 
+      prm.declare_entry("monitored fluid with phase change",
+                        "fluid 0",
+                        Patterns::Selection("fluid 0|fluid 1"),
+                        "Fluid with phase change properties <fluid 0|fluid 1>");
+
+      prm.declare_entry(
+        "melting temperature",
+        "0",
+        Patterns::Double(0),
+        "Temperature used to define the melting point of the fluid for volume calculation.");
+
       prm.declare_entry("calculate heat flux",
                         "false",
                         Patterns::Bool(),
@@ -2488,6 +2499,16 @@ namespace Parameters
       liquid_fraction_output_name = prm.get("liquid fraction name");
       calculate_melt_volume       = prm.get_bool("calculate melt volume");
       melt_volume_output_name     = prm.get("melt volume name");
+      const std::string melt_fluid =
+        prm.get("monitored fluid with phase change");
+      if (melt_fluid == "fluid 0")
+        monitored_fluid_with_phase_change = Parameters::FluidIndicator::fluid0;
+      else if (melt_fluid == "fluid 1")
+        monitored_fluid_with_phase_change = Parameters::FluidIndicator::fluid1;
+      else
+        throw(std::runtime_error("Invalid fluid. "
+                                 "Options are 'fluid 0' or 'fluid 1'."));
+      melting_temperature         = prm.get_double("melting temperature");
       temperature_output_name     = prm.get("temperature statistics name");
       calculate_heat_flux         = prm.get_bool("calculate heat flux");
       heat_flux_output_name       = prm.get("heat flux name");

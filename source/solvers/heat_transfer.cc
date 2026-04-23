@@ -1195,7 +1195,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
       AssertThrow(
         simulation_parameters.physical_properties_manager.has_phase_change(),
         ExcMessage(
-          "Calculation of the melt volume requires that a fluid has a 'phase_change' specific heat model"));
+          "Calculation of the melt volume requires that a fluid has at least a 'phase_change' physical property model"));
       postprocess_melt_volume(gather_cls);
 
       if (simulation_control->get_step_number() %
@@ -1203,7 +1203,6 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
           0)
         this->write_melt_volume();
     }
-
 
   if (this->simulation_parameters.timer.type ==
       Parameters::Timer::Type::iteration)
@@ -2150,6 +2149,11 @@ HeatTransfer<dim>::postprocess_melt_volume(const bool gather_cls)
 {
   const MPI_Comm mpi_communicator = this->dof_handler->get_mpi_communicator();
 
+  // For single fluid flows
+  std::shared_ptr<GlobalVectorType> temperature_vector_owned_copy;
+  const double                      melting_temperature =
+    this->simulation_parameters.post_processing.melting_temperature;
+
   // Initialize CLS related objects
   std::shared_ptr<const DoFHandler<dim>>      dof_handler_cls;
   std::shared_ptr<NonMatching::FEValues<dim>> non_matching_fe_values_cls;
@@ -2157,25 +2161,10 @@ HeatTransfer<dim>::postprocess_melt_volume(const bool gather_cls)
   std::shared_ptr<GlobalVectorType>           intersection_vector_relevant_copy;
   const double phase_indicator_interface_value = 0.5;
 
-  // Get the reference to physical properties parameters to get the
-  // liquidus temperature of fluids
-  const auto &physical_properties_parameters =
-    this->simulation_parameters.physical_properties_manager
-      .get_physical_properties_parameters();
-
-  double liquidus_temperature;
   if (gather_cls)
-    { // Get liquidus temperature and generate signed phase indicator level set
+    {
+      // Get liquidus temperature and generate signed phase indicator level set
       // for intersection operation
-
-      // Check that only one fluid has phase change
-      AssertThrow(
-        !(physical_properties_parameters.fluids[0].specific_heat_model ==
-            Parameters::Material::SpecificHeatModel::phase_change &&
-          physical_properties_parameters.fluids[1].specific_heat_model ==
-            Parameters::Material::SpecificHeatModel::phase_change),
-        ExcMessage(
-          "For CLS simulations, the current implementation for computing the melt volume only supports 1 fluid with phase change."));
 
       dof_handler_cls = std::shared_ptr<const DoFHandler<dim>>(
         &this->multiphysics->get_dof_handler(PhysicsID::CLS),
@@ -2191,39 +2180,9 @@ HeatTransfer<dim>::postprocess_melt_volume(const bool gather_cls)
         this->multiphysics->get_solution(PhysicsID::CLS),
         *this->dof_handler,
         *phase_indicator_vector_owned_copy); // Ensure DoF correspondence for
-                                             // intersection vector later
+      // intersection vector later
       phase_indicator_vector_owned_copy->add(-phase_indicator_interface_value);
-
-      // Fluid 0 has phase change
-      if (physical_properties_parameters.fluids[0].specific_heat_model ==
-          Parameters::Material::SpecificHeatModel::phase_change)
-        {
-          liquidus_temperature = physical_properties_parameters.fluids[0]
-                                   .phase_change_parameters.T_liquidus;
-        }
-      else // Fluid 1 has phase change
-        {
-          liquidus_temperature = physical_properties_parameters.fluids[1]
-                                   .phase_change_parameters.T_liquidus;
-          phase_indicator_vector_owned_copy->operator*=(
-            -1); // Make fluid 1 'inside' (negative values)
-        }
     }
-  else // Single fluid flow
-    {
-      // Get liquidus temperature
-      liquidus_temperature = physical_properties_parameters.fluids[0]
-                               .phase_change_parameters.T_liquidus;
-    }
-
-  // Transpose temperature to get volume of the region where the temperature is
-  // over the liquidus temperature
-  GlobalVectorType temperature_vector_owned_copy(
-    this->dof_handler->locally_owned_dofs(), mpi_communicator);
-  temperature_vector_owned_copy = *this->present_solution;
-  temperature_vector_owned_copy.add(-liquidus_temperature);
-  temperature_vector_owned_copy.operator*=(
-    -1); // Make the liquid region 'inside' (negative values)
 
   if (gather_cls)
     {
@@ -2235,9 +2194,21 @@ HeatTransfer<dim>::postprocess_melt_volume(const bool gather_cls)
       for (const auto dof_id : this->dof_handler->locally_owned_dofs())
         {
           (*intersection_vector_relevant_copy)[dof_id] =
-            std::max(temperature_vector_owned_copy[dof_id],
-                     (*phase_indicator_vector_owned_copy)[dof_id]);
+            std::max<double>((-1.0 * ((*this->present_solution)[dof_id] -
+                                      melting_temperature)),
+                             (*phase_indicator_vector_owned_copy)[dof_id]);
         }
+    }
+  else // Single fluid flow
+    {
+      // Transpose temperature to get volume of the region where the temperature
+      // is over the melting temperature
+      temperature_vector_owned_copy = std::make_shared<GlobalVectorType>(
+        this->dof_handler->locally_owned_dofs(), mpi_communicator);
+      *temperature_vector_owned_copy = *this->present_solution;
+      temperature_vector_owned_copy->add(-melting_temperature);
+      temperature_vector_owned_copy->operator*=(
+        -1); // Make the liquid region 'inside' (negative values)
     }
 
   // Classify active cells as being inside/outside/intersected
@@ -2246,7 +2217,7 @@ HeatTransfer<dim>::postprocess_melt_volume(const bool gather_cls)
     DoFTools::extract_locally_relevant_dofs(*this->dof_handler),
     mpi_communicator);
   melt_indicator_vector_relevant_copy = (!gather_cls) ?
-                                          temperature_vector_owned_copy :
+                                          *temperature_vector_owned_copy :
                                           *intersection_vector_relevant_copy;
   NonMatching::MeshClassifier<dim> mesh_classifier(
     *this->dof_handler, melt_indicator_vector_relevant_copy);
