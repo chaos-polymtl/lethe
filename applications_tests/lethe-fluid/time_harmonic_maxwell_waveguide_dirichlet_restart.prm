@@ -5,7 +5,7 @@
 # propagation of one wavelength in a waveguide with perfectly conducting walls.
 # This test imposes Dirichlet boundary conditions on both the electric field (inlet) and
 # magnetic field (outlet) to verify the implementation of those conditions. We also
-# monitor the convergence for one refinement to make sure that we recover the right order.
+# monitor the convergence for one refinement to make sure that we recover the right order. In addition, the test verify the restart functionality of the solver.
 
 # Listing of Parameters
 #----------------------
@@ -20,6 +20,15 @@ subsection simulation control
   set method            = steady
   set output frequency  = 0
   set number mesh adapt = 1
+end
+
+#---------------------------------------------------
+# Restart
+#---------------------------------------------------
+
+subsection restart
+  set restart  = true
+  set filename = time_harmonic_maxwell_waveguide_dirichlet_restart
 end
 
 #---------------------------------------------------

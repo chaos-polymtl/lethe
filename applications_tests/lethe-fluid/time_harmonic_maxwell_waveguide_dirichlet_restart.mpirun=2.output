@@ -5,15 +5,16 @@ Running on 2 MPI rank(s)...
   DPG system for Time-Harmonic Maxwell Equations:
    Number of skeleton degrees of freedom for Time-Harmonic Maxwell: 720
    Number of interior degrees of freedom for Time-Harmonic Maxwell: 384
-
-*****************************
-Steady iteration:        1/2
-*****************************
-L2 error velocity: 0.000000e+00
-L2 error E real: 7.889776e-02
-L2 error E imag: 7.314783e-02
-L2 error H real: 5.500585e-02
-L2 error H imag: 6.374030e-02
+************************
+---> Simulation Restart 
+************************
+   Number of active cells:       4
+   Number of degrees of freedom: 80
+   Volume of triangulation:      6.250000e-02
+  DPG system for Time-Harmonic Maxwell Equations:
+   Number of skeleton degrees of freedom for Time-Harmonic Maxwell: 720
+   Number of interior degrees of freedom for Time-Harmonic Maxwell: 384
+Reading time-harmonic Maxwell checkpoint
 
 *****************************
 Steady iteration:        2/2
