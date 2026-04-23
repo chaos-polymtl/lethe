@@ -35,7 +35,6 @@
 #include <deal.II/non_matching/fe_values.h>
 #include <deal.II/non_matching/mesh_classifier.h>
 
-
 DeclException1(
   HeatTransferBoundaryConditionMissing,
   types::boundary_id,
@@ -582,14 +581,17 @@ private:
   write_liquid_fraction();
 
   /**
-   * @brief Compute the melt volume (3D) or surface (2D) in a domain. The mushy
-   * zone is excluded from the melt region.
+   * @brief Compute the melt volume (3D) or surface (2D) in a domain. The melt
+   * region is delimited by the Parameters::PostProcessing::melting_temperature
+   * isosurface (3D) or isocurve (2D) within the subdomain occupied by the fluid
+   * selected with
+   * Parameters::PostProcessing::monitored_fluid_with_phase_change.
    *
    * @param[in] gather_cls Boolean indicating when a CLS multiphase flow is
    * being simulated.
    *
-   * @remark For CLS multiphase flow, only one of the fluids can have phase
-   * change. The volume is computed as the geometrical volume with respect to
+   * @remark For CLS multiphase flow, only one of the fluids can be monitored.
+   * The volume is computed as the geometrical volume with respect to
    * the phase indicator isocurve (isosurface) of value 0.5.
    */
   void

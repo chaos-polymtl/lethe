@@ -1131,6 +1131,12 @@ namespace Parameters
     /// Prefix for the melt volume output
     std::string melt_volume_output_name;
 
+    /// FluidIndicator corresponding to the fluid which has phase change
+    Parameters::FluidIndicator monitored_fluid_with_phase_change;
+
+    /// Melting temperature iso-value
+    double melting_temperature;
+
     /// Enable heat flux calculation
     bool calculate_heat_flux;
 

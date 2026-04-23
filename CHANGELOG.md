@@ -7,8 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-
-- MINOR This PR adds the postprocessing of the melt volume for cases with phase change. Setting `calculate melt volume` to true enables the computation of the melt volume. The region where the temperature of the fluid with phase change is above the liquidus temperature describes the melt subdomain. The implementation is compatible with CLS multiphase flows as long as only 1 of the 2 fluids has phase change. `melt volume name` sets the name of the file where computed melt volume values are saved. [#1972](https://github.com/chaos-polymtl/lethe/pull/1972)
+- MINOR This PR adds the postprocessing of the melt volume for cases with phase change. Setting `calculate melt volume` to true enables the computation of the melt volume. The region where the temperature of the fluid with phase change is above the `melting temperature` describes the melt subdomain. The implementation is compatible with CLS multiphase flows as long as only 1 of the 2 fluids has phase change. `monitored fluid with phase change` set the fluid monitored. `melt volume name` sets the name of the file where computed melt volume values are saved. [#1972](https://github.com/chaos-polymtl/lethe/pull/1972)
 - MINOR Added application test (MMS case) for 3D mortar implementation. [#1976](https://github.com/chaos-polymtl/lethe/pull/1976)
 
 ## [Master] - 2026/04/22
