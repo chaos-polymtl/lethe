@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR Added application test (MMS case) for 3D mortar implementation. [#1976](https://github.com/chaos-polymtl/lethe/pull/1976)
 
+### Fixed
+
+- MINOR This PR removes the obligation to start the domain at z=0 when using the mortar method. The domain can now be shifted along the rotation axis without affecting the results. [#1975](https://github.com/chaos-polymtl/lethe/pull/1975)
+
 ## [Master] - 2026/04/22
 
 ### Added
