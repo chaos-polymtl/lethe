@@ -17,6 +17,7 @@ main()
   const std::vector<unsigned int> n_subdivisions      = {10, 3};
   const unsigned int              n_quadrature_points = 3;
   const std::vector<double>       radius              = {1.2, 0.4};
+  const double                    height_min          = radius[1] / n_subdivisions[1] * 0.5;
 
   // cell angle variation
   const double delta = 2 * numbers::PI / n_subdivisions[0];
@@ -30,7 +31,8 @@ main()
       const MyMortarManagerCircle<dim> manager(n_subdivisions,
                                                radius,
                                                QGauss<dim>(n_quadrature_points),
-                                               rotate);
+                                               rotate,
+                                               height_min);
 
       std::cout << manager.get_n_mortars() << std::endl;
       std::cout << manager.get_n_total_mortars() << std::endl;

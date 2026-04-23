@@ -104,7 +104,8 @@ main(int argc, char **argv)
                               2 * Utilities::pow(2, n_global_refinements)},
     std::vector<double>{0.5 * radius, radius},
     construct_quadrature(quadrature),
-    0.0);
+    0.0,
+    radius / (2 * Utilities::pow(2, n_global_refinements)) * 0.5);
 
   op.add_coupling(mortar_manager, 1, 2);
 

@@ -805,8 +805,8 @@ compute_height_min(const Triangulation<dim>      &triangulation,
                   const auto face = cell->face(face_no);
 
                   // Check if the face is at the boundary and belongs to the
-                  // stator boundary The choice of the stator boundary is
-                  // arbitrary
+                  // stator boundary
+                  // The choice of the stator boundary is arbitrary
                   if (face->at_boundary() &&
                       face->boundary_id() ==
                         mortar_parameters.stator_boundary_id)

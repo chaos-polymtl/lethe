@@ -115,7 +115,8 @@ main(int argc, char **argv)
                               1 * Utilities::pow(2, n_global_refinements)},
     std::vector<double>{radius, radius},
     construct_quadrature(quadrature),
-    rotate_pi);
+    rotate_pi,
+    radius / Utilities::pow(2, n_global_refinements) * 0.5);
 
   op.add_coupling(mortar_manager, 0, 5);
 

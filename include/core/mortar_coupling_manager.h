@@ -337,7 +337,7 @@ public:
                       double                  radius,
                       const Quadrature<dim2> &quadrature,
                       const double            rotation_angle,
-                      const double            height_min,
+                      const double            height_min = 0.0,
                       const Point<dim>       &center_of_rotation = Point<dim>(),
                       const double            pre_rotation_angle = 0.0);
 
@@ -362,7 +362,7 @@ public:
                       std::vector<double>       radius,
                       const Quadrature<dim2>   &quadrature,
                       const double              rotation_angle,
-                      const double              height_min,
+                      const double              height_min = 0.0,
                       const Point<dim> &center_of_rotation = Point<dim>(),
                       const double      pre_rotation_angle = 0.0);
 
