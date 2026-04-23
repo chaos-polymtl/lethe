@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <deal.II/grid/grid_generator.h>
@@ -2414,7 +2414,11 @@ MyMortarManagerCircle<dim>::MyMortarManagerCircle(
   const Quadrature<dim2>          &quadrature,
   const double                     rotation_angle,
   const double                     height_min)
-  : MortarManagerBase<dim>(n_subdivisions, radius, quadrature, rotation_angle, height_min)
+  : MortarManagerBase<dim>(n_subdivisions,
+                           radius,
+                           quadrature,
+                           rotation_angle,
+                           height_min)
 {}
 
 template <int dim>
