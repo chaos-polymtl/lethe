@@ -2362,21 +2362,32 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
   setup_dofs();
   enable_dynamic_zero_constraints_fd();
 
-  // SolutionTransfer::deserialize writes into the target vectors, which is
-  // forbidden on ghosted Trilinos vectors (debug-mode assertion). We therefore
-  // unpack into purely locally-owned temporaries and copy the result into the
-  // ghosted solution vectors below.
+  // SolutionTransfer::deserialize writes into the target vectors. For Trilinos
+  // vectors this is forbidden on ghosted vectors (debug-mode assertion), so we
+  // build purely locally-owned temporaries and copy the result into the
+  // ghosted solution vectors below. For deal.II's parallel distributed vector
+  // SolutionTransfer expects the targets to have their ghosts set up, so in
+  // that case we keep the ghosted construction.
   std::vector<VectorType *> x_system(1 + previous_solutions->size());
 
-  VectorType distributed_system(locally_owned_dofs, this->mpi_communicator);
-  x_system[0] = &(distributed_system);
+  auto make_distributed = [this]() {
+    if constexpr (std::is_same_v<VectorType,
+                                 LinearAlgebra::distributed::Vector<double>>)
+      return VectorType(this->locally_owned_dofs,
+                        this->locally_relevant_dofs,
+                        this->mpi_communicator);
+    else
+      return VectorType(this->locally_owned_dofs, this->mpi_communicator);
+  };
+
+  VectorType distributed_system = make_distributed();
+  x_system[0]                   = &(distributed_system);
 
   std::vector<VectorType> distributed_previous_solutions;
   distributed_previous_solutions.reserve(previous_solutions->size());
   for (unsigned int i = 0; i < previous_solutions->size(); ++i)
     {
-      distributed_previous_solutions.emplace_back(
-        VectorType(locally_owned_dofs, this->mpi_communicator));
+      distributed_previous_solutions.emplace_back(make_distributed());
       x_system[i + 1] = &distributed_previous_solutions[i];
     }
   SolutionTransfer<dim, VectorType> system_trans_vectors(*this->dof_handler);
