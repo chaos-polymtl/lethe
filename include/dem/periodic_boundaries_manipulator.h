@@ -233,7 +233,7 @@ private:
   /**
    * @brief Map storing offset distance between periodic boundaries, keyed by
    * the boundary ID (pb0). It is calculated from the first pair of cells on
-   * periodic boundaries, so all pair of cells on a given peridodic boundary
+   * periodic boundaries, so all pairs of cells on a given peridodic boundary
    * are assumed to have the same offset.
    */
   std::unordered_map<types::boundary_id, Tensor<1, dim>> periodic_offsets;
