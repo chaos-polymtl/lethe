@@ -2506,8 +2506,8 @@ namespace Parameters
       else if (melt_fluid == "fluid 1")
         monitored_fluid_with_phase_change = Parameters::FluidIndicator::fluid1;
       else
-        throw(std::runtime_error("Invalid fluid. "
-                                 "Options are 'fluid 0' or 'fluid 1'."));
+        throw(std::invalid_argument("Invalid fluid. "
+                                    "Options are 'fluid 0' or 'fluid 1'."));
       melting_temperature         = prm.get_double("melting temperature");
       temperature_output_name     = prm.get("temperature statistics name");
       calculate_heat_flux         = prm.get_bool("calculate heat flux");

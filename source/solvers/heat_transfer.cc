@@ -2165,7 +2165,6 @@ HeatTransfer<dim>::postprocess_melt_volume(const bool gather_cls)
     {
       // Get liquidus temperature and generate signed phase indicator level set
       // for intersection operation
-
       dof_handler_cls = std::shared_ptr<const DoFHandler<dim>>(
         &this->multiphysics->get_dof_handler(PhysicsID::CLS),
         [](const DoFHandler<dim> *) {});
@@ -2182,10 +2181,11 @@ HeatTransfer<dim>::postprocess_melt_volume(const bool gather_cls)
         *phase_indicator_vector_owned_copy); // Ensure DoF correspondence for
       // intersection vector later
       phase_indicator_vector_owned_copy->add(-phase_indicator_interface_value);
-    }
+      if (this->simulation_parameters.post_processing
+            .monitored_fluid_with_phase_change ==
+          Parameters::FluidIndicator::fluid1)
+        phase_indicator_vector_owned_copy->operator*=(-1);
 
-  if (gather_cls)
-    {
       // Get the intersection region between the correct fluid and the liquidus
       // temperature isocurve
       intersection_vector_relevant_copy = std::make_shared<GlobalVectorType>(
