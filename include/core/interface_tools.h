@@ -10,6 +10,8 @@
 #include <core/utilities.h>
 #include <core/vector.h>
 
+#include "solvers/time_harmonic_maxwell.h"
+
 #include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/data_out_base.h>
 #include <deal.II/base/function.h>
@@ -211,10 +213,36 @@ namespace InterfaceTools
     const unsigned int n_quad_points);
 
   /**
+   * @brief Integrate the surface area of a given level of a level set field and the
+   * volume enclosed by it. The inside volume is computed, defined by negative
+   * values of the level-set field.
+   *
+   * @tparam dim An integer that denotes the dimension of the space in which
+   * the problem is solved.
+   *
+   * @tparam VectorType The vector type of the solution vector.
+   * @param[in] dof_handler DofHandler associated to the triangulation on which
+   * the volume is computed
+   * @param[in] fe Finite element
+   * @param[in] mpi_communicator MPI communicator
+   *
+   * @return Surface area of the specified level and the volume enclosed by it.
+   * The volume is the first value and the surface the second.
+   */
+  template <int dim, typename VectorType>
+  std::pair<double, double>
+  integrate_volume_and_surface(const VectorType &level_set_vector_relevant_copy,
+                               const DoFHandler<dim>    &dof_handler,
+                               const FiniteElement<dim> &fe,
+                               const MPI_Comm           &mpi_communicator);
+
+  /**
    * @brief
    * Compute the surface area of a given level of a level set field and the
    * volume enclosed by it. The inside volume is computed, defined by negative
-   * values of the level-set field.
+   * values of the level-set field. The zero-contour of the level set field is
+   * defined with respect to the @p iso_level value precised by shifting the
+   * values of the level set field.
    *
    * @tparam dim An integer that denotes the dimension of the space in which
    * the problem is solved.
@@ -233,11 +261,12 @@ namespace InterfaceTools
    *
    * @param[in] mpi_communicator MPI communicator
    *
-   * @return Surface area of the specified level and the volume enclosed by it
+   * @return Surface area of the specified level and the volume enclosed by it.
+   * The volume is the first value and the surface the second.
    */
   template <int dim, typename VectorType>
   std::pair<double, double>
-  compute_surface_and_volume(const DoFHandler<dim>    &dof_handler,
+  compute_volume_and_surface(const DoFHandler<dim>    &dof_handler,
                              const FiniteElement<dim> &fe,
                              const VectorType         &level_set_vector,
                              const double              iso_level,

@@ -63,28 +63,17 @@ InterfaceTools::compute_cell_wise_volume(
   return inside_cell_volume;
 }
 
+
 template <int dim, typename VectorType>
 std::pair<double, double>
-InterfaceTools::compute_surface_and_volume(const DoFHandler<dim> &dof_handler,
-                                           const FiniteElement<dim> &fe,
-                                           const VectorType &level_set_vector,
-                                           const double      iso_level,
-                                           const MPI_Comm   &mpi_communicator)
+InterfaceTools::integrate_volume_and_surface(
+  const VectorType         &level_set_vector_relevant_copy,
+  const DoFHandler<dim>    &dof_handler,
+  const FiniteElement<dim> &fe,
+  const MPI_Comm           &mpi_communicator)
 {
   VectorType level_set_vector_owned_copy(dof_handler.locally_owned_dofs(),
                                          mpi_communicator);
-
-  level_set_vector_owned_copy = level_set_vector;
-
-  level_set_vector_owned_copy.add(-iso_level);
-
-  VectorType level_set_vector_relevant_copy(
-    dof_handler.locally_owned_dofs(),
-    DoFTools::extract_locally_relevant_dofs(dof_handler),
-    mpi_communicator);
-
-  level_set_vector_relevant_copy = level_set_vector_owned_copy;
-
   NonMatching::MeshClassifier<dim> mesh_classifier(
     dof_handler, level_set_vector_relevant_copy);
   mesh_classifier.reclassify();
@@ -140,15 +129,43 @@ InterfaceTools::compute_surface_and_volume(const DoFHandler<dim> &dof_handler,
   return {volume, surface};
 }
 
+template <int dim, typename VectorType>
+std::pair<double, double>
+InterfaceTools::compute_volume_and_surface(const DoFHandler<dim> &dof_handler,
+                                           const FiniteElement<dim> &fe,
+                                           const VectorType &level_set_vector,
+                                           const double      iso_level,
+                                           const MPI_Comm   &mpi_communicator)
+{
+  VectorType level_set_vector_owned_copy(dof_handler.locally_owned_dofs(),
+                                         mpi_communicator);
+
+  level_set_vector_owned_copy = level_set_vector;
+
+  level_set_vector_owned_copy.add(-iso_level);
+
+  VectorType level_set_vector_relevant_copy(
+    dof_handler.locally_owned_dofs(),
+    DoFTools::extract_locally_relevant_dofs(dof_handler),
+    mpi_communicator);
+
+  level_set_vector_relevant_copy = level_set_vector_owned_copy;
+
+  return integrate_volume_and_surface(level_set_vector_relevant_copy,
+                                      dof_handler,
+                                      fe,
+                                      mpi_communicator);
+}
+
 template std::pair<double, double>
-InterfaceTools::compute_surface_and_volume(
+InterfaceTools::compute_volume_and_surface(
   const DoFHandler<2>    &dof_handler,
   const FiniteElement<2> &fe,
   const GlobalVectorType &level_set_vector,
   const double            iso_level,
   const MPI_Comm         &mpi_communicator);
 template std::pair<double, double>
-InterfaceTools::compute_surface_and_volume(
+InterfaceTools::compute_volume_and_surface(
   const DoFHandler<3>    &dof_handler,
   const FiniteElement<3> &fe,
   const GlobalVectorType &level_set_vector,
@@ -1186,7 +1203,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
   by iso-contour 0.5 of the phase indicator).*/
   double global_volume, surface;
 
-  std::tie(global_volume, surface) = compute_surface_and_volume(
+  std::tie(global_volume, surface) = compute_volume_and_surface(
     dof_handler, *fe, level_set, iso_level, mpi_communicator);
 
   /* Initialization of values for the secant method. The subscript nm1 (or n
@@ -1219,7 +1236,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
   // Update_ghost_values is required for cell-wise volume computations
   signed_distance_0.update_ghost_values();
 
-  std::tie(global_volume_nm1, surface) = compute_surface_and_volume(
+  std::tie(global_volume_nm1, surface) = compute_volume_and_surface(
     dof_handler, *fe, signed_distance_0, 0.0, mpi_communicator);
 
   global_delta_volume_nm1 = global_volume - global_volume_nm1;
@@ -1248,7 +1265,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::conserve_global_volume()
       signed_distance_n.add(C_n, volume_correction);
       signed_distance_n.update_ghost_values();
 
-      std::tie(global_volume_n, surface) = compute_surface_and_volume(
+      std::tie(global_volume_n, surface) = compute_volume_and_surface(
         dof_handler, *fe, signed_distance_n, 0.0, mpi_communicator);
 
       global_delta_volume_n = global_volume - global_volume_n;

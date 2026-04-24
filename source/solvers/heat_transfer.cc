@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include "core/interface_tools.h"
 #include <core/bdf.h>
 #include <core/time_integration_utilities.h>
 
@@ -1196,7 +1197,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
         simulation_parameters.physical_properties_manager.has_phase_change(),
         ExcMessage(
           "Calculation of the melt volume requires that a fluid has at least a 'phase_change' physical property model"));
-      postprocess_melt_volume(gather_cls);
+      postprocess_melt_volume_and_surface(gather_cls);
 
       if (simulation_control->get_step_number() %
             this->simulation_parameters.post_processing.output_frequency ==
@@ -2145,9 +2146,13 @@ HeatTransfer<dim>::write_liquid_fraction()
 
 template <int dim>
 void
-HeatTransfer<dim>::postprocess_melt_volume(const bool gather_cls)
+HeatTransfer<dim>::postprocess_melt_volume_and_surface(const bool gather_cls)
 {
   const MPI_Comm mpi_communicator = this->dof_handler->get_mpi_communicator();
+
+  // Initializes variables for the melt volume and surface
+  double melt_volume;
+  double melt_surface;
 
   // For single fluid flows
   std::shared_ptr<GlobalVectorType> temperature_vector_owned_copy;
@@ -2219,68 +2224,47 @@ HeatTransfer<dim>::postprocess_melt_volume(const bool gather_cls)
   melt_indicator_vector_relevant_copy = (!gather_cls) ?
                                           *temperature_vector_owned_copy :
                                           *intersection_vector_relevant_copy;
-  NonMatching::MeshClassifier<dim> mesh_classifier(
-    *this->dof_handler, melt_indicator_vector_relevant_copy);
-  mesh_classifier.reclassify();
 
-  // Initialize NonMatching FEValues
-  const hp::FECollection<dim>    fe_collection(*this->fe);
-  const QGauss<1>                quadrature_1D(this->fe->degree + 1);
-  NonMatching::RegionUpdateFlags region_update_flags;
-  region_update_flags.inside = update_JxW_values;
-  NonMatching::FEValues<dim> non_matching_fe_values(
-    fe_collection,
-    quadrature_1D,
-    region_update_flags,
-    mesh_classifier,
-    *this->dof_handler,
-    melt_indicator_vector_relevant_copy);
+  // Compute volume and surface integral
+  std::tie(melt_volume, melt_surface) =
+    InterfaceTools::integrate_volume_and_surface(
+      melt_indicator_vector_relevant_copy,
+      *this->dof_handler,
+      *this->fe,
+      mpi_communicator);
 
-  // Initialize melt volume
-  double melt_volume = 0.0;
-
-  // Loop over cells to get inside cells that are locally owned and compute
-  // volume
-  for (const auto &cell : this->dof_handler->active_cell_iterators())
+  // Initialize table column names
+  std::string melt_volume_column_name;
+  std::string melt_contour_column_name;
+  if constexpr (dim == 2)
     {
-      if (cell->is_locally_owned())
-        {
-          // Reinitialize to current cell
-          non_matching_fe_values.reinit(cell);
-
-          const std::optional<FEValues<dim>> &inside_fe_values =
-            non_matching_fe_values.get_inside_fe_values();
-
-          // If quadrature points are inside the region of interest, add local
-          // volume contribution
-          if (inside_fe_values)
-            {
-              for (const unsigned int q :
-                   inside_fe_values->quadrature_point_indices())
-                {
-                  melt_volume += inside_fe_values->JxW(q);
-                }
-            }
-        }
+      melt_volume_column_name  = "melt surface";
+      melt_contour_column_name = "melt contour length";
     }
-
-  // Sum over all processes
-  melt_volume = Utilities::MPI::sum(melt_volume, mpi_communicator);
+  else if constexpr (dim == 3)
+    {
+      melt_volume_column_name  = "melt volume";
+      melt_contour_column_name = "melt contour surface";
+    }
 
   // Consol output
   if (simulation_parameters.post_processing.verbosity ==
       Parameters::Verbosity::verbose)
     {
-      this->pcout << "Melt volume"
-                  << ": " << melt_volume << std::endl;
+      this->pcout << melt_volume_column_name << ": " << melt_volume
+                  << std::endl;
+      this->pcout << melt_contour_column_name << ": " << melt_surface
+                  << std::endl;
     }
 
   // Fill table
   this->melt_volume_table.add_value(
     "time", this->simulation_control->get_current_time());
   this->melt_volume_table.set_scientific("time", true);
-  this->melt_volume_table.add_value("melt volume", melt_volume);
-  this->melt_volume_table.set_scientific("melt volume", true);
+  this->melt_volume_table.add_value(melt_volume_column_name, melt_volume);
+  this->melt_volume_table.set_scientific(melt_volume_column_name, true);
+  this->melt_volume_table.add_value(melt_contour_column_name, melt_volume);
+  this->melt_volume_table.set_scientific(melt_contour_column_name, true);
 }
 
 template <int dim>

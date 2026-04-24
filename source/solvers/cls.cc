@@ -1446,12 +1446,12 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
 
       double geometric_volume_outside, geometric_volume_inside, surface;
 
-      // The mesh classifier in the InterfaceTools::compute_surface_and_volume
+      // The mesh classifier in the InterfaceTools::compute_volume_and_surface
       // is not compatible with other FE than FE_Q
       if (!simulation_parameters.fem_parameters.CLS_uses_dg)
         {
           std::tie(geometric_volume_outside, surface) =
-            InterfaceTools::compute_surface_and_volume(*dof_handler,
+            InterfaceTools::compute_volume_and_surface(*dof_handler,
                                                        *fe,
                                                        *this->present_solution,
                                                        0.5,
