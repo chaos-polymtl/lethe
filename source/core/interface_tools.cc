@@ -129,6 +129,20 @@ InterfaceTools::integrate_volume_and_surface(
   return {volume, surface};
 }
 
+template std::pair<double, double>
+InterfaceTools::integrate_volume_and_surface(
+  const GlobalVectorType &level_set_vector,
+  const DoFHandler<2>    &dof_handler,
+  const FiniteElement<2> &fe,
+  const MPI_Comm         &mpi_communicator);
+
+template std::pair<double, double>
+InterfaceTools::integrate_volume_and_surface(
+  const GlobalVectorType &level_set_vector,
+  const DoFHandler<3>    &dof_handler,
+  const FiniteElement<3> &fe,
+  const MPI_Comm         &mpi_communicator);
+
 template <int dim, typename VectorType>
 std::pair<double, double>
 InterfaceTools::compute_volume_and_surface(const DoFHandler<dim> &dof_handler,
