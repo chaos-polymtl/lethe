@@ -24,7 +24,7 @@ test()
 {
   /* This test checks the computation of the surface area of the level 0.1 of
   a level-set field and the volume enclosed by it using the
-  InterfaceTools::compute_surface_and_volume function. The level-set field of
+  InterfaceTools::compute_volume_and_surface function. The level-set field of
   interest is the one describing a sphere. The surface and volume are computed
   for 3 mesh refinements and the test checks the error on these metrics and the
   convergence rate of the method (formally 2).
@@ -79,7 +79,7 @@ test()
       // FEValues
       double volume, surface;
 
-      std::tie(volume, surface) = InterfaceTools::compute_surface_and_volume(
+      std::tie(volume, surface) = InterfaceTools::compute_volume_and_surface(
         dof_handler, fe, signed_distance, iso_level, mpi_communicator);
 
       // Analytical surface and volume

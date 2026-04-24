@@ -581,8 +581,9 @@ private:
   write_liquid_fraction();
 
   /**
-   * @brief Compute the melt volume (3D) or surface (2D) in a domain. The melt
-   * region is delimited by the Parameters::PostProcessing::melting_temperature
+   * @brief Compute the melt volume (3D) or surface (2D) and the contour surface
+   * area (3D) or length (2D) in a domain. The melt region is delimited by the
+   * Parameters::PostProcessing::melting_temperature
    * isosurface (3D) or isocurve (2D) within the subdomain occupied by the fluid
    * selected with
    * Parameters::PostProcessing::monitored_fluid_with_phase_change.
@@ -595,7 +596,7 @@ private:
    * the phase indicator isocurve (isosurface) of value 0.5.
    */
   void
-  postprocess_melt_volume(const bool gather_cls);
+  postprocess_melt_volume_and_surface(const bool gather_cls);
 
   /**
    * @brief Write the melt volume to an output file.
