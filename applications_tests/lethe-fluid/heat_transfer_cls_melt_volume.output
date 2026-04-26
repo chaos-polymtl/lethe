@@ -4,35 +4,35 @@ Running on 1 MPI rank(s)...
    Volume of triangulation:      2.500000e-01
    Number of thermal degrees of freedom: 289
    Number of CLS degrees of freedom: 289
-melt surface: 4.687500e-02
-melt contour length: 4.843750e-01
+melt surface: 3.948421e-02
+melt contour length: 4.571558e-01
 
 *******************************************************************************
 Transient iteration: 1        Time: 1        Time step: 1        CFL: 0
 *******************************************************************************
-melt surface: 4.687500e-02
-melt contour length: 5.000000e-01
+melt surface: 3.948356e-02
+melt contour length: 4.571538e-01
 
 *******************************************************************************
 Transient iteration: 2        Time: 2        Time step: 1        CFL: 0
 *******************************************************************************
-melt surface: 4.687500e-02
-melt contour length: 5.000000e-01
+melt surface: 3.948291e-02
+melt contour length: 4.571518e-01
 
 *******************************************************************************
 Transient iteration: 3        Time: 3        Time step: 1        CFL: 0
 *******************************************************************************
-melt surface: 4.687500e-02
-melt contour length: 5.000000e-01
+melt surface: 3.948226e-02
+melt contour length: 4.571498e-01
 
 *******************************************************************************
 Transient iteration: 4        Time: 4        Time step: 1        CFL: 0
 *******************************************************************************
-melt surface: 4.687500e-02
-melt contour length: 5.000000e-01
+melt surface: 3.948161e-02
+melt contour length: 4.571478e-01
 
 *******************************************************************************
 Transient iteration: 5        Time: 5        Time step: 1        CFL: 0
 *******************************************************************************
-melt surface: 4.687500e-02
-melt contour length: 5.000000e-01
+melt surface: 3.948097e-02
+melt contour length: 4.571458e-01

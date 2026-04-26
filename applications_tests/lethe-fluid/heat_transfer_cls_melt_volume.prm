@@ -49,10 +49,10 @@ subsection initial conditions
     set Function expression = 0; 0; 0
   end
   subsection CLS
-    set Function expression = 0.5 - 0.5*tanh((y-0.375)/0.03125)
+    set Function expression = 0.5 - 0.5*tanh((y-0.3725)/0.03125)
   end
   subsection temperature
-    set Function expression = 0.02 + 0.02*tanh((0.125-x)/0.03125)
+    set Function expression = 0.02 + 0.02*tanh((0.1125-x)/0.03125)
   end
 end
 
