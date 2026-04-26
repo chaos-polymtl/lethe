@@ -2263,7 +2263,7 @@ HeatTransfer<dim>::postprocess_melt_volume_and_surface(const bool gather_cls)
   this->melt_volume_table.set_scientific("time", true);
   this->melt_volume_table.add_value(melt_volume_column_name, melt_volume);
   this->melt_volume_table.set_scientific(melt_volume_column_name, true);
-  this->melt_volume_table.add_value(melt_contour_column_name, melt_volume);
+  this->melt_volume_table.add_value(melt_contour_column_name, melt_surface);
   this->melt_volume_table.set_scientific(melt_contour_column_name, true);
 }
 
