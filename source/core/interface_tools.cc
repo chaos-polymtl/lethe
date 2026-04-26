@@ -63,7 +63,6 @@ InterfaceTools::compute_cell_wise_volume(
   return inside_cell_volume;
 }
 
-
 template <int dim, typename VectorType>
 std::pair<double, double>
 InterfaceTools::integrate_volume_and_surface(
@@ -72,8 +71,6 @@ InterfaceTools::integrate_volume_and_surface(
   const FiniteElement<dim> &fe,
   const MPI_Comm           &mpi_communicator)
 {
-  VectorType level_set_vector_owned_copy(dof_handler.locally_owned_dofs(),
-                                         mpi_communicator);
   NonMatching::MeshClassifier<dim> mesh_classifier(
     dof_handler, level_set_vector_relevant_copy);
   mesh_classifier.reclassify();
