@@ -584,7 +584,7 @@ compute_interface_dimensions_circular(
   // Min and max vertex coordinates for length computation in the axial
   // direction. Used in 3D case
   double vertex_min = std::numeric_limits<double>::max();
-  double vertex_max = std::numeric_limits<double>::max() * -1;
+  double vertex_max = std::numeric_limits<double>::lowest();
 
   // Verify if rotation axis is a unit vector in x, y, or z
   if constexpr (dim == 3)

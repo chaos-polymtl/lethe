@@ -213,7 +213,8 @@ protected:
   const unsigned int n_quadrature_points;
   /// Rotation angle for the inner domain
   const double rotation_angle;
-  /// Minimum z value in 3D problems
+  /// Minimum cell center height at the mortar interface along the rotation axis
+  /// value in 3D problems
   const double height_min;
 };
 
