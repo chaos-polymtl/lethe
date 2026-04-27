@@ -173,8 +173,9 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
             points.emplace_back(
               x[0],
               x[1],
-              (height_min - delta_1 / 2) + (id_out_plane + quadrature.point(q)[1]) *
-                             delta_1); // TODO Generalize for x and y directions
+              (height_min - delta_1 / 2) +
+                (id_out_plane + quadrature.point(q)[1]) *
+                  delta_1); // TODO Generalize for x and y directions
           else
             points.emplace_back(x);
         }
@@ -216,8 +217,9 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
             points.emplace_back(
               x[0],
               x[1],
-              (height_min - delta_1 / 2) + (id_out_plane + quadrature.point(q)[1]) *
-                             delta_1); // TODO Generalize for x and y directions
+              (height_min - delta_1 / 2) +
+                (id_out_plane + quadrature.point(q)[1]) *
+                  delta_1); // TODO Generalize for x and y directions
           else
             points.emplace_back(x);
         }
@@ -231,8 +233,9 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
             points.emplace_back(
               x[0],
               x[1],
-              (height_min - delta_1 / 2) + (id_out_plane + quadrature.point(q)[1]) *
-                             delta_1); // TODO Generalize for x and y directions
+              (height_min - delta_1 / 2) +
+                (id_out_plane + quadrature.point(q)[1]) *
+                  delta_1); // TODO Generalize for x and y directions
           else
             points.emplace_back(x);
         }
