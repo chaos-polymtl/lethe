@@ -170,11 +170,13 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
             from_1D((id_in_plane + quadrature.point(q)[0]) * delta_0);
 
           if constexpr (dim == 3)
-            points.emplace_back(
+            { points.emplace_back(
               x[0],
               x[1],
               height_min + (id_out_plane + quadrature.point(q)[1]) *
                              delta_1); // TODO Generalize for x and y directions
+              std::cout << "height : " << (id_out_plane + quadrature.point(q)[1]) * delta_1 << std::endl;
+            }
           else
             points.emplace_back(x);
         }
@@ -213,11 +215,13 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
             from_1D(rad_0 + quadrature.point(q)[0] * (rad_1 - rad_0));
 
           if constexpr (dim == 3)
-            points.emplace_back(
+          {  points.emplace_back(
               x[0],
               x[1],
               height_min + (id_out_plane + quadrature.point(q)[1]) *
                              delta_1); // TODO Generalize for x and y directions
+              std::cout << "height : " << height_min + (id_out_plane + quadrature.point(q)[1]) * delta_1 << std::endl;
+            }
           else
             points.emplace_back(x);
         }
@@ -228,11 +232,13 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
             from_1D(rad_1 + quadrature.point(q)[0] * (rad_2 - rad_1));
 
           if constexpr (dim == 3)
-            points.emplace_back(
+          { points.emplace_back(
               x[0],
               x[1],
               height_min + (id_out_plane + quadrature.point(q)[1]) *
                              delta_1); // TODO Generalize for x and y directions
+              std::cout << "height : " << height_min + (id_out_plane + quadrature.point(q)[1]) * delta_1 << std::endl;
+            }
           else
             points.emplace_back(x);
         }
