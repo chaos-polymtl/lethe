@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- MINOR This PR removes the obligation to start the domain at z=0 when using the mortar method. The domain can now be shifted along the rotation axis without affecting the results. [#1975](https://github.com/chaos-polymtl/lethe/pull/1975)
+- MINOR This PR removes the obligation to start the domain at z=0 when using the mortar method in 3D cases. The domain can now be shifted along the rotation axis without affecting the results. [#1975](https://github.com/chaos-polymtl/lethe/pull/1975)
 
 ## [Master] - 2026/04/22
 

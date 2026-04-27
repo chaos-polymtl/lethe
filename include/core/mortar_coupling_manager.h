@@ -283,12 +283,14 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
                      const Parameters::Mortar<dim> &mortar_parameters);
 
 /**
- * @brief Sets the minimum z value of cell centers at the mortar interface
+ * @brief Computes the minimum cell center height in the direction of the
+ * rotation axis at the mortar interface
  * @param[in] triangulation The triangulation object
- * @param[in] stator_boundary_id Boundary ID corresponding to the stator side
- * of the mortar interface
+ * @param[in] mortar_parameters The information about the mortar method
+ * control, including the rotor mesh parameters
  *
- * @return Minimum z value of cell centers at the mortar interface
+ * @return Minimum cell height in the rotation axis direction. At the moment,
+ * it is assumed that the rotation axis is in z
  */
 template <int dim>
 double
