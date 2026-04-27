@@ -15,6 +15,8 @@ file(COPY lpbf_benchmark_mesh_3D.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 file(COPY cylinder_close_outlet.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 file(COPY jurins-law-2d-mesh-dimensioned.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 file(COPY dg_tracer_sharp_edge_90_degrees_curve.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
+file(COPY rotor_mesh_3d.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
+file(COPY stator_mesh_3d.msh DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 
 file(COPY override_time_step_restart_files/restart.pvdhandler DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/override_time_step.${_build_type}/mpirun=1/")
 file(COPY override_time_step_restart_files/restart.simulationcontrol DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/override_time_step.${_build_type}/mpirun=1/")
