@@ -72,6 +72,7 @@ namespace BoundaryConditions
     function_weak,
     partial_slip,
     pressure,
+    Neumann_traction,
     //  for heat transfer
     noflux,
     temperature,
@@ -146,11 +147,43 @@ namespace BoundaryConditions
     Functions::ParsedFunction<dim> v;
     Functions::ParsedFunction<dim> w;
 
+
     /// Pressure
     Functions::ParsedFunction<dim> p;
 
+    // Neumann Traction σ = 2με(u)− pI
+    // σ.n = g
+
+    Functions::ParsedFunction<dim> t;
+
     /// Point for the center of rotation
     Point<dim> center_of_rotation;
+
+    /*
+      Constructor required to avoid vector-valued function t of ParsedFunction
+      type which in-turn initializes the function_parser object with
+      n_components = 1 by default if n_components is not passed.
+
+      Moreover, the test and trial function is dim+1 components including
+      pressure. Hence, we have the traction function as a vector-valued function
+      with dim components for the traction vector and 1 component for the
+      pressure value at the boundary which is dummy and is needed to properly
+      assemble the traction term as FEFaceIntegrator uses MatrixFree which in
+      turn is based on the DoFHandler which in turn is based on the FE system
+      that has dim velocity components and 1 pressure component.
+
+        t = (t₁, t₂, …, t_dim, 0.0 (dummy pressure component))
+
+        φ = (φ₁, φ₂, …, φ_dim, φ_p)
+
+        ∫_{Γ_t} = t · φ ds
+
+    */
+
+    NSBoundaryFunctions()
+      : t(dim +
+          1) // The traction function has dim components for the traction vector
+    {}
   };
 
   /**
@@ -202,7 +235,7 @@ namespace BoundaryConditions
   class NSBoundaryConditions : public BoundaryConditions
   {
   public:
-    /// Functions for (u, v, w, p) for all boundaries
+    /// Functions for (u, v, w, p, (Neumann traction: t)) for all boundaries
     std::map<types::boundary_id, std::shared_ptr<NSBoundaryFunctions<dim>>>
       navier_stokes_functions;
 
@@ -268,9 +301,9 @@ namespace BoundaryConditions
       "type",
       "none",
       Patterns::Selection(
-        "none|noslip|slip|function|periodic|pressure|function weak|partial slip|outlet"),
+        "none|noslip|slip|function|periodic|pressure|Neumann traction|function weak|partial slip|outlet"),
       "Type of boundary condition"
-      "Choices are <noslip|slip|function|periodic|pressure|function weak|partial slip|outlet>.");
+      "Choices are <noslip|slip|function|periodic|pressure|Neumann traction|function weak|partial slip|outlet>.");
 
 
     prm.declare_entry("id",
@@ -314,6 +347,20 @@ namespace BoundaryConditions
     prm.enter_subsection("p");
     temporary_fluid_dynamics_functions.p.declare_parameters(prm);
     prm.leave_subsection();
+
+    /*
+      Vector-valued function for the traction with dim components for the
+      traction vector and 1 component for the pressure value at the boundary
+      which is dummy and is needed to properly assemble the traction term as
+      FEFaceIntegrator uses MatrixFree which in turn is based on the DoFHandler
+      which in turn is based on the FE system that has dim velocity components
+      and 1 pressure component.
+    */
+
+    prm.enter_subsection("t");
+    temporary_fluid_dynamics_functions.t.declare_parameters(prm, dim + 1);
+    prm.leave_subsection();
+
 
     // Center of rotation of the boundary condition for torque calculation
     prm.enter_subsection("center of rotation");
@@ -383,6 +430,12 @@ namespace BoundaryConditions
         navier_stokes_functions[boundary_id]->p.parse_parameters(prm);
         prm.leave_subsection();
 
+
+        prm.enter_subsection("t");
+        navier_stokes_functions[boundary_id]->t.parse_parameters(prm);
+        prm.leave_subsection();
+
+
         prm.enter_subsection("center of rotation");
         navier_stokes_functions[boundary_id]->center_of_rotation[0] =
           prm.get_double("x");
@@ -414,6 +467,10 @@ namespace BoundaryConditions
         if (op == "pressure")
           {
             this->type[boundary_id] = BoundaryType::pressure;
+          }
+        if (op == "Neumann traction")
+          {
+            this->type[boundary_id] = BoundaryType::Neumann_traction;
           }
         if (op == "periodic")
           {
@@ -452,6 +509,12 @@ namespace BoundaryConditions
             navier_stokes_functions[periodic_boundary_id]->w.parse_parameters(
               prm);
             prm.leave_subsection();
+
+
+            prm.enter_subsection("t");
+            navier_stokes_functions[boundary_id]->t.parse_parameters(prm);
+            prm.leave_subsection();
+
 
             prm.enter_subsection("p");
             navier_stokes_functions[periodic_boundary_id]->p.parse_parameters(
@@ -1990,6 +2053,62 @@ NavierStokesFunctionDefined<dim>::value(const Point<dim>  &point,
     }
   return 0.;
 }
+
+/**
+ * @brief This class implements a boundary conditions for the Navier-Stokes equation
+ * where the Neumann traction component are defined using individual functions
+ */
+template <int dim>
+class NavierStokesTractionFunctionDefined
+  : public Functions::ParsedFunction<dim>
+{
+  Functions::ParsedFunction<dim> *t;
+
+
+public:
+  NavierStokesTractionFunctionDefined(Functions::ParsedFunction<dim> *pt)
+    : Functions::ParsedFunction<dim>(dim + 1)
+    , t(pt)
+  {}
+
+
+  double
+  value(const Point<dim> &point, const unsigned int component) const override;
+};
+
+
+/**
+ * @brief Calculates the value of a Function-type Navier-Stokes traction boundary condition
+ *
+ * @param point A point at which the function will be evaluated
+ *
+ * @param component The vector component of the boundary condition (0-x, 1-y and 2-z)
+ */
+
+
+template <int dim>
+double
+NavierStokesTractionFunctionDefined<dim>::value(
+  const Point<dim>  &point,
+  const unsigned int component) const
+{
+  Assert(component < this->n_components,
+         ExcIndexRange(component, 0, this->n_components));
+
+  /*
+   DofHandler associated with MatrixFree is based on an FE system where the last
+   component is associated with the pressure. Thus, if the component corresponds
+   to the pressure, we return 0 since the traction boundary condition is only
+   applied on the velocity components.
+  */
+  if (component == this->n_components - 1)
+    return 0.;
+
+
+  return t->value(point, component);
+}
+
+
 
 /**
  * @brief This class implements a pressure boundary condition for the Navier-Stokes equations.
