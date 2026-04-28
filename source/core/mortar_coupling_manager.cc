@@ -790,12 +790,12 @@ compute_minimum_height(const Triangulation<dim>      &triangulation,
   if constexpr (dim == 3)
     {
       // Direction of the rotation axis
-      unsigned int   direction = 0;
+      int   direction = 0;
       Tensor<1, dim> axis      = mortar_parameters.rotation_axis;
-      for (unsigned int d = 1; d < static_cast<unsigned int>(dim); ++d)
+      for (int d = 1; d < dim; ++d)
         if (std::abs(axis[d]) > std::abs(axis[direction]))
           direction = d;
-
+          
       AssertThrow(
         std::abs(axis[direction]) > 0.99,
         ExcMessage(
