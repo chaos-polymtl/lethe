@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2019, 2021, 2023-2024 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 # Checks the 3D matrix-based mortar implementation for a MMS case.
 
@@ -34,7 +34,7 @@ end
 subsection mesh
   set type               = gmsh
   set file name          = ../../stator_mesh_3d.msh
-  set initial refinement = 1
+  set initial refinement = 0
 end
 
 #---------------------------------------------------
@@ -137,7 +137,7 @@ end
 
 subsection non-linear solver
   subsection fluid dynamics
-    set tolerance      = 1e-7
+    set tolerance      = 1e-10
     set max iterations = 10
     set verbosity      = quiet
   end
@@ -150,8 +150,8 @@ end
 subsection linear solver
   subsection fluid dynamics
     set method            = gmres
-    set relative residual = 1e-3
-    set minimum residual  = 1e-9
+    set relative residual = 1e-4
+    set minimum residual  = 1e-14
     set preconditioner    = amg
     set verbosity         = quiet
   end
