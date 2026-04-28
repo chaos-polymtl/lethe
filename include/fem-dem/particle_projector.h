@@ -705,11 +705,11 @@ private:
   /// Boolean to indicate if the mesh has periodic boundaries
   bool has_periodic_boundaries;
 
-  /// Offset for the periodic boundary condition
-  Tensor<1, dim> periodic_offset;
+  /// Map of offsets for periodic boundary conditions
+  std::map<types::boundary_id, Tensor<1, dim>> cfd_periodic_offsets;
 
-  /// Direction associated with the periodic boundary condition
-  unsigned int periodic_direction;
+  /// Map of directions associated with periodic boundary conditions
+  std::map<types::boundary_id, unsigned int> cfd_periodic_directions;
 
   /// Vertices to periodic cell map, this is used in the QCM and the satellite
   /// point method to access the neighboring cells of a cell.

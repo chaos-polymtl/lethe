@@ -203,12 +203,13 @@ ParticleProjector<dim>::setup_constraints(
     {
       if (type == BoundaryConditions::BoundaryType::periodic)
         {
-          periodic_direction = boundary_conditions.periodic_direction.at(id);
+          cfd_periodic_directions[id] =
+            boundary_conditions.periodic_direction.at(id);
           DoFTools::make_periodicity_constraints(
             this->dof_handler,
             id,
             boundary_conditions.periodic_neighbor_id.at(id),
-            periodic_direction,
+            cfd_periodic_directions.at(id),
             this->void_fraction_constraints);
 
           has_periodic_boundaries = true;
@@ -219,7 +220,7 @@ ParticleProjector<dim>::setup_constraints(
               this->void_fraction_parameters->mode ==
                 Parameters::VoidFractionMode::spm)
             {
-              periodic_offset = get_periodic_offset_distance(id);
+              cfd_periodic_offsets[id] = this->get_periodic_offset_distance(id);
             }
         }
     }
@@ -592,12 +593,25 @@ ParticleProjector<dim>::calculate_void_fraction_satellite_point_method()
               for (auto &particle : pic)
                 {
                   auto particle_properties = particle.get_properties();
+
+                  unsigned int   neighbor_dir    = 0;
+                  Tensor<1, dim> neighbor_offset = Tensor<1, dim>();
+                  for (const auto &[bid, d] : cfd_periodic_directions)
+                    {
+                      if (std::abs(active_periodic_neighbors[m]->center()[d] -
+                                   cell->center()[d]) > cell->diameter())
+                        {
+                          neighbor_dir    = d;
+                          neighbor_offset = cfd_periodic_offsets.at(bid);
+                          break;
+                        }
+                    }
+
                   const Point<dim> particle_location =
-                    (active_periodic_neighbors[m]
-                       ->center()[periodic_direction] >
-                     cell->center()[periodic_direction]) ?
-                      particle.get_location() - periodic_offset :
-                      particle.get_location() + periodic_offset;
+                    (active_periodic_neighbors[m]->center()[neighbor_dir] >
+                     cell->center()[neighbor_dir]) ?
+                      particle.get_location() - neighbor_offset :
+                      particle.get_location() + neighbor_offset;
 
                   double translational_factor =
                     particle_properties
@@ -740,11 +754,11 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
             neighbor_quadrature_point_location(
               active_neighbors.size(), std::vector<Point<dim>>(n_q_points));
 
-          for (unsigned int n = 0; n < active_neighbors.size(); n++)
+          for (unsigned int m = 0; m < active_neighbors.size(); m++)
             {
-              fe_values_void_fraction.reinit(active_neighbors[n]);
+              fe_values_void_fraction.reinit(active_neighbors[m]);
 
-              neighbor_quadrature_point_location[n] =
+              neighbor_quadrature_point_location[m] =
                 fe_values_void_fraction.get_quadrature_points();
             }
 
@@ -755,11 +769,11 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
               active_periodic_neighbors.size(),
               std::vector<Point<dim>>(n_q_points));
 
-          for (unsigned int n = 0; n < active_periodic_neighbors.size(); n++)
+          for (unsigned int m = 0; m < active_periodic_neighbors.size(); m++)
             {
-              fe_values_void_fraction.reinit(active_periodic_neighbors[n]);
+              fe_values_void_fraction.reinit(active_periodic_neighbors[m]);
 
-              periodic_neighbor_quadrature_point_location[n] =
+              periodic_neighbor_quadrature_point_location[m] =
                 fe_values_void_fraction.get_quadrature_points();
             }
 
@@ -776,7 +790,7 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
               // neighboring particle contributes to the solid volume of the
               // current reference sphere
               //***********************************************************************
-              for (unsigned int n = 0; n < active_neighbors.size(); n++)
+              for (unsigned int m = 0; m < active_neighbors.size(); m++)
                 {
                   // Define the radius of the reference sphere to be used as
                   // the averaging volume for the QCM. If the reference sphere
@@ -786,7 +800,7 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
                   if (calculate_reference_sphere_radius)
                     {
                       r_sphere = calculate_qcm_radius_from_cell_measure(
-                        active_neighbors[n]->measure());
+                        active_neighbors[m]->measure());
                     }
 
                   // Loop over quadrature points
@@ -795,7 +809,7 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
                       // Distance between particle and quadrature point
                       double neighbor_distance =
                         particle.get_location().distance(
-                          neighbor_quadrature_point_location[n][k]);
+                          neighbor_quadrature_point_location[m][k]);
 
                       // Add the intersection volume to the particle
                       // contribution
@@ -812,13 +826,13 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
               // neighboring particle contributes to the solid volume of the
               // current reference sphere
               //***********************************************************************
-              for (unsigned int n = 0; n < active_periodic_neighbors.size();
-                   n++)
+              for (unsigned int m = 0; m < active_periodic_neighbors.size();
+                   m++)
                 {
                   if (calculate_reference_sphere_radius)
                     {
                       r_sphere = calculate_qcm_radius_from_cell_measure(
-                        active_periodic_neighbors[n]->measure());
+                        active_periodic_neighbors[m]->measure());
                     }
 
                   // Loop over quadrature points
@@ -829,17 +843,31 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
                       // periodic cell is greater than the position of the
                       // current cell, the particle location needs a positive
                       // correction, and vice versa
+                      unsigned int   neighbor_dir    = 0;
+                      Tensor<1, dim> neighbor_offset = Tensor<1, dim>();
+                      for (const auto &[bid, d] : cfd_periodic_directions)
+                        {
+                          if (std::abs(
+                                active_periodic_neighbors[m]->center()[d] -
+                                cell->center()[d]) > cell->diameter())
+                            {
+                              neighbor_dir    = d;
+                              neighbor_offset = cfd_periodic_offsets.at(bid);
+                              break;
+                            }
+                        }
+
                       const Point<dim> particle_location =
-                        (active_periodic_neighbors[n]
-                           ->center()[periodic_direction] >
-                         cell->center()[periodic_direction]) ?
-                          particle.get_location() + periodic_offset :
-                          particle.get_location() - periodic_offset;
+                        (active_periodic_neighbors[m]->center()[neighbor_dir] >
+                         cell->center()[neighbor_dir]) ?
+                          particle.get_location() + neighbor_offset :
+                          particle.get_location() - neighbor_offset;
+
 
                       // Distance between particle and quadrature point
                       double periodic_neighbor_distance =
                         particle_location.distance(
-                          periodic_neighbor_quadrature_point_location[n][k]);
+                          periodic_neighbor_quadrature_point_location[m][k]);
 
                       // Add the intersection volume to the particle
                       // contribution
@@ -971,12 +999,26 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
                       // correction, and vice versa. Since the particle is in
                       // the periodic cell, this correction is the inverse of
                       // the correction for the volumetric contribution
+                      unsigned int   neighbor_dir    = 0;
+                      Tensor<1, dim> neighbor_offset = Tensor<1, dim>();
+                      for (const auto &[bid, d] : cfd_periodic_directions)
+                        {
+                          if (std::abs(
+                                active_periodic_neighbors[m]->center()[d] -
+                                cell->center()[d]) > cell->diameter())
+                            {
+                              neighbor_dir    = d;
+                              neighbor_offset = cfd_periodic_offsets.at(bid);
+                              break;
+                            }
+                        }
+
                       const Point<dim> particle_location =
-                        (active_periodic_neighbors[m]
-                           ->center()[periodic_direction] >
-                         cell->center()[periodic_direction]) ?
-                          particle.get_location() - periodic_offset :
-                          particle.get_location() + periodic_offset;
+                        (active_periodic_neighbors[m]->center()[neighbor_dir] >
+                         cell->center()[neighbor_dir]) ?
+                          particle.get_location() - neighbor_offset :
+                          particle.get_location() + neighbor_offset;
+
 
                       // Distance between particle and quadrature point
                       // centers
@@ -998,6 +1040,12 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
                         calculate_intersection_measure(r_particle,
                                                        r_sphere,
                                                        distance);
+                    }
+                  if (particles_volume_in_sphere > 1.001)
+                    {
+                      std::cout << "WARNING: particles_volume_in_sphere = "
+                                << particles_volume_in_sphere << " at cell "
+                                << cell->center() << std::endl;
                     }
                 }
 
@@ -1060,6 +1108,13 @@ ParticleProjector<dim>::calculate_field_projection(
   AssertThrow(n_components == 1 || n_components == dim,
               ExcMessage(
                 "QCM projection of a field only supports 1 or dim components"));
+
+  AssertThrow(
+    has_periodic_boundaries == false,
+    ExcMessage(
+      "The QCM projection of a particle field is not currently supported "
+      "with periodic boundary conditions. The periodic constraints are not "
+      "applied to the particle field constraints."));
 
   FEValues<dim> fe_values_field(*mapping,
                                 *field_qcm.fe,
@@ -1236,12 +1291,26 @@ ParticleProjector<dim>::calculate_field_projection(
                       // correction, and vice versa. Since the particle is in
                       // the periodic cell, this correction is the inverse of
                       // the correction for the volumetric contribution
+                      unsigned int   neighbor_dir    = 0;
+                      Tensor<1, dim> neighbor_offset = Tensor<1, dim>();
+                      for (const auto &[bid, d] : cfd_periodic_directions)
+                        {
+                          if (std::abs(
+                                active_periodic_neighbors[m]->center()[d] -
+                                cell->center()[d]) > cell->diameter())
+                            {
+                              neighbor_dir    = d;
+                              neighbor_offset = cfd_periodic_offsets.at(bid);
+                              break;
+                            }
+                        }
+
                       const Point<dim> particle_location =
-                        (active_periodic_neighbors[m]
-                           ->center()[periodic_direction] >
-                         cell->center()[periodic_direction]) ?
-                          particle.get_location() - periodic_offset :
-                          particle.get_location() + periodic_offset;
+                        (active_periodic_neighbors[m]->center()[neighbor_dir] >
+                         cell->center()[neighbor_dir]) ?
+                          particle.get_location() - neighbor_offset :
+                          particle.get_location() + neighbor_offset;
+
 
                       // Distance between particle and quadrature point
                       // centers
