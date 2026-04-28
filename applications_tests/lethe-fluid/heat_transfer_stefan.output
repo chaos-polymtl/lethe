@@ -3,2008 +3,2259 @@ Running on 1 MPI rank(s)...
    Number of degrees of freedom: 606
    Volume of triangulation:      1.000000e-01
    Number of thermal degrees of freedom: 202
-melt surface: 9.800000e-04
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.000000e-03
+melt_surface_geo: 9.800000e-04
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 1        Time: 0.02     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.453714e-04
-melt surface: 1.577808e-03
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.941436e-03
+melt_surface_geo: 1.577808e-03
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 2        Time: 0.04     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.180633e-04
-melt surface: 2.800384e-03
-melt contour length: 1.000000e-01
+melt_surface_alge: 4.210856e-03
+melt_surface_geo: 2.800384e-03
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 3        Time: 0.06     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.366417e-05
-melt surface: 3.469234e-03
-melt contour length: 1.000000e-01
+melt_surface_alge: 4.856561e-03
+melt_surface_geo: 3.469234e-03
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 4        Time: 0.08     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.572221e-05
-melt surface: 3.989411e-03
-melt contour length: 1.000000e-01
+melt_surface_alge: 5.480973e-03
+melt_surface_geo: 3.989411e-03
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 5        Time: 0.1      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 8.953926e-06
-melt surface: 4.584104e-03
-melt contour length: 1.000000e-01
+melt_surface_alge: 5.963928e-03
+melt_surface_geo: 4.584104e-03
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 6        Time: 0.12     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 2.532946e-05
-melt surface: 4.969328e-03
-melt contour length: 1.000000e-01
+melt_surface_alge: 6.434667e-03
+melt_surface_geo: 4.969328e-03
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 7        Time: 0.14     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.921684e-06
-melt surface: 5.399278e-03
-melt contour length: 1.000000e-01
+melt_surface_alge: 6.822095e-03
+melt_surface_geo: 5.399278e-03
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 8        Time: 0.16     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.219165e-05
-melt surface: 5.778196e-03
-melt contour length: 1.000000e-01
+melt_surface_alge: 7.207884e-03
+melt_surface_geo: 5.778196e-03
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 9        Time: 0.18     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.817090e-07
-melt surface: 6.005459e-03
-melt contour length: 1.000000e-01
+melt_surface_alge: 7.539359e-03
+melt_surface_geo: 6.005459e-03
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 10       Time: 0.2      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.470335e-06
-melt surface: 6.442517e-03
-melt contour length: 1.000000e-01
+melt_surface_alge: 7.863499e-03
+melt_surface_geo: 6.442517e-03
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 11       Time: 0.22     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 8.197659e-06
-melt surface: 6.755213e-03
-melt contour length: 1.000000e-01
+melt_surface_alge: 8.185320e-03
+melt_surface_geo: 6.755213e-03
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 12       Time: 0.24     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 2.245127e-06
-melt surface: 6.990507e-03
-melt contour length: 1.000000e-01
+melt_surface_alge: 8.481714e-03
+melt_surface_geo: 6.990507e-03
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 13       Time: 0.26     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 5.129874e-07
-melt surface: 7.269748e-03
-melt contour length: 1.000000e-01
+melt_surface_alge: 8.759516e-03
+melt_surface_geo: 7.269748e-03
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 14       Time: 0.28     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 2.945297e-06
-melt surface: 7.628049e-03
-melt contour length: 1.000000e-01
+melt_surface_alge: 9.036415e-03
+melt_surface_geo: 7.628049e-03
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 15       Time: 0.3      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 8.264478e-06
-melt surface: 7.860135e-03
-melt contour length: 1.000000e-01
+melt_surface_alge: 9.310585e-03
+melt_surface_geo: 7.860135e-03
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 16       Time: 0.32     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.229079e-06
-melt surface: 7.999747e-03
-melt contour length: 1.000000e-01
+melt_surface_alge: 9.553023e-03
+melt_surface_geo: 7.999747e-03
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 17       Time: 0.34     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.552489e-07
-melt surface: 8.313771e-03
-melt contour length: 1.000000e-01
+melt_surface_alge: 9.796865e-03
+melt_surface_geo: 8.313771e-03
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 18       Time: 0.36     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 2.159469e-06
-melt surface: 8.619272e-03
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.003924e-02
+melt_surface_geo: 8.619272e-03
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 19       Time: 0.38     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 6.125761e-06
-melt surface: 8.815187e-03
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.027998e-02
+melt_surface_geo: 8.815187e-03
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 20       Time: 0.4      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.975801e-06
-melt surface: 8.991680e-03
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.049538e-02
+melt_surface_geo: 8.991680e-03
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 21       Time: 0.42     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.690326e-07
-melt surface: 9.174492e-03
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.071252e-02
+melt_surface_geo: 9.174492e-03
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 22       Time: 0.44     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 7.661808e-07
-melt surface: 9.489053e-03
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.092862e-02
+melt_surface_geo: 9.489053e-03
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 23       Time: 0.46     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 2.859581e-06
-melt surface: 9.700533e-03
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.114358e-02
+melt_surface_geo: 9.700533e-03
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 24       Time: 0.48     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 5.197246e-06
-melt surface: 9.886535e-03
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.135615e-02
+melt_surface_geo: 9.886535e-03
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 25       Time: 0.5      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.411319e-06
-melt surface: 9.996595e-03
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.154985e-02
+melt_surface_geo: 9.996595e-03
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 26       Time: 0.52     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.541662e-07
-melt surface: 1.019835e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.174520e-02
+melt_surface_geo: 1.019835e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 27       Time: 0.54     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 6.162387e-07
-melt surface: 1.049059e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.193966e-02
+melt_surface_geo: 1.049059e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 28       Time: 0.56     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 2.063815e-06
-melt surface: 1.068373e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.213323e-02
+melt_surface_geo: 1.068373e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 29       Time: 0.58     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.193167e-06
-melt surface: 1.084181e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.232546e-02
+melt_surface_geo: 1.084181e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 30       Time: 0.6      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.963148e-06
-melt surface: 1.098788e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.250143e-02
+melt_surface_geo: 1.098788e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 31       Time: 0.62     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 7.578342e-07
-melt surface: 1.111355e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.267917e-02
+melt_surface_geo: 1.111355e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 32       Time: 0.64     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.543372e-07
-melt surface: 1.135769e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.285641e-02
+melt_surface_geo: 1.135769e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 33       Time: 0.66     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 9.065899e-07
-melt surface: 1.157966e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.303286e-02
+melt_surface_geo: 1.157966e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 34       Time: 0.68     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 2.348459e-06
-melt surface: 1.173212e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.320858e-02
+melt_surface_geo: 1.173212e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 35       Time: 0.7      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.121322e-06
-melt surface: 1.189511e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.338215e-02
+melt_surface_geo: 1.189511e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 36       Time: 0.72     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.572526e-06
-melt surface: 1.199177e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.354344e-02
+melt_surface_geo: 1.199177e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 37       Time: 0.74     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 7.046490e-07
-melt surface: 1.213255e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.370631e-02
+melt_surface_geo: 1.213255e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 38       Time: 0.76     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.394824e-07
-melt surface: 1.236048e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.386876e-02
+melt_surface_geo: 1.236048e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 39       Time: 0.78     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 6.950095e-07
-melt surface: 1.256583e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.403056e-02
+melt_surface_geo: 1.256583e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 40       Time: 0.8      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.715426e-06
-melt surface: 1.271091e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.419175e-02
+melt_surface_geo: 1.271091e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 41       Time: 0.82     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 2.906768e-06
-melt surface: 1.284577e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.435191e-02
+melt_surface_geo: 1.284577e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 42       Time: 0.84     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.984973e-06
-melt surface: 1.298223e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.450062e-02
+melt_surface_geo: 1.298223e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 43       Time: 0.86     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.086594e-06
-melt surface: 1.305494e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.465105e-02
+melt_surface_geo: 1.305494e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 44       Time: 0.88     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.365801e-07
-melt surface: 1.323143e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.480131e-02
+melt_surface_geo: 1.323143e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 45       Time: 0.9      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.725128e-07
-melt surface: 1.346283e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.495097e-02
+melt_surface_geo: 1.346283e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 46       Time: 0.92     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 8.442050e-07
-melt surface: 1.362477e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.510011e-02
+melt_surface_geo: 1.362477e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 47       Time: 0.94     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.794811e-06
-melt surface: 1.374535e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.524875e-02
+melt_surface_geo: 1.374535e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 48       Time: 0.96     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 2.000361e-06
-melt surface: 1.388965e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.539565e-02
+melt_surface_geo: 1.388965e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 49       Time: 0.98     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.701967e-06
-melt surface: 1.398506e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.553378e-02
+melt_surface_geo: 1.398506e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 50       Time: 1        Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.013855e-06
-melt surface: 1.406926e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.567343e-02
+melt_surface_geo: 1.406926e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 51       Time: 1.02     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.398329e-07
-melt surface: 1.423285e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.581295e-02
+melt_surface_geo: 1.423285e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 52       Time: 1.04     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.392434e-07
-melt surface: 1.444961e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.595195e-02
+melt_surface_geo: 1.444961e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 53       Time: 1.06     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 6.483571e-07
-melt surface: 1.460477e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.609051e-02
+melt_surface_geo: 1.460477e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 54       Time: 1.08     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.329983e-06
-melt surface: 1.472215e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.622863e-02
+melt_surface_geo: 1.472215e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 55       Time: 1.1      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 2.051734e-06
-melt surface: 1.483662e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.636603e-02
+melt_surface_geo: 1.483662e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 56       Time: 1.12     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 2.011320e-06
-melt surface: 1.497459e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.649476e-02
+melt_surface_geo: 1.497459e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 57       Time: 1.14     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.388733e-06
-melt surface: 1.499937e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.662516e-02
+melt_surface_geo: 1.499937e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 58       Time: 1.16     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 6.946654e-07
-melt surface: 1.515133e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.675550e-02
+melt_surface_geo: 1.515133e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 59       Time: 1.18     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.422971e-07
-melt surface: 1.533567e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.688550e-02
+melt_surface_geo: 1.533567e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 60       Time: 1.2      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.818505e-07
-melt surface: 1.551138e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.701509e-02
+melt_surface_geo: 1.551138e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 61       Time: 1.22     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 7.257125e-07
-melt surface: 1.564278e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.714429e-02
+melt_surface_geo: 1.564278e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 62       Time: 1.24     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.351592e-06
-melt surface: 1.574545e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.727313e-02
+melt_surface_geo: 1.574545e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 63       Time: 1.26     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.577304e-06
-melt surface: 1.586700e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.740091e-02
+melt_surface_geo: 1.586700e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 64       Time: 1.28     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.780167e-06
-melt surface: 1.597635e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.752160e-02
+melt_surface_geo: 1.597635e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 65       Time: 1.3      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.306270e-06
-melt surface: 1.600583e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.764382e-02
+melt_surface_geo: 1.600583e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 66       Time: 1.32     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 6.976423e-07
-melt surface: 1.615088e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.776601e-02
+melt_surface_geo: 1.615088e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 67       Time: 1.34     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.568692e-07
-melt surface: 1.632181e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.788792e-02
+melt_surface_geo: 1.632181e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 68       Time: 1.36     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.425154e-07
-melt surface: 1.649125e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.800945e-02
+melt_surface_geo: 1.649125e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 69       Time: 1.38     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 5.684980e-07
-melt surface: 1.661969e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.813064e-02
+melt_surface_geo: 1.661969e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 70       Time: 1.4      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.019585e-06
-melt surface: 1.672102e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.825153e-02
+melt_surface_geo: 1.672102e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 71       Time: 1.42     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.536786e-06
-melt surface: 1.681535e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.837196e-02
+melt_surface_geo: 1.681535e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 72       Time: 1.44     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 2.026245e-06
-melt surface: 1.696494e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.848542e-02
+melt_surface_geo: 1.696494e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 73       Time: 1.46     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.646680e-06
-melt surface: 1.698968e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.860048e-02
+melt_surface_geo: 1.698968e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 74       Time: 1.48     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 9.723199e-07
-melt surface: 1.708059e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.871556e-02
+melt_surface_geo: 1.708059e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 75       Time: 1.5      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.845594e-07
-melt surface: 1.720796e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.883050e-02
+melt_surface_geo: 1.720796e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 76       Time: 1.52     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.248188e-07
-melt surface: 1.739461e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.894507e-02
+melt_surface_geo: 1.739461e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 77       Time: 1.54     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.683051e-07
-melt surface: 1.753724e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.905934e-02
+melt_surface_geo: 1.753724e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 78       Time: 1.56     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 5.973447e-07
-melt surface: 1.764888e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.917333e-02
+melt_surface_geo: 1.764888e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 79       Time: 1.58     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.003312e-06
-melt surface: 1.773918e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.928705e-02
+melt_surface_geo: 1.773918e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 80       Time: 1.6      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.285329e-06
-melt surface: 1.783634e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.940020e-02
+melt_surface_geo: 1.783634e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 81       Time: 1.62     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.829404e-06
-melt surface: 1.796562e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.950733e-02
+melt_surface_geo: 1.796562e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 82       Time: 1.64     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.559510e-06
-melt surface: 1.799017e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.961598e-02
+melt_surface_geo: 1.799017e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 83       Time: 1.66     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 9.760814e-07
-melt surface: 1.807840e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.972466e-02
+melt_surface_geo: 1.807840e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 84       Time: 1.68     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 5.126240e-07
-melt surface: 1.819921e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.983322e-02
+melt_surface_geo: 1.819921e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 85       Time: 1.7      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.382811e-07
-melt surface: 1.837206e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 1.994147e-02
+melt_surface_geo: 1.837206e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 86       Time: 1.72     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.367738e-07
-melt surface: 1.851254e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.004945e-02
+melt_surface_geo: 1.851254e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 87       Time: 1.74     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.847838e-07
-melt surface: 1.862336e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.015717e-02
+melt_surface_geo: 1.862336e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 88       Time: 1.76     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 7.764168e-07
-melt surface: 1.871351e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.026465e-02
+melt_surface_geo: 1.871351e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 89       Time: 1.78     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.158920e-06
-melt surface: 1.878873e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.037190e-02
+melt_surface_geo: 1.878873e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 90       Time: 1.8      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 2.034105e-06
-melt surface: 1.895323e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.047331e-02
+melt_surface_geo: 1.895323e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 91       Time: 1.82     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.858552e-06
-melt surface: 1.897803e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.057627e-02
+melt_surface_geo: 1.897803e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 92       Time: 1.84     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.249723e-06
-melt surface: 1.900922e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.067928e-02
+melt_surface_geo: 1.900922e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 93       Time: 1.86     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 7.421927e-07
-melt surface: 1.913181e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.078220e-02
+melt_surface_geo: 1.913181e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 94       Time: 1.88     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.205819e-07
-melt surface: 1.926063e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.088496e-02
+melt_surface_geo: 1.926063e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 95       Time: 1.9      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.232614e-07
-melt surface: 1.941947e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.098742e-02
+melt_surface_geo: 1.941947e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 96       Time: 1.92     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.521826e-07
-melt surface: 1.954333e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.108965e-02
+melt_surface_geo: 1.954333e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 97       Time: 1.94     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.998551e-07
-melt surface: 1.964316e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.119166e-02
+melt_surface_geo: 1.964316e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 98       Time: 1.96     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 7.630115e-07
-melt surface: 1.972576e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.129346e-02
+melt_surface_geo: 1.972576e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 99       Time: 1.98     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.035611e-06
-melt surface: 1.980082e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.139500e-02
+melt_surface_geo: 1.980082e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 100      Time: 2        Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.859921e-06
-melt surface: 1.995281e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.149130e-02
+melt_surface_geo: 1.995281e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 101      Time: 2.02     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.768583e-06
-melt surface: 1.997746e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.158909e-02
+melt_surface_geo: 1.997746e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 102      Time: 2.04     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.241676e-06
-melt surface: 2.000494e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.168695e-02
+melt_surface_geo: 2.000494e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 103      Time: 2.06     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 7.674689e-07
-melt surface: 2.012205e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.178473e-02
+melt_surface_geo: 2.012205e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 104      Time: 2.08     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.472442e-07
-melt surface: 2.023685e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.188238e-02
+melt_surface_geo: 2.023685e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 105      Time: 2.1      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.370603e-07
-melt surface: 2.039360e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.197976e-02
+melt_surface_geo: 2.039360e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 106      Time: 2.12     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.310325e-07
-melt surface: 2.051670e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.207693e-02
+melt_surface_geo: 2.051670e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 107      Time: 2.14     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.220007e-07
-melt surface: 2.061646e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.217390e-02
+melt_surface_geo: 2.061646e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 108      Time: 2.16     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 6.078892e-07
-melt surface: 2.069936e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.227068e-02
+melt_surface_geo: 2.069936e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 109      Time: 2.18     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 8.367591e-07
-melt surface: 2.076968e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.236727e-02
+melt_surface_geo: 2.076968e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 110      Time: 2.2      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 5.470162e-07
-melt surface: 2.088493e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.246261e-02
+melt_surface_geo: 2.088493e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 111      Time: 2.22     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.548258e-06
-melt surface: 2.096445e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.255459e-02
+melt_surface_geo: 2.096445e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 112      Time: 2.24     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.432136e-06
-melt surface: 2.098843e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.264769e-02
+melt_surface_geo: 2.098843e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 113      Time: 2.26     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.012133e-06
-melt surface: 2.105794e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.274085e-02
+melt_surface_geo: 2.105794e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 114      Time: 2.28     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 6.169240e-07
-melt surface: 2.116405e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.283392e-02
+melt_surface_geo: 2.116405e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 115      Time: 2.3      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.047102e-07
-melt surface: 2.129317e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.292683e-02
+melt_surface_geo: 2.129317e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 116      Time: 2.32     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.309865e-07
-melt surface: 2.143108e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.301952e-02
+melt_surface_geo: 2.143108e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 117      Time: 2.34     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.399888e-07
-melt surface: 2.154173e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.311202e-02
+melt_surface_geo: 2.154173e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 118      Time: 2.36     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.277551e-07
-melt surface: 2.163290e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.320434e-02
+melt_surface_geo: 2.163290e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 119      Time: 2.38     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 5.933028e-07
-melt surface: 2.170970e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.329649e-02
+melt_surface_geo: 2.170970e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 120      Time: 2.4      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 7.673859e-07
-melt surface: 2.177559e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.338847e-02
+melt_surface_geo: 2.177559e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 121      Time: 2.42     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.064432e-07
-melt surface: 2.189995e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.347876e-02
+melt_surface_geo: 2.189995e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 122      Time: 2.44     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.544198e-06
-melt surface: 2.196336e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.356672e-02
+melt_surface_geo: 2.196336e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 123      Time: 2.46     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.425410e-06
-melt surface: 2.198712e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.365560e-02
+melt_surface_geo: 2.198712e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 124      Time: 2.48     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.032180e-06
-melt surface: 2.204886e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.374452e-02
+melt_surface_geo: 2.204886e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 125      Time: 2.5      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 6.582156e-07
-melt surface: 2.215114e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.383338e-02
+melt_surface_geo: 2.215114e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 126      Time: 2.52     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.340323e-07
-melt surface: 2.226583e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.392210e-02
+melt_surface_geo: 2.226583e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 127      Time: 2.54     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.479104e-07
-melt surface: 2.240337e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.401061e-02
+melt_surface_geo: 2.240337e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 128      Time: 2.56     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.313733e-07
-melt surface: 2.251421e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.409895e-02
+melt_surface_geo: 2.251421e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 129      Time: 2.58     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.798586e-07
-melt surface: 2.260586e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.418713e-02
+melt_surface_geo: 2.260586e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 130      Time: 2.6      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.927891e-07
-melt surface: 2.268328e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.427516e-02
+melt_surface_geo: 2.268328e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 131      Time: 2.62     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 6.193499e-07
-melt surface: 2.274983e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.436303e-02
+melt_surface_geo: 2.274983e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 132      Time: 2.64     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 7.060255e-07
-melt surface: 2.282421e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.445058e-02
+melt_surface_geo: 2.282421e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 133      Time: 2.66     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.552123e-06
-melt surface: 2.294949e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.453429e-02
+melt_surface_geo: 2.294949e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 134      Time: 2.68     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.617967e-06
-melt surface: 2.297371e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.461927e-02
+melt_surface_geo: 2.297371e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 135      Time: 2.7      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.264567e-06
-melt surface: 2.299675e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.470435e-02
+melt_surface_geo: 2.299675e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 136      Time: 2.72     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 8.675787e-07
-melt surface: 2.308867e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.478940e-02
+melt_surface_geo: 2.308867e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 137      Time: 2.74     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 5.637180e-07
-melt surface: 2.318286e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.487437e-02
+melt_surface_geo: 2.318286e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 138      Time: 2.76     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.091114e-07
-melt surface: 2.330891e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.495916e-02
+melt_surface_geo: 2.330891e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 139      Time: 2.78     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.452589e-07
-melt surface: 2.343240e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.504378e-02
+melt_surface_geo: 2.343240e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 140      Time: 2.8      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.373972e-07
-melt surface: 2.353361e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.512825e-02
+melt_surface_geo: 2.353361e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 141      Time: 2.82     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.831041e-07
-melt surface: 2.361844e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.521258e-02
+melt_surface_geo: 2.361844e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 142      Time: 2.84     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.788532e-07
-melt surface: 2.369089e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.529676e-02
+melt_surface_geo: 2.369089e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 143      Time: 2.86     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 5.703531e-07
-melt surface: 2.375375e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.538081e-02
+melt_surface_geo: 2.375375e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 144      Time: 2.88     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 6.291361e-07
-melt surface: 2.382675e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.546454e-02
+melt_surface_geo: 2.382675e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 145      Time: 2.9      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.489174e-06
-melt surface: 2.394739e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.554475e-02
+melt_surface_geo: 2.394739e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 146      Time: 2.92     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.589976e-06
-melt surface: 2.397151e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.562617e-02
+melt_surface_geo: 2.397151e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 147      Time: 2.94     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.279762e-06
-melt surface: 2.399442e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.570771e-02
+melt_surface_geo: 2.399442e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 148      Time: 2.96     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 9.045545e-07
-melt surface: 2.407511e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.578922e-02
+melt_surface_geo: 2.407511e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 149      Time: 2.98     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 6.099676e-07
-melt surface: 2.416663e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.587066e-02
+melt_surface_geo: 2.416663e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 150      Time: 3        Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.379032e-07
-melt surface: 2.427721e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.595197e-02
+melt_surface_geo: 2.427721e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 151      Time: 3.02     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.644644e-07
-melt surface: 2.440172e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.603310e-02
+melt_surface_geo: 2.440172e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 152      Time: 3.04     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.391727e-07
-melt surface: 2.450400e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.611409e-02
+melt_surface_geo: 2.450400e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 153      Time: 3.06     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.584532e-07
-melt surface: 2.458989e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.619495e-02
+melt_surface_geo: 2.458989e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 154      Time: 3.08     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.222865e-07
-melt surface: 2.466334e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.627569e-02
+melt_surface_geo: 2.466334e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 155      Time: 3.1      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.815108e-07
-melt surface: 2.472715e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.635630e-02
+melt_surface_geo: 2.472715e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 156      Time: 3.12     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 5.837892e-07
-melt surface: 2.478331e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.643678e-02
+melt_surface_geo: 2.478331e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 157      Time: 3.14     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 6.225862e-07
-melt surface: 2.491586e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.651495e-02
+melt_surface_geo: 2.491586e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 158      Time: 3.16     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.560335e-06
-melt surface: 2.495706e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.659267e-02
+melt_surface_geo: 2.495706e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 159      Time: 3.18     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.440845e-06
-melt surface: 2.498026e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.667091e-02
+melt_surface_geo: 2.498026e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 160      Time: 3.2      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.110637e-06
-melt surface: 2.501269e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.674918e-02
+melt_surface_geo: 2.501269e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 161      Time: 3.22     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 7.896544e-07
-melt surface: 2.510602e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.682741e-02
+melt_surface_geo: 2.510602e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 162      Time: 3.24     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 5.455584e-07
-melt surface: 2.519130e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.690557e-02
+melt_surface_geo: 2.519130e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 163      Time: 3.26     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.227034e-07
-melt surface: 2.531091e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.698357e-02
+melt_surface_geo: 2.531091e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 164      Time: 3.28     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.642886e-07
-melt surface: 2.542453e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.706143e-02
+melt_surface_geo: 2.542453e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 165      Time: 3.3      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.448021e-07
-melt surface: 2.551914e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.713916e-02
+melt_surface_geo: 2.551914e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 166      Time: 3.32     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.623739e-07
-melt surface: 2.559947e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.721677e-02
+melt_surface_geo: 2.559947e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 167      Time: 3.34     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.074514e-07
-melt surface: 2.566880e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.729427e-02
+melt_surface_geo: 2.566880e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 168      Time: 3.36     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.490407e-07
-melt surface: 2.572950e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.737165e-02
+melt_surface_geo: 2.572950e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 169      Time: 3.38     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 5.336647e-07
-melt surface: 2.578328e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.744892e-02
+melt_surface_geo: 2.578328e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 170      Time: 3.4      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 5.940983e-07
-melt surface: 2.591153e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.752410e-02
+melt_surface_geo: 2.591153e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 171      Time: 3.42     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.518950e-06
-melt surface: 2.595399e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.759879e-02
+melt_surface_geo: 2.595399e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 172      Time: 3.44     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.441732e-06
-melt surface: 2.597710e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.767401e-02
+melt_surface_geo: 2.597710e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 173      Time: 3.46     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.138316e-06
-melt surface: 2.599963e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.774928e-02
+melt_surface_geo: 2.599963e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 174      Time: 3.48     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 8.345962e-07
-melt surface: 2.608941e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.782450e-02
+melt_surface_geo: 2.608941e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 175      Time: 3.5      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 5.939653e-07
-melt surface: 2.617278e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.789967e-02
+melt_surface_geo: 2.617278e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 176      Time: 3.52     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.511058e-07
-melt surface: 2.627609e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.797472e-02
+melt_surface_geo: 2.627609e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 177      Time: 3.54     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.855071e-07
-melt surface: 2.639156e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.804962e-02
+melt_surface_geo: 2.639156e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 178      Time: 3.56     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.543794e-07
-melt surface: 2.648781e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.812440e-02
+melt_surface_geo: 2.648781e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 179      Time: 3.58     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.543315e-07
-melt surface: 2.656959e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.819908e-02
+melt_surface_geo: 2.656959e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 180      Time: 3.6      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.854445e-07
-melt surface: 2.664021e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.827364e-02
+melt_surface_geo: 2.664021e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 181      Time: 3.62     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.005703e-07
-melt surface: 2.670205e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.834810e-02
+melt_surface_geo: 2.670205e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 182      Time: 3.64     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.516543e-07
-melt surface: 2.675685e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.842246e-02
+melt_surface_geo: 2.675685e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 183      Time: 3.66     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.887501e-07
-melt surface: 2.682043e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.849659e-02
+melt_surface_geo: 2.682043e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 184      Time: 3.68     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.356217e-06
-melt surface: 2.693835e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.856784e-02
+melt_surface_geo: 2.693835e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 185      Time: 3.7      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.539697e-06
-melt surface: 2.696224e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.864019e-02
+melt_surface_geo: 2.696224e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 186      Time: 3.72     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.322901e-06
-melt surface: 2.698479e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.871267e-02
+melt_surface_geo: 2.698479e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 187      Time: 3.74     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.019697e-06
-melt surface: 2.702872e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.878513e-02
+melt_surface_geo: 2.702872e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 188      Time: 3.76     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 7.546029e-07
-melt surface: 2.711386e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.885756e-02
+melt_surface_geo: 2.711386e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 189      Time: 3.78     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 5.487067e-07
-melt surface: 2.719225e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.892992e-02
+melt_surface_geo: 2.719225e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 190      Time: 3.8      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.419531e-07
-melt surface: 2.730264e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.900216e-02
+melt_surface_geo: 2.730264e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 191      Time: 3.82     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.872838e-07
-melt surface: 2.740946e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.907426e-02
+melt_surface_geo: 2.740946e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 192      Time: 3.84     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.606490e-07
-melt surface: 2.749947e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.914626e-02
+melt_surface_geo: 2.749947e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 193      Time: 3.86     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.600076e-07
-melt surface: 2.757666e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.921816e-02
+melt_surface_geo: 2.757666e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 194      Time: 3.88     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.717975e-07
-melt surface: 2.764383e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.928996e-02
+melt_surface_geo: 2.764383e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 195      Time: 3.9      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.810061e-07
-melt surface: 2.770303e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.936166e-02
+melt_surface_geo: 2.770303e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 196      Time: 3.92     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.210400e-07
-melt surface: 2.775579e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.943328e-02
+melt_surface_geo: 2.775579e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 197      Time: 3.94     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.586651e-07
-melt surface: 2.781499e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.950469e-02
+melt_surface_geo: 2.781499e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 198      Time: 3.96     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.325200e-06
-melt surface: 2.793447e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.957339e-02
+melt_surface_geo: 2.793447e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 199      Time: 3.98     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.530387e-06
-melt surface: 2.795831e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.964314e-02
+melt_surface_geo: 2.795831e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 200      Time: 4        Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.339955e-06
-melt surface: 2.798076e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.971303e-02
+melt_surface_geo: 2.798076e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 201      Time: 4.02     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.058416e-06
-melt surface: 2.801164e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.978292e-02
+melt_surface_geo: 2.801164e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 202      Time: 4.04     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 8.035743e-07
-melt surface: 2.809508e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.985276e-02
+melt_surface_geo: 2.809508e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 203      Time: 4.06     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 5.984341e-07
-melt surface: 2.817209e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.992256e-02
+melt_surface_geo: 2.817209e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 204      Time: 4.08     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.703128e-07
-melt surface: 2.826561e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 2.999226e-02
+melt_surface_geo: 2.826561e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 205      Time: 4.1      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.101282e-07
-melt surface: 2.837476e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.006182e-02
+melt_surface_geo: 2.837476e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 206      Time: 4.12     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.758177e-07
-melt surface: 2.846676e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.013129e-02
+melt_surface_geo: 2.846676e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 207      Time: 4.14     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.635514e-07
-melt surface: 2.854565e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.020066e-02
+melt_surface_geo: 2.854565e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 208      Time: 4.16     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.684457e-07
-melt surface: 2.861429e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.026994e-02
+melt_surface_geo: 2.861429e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 209      Time: 4.18     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.599236e-07
-melt surface: 2.867478e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.033913e-02
+melt_surface_geo: 2.867478e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 210      Time: 4.2      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.773349e-07
-melt surface: 2.872867e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.040824e-02
+melt_surface_geo: 2.872867e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 211      Time: 4.22     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.213804e-07
-melt surface: 2.877715e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.047726e-02
+melt_surface_geo: 2.877715e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 212      Time: 4.24     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.596028e-07
-melt surface: 2.886882e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.054548e-02
+melt_surface_geo: 2.886882e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 213      Time: 4.26     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.283078e-06
-melt surface: 2.894206e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.061205e-02
+melt_surface_geo: 2.894206e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 214      Time: 4.28     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.411850e-06
-melt surface: 2.896528e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.067941e-02
+melt_surface_geo: 2.896528e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 215      Time: 4.3      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.213118e-06
-melt surface: 2.898749e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.074688e-02
+melt_surface_geo: 2.898749e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 216      Time: 4.32     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 9.667263e-07
-melt surface: 2.903595e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.081434e-02
+melt_surface_geo: 2.903595e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 217      Time: 4.34     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 7.445560e-07
-melt surface: 2.911466e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.088176e-02
+melt_surface_geo: 2.911466e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 218      Time: 4.36     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 5.655321e-07
-melt surface: 2.918759e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.094914e-02
+melt_surface_geo: 2.918759e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 219      Time: 4.38     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.650754e-07
-melt surface: 2.928649e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.101640e-02
+melt_surface_geo: 2.928649e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 220      Time: 4.4      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.134009e-07
-melt surface: 2.938862e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.108356e-02
+melt_surface_geo: 2.938862e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 221      Time: 4.42     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.829564e-07
-melt surface: 2.947549e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.115061e-02
+melt_surface_geo: 2.947549e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 222      Time: 4.44     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.710237e-07
-melt surface: 2.955054e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.121759e-02
+melt_surface_geo: 2.955054e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 223      Time: 4.46     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.613786e-07
-melt surface: 2.961626e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.128448e-02
+melt_surface_geo: 2.961626e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 224      Time: 4.48     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.500400e-07
-melt surface: 2.967450e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.135129e-02
+melt_surface_geo: 2.967450e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 225      Time: 4.5      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.608381e-07
-melt surface: 2.972663e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.141802e-02
+melt_surface_geo: 2.972663e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 226      Time: 4.52     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.944800e-07
-melt surface: 2.977372e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.148467e-02
+melt_surface_geo: 2.977372e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 227      Time: 4.54     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.636468e-07
-melt surface: 2.985078e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.155082e-02
+melt_surface_geo: 2.985078e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 228      Time: 4.56     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.229124e-06
-melt surface: 2.993730e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.161506e-02
+melt_surface_geo: 2.993730e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 229      Time: 4.58     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.402852e-06
-melt surface: 2.996058e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.168015e-02
+melt_surface_geo: 2.996058e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 230      Time: 4.6      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.237378e-06
-melt surface: 2.998270e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.174537e-02
+melt_surface_geo: 2.998270e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 231      Time: 4.62     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.009568e-06
-melt surface: 3.001700e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.181059e-02
+melt_surface_geo: 3.001700e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 232      Time: 4.64     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 7.952233e-07
-melt surface: 3.009445e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.187577e-02
+melt_surface_geo: 3.009445e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 233      Time: 4.66     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 6.162944e-07
-melt surface: 3.016636e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.194091e-02
+melt_surface_geo: 3.016636e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 234      Time: 4.68     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.940990e-07
-melt surface: 3.024825e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.200599e-02
+melt_surface_geo: 3.024825e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 235      Time: 4.7      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.379318e-07
-melt surface: 3.035293e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.207093e-02
+melt_surface_geo: 3.035293e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 236      Time: 4.72     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.023873e-07
-melt surface: 3.044192e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.213579e-02
+melt_surface_geo: 3.044192e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 237      Time: 4.74     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.828192e-07
-melt surface: 3.051879e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.220057e-02
+melt_surface_geo: 3.051879e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 238      Time: 4.76     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.706316e-07
-melt surface: 3.058607e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.226527e-02
+melt_surface_geo: 3.058607e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 239      Time: 4.78     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.476094e-07
-melt surface: 3.064566e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.232989e-02
+melt_surface_geo: 3.064566e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 240      Time: 4.8      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.431579e-07
-melt surface: 3.069898e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.239444e-02
+melt_surface_geo: 3.069898e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 241      Time: 4.82     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.579880e-07
-melt surface: 3.074712e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.245892e-02
+melt_surface_geo: 3.074712e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 242      Time: 4.84     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 3.907938e-07
-melt surface: 3.079245e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.252332e-02
+melt_surface_geo: 3.079245e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 243      Time: 4.86     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.259993e-06
-melt surface: 3.092043e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.258533e-02
+melt_surface_geo: 3.092043e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 244      Time: 4.88     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.515754e-06
-melt surface: 3.094422e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.264830e-02
+melt_surface_geo: 3.094422e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 245      Time: 4.9      Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.394847e-06
-melt surface: 3.096639e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.271143e-02
+melt_surface_geo: 3.096639e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 246      Time: 4.92     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 1.172116e-06
-melt surface: 3.098824e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.277457e-02
+melt_surface_geo: 3.098824e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 247      Time: 4.94     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 9.487625e-07
-melt surface: 3.103559e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.283768e-02
+melt_surface_geo: 3.103559e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 248      Time: 4.96     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 7.526142e-07
-melt surface: 3.110922e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.290075e-02
+melt_surface_geo: 3.110922e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 249      Time: 4.98     Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 5.917295e-07
-melt surface: 3.117780e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.296379e-02
+melt_surface_geo: 3.117780e-02
+melt_contour_length_geo: 1.000000e-01
 
 *******************************************************************************
 Transient iteration: 250      Time: 5        Time step: 0.02     CFL: 0
 *******************************************************************************
 L2 error velocity: 0.000000e+00
 L2 error temperature : 4.899649e-07
-melt surface: 3.126296e-02
-melt contour length: 1.000000e-01
+melt_surface_alge: 3.302674e-02
+melt_surface_geo: 3.126296e-02
+melt_contour_length_geo: 1.000000e-01
  time  error_velocity 
 0.0200   0.000000e+00 
 0.0400   0.000000e+00 

@@ -6,7 +6,8 @@
 # This test checks that the phase change heat capacity model works correctly.
 # We simulate the Stefan Problem in a pseudo-1D domain where melting occurs from
 # conduction on the left side of the domain.
-# The melt volume post-processing is also tested here.
+# The melt volume post-processing is also tested here (both algebraic and
+# geometric).
 #-------------------------------------------------------------------------------
 
 # Listing of Parameters
@@ -129,7 +130,8 @@ end
 
 subsection post-processing
   set verbosity                         = verbose
-  set calculate melt volume             = true
+  set calculate geometric melt volume   = true
+  set calculate algebraic melt volume   = true
   set monitored fluid with phase change = fluid 1
   set melting temperature               = 0.02
 end

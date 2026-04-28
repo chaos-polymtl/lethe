@@ -81,11 +81,11 @@ This subsection controls the post-processing other than the forces and torque on
     set temperature statistics name       = temperature_statistics
     set calculate heat flux               = false
     set heat flux name                    = heat_flux
-    set calculate liquid fraction         = false
-    set liquid fraction name              = liquid_fraction
-    set calculate melt volume             = false
-    set melt volume name                  = melt_volume
     set monitored fluid with phase change = fluid 0
+    set calculate algebraic melt volume   = false
+    set algebraic melt volume name        = melt_volume_alge
+    set calculate geometric melt volume   = false
+    set geometric melt volume name        = melt_volume_geo
     set melting temperature               = 0
 
     # Multiphase postprocessing
@@ -258,23 +258,77 @@ This subsection controls the post-processing other than the forces and torque on
 		0.0000          0.0000               0.0000               0.0000            1000.0000 
 		1.0000         -0.9732               0.0000               1.4856               0.9732 
 
-* ``calculate liquid fraction``: calculates the liquid fraction in simulations with phase change. The liquid fraction corresponds to the volume (area) integral of the liquid divided by the volume (area) of the domain.
+* ``monitored fluid with phase change``:  fluid with phase change properties, either ``fluid 0`` or ``fluid 1`` (for CLS multiphase flows). The current implementation does not track two melt volumes simultaneously.
 
-  * ``liquid fraction name``: name of the output file containing the time evolution of the liquid fraction.
+* ``calculate algebraic melt volume``: calculates the algebraic melt volume in simulations with phase change. The algebraic melt volume (:math:`V_\mathrm{i,melt,alge}` with :math:`i \in \{0,1\}` depending on the fluid) corresponds to the volume (area, in 2D) integral of the liquid of the specified fluid (with ``monitored fluid with phase change``, by default: ``fluid 0``) in the domain.
 
-* ``calculate melt volume``: computes the melt volume (surface, in 2D) and contour area (length, in 2D) in simulations with phase change. The melt volume corresponds to the volume integral of the melted phase of the fluid with phase change. The melt region (:math:`\Omega_\mathrm{i,melt}` with :math:`i \in \{0,1\}` depending on the fluid) is characterized by temperatures above the fluid's melting temperature (:math:`T_\mathrm{melt}`):
+  * For single-phase flows:
 
-  .. math::
-    \Omega_\mathrm{0,melt} = \{\vec{x} \in \Omega_0 | T > T_\mathrm{melt} \}
+    .. math::
+      V_\mathrm{0,melt,alge} = \int_{\Omega_0} \alpha_\mathrm{0,liquid} \, \mathrm{d}\Omega
 
-  here, ``fluid 0`` is considered as a fluid a with phase change, hence the index :math:`0` and :math:`\Omega_0` corresponds to the subdomain occupied by fluid 0.
+    where :math:`\alpha_\mathrm{0,liquid} = \frac{T-T_\mathrm{0,solidus}}{T_\mathrm{0,liquidus} - T_\mathrm{0,solidus}}` is the liquid fraction of ``fluid 0`` with :math:`T_\mathrm{0,solidus}` and :math:`T_\mathrm{0,liquidus}` respectively the solidus and liquidus temperatures of ``fluid 0``, and :math:`T` is the temperature.
+
+  * For CLS flows:
+
+    .. warning::
+
+      This is compatible with CLS two-phase flows. However, only one of the two fluids can be a fluid identified with phase change using the parameter ``monitored fluid with phase change``.
+
+    * If ``fluid 0`` is monitored:
+
+      .. math::
+        V_\mathrm{0,melt,alge} = \int_{\Omega_0} (1-\phi) \, \alpha_\mathrm{0,liquid} \, \mathrm{d}\Omega
+
+    where :math:`\phi` is the phase indicator.
+
+
+    * If ``fluid 1`` is monitored:
+
+      .. math::
+        V_\mathrm{1,melt,alge} = \int_{\Omega_1} \phi \, \alpha_\mathrm{1,liquid} \, \mathrm{d}\Omega
+
+  * ``algebraic melt volume name``: name of the output file containing the time evolution of the algebraic melt volume.
+
+* ``calculate geometric melt volume``: computes the geometric melt volume (surface, in 2D) and contour area (length, in 2D) in simulations with phase change. The melt volume corresponds to the volume integral of the melted phase of the fluid with phase change. The geometric melt volume (:math:`V_\mathrm{i,melt,geo}` with :math:`i \in \{0,1\}` depending on the fluid) is characterized by temperatures above the fluid's melting temperature (:math:`T_\mathrm{melt}`).
+
+
+  * For single-phase flows:
+
+    .. math::
+      \Omega_\mathrm{0,melt,geo} = \{\vec{x} \in \Omega | T > T_\mathrm{melt} \}
+
+    here, ``fluid 0`` is considered as a fluid a with phase change, hence the index :math:`0`.
+
+    .. math::
+          V_\mathrm{0,melt,geo} = \int_{\Omega_\mathrm{0,melt,geo}} \mathrm{d}\Omega
+
+
+  * For CLS flows, a geometrical volume is computed delimited by the :math:`0.5` phase indicator isocontour:
 
   .. warning::
 
-    This is compatible with CLS two-phase flows. A geometrical volume is computed delimited by the :math:`0.5` phase indicator iso-curve. However, only one of the two fluids can be a fluid identified with phase change using the parameter ``monitored fluid with phase change``.
+    This is compatible with CLS two-phase flows. However, only one of the two fluids can be a fluid identified with phase change using the parameter ``monitored fluid with phase change``.
 
-  * ``melt volume name``: name of the output file containing the time evolution of the melt volume.
-  * ``monitored fluid with phase change``:  fluid with phase change properties, either ``fluid 0`` or ``fluid 1`` (for CLS multiphase flows). The current implementation does not track two melt volumes simultaneously.
+  * If ``fluid 0`` is monitored:
+
+    .. math::
+      \Omega_\mathrm{0,melt,geo} = \{\vec{x} \in \Omega| T > T_\mathrm{melt}, \, \phi < 0.5 \}
+
+    where :math:`\phi` is the phase indicator.
+
+    .. math::
+        V_\mathrm{0,melt,geo} = \int_{\Omega_\mathrm{0,melt,geo}} \mathrm{d}\Omega
+
+  * If ``fluid 1`` is monitored:
+
+    .. math::
+      \Omega_\mathrm{1,melt,geo} = \{\vec{x} \in \Omega | T > T_\mathrm{melt}, \, \phi > 0.5 \}
+
+    .. math::
+        V_\mathrm{1,melt,geo} = \int_{\Omega_\mathrm{1,melt,geo}} \mathrm{d}\Omega
+
+  * ``geometric melt volume name``: name of the output file containing the time evolution of the geometric melt volume.
   * ``melting temperature``: temperature in Kelvin above which the fluid is considered melted.
 
 * ``calculate barycenter``: calculates the barycenter of ``fluid 1`` and its velocity in CLS and Cahn-Hilliard simulations. The barycenter :math:`\mathbf{x}_b` and its velocity :math:`\mathbf{v}_b` are defined as:

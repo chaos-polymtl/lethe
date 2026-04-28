@@ -218,19 +218,20 @@ namespace InterfaceTools
    * @tparam dim An integer that denotes the dimension of the space in which
    * the problem is solved.
    *
-   * @tparam VectorType The vector type of the solution vector.
    * @param[in] dof_handler DofHandler associated to the triangulation on which
    * the volume is computed
    * @param[in] fe Finite element
+   * @param[in] level_set_vector_relevant_copy Level-set vector
    *
    * @return Surface area of the specified level and the volume enclosed by it.
    * The volume is the first value and the surface the second.
    */
   template <int dim, typename VectorType>
   std::pair<double, double>
-  integrate_volume_and_surface(const VectorType &level_set_vector_relevant_copy,
-                               const DoFHandler<dim>    &dof_handler,
-                               const FiniteElement<dim> &fe);
+  integrate_volume_and_surface(
+    const DoFHandler<dim>    &dof_handler,
+    const FiniteElement<dim> &fe,
+    const VectorType         &level_set_vector_relevant_copy);
 
   /**
    * @brief Overload of the function above. Here, the zero-contour of the level

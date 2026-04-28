@@ -23,8 +23,8 @@
 #include <deal.II/numerics/vector_tools.h>
 
 DeclExceptionMsg(
-  LiquidFractionRequiresPhaseChange,
-  "Calculation of the liquid fraction requires that a fluid has a phase_change specific heat model");
+  MeltVolumeRequiresPhaseChange,
+  "Calculation of the melt volume requires that a fluid has at least a 'phase_change' physical property model");
 
 template <int dim>
 void
@@ -1176,33 +1176,32 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
         this->write_heat_flux(domain_name);
     }
 
-  // Liquid fraction
-  if (simulation_parameters.post_processing.calculate_liquid_fraction)
+  // Algebraic melt volume
+  if (simulation_parameters.post_processing.calculate_algebraic_melt_volume)
     {
       AssertThrow(
         simulation_parameters.physical_properties_manager.has_phase_change(),
-        LiquidFractionRequiresPhaseChange());
-      postprocess_liquid_fraction();
+        MeltVolumeRequiresPhaseChange());
+      postprocess_algebraic_melt_volume();
 
       if (simulation_control->get_step_number() %
             this->simulation_parameters.post_processing.output_frequency ==
           0)
-        this->write_liquid_fraction();
+        this->write_algebraic_melt_volume();
     }
 
-  // Melt volume
-  if (simulation_parameters.post_processing.calculate_melt_volume)
+  // Geometric melt volume
+  if (simulation_parameters.post_processing.calculate_geometric_melt_volume)
     {
       AssertThrow(
         simulation_parameters.physical_properties_manager.has_phase_change(),
-        ExcMessage(
-          "Calculation of the melt volume requires that a fluid has at least a 'phase_change' physical property model"));
+        MeltVolumeRequiresPhaseChange());
       postprocess_geometric_melt_volume_and_surface();
 
       if (simulation_control->get_step_number() %
             this->simulation_parameters.post_processing.output_frequency ==
           0)
-        this->write_melt_volume();
+        this->write_geometric_melt_volume();
     }
 
   if (this->simulation_parameters.timer.type ==
@@ -1336,19 +1335,22 @@ HeatTransfer<dim>::gather_tables()
         this->simulation_parameters.post_processing.temperature_output_name +
         suffix);
 
-  if (this->simulation_parameters.post_processing.calculate_liquid_fraction)
+  if (this->simulation_parameters.post_processing
+        .calculate_algebraic_melt_volume)
     table_output_structs.emplace_back(
-      this->liquid_fraction_table,
+      this->melt_volume_alge_table,
       prefix +
         this->simulation_parameters.post_processing
-          .liquid_fraction_output_name +
+          .algebraic_melt_volume_output_name +
         suffix);
 
-  if (this->simulation_parameters.post_processing.calculate_melt_volume)
+  if (this->simulation_parameters.post_processing
+        .calculate_geometric_melt_volume)
     table_output_structs.emplace_back(
-      this->melt_volume_table,
+      this->melt_volume_geo_table,
       prefix +
-        this->simulation_parameters.post_processing.melt_volume_output_name +
+        this->simulation_parameters.post_processing
+          .geometric_melt_volume_output_name +
         suffix);
 
   return table_output_structs;
@@ -1988,7 +1990,7 @@ HeatTransfer<dim>::write_temperature_statistics(const std::string domain_name)
 
 template <int dim>
 void
-HeatTransfer<dim>::postprocess_liquid_fraction()
+HeatTransfer<dim>::postprocess_algebraic_melt_volume()
 {
   const unsigned int n_q_points   = this->cell_quadrature->size();
   const MPI_Comm mpi_communicator = this->dof_handler->get_mpi_communicator();
@@ -2027,7 +2029,6 @@ HeatTransfer<dim>::postprocess_liquid_fraction()
     }
 
   // Variables for the integration
-  double volume_integral(0.);
   double liquid_volume_integral(0.);
 
   // Calculate min, max and average
@@ -2068,14 +2069,13 @@ HeatTransfer<dim>::postprocess_liquid_fraction()
                                                 .fluids[0]
                                                 .phase_change_parameters) *
                     fe_values_ht.JxW(q);
-                  volume_integral += fe_values_ht.JxW(q);
                 }
               else
                 {
                   // Case of fluid 0 being a phase change
-                  if (physical_properties_parameters.fluids[0]
-                        .specific_heat_model ==
-                      Parameters::Material::SpecificHeatModel::phase_change)
+                  if (this->simulation_parameters.post_processing
+                        .monitored_fluid_with_phase_change ==
+                      Parameters::FluidIndicator::fluid0)
                     {
                       liquid_volume_integral +=
                         (1. - filtered_phase_values[q]) *
@@ -2084,14 +2084,12 @@ HeatTransfer<dim>::postprocess_liquid_fraction()
                                                     .fluids[0]
                                                     .phase_change_parameters) *
                         fe_values_ht.JxW(q);
-                      volume_integral +=
-                        (1. - filtered_phase_values[q]) * fe_values_ht.JxW(q);
                     }
 
                   // Case of fluid 1 being a phase change
-                  if (physical_properties_parameters.fluids[1]
-                        .specific_heat_model ==
-                      Parameters::Material::SpecificHeatModel::phase_change)
+                  if (this->simulation_parameters.post_processing
+                        .monitored_fluid_with_phase_change ==
+                      Parameters::FluidIndicator::fluid1)
                     {
                       liquid_volume_integral +=
                         (filtered_phase_values[q]) *
@@ -2100,38 +2098,47 @@ HeatTransfer<dim>::postprocess_liquid_fraction()
                                                     .fluids[1]
                                                     .phase_change_parameters) *
                         fe_values_ht.JxW(q);
-                      volume_integral +=
-                        (filtered_phase_values[q]) * fe_values_ht.JxW(q);
                     }
                 }
             } // end loop on quadrature points
         }
     } // end loop on cell
 
-  volume_integral = Utilities::MPI::sum(volume_integral, mpi_communicator);
   liquid_volume_integral =
     Utilities::MPI::sum(liquid_volume_integral, mpi_communicator);
-  const double liquid_fraction = liquid_volume_integral / volume_integral;
+
+  // Initialize table column names
+  std::string melt_volume_column_name;
+  if constexpr (dim == 2)
+    {
+      melt_volume_column_name = "melt_surface_alge";
+    }
+  else if constexpr (dim == 3)
+    {
+      melt_volume_column_name = "melt_volume_alge";
+    }
 
   // Console output
   if (simulation_parameters.post_processing.verbosity ==
       Parameters::Verbosity::verbose)
     {
-      this->pcout << "Liquid fraction"
-                  << ": " << liquid_fraction << std::endl;
+      this->pcout << melt_volume_column_name << ": " << liquid_volume_integral
+                  << std::endl;
     }
 
   // Fill table
-  this->liquid_fraction_table.add_value(
+  this->melt_volume_alge_table.add_value(
     "time", this->simulation_control->get_current_time());
-  this->liquid_fraction_table.set_scientific("time", true);
-  this->liquid_fraction_table.add_value("liquid fraction", liquid_fraction);
-  this->liquid_fraction_table.set_scientific("liquid fraction", true);
+  this->melt_volume_alge_table.set_scientific("time", true);
+  this->melt_volume_alge_table.add_value(melt_volume_column_name,
+                                         liquid_volume_integral);
+  this->melt_volume_alge_table.set_precision(melt_volume_column_name, 8);
+  this->melt_volume_alge_table.set_scientific(melt_volume_column_name, true);
 }
 
 template <int dim>
 void
-HeatTransfer<dim>::write_liquid_fraction()
+HeatTransfer<dim>::write_algebraic_melt_volume()
 {
   auto mpi_communicator = triangulation->get_mpi_communicator();
 
@@ -2139,11 +2146,12 @@ HeatTransfer<dim>::write_liquid_fraction()
     {
       std::string filename =
         simulation_parameters.simulation_control.output_folder +
-        simulation_parameters.post_processing.liquid_fraction_output_name +
+        simulation_parameters.post_processing
+          .algebraic_melt_volume_output_name +
         ".dat";
       std::ofstream output(filename.c_str());
 
-      this->liquid_fraction_table.write_text(output);
+      this->melt_volume_alge_table.write_text(output);
     }
 }
 
@@ -2234,20 +2242,20 @@ HeatTransfer<dim>::postprocess_geometric_melt_volume_and_surface()
   // Compute volume and surface integral
   std::tie(melt_volume, melt_surface) =
     InterfaceTools::integrate_volume_and_surface(
-      melt_indicator_vector_relevant_copy, *this->dof_handler, *this->fe);
+      *this->dof_handler, *this->fe, melt_indicator_vector_relevant_copy);
 
   // Initialize table column names
   std::string melt_volume_column_name;
   std::string melt_contour_column_name;
   if constexpr (dim == 2)
     {
-      melt_volume_column_name  = "melt surface";
-      melt_contour_column_name = "melt contour length";
+      melt_volume_column_name  = "melt_surface_geo";
+      melt_contour_column_name = "melt_contour_length_geo";
     }
   else if constexpr (dim == 3)
     {
-      melt_volume_column_name  = "melt volume";
-      melt_contour_column_name = "melt contour surface";
+      melt_volume_column_name  = "melt_volume_geo";
+      melt_contour_column_name = "melt_contour_surface_geo";
     }
 
   // Console output
@@ -2261,20 +2269,20 @@ HeatTransfer<dim>::postprocess_geometric_melt_volume_and_surface()
     }
 
   // Fill table
-  this->melt_volume_table.add_value(
+  this->melt_volume_geo_table.add_value(
     "time", this->simulation_control->get_current_time());
-  this->melt_volume_table.set_scientific("time", true);
-  this->melt_volume_table.add_value(melt_volume_column_name, melt_volume);
-  this->melt_volume_table.set_precision(melt_volume_column_name, 8);
-  this->melt_volume_table.set_scientific(melt_volume_column_name, true);
-  this->melt_volume_table.add_value(melt_contour_column_name, melt_surface);
-  this->melt_volume_table.set_precision(melt_contour_column_name, 8);
-  this->melt_volume_table.set_scientific(melt_contour_column_name, true);
+  this->melt_volume_geo_table.set_scientific("time", true);
+  this->melt_volume_geo_table.add_value(melt_volume_column_name, melt_volume);
+  this->melt_volume_geo_table.set_precision(melt_volume_column_name, 8);
+  this->melt_volume_geo_table.set_scientific(melt_volume_column_name, true);
+  this->melt_volume_geo_table.add_value(melt_contour_column_name, melt_surface);
+  this->melt_volume_geo_table.set_precision(melt_contour_column_name, 8);
+  this->melt_volume_geo_table.set_scientific(melt_contour_column_name, true);
 }
 
 template <int dim>
 void
-HeatTransfer<dim>::write_melt_volume()
+HeatTransfer<dim>::write_geometric_melt_volume()
 {
   auto mpi_communicator = triangulation->get_mpi_communicator();
 
@@ -2282,10 +2290,12 @@ HeatTransfer<dim>::write_melt_volume()
     {
       std::string filename =
         simulation_parameters.simulation_control.output_folder +
-        simulation_parameters.post_processing.melt_volume_output_name + ".dat";
+        simulation_parameters.post_processing
+          .geometric_melt_volume_output_name +
+        ".dat";
       std::ofstream output(filename.c_str());
 
-      this->melt_volume_table.write_text(output);
+      this->melt_volume_geo_table.write_text(output);
     }
 }
 

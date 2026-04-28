@@ -24,7 +24,7 @@ test()
 {
   /* This test checks the computation of the surface area of the level 0.1 of
   a level-set field and the volume enclosed by it using the
-  InterfaceTools::compute_volume_and_surface function. The level-set field of
+  InterfaceTools::integrate_volume_and_surface function. The level-set field of
   interest is the one describing a sphere. The surface and volume are computed
   for 3 mesh refinements and the test checks the error on these metrics and the
   convergence rate of the method (formally 2).
@@ -77,10 +77,24 @@ test()
 
       // Compute the surface and volume of the sphere with the NonMatching
       // FEValues
-      double volume, surface;
+      double volume_0, surface_0;
 
-      std::tie(volume, surface) = InterfaceTools::integrate_volume_and_surface(
-        dof_handler, fe, signed_distance, iso_level);
+      std::tie(volume_0, surface_0) =
+        InterfaceTools::integrate_volume_and_surface(dof_handler,
+                                                     fe,
+                                                     signed_distance,
+                                                     iso_level);
+
+      // Check other overload form of
+      // InterfaceTools::integrate_volume_and_surface
+      double volume_1, surface_1;
+      tmp_signed_distance.add(-iso_level);
+      signed_distance = tmp_signed_distance;
+
+      std::tie(volume_1, surface_1) =
+        InterfaceTools::integrate_volume_and_surface(dof_handler,
+                                                     fe,
+                                                     signed_distance);
 
       // Analytical surface and volume
       const double analytical_surface =
@@ -92,17 +106,27 @@ test()
       error_table.add_value("ref. level", n + 3);
       error_table.add_value("cells", triangulation.n_global_active_cells());
       error_table.add_value("dofs", dof_handler.n_dofs());
-      error_table.add_value("error_surface", abs(analytical_surface - surface));
-      error_table.add_value("error_volume", abs(analytical_volume - volume));
+      error_table.add_value("error_surface_0",
+                            abs(analytical_surface - surface_0));
+      error_table.add_value("error_volume_0",
+                            abs(analytical_volume - volume_0));
+      error_table.add_value("error_surface_1",
+                            abs(analytical_surface - surface_1));
+      error_table.add_value("error_volume_1",
+                            abs(analytical_volume - volume_1));
 
       triangulation.refine_global(1);
     }
 
-  error_table.set_precision("error_surface", 3);
-  error_table.set_precision("error_volume", 3);
+  error_table.set_precision("error_surface_0", 3);
+  error_table.set_precision("error_volume_0", 3);
+  error_table.set_precision("error_surface_1", 3);
+  error_table.set_precision("error_volume_1", 3);
 
-  error_table.set_scientific("error_surface", true);
-  error_table.set_scientific("error_volume", true);
+  error_table.set_scientific("error_surface_0", true);
+  error_table.set_scientific("error_volume_0", true);
+  error_table.set_scientific("error_surface_1", true);
+  error_table.set_scientific("error_volume_1", true);
 
   error_table.omit_column_from_convergence_rate_evaluation("ref. level");
   error_table.omit_column_from_convergence_rate_evaluation("cells");

@@ -66,9 +66,9 @@ InterfaceTools::compute_cell_wise_volume(
 template <int dim, typename VectorType>
 std::pair<double, double>
 InterfaceTools::integrate_volume_and_surface(
-  const VectorType         &level_set_vector_relevant_copy,
   const DoFHandler<dim>    &dof_handler,
-  const FiniteElement<dim> &fe)
+  const FiniteElement<dim> &fe,
+  const VectorType         &level_set_vector_relevant_copy)
 {
   // Get MPI communicator
   const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
@@ -130,15 +130,15 @@ InterfaceTools::integrate_volume_and_surface(
 
 template std::pair<double, double>
 InterfaceTools::integrate_volume_and_surface(
-  const GlobalVectorType &level_set_vector,
   const DoFHandler<2>    &dof_handler,
-  const FiniteElement<2> &fe);
+  const FiniteElement<2> &fe,
+  const GlobalVectorType &level_set_vector_relevant_copy);
 
 template std::pair<double, double>
 InterfaceTools::integrate_volume_and_surface(
-  const GlobalVectorType &level_set_vector,
   const DoFHandler<3>    &dof_handler,
-  const FiniteElement<3> &fe);
+  const FiniteElement<3> &fe,
+  const GlobalVectorType &level_set_vector_relevant_copy);
 
 template <int dim, typename VectorType>
 std::pair<double, double>
@@ -164,9 +164,9 @@ InterfaceTools::integrate_volume_and_surface(const DoFHandler<dim> &dof_handler,
 
   level_set_vector_relevant_copy = level_set_vector_owned_copy;
 
-  return integrate_volume_and_surface(level_set_vector_relevant_copy,
-                                      dof_handler,
-                                      fe);
+  return integrate_volume_and_surface(dof_handler,
+                                      fe,
+                                      level_set_vector_relevant_copy);
 }
 
 template std::pair<double, double>
