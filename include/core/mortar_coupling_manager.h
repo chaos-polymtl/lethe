@@ -296,7 +296,7 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
 template <int dim>
 double
 compute_minimum_height(const Triangulation<dim>      &triangulation,
-                   const Parameters::Mortar<dim> &mortar_parameters);
+                       const Parameters::Mortar<dim> &mortar_parameters);
 
 /**
  * @brief Compute workload imbalance of mortar cells
@@ -340,7 +340,7 @@ public:
                       double                  radius,
                       const Quadrature<dim2> &quadrature,
                       const double            rotation_angle,
-                      const double            minimum_height         = 0.0,
+                      const double            minimum_height     = 0.0,
                       const Point<dim>       &center_of_rotation = Point<dim>(),
                       const double            pre_rotation_angle = 0.0);
 
@@ -366,8 +366,8 @@ public:
                       const Quadrature<dim2>   &quadrature,
                       const double              rotation_angle,
                       const double              minimum_height = 0.0,
-                      const Point<dim> &center_of_rotation = Point<dim>(),
-                      const double      pre_rotation_angle = 0.0);
+                      const Point<dim> &center_of_rotation     = Point<dim>(),
+                      const double      pre_rotation_angle     = 0.0);
 
   /**
    * @brief Class constructor for circular interface used within the Navier-Stokes
@@ -529,7 +529,8 @@ MortarManagerCircle<dim>::MortarManagerCircle(
                                               mortar_parameters)),
       construct_quadrature(quadrature, mortar_parameters),
       mortar_parameters.rotor_rotation_angle->value(Point<dim>()),
-      compute_minimum_height(dof_handler.get_triangulation(), mortar_parameters),
+      compute_minimum_height(dof_handler.get_triangulation(),
+                             mortar_parameters),
       mortar_parameters.center_of_rotation,
       std::get<1>(
         compute_interface_dimensions_circular(dof_handler.get_triangulation(),
@@ -558,7 +559,8 @@ MortarManagerLinear<dim>::MortarManagerLinear(
         (2.0 * numbers::PI),
       quadrature,
       0.0,
-      compute_minimum_height(dof_handler.get_triangulation(), mortar_parameters))
+      compute_minimum_height(dof_handler.get_triangulation(),
+                             mortar_parameters))
 {
   std::tie(this->coord_min, this->coord_max) =
     compute_interface_dimensions_linear(dof_handler.get_triangulation(),

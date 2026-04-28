@@ -785,20 +785,22 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
 template <int dim>
 double
 compute_minimum_height(const Triangulation<dim>      &triangulation,
-                   const Parameters::Mortar<dim> &mortar_parameters)
+                       const Parameters::Mortar<dim> &mortar_parameters)
 {
   if constexpr (dim == 3)
     {
       // Direction of the rotation axis
-      unsigned int direction = 0;
-      Tensor<1, dim> axis = mortar_parameters.rotation_axis;
+      unsigned int   direction = 0;
+      Tensor<1, dim> axis      = mortar_parameters.rotation_axis;
       for (unsigned int d = 1; d < dim; ++d)
         if (std::abs(axis[d]) > std::abs(axis[direction]))
           direction = d;
-       
-      AssertThrow(std::abs(axis[direction]) > 0.99,
-       ExcMessage("Rotation axis is not aligned with a coordinate direction."));
-       
+
+      AssertThrow(
+        std::abs(axis[direction]) > 0.99,
+        ExcMessage(
+          "Rotation axis is not aligned with a coordinate direction."));
+
       // Minimum coordinate in the direction of the rotation axis
       double minimum_height_local = std::numeric_limits<double>::max();
 
@@ -2154,11 +2156,11 @@ construct_quadrature(const Quadrature<3>         &quadrature,
 
 template double
 compute_minimum_height<2>(const Triangulation<2>      &triangulation,
-                      const Parameters::Mortar<2> &mortar_parameters);
+                          const Parameters::Mortar<2> &mortar_parameters);
 
 template double
 compute_minimum_height<3>(const Triangulation<3>      &triangulation,
-                      const Parameters::Mortar<3> &mortar_parameters);
+                          const Parameters::Mortar<3> &mortar_parameters);
 
 template void
 mortar_workload_imbalance(const Triangulation<2>      &triangulation,

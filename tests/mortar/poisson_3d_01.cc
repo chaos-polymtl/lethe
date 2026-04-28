@@ -98,9 +98,9 @@ main(int argc, char **argv)
                                      dof_handler,
                                      constraints,
                                      quadrature);
-  
-  // Minimum height is obtained from the minimum cell center height at the 
-  // mortar interface along the rotation axis. Since the cell height is constant 
+
+  // Minimum height is obtained from the minimum cell center height at the
+  // mortar interface along the rotation axis. Since the cell height is constant
   // in this case, we obtain it from half of the domain height divided by the
   // number of refinements in the rotation axis direction.
   const auto mortar_manager = std::make_shared<MyMortarManagerCircle<dim>>(
