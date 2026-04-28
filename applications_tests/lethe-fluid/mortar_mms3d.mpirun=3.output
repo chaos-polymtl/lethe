@@ -1,0 +1,50 @@
+Running on 3 MPI rank(s)...
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    1.670000e-01 rad 
+Rotor grid velocity: 0.000000e+00 rad/time 
+
+   Number of active cells:       18
+   Number of degrees of freedom: 246
+   Volume of triangulation:      8.000000e+00
+
+*****************************
+Steady iteration:        1/3
+*****************************
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    1.670000e-01 rad 
+Rotor grid velocity: 0.000000e+00 rad/time 
+
+
+*****************************
+Steady iteration:        2/3
+*****************************
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    1.670000e-01 rad 
+Rotor grid velocity: 0.000000e+00 rad/time 
+
+   Number of active cells:       144
+   Number of degrees of freedom: 1412
+   Volume of triangulation:      8.000000e+00
+
+*****************************
+Steady iteration:        3/3
+*****************************
+-----------------
+Mortar Interface
+-----------------
+Rotor grid angle:    1.670000e-01 rad 
+Rotor grid velocity: 0.000000e+00 rad/time 
+
+   Number of active cells:       1152
+   Number of degrees of freedom: 9540
+   Volume of triangulation:      8.000000e+00
+cells  error_velocity    error_pressure   
+   18 5.416881e-01    - 6.682774e+00    - 
+  144 4.152072e-01 0.38 2.915281e+00 1.20 
+ 1152 1.769766e-01 1.23 1.007928e+00 1.53 

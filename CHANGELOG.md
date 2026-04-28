@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/04/28
+
+### Added
+
+- MINOR Added application test (MMS case) for 3D mortar implementation. [#1976](https://github.com/chaos-polymtl/lethe/pull/1976)
+
 ## [Master] - 2026/04/22
 
 ### Added
