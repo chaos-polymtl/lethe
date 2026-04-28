@@ -749,71 +749,71 @@ private:
 };
 
 
-template <int dim>
-class NavierStokesAssemblerALE : public NavierStokesAssemblerBase<dim>
-{
-public:
-  NavierStokesAssemblerALE(
-    const std::shared_ptr<SimulationControl> &simulation_control,
-    const Parameters::ALE<dim>               &ale)
-    : simulation_control(simulation_control)
-    , ale(ale)
-  {}
+// template <int dim>
+// class NavierStokesAssemblerALE : public NavierStokesAssemblerBase<dim>
+// {
+// public:
+//   NavierStokesAssemblerALE(
+//     const std::shared_ptr<SimulationControl> &simulation_control,
+//     const Parameters::ALE<dim>               &ale)
+//     : simulation_control(simulation_control)
+//     , ale(ale)
+//   {}
 
-  /**
-   * @brief assemble_matrix Assembles the matrix
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
-   */
-  virtual void
-  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
-                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+//   /**
+//    * @brief assemble_matrix Assembles the matrix
+//    * @param scratch_data (see base class)
+//    * @param copy_data (see base class)
+//    */
+//   virtual void
+//   assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
+//                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  /**
-   * @brief assemble_rhs Assembles the rhs
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
-   */
-  virtual void
-  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
-               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+//   /**
+//    * @brief assemble_rhs Assembles the rhs
+//    * @param scratch_data (see base class)
+//    * @param copy_data (see base class)
+//    */
+//   virtual void
+//   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
+//                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  const std::shared_ptr<SimulationControl> simulation_control;
-  const Parameters::ALE<dim>              &ale;
-};
+//   const std::shared_ptr<SimulationControl> simulation_control;
+//   const Parameters::ALE<dim>              &ale;
+// };
 
 
-template <int dim>
-class NavierStokesAssemblerMortarALE : public NavierStokesAssemblerBase<dim>
-{
-public:
-  NavierStokesAssemblerMortarALE(
-    const std::shared_ptr<SimulationControl> &simulation_control,
-    const Parameters::Mortar<dim>            &mortar_parameters)
-    : simulation_control(simulation_control)
-    , mortar_parameters(mortar_parameters)
-  {}
+// template <int dim>
+// class NavierStokesAssemblerMortarALE : public NavierStokesAssemblerBase<dim>
+// {
+// public:
+//   NavierStokesAssemblerMortarALE(
+//     const std::shared_ptr<SimulationControl> &simulation_control,
+//     const Parameters::Mortar<dim>            &mortar_parameters)
+//     : simulation_control(simulation_control)
+//     , mortar_parameters(mortar_parameters)
+//   {}
 
-  /**
-   * @brief assemble_matrix Assembles the matrix
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
-   */
-  virtual void
-  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
-                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+//   /**
+//    * @brief assemble_matrix Assembles the matrix
+//    * @param scratch_data (see base class)
+//    * @param copy_data (see base class)
+//    */
+//   virtual void
+//   assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
+//                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  /**
-   * @brief assemble_rhs Assembles the rhs
-   * @param scratch_data (see base class)
-   * @param copy_data (see base class)
-   */
-  virtual void
-  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
-               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+//   /**
+//    * @brief assemble_rhs Assembles the rhs
+//    * @param scratch_data (see base class)
+//    * @param copy_data (see base class)
+//    */
+//   virtual void
+//   assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
+//                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-  const std::shared_ptr<SimulationControl> simulation_control;
-  const Parameters::Mortar<dim>           &mortar_parameters;
-};
+//   const std::shared_ptr<SimulationControl> simulation_control;
+//   const Parameters::Mortar<dim>           &mortar_parameters;
+// };
 
 #endif

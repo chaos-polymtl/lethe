@@ -38,7 +38,7 @@ NavierStokesScratchData<dim>::allocate()
   this->velocity_hessians            = std::vector<Tensor<3, dim>>(n_q_points);
   this->velocity_gradient_divergence = std::vector<Tensor<1, dim>>(n_q_points);
   this->shear_rate                   = std::vector<double>(n_q_points);
-  this->velocity_for_stabilization   = std::vector<Tensor<1, dim>>(n_q_points);
+  this->convective_velocity          = std::vector<Tensor<1, dim>>(n_q_points);
 
   // For SDIRK method: sum(a_ij * k_j)
   if (this->simulation_control->is_sdirk())
@@ -401,6 +401,36 @@ NavierStokesScratchData<dim>::enable_particle_fluid_interactions(
 
 template <int dim>
 void
+NavierStokesScratchData<dim>::enable_ale()
+{
+  gather_ale = true;
+}
+
+template <int dim>
+void
+NavierStokesScratchData<dim>::reinit_ale(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  const Parameters::ALE<dim>                           &ale)
+{
+  Tensor<1, dim>                                  velocity_ale;
+  std::shared_ptr<Functions::ParsedFunction<dim>> velocity_ale_function =
+    ale.velocity;
+  Vector<double> velocity_ale_vector(dim);
+
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      velocity_ale_function->vector_value(quadrature_points[q],
+                                          velocity_ale_vector);
+      for (int d = 0; d < dim; ++d)
+        velocity_ale[d] = velocity_ale_vector[d];
+
+      // Add u_ale into the convective velocity term
+      this->convective_velocity[q] -= velocity_ale;
+    }
+}
+
+template <int dim>
+void
 NavierStokesScratchData<dim>::enable_mortar()
 {
   gather_mortar = true;
@@ -445,8 +475,8 @@ NavierStokesScratchData<dim>::reinit_mortar(
         LetheGridTools::angular_to_linear_velocity(
           omega, p, mortar_parameters.rotation_axis);
 
-      // Update velocity for stabilization
-      this->velocity_for_stabilization[q] -= rotor_linear_velocity_values[q];
+      // Add u_ale into the convective velocity term
+      this->convective_velocity[q] -= rotor_linear_velocity_values[q];
     }
 }
 

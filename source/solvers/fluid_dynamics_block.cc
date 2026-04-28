@@ -69,12 +69,12 @@ FluidDynamicsBlock<dim>::setup_assemblers()
     }
 
   // ALE
-  if (this->simulation_parameters.ale.enabled())
-    {
-      this->assemblers.emplace_back(
-        std::make_shared<NavierStokesAssemblerALE<dim>>(
-          this->simulation_control, this->simulation_parameters.ale));
-    }
+  // if (this->simulation_parameters.ale.enabled())
+  //   {
+  //     this->assemblers.emplace_back(
+  //       std::make_shared<NavierStokesAssemblerALE<dim>>(
+  //         this->simulation_control, this->simulation_parameters.ale));
+  //   }
 
   if (this->simulation_parameters.multiphysics.CLS)
     {

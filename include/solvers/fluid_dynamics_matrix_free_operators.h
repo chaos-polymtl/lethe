@@ -833,11 +833,11 @@ protected:
 
   /**
    * @brief Table with correct alignment for vectorization to store the values
-   * of the velocity used to compute the stabilization term.
+   * of the velocity within the convective term. If ALE is enabled, this term is
+   * given by u - u_ALE. Otherwise, it returns the regular velocity tensor.
    *
    */
-  Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>
-    velocity_for_stabilization;
+  Table<2, Tensor<1, dim + 1, VectorizedArray<number>>> convective_velocity;
 
   /**
    * @brief Table with correct alignment for vectorization to store the values

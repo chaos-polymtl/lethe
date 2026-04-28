@@ -4,6 +4,7 @@
 #ifndef lethe_navier_stokes_scratch_data_h
 #define lethe_navier_stokes_scratch_data_h
 
+#include <core/ale.h>
 #include "core/parameters_cfd_dem.h"
 #include <core/bdf.h>
 #include <core/dem_properties.h>
@@ -121,6 +122,7 @@ public:
     gather_particles_information              = false;
     gather_temperature                        = false;
     gather_cahn_hilliard                      = false;
+    gather_ale                                = false;
     gather_mortar                             = false;
     gather_particle_field_project             = false;
     gather_hessian = properties_manager.is_non_newtonian();
@@ -162,6 +164,7 @@ public:
     gather_particles_information              = false;
     gather_temperature                        = false;
     gather_cahn_hilliard                      = false;
+    gather_ale                                = false;
     gather_mortar                             = false;
     gather_particle_field_project             = false;
     gather_hessian = properties_manager.is_non_newtonian();
@@ -197,6 +200,8 @@ public:
                            sd.fe_values_cahn_hilliard->get_quadrature(),
                            sd.fe_values_cahn_hilliard->get_mapping(),
                            sd.cahn_hilliard_filter);
+    if (sd.gather_ale)
+      enable_ale();
     if (sd.gather_mortar)
       enable_mortar();
 
@@ -307,10 +312,10 @@ public:
       this->fe_values[velocities].get_function_hessians(
         current_solution, this->velocity_hessians);
 
-    // Gather velocity for stabilization (same as velocity_values unless ALE is
+    // Gather convective velocity (same as velocity_values unless ALE is
     // enabled. The ALE correction is made within the correponding reinit
     // function)
-    this->velocity_for_stabilization = this->velocity_values;
+    this->convective_velocity = this->velocity_values;
 
     for (unsigned int q = 0; q < this->n_q_points; ++q)
       {
@@ -1331,7 +1336,26 @@ public:
   }
 
   /**
-   * @brief enable_mortar Enables the calculation of the rotor rotation angle
+   * @brief enable_ale Enables the calculation of the ALE velocity
+   */
+  void
+  enable_ale();
+
+  /**
+   * @brief Renitialize the content of the scratch data for ALE
+   *
+   * @param[in] cell The cell over which the assembly is being carried.
+   * This cell must be compatible with the FE which is used to fill the
+   * FeValues.
+   *
+   * @param[in] ale ALE parameters
+   */
+  void
+  reinit_ale(const typename DoFHandler<dim>::active_cell_iterator &cell,
+             const Parameters::ALE<dim>                           &ale);
+
+  /**
+   * @brief enable_mortar Enables the calculation of ALE velocity within the mortar feature
    */
   void
   enable_mortar();
@@ -1531,7 +1555,7 @@ public:
   std::vector<Tensor<3, dim>> velocity_hessians;
   std::vector<Tensor<1, dim>> velocity_gradient_divergence;
   // The gradient of the velocity divergence
-  std::vector<Tensor<1, dim>>              velocity_for_stabilization;
+  std::vector<Tensor<1, dim>>              convective_velocity;
   std::vector<double>                      shear_rate;
   std::vector<double>                      pressure_values;
   std::vector<Tensor<1, dim>>              pressure_gradients;
@@ -1659,7 +1683,12 @@ public:
   FEValuesExtractors::Scalar     chemical_potential;
 
   /**
-   * Scratch component for the mortar method
+   * Scratch component for the ALE method
+   */
+  bool gather_ale;
+
+  /**
+   * Scratch components for the mortar method
    */
   bool                        gather_mortar;
   std::vector<Tensor<1, dim>> rotor_linear_velocity_values;
