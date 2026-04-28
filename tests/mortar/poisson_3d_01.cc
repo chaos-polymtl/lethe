@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -99,12 +99,17 @@ main(int argc, char **argv)
                                      constraints,
                                      quadrature);
 
+  // Minimum height is obtained from the minimum cell center height at the
+  // mortar interface along the rotation axis. Since the cell height is constant
+  // in this case, we obtain it from half of the domain height divided by the
+  // number of refinements in the rotation axis direction.
   const auto mortar_manager = std::make_shared<MyMortarManagerCircle<dim>>(
     std::vector<unsigned int>{6 * Utilities::pow(2, n_global_refinements),
                               2 * Utilities::pow(2, n_global_refinements)},
     std::vector<double>{0.5 * radius, radius},
     construct_quadrature(quadrature),
-    0.0);
+    0.0,
+    radius / (2 * Utilities::pow(2, n_global_refinements)) * 0.5);
 
   op.add_coupling(mortar_manager, 1, 2);
 

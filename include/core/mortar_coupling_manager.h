@@ -39,7 +39,8 @@ public:
   MortarManagerBase(unsigned int            n_subdivisions,
                     double                  radius,
                     const Quadrature<dim2> &quadrature,
-                    const double            rotation_angle);
+                    const double            rotation_angle,
+                    const double            minimum_height = 0.0);
 
   /**
    * @brief Mortar manager base constructor used in 3D problems
@@ -56,7 +57,8 @@ public:
   MortarManagerBase(const std::vector<unsigned int> &n_subdivisions,
                     const std::vector<double>       &radius,
                     const Quadrature<dim2>          &quadrature,
-                    const double                     rotation_angle);
+                    const double                     rotation_angle,
+                    const double                     minimum_height = 0.0);
 
   /**
    * @brief Default destructor
@@ -211,6 +213,9 @@ protected:
   const unsigned int n_quadrature_points;
   /// Rotation angle for the inner domain
   const double rotation_angle;
+  /// Minimum cell center height at the mortar interface along the rotation axis
+  /// value in 3D problems
+  const double minimum_height;
 };
 
 /**
@@ -279,6 +284,21 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
                      const Parameters::Mortar<dim> &mortar_parameters);
 
 /**
+ * @brief Computes the minimum cell center height in the direction of the
+ * rotation axis at the mortar interface
+ * @param[in] triangulation The triangulation object
+ * @param[in] mortar_parameters The information about the mortar method
+ * control, including the rotor mesh parameters
+ *
+ * @return Minimum cell height in the rotation axis direction. At the moment,
+ * it is assumed that the rotation axis is in z
+ */
+template <int dim>
+double
+compute_minimum_height(const Triangulation<dim>      &triangulation,
+                       const Parameters::Mortar<dim> &mortar_parameters);
+
+/**
  * @brief Compute workload imbalance of mortar cells
  *
  * @param[in] triangulation The triangulation object
@@ -320,6 +340,7 @@ public:
                       double                  radius,
                       const Quadrature<dim2> &quadrature,
                       const double            rotation_angle,
+                      const double            minimum_height     = 0.0,
                       const Point<dim>       &center_of_rotation = Point<dim>(),
                       const double            pre_rotation_angle = 0.0);
 
@@ -344,8 +365,9 @@ public:
                       std::vector<double>       radius,
                       const Quadrature<dim2>   &quadrature,
                       const double              rotation_angle,
-                      const Point<dim> &center_of_rotation = Point<dim>(),
-                      const double      pre_rotation_angle = 0.0);
+                      const double              minimum_height = 0.0,
+                      const Point<dim> &center_of_rotation     = Point<dim>(),
+                      const double      pre_rotation_angle     = 0.0);
 
   /**
    * @brief Class constructor for circular interface used within the Navier-Stokes
@@ -425,11 +447,13 @@ template <int dim2>
 MortarManagerBase<dim>::MortarManagerBase(unsigned int n_subdivisions,
                                           double       radius,
                                           const Quadrature<dim2> &quadrature_in,
-                                          const double rotation_angle)
+                                          const double rotation_angle,
+                                          const double minimum_height)
   : MortarManagerBase(std::vector<unsigned int>{n_subdivisions, 1},
                       std::vector<double>{radius, 1.0},
                       quadrature_in,
-                      rotation_angle)
+                      rotation_angle,
+                      minimum_height)
 {}
 
 
@@ -439,12 +463,14 @@ MortarManagerBase<dim>::MortarManagerBase(
   const std::vector<unsigned int> &n_subdivisions,
   const std::vector<double>       &radius,
   const Quadrature<dim2>          &quadrature_in,
-  const double                     rotation_angle)
+  const double                     rotation_angle,
+  const double                     minimum_height)
   : n_subdivisions(n_subdivisions)
   , radius(radius)
   , quadrature(quadrature_in.get_tensor_basis()[0])
   , n_quadrature_points(quadrature.size())
   , rotation_angle(rotation_angle)
+  , minimum_height(minimum_height)
 {}
 
 
@@ -455,9 +481,14 @@ MortarManagerCircle<dim>::MortarManagerCircle(
   double                  radius,
   const Quadrature<dim2> &quadrature,
   const double            rotation_angle,
+  const double            minimum_height,
   const Point<dim>       &center_of_rotation,
   const double            pre_rotation_angle)
-  : MortarManagerBase<dim>(n_subdivisions, radius, quadrature, rotation_angle)
+  : MortarManagerBase<dim>(n_subdivisions,
+                           radius,
+                           quadrature,
+                           rotation_angle,
+                           minimum_height)
   , pre_rotation_angle(pre_rotation_angle)
   , center_of_rotation(center_of_rotation)
 {}
@@ -469,9 +500,14 @@ MortarManagerCircle<dim>::MortarManagerCircle(
   std::vector<double>       radius,
   const Quadrature<dim2>   &quadrature,
   const double              rotation_angle,
+  const double              minimum_height,
   const Point<dim>         &center_of_rotation,
   const double              pre_rotation_angle)
-  : MortarManagerBase<dim>(n_subdivisions, radius, quadrature, rotation_angle)
+  : MortarManagerBase<dim>(n_subdivisions,
+                           radius,
+                           quadrature,
+                           rotation_angle,
+                           minimum_height)
   , pre_rotation_angle(pre_rotation_angle)
   , center_of_rotation(center_of_rotation)
 {}
@@ -493,6 +529,8 @@ MortarManagerCircle<dim>::MortarManagerCircle(
                                               mortar_parameters)),
       construct_quadrature(quadrature, mortar_parameters),
       mortar_parameters.rotor_rotation_angle->value(Point<dim>()),
+      compute_minimum_height(dof_handler.get_triangulation(),
+                             mortar_parameters),
       mortar_parameters.center_of_rotation,
       std::get<1>(
         compute_interface_dimensions_circular(dof_handler.get_triangulation(),
@@ -520,7 +558,9 @@ MortarManagerLinear<dim>::MortarManagerLinear(
                                              mortar_parameters))) /
         (2.0 * numbers::PI),
       quadrature,
-      0.0)
+      0.0,
+      compute_minimum_height(dof_handler.get_triangulation(),
+                             mortar_parameters))
 {
   std::tie(this->coord_min, this->coord_max) =
     compute_interface_dimensions_linear(dof_handler.get_triangulation(),
