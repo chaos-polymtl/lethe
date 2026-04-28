@@ -1451,11 +1451,8 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
       if (!simulation_parameters.fem_parameters.CLS_uses_dg)
         {
           std::tie(geometric_volume_outside, surface) =
-            InterfaceTools::compute_volume_and_surface(*dof_handler,
-                                                       *fe,
-                                                       *this->present_solution,
-                                                       0.5,
-                                                       mpi_communicator);
+            InterfaceTools::integrate_volume_and_surface(
+              *dof_handler, *fe, *this->present_solution, 0.5);
 
           // Compute geometric inside volume (fluid 1)
           const double global_volume =
