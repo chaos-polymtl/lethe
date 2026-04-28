@@ -1119,17 +1119,17 @@ namespace Parameters
     /// Prefix for the temperature output
     std::string temperature_output_name;
 
-    /// Enable calculation of liquid fraction in phase change problems
-    bool calculate_liquid_fraction;
+    /// Enable calculation of algebraic melt volume in phase change problems
+    bool calculate_algebraic_melt_volume;
 
-    /// Prefix for the liquid fraction output
-    std::string liquid_fraction_output_name;
+    /// Prefix for the algebraic melt volume output
+    std::string algebraic_melt_volume_output_name;
 
-    /// Enable calculation of melt volume in phase change problems
-    bool calculate_melt_volume;
+    /// Enable calculation of geometric melt volume in phase change problems
+    bool calculate_geometric_melt_volume;
 
-    /// Prefix for the melt volume output
-    std::string melt_volume_output_name;
+    /// Prefix for the geometric melt volume output
+    std::string geometric_melt_volume_output_name;
 
     /// FluidIndicator corresponding to the fluid which has phase change
     Parameters::FluidIndicator monitored_fluid_with_phase_change;

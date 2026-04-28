@@ -565,22 +565,27 @@ private:
   write_temperature_statistics(const std::string domain_name);
 
   /**
-   * @brief Post-processing.
-   * Calculate liquid fraction on the domain.
+   * @brief Compute the algebraic (phase indicator and liquid fraction weighted)
+   * melt volume (3D) or surface (2D) in a domain. The phase evolving fluid must
+   * be selected with
+   * Parameters::PostProcessing::monitored_fluid_with_phase_change.
+   *
+   * @remark For CLS multiphase flow, only one of the fluids can be monitored.
    */
   void
-  postprocess_liquid_fraction();
+  postprocess_algebraic_melt_volume();
 
   /**
-   * @brief Post-processing. Write the liquid fraction to an output file.
+   * @brief Post-processing. Write the algebraic (phase-weighted) melt volume to
+   * an output file.
    */
   void
-  write_liquid_fraction();
+  write_algebraic_melt_volume();
 
   /**
-   * @brief Compute the melt volume (3D) or surface (2D) and the contour surface
-   * area (3D) or length (2D) in a domain. The melt region is delimited by the
-   * Parameters::PostProcessing::melting_temperature
+   * @brief Compute the geometric melt volume (3D) or surface (2D) and the
+   * contour surface area (3D) or length (2D) in a domain. The melt region is
+   * delimited by the Parameters::PostProcessing::melting_temperature
    * isosurface (3D) or isocurve (2D) within the subdomain occupied by the fluid
    * selected with
    * Parameters::PostProcessing::monitored_fluid_with_phase_change.
@@ -593,10 +598,10 @@ private:
   postprocess_geometric_melt_volume_and_surface();
 
   /**
-   * @brief Write the melt volume to an output file.
+   * @brief Write the geometric melt volume to an output file.
    */
   void
-  write_melt_volume();
+  write_geometric_melt_volume();
 
   /**
    * Post-processing. Calculate the heat flux at heat transfer boundary
@@ -884,12 +889,12 @@ private:
   /**
    * @brief Liquid fraction in the domain.
    */
-  TableHandler liquid_fraction_table;
+  TableHandler melt_volume_alge_table;
 
   /**
    * @brief Evolution of the melt volume in the simulated domain.
    */
-  TableHandler melt_volume_table;
+  TableHandler melt_volume_geo_table;
 };
 
 

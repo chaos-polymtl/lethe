@@ -3,11 +3,15 @@
 
 #-------------------------------------------------------------------------------
 # DESCRIPTION:
-# This test checks that the melt volume computation works well in a CLS
-# simulation. Two superposed fluids are subject to a higher temperature on the
-# left side of the domain (this is set with the initial condition).
+# This test checks that the melt volume computation (both, algebraic and
+# geometric) works well in a CLS simulation. Two superposed fluids are subject
+# to a higher temperature on the left side of the domain (this is set with the
+# initial condition).
 # Only fluid 1 has a phase change specific heat model, therefore it is the only
-# fluid that melts. The melt volume corresponds to the region at the
+# fluid that melts.
+# The algebraic melt volume corresponds to a phase indicator and liquid fraction
+# weighted volume integral.
+# The geometric melt volume corresponds to the region at the
 # intersection of the temperature above the melting temperature and the fluid 1
 # subdomains.
 #-------------------------------------------------------------------------------
@@ -108,7 +112,8 @@ end
 
 subsection post-processing
   set verbosity                         = verbose
-  set calculate melt volume             = true
+  set calculate geometric melt volume   = true
+  set calculate algebraic melt volume   = true
   set monitored fluid with phase change = fluid 1
   set melting temperature               = 0.02
   set calculate mass conservation       = false
