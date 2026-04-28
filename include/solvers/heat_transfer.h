@@ -567,12 +567,9 @@ private:
   /**
    * @brief Post-processing.
    * Calculate liquid fraction on the domain.
-   *
-   * @param gather_cls boolean true when CLS=true (multiphase flow), used to gather
-   * CLS information
    */
   void
-  postprocess_liquid_fraction(const bool gather_cls);
+  postprocess_liquid_fraction();
 
   /**
    * @brief Post-processing. Write the liquid fraction to an output file.
@@ -588,15 +585,12 @@ private:
    * selected with
    * Parameters::PostProcessing::monitored_fluid_with_phase_change.
    *
-   * @param[in] gather_cls Boolean indicating when a CLS multiphase flow is
-   * being simulated.
-   *
    * @remark For CLS multiphase flow, only one of the fluids can be monitored.
    * The volume is computed as the geometrical volume with respect to
    * the phase indicator isocurve (isosurface) of value 0.5.
    */
   void
-  postprocess_melt_volume_and_surface(const bool gather_cls);
+  postprocess_geometric_melt_volume_and_surface();
 
   /**
    * @brief Write the melt volume to an output file.

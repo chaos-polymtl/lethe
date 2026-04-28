@@ -1182,7 +1182,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
       AssertThrow(
         simulation_parameters.physical_properties_manager.has_phase_change(),
         LiquidFractionRequiresPhaseChange());
-      postprocess_liquid_fraction(gather_cls);
+      postprocess_liquid_fraction();
 
       if (simulation_control->get_step_number() %
             this->simulation_parameters.post_processing.output_frequency ==
@@ -1197,7 +1197,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
         simulation_parameters.physical_properties_manager.has_phase_change(),
         ExcMessage(
           "Calculation of the melt volume requires that a fluid has at least a 'phase_change' physical property model"));
-      postprocess_melt_volume_and_surface(gather_cls);
+      postprocess_geometric_melt_volume_and_surface();
 
       if (simulation_control->get_step_number() %
             this->simulation_parameters.post_processing.output_frequency ==
@@ -1988,10 +1988,13 @@ HeatTransfer<dim>::write_temperature_statistics(const std::string domain_name)
 
 template <int dim>
 void
-HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_cls)
+HeatTransfer<dim>::postprocess_liquid_fraction()
 {
   const unsigned int n_q_points   = this->cell_quadrature->size();
   const MPI_Comm mpi_communicator = this->dof_handler->get_mpi_communicator();
+
+  // Local variable to check if it is a CLS simulation
+  const bool gather_cls = this->simulation_parameters.multiphysics.CLS;
 
   // Initialize heat transfer information
   std::vector<double> local_temperature_values(n_q_points);
@@ -2146,9 +2149,12 @@ HeatTransfer<dim>::write_liquid_fraction()
 
 template <int dim>
 void
-HeatTransfer<dim>::postprocess_melt_volume_and_surface(const bool gather_cls)
+HeatTransfer<dim>::postprocess_geometric_melt_volume_and_surface()
 {
   const MPI_Comm mpi_communicator = this->dof_handler->get_mpi_communicator();
+
+  // Local variable to check if it is a CLS simulation
+  const bool gather_cls = this->simulation_parameters.multiphysics.CLS;
 
   // Initializes variables for the melt volume and surface
   double melt_volume;
@@ -2228,10 +2234,7 @@ HeatTransfer<dim>::postprocess_melt_volume_and_surface(const bool gather_cls)
   // Compute volume and surface integral
   std::tie(melt_volume, melt_surface) =
     InterfaceTools::integrate_volume_and_surface(
-      melt_indicator_vector_relevant_copy,
-      *this->dof_handler,
-      *this->fe,
-      mpi_communicator);
+      melt_indicator_vector_relevant_copy, *this->dof_handler, *this->fe);
 
   // Initialize table column names
   std::string melt_volume_column_name;
@@ -2247,7 +2250,7 @@ HeatTransfer<dim>::postprocess_melt_volume_and_surface(const bool gather_cls)
       melt_contour_column_name = "melt contour surface";
     }
 
-  // Consol output
+  // Console output
   if (simulation_parameters.post_processing.verbosity ==
       Parameters::Verbosity::verbose)
     {

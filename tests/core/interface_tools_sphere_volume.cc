@@ -79,8 +79,8 @@ test()
       // FEValues
       double volume, surface;
 
-      std::tie(volume, surface) = InterfaceTools::compute_volume_and_surface(
-        dof_handler, fe, signed_distance, iso_level, mpi_communicator);
+      std::tie(volume, surface) = InterfaceTools::integrate_volume_and_surface(
+        dof_handler, fe, signed_distance, iso_level);
 
       // Analytical surface and volume
       const double analytical_surface =
