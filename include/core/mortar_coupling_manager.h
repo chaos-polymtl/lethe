@@ -40,7 +40,7 @@ public:
                     double                  radius,
                     const Quadrature<dim2> &quadrature,
                     const double            rotation_angle,
-                    const double            height_min = 0.0);
+                    const double            minimum_height = 0.0);
 
   /**
    * @brief Mortar manager base constructor used in 3D problems
@@ -58,7 +58,7 @@ public:
                     const std::vector<double>       &radius,
                     const Quadrature<dim2>          &quadrature,
                     const double                     rotation_angle,
-                    const double                     height_min = 0.0);
+                    const double                     minimum_height = 0.0);
 
   /**
    * @brief Default destructor
@@ -215,7 +215,7 @@ protected:
   const double rotation_angle;
   /// Minimum cell center height at the mortar interface along the rotation axis
   /// value in 3D problems
-  const double height_min;
+  const double minimum_height;
 };
 
 /**
@@ -295,7 +295,7 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
  */
 template <int dim>
 double
-compute_height_min(const Triangulation<dim>      &triangulation,
+compute_minimum_height(const Triangulation<dim>      &triangulation,
                    const Parameters::Mortar<dim> &mortar_parameters);
 
 /**
@@ -340,7 +340,7 @@ public:
                       double                  radius,
                       const Quadrature<dim2> &quadrature,
                       const double            rotation_angle,
-                      const double            height_min         = 0.0,
+                      const double            minimum_height         = 0.0,
                       const Point<dim>       &center_of_rotation = Point<dim>(),
                       const double            pre_rotation_angle = 0.0);
 
@@ -365,7 +365,7 @@ public:
                       std::vector<double>       radius,
                       const Quadrature<dim2>   &quadrature,
                       const double              rotation_angle,
-                      const double              height_min = 0.0,
+                      const double              minimum_height = 0.0,
                       const Point<dim> &center_of_rotation = Point<dim>(),
                       const double      pre_rotation_angle = 0.0);
 
@@ -448,12 +448,12 @@ MortarManagerBase<dim>::MortarManagerBase(unsigned int n_subdivisions,
                                           double       radius,
                                           const Quadrature<dim2> &quadrature_in,
                                           const double rotation_angle,
-                                          const double height_min)
+                                          const double minimum_height)
   : MortarManagerBase(std::vector<unsigned int>{n_subdivisions, 1},
                       std::vector<double>{radius, 1.0},
                       quadrature_in,
                       rotation_angle,
-                      height_min)
+                      minimum_height)
 {}
 
 
@@ -464,13 +464,13 @@ MortarManagerBase<dim>::MortarManagerBase(
   const std::vector<double>       &radius,
   const Quadrature<dim2>          &quadrature_in,
   const double                     rotation_angle,
-  const double                     height_min)
+  const double                     minimum_height)
   : n_subdivisions(n_subdivisions)
   , radius(radius)
   , quadrature(quadrature_in.get_tensor_basis()[0])
   , n_quadrature_points(quadrature.size())
   , rotation_angle(rotation_angle)
-  , height_min(height_min)
+  , minimum_height(minimum_height)
 {}
 
 
@@ -481,14 +481,14 @@ MortarManagerCircle<dim>::MortarManagerCircle(
   double                  radius,
   const Quadrature<dim2> &quadrature,
   const double            rotation_angle,
-  const double            height_min,
+  const double            minimum_height,
   const Point<dim>       &center_of_rotation,
   const double            pre_rotation_angle)
   : MortarManagerBase<dim>(n_subdivisions,
                            radius,
                            quadrature,
                            rotation_angle,
-                           height_min)
+                           minimum_height)
   , pre_rotation_angle(pre_rotation_angle)
   , center_of_rotation(center_of_rotation)
 {}
@@ -500,14 +500,14 @@ MortarManagerCircle<dim>::MortarManagerCircle(
   std::vector<double>       radius,
   const Quadrature<dim2>   &quadrature,
   const double              rotation_angle,
-  const double              height_min,
+  const double              minimum_height,
   const Point<dim>         &center_of_rotation,
   const double              pre_rotation_angle)
   : MortarManagerBase<dim>(n_subdivisions,
                            radius,
                            quadrature,
                            rotation_angle,
-                           height_min)
+                           minimum_height)
   , pre_rotation_angle(pre_rotation_angle)
   , center_of_rotation(center_of_rotation)
 {}
@@ -529,7 +529,7 @@ MortarManagerCircle<dim>::MortarManagerCircle(
                                               mortar_parameters)),
       construct_quadrature(quadrature, mortar_parameters),
       mortar_parameters.rotor_rotation_angle->value(Point<dim>()),
-      compute_height_min(dof_handler.get_triangulation(), mortar_parameters),
+      compute_minimum_height(dof_handler.get_triangulation(), mortar_parameters),
       mortar_parameters.center_of_rotation,
       std::get<1>(
         compute_interface_dimensions_circular(dof_handler.get_triangulation(),
@@ -558,7 +558,7 @@ MortarManagerLinear<dim>::MortarManagerLinear(
         (2.0 * numbers::PI),
       quadrature,
       0.0,
-      compute_height_min(dof_handler.get_triangulation(), mortar_parameters))
+      compute_minimum_height(dof_handler.get_triangulation(), mortar_parameters))
 {
   std::tie(this->coord_min, this->coord_max) =
     compute_interface_dimensions_linear(dof_handler.get_triangulation(),

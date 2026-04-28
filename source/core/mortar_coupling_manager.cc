@@ -173,7 +173,7 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
             points.emplace_back(
               x[0],
               x[1],
-              (height_min - delta_1 / 2) +
+              (minimum_height - delta_1 / 2) +
                 (id_out_plane + quadrature.point(q)[1]) *
                   delta_1); // TODO Generalize for x and y directions
           else
@@ -217,7 +217,7 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
             points.emplace_back(
               x[0],
               x[1],
-              (height_min - delta_1 / 2) +
+              (minimum_height - delta_1 / 2) +
                 (id_out_plane + quadrature.point(q)[1]) *
                   delta_1); // TODO Generalize for x and y directions
           else
@@ -233,7 +233,7 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
             points.emplace_back(
               x[0],
               x[1],
-              (height_min - delta_1 / 2) +
+              (minimum_height - delta_1 / 2) +
                 (id_out_plane + quadrature.point(q)[1]) *
                   delta_1); // TODO Generalize for x and y directions
           else
@@ -423,7 +423,7 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center,
     {
       const double delta_1 = radius[1] / n_subdivisions[1];
       id_out_plane         = static_cast<unsigned int>(
-        std::round((face_center[2] - height_min) /
+        std::round((face_center[2] - minimum_height) /
                    delta_1)); // TODO Generalize for x and y directions
     }
 
@@ -609,7 +609,7 @@ compute_interface_dimensions_circular(
       AssertThrow(
         is_unit_axis,
         ExcMessage(
-          " The rotation axis must be a unit vector in x, y, or z direction."));
+          "The rotation axis must be a unit vector in x, y, or z direction."));
 
       // Find the direction of the rotation axis
       for (int d = 0; d < dim; d++)
@@ -784,18 +784,23 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
 
 template <int dim>
 double
-compute_height_min(const Triangulation<dim>      &triangulation,
+compute_minimum_height(const Triangulation<dim>      &triangulation,
                    const Parameters::Mortar<dim> &mortar_parameters)
 {
   if constexpr (dim == 3)
     {
       // Direction of the rotation axis
       unsigned int direction = 0;
-      for (int d = 0; d < dim; d++)
-        if (mortar_parameters.rotation_axis[d] != 0.0)
+      Tensor<1, dim> axis = mortar_parameters.rotation_axis;
+      for (unsigned int d = 1; d < dim; ++d)
+        if (std::abs(axis[d]) > std::abs(axis[direction]))
           direction = d;
+       
+      AssertThrow(std::abs(axis[direction]) > 0.99,
+       ExcMessage("Rotation axis is not aligned with a coordinate direction."));
+       
       // Minimum coordinate in the direction of the rotation axis
-      double height_min_local = std::numeric_limits<double>::max();
+      double minimum_height_local = std::numeric_limits<double>::max();
 
       // Loop over the cells to find the minimum coordinate in the rotation axis
       // direction
@@ -813,13 +818,13 @@ compute_height_min(const Triangulation<dim>      &triangulation,
                   if (face->at_boundary() &&
                       face->boundary_id() ==
                         mortar_parameters.stator_boundary_id)
-                    height_min_local =
-                      std::min(height_min_local, cell->center()[direction]);
+                    minimum_height_local =
+                      std::min(minimum_height_local, cell->center()[direction]);
                 }
             }
         }
       // Return the minimum value across all processes
-      return Utilities::MPI::min(height_min_local,
+      return Utilities::MPI::min(minimum_height_local,
                                  triangulation.get_mpi_communicator());
     }
   else
@@ -2148,11 +2153,11 @@ construct_quadrature(const Quadrature<3>         &quadrature,
                      const Parameters::Mortar<3> &mortar_parameters);
 
 template double
-compute_height_min<2>(const Triangulation<2>      &triangulation,
+compute_minimum_height<2>(const Triangulation<2>      &triangulation,
                       const Parameters::Mortar<2> &mortar_parameters);
 
 template double
-compute_height_min<3>(const Triangulation<3>      &triangulation,
+compute_minimum_height<3>(const Triangulation<3>      &triangulation,
                       const Parameters::Mortar<3> &mortar_parameters);
 
 template void
