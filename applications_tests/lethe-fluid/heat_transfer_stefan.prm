@@ -129,11 +129,10 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity                         = verbose
-  set calculate geometric melt volume   = true
-  set calculate algebraic melt volume   = true
-  set monitored fluid with phase change = fluid 1
-  set melting temperature               = 0.02
+  set verbosity                       = verbose
+  set calculate geometric melt volume = true
+  set calculate algebraic melt volume = true
+  set melting temperature             = 0.02
 end
 
 #---------------------------------------------------

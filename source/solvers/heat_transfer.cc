@@ -1998,6 +1998,12 @@ HeatTransfer<dim>::postprocess_algebraic_melt_volume()
   // Local variable to check if it is a CLS simulation
   const bool gather_cls = this->simulation_parameters.multiphysics.CLS;
 
+  AssertThrow(!(!gather_cls && this->simulation_parameters.post_processing
+                                   .monitored_fluid_with_phase_change ==
+                                 Parameters::FluidIndicator::fluid1),
+              ExcMessage(
+                "For single-fluid flows only 'fluid 0' can be monitored."));
+
   // Initialize heat transfer information
   std::vector<double> local_temperature_values(n_q_points);
   FEValues<dim>       fe_values_ht(*this->temperature_mapping,
@@ -2164,6 +2170,12 @@ HeatTransfer<dim>::postprocess_geometric_melt_volume_and_surface()
   // Local variable to check if it is a CLS simulation
   const bool gather_cls = this->simulation_parameters.multiphysics.CLS;
 
+  AssertThrow(!(!gather_cls && this->simulation_parameters.post_processing
+                                   .monitored_fluid_with_phase_change ==
+                                 Parameters::FluidIndicator::fluid1),
+              ExcMessage(
+                "For single-fluid flows only 'fluid 0' can be monitored."));
+
   // Initializes variables for the melt volume and surface
   double melt_volume;
   double melt_surface;
@@ -2218,7 +2230,7 @@ HeatTransfer<dim>::postprocess_geometric_melt_volume_and_surface()
                              (*phase_indicator_vector_owned_copy)[dof_id]);
         }
     }
-  else // Single fluid flow
+  else // Single-fluid flow
     {
       // Transpose temperature to get volume of the region where the temperature
       // is over the melting temperature

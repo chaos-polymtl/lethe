@@ -119,12 +119,14 @@ subsection mesh
 end
 
 #---------------------------------------------------
-# Postprocessing
+# Post-processing
 #---------------------------------------------------
 
 subsection post-processing
-  set calculate liquid fraction = true
-  set verbosity                 = verbose
+  set calculate algebraic melt volume = true
+  set calculate geometric melt volume = true
+  set melting temperature             = 29.8 # liquidus temperature
+  set verbosity                       = verbose
 end
 
 #---------------------------------------------------
