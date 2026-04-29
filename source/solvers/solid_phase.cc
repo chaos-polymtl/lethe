@@ -164,12 +164,10 @@ public:
   {
     if (component < dim)
       {
-        // initial solid velocity: (u_0, 0, 0, ...)
-        return (0.0);
+        return component == 0 ? u_0 : 0.0;
       }
     else
       {
-        // initial solid volume fraction α_s^0
         return alpha_0;
       }
   }
@@ -261,101 +259,6 @@ SolidPhaseSolver<dim>::SolidPhaseSolver(
 }
 
 
-// template <int dim>
-// void
-// SolidPhaseSolver<dim>::make_grid()
-// {
-//   Point<dim> p1, p2;
-
-
-//   for (unsigned int d = 0; d < dim; ++d)
-//     {
-//       p1[d] = 0.0;
-//       p2[d] = 1.0;
-//     }
-
-
-
-//   // sub.assign(dim, 1);
-//   // sub[0] = 10;           // x-direction
-//   // if (dim > 1) sub[1] = 10;  // y-direction
-//   // if (dim > 2) sub[2] = 10;   // z-direction
-
-
-
-//   GridGenerator::subdivided_hyper_subdivided_hyper_rectangle(triangulation,
-//   sub, p1, p2);
-
-
-//   triangulation.refine_global(parameters.global_refinement);
-
-
-//   const double tol = 1e-12;
-
-
-//   const auto axis_from = [&](const std::string &d) -> unsigned int {
-//     if (d == "x")
-//       return 0;
-//     if (d == "y")
-//       return 1;
-//     if (d == "z")
-//       return 2;
-//     AssertThrow(false, ExcMessage("direction must be x, y, or z"));
-//     return 0;
-//   };
-
-//   const unsigned int axis1 = axis_from(parameters.direction1);
-//   const unsigned int axis2 = axis_from(parameters.direction2);
-
-//   pcout << "dim = " << dim << std::endl;
-
-//   for (const auto &cell : triangulation.active_cell_iterators())
-//     {
-//       for (unsigned int f = 0; f < GeometryInfo<dim>::faces_per_cell; ++f)
-//         {
-//           if (cell->face(f)->at_boundary())
-//             {
-//               const Point<dim> fc = cell->face(f)->center();
-
-//               cell->face(f)->set_boundary_id(0);
-
-//               if (std::fabs(fc[axis1]) < tol)
-//                 {
-//                   cell->face(f)->set_boundary_id(1);
-//                 }
-
-//               else if (std::fabs(fc[axis1] - 1.0) < tol)
-//                 {
-//                   cell->face(f)->set_boundary_id(2);
-//                 }
-
-//               else if (std::fabs(fc[axis2]) < tol)
-//                 {
-//                   cell->face(f)->set_boundary_id(1);
-//                 }
-
-//               else if (std::fabs(fc[axis2] - 1.0) < tol)
-//                 {
-//                   cell->face(f)->set_boundary_id(2);
-//                 }
-//             }
-//         }
-//     }
-
-//   //  if (std::fabs(fc[0]) < tol || (dim >= 2 && std::fabs(fc[1]) < tol))
-//   //    cell->face(f)->set_boundary_id(1);      // inlet
-//   //  else if (std::fabs(fc[0] - 1.0) < tol || (dim >= 2 && std::fabs(fc[1]
-//   //  - 1.0) < tol))
-//   //    cell->face(f)->set_boundary_id(2);      // outlet
-//   //  else
-//   //    cell->face(f)->set_boundary_id(0);      // walls
-
-
-
-//   pcout << "active cells " << triangulation.n_global_active_cells()
-//         << std::endl;
-// }
-
 
 template <int dim>
 void
@@ -416,13 +319,22 @@ SolidPhaseSolver<dim>::setup_dofs()
     dof_handler, 1, bc, constraints, alpha_mask);
 
 
+  // wall no-slip..........................................
   Functions::ZeroFunction<dim> zero_bc(dim + 1);
 
   VectorTools::interpolate_boundary_values(
     dof_handler, 0, zero_bc, constraints, vel_mask);
 
-  VectorTools::interpolate_boundary_values(
-    dof_handler, 0, zero_bc, constraints, alpha_mask);
+
+
+  // Wall slip...............................................
+  // std::set<types::boundary_id> slip_boundaries;
+  // slip_boundaries.insert(0);
+
+  // VectorTools::compute_no_normal_flux_constraints(dof_handler,
+  //                                                 0,
+  //                                                 slip_boundaries,
+  //                                                 constraints);
 
   constraints.close();
 
@@ -551,7 +463,7 @@ SolidPhaseSolver<dim>::assemble_system()
   locally_relevant_old_solution = old_solution;
   locally_relevant_old_solution.update_ghost_values();
 
-  bool printed_u_f_q = false;
+  // bool printed_u_f_q = false;
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -589,16 +501,28 @@ SolidPhaseSolver<dim>::assemble_system()
 
               const Tensor<1, dim> u_f_q = fluid_velocity_values[q];
 
-              if (!printed_u_f_q &&
-                  Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
-                {
-                  pcout << "u_f_q = ";
-                  for (unsigned int d = 0; d < dim; ++d)
-                    pcout << u_f_q[d] << ' ';
-                  pcout << std::endl;
+              // const Point<dim> xq = fe_values.quadrature_point(q);
 
-                  printed_u_f_q = true;
-                }
+              // if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0 &&
+              //     std::abs(xq[0] - 0.526416) < 1e-3 &&
+              //     std::abs(xq[1] - 0.223584) < 1e-3 &&
+              //     std::abs(xq[2] - 0.223584) < 1e-3)
+              //   {
+              //     pcout << "TIME = " << timestep_number << " | x_q = " << xq
+              //           << " | u_s_old = " << u_k << " | u_f_used = " << u_f_q
+              //           << " | slip = " << (u_f_q - u_k) << std::endl;
+              //   }
+
+              // if (!printed_u_f_q &&
+              //     Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+              //   {
+              //     pcout << "u_f_q = ";
+              //     for (unsigned int d = 0; d < dim; ++d)
+              //       pcout << u_f_q[d] << ' ';
+              //     pcout << std::endl;
+
+              //     printed_u_f_q = true;
+              //   }
 
               // shape values at q
               for (unsigned int k = 0; k < dofs_per_cell; ++k)
@@ -632,12 +556,11 @@ SolidPhaseSolver<dim>::assemble_system()
                             (phi_a[i] * (grad_phi_a[j] * u_k)) * JxW;
 
                           // (w, alpha^{n+1} div(u_k))
-
                           cell_matrix(i, j) +=
                             (phi_a[i] * phi_a[j] * div_u_k) * JxW;
                         }
 
-                      // RHS: (w, alpha^n)/dt
+                      // RHS: (w, alpha^n) / dt
                       cell_rhs(i) += (phi_a[i] * a_k / dt) * JxW;
                     }
 
@@ -683,6 +606,7 @@ SolidPhaseSolver<dim>::assemble_system()
                     }
                 }
             }
+
 
 
           cell->get_dof_indices(local_dof_indices);
@@ -954,7 +878,7 @@ SolidPhaseSolver<dim>::setup()
   make_output_dir();
 
   // Initial condition
-  SolidInitialValues<dim> ic(parameters.alpha0, 1.0);
+  SolidInitialValues<dim> ic(parameters.alpha0, parameters.u_inlet_x);
 
   old_solution = 0.0;
   VectorTools::interpolate(dof_handler, ic, old_solution);

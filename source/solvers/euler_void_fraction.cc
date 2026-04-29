@@ -34,15 +34,13 @@ namespace
 
 template <int dim>
 EulerEulerVoidFraction<dim>::EulerEulerVoidFraction(
-  FluidDynamicsVANS<dim> &fluid_solver,
-  const MPI_Comm         &mpi_communicator,
-  const bool              verbose)
-  : fluid_solver(fluid_solver)
-  , mpi_communicator(mpi_communicator)
-  , pcout(std::cout, Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+  const MPI_Comm &mpi_communicator,
+  const bool      verbose)
+  : mpi_communicator(mpi_communicator)
+  , pcout(std::cout,
+          Utilities::MPI::this_mpi_process(mpi_communicator) == 0 && verbose)
   , verbose(verbose)
 {}
-
 
 template <int dim>
 void
@@ -56,62 +54,32 @@ EulerEulerVoidFraction<dim>::set_solid_volume_fraction(
 
   has_alpha_s = true;
   has_alpha_f = false;
-
-  if (verbose)
-    {
-      const double alpha_s_min = global_min_owned(alpha_s, mpi_communicator);
-      const double alpha_s_max = global_max_owned(alpha_s, mpi_communicator);
-
-      pcout << "alpha_s range: [" << alpha_s_min << ", " << alpha_s_max << "]"
-            << std::endl;
-    }
 }
-
 
 template <int dim>
 void
 EulerEulerVoidFraction<dim>::calculate_alpha_f()
 {
   AssertThrow(has_alpha_s,
-              ExcMessage("alpha_s must be set before calculating alpha_f."));
+              ExcMessage("Solid volume fraction alpha_s is not set."));
 
-  if (verbose)
-    pcout << "Calculating alpha_f = 1 - alpha_s" << std::endl;
-
-  alpha_f = 0.0;
-
-  for (const auto i : alpha_f.locally_owned_elements())
+  for (const auto &i : alpha_f.locally_owned_elements())
     {
-      const double value = 1.0 - alpha_s[i];
-      alpha_f[i]         = std::max(min_alpha_f_value, std::min(1.0, value));
+      alpha_f[i] = std::max(1.0 - alpha_s[i], min_alpha_f_value);
     }
 
   alpha_f.compress(VectorOperation::insert);
+
   has_alpha_f = true;
-
-  if (verbose)
-    {
-      const double alpha_f_min = global_min_owned(alpha_f, mpi_communicator);
-      const double alpha_f_max = global_max_owned(alpha_f, mpi_communicator);
-
-      pcout << "alpha_f range: [" << alpha_f_min << ", " << alpha_f_max << "]"
-            << std::endl;
-    }
 }
 
-
 template <int dim>
-void
-EulerEulerVoidFraction<dim>::pass_alpha_f_to_fluid()
+const TrilinosWrappers::MPI::Vector &
+EulerEulerVoidFraction<dim>::get_alpha_f() const
 {
   AssertThrow(has_alpha_f,
-              ExcMessage(
-                "alpha_f must be calculated before passing to fluid."));
-
-  if (verbose)
-    pcout << "Passing alpha_f to Fluid" << std::endl;
-
-  fluid_solver.set_alpha_f(alpha_f);
+              ExcMessage("Fluid volume fraction alpha_f is not calculated."));
+  return alpha_f;
 }
 
 

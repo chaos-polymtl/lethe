@@ -66,6 +66,9 @@ FluidDynamicsVANS<dim>::setup_dofs()
   void_fraction_manager.setup_dofs();
   void_fraction_manager.setup_constraints(
     this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
+
+    euler_euler_drag_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
+
 }
 
 template <int dim>
@@ -167,16 +170,6 @@ FluidDynamicsVANS<dim>::calculate_void_fraction(const double time)
 {
   TimerOutput::Scope t(this->computing_timer, "Calculate void fraction");
   void_fraction_manager.calculate_void_fraction(time);
-}
-
-template <int dim>
-void
-FluidDynamicsVANS<dim>::set_alpha_f(
-  const TrilinosWrappers::MPI::Vector &alpha_f_in) // for euler-euler
-{
-  alpha_f.reinit(alpha_f_in);
-  alpha_f     = alpha_f_in;
-  has_alpha_f = true;
 }
 
 template <int dim>
@@ -414,25 +407,6 @@ FluidDynamicsVANS<dim>::assemble_system_matrix()
   }
 }
 
-
-template <int dim>
-void
-FluidDynamicsVANS<dim>::apply_alpha_f_to_void_fraction_manager() // for
-                                                                 // euler-euler
-{
-  AssertThrow(
-    has_alpha_f,
-    ExcMessage(
-      "alpha_f was not set before applying it to the void-fraction field."));
-
-  AssertThrow(
-    alpha_f.size() == void_fraction_manager.get_void_fraction_field().size(),
-    ExcMessage(
-      "alpha_f and the VANS void-fraction field do not have the same size."));
-
-  void_fraction_manager.set_void_fraction_field(alpha_f);
-}
-
 template <int dim>
 void
 FluidDynamicsVANS<dim>::assemble_local_system_matrix(
@@ -539,6 +513,12 @@ FluidDynamicsVANS<dim>::assemble_system_rhs()
                                          this->cell_quadrature->size()));
 
   this->system_rhs.compress(VectorOperation::add);
+
+  if (has_euler_euler_drag_rhs)
+  {
+    this->system_rhs += euler_euler_drag_rhs;
+  }
+  
 
   if (this->simulation_control->is_first_assembly())
     this->simulation_control->provide_residual(this->system_rhs.l2_norm());
@@ -800,141 +780,18 @@ FluidDynamicsVANS<dim>::monitor_mass_conservation()
               << " s^-1" << std::endl;
 }
 
-
-template <int dim>
-parallel::distributed::Triangulation<dim> &
-FluidDynamicsVANS<dim>::get_triangulation()
-{
-  auto *distributed_tria =
-    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-      this->triangulation.get());
-
-  AssertThrow(distributed_tria != nullptr,
-              ExcMessage("FluidDynamicsVANS triangulation is not a "
-                         "parallel::distributed::Triangulation."));
-
-  return *distributed_tria;
-}
-
-template <int dim>
-const DoFHandler<dim> &
-FluidDynamicsVANS<dim>::get_fluid_dof_handler() const
-{
-  return this->dof_handler;
-}
-
-template <int dim>
-const Mapping<dim> &
-FluidDynamicsVANS<dim>::get_fluid_mapping() const
-{
-  return *this->mapping;
-}
-
-template <int dim>
-const TrilinosWrappers::MPI::Vector &
-FluidDynamicsVANS<dim>::get_fluid_solution() const
-{
-  return this->evaluation_point;
-}
-
-// template <int dim>
-// void
-// FluidDynamicsVANS<dim>::solve()
-// {
-//   if (this->triangulation->n_global_active_cells() == 0)
-//     {
-//       read_mesh_and_manifolds(
-//         *this->triangulation,
-//         this->cfd_dem_simulation_parameters.cfd_parameters.mesh,
-//         this->cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,
-//         this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
-//             .restart ||
-//           this->cfd_dem_simulation_parameters.void_fraction->read_dem ==
-//           true,
-//         this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
-//     }
-
-//   if (this->cfd_dem_simulation_parameters.void_fraction->read_dem == true &&
-//       this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
-//           .restart == false)
-//     read_dem();
-
-//   this->setup_dofs();
-
-//   this->set_initial_condition(
-//     this->cfd_dem_simulation_parameters.cfd_parameters.initial_condition->type,
-//     this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
-//       .restart);
-
-//   particle_handler.exchange_ghost_particles(true);
-
-//   while (this->simulation_control->integrate())
-//     {
-//       this->simulation_control->print_progression(this->pcout);
-
-//       // We allow the physics to update their boundary conditions
-//       // according to their own parameters
-//       this->update_boundary_conditions();
-//       this->multiphysics->update_boundary_conditions();
-
-//       this->dynamic_flow_control();
-
-//       if (this->simulation_control->is_at_start())
-//         {
-//           vertices_cell_mapping();
-//           if (has_alpha_f)
-//             {
-//               apply_alpha_f_to_void_fraction_manager();
-//             }
-//           else
-//             {
-//               void_fraction_manager.initialize_void_fraction(
-//                 this->simulation_control->get_current_time());
-//             }
-
-//           this->iterate();
-//         }
-//       else
-//         {
-//           NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
-//           vertices_cell_mapping();
-
-//           if (has_alpha_f)
-//             {
-//               apply_alpha_f_to_void_fraction_manager();
-//             }
-//           else
-//             {
-//               calculate_void_fraction(
-//                 this->simulation_control->get_current_time());
-//             }
-
-//           this->iterate();
-//         }
-
-//       this->postprocess(false);
-//       monitor_mass_conservation();
-//       finish_time_step_fd();
-//     }
-
-//   this->finish_simulation();
-// }
-
 template <int dim>
 void
-FluidDynamicsVANS<dim>::setup_for_external_stepping()
+FluidDynamicsVANS<dim>::solve()
 {
-  if (this->triangulation->n_global_active_cells() == 0)
-    {
-      read_mesh_and_manifolds(
-        *this->triangulation,
-        this->cfd_dem_simulation_parameters.cfd_parameters.mesh,
-        this->cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,
-        this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
-            .restart ||
-          this->cfd_dem_simulation_parameters.void_fraction->read_dem == true,
-        this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
-    }
+  read_mesh_and_manifolds(
+    *this->triangulation,
+    this->cfd_dem_simulation_parameters.cfd_parameters.mesh,
+    this->cfd_dem_simulation_parameters.cfd_parameters.manifolds_parameters,
+    this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
+        .restart ||
+      this->cfd_dem_simulation_parameters.void_fraction->read_dem == true,
+    this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
 
   if (this->cfd_dem_simulation_parameters.void_fraction->read_dem == true &&
       this->cfd_dem_simulation_parameters.cfd_parameters.restart_parameters
@@ -949,80 +806,39 @@ FluidDynamicsVANS<dim>::setup_for_external_stepping()
       .restart);
 
   particle_handler.exchange_ghost_particles(true);
-}
 
-template <int dim>
-bool
-FluidDynamicsVANS<dim>::advance_one_step_external()
-{
-  if (!this->simulation_control->integrate())
-    return false;
-
-  this->simulation_control->print_progression(this->pcout);
-
-  this->update_boundary_conditions();
-  this->multiphysics->update_boundary_conditions();
-
-  this->dynamic_flow_control();
-
-  if (this->simulation_control->is_at_start())
+  while (this->simulation_control->integrate())
     {
-      vertices_cell_mapping();
+      this->simulation_control->print_progression(this->pcout);
 
-      if (has_alpha_f)
+      // We allow the physics to update their boundary conditions
+      // according to their own parameters
+      this->update_boundary_conditions();
+      this->multiphysics->update_boundary_conditions();
+
+      this->dynamic_flow_control();
+
+      if (this->simulation_control->is_at_start())
         {
-          apply_alpha_f_to_void_fraction_manager();
-        }
-      else
-        {
+          vertices_cell_mapping();
           void_fraction_manager.initialize_void_fraction(
             this->simulation_control->get_current_time());
-        }
-
-      this->iterate();
-    }
-  else
-    {
-      NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
-      vertices_cell_mapping();
-
-      if (has_alpha_f)
-        {
-          apply_alpha_f_to_void_fraction_manager();
+          this->iterate();
         }
       else
         {
+          NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
+          vertices_cell_mapping();
           calculate_void_fraction(this->simulation_control->get_current_time());
+          this->iterate();
         }
 
-      this->iterate();
+      this->postprocess(false);
+      monitor_mass_conservation();
+      finish_time_step_fd();
     }
 
-  this->postprocess(false);
-  monitor_mass_conservation();
-  finish_time_step_fd();
-
-  return true;
-}
-
-template <int dim>
-void
-FluidDynamicsVANS<dim>::finish_external_stepping()
-{
   this->finish_simulation();
-}
-
-template <int dim>
-void
-FluidDynamicsVANS<dim>::solve()
-{
-  setup_for_external_stepping();
-
-  while (advance_one_step_external())
-    {
-    }
-
-  finish_external_stepping();
 }
 
 // Pre-compile the 2D and 3D solver to ensure that the

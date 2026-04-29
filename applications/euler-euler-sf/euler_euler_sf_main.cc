@@ -1,7 +1,8 @@
 #include <core/parameters.h>
 
-#include <solvers/euler_euler_prm.h>
 #include <solvers/euler_euler_sf.h>
+#include <solvers/euler_void_fraction.h>
+#include <solvers/solid_phase.h>
 
 #include <fem-dem/cfd_dem_simulation_parameters.h>
 
@@ -23,8 +24,9 @@ main(int argc, char *argv[])
       Utilities::MPI::MPI_InitFinalize mpi_init(argc,
                                                 argv,
                                                 numbers::invalid_unsigned_int);
-      const MPI_Comm                   mpi_communicator = MPI_COMM_WORLD;
-      const unsigned int               rank =
+
+      const MPI_Comm     mpi_communicator = MPI_COMM_WORLD;
+      const unsigned int rank =
         Utilities::MPI::this_mpi_process(mpi_communicator);
 
       constexpr int dim = 3;
@@ -33,17 +35,13 @@ main(int argc, char *argv[])
         (argc > 1 && std::string(argv[1]) == "--print-prm");
 
       const std::string prm_file =
-        (print_prm ? (argc > 2 ? std::string(argv[2]) : "euler_euler.prm") :
-                     (argc > 1 ? std::string(argv[1]) : "euler_euler.prm"));
+        print_prm ? (argc > 2 ? std::string(argv[2]) : "euler_euler.prm") :
+                    (argc > 1 ? std::string(argv[1]) : "euler_euler.prm");
 
       ParameterHandler prm;
 
-      // Declare custom Euler-Euler sections
-      EulerEulerMeshParameters<dim>::declare_parameters(prm);
       SolidPhaseParameters::declare_parameters(prm);
-      EulerEulerCouplingParameters::declare_parameters(prm);
 
-      // Declare reduced Lethe fluid/VANS sections
       CFDDEMSimulationParameters<dim> fluid_parameters;
 
       Parameters::SizeOfSubsections size_of_subsections;
@@ -52,7 +50,6 @@ main(int argc, char *argv[])
 
       fluid_parameters.declare(prm, size_of_subsections);
 
-      // Print default prm and exit
       if (print_prm)
         {
           if (rank == 0)
@@ -61,12 +58,13 @@ main(int argc, char *argv[])
               prm.print_parameters(out, ParameterHandler::Text);
               std::cout << "Wrote default prm: " << prm_file << std::endl;
             }
+
           MPI_Barrier(mpi_communicator);
           return 0;
         }
 
-      // If prm file does not exist, generate one and exit
       bool prm_exists = false;
+
       if (rank == 0)
         {
           std::ifstream in(prm_file);
@@ -84,37 +82,24 @@ main(int argc, char *argv[])
               std::cout << "Parameter file not found. Wrote default: "
                         << prm_file << "\nEdit it and rerun.\n";
             }
+
           MPI_Barrier(mpi_communicator);
           return 0;
         }
 
       if (rank == 0)
-        {
-          std::cout << "Reading parameters from: " << prm_file << std::endl;
-        }
+        std::cout << "Reading parameters from: " << prm_file << std::endl;
 
       prm.parse_input(prm_file);
-
-      // Parse custom Euler-Euler sections
-      EulerEulerMeshParameters<dim> mesh_parameters;
-      mesh_parameters.parse_parameters(prm);
 
       SolidPhaseParameters solid_parameters;
       solid_parameters.parse_parameters(prm);
 
-      EulerEulerCouplingParameters coupling_parameters;
-      coupling_parameters.parse_parameters(prm);
-
-      // Parse Lethe fluid/VANS sections
       fluid_parameters.parse(prm);
 
-      EulerEulerOneWay<dim> problem(mesh_parameters,
-                                    solid_parameters,
-                                    fluid_parameters,
-                                    mpi_communicator,
-                                    coupling_parameters.verbose);
+      EulerEulerOneWay<dim> problem(fluid_parameters, solid_parameters);
 
-      problem.run();
+      problem.solve();
     }
   catch (std::exception &exc)
     {

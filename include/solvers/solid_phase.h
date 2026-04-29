@@ -374,6 +374,31 @@ public:
                            const Mapping<dim>                  &fluid_mapping,
                            const TrilinosWrappers::MPI::Vector &fluid_solution);
 
+  const DoFHandler<dim> &
+  get_dof_handler() const
+  {
+    return dof_handler;
+  }
+
+  const TrilinosWrappers::MPI::BlockVector &
+  get_locally_relevant_solution() const
+  {
+    return locally_relevant_solution;
+  }
+
+  const FESystem<dim> &
+  get_fe() const
+  {
+    return fe;
+  }
+
+  double
+  get_beta() const
+  {
+    return beta;
+  }
+  
+
 private:
   // void
   // make_grid();
@@ -457,6 +482,7 @@ private:
 
   // double max_inlet_velocity = 0.0;
   double cfl_length_scale = 1.0;
+
 
   // output
   PVDHandler   pvd_handler;

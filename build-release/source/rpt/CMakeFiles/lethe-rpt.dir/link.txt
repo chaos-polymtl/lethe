@@ -1,0 +1,2 @@
+/usr/bin/ar qc liblethe-rpt.a CMakeFiles/lethe-rpt.dir/parameters_rpt.cc.o CMakeFiles/lethe-rpt.dir/particle_detector_interactions.cc.o CMakeFiles/lethe-rpt.dir/particle_visualization.cc.o CMakeFiles/lethe-rpt.dir/rpt.cc.o CMakeFiles/lethe-rpt.dir/rpt_calculating_parameters.cc.o CMakeFiles/lethe-rpt.dir/rpt_cell_reconstruction.cc.o CMakeFiles/lethe-rpt.dir/rpt_fem_reconstruction.cc.o
+/usr/bin/ranlib liblethe-rpt.a

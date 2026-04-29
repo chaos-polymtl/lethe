@@ -1,0 +1,9 @@
+// SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+#pragma once
+
+/**
+ * Tag of the current git HEAD as obtained with `git describe`.
+ */
+#define LETHE_GIT_FANCY_TAG ""
