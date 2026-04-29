@@ -10,202 +10,6 @@
 
 // using namespace dealii;
 
-// template <int dim>
-// void
-// make_euler_euler_grid(parallel::distributed::Triangulation<dim> &tria,
-//                       const EulerEulerGridParameters<dim> &grid_parameters)
-// {
-//   GridGenerator::subdivided_hyper_rectangle(tria,
-//                                             grid_parameters.subdivisions,
-//                                             grid_parameters.p1,
-//                                             grid_parameters.p2);
-
-//   tria.refine_global(grid_parameters.global_refinement);
-
-//   const double tol = 1e-12;
-
-//   const auto axis_from = [](const std::string &d) -> unsigned int {
-//     if (d == "x")
-//       return 0;
-//     if (d == "y")
-//       return 1;
-//     if (d == "z")
-//       return 2;
-
-//     AssertThrow(false, ExcMessage("direction must be x, y, or z"));
-//     return 0;
-//   };
-
-//   const unsigned int axis1 = axis_from(grid_parameters.direction1);
-//   // const unsigned int axis2 = axis_from(grid_parameters.direction2);
-
-//   for (const auto &cell : tria.active_cell_iterators())
-//     {
-//       for (unsigned int f = 0; f < GeometryInfo<dim>::faces_per_cell; ++f)
-//         {
-//           if (cell->face(f)->at_boundary())
-//             {
-//               const Point<dim> fc = cell->face(f)->center();
-
-//               cell->face(f)->set_boundary_id(0);
-
-//               if (std::fabs(fc[axis1] - grid_parameters.p1[axis1]) < tol)
-//                 cell->face(f)->set_boundary_id(1);
-//               else if (std::fabs(fc[axis1] - grid_parameters.p2[axis1]) <
-//               tol)
-//                 cell->face(f)->set_boundary_id(2);
-//               //   else if (std::fabs(fc[axis2] - grid_parameters.p1[axis2])
-//               <
-//               //   tol)
-//               //     cell->face(f)->set_boundary_id(1);
-//               //   else if (std::fabs(fc[axis2] - grid_parameters.p2[axis2])
-//               <
-//               //   tol)
-//               //     cell->face(f)->set_boundary_id(2);
-//             }
-//         }
-//     }
-// }
-
-// template <int dim>
-// EulerEulerOneWay<dim>::EulerEulerOneWay(
-//   const EulerEulerMeshParameters<dim> &mesh_parameters,
-//   const SolidPhaseParameters          &solid_parameters,
-//   CFDDEMSimulationParameters<dim>     &fluid_parameters,
-//   const MPI_Comm                      &mpi_communicator,
-//   const bool                           verbose)
-//   : mesh_parameters(mesh_parameters)
-//   , mpi_communicator(mpi_communicator)
-//   , pcout(std::cout, Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
-//   , verbose(verbose)
-//   , solid_parameters(solid_parameters)
-//   , fluid_solver(fluid_parameters)
-//   , void_fraction_solver(fluid_solver, mpi_communicator, verbose)
-// {}
-
-
-
-// template <int dim>
-// void
-// EulerEulerOneWay<dim>::build_and_pass_alpha_f()
-// {
-//   if (verbose)
-//     pcout << "Building alpha_f and passing it to fluid solver" << std::endl;
-
-//   void_fraction_solver.set_solid_volume_fraction(
-//     solid_solver->get_solid_volume_fraction());
-
-//   void_fraction_solver.calculate_alpha_f();
-//   void_fraction_solver.pass_alpha_f_to_fluid();
-// }
-
-
-
-// template <int dim>
-// void
-// EulerEulerOneWay<dim>::solve_solid_one_step()
-// {
-//   if (verbose)
-//     pcout << "Solving solid phase one step" << std::endl;
-
-//   solid_solver->advance_one_step();
-// }
-
-// template <int dim>
-// void
-// EulerEulerOneWay<dim>::solve_fluid_one_step()
-// {
-//   if (verbose)
-//     pcout << "Solving fluid phase one step" << std::endl;
-
-//   fluid_solver.advance_one_step_external();
-// }
-
-// template <int dim>
-// void
-// EulerEulerOneWay<dim>::run()
-// {
-//   if (verbose)
-//     pcout << "Running Euler-Euler coupling" << std::endl;
-
-//   auto &shared_triangulation = fluid_solver.get_triangulation();
-
-//   if (shared_triangulation.n_global_active_cells() == 0)
-//     {
-//       if (verbose)
-//         pcout << "Building Euler-Euler grid" << std::endl;
-
-//       EulerEulerGridParameters<dim> grid_parameters;
-//       grid_parameters.p1 = mesh_parameters.p1;
-//       grid_parameters.p2 = mesh_parameters.p2;
-//       grid_parameters.subdivisions.assign(dim, 1);
-//       grid_parameters.subdivisions[0] = mesh_parameters.nx;
-//       if (dim > 1)
-//         grid_parameters.subdivisions[1] = mesh_parameters.ny;
-//       if (dim > 2)
-//         grid_parameters.subdivisions[2] = mesh_parameters.nz;
-//       grid_parameters.global_refinement = mesh_parameters.global_refinement;
-//       grid_parameters.direction1        = mesh_parameters.direction1;
-//       grid_parameters.direction2        = mesh_parameters.direction2;
-
-//       make_euler_euler_grid(shared_triangulation, grid_parameters);
-//     }
-
-//   solid_solver = std::make_unique<SolidPhaseSolver<dim>>(solid_parameters,
-//                                                          shared_triangulation,
-//                                                          mpi_communicator);
-
-//   solid_solver->setup();
-//   fluid_solver.setup_for_external_stepping();
-
-//   while (!solid_solver->finished())
-//     {
-//       pcout << "Coupled step = " << solid_solver->get_step_number()
-//             << std::endl;
-
-//       void_fraction_solver.set_solid_volume_fraction(
-//         solid_solver->get_solid_volume_fraction());
-
-//       void_fraction_solver.calculate_alpha_f();
-//       void_fraction_solver.pass_alpha_f_to_fluid();
-
-//       pcout << "Before fluid step: "
-//             << shared_triangulation.n_global_active_cells() << std::endl;
-
-//       const bool fluid_ok = fluid_solver.advance_one_step_external();
-
-//       pcout << "After fluid step:  "
-//             << shared_triangulation.n_global_active_cells() << std::endl;
-
-//       AssertThrow(
-//         fluid_ok,
-//         ExcMessage(
-//           "Fluid finished before solid. Check time step and end time."));
-
-//       solid_solver->set_fluid_velocity_field(
-//         fluid_solver.get_fluid_dof_handler(),
-//         fluid_solver.get_fluid_mapping(),
-//         fluid_solver.get_fluid_solution());
-
-//       solve_solid_one_step();
-//     }
-
-//   solid_solver->finalize();
-//   fluid_solver.finish_external_stepping();
-// }
-
-// template void
-// make_euler_euler_grid<2>(parallel::distributed::Triangulation<2> &tria,
-//                          const EulerEulerGridParameters<2> &grid_parameters);
-
-// template void
-// make_euler_euler_grid<3>(parallel::distributed::Triangulation<3> &tria,
-//                          const EulerEulerGridParameters<3> &grid_parameters);
-
-
-// template class EulerEulerOneWay<2>;
-// template class EulerEulerOneWay<3>;
-
 template <int dim>
 EulerEulerOneWay<dim>::EulerEulerOneWay(
   CFDDEMSimulationParameters<dim> &fluid_parameters,
@@ -242,15 +46,7 @@ EulerEulerOneWay<dim>::update_void_fraction_from_solid()
   const TrilinosWrappers::MPI::Vector &alpha_f =
     euler_void_fraction.get_alpha_f();
 
-  /*
-   * IMPORTANT:
-   * This direct assignment only works if alpha_f has the same DoF layout as
-   * this->void_fraction_manager.void_fraction_locally_relevant.
-   *
-   * If solid alpha_s is still on the solid mixed DoFHandler, this will fail or
-   * give wrong results. Then you must interpolate/project alpha_s onto
-   * this->void_fraction_manager.dof_handler first.
-   */
+
   this->void_fraction_manager.void_fraction_locally_relevant = alpha_f;
 }
 
@@ -265,8 +61,7 @@ EulerEulerOneWay<dim>::assemble_fluid_drag_exchange_rhs()
   FEValues<dim> fluid_fe_values(*this->mapping,
                                 *this->fe,
                                 quadrature_formula,
-                                update_values |
-                                  update_quadrature_points |
+                                update_values | update_quadrature_points |
                                   update_JxW_values);
 
   FEValues<dim> solid_fe_values(*this->mapping,
@@ -320,19 +115,20 @@ EulerEulerOneWay<dim>::assemble_fluid_drag_exchange_rhs()
           const Tensor<1, dim> drag_q =
             solid_solver.get_beta() * a_s_q[q] * (u_s_q[q] - u_f_q[q]);
 
-            if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0 &&
-                std::abs(fluid_fe_values.quadrature_point(q)[0] - 0.526416) < 1e-3 &&
-                std::abs(fluid_fe_values.quadrature_point(q)[1] - 0.223584) < 1e-3 &&
-                std::abs(fluid_fe_values.quadrature_point(q)[2] - 0.223584) < 1e-3)
-              {
-                this->pcout << "fluid drag | x_q = "
-                            << fluid_fe_values.quadrature_point(q)
-                            << " | alpha_s = " << a_s_q[q]
-                            << " | u_s = " << u_s_q[q]
-                            << " | u_f = " << u_f_q[q]
-                            << " | drag_to_fluid = " << drag_q
-                            << std::endl;
-              }
+          if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0 &&
+              std::abs(fluid_fe_values.quadrature_point(q)[0] - 0.526416) <
+                1e-3 &&
+              std::abs(fluid_fe_values.quadrature_point(q)[1] - 0.223584) <
+                1e-3 &&
+              std::abs(fluid_fe_values.quadrature_point(q)[2] - 0.223584) <
+                1e-3)
+            {
+              this->pcout << "fluid drag | x_q = "
+                          << fluid_fe_values.quadrature_point(q)
+                          << " | alpha_s = " << a_s_q[q]
+                          << " | u_s = " << u_s_q[q] << " | u_f = " << u_f_q[q]
+                          << " | drag_to_fluid = " << drag_q << std::endl;
+            }
 
           for (unsigned int i = 0; i < dofs_per_cell; ++i)
             {
@@ -344,8 +140,7 @@ EulerEulerOneWay<dim>::assemble_fluid_drag_exchange_rhs()
                   const double v_i =
                     fluid_fe_values[fluid_velocities].value(i, q)[comp_i];
 
-                  cell_rhs(i) += v_i * drag_q[comp_i] *
-                                 fluid_fe_values.JxW(q);
+                  cell_rhs(i) += v_i * drag_q[comp_i] * fluid_fe_values.JxW(q);
                 }
             }
         }
@@ -428,29 +223,24 @@ EulerEulerOneWay<dim>::solve()
 
       /*
        * Fluid -> solid.
-       * The solid solver uses the latest available fluid velocity field
-       * when assembling the drag term.
        */
       pass_fluid_solution_to_solid();
 
       /*
        * Solid solve.
-       * This advances alpha_s and u_s by one solid timestep.
        */
       solid_solver.advance_one_step();
 
       /*
        * Solid -> fluid.
-       * Convert alpha_s to alpha_f = 1 - alpha_s and pass it to VANS.
        */
       update_void_fraction_from_solid();
 
 
       assemble_fluid_drag_exchange_rhs();
 
-      this->pcout << "||fluid_drag_rhs|| = "
-            << fluid_drag_rhs.l2_norm()
-            << std::endl;
+      this->pcout << "||fluid_drag_rhs|| = " << fluid_drag_rhs.l2_norm()
+                  << std::endl;
 
       this->set_euler_euler_drag_rhs(fluid_drag_rhs);
 
@@ -491,6 +281,6 @@ EulerEulerOneWay<dim>::solve()
 }
 
 
-// Explicit instantiations
+
 template class EulerEulerOneWay<2>;
 template class EulerEulerOneWay<3>;
