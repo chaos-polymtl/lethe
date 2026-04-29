@@ -209,7 +209,7 @@ The solid block melts into liquid in this example, hence in the ``physical prope
 Post-processing
 ~~~~~~~~~~~~~~~~~~~
 
-In the ``post-processing`` subsection the algebraic and geometric melt volume computation are enabled. For the geometric approach the ``melting temperature`` is set to the liquidus temperature.
+In the ``post-processing`` subsection the algebraic and geometric melt volume computations are enabled. For the geometric approach the ``melting temperature`` is set to the liquidus temperature.
 
 .. seealso::
 
@@ -260,7 +260,7 @@ A python post-processing code `(melting-cavity.py)`
 is added to the example folder to post-process the results.
 Run ``python3 ./melting-cavity.py ./output`` to execute this 
 post-processing code, where ``./output`` is the directory that 
-contains the simulation results. In post-processing, the position of the solid-liquid interface at the top, center and bottom of the cavity, as well as the melted volume fraction are plotted and compared with experiments of Gau and Viskanta [#gau1986]_. Note that the discrepancies in the interfaces are attributed to the two-dimensional simulations and they were also observed and reported by Blais and Ilinca [#blais2018]_. When comparing the current simulation results, both the algebraic and geometric melt volume results (indicated respectively by :math:`V_\mathrm{melt,alge}` and :math:`V_\mathrm{melt,geo}`) give similar liquid fractions, as expected, since the mushy zone is narrow. For the following studies, we will maintain only the algebraic melt volume computation.
+contains the simulation results. In post-processing, the position of the solid-liquid interface at the top, center and bottom of the cavity, as well as the melted volume fraction are plotted and compared with experiments of Gau and Viskanta [#gau1986]_. Note that the discrepancies in the interfaces are attributed to the two-dimensional simulations and they were also observed and reported by Blais and Ilinca [#blais2018]_. When comparing the current simulation results, both the algebraic and geometric melt volume results (indicated respectively by :math:`V_\mathrm{melt,alge}` and :math:`V_\mathrm{melt,geo}`) give similar liquid fractions, as expected, since the mushy zone is narrow. For the following studies, we will use only the algebraic melt volume computation.
 
 .. image:: images/xmax-t.png
     :alt: bubble_rise_velocity

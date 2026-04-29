@@ -1193,11 +1193,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
   // Geometric melt volume
   if (simulation_parameters.post_processing.calculate_geometric_melt_volume)
     {
-      AssertThrow(
-        simulation_parameters.physical_properties_manager.has_phase_change(),
-        MeltVolumeRequiresPhaseChange());
       postprocess_geometric_melt_volume_and_surface();
-
       if (simulation_control->get_step_number() %
             this->simulation_parameters.post_processing.output_frequency ==
           0)
@@ -2182,16 +2178,22 @@ HeatTransfer<dim>::postprocess_geometric_melt_volume_and_surface()
   double melt_volume;
   double melt_surface;
 
+  // Initialize melt indicator vectors
+  GlobalVectorType melt_indicator_vector_owned_copy(
+    this->dof_handler->locally_owned_dofs(), mpi_communicator);
+  GlobalVectorType melt_indicator_vector_relevant_copy(
+    this->dof_handler->locally_owned_dofs(),
+    DoFTools::extract_locally_relevant_dofs(*this->dof_handler),
+    mpi_communicator);
+
   // For single fluid flows
-  std::shared_ptr<GlobalVectorType> temperature_vector_owned_copy;
-  const double                      melting_temperature =
+  const double melting_temperature =
     this->simulation_parameters.post_processing.melting_temperature;
 
   // Initialize CLS related objects
   std::shared_ptr<const DoFHandler<dim>>      dof_handler_cls;
   std::shared_ptr<NonMatching::FEValues<dim>> non_matching_fe_values_cls;
   std::shared_ptr<GlobalVectorType>           phase_indicator_vector_owned_copy;
-  std::shared_ptr<GlobalVectorType>           intersection_vector_relevant_copy;
   const double phase_indicator_interface_value = 0.5;
 
   if (gather_cls)
@@ -2219,39 +2221,28 @@ HeatTransfer<dim>::postprocess_geometric_melt_volume_and_surface()
           Parameters::FluidIndicator::fluid1)
         phase_indicator_vector_owned_copy->operator*=(-1);
 
-      // Get the intersection region between the correct fluid and the liquidus
-      // temperature isocurve
-      intersection_vector_relevant_copy = std::make_shared<GlobalVectorType>(
-        this->dof_handler->locally_owned_dofs(), mpi_communicator);
-
+      // Get the intersection region between the monitored fluid and the
+      // melting temperature isocurve
       for (const auto dof_id : this->dof_handler->locally_owned_dofs())
         {
-          (*intersection_vector_relevant_copy)[dof_id] =
+          melt_indicator_vector_owned_copy[dof_id] =
             std::max<double>((-1.0 * ((*this->present_solution)[dof_id] -
                                       melting_temperature)),
                              (*phase_indicator_vector_owned_copy)[dof_id]);
         }
+      melt_indicator_vector_relevant_copy = melt_indicator_vector_owned_copy;
     }
   else // Single-fluid flow
     {
       // Transpose temperature to get volume of the region where the temperature
       // is over the melting temperature
-      temperature_vector_owned_copy = std::make_shared<GlobalVectorType>(
-        this->dof_handler->locally_owned_dofs(), mpi_communicator);
-      *temperature_vector_owned_copy = *this->present_solution;
-      temperature_vector_owned_copy->add(-melting_temperature);
-      temperature_vector_owned_copy->operator*=(
-        -1); // Make the liquid region 'inside' (negative values)
+      melt_indicator_vector_owned_copy = *this->present_solution;
+      melt_indicator_vector_owned_copy.add(-melting_temperature);
+      melt_indicator_vector_owned_copy.operator*=(
+        -1); // Make the liquid region 'inside' (negative values) for the
+             // NonMatching MeshClassifier.
+      melt_indicator_vector_relevant_copy = melt_indicator_vector_owned_copy;
     }
-
-  // Classify active cells as being inside/outside/intersected
-  GlobalVectorType melt_indicator_vector_relevant_copy(
-    this->dof_handler->locally_owned_dofs(),
-    DoFTools::extract_locally_relevant_dofs(*this->dof_handler),
-    mpi_communicator);
-  melt_indicator_vector_relevant_copy = (!gather_cls) ?
-                                          *temperature_vector_owned_copy :
-                                          *intersection_vector_relevant_copy;
 
   // Compute volume and surface integral
   std::tie(melt_volume, melt_surface) =

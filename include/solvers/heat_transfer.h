@@ -566,7 +566,7 @@ private:
 
   /**
    * @brief Compute the algebraic (phase indicator and liquid fraction weighted)
-   * melt volume (3D) or surface (2D) in a domain. The phase evolving fluid must
+   * melt volume (3D) or surface (2D) in a domain. The monitored fluid must
    * be selected with
    * Parameters::PostProcessing::monitored_fluid_with_phase_change.
    *
@@ -576,8 +576,7 @@ private:
   postprocess_algebraic_melt_volume();
 
   /**
-   * @brief Post-processing. Write the algebraic (phase-weighted) melt volume to
-   * an output file.
+   * @brief Post-processing. Write the algebraic melt volume to an output file.
    */
   void
   write_algebraic_melt_volume();
