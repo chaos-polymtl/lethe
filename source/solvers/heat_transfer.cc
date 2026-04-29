@@ -2114,22 +2114,24 @@ HeatTransfer<dim>::postprocess_algebraic_melt_volume()
     Utilities::MPI::sum(liquid_volume_integral, mpi_communicator);
 
   // Initialize table column names
-  std::string melt_volume_column_name;
+  std::string melt_volume_column_name, melt_volume_console_string;
   if constexpr (dim == 2)
     {
-      melt_volume_column_name = "melt_surface_alge";
+      melt_volume_column_name    = "melt_surface_alge";
+      melt_volume_console_string = "melt surface alge";
     }
   else if constexpr (dim == 3)
     {
-      melt_volume_column_name = "melt_volume_alge";
+      melt_volume_column_name    = "melt_volume_alge";
+      melt_volume_console_string = "melt volume alge";
     }
 
   // Console output
   if (simulation_parameters.post_processing.verbosity ==
       Parameters::Verbosity::verbose)
     {
-      this->pcout << melt_volume_column_name << ": " << liquid_volume_integral
-                  << std::endl;
+      this->pcout << melt_volume_console_string << ": "
+                  << liquid_volume_integral << std::endl;
     }
 
   // Fill table
@@ -2257,26 +2259,30 @@ HeatTransfer<dim>::postprocess_geometric_melt_volume_and_surface()
       *this->dof_handler, *this->fe, melt_indicator_vector_relevant_copy);
 
   // Initialize table column names
-  std::string melt_volume_column_name;
-  std::string melt_contour_column_name;
+  std::string melt_volume_column_name, melt_volume_console_string;
+  std::string melt_contour_column_name, melt_contour_console_string;
   if constexpr (dim == 2)
     {
-      melt_volume_column_name  = "melt_surface_geo";
-      melt_contour_column_name = "melt_contour_length_geo";
+      melt_volume_column_name     = "melt_surface_geo";
+      melt_contour_column_name    = "melt_contour_length_geo";
+      melt_volume_console_string  = "melt surface geo";
+      melt_contour_console_string = "melt contour length geo";
     }
   else if constexpr (dim == 3)
     {
-      melt_volume_column_name  = "melt_volume_geo";
-      melt_contour_column_name = "melt_contour_surface_geo";
+      melt_volume_column_name     = "melt_volume_geo";
+      melt_contour_column_name    = "melt_contour_surface_geo";
+      melt_volume_console_string  = "melt volume geo";
+      melt_contour_console_string = "melt contour surface geo";
     }
 
   // Console output
   if (simulation_parameters.post_processing.verbosity ==
       Parameters::Verbosity::verbose)
     {
-      this->pcout << melt_volume_column_name << ": " << melt_volume
+      this->pcout << melt_volume_console_string << ": " << melt_volume
                   << std::endl;
-      this->pcout << melt_contour_column_name << ": " << melt_surface
+      this->pcout << melt_contour_console_string << ": " << melt_surface
                   << std::endl;
     }
 
