@@ -2207,7 +2207,7 @@ HeatTransfer<dim>::postprocess_geometric_melt_volume_and_surface()
       phase_indicator_vector_owned_copy = std::make_shared<GlobalVectorType>();
       phase_indicator_vector_owned_copy->reinit(
         this->dof_handler->locally_owned_dofs(), mpi_communicator);
-      VectorTools::interpolate_to_different_mesh(
+      FETools::interpolate(
         *dof_handler_cls,
         this->multiphysics->get_solution(PhysicsID::CLS),
         *this->dof_handler,
