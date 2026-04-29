@@ -1,13 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 2022-2024, 2026 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #-------------------------------------------------------------------------------
 # DESCRIPTION:
-# This test checks that the phase change heat capacity model works correctly.
-# We simulate the Stefan Problem in a pseudo-1D domain where melting occurs from
-# conduction on the left side of the domain.
-# The melt volume post-processing is also tested here (both algebraic and
-# geometric).
+# This test checks that the melt volume computation (both, algebraic and
+# geometric) works well in a CLS simulation. Two superposed fluids are subject
+# to a higher temperature on the left side of the domain (this is set with the
+# initial condition).
+# Only fluid 1 has a phase change specific heat model, therefore it is the only
+# fluid that melts.
+# The algebraic melt volume corresponds to a phase indicator and liquid fraction
+# weighted volume integral.
+# The geometric melt volume corresponds to the region at the
+# intersection of the temperature above the melting temperature and the fluid 1
+# subdomains.
 #-------------------------------------------------------------------------------
 
 # Listing of Parameters
@@ -22,9 +28,9 @@ set dimension = 2
 subsection simulation control
   set method           = bdf1
   set output frequency = 0
-  set output name      = stefan
+  set output name      = heat_transfer_cls_melt_volume
   set time end         = 5
-  set time step        = 0.02
+  set time step        = 1
 end
 
 #---------------------------------------------------
@@ -38,14 +44,6 @@ subsection FEM
 end
 
 #---------------------------------------------------
-# Timer
-#---------------------------------------------------
-
-subsection timer
-  set type = none
-end
-
-#---------------------------------------------------
 # Initial condition
 #---------------------------------------------------
 
@@ -54,6 +52,12 @@ subsection initial conditions
   subsection uvwp
     set Function expression = 0; 0; 0
   end
+  subsection CLS
+    set Function expression = 0.5 - 0.5*tanh((y-0.3725)/0.03125)
+  end
+  subsection temperature
+    set Function expression = 0.02 + 0.02*tanh((0.1125-x)/0.03125)
+  end
 end
 
 #---------------------------------------------------
@@ -61,27 +65,22 @@ end
 #---------------------------------------------------
 
 subsection physical properties
-  set number of fluids = 1
+  set number of fluids = 2
   subsection fluid 0
+    set thermal conductivity = 0.001
+    set specific heat        = 2000
+  end
+  subsection fluid 1
     set thermal conductivity model = constant
-    set thermal conductivity       = 1
+    set thermal conductivity       = 0.001
 
     set specific heat model = phase_change
     subsection phase change
-      # Enthalpy of the phase change
-      set latent enthalpy = 100
-
-      # Temperature of the liquidus
+      set latent enthalpy      = 100
       set liquidus temperature = 0.02
-
-      # Temperature of the solidus
-      set solidus temperature = 0
-
-      # Specific heat of the liquid phase
-      set specific heat liquid = 1
-
-      # Specific heat of the solid phase
-      set specific heat solid = 1
+      set solidus temperature  = 0
+      set specific heat liquid = 2000
+      set specific heat solid  = 2000
     end
   end
 end
@@ -92,9 +91,9 @@ end
 
 subsection mesh
   set type               = dealii
-  set grid type          = subdivided_hyper_rectangle
-  set grid arguments     = 100, 1 : 0, 0 : 1, 0.1 : true
-  set initial refinement = 0
+  set grid type          = hyper_cube
+  set grid arguments     = 0: 0.5 : false
+  set initial refinement = 4
 end
 
 #---------------------------------------------------
@@ -102,26 +101,9 @@ end
 #---------------------------------------------------
 
 subsection multiphysics
-  set fluid dynamics = false
+  set fluid dynamics = true
   set heat transfer  = true
-end
-
-#---------------------------------------------------
-# Analytical Solution
-#---------------------------------------------------
-
-subsection analytical solution
-  set enable    = true
-  set verbosity = verbose
-  subsection uvwp
-    set Function expression = 0 ; 0 ; 0
-  end
-  # This is not exactly the analytical solution, but until we have
-  # erf support in deal.II, this is as close as it gets
-  subsection temperature
-    set Function constants  = beta=0.07059328
-    set Function expression = if (x<(2*beta*sqrt(t)), ((2*beta*sqrt(t))-x)/(2*beta*sqrt(t)),0)
-  end
+  set cls            = true
 end
 
 #---------------------------------------------------
@@ -129,18 +111,12 @@ end
 #---------------------------------------------------
 
 subsection post-processing
-  set verbosity                       = verbose
-  set calculate geometric melt volume = true
-  set calculate algebraic melt volume = true
-  set melting temperature             = 0.02
-end
-
-#---------------------------------------------------
-# Mesh Adaptation Control
-#---------------------------------------------------
-
-subsection mesh adaptation
-  set type = none
+  set verbosity                         = verbose
+  set calculate geometric melt volume   = true
+  set calculate algebraic melt volume   = true
+  set monitored fluid with phase change = fluid 1
+  set melting temperature               = 0.02
+  set calculate mass conservation       = false
 end
 
 #---------------------------------------------------
@@ -150,23 +126,24 @@ end
 subsection boundary conditions
   set number = 1
   subsection bc 0
-    set id   = 0,1,2,3
+    set id   = 0
     set type = noslip
   end
 end
 
 subsection boundary conditions heat transfer
-  set number = 2
+  set number = 1
   subsection bc 0
     set id   = 0
-    set type = temperature
-    subsection value
-      set Function expression = 1
-    end
-  end
-  subsection bc 1
-    set id   = 1,2,3
     set type = noflux
+  end
+end
+
+subsection boundary conditions CLS
+  set number = 1
+  subsection bc 0
+    set id   = 0
+    set type = none
   end
 end
 
@@ -185,6 +162,11 @@ subsection non-linear solver
     set tolerance      = 1e-12
     set max iterations = 10
   end
+  subsection CLS
+    set tolerance      = 1e-8
+    set max iterations = 10
+    set verbosity      = quiet
+  end
 end
 
 #---------------------------------------------------
@@ -201,5 +183,21 @@ subsection linear solver
     set ilu preconditioner fill               = 0
     set ilu preconditioner absolute tolerance = 1e-14
     set ilu preconditioner relative tolerance = 1.00
+  end
+  subsection fluid dynamics
+    set verbosity                             = quiet
+    set method                                = gmres
+    set relative residual                     = 1e-13
+    set minimum residual                      = 1e-13
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 0
+    set ilu preconditioner absolute tolerance = 1e-14
+    set ilu preconditioner relative tolerance = 1.00
+  end
+  subsection CLS
+    set verbosity               = quiet
+    set relative residual       = 1e-3
+    set minimum residual        = 1e-10
+    set ilu preconditioner fill = 0
   end
 end

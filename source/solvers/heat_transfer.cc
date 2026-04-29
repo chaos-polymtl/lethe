@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include "core/interface_tools.h"
 #include <core/bdf.h>
 #include <core/time_integration_utilities.h>
 
@@ -22,8 +23,8 @@
 #include <deal.II/numerics/vector_tools.h>
 
 DeclExceptionMsg(
-  LiquidFractionRequiresPhaseChange,
-  "Calculation of the liquid fraction requires that a fluid has a phase_change specific heat model");
+  MeltVolumeRequiresPhaseChange,
+  "Calculation of the melt volume requires that a fluid has at least a 'phase_change' physical property model");
 
 template <int dim>
 void
@@ -1175,18 +1176,28 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
         this->write_heat_flux(domain_name);
     }
 
-  // Liquid fraction
-  if (simulation_parameters.post_processing.calculate_liquid_fraction)
+  // Algebraic melt volume
+  if (simulation_parameters.post_processing.calculate_algebraic_melt_volume)
     {
       AssertThrow(
         simulation_parameters.physical_properties_manager.has_phase_change(),
-        LiquidFractionRequiresPhaseChange());
-      postprocess_liquid_fraction(gather_cls);
+        MeltVolumeRequiresPhaseChange());
+      postprocess_algebraic_melt_volume();
 
       if (simulation_control->get_step_number() %
             this->simulation_parameters.post_processing.output_frequency ==
           0)
-        this->write_liquid_fraction();
+        this->write_algebraic_melt_volume();
+    }
+
+  // Geometric melt volume
+  if (simulation_parameters.post_processing.calculate_geometric_melt_volume)
+    {
+      postprocess_geometric_melt_volume_and_surface();
+      if (simulation_control->get_step_number() %
+            this->simulation_parameters.post_processing.output_frequency ==
+          0)
+        this->write_geometric_melt_volume();
     }
 
   if (this->simulation_parameters.timer.type ==
@@ -1320,12 +1331,22 @@ HeatTransfer<dim>::gather_tables()
         this->simulation_parameters.post_processing.temperature_output_name +
         suffix);
 
-  if (this->simulation_parameters.post_processing.calculate_liquid_fraction)
+  if (this->simulation_parameters.post_processing
+        .calculate_algebraic_melt_volume)
     table_output_structs.emplace_back(
-      this->liquid_fraction_table,
+      this->melt_volume_alge_table,
       prefix +
         this->simulation_parameters.post_processing
-          .liquid_fraction_output_name +
+          .algebraic_melt_volume_output_name +
+        suffix);
+
+  if (this->simulation_parameters.post_processing
+        .calculate_geometric_melt_volume)
+    table_output_structs.emplace_back(
+      this->melt_volume_geo_table,
+      prefix +
+        this->simulation_parameters.post_processing
+          .geometric_melt_volume_output_name +
         suffix);
 
   return table_output_structs;
@@ -1965,10 +1986,19 @@ HeatTransfer<dim>::write_temperature_statistics(const std::string domain_name)
 
 template <int dim>
 void
-HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_cls)
+HeatTransfer<dim>::postprocess_algebraic_melt_volume()
 {
   const unsigned int n_q_points   = this->cell_quadrature->size();
   const MPI_Comm mpi_communicator = this->dof_handler->get_mpi_communicator();
+
+  // Local variable to check if it is a CLS simulation
+  const bool gather_cls = this->simulation_parameters.multiphysics.CLS;
+
+  AssertThrow(!(!gather_cls && this->simulation_parameters.post_processing
+                                   .monitored_fluid_with_phase_change ==
+                                 Parameters::FluidIndicator::fluid1),
+              ExcMessage(
+                "For single-fluid flows only 'fluid 0' can be monitored."));
 
   // Initialize heat transfer information
   std::vector<double> local_temperature_values(n_q_points);
@@ -2001,7 +2031,6 @@ HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_cls)
     }
 
   // Variables for the integration
-  double volume_integral(0.);
   double liquid_volume_integral(0.);
 
   // Calculate min, max and average
@@ -2042,14 +2071,13 @@ HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_cls)
                                                 .fluids[0]
                                                 .phase_change_parameters) *
                     fe_values_ht.JxW(q);
-                  volume_integral += fe_values_ht.JxW(q);
                 }
               else
                 {
                   // Case of fluid 0 being a phase change
-                  if (physical_properties_parameters.fluids[0]
-                        .specific_heat_model ==
-                      Parameters::Material::SpecificHeatModel::phase_change)
+                  if (this->simulation_parameters.post_processing
+                        .monitored_fluid_with_phase_change ==
+                      Parameters::FluidIndicator::fluid0)
                     {
                       liquid_volume_integral +=
                         (1. - filtered_phase_values[q]) *
@@ -2058,14 +2086,12 @@ HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_cls)
                                                     .fluids[0]
                                                     .phase_change_parameters) *
                         fe_values_ht.JxW(q);
-                      volume_integral +=
-                        (1. - filtered_phase_values[q]) * fe_values_ht.JxW(q);
                     }
 
                   // Case of fluid 1 being a phase change
-                  if (physical_properties_parameters.fluids[1]
-                        .specific_heat_model ==
-                      Parameters::Material::SpecificHeatModel::phase_change)
+                  if (this->simulation_parameters.post_processing
+                        .monitored_fluid_with_phase_change ==
+                      Parameters::FluidIndicator::fluid1)
                     {
                       liquid_volume_integral +=
                         (filtered_phase_values[q]) *
@@ -2074,38 +2100,49 @@ HeatTransfer<dim>::postprocess_liquid_fraction(const bool gather_cls)
                                                     .fluids[1]
                                                     .phase_change_parameters) *
                         fe_values_ht.JxW(q);
-                      volume_integral +=
-                        (filtered_phase_values[q]) * fe_values_ht.JxW(q);
                     }
                 }
             } // end loop on quadrature points
         }
     } // end loop on cell
 
-  volume_integral = Utilities::MPI::sum(volume_integral, mpi_communicator);
   liquid_volume_integral =
     Utilities::MPI::sum(liquid_volume_integral, mpi_communicator);
-  const double liquid_fraction = liquid_volume_integral / volume_integral;
+
+  // Initialize table column names
+  std::string melt_volume_column_name, melt_volume_console_string;
+  if constexpr (dim == 2)
+    {
+      melt_volume_column_name    = "melt_surface_alge";
+      melt_volume_console_string = "melt surface alge";
+    }
+  else if constexpr (dim == 3)
+    {
+      melt_volume_column_name    = "melt_volume_alge";
+      melt_volume_console_string = "melt volume alge";
+    }
 
   // Console output
   if (simulation_parameters.post_processing.verbosity ==
       Parameters::Verbosity::verbose)
     {
-      this->pcout << "Liquid fraction"
-                  << ": " << liquid_fraction << std::endl;
+      this->pcout << melt_volume_console_string << ": "
+                  << liquid_volume_integral << std::endl;
     }
 
   // Fill table
-  this->liquid_fraction_table.add_value(
+  this->melt_volume_alge_table.add_value(
     "time", this->simulation_control->get_current_time());
-  this->liquid_fraction_table.set_scientific("time", true);
-  this->liquid_fraction_table.add_value("liquid fraction", liquid_fraction);
-  this->liquid_fraction_table.set_scientific("liquid fraction", true);
+  this->melt_volume_alge_table.set_scientific("time", true);
+  this->melt_volume_alge_table.add_value(melt_volume_column_name,
+                                         liquid_volume_integral);
+  this->melt_volume_alge_table.set_precision(melt_volume_column_name, 8);
+  this->melt_volume_alge_table.set_scientific(melt_volume_column_name, true);
 }
 
 template <int dim>
 void
-HeatTransfer<dim>::write_liquid_fraction()
+HeatTransfer<dim>::write_algebraic_melt_volume()
 {
   auto mpi_communicator = triangulation->get_mpi_communicator();
 
@@ -2113,15 +2150,163 @@ HeatTransfer<dim>::write_liquid_fraction()
     {
       std::string filename =
         simulation_parameters.simulation_control.output_folder +
-        simulation_parameters.post_processing.liquid_fraction_output_name +
+        simulation_parameters.post_processing
+          .algebraic_melt_volume_output_name +
         ".dat";
       std::ofstream output(filename.c_str());
 
-      this->liquid_fraction_table.write_text(output);
+      this->melt_volume_alge_table.write_text(output);
     }
 }
 
+template <int dim>
+void
+HeatTransfer<dim>::postprocess_geometric_melt_volume_and_surface()
+{
+  const MPI_Comm mpi_communicator = this->dof_handler->get_mpi_communicator();
 
+  // Local variable to check if it is a CLS simulation
+  const bool gather_cls = this->simulation_parameters.multiphysics.CLS;
+
+  AssertThrow(!(!gather_cls && this->simulation_parameters.post_processing
+                                   .monitored_fluid_with_phase_change ==
+                                 Parameters::FluidIndicator::fluid1),
+              ExcMessage(
+                "For single-fluid flows only 'fluid 0' can be monitored."));
+
+  // Initializes variables for the melt volume and surface
+  double melt_volume;
+  double melt_surface;
+
+  // Initialize melt indicator vectors
+  GlobalVectorType melt_indicator_vector_owned_copy(
+    this->dof_handler->locally_owned_dofs(), mpi_communicator);
+  GlobalVectorType melt_indicator_vector_relevant_copy(
+    this->dof_handler->locally_owned_dofs(),
+    DoFTools::extract_locally_relevant_dofs(*this->dof_handler),
+    mpi_communicator);
+
+  // For single fluid flows
+  const double melting_temperature =
+    this->simulation_parameters.post_processing.melting_temperature;
+
+  // Initialize CLS related objects
+  std::shared_ptr<const DoFHandler<dim>>      dof_handler_cls;
+  std::shared_ptr<NonMatching::FEValues<dim>> non_matching_fe_values_cls;
+  std::shared_ptr<GlobalVectorType>           phase_indicator_vector_owned_copy;
+  const double phase_indicator_interface_value = 0.5;
+
+  if (gather_cls)
+    {
+      // Get liquidus temperature and generate signed phase indicator level set
+      // for intersection operation
+      dof_handler_cls = std::shared_ptr<const DoFHandler<dim>>(
+        &this->multiphysics->get_dof_handler(PhysicsID::CLS),
+        [](const DoFHandler<dim> *) {});
+
+      // Local copy to shift phase indicator solution to make the region of
+      // interest 'inside' (negative values)
+      phase_indicator_vector_owned_copy = std::make_shared<GlobalVectorType>();
+      phase_indicator_vector_owned_copy->reinit(
+        this->dof_handler->locally_owned_dofs(), mpi_communicator);
+      FETools::interpolate(
+        *dof_handler_cls,
+        this->multiphysics->get_solution(PhysicsID::CLS),
+        *this->dof_handler,
+        *phase_indicator_vector_owned_copy); // Ensure DoF correspondence for
+      // intersection vector later
+      phase_indicator_vector_owned_copy->add(-phase_indicator_interface_value);
+      if (this->simulation_parameters.post_processing
+            .monitored_fluid_with_phase_change ==
+          Parameters::FluidIndicator::fluid1)
+        phase_indicator_vector_owned_copy->operator*=(-1);
+
+      // Get the intersection region between the monitored fluid and the
+      // melting temperature isocurve
+      for (const auto dof_id : this->dof_handler->locally_owned_dofs())
+        {
+          melt_indicator_vector_owned_copy[dof_id] =
+            std::max<double>((-1.0 * ((*this->present_solution)[dof_id] -
+                                      melting_temperature)),
+                             (*phase_indicator_vector_owned_copy)[dof_id]);
+        }
+      melt_indicator_vector_relevant_copy = melt_indicator_vector_owned_copy;
+    }
+  else // Single-fluid flow
+    {
+      // Transpose temperature to get volume of the region where the temperature
+      // is over the melting temperature
+      melt_indicator_vector_owned_copy = *this->present_solution;
+      melt_indicator_vector_owned_copy.add(-melting_temperature);
+      melt_indicator_vector_owned_copy.operator*=(
+        -1); // Make the liquid region 'inside' (negative values) for the
+             // NonMatching MeshClassifier.
+      melt_indicator_vector_relevant_copy = melt_indicator_vector_owned_copy;
+    }
+
+  // Compute volume and surface integral
+  std::tie(melt_volume, melt_surface) =
+    InterfaceTools::integrate_volume_and_surface(
+      *this->dof_handler, *this->fe, melt_indicator_vector_relevant_copy);
+
+  // Initialize table column names
+  std::string melt_volume_column_name, melt_volume_console_string;
+  std::string melt_contour_column_name, melt_contour_console_string;
+  if constexpr (dim == 2)
+    {
+      melt_volume_column_name     = "melt_surface_geo";
+      melt_contour_column_name    = "melt_contour_length_geo";
+      melt_volume_console_string  = "melt surface geo";
+      melt_contour_console_string = "melt contour length geo";
+    }
+  else if constexpr (dim == 3)
+    {
+      melt_volume_column_name     = "melt_volume_geo";
+      melt_contour_column_name    = "melt_contour_surface_geo";
+      melt_volume_console_string  = "melt volume geo";
+      melt_contour_console_string = "melt contour surface geo";
+    }
+
+  // Console output
+  if (simulation_parameters.post_processing.verbosity ==
+      Parameters::Verbosity::verbose)
+    {
+      this->pcout << melt_volume_console_string << ": " << melt_volume
+                  << std::endl;
+      this->pcout << melt_contour_console_string << ": " << melt_surface
+                  << std::endl;
+    }
+
+  // Fill table
+  this->melt_volume_geo_table.add_value(
+    "time", this->simulation_control->get_current_time());
+  this->melt_volume_geo_table.set_scientific("time", true);
+  this->melt_volume_geo_table.add_value(melt_volume_column_name, melt_volume);
+  this->melt_volume_geo_table.set_precision(melt_volume_column_name, 8);
+  this->melt_volume_geo_table.set_scientific(melt_volume_column_name, true);
+  this->melt_volume_geo_table.add_value(melt_contour_column_name, melt_surface);
+  this->melt_volume_geo_table.set_precision(melt_contour_column_name, 8);
+  this->melt_volume_geo_table.set_scientific(melt_contour_column_name, true);
+}
+
+template <int dim>
+void
+HeatTransfer<dim>::write_geometric_melt_volume()
+{
+  auto mpi_communicator = triangulation->get_mpi_communicator();
+
+  if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+    {
+      std::string filename =
+        simulation_parameters.simulation_control.output_folder +
+        simulation_parameters.post_processing
+          .geometric_melt_volume_output_name +
+        ".dat";
+      std::ofstream output(filename.c_str());
+
+      this->melt_volume_geo_table.write_text(output);
+    }
+}
 
 template <int dim>
 template <typename VectorType>
