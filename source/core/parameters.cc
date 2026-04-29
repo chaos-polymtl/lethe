@@ -2331,7 +2331,7 @@ namespace Parameters
         "calculate algebraic melt volume",
         "false",
         Patterns::Bool(),
-        "Enable calculation of the algebraic (phase indicator and liquid fraction weighted) melt volume in the domain. In the case of CLS simulations, the fluid of interest must be selected with 'monitored fluid with phase change.'");
+        "Enable calculation of the algebraic (phase indicator and liquid fraction weighted) melt volume in the domain. In the case of CLS simulations, the fluid of interest is selected with 'monitored fluid with phase change.'");
 
       prm.declare_entry("algebraic melt volume name",
                         "melt_volume_alge",
