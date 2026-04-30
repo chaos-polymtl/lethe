@@ -171,7 +171,11 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
 
           if constexpr (dim == 3)
             points.emplace_back(
-              x[0], x[1], (id_out_plane + quadrature.point(q)[1]) * delta_1);
+              x[0],
+              x[1],
+              (minimum_height - delta_1 / 2) +
+                (id_out_plane + quadrature.point(q)[1]) *
+                  delta_1); // TODO Generalize for x and y directions
           else
             points.emplace_back(x);
         }
@@ -211,7 +215,11 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
 
           if constexpr (dim == 3)
             points.emplace_back(
-              x[0], x[1], (id_out_plane + quadrature.point(q)[1]) * delta_1);
+              x[0],
+              x[1],
+              (minimum_height - delta_1 / 2) +
+                (id_out_plane + quadrature.point(q)[1]) *
+                  delta_1); // TODO Generalize for x and y directions
           else
             points.emplace_back(x);
         }
@@ -223,7 +231,11 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
 
           if constexpr (dim == 3)
             points.emplace_back(
-              x[0], x[1], (id_out_plane + quadrature.point(q)[1]) * delta_1);
+              x[0],
+              x[1],
+              (minimum_height - delta_1 / 2) +
+                (id_out_plane + quadrature.point(q)[1]) *
+                  delta_1); // TODO Generalize for x and y directions
           else
             points.emplace_back(x);
         }
@@ -411,7 +423,8 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center,
     {
       const double delta_1 = radius[1] / n_subdivisions[1];
       id_out_plane         = static_cast<unsigned int>(
-        std::round((face_center[2] - delta_1 / 2) / delta_1));
+        std::round((face_center[2] - minimum_height) /
+                   delta_1)); // TODO Generalize for x and y directions
     }
 
   if (this->is_mesh_aligned())
@@ -574,7 +587,7 @@ compute_interface_dimensions_circular(
   // Min and max vertex coordinates for length computation in the axial
   // direction. Used in 3D case
   double vertex_min = std::numeric_limits<double>::max();
-  double vertex_max = 0;
+  double vertex_max = std::numeric_limits<double>::lowest();
 
   // Verify if rotation axis is a unit vector in x, y, or z
   if constexpr (dim == 3)
@@ -596,7 +609,7 @@ compute_interface_dimensions_circular(
       AssertThrow(
         is_unit_axis,
         ExcMessage(
-          " The rotation axis must be a unit vector in x, y, or z direction."));
+          "The rotation axis must be a unit vector in x, y, or z direction."));
 
       // Find the direction of the rotation axis
       for (int d = 0; d < dim; d++)
@@ -767,6 +780,57 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
   AssertThrow(false, ExcNotImplemented());
 
   return quadrature;
+}
+
+template <int dim>
+double
+compute_minimum_height(const Triangulation<dim>      &triangulation,
+                       const Parameters::Mortar<dim> &mortar_parameters)
+{
+  if constexpr (dim == 3)
+    {
+      // Direction of the rotation axis
+      int            direction = 0;
+      Tensor<1, dim> axis      = mortar_parameters.rotation_axis;
+      for (int d = 1; d < dim; ++d)
+        if (std::abs(axis[d]) > std::abs(axis[direction]))
+          direction = d;
+
+      AssertThrow(
+        std::abs(axis[direction]) > 0.99,
+        ExcMessage(
+          "Rotation axis is not aligned with a coordinate direction."));
+
+      // Minimum coordinate in the direction of the rotation axis
+      double minimum_height_local = std::numeric_limits<double>::max();
+
+      // Loop over the cells to find the minimum coordinate in the rotation axis
+      // direction
+      for (const auto &cell : triangulation.active_cell_iterators())
+        {
+          if (cell->is_locally_owned())
+            {
+              for (const auto face_no : cell->face_indices())
+                {
+                  const auto face = cell->face(face_no);
+
+                  // Check if the face is at the boundary and belongs to the
+                  // stator boundary
+                  // The choice of the stator boundary is arbitrary
+                  if (face->at_boundary() &&
+                      face->boundary_id() ==
+                        mortar_parameters.stator_boundary_id)
+                    minimum_height_local =
+                      std::min(minimum_height_local, cell->center()[direction]);
+                }
+            }
+        }
+      // Return the minimum value across all processes
+      return Utilities::MPI::min(minimum_height_local,
+                                 triangulation.get_mpi_communicator());
+    }
+  else
+    return 0.0;
 }
 
 template <int dim>
@@ -2089,6 +2153,14 @@ construct_quadrature(const Quadrature<2>         &quadrature,
 template Quadrature<3>
 construct_quadrature(const Quadrature<3>         &quadrature,
                      const Parameters::Mortar<3> &mortar_parameters);
+
+template double
+compute_minimum_height<2>(const Triangulation<2>      &triangulation,
+                          const Parameters::Mortar<2> &mortar_parameters);
+
+template double
+compute_minimum_height<3>(const Triangulation<3>      &triangulation,
+                          const Parameters::Mortar<3> &mortar_parameters);
 
 template void
 mortar_workload_imbalance(const Triangulation<2>      &triangulation,

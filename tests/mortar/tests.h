@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <deal.II/grid/grid_generator.h>
@@ -2391,7 +2391,8 @@ public:
   MyMortarManagerCircle(const std::vector<unsigned int> &n_subdivisions,
                         const std::vector<double>       &radius,
                         const Quadrature<dim2>          &quadrature,
-                        const double                     rotation_angle);
+                        const double                     rotation_angle,
+                        const double                     height_min);
 
 protected:
   Point<dim>
@@ -2411,8 +2412,13 @@ MyMortarManagerCircle<dim>::MyMortarManagerCircle(
   const std::vector<unsigned int> &n_subdivisions,
   const std::vector<double>       &radius,
   const Quadrature<dim2>          &quadrature,
-  const double                     rotation_angle)
-  : MortarManagerBase<dim>(n_subdivisions, radius, quadrature, rotation_angle)
+  const double                     rotation_angle,
+  const double                     height_min)
+  : MortarManagerBase<dim>(n_subdivisions,
+                           radius,
+                           quadrature,
+                           rotation_angle,
+                           height_min)
 {}
 
 template <int dim>
