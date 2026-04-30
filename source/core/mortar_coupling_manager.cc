@@ -10,6 +10,8 @@
 
 #include <deal.II/fe/fe_nothing.h>
 
+#include <algorithm>
+
 DeclException1(
   InterfaceRadiusTolerance,
   double,
@@ -173,7 +175,7 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
             points.emplace_back(
               x[0],
               x[1],
-              (minimum_height - delta_1 / 2) +
+              (stage_heights[0] - delta_1 / 2) +
                 (id_out_plane + quadrature.point(q)[1]) *
                   delta_1); // TODO Generalize for x and y directions
           else
@@ -217,7 +219,7 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
             points.emplace_back(
               x[0],
               x[1],
-              (minimum_height - delta_1 / 2) +
+              (stage_heights[0] - delta_1 / 2) +
                 (id_out_plane + quadrature.point(q)[1]) *
                   delta_1); // TODO Generalize for x and y directions
           else
@@ -233,7 +235,7 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
             points.emplace_back(
               x[0],
               x[1],
-              (minimum_height - delta_1 / 2) +
+              (stage_heights[0] - delta_1 / 2) +
                 (id_out_plane + quadrature.point(q)[1]) *
                   delta_1); // TODO Generalize for x and y directions
           else
@@ -423,7 +425,7 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center,
     {
       const double delta_1 = radius[1] / n_subdivisions[1];
       id_out_plane         = static_cast<unsigned int>(
-        std::round((face_center[2] - minimum_height) /
+        std::round((face_center[2] - stage_heights[0]) /
                    delta_1)); // TODO Generalize for x and y directions
     }
 
@@ -783,9 +785,9 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
 }
 
 template <int dim>
-double
-compute_minimum_height(const Triangulation<dim>      &triangulation,
-                       const Parameters::Mortar<dim> &mortar_parameters)
+std::vector<double>
+compute_stage_heights(const Triangulation<dim>      &triangulation,
+                      const Parameters::Mortar<dim> &mortar_parameters)
 {
   if constexpr (dim == 3)
     {
@@ -801,11 +803,15 @@ compute_minimum_height(const Triangulation<dim>      &triangulation,
         ExcMessage(
           "Rotation axis is not aligned with a coordinate direction."));
 
-      // Minimum coordinate in the direction of the rotation axis
-      double minimum_height_local = std::numeric_limits<double>::max();
+      // Container storing all vertex coordinates in the rotation axis direction
+      // for the local cells at the mortar boundary
+      std::vector<double> stage_heights_local;
+      // Smallest mortar cell face diameter, used to set the tolerance for
+      // height comparison
+      double minimum_face_size_local = std::numeric_limits<double>::max();
 
-      // Loop over the cells to find the minimum coordinate in the rotation axis
-      // direction
+      // Loop over the cells to collect the vertex coordinates in the rotation
+      // axis direction
       for (const auto &cell : triangulation.active_cell_iterators())
         {
           if (cell->is_locally_owned())
@@ -820,17 +826,51 @@ compute_minimum_height(const Triangulation<dim>      &triangulation,
                   if (face->at_boundary() &&
                       face->boundary_id() ==
                         mortar_parameters.stator_boundary_id)
-                    minimum_height_local =
-                      std::min(minimum_height_local, cell->center()[direction]);
+                    {
+                      minimum_face_size_local =
+                        std::min(minimum_face_size_local, face->diameter());
+
+                      for (const auto vertex_no : face->vertex_indices())
+                        stage_heights_local.push_back(
+                          face->vertex(vertex_no)[direction]);
+                    }
                 }
             }
         }
-      // Return the minimum value across all processes
-      return Utilities::MPI::min(minimum_height_local,
-                                 triangulation.get_mpi_communicator());
+      // Set the minimum face size over all processes
+      double minimum_face_size =
+        Utilities::MPI::min(minimum_face_size_local,
+                            triangulation.get_mpi_communicator());
+
+      // Collect the vertex coordinates in the rotation axis direction from all
+      // processes
+      const auto stage_heights_all =
+        Utilities::MPI::all_gather(triangulation.get_mpi_communicator(),
+                                   stage_heights_local);
+      std::vector<double> stage_heights;
+      for (const auto &heights_per_process : stage_heights_all)
+        stage_heights.insert(stage_heights.end(),
+                             heights_per_process.begin(),
+                             heights_per_process.end());
+
+      // Set the tolerance for height comparison based on the minimum face size
+      const double height_tolerance = minimum_face_size * 1e-8;
+
+      // Remove duplicate heights within the specified tolerance
+      std::sort(stage_heights.begin(), stage_heights.end());
+      stage_heights.erase(std::unique(stage_heights.begin(),
+                                      stage_heights.end(),
+                                      [height_tolerance](const double a,
+                                                         const double b) {
+                                        return std::abs(a - b) <=
+                                               height_tolerance;
+                                      }),
+                          stage_heights.end());
+
+      return stage_heights;
     }
   else
-    return 0.0;
+    return {0.0};
 }
 
 template <int dim>
@@ -2154,13 +2194,13 @@ template Quadrature<3>
 construct_quadrature(const Quadrature<3>         &quadrature,
                      const Parameters::Mortar<3> &mortar_parameters);
 
-template double
-compute_minimum_height<2>(const Triangulation<2>      &triangulation,
-                          const Parameters::Mortar<2> &mortar_parameters);
+template std::vector<double>
+compute_stage_heights<2>(const Triangulation<2>      &triangulation,
+                         const Parameters::Mortar<2> &mortar_parameters);
 
-template double
-compute_minimum_height<3>(const Triangulation<3>      &triangulation,
-                          const Parameters::Mortar<3> &mortar_parameters);
+template std::vector<double>
+compute_stage_heights<3>(const Triangulation<3>      &triangulation,
+                         const Parameters::Mortar<3> &mortar_parameters);
 
 template void
 mortar_workload_imbalance(const Triangulation<2>      &triangulation,
