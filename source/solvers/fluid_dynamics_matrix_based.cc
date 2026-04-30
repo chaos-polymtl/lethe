@@ -7,7 +7,7 @@
 #include <core/multiphysics.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
-
+#include <deal.II/fe/mapping_q_eulerian.h>
 #include <solvers/fluid_dynamics_matrix_based.h>
 #include <solvers/isothermal_compressible_navier_stokes_assembler.h>
 #include <solvers/isothermal_compressible_navier_stokes_cls_assembler.h>
@@ -2105,6 +2105,13 @@ FluidDynamicsMatrixBased<dim>::solve()
 {
   this->computing_timer.enter_subsection("Read mesh and manifolds");
 
+  // Allocate the mapping cache once; it will be re-initialized in place
+  // each time the mesh rotation is updated. Reusing the same instance
+  // avoids dangling references from any object that captured the
+  // Mapping<dim>& returned by get_mapping().
+  this->mapping_cache =
+    std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
+
   if (this->simulation_parameters.mortar_parameters.enable)
     {
       // Mortar load balancing
@@ -2117,18 +2124,26 @@ FluidDynamicsMatrixBased<dim>::solve()
         this->simulation_parameters.restart_parameters.restart,
         this->simulation_parameters.boundary_conditions,
         this->simulation_parameters.mortar_parameters);
-      // Create and initialize mapping cache
-      this->mapping_cache =
-        std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
       this->rotate_rotor_mapping(true);
     }
   else
-    read_mesh_and_manifolds(
-      *this->triangulation,
-      this->simulation_parameters.mesh,
-      this->simulation_parameters.manifolds_parameters,
-      this->simulation_parameters.restart_parameters.restart,
-      this->simulation_parameters.boundary_conditions);
+    {
+      read_mesh_and_manifolds(
+        *this->triangulation,
+        this->simulation_parameters.mesh,
+        this->simulation_parameters.manifolds_parameters,
+        this->simulation_parameters.restart_parameters.restart,
+        this->simulation_parameters.boundary_conditions);
+
+      // Initialize the cache to the identity (rotation = 0) before
+      // setup_dofs so constraints are built on the un-rotated mesh.
+      LetheGridTools::rotate_mapping(*this->dof_handler,
+                                     *this->mapping_cache,
+                                     *this->mapping,
+                                     0.0,
+                                     Point<dim>(),
+                                     Tensor<1, dim>());
+    }
 
   this->computing_timer.leave_subsection("Read mesh and manifolds");
 
@@ -2142,8 +2157,19 @@ FluidDynamicsMatrixBased<dim>::solve()
 
   while (this->simulation_control->integrate())
     {
+      // Re-initialize the existing mapping cache in place with the
+      // current rotation angle (omega = 1 rad/s).
+      LetheGridTools::rotate_mapping(*this->dof_handler,
+                                     *this->mapping_cache,
+                                     *this->mapping,
+                                     this->simulation_control
+                                       ->get_current_time(),
+                                     Point<dim>(),
+                                     Tensor<1, dim>());
+
       this->forcing_function->set_time(
         this->simulation_control->get_current_time());
+      
 
       // We allow the physics to update their boundary conditions
       // according to their own parameters

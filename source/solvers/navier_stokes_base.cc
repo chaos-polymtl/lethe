@@ -3068,7 +3068,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
 
   if (simulation_control->get_output_boundaries() &&
       (simulation_control->get_step_number() == 0 ||
-       simulation_parameters.mortar_parameters.enable))
+       simulation_parameters.mortar_parameters.enable ))
     {
       DataOutFaces<dim> data_out_faces;
 

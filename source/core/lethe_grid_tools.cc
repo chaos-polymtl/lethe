@@ -1800,8 +1800,8 @@ LetheGridTools::rotate_mapping(const DoFHandler<dim> &dof_handler,
         dof_handler.get_triangulation(),
         [&](const auto &cell, const auto &point) {
           // Do not rotate the point if current cell is part of the stator
-          if (cell->material_id() == 0)
-            return point;
+          //if (cell->material_id() == 0)
+          //  return point;
 
           // Shift point by the center of rotation
           const auto shift_point = point - center_of_rotation;
