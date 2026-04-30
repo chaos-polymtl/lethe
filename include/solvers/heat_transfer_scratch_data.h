@@ -396,6 +396,7 @@ public:
   template <typename VectorType>
   void
   reinit_cls(const typename DoFHandler<dim>::active_cell_iterator &cell,
+             const VectorType &current_solution,
              const VectorType &current_filtered_solution)
   {
     this->fe_values_cls->reinit(cell);
@@ -404,6 +405,9 @@ public:
                                              this->filtered_phase_values);
     this->fe_values_cls->get_function_gradients(
       current_filtered_solution, this->filtered_phase_gradient_values);
+
+    this->fe_values_cls->get_function_gradients(current_filtered_solution,
+                                                this->phase_gradient_values);
   }
 
   /**
@@ -534,6 +538,8 @@ public:
   unsigned int                n_dofs_cls;
   std::vector<double>         filtered_phase_values;
   std::vector<Tensor<1, dim>> filtered_phase_gradient_values;
+  std::vector<Tensor<1, dim>> phase_gradient_values;
+
   // This is stored as a shared_ptr because it is only instantiated when needed
   std::shared_ptr<FEValues<dim>> fe_values_cls;
   std::shared_ptr<ConservativeLevelSetFilterBase>
