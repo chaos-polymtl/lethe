@@ -250,7 +250,7 @@ namespace InterfaceTools
    * @param[in] iso_level Given level of the level-set field enclosing the
    * volume of interest
    *
-   * @return Volume enclosed by specified level and its surface area.
+   * @return Volume and surface enclosed by specified @p iso_level.
    * The volume is the first value and the surface the second.
    */
   template <int dim, typename VectorType>
