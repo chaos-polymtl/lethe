@@ -1,22 +1,19 @@
 # SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# Smoking-gun test for compute_combined_periodic_offsets in 2D.
+# Anisotropic-domain companion to multiperiodic_single_axis_collisions_2d.
 #
-# Two stationary particles are placed in slight overlap across the
-# x-periodic boundary, in a fully periodic unit square. The y-periodic BC
-# is registered first and the x-periodic BC second, so a correct contact
-# requires the pure +/- offset of the SECOND registered pair to be present
-# in combined_periodic_offsets.
+# Identical minimal physics setup, but on a 2.0 x 0.5 rectangle instead
+# of a unit square. The two periodic offset magnitudes (|offset_x| = 2.0,
+# |offset_y| = 0.5) differ by a factor of 4. This catches any place in
+# the periodic contact pipeline that accidentally assumes the periodic
+# offsets share a magnitude or are commensurate with a single length
+# scale (for example, a "nearest image" tie-break or a hard-coded
+# threshold in cell-size units).
 #
-# - With the bug, the pure +/- x offset is missing, the periodic contact is
-#   never detected, and both particles remain frozen at their initial
-#   positions.
-# - With the fix, the Hertzian repulsion pushes them apart along x.
-#
-# The simulation is intentionally short (5e-3 s, 500 steps) so that the
-# only 1D contact dynamics dominate and the final positions are robust to
-# floating-point drift.
+# As in the smoking-gun test, the y-periodic BC is registered first and
+# the x-periodic BC second, so detecting this pair requires the pure
+# +/- x offset that the buggy compute_combined_periodic_offsets omitted.
 
 # Listing of Parameters
 #----------------------
@@ -82,14 +79,15 @@ end
 # Insertion Info
 #---------------------------------------------------
 
-# Particles initially overlap by 1e-2 across the x-periodic boundary:
-# centers are at x = 0.020 and x = 0.980, so the periodic distance is
-# 0.040 < diameter 0.05 -> overlap of 0.010.
+# Centers at x = 0.010 and x = 1.990 on the long (Lx = 2.0) axis;
+# periodic distance = 0.020 < diameter 0.05 -> overlap of 0.030.
+# Both at y = 0.250, far from the y-periodic boundary, so only the
+# pure +/- x offset can produce a near-image.
 subsection insertion info
   set insertion method    = list
   set insertion frequency = 1000000
-  set list x              = 0.020, 0.980
-  set list y              = 0.500, 0.500
+  set list x              = 0.010, 1.990
+  set list y              = 0.250, 0.250
   set list z              = 0.000, 0.000
   set list velocity x     = 0.000, 0.000
   set list velocity y     = 0.000, 0.000
@@ -105,11 +103,13 @@ end
 # Mesh
 #---------------------------------------------------
 
+# Refinement 3 on a 2.0 x 0.5 rectangle yields 8 x 8 cells of size
+# 0.25 x 0.0625, both larger than the particle diameter.
 subsection mesh
   set type                                = dealii
   set grid type                           = hyper_rectangle
-  set grid arguments                      = 0.0, 0.0 : 1.0, 1.0 : true
-  set initial refinement                  = 4
+  set grid arguments                      = 0.0, 0.0 : 2.0, 0.5 : true
+  set initial refinement                  = 3
   set expand particle-wall contact search = false
 end
 
@@ -117,16 +117,9 @@ end
 # Boundary conditions DEM
 #---------------------------------------------------
 
-<<<<<<< HEAD
-# BC 0 is the y-periodic pair (registered first), BC 1 is the x-periodic pair
-# (registered second). Pair B therefore tests the pure +/- offset that is
-# added last in compute_combined_periodic_offsets.
-
-=======
-# y-periodic registered first, x-periodic registered second on purpose so
-# that the bug (missing pure +/- offset of the second pair) manifests
-# directly on this single test pair.
->>>>>>> 1e2bc4947 (Add a lot of multiperiodic small application-tests)
+# y-periodic registered first, x-periodic second so that the missing
+# pure +/- offset under the bug is +/- x, which is the offset this test
+# requires.
 subsection DEM boundary conditions
   set number of boundary conditions = 2
 

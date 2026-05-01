@@ -1,22 +1,24 @@
 # SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# Smoking-gun test for compute_combined_periodic_offsets in 2D.
+# Parallel companion to multiperiodic_single_axis_collisions_2d.
 #
-# Two stationary particles are placed in slight overlap across the
-# x-periodic boundary, in a fully periodic unit square. The y-periodic BC
-# is registered first and the x-periodic BC second, so a correct contact
-# requires the pure +/- offset of the SECOND registered pair to be present
-# in combined_periodic_offsets.
+# Same minimal setup -- two stationary particles in slight overlap across
+# the second-registered (x) periodic boundary of a fully periodic unit
+# square -- but designed to be run with mpirun=2 so that the periodic
+# contact crosses the rank boundary. With the default p4est partitioning
+# of a uniformly refined unit square on two ranks, particles placed at
+# x = 0.020 and x = 0.980 land in cells that are owned by different ranks.
 #
-# - With the bug, the pure +/- x offset is missing, the periodic contact is
-#   never detected, and both particles remain frozen at their initial
-#   positions.
-# - With the fix, the Hertzian repulsion pushes them apart along x.
+# This guards two distinct things at once:
+#  1. compute_combined_periodic_offsets must include the pure +/- offset
+#     of the second registered pair (the bug fixed on this branch).
+#  2. The periodic ghost particle pipeline (update_local_particle_containers,
+#     update_fine_search_candidates, ghost_local_periodic_particle_particle
+#     contacts) must correctly transmit the periodic image of one particle
+#     to the rank that owns the other.
 #
-# The simulation is intentionally short (5e-3 s, 500 steps) so that the
-# only 1D contact dynamics dominate and the final positions are robust to
-# floating-point drift.
+# Either failure leaves the particles frozen at their initial positions.
 
 # Listing of Parameters
 #----------------------
@@ -82,9 +84,9 @@ end
 # Insertion Info
 #---------------------------------------------------
 
-# Particles initially overlap by 1e-2 across the x-periodic boundary:
-# centers are at x = 0.020 and x = 0.980, so the periodic distance is
-# 0.040 < diameter 0.05 -> overlap of 0.010.
+# Particles overlap by 0.010 across the x-periodic boundary, identical to
+# the serial smoking-gun setup. With mpirun=2 they land on different
+# ranks, exercising the periodic ghost contact path.
 subsection insertion info
   set insertion method    = list
   set insertion frequency = 1000000
@@ -117,16 +119,6 @@ end
 # Boundary conditions DEM
 #---------------------------------------------------
 
-<<<<<<< HEAD
-# BC 0 is the y-periodic pair (registered first), BC 1 is the x-periodic pair
-# (registered second). Pair B therefore tests the pure +/- offset that is
-# added last in compute_combined_periodic_offsets.
-
-=======
-# y-periodic registered first, x-periodic registered second on purpose so
-# that the bug (missing pure +/- offset of the second pair) manifests
-# directly on this single test pair.
->>>>>>> 1e2bc4947 (Add a lot of multiperiodic small application-tests)
 subsection DEM boundary conditions
   set number of boundary conditions = 2
 

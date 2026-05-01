@@ -1,27 +1,29 @@
 # SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# Smoking-gun test for compute_combined_periodic_offsets in 2D.
+# Edge-crossing companion to multiperiodic_single_axis_collisions_3d.
 #
-# Two stationary particles are placed in slight overlap across the
-# x-periodic boundary, in a fully periodic unit square. The y-periodic BC
-# is registered first and the x-periodic BC second, so a correct contact
-# requires the pure +/- offset of the SECOND registered pair to be present
-# in combined_periodic_offsets.
+# Two stationary particles overlap across the y-z edge of a fully periodic
+# unit cube: their only near-image requires the COMBINED offset (0, +/-y,
+# +/-z), i.e. crossings of the second AND third registered periodic
+# pairs simultaneously, with no x-crossing involved. The y-z combined
+# offset is precisely one of the entries omitted by the buggy
+# compute_combined_periodic_offsets, which only generated combined offsets
+# that involved the first registered pair (x).
 #
-# - With the bug, the pure +/- x offset is missing, the periodic contact is
-#   never detected, and both particles remain frozen at their initial
-#   positions.
-# - With the fix, the Hertzian repulsion pushes them apart along x.
+# - With the bug, neither pure +/- y, nor pure +/- z, nor +/- y +/- z is
+#   in combined_periodic_offsets, so the edge contact is silently
+#   dropped and the particles stay frozen.
+# - With the fix, the Hertzian repulsion separates them along the y-z
+#   diagonal.
 #
-# The simulation is intentionally short (5e-3 s, 500 steps) so that the
-# only 1D contact dynamics dominate and the final positions are robust to
-# floating-point drift.
+# Together with the smoking-gun single-axis test (which checks the pure
+# offsets) this covers both branches of the offset list construction.
 
 # Listing of Parameters
 #----------------------
 
-set dimension = 2
+set dimension = 3
 
 #---------------------------------------------------
 # Simulation Control
@@ -63,7 +65,7 @@ end
 #---------------------------------------------------
 
 subsection lagrangian physical properties
-  set g                        = 0., 0.
+  set g                        = 0., 0., 0.
   set number of particle types = 1
   subsection particle type 0
     set size distribution type            = uniform
@@ -82,15 +84,17 @@ end
 # Insertion Info
 #---------------------------------------------------
 
-# Particles initially overlap by 1e-2 across the x-periodic boundary:
-# centers are at x = 0.020 and x = 0.980, so the periodic distance is
-# 0.040 < diameter 0.05 -> overlap of 0.010.
+# Particles share the same x = 0.5, but sit in opposite y-z corners of
+# the cube. Centre-to-centre periodic distance through the y-z edge is
+# sqrt(0.030^2 + 0.030^2) ~ 0.0424 < diameter 0.05 -> overlap ~ 0.0076.
+# Centre-to-centre distance through any single y or z face alone is
+# ~ sqrt(0.030^2 + 0.97^2) ~ 0.97, far above the neighborhood threshold.
 subsection insertion info
   set insertion method    = list
   set insertion frequency = 1000000
-  set list x              = 0.020, 0.980
-  set list y              = 0.500, 0.500
-  set list z              = 0.000, 0.000
+  set list x              = 0.500, 0.500
+  set list y              = 0.015, 0.985
+  set list z              = 0.015, 0.985
   set list velocity x     = 0.000, 0.000
   set list velocity y     = 0.000, 0.000
   set list velocity z     = 0.000, 0.000
@@ -108,8 +112,8 @@ end
 subsection mesh
   set type                                = dealii
   set grid type                           = hyper_rectangle
-  set grid arguments                      = 0.0, 0.0 : 1.0, 1.0 : true
-  set initial refinement                  = 4
+  set grid arguments                      = 0.0, 0.0, 0.0 : 1.0, 1.0, 1.0 : true
+  set initial refinement                  = 3
   set expand particle-wall contact search = false
 end
 
@@ -117,30 +121,30 @@ end
 # Boundary conditions DEM
 #---------------------------------------------------
 
-<<<<<<< HEAD
-# BC 0 is the y-periodic pair (registered first), BC 1 is the x-periodic pair
-# (registered second). Pair B therefore tests the pure +/- offset that is
-# added last in compute_combined_periodic_offsets.
-
-=======
-# y-periodic registered first, x-periodic registered second on purpose so
-# that the bug (missing pure +/- offset of the second pair) manifests
-# directly on this single test pair.
->>>>>>> 1e2bc4947 (Add a lot of multiperiodic small application-tests)
+# x first, y second, z third. The pair below crosses only the y-z edge,
+# i.e. the combined offset of the second and third registered pairs --
+# the case the buggy algorithm never generated.
 subsection DEM boundary conditions
-  set number of boundary conditions = 2
+  set number of boundary conditions = 3
 
   subsection boundary condition 0
+    set type               = periodic
+    set periodic id 0      = 1
+    set periodic id 1      = 0
+    set periodic direction = 0
+  end
+
+  subsection boundary condition 1
     set type               = periodic
     set periodic id 0      = 3
     set periodic id 1      = 2
     set periodic direction = 1
   end
 
-  subsection boundary condition 1
+  subsection boundary condition 2
     set type               = periodic
-    set periodic id 0      = 1
-    set periodic id 1      = 0
-    set periodic direction = 0
+    set periodic id 0      = 5
+    set periodic id 1      = 4
+    set periodic direction = 2
   end
 end
