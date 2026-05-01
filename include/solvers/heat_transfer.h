@@ -32,6 +32,8 @@
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
+#include <deal.II/non_matching/fe_values.h>
+#include <deal.II/non_matching/mesh_classifier.h>
 
 DeclException1(
   HeatTransferBoundaryConditionMissing,
@@ -563,22 +565,42 @@ private:
   write_temperature_statistics(const std::string domain_name);
 
   /**
-   * @brief Post-processing.
-   * Calculate liquid fraction on the domain.
+   * @brief Compute the algebraic (phase indicator and liquid fraction weighted)
+   * melt volume (3D) or surface (2D) in a domain. The monitored fluid must
+   * be selected with
+   * Parameters::PostProcessing::monitored_fluid_with_phase_change.
    *
-   * @param gather_cls boolean true when CLS=true (multiphase flow), used to gather
-   * CLS information
+   * @remark For CLS multiphase flow, only one of the fluids can be monitored.
    */
-
   void
-  postprocess_liquid_fraction(const bool gather_cls);
+  postprocess_algebraic_melt_volume();
 
   /**
-   * @brief Post-processing. Write the liquid fraction to an output file.
+   * @brief Post-processing. Write the algebraic melt volume to an output file.
    */
-
   void
-  write_liquid_fraction();
+  write_algebraic_melt_volume();
+
+  /**
+   * @brief Compute the geometric melt volume (3D) or surface (2D) and the
+   * contour surface area (3D) or length (2D) in a domain. The melt region is
+   * delimited by the Parameters::PostProcessing::melting_temperature
+   * isosurface (3D) or isocurve (2D) within the subdomain occupied by the fluid
+   * selected with
+   * Parameters::PostProcessing::monitored_fluid_with_phase_change.
+   *
+   * @remark For CLS multiphase flow, only one of the fluids can be monitored.
+   * The volume is computed as the geometrical volume with respect to
+   * the phase indicator isocurve (isosurface) of value 0.5.
+   */
+  void
+  postprocess_geometric_melt_volume_and_surface();
+
+  /**
+   * @brief Write the geometric melt volume to an output file.
+   */
+  void
+  write_geometric_melt_volume();
 
   /**
    * Post-processing. Calculate the heat flux at heat transfer boundary
@@ -590,7 +612,6 @@ private:
    * @param current_solution_fd current solution for the fluid dynamics, parsed
    * by postprocess
    */
-
   template <typename VectorType>
   void
   postprocess_heat_flux_on_bc(const bool        gather_cls,
@@ -867,7 +888,12 @@ private:
   /**
    * @brief Liquid fraction in the domain.
    */
-  TableHandler liquid_fraction_table;
+  TableHandler melt_volume_alge_table;
+
+  /**
+   * @brief Evolution of the melt volume in the simulated domain.
+   */
+  TableHandler melt_volume_geo_table;
 };
 
 

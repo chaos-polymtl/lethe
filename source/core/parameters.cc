@@ -2322,17 +2322,40 @@ namespace Parameters
                         Patterns::FileName(),
                         "File name output temperature statistics");
 
+      prm.declare_entry("monitored fluid with phase change",
+                        "fluid 0",
+                        Patterns::Selection("fluid 0|fluid 1"),
+                        "Fluid with phase change properties <fluid 0|fluid 1>");
+
       prm.declare_entry(
-        "calculate liquid fraction",
+        "calculate algebraic melt volume",
         "false",
         Patterns::Bool(),
-        "Enable calculation of the liquid fraction. The liquid fraction "
-        "is calculated from the volume integral of the liquid fraction divided by the volume of the domain.");
+        "Enable calculation of the algebraic (phase indicator and liquid fraction weighted) melt volume in the domain. In the case of CLS simulations, the fluid of interest is selected with 'monitored fluid with phase change.'");
 
-      prm.declare_entry("liquid fraction name",
-                        "liquid_fraction",
+      prm.declare_entry("algebraic melt volume name",
+                        "melt_volume_alge",
                         Patterns::FileName(),
-                        "File name output liquid fraction");
+                        "Filename of the algebraic melt volume output file");
+
+      prm.declare_entry(
+        "calculate geometric melt volume",
+        "false",
+        Patterns::Bool(),
+        "Enable calculation of the geometric melt volume. "
+        "The melt volume is computed as the volume of fluid over the 'melting temperature'."
+        "In the case of CLS simulations, the volume is the geometrical volume within the 'monitored fluid with phase change.'");
+
+      prm.declare_entry("geometric melt volume name",
+                        "melt_volume_geo",
+                        Patterns::FileName(),
+                        "Filename of the geometric melt volume output file");
+
+      prm.declare_entry(
+        "melting temperature",
+        "0",
+        Patterns::Double(0),
+        "Temperature used to define the melting point of the fluid for volume calculation.");
 
       prm.declare_entry("calculate heat flux",
                         "false",
@@ -2473,8 +2496,22 @@ namespace Parameters
       phase_output_name           = prm.get("phase statistics name");
       calculate_temperature_statistics =
         prm.get_bool("calculate temperature statistics");
-      calculate_liquid_fraction   = prm.get_bool("calculate liquid fraction");
-      liquid_fraction_output_name = prm.get("liquid fraction name");
+      const std::string melt_fluid =
+        prm.get("monitored fluid with phase change");
+      if (melt_fluid == "fluid 0")
+        monitored_fluid_with_phase_change = Parameters::FluidIndicator::fluid0;
+      else if (melt_fluid == "fluid 1")
+        monitored_fluid_with_phase_change = Parameters::FluidIndicator::fluid1;
+      else
+        throw(std::invalid_argument("Invalid fluid. "
+                                    "Options are 'fluid 0' or 'fluid 1'."));
+      calculate_algebraic_melt_volume =
+        prm.get_bool("calculate algebraic melt volume");
+      algebraic_melt_volume_output_name = prm.get("algebraic melt volume name");
+      calculate_geometric_melt_volume =
+        prm.get_bool("calculate geometric melt volume");
+      geometric_melt_volume_output_name = prm.get("geometric melt volume name");
+      melting_temperature               = prm.get_double("melting temperature");
       temperature_output_name     = prm.get("temperature statistics name");
       calculate_heat_flux         = prm.get_bool("calculate heat flux");
       heat_flux_output_name       = prm.get("heat flux name");

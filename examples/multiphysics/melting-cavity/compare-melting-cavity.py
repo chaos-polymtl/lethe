@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2024, 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #############################################################################
@@ -33,6 +33,7 @@ time_scaling = St * alpha
 y_top	= 0.999 * H
 y_mid	= 0.5 * H
 y_bot	= 0.001 * H
+total_volume = 1 * 0.714
 
 #Set temperature to search for maximum x
 temperature_limit = 29.7
@@ -63,9 +64,9 @@ ax1.set_xlim([0, 0.07])
 
 #Load melted volume
 for c in range(1,len(sys.argv)):
-    t_list,melt_frac=np.loadtxt(sys.argv[c]+"/liquid_fraction.dat",unpack=True,skiprows=1)
-    ax1.plot(t_list * time_scaling , melt_frac, '-', label=case_list[c-1])
-
+    t_list_alge,melt_volume_alge=np.loadtxt(sys.argv[c]+"/melt_volume_alge.dat",unpack=True,skiprows=1)
+    melt_frac_alge = [V/total_volume for V in melt_volume_alge]
+    ax1.plot(t_list_alge * time_scaling , melt_frac_alge, '-', label=case_list[c-1])
 
 ax1.legend(loc="upper left")
 fig1.savefig(f'./comparison-melted-volume-fraction.png')
