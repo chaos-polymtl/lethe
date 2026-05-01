@@ -512,19 +512,23 @@
   set tracer flow rate name            = tracer_flow_rate
 
   # Thermal postprocessing
-  set postprocessed fluid              = both
-  set calculate temperature statistics = false
-  set temperature statistics name      = temperature_statistics
-  set calculate heat flux              = false
-  set heat flux name                   = heat_flux
+  set postprocessed fluid               = both
+  set calculate temperature statistics  = false
+  set temperature statistics name       = temperature_statistics
+  set calculate heat flux               = false
+  set heat flux name                    = heat_flux
+  set monitored fluid with phase change = fluid 0
+  set calculate algebraic melt volume   = false
+  set algebraic melt volume name        = melt_volume_alge
+  set calculate geometric melt volume   = false
+  set geometric melt volume name        = melt_volume_geo
+  set melting temperature               = 0
 
   # Multiphase postprocessing
   set calculate barycenter             = false
   set barycenter name                  = barycenter_information
   set calculate mass conservation      = true
   set mass conservation name           = mass_conservation_information
-  set calculate liquid fraction        = false
-  set liquid fraction name             = liquid_fraction
 
   # Other Cahn-Hilliard postprocessing
   set calculate phase statistics       = false
@@ -743,6 +747,40 @@ end
 </li>
 </ul>
 </li>
+<li><p><code class="docutils literal notranslate"><span class="pre">monitored</span> <span class="pre">fluid</span> <span class="pre">with</span> <span class="pre">phase</span> <span class="pre">change</span></code>:  fluid with phase change properties, either <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">0</span></code> or <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code> (for CLS multiphase flows). The current implementation does not track two melt volumes simultaneously.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">calculate</span> <span class="pre">algebraic</span> <span class="pre">melt</span> <span class="pre">volume</span></code>: calculates the algebraic melt volume in simulations with phase change. The algebraic melt volume (<span class="math notranslate nohighlight">\(V_\mathrm{i,melt,alge}\)</span> with <span class="math notranslate nohighlight">\(i \in \{0,1\}\)</span> depending on the fluid) corresponds to the volume (surface, in 2D) integral of the liquid fraction in the specified <code class="docutils literal notranslate"><span class="pre">monitored</span> <span class="pre">fluid</span> <span class="pre">with</span> <span class="pre">phase</span> <span class="pre">change</span></code> domain:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[V_{i\mathrm{,melt,alge}} = \int_{\Omega_i} \alpha_{i\mathrm{,liquid}} \, \mathrm{d}\Omega\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(\alpha_{i\mathrm{,liquid}} = \frac{T-T_{i\mathrm{,solidus}}}{T_{i\mathrm{,liquidus}} - T_{i\mathrm{,solidus}}}\)</span> is the liquid fraction of fluid <span class="math notranslate nohighlight">\(i\)</span> with <span class="math notranslate nohighlight">\(T_{i\mathrm{,solidus}}\)</span> and <span class="math notranslate nohighlight">\(T_{i\mathrm{,liquidus}}\)</span> respectively the solidus and liquidus temperatures of fluid <span class="math notranslate nohighlight">\(i\)</span>, and <span class="math notranslate nohighlight">\(T\)</span> is the temperature.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This is compatible with CLS two-phase flows. However, only one of the two fluids can be a fluid identified with phase change using the parameter <code class="docutils literal notranslate"><span class="pre">monitored</span> <span class="pre">fluid</span> <span class="pre">with</span> <span class="pre">phase</span> <span class="pre">change</span></code>.</p>
+</div>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>At least one of the <a class="reference internal" href="physical_properties.html"><span class="doc">physical property models</span></a> have to be defined as <code class="docutils literal notranslate"><span class="pre">phase_change</span></code> and <code class="docutils literal notranslate"><span class="pre">liquidus</span> <span class="pre">temperature</span></code> as well as <code class="docutils literal notranslate"><span class="pre">solidus</span> <span class="pre">temperature</span></code> have to be set to compute the algebraic melt volume.</p>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">algebraic</span> <span class="pre">melt</span> <span class="pre">volume</span> <span class="pre">name</span></code>: name of the output file containing the time evolution of the algebraic melt volume.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">calculate</span> <span class="pre">geometric</span> <span class="pre">melt</span> <span class="pre">volume</span></code>: computes the geometric melt volume (surface, in 2D) and contour area (length, in 2D) in simulations with phase change. The melt volume corresponds to the volume integral of the melted phase of the fluid with phase change. The geometric melt volume (<span class="math notranslate nohighlight">\(V_\mathrm{i,melt,geo}\)</span> with <span class="math notranslate nohighlight">\(i \in \{0,1\}\)</span> depending on the fluid) is characterized by temperatures above the fluid’s melting temperature (<span class="math notranslate nohighlight">\(T_\mathrm{melt}\)</span>):</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[V_\mathrm{i,melt,geo} = \int_{\Omega_\mathrm{i,melt,geo}} \mathrm{d}\Omega\]</div>
+</div>
+<p>with  <span class="math notranslate nohighlight">\(\Omega_\mathrm{i,melt,geo} = \{\vec{x} \in \Omega_i | T &gt; T_\mathrm{melt} \}\)</span>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This is compatible with CLS two-phase flows. However, only one of the two fluids can be a fluid identified with phase change using the parameter <code class="docutils literal notranslate"><span class="pre">monitored</span> <span class="pre">fluid</span> <span class="pre">with</span> <span class="pre">phase</span> <span class="pre">change</span></code>.</p>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">geometric</span> <span class="pre">melt</span> <span class="pre">volume</span> <span class="pre">name</span></code>: name of the output file containing the time evolution of the geometric melt volume.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">melting</span> <span class="pre">temperature</span></code>: temperature above which the fluid is considered melted.</p></li>
+</ul>
+</li>
 <li><p><code class="docutils literal notranslate"><span class="pre">calculate</span> <span class="pre">barycenter</span></code>: calculates the barycenter of <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code> and its velocity in CLS and Cahn-Hilliard simulations. The barycenter <span class="math notranslate nohighlight">\(\mathbf{x}_b\)</span> and its velocity <span class="math notranslate nohighlight">\(\mathbf{v}_b\)</span> are defined as:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -767,8 +805,6 @@ end
 <li><p><code class="docutils literal notranslate"><span class="pre">barycenter</span> <span class="pre">name</span></code>: name of the output file containing the position and velocity of the barycenter for CLS and Cahn-Hilliard simulations. The default file name is <code class="docutils literal notranslate"><span class="pre">barycenter_information</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">calculate</span> <span class="pre">mass</span> <span class="pre">conservation</span></code>: calculates the mass and momentum of both fluids for CLS simulations.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">mass</span> <span class="pre">conservation</span> <span class="pre">name</span></code>: name of the output file containing the mass of both fluids for CLS simulations. The default file name is <code class="docutils literal notranslate"><span class="pre">mass_conservation_information</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">calculate</span> <span class="pre">liquid</span> <span class="pre">fraction</span></code>: calculates the liquid fraction in simulations with phase change. The liquid fraction corresponds to the volume (area) integral of the liquid divided by the volume (area) of the domain.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">liquid</span> <span class="pre">fraction</span> <span class="pre">name</span></code>: name of the output file containing the time evolution of the liquid fraction.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">calculate</span> <span class="pre">phase</span> <span class="pre">statistics</span></code>: outputs Cahn-Hilliard phase statistics, including minimum, maximum, average, integral of the phase order parameter, and the volume of each phase.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>

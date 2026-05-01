@@ -94,7 +94,8 @@ $(function() {
   <div class="headertitle"><div class="title">heat_transfer.cc File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;<a class="el" href="bdf_8h_source.html">core/bdf.h</a>&gt;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="interface__tools_8h_source.html">core/interface_tools.h</a>&quot;</code><br />
+<code>#include &lt;<a class="el" href="bdf_8h_source.html">core/bdf.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="time__integration__utilities_8h_source.html">core/time_integration_utilities.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="heat__transfer_8h_source.html">solvers/heat_transfer.h</a>&gt;</code><br />
 <code>#include &lt;deal.II/base/exceptions.h&gt;</code><br />
@@ -111,19 +112,19 @@ $(function() {
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for heat_transfer.cc:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="heat__transfer_8cc__incl.svg" width="4543" height="843"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="heat__transfer_8cc__incl.svg" width="5790" height="828"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="heat__transfer_8cc_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ab1207a8cd9bf115faed85784eaa7410c" id="r_ab1207a8cd9bf115faed85784eaa7410c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="heat__transfer_8cc.html#ab1207a8cd9bf115faed85784eaa7410c">DeclExceptionMsg</a> (LiquidFractionRequiresPhaseChange, &quot;Calculation of the liquid fraction requires that a fluid has a phase_change specific heat model&quot;)</td></tr>
-<tr class="separator:ab1207a8cd9bf115faed85784eaa7410c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ee4b6d439749c6e59909d30a88f66ae" id="r_a6ee4b6d439749c6e59909d30a88f66ae"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="heat__transfer_8cc.html#a6ee4b6d439749c6e59909d30a88f66ae">DeclExceptionMsg</a> (MeltVolumeRequiresPhaseChange, &quot;Calculation of the melt volume requires that a fluid has at least a 'phase_change' physical property model&quot;)</td></tr>
+<tr class="separator:a6ee4b6d439749c6e59909d30a88f66ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ab1207a8cd9bf115faed85784eaa7410c" name="ab1207a8cd9bf115faed85784eaa7410c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab1207a8cd9bf115faed85784eaa7410c">&#9670;&#160;</a></span>DeclExceptionMsg()</h2>
+<a id="a6ee4b6d439749c6e59909d30a88f66ae" name="a6ee4b6d439749c6e59909d30a88f66ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ee4b6d439749c6e59909d30a88f66ae">&#9670;&#160;</a></span>DeclExceptionMsg()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -131,13 +132,13 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">DeclExceptionMsg </td>
           <td>(</td>
-          <td class="paramtype">LiquidFractionRequiresPhaseChange&#160;</td>
+          <td class="paramtype">MeltVolumeRequiresPhaseChange&#160;</td>
           <td class="paramname">, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">&quot;Calculation of the liquid fraction requires that a fluid has a phase_change specific heat model&quot;&#160;</td>
+          <td class="paramtype">&quot;Calculation of the melt volume requires that a fluid has at least a 'phase_change' physical property model&quot;&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>

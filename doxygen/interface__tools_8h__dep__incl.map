@@ -1,9 +1,11 @@
 <map id="/home/runner/work/lethe/lethe/include/core/interface_tools.h" name="/home/runner/work/lethe/lethe/include/core/interface_tools.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="211,5,415,60"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="321,5,525,60"/>
 <area shape="rect" id="Node000002" href="$cls_8h.html" title=" " alt="" coords="105,115,299,155"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="275,72,225,117,221,113,272,68"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="354,68,245,118,242,113,352,63"/>
 <area shape="rect" id="Node000005" href="$interface__tools_8cc.html" title=" " alt="" coords="323,108,523,163"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="353,67,396,106,393,110,350,71"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="426,74,426,108,421,108,421,74"/>
+<area shape="rect" id="Node000006" href="$heat__transfer_8cc.html" title=" " alt="" coords="548,108,731,163"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="493,63,584,106,582,110,491,68"/>
 <area shape="rect" id="Node000003" href="$cls_8cc.html" title=" " alt="" coords="5,211,188,265"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="174,167,126,212,123,208,171,163"/>
 <area shape="rect" id="Node000004" href="$multiphysics__interface_8cc.html" title=" " alt="" coords="213,211,405,265"/>

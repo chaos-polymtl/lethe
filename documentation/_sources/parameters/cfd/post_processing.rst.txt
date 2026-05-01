@@ -76,19 +76,23 @@ This subsection controls the post-processing other than the forces and torque on
     set tracer flow rate name            = tracer_flow_rate
 
     # Thermal postprocessing
-    set postprocessed fluid              = both
-    set calculate temperature statistics = false
-    set temperature statistics name      = temperature_statistics
-    set calculate heat flux              = false
-    set heat flux name                   = heat_flux
+    set postprocessed fluid               = both
+    set calculate temperature statistics  = false
+    set temperature statistics name       = temperature_statistics
+    set calculate heat flux               = false
+    set heat flux name                    = heat_flux
+    set monitored fluid with phase change = fluid 0
+    set calculate algebraic melt volume   = false
+    set algebraic melt volume name        = melt_volume_alge
+    set calculate geometric melt volume   = false
+    set geometric melt volume name        = melt_volume_geo
+    set melting temperature               = 0
 
     # Multiphase postprocessing
     set calculate barycenter             = false
     set barycenter name                  = barycenter_information
     set calculate mass conservation      = true
     set mass conservation name           = mass_conservation_information
-    set calculate liquid fraction        = false
-    set liquid fraction name             = liquid_fraction
 
     # Other Cahn-Hilliard postprocessing
     set calculate phase statistics       = false
@@ -254,6 +258,39 @@ This subsection controls the post-processing other than the forces and torque on
 		0.0000          0.0000               0.0000               0.0000            1000.0000 
 		1.0000         -0.9732               0.0000               1.4856               0.9732 
 
+* ``monitored fluid with phase change``:  fluid with phase change properties, either ``fluid 0`` or ``fluid 1`` (for CLS multiphase flows). The current implementation does not track two melt volumes simultaneously.
+
+* ``calculate algebraic melt volume``: calculates the algebraic melt volume in simulations with phase change. The algebraic melt volume (:math:`V_\mathrm{i,melt,alge}` with :math:`i \in \{0,1\}` depending on the fluid) corresponds to the volume (surface, in 2D) integral of the liquid fraction in the specified ``monitored fluid with phase change`` domain:
+
+  .. math::
+    V_{i\mathrm{,melt,alge}} = \int_{\Omega_i} \alpha_{i\mathrm{,liquid}} \, \mathrm{d}\Omega
+
+  where :math:`\alpha_{i\mathrm{,liquid}} = \frac{T-T_{i\mathrm{,solidus}}}{T_{i\mathrm{,liquidus}} - T_{i\mathrm{,solidus}}}` is the liquid fraction of fluid :math:`i` with :math:`T_{i\mathrm{,solidus}}` and :math:`T_{i\mathrm{,liquidus}}` respectively the solidus and liquidus temperatures of fluid :math:`i`, and :math:`T` is the temperature.
+
+  .. warning::
+
+    This is compatible with CLS two-phase flows. However, only one of the two fluids can be a fluid identified with phase change using the parameter ``monitored fluid with phase change``.
+
+  .. attention::
+
+    At least one of the :doc:`physical property models<./physical_properties>` have to be defined as ``phase_change`` and ``liquidus temperature`` as well as ``solidus temperature`` have to be set to compute the algebraic melt volume.
+
+  * ``algebraic melt volume name``: name of the output file containing the time evolution of the algebraic melt volume.
+
+* ``calculate geometric melt volume``: computes the geometric melt volume (surface, in 2D) and contour area (length, in 2D) in simulations with phase change. The melt volume corresponds to the volume integral of the melted phase of the fluid with phase change. The geometric melt volume (:math:`V_\mathrm{i,melt,geo}` with :math:`i \in \{0,1\}` depending on the fluid) is characterized by temperatures above the fluid's melting temperature (:math:`T_\mathrm{melt}`):
+
+  .. math::
+    V_\mathrm{i,melt,geo} = \int_{\Omega_\mathrm{i,melt,geo}} \mathrm{d}\Omega
+
+  with  :math:`\Omega_\mathrm{i,melt,geo} = \{\vec{x} \in \Omega_i | T > T_\mathrm{melt} \}`.
+
+  .. warning::
+
+    This is compatible with CLS two-phase flows. However, only one of the two fluids can be a fluid identified with phase change using the parameter ``monitored fluid with phase change``.
+
+  * ``geometric melt volume name``: name of the output file containing the time evolution of the geometric melt volume.
+  * ``melting temperature``: temperature above which the fluid is considered melted.
+
 * ``calculate barycenter``: calculates the barycenter of ``fluid 1`` and its velocity in CLS and Cahn-Hilliard simulations. The barycenter :math:`\mathbf{x}_b` and its velocity :math:`\mathbf{v}_b` are defined as:
 
   .. math::
@@ -284,10 +321,6 @@ This subsection controls the post-processing other than the forces and torque on
 * ``calculate mass conservation``: calculates the mass and momentum of both fluids for CLS simulations.
 
 * ``mass conservation name``: name of the output file containing the mass of both fluids for CLS simulations. The default file name is ``mass_conservation_information``.
-
-* ``calculate liquid fraction``: calculates the liquid fraction in simulations with phase change. The liquid fraction corresponds to the volume (area) integral of the liquid divided by the volume (area) of the domain.
-
-* ``liquid fraction name``: name of the output file containing the time evolution of the liquid fraction.
   
 * ``calculate phase statistics``: outputs Cahn-Hilliard phase statistics, including minimum, maximum, average, integral of the phase order parameter, and the volume of each phase.
 
