@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
+- MINOR When using the mortar feature in transient simulations, the boundary conditions need to be updated at every iteration since the mapping rotation is time-dependent, which wasn't done previously. This PR adds an Assert to ensure that time-dependent boundary conditions have been set. [#1980](https://github.com/chaos-polymtl/lethe/pull/1980)
+
 - MAJOR This PR adds a missing factor in the uniform and Gaussian laser models to account for the reduce heat flux when there is an angle of incidence between the laser and the CLS interface. The factor corresponds to the scalar product between the normal of the interface and the laser direction unit vector. [#1977](https://github.com/chaos-polymtl/lethe/pull/1977)
 
 ## [Master] - 2026/04/30
