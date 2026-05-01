@@ -11,11 +11,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
   This PR also changes the computation of the liquid fraction with `calculate liquid fraction` to `calculate algebraic melt volume`. The liquid fraction in the domain is no longer outputted. Instead, a liquid fraction weighted melt volume is outputted in a file named with `algebraic melt volume name`. In CLS simulations, the fluid of interest must be specified with `monitored fluid with phase change`. [#1972](https://github.com/chaos-polymtl/lethe/pull/1972)
 
-## [Master] - 2026/04/30
+## [Master] - 2026/05/01
 
 ### Fixed
 
-- MINOR This PR adds a missing factor in the uniform and Gaussian laser models to account for the reduce heat flux when there is an angle of incidence between the laser and the CLS interface. The factor corresponds to the scalar product between the normal of the interface and the laser direction unit vector. [#1977](https://github.com/chaos-polymtl/lethe/pull/1977)
+- MAJOR This PR adds a missing factor in the uniform and Gaussian laser models to account for the reduce heat flux when there is an angle of incidence between the laser and the CLS interface. The factor corresponds to the scalar product between the normal of the interface and the laser direction unit vector. [#1977](https://github.com/chaos-polymtl/lethe/pull/1977)
 
 ## [Master] - 2026/04/28
 
