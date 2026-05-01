@@ -863,6 +863,9 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
         this->multiphysics->get_previous_solutions(PhysicsID::heat_transfer));
     }
 
+  if (this->simulation_parameters.ale.enabled())
+    scratch_data.reinit_ale(cell, this->simulation_parameters.ale);
+
   if (this->simulation_parameters.mortar_parameters.enable)
     scratch_data.reinit_mortar(cell,
                                this->simulation_parameters.mortar_parameters);
@@ -1101,6 +1104,9 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_rhs(
         this->multiphysics->get_solution(PhysicsID::heat_transfer),
         this->multiphysics->get_previous_solutions(PhysicsID::heat_transfer));
     }
+
+  if (this->simulation_parameters.ale.enabled())
+    scratch_data.reinit_ale(cell, this->simulation_parameters.ale);
 
   if (this->simulation_parameters.mortar_parameters.enable)
     scratch_data.reinit_mortar(cell,

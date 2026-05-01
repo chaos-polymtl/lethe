@@ -4,8 +4,8 @@
 #ifndef lethe_navier_stokes_scratch_data_h
 #define lethe_navier_stokes_scratch_data_h
 
-#include <core/ale.h>
 #include "core/parameters_cfd_dem.h"
+#include <core/ale.h>
 #include <core/bdf.h>
 #include <core/dem_properties.h>
 #include <core/lethe_grid_tools.h>
