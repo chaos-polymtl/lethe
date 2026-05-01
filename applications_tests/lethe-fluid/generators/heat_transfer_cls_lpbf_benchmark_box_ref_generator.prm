@@ -160,8 +160,6 @@ subsection initial conditions
   end
   subsection CLS
     set Function expression = if (y<0.43 , 1, 0)
-    set smoothing type      = diffusive
-    set diffusion factor    = 1
   end
   subsection temperature
     set Function expression = 298
