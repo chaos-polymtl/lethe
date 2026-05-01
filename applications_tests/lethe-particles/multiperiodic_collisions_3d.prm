@@ -82,6 +82,7 @@ end
 # Particle 0 starts near the (0.975, 0.975, 0.025) corner so the approach
 # phase is short (~125 ms) and the test fits in 15000 steps. The seven
 # other particles occupy the seven other cube corners.
+
 subsection insertion info
   set insertion method    = list
   set insertion frequency = 1000000

@@ -87,6 +87,7 @@ end
 # fits in 15000 steps. Three other particles sit at three of the four
 # corners; the (0.975, 0.025) corner is left empty so particle 0 can
 # arrive there.
+
 subsection insertion info
   set insertion method    = list
   set insertion frequency = 1000000
