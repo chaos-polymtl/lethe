@@ -210,7 +210,8 @@ private:
 
   /**
    * @brief Direction of the periodic boundaries, it is the perpendicular axis
-   * of the periodic boundaries.
+   * of the periodic boundaries. Keys of this map are periodic boundary
+   * condition indices in the .prm (subsection numbers)
    */
   std::unordered_map<unsigned int, unsigned int> directions;
 
