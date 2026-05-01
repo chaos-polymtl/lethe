@@ -2175,6 +2175,15 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_rotor_mapping(
   if (!this->simulation_parameters.mortar_parameters.enable)
     return;
 
+  // Check if time-dependent BCs have been set; BCs have to be updated at each
+  // iteration because of the rotation of the rotor domain. This check is done
+  // only once at the beginning of the simulation
+  if (is_first && !this->simulation_control->is_steady())
+    AssertThrow(
+      this->simulation_parameters.boundary_conditions.time_dependent,
+      ExcMessage(
+        "The mortar feature requires a time-dependent setup of the boundary conditions so that they are coherent with the mapping rotation. You can do that by adding 'set time dependent = true' on the Boundary Conditions subsection."));
+
   if ((simulation_parameters.mortar_parameters.verbosity ==
          Parameters::Verbosity::verbose ||
        simulation_parameters.mortar_parameters.verbosity ==

@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 # Checks the transient stabilized ALE mortar implementation.
 
@@ -112,7 +112,8 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions
-  set number = 4
+  set number         = 4
+  set time dependent = true
   subsection bc 0
     set type               = periodic
     set id                 = 0
