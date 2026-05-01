@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
+- MINOR This PR removes the obligation to have a constant mortar cell height in the direction parallel to the rotation axis. [#1978](https://github.com/chaos-polymtl/lethe/pull/1978)
+
 - MAJOR This PR adds a missing factor in the uniform and Gaussian laser models to account for the reduce heat flux when there is an angle of incidence between the laser and the CLS interface. The factor corresponds to the scalar product between the normal of the interface and the laser direction unit vector. [#1977](https://github.com/chaos-polymtl/lethe/pull/1977)
 
 ## [Master] - 2026/04/30

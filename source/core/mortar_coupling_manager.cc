@@ -864,7 +864,7 @@ compute_stage_heights(const Triangulation<dim>      &triangulation,
       const double height_tolerance = minimum_face_size * 1e-8;
 
       // Remove duplicate heights within the specified tolerance
-      std::sort(stage_heights.begin(), stage_heights.end());
+      std::ranges::sort(stage_heights);
       auto result =
         std::ranges::unique(stage_heights,
                             [height_tolerance](const double a, const double b) {
