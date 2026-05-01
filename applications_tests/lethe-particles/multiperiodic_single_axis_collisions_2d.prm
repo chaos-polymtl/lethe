@@ -117,16 +117,9 @@ end
 # Boundary conditions DEM
 #---------------------------------------------------
 
-<<<<<<< HEAD
-# BC 0 is the y-periodic pair (registered first), BC 1 is the x-periodic pair
-# (registered second). Pair B therefore tests the pure +/- offset that is
-# added last in compute_combined_periodic_offsets.
-
-=======
 # y-periodic registered first, x-periodic registered second on purpose so
 # that the bug (missing pure +/- offset of the second pair) manifests
 # directly on this single test pair.
->>>>>>> 1e2bc4947 (Add a lot of multiperiodic small application-tests)
 subsection DEM boundary conditions
   set number of boundary conditions = 2
 
