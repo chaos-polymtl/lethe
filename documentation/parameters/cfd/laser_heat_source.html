@@ -525,9 +525,9 @@ end
 <li><p>The <code class="docutils literal notranslate"><span class="pre">gaussian_heat_flux_cls_interface</span></code> model is used to apply a gaussian heat flux only at the interface. In 3D, this heat flux is given by:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[q(x,y,z) = \frac{|\nabla \psi| \eta \alpha P}{\pi R^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}\]</div>
+\[q(x,y,z) = \frac{|\nabla \psi| \eta \alpha P}{\pi R^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \left(\vec{n}_\Gamma\cdot \vec{d}_\mathrm{laser}\right)\]</div>
 </div>
-<p>where <span class="math notranslate nohighlight">\(r\)</span> is the radial distance from the laser’s axis and <span class="math notranslate nohighlight">\(|\nabla \psi|\)</span> is the <span class="math notranslate nohighlight">\(L^2\)</span> norm of the filtered phase indicator gradient. In 2D, the pre-exponential factor accounts for the change in the receiving area (going from a disk of radius <span class="math notranslate nohighlight">\(R\)</span> in 3D to a line segment of length <span class="math notranslate nohighlight">\(2R\)</span> in 2D):</p>
+<p>where <span class="math notranslate nohighlight">\(r\)</span> is the radial distance from the laser’s axis, <span class="math notranslate nohighlight">\(|\nabla \psi|\)</span> is the <span class="math notranslate nohighlight">\(L^2\)</span> norm of the filtered phase indicator gradient, <span class="math notranslate nohighlight">\(\vec{n}_\Gamma\)</span> is the surface unit normal, and <span class="math notranslate nohighlight">\(\vec{d}_\mathrm{laser}\)</span> is the unit direction vector of the laser. In 2D, the pre-exponential factor accounts for the change in the receiving area (going from a disk of radius <span class="math notranslate nohighlight">\(R\)</span> in 3D to a line segment of length <span class="math notranslate nohighlight">\(2R\)</span> in 2D):</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[q(x,y,z) = \frac{2|\nabla \psi| \sqrt{\eta\;} \alpha P}{\sqrt{\pi^3} R^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)}\]</div>
@@ -536,7 +536,7 @@ end
 <li><p>The <code class="docutils literal notranslate"><span class="pre">uniform_heat_flux_cls_interface</span></code> model is used to apply a uniform heat flux, given by the expression below, only at the interface.</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[q(x,y,z) = \frac{|\nabla \psi| \alpha P}{\pi R^2}\]</div>
+\[q(x,y,z) = \frac{|\nabla \psi| \alpha P}{\pi R^2}\left(\vec{n}_\Gamma\cdot \vec{d}_\mathrm{laser}\right)\]</div>
 </div>
 </li>
 </ul>

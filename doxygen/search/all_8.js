@@ -23,7 +23,7 @@ var searchData=
   ['gather_5ftime_5fharmonic_5fmaxwell_20',['gather_time_harmonic_maxwell',['../classHeatTransferScratchData.html#ae08083d42a5e9b5c1b0e421c364bf6b8',1,'HeatTransferScratchData']]],
   ['gather_5fvoid_5ffraction_21',['gather_void_fraction',['../classNavierStokesScratchData.html#ac56d38ff514f674f06df2d66d50ae980',1,'NavierStokesScratchData']]],
   ['gauss_22',['gauss',['../namespaceParameters.html#a3c3b515caf96bc00d4181a1085dfdb84a710a4950250286365cf841f765a790f1',1,'Parameters']]],
-  ['gauss90_23',['gauss90',['../classRBFShape.html#a2060a8058a7a5a439d772319f39ec66bada58d378d11a57b15b031f9a5e79fcca',1,'RBFShape::GAUSS90'],['../classRBFShape.html#afcc70649ac96639b57456bd38e5a222e',1,'RBFShape::gauss90(const double distance)']]],
+  ['gauss90_23',['gauss90',['../classRBFShape.html#afcc70649ac96639b57456bd38e5a222e',1,'RBFShape::gauss90(const double distance)'],['../classRBFShape.html#a2060a8058a7a5a439d772319f39ec66bada58d378d11a57b15b031f9a5e79fcca',1,'RBFShape::GAUSS90']]],
   ['gauss90_5fderivative_24',['gauss90_derivative',['../classRBFShape.html#a40217b3ae4880af9254d5c839f07f9d8',1,'RBFShape']]],
   ['gauss95_25',['gauss95',['../classRBFShape.html#a0136ef0bada828a44e21a53d067c4cbf',1,'RBFShape::gauss95(const double distance)'],['../classRBFShape.html#a2060a8058a7a5a439d772319f39ec66ba5152fe409882d54099012df9f595e579',1,'RBFShape::GAUSS95']]],
   ['gauss95_5fderivative_26',['gauss95_derivative',['../classRBFShape.html#af85fb383074fbe41bf03445d98f359de',1,'RBFShape']]],

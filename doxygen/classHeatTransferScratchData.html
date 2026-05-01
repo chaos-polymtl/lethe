@@ -121,9 +121,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a35324890e384ee5a6d669f4a0a1da552"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a12fe12c7dc464ee4bc85bd984e82d226" id="r_a12fe12c7dc464ee4bc85bd984e82d226"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHeatTransferScratchData.html#a12fe12c7dc464ee4bc85bd984e82d226">enable_cls</a> (const FiniteElement&lt; dim &gt; &amp;fe, const Quadrature&lt; dim &gt; &amp;quadrature, const Mapping&lt; dim &gt; &amp;mapping, const std::shared_ptr&lt; <a class="el" href="classConservativeLevelSetFilterBase.html">ConservativeLevelSetFilterBase</a> &gt; &amp;<a class="el" href="classHeatTransferScratchData.html#a231ede4243d90c6ec94a6cf4b5013fe3">filter</a>)</td></tr>
 <tr class="separator:a12fe12c7dc464ee4bc85bd984e82d226"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aef21c856237186f8f7cd74f3c48153ea" id="r_aef21c856237186f8f7cd74f3c48153ea"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
-<tr class="memitem:aef21c856237186f8f7cd74f3c48153ea"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classHeatTransferScratchData.html#aef21c856237186f8f7cd74f3c48153ea">reinit_cls</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_filtered_solution)</td></tr>
-<tr class="separator:aef21c856237186f8f7cd74f3c48153ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09513f7652649f4aaf6dc17fdb2f9aeb" id="r_a09513f7652649f4aaf6dc17fdb2f9aeb"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
+<tr class="memitem:a09513f7652649f4aaf6dc17fdb2f9aeb"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classHeatTransferScratchData.html#a09513f7652649f4aaf6dc17fdb2f9aeb">reinit_cls</a> (const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;cell, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_solution, const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;current_filtered_solution)</td></tr>
+<tr class="separator:a09513f7652649f4aaf6dc17fdb2f9aeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5afa16f4b18af5c1385d4efe76b033d2" id="r_a5afa16f4b18af5c1385d4efe76b033d2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHeatTransferScratchData.html#a5afa16f4b18af5c1385d4efe76b033d2">enable_time_harmonic_maxwell</a> (const FiniteElement&lt; dim &gt; &amp;fe, const Quadrature&lt; dim &gt; &amp;quadrature, const Mapping&lt; dim &gt; &amp;mapping)</td></tr>
 <tr class="separator:a5afa16f4b18af5c1385d4efe76b033d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abd1f5cdf9a2095f49cd34b921f563fc9" id="r_abd1f5cdf9a2095f49cd34b921f563fc9"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </td></tr>
@@ -223,6 +223,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a0339d36d335e5e53853f70cdcb78fac2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a62f5084754830bafcc3143061e8e3894" id="r_a62f5084754830bafcc3143061e8e3894"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Tensor&lt; 1, dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHeatTransferScratchData.html#a62f5084754830bafcc3143061e8e3894">filtered_phase_gradient_values</a></td></tr>
 <tr class="separator:a62f5084754830bafcc3143061e8e3894"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6720c3596b5fe2412f351c23852fdd5" id="r_ab6720c3596b5fe2412f351c23852fdd5"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Tensor&lt; 1, dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHeatTransferScratchData.html#ab6720c3596b5fe2412f351c23852fdd5">phase_gradient_values</a></td></tr>
+<tr class="separator:ab6720c3596b5fe2412f351c23852fdd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace048dd86dc143389c2dd90e4354d2a2" id="r_ace048dd86dc143389c2dd90e4354d2a2"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; FEValues&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHeatTransferScratchData.html#ace048dd86dc143389c2dd90e4354d2a2">fe_values_cls</a></td></tr>
 <tr class="separator:ace048dd86dc143389c2dd90e4354d2a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a231ede4243d90c6ec94a6cf4b5013fe3" id="r_a231ede4243d90c6ec94a6cf4b5013fe3"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classConservativeLevelSetFilterBase.html">ConservativeLevelSetFilterBase</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classHeatTransferScratchData.html#a231ede4243d90c6ec94a6cf4b5013fe3">filter</a></td></tr>
@@ -373,7 +375,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00069">69</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer__scratch__data_8cc_source.html#l00011">HeatTransferScratchData&lt; dim &gt;::allocate()</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00533">HeatTransferScratchData&lt; dim &gt;::gather_cls</a>, and <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00545">HeatTransferScratchData&lt; dim &gt;::gather_time_harmonic_maxwell</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer__scratch__data_8cc_source.html#l00011">HeatTransferScratchData&lt; dim &gt;::allocate()</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00537">HeatTransferScratchData&lt; dim &gt;::gather_cls</a>, and <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00551">HeatTransferScratchData&lt; dim &gt;::gather_time_harmonic_maxwell</a>.</p>
 
 </div>
 </div>
@@ -413,7 +415,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00111">111</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer__scratch__data_8cc_source.html#l00011">HeatTransferScratchData&lt; dim &gt;::allocate()</a>, <a class="el" href="heat__transfer__scratch__data_8cc_source.html#l00074">HeatTransferScratchData&lt; dim &gt;::enable_cls()</a>, <a class="el" href="heat__transfer__scratch__data_8cc_source.html#l00142">HeatTransferScratchData&lt; dim &gt;::enable_time_harmonic_maxwell()</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00538">HeatTransferScratchData&lt; dim &gt;::fe_values_cls</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00556">HeatTransferScratchData&lt; dim &gt;::fe_values_time_harmonic_maxwell</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00540">HeatTransferScratchData&lt; dim &gt;::filter</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00533">HeatTransferScratchData&lt; dim &gt;::gather_cls</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00545">HeatTransferScratchData&lt; dim &gt;::gather_time_harmonic_maxwell</a>, and <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00519">HeatTransferScratchData&lt; dim &gt;::global_delta_T_ref</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer__scratch__data_8cc_source.html#l00011">HeatTransferScratchData&lt; dim &gt;::allocate()</a>, <a class="el" href="heat__transfer__scratch__data_8cc_source.html#l00074">HeatTransferScratchData&lt; dim &gt;::enable_cls()</a>, <a class="el" href="heat__transfer__scratch__data_8cc_source.html#l00146">HeatTransferScratchData&lt; dim &gt;::enable_time_harmonic_maxwell()</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00544">HeatTransferScratchData&lt; dim &gt;::fe_values_cls</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00562">HeatTransferScratchData&lt; dim &gt;::fe_values_time_harmonic_maxwell</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00546">HeatTransferScratchData&lt; dim &gt;::filter</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00537">HeatTransferScratchData&lt; dim &gt;::gather_cls</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00551">HeatTransferScratchData&lt; dim &gt;::gather_time_harmonic_maxwell</a>, and <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00523">HeatTransferScratchData&lt; dim &gt;::global_delta_T_ref</a>.</p>
 
 </div>
 </div>
@@ -473,7 +475,7 @@ template&lt;int dim&gt; </div>
 
 <p>Calculates the physical properties. This method calculates the physical properties that may be required by the heat transfer problem. Namely the density, specific heat, thermal conductivity and viscosity (for viscous dissipation). </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8cc_source.html#l00175">175</a> of file <a class="el" href="heat__transfer__scratch__data_8cc_source.html">heat_transfer_scratch_data.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8cc_source.html#l00179">179</a> of file <a class="el" href="heat__transfer__scratch__data_8cc_source.html">heat_transfer_scratch_data.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00297">calculate_point_property()</a>, <a class="el" href="rheological__model_8h_source.html#l00690">calculate_shear_rate_magnitude()</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, <a class="el" href="physical__property__model_8h_source.html#l00051">set_field_vector()</a>, <a class="el" href="physical__property__model_8h_source.html#l00039">shear_rate</a>, <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>, <a class="el" href="physical__property__model_8h_source.html#l00041">temperature_p1</a>, and <a class="el" href="physical__property__model_8h_source.html#l00042">temperature_p2</a>.</p>
 
@@ -587,7 +589,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8cc_source.html#l00108">108</a> of file <a class="el" href="heat__transfer__scratch__data_8cc_source.html">heat_transfer_scratch_data.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8cc_source.html#l00110">110</a> of file <a class="el" href="heat__transfer__scratch__data_8cc_source.html">heat_transfer_scratch_data.cc</a>.</p>
 
 </div>
 </div>
@@ -635,7 +637,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8cc_source.html#l00142">142</a> of file <a class="el" href="heat__transfer__scratch__data_8cc_source.html">heat_transfer_scratch_data.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8cc_source.html#l00146">146</a> of file <a class="el" href="heat__transfer__scratch__data_8cc_source.html">heat_transfer_scratch_data.cc</a>.</p>
 
 </div>
 </div>
@@ -709,12 +711,12 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00181">181</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00581">HeatTransferScratchData&lt; dim &gt;::boundary_face_id</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00505">HeatTransferScratchData&lt; dim &gt;::cell_size</a>, <a class="el" href="core_2utilities_8h_source.html#l00781">compute_cell_measure_with_JxW()</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00573">HeatTransferScratchData&lt; dim &gt;::face_JxW</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00572">HeatTransferScratchData&lt; dim &gt;::fe_face_values_ht</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00502">HeatTransferScratchData&lt; dim &gt;::fe_values_T</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00523">HeatTransferScratchData&lt; dim &gt;::grad_phi_T</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00524">HeatTransferScratchData&lt; dim &gt;::hess_phi_T</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00579">HeatTransferScratchData&lt; dim &gt;::is_boundary_cell</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00580">HeatTransferScratchData&lt; dim &gt;::is_boundary_face</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00509">HeatTransferScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00525">HeatTransferScratchData&lt; dim &gt;::laplacian_phi_T</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00470">HeatTransferScratchData&lt; dim &gt;::material_id</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00503">HeatTransferScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00575">HeatTransferScratchData&lt; dim &gt;::n_faces</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00576">HeatTransferScratchData&lt; dim &gt;::n_faces_q_points</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00504">HeatTransferScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00585">HeatTransferScratchData&lt; dim &gt;::phi_face_T</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00522">HeatTransferScratchData&lt; dim &gt;::phi_T</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00515">HeatTransferScratchData&lt; dim &gt;::present_temperature_laplacians</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00513">HeatTransferScratchData&lt; dim &gt;::present_temperature_values</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00518">HeatTransferScratchData&lt; dim &gt;::previous_temperature_gradients</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00517">HeatTransferScratchData&lt; dim &gt;::previous_temperature_values</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00510">HeatTransferScratchData&lt; dim &gt;::quadrature_points</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00528">HeatTransferScratchData&lt; dim &gt;::source</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00587">HeatTransferScratchData&lt; dim &gt;::temperature_face_value</a>, and <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00514">HeatTransferScratchData&lt; dim &gt;::temperature_gradients</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00587">HeatTransferScratchData&lt; dim &gt;::boundary_face_id</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00509">HeatTransferScratchData&lt; dim &gt;::cell_size</a>, <a class="el" href="core_2utilities_8h_source.html#l00781">compute_cell_measure_with_JxW()</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00579">HeatTransferScratchData&lt; dim &gt;::face_JxW</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00578">HeatTransferScratchData&lt; dim &gt;::fe_face_values_ht</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00506">HeatTransferScratchData&lt; dim &gt;::fe_values_T</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00527">HeatTransferScratchData&lt; dim &gt;::grad_phi_T</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00528">HeatTransferScratchData&lt; dim &gt;::hess_phi_T</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00585">HeatTransferScratchData&lt; dim &gt;::is_boundary_cell</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00586">HeatTransferScratchData&lt; dim &gt;::is_boundary_face</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00513">HeatTransferScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00529">HeatTransferScratchData&lt; dim &gt;::laplacian_phi_T</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00474">HeatTransferScratchData&lt; dim &gt;::material_id</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00507">HeatTransferScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00581">HeatTransferScratchData&lt; dim &gt;::n_faces</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00582">HeatTransferScratchData&lt; dim &gt;::n_faces_q_points</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00508">HeatTransferScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00591">HeatTransferScratchData&lt; dim &gt;::phi_face_T</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00526">HeatTransferScratchData&lt; dim &gt;::phi_T</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00519">HeatTransferScratchData&lt; dim &gt;::present_temperature_laplacians</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00517">HeatTransferScratchData&lt; dim &gt;::present_temperature_values</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00522">HeatTransferScratchData&lt; dim &gt;::previous_temperature_gradients</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00521">HeatTransferScratchData&lt; dim &gt;::previous_temperature_values</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00514">HeatTransferScratchData&lt; dim &gt;::quadrature_points</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00532">HeatTransferScratchData&lt; dim &gt;::source</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00593">HeatTransferScratchData&lt; dim &gt;::temperature_face_value</a>, and <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00518">HeatTransferScratchData&lt; dim &gt;::temperature_gradients</a>.</p>
 
 </div>
 </div>
-<a id="aef21c856237186f8f7cd74f3c48153ea" name="aef21c856237186f8f7cd74f3c48153ea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aef21c856237186f8f7cd74f3c48153ea">&#9670;&#160;</a></span>reinit_cls()</h2>
+<a id="a09513f7652649f4aaf6dc17fdb2f9aeb" name="a09513f7652649f4aaf6dc17fdb2f9aeb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a09513f7652649f4aaf6dc17fdb2f9aeb">&#9670;&#160;</a></span>reinit_cls()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -731,6 +733,12 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
           <td>(</td>
           <td class="paramtype">const typename DoFHandler&lt; dim &gt;::active_cell_iterator &amp;&#160;</td>
           <td class="paramname"><em>cell</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &amp;&#160;</td>
+          <td class="paramname"><em>current_solution</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -769,7 +777,7 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00398">398</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00538">HeatTransferScratchData&lt; dim &gt;::fe_values_cls</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00536">HeatTransferScratchData&lt; dim &gt;::filtered_phase_gradient_values</a>, and <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00535">HeatTransferScratchData&lt; dim &gt;::filtered_phase_values</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00544">HeatTransferScratchData&lt; dim &gt;::fe_values_cls</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00540">HeatTransferScratchData&lt; dim &gt;::filtered_phase_gradient_values</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00539">HeatTransferScratchData&lt; dim &gt;::filtered_phase_values</a>, and <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00541">HeatTransferScratchData&lt; dim &gt;::phase_gradient_values</a>.</p>
 
 </div>
 </div>
@@ -835,7 +843,7 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00296">296</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
-<p class="reference">References <a class="el" href="physical__properties__manager_8h_source.html#l00410">PhysicalPropertiesManager::density_is_constant()</a>, <a class="el" href="ale_8h_source.html#l00064">Parameters::ALE&lt; dim &gt;::enabled()</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00564">HeatTransferScratchData&lt; dim &gt;::fe_values_fd</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00504">HeatTransferScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00562">HeatTransferScratchData&lt; dim &gt;::pressure</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00569">HeatTransferScratchData&lt; dim &gt;::pressure_values</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00468">HeatTransferScratchData&lt; dim &gt;::properties_manager</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00510">HeatTransferScratchData&lt; dim &gt;::quadrature_points</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00561">HeatTransferScratchData&lt; dim &gt;::velocities</a>, <a class="el" href="ale_8h_source.html#l00056">Parameters::ALE&lt; dim &gt;::velocity</a>, and <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00565">HeatTransferScratchData&lt; dim &gt;::velocity_values</a>.</p>
+<p class="reference">References <a class="el" href="physical__properties__manager_8h_source.html#l00410">PhysicalPropertiesManager::density_is_constant()</a>, <a class="el" href="ale_8h_source.html#l00064">Parameters::ALE&lt; dim &gt;::enabled()</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00570">HeatTransferScratchData&lt; dim &gt;::fe_values_fd</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00508">HeatTransferScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00568">HeatTransferScratchData&lt; dim &gt;::pressure</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00575">HeatTransferScratchData&lt; dim &gt;::pressure_values</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00472">HeatTransferScratchData&lt; dim &gt;::properties_manager</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00514">HeatTransferScratchData&lt; dim &gt;::quadrature_points</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00567">HeatTransferScratchData&lt; dim &gt;::velocities</a>, <a class="el" href="ale_8h_source.html#l00056">Parameters::ALE&lt; dim &gt;::velocity</a>, and <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00571">HeatTransferScratchData&lt; dim &gt;::velocity_values</a>.</p>
 
 </div>
 </div>
@@ -892,9 +900,9 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00442">442</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00446">446</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00551">HeatTransferScratchData&lt; dim &gt;::electric_field_imag_values</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00550">HeatTransferScratchData&lt; dim &gt;::electric_field_real_values</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00547">HeatTransferScratchData&lt; dim &gt;::extractor_E_imag</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00546">HeatTransferScratchData&lt; dim &gt;::extractor_E_real</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00549">HeatTransferScratchData&lt; dim &gt;::extractor_H_imag</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00548">HeatTransferScratchData&lt; dim &gt;::extractor_H_real</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00556">HeatTransferScratchData&lt; dim &gt;::fe_values_time_harmonic_maxwell</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00553">HeatTransferScratchData&lt; dim &gt;::magnetic_field_imag_values</a>, and <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00552">HeatTransferScratchData&lt; dim &gt;::magnetic_field_real_values</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00557">HeatTransferScratchData&lt; dim &gt;::electric_field_imag_values</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00556">HeatTransferScratchData&lt; dim &gt;::electric_field_real_values</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00553">HeatTransferScratchData&lt; dim &gt;::extractor_E_imag</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00552">HeatTransferScratchData&lt; dim &gt;::extractor_E_real</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00555">HeatTransferScratchData&lt; dim &gt;::extractor_H_imag</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00554">HeatTransferScratchData&lt; dim &gt;::extractor_H_real</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00562">HeatTransferScratchData&lt; dim &gt;::fe_values_time_harmonic_maxwell</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00559">HeatTransferScratchData&lt; dim &gt;::magnetic_field_imag_values</a>, and <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00558">HeatTransferScratchData&lt; dim &gt;::magnetic_field_real_values</a>.</p>
 
 </div>
 </div>
@@ -942,7 +950,7 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
 
 <p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00340">340</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
-<p class="reference">References <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00564">HeatTransferScratchData&lt; dim &gt;::fe_values_fd</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00561">HeatTransferScratchData&lt; dim &gt;::velocities</a>, and <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00566">HeatTransferScratchData&lt; dim &gt;::velocity_gradient_values</a>.</p>
+<p class="reference">References <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00570">HeatTransferScratchData&lt; dim &gt;::fe_values_fd</a>, <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00567">HeatTransferScratchData&lt; dim &gt;::velocities</a>, and <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00572">HeatTransferScratchData&lt; dim &gt;::velocity_gradient_values</a>.</p>
 
 </div>
 </div>
@@ -961,7 +969,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00581">581</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00587">587</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -979,7 +987,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00505">505</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00509">509</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -997,7 +1005,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00473">473</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00477">477</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1015,7 +1023,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00483">483</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00487">487</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1033,7 +1041,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00489">489</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00493">493</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1051,7 +1059,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00474">474</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00478">478</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1069,7 +1077,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00484">484</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00488">488</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1087,7 +1095,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00490">490</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00494">494</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1105,7 +1113,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00497">497</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00501">501</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1123,7 +1131,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00551">551</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00557">557</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1141,7 +1149,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00550">550</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00556">556</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1159,7 +1167,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00499">499</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00503">503</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1177,7 +1185,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00547">547</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00553">553</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1195,7 +1203,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00546">546</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00552">552</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1213,7 +1221,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00549">549</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00555">555</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1231,7 +1239,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00548">548</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00554">554</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1249,7 +1257,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00573">573</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00579">579</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1267,7 +1275,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00572">572</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00578">578</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1285,7 +1293,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00538">538</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00544">544</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1303,7 +1311,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00564">564</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00570">570</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1321,7 +1329,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00502">502</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00506">506</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1339,7 +1347,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00556">556</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00562">562</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1357,7 +1365,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00469">469</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00473">473</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1375,7 +1383,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00540">540</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00546">546</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1393,7 +1401,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00536">536</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00540">540</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1411,7 +1419,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00535">535</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00539">539</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1430,7 +1438,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Scratch component for the CLS auxiliary physics </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00533">533</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00537">537</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1449,7 +1457,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Scratch component for the time-harmonic Maxwell auxiliary physics </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00545">545</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00551">551</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1467,7 +1475,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00519">519</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00523">523</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1485,7 +1493,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00523">523</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00527">527</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1503,7 +1511,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00478">478</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00482">482</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1521,7 +1529,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00485">485</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00489">489</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1539,7 +1547,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00491">491</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00495">495</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1557,7 +1565,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00524">524</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00528">528</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1575,7 +1583,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00579">579</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00585">585</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1593,7 +1601,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00580">580</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00586">586</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1611,7 +1619,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00509">509</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00513">513</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1629,7 +1637,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00525">525</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00529">529</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1647,7 +1655,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00553">553</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00559">559</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1665,7 +1673,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00552">552</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00558">558</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1683,7 +1691,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00498">498</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00502">502</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1701,7 +1709,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00470">470</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00474">474</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1719,7 +1727,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00503">503</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00507">507</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1737,7 +1745,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00534">534</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00538">538</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1755,7 +1763,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00575">575</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00581">581</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1773,7 +1781,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00576">576</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00582">582</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1791,7 +1799,25 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00504">504</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00508">508</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+
+</div>
+</div>
+<a id="ab6720c3596b5fe2412f351c23852fdd5" name="ab6720c3596b5fe2412f351c23852fdd5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6720c3596b5fe2412f351c23852fdd5">&#9670;&#160;</a></span>phase_gradient_values</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;Tensor&lt;1, dim&gt; &gt; <a class="el" href="classHeatTransferScratchData.html">HeatTransferScratchData</a>&lt; dim &gt;::phase_gradient_values</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00541">541</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1809,7 +1835,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00585">585</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00591">591</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1827,7 +1853,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00522">522</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00526">526</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1845,7 +1871,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00516">516</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00520">520</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1863,7 +1889,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00515">515</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00519">519</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1881,7 +1907,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00513">513</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00517">517</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1899,7 +1925,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00562">562</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00568">568</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1919,7 +1945,7 @@ template&lt;int dim&gt; </div>
 
 <p>Pressure field for physical property models requiring them. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00569">569</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00575">575</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1937,7 +1963,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00518">518</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00522">522</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1955,7 +1981,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00517">517</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00521">521</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1973,7 +1999,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00468">468</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00472">472</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -1991,7 +2017,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00510">510</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00514">514</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -2009,7 +2035,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00567">567</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00573">573</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -2027,7 +2053,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00528">528</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00532">532</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -2045,7 +2071,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00471">471</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00475">475</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -2063,7 +2089,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00481">481</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00485">485</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -2081,7 +2107,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00487">487</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00491">491</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -2099,7 +2125,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00587">587</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00593">593</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -2117,7 +2143,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00514">514</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00518">518</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -2135,7 +2161,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00472">472</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00476">476</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -2153,7 +2179,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00482">482</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00486">486</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -2171,7 +2197,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00488">488</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00492">492</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -2190,7 +2216,7 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 <p>Scratch component for the Navier-Stokes components </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00561">561</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00567">567</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -2208,7 +2234,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00566">566</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00572">572</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
@@ -2226,7 +2252,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00565">565</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer__scratch__data_8h_source.html#l00571">571</a> of file <a class="el" href="heat__transfer__scratch__data_8h_source.html">heat_transfer_scratch_data.h</a>.</p>
 
 </div>
 </div>
