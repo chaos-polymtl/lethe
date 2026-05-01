@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/05/01
+
+### Fixed
+
+- MAJOR This PR adds a missing factor in the uniform and Gaussian laser models to account for the reduce heat flux when there is an angle of incidence between the laser and the CLS interface. The factor corresponds to the scalar product between the normal of the interface and the laser direction unit vector. [#1977](https://github.com/chaos-polymtl/lethe/pull/1977)
+
 ## [Master] - 2026/04/30
 
 ### Added
@@ -10,12 +16,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - MAJOR This PR adds the postprocessing of the melt volume for cases with phase change. Setting `calculate geometric melt volume` to true enables the computation of the geometric melt volume. The region where the temperature of the fluid with phase change is above the `melting temperature` describes the melt subdomain. The implementation is compatible with CLS multiphase flows as long as only 1 of the 2 fluids has phase change. `monitored fluid with phase change` set the fluid monitored. `geometric melt volume name` sets the name of the file where computed melt volume values are saved.
 
   This PR also changes the computation of the liquid fraction with `calculate liquid fraction` to `calculate algebraic melt volume`. The liquid fraction in the domain is no longer outputted. Instead, a liquid fraction weighted melt volume is outputted in a file named with `algebraic melt volume name`. In CLS simulations, the fluid of interest must be specified with `monitored fluid with phase change`. [#1972](https://github.com/chaos-polymtl/lethe/pull/1972)
-
-## [Master] - 2026/05/01
-
-### Fixed
-
-- MAJOR This PR adds a missing factor in the uniform and Gaussian laser models to account for the reduce heat flux when there is an angle of incidence between the laser and the CLS interface. The factor corresponds to the scalar product between the normal of the interface and the laser direction unit vector. [#1977](https://github.com/chaos-polymtl/lethe/pull/1977)
 
 ## [Master] - 2026/04/28
 
