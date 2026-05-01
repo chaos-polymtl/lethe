@@ -406,7 +406,7 @@ public:
     this->fe_values_cls->get_function_gradients(
       current_filtered_solution, this->filtered_phase_gradient_values);
 
-    this->fe_values_cls->get_function_gradients(current_filtered_solution,
+    this->fe_values_cls->get_function_gradients(current_solution,
                                                 this->phase_gradient_values);
   }
 
