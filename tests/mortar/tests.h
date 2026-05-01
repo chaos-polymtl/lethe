@@ -2392,7 +2392,7 @@ public:
                         const std::vector<double>       &radius,
                         const Quadrature<dim2>          &quadrature,
                         const double                     rotation_angle,
-                        const double                     height_min);
+                        const std::vector<double>       &stage_heights);
 
 protected:
   Point<dim>
@@ -2413,12 +2413,12 @@ MyMortarManagerCircle<dim>::MyMortarManagerCircle(
   const std::vector<double>       &radius,
   const Quadrature<dim2>          &quadrature,
   const double                     rotation_angle,
-  const double                     height_min)
+  const std::vector<double>       &stage_heights)
   : MortarManagerBase<dim>(n_subdivisions,
                            radius,
                            quadrature,
                            rotation_angle,
-                           height_min)
+                           stage_heights)
 {}
 
 template <int dim>
