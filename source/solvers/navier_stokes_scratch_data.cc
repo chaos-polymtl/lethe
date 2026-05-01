@@ -408,9 +408,7 @@ NavierStokesScratchData<dim>::enable_ale()
 
 template <int dim>
 void
-NavierStokesScratchData<dim>::reinit_ale(
-  const typename DoFHandler<dim>::active_cell_iterator &cell,
-  const Parameters::ALE<dim>                           &ale)
+NavierStokesScratchData<dim>::reinit_ale(const Parameters::ALE<dim> &ale)
 {
   Tensor<1, dim>                                  velocity_ale;
   std::shared_ptr<Functions::ParsedFunction<dim>> velocity_ale_function =

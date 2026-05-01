@@ -1344,15 +1344,10 @@ public:
   /**
    * @brief Renitialize the content of the scratch data for ALE
    *
-   * @param[in] cell The cell over which the assembly is being carried.
-   * This cell must be compatible with the FE which is used to fill the
-   * FeValues.
-   *
    * @param[in] ale ALE parameters
    */
   void
-  reinit_ale(const typename DoFHandler<dim>::active_cell_iterator &cell,
-             const Parameters::ALE<dim>                           &ale);
+  reinit_ale(const Parameters::ALE<dim> &ale);
 
   /**
    * @brief enable_mortar Enables the calculation of ALE velocity within the mortar feature

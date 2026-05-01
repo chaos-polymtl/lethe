@@ -845,7 +845,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
     }
 
   if (this->simulation_parameters.ale.enabled())
-    scratch_data.reinit_ale(cell, this->simulation_parameters.ale);
+    scratch_data.reinit_ale(this->simulation_parameters.ale);
 
   if (this->simulation_parameters.mortar_parameters.enable)
     scratch_data.reinit_mortar(cell,
@@ -1087,7 +1087,7 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_rhs(
     }
 
   if (this->simulation_parameters.ale.enabled())
-    scratch_data.reinit_ale(cell, this->simulation_parameters.ale);
+    scratch_data.reinit_ale(this->simulation_parameters.ale);
 
   if (this->simulation_parameters.mortar_parameters.enable)
     scratch_data.reinit_mortar(cell,
