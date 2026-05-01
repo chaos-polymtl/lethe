@@ -87,6 +87,7 @@ end
 # Particles overlap by 0.010 across the x-periodic boundary, identical to
 # the serial smoking-gun setup. With mpirun=2 they land on different
 # ranks, exercising the periodic ghost contact path.
+
 subsection insertion info
   set insertion method    = list
   set insertion frequency = 1000000

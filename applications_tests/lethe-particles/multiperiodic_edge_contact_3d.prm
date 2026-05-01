@@ -89,6 +89,7 @@ end
 # sqrt(0.030^2 + 0.030^2) ~ 0.0424 < diameter 0.05 -> overlap ~ 0.0076.
 # Centre-to-centre distance through any single y or z face alone is
 # ~ sqrt(0.030^2 + 0.97^2) ~ 0.97, far above the neighborhood threshold.
+
 subsection insertion info
   set insertion method    = list
   set insertion frequency = 1000000
@@ -124,6 +125,7 @@ end
 # x first, y second, z third. The pair below crosses only the y-z edge,
 # i.e. the combined offset of the second and third registered pairs --
 # the case the buggy algorithm never generated.
+
 subsection DEM boundary conditions
   set number of boundary conditions = 3
 

@@ -84,6 +84,7 @@ end
 
 # Particles overlap by 0.010 across the z-periodic boundary; far from any
 # x or y boundary so no edge or corner offset can mask the test.
+
 subsection insertion info
   set insertion method    = list
   set insertion frequency = 1000000
@@ -117,6 +118,7 @@ end
 #---------------------------------------------------
 
 # x first, y second, z THIRD: the pair below crosses only the third pair.
+
 subsection DEM boundary conditions
   set number of boundary conditions = 3
 
