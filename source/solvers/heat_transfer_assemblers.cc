@@ -1038,7 +1038,8 @@ HeatTransferAssemblerLaserGaussianHeatFluxCLSInterface<dim>::assemble_rhs(
 
           // Calculate the strong residual for GLS stabilization
           const double incidence_angle_factor =
-            scratch_data.phase_gradient_values[q] * laser_parameters->beam_axis/
+            scratch_data.phase_gradient_values[q] *
+            laser_parameters->beam_axis /
             (scratch_data.phase_gradient_values[q].norm() *
                laser_parameters->beam_axis.norm() +
              1e-16);
@@ -1326,7 +1327,8 @@ HeatTransferAssemblerLaserUniformHeatFluxCLSInterface<dim>::assemble_rhs(
           double laser_heat_source = 0.0;
 
           const double incidence_angle_factor =
-            scratch_data.phase_gradient_values[q] * laser_parameters->beam_axis/
+            scratch_data.phase_gradient_values[q] *
+            laser_parameters->beam_axis /
             (scratch_data.phase_gradient_values[q].norm() *
                laser_parameters->beam_axis.norm() +
              1e-16);
