@@ -1386,7 +1386,6 @@ BlockNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
-      const Tensor<1, dim> &velocity = scratch_data.velocity_values[q];
       const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
       const Tensor<1, dim> &convective_velocity =
@@ -1394,8 +1393,6 @@ BlockNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
-
-
 
       // We loop over the column first to prevent recalculation
       // of the strong jacobian in the inner loop
@@ -1409,15 +1406,12 @@ BlockNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
           velocity_gradient_x_phi_u_j[j] = velocity_gradient * phi_u_j;
         }
 
-
-
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto &phi_u_i      = scratch_data.phi_u[q][i];
           const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
           const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
           const auto &phi_p_i      = scratch_data.phi_p[q][i];
-
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
@@ -1472,7 +1466,6 @@ BlockNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
       const double kinematic_viscosity = kinematic_viscosity_vector[q];
 
       // Velocity
-      const Tensor<1, dim> &velocity   = scratch_data.velocity_values[q];
       const double velocity_divergence = scratch_data.velocity_divergences[q];
       const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
@@ -1554,9 +1547,7 @@ BlockNavierStokesAssemblerCore<dim>::assemble_matrix(
       // Physical properties
       const double kinematic_viscosity = kinematic_viscosity_vector[q];
 
-
       // Gather into local variables the relevant fields
-      const Tensor<1, dim> &velocity = scratch_data.velocity_values[q];
       const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
       const Tensor<1, dim> &convective_velocity =
@@ -1577,15 +1568,12 @@ BlockNavierStokesAssemblerCore<dim>::assemble_matrix(
           velocity_gradient_x_phi_u_j[j] = velocity_gradient * phi_u_j;
         }
 
-
-
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto &phi_u_i      = scratch_data.phi_u[q][i];
           const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
           const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
           const auto &phi_p_i      = scratch_data.phi_p[q][i];
-
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
@@ -1636,9 +1624,7 @@ BlockNavierStokesAssemblerCore<dim>::assemble_rhs(
       // Physical properties
       const double kinematic_viscosity = kinematic_viscosity_vector[q];
 
-
       // Velocity
-      const Tensor<1, dim> &velocity   = scratch_data.velocity_values[q];
       const double velocity_divergence = scratch_data.velocity_divergences[q];
       const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
