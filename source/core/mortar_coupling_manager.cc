@@ -326,13 +326,14 @@ MortarManagerBase<dim>::get_weights(const Point<dim> &face_center,
     return std::vector<double>{1.0};
 
   // Mesh alignment type and cell index
-  const auto [type, id_in_plane, _] = get_config(face_center, is_inner);
+  const auto [type, id_in_plane, id_out_plane] =
+    get_config(face_center, is_inner);
   // Angle variation within each cell
   const double delta_0 = 2 * numbers::PI / n_subdivisions[0];
   double       delta_1 = 1.0;
 
   if (dim == 3)
-    delta_1 = radius[1] / n_subdivisions[1];
+    delta_1 = stage_heights[id_out_plane + 1] - stage_heights[id_out_plane];
 
   if (type == 0) // aligned
     {
@@ -423,11 +424,16 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center,
 
   if constexpr (dim == 3)
     {
-      auto it = std::upper_bound(
+      // Return the iterator of the first element in stage_heights that is
+      // greater than the face center height
+      auto upper_height_iterator = std::upper_bound(
         stage_heights.begin(),
         stage_heights.end(),
         face_center[2]); // TODO Generalize for x and y directions
-      id_out_plane = std::distance(stage_heights.begin(), it) - 1;
+      // The id_out_plane of the cell can be obtained with the distance between
+      // the iterator obtained and the lowest stage height iterator
+      id_out_plane =
+        std::distance(stage_heights.begin(), upper_height_iterator) - 1;
     }
 
   if (this->is_mesh_aligned())
@@ -859,14 +865,12 @@ compute_stage_heights(const Triangulation<dim>      &triangulation,
 
       // Remove duplicate heights within the specified tolerance
       std::sort(stage_heights.begin(), stage_heights.end());
-      stage_heights.erase(std::unique(stage_heights.begin(),
-                                      stage_heights.end(),
-                                      [height_tolerance](const double a,
-                                                         const double b) {
-                                        return std::abs(a - b) <=
-                                               height_tolerance;
-                                      }),
-                          stage_heights.end());
+      auto result =
+        std::ranges::unique(stage_heights,
+                            [height_tolerance](const double a, const double b) {
+                              return std::abs(a - b) <= height_tolerance;
+                            });
+      stage_heights.erase(result.begin(), result.end());
 
       return stage_heights;
     }
