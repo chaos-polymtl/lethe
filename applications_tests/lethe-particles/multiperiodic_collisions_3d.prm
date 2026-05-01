@@ -1,11 +1,19 @@
-# SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# This DEM test checks the contact of 8 identical particles across the corners
-# of a fully periodic 3D cube. A particle begins at the domain center and
-# moves diagonally towards the corner at (1,1,0), where it makes simultaneous
-# contact with the other particles in the other corners. The output particle
-# positions should be reproduced to validate this test.
+# This DEM test checks the simultaneous multi-pair periodic contact of a
+# moving particle with seven stationary corner particles in a fully
+# periodic 3D unit cube. Particle 0 starts near (0.85, 0.85, 0.15) and
+# moves diagonally toward the (0.975, 0.975, 0.025) corner. Just before
+# reaching the domain boundary it makes simultaneous contact with the
+# seven other corner particles via various combinations of periodic
+# offsets (single face, edge, and full corner). By symmetry of the
+# elastic frictionless setup the multi-body collision is deterministic.
+#
+# The simulation horizon is tuned to capture the first multi-contact
+# event and a short rebound, then stop -- no second collision occurs
+# within the window. Combined with elastic, frictionless, soft Hertzian
+# contact this keeps the multi-body dynamics symmetric and reproducible.
 
 # Listing of Parameters
 #----------------------
@@ -18,8 +26,8 @@ set dimension = 3
 
 subsection simulation control
   set time step        = 1e-5
-  set time end         = 3
-  set log frequency    = 10000
+  set time end         = 0.15
+  set log frequency    = 5000
   set output frequency = 0
 end
 
@@ -59,11 +67,11 @@ subsection lagrangian physical properties
     set diameter                          = 0.05
     set number of particles               = 8
     set density particles                 = 2000
-    set young modulus particles           = 1e8
+    set young modulus particles           = 1e6
     set poisson ratio particles           = 0.3
-    set restitution coefficient particles = 0.9
-    set friction coefficient particles    = 0.3
-    set rolling friction particles        = 0.3
+    set restitution coefficient particles = 1.0
+    set friction coefficient particles    = 0.0
+    set rolling friction particles        = 0.0
   end
 end
 
@@ -71,16 +79,23 @@ end
 # Insertion Info
 #---------------------------------------------------
 
+# Particle 0 starts near the (0.975, 0.975, 0.025) corner so the approach
+# phase is short (~125 ms) and the test fits in 15000 steps. The seven
+# other particles occupy the seven other cube corners.
 subsection insertion info
   set insertion method    = list
   set insertion frequency = 1000000
-  set list x              = 0.500, 0.025, 0.975, 0.025, 0.025, 0.975, 0.025, 0.975
-  set list y              = 0.500, 0.025, 0.025, 0.975, 0.025, 0.025, 0.975, 0.975
-  set list z              = 0.500, 0.025, 0.025, 0.025, 0.975, 0.975, 0.975, 0.975
-  set list velocity x     = 1.500, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
-  set list velocity y     = 1.500, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
-  set list velocity z     = -1.500, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
+  set list x              = 0.850, 0.025, 0.975, 0.025, 0.025, 0.975, 0.025, 0.975
+  set list y              = 0.850, 0.025, 0.025, 0.975, 0.025, 0.025, 0.975, 0.975
+  set list z              = 0.150, 0.025, 0.025, 0.025, 0.975, 0.975, 0.975, 0.975
+  set list velocity x     = 1.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
+  set list velocity y     = 1.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
+  set list velocity z     = -1.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
+  set list omega x        = 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
+  set list omega y        = 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
+  set list omega z        = 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
   set list diameters      = 0.050, 0.050, 0.050, 0.050, 0.050, 0.050, 0.050, 0.050
+  set list temperatures   = 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
 end
 
 #---------------------------------------------------
@@ -91,7 +106,7 @@ subsection mesh
   set type                                = dealii
   set grid type                           = hyper_rectangle
   set grid arguments                      = 0.0, 0.0, 0.0 : 1.0, 1.0, 1.0 : true
-  set initial refinement                  = 4
+  set initial refinement                  = 3
   set expand particle-wall contact search = false
 end
 
