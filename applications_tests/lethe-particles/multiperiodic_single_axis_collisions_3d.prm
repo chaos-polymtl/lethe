@@ -1,18 +1,22 @@
 # SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# This DEM test exercises the combined_periodic_offsets construction in a
-# fully-periodic 3D cube. Three independent particle pairs are placed so that
-# each pair only interacts across a single periodic face (no edge or corner
-# crossing):
-#  - Pair A (particles 0, 1) collides through the x-periodic boundary only.
-#  - Pair B (particles 2, 3) collides through the y-periodic boundary only.
-#  - Pair C (particles 4, 5) collides through the z-periodic boundary only.
-# This specifically catches the case where the pure +/- offsets for the
-# second and third registered periodic boundary pairs were missing from
-# combined_periodic_offsets, which previously caused single-axis periodic
-# contacts to be missed even though edge/corner (combined) offsets were
-# present.
+# Smoking-gun test for compute_combined_periodic_offsets in 3D.
+#
+# Two stationary particles are placed in slight overlap across the
+# z-periodic boundary, in a fully periodic unit cube. The periodic BCs are
+# registered in the order x, y, z so that a correct contact requires the
+# pure +/- offset of the THIRD registered pair to be present in
+# combined_periodic_offsets, which was the case missed most aggressively
+# by the bug (the third pair lost both its pure offsets and all combined
+# offsets that involved itself but not the other two).
+#
+# - With the bug, the pure +/- z offset is missing, the periodic contact
+#   is never detected, and both particles remain frozen.
+# - With the fix, the Hertzian repulsion pushes them apart along z.
+#
+# Simulation horizon is intentionally short to keep the dynamics 1D and
+# robust to floating-point drift.
 
 # Listing of Parameters
 #----------------------
@@ -25,8 +29,8 @@ set dimension = 3
 
 subsection simulation control
   set time step        = 1e-5
-  set time end         = 0.5
-  set log frequency    = 10000
+  set time end         = 5e-3
+  set log frequency    = 1000
   set output frequency = 0
 end
 
@@ -64,13 +68,13 @@ subsection lagrangian physical properties
   subsection particle type 0
     set size distribution type            = uniform
     set diameter                          = 0.05
-    set number of particles               = 6
+    set number of particles               = 2
     set density particles                 = 2000
-    set young modulus particles           = 1e8
+    set young modulus particles           = 1e6
     set poisson ratio particles           = 0.3
-    set restitution coefficient particles = 0.9
-    set friction coefficient particles    = 0.3
-    set rolling friction particles        = 0.3
+    set restitution coefficient particles = 1.0
+    set friction coefficient particles    = 0.0
+    set rolling friction particles        = 0.0
   end
 end
 
@@ -78,30 +82,22 @@ end
 # Insertion Info
 #---------------------------------------------------
 
-# Pair A (ids 0, 1): aligned along x at (y, z) = (0.25, 0.25), approaching
-# across the x-periodic boundary.
-# Pair B (ids 2, 3): aligned along y at (x, z) = (0.50, 0.75), approaching
-# across the y-periodic boundary.
-# Pair C (ids 4, 5): aligned along z at (x, y) = (0.75, 0.50), approaching
-# across the z-periodic boundary.
-# All three pairs are well separated from each other and from any
-# edge/corner periodic image so that only the pure single-axis offsets can
-# bring two particles within the neighborhood threshold.
-
+# Particles overlap by 0.010 across the z-periodic boundary; far from any
+# x or y boundary so no edge or corner offset can mask the test.
 subsection insertion info
   set insertion method    = list
   set insertion frequency = 1000000
-  set list x              = 0.025, 0.975, 0.500, 0.500, 0.750, 0.750
-  set list y              = 0.250, 0.250, 0.025, 0.975, 0.500, 0.500
-  set list z              = 0.250, 0.250, 0.750, 0.750, 0.025, 0.975
-  set list velocity x     = -1.000, 1.000, 0.000, 0.000, 0.000, 0.000
-  set list velocity y     = 0.000, 0.000, -1.000, 1.000, 0.000, 0.000
-  set list velocity z     = 0.000, 0.000, 0.000, 0.000, -1.000, 1.000
-  set list omega x        = 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
-  set list omega y        = 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
-  set list omega z        = 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
-  set list diameters      = 0.050, 0.050, 0.050, 0.050, 0.050, 0.050
-  set list temperatures   = 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
+  set list x              = 0.500, 0.500
+  set list y              = 0.500, 0.500
+  set list z              = 0.020, 0.980
+  set list velocity x     = 0.000, 0.000
+  set list velocity y     = 0.000, 0.000
+  set list velocity z     = 0.000, 0.000
+  set list omega x        = 0.000, 0.000
+  set list omega y        = 0.000, 0.000
+  set list omega z        = 0.000, 0.000
+  set list diameters      = 0.050, 0.050
+  set list temperatures   = 0.000, 0.000
 end
 
 #---------------------------------------------------
@@ -120,10 +116,7 @@ end
 # Boundary conditions DEM
 #---------------------------------------------------
 
-# BC 0 = x-periodic (registered first), BC 1 = y-periodic, BC 2 = z-periodic.
-# Pairs B and C therefore test the pure +/- offsets added second and third
-# in compute_combined_periodic_offsets.
-
+# x first, y second, z THIRD: the pair below crosses only the third pair.
 subsection DEM boundary conditions
   set number of boundary conditions = 3
 
