@@ -87,6 +87,7 @@ end
 # All three pairs are well separated from each other and from any
 # edge/corner periodic image so that only the pure single-axis offsets can
 # bring two particles within the neighborhood threshold.
+
 subsection insertion info
   set insertion method    = list
   set insertion frequency = 1000000
@@ -122,6 +123,7 @@ end
 # BC 0 = x-periodic (registered first), BC 1 = y-periodic, BC 2 = z-periodic.
 # Pairs B and C therefore test the pure +/- offsets added second and third
 # in compute_combined_periodic_offsets.
+
 subsection DEM boundary conditions
   set number of boundary conditions = 3
 

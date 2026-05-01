@@ -79,6 +79,7 @@ end
 # y-periodic boundary. They never come close in x to each other or to pair B.
 # Pair B (ids 2, 3): aligned along x at y = 0.50, approaching across the
 # x-periodic boundary. They never come close in y to pair A.
+
 subsection insertion info
   set insertion method    = list
   set insertion frequency = 1000000
@@ -114,6 +115,7 @@ end
 # BC 0 is the y-periodic pair (registered first), BC 1 is the x-periodic pair
 # (registered second). Pair B therefore tests the pure +/- offset that is
 # added last in compute_combined_periodic_offsets.
+
 subsection DEM boundary conditions
   set number of boundary conditions = 2
 
