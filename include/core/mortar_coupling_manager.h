@@ -58,7 +58,7 @@ public:
                     const std::vector<double>       &radius,
                     const Quadrature<dim2>          &quadrature,
                     const double                     rotation_angle,
-                    const std::vector<double>        stage_heights = {0.0});
+                    const std::vector<double>        stage_heights = {0.0, 1.0});
 
   /**
    * @brief Default destructor
@@ -364,7 +364,7 @@ public:
                       std::vector<double>       radius,
                       const Quadrature<dim2>   &quadrature,
                       const double              rotation_angle,
-                      const std::vector<double> stage_heights = {0.0},
+                      const std::vector<double> stage_heights = {0.0, 1.0},
                       const Point<dim> &center_of_rotation    = Point<dim>(),
                       const double      pre_rotation_angle    = 0.0);
 
@@ -452,7 +452,7 @@ MortarManagerBase<dim>::MortarManagerBase(unsigned int n_subdivisions,
                       std::vector<double>{radius, 1.0},
                       quadrature_in,
                       rotation_angle,
-                      std::vector<double>{stage_heights})
+                      std::vector<double>{stage_heights, stage_heights + 1.0})
 {}
 
 
@@ -470,10 +470,7 @@ MortarManagerBase<dim>::MortarManagerBase(
   , n_quadrature_points(quadrature.size())
   , rotation_angle(rotation_angle)
   , stage_heights(stage_heights)
-{
-  // for (const auto &height : this->stage_heights)
-  //   std::cout << "STAGE_HEIGHTS_CONSTRUCTOR : " << height << std::endl;
-}
+{}
 
 template <int dim>
 template <int dim2>

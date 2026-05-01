@@ -17,7 +17,7 @@ main()
   const std::vector<unsigned int> n_subdivisions      = {10, 3};
   const unsigned int              n_quadrature_points = 3;
   const std::vector<double>       radius              = {1.2, 0.4};
-  const double                    stage_heights       = {0.0, 0.4/3.0, 0.8/3.0, 0.4};
+  const std::vector<double>       stage_heights       = {0.0, 0.4/3.0, 0.8/3.0, 0.4};
 
   // cell angle variation
   const double delta = 2 * numbers::PI / n_subdivisions[0];
