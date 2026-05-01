@@ -249,6 +249,11 @@ PeriodicBoundariesManipulator<dim>::compute_combined_periodic_offsets()
         }
       else
         {
+          // Pure +/- offset for the new direction: a particle may cross only
+          // this boundary pair without crossing any of the previous ones.
+          this->combined_periodic_offsets.push_back(offset);
+          this->combined_periodic_offsets.push_back(-offset);
+
           for (size_t i = 0; i < current_size; ++i)
             {
               // A particle next to a periodic boundary can be next to pb0 or

@@ -1,0 +1,133 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# This DEM test exercises the combined_periodic_offsets construction in a
+# fully-periodic 2D square. Two independent particle pairs are placed so that
+# each pair only interacts across a single periodic face (no corner crossing):
+#  - Pair A (particles 0, 1) collides through the y-periodic boundary only.
+#  - Pair B (particles 2, 3) collides through the x-periodic boundary only.
+# This specifically catches the case where the pure +/- offset for the second
+# registered periodic boundary pair is missing from combined_periodic_offsets,
+# which previously caused single-axis periodic contacts of the second pair to
+# be missed even though the corner (combined) offsets were present.
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set time step        = 1e-5
+  set time end         = 0.5
+  set log frequency    = 10000
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# Test
+#---------------------------------------------------
+
+subsection test
+  set enable = true
+end
+
+#---------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection contact detection
+    set contact detection method                = dynamic
+    set dynamic contact search size coefficient = 0.8
+    set neighborhood threshold                  = 1.3
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+  set rolling resistance torque method       = none
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set g                        = 0., 0.
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.05
+    set number of particles               = 4
+    set density particles                 = 2000
+    set young modulus particles           = 1e8
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 0.9
+    set friction coefficient particles    = 0.3
+    set rolling friction particles        = 0.3
+  end
+end
+
+#---------------------------------------------------
+# Insertion Info
+#---------------------------------------------------
+
+# Pair A (ids 0, 1): aligned along y at x = 0.25, approaching across the
+# y-periodic boundary. They never come close in x to each other or to pair B.
+# Pair B (ids 2, 3): aligned along x at y = 0.50, approaching across the
+# x-periodic boundary. They never come close in y to pair A.
+subsection insertion info
+  set insertion method    = list
+  set insertion frequency = 1000000
+  set list x              = 0.250, 0.250, 0.025, 0.975
+  set list y              = 0.025, 0.975, 0.500, 0.500
+  set list z              = 0.000, 0.000, 0.000, 0.000
+  set list velocity x     = 0.000, 0.000, -1.000, 1.000
+  set list velocity y     = -1.000, 1.000, 0.000, 0.000
+  set list velocity z     = 0.000, 0.000, 0.000, 0.000
+  set list omega x        = 0.000, 0.000, 0.000, 0.000
+  set list omega y        = 0.000, 0.000, 0.000, 0.000
+  set list omega z        = 0.000, 0.000, 0.000, 0.000
+  set list diameters      = 0.050, 0.050, 0.050, 0.050
+  set list temperatures   = 0.000, 0.000, 0.000, 0.000
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type                                = dealii
+  set grid type                           = hyper_rectangle
+  set grid arguments                      = 0.0, 0.0 : 1.0, 1.0 : true
+  set initial refinement                  = 4
+  set expand particle-wall contact search = false
+end
+
+#---------------------------------------------------
+# Boundary conditions DEM
+#---------------------------------------------------
+
+# BC 0 is the y-periodic pair (registered first), BC 1 is the x-periodic pair
+# (registered second). Pair B therefore tests the pure +/- offset that is
+# added last in compute_combined_periodic_offsets.
+subsection DEM boundary conditions
+  set number of boundary conditions = 2
+
+  subsection boundary condition 0
+    set type               = periodic
+    set periodic id 0      = 3
+    set periodic id 1      = 2
+    set periodic direction = 1
+  end
+
+  subsection boundary condition 1
+    set type               = periodic
+    set periodic id 0      = 1
+    set periodic id 1      = 0
+    set periodic direction = 0
+  end
+end
