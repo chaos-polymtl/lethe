@@ -89,9 +89,9 @@ Laser types
   
     .. math::
       
-        q(x,y,z) = \frac{|\nabla \psi| \eta \alpha P}{\pi R^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \left(\vec{n}_\Gamma\cdot \vec{d}_mathrm{laser}\right)
+        q(x,y,z) = \frac{|\nabla \psi| \eta \alpha P}{\pi R^2} \exp{\left(-\eta \frac{r^2}{R^2}\right)} \left(\vec{n}_\Gamma\cdot \vec{d}_\mathrm{laser}\right)
         
-    where :math:`r` is the radial distance from the laser's axis, :math:`|\nabla \psi|` is the :math:`L^2` norm of the filtered phase indicator gradient, :math:`\vec{n}_\Gamma` is the surface unit normal, and :math:`\vec{d}_mathrm{laser}` is the unit direction vector of the laser. In 2D, the pre-exponential factor accounts for the change in the receiving area (going from a disk of radius :math:`R` in 3D to a line segment of length :math:`2R` in 2D): 
+    where :math:`r` is the radial distance from the laser's axis, :math:`|\nabla \psi|` is the :math:`L^2` norm of the filtered phase indicator gradient, :math:`\vec{n}_\Gamma` is the surface unit normal, and :math:`\vec{d}_\mathrm{laser}` is the unit direction vector of the laser. In 2D, the pre-exponential factor accounts for the change in the receiving area (going from a disk of radius :math:`R` in 3D to a line segment of length :math:`2R` in 2D): 
     
     .. math::
 
@@ -102,7 +102,7 @@ Laser types
   
     .. math::
       
-        q(x,y,z) = \frac{|\nabla \psi| \alpha P}{\pi R^2}\left(\vec{n}_\Gamma\cdot \vec{d}_mathrm{laser}\right)
+        q(x,y,z) = \frac{|\nabla \psi| \alpha P}{\pi R^2}\left(\vec{n}_\Gamma\cdot \vec{d}_\mathrm{laser}\right)
 
 
 * When the ``type`` parameter is set to ``exponential_decay``, the exponential model from Liu *et al.* [#liu2018]_ is used to simulate the laser heat source:
