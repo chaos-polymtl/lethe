@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2026/05/01
 
+### Changed
+
+- MAJOR This PR refactors the ALE velocity computation in the matrix-based and matrix-free solvers. Previously, the ALE velocity term was added in a separate assembler (NavierStokesAssemblerALE and NavierStokesAssemblerMortarALE). This refactoring removes these two assemblers and adds the ALE velocity as a `convective_velocity` term, used directly into the core assemblers. [#1979](https://github.com/chaos-polymtl/lethe/pull/1979)
+
 ### Fixed
 
 - MAJOR This PR adds a missing factor in the uniform and Gaussian laser models to account for the reduce heat flux when there is an angle of incidence between the laser and the CLS interface. The factor corresponds to the scalar product between the normal of the interface and the laser direction unit vector. [#1977](https://github.com/chaos-polymtl/lethe/pull/1977)
