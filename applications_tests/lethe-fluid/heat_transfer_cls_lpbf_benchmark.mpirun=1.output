@@ -16,166 +16,166 @@ Reading heat transfer checkpoint
 Reading CLS checkpoint
 
 ***********************************************************************************
-Transient iteration: 31       Time: 6.012e-06 Time step: 2e-07    CFL: 1.00174e-06
+Transient iteration: 31       Time: 6.012e-06 Time step: 2e-07    CFL: 9.91084e-07
 ***********************************************************************************
 Temperature statistics on fluid: 
 	     Min: 2.980000e+02
-	     Max: 1.432854e+03
-	 Average: 3.074751e+02
-	 Std-Dev: 7.244072e+01
+	     Max: 1.432831e+03
+	 Average: 3.074750e+02
+	 Std-Dev: 7.243944e+01
 
 ----------------------
 CLS Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-6.012000e-06    1.068750e-01              1.070024e-01            1.906650e-10   6.000000e-01       1.499019e-11       2.775805e-14    2.531250e-01              2.529976e-01            1.118812e-06   6.000000e-01       5.049639e-11      -6.311386e-13         5.000000e-01 
+6.012000e-06    1.068750e-01              1.070030e-01            1.906650e-10   6.000117e-01       1.490451e-11       2.872916e-14    2.531250e-01              2.529970e-01            1.118813e-06   6.000117e-01       5.089860e-11      -3.077518e-12         5.000000e-01 
 
 ***********************************************************************************
-Transient iteration: 32       Time: 6.212e-06 Time step: 2e-07    CFL: 9.94585e-07
+Transient iteration: 32       Time: 6.212e-06 Time step: 2e-07    CFL: 9.90883e-07
 ***********************************************************************************
 Temperature statistics on fluid: 
 	     Min: 2.980000e+02
-	     Max: 1.464727e+03
-	 Average: 3.077865e+02
-	 Std-Dev: 7.458525e+01
+	     Max: 1.464703e+03
+	 Average: 3.077863e+02
+	 Std-Dev: 7.458390e+01
 
 ----------------------
 CLS Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-6.212000e-06    1.068750e-01              1.070024e-01            1.906650e-10   6.000000e-01       1.491929e-11       3.311475e-14    2.531250e-01              2.529976e-01            1.118812e-06   6.000000e-01       4.991163e-11      -1.102740e-12         5.000000e-01 
+6.212000e-06    1.068750e-01              1.070030e-01            1.906650e-10   6.000117e-01       1.490233e-11       3.075825e-14    2.531250e-01              2.529970e-01            1.118813e-06   6.000117e-01       5.060194e-11      -1.908882e-12         5.000000e-01 
 
 ***********************************************************************************
-Transient iteration: 33       Time: 6.412e-06 Time step: 2e-07    CFL: 9.90394e-07
+Transient iteration: 33       Time: 6.412e-06 Time step: 2e-07    CFL: 9.91184e-07
 ***********************************************************************************
 Temperature statistics on fluid: 
 	     Min: 2.980000e+02
-	     Max: 1.496279e+03
-	 Average: 3.080976e+02
-	 Std-Dev: 7.671517e+01
+	     Max: 1.496253e+03
+	 Average: 3.080974e+02
+	 Std-Dev: 7.671375e+01
 
 ----------------------
 CLS Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-6.412000e-06    1.068750e-01              1.070024e-01            1.906650e-10   6.000000e-01       1.493979e-11       3.654251e-14    2.531250e-01              2.529976e-01            1.118812e-06   6.000000e-01       5.063419e-11      -5.709350e-13         5.000000e-01 
+6.412000e-06    1.068750e-01              1.070030e-01            1.906650e-10   6.000117e-01       1.490793e-11       3.292720e-14    2.531250e-01              2.529970e-01            1.118813e-06   6.000117e-01       5.031014e-11      -1.571489e-12         5.000000e-01 
 
 ***********************************************************************************
-Transient iteration: 34       Time: 6.612e-06 Time step: 2e-07    CFL: 9.91106e-07
+Transient iteration: 34       Time: 6.612e-06 Time step: 2e-07    CFL: 9.91258e-07
 ***********************************************************************************
 Temperature statistics on fluid: 
 	     Min: 2.980000e+02
-	     Max: 1.527512e+03
-	 Average: 3.084084e+02
-	 Std-Dev: 7.883067e+01
+	     Max: 1.527486e+03
+	 Average: 3.084082e+02
+	 Std-Dev: 7.882919e+01
 
 ----------------------
 CLS Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-6.612000e-06    1.068750e-01              1.070024e-01            1.906650e-10   6.000000e-01       1.499280e-11       3.803088e-14    2.531250e-01              2.529976e-01            1.118812e-06   6.000000e-01       5.073913e-11      -3.301725e-13         5.000000e-01 
+6.612000e-06    1.068750e-01              1.070030e-01            1.906650e-10   6.000117e-01       1.491784e-11       3.621828e-14    2.531250e-01              2.529970e-01            1.118813e-06   6.000117e-01       5.003611e-11      -1.306171e-12         5.000000e-01 
 
 ***********************************************************************************
-Transient iteration: 35       Time: 6.812e-06 Time step: 2e-07    CFL: 9.94625e-07
+Transient iteration: 35       Time: 6.812e-06 Time step: 2e-07    CFL: 9.91363e-07
 ***********************************************************************************
 Temperature statistics on fluid: 
 	     Min: 2.980000e+02
-	     Max: 1.558433e+03
-	 Average: 3.087189e+02
-	 Std-Dev: 8.093196e+01
+	     Max: 1.558406e+03
+	 Average: 3.087187e+02
+	 Std-Dev: 8.093042e+01
 
 ----------------------
 CLS Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-6.812000e-06    1.068750e-01              1.070024e-01            1.906650e-10   6.000000e-01       1.503812e-11       4.255058e-14    2.531250e-01              2.529976e-01            1.118812e-06   6.000000e-01       5.085904e-11       3.388782e-13         5.000000e-01 
+6.812000e-06    1.068750e-01              1.070030e-01            1.906650e-10   6.000117e-01       1.493029e-11       3.997458e-14    2.531250e-01              2.529970e-01            1.118813e-06   6.000117e-01       4.977808e-11      -1.065868e-12         5.000000e-01 
 
 ***********************************************************************************
-Transient iteration: 36       Time: 7.012e-06 Time step: 2e-07    CFL: 1.00207e-06
+Transient iteration: 36       Time: 7.012e-06 Time step: 2e-07    CFL: 9.91893e-07
 ***********************************************************************************
 Temperature statistics on fluid: 
 	     Min: 2.980000e+02
-	     Max: 1.589046e+03
-	 Average: 3.090291e+02
-	 Std-Dev: 8.301922e+01
+	     Max: 1.589017e+03
+	 Average: 3.090288e+02
+	 Std-Dev: 8.301761e+01
 
 ----------------------
 CLS Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-7.012000e-06    1.068750e-01              1.070024e-01            1.906650e-10   6.000000e-01       1.507797e-11       4.699961e-14    2.531250e-01              2.529976e-01            1.118812e-06   6.000000e-01       5.066961e-11       5.726447e-13         5.000000e-01 
+7.012000e-06    1.068750e-01              1.070030e-01            1.906650e-10   6.000117e-01       1.494423e-11       4.357026e-14    2.531250e-01              2.529970e-01            1.118813e-06   6.000117e-01       4.952734e-11      -8.476881e-13         5.000000e-01 
 
 ***********************************************************************************
-Transient iteration: 37       Time: 7.212e-06 Time step: 2e-07    CFL: 1.00915e-06
+Transient iteration: 37       Time: 7.212e-06 Time step: 2e-07    CFL: 9.93004e-07
 ***********************************************************************************
 Temperature statistics on fluid: 
 	     Min: 2.980000e+02
-	     Max: 1.619355e+03
-	 Average: 3.093389e+02
-	 Std-Dev: 8.509263e+01
+	     Max: 1.619325e+03
+	 Average: 3.093387e+02
+	 Std-Dev: 8.509096e+01
 
 ----------------------
 CLS Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-7.212000e-06    1.068750e-01              1.070024e-01            1.906650e-10   6.000000e-01       1.509534e-11       5.055428e-14    2.531250e-01              2.529976e-01            1.118812e-06   6.000000e-01       5.018604e-11       6.181659e-13         5.000000e-01 
+7.212000e-06    1.068750e-01              1.070030e-01            1.906650e-10   6.000117e-01       1.495893e-11       4.672836e-14    2.531250e-01              2.529970e-01            1.118813e-06   6.000117e-01       4.928401e-11      -6.542053e-13         5.000000e-01 
 
 ***********************************************************************************
-Transient iteration: 38       Time: 7.412e-06 Time step: 2e-07    CFL: 1.00796e-06
+Transient iteration: 38       Time: 7.412e-06 Time step: 2e-07    CFL: 9.94633e-07
 ***********************************************************************************
 Temperature statistics on fluid: 
 	     Min: 2.980000e+02
-	     Max: 1.649364e+03
-	 Average: 3.096485e+02
-	 Std-Dev: 8.715238e+01
+	     Max: 1.649333e+03
+	 Average: 3.096482e+02
+	 Std-Dev: 8.715064e+01
 
 ----------------------
 CLS Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-7.412000e-06    1.068750e-01              1.070024e-01            1.906650e-10   6.000000e-01       1.508543e-11       5.219817e-14    2.531250e-01              2.529976e-01            1.118812e-06   6.000000e-01       4.961111e-11       4.707635e-13         5.000000e-01 
+7.412000e-06    1.068750e-01              1.070030e-01            1.906650e-10   6.000117e-01       1.497406e-11       4.969697e-14    2.531250e-01              2.529970e-01            1.118813e-06   6.000117e-01       4.904958e-11      -4.821451e-13         5.000000e-01 
 
 ***********************************************************************************
-Transient iteration: 39       Time: 7.612e-06 Time step: 2e-07    CFL: 1.00744e-06
+Transient iteration: 39       Time: 7.612e-06 Time step: 2e-07    CFL: 9.96605e-07
 ***********************************************************************************
 Temperature statistics on fluid: 
 	     Min: 2.980000e+02
-	     Max: 1.679078e+03
-	 Average: 3.099577e+02
-	 Std-Dev: 8.919864e+01
+	     Max: 1.679045e+03
+	 Average: 3.099574e+02
+	 Std-Dev: 8.919683e+01
 
 ----------------------
 CLS Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-7.612000e-06    1.068750e-01              1.070024e-01            1.906650e-10   6.000000e-01       1.506457e-11       5.434590e-14    2.531250e-01              2.529976e-01            1.118812e-06   6.000000e-01       4.913436e-11       4.304867e-13         5.000000e-01 
+7.612000e-06    1.068750e-01              1.070030e-01            1.906650e-10   6.000117e-01       1.498963e-11       5.275528e-14    2.531250e-01              2.529970e-01            1.118813e-06   6.000117e-01       4.882429e-11      -3.280374e-13         5.000000e-01 
 
 ***********************************************************************************
-Transient iteration: 40       Time: 7.812e-06 Time step: 2e-07    CFL: 1.00627e-06
+Transient iteration: 40       Time: 7.812e-06 Time step: 2e-07    CFL: 9.98743e-07
 ***********************************************************************************
 Temperature statistics on fluid: 
 	     Min: 2.980000e+02
-	     Max: 1.708500e+03
-	 Average: 3.102666e+02
-	 Std-Dev: 9.123158e+01
+	     Max: 1.708467e+03
+	 Average: 3.102663e+02
+	 Std-Dev: 9.122971e+01
 
 ----------------------
 CLS Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-7.812000e-06    1.068750e-01              1.070029e-01            1.906650e-10   6.000000e-01       1.504041e-11       5.716677e-14    2.531250e-01              2.529971e-01            1.118812e-06   6.000000e-01       4.886027e-11       4.091202e-13         7.969647e-01 
+7.812000e-06    1.068750e-01              1.070034e-01            1.906650e-10   6.000116e-01       1.500559e-11       5.599645e-14    2.531250e-01              2.529966e-01            1.118813e-06   6.000116e-01       4.875655e-11      -1.894209e-13         7.976804e-01 
 
-**********************************************************************************
-Transient iteration: 41       Time: 8.012e-06 Time step: 2e-07    CFL: 1.0046e-06
-**********************************************************************************
+***********************************************************************************
+Transient iteration: 41       Time: 8.012e-06 Time step: 2e-07    CFL: 1.00089e-06
+***********************************************************************************
 Temperature statistics on fluid: 
 	     Min: 2.980000e+02
-	     Max: 1.737636e+03
-	 Average: 3.105751e+02
-	 Std-Dev: 9.325138e+01
+	     Max: 1.737601e+03
+	 Average: 3.105749e+02
+	 Std-Dev: 9.324945e+01
 
 ----------------------
 CLS Mass Conservation
 ----------------------
     time     surface_fluid_0 geometric_surface_fluid_0 mass_per_length_fluid_0 length_fluid_0 momentum-x_fluid_0 momentum-y_fluid_0 surface_fluid_1 geometric_surface_fluid_1 mass_per_length_fluid_1 length_fluid_1 momentum-x_fluid_1 momentum-y_fluid_1 sharpening_threshold 
-8.012000e-06    1.068750e-01              1.070029e-01            1.906650e-10   6.000000e-01       1.501533e-11       5.943337e-14    2.531250e-01              2.529971e-01            1.118812e-06   6.000000e-01       4.840943e-11       3.840301e-13         7.969647e-01 
+8.012000e-06    1.068750e-01              1.070034e-01            1.906650e-10   6.000116e-01       1.502196e-11       5.929842e-14    2.531250e-01              2.529966e-01            1.118813e-06   6.000116e-01       4.854665e-11      -6.569620e-14         7.976804e-01 

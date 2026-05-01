@@ -572,8 +572,10 @@ HeatTransfer<dim>::assemble_local_system_matrix(
         cell->index(),
         &dof_handler_cls);
 
-      scratch_data.reinit_cls(
-        phase_cell, this->multiphysics->get_filtered_solution(PhysicsID::CLS));
+      scratch_data.reinit_cls(phase_cell,
+                              this->multiphysics->get_solution(PhysicsID::CLS),
+                              this->multiphysics->get_filtered_solution(
+                                PhysicsID::CLS));
     }
 
   if (this->simulation_parameters.multiphysics.electromagnetics)
@@ -771,8 +773,10 @@ HeatTransfer<dim>::assemble_local_system_rhs(
         cell->index(),
         &dof_handler_cls);
 
-      scratch_data.reinit_cls(
-        phase_cell, this->multiphysics->get_filtered_solution(PhysicsID::CLS));
+      scratch_data.reinit_cls(phase_cell,
+                              this->multiphysics->get_solution(PhysicsID::CLS),
+                              this->multiphysics->get_filtered_solution(
+                                PhysicsID::CLS));
     }
 
   if (this->simulation_parameters.multiphysics.electromagnetics)

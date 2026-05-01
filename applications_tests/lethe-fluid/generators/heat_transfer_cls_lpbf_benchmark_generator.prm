@@ -37,7 +37,7 @@ subsection mesh
   set type = gmsh
 
   # GMSH file name
-  set file name = ../../lpbf_benchmark_mesh.msh
+  set file name = ../lpbf_benchmark_mesh.msh
 
   # Initial refinement of the mesh
   set initial refinement = 3
@@ -148,10 +148,6 @@ subsection initial conditions
   end
   subsection CLS
     set Function expression = if (y<0.43 , 1, 0)
-    subsection projection step
-      set enable           = false
-      set diffusion factor = 1
-    end
   end
   subsection temperature
     set Function expression = 298

@@ -44,13 +44,15 @@ subsection mesh
 end
 
 subsection box refinement
-  subsection mesh
-    set type               = dealii
-    set grid type          = subdivided_hyper_rectangle
-    set grid arguments     = 8,1 : 0,0.3925: 0.6,0.4675: false
-    set initial refinement = 0
+  set number of refinement boxes = 1
+  subsection box 0
+    subsection mesh
+      set type           = dealii
+      set grid type      = subdivided_hyper_rectangle
+      set grid arguments = 8,1 : 0,0.3925: 0.6,0.4675: false
+    end
+    set additional refinement = 3
   end
-  set initial refinement = 3
 end
 
 #---------------------------------------------------
@@ -158,10 +160,6 @@ subsection initial conditions
   end
   subsection CLS
     set Function expression = if (y<0.43 , 1, 0)
-    subsection projection step
-      set enable           = false
-      set diffusion factor = 1
-    end
   end
   subsection temperature
     set Function expression = 298
