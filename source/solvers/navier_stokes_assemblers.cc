@@ -1389,6 +1389,8 @@ BlockNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
       const Tensor<1, dim> &velocity = scratch_data.velocity_values[q];
       const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
+      const Tensor<1, dim> &convective_velocity =
+        scratch_data.convective_velocity[q];
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -1403,7 +1405,7 @@ BlockNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
           const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
 
           // Store these temporary products in auxiliary variables for speed
-          grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * velocity;
+          grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * convective_velocity;
           velocity_gradient_x_phi_u_j[j] = velocity_gradient * phi_u_j;
         }
 
@@ -1474,6 +1476,8 @@ BlockNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
       const double velocity_divergence = scratch_data.velocity_divergences[q];
       const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
+      const Tensor<1, dim> &convective_velocity =
+        scratch_data.convective_velocity[q];
 
       // Calculate shear rate (at each q)
       const Tensor<2, dim> shear_rate =
@@ -1503,8 +1507,8 @@ BlockNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
             (
               // Momentum
               -kinematic_viscosity * scalar_product(shear_rate, grad_phi_u_i) -
-              velocity_gradient * velocity * phi_u_i + pressure * div_phi_u_i +
-              force * phi_u_i +
+              velocity_gradient * convective_velocity * phi_u_i +
+              pressure * div_phi_u_i + force * phi_u_i +
               // Continuity
               velocity_divergence * phi_p_i -
               gamma * velocity_divergence * div_phi_u_i) *
@@ -1555,6 +1559,8 @@ BlockNavierStokesAssemblerCore<dim>::assemble_matrix(
       const Tensor<1, dim> &velocity = scratch_data.velocity_values[q];
       const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
+      const Tensor<1, dim> &convective_velocity =
+        scratch_data.convective_velocity[q];
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -1567,7 +1573,7 @@ BlockNavierStokesAssemblerCore<dim>::assemble_matrix(
           const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
 
           // Store these temporary products in auxiliary variables for speed
-          grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * velocity;
+          grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * convective_velocity;
           velocity_gradient_x_phi_u_j[j] = velocity_gradient * phi_u_j;
         }
 
@@ -1636,6 +1642,8 @@ BlockNavierStokesAssemblerCore<dim>::assemble_rhs(
       const double velocity_divergence = scratch_data.velocity_divergences[q];
       const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
+      const Tensor<1, dim> &convective_velocity =
+        scratch_data.convective_velocity[q];
 
       // Pressure
       const double pressure = scratch_data.pressure_values[q];
@@ -1661,7 +1669,7 @@ BlockNavierStokesAssemblerCore<dim>::assemble_rhs(
                            // Momentum
                            -kinematic_viscosity *
                              scalar_product(velocity_gradient, grad_phi_u_i) -
-                           velocity_gradient * velocity * phi_u_i +
+                           velocity_gradient * convective_velocity * phi_u_i +
                            pressure * div_phi_u_i + force * phi_u_i +
                            // Continuity
                            velocity_divergence * phi_p_i -
