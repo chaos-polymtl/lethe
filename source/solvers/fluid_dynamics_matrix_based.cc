@@ -437,14 +437,6 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
         }
     }
 
-  // ALE
-  // if (this->simulation_parameters.ale.enabled())
-  //   {
-  //     this->assemblers.emplace_back(
-  //       std::make_shared<NavierStokesAssemblerALE<dim>>(
-  //         this->simulation_control, this->simulation_parameters.ale));
-  //   }
-
   if (this->simulation_parameters.multiphysics.cahn_hilliard)
     {
       // Time-stepping schemes
@@ -658,17 +650,6 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
               "stabilization will lead to an unstable solver that is unable to converge");
         }
     }
-
-  // Mortar ALE
-  // This assembler is added last because it needs access to the strong
-  // Jacobian term computed in the core default assembler
-  // if (this->simulation_parameters.mortar_parameters.enable)
-  //   {
-  //     this->assemblers.emplace_back(
-  //       std::make_shared<NavierStokesAssemblerMortarALE<dim>>(
-  //         this->simulation_control,
-  //         this->simulation_parameters.mortar_parameters));
-  //   }
 }
 
 template <int dim>
