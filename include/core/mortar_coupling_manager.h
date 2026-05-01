@@ -58,7 +58,7 @@ public:
                     const std::vector<double>       &radius,
                     const Quadrature<dim2>          &quadrature,
                     const double                     rotation_angle,
-                    const std::vector<double>        stage_heights = {0.0, 1.0});
+                    const std::vector<double> stage_heights = {0.0, 1.0});
 
   /**
    * @brief Default destructor

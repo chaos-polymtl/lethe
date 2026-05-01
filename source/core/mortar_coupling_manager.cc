@@ -175,7 +175,8 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
             points.emplace_back(
               x[0],
               x[1],
-              stage_heights[id_out_plane] + quadrature.point(q)[1] *
+              stage_heights[id_out_plane] +
+                quadrature.point(q)[1] *
                   delta_1); // TODO Generalize for x and y directions
           else
             points.emplace_back(x);
@@ -218,7 +219,8 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
             points.emplace_back(
               x[0],
               x[1],
-              stage_heights[id_out_plane] + quadrature.point(q)[1] *
+              stage_heights[id_out_plane] +
+                quadrature.point(q)[1] *
                   delta_1); // TODO Generalize for x and y directions
           else
             points.emplace_back(x);
@@ -233,7 +235,8 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
             points.emplace_back(
               x[0],
               x[1],
-              stage_heights[id_out_plane] + quadrature.point(q)[1] *
+              stage_heights[id_out_plane] +
+                quadrature.point(q)[1] *
                   delta_1); // TODO Generalize for x and y directions
           else
             points.emplace_back(x);
@@ -420,11 +423,11 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center,
 
   if constexpr (dim == 3)
     {
-      auto it = std::upper_bound(stage_heights.begin(),
-                                 stage_heights.end(),
-                                 face_center[2]); // TODO Generalize for x and y directions
-      id_out_plane =
-        std::distance(stage_heights.begin(), it) - 1; 
+      auto it = std::upper_bound(
+        stage_heights.begin(),
+        stage_heights.end(),
+        face_center[2]); // TODO Generalize for x and y directions
+      id_out_plane = std::distance(stage_heights.begin(), it) - 1;
     }
 
   if (this->is_mesh_aligned())
@@ -807,7 +810,7 @@ compute_stage_heights(const Triangulation<dim>      &triangulation,
       // Smallest mortar cell face diameter, used to set the tolerance for
       // height comparison
       double minimum_face_size_local = std::numeric_limits<double>::max();
-      
+
       // Loop over the cells to collect the vertex coordinates in the rotation
       // axis direction
       for (const auto &cell : triangulation.active_cell_iterators())
