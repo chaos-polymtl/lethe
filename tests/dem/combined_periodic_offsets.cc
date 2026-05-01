@@ -47,7 +47,7 @@ test()
   std::vector<GridTools::PeriodicFacePair<
     typename parallel::distributed::Triangulation<dim>::cell_iterator>>
     matched_pairs;
-  for (unsigned int d = 0; d < dim; ++d)
+  for (int d = 0; d < dim; ++d)
     GridTools::collect_periodic_faces(triangulation,
                                       /*b_id1=*/2 * d,
                                       /*b_id2=*/2 * d + 1,
@@ -65,7 +65,7 @@ test()
   std::unordered_map<unsigned int, types::boundary_id> primary_ids;
   std::unordered_map<unsigned int, unsigned int>       directions;
   std::vector<unsigned int>                            bc_indices;
-  for (unsigned int d = 0; d < dim; ++d)
+  for (int d = 0; d < dim; ++d)
     {
       primary_ids[d] = 2 * d;
       directions[d]  = d;
@@ -88,7 +88,7 @@ test()
   std::sort(offsets.begin(),
             offsets.end(),
             [](const Tensor<1, dim> &a, const Tensor<1, dim> &b) {
-              for (unsigned int d = 0; d < dim; ++d)
+              for (int d = 0; d < dim; ++d)
                 {
                   if (a[d] < b[d])
                     return true;
@@ -102,7 +102,7 @@ test()
   for (const auto &o : offsets)
     {
       deallog << " (";
-      for (unsigned int d = 0; d < dim; ++d)
+      for (int d = 0; d < dim; ++d)
         deallog << (d == 0 ? "" : ", ") << o[d];
       deallog << ")" << std::endl;
     }
