@@ -842,7 +842,7 @@ NavierStokesOperatorBase<dim, number>::
   kinematic_viscosity_gradient.reinit(n_cells, integrator.n_q_points);
   previous_shear_rate.reinit(n_cells, integrator.n_q_points);
   previous_shear_rate_magnitude.reinit(n_cells, integrator.n_q_points);
-  convective_velocity.reinit(n_cells, integrator.n_q_points);
+  nonlinear_previous_convective_values.reinit(n_cells, integrator.n_q_points);
 
   // Define 1/dt if the simulation is transient
   double sdt = 0.0;
@@ -879,11 +879,11 @@ NavierStokesOperatorBase<dim, number>::
         {
           nonlinear_previous_values(cell, q)   = integrator.get_value(q);
           nonlinear_previous_gradient(cell, q) = integrator.get_gradient(q);
-          convective_velocity(cell, q)         = integrator.get_value(q);
+          nonlinear_previous_convective_values(cell, q)         = integrator.get_value(q);
 
           // If mortar is enabled, add u_ALE into the convective velocity
           if (this->enable_mortar)
-            convective_velocity(cell, q) -= this->velocity_ale(cell, q);
+            nonlinear_previous_convective_values(cell, q) -= this->velocity_ale(cell, q);
 
           if (this->enable_hessians_jacobian)
             {
@@ -896,7 +896,7 @@ NavierStokesOperatorBase<dim, number>::
           VectorizedArray<number> u_mag_squared = 1e-12;
           for (int k = 0; k < dim; ++k)
             u_mag_squared +=
-              Utilities::fixed_power<2>(this->convective_velocity(cell, q)[k]);
+              Utilities::fixed_power<2>(this->nonlinear_previous_convective_values(cell, q)[k]);
 
           stabilization_parameter(cell, q) =
             1. / std::sqrt(Utilities::fixed_power<2>(sdt) +
@@ -1645,7 +1645,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
       auto previous_gradient = this->nonlinear_previous_gradient(cell, q);
       auto previous_hessian_diagonal =
         this->nonlinear_previous_hessian_diagonal(cell, q);
-      auto convective_velocity = this->convective_velocity(cell, q);
+      auto previous_convective_values = this->nonlinear_previous_convective_values(cell, q);
 
       Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
       if (transient)
@@ -1669,7 +1669,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
           for (int k = 0; k < dim; ++k)
             {
               // +(v,(u_conv·∇)δu + (δu·∇)u)
-              value_result[i] += gradient[i][k] * convective_velocity[k] +
+              value_result[i] += gradient[i][k] * previous_convective_values[k] +
                                  previous_gradient[i][k] * value[k];
 
               // -(v, (u_ale·∇)δu)
@@ -1693,7 +1693,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
               // (-ν∆δu + (u_conv·∇)δu + (δu·∇)u)·τ∇q
               gradient_result[dim][i] +=
                 tau * (-kinematic_viscosity * hessian_diagonal[i][k] +
-                       gradient[i][k] * convective_velocity[k] +
+                       gradient[i][k] * previous_convective_values[k] +
                        previous_gradient[i][k] * value[k]);
 
               // -(u_ale·∇δu)·τ∇q
@@ -1720,8 +1720,8 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
                 {
                   // +((u_conv·∇)δu + (δu·∇)u - ν∆δu)τ(u_conv·∇)v
                   gradient_result[i][k] +=
-                    tau * convective_velocity[k] *
-                    (gradient[i][l] * convective_velocity[l] +
+                    tau * previous_convective_values[k] *
+                    (gradient[i][l] * previous_convective_values[l] +
                      previous_gradient[i][l] * value[l] -
                      kinematic_viscosity * hessian_diagonal[i][l]);
 
@@ -1743,11 +1743,11 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
                 }
               // +(∇δp)τ(u_conv·∇)v
               gradient_result[i][k] +=
-                tau * convective_velocity[k] * (gradient[dim][i]);
+                tau * previous_convective_values[k] * (gradient[dim][i]);
 
               // +(∂t δu)τ(u_conv·∇)v
               if (is_bdf)
-                gradient_result[i][k] += tau * convective_velocity[k] *
+                gradient_result[i][k] += tau * previous_convective_values[k] *
                                          ((*bdf_coefficients)[0] * value[i]);
 
               // if (enable_mortar)
@@ -1763,7 +1763,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
 
               if (is_sdirk)
                 {
-                  gradient_result[i][k] += tau * convective_velocity[k] *
+                  gradient_result[i][k] += tau * previous_convective_values[k] *
                                            ((1.0 / (dt * a_ii)) * value[i]);
                 }
 
@@ -1773,7 +1773,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
                   // +((u·∇)u - ν∆u)τ(δu·∇)v
                   gradient_result[i][k] +=
                     tau * value[k] *
-                    (previous_gradient[i][l] * convective_velocity[l] -
+                    (previous_gradient[i][l] * previous_convective_values[l] -
                      kinematic_viscosity * previous_hessian_diagonal[i][l]);
 
                   // // -((u_ale·∇)u)τ(δu·∇)v
@@ -1816,7 +1816,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
                           // +((u_conv·∇)δu + (δu·∇)u - ν∆δu)τ(−ν∆v)
                           hessian_result[i][k][k] +=
                             tau * -kinematic_viscosity *
-                            (gradient[i][l] * convective_velocity[l] +
+                            (gradient[i][l] * previous_convective_values[l] +
                              previous_gradient[i][l] * value[l] -
                              kinematic_viscosity * hessian_diagonal[i][l]);
                         }
@@ -1932,7 +1932,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
           typename FECellIntegrator::gradient_type gradient =
             integrator.get_gradient(q);
           typename FECellIntegrator::gradient_type hessian_diagonal;
-          auto convective_velocity = this->convective_velocity(cell, q);
+          const auto convective_value = this->nonlinear_previous_convective_values(cell, q);
 
           if (this->enable_hessians_residual)
             hessian_diagonal = integrator.get_hessian_diagonal(q);
@@ -1977,7 +1977,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
               for (int k = 0; k < dim; ++k)
                 {
                   // +(v,(u·∇)u)
-                  value_result[i] += gradient[i][k] * convective_velocity[k];
+                  value_result[i] += gradient[i][k] * convective_value[k];
 
                   // -(v, (u_ale·∇)u)
                   // if (enable_mortar)
@@ -1993,7 +1993,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                   // (-ν∆u + (u_conv·∇)u)·τ∇q
                   gradient_result[dim][i] +=
                     tau * (-kinematic_viscosity * hessian_diagonal[i][k] +
-                           gradient[i][k] * convective_velocity[k]);
+                           gradient[i][k] * convective_value[k]);
 
                   // -((u_ale·∇)u)·τ∇q
                   // if (enable_mortar)
@@ -2025,13 +2025,13 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                     {
                       // (-ν∆u)τ(u_conv·∇)v
                       gradient_result[i][k] += -tau * kinematic_viscosity *
-                                               convective_velocity[k] *
+                                               convective_value[k] *
                                                hessian_diagonal[i][l];
 
                       // + ((u_conv·∇)u)τ(u_conv·∇)v
-                      gradient_result[i][k] += tau * convective_velocity[k] *
+                      gradient_result[i][k] += tau * convective_value[k] *
                                                gradient[i][l] *
-                                               convective_velocity[l];
+                                               convective_value[l];
 
                       // if (enable_mortar)
                       //   {
@@ -2054,13 +2054,13 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                       // }
                     }
                   // + (∇p - f)τ(u_conv·∇)v
-                  gradient_result[i][k] += tau * convective_velocity[k] *
+                  gradient_result[i][k] += tau * convective_value[k] *
                                            (gradient[dim][i] - source_value[i]);
 
                   // + (∂t u)τ(u_conv·∇)v
                   if (is_bdf)
                     gradient_result[i][k] +=
-                      tau * convective_velocity[k] *
+                      tau * convective_value[k] *
                       ((*bdf_coefficients)[0] * value[i] +
                        previous_time_derivatives[i]);
 
@@ -2085,7 +2085,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                   // }
 
                   if (is_sdirk)
-                    gradient_result[i][k] += tau * convective_velocity[k] *
+                    gradient_result[i][k] += tau * convective_value[k] *
                                              ((1.0 / (dt * a_ii)) * value[i] +
                                               previous_time_derivatives[i]);
                 }
@@ -2107,7 +2107,7 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                               hessian_result[i][k][k] +=
                                 tau * -kinematic_viscosity *
                                 (-kinematic_viscosity * hessian_diagonal[i][l] +
-                                 gradient[i][l] * convective_velocity[l]);
+                                 gradient[i][l] * convective_value[l]);
                             }
                           // + (∇p - f)τ(−ν∆v)
                           hessian_result[i][k][k] +=
@@ -2174,10 +2174,10 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
  * \+ (∂t δu +(u_conv·∇)δu + (δu·∇)u + ∇δp - ν∆δu - (∇ν)(∇δu + ∇δuT))τu_conv·∇v
  * (SUPG Jacobian Part 1)
  * \+ (∂t u +(u_conv·∇)u + ∇p - ν∆u - (∇ν)((∇u + ∇uT) - f )τδu_conv·∇v (SUPG
- * Jacobian Part 2). 
- * The convective velocity u_conv is the same as the velocity
- * u unless an ALE simulation is performed. In this case, u_conv = u - u_ALE,
- * and u_ALE is previously integrated into u_conv at the function
+ * Jacobian Part 2).
+ * The convective velocity u_conv is the same as the velocity u unless an ALE
+ * simulation is performed. In this case, u_conv = u - u_ALE, and u_ALE is
+ * previously integrated into u_conv at the function
  * evaluate_non_linear_term_and_calculate_tau().
  */
 template <int dim, typename number>
@@ -2237,7 +2237,7 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
       auto previous_gradient = this->nonlinear_previous_gradient(cell, q);
       auto previous_hessian_diagonal =
         this->nonlinear_previous_hessian_diagonal(cell, q);
-      auto convective_velocity = this->convective_velocity(cell, q);
+      auto previous_convective_values = this->nonlinear_previous_convective_values(cell, q);
 
       Tensor<1, dim + 1, VectorizedArray<number>> previous_time_derivatives;
       if (transient)
@@ -2305,7 +2305,7 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
                                        shear_rate_previous_product *
                                        previous_shear_rate[i][k];
               // +(v,(u_conv·∇)δu + (δu·∇)u)
-              value_result[i] += gradient[i][k] * convective_velocity[k] +
+              value_result[i] += gradient[i][k] * previous_convective_values[k] +
                                  previous_gradient[i][k] * value[k];
             }
           // +(v,∂t δu)
@@ -2322,11 +2322,11 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
         {
           for (int k = 0; k < dim; ++k)
             {
-              // (-ν∆δu - (∇ν)(∇δu + ∇δuT) + (u·∇)δu + (δu·∇)u)·τ∇q
+              // (-ν∆δu - (∇ν)(∇δu + ∇δuT) + (u_conv·∇)δu + (δu·∇)u)·τ∇q
               gradient_result[dim][i] +=
                 tau * (-kinematic_viscosity * hessian_diagonal[i][k] -
                        kinematic_viscosity_gradient[k] * shear_rate[k][i] +
-                       gradient[i][k] * previous_values[k] +
+                       gradient[i][k] * previous_convective_values[k] +
                        previous_gradient[i][k] * value[k]);
             }
           // +(∂t δu)·τ∇q
@@ -2346,21 +2346,22 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
               // Part 1
               for (int l = 0; l < dim; ++l)
                 {
-                  // +((u·∇)δu + (δu·∇)u - ν∆δu  - (∇ν)(∇δu + ∇δuT))τ(u·∇)v
+                  // +((u_conv·∇)δu + (δu·∇)u - ν∆δu  - (∇ν)(∇δu +
+                  // ∇δuT))τ(u_conv·∇)v
                   gradient_result[i][k] +=
-                    tau * previous_values[k] *
-                    (gradient[i][l] * previous_values[l] +
+                    tau * previous_convective_values[k] *
+                    (gradient[i][l] * previous_convective_values[l] +
                      previous_gradient[i][l] * value[l] -
                      kinematic_viscosity * hessian_diagonal[i][l] -
                      kinematic_viscosity_gradient[i] * shear_rate[i][l]);
                 }
-              // +(∇δp)τ(u·∇)v
+              // +(∇δp)τ(u_conv·∇)v
               gradient_result[i][k] +=
-                tau * previous_values[k] * (gradient[dim][i]);
+                tau * previous_convective_values[k] * (gradient[dim][i]);
 
-              // +(∂t δu)τ(u·∇)v
+              // +(∂t δu)τ(u_conv·∇)v
               if (is_bdf)
-                gradient_result[i][k] += tau * previous_values[k] *
+                gradient_result[i][k] += tau * previous_convective_values[k] *
                                          ((*bdf_coefficients)[0] * value[i]);
 
               if (is_sdirk)
@@ -2371,10 +2372,10 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
               // Part 2
               for (int l = 0; l < dim; ++l)
                 {
-                  // +((u·∇)u - ν∆u - (∇ν)((∇u + ∇uT))τ(δu·∇)v
+                  // +((u_conv·∇)u - ν∆u - (∇ν)((∇u + ∇uT))τ(δu·∇)v
                   gradient_result[i][k] +=
                     tau * value[k] *
-                    (previous_gradient[i][l] * previous_values[l] -
+                    (previous_gradient[i][l] * previous_convective_values[l] -
                      kinematic_viscosity * previous_hessian_diagonal[i][l] -
                      kinematic_viscosity_gradient[i] *
                        previous_shear_rate[i][l]);
@@ -2413,10 +2414,15 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
 
 /**
  * The expressions calculated in this cell integral are:
- * (q, ∇·u) + (v,∂t u) + (v,(u·∇)u) - (∇·v,p) + ν(∇v,(∇u + ∇uT)) - (v,f) (Weak
- * form), plus two additional terms in the case of SUPG-PSPG stabilization:
- * \+ (∂t u +(u·∇)u + ∇p -ν∆u - (∇ν)((∇u + ∇uT) - f)τ∇·q (PSPG term)
- * \+ (∂t u +(u·∇)u + ∇p -ν∆u - (∇ν)((∇u + ∇uT) - f)τu·∇v (SUPG term),
+ * (q, ∇·u) + (v,∂t u) + (v,(u_conv·∇)u) - (∇·v,p) + ν(∇v,(∇u + ∇uT)) - (v,f)
+ * (Weak form), plus two additional terms in the case of SUPG-PSPG
+ * stabilization:
+ * \+ (∂t u +(u_conv·∇)u + ∇p -ν∆u - (∇ν)((∇u + ∇uT) - f)τ∇·q (PSPG term)
+ * \+ (∂t u +(u_conv·∇)u + ∇p -ν∆u - (∇ν)((∇u + ∇uT) - f)τu_conv·∇v (SUPG term).
+ * The convective velocity u_conv is the same as the velocity u unless an ALE
+ * simulation is performed. In this case, u_conv = u - u_ALE, and u_ALE is
+ * previously integrated into u_conv at the function
+ * evaluate_non_linear_term_and_calculate_tau().
  */
 template <int dim, typename number>
 void
@@ -2473,6 +2479,7 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
           typename FECellIntegrator::gradient_type gradient =
             integrator.get_gradient(q);
           typename FECellIntegrator::gradient_type hessian_diagonal;
+          const auto convective_value = this->nonlinear_previous_convective_values(cell, q);
 
           if (this->enable_hessians_residual)
             hessian_diagonal = integrator.get_hessian_diagonal(q);
@@ -2535,8 +2542,8 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
 
               for (int k = 0; k < dim; ++k)
                 {
-                  // +(v,(u·∇)u)
-                  value_result[i] += gradient[i][k] * value[k];
+                  // +(v,(u_conv·∇)u)
+                  value_result[i] += gradient[i][k] * convective_value[k];
                 }
             }
 
@@ -2545,11 +2552,11 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
             {
               for (int k = 0; k < dim; ++k)
                 {
-                  // (-ν∆u - (∇ν)((∇u + ∇uT)) + (u·∇)u)·τ∇q
+                  // (-ν∆u - (∇ν)((∇u + ∇uT)) + (u_conv·∇)u)·τ∇q
                   gradient_result[dim][i] +=
                     tau * (-kinematic_viscosity * hessian_diagonal[i][k] -
                            kinematic_viscosity_gradient[k] * shear_rate[k][i] +
-                           gradient[i][k] * value[k]);
+                           gradient[i][k] * convective_value[k]);
                 }
               // +(-f)·τ∇q
               gradient_result[dim][i] += tau * (-source_value[i]);
@@ -2574,24 +2581,24 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
                 {
                   for (int l = 0; l < dim; ++l)
                     {
-                      // (-ν∆u - (∇ν)((∇u + ∇uT)))τ(u·∇)v
+                      // (-ν∆u - (∇ν)((∇u + ∇uT)))τ(u_conv·∇)v
                       gradient_result[i][k] +=
-                        tau * value[k] *
+                        tau * convective_value[k] *
                         (-kinematic_viscosity * hessian_diagonal[i][l] -
                          kinematic_viscosity_gradient[l] * shear_rate[l][i]);
 
-                      // + ((u·∇)u)τ(u·∇)v
+                      // + ((u_conv·∇)u)τ(u_conv·∇)v
                       gradient_result[i][k] +=
-                        tau * value[k] * gradient[i][l] * value[l];
+                        tau * convective_value[k] * gradient[i][l] * convective_value[l];
                     }
-                  // + (∇p - f)τ(u·∇)v
+                  // + (∇p - f)τ(u_conv·∇)v
                   gradient_result[i][k] +=
-                    tau * value[k] * (gradient[dim][i] - source_value[i]);
+                    tau * convective_value[k] * (gradient[dim][i] - source_value[i]);
 
-                  // + (∂t u)τ(u·∇)v
+                  // + (∂t u)τ(u_conv·∇)v
                   if (is_bdf || is_sdirk)
                     gradient_result[i][k] +=
-                      tau * value[k] *
+                      tau * convective_value[k] *
                       ((*bdf_coefficients)[0] * value[i] +
                        previous_time_derivatives[i]);
                 }
