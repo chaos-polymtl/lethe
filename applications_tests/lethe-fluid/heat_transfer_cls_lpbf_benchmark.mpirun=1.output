@@ -37,7 +37,7 @@ Temperature statistics on fluid:
 	     Min: 2.980000e+02
 	     Max: 1.464727e+03
 	 Average: 3.077865e+02
-	 Std-Dev: 7.458525e+01
+	 Std-Dev: 7.458524e+01
 
 ----------------------
 CLS Mass Conservation
@@ -52,7 +52,7 @@ Temperature statistics on fluid:
 	     Min: 2.980000e+02
 	     Max: 1.496279e+03
 	 Average: 3.080976e+02
-	 Std-Dev: 7.671517e+01
+	 Std-Dev: 7.671516e+01
 
 ----------------------
 CLS Mass Conservation
@@ -82,7 +82,7 @@ Temperature statistics on fluid:
 	     Min: 2.980000e+02
 	     Max: 1.558433e+03
 	 Average: 3.087189e+02
-	 Std-Dev: 8.093196e+01
+	 Std-Dev: 8.093195e+01
 
 ----------------------
 CLS Mass Conservation
@@ -97,7 +97,7 @@ Temperature statistics on fluid:
 	     Min: 2.980000e+02
 	     Max: 1.589046e+03
 	 Average: 3.090291e+02
-	 Std-Dev: 8.301922e+01
+	 Std-Dev: 8.301921e+01
 
 ----------------------
 CLS Mass Conservation
@@ -112,7 +112,7 @@ Temperature statistics on fluid:
 	     Min: 2.980000e+02
 	     Max: 1.619355e+03
 	 Average: 3.093389e+02
-	 Std-Dev: 8.509263e+01
+	 Std-Dev: 8.509262e+01
 
 ----------------------
 CLS Mass Conservation
@@ -126,8 +126,8 @@ Transient iteration: 38       Time: 7.412e-06 Time step: 2e-07    CFL: 1.00796e-
 Temperature statistics on fluid: 
 	     Min: 2.980000e+02
 	     Max: 1.649364e+03
-	 Average: 3.096485e+02
-	 Std-Dev: 8.715238e+01
+	 Average: 3.096484e+02
+	 Std-Dev: 8.715236e+01
 
 ----------------------
 CLS Mass Conservation
@@ -142,7 +142,7 @@ Temperature statistics on fluid:
 	     Min: 2.980000e+02
 	     Max: 1.679078e+03
 	 Average: 3.099577e+02
-	 Std-Dev: 8.919864e+01
+	 Std-Dev: 8.919861e+01
 
 ----------------------
 CLS Mass Conservation
@@ -157,7 +157,7 @@ Temperature statistics on fluid:
 	     Min: 2.980000e+02
 	     Max: 1.708500e+03
 	 Average: 3.102666e+02
-	 Std-Dev: 9.123158e+01
+	 Std-Dev: 9.123155e+01
 
 ----------------------
 CLS Mass Conservation
@@ -172,7 +172,7 @@ Temperature statistics on fluid:
 	     Min: 2.980000e+02
 	     Max: 1.737636e+03
 	 Average: 3.105751e+02
-	 Std-Dev: 9.325138e+01
+	 Std-Dev: 9.325135e+01
 
 ----------------------
 CLS Mass Conservation
