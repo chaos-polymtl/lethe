@@ -837,7 +837,8 @@ protected:
    * given by u - u_ALE. Otherwise, it returns the regular velocity tensor.
    *
    */
-  Table<2, Tensor<1, dim + 1, VectorizedArray<number>>> nonlinear_previous_convective_values;
+  Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>
+    nonlinear_previous_convective_values;
 
   /**
    * @brief Table with correct alignment for vectorization to store the values
