@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# Smoking-gun test for compute_combined_periodic_offsets in 2D.
+# Application test for compute_combined_periodic_offsets in 2D.
 #
 # Two stationary particles are placed in slight overlap across the
 # x-periodic boundary, in a fully periodic unit square. The y-periodic BC

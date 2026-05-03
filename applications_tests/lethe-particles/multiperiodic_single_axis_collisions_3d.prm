@@ -1,14 +1,14 @@
 # SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# Smoking-gun test for compute_combined_periodic_offsets in 3D.
+# Application test for compute_combined_periodic_offsets in 3D.
 #
 # Two stationary particles are placed in slight overlap across the
 # z-periodic boundary, in a fully periodic unit cube. The periodic BCs are
 # registered in the order x, y, z so that a correct contact requires the
 # pure +/- offset of the THIRD registered pair to be present in
 # combined_periodic_offsets, which was the case missed most aggressively
-# by the bug (the third pair lost both its pure offsets and all combined
+# by the original implementaiotn bug (the third pair lost both its pure offsets and all combined
 # offsets that involved itself but not the other two).
 #
 # - With the bug, the pure +/- z offset is missing, the periodic contact

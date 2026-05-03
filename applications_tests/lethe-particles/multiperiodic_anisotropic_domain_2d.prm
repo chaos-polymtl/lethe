@@ -11,7 +11,7 @@
 # scale (for example, a "nearest image" tie-break or a hard-coded
 # threshold in cell-size units).
 #
-# As in the smoking-gun test, the y-periodic BC is registered first and
+# The y-periodic BC is registered first and
 # the x-periodic BC second, so detecting this pair requires the pure
 # +/- x offset that the buggy compute_combined_periodic_offsets omitted.
 

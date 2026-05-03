@@ -7,7 +7,7 @@
 # unit cube: their only near-image requires the COMBINED offset (0, +/-y,
 # +/-z), i.e. crossings of the second AND third registered periodic
 # pairs simultaneously, with no x-crossing involved. The y-z combined
-# offset is precisely one of the entries omitted by the buggy
+# offset is precisely one of the entries omitted by the original buggy
 # compute_combined_periodic_offsets, which only generated combined offsets
 # that involved the first registered pair (x).
 #
@@ -17,7 +17,7 @@
 # - With the fix, the Hertzian repulsion separates them along the y-z
 #   diagonal.
 #
-# Together with the smoking-gun single-axis test (which checks the pure
+# Together with single-axis test (which checks the pure
 # offsets) this covers both branches of the offset list construction.
 
 # Listing of Parameters
