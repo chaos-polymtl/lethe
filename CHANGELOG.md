@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/05/02
+
+### Fixed
+
+- MINOR Fixed several Clang warnings encountered when compiling Lethe with Apple Clang. The unused-parameter warning in `LetheGridTools::find_cells_around_edge` is silenced with `[[maybe_unused]]` (the parameter is used when compiled with OpenCascade). The unused-private-field warnings in `SubSimulationControlDEM` are resolved by reading the constructor's stored members (via `this->`) instead of the shadowing parameters. The obsolete `#if __GNUC__ > 7` guards around `std::filesystem` usage in `create_output_folder`, `delete_output_folder`, and `delete_vtu_and_pvd_files` are removed; they prevented these functions from working on Apple Clang (which defines `__GNUC__ == 4`) and are no longer needed since Lethe requires C++20. The implicit `double`-to-`int` narrowing in `TimeHarmonicMaxwell::should_solve_auxiliary_physics` is made explicit with `static_cast<int>`. [#1981](https://github.com/chaos-polymtl/lethe/pull/1981)
+
 ## [Master] - 2026/05/01
 
 ### Fixed

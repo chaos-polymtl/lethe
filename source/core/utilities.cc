@@ -8,11 +8,8 @@
 
 #include <boost/algorithm/string/replace.hpp>
 
+#include <filesystem>
 #include <type_traits>
-
-#if __GNUC__ > 7
-#  include <filesystem>
-#endif
 
 template <typename T>
 TableHandler
@@ -367,20 +364,13 @@ fill_string_vectors_from_file(
 void
 create_output_folder(const std::string &dirname)
 {
-#if __GNUC__ > 7
   std::filesystem::create_directory(dirname);
-#else
-  // mkdir(dirname.c_str(), 0755);
-#endif
 }
 
-// TODO find a solution for other compilers
 void
 delete_output_folder(const std::string &dirname)
 {
-#if __GNUC__ > 7
   std::filesystem::remove_all(dirname);
-#endif
 }
 
 template TableHandler
@@ -869,7 +859,6 @@ print_comment_to_output_file(const ConditionalOStream &pcout,
 void
 delete_vtu_and_pvd_files(const std::string &output_path)
 {
-#if __GNUC__ > 7
   for (auto const &filename : std::filesystem::directory_iterator{output_path})
     {
       if (filename.path().extension() == ".vtu" ||
@@ -877,10 +866,4 @@ delete_vtu_and_pvd_files(const std::string &output_path)
           filename.path().extension() == ".pvtu")
         std::filesystem::remove(filename.path());
     }
-#else
-  AssertThrow(
-    false,
-    ExcMessage(
-      "Deleting old vtu files is not possible with the current compiler version."));
-#endif
 }

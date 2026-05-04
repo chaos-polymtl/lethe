@@ -1730,11 +1730,11 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
               // coupling parameter. If they are different, it means we have
               // passed a multiple of the time coupling parameter and we should
               // solve the electromagnetics.
-              int difference_in_time_steps =
+              const int difference_in_time_steps = static_cast<int>(
                 std::floor(this->simulation_control->get_current_time() /
                            thm_parameters.coupling_time) -
                 std::floor(this->simulation_control->get_previous_time() /
-                           thm_parameters.coupling_time);
+                           thm_parameters.coupling_time));
               if (difference_in_time_steps == 1)
                 return true;
               else if (difference_in_time_steps > 1)

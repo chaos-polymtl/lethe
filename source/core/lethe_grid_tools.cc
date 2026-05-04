@@ -683,10 +683,10 @@ LetheGridTools::find_cells_around_edge(
   const DoFHandler<dim> &dof_handler,
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
-                                                       &vertices_cell_map,
-  const typename DoFHandler<dim>::active_cell_iterator &cell,
-  Point<dim>                                           &point_1,
-  Point<dim>                                           &point_2)
+    &vertices_cell_map,
+  [[maybe_unused]] const typename DoFHandler<dim>::active_cell_iterator &cell,
+  Point<dim> &point_1,
+  Point<dim> &point_2)
 {
   std::set<typename DoFHandler<dim>::active_cell_iterator> cells_pierced_set;
   DoFHandler<1, dim>       local_edge_dof_handler;
