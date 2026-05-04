@@ -723,7 +723,7 @@ namespace InterfaceTools
     get_face_transformation_jacobian(
       const DerivativeForm<1, dim, dim> &cell_transformation_jac,
       const unsigned int                 local_face_id,
-      LAPACKFullMatrix<double>          &face_transformation_jac)
+      DerivativeForm<1, dim - 1, dim>   &face_transformation_jac)
     {
       for (unsigned int i = 0; i < dim; ++i)
         {
@@ -734,7 +734,7 @@ namespace InterfaceTools
                 continue;
 
               if (k < dim - 1)
-                face_transformation_jac(i, k) = cell_transformation_jac[i][j];
+                face_transformation_jac[i][k] = cell_transformation_jac[i][j];
               k += 1;
             }
         }
@@ -791,70 +791,19 @@ namespace InterfaceTools
     inline void
     compute_residual(const Tensor<1, dim>           &x_n_to_x_I_real,
                      const Tensor<1, dim>           &distance_gradient,
-                     const LAPACKFullMatrix<double> &transformation_jac,
+                     const DerivativeForm<1, dim - 1, dim> &transformation_jac,
                      Tensor<1, dim - 1>             &residual_ref)
     {
       Tensor<1, dim> residual_real =
         distance_gradient - (1.0 / x_n_to_x_I_real.norm()) * x_n_to_x_I_real;
 
+      DerivativeForm<1, dim, dim - 1> transformation_jac_transpose =
+        transformation_jac.transpose();
+
       for (unsigned int i = 0; i < dim - 1; ++i)
         for (unsigned int j = 0; j < dim; ++j)
-          residual_ref[i] += transformation_jac(j, i) * residual_real[j];
-    };
-
-    /**
-     * @brief Compute the stencil for the numerical jacobian of the distance
-     * minimization problem in the face where the problem is solved
-     *
-     * @param[in] x_ref point in the reference cell space where the jacobian is
-     * evaluated
-     *
-     * @param[in] local_face_id local id of the face in which the numerical
-     * jacobian is required
-     *
-     * @param[in] perturbation value of the perturbation use for the
-     * numerical jacobian computation
-     *
-     * @return vector containing the 2*dim - 1 stencil point. The entries of the
-     * vector are the following:
-     *                                    4
-     *
-     *                               1    0    2
-     *
-     *                                    3
-     * The entry 0 is the current evaluation point x_ref
-     */
-    inline void
-    compute_numerical_jacobian_stencil(const Point<dim>         x_ref,
-                                       const unsigned int       local_face_id,
-                                       const double             perturbation,
-                                       std::vector<Point<dim>> &stencil)
-    {
-      for (unsigned int i = 0; i < 2 * dim - 1; ++i)
-        {
-          stencil[i] = x_ref;
-        }
-
-      unsigned int              skip_index = local_face_id / 2;
-      std::vector<unsigned int> j_index(dim - 1);
-
-      // Set the coordinates (x,y,z) to be skipped (the coordinates not
-      // perturbed)
-      unsigned int j = 0;
-      for (unsigned int i = 0; i < dim; ++i)
-        {
-          if (i == skip_index)
-            continue;
-          j_index[j] = i;
-          j += 1;
-        }
-
-      for (unsigned int i = 1; i < dim; ++i)
-        {
-          j = j_index[i - 1];
-          stencil[2 * i - 1][j] -= perturbation;
-          stencil[2 * i][j] += perturbation;
-        }
+          residual_ref[i] +=
+            transformation_jac_transpose[i][j] * residual_real[j];
     };
 
     /**
@@ -898,6 +847,8 @@ namespace InterfaceTools
      * 1): J_R = J^T*H*J, where J is the face transformation jacobian, and
      * H is the Hessian matrix in the real space (H = H(d) + H(||x_I - x_n||)).
      *
+     * @param[in] x_n_to_x_I_real_p1 vector between the evaluation point x_n and the DoF x_I in the real space.
+     *
      * @param[in] transformation_jacobian face transformation jacobian
      *
      * @param[in] face_local_dof_values values of the DoFs of the face
@@ -907,10 +858,13 @@ namespace InterfaceTools
     inline void
     compute_analytical_jacobian(
       const Tensor<1, dim>           &x_n_to_x_I_real_p1,
-      const LAPACKFullMatrix<double> &transformation_jacobian,
+      const DerivativeForm<1, dim - 1, dim> &transformation_jacobian,
       const std::vector<double>      &face_local_dof_values,
       LAPACKFullMatrix<double>       &jacobian_matrix)
     {
+      hessian_matrix = 0;
+      H_x_transformation_jacobian = 0;
+
       const double x_n_to_x_I_real_p1_norm = x_n_to_x_I_real_p1.norm();
 
       const double x_n_to_x_I_real_p1_norm_inv = 1.0 / x_n_to_x_I_real_p1_norm;
@@ -921,19 +875,14 @@ namespace InterfaceTools
 
       for (int i = 0; i < dim; ++i)
         {
-          double h_ii = -(x_n_to_x_I_real_p1[i] * x_n_to_x_I_real_p1[i]) *
-                          x_n_to_x_I_real_p1_norm_cubic_inv +
-                        x_n_to_x_I_real_p1_norm_inv;
-
-          hessian_matrix(i, i) = h_ii;
-
-          for (int j = i + 1; j < dim; ++j)
+          for (int j =0; j < dim; ++j)
             {
               double h_ij = -(x_n_to_x_I_real_p1[i] * x_n_to_x_I_real_p1[j]) *
                             x_n_to_x_I_real_p1_norm_cubic_inv;
+              if (i == j)
+                h_ij += x_n_to_x_I_real_p1_norm_inv;
 
-              hessian_matrix(i, j) = h_ij;
-              hessian_matrix(j, i) = h_ij;
+              hessian_matrix.set(i, j, h_ij);
             }
         }
 
@@ -945,24 +894,26 @@ namespace InterfaceTools
               for (int k = 0; k < dim; ++k)
                 {
                   matrix_ij +=
-                    hessian_matrix(i, k) * transformation_jacobian(k, j);
+                    hessian_matrix(i, k) * transformation_jacobian[k][j];
                 }
-              H_x_transformation_jacobian(i, j) = matrix_ij;
+              H_x_transformation_jacobian.set(i, j, matrix_ij);
             }
         }
 
+      const DerivativeForm<1, dim, dim - 1> transformation_jacobian_transpose =
+      transformation_jacobian.transpose();
+
       for (int i = 0; i < dim - 1; ++i)
         {
-          for (int j = i; j < dim - 1; ++j)
+          for (int j = 0; j < dim - 1; ++j)
             {
               double matrix_ij = 0;
               for (int k = 0; k < dim; ++k)
                 {
-                  matrix_ij += transformation_jacobian(k, i) *
+                  matrix_ij += transformation_jacobian_transpose[i][k] *
                                H_x_transformation_jacobian(k, j);
                 }
-              jacobian_matrix(i, j) = matrix_ij;
-              jacobian_matrix(j, i) = matrix_ij;
+              jacobian_matrix.set(i, j, matrix_ij);
             }
         }
 
@@ -972,10 +923,11 @@ namespace InterfaceTools
       double off_diag_H = 0;
       if constexpr (dim == 3)
         {
-          off_diag_H = face_local_dof_values[0] - face_local_dof_values[1] -
-                       face_local_dof_values[2] + face_local_dof_values[3];
-          jacobian_matrix(0, 1) += off_diag_H;
-          jacobian_matrix(1, 0) += off_diag_H;
+          off_diag_H = jacobian_matrix(0, 1) + face_local_dof_values[0] -
+                       face_local_dof_values[1] - face_local_dof_values[2] +
+                       face_local_dof_values[3];
+          jacobian_matrix.set(0, 1, off_diag_H);
+          jacobian_matrix.set(1, 0, off_diag_H);
         }
     };
 

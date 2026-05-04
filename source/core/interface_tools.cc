@@ -621,7 +621,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
 
   // Transformation jacobian
   DerivativeForm<1, dim, dim> cell_transformation_jacobian;
-  LAPACKFullMatrix<double>    face_transformation_jacobian(dim, dim - 1);
+  DerivativeForm<1, dim - 1, dim>    face_transformation_jacobian;
 
   // Jacobian matrix, residual vector and correction
   LAPACKFullMatrix<double> jacobian_matrix(dim - 1, dim - 1);
