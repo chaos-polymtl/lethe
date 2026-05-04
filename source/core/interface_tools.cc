@@ -620,8 +620,8 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
   Tensor<1, dim>          distance_gradients;
 
   // Transformation jacobian
-  DerivativeForm<1, dim, dim> cell_transformation_jacobian;
-  DerivativeForm<1, dim - 1, dim>    face_transformation_jacobian;
+  DerivativeForm<1, dim, dim>     cell_transformation_jacobian;
+  DerivativeForm<1, dim - 1, dim> face_transformation_jacobian;
 
   // Jacobian matrix, residual vector and correction
   LAPACKFullMatrix<double> jacobian_matrix(dim - 1, dim - 1);

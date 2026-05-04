@@ -789,10 +789,10 @@ namespace InterfaceTools
      * @param[out] residual_ref residual in the reference face space
      */
     inline void
-    compute_residual(const Tensor<1, dim>           &x_n_to_x_I_real,
-                     const Tensor<1, dim>           &distance_gradient,
+    compute_residual(const Tensor<1, dim>                  &x_n_to_x_I_real,
+                     const Tensor<1, dim>                  &distance_gradient,
                      const DerivativeForm<1, dim - 1, dim> &transformation_jac,
-                     Tensor<1, dim - 1>             &residual_ref)
+                     Tensor<1, dim - 1>                    &residual_ref)
     {
       Tensor<1, dim> residual_real =
         distance_gradient - (1.0 / x_n_to_x_I_real.norm()) * x_n_to_x_I_real;
@@ -847,7 +847,8 @@ namespace InterfaceTools
      * 1): J_R = J^T*H*J, where J is the face transformation jacobian, and
      * H is the Hessian matrix in the real space (H = H(d) + H(||x_I - x_n||)).
      *
-     * @param[in] x_n_to_x_I_real_p1 vector between the evaluation point x_n and the DoF x_I in the real space.
+     * @param[in] x_n_to_x_I_real_p1 vector between the evaluation point x_n and
+     * the DoF x_I in the real space.
      *
      * @param[in] transformation_jacobian face transformation jacobian
      *
@@ -857,12 +858,12 @@ namespace InterfaceTools
      */
     inline void
     compute_analytical_jacobian(
-      const Tensor<1, dim>           &x_n_to_x_I_real_p1,
+      const Tensor<1, dim>                  &x_n_to_x_I_real_p1,
       const DerivativeForm<1, dim - 1, dim> &transformation_jacobian,
-      const std::vector<double>      &face_local_dof_values,
-      LAPACKFullMatrix<double>       &jacobian_matrix)
+      const std::vector<double>             &face_local_dof_values,
+      LAPACKFullMatrix<double>              &jacobian_matrix)
     {
-      hessian_matrix = 0;
+      hessian_matrix              = 0;
       H_x_transformation_jacobian = 0;
 
       const double x_n_to_x_I_real_p1_norm = x_n_to_x_I_real_p1.norm();
@@ -875,7 +876,7 @@ namespace InterfaceTools
 
       for (int i = 0; i < dim; ++i)
         {
-          for (int j =0; j < dim; ++j)
+          for (int j = 0; j < dim; ++j)
             {
               double h_ij = -(x_n_to_x_I_real_p1[i] * x_n_to_x_I_real_p1[j]) *
                             x_n_to_x_I_real_p1_norm_cubic_inv;
@@ -901,7 +902,7 @@ namespace InterfaceTools
         }
 
       const DerivativeForm<1, dim, dim - 1> transformation_jacobian_transpose =
-      transformation_jacobian.transpose();
+        transformation_jacobian.transpose();
 
       for (int i = 0; i < dim - 1; ++i)
         {
