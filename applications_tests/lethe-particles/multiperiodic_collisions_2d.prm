@@ -5,7 +5,7 @@
 # moving particle with three stationary corner particles in a fully
 # periodic 2D unit square. Particle 0 starts near (0.85, 0.15) and moves
 # diagonally toward the (0.975, 0.025) corner. Just before reaching the
-# domain boundary it makes simultaneous contact with:
+# domain boundary, it makes simultaneous contact with:
 #  - particle 1 at (0.025, 0.975) via the (+x, -y) corner offset,
 #  - particle 2 at (0.025, 0.025) via the +x face offset,
 #  - particle 3 at (0.975, 0.975) via the -y face offset.
