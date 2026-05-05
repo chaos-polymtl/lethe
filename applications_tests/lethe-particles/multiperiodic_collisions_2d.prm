@@ -3,20 +3,23 @@
 
 # This DEM test checks the simultaneous multi-pair periodic contact of a
 # moving particle with three stationary corner particles in a fully
-# periodic 2D unit square. Particle 0 starts near (0.85, 0.15) and moves
-# diagonally toward the (0.975, 0.025) corner. Just before reaching the
-# domain boundary, it makes simultaneous contact with:
-#  - particle 1 at (0.025, 0.975) via the (+x, -y) corner offset,
-#  - particle 2 at (0.025, 0.025) via the +x face offset,
-#  - particle 3 at (0.975, 0.975) via the -y face offset.
+# periodic 2D unit square of length 1.
+# Particle 0 starts near (0.85, 0.15) and moves
+# diagonally toward the (1, 0) corner of the mesh.
+# Just before reaching the domain boundary, it makes simultaneous contact with:
+#  - particle 1 at (0.025, 0.975) via the (-x, -y) corner,
+#  - particle 2 at (0.025, 0.025) via the -x face,
+#  - particle 3 at (0.975, 0.975) via the -y face.
 # By symmetry of the elastic frictionless setup, the moving particle
 # rebounds back along (-1, +1) and the corner particles are pushed
 # outward along their contact normals.
 #
 # The simulation horizon is tuned to capture the first multi-contact
 # event and a short rebound, then stop -- no second collision occurs
-# within the window. Combined with elastic, frictionless, soft Hertzian
-# contact this keeps the multi-body dynamics symmetric and reproducible.
+# within the window. The kinetic energy of the system is fully preserved.
+# This is more of a regression test than a validation test, since without
+# visualizing the test output it is relatively difficult to assess
+# if the simulation result is good.
 
 # Listing of Parameters
 #----------------------
@@ -82,10 +85,8 @@ end
 # Insertion Info
 #---------------------------------------------------
 
-# Particle 0 starts near the (0.975, 0.025) corner instead of at the
-# domain centre so the approach phase is short (~125 ms) and the test
-# fits in 15000 steps. Three other particles sit at three of the four
-# corners; the (0.975, 0.025) corner is left empty so particle 0 can
+# Particle 0 starts near the (1, 0) corner of the domain. Three other particles sit at three of the four
+# corners; the (1, 0) corner is left empty so particle 0 can
 # arrive there.
 
 subsection insertion info
