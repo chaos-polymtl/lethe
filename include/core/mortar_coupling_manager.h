@@ -337,6 +337,8 @@ public:
    * @param[in] radius Radius at the mortar interface
    * @param[in] quadrature Quadrature for local cell operations
    * @param[in] rotation_angle Rotation angle for the inner domain
+   * @param[in] stage_heights Vector containing the unique vertex heights at the
+   * mortar interface
    * @param[in] center_of_rotation Center of rotation of the inner domain
    * @param[in] pre_rotation_angle Initial rotation angle used for computing
    * mortar locations, accounting for cases here the element edges are not
@@ -362,6 +364,8 @@ public:
    * the domain length in the direction of the rotation axis
    * @param[in] quadrature Quadrature for local cell operations
    * @param[in] rotation_angle Rotation angle for the inner domain
+   * @param[in] stage_heights Vector containing the unique vertex heights at the
+   * mortar interface
    * @param[in] center_of_rotation Center of rotation of the inner domain
    * @param[in] pre_rotation_angle Initial rotation angle used for computing
    * mortar locations, accounting for cases here the element edges are not
