@@ -157,7 +157,8 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
     get_config(face_center, is_inner);
   // Angle variation within each cell
   const double delta_0 = 2 * numbers::PI / n_subdivisions[0];
-  double       delta_1 = 1.0;
+  // Height of the cell in the direction of the rotation axis
+  double delta_1 = 1.0;
 
   if constexpr (dim == 3)
     delta_1 = stage_heights[id_out_plane + 1] - stage_heights[id_out_plane];
@@ -815,9 +816,9 @@ compute_stage_heights(const Triangulation<dim>      &triangulation,
       std::vector<double> stage_heights_local;
       // Smallest mortar cell face diameter, used to set the tolerance for
       // height comparison
-      double minimum_face_size_local = std::numeric_limits<double>::max();
+      double minimum_face_diameter_local = std::numeric_limits<double>::max();
 
-      // Loop over the cells to collect the vertex coordinates in the rotation
+      // Loop over the cells to store the vertex coordinates in the rotation
       // axis direction
       for (const auto &cell : triangulation.active_cell_iterators())
         {
@@ -834,8 +835,8 @@ compute_stage_heights(const Triangulation<dim>      &triangulation,
                       face->boundary_id() ==
                         mortar_parameters.stator_boundary_id)
                     {
-                      minimum_face_size_local =
-                        std::min(minimum_face_size_local, face->diameter());
+                      minimum_face_diameter_local =
+                        std::min(minimum_face_diameter_local, face->diameter());
 
                       for (const auto vertex_no : face->vertex_indices())
                         stage_heights_local.push_back(
@@ -845,11 +846,11 @@ compute_stage_heights(const Triangulation<dim>      &triangulation,
             }
         }
       // Set the minimum face size over all processes
-      double minimum_face_size =
-        Utilities::MPI::min(minimum_face_size_local,
+      double minimum_face_diameter =
+        Utilities::MPI::min(minimum_face_diameter_local,
                             triangulation.get_mpi_communicator());
 
-      // Collect the vertex coordinates in the rotation axis direction from all
+      // Store the vertex coordinates in the rotation axis direction from all
       // processes
       const auto stage_heights_all =
         Utilities::MPI::all_gather(triangulation.get_mpi_communicator(),
@@ -861,7 +862,7 @@ compute_stage_heights(const Triangulation<dim>      &triangulation,
                              heights_per_process.end());
 
       // Set the tolerance for height comparison based on the minimum face size
-      const double height_tolerance = minimum_face_size * 1e-8;
+      const double height_tolerance = minimum_face_diameter * 1e-8;
 
       // Remove duplicate heights within the specified tolerance
       std::ranges::sort(stage_heights);
