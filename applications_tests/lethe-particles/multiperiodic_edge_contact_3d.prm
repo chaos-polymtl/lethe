@@ -1,0 +1,152 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Edge-crossing companion to multiperiodic_single_axis_collisions_3d.
+#
+# Two stationary particles overlap across the y-z edge of a fully periodic
+# unit cube: their only near-image requires the COMBINED offset (0, +/-y,
+# +/-z), i.e. crossings of the second AND third registered periodic
+# pairs simultaneously, with no x-crossing involved. The y-z combined
+# offset is precisely one of the entries omitted by the original buggy
+# compute_combined_periodic_offsets, which only generated combined offsets
+# that involved the first registered pair (x).
+#
+# - With the bug, neither pure +/- y, nor pure +/- z, nor +/- y +/- z is
+#   in combined_periodic_offsets, so the edge contact is silently
+#   dropped and the particles stay frozen.
+# - With the fix, the Hertzian repulsion separates them along the y-z
+#   diagonal.
+#
+# Together with single-axis test (which checks the pure
+# offsets) this covers both branches of the offset list construction.
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set time step        = 1e-5
+  set time end         = 5e-3
+  set log frequency    = 1000
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# Test
+#---------------------------------------------------
+
+subsection test
+  set enable = true
+end
+
+#---------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection contact detection
+    set contact detection method                = dynamic
+    set dynamic contact search size coefficient = 0.8
+    set neighborhood threshold                  = 1.3
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+  set rolling resistance torque method       = none
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set g                        = 0., 0., 0.
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.05
+    set number of particles               = 2
+    set density particles                 = 2000
+    set young modulus particles           = 1e6
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 1.0
+    set friction coefficient particles    = 0.0
+    set rolling friction particles        = 0.0
+  end
+end
+
+#---------------------------------------------------
+# Insertion Info
+#---------------------------------------------------
+
+# Particles share the same x = 0.5, but sit in opposite y-z corners of
+# the cube. Centre-to-centre periodic distance through the y-z edge is
+# sqrt(0.030^2 + 0.030^2) ~ 0.0424 < diameter 0.05 -> overlap ~ 0.0076.
+# Centre-to-centre distance through any single y or z face alone is
+# ~ sqrt(0.030^2 + 0.97^2) ~ 0.97, far above the neighborhood threshold.
+
+subsection insertion info
+  set insertion method    = list
+  set insertion frequency = 1000000
+  set list x              = 0.500, 0.500
+  set list y              = 0.015, 0.985
+  set list z              = 0.015, 0.985
+  set list velocity x     = 0.000, 0.000
+  set list velocity y     = 0.000, 0.000
+  set list velocity z     = 0.000, 0.000
+  set list omega x        = 0.000, 0.000
+  set list omega y        = 0.000, 0.000
+  set list omega z        = 0.000, 0.000
+  set list diameters      = 0.050, 0.050
+  set list temperatures   = 0.000, 0.000
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type                                = dealii
+  set grid type                           = hyper_rectangle
+  set grid arguments                      = 0.0, 0.0, 0.0 : 1.0, 1.0, 1.0 : true
+  set initial refinement                  = 3
+  set expand particle-wall contact search = false
+end
+
+#---------------------------------------------------
+# Boundary conditions DEM
+#---------------------------------------------------
+
+# x first, y second, z third. The pair below crosses only the y-z edge,
+# i.e. the combined offset of the second and third registered pairs --
+# the case the buggy algorithm never generated.
+
+subsection DEM boundary conditions
+  set number of boundary conditions = 3
+
+  subsection boundary condition 0
+    set type               = periodic
+    set periodic id 0      = 1
+    set periodic id 1      = 0
+    set periodic direction = 0
+  end
+
+  subsection boundary condition 1
+    set type               = periodic
+    set periodic id 0      = 3
+    set periodic id 1      = 2
+    set periodic direction = 1
+  end
+
+  subsection boundary condition 2
+    set type               = periodic
+    set periodic id 0      = 5
+    set periodic id 1      = 4
+    set periodic direction = 2
+  end
+end

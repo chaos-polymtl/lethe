@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_periodic_boundaries_manipulator_h
@@ -12,6 +12,8 @@
 
 #include <deal.II/particles/particle_handler.h>
 
+#include <unordered_map>
+#include <vector>
 
 using namespace dealii;
 
@@ -37,22 +39,33 @@ public:
   /**
    * @brief Sets the periodic boundaries parameters.
    *
-   * @param[in] periodic_boundary_id_0 ID of the first periodic boundary.
-   * @param[in] periodic_direction Perpendicular axis of PB.
+   * @param[in] periodic_boundary_ids_0 Map of IDs of the first boundary of each
+   * PB pair.
+   * @param[in] periodic_directions Map of perpendicular axes of each PB pair.
+   * @param[in] periodic_bc_ind Index of the PB conditions in the .prm file.
    */
   void
   set_periodic_boundaries_information(
-    const types::boundary_id periodic_boundary_id_0,
-    const unsigned int       periodic_direction)
+    const std::unordered_map<unsigned int, types::boundary_id>
+      &periodic_boundary_ids_0,
+    const std::unordered_map<unsigned int, unsigned int> &periodic_directions,
+    const std::vector<unsigned int>                      &periodic_bc_ind)
   {
-    // If function is reached, there are periodic boundaries in the simulation
+    // If function is reached and vectors are not empty
+    if (periodic_boundary_ids_0.empty())
+      return;
+
     periodic_boundaries_enabled = true;
 
     // Communicate to the action manager that there are periodic boundaries
     DEMActionManager::get_action_manager()->set_periodic_boundaries_enabled();
 
-    periodic_boundary_0 = periodic_boundary_id_0;
-    direction           = periodic_direction;
+    this->periodic_boundaries_ids = periodic_boundary_ids_0;
+    this->directions              = periodic_directions;
+    this->periodic_bc_index       = periodic_bc_ind;
+
+    // Initialize offset map
+    this->periodic_offsets.clear();
   }
 
   /**
@@ -60,8 +73,8 @@ public:
    * information in periodic_boundaries_cells_information.
    *
    * @param[in] triangulation Triangulation.
-   * @param[out] periodic_boundaries_cells_information Map of information of the
-   * pair of cells on periodic boundaries.
+   * @param[out] periodic_boundaries_cells_information Map (multimap) of
+   * information of the pair of cells on periodic boundaries.
    */
   void
   map_periodic_cells(
@@ -89,22 +102,65 @@ public:
       &periodic_boundaries_cells_information);
 
   /**
-   * @brief Return the periodic offset distance, it is calculated from the first
-   * pair of cells on periodic boundaries, all pair of cells are assumed to
-   * have the same offset.
+   * @brief Return the periodic offset distance for a specific pb0 boundary ID.
+   * All pairs of cells on that pair of periodic boundaries are assumed to have
+   * the same offset. If no periodic offset has been identified for the
+   * boundary id, a zero tensor is inserted as a default value.
+   *
+   * @param[in] boundary_id ID of the boundary to query.
    *
    * @return Offset distance between periodic boundaries.
    */
-  inline Tensor<1, dim>
-  get_periodic_offset_distance()
+  inline const Tensor<1, dim> &
+  get_periodic_offset_distance(const types::boundary_id boundary_id)
   {
-    return constant_periodic_offset;
+    // If no offset was identified during looping over the cell, a zero
+    // tensor is returned as a default offset.
+    if (!periodic_offsets.contains(boundary_id))
+      {
+        Tensor<1, dim> zero_tensor;
+        periodic_offsets.insert(std::make_pair(boundary_id, zero_tensor));
+      }
+    return periodic_offsets.at(boundary_id);
+  }
+
+  /**
+   * @brief Return the index of the periodic boundary conditions in the .prm.
+   *
+   * @return Index of the periodic boundary conditions.
+   */
+  inline const std::vector<unsigned int> &
+  get_periodic_bc_index() const
+  {
+    return periodic_bc_index;
+  }
+
+  /**
+   * @brief Return the mesh IDs of the principal periodic boundaries
+   *
+   * @return Mesh IDS of the principal periodic boundaries.
+   */
+  inline const std::unordered_map<unsigned int, types::boundary_id> &
+  get_periodic_boundaries_ids() const
+  {
+    return periodic_boundaries_ids;
+  }
+
+  /**
+   * @brief Return the combined periodic offsets
+   *
+   * @return Combined periodic offsets.
+   */
+  inline const std::vector<Tensor<1, dim>> &
+  get_combined_periodic_offsets() const
+  {
+    return combined_periodic_offsets;
   }
 
 private:
   /**
-   * @brief Gets boundaries information related to the face at periodic
-   * boundaries 0 and 1 and stores in periodic_boundaries_cells_info_struct
+   * @brief Get boundary information related to a face at a periodic
+   * boundary and store it in a periodic_boundaries_cells_info_struct
    * object.
    *
    * @param[in] cell Current cell on boundary.
@@ -119,9 +175,9 @@ private:
     periodic_boundaries_cells_info_struct<dim> &boundaries_information);
 
   /**
-   * @brief Checks if particle is outside the cell, if so, modifies the
-   * location of the particle with the distance (offset) between the periodic
-   * faces.
+   * @brief Check if particle is outside the cell, if so, modify the
+   * location of the particle using the relevant periodic offset for the
+   * boundary.
    *
    * @param[in] boundaries_cells_content Reference to the object with periodic
    * boundary information.
@@ -140,30 +196,54 @@ private:
     bool &particle_has_been_moved);
 
   /**
+   * @brief Compute the combined periodic offsets and store them in
+   * combined_periodic_offsets.
+   */
+  void
+  compute_combined_periodic_offsets();
+
+  /**
    * @brief Flag for periodic boundary conditions in simulation. Useful to
    * exit function when there are no periodic boundaries.
    */
   bool periodic_boundaries_enabled;
 
   /**
-   * @brief ID of the first periodic boundary. No needs to store the second one
-   * since there are linked on the triangulation, and accessible through
-   * functions on cells on the boundary condition 0.
+   * @brief Direction of the periodic boundaries, it is the perpendicular axis
+   * of the periodic boundaries. Keys of this map are periodic boundary
+   * condition indices in the .prm (subsection numbers)
    */
-  types::boundary_id periodic_boundary_0;
+  std::unordered_map<unsigned int, unsigned int> directions;
 
   /**
-   * @brief Direction of the periodic boundary, it is the perpendicular axis of
-   * the periodic boundaries.
+   * @brief Index of the boundary conditions in the .prm (subsection numbers)
+   * that correspond to periodic boundary conditions.
    */
-  unsigned int direction;
+  std::vector<unsigned int> periodic_bc_index;
 
   /**
-   * @brief Offset distance between periodic boundaries, it is calculated from
-   * the first pair of cells on periodic boundaries, all pair of cells are
-   * assumed to have the same offset.
+   * @brief Mesh ID of the first periodic boundary for all periodic boundary
+   * pairs. No need to store the second one since they are linked on the
+   * triangulation, and accessible through functions on cells on the boundary
+   * condition 0.
+   *    Map key: index of BC from .prm
+   *    Map value: ID of a primary periodic boundary
    */
-  Tensor<1, dim> constant_periodic_offset;
+  std::unordered_map<unsigned int, types::boundary_id> periodic_boundaries_ids;
+
+  /**
+   * @brief Map storing offset distance between periodic boundaries, keyed by
+   * the boundary ID (pb0). It is calculated from the first pair of cells on
+   * periodic boundaries, so all pairs of cells on a given peridodic boundary
+   * are assumed to have the same offset.
+   */
+  std::unordered_map<types::boundary_id, Tensor<1, dim>> periodic_offsets;
+
+  /**
+   * @brief Storage for all 9 (2D) or 27 (3D) precomputed periodic translation
+   * vectors. Calculated from periodic_offsets.
+   */
+  std::vector<Tensor<1, dim>> combined_periodic_offsets;
 };
 
 #endif

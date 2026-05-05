@@ -174,13 +174,14 @@ See how the mechanism works with mobility status in the figure below:
 
 * ``enable adaptive sparse contacts`` enables the feature.
 
-* ``enable particle advection`` enabled the advection of particles from an average source term derived from the average velocity of particles in cell. This is highly recommended for CFD-DEM simulations because of the hydrodynamic forces.
+* ``enable particle advection`` enables the advection of particles from an average source term derived from the average velocity of particles in cell. This is highly recommended for CFD-DEM simulations because of the hydrodynamic forces.
 * ``granular temperature threshold`` is the threshold of the granular temperature below which the contacts are disabled.
 * ``solid fraction threshold`` is the minimum solid fraction of the cell in which the contacts may be disabled.
 
 Some parameters in the load balance section may be used to improve the performance of the dynamic disabling contacts feature using the dynamic load balancing.
+
 .. note::
-The ``load balance method`` may be set to ``dynamic_with_sparse_contacts`` and factors of the weight of the cells by mobility status may be adjusted using the ``active weight factor`` and ``inactive weight factor`` parameters. There is factor only for active and inactive status, mobile factor is always 1.
+    The ``load balance method`` may be set to ``dynamic_with_sparse_contacts`` and factors of the weight of the cells by mobility status may be adjusted using the ``active weight factor`` and ``inactive weight factor`` parameters. There is factor only for active and inactive status, mobile factor is always 1.
 
 -----------
 Solver Type

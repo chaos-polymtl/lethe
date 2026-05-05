@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020- 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_find_cell_neighbors_h
@@ -106,16 +106,16 @@ find_full_cell_neighbors(
  * get the list of the periodic neighbor cells to the main cell.
  *
  * Here is an example to understand how the search works :
- * Cell 8 have vertices 0, 1, 2, 3 on the periodic boundary. First,
+ * Cell 8 has vertices 0, 1, 2, 3 on the periodic boundary. First,
  * it checks in the coinciding_vertex_groups if the vertex 0 is a key in the
- * map, and if it is, it gets a label, let's say label is 10. In the
+ * map, and if it is, it gets a label, let's say that label is 10. In the
  * vertex_to_coinciding_vertex_group, it can find the coinciding vertices
  * with the label. Using the label 10, it gets the vertices 0 and 34, which
  * means that vertices 0 and 34 are periodic. We do not want the cells
  * attached to the vertex 0 since they are already found with the regular
  * find_cell_neighbor function, so it skips vertex 0, but gets the cells 21,
  * 22, 23, 24 attached to the vertex 34. The same checks are done for vertices
- * 1, 2 and 3 and all periodic cells are return as a vector.
+ * 1, 2 and 3 and all periodic cells are returned as a vector.
  *
  * @param cell The cell that needs the periodic neighbor list
  * @param coinciding_vertex_groups A map of coinciding vertices labeled by an

@@ -16,6 +16,7 @@
 
 #include <boost/range/adaptor/map.hpp>
 
+#include <unordered_map>
 #include <vector>
 
 using namespace dealii;
@@ -28,7 +29,8 @@ using namespace dealii;
  * ParticleParticleContactForce class which is templated by the contact model
  * type.
  * @tparam dim An integer that denotes the number of spatial dimensions.
- * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
+ * @tparam PropertiesIndex Index of the properties used within the
+ * ParticleHandler.
  */
 template <int dim, typename PropertiesIndex>
 class ParticleParticleContactForceBase
@@ -43,14 +45,14 @@ public:
    * @param ghost_adjacent_particles Container of the contact pair candidates
    * information for calculation of the local-ghost particle-particle contact
    * forces.
-   * @param local_local_periodic_adjacent_particles Container of the contact pair
-   * candidates information for calculation of the local periodic
+   * @param local_local_periodic_adjacent_particles Container of the contact
+   * pair candidates information for calculation of the local periodic
    * particle-particle contact forces.
-   * @param local_ghost_periodic_adjacent_particles Container of the contact pair
-   * candidates information for calculation of the local-ghost periodic
+   * @param local_ghost_periodic_adjacent_particles Container of the contact
+   * pair candidates information for calculation of the local-ghost periodic
    * particle-particle contact forces.
-   * @param ghost_local_periodic_adjacent_particles Container of the contact pair
-   * candidates information for calculation of the ghost-local periodic
+   * @param ghost_local_periodic_adjacent_particles Container of the contact
+   * pair candidates information for calculation of the ghost-local periodic
    * particle-particle contact forces.
    * @param dt DEM time step.
    * @param contact_outcome Interaction outcomes.
@@ -61,23 +63,57 @@ public:
       &local_adjacent_particles,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
       &ghost_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+    typename DEM::dem_data_structures<dim>::periodic_adjacent_particle_pairs
       &local_local_periodic_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+    typename DEM::dem_data_structures<dim>::periodic_adjacent_particle_pairs
       &local_ghost_periodic_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+    typename DEM::dem_data_structures<dim>::periodic_adjacent_particle_pairs
                 &ghost_local_periodic_adjacent_particles,
     const double dt,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) = 0;
 
-  void
-  set_periodic_offset(const Tensor<1, dim> &periodic_offset)
+  /**
+   * @brief Set the distance between a principal periodic boundary pb0 (with
+   * mesh ID boundary_id) and its associated periodic boundary pb1 in the
+   * periodic_offsets map.
+   *
+   * @param[in] offset Distance between the pair of periodic boundaries.
+   * @param[in] boundary_id Mesh ID of the principal periodic boundary of the
+   * pair.
+   */
+  inline void
+  set_periodic_offset(const Tensor<1, dim>    &offset,
+                      const types::boundary_id boundary_id)
   {
-    this->periodic_offset = periodic_offset;
+    this->periodic_offsets[boundary_id] = offset;
+  }
+
+  /**
+   * @brief Set the value of the combined periodic offsets for this class.
+   *
+   * @param [in] offsets Combined periodic offsets from the
+   * PeriodicBoundariesManipulator class.
+   */
+  inline void
+  set_combined_periodic_offsets(const std::vector<Tensor<1, dim>> &offsets)
+  {
+    this->combined_periodic_offsets = offsets;
   }
 
 protected:
-  Tensor<1, dim> periodic_offset;
+  /**
+   * @brief Map storing offset distance between periodic boundaries, keyed by
+   * the boundary ID (pb0). It is calculated from the first pair of cells on
+   * periodic boundaries, so all pairs of cells on a given peridodic boundary
+   * are assumed to have the same offset.
+   */
+  std::unordered_map<types::boundary_id, Tensor<1, dim>> periodic_offsets;
+
+  /**
+   * @brief Storage for all 9 (2D) or 27 (3D) precomputed periodic translation
+   * vectors. Calculated from periodic_offsets.
+   */
+  std::vector<Tensor<1, dim>> combined_periodic_offsets;
 };
 
 /**
@@ -116,14 +152,14 @@ public:
    * @param ghost_adjacent_particles Container of the contact pair candidates
    * information for calculation of the local-ghost particle-particle contact
    * forces.
-   * @param local_local_periodic_adjacent_particles Container of the contact pair
-   * candidates information for calculation of the local periodic
+   * @param local_local_periodic_adjacent_particles Container of the contact
+   * pair candidates information for calculation of the local periodic
    * particle-particle contact forces.
-   * @param local_ghost_periodic_adjacent_particles Container of the contact pair
-   * candidates information for calculation of the local-ghost periodic
+   * @param local_ghost_periodic_adjacent_particles Container of the contact
+   * pair candidates information for calculation of the local-ghost periodic
    * particle-particle contact forces.
-   * @param ghost_local_periodic_adjacent_particles Container of the contact pair
-   * candidates information for calculation of the ghost-local periodic
+   * @param ghost_local_periodic_adjacent_particles Container of the contact
+   * pair candidates information for calculation of the ghost-local periodic
    * particle-particle contact forces.
    * @param dt DEM time step.
    * @param[out] contact_outcome Interaction outcomes.
@@ -134,11 +170,11 @@ public:
       &local_adjacent_particles,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
       &ghost_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+    typename DEM::dem_data_structures<dim>::periodic_adjacent_particle_pairs
       &local_local_periodic_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+    typename DEM::dem_data_structures<dim>::periodic_adjacent_particle_pairs
       &local_ghost_periodic_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
+    typename DEM::dem_data_structures<dim>::periodic_adjacent_particle_pairs
                 &ghost_local_periodic_adjacent_particles,
     const double dt,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) override;
@@ -226,10 +262,11 @@ protected:
 
     // Calculation of new tangential_displacement, since this value is history
     // dependent it needs the value at previous time step. This variable is the
-    // main reason that we have iteration over  two different vectors :
+    // main reason that we have iteration over two different vectors :
     // tangential_displacement of the particles which were already in contact
-    // needs to modified using its history, while the tangential_displacements
-    // of new particles are equal to zero delta_t_new = delta_t_old + v_rt*dt
+    // needs to be modified using its history, while the
+    // tangential_displacements of new particles are equal to zero
+    // delta_t_new = delta_t_old + v_rt*dt
     contact_info.tangential_displacement += tangential_relative_velocity * dt;
     contact_info.tangential_displacement -=
       (contact_info.tangential_displacement * normal_unit_vector) *
@@ -239,7 +276,9 @@ protected:
   /**
    * @brief Get the location of the particle.
    *
-   * @param particle The particle to get the location from.
+   * @param[in] particle The particle from which to get the location.
+   *
+   * @return The location of the particle.
    */
   inline Point<3>
   get_location(const Particles::ParticleIterator<dim> &particle) &
@@ -252,18 +291,23 @@ protected:
   }
 
   /**
-   * @brief Get the shifted location of the particle on the periodic boundary.
+   * @brief Get the shifted location of a particle on a periodic boundary.
    *
-   * @param particle The particle to get the location from.
+   * @param[in] particle The particle to get the location from.
+   * @param[in] periodic_offset The periodic offset with which to shift the
+   * location.
+   *
+   * @return The offset periodic location of the particle.
    */
   inline Point<3>
-  get_periodic_location(const Particles::ParticleIterator<dim> &particle) &
+  get_periodic_location(const Particles::ParticleIterator<dim> &particle,
+                        const Tensor<1, 3> &periodic_offset) &
   {
     if constexpr (dim == 3)
-      return (particle->get_location() - this->periodic_offset);
+      return (particle->get_location() + periodic_offset);
 
     if constexpr (dim == 2)
-      return point_nd_to_3d(particle->get_location() - this->periodic_offset);
+      return point_nd_to_3d(particle->get_location()) + periodic_offset;
   }
 
   /**
@@ -1675,15 +1719,14 @@ private:
    * contact according to the contact type
    *
    * @param[in] adjacent_particles_list Container of the adjacent particles of a
-   * particles
+   * particle.
    * @param[in] dt DEM time step.
    * @param[out] contact_outcome Interaction outcomes.
    */
-  template <ContactType contact_type>
+  template <ContactType contact_type, typename ContactInfoContainer>
   inline void
   execute_contact_calculation(
-    typename DEM::dem_data_structures<dim>::particle_contact_info
-                                                 &adjacent_particles_list,
+    ContactInfoContainer                         &adjacent_particles_list,
     const double                                  dt,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome)
   {
@@ -1737,7 +1780,8 @@ private:
                       contact_type ==
                         ContactType::ghost_local_periodic_particle_particle)
           {
-            particle_two_location = get_periodic_location(particle_two);
+            particle_two_location =
+              get_periodic_location(particle_two, contact_info.periodic_offset);
           }
 
         // Calculation of normal overlap

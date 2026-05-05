@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_fluid_dynamics_vans_h
@@ -313,11 +313,11 @@ protected:
   /// Flag indicating whether the domain has periodic boundary conditions
   bool has_periodic_boundaries;
 
-  /// Offset vector for periodic boundary condition calculations
-  Tensor<1, dim> periodic_offset;
+  /// Map of offset vectors for periodic boundary condition calculations
+  std::map<types::boundary_id, Tensor<1, dim>> cfd_periodic_offsets;
 
-  /// Direction index for periodic boundary conditions
-  unsigned int periodic_direction;
+  /// Map of direction indices for periodic boundary conditions
+  std::map<types::boundary_id, unsigned int> cfd_periodic_directions;
 };
 
 #endif
