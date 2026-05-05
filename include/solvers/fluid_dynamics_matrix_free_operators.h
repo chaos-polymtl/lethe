@@ -833,12 +833,12 @@ protected:
 
   /**
    * @brief Table with correct alignment for vectorization to store the values
-   * of the velocity within the convective term. If ALE is enabled, this term is
+   * of the velocity within the advective term. If ALE is enabled, this term is
    * given by u - u_ALE. Otherwise, it returns the regular velocity tensor.
    *
    */
   Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>
-    nonlinear_previous_convective_values;
+    nonlinear_previous_advective_values;
 
   /**
    * @brief Table with correct alignment for vectorization to store the values

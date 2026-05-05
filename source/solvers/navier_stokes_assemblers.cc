@@ -51,8 +51,8 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
         scratch_data.velocity_gradients[q];
       const Tensor<1, dim> &velocity_laplacian =
         scratch_data.velocity_laplacians[q];
-      const Tensor<1, dim> &convective_velocity =
-        scratch_data.convective_velocity[q];
+      const Tensor<1, dim> &advective_velocity =
+        scratch_data.advective_velocity[q];
 
       const Tensor<1, dim> &pressure_gradient =
         scratch_data.pressure_gradients[q];
@@ -63,7 +63,7 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
 
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
-      const double u_mag = std::max(convective_velocity.norm(), 1e-12);
+      const double u_mag = std::max(advective_velocity.norm(), 1e-12);
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -81,7 +81,7 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
             u_mag, viscosity_for_stabilization_vector[q], h, sdt);
 
       // Calculate the strong residual for GLS stabilization
-      auto strong_residual = velocity_gradient * convective_velocity +
+      auto strong_residual = velocity_gradient * advective_velocity +
                              pressure_gradient -
                              kinematic_viscosity * velocity_laplacian - force +
                              mass_source * velocity + strong_residual_vec[q];
@@ -102,12 +102,12 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
             pressure_scaling_factor * scratch_data.grad_phi_p[q][j];
 
           strong_jacobian_vec[q][j] +=
-            (velocity_gradient * phi_u_j + grad_phi_u_j * convective_velocity +
+            (velocity_gradient * phi_u_j + grad_phi_u_j * advective_velocity +
              grad_phi_p_j - kinematic_viscosity * laplacian_phi_u_j +
              mass_source * phi_u_j);
 
           // Store these temporary products in auxiliary variables for speed
-          grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * convective_velocity;
+          grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * advective_velocity;
           velocity_gradient_x_phi_u_j[j] = velocity_gradient * phi_u_j;
         }
 
@@ -126,7 +126,7 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_matrix(
 
           // Store these temporary products in auxiliary variables for speed
           const auto grad_phi_u_i_x_velocity =
-            grad_phi_u_i * convective_velocity;
+            grad_phi_u_i * advective_velocity;
           const auto strong_residual_x_grad_phi_u_i =
             strong_residual * grad_phi_u_i;
 
@@ -230,8 +230,8 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_rhs(
         scratch_data.velocity_gradients[q];
       const Tensor<1, dim> &velocity_laplacian =
         scratch_data.velocity_laplacians[q];
-      const Tensor<1, dim> &convective_velocity =
-        scratch_data.convective_velocity[q];
+      const Tensor<1, dim> &advective_velocity =
+        scratch_data.advective_velocity[q];
 
       // Pressure
       const double          pressure = scratch_data.pressure_values[q];
@@ -243,7 +243,7 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_rhs(
       double                mass_source = scratch_data.mass_source[q];
       // Calculation of the magnitude of the velocity for the stabilization
       // parameter
-      const double u_mag = std::max(convective_velocity.norm(), 1e-12);
+      const double u_mag = std::max(advective_velocity.norm(), 1e-12);
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -263,7 +263,7 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_rhs(
 
 
       // Calculate the strong residual for GLS stabilization
-      auto strong_residual = velocity_gradient * convective_velocity +
+      auto strong_residual = velocity_gradient * advective_velocity +
                              pressure_gradient -
                              kinematic_viscosity * velocity_laplacian - force +
                              mass_source * velocity + strong_residual_vec[q];
@@ -285,7 +285,7 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_rhs(
               // Momentum
               -kinematic_viscosity *
                 scalar_product(velocity_gradient, grad_phi_u_i) -
-              velocity_gradient * convective_velocity * phi_u_i +
+              velocity_gradient * advective_velocity * phi_u_i +
               pressure * div_phi_u_i + force * phi_u_i -
               mass_source * velocity * phi_u_i -
               // Continuity
@@ -297,7 +297,7 @@ PSPGSUPGNavierStokesAssemblerCore<dim>::assemble_rhs(
 
           // SUPG GLS term
           local_rhs_i +=
-            -tau * (strong_residual * (grad_phi_u_i * convective_velocity)) *
+            -tau * (strong_residual * (grad_phi_u_i * advective_velocity)) *
             JxW;
 
           local_rhs(i) += local_rhs_i;
@@ -353,8 +353,8 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
         scratch_data.velocity_gradients[q];
       const Tensor<1, dim> &velocity_laplacian =
         scratch_data.velocity_laplacians[q];
-      const Tensor<1, dim> &convective_velocity =
-        scratch_data.convective_velocity[q];
+      const Tensor<1, dim> &advective_velocity =
+        scratch_data.advective_velocity[q];
 
       const Tensor<1, dim> &pressure_gradient =
         scratch_data.pressure_gradients[q];
@@ -365,7 +365,7 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
 
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
-      const double u_mag = std::max(convective_velocity.norm(), 1e-12);
+      const double u_mag = std::max(advective_velocity.norm(), 1e-12);
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -387,7 +387,7 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
 
 
       // Calculate the strong residual for GLS stabilization
-      auto strong_residual = velocity_gradient * convective_velocity +
+      auto strong_residual = velocity_gradient * advective_velocity +
                              pressure_gradient -
                              kinematic_viscosity * velocity_laplacian - force +
                              mass_source * velocity + strong_residual_vec[q];
@@ -408,12 +408,12 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
             pressure_scaling_factor * scratch_data.grad_phi_p[q][j];
 
           strong_jacobian_vec[q][j] +=
-            (velocity_gradient * phi_u_j + grad_phi_u_j * convective_velocity +
+            (velocity_gradient * phi_u_j + grad_phi_u_j * advective_velocity +
              grad_phi_p_j - kinematic_viscosity * laplacian_phi_u_j +
              mass_source * phi_u_j);
 
           // Store these temporary products in auxiliary variables for speed
-          grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * convective_velocity;
+          grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * advective_velocity;
           velocity_gradient_x_phi_u_j[j] = velocity_gradient * phi_u_j;
         }
 
@@ -432,7 +432,7 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
 
           // Store these temporary products in auxiliary variables for speed
           const auto grad_phi_u_i_x_velocity =
-            grad_phi_u_i * convective_velocity;
+            grad_phi_u_i * advective_velocity;
           const auto strong_residual_x_grad_phi_u_i =
             strong_residual * grad_phi_u_i;
 
@@ -540,8 +540,8 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
         scratch_data.velocity_gradients[q];
       const Tensor<1, dim> &velocity_laplacian =
         scratch_data.velocity_laplacians[q];
-      const Tensor<1, dim> &convective_velocity =
-        scratch_data.convective_velocity[q];
+      const Tensor<1, dim> &advective_velocity =
+        scratch_data.advective_velocity[q];
 
       // Pressure
       const double          pressure = scratch_data.pressure_values[q];
@@ -553,7 +553,7 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
       double                mass_source = scratch_data.mass_source[q];
       // Calculation of the magnitude of the
       // velocity for the stabilization parameter
-      const double u_mag = std::max(convective_velocity.norm(), 1e-12);
+      const double u_mag = std::max(advective_velocity.norm(), 1e-12);
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -576,7 +576,7 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
 
 
       // Calculate the strong residual for GLS stabilization
-      auto strong_residual = velocity_gradient * convective_velocity +
+      auto strong_residual = velocity_gradient * advective_velocity +
                              pressure_gradient -
                              kinematic_viscosity * velocity_laplacian - force +
                              mass_source * velocity + strong_residual_vec[q];
@@ -600,7 +600,7 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
               // Momentum
               -kinematic_viscosity *
                 scalar_product(velocity_gradient, grad_phi_u_i) -
-              velocity_gradient * convective_velocity * phi_u_i +
+              velocity_gradient * advective_velocity * phi_u_i +
               pressure * div_phi_u_i + force * phi_u_i -
               mass_source * velocity * phi_u_i -
               // Continuity
@@ -616,7 +616,7 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
           // SUPG GLS term
           local_rhs_i +=
             -tau *
-            (strong_residual * (grad_phi_u_i * convective_velocity -
+            (strong_residual * (grad_phi_u_i * advective_velocity -
                                 kinematic_viscosity * laplacian_phi_u_i)) *
             JxW;
 
@@ -678,8 +678,8 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
         scratch_data.velocity_hessians[q];
       const Tensor<1, dim> &pressure_gradient =
         scratch_data.pressure_gradients[q];
-      const Tensor<1, dim> &convective_velocity =
-        scratch_data.convective_velocity[q];
+      const Tensor<1, dim> &advective_velocity =
+        scratch_data.advective_velocity[q];
 
       // Calculate shear rate (at each q)
       const Tensor<2, dim> shear_rate =
@@ -706,7 +706,7 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
 
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
-      const double u_mag = std::max(convective_velocity.norm(), 1e-12);
+      const double u_mag = std::max(advective_velocity.norm(), 1e-12);
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -724,7 +724,7 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
             u_mag, viscosity_for_stabilization_vector[q], h, sdt);
 
       // Calculate the strong residual for GLS stabilization
-      auto strong_residual = velocity_gradient * convective_velocity +
+      auto strong_residual = velocity_gradient * advective_velocity +
                              pressure_gradient -
                              shear_rate * viscosity_gradient -
                              kinematic_viscosity * velocity_laplacian - force +
@@ -749,13 +749,13 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
             grad_phi_u_j + transpose(grad_phi_u_j);
 
           strong_jacobian_vec[q][j] +=
-            (velocity_gradient * phi_u_j + grad_phi_u_j * convective_velocity +
+            (velocity_gradient * phi_u_j + grad_phi_u_j * advective_velocity +
              grad_phi_p_j - kinematic_viscosity * laplacian_phi_u_j -
              grad_phi_u_j_non_newtonian * viscosity_gradient +
              mass_source * phi_u_j);
 
           // Store these temporary products in auxiliary variables for speed
-          grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * convective_velocity;
+          grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * advective_velocity;
           velocity_gradient_x_phi_u_j[j] = velocity_gradient * phi_u_j;
         }
 
@@ -772,7 +772,7 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
 
           // Store these temporary products in auxiliary variables for speed
           const auto grad_phi_u_i_x_velocity =
-            grad_phi_u_i * convective_velocity;
+            grad_phi_u_i * advective_velocity;
           const auto strong_residual_x_grad_phi_u_i =
             strong_residual * grad_phi_u_i;
 
@@ -868,8 +868,8 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
         scratch_data.velocity_laplacians[q];
       const Tensor<3, dim> &velocity_hessian =
         scratch_data.velocity_hessians[q];
-      const Tensor<1, dim> &convective_velocity =
-        scratch_data.convective_velocity[q];
+      const Tensor<1, dim> &advective_velocity =
+        scratch_data.advective_velocity[q];
 
       // Calculate shear rate (at each q)
       const Tensor<2, dim> shear_rate =
@@ -899,7 +899,7 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
       double               mass_source = scratch_data.mass_source[q];
       // Calculation of the magnitude of the
       // velocity for the stabilization parameter
-      const double u_mag = std::max(convective_velocity.norm(), 1e-12);
+      const double u_mag = std::max(advective_velocity.norm(), 1e-12);
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -918,7 +918,7 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
 
 
       // Calculate the strong residual for GLS stabilization
-      auto strong_residual = velocity_gradient * convective_velocity +
+      auto strong_residual = velocity_gradient * advective_velocity +
                              pressure_gradient -
                              shear_rate * kinematic_viscosity_gradient -
                              kinematic_viscosity * velocity_laplacian - force +
@@ -940,7 +940,7 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
             (
               // Momentum
               -kinematic_viscosity * scalar_product(shear_rate, grad_phi_u_i) -
-              velocity_gradient * convective_velocity * phi_u_i +
+              velocity_gradient * advective_velocity * phi_u_i +
               pressure * div_phi_u_i + force * phi_u_i -
               mass_source * velocity * phi_u_i -
               // Continuity
@@ -954,8 +954,8 @@ GLSNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
           if (SUPG)
             {
               local_rhs_i +=
-                -tau *
-                (strong_residual * (grad_phi_u_i * convective_velocity)) * JxW;
+                -tau * (strong_residual * (grad_phi_u_i * advective_velocity)) *
+                JxW;
             }
           local_rhs(i) += local_rhs_i;
         }
@@ -1388,8 +1388,8 @@ BlockNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
       // Gather into local variables the relevant fields
       const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
-      const Tensor<1, dim> &convective_velocity =
-        scratch_data.convective_velocity[q];
+      const Tensor<1, dim> &advective_velocity =
+        scratch_data.advective_velocity[q];
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -1402,7 +1402,7 @@ BlockNavierStokesAssemblerNonNewtonianCore<dim>::assemble_matrix(
           const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
 
           // Store these temporary products in auxiliary variables for speed
-          grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * convective_velocity;
+          grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * advective_velocity;
           velocity_gradient_x_phi_u_j[j] = velocity_gradient * phi_u_j;
         }
 
@@ -1469,8 +1469,8 @@ BlockNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
       const double velocity_divergence = scratch_data.velocity_divergences[q];
       const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
-      const Tensor<1, dim> &convective_velocity =
-        scratch_data.convective_velocity[q];
+      const Tensor<1, dim> &advective_velocity =
+        scratch_data.advective_velocity[q];
 
       // Calculate shear rate (at each q)
       const Tensor<2, dim> shear_rate =
@@ -1500,7 +1500,7 @@ BlockNavierStokesAssemblerNonNewtonianCore<dim>::assemble_rhs(
             (
               // Momentum
               -kinematic_viscosity * scalar_product(shear_rate, grad_phi_u_i) -
-              velocity_gradient * convective_velocity * phi_u_i +
+              velocity_gradient * advective_velocity * phi_u_i +
               pressure * div_phi_u_i + force * phi_u_i +
               // Continuity
               velocity_divergence * phi_p_i -
@@ -1550,8 +1550,8 @@ BlockNavierStokesAssemblerCore<dim>::assemble_matrix(
       // Gather into local variables the relevant fields
       const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
-      const Tensor<1, dim> &convective_velocity =
-        scratch_data.convective_velocity[q];
+      const Tensor<1, dim> &advective_velocity =
+        scratch_data.advective_velocity[q];
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -1564,7 +1564,7 @@ BlockNavierStokesAssemblerCore<dim>::assemble_matrix(
           const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
 
           // Store these temporary products in auxiliary variables for speed
-          grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * convective_velocity;
+          grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * advective_velocity;
           velocity_gradient_x_phi_u_j[j] = velocity_gradient * phi_u_j;
         }
 
@@ -1628,8 +1628,8 @@ BlockNavierStokesAssemblerCore<dim>::assemble_rhs(
       const double velocity_divergence = scratch_data.velocity_divergences[q];
       const Tensor<2, dim> &velocity_gradient =
         scratch_data.velocity_gradients[q];
-      const Tensor<1, dim> &convective_velocity =
-        scratch_data.convective_velocity[q];
+      const Tensor<1, dim> &advective_velocity =
+        scratch_data.advective_velocity[q];
 
       // Pressure
       const double pressure = scratch_data.pressure_values[q];
@@ -1655,7 +1655,7 @@ BlockNavierStokesAssemblerCore<dim>::assemble_rhs(
                            // Momentum
                            -kinematic_viscosity *
                              scalar_product(velocity_gradient, grad_phi_u_i) -
-                           velocity_gradient * convective_velocity * phi_u_i +
+                           velocity_gradient * advective_velocity * phi_u_i +
                            pressure * div_phi_u_i + force * phi_u_i +
                            // Continuity
                            velocity_divergence * phi_p_i -

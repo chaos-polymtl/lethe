@@ -315,7 +315,7 @@ public:
     // Gather convective velocity (same as velocity_values unless ALE is
     // enabled. The ALE correction is made within the correponding reinit
     // function)
-    this->convective_velocity = this->velocity_values;
+    this->advective_velocity = this->velocity_values;
 
     for (unsigned int q = 0; q < this->n_q_points; ++q)
       {
@@ -1550,7 +1550,7 @@ public:
   std::vector<Tensor<3, dim>> velocity_hessians;
   std::vector<Tensor<1, dim>> velocity_gradient_divergence;
   // The gradient of the velocity divergence
-  std::vector<Tensor<1, dim>>              convective_velocity;
+  std::vector<Tensor<1, dim>>              advective_velocity;
   std::vector<double>                      shear_rate;
   std::vector<double>                      pressure_values;
   std::vector<Tensor<1, dim>>              pressure_gradients;

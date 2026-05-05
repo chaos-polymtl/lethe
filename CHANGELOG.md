@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MAJOR This PR refactors the ALE velocity computation in the matrix-based and matrix-free solvers. Previously, the ALE velocity term was added in a separate assembler (NavierStokesAssemblerALE and NavierStokesAssemblerMortarALE). This refactoring removes these two assemblers and adds the ALE velocity as a `convective_velocity` term, used directly into the core assemblers. [#1979](https://github.com/chaos-polymtl/lethe/pull/1979)
+- MAJOR This PR refactors the ALE velocity computation in the matrix-based and matrix-free solvers. Previously, the ALE velocity term was added in a separate assembler (NavierStokesAssemblerALE and NavierStokesAssemblerMortarALE). This refactoring removes these two assemblers and adds the ALE velocity in the `advective_velocity` term, used directly into the core assemblers. [#1979](https://github.com/chaos-polymtl/lethe/pull/1979)
 
 ### Fixed
 

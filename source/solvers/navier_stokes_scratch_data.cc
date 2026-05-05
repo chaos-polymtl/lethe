@@ -38,7 +38,7 @@ NavierStokesScratchData<dim>::allocate()
   this->velocity_hessians            = std::vector<Tensor<3, dim>>(n_q_points);
   this->velocity_gradient_divergence = std::vector<Tensor<1, dim>>(n_q_points);
   this->shear_rate                   = std::vector<double>(n_q_points);
-  this->convective_velocity          = std::vector<Tensor<1, dim>>(n_q_points);
+  this->advective_velocity           = std::vector<Tensor<1, dim>>(n_q_points);
 
   // For SDIRK method: sum(a_ij * k_j)
   if (this->simulation_control->is_sdirk())
@@ -422,8 +422,8 @@ NavierStokesScratchData<dim>::reinit_ale(const Parameters::ALE<dim> &ale)
       for (int d = 0; d < dim; ++d)
         velocity_ale[d] = velocity_ale_vector[d];
 
-      // Add u_ale into the convective velocity term
-      this->convective_velocity[q] -= velocity_ale;
+      // Subtract u_ale from the advective velocity
+      this->advective_velocity[q] -= velocity_ale;
     }
 }
 
@@ -473,8 +473,8 @@ NavierStokesScratchData<dim>::reinit_mortar(
         LetheGridTools::angular_to_linear_velocity(
           omega, p, mortar_parameters.rotation_axis);
 
-      // Add u_ale into the convective velocity term
-      this->convective_velocity[q] -= rotor_linear_velocity_values[q];
+      // Subtract u_ale from the advective velocity
+      this->advective_velocity[q] -= rotor_linear_velocity_values[q];
     }
 }
 
