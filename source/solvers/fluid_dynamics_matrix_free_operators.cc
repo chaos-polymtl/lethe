@@ -882,7 +882,7 @@ NavierStokesOperatorBase<dim, number>::
           nonlinear_previous_advective_values(cell, q) =
             integrator.get_value(q);
 
-          // If mortar is enabled, add u_ALE into the convective velocity
+          // If mortar is enabled, subtract u_ALE from the advective velocity
           if (this->enable_mortar)
             nonlinear_previous_advective_values(cell, q) -=
               this->velocity_ale(cell, q);
@@ -1423,7 +1423,7 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
           const auto gradient = integrator.get_gradient(q);
 
 
-          // If we are assembling the residual, substract the target velocity
+          // If we are assembling the residual, subtract the target velocity
           // from the velocity value.
           if constexpr (assemble_residual)
             for (int d = 0; d < dim; ++d)
@@ -1582,7 +1582,7 @@ NavierStokesStabilizedOperator<dim, number>::NavierStokesStabilizedOperator() =
  * \+ (∇·δu)τ'(∇·v) (LSIC Jacobian).
  * The advective velocity u_adv is the same as the velocity u unless an ALE
  * simulation is performed. In this case, u_adv = u - u_ALE, and u_ALE is
- * previously integrated into u_adv at the function
+ * previously subtracted from u_adv at the function
  * evaluate_non_linear_term_and_calculate_tau().
  */
 template <int dim, typename number>
@@ -1833,7 +1833,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
  * \+ (∇·u)τ'(∇·v) (LSIC term).
  * The advective velocity u_adv is the same as the velocity u unless an ALE
  * simulation is performed. In this case, u_adv = u - u_ALE, and u_ALE is
- * previously integrated into u_adv at the function
+ * previously subtracted from u_adv at the function
  * evaluate_non_linear_term_and_calculate_tau().
  */
 template <int dim, typename number>
@@ -2092,7 +2092,7 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
  * Jacobian Part 2).
  * The advective velocity u_adv is the same as the velocity u unless an ALE
  * simulation is performed. In this case, u_adv = u - u_ALE, and u_ALE is
- * previously integrated into u_adv at the function
+ * previously subtracted from u_adv at the function
  * evaluate_non_linear_term_and_calculate_tau().
  */
 template <int dim, typename number>
@@ -2337,7 +2337,7 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
  * \+ (∂t u +(u_adv·∇)u + ∇p -ν∆u - (∇ν)((∇u + ∇uT) - f)τu_adv·∇v (SUPG term).
  * The advective velocity u_adv is the same as the velocity u unless an ALE
  * simulation is performed. In this case, u_adv = u - u_ALE, and u_ALE is
- * previously integrated into u_adv at the function
+ * previously subtracted from u_adv at the function
  * evaluate_non_linear_term_and_calculate_tau().
  */
 template <int dim, typename number>
