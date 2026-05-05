@@ -238,20 +238,22 @@ update_fine_search_candidates<
 template void
 update_fine_search_candidates<
   2,
-  DEM::dem_data_structures<2>::adjacent_particle_pairs,
+  DEM::dem_data_structures<2>::periodic_adjacent_particle_pairs,
   DEM::dem_data_structures<2>::particle_particle_candidates,
   ContactType::local_periodic_particle_particle>(
-  DEM::dem_data_structures<2>::adjacent_particle_pairs &adjacent_particles,
+  DEM::dem_data_structures<2>::periodic_adjacent_particle_pairs
+    &adjacent_particles,
   DEM::dem_data_structures<2>::particle_particle_candidates
     &contact_pair_candidates);
 
 template void
 update_fine_search_candidates<
   3,
-  DEM::dem_data_structures<3>::adjacent_particle_pairs,
+  DEM::dem_data_structures<3>::periodic_adjacent_particle_pairs,
   DEM::dem_data_structures<3>::particle_particle_candidates,
   ContactType::local_periodic_particle_particle>(
-  DEM::dem_data_structures<3>::adjacent_particle_pairs &pairs_in_contact,
+  DEM::dem_data_structures<3>::periodic_adjacent_particle_pairs
+    &pairs_in_contact,
   DEM::dem_data_structures<3>::particle_particle_candidates
     &contact_candidates);
 
@@ -259,20 +261,22 @@ update_fine_search_candidates<
 template void
 update_fine_search_candidates<
   2,
-  DEM::dem_data_structures<2>::adjacent_particle_pairs,
+  DEM::dem_data_structures<2>::periodic_adjacent_particle_pairs,
   DEM::dem_data_structures<2>::particle_particle_candidates,
   ContactType::ghost_periodic_particle_particle>(
-  DEM::dem_data_structures<2>::adjacent_particle_pairs &adjacent_particles,
+  DEM::dem_data_structures<2>::periodic_adjacent_particle_pairs
+    &adjacent_particles,
   DEM::dem_data_structures<2>::particle_particle_candidates
     &contact_pair_candidates);
 
 template void
 update_fine_search_candidates<
   3,
-  DEM::dem_data_structures<3>::adjacent_particle_pairs,
+  DEM::dem_data_structures<3>::periodic_adjacent_particle_pairs,
   DEM::dem_data_structures<3>::particle_particle_candidates,
   ContactType::ghost_periodic_particle_particle>(
-  DEM::dem_data_structures<3>::adjacent_particle_pairs &pairs_in_contact,
+  DEM::dem_data_structures<3>::periodic_adjacent_particle_pairs
+    &pairs_in_contact,
   DEM::dem_data_structures<3>::particle_particle_candidates
     &contact_candidates);
 
@@ -280,20 +284,22 @@ update_fine_search_candidates<
 template void
 update_fine_search_candidates<
   2,
-  DEM::dem_data_structures<2>::adjacent_particle_pairs,
+  DEM::dem_data_structures<2>::periodic_adjacent_particle_pairs,
   DEM::dem_data_structures<2>::particle_particle_candidates,
   ContactType::ghost_local_periodic_particle_particle>(
-  DEM::dem_data_structures<2>::adjacent_particle_pairs &adjacent_particles,
+  DEM::dem_data_structures<2>::periodic_adjacent_particle_pairs
+    &adjacent_particles,
   DEM::dem_data_structures<2>::particle_particle_candidates
     &contact_pair_candidates);
 
 template void
 update_fine_search_candidates<
   3,
-  DEM::dem_data_structures<3>::adjacent_particle_pairs,
+  DEM::dem_data_structures<3>::periodic_adjacent_particle_pairs,
   DEM::dem_data_structures<3>::particle_particle_candidates,
   ContactType::ghost_local_periodic_particle_particle>(
-  DEM::dem_data_structures<3>::adjacent_particle_pairs &pairs_in_contact,
+  DEM::dem_data_structures<3>::periodic_adjacent_particle_pairs
+    &pairs_in_contact,
   DEM::dem_data_structures<3>::particle_particle_candidates
     &contact_candidates);
 

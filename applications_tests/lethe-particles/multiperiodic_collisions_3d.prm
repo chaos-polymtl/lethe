@@ -1,0 +1,141 @@
+# SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# This DEM test checks the simultaneous multi-pair periodic contact of a
+# moving particle with seven stationary corner particles in a fully
+# periodic 3D unit cube. Particle 0 starts near (0.85, 0.85, 0.15) and
+# moves diagonally toward the (0.975, 0.975, 0.025) corner. Just before
+# reaching the domain boundary it makes simultaneous contact with the
+# seven other corner particles via various combinations of periodic
+# offsets (single face, edge, and full corner). By symmetry of the
+# elastic frictionless setup the multi-body collision is deterministic.
+#
+# The simulation horizon is tuned to capture the first multi-contact
+# event and a short rebound, then stop -- no second collision occurs
+# within the window. Combined with elastic, frictionless, soft Hertzian
+# contact this keeps the multi-body dynamics symmetric and reproducible.
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set time step        = 1e-5
+  set time end         = 0.15
+  set log frequency    = 5000
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# Test
+#---------------------------------------------------
+
+subsection test
+  set enable = true
+end
+
+#---------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection contact detection
+    set contact detection method                = dynamic
+    set dynamic contact search size coefficient = 0.8
+    set neighborhood threshold                  = 1.3
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+  set rolling resistance torque method       = none
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set g                        = 0., 0., 0.
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.05
+    set number of particles               = 8
+    set density particles                 = 2000
+    set young modulus particles           = 1e6
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 1.0
+    set friction coefficient particles    = 0.0
+    set rolling friction particles        = 0.0
+  end
+end
+
+#---------------------------------------------------
+# Insertion Info
+#---------------------------------------------------
+
+# Particle 0 starts near the (0.975, 0.975, 0.025) corner so the approach
+# phase is short (~125 ms) and the test fits in 15000 steps. The seven
+# other particles occupy the seven other cube corners.
+
+subsection insertion info
+  set insertion method    = list
+  set insertion frequency = 1000000
+  set list x              = 0.850, 0.025, 0.975, 0.025, 0.025, 0.975, 0.025, 0.975
+  set list y              = 0.850, 0.025, 0.025, 0.975, 0.025, 0.025, 0.975, 0.975
+  set list z              = 0.150, 0.025, 0.025, 0.025, 0.975, 0.975, 0.975, 0.975
+  set list velocity x     = 1.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
+  set list velocity y     = 1.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
+  set list velocity z     = -1.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
+  set list omega x        = 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
+  set list omega y        = 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
+  set list omega z        = 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
+  set list diameters      = 0.050, 0.050, 0.050, 0.050, 0.050, 0.050, 0.050, 0.050
+  set list temperatures   = 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type                                = dealii
+  set grid type                           = hyper_rectangle
+  set grid arguments                      = 0.0, 0.0, 0.0 : 1.0, 1.0, 1.0 : true
+  set initial refinement                  = 3
+  set expand particle-wall contact search = false
+end
+
+#---------------------------------------------------
+# Boundary conditions DEM
+#---------------------------------------------------
+
+subsection DEM boundary conditions
+  set number of boundary conditions = 3
+
+  subsection boundary condition 0
+    set type               = periodic
+    set periodic id 0      = 1
+    set periodic id 1      = 0
+    set periodic direction = 0
+  end
+
+  subsection boundary condition 1
+    set type               = periodic
+    set periodic id 0      = 3
+    set periodic id 1      = 2
+    set periodic direction = 1
+  end
+
+  subsection boundary condition 2
+    set type               = periodic
+    set periodic id 0      = 5
+    set periodic id 1      = 4
+    set periodic direction = 2
+  end
+end

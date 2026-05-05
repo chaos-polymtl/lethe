@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_dem_contact_manager_h
@@ -11,6 +11,7 @@
 #include <dem/particle_particle_broad_search.h>
 #include <dem/particle_wall_broad_search.h>
 
+#include <unordered_map>
 
 using namespace DEM;
 
@@ -21,7 +22,8 @@ using namespace DEM;
  * the contact detection and updates of data containers.
  *
  * @tparam dim An integer that denotes the number of spatial dimensions.
- * @tparam PropertiesIndex Index of the properties used within the ParticleHandler.
+ * @tparam PropertiesIndex Index of the properties used within the
+ * ParticleHandler.
  */
 template <int dim, typename PropertiesIndex>
 class DEMContactManager
@@ -90,7 +92,7 @@ public:
   update_contacts();
 
   /**
-   * @breif Execute functions to update the particle iterators in local-local
+   * @brief Execute functions to update the particle iterators in local-local
    * contact containers.
    *
    * This is essential since sort_particles_into_subdomains_and_cells() and
@@ -186,16 +188,15 @@ public:
     const double                                      neighborhood_threshold);
 
   /**
-   * @brief Set the constant periodic offset for the periodic boundaries. If
-   * they are no periodic boundaries, the default offset is zeros;
+   * @brief Set the combined offsets for periodic boundaries.
    *
-   * @param[in] periodic_offset Offset used for tuning particle locations in
-   * periodic boundaries.
+   * @param[in] offsets Combined periodic offsets for periodic
+   * boundaries, used for determining periodic contacts.
    */
   inline void
-  set_periodic_offset(const Tensor<1, dim> &offset)
+  set_combined_periodic_offsets(const std::vector<Tensor<1, dim>> &offsets)
   {
-    this->periodic_offset = offset;
+    this->combined_periodic_offsets = offsets;
   }
 
   /**
@@ -265,7 +266,7 @@ public:
   /**
    * @brief Return the local-local periodic particle contact container.
    */
-  inline typename dem_data_structures<dim>::adjacent_particle_pairs &
+  inline typename dem_data_structures<dim>::periodic_adjacent_particle_pairs &
   get_local_local_periodic_adjacent_particles()
   {
     return local_local_periodic_adjacent_particles;
@@ -274,7 +275,7 @@ public:
   /**
    * @brief Return the local-ghost periodic particle contact container.
    */
-  inline typename dem_data_structures<dim>::adjacent_particle_pairs &
+  inline typename dem_data_structures<dim>::periodic_adjacent_particle_pairs &
   get_local_ghost_periodic_adjacent_particles()
   {
     return local_ghost_periodic_adjacent_particles;
@@ -283,7 +284,7 @@ public:
   /**
    * @brief Return the ghost-local periodic particle contact container.
    */
-  inline typename dem_data_structures<dim>::adjacent_particle_pairs &
+  inline typename dem_data_structures<dim>::periodic_adjacent_particle_pairs &
   get_ghost_local_periodic_adjacent_particles()
   {
     return ghost_local_periodic_adjacent_particles;
@@ -372,18 +373,24 @@ private:
     local_adjacent_particles;
   typename dem_data_structures<dim>::adjacent_particle_pairs
     ghost_adjacent_particles;
-  typename dem_data_structures<dim>::adjacent_particle_pairs
+  typename dem_data_structures<dim>::periodic_adjacent_particle_pairs
     local_local_periodic_adjacent_particles;
-  typename dem_data_structures<dim>::adjacent_particle_pairs
+  typename dem_data_structures<dim>::periodic_adjacent_particle_pairs
     local_ghost_periodic_adjacent_particles;
-  typename dem_data_structures<dim>::adjacent_particle_pairs
+  typename dem_data_structures<dim>::periodic_adjacent_particle_pairs
     ghost_local_periodic_adjacent_particles;
 
   // Containers with other information
   typename DEM::dem_data_structures<dim>::cell_vector periodic_cells_container;
 
 private:
-  Tensor<1, dim> periodic_offset = Tensor<1, dim>();
+  /**
+   * @brief Storage for all precomputed periodic translation vectors,
+   * representing translations between pairs of periodic faces and corners.
+   * Initialized to identity (zero offset) for compatibility with non-periodic
+   * geometry
+   */
+  std::vector<Tensor<1, dim>> combined_periodic_offsets;
 };
 
 #endif
