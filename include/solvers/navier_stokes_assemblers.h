@@ -518,6 +518,53 @@ public:
     &pressure_boundary_conditions;
 };
 
+/**
+ * @brief Class that assembles a Neumann traction boundary condition.
+ * According to the following weak form: (p-mu*grad_u)*n at the boundary
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ * @param pressure_boundary_condition The boundary condition objects use to store the function.
+ * @ingroup assemblers
+ */
+template <int dim>
+class NeumannTractionBoundaryCondition : public NavierStokesAssemblerBase<dim>
+{
+public:
+  NeumannTractionBoundaryCondition(
+    const std::shared_ptr<SimulationControl> &simulation_control,
+    const BoundaryConditions::NSBoundaryConditions<dim>
+      &neumann_traction_boundary_conditions_input)
+    : simulation_control(simulation_control)
+    , neumann_traction_boundary_conditions(
+        neumann_traction_boundary_conditions_input)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   * @note This method is just for consistency and Neumann boundary traction doesn't
+   *       require matrix assembly
+   */
+  virtual void
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  const std::shared_ptr<SimulationControl> simulation_control;
+  const BoundaryConditions::NSBoundaryConditions<dim>
+    &neumann_traction_boundary_conditions;
+};
+
+
 
 /**
  * @brief Class that assembles the weak formulation of a Dirichlet boundary condition using the Nitsche method.
