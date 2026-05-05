@@ -11,11 +11,7 @@
 # compute_combined_periodic_offsets, which only generated combined offsets
 # that involved the first registered pair (x).
 #
-# - With the bug, neither pure +/- y, nor pure +/- z, nor +/- y +/- z is
-#   in combined_periodic_offsets, so the edge contact is silently
-#   dropped and the particles stay frozen.
-# - With the fix, the Hertzian repulsion separates them along the y-z
-#   diagonal.
+# The Hertzian repulsion separates them along the y-z diagonal.
 #
 # Together with single-axis test (which checks the pure
 # offsets) this covers both branches of the offset list construction.

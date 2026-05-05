@@ -3,16 +3,16 @@
 
 # Parallel companion to multiperiodic_single_axis_collisions_2d.
 #
-# Same minimal setup -- two stationary particles in slight overlap across
+# Two stationary particles in slight overlap across
 # the second-registered (x) periodic boundary of a fully periodic unit
-# square -- but designed to be run with mpirun=2 so that the periodic
+# square. This test is designed to be run with mpirun=2 so that the periodic
 # contact crosses the rank boundary. With the default p4est partitioning
 # of a uniformly refined unit square on two ranks, particles placed at
 # x = 0.020 and x = 0.980 land in cells that are owned by different ranks.
 #
 # This guards two distinct things at once:
 #  1. compute_combined_periodic_offsets must include the pure +/- offset
-#     of the second registered pair (the bug fixed on this branch).
+#     of the second registered pair.
 #  2. The periodic ghost particle pipeline (update_local_particle_containers,
 #     update_fine_search_candidates, ghost_local_periodic_particle_particle
 #     contacts) must correctly transmit the periodic image of one particle

@@ -11,9 +11,10 @@
 # elastic frictionless setup the multi-body collision is deterministic.
 #
 # The simulation horizon is tuned to capture the first multi-contact
-# event and a short rebound, then stop -- no second collision occurs
-# within the window. Combined with elastic, frictionless, soft Hertzian
-# contact this keeps the multi-body dynamics symmetric and reproducible.
+# event and a short rebound, then stop. The kinetic energy of the system is fully preserved.
+# This is more of a regression test than a validation test, since without
+# visualizing the test output it is relatively difficult to assess
+# if the simulation result is good.
 
 # Listing of Parameters
 #----------------------

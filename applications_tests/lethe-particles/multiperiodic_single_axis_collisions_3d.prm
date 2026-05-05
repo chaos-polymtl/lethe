@@ -8,12 +8,7 @@
 # registered in the order x, y, z so that a correct contact requires the
 # pure +/- offset of the THIRD registered pair to be present in
 # combined_periodic_offsets, which was the case missed most aggressively
-# by the original implementaiotn bug (the third pair lost both its pure offsets and all combined
-# offsets that involved itself but not the other two).
-#
-# - With the bug, the pure +/- z offset is missing, the periodic contact
-#   is never detected, and both particles remain frozen.
-# - With the fix, the Hertzian repulsion pushes them apart along z.
+# by the original implementaiotn bug. The Hertzian repulsion pushes them apart along z.
 #
 # Simulation horizon is intentionally short to keep the dynamics 1D and
 # robust to floating-point drift.

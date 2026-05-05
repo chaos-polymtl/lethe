@@ -7,12 +7,7 @@
 # x-periodic boundary, in a fully periodic unit square. The y-periodic BC
 # is registered first and the x-periodic BC second, so a correct contact
 # requires the pure +/- offset of the SECOND registered pair to be present
-# in combined_periodic_offsets.
-#
-# - With the bug, the pure +/- x offset is missing, the periodic contact is
-#   never detected, and both particles remain frozen at their initial
-#   positions.
-# - With the fix, the Hertzian repulsion pushes them apart along x.
+# in combined_periodic_offsets. The Hertzian repulsion pushes them apart along x.
 #
 # The simulation is intentionally short (5e-3 s, 500 steps) so that the
 # only 1D contact dynamics dominate and the final positions are robust to
