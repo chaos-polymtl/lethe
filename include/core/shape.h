@@ -2018,7 +2018,7 @@ class DeathStar : public Shape<dim>
 {
 public:
   /**
-   * @brief The Death Star is the result of a boolean substraction of one sphere from
+   * @brief The Death Star is the result of a boolean subtraction of one sphere from
    * another
    * @param radius The main sphere radius
    * @param hole_radius The removed sphere radius
