@@ -34,8 +34,8 @@ public:
    * @param[in] radius Radius at the mortar interface
    * @param[in] quadrature Quadrature for local cell operations
    * @param[in] rotation_angle Rotation angle for the inner domain
-   * @param[in] stage_heights Vector containing the stage heights at the mortar
-   * interface
+   * @param[in] stage_heights Vector containing the unique vertex heights at the
+   * mortar interface
    */
   template <int dim2>
   MortarManagerBase(unsigned int            n_subdivisions,
@@ -54,8 +54,8 @@ public:
    * the domain length in the direction of the rotation axis
    * @param[in] quadrature Quadrature for local cell operations
    * @param[in] rotation_angle Rotation angle for the inner domain
-   * @param[in] stage_heights Vector containing the stage heights at the mortar
-   * interface
+   * @param[in] stage_heights Vector containing the unique vertex heights at the
+   * mortar interface
    */
   template <int dim2>
   MortarManagerBase(const std::vector<unsigned int> &n_subdivisions,
@@ -293,7 +293,7 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
  * rotation axis at the mortar interface. Stages are defined as layers of
  * vertices with the same height in the rotation axis direction, so there will
  * always be one more stage than the number of cells in the rotation axis
- * direction. At the moment
+ * direction.
  * @param[in] triangulation The triangulation object
  * @param[in] mortar_parameters The information about the mortar method
  * control, including the rotor mesh parameters
