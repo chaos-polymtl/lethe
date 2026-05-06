@@ -171,6 +171,9 @@ private:
   /// Number of layers in the z direction, 3D only. Minimum is 2, which
   /// corresponds to a single layer of cells in the z direction.
   unsigned int n_slices;
+  /// Whether to use transfinite interpolation for the transition region between
+  /// the cylinder and the channel.
+  bool use_transfinite_region;
   /// Whether to assign distinct boundary IDs to the channel boundaries
   /// following the subdivided_hyper_rectangle convention.
   bool colorize;
