@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/05/05
+
+### Fixed
+
+- MINOR This PR removes the obligation to have a constant mortar cell height in the direction parallel to the rotation axis. [#1978](https://github.com/chaos-polymtl/lethe/pull/1978)
+
 ## [Master] - 2026/05/02
 
 ### Fixed

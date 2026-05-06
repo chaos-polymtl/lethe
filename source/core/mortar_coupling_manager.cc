@@ -10,6 +10,8 @@
 
 #include <deal.II/fe/fe_nothing.h>
 
+#include <algorithm>
+
 DeclException1(
   InterfaceRadiusTolerance,
   double,
@@ -155,10 +157,11 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
     get_config(face_center, is_inner);
   // Angle variation within each cell
   const double delta_0 = 2 * numbers::PI / n_subdivisions[0];
-  double       delta_1 = 1.0;
+  // Height of the cell in the direction of the rotation axis
+  double delta_1 = 1.0;
 
   if constexpr (dim == 3)
-    delta_1 = radius[1] / n_subdivisions[1];
+    delta_1 = stage_heights[id_out_plane + 1] - stage_heights[id_out_plane];
 
   if (type == 0) // aligned
     {
@@ -173,8 +176,8 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
             points.emplace_back(
               x[0],
               x[1],
-              (minimum_height - delta_1 / 2) +
-                (id_out_plane + quadrature.point(q)[1]) *
+              stage_heights[id_out_plane] +
+                quadrature.point(q)[1] *
                   delta_1); // TODO Generalize for x and y directions
           else
             points.emplace_back(x);
@@ -217,8 +220,8 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
             points.emplace_back(
               x[0],
               x[1],
-              (minimum_height - delta_1 / 2) +
-                (id_out_plane + quadrature.point(q)[1]) *
+              stage_heights[id_out_plane] +
+                quadrature.point(q)[1] *
                   delta_1); // TODO Generalize for x and y directions
           else
             points.emplace_back(x);
@@ -233,8 +236,8 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
             points.emplace_back(
               x[0],
               x[1],
-              (minimum_height - delta_1 / 2) +
-                (id_out_plane + quadrature.point(q)[1]) *
+              stage_heights[id_out_plane] +
+                quadrature.point(q)[1] *
                   delta_1); // TODO Generalize for x and y directions
           else
             points.emplace_back(x);
@@ -324,13 +327,14 @@ MortarManagerBase<dim>::get_weights(const Point<dim> &face_center,
     return std::vector<double>{1.0};
 
   // Mesh alignment type and cell index
-  const auto [type, id_in_plane, _] = get_config(face_center, is_inner);
+  const auto [type, id_in_plane, id_out_plane] =
+    get_config(face_center, is_inner);
   // Angle variation within each cell
   const double delta_0 = 2 * numbers::PI / n_subdivisions[0];
   double       delta_1 = 1.0;
 
   if (dim == 3)
-    delta_1 = radius[1] / n_subdivisions[1];
+    delta_1 = stage_heights[id_out_plane + 1] - stage_heights[id_out_plane];
 
   if (type == 0) // aligned
     {
@@ -421,10 +425,16 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center,
 
   if constexpr (dim == 3)
     {
-      const double delta_1 = radius[1] / n_subdivisions[1];
-      id_out_plane         = static_cast<unsigned int>(
-        std::round((face_center[2] - minimum_height) /
-                   delta_1)); // TODO Generalize for x and y directions
+      // Return the iterator of the first element in stage_heights that is
+      // greater than the face center height
+      auto upper_height_iterator = std::upper_bound(
+        stage_heights.begin(),
+        stage_heights.end(),
+        face_center[2]); // TODO Generalize for x and y directions
+      // The id_out_plane of the cell can be obtained with the distance between
+      // the iterator obtained and the lowest stage height iterator
+      id_out_plane =
+        std::distance(stage_heights.begin(), upper_height_iterator) - 1;
     }
 
   if (this->is_mesh_aligned())
@@ -487,7 +497,15 @@ compute_number_interface_cells(const Triangulation<dim>      &triangulation,
       AssertThrow(
         is_unit_axis,
         ExcMessage(
-          " The rotation axis must be a unit vector in x, y, or z direction."));
+          "The rotation axis must be a unit vector in x, y, or z direction."));
+
+      // Check if the rotation axis is aligned with the z direction
+      // For now, it is the only direction supported; this throw can be removed
+      // when the x and y directions are also supported
+      AssertThrow(
+        mortar_parameters.rotation_axis[2] == 1.,
+        ExcMessage(
+          "Currently, only rotation axes aligned with the z direction are supported."));
 
       // Find the direction of the rotation axis
       for (int d = 0; d < dim; d++)
@@ -783,9 +801,9 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
 }
 
 template <int dim>
-double
-compute_minimum_height(const Triangulation<dim>      &triangulation,
-                       const Parameters::Mortar<dim> &mortar_parameters)
+std::vector<double>
+compute_stage_heights(const Triangulation<dim>      &triangulation,
+                      const Parameters::Mortar<dim> &mortar_parameters)
 {
   if constexpr (dim == 3)
     {
@@ -801,11 +819,15 @@ compute_minimum_height(const Triangulation<dim>      &triangulation,
         ExcMessage(
           "Rotation axis is not aligned with a coordinate direction."));
 
-      // Minimum coordinate in the direction of the rotation axis
-      double minimum_height_local = std::numeric_limits<double>::max();
+      // Container storing all vertex coordinates in the rotation axis direction
+      // for the local cells at the mortar boundary
+      std::vector<double> stage_heights_local;
+      // Smallest mortar cell face diameter, used to set the tolerance for
+      // height comparison
+      double minimum_face_diameter_local = std::numeric_limits<double>::max();
 
-      // Loop over the cells to find the minimum coordinate in the rotation axis
-      // direction
+      // Loop over the cells to store the vertex coordinates in the rotation
+      // axis direction
       for (const auto &cell : triangulation.active_cell_iterators())
         {
           if (cell->is_locally_owned())
@@ -820,17 +842,49 @@ compute_minimum_height(const Triangulation<dim>      &triangulation,
                   if (face->at_boundary() &&
                       face->boundary_id() ==
                         mortar_parameters.stator_boundary_id)
-                    minimum_height_local =
-                      std::min(minimum_height_local, cell->center()[direction]);
+                    {
+                      minimum_face_diameter_local =
+                        std::min(minimum_face_diameter_local, face->diameter());
+
+                      for (const auto vertex_no : face->vertex_indices())
+                        stage_heights_local.push_back(
+                          face->vertex(vertex_no)[direction]);
+                    }
                 }
             }
         }
-      // Return the minimum value across all processes
-      return Utilities::MPI::min(minimum_height_local,
-                                 triangulation.get_mpi_communicator());
+      // Set the minimum face size over all processes
+      double minimum_face_diameter =
+        Utilities::MPI::min(minimum_face_diameter_local,
+                            triangulation.get_mpi_communicator());
+
+      // Store the vertex coordinates in the rotation axis direction from all
+      // processes
+      const auto stage_heights_all =
+        Utilities::MPI::all_gather(triangulation.get_mpi_communicator(),
+                                   stage_heights_local);
+      std::vector<double> stage_heights;
+      for (const auto &heights_per_process : stage_heights_all)
+        stage_heights.insert(stage_heights.end(),
+                             heights_per_process.begin(),
+                             heights_per_process.end());
+
+      // Set the tolerance for height comparison based on the minimum face size
+      const double height_tolerance = minimum_face_diameter * 1e-8;
+
+      // Remove duplicate heights within the specified tolerance
+      std::ranges::sort(stage_heights);
+      auto result =
+        std::ranges::unique(stage_heights,
+                            [height_tolerance](const double a, const double b) {
+                              return std::abs(a - b) <= height_tolerance;
+                            });
+      stage_heights.erase(result.begin(), result.end());
+
+      return stage_heights;
     }
   else
-    return 0.0;
+    return {0.0};
 }
 
 template <int dim>
@@ -2154,13 +2208,13 @@ template Quadrature<3>
 construct_quadrature(const Quadrature<3>         &quadrature,
                      const Parameters::Mortar<3> &mortar_parameters);
 
-template double
-compute_minimum_height<2>(const Triangulation<2>      &triangulation,
-                          const Parameters::Mortar<2> &mortar_parameters);
+template std::vector<double>
+compute_stage_heights<2>(const Triangulation<2>      &triangulation,
+                         const Parameters::Mortar<2> &mortar_parameters);
 
-template double
-compute_minimum_height<3>(const Triangulation<3>      &triangulation,
-                          const Parameters::Mortar<3> &mortar_parameters);
+template std::vector<double>
+compute_stage_heights<3>(const Triangulation<3>      &triangulation,
+                         const Parameters::Mortar<3> &mortar_parameters);
 
 template void
 mortar_workload_imbalance(const Triangulation<2>      &triangulation,
