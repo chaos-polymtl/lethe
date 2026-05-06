@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_data_containers_h
@@ -45,7 +45,7 @@ namespace DEM
    * @brief DEM data structure containers
    * To improve readability of containers, there's a simple description above
    * all declarations which follow these representation :
-   * <> : map or unordered map
+   * <> : map or unordered map or unordered multimap
    * () : tuple or pair
    * [] : vector
    */
@@ -106,10 +106,20 @@ namespace DEM
                                          particle_particle_contact_info<dim>>
       particle_contact_info;
 
+    // <particle id, periodic particle-particle info>
+    typedef ankerl::unordered_dense::
+      map<types::particle_index, periodic_particle_particle_contact_info<dim>>
+        periodic_particle_contact_info;
+
     // <particle id, <particle id, particle-particle info>>
     typedef ankerl::unordered_dense::map<types::particle_index,
                                          particle_contact_info>
       adjacent_particle_pairs;
+
+    // <particle id, <particle id, periodic particle-particle info>>
+    typedef ankerl::unordered_dense::map<types::particle_index,
+                                         periodic_particle_contact_info>
+      periodic_adjacent_particle_pairs;
 
     // <cell iterator, <particle id, particle iterator>>
     typedef std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
@@ -191,9 +201,9 @@ namespace DEM
       cell_set;
 
     // <cell id, periodic cells info>
-    typedef ankerl::unordered_dense::
-      map<types::global_cell_index, periodic_boundaries_cells_info_struct<dim>>
-        periodic_boundaries_cells_info;
+    typedef std::unordered_multimap<types::global_cell_index,
+                                    periodic_boundaries_cells_info_struct<dim>>
+      periodic_boundaries_cells_info;
 
     // <cell id, integer value>
     typedef ankerl::unordered_dense::map<types::global_cell_index, unsigned int>

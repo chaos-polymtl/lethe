@@ -145,7 +145,8 @@ CFDDEMMatrixFree<dim>::dem_setup_parameters()
 
           periodic_boundaries_object.set_periodic_boundaries_information(
             dem_parameters.boundary_conditions.periodic_boundary_0,
-            dem_parameters.boundary_conditions.periodic_direction);
+            dem_parameters.boundary_conditions.periodic_direction,
+            dem_parameters.boundary_conditions.periodic_bc_index);
 
           break;
         }
@@ -226,12 +227,30 @@ CFDDEMMatrixFree<dim>::initialize_dem_parameters()
   periodic_boundaries_object.map_periodic_cells(
     *parallel_triangulation, periodic_boundaries_cells_information);
 
-  // Set the periodic offset to contact managers and particles contact forces
-  // for periodic contact detection (if PBC enabled)
-  contact_manager.set_periodic_offset(
-    periodic_boundaries_object.get_periodic_offset_distance());
-  particle_particle_contact_force_object->set_periodic_offset(
-    periodic_boundaries_object.get_periodic_offset_distance());
+  // Set the combined_periodic_offsets to contact managers and particles contact
+  // forces for periodic contact detection (if PBC enabled)
+  contact_manager.set_combined_periodic_offsets(
+    periodic_boundaries_object.get_combined_periodic_offsets());
+  particle_particle_contact_force_object->set_combined_periodic_offsets(
+    periodic_boundaries_object.get_combined_periodic_offsets());
+
+  // Set the periodic offsets of the periodic boundary pairs for other classes
+  auto const &periodic_bc_index =
+    periodic_boundaries_object.get_periodic_bc_index();
+  auto const &periodic_boundaries_ids =
+    periodic_boundaries_object.get_periodic_boundaries_ids();
+
+  for (const unsigned int pbc_index : periodic_bc_index)
+    {
+      auto it = periodic_boundaries_ids.find(pbc_index);
+      if (it != periodic_boundaries_ids.end())
+        {
+          auto const &pb_id = it->second;
+          particle_particle_contact_force_object->set_periodic_offset(
+            periodic_boundaries_object.get_periodic_offset_distance(pb_id),
+            pb_id);
+        }
+    }
 
   // Find cell neighbors
   contact_manager.execute_cell_neighbors_search(

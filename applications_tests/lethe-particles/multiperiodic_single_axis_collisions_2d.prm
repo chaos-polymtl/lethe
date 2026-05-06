@@ -1,0 +1,136 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Application test for compute_combined_periodic_offsets in 2D.
+#
+# Two stationary particles are placed in slight overlap across the
+# x-periodic boundary, in a fully periodic unit square. The y-periodic BC
+# is registered first and the x-periodic BC second, so a correct contact
+# requires the pure +/- offset of the SECOND registered pair to be present
+# in combined_periodic_offsets. The Hertzian repulsion pushes them apart along x.
+#
+# The simulation is intentionally short (5e-3 s, 500 steps) so that the
+# only 1D contact dynamics dominate and the final positions are robust to
+# floating-point drift.
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set time step        = 1e-5
+  set time end         = 5e-3
+  set log frequency    = 1000
+  set output frequency = 0
+end
+
+#---------------------------------------------------
+# Test
+#---------------------------------------------------
+
+subsection test
+  set enable = true
+end
+
+#---------------------------------------------------
+# Model parameters
+#---------------------------------------------------
+
+subsection model parameters
+  subsection contact detection
+    set contact detection method                = dynamic
+    set dynamic contact search size coefficient = 0.8
+    set neighborhood threshold                  = 1.3
+  end
+  set particle particle contact force method = hertz_mindlin_limit_overlap
+  set particle wall contact force method     = nonlinear
+  set integration method                     = velocity_verlet
+  set rolling resistance torque method       = none
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection lagrangian physical properties
+  set g                        = 0., 0.
+  set number of particle types = 1
+  subsection particle type 0
+    set size distribution type            = uniform
+    set diameter                          = 0.05
+    set number of particles               = 2
+    set density particles                 = 2000
+    set young modulus particles           = 1e6
+    set poisson ratio particles           = 0.3
+    set restitution coefficient particles = 1.0
+    set friction coefficient particles    = 0.0
+    set rolling friction particles        = 0.0
+  end
+end
+
+#---------------------------------------------------
+# Insertion Info
+#---------------------------------------------------
+
+# Particles initially overlap by 1e-2 across the x-periodic boundary:
+# centers are at x = 0.020 and x = 0.980, so the periodic distance is
+# 0.040 < diameter 0.05 -> overlap of 0.010.
+
+subsection insertion info
+  set insertion method    = list
+  set insertion frequency = 1000000
+  set list x              = 0.020, 0.980
+  set list y              = 0.500, 0.500
+  set list z              = 0.000, 0.000
+  set list velocity x     = 0.000, 0.000
+  set list velocity y     = 0.000, 0.000
+  set list velocity z     = 0.000, 0.000
+  set list omega x        = 0.000, 0.000
+  set list omega y        = 0.000, 0.000
+  set list omega z        = 0.000, 0.000
+  set list diameters      = 0.050, 0.050
+  set list temperatures   = 0.000, 0.000
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type                                = dealii
+  set grid type                           = hyper_rectangle
+  set grid arguments                      = 0.0, 0.0 : 1.0, 1.0 : true
+  set initial refinement                  = 4
+  set expand particle-wall contact search = false
+end
+
+#---------------------------------------------------
+# Boundary conditions DEM
+#---------------------------------------------------
+
+# y-periodic registered first, x-periodic registered second on purpose so
+# that the bug (missing pure +/- offset of the second pair) manifests
+# directly on this single test pair.
+
+subsection DEM boundary conditions
+  set number of boundary conditions = 2
+
+  subsection boundary condition 0
+    set type               = periodic
+    set periodic id 0      = 3
+    set periodic id 1      = 2
+    set periodic direction = 1
+  end
+
+  subsection boundary condition 1
+    set type               = periodic
+    set periodic id 0      = 1
+    set periodic id 1      = 0
+    set periodic direction = 0
+  end
+end

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/parameters_lagrangian.h>
@@ -42,11 +42,11 @@ ParticleParticleContactForce<dim,
       &local_adjacent_particles,
     typename dem_data_structures<dim>::adjacent_particle_pairs
       &ghost_adjacent_particles,
-    typename dem_data_structures<dim>::adjacent_particle_pairs
+    typename dem_data_structures<dim>::periodic_adjacent_particle_pairs
       &local_local_periodic_adjacent_particles,
-    typename dem_data_structures<dim>::adjacent_particle_pairs
+    typename dem_data_structures<dim>::periodic_adjacent_particle_pairs
       &local_ghost_periodic_adjacent_particles,
-    typename dem_data_structures<dim>::adjacent_particle_pairs
+    typename dem_data_structures<dim>::periodic_adjacent_particle_pairs
                 &ghost_local_periodic_adjacent_particles,
     const double dt,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome)
