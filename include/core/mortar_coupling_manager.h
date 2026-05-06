@@ -218,8 +218,7 @@ protected:
   /// Rotation angle for the inner domain
   const double rotation_angle;
   /// Stage heights at the mortar interface along the rotation axis
-  /// in 3D problems. A stage is defined as a layer of vertices with the same
-  /// height in the rotation axis direction.
+  /// in 3D problems. A stage is defined as a plane perpendicular to the rotation axis containing vertices of the same height.
   const std::vector<double> stage_heights;
 };
 
@@ -290,10 +289,10 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
 
 /**
  * @brief Compute the stage heights in the direction of the
- * rotation axis at the mortar interface. Stages are defined as layers of
- * vertices with the same height in the rotation axis direction, so there will
- * always be one more stage than the number of cells in the rotation axis
- * direction.
+ * rotation axis at the mortar interface. Stages are defined as planes 
+ * perpendicular to the rotation axis containing vertices of the same 
+ * height. There will always be one more stage than the number of 
+ * cells in the rotation axis direction.
  * @param[in] triangulation The triangulation object
  * @param[in] mortar_parameters The information about the mortar method
  * control, including the rotor mesh parameters
