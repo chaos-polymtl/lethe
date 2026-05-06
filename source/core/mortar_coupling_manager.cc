@@ -500,7 +500,8 @@ compute_number_interface_cells(const Triangulation<dim>      &triangulation,
           "The rotation axis must be a unit vector in x, y, or z direction."));
 
       // Check if the rotation axis is aligned with the z direction
-      // For now, it is the only direction supported; this throw can be removed when the x and y directions are also supported
+      // For now, it is the only direction supported; this throw can be removed
+      // when the x and y directions are also supported
       AssertThrow(
         mortar_parameters.rotation_axis[2] == 1.,
         ExcMessage(

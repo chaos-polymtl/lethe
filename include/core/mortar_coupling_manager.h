@@ -34,7 +34,7 @@ public:
    * @param[in] radius Radius at the mortar interface
    * @param[in] quadrature Quadrature for local cell operations
    * @param[in] rotation_angle Rotation angle for the inner domain
-   * @param[in] stage_heights Domain height in the direction of the rotation 
+   * @param[in] stage_heights Domain height in the direction of the rotation
    * axis at the mortar interface, which should be 0 for 2D problems
    */
   template <int dim2>
@@ -337,7 +337,7 @@ public:
    * @param[in] radius Radius at the mortar interface
    * @param[in] quadrature Quadrature for local cell operations
    * @param[in] rotation_angle Rotation angle for the inner domain
-   * @param[in] stage_heights Domain height in the direction of the rotation 
+   * @param[in] stage_heights Domain height in the direction of the rotation
    * axis at the mortar interface, which should be 0 for 2D problems
    * @param[in] center_of_rotation Center of rotation of the inner domain
    * @param[in] pre_rotation_angle Initial rotation angle used for computing
