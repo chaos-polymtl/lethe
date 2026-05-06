@@ -1713,7 +1713,7 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
 
           case Parameters::TimeHarmonicMaxwellCouplingStrategy::iteration:
             // Solve only if we are at a multiple of the specified iteration
-            // frequency. We substract 1 since the step number starts at 1.
+            // frequency. We subtract 1 since the step number starts at 1.
             if ((this->simulation_control->get_step_number() - 1) %
                   thm_parameters.coupling_iteration ==
                 0)

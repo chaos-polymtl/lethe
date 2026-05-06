@@ -437,14 +437,6 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
         }
     }
 
-  // ALE
-  if (this->simulation_parameters.ale.enabled())
-    {
-      this->assemblers.emplace_back(
-        std::make_shared<NavierStokesAssemblerALE<dim>>(
-          this->simulation_control, this->simulation_parameters.ale));
-    }
-
   if (this->simulation_parameters.multiphysics.cahn_hilliard)
     {
       // Time-stepping schemes
@@ -658,17 +650,6 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
               "stabilization will lead to an unstable solver that is unable to converge");
         }
     }
-
-  // Mortar ALE
-  // This assembler is added last because it needs access to the strong
-  // Jacobian term computed in the core default assembler
-  if (this->simulation_parameters.mortar_parameters.enable)
-    {
-      this->assemblers.emplace_back(
-        std::make_shared<NavierStokesAssemblerMortarALE<dim>>(
-          this->simulation_control,
-          this->simulation_parameters.mortar_parameters));
-    }
 }
 
 template <int dim>
@@ -862,6 +843,9 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
         this->multiphysics->get_solution(PhysicsID::heat_transfer),
         this->multiphysics->get_previous_solutions(PhysicsID::heat_transfer));
     }
+
+  if (this->simulation_parameters.ale.enabled())
+    scratch_data.reinit_ale(this->simulation_parameters.ale);
 
   if (this->simulation_parameters.mortar_parameters.enable)
     scratch_data.reinit_mortar(cell,
@@ -1101,6 +1085,9 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_rhs(
         this->multiphysics->get_solution(PhysicsID::heat_transfer),
         this->multiphysics->get_previous_solutions(PhysicsID::heat_transfer));
     }
+
+  if (this->simulation_parameters.ale.enabled())
+    scratch_data.reinit_ale(this->simulation_parameters.ale);
 
   if (this->simulation_parameters.mortar_parameters.enable)
     scratch_data.reinit_mortar(cell,

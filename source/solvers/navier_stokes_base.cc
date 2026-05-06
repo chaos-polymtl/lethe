@@ -2216,10 +2216,6 @@ NavierStokesBase<dim, VectorType, DofsType>::rotate_rotor_mapping(
                   << std::endl;
     }
 
-  // Create new mapping cache
-  this->mapping_cache =
-    std::make_shared<MappingQCache<dim>>(this->velocity_fem_degree);
-
   // Rotate mapping only in the case of a circular mortar interface
   if (this->simulation_parameters.mortar_parameters.interface_type ==
       Parameters::Mortar<dim>::InterfaceType::circular)

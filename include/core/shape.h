@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_shape_h
@@ -2018,7 +2018,7 @@ class DeathStar : public Shape<dim>
 {
 public:
   /**
-   * @brief The Death Star is the result of a boolean substraction of one sphere from
+   * @brief The Death Star is the result of a boolean subtraction of one sphere from
    * another
    * @param radius The main sphere radius
    * @param hole_radius The removed sphere radius

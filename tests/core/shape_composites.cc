@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -44,7 +44,7 @@ test()
   operation_map operation_difference;
   operation_difference[2] = std::make_tuple(boolean_operation::Difference,
                                             0,
-                                            1); // We substract 0 from 1
+                                            1); // We subtract 0 from 1
   operation_map operation_intersection;
   operation_intersection[2] =
     std::make_tuple(boolean_operation::Intersection, 0, 1);
@@ -110,7 +110,7 @@ test()
   operation_map operation_hollow_sphere;
   operation_hollow_sphere[2] = std::make_tuple(boolean_operation::Difference,
                                                1,
-                                               0); // We substract 1 from 0
+                                               0); // We subtract 1 from 0
 
   std::shared_ptr<CompositeShape<3>> composite_hollow_sphere =
     std::make_shared<CompositeShape<3>>(spheres,

@@ -440,8 +440,8 @@ def find_files(root_dir):
 
 def difference_images(image_path1, image_path2, output_path, border_size=5):
     """
-    This function take two gray scaled images and create a new image by substracting image 2 from image 1. 
-    If the results is positive, bleu is use. If the results is negative, red is use. 
+    This function takes two gray scaled images and creates a new image by subtracting image 2 from image 1. 
+    If the result is positive, blue is used. If the result is negative, red is used. 
     The image is cropped and saved
 
     image_path1 (string) : path to the first image (e.g. 'image1.png')
