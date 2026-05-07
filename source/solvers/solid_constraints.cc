@@ -33,7 +33,7 @@ namespace
 
     for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
       {
-        const unsigned int component = fe.system_to_component_index(i).first;
+        const int component = fe.system_to_component_index(i).first;
         if (component == dim)
           {
             dofs_are_connected_to_fluid.insert(local_dof_indices[i]);
@@ -94,7 +94,7 @@ namespace
 
     for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
       {
-        const unsigned int component = fe.system_to_component_index(i).first;
+        const int component = fe.system_to_component_index(i).first;
 
         // Only pressure DOFs have an additional Dirichlet condition
         if (component == dim) // pressure DOFs
@@ -154,7 +154,7 @@ constrain_solid_cell_velocity_dofs(
 
   for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
     {
-      const unsigned int component = fe.system_to_component_index(i).first;
+      const int component = fe.system_to_component_index(i).first;
       if (component < dim) // velocity DOFs
         {
           // We apply a constraint to all DOFs in the solid region, whether
