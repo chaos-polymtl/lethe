@@ -3,6 +3,7 @@
 
 #include <solvers/solid_constraints.h>
 
+#include <deal.II/base/exceptions.h>
 #include <deal.II/base/index_set.h>
 
 #include <type_traits>
@@ -22,6 +23,14 @@ namespace
     const std::vector<types::global_dof_index>  &local_dof_indices,
     std::unordered_set<types::global_dof_index> &dofs_are_connected_to_fluid)
   {
+    Assert(fe.n_components() == dim + 1,
+           ExcMessage("The finite element passed to "
+                      "flag_dofs_connected_to_fluid must have dim+1 "
+                      "components (velocity + pressure). This routine is "
+                      "intended for fluid dynamics problems only."));
+    Assert(local_dof_indices.size() == fe.dofs_per_cell,
+           ExcDimensionMismatch(local_dof_indices.size(), fe.dofs_per_cell));
+
     for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
       {
         const unsigned int component = fe.system_to_component_index(i).first;
@@ -63,6 +72,26 @@ namespace
     const std::vector<types::global_dof_index> &local_dof_indices,
     AffineConstraints<double>                  &constraints)
   {
+    Assert(fe.n_components() == dim + 1,
+           ExcMessage("The finite element passed to constrain_pressure must "
+                      "have dim+1 components (velocity + pressure). This "
+                      "routine is intended for fluid dynamics problems only."));
+    Assert(local_dof_indices.size() == fe.dofs_per_cell,
+           ExcDimensionMismatch(local_dof_indices.size(), fe.dofs_per_cell));
+    static_assert(std::is_same_v<DofsType, IndexSet> ||
+                    std::is_same_v<DofsType, std::vector<IndexSet>>,
+                  "constrain_pressure only supports IndexSet (GLS family) or "
+                  "std::vector<IndexSet> (GD family) for the locally owned "
+                  "DOFs container.");
+    if constexpr (std::is_same_v<DofsType, std::vector<IndexSet>>)
+      {
+        Assert(locally_owned_dofs.size() == 2,
+               ExcMessage("For block (GD-family) solvers, the locally owned "
+                          "DOFs container must contain exactly two index "
+                          "sets: velocities (block 0) and pressure "
+                          "(block 1)."));
+      }
+
     for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
       {
         const unsigned int component = fe.system_to_component_index(i).first;
@@ -115,6 +144,14 @@ constrain_solid_cell_velocity_dofs(
   const std::vector<types::global_dof_index> &local_dof_indices,
   AffineConstraints<double>                  &constraints)
 {
+  Assert(fe.n_components() == dim + 1,
+         ExcMessage("The finite element passed to "
+                    "constrain_solid_cell_velocity_dofs must have dim+1 "
+                    "components (velocity + pressure). This routine is "
+                    "intended for fluid dynamics problems only."));
+  Assert(local_dof_indices.size() == fe.dofs_per_cell,
+         ExcDimensionMismatch(local_dof_indices.size(), fe.dofs_per_cell));
+
   for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
     {
       const unsigned int component = fe.system_to_component_index(i).first;
@@ -140,6 +177,12 @@ establish_solid_domain(const DoFHandler<dim>     &dof_handler,
                        const bool                 non_zero_constraints,
                        AffineConstraints<double> &constraints)
 {
+  Assert(dof_handler.get_fe().n_components() == dim + 1,
+         ExcMessage("The DoFHandler passed to establish_solid_domain must "
+                    "use a finite element with dim+1 components (velocity + "
+                    "pressure). This routine is intended for fluid dynamics "
+                    "problems only."));
+
   const unsigned int dofs_per_cell = dof_handler.get_fe().dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
@@ -225,24 +268,24 @@ constrain_solid_cell_velocity_dofs<3>(
   AffineConstraints<double>                  &constraints);
 
 template void
-establish_solid_domain<2, IndexSet>(const DoFHandler<2>       &dof_handler,
-                                    const IndexSet            &locally_owned_dofs,
-                                    const bool                 non_zero_constraints,
+establish_solid_domain<2, IndexSet>(const DoFHandler<2> &dof_handler,
+                                    const IndexSet      &locally_owned_dofs,
+                                    const bool           non_zero_constraints,
                                     AffineConstraints<double> &constraints);
 template void
-establish_solid_domain<3, IndexSet>(const DoFHandler<3>       &dof_handler,
-                                    const IndexSet            &locally_owned_dofs,
-                                    const bool                 non_zero_constraints,
+establish_solid_domain<3, IndexSet>(const DoFHandler<3> &dof_handler,
+                                    const IndexSet      &locally_owned_dofs,
+                                    const bool           non_zero_constraints,
                                     AffineConstraints<double> &constraints);
 template void
 establish_solid_domain<2, std::vector<IndexSet>>(
-  const DoFHandler<2>          &dof_handler,
-  const std::vector<IndexSet>  &locally_owned_dofs,
-  const bool                    non_zero_constraints,
-  AffineConstraints<double>    &constraints);
+  const DoFHandler<2>         &dof_handler,
+  const std::vector<IndexSet> &locally_owned_dofs,
+  const bool                   non_zero_constraints,
+  AffineConstraints<double>   &constraints);
 template void
 establish_solid_domain<3, std::vector<IndexSet>>(
-  const DoFHandler<3>          &dof_handler,
-  const std::vector<IndexSet>  &locally_owned_dofs,
-  const bool                    non_zero_constraints,
-  AffineConstraints<double>    &constraints);
+  const DoFHandler<3>         &dof_handler,
+  const std::vector<IndexSet> &locally_owned_dofs,
+  const bool                   non_zero_constraints,
+  AffineConstraints<double>   &constraints);
