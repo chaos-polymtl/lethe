@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2024 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <dem/dem_action_manager.h>
@@ -9,7 +9,7 @@
 using namespace dealii;
 
 template <int dim, int spacedim>
-GridMotion<dim, spacedim>::GridMotion(
+GridMotionBase<dim, spacedim>::GridMotionBase(
   const Parameters::Lagrangian::GridMotion<spacedim> &grid_motion_parameters,
   const double                                        dem_time_step)
 {
@@ -19,7 +19,7 @@ GridMotion<dim, spacedim>::GridMotion(
     {
       case Parameters::Lagrangian::GridMotion<spacedim>::MotionType::none:
         {
-          grid_motion = &GridMotion<dim, spacedim>::no_motion;
+          grid_motion = &GridMotionBase<dim, spacedim>::no_motion;
           break;
         }
       case Parameters::Lagrangian::GridMotion<spacedim>::MotionType::rotational:
@@ -27,7 +27,7 @@ GridMotion<dim, spacedim>::GridMotion(
           // Communicate to the action manager that there is a grid motion
           action_manager->set_grid_motion_enabled();
 
-          grid_motion = &GridMotion<dim, spacedim>::move_grid_rotational;
+          grid_motion = &GridMotionBase<dim, spacedim>::move_grid_rotational;
           rotation_angle =
             grid_motion_parameters.grid_rotational_speed * dem_time_step;
           rotation_axis = grid_motion_parameters.grid_rotational_axis;
@@ -40,7 +40,7 @@ GridMotion<dim, spacedim>::GridMotion(
           // grid motion
           action_manager->set_grid_motion_enabled();
 
-          grid_motion = &GridMotion<dim, spacedim>::move_grid_translational;
+          grid_motion = &GridMotionBase<dim, spacedim>::move_grid_translational;
           shift_vector =
             grid_motion_parameters.grid_translational_velocity * dem_time_step;
           break;
@@ -52,7 +52,7 @@ GridMotion<dim, spacedim>::GridMotion(
 
 template <>
 void
-GridMotion<1, 2>::move_grid_rotational(Triangulation<1, 2> &)
+GridMotionBase<1, 2>::move_grid_rotational(Triangulation<1, 2> &)
 {
   throw ExcImpossibleInDim(1);
   // TODO We need to add this function to GridTools for dim=1
@@ -61,14 +61,14 @@ GridMotion<1, 2>::move_grid_rotational(Triangulation<1, 2> &)
 
 template <>
 void
-GridMotion<2, 2>::move_grid_rotational(Triangulation<2, 2> &triangulation)
+GridMotionBase<2, 2>::move_grid_rotational(Triangulation<2, 2> &triangulation)
 {
   GridTools::rotate(rotation_angle, triangulation);
 }
 
 template <>
 void
-GridMotion<2, 3>::move_grid_rotational(Triangulation<2, 3> &triangulation)
+GridMotionBase<2, 3>::move_grid_rotational(Triangulation<2, 3> &triangulation)
 {
   Tensor<1, 3> axis({0, 0, 0});
   axis[rotation_axis] = 1;
@@ -77,7 +77,7 @@ GridMotion<2, 3>::move_grid_rotational(Triangulation<2, 3> &triangulation)
 
 template <>
 void
-GridMotion<3, 3>::move_grid_rotational(Triangulation<3, 3> &triangulation)
+GridMotionBase<3, 3>::move_grid_rotational(Triangulation<3, 3> &triangulation)
 {
   Tensor<1, 3> axis({0, 0, 0});
   axis[rotation_axis] = 1;
@@ -86,7 +86,7 @@ GridMotion<3, 3>::move_grid_rotational(Triangulation<3, 3> &triangulation)
 
 template <int dim, int spacedim>
 void
-GridMotion<dim, spacedim>::move_grid_translational(
+GridMotionBase<dim, spacedim>::move_grid_translational(
   Triangulation<dim, spacedim> &triangulation)
 {
   GridTools::shift(shift_vector, triangulation);
@@ -94,7 +94,7 @@ GridMotion<dim, spacedim>::move_grid_translational(
 
 template <int dim, int spacedim>
 void
-GridMotion<dim, spacedim>::
+GridMotionBase<dim, spacedim>::
   update_boundary_points_and_normal_vectors_in_contact_list(
     typename DEM::dem_data_structures<spacedim>::particle_wall_in_contact
       &particle_wall_pairs_in_contact,
@@ -137,7 +137,7 @@ GridMotion<dim, spacedim>::
     }
 }
 
-template class GridMotion<1, 2>;
-template class GridMotion<2, 2>;
-template class GridMotion<2, 3>;
-template class GridMotion<3, 3>;
+template class GridMotionBase<1, 2>;
+template class GridMotionBase<2, 2>;
+template class GridMotionBase<2, 3>;
+template class GridMotionBase<3, 3>;

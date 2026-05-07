@@ -24,9 +24,9 @@ using namespace dealii;
  */
 
 template <int dim, int spacedim = dim>
-class GridMotion
+class GridMotionBase
 {
-  using FuncPtrType = void (GridMotion<dim, spacedim>::*)(
+  using FuncPtrType = void (GridMotionBase<dim, spacedim>::*)(
     Triangulation<dim, spacedim> &triangulation);
   FuncPtrType grid_motion;
 
@@ -39,7 +39,7 @@ public:
    * @param grid_motion_parameters DEM parameters defined using the parameter handler
    * @param dem_time_step DEM time step
    */
-  GridMotion(
+  GridMotionBase(
     const Parameters::Lagrangian::GridMotion<spacedim> &grid_motion_parameters,
     const double                                        dem_time_step);
 
