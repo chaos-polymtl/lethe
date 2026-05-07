@@ -1653,6 +1653,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             }
 
           // If there are solid regions. Also establish them as part of the
+          // multigrid
+
           // constraints
           level_constraint.close();
 
