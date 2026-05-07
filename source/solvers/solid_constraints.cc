@@ -50,9 +50,9 @@ namespace
                                                &dofs_are_connected_to_fluid,
     const std::vector<types::global_dof_index> &local_dof_indices)
   {
-    for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+    for (const auto &dof_index : local_dof_indices)
       {
-        auto search = dofs_are_connected_to_fluid.find(local_dof_indices[i]);
+        auto search = dofs_are_connected_to_fluid.find(dof_index);
         if (search != dofs_are_connected_to_fluid.end())
           return true;
       }
