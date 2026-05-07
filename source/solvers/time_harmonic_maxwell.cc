@@ -1276,10 +1276,151 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
     mpi_communicator,
     this->locally_relevant_dofs_trial_skeleton);
 
+
   this->system_matrix.reinit(this->locally_owned_dofs_trial_skeleton,
                              this->locally_owned_dofs_trial_skeleton,
                              dsp,
                              mpi_communicator);
+
+
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
+        .verbosity == Parameters::Verbosity::extra_verbose)
+    {
+      const auto this_mpi_process =
+        Utilities::MPI::this_mpi_process(mpi_communicator);
+      constexpr double bytes_to_gb = 1.0 / (1024.0 * 1024.0 * 1024.0);
+
+      const auto present_solution_memory =
+        this->present_solution->memory_consumption() * bytes_to_gb;
+      const auto present_solution_skeleton_memory =
+        this->present_solution_skeleton->memory_consumption() * bytes_to_gb;
+      const auto present_dpg_error_indicator_memory =
+        this->present_DPG_error_indicator->memory_consumption() * bytes_to_gb;
+      const auto system_rhs_memory =
+        this->system_rhs.memory_consumption() * bytes_to_gb;
+      const auto sparsity_pattern_memory =
+        dsp.memory_consumption() * bytes_to_gb;
+      const auto system_matrix_memory =
+        this->system_matrix.memory_consumption() * bytes_to_gb;
+
+      const auto present_solution_memory_by_rank =
+        Utilities::MPI::gather(mpi_communicator, present_solution_memory, 0);
+      const auto present_solution_skeleton_memory_by_rank =
+        Utilities::MPI::gather(mpi_communicator,
+                               present_solution_skeleton_memory,
+                               0);
+      const auto present_dpg_error_indicator_memory_by_rank =
+        Utilities::MPI::gather(mpi_communicator,
+                               present_dpg_error_indicator_memory,
+                               0);
+      const auto system_rhs_memory_by_rank =
+        Utilities::MPI::gather(mpi_communicator, system_rhs_memory, 0);
+      const auto sparsity_pattern_memory_by_rank =
+        Utilities::MPI::gather(mpi_communicator, sparsity_pattern_memory, 0);
+      const auto system_matrix_memory_by_rank =
+        Utilities::MPI::gather(mpi_communicator, system_matrix_memory, 0);
+
+      const auto present_solution_memory_total =
+        Utilities::MPI::sum(present_solution_memory, mpi_communicator);
+      const auto present_solution_skeleton_memory_total =
+        Utilities::MPI::sum(present_solution_skeleton_memory, mpi_communicator);
+      const auto present_dpg_error_indicator_memory_total =
+        Utilities::MPI::sum(present_dpg_error_indicator_memory,
+                            mpi_communicator);
+      const auto system_rhs_memory_total =
+        Utilities::MPI::sum(system_rhs_memory, mpi_communicator);
+      const auto sparsity_pattern_memory_total =
+        Utilities::MPI::sum(sparsity_pattern_memory, mpi_communicator);
+      const auto system_matrix_memory_total =
+        Utilities::MPI::sum(system_matrix_memory, mpi_communicator);
+
+      if (this_mpi_process == 0)
+        {
+          this->pcout
+            << " =================================================================="
+            << std::endl;
+          this->pcout << "  [THM memory diagnostics]" << std::endl;
+
+          // When debugging memory issues if rank is needed turn this parameter
+          // to true to have the memory consumption of each rank printed,
+          // otherwise only the total memory consumption across all ranks will
+          // be printed.
+          pcout << " Printing total memory consumption, if you "
+                << "want to see the memory consumption by rank, set "
+                << "`print_memory_by_rank` to true." << std::endl;
+          bool print_memory_by_rank = false;
+          if (print_memory_by_rank)
+            {
+              this->pcout << "  *** By rank memory (GB) *** " << std::endl;
+              for (unsigned int rank = 0;
+                   rank < present_solution_memory_by_rank.size();
+                   ++rank)
+                {
+                  this->pcout << "  present_solution rank " << rank << " : "
+                              << present_solution_memory_by_rank[rank]
+                              << std::endl;
+                }
+              for (unsigned int rank = 0;
+                   rank < present_solution_skeleton_memory_by_rank.size();
+                   ++rank)
+                {
+                  this->pcout << "  present_solution_skeleton rank " << rank
+                              << " : "
+                              << present_solution_skeleton_memory_by_rank[rank]
+                              << std::endl;
+                }
+              for (unsigned int rank = 0;
+                   rank < present_dpg_error_indicator_memory_by_rank.size();
+                   ++rank)
+                {
+                  this->pcout
+                    << "  present_DPG_error_indicator rank " << rank << " : "
+                    << present_dpg_error_indicator_memory_by_rank[rank]
+                    << std::endl;
+                }
+              for (unsigned int rank = 0;
+                   rank < system_rhs_memory_by_rank.size();
+                   ++rank)
+                {
+                  this->pcout << "  system_rhs rank " << rank << " : "
+                              << system_rhs_memory_by_rank[rank] << std::endl;
+                }
+              for (unsigned int rank = 0;
+                   rank < sparsity_pattern_memory_by_rank.size();
+                   ++rank)
+                {
+                  this->pcout << "  dsp rank " << rank << " : "
+                              << sparsity_pattern_memory_by_rank[rank]
+                              << std::endl;
+                }
+              for (unsigned int rank = 0;
+                   rank < system_matrix_memory_by_rank.size();
+                   ++rank)
+                {
+                  this->pcout << "  system_matrix rank " << rank << " : "
+                              << system_matrix_memory_by_rank[rank]
+                              << std::endl;
+                }
+            }
+
+          this->pcout << "  *** Totals memory (GB) *** " << std::endl;
+          this->pcout << "  present_solution : "
+                      << present_solution_memory_total << std::endl;
+          this->pcout << "  present_solution_skeleton : "
+                      << present_solution_skeleton_memory_total << std::endl;
+          this->pcout << "  present_DPG_error_indicator : "
+                      << present_dpg_error_indicator_memory_total << std::endl;
+          this->pcout << "  system_rhs : " << system_rhs_memory_total
+                      << std::endl;
+          this->pcout << "  dsp : " << sparsity_pattern_memory_total
+                      << std::endl;
+          this->pcout << "  system_matrix : " << system_matrix_memory_total
+                      << std::endl;
+          this->pcout
+            << " =================================================================="
+            << std::endl;
+        }
+    }
   this->pcout << "  DPG system for Time-Harmonic Maxwell Equations:"
               << std::endl;
   this->pcout
@@ -1349,7 +1490,8 @@ template <int dim>
 void
 TimeHarmonicMaxwell<dim>::setup_preconditioner()
 {
-  preconditioner = std::make_shared<TrilinosWrappers::PreconditionIdentity>();
+  // No preconditioner is currently implemented for the time-harmonic Maxwell
+  // solver.
 }
 
 template <int dim>
@@ -1633,7 +1775,7 @@ TimeHarmonicMaxwell<dim>::solve_linear_system()
     std::max(relative_residual * rescaled_residual, absolute_residual);
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
-        .verbosity == Parameters::Verbosity::extra_verbose)
+        .verbosity == Parameters::Verbosity::verbose)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
@@ -1654,7 +1796,7 @@ TimeHarmonicMaxwell<dim>::solve_linear_system()
                *this->preconditioner);
 
   if (simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
-        .verbosity == Parameters::Verbosity::extra_verbose)
+        .verbosity == Parameters::Verbosity::verbose)
     {
       this->pcout << "  -CG iterative solver took : "
                   << solver_control.last_step()
