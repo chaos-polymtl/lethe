@@ -1925,10 +1925,6 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
           cell_mask = this->solid_cell_mask[cell];
         }
 
-      // To identify whether mortar feature is enabled (use local variable for
-      // efficiency)
-      const bool enable_mortar = this->enable_mortar;
-
       // Time stepping data information structure.
       // We create a small helper structure that contains everything related to
       // the time-stepping process and carries out all the flag checking.
