@@ -576,7 +576,7 @@ GridUniformChannelWithMeshedSquarePrism<2, 2>::make_grid(
                            colorize);
 
   // Attach manifold for id 0 required by deal.II
-  FlatManifold<2,2> FlatManifold;
+  FlatManifold<2, 2> FlatManifold;
   triangulation.set_manifold(0, FlatManifold);
 }
 
@@ -603,7 +603,7 @@ GridUniformChannelWithMeshedSquarePrism<3, 3>::make_grid(
 
   // Attach manifold id 0 on the 2D mesh before extrusion.
   // extrude_triangulation queries get_manifold() on the input 2D triangulation.
-  FlatManifold<2,2> FlatManifold_2d;
+  FlatManifold<2, 2> FlatManifold_2d;
   tria_2D.set_manifold(0, FlatManifold_2d);
 
   // Extrude the 2D cross-section along the z-axis. Manifold  and material IDs
@@ -612,7 +612,7 @@ GridUniformChannelWithMeshedSquarePrism<3, 3>::make_grid(
     tria_2D, n_slices, height, triangulation, true);
 
   // Attach manifold for id 0 required by deal.II
-  FlatManifold<3,3> FlatManifold;
+  FlatManifold<3, 3> FlatManifold;
   triangulation.set_manifold(0, FlatManifold);
 
   // Set the boundary ids for the extruded top and bottom faces.

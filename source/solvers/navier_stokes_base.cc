@@ -2005,7 +2005,9 @@ NavierStokesBase<dim, VectorType, DofsType>::define_non_zero_constraints()
         }
     }
 
-  this->establish_solid_domain(true);
+  this->establish_solid_domain(*this->dof_handler,
+                               true,
+                               this->nonzero_constraints);
 
   nonzero_constraints.close();
 }
@@ -2114,7 +2116,9 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
         }
     }
 
-  this->establish_solid_domain(false);
+  this->establish_solid_domain(*this->dof_handler,
+                               false,
+                               this->zero_constraints);
 
   this->zero_constraints.close();
 }
@@ -2439,7 +2443,9 @@ NavierStokesBase<dim, VectorType, DofsType>::set_solution_from_checkpoint(
 template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
-  const bool non_zero_constraints)
+  const DoFHandler<dim>     &dof_handler,
+  const bool                 non_zero_constraints,
+  AffineConstraints<double> &constraints)
 {
   // If there are no solid regions, there is no work to be done and we can
   // return.
@@ -2458,7 +2464,7 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
   // is used to 1) constraint the velocity degree of freedom to be zero in the
   // solid region and 2) to identify which pressure degrees of freedom are
   // connected to fluid cells
-  for (const auto &cell : dof_handler->active_cell_iterators())
+  for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned() || cell->is_ghost())
         {
@@ -2469,7 +2475,7 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
             {
               constrain_solid_cell_velocity_dofs(non_zero_constraints,
                                                  local_dof_indices,
-                                                 this->zero_constraints);
+                                                 constraints);
             }
           else
             {
@@ -2484,7 +2490,7 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
 
   // All pressure DOFs that are not connected to a fluid cell are constrained
   // to ensure that the system matrix has adequate conditioning.
-  for (const auto &cell : dof_handler->active_cell_iterators())
+  for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned() || cell->is_ghost())
         {
@@ -2506,7 +2512,7 @@ NavierStokesBase<dim, VectorType, DofsType>::establish_solid_domain(
                 {
                   constrain_pressure(non_zero_constraints,
                                      local_dof_indices,
-                                     this->zero_constraints);
+                                     constraints);
                 }
             }
         }

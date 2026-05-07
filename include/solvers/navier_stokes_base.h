@@ -547,13 +547,24 @@ protected:
    * domain is assumed to have a @p material_id=0 and the rest of the domains
    * have a @p material_id>0.
    *
+   * @param[in] dof_handler DoFHandler for which the solid region is
+   * established. In the majority of cases this is the DoFHandler that is a
+   * member of this class, but if a multigrid preconditioner, constraints must
+   * be built at every level. In this case, this DoFHandler can be the
+   * DoFHandler at any of the multigrid level.
+   *
    * @param[in] non_zero_constraints If this parameter is true, it indicates
    * that non-zero constraints are being constrained for the solid domain. If
    * this is set to false, homogeneous constraints are constrained in the solid
    * domain.
+   *
+   * @param[in] constraints Set of constraints on which the solid domain
+   * constraint is applied.
    */
   void
-  establish_solid_domain(const bool non_zero_constraints);
+  establish_solid_domain(const DoFHandler<dim>     &dof_handler,
+                         const bool                 non_zero_constraints,
+                         AffineConstraints<double> &constraints);
 
   /**
    * @brief Checks and identifies if the cell is located in the constraining
@@ -681,13 +692,13 @@ protected:
    *
    * @param[in] local_dof_indices Vector of a cell's local DOF indices.
    *
-   * @param[out] zero_constraints Homogeneous constraints holding object.
+   * @param[out] constraints Homogeneous constraints holding object.
    */
   inline void
   constrain_solid_cell_velocity_dofs(
     const bool                                 &non_zero_constraints,
     const std::vector<types::global_dof_index> &local_dof_indices,
-    AffineConstraints<double>                  &zero_constraints)
+    AffineConstraints<double>                  &constraints)
   {
     for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
       {
@@ -699,12 +710,11 @@ protected:
             // they are locally owned or not.
             if (non_zero_constraints)
               {
-                this->nonzero_constraints.add_line(local_dof_indices[i]);
-                this->nonzero_constraints.set_inhomogeneity(
-                  local_dof_indices[i], 0);
+                constraints.add_line(local_dof_indices[i]);
+                constraints.set_inhomogeneity(local_dof_indices[i], 0);
               }
             else
-              zero_constraints.add_line(local_dof_indices[i]);
+              constraints.add_line(local_dof_indices[i]);
           }
       }
   }

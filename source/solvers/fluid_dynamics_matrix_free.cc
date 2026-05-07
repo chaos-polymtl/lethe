@@ -1652,6 +1652,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                 level_constraint.add_line(min_index);
             }
 
+          // If there are solid regions. Also establish them as part of the
+          // constraints
           level_constraint.close();
 
           this->mg_setup_timer.leave_subsection("Set boundary conditions");
