@@ -1654,6 +1654,12 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
 
           // If there are solid regions. Also establish them as part of the
           // multigrid
+          if (simulation_parameters.physical_properties_manager
+                .get_number_of_solids() > 0)
+            establish_solid_domain(level_dof_handler,
+                                   level_dof_handler.locally_owned_dofs(),
+                                   false,
+                                   level_constraint);
 
           // constraints
           level_constraint.close();
