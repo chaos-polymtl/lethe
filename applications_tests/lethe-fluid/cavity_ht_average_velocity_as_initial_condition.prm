@@ -76,7 +76,7 @@ subsection post-processing
 end
 
 #---------------------------------------------------
-# Checkpoint/Restart Control
+# Restart
 #---------------------------------------------------
 
 subsection restart
@@ -164,7 +164,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# Boundary Conditions
+# Boundary Conditions CLS
 #---------------------------------------------------
 
 subsection boundary conditions CLS

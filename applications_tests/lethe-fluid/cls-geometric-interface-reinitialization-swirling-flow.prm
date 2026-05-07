@@ -51,7 +51,7 @@ subsection CLS
 end
 
 #---------------------------------------------------
-# Post-processing
+# Post-Processing
 #---------------------------------------------------
 
 subsection post-processing
@@ -61,7 +61,7 @@ subsection post-processing
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -93,7 +93,7 @@ subsection physical properties
 end
 
 #---------------------------------------------------
-# Post-processing
+# Post-Processing
 #---------------------------------------------------
 
 subsection post-processing
@@ -112,7 +112,7 @@ subsection mesh
 end
 
 #---------------------------------------------------
-# Mesh Adaptation
+# Mesh Adaptation Control
 #---------------------------------------------------
 
 subsection mesh adaptation
@@ -126,6 +126,10 @@ subsection mesh adaptation
   set fraction coarsening      = 0.00005
   set initial refinement steps = 4
 end
+
+#---------------------------------------------------
+# Stabilization
+#---------------------------------------------------
 
 subsection stabilization
   set cls dcdd stabilization = false
@@ -186,6 +190,10 @@ subsection boundary conditions
     end
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions CLS
+#---------------------------------------------------
 
 subsection boundary conditions CLS
   set number = 4

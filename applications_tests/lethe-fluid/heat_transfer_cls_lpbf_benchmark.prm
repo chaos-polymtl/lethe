@@ -77,6 +77,10 @@ subsection boundary conditions
   end
 end
 
+#---------------------------------------------------
+# Boundary Conditions Heat Transfer
+#---------------------------------------------------
+
 subsection boundary conditions heat transfer
   set number = 6
   subsection bc 0
@@ -111,6 +115,10 @@ subsection boundary conditions heat transfer
   end
 end
 
+#---------------------------------------------------
+# Boundary Conditions CLS
+#---------------------------------------------------
+
 subsection boundary conditions CLS
   set number = 6
   subsection bc 0
@@ -134,7 +142,7 @@ subsection boundary conditions CLS
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -195,7 +203,7 @@ subsection physical properties
 end
 
 #---------------------------------------------------
-# Laser parameters
+# Laser Parameters
 #---------------------------------------------------
 
 subsection laser parameters
@@ -253,7 +261,7 @@ subsection evaporation
 end
 
 #---------------------------------------------------
-# Post-processing
+# Post-Processing
 #---------------------------------------------------
 
 subsection post-processing

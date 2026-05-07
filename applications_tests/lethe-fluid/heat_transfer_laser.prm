@@ -30,7 +30,7 @@ subsection multiphysics
 end
 
 #---------------------------------------------------
-# Laser heat source
+# Laser Parameters
 #---------------------------------------------------
 
 subsection laser parameters
@@ -59,7 +59,7 @@ subsection post-processing
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -115,6 +115,10 @@ subsection boundary conditions
     set type = noslip
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions Heat Transfer
+#---------------------------------------------------
 
 subsection boundary conditions heat transfer
   set number = 4

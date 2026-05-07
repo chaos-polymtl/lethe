@@ -26,7 +26,7 @@ subsection multiphysics
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -40,7 +40,7 @@ subsection initial conditions
 end
 
 #---------------------------------------------------
-# Source term
+# Source Term
 #---------------------------------------------------
 
 subsection source term
@@ -65,6 +65,10 @@ subsection physical properties
     set kinematic viscosity = 0.01
   end
 end
+
+#---------------------------------------------------
+# ALE
+#---------------------------------------------------
 
 subsection ALE
   set enable = true
@@ -144,6 +148,10 @@ subsection boundary conditions
     end
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions Heat Transfer
+#---------------------------------------------------
 
 subsection boundary conditions heat transfer
   set number = 4

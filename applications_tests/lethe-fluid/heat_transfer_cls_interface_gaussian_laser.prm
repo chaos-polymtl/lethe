@@ -28,7 +28,7 @@ subsection multiphysics
 end
 
 #---------------------------------------------------
-# Laser parameters
+# Laser Parameters
 #---------------------------------------------------
 
 subsection laser parameters
@@ -48,7 +48,7 @@ subsection laser parameters
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -87,7 +87,7 @@ subsection physical properties
 end
 
 #---------------------------------------------------
-# Post-processing
+# Post-Processing
 #---------------------------------------------------
 
 subsection post-processing
@@ -119,6 +119,10 @@ subsection boundary conditions
   end
 end
 
+#---------------------------------------------------
+# Boundary Conditions Heat Transfer
+#---------------------------------------------------
+
 subsection boundary conditions heat transfer
   set number = 1
   subsection bc 0
@@ -135,6 +139,10 @@ subsection boundary conditions heat transfer
     end
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions CLS
+#---------------------------------------------------
 
 subsection boundary conditions CLS
   set number = 1

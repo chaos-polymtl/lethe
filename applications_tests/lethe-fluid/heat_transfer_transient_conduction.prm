@@ -28,7 +28,7 @@ subsection multiphysics
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -40,6 +40,10 @@ subsection initial conditions
     set Function expression = 0
   end
 end
+
+#---------------------------------------------------
+# Source Term
+#---------------------------------------------------
 
 subsection source term
   subsection heat transfer
@@ -98,6 +102,10 @@ subsection boundary conditions
     set type = noslip
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions Heat Transfer
+#---------------------------------------------------
 
 subsection boundary conditions heat transfer
   set number = 4

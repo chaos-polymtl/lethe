@@ -1,13 +1,24 @@
 # SPDX-FileCopyrightText: Copyright (c) 2022-2023 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+# Listing of Parameters
+#----------------------
+
 set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
 
 subsection simulation control
   set method            = steady
   set number mesh adapt = 3
   set output frequency  = 0
 end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
 
 subsection FEM
   set velocity order = 1
@@ -16,12 +27,20 @@ subsection FEM
   set tracer uses dg = true
 end
 
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
 subsection physical properties
   set number of fluids = 1
   subsection fluid 0
     set tracer diffusivity = 1
   end
 end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
 
 subsection mesh
   set type               = dealii
@@ -30,13 +49,25 @@ subsection mesh
   set initial refinement = 1
 end
 
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
 subsection multiphysics
   set tracer = true
 end
 
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
 subsection mesh adaptation
   set type = uniform
 end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
 
 subsection analytical solution
   set enable    = true
@@ -49,6 +80,10 @@ subsection analytical solution
   end
 end
 
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
 subsection boundary conditions
   set number = 1
   subsection bc 0
@@ -56,6 +91,10 @@ subsection boundary conditions
     set type = noslip
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions Tracer
+#---------------------------------------------------
 
 subsection boundary conditions tracer
   set number = 1
@@ -68,11 +107,19 @@ subsection boundary conditions tracer
   end
 end
 
+#---------------------------------------------------
+# Source Term
+#---------------------------------------------------
+
 subsection source term
   subsection tracer
     set Function expression = 2*pi*pi*sin(pi*x)*sin(pi*y)
   end
 end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
 
 subsection non-linear solver
   subsection tracer
@@ -86,6 +133,10 @@ subsection non-linear solver
     set max iterations = 10
   end
 end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
 
 subsection linear solver
   subsection fluid dynamics

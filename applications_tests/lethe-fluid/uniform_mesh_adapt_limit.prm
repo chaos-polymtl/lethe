@@ -21,7 +21,7 @@ subsection simulation control
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -84,7 +84,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# Mesh adaptation
+# Mesh Adaptation Control
 #---------------------------------------------------
 
 subsection mesh adaptation

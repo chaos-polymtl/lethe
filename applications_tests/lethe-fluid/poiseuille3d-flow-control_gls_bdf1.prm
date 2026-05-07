@@ -65,7 +65,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# Flow control
+# Flow Control
 #---------------------------------------------------
 
 subsection flow control

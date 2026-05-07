@@ -1,7 +1,14 @@
 # SPDX-FileCopyrightText: Copyright (c) 2023 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+# Listing of Parameters
+#----------------------
+
 set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
 
 subsection simulation control
   set method           = bdf1
@@ -11,9 +18,17 @@ subsection simulation control
   set output frequency = 0
 end
 
+#---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
+
 subsection initial conditions
   set type = nodal
 end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
 
 subsection boundary conditions
   set number         = 4
@@ -41,6 +56,10 @@ subsection boundary conditions
     end
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions Tracer
+#---------------------------------------------------
 
 subsection boundary conditions tracer
   set number         = 4
@@ -75,6 +94,10 @@ subsection boundary conditions tracer
   end
 end
 
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
 subsection physical properties
   subsection fluid 0
     set rheological model   = newtonian
@@ -83,15 +106,27 @@ subsection physical properties
   end
 end
 
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
 subsection multiphysics
   set fluid dynamics = true
   set tracer         = true
 end
 
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
 subsection post-processing
   set verbosity                   = verbose
   set calculate tracer statistics = true
 end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
 
 subsection mesh
   set type               = dealii
@@ -100,11 +135,19 @@ subsection mesh
   set initial refinement = 3
 end
 
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
 subsection FEM
   set velocity order = 1
   set pressure order = 1
   set tracer order   = 1
 end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
 
 subsection non-linear solver
   subsection fluid dynamics
@@ -114,6 +157,10 @@ subsection non-linear solver
     set verbosity = quiet
   end
 end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
 
 subsection linear solver
   subsection fluid dynamics

@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 # Checks the steady matrix-based mortar implementation for an MMS example.
 # Also tests the use of a different mortar cell weight with respect to the other
 # cells, which affects the load balancing.
@@ -92,8 +93,8 @@ subsection boundary conditions
   end
 end
 
-# --------------------------------------------------
-# Source term
+#---------------------------------------------------
+# Source Term
 #---------------------------------------------------
 
 subsection source term
@@ -104,7 +105,7 @@ subsection source term
   end
 end
 
-# --------------------------------------------------
+#---------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
 

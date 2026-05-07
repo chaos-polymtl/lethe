@@ -68,6 +68,10 @@ subsection boundary conditions
   end
 end
 
+#---------------------------------------------------
+# Boundary Conditions Cahn Hilliard
+#---------------------------------------------------
+
 subsection boundary conditions cahn hilliard
   set number = 1
   subsection bc 0

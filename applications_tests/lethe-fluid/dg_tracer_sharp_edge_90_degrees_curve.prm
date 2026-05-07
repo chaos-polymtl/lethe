@@ -6,12 +6,23 @@
 # It consists of the flow inside a pipe with a sharp 90 degree curve at the end, and
 # is very sensitive to the divergence of the velocity field.
 
+# Listing of Parameters
+#----------------------
+
 set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
 
 subsection simulation control
   set method           = steady
   set output frequency = 0
 end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
 
 subsection FEM
   set velocity order = 1
@@ -20,6 +31,10 @@ subsection FEM
   set tracer uses dg = true
 end
 
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
 subsection physical properties
   set number of fluids = 1
   subsection fluid 0
@@ -27,14 +42,26 @@ subsection physical properties
   end
 end
 
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
 subsection mesh
   set type      = gmsh
   set file name = ../../dg_tracer_sharp_edge_90_degrees_curve.msh
 end
 
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
 subsection multiphysics
   set tracer = true
 end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
 
 subsection boundary conditions
   set number = 3
@@ -55,6 +82,10 @@ subsection boundary conditions
   end
 end
 
+#---------------------------------------------------
+# Boundary Conditions Tracer
+#---------------------------------------------------
+
 subsection boundary conditions tracer
   set number = 3
   subsection bc 0
@@ -74,12 +105,20 @@ subsection boundary conditions tracer
   end
 end
 
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
 subsection post-processing
   set verbosity                   = verbose
   set output frequency            = 1
   set calculate tracer statistics = true
   set calculate tracer flow rate  = true
 end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
 
 subsection non-linear solver
   subsection fluid dynamics
@@ -93,6 +132,10 @@ subsection non-linear solver
     set max iterations = 10
   end
 end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
 
 subsection linear solver
   subsection fluid dynamics

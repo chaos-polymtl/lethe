@@ -32,7 +32,7 @@ subsection restart
 end
 
 #---------------------------------------------------
-# Mesh Adaptation
+# Mesh Adaptation Control
 #---------------------------------------------------
 
 subsection mesh adaptation
@@ -106,6 +106,10 @@ subsection boundary conditions
     set type = noslip
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions Time Harmonic Maxwell
+#---------------------------------------------------
 
 subsection boundary conditions time harmonic maxwell
   set number = 3

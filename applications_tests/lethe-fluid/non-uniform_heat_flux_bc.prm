@@ -76,6 +76,10 @@ subsection boundary conditions
   end
 end
 
+#---------------------------------------------------
+# Boundary Conditions Heat Transfer
+#---------------------------------------------------
+
 subsection boundary conditions heat transfer
   set number = 4
   subsection bc 0
@@ -101,6 +105,10 @@ subsection boundary conditions heat transfer
     set type = convection-radiation-flux
   end
 end
+
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
 
 subsection post-processing
   set verbosity                        = verbose
