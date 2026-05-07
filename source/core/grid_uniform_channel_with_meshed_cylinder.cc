@@ -298,14 +298,19 @@ GridUniformChannelWithMeshedCylinder<dim, spacedim>::generate_2d_channel_mesh(
   //  not on the inner cylinder boundary
   //  - id 1 (polar/cylindrical) on inner-cylinder boundary faces
   triangulation.reset_all_manifolds();
-  triangulation.set_all_manifold_ids(tfi_manifold_id);
+  const types::manifold_id fluid_manifold_id =
+    use_transfinite_region ? tfi_manifold_id : numbers::flat_manifold_id;
+  triangulation.set_all_manifold_ids(fluid_manifold_id);
 
   for (const auto &cell : triangulation.active_cell_iterators())
     {
+      // If cell center is within the inner_radius, it's in the cylinder.
+      bool cell_in_cylinder = cell->center().distance(center) < inner_radius;
+
       // The inner cylinder is marked with the polar manifold ID for the
       // material and all faces that have all vertices on the inner circle are
       // marked with the polar manifold ID for the manifold.
-      if (cell->center().distance(center) < inner_radius)
+      if (cell_in_cylinder)
         {
           cell->set_material_id(solid_material_id);
           for (const auto &face : cell->face_iterators())
@@ -325,19 +330,10 @@ GridUniformChannelWithMeshedCylinder<dim, spacedim>::generate_2d_channel_mesh(
                 face->set_all_manifold_ids(polar_manifold_id);
             }
         }
-      // If outside of the transition region, we can mark cells as flat manifold
-      // and fluid material.
-      else if (std::abs(cell->center()[0] - center[0]) >
-                 outer_radius + 1e-10 * outer_radius ||
-               std::abs(cell->center()[1] - center[1]) >
-                 outer_radius + 1e-10 * outer_radius)
-        {
-          cell->set_all_manifold_ids(numbers::flat_manifold_id);
-          cell->set_material_id(fluid_material_id);
-        }
-      // Every other cells stay with TFI manifold and gets the fluid material
-      // ID.
-      else
+
+      // Every other cells stay with the flat manifold and gets the fluid
+      // material ID.
+      if (!cell_in_cylinder)
         {
           cell->set_material_id(fluid_material_id);
         }
@@ -395,7 +391,6 @@ GridUniformChannelWithMeshedCylinder<2, 2>::make_grid(
   PolarManifold<2, 2> polar_manifold(center);
   triangulation.set_manifold(1, polar_manifold);
 
-  triangulation.set_manifold(0, FlatManifold<2, 2>());
   if (use_transfinite_region)
     {
       TransfiniteInterpolationManifold<2> tfi_manifold;
@@ -438,7 +433,6 @@ GridUniformChannelWithMeshedCylinder<3, 3>::make_grid(
   const CylindricalManifold<3> cylindrical_manifold(direction, center);
   triangulation.set_manifold(1, cylindrical_manifold);
 
-  triangulation.set_manifold(0, FlatManifold<3, 3>());
   if (use_transfinite_region)
     {
       TransfiniteInterpolationManifold<3> tfi_manifold;
