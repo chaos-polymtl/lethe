@@ -706,7 +706,7 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
   if (simulation_parameters.post_processing.calculate_phase_statistics)
     {
       calculate_phase_statistics();
-      if (simulation_control->get_step_number() %
+      if (simulation_control->get_iteration_number() %
             this->simulation_parameters.post_processing.output_frequency ==
           0)
         this->write_phase_statistics();
@@ -716,7 +716,7 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
     {
       calculate_phase_energy();
       // Output phase energies to a text file from processor 0
-      if (simulation_control->get_step_number() %
+      if (simulation_control->get_iteration_number() %
             this->simulation_parameters.post_processing.output_frequency ==
           0)
         {
@@ -851,7 +851,7 @@ CahnHilliard<dim>::postprocess(bool first_iteration)
                                              position_and_velocity.second[2]);
 
 
-          if (this->simulation_control->get_step_number() %
+          if (this->simulation_control->get_iteration_number() %
                 this->simulation_parameters.post_processing.output_frequency ==
               0)
             {

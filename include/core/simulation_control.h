@@ -730,17 +730,6 @@ public:
   }
 
   /**
-   * @brief Get step number (alias for get_iteration_number)
-   *
-   * @return Current iteration/step number
-   */
-  unsigned int
-  get_step_number() const
-  {
-    return iteration_number;
-  }
-
-  /**
    * @brief Get number of mesh subdivisions for output
    *
    * @return Number of mesh subdivisions to be used when outputting the results

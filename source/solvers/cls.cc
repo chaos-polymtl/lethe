@@ -786,11 +786,11 @@ ConservativeLevelSet<dim>::gather_output_hook()
   if (simulation_parameters.multiphysics.cls_parameters.reinitialization_method
         .geometric_interface_reinitialization.enable)
     {
-      if ((simulation_control->get_step_number() %
+      if ((simulation_control->get_iteration_number() %
              simulation_parameters.multiphysics.cls_parameters
                .reinitialization_method.frequency !=
            0) ||
-          (simulation_control->get_step_number() == 0))
+          (simulation_control->get_iteration_number() == 0))
         {
           TimerOutput::Scope t(this->computing_timer, "Signed distance output");
 
@@ -809,7 +809,7 @@ ConservativeLevelSet<dim>::gather_output_hook()
           this->simulation_parameters.simulation_control.output_name,
         this->simulation_parameters.simulation_control.output_folder,
         simulation_control->get_current_time(),
-        simulation_control->get_step_number());
+        simulation_control->get_iteration_number());
     }
   return solution_output_structs;
 }
@@ -1607,7 +1607,7 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
           this->table_monitoring_cls.add_value("sharpening_threshold",
                                                this->sharpening_threshold);
 
-          if (this->simulation_control->get_step_number() %
+          if (this->simulation_control->get_iteration_number() %
                 this->simulation_parameters.post_processing.output_frequency ==
               0)
             {
@@ -1790,7 +1790,7 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
             }
 
 
-          if (this->simulation_control->get_step_number() %
+          if (this->simulation_control->get_iteration_number() %
                 this->simulation_parameters.post_processing.output_frequency ==
               0)
             {
@@ -1849,7 +1849,7 @@ ConservativeLevelSet<dim>::modify_solution()
     if (cls_parameters.reinitialization_method.sharpening.enable)
       {
         // Interface sharpening is done at a constant frequency
-        if (this->simulation_control->get_step_number() %
+        if (this->simulation_control->get_iteration_number() %
               this->simulation_parameters.multiphysics.cls_parameters
                 .reinitialization_method.frequency ==
             0)
@@ -1862,7 +1862,7 @@ ConservativeLevelSet<dim>::modify_solution()
   // Apply PDE-based interface reinitialization
   if (simulation_parameters.multiphysics.cls_parameters.reinitialization_method
         .pde_based_interface_reinitialization.enable &&
-      (simulation_control->get_step_number() %
+      (simulation_control->get_iteration_number() %
          simulation_parameters.multiphysics.cls_parameters
            .reinitialization_method.frequency ==
        0))
@@ -1871,7 +1871,7 @@ ConservativeLevelSet<dim>::modify_solution()
   // Apply geometric interface reinitialization
   if (simulation_parameters.multiphysics.cls_parameters.reinitialization_method
         .geometric_interface_reinitialization.enable &&
-      (simulation_control->get_step_number() %
+      (simulation_control->get_iteration_number() %
          simulation_parameters.multiphysics.cls_parameters
            .reinitialization_method.frequency ==
        0))
@@ -1901,7 +1901,8 @@ ConservativeLevelSet<dim>::handle_interface_sharpening()
         .reinitialization_method.verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "Sharpening interface at step "
-                  << this->simulation_control->get_step_number() << std::endl;
+                  << this->simulation_control->get_iteration_number()
+                  << std::endl;
     }
   if (this->simulation_parameters.multiphysics.cls_parameters
         .reinitialization_method.sharpening.type ==

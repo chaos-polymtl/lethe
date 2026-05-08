@@ -1137,7 +1137,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
                                              true);
         }
 
-      if (simulation_control->get_step_number() %
+      if (simulation_control->get_iteration_number() %
             this->simulation_parameters.post_processing.output_frequency ==
           0)
         this->write_temperature_statistics(domain_name);
@@ -1174,7 +1174,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
       if (this->simulation_parameters.nitsche->number_solids > 0)
         postprocess_heat_flux_on_nitsche_ib();
 
-      if (simulation_control->get_step_number() %
+      if (simulation_control->get_iteration_number() %
             this->simulation_parameters.post_processing.output_frequency ==
           0)
         this->write_heat_flux(domain_name);
@@ -1188,7 +1188,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
         MeltVolumeRequiresPhaseChange());
       postprocess_algebraic_melt_volume();
 
-      if (simulation_control->get_step_number() %
+      if (simulation_control->get_iteration_number() %
             this->simulation_parameters.post_processing.output_frequency ==
           0)
         this->write_algebraic_melt_volume();
@@ -1198,7 +1198,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
   if (simulation_parameters.post_processing.calculate_geometric_melt_volume)
     {
       postprocess_geometric_melt_volume_and_surface();
-      if (simulation_control->get_step_number() %
+      if (simulation_control->get_iteration_number() %
             this->simulation_parameters.post_processing.output_frequency ==
           0)
         this->write_geometric_melt_volume();

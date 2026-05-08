@@ -975,9 +975,9 @@ CFDDEMMatrixFree<dim>::insert_particles()
   const auto parallel_triangulation =
     dynamic_cast<parallel::distributed::Triangulation<dim> *>(
       &*this->triangulation);
-  if ((this->simulation_control->get_step_number() %
+  if ((this->simulation_control->get_iteration_number() %
        dem_parameters.insertion_info.insertion_frequency) == 1 ||
-      this->simulation_control->get_step_number() == 1)
+      this->simulation_control->get_iteration_number() == 1)
     {
       insertion_object->insert(this->particle_handler,
                                *parallel_triangulation,
@@ -1034,7 +1034,7 @@ CFDDEMMatrixFree<dim>::write_dem_output_results()
   const std::string folder = dem_parameters.simulation_control.output_folder;
   const std::string particles_solution_name =
     dem_parameters.simulation_control.output_name + "_particles";
-  const unsigned int iter = this->simulation_control->get_step_number();
+  const unsigned int iter = this->simulation_control->get_iteration_number();
   const double       time = this->simulation_control->get_current_time();
   const unsigned int group_files =
     dem_parameters.simulation_control.group_files;
@@ -1070,7 +1070,7 @@ CFDDEMMatrixFree<dim>::report_particle_statistics()
     std::min(number_of_list_built_since_last_log, contact_list.min);
   contact_list.total   = double(contact_search_total_number);
   contact_list.average = contact_list.total /
-                         (this->simulation_control->get_step_number()) *
+                         (this->simulation_control->get_iteration_number()) *
                          this->simulation_control->get_log_frequency();
 
   // Calculate statistics on the particles
@@ -1145,7 +1145,7 @@ CFDDEMMatrixFree<dim>::report_particle_statistics()
         this->particle_handler,
         dem_parameters,
         this->simulation_control->get_current_time(),
-        this->simulation_control->get_step_number(),
+        this->simulation_control->get_iteration_number(),
         this->mpi_communicator,
         sparse_contacts_object);
     }
@@ -1207,7 +1207,7 @@ CFDDEMMatrixFree<dim>::postprocess_cfd_dem()
         }
 
       // Output pressure drop to a text file from processor 0
-      if ((this->simulation_control->get_step_number() %
+      if ((this->simulation_control->get_iteration_number() %
              this->simulation_parameters.post_processing.output_frequency ==
            0) &&
           this->this_mpi_process == 0)
@@ -1251,7 +1251,7 @@ CFDDEMMatrixFree<dim>::dynamic_flow_control()
       this->flow_control.calculate_beta(
         average_velocity,
         this->simulation_control->get_time_step(),
-        this->simulation_control->get_step_number());
+        this->simulation_control->get_iteration_number());
 
       Tensor<1, 3> beta_particle;
       if (this->simulation_parameters.flow_control.enable_beta_particle)
@@ -1277,7 +1277,7 @@ CFDDEMMatrixFree<dim>::dynamic_flow_control()
       // Showing results
       if (this->simulation_parameters.flow_control.verbosity ==
             Parameters::Verbosity::verbose &&
-          this->simulation_control->get_step_number() > 0 &&
+          this->simulation_control->get_iteration_number() > 0 &&
           this->this_mpi_process == 0)
         {
           announce_string(this->pcout, "Flow control summary");
@@ -1373,7 +1373,7 @@ CFDDEMMatrixFree<dim>::dem_iterator()
   // In the first step, we have to obtain location of particles at half-step
   // time
   // TODO do all DEM time step at first CFD time step are half step?
-  if (this->simulation_control->get_step_number() == 0)
+  if (this->simulation_control->get_iteration_number() == 0)
     {
       integrator_object->integrate_half_step_location(this->particle_handler,
                                                       g,

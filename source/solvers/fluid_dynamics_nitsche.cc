@@ -795,8 +795,8 @@ FluidDynamicsNitsche<dim, spacedim>::output_solid_particles(
   const std::string solution_name =
     this->simulation_control->get_output_name() + "_solid_particles_" +
     Utilities::int_to_string(i_solid, 2);
-  const unsigned int iter        = this->simulation_control->get_step_number();
-  const double       time        = this->simulation_control->get_current_time();
+  const unsigned int iter = this->simulation_control->get_iteration_number();
+  const double       time = this->simulation_control->get_current_time();
   const unsigned int group_files = this->simulation_control->get_group_files();
 
   write_vtu_and_pvd<0, spacedim>(pvdhandler_solid_particles[i_solid],
@@ -843,8 +843,8 @@ FluidDynamicsNitsche<dim, spacedim>::output_solid_triangulation(
   const std::string solution_name =
     this->simulation_control->get_output_name() + "_solid_triangulation_" +
     Utilities::int_to_string(i_solid, 2);
-  const unsigned int iter        = this->simulation_control->get_step_number();
-  const double       time        = this->simulation_control->get_current_time();
+  const unsigned int iter = this->simulation_control->get_iteration_number();
+  const double       time = this->simulation_control->get_current_time();
   const unsigned int group_files = this->simulation_control->get_group_files();
 
   write_vtu_and_pvd<dim>(pvdhandler_solid_triangulation[i_solid],

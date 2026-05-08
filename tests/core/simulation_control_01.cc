@@ -46,8 +46,8 @@ test()
           << std::endl;
   deallog << "time                : " << simulationControl.get_current_time()
           << std::endl;
-  deallog << "iter                : " << simulationControl.get_step_number()
-          << std::endl;
+  deallog << "iter                : "
+          << simulationControl.get_iteration_number() << std::endl;
   deallog << "OK" << std::endl;
 }
 

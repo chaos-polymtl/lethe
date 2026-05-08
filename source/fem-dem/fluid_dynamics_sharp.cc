@@ -3333,7 +3333,8 @@ FluidDynamicsSharp<dim>::handle_dem_particle_output_and_postprocessing()
         this->simulation_parameters.simulation_control.output_folder;
       const std::string particles_solution_name =
         this->simulation_parameters.particlesParameters->ib_particles_pvd_file;
-      const unsigned int iter = this->simulation_control->get_step_number();
+      const unsigned int iter =
+        this->simulation_control->get_iteration_number();
       const double       time = this->simulation_control->get_current_time();
       const unsigned int group_files =
         this->simulation_parameters.simulation_control.group_files;
@@ -5186,8 +5187,8 @@ FluidDynamicsSharp<dim>::solve()
                                                    *this->dof_handler,
                                                    *this->face_quadrature,
                                                    *this->mapping);
-          if (this->simulation_control->get_step_number() == 0 ||
-              this->simulation_control->get_step_number() %
+          if (this->simulation_control->get_iteration_number() == 0 ||
+              this->simulation_control->get_iteration_number() %
                   this->simulation_parameters.particlesParameters
                     ->contact_search_frequency ==
                 0)

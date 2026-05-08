@@ -40,13 +40,13 @@ test()
     deallog << "*************************************************" << std::endl;
     deallog << "Constant time stepping - constant output" << std::endl;
     deallog << "*************************************************" << std::endl;
-    deallog << "Iteration : " << simulation_control.get_step_number()
+    deallog << "Iteration : " << simulation_control.get_iteration_number()
             << "    Time : " << simulation_control.get_current_time()
             << std::endl;
 
     while (simulation_control.integrate())
       {
-        deallog << "Iteration : " << simulation_control.get_step_number()
+        deallog << "Iteration : " << simulation_control.get_iteration_number()
                 << "    Time : " << simulation_control.get_current_time()
                 << std::endl;
 
@@ -73,13 +73,13 @@ test()
     deallog << "*************************************************" << std::endl;
     deallog << "Constant time stepping - specific time output" << std::endl;
     deallog << "*************************************************" << std::endl;
-    deallog << "Iteration : " << simulation_control.get_step_number()
+    deallog << "Iteration : " << simulation_control.get_iteration_number()
             << "    Time : " << simulation_control.get_current_time()
             << std::endl;
 
     while (simulation_control.integrate())
       {
-        deallog << "Iteration : " << simulation_control.get_step_number()
+        deallog << "Iteration : " << simulation_control.get_iteration_number()
                 << "    Time : " << simulation_control.get_current_time()
                 << std::endl;
 
@@ -105,13 +105,13 @@ test()
     deallog << "*************************************************" << std::endl;
     deallog << "Constant time stepping - specific time interval" << std::endl;
     deallog << "*************************************************" << std::endl;
-    deallog << "Iteration : " << simulation_control.get_step_number()
+    deallog << "Iteration : " << simulation_control.get_iteration_number()
             << "    Time : " << simulation_control.get_current_time()
             << std::endl;
 
     while (simulation_control.integrate())
       {
-        deallog << "Iteration : " << simulation_control.get_step_number()
+        deallog << "Iteration : " << simulation_control.get_iteration_number()
                 << "    Time : " << simulation_control.get_current_time()
                 << std::endl;
 
@@ -138,13 +138,13 @@ test()
     deallog << "*************************************************" << std::endl;
     deallog << "Constant time stepping - output time frequency" << std::endl;
     deallog << "*************************************************" << std::endl;
-    deallog << "Iteration : " << simulation_control.get_step_number()
+    deallog << "Iteration : " << simulation_control.get_iteration_number()
             << "    Time : " << simulation_control.get_current_time()
             << std::endl;
 
     while (simulation_control.integrate())
       {
-        deallog << "Iteration : " << simulation_control.get_step_number()
+        deallog << "Iteration : " << simulation_control.get_iteration_number()
                 << "    Time : " << simulation_control.get_current_time()
                 << std::endl;
 
@@ -177,14 +177,14 @@ test()
     deallog << "*************************************************" << std::endl;
     deallog << "Adaptative time stepping - constant output" << std::endl;
     deallog << "*************************************************" << std::endl;
-    deallog << "Iteration : " << simulation_control.get_step_number()
+    deallog << "Iteration : " << simulation_control.get_iteration_number()
             << "    Time : " << simulation_control.get_current_time()
             << "    Time step : " << simulation_control.get_time_step()
             << std::endl;
 
     while (simulation_control.integrate())
       {
-        deallog << "Iteration : " << simulation_control.get_step_number()
+        deallog << "Iteration : " << simulation_control.get_iteration_number()
                 << "    Time : " << simulation_control.get_current_time()
                 << "    Time step : " << simulation_control.get_time_step()
                 << std::endl;
@@ -219,14 +219,14 @@ test()
     deallog << "*************************************************" << std::endl;
     deallog << "Adaptative time stepping - specific time output" << std::endl;
     deallog << "*************************************************" << std::endl;
-    deallog << "Iteration : " << simulation_control.get_step_number()
+    deallog << "Iteration : " << simulation_control.get_iteration_number()
             << "    Time : " << simulation_control.get_current_time()
             << "    Time step : " << simulation_control.get_time_step()
             << std::endl;
 
     while (simulation_control.integrate())
       {
-        deallog << "Iteration : " << simulation_control.get_step_number()
+        deallog << "Iteration : " << simulation_control.get_iteration_number()
                 << "    Time : " << simulation_control.get_current_time()
                 << "    Time step : " << simulation_control.get_time_step()
                 << std::endl;
@@ -262,14 +262,14 @@ test()
     deallog << "*************************************************" << std::endl;
     deallog << "Adaptative time stepping - interval time output" << std::endl;
     deallog << "*************************************************" << std::endl;
-    deallog << "Iteration : " << simulation_control.get_step_number()
+    deallog << "Iteration : " << simulation_control.get_iteration_number()
             << "    Time : " << simulation_control.get_current_time()
             << "    Time step : " << simulation_control.get_time_step()
             << std::endl;
 
     while (simulation_control.integrate())
       {
-        deallog << "Iteration : " << simulation_control.get_step_number()
+        deallog << "Iteration : " << simulation_control.get_iteration_number()
                 << "    Time : " << simulation_control.get_current_time()
                 << "    Time step : " << simulation_control.get_time_step()
                 << std::endl;
@@ -306,14 +306,14 @@ test()
     deallog << "*************************************************" << std::endl;
     deallog << "Adaptative time stepping - output time frequency" << std::endl;
     deallog << "*************************************************" << std::endl;
-    deallog << "Iteration : " << simulation_control.get_step_number()
+    deallog << "Iteration : " << simulation_control.get_iteration_number()
             << "    Time : " << simulation_control.get_current_time()
             << "    Time step : " << simulation_control.get_time_step()
             << std::endl;
 
     while (simulation_control.integrate())
       {
-        deallog << "Iteration : " << simulation_control.get_step_number()
+        deallog << "Iteration : " << simulation_control.get_iteration_number()
                 << "    Time : " << simulation_control.get_current_time()
                 << "    Time step : " << simulation_control.get_time_step()
                 << std::endl;
