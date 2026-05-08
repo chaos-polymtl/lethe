@@ -37,7 +37,7 @@ subsection timer
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -71,9 +71,9 @@ subsection analytical solution
   end
 end
 
-#--------------------------------------------------
+#---------------------------------------------------
 # Restart
-#--------------------------------------------------
+#---------------------------------------------------
 
 subsection restart
   set checkpoint = false
@@ -133,7 +133,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# Source term
+# Source Term
 #---------------------------------------------------
 
 subsection source term

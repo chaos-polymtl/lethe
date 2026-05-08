@@ -85,7 +85,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# Source term
+# Source Term
 #---------------------------------------------------
 
 subsection source term
@@ -115,7 +115,7 @@ subsection non-linear solver
 end
 
 #---------------------------------------------------
-# Analytical solution
+# Analytical Solution
 #---------------------------------------------------
 
 subsection analytical solution

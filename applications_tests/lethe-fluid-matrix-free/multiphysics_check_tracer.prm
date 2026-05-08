@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 # Checks that the tracer can be called within a multiphysics simulation using matrix-free solver.
 
 # Listing of Parameters
@@ -58,6 +59,10 @@ subsection boundary conditions
     set type = noslip
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions Tracer
+#---------------------------------------------------
 
 subsection boundary conditions tracer
   set number = 1

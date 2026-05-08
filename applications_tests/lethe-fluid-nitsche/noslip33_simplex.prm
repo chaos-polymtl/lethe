@@ -129,7 +129,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# Initial conditions
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions

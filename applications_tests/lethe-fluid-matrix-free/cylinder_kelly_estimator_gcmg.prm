@@ -36,7 +36,7 @@ subsection timer
 end
 
 #---------------------------------------------------
-# Force
+# Forces
 #---------------------------------------------------
 
 subsection forces
@@ -49,7 +49,7 @@ subsection forces
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -114,7 +114,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# Source term
+# Source Term
 #---------------------------------------------------
 
 subsection source term

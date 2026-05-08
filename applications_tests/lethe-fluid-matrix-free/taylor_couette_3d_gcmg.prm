@@ -19,7 +19,7 @@ subsection simulation control
   set output frequency               = 0
 end
 
-#------------------------ ---------------------------
+#---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
 
@@ -30,7 +30,7 @@ subsection physical properties
 end
 
 #---------------------------------------------------
-# Initial conditions
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -55,7 +55,7 @@ subsection mesh
 end
 
 #---------------------------------------------------
-# Source term
+# Source Term
 #---------------------------------------------------
 
 subsection source term

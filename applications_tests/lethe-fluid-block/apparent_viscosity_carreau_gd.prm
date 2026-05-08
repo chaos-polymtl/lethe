@@ -47,9 +47,9 @@ subsection physical properties
   end
 end
 
-#--------------------------------------------------
-# Initial conditions
-#--------------------------------------------------
+#---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
 
 subsection initial conditions
   set type = nodal
@@ -100,7 +100,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# Source term
+# Source Term
 #---------------------------------------------------
 
 subsection source term
@@ -120,6 +120,10 @@ subsection analytical solution
     set Function expression = y*y; 0; y*y
   end
 end
+
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
 
 subsection post-processing
   set calculate apparent viscosity = true

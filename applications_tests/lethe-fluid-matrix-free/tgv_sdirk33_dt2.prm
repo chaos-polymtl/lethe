@@ -46,7 +46,7 @@ subsection timer
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -131,7 +131,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# Source term
+# Source Term
 #---------------------------------------------------
 
 subsection source term
@@ -182,6 +182,10 @@ subsection linear solver
     set mg coarse grid solver = direct
   end
 end
+
+#---------------------------------------------------
+# Stabilization
+#---------------------------------------------------
 
 subsection stabilization
   set use default stabilization = false

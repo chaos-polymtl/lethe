@@ -37,7 +37,7 @@ subsection timer
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -121,7 +121,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# Source term
+# Source Term
 #---------------------------------------------------
 
 subsection source term
@@ -160,9 +160,9 @@ subsection linear solver
   end
 end
 
-#--------------------------------------------------
+#---------------------------------------------------
 # Stabilization
-#--------------------------------------------------
+#---------------------------------------------------
 
 subsection stabilization
   set use default stabilization = false
