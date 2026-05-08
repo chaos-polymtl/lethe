@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/05/08
+
+### Changed
+
+- MINOR Addressing issue #1878, this PR renames the GridMotion class in `grid_motion.h` so that it differs from the one in `parameters_lagrangian.h` and hence avoids ambiguity at compilation time.
+
 ## [Master] - 2026/05/05
 
 ### Fixed
