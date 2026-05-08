@@ -19,8 +19,6 @@ endif()
 find_package(deal.II 9.7.0 QUIET REQUIRED
   HINTS "${deal.II_DIR}" "${DEAL_II_DIR}" "$ENV{DEAL_II_DIR}")
 deal_ii_initialize_cached_variables()
-message(STATUS
-  "deal.II version: ${DEAL_II_VERSION} (major=${DEAL_II_VERSION_MAJOR}, minor=${DEAL_II_VERSION_MINOR})")
 
 deal_ii_query_git_information(LETHE)
 
