@@ -170,7 +170,7 @@ subsection lagrangian physical properties
 end
 
 #---------------------------------------------------
-# DEM Model Parameters
+# Model Parameters
 #---------------------------------------------------
 
 subsection model parameters

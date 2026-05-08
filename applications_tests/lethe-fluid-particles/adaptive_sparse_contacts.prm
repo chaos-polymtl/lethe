@@ -51,7 +51,7 @@ subsection source term
 end
 
 #---------------------------------------------------
-# DEM Model Parameters
+# Model Parameters
 #---------------------------------------------------
 
 subsection model parameters

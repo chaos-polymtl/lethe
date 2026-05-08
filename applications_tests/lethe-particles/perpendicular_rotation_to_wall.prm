@@ -28,7 +28,7 @@ subsection post-processing
 end
 
 #---------------------------------------------------
-# DEM Model Parameters
+# Model Parameters
 #---------------------------------------------------
 
 subsection model parameters
