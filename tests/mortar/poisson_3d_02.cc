@@ -110,17 +110,13 @@ main(int argc, char **argv)
                                      constraints,
                                      quadrature);
 
-  // Minimum height is obtained from the minimum cell center height at the
-  // mortar interface along the rotation axis. Since the cell height is constant
-  // in this case, we obtain it from half of the domain height divided by the
-  // number of refinements in the rotation axis direction.
   const auto mortar_manager = std::make_shared<MyMortarManagerCircle<dim>>(
     std::vector<unsigned int>{8 * Utilities::pow(2, n_global_refinements),
                               1 * Utilities::pow(2, n_global_refinements)},
     std::vector<double>{radius, radius},
     construct_quadrature(quadrature),
     rotate_pi,
-    radius / Utilities::pow(2, n_global_refinements) * 0.5);
+    std::vector<double>{0.0, 0.5, 1.0});
 
   op.add_coupling(mortar_manager, 0, 5);
 

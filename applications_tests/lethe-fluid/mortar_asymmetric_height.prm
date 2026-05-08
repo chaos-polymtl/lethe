@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
-# Checks the 3D matrix-based mortar implementation for a MMS case.
+
+# Checks the 3D matrix-based mortar implementation with a varying cell height along the rotation axis
 
 # Listing of Parameters
 #----------------------
@@ -33,7 +34,7 @@ end
 
 subsection mesh
   set type               = gmsh
-  set file name          = ../../stator_mesh_shifted_3d.msh
+  set file name          = ../../stator_mesh_asymmetric_3d.msh
   set initial refinement = 0
 end
 
@@ -65,7 +66,7 @@ subsection mortar
   set enable = true
   subsection mesh
     set type      = gmsh
-    set file name = ../../rotor_mesh_shifted_3d.msh
+    set file name = ../../rotor_mesh_asymmetric_3d.msh
   end
   set rotor boundary id  = 7
   set stator boundary id = 4
@@ -108,8 +109,7 @@ end
 
 subsection source term
   subsection fluid dynamics
-    set Function constants  = h=0.6
-    set Function expression = 2*pi*pi*(-3*cos(2*pi*x)+2.)*sin(pi*y)*sin(pi*(z-h))*cos(pi*y)*cos(pi*(z-h))+pi*(2*(cos(pi* y)^2)-(cos(pi*(z-h))^2))*(sin(pi*x)^3)*(sin(pi * y)^2)*(sin(pi * (z-h))^2) * cos(pi*x)    ;     2*pi*pi*(-3*cos(2*pi*y)+2) * sin(pi*x) * sin(pi*(z-h)) * cos(pi*x) * cos(pi*(z-h))+pi*(2*(cos(pi* x)^2) -(cos(pi* (z-h))^2)) * (sin(pi * x)^2) * (sin(pi * y)^3) * (sin(pi*(z-h))^2) * cos(pi * y)   ; 4*pi*pi*(3*cos(2*pi*(z-h))-2) * sin(pi*x) * sin(pi*y) * cos(pi*x) * cos(pi*y)+2*pi*((cos(pi * x)^2) + (cos(pi * y)^2)) * (sin(pi * x)^2) * (sin(pi*y)^2) * (sin(pi*(z-h))^3) * cos(pi*(z-h)); 0
+    set Function expression = 2*pi*pi*(-3*cos(2*pi*x)+2.)*sin(pi*y)*sin(pi*z)*cos(pi*y)*cos(pi*z)+pi*(2*(cos(pi* y)^2)-(cos(pi*z)^2))*(sin(pi*x)^3)*(sin(pi * y)^2)*(sin(pi * z)^2) * cos(pi*x)    ;     2*pi*pi*(-3*cos(2*pi*y)+2) * sin(pi*x) * sin(pi*z) * cos(pi*x) * cos(pi*z)+pi*(2*(cos(pi* x)^2) -(cos(pi* z)^2)) * (sin(pi * x)^2) * (sin(pi * y)^3) * (sin(pi*z)^2) * cos(pi * y)   ; 4*pi*pi*(3*cos(2*pi*z)-2) * sin(pi*x) * sin(pi*y) * cos(pi*x) * cos(pi*y)+2*pi*((cos(pi * x)^2) + (cos(pi * y)^2)) * (sin(pi * x)^2) * (sin(pi*y)^2) * (sin(pi*z)^3) * cos(pi*z); 0
   end
 end
 
@@ -120,8 +120,7 @@ end
 subsection analytical solution
   set enable = true
   subsection uvwp
-    set Function constants  = h=0.6
-    set Function expression = sin(pi * x) * sin(pi * x) * cos(pi * y) * sin(pi * y) * cos(pi * (z-h)) * sin(pi * (z-h));  cos(pi * x) * sin(pi * x) * sin(pi * y) * sin(pi * y) * cos(pi * (z-h)) * sin(pi * (z-h));-2 * cos(pi * x) * sin(pi * x) * cos(pi * y) * sin(pi * y) * sin(pi * (z-h)) * sin(pi * (z-h)) ; 0
+    set Function expression = sin(pi * x) * sin(pi * x) * cos(pi * y) * sin(pi * y) * cos(pi * z) * sin(pi * z);  cos(pi * x) * sin(pi * x) * sin(pi * y) * sin(pi * y) * cos(pi * z) * sin(pi * z);-2 * cos(pi * x) * sin(pi * x) * cos(pi * y) * sin(pi * y) * sin(pi * z) * sin(pi * z) ; 0
   end
 end
 
