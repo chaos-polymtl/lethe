@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- MINOR Addressing issue #1878, this PR renames the GridMotion class in `grid_motion.h` so that it differs from the one in `parameters_lagrangian.h` and hence avoids ambiguity at compilation time.
+- MINOR Addressing issue #1878, this PR renames the `GridMotion` class in `grid_motion.h` so that it differs from the one in `parameters_lagrangian.h` and hence avoids ambiguity at compilation time. [#1985](https://github.com/chaos-polymtl/lethe/pull/1985)
 
 ## [Master] - 2026/05/05
 
