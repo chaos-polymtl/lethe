@@ -82,8 +82,8 @@ InterfaceTools::integrate_volume_and_surface(
   const QGauss<1> quadrature_1D(fe.degree + 1);
 
   NonMatching::RegionUpdateFlags region_update_flags;
-  region_update_flags.inside  = update_JxW_values;
-  region_update_flags.surface = update_JxW_values;
+  region_update_flags.inside  = update_JxW_values | update_quadrature_points;
+  region_update_flags.surface = update_JxW_values | update_quadrature_points;
 
   NonMatching::FEValues<dim> non_matching_fe_values(
     fe_collection,
@@ -92,6 +92,14 @@ InterfaceTools::integrate_volume_and_surface(
     mesh_classifier,
     dof_handler,
     level_set_vector_relevant_copy);
+
+  TableHandler              melt_volume_geo_table_debugging;
+  std::vector<unsigned int> local_cells;
+  std::vector<unsigned int> local_qi;
+  std::vector<double>       local_q_point_x;
+  std::vector<double>       local_q_point_y;
+  std::vector<double>       local_q_point_z;
+  std::vector<double>       local_q_weights;
 
   double volume  = 0.0;
   double surface = 0.0;
@@ -105,11 +113,38 @@ InterfaceTools::integrate_volume_and_surface(
             non_matching_fe_values.get_inside_fe_values();
 
           if (inside_fe_values)
-            for (const unsigned int q :
-                 inside_fe_values->quadrature_point_indices())
+            {
+              // DEBUGGING Print q_point coordinates
               {
-                volume += inside_fe_values->JxW(q);
+                if constexpr (dim == 3)
+                  {
+                    auto q_points = &inside_fe_values->get_quadrature_points();
+                    uint qi       = 0;
+                    for (const auto q_p : *q_points)
+                      {
+                        local_cells.push_back(cell->active_cell_index());
+                        local_qi.push_back(qi);
+                        local_q_point_x.push_back(q_p[0]);
+                        local_q_point_y.push_back(q_p[1]);
+                        local_q_point_z.push_back(q_p[2]);
+                        local_q_weights.push_back(inside_fe_values->JxW(qi));
+
+                        // if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+                        // == 0)
+                        //   std::cout
+                        //     << "cell: " << cell->active_cell_index() << "; "
+                        //     << "q_point[" << qi << "]: (" << q_p[0] << ", "
+                        //     << q_p[1] << ", " << q_p[2] << ")" << std::endl;
+                        //   qi++;
+                      }
+                  }
               }
+              for (const unsigned int q :
+                   inside_fe_values->quadrature_point_indices())
+                {
+                  volume += inside_fe_values->JxW(q);
+                }
+            }
 
           const std::optional<NonMatching::FEImmersedSurfaceValues<dim>>
             &surface_fe_values = non_matching_fe_values.get_surface_fe_values();
@@ -124,6 +159,71 @@ InterfaceTools::integrate_volume_and_surface(
     }
   volume  = Utilities::MPI::sum(volume, mpi_communicator);
   surface = Utilities::MPI::sum(surface, mpi_communicator);
+
+  auto gathered_cells =
+    Utilities::MPI::gather(mpi_communicator, local_cells, 0);
+
+  auto gathered_qi = Utilities::MPI::gather(mpi_communicator, local_qi, 0);
+
+  auto gathered_q_point_x =
+    Utilities::MPI::gather(mpi_communicator, local_q_point_x, 0);
+
+
+  auto gathered_q_point_y =
+    Utilities::MPI::gather(mpi_communicator, local_q_point_y, 0);
+
+
+  auto gathered_q_point_z =
+    Utilities::MPI::gather(mpi_communicator, local_q_point_z, 0);
+
+  auto gathered_q_weights =
+    Utilities::MPI::gather(mpi_communicator, local_q_weights, 0);
+
+  if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+    {
+      for (unsigned int rank = 0; rank < gathered_cells.size(); ++rank)
+        {
+          AssertDimension(gathered_cells[rank].size(),
+                          gathered_qi[rank].size());
+          AssertDimension(gathered_cells[rank].size(),
+                          gathered_q_point_x[rank].size());
+          AssertDimension(gathered_cells[rank].size(),
+                          gathered_q_point_y[rank].size());
+          AssertDimension(gathered_cells[rank].size(),
+                          gathered_q_point_z[rank].size());
+          AssertDimension(gathered_cells[rank].size(),
+                          gathered_q_weights[rank].size());
+
+          for (unsigned int i = 0; i < gathered_cells[rank].size(); ++i)
+            {
+              melt_volume_geo_table_debugging.add_value(
+                "cell", gathered_cells[rank][i]);
+
+              melt_volume_geo_table_debugging.add_value("qi",
+                                                        gathered_qi[rank][i]);
+
+              melt_volume_geo_table_debugging.add_value(
+                "q_point_x", gathered_q_point_x[rank][i]);
+
+              melt_volume_geo_table_debugging.add_value(
+                "q_point_y", gathered_q_point_y[rank][i]);
+
+              melt_volume_geo_table_debugging.add_value(
+                "q_point_z", gathered_q_point_z[rank][i]);
+
+              melt_volume_geo_table_debugging.add_value(
+                "q_weight", gathered_q_weights[rank][i]);
+            }
+        }
+
+      melt_volume_geo_table_debugging.set_scientific("q_point_x", true);
+      melt_volume_geo_table_debugging.set_scientific("q_point_y", true);
+      melt_volume_geo_table_debugging.set_scientific("q_point_z", true);
+      melt_volume_geo_table_debugging.set_scientific("q_weight", true);
+
+      std::ofstream output("./output/geometric_melt_volume_DEBUG.dat");
+      melt_volume_geo_table_debugging.write_text(output);
+    }
 
   return {volume, surface};
 }
