@@ -218,7 +218,7 @@ Using Paraview, we can visualize the results of the simulation with the ``.pvd``
 
 .. raw:: html
 
-    <iframe width="560" height="315" src="https://www.youtube.com/watch?v=fGO1YEMRqDY" frameborder="0" allowfullscreen></iframe>
+    <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/fGO1YEMRqDY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 As we can see, the presence of the baffle creates re-circulation zones in the flow, which are visible in the animations. Continuity of the solution is maintained at the mortar interface, as expected. 
 
