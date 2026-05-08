@@ -7,10 +7,13 @@
 # can be used to extract and plot the size distribution from the output
 # .vtu files of this test and compare it to the expected normal distribution.
 
+# Listing of Parameters
+#----------------------
+
 set dimension = 3
 
 #---------------------------------------------------
-# Simulation and IO Control
+# Simulation Control
 #---------------------------------------------------
 
 subsection simulation control
@@ -29,7 +32,7 @@ subsection test
 end
 
 #---------------------------------------------------
-# Model parameters
+# DEM Model Parameters
 #---------------------------------------------------
 
 subsection model parameters
@@ -47,7 +50,7 @@ subsection model parameters
 end
 
 #---------------------------------------------------
-# Physical Properties
+# Lagrangian Physical Properties
 #---------------------------------------------------
 
 subsection lagrangian physical properties

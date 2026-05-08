@@ -18,7 +18,7 @@ subsection simulation control
 end
 
 #---------------------------------------------------
-# Model parameters
+# DEM Model Parameters
 #---------------------------------------------------
 
 subsection model parameters
@@ -38,7 +38,7 @@ subsection model parameters
 end
 
 #---------------------------------------------------
-# Physical Properties
+# Lagrangian Physical Properties
 #---------------------------------------------------
 
 subsection lagrangian physical properties

@@ -46,7 +46,7 @@ subsection test
 end
 
 #---------------------------------------------------
-# Model parameters
+# DEM Model Parameters
 #---------------------------------------------------
 
 subsection model parameters

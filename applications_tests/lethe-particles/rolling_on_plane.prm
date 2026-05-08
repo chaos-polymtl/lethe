@@ -7,7 +7,7 @@
 set dimension = 3
 
 #---------------------------------------------------
-# Simulation and IO Control
+# Simulation Control
 #---------------------------------------------------
 
 subsection simulation control
@@ -34,7 +34,7 @@ subsection test
 end
 
 #---------------------------------------------------
-# Model parameters
+# DEM Model Parameters
 #---------------------------------------------------
 
 subsection model parameters
@@ -45,7 +45,7 @@ subsection model parameters
 end
 
 #---------------------------------------------------
-# Physical Properties
+# Lagrangian Physical Properties
 #---------------------------------------------------
 
 subsection lagrangian physical properties
@@ -98,7 +98,7 @@ subsection mesh
 end
 
 #---------------------------------------------------
-# Boundary Condition
+# DEM Boundary Conditions
 #---------------------------------------------------
 
 subsection DEM boundary conditions

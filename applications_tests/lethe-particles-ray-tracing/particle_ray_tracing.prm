@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 # In this test, three particles are inserted using the list insertion.
 # These particles partially overlap each other in relation to the photon's displacement direction.
 # 10,000 photons are then inserted and ray tracing simulation is performed.
@@ -25,7 +28,7 @@ subsection test
 end
 
 #---------------------------------------------------
-# Model parameters
+# DEM Model Parameters
 #---------------------------------------------------
 
 subsection model parameters
@@ -36,7 +39,7 @@ subsection model parameters
 end
 
 #---------------------------------------------------
-# Physical Properties
+# Lagrangian Physical Properties
 #---------------------------------------------------
 
 subsection lagrangian physical properties
@@ -71,7 +74,7 @@ subsection mesh
 end
 
 #---------------------------------------------------
-# Ray tracing
+# Particle Ray Tracing
 #---------------------------------------------------
 
 subsection particle ray tracing

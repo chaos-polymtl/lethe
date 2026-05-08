@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 # Tests wether particles are being inserted at the first time step when the
 # frequency of insertion is 1
 
@@ -37,7 +38,7 @@ subsection restart
 end
 
 #---------------------------------------------------
-# Physical Properties
+# Lagrangian Physical Properties
 #---------------------------------------------------
 
 subsection lagrangian physical properties
