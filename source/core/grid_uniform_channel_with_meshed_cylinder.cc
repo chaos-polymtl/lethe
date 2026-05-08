@@ -298,9 +298,8 @@ GridUniformChannelWithMeshedCylinder<dim, spacedim>::generate_2d_channel_mesh(
   //  not on the inner cylinder boundary
   //  - id 1 (polar/cylindrical) on inner-cylinder boundary faces
   triangulation.reset_all_manifolds();
-  const types::manifold_id fluid_manifold_id =
-    use_transfinite_region ? tfi_manifold_id : numbers::flat_manifold_id;
-  triangulation.set_all_manifold_ids(fluid_manifold_id);
+  triangulation.set_all_manifold_ids(
+    use_transfinite_region ? tfi_manifold_id : numbers::flat_manifold_id);
 
   for (const auto &cell : triangulation.active_cell_iterators())
     {
@@ -363,6 +362,19 @@ GridUniformChannelWithMeshedCylinder<dim, spacedim>::generate_2d_channel_mesh(
             face->set_boundary_id(3);
         }
     }
+
+  // Attach manifold objects for proper refinement behavior
+  PolarManifold<2, 2> polar_manifold(center);
+  triangulation.set_manifold(1, polar_manifold);
+
+  // If transfinite interpolation is enabled for the transition region, attach a
+  // TFI, else deal.II will use a default flat manifold.
+  if (use_transfinite_region)
+    {
+      TransfiniteInterpolationManifold<2> tfi_manifold;
+      tfi_manifold.initialize(triangulation);
+      triangulation.set_manifold(0, tfi_manifold);
+    }
 }
 
 
@@ -383,20 +395,6 @@ GridUniformChannelWithMeshedCylinder<2, 2>::make_grid(
                            pad_left,
                            pad_right,
                            colorize);
-
-  // Attach manifold objects for proper refinement behavior
-  FlatManifold<2, 2> flat_manifold;
-  triangulation.set_manifold(numbers::flat_manifold_id, flat_manifold);
-
-  PolarManifold<2, 2> polar_manifold(center);
-  triangulation.set_manifold(1, polar_manifold);
-
-  if (use_transfinite_region)
-    {
-      TransfiniteInterpolationManifold<2> tfi_manifold;
-      tfi_manifold.initialize(triangulation);
-      triangulation.set_manifold(0, tfi_manifold);
-    }
 }
 
 
@@ -426,9 +424,6 @@ GridUniformChannelWithMeshedCylinder<3, 3>::make_grid(
 
   // Attach 3D manifold objects. The manifold IDs (0 for TFI, 1 for
   // cylindrical) were inherited from the 2D mesh during extrusion.
-  FlatManifold<3, 3> flat_manifold;
-  triangulation.set_manifold(numbers::flat_manifold_id, flat_manifold);
-
   const Tensor<1, 3>           direction{{0.0, 0.0, 1.0}};
   const CylindricalManifold<3> cylindrical_manifold(direction, center);
   triangulation.set_manifold(1, cylindrical_manifold);

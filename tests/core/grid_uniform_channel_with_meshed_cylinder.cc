@@ -75,7 +75,8 @@ main()
                   1);
 
       run_test<3>("3D 2x1x1 channel, padded, boundary ids, and no TFI region",
-                  "0,0:2,1:1,0.5:0.1:0.2:1:1:1:1:1.0:2:false:true");
+                  "0,0:2,1:1,0.5:0.1:0.2:1:1:1:1:1.0:2:false:true",
+                  1);
 
       run_test<3>("3D 2x1x1 channel, padded, boundary ids, and TFI region",
                   "0,0:2,1:1,0.5:0.1:0.2:1:1:1:1:1.0:2:true:true",
