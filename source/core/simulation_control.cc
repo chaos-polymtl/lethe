@@ -74,6 +74,20 @@ SimulationControl::is_output_iteration()
     }
 }
 
+bool
+SimulationControl::is_refinement_step(
+  const Parameters::MeshAdaptation &mesh_adaptation)
+{
+  bool is_refinement_step;
+
+  if (mesh_adaptation.refinement_at_frequency)
+    is_refinement_step = get_iteration_number() % mesh_adaptation.frequency == 0;
+  else
+    is_refinement_step = get_iteration_number() == 0;
+
+  return is_refinement_step;
+}
+
 void
 SimulationControl::update_assembly_method()
 {

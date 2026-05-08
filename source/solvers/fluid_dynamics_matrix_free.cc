@@ -3039,19 +3039,13 @@ FluidDynamicsMatrixFree<dim>::update_mortar_configuration()
 
   TimerOutput::Scope t(this->computing_timer, "Update mortar configuration");
 
-  bool refinement_step;
-  if (this->simulation_parameters.mesh_adaptation.refinement_at_frequency)
-    refinement_step = this->simulation_control->get_iteration_number() %
-                        this->simulation_parameters.mesh_adaptation.frequency ==
-                      0;
-  else
-    refinement_step = this->simulation_control->get_iteration_number() == 0;
-
   // We need to update the mortar operator/evaluator, as well as the sparsity
   // pattern, at every iteration. Since this is already done within
   // setup_dofs(), which is called in refine_mesh(), here we make sure that,
   // when there is no mesh refinement, the mortar information is still updated
-  if (this->simulation_control->is_at_start() || !refinement_step ||
+  if (this->simulation_control->is_at_start() ||
+      !this->simulation_control->is_refinement_step(
+        this->simulation_parameters.mesh_adaptation) ||
       this->simulation_parameters.mesh_adaptation.type ==
         Parameters::MeshAdaptation::Type::none)
     {
