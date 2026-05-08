@@ -315,7 +315,7 @@ var searchData=
   ['fu_5fpreconditioner_312',['fu_preconditioner',['../classPreconditionAdapter.html#a709ccf5dce90c9b01b34e8df771a4f06',1,'PreconditionAdapter']]],
   ['fully_5fexplicit_313',['fully_explicit',['../namespaceParameters.html#ab888bbb141fede015eec33a09e2a5e46a85e3a2ea2c77a301661f94bdd824138f',1,'Parameters']]],
   ['fully_5fimplicit_314',['fully_implicit',['../namespaceParameters.html#ab888bbb141fede015eec33a09e2a5e46a555ede1f7c02f9ecb183480feb7ae143',1,'Parameters']]],
-  ['funcptrtype_315',['FuncPtrType',['../classGridMotion.html#af227c03280158d4ce32cd8524e4d62d0',1,'GridMotion']]],
+  ['funcptrtype_315',['FuncPtrType',['../classGridMotionBase.html#a150454f59fba914d518ef28526bce881',1,'GridMotionBase']]],
   ['function_316',['function',['../namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ac1c425268e68385d1ab5074c17a94f14',1,'BoundaryConditions::function'],['../namespaceParameters.html#a59bccd897a552f378b3da967e9fa803fac1c425268e68385d1ab5074c17a94f14',1,'Parameters::function']]],
   ['function_5fweak_317',['function_weak',['../namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8add95ffdcea64b1eaaa9244611678ed38',1,'BoundaryConditions']]]
 ];

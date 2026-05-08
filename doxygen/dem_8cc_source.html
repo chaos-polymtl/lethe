@@ -213,7 +213,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>                               size_distribution_object_container);</div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>  <span class="comment">// Set the grid motion type</span></div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>  grid_motion_object = std::make_shared&lt;::GridMotion&lt;dim, dim&gt;&gt;(</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>  grid_motion_object = std::make_shared&lt;::GridMotionBase&lt;dim, dim&gt;&gt;(</div>
 <div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    parameters.grid_motion, simulation_control-&gt;get_time_step());</div>
 <div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span> </div>
 <div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>  <span class="comment">// Set up the solid objects</span></div>

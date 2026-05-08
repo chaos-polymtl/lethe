@@ -68,7 +68,7 @@ var searchData=
   ['no_5ffluid_5ffluid_5finteraction_5ferror_65',['no_fluid_fluid_interaction_error',['../classSimulationParameters.html#a16cd27d99504c763010d3c9084f2db84',1,'SimulationParameters']]],
   ['no_5fforce_66',['no_force',['../classFlowControl.html#a80d14d2c68789e091a9c3277a4414361',1,'FlowControl']]],
   ['no_5fmore_5foutput_5ftimes_67',['no_more_output_times',['../classSimulationControlTransient.html#ac8d9b7077bb7c38ef2c3fb22e4cc916a',1,'SimulationControlTransient']]],
-  ['no_5fmotion_68',['no_motion',['../classGridMotion.html#aed206185f847e9e45754bda462e42651',1,'GridMotion']]],
+  ['no_5fmotion_68',['no_motion',['../classGridMotionBase.html#abf2da56e4e55126e3b63e97dabba8c37',1,'GridMotionBase']]],
   ['no_5frolling_5fresistance_5ftorque_69',['no_rolling_resistance_torque',['../rolling__resistance__torque__models_8h.html#abdd60e13449c7d675c40c8032997f37a',1,'rolling_resistance_torque_models.h']]],
   ['no_5frolling_5ftorque_70',['no_rolling_torque',['../particle__wall__rolling__resistance__torque_8h.html#a8697aa56bb93f52a9d8257092a2aa388',1,'particle_wall_rolling_resistance_torque.h']]],
   ['nodal_71',['nodal',['../namespaceParameters.html#a87f2367892b0cda4800d7fac3b21fc12a2e69977b7c3df8d5c77016255b4006f2',1,'Parameters']]],
