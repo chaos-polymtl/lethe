@@ -1,7 +1,14 @@
 # SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+# Listing of Parameters
+#----------------------
+
 set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
 
 subsection simulation control
   set method           = steady
@@ -9,10 +16,18 @@ subsection simulation control
   set log precision    = 4
 end
 
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
 subsection FEM
   set velocity order = 1
   set pressure order = 1
 end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
 
 subsection physical properties
   set number of fluids = 1
@@ -27,10 +42,18 @@ subsection physical properties
   end
 end
 
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
 subsection multiphysics
   set fluid dynamics = true
   set tracer         = true
 end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
 
 subsection mesh
   set type               = dealii
@@ -38,6 +61,10 @@ subsection mesh
   set grid arguments     = 2,  1: -1.25, -0.25: -0.25, 0.25: true
   set initial refinement = 3
 end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
 
 subsection boundary conditions
   set number = 4
@@ -62,6 +89,10 @@ subsection boundary conditions
   end
 end
 
+#---------------------------------------------------
+# Boundary Conditions Tracer
+#---------------------------------------------------
+
 subsection boundary conditions tracer
   set number = 4
   subsection bc 0
@@ -82,11 +113,19 @@ subsection boundary conditions tracer
   end
 end
 
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
 subsection post-processing
   set verbosity                   = verbose
   set calculate tracer statistics = true
   set tracer statistics name      = tracer_statistics
 end
+
+#---------------------------------------------------
+# IB Particles
+#---------------------------------------------------
 
 subsection particles
   set number of particles                     = 1
@@ -112,6 +151,10 @@ subsection particles
   end
 end
 
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
 subsection mesh adaptation
   set type                 = adaptive
   set error estimator      = kelly
@@ -122,6 +165,10 @@ subsection mesh adaptation
   set min refinement level = 0
   set frequency            = 0
 end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
 
 subsection non-linear solver
   subsection fluid dynamics
@@ -135,6 +182,10 @@ subsection non-linear solver
     set max iterations = 30
   end
 end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
 
 subsection linear solver
   subsection fluid dynamics

@@ -47,6 +47,10 @@ subsection FEM
   set pressure order = 1
 end
 
+#---------------------------------------------------
+# Stabilization
+#---------------------------------------------------
+
 subsection stabilization
   set use default stabilization = false
 
@@ -99,7 +103,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# IB particles
+# IB Particles
 #---------------------------------------------------
 
 subsection particles
@@ -166,7 +170,7 @@ subsection mesh adaptation
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions

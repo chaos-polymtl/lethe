@@ -141,7 +141,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# IB particles
+# IB Particles
 #---------------------------------------------------
 
 subsection particles
@@ -161,7 +161,7 @@ subsection particles
 end
 
 #---------------------------------------------------
-# Source Term Control
+# Source Term
 #---------------------------------------------------
 
 subsection source term

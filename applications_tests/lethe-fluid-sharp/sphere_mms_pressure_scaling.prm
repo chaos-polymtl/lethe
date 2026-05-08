@@ -37,7 +37,7 @@ subsection physical properties
 end
 
 #---------------------------------------------------
-# Stabilization Control
+# Stabilization
 #---------------------------------------------------
 
 subsection stabilization
@@ -149,7 +149,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# IB particles
+# IB Particles
 #---------------------------------------------------
 
 subsection particles
