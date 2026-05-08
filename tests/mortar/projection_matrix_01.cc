@@ -51,8 +51,8 @@ get_projection_matrix(const FiniteElement<dim, spacedim> &fe1,
   // Choose a Gauss quadrature rule that is exact up to degree 2n-1
   const unsigned int degree = fe1.tensor_degree();
   Assert(degree != numbers::invalid_unsigned_int, ExcNotImplemented());
-#if (DEAL_II_VERSION_MAJOR == 9 && DEAL_II_VERSION_MINOR < 8 ||
-  DEAL_II_VERSION_MAJOR < 9)
+#if (DEAL_II_VERSION_MAJOR == 9 && DEAL_II_VERSION_MINOR < 8 || \
+     DEAL_II_VERSION_MAJOR < 9)
   const auto quadrature_2 =
     reference_cell.template get_gauss_type_quadrature<dim>(degree + 1);
 #else
