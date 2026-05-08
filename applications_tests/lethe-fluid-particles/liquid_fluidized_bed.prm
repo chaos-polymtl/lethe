@@ -94,7 +94,7 @@ subsection cfd-dem
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -105,7 +105,7 @@ subsection initial conditions
 end
 
 #---------------------------------------------------
-# Post-processing
+# Post-Processing
 #---------------------------------------------------
 
 subsection post-processing
@@ -183,7 +183,7 @@ subsection timer
 end
 
 #---------------------------------------------------
-# Model parameters
+# DEM Model Parameters
 #---------------------------------------------------
 
 subsection model parameters
@@ -204,7 +204,7 @@ subsection model parameters
 end
 
 #---------------------------------------------------
-# Physical Properties
+# Lagrangian Physical Properties
 #---------------------------------------------------
 
 subsection lagrangian physical properties
@@ -229,7 +229,7 @@ subsection lagrangian physical properties
 end
 
 #---------------------------------------------------
-# Floating walls
+# Floating Walls
 #---------------------------------------------------
 
 subsection floating walls

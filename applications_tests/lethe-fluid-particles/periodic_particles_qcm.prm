@@ -33,7 +33,7 @@ subsection mesh
 end
 
 #---------------------------------------------------
-# Physical Properties CFD
+# Physical Properties
 #---------------------------------------------------
 
 subsection physical properties
@@ -44,7 +44,7 @@ subsection physical properties
 end
 
 #---------------------------------------------------
-# Physical Properties
+# Lagrangian Physical Properties
 #---------------------------------------------------
 
 subsection lagrangian physical properties
@@ -69,7 +69,7 @@ subsection lagrangian physical properties
 end
 
 #---------------------------------------------------
-# Flow control
+# Flow Control
 #---------------------------------------------------
 
 subsection flow control
@@ -83,7 +83,7 @@ subsection flow control
 end
 
 #---------------------------------------------------
-# Boundary Conditions CFD
+# Boundary Conditions
 #---------------------------------------------------
 
 subsection boundary conditions
@@ -115,7 +115,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# Boundary Conditions DEM
+# DEM Boundary Conditions
 #---------------------------------------------------
 
 subsection DEM boundary conditions
@@ -138,7 +138,7 @@ subsection FEM
 end
 
 #---------------------------------------------------
-# Void Fraction CFD-DEM
+# Void Fraction
 #---------------------------------------------------
 
 subsection void fraction
@@ -163,7 +163,7 @@ subsection cfd-dem
 end
 
 #---------------------------------------------------
-# Model parameters DEM
+# DEM Model Parameters
 #---------------------------------------------------
 
 subsection model parameters
@@ -179,7 +179,7 @@ subsection model parameters
 end
 
 #---------------------------------------------------
-# Non-Linear Solver Control CFD
+# Non-Linear Solver Control
 #---------------------------------------------------
 
 subsection non-linear solver
@@ -191,7 +191,7 @@ subsection non-linear solver
 end
 
 #---------------------------------------------------
-# Linear Solver Control CFD
+# Linear Solver Control
 #---------------------------------------------------
 
 subsection linear solver

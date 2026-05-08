@@ -14,6 +14,9 @@
 # folder that can be used to verify the validity of the solution
 # for the particle trajectory and velocity.
 
+# Listing of Parameters
+#----------------------
+
 set dimension = 3
 
 #---------------------------------------------------
@@ -106,7 +109,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# Model parameters
+# DEM Model Parameters
 #---------------------------------------------------
 
 subsection model parameters
@@ -117,7 +120,7 @@ subsection model parameters
 end
 
 #---------------------------------------------------
-# Physical Properties
+# Lagrangian Physical Properties
 #---------------------------------------------------
 
 subsection lagrangian physical properties

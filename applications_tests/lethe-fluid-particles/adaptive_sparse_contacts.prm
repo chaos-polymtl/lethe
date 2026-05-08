@@ -6,8 +6,8 @@
 
 set dimension = 3
 
-# --------------------------------------------------
-# Simulation and IO Control
+#---------------------------------------------------
+# Simulation Control
 #---------------------------------------------------
 
 subsection simulation control
@@ -21,7 +21,7 @@ subsection simulation control
 end
 
 #---------------------------------------------------
-# test
+# Test
 #---------------------------------------------------
 
 subsection test
@@ -30,7 +30,7 @@ subsection test
 end
 
 #---------------------------------------------------
-# Physical Properties CFD
+# Physical Properties
 #---------------------------------------------------
 
 subsection physical properties
@@ -40,6 +40,10 @@ subsection physical properties
   end
 end
 
+#---------------------------------------------------
+# Source Term
+#---------------------------------------------------
+
 subsection source term
   subsection fluid dynamics
     set Function expression = 0; 5; 0; 0
@@ -47,7 +51,7 @@ subsection source term
 end
 
 #---------------------------------------------------
-# Model parameters
+# DEM Model Parameters
 #---------------------------------------------------
 
 subsection model parameters
@@ -60,7 +64,7 @@ subsection model parameters
 end
 
 #---------------------------------------------------
-# Physical Properties
+# Lagrangian Physical Properties
 #---------------------------------------------------
 
 subsection lagrangian physical properties
@@ -84,7 +88,7 @@ subsection lagrangian physical properties
 end
 
 #---------------------------------------------------
-# Boundary Conditions DEM
+# DEM Boundary Conditions
 #---------------------------------------------------
 
 subsection DEM boundary conditions
@@ -98,8 +102,8 @@ subsection DEM boundary conditions
   end
 end
 
-# --------------------------------------------------
-# Boundary Conditions CFD
+#---------------------------------------------------
+# Boundary Conditions
 #---------------------------------------------------
 
 subsection boundary conditions
@@ -156,7 +160,7 @@ subsection cfd-dem
 end
 
 #---------------------------------------------------
-# Void Fraction CFD-DEM
+# Void Fraction
 #---------------------------------------------------
 
 subsection void fraction
@@ -166,8 +170,8 @@ subsection void fraction
   set l2 smoothing length = 0.01
 end
 
-# --------------------------------------------------
-# Non-Linear Solver Control CFD
+#---------------------------------------------------
+# Non-Linear Solver Control
 #---------------------------------------------------
 
 subsection non-linear solver
@@ -179,8 +183,8 @@ subsection non-linear solver
   end
 end
 
-# --------------------------------------------------
-# Linear Solver Control CFD
+#---------------------------------------------------
+# Linear Solver Control
 #---------------------------------------------------
 
 subsection linear solver

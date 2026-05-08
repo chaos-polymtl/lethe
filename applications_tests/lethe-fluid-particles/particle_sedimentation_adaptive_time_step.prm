@@ -84,7 +84,7 @@ subsection cfd-dem
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -131,7 +131,7 @@ subsection timer
 end
 
 #---------------------------------------------------
-# Physical Properties
+# Lagrangian Physical Properties
 #---------------------------------------------------
 
 subsection lagrangian physical properties
@@ -156,7 +156,7 @@ subsection lagrangian physical properties
 end
 
 #---------------------------------------------------
-# Model parameters
+# DEM Model Parameters
 #---------------------------------------------------
 
 subsection model parameters
@@ -171,7 +171,7 @@ subsection model parameters
 end
 
 #---------------------------------------------------
-# Testing
+# Test
 #---------------------------------------------------
 
 subsection test
