@@ -111,7 +111,7 @@ DEMSolver<dim, PropertiesIndex>::setup_parameters()
                                size_distribution_object_container);
 
   // Set the grid motion type
-  grid_motion_object = std::make_shared<::GridMotion<dim, dim>>(
+  grid_motion_object = std::make_shared<::GridMotionBase<dim, dim>>(
     parameters.grid_motion, simulation_control->get_time_step());
 
   // Set up the solid objects
