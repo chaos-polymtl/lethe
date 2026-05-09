@@ -253,6 +253,78 @@ establish_solid_domain(const DoFHandler<dim>     &dof_handler,
     }
 }
 
+template <int dim>
+void
+establish_solid_domain_lsmg(const DoFHandler<dim>     &dof_handler,
+                            const unsigned int         level,
+                            const IndexSet            &locally_owned_mg_dofs,
+                            const bool                 non_zero_constraints,
+                            AffineConstraints<double> &constraints)
+{
+  Assert(dof_handler.get_fe().n_components() == dim + 1,
+         ExcMessage("The DoFHandler passed to establish_solid_domain_lsmg "
+                    "must use a finite element with dim+1 components "
+                    "(velocity + pressure). This routine is intended for "
+                    "fluid dynamics problems only."));
+
+  const unsigned int dofs_per_cell = dof_handler.get_fe().dofs_per_cell;
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+
+  // Pressure DOFs (in MG numbering on this level) that touch a fluid cell.
+  std::unordered_set<types::global_dof_index> dofs_are_connected_to_fluid;
+
+  // First pass: classify cells on this level. We must include both
+  // owned-on-level and ghost-on-level cells so that the connectivity
+  // information for pressure DOFs at the fluid/solid interface is complete.
+  for (const auto &cell : dof_handler.mg_cell_iterators_on_level(level))
+    {
+      if (cell->level_subdomain_id() == numbers::artificial_subdomain_id)
+        continue;
+
+      cell->get_mg_dof_indices(local_dof_indices);
+
+      if (cell->material_id() > 0)
+        {
+          constrain_solid_cell_velocity_dofs(dof_handler.get_fe(),
+                                             non_zero_constraints,
+                                             local_dof_indices,
+                                             constraints);
+        }
+      else
+        {
+          flag_dofs_connected_to_fluid(dof_handler.get_fe(),
+                                       local_dof_indices,
+                                       dofs_are_connected_to_fluid);
+        }
+    }
+
+  // Second pass: for solid cells fully disconnected from the fluid, pin the
+  // pressure to keep the system well posed.
+  for (const auto &cell : dof_handler.mg_cell_iterators_on_level(level))
+    {
+      if (cell->level_subdomain_id() == numbers::artificial_subdomain_id)
+        continue;
+
+      if (cell->material_id() > 0)
+        {
+          cell->get_mg_dof_indices(local_dof_indices);
+
+          const bool connected_to_fluid =
+            check_cell_is_connected_to_fluid(dofs_are_connected_to_fluid,
+                                             local_dof_indices);
+
+          if (!connected_to_fluid)
+            {
+              constrain_pressure(dof_handler.get_fe(),
+                                 non_zero_constraints,
+                                 locally_owned_mg_dofs,
+                                 local_dof_indices,
+                                 constraints);
+            }
+        }
+    }
+}
+
 // Explicit template instantiations
 template void
 constrain_solid_cell_velocity_dofs<2>(
@@ -283,6 +355,19 @@ establish_solid_domain<2, std::vector<IndexSet>>(
   const std::vector<IndexSet> &locally_owned_dofs,
   const bool                   non_zero_constraints,
   AffineConstraints<double>   &constraints);
+template void
+establish_solid_domain_lsmg<2>(const DoFHandler<2>       &dof_handler,
+                               const unsigned int         level,
+                               const IndexSet            &locally_owned_mg_dofs,
+                               const bool                 non_zero_constraints,
+                               AffineConstraints<double> &constraints);
+template void
+establish_solid_domain_lsmg<3>(const DoFHandler<3>       &dof_handler,
+                               const unsigned int         level,
+                               const IndexSet            &locally_owned_mg_dofs,
+                               const bool                 non_zero_constraints,
+                               AffineConstraints<double> &constraints);
+
 template void
 establish_solid_domain<3, std::vector<IndexSet>>(
   const DoFHandler<3>         &dof_handler,

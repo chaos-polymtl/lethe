@@ -72,4 +72,44 @@ establish_solid_domain(const dealii::DoFHandler<dim>     &dof_handler,
                        const bool                         non_zero_constraints,
                        dealii::AffineConstraints<double> &constraints);
 
+/**
+ * @brief Multigrid-level variant of establish_solid_domain for the local
+ * smoothing multigrid (LSMG) preconditioner.
+ *
+ * Unlike the active-cell version above, this overload walks the cells of a
+ * specific multigrid level using @p mg_cell_iterators_on_level and uses
+ * @p get_mg_dof_indices, so the DOF indices it adds to the constraint object
+ * match the multigrid-level IndexSet with which @p constraints was reinit'd
+ * (i.e. @p locally_owned_mg_dofs(level) and the corresponding locally
+ * relevant level DoFs). Using the active-cell version on an LSMG level
+ * constraint object triggers the @p local_lines.is_element(line_n) assertion
+ * inside @p AffineConstraints::add_line because active and MG DoF numberings
+ * are unrelated.
+ *
+ * The @p material_id is inherited from active cells by their parents on
+ * coarser levels, so the solid/fluid classification is well defined on MG
+ * levels.
+ *
+ * @param[in] dof_handler DoFHandler distributed with @p distribute_mg_dofs.
+ *
+ * @param[in] level Multigrid level on which constraints are built.
+ *
+ * @param[in] locally_owned_mg_dofs The locally owned MG DoFs on @p level
+ * (i.e. @p dof_handler.locally_owned_mg_dofs(level)). Used to filter pressure
+ * DoFs that should receive a Dirichlet constraint when their cell is fully
+ * disconnected from the fluid.
+ *
+ * @param[in] non_zero_constraints If true, set inhomogeneous (zero-valued)
+ * constraints; otherwise add homogeneous constraints.
+ *
+ * @param[in,out] constraints Level constraint object to populate.
+ */
+template <int dim>
+void
+establish_solid_domain_lsmg(const dealii::DoFHandler<dim> &dof_handler,
+                            const unsigned int             level,
+                            const dealii::IndexSet &locally_owned_mg_dofs,
+                            const bool              non_zero_constraints,
+                            dealii::AffineConstraints<double> &constraints);
+
 #endif
