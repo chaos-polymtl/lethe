@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/05/09
+
+### Changed
+
+- MINOR There were two functions, `get_step_number()` and `get_iteration_number()`, that returned the same `iteration_number` value. This PR deprecates `get_step_number()` and replaces it by get_iteration_number() everywhere in the code. [#1988](https://github.com/chaos-polymtl/lethe/pull/1988)
+
 ## [Master] - 2026/05/08
 
 ### Changed
