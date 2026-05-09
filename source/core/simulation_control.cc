@@ -81,7 +81,8 @@ SimulationControl::is_refinement_step(
   bool is_refinement_step;
 
   if (mesh_adaptation.refinement_at_frequency)
-    is_refinement_step = get_iteration_number() % mesh_adaptation.frequency == 0;
+    is_refinement_step =
+      get_iteration_number() % mesh_adaptation.frequency == 0;
   else
     is_refinement_step = get_iteration_number() == 0;
 
