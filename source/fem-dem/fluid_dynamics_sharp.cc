@@ -823,11 +823,11 @@ FluidDynamicsSharp<dim>::mesh_adapt_ib(const bool initial_refinement)
 {
   bool refinement_step;
   if (this->simulation_parameters.mesh_adaptation.refinement_at_frequency)
-    refinement_step = this->simulation_control->get_step_number() %
+    refinement_step = this->simulation_control->get_iteration_number() %
                         this->simulation_parameters.mesh_adaptation.frequency ==
                       0;
   else
-    refinement_step = this->simulation_control->get_step_number() == 0;
+    refinement_step = this->simulation_control->get_iteration_number() == 0;
 
   // If this is not the initial refinement cycle nor a usual refinement step,
   // we refine the cells around immersed solids only if they have moved since
