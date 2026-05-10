@@ -134,6 +134,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad3f2ab3ca4e4bdb1a5b86eaaca662944 inherit pub_methods_classSimulationControl"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a106da443da26004eca4875cee8060207 inherit pub_methods_classSimulationControl" id="r_a106da443da26004eca4875cee8060207"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a106da443da26004eca4875cee8060207">is_sdirk</a> () const</td></tr>
 <tr class="separator:a106da443da26004eca4875cee8060207 inherit pub_methods_classSimulationControl"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27da5a4ba94690b63404c50a2ec188b5 inherit pub_methods_classSimulationControl" id="r_a27da5a4ba94690b63404c50a2ec188b5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a27da5a4ba94690b63404c50a2ec188b5">is_refinement_step</a> (const <a class="el" href="structParameters_1_1MeshAdaptation.html">Parameters::MeshAdaptation</a> &amp;mesh_adaptation)</td></tr>
+<tr class="separator:a27da5a4ba94690b63404c50a2ec188b5 inherit pub_methods_classSimulationControl"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3322c6b5a41b5418901963b6477ba5d8 inherit pub_methods_classSimulationControl" id="r_a3322c6b5a41b5418901963b6477ba5d8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a3322c6b5a41b5418901963b6477ba5d8">output_enabled</a> () const</td></tr>
 <tr class="separator:a3322c6b5a41b5418901963b6477ba5d8 inherit pub_methods_classSimulationControl"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aacf975b305fdc7148ba2b744e8348fdd inherit pub_methods_classSimulationControl" id="r_aacf975b305fdc7148ba2b744e8348fdd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#aacf975b305fdc7148ba2b744e8348fdd">get_output_boundaries</a> () const</td></tr>
@@ -312,7 +314,7 @@ Additional Inherited Members</h2></td></tr>
 <li>Maximum time step limiting </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00893">893</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00900">900</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a37311976ee58fa729d45bd65d98984f8" name="a37311976ee58fa729d45bd65d98984f8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a37311976ee58fa729d45bd65d98984f8">&#9670;&#160;</a></span>SimulationControlTransient()</h2>
@@ -338,7 +340,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00255">255</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00270">270</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
 </div>
 </div>
@@ -372,9 +374,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classSimulationControl.html#a096e10bf3a464ae70f3e77c33e7f027d">SimulationControl</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00361">361</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00376">376</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00184">SimulationControl::adapt_with_capillary_time_step_ratio</a>, <a class="el" href="simulation__control_8h_source.html#l00907">adapt_with_cfl</a>, <a class="el" href="simulation__control_8h_source.html#l00915">adaptative_time_step_scaling</a>, <a class="el" href="simulation__control_8h_source.html#l00143">SimulationControl::capillary_time_step_constraint</a>, <a class="el" href="simulation__control_8h_source.html#l00109">SimulationControl::CFL</a>, <a class="el" href="simulation__control_8h_source.html#l00059">SimulationControl::current_time</a>, <a class="el" href="simulation__control_8h_source.html#l00071">SimulationControl::end_time</a>, <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>, <a class="el" href="simulation__control_8h_source.html#l00160">SimulationControl::max_capillary_time_step_ratio</a>, <a class="el" href="simulation__control_8h_source.html#l00117">SimulationControl::max_CFL</a>, <a class="el" href="simulation__control_8h_source.html#l00918">max_dt</a>, <a class="el" href="simulation__control_8h_source.html#l00065">SimulationControl::time_step</a>, <a class="el" href="simulation__control_8h_source.html#l00901">time_step_adaptation_required</a>, and <a class="el" href="simulation__control_8h_source.html#l00080">SimulationControl::time_step_independent_of_end_time</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00184">SimulationControl::adapt_with_capillary_time_step_ratio</a>, <a class="el" href="simulation__control_8h_source.html#l00914">adapt_with_cfl</a>, <a class="el" href="simulation__control_8h_source.html#l00922">adaptative_time_step_scaling</a>, <a class="el" href="simulation__control_8h_source.html#l00143">SimulationControl::capillary_time_step_constraint</a>, <a class="el" href="simulation__control_8h_source.html#l00109">SimulationControl::CFL</a>, <a class="el" href="simulation__control_8h_source.html#l00059">SimulationControl::current_time</a>, <a class="el" href="simulation__control_8h_source.html#l00071">SimulationControl::end_time</a>, <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>, <a class="el" href="simulation__control_8h_source.html#l00160">SimulationControl::max_capillary_time_step_ratio</a>, <a class="el" href="simulation__control_8h_source.html#l00117">SimulationControl::max_CFL</a>, <a class="el" href="simulation__control_8h_source.html#l00925">max_dt</a>, <a class="el" href="simulation__control_8h_source.html#l00065">SimulationControl::time_step</a>, <a class="el" href="simulation__control_8h_source.html#l00908">time_step_adaptation_required</a>, and <a class="el" href="simulation__control_8h_source.html#l00080">SimulationControl::time_step_independent_of_end_time</a>.</p>
 
 </div>
 </div>
@@ -407,9 +409,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classSimulationControl.html#a67aa726e7105dd0af92f47dac688e001">SimulationControl</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00313">313</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00328">328</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00184">SimulationControl::adapt_with_capillary_time_step_ratio</a>, <a class="el" href="simulation__control_8cc_source.html#l00054">SimulationControl::add_time_step()</a>, <a class="el" href="simulation__control_8cc_source.html#l00361">calculate_time_step()</a>, <a class="el" href="simulation__control_8h_source.html#l00059">SimulationControl::current_time</a>, <a class="el" href="simulation__control_8h_source.html#l00252">SimulationControl::first_assembly</a>, <a class="el" href="simulation__control_8cc_source.html#l00354">is_at_end()</a>, <a class="el" href="simulation__control_8h_source.html#l00388">SimulationControl::is_bdf()</a>, <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>, <a class="el" href="simulation__control_8h_source.html#l00062">SimulationControl::previous_time</a>, <a class="el" href="simulation__control_8h_source.html#l00584">SimulationControl::set_current_capillary_time_step_ratio()</a>, <a class="el" href="simulation__control_8h_source.html#l00065">SimulationControl::time_step</a>, <a class="el" href="simulation__control_8cc_source.html#l00078">SimulationControl::update_assembly_method()</a>, and <a class="el" href="simulation__control_8h_source.html#l00279">SimulationControl::update_bdf_coefficients()</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00184">SimulationControl::adapt_with_capillary_time_step_ratio</a>, <a class="el" href="simulation__control_8cc_source.html#l00054">SimulationControl::add_time_step()</a>, <a class="el" href="simulation__control_8cc_source.html#l00376">calculate_time_step()</a>, <a class="el" href="simulation__control_8h_source.html#l00059">SimulationControl::current_time</a>, <a class="el" href="simulation__control_8h_source.html#l00252">SimulationControl::first_assembly</a>, <a class="el" href="simulation__control_8cc_source.html#l00369">is_at_end()</a>, <a class="el" href="simulation__control_8h_source.html#l00388">SimulationControl::is_bdf()</a>, <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>, <a class="el" href="simulation__control_8h_source.html#l00062">SimulationControl::previous_time</a>, <a class="el" href="simulation__control_8h_source.html#l00591">SimulationControl::set_current_capillary_time_step_ratio()</a>, <a class="el" href="simulation__control_8h_source.html#l00065">SimulationControl::time_step</a>, <a class="el" href="simulation__control_8cc_source.html#l00093">SimulationControl::update_assembly_method()</a>, and <a class="el" href="simulation__control_8h_source.html#l00279">SimulationControl::update_bdf_coefficients()</a>.</p>
 
 </div>
 </div>
@@ -441,9 +443,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classSimulationControl.html#a08bd0100d59a88e4aaf607f70f803aba">SimulationControl</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l01001">1001</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l01008">1008</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00901">time_step_adaptation_required</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00908">time_step_adaptation_required</a>.</p>
 
 </div>
 </div>
@@ -477,7 +479,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented in <a class="el" href="classSimulationControlAdjointSteady.html#ac8534ba715f32012c81368600656323d">SimulationControlAdjointSteady</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00354">354</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00369">369</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00059">SimulationControl::current_time</a>, <a class="el" href="simulation__control_8h_source.html#l00071">SimulationControl::end_time</a>, and <a class="el" href="simulation__control_8h_source.html#l00065">SimulationControl::time_step</a>.</p>
 
@@ -512,9 +514,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classSimulationControl.html#a037f676d4e45242bb481e0a4a71e2dc9">SimulationControl</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00396">396</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00411">411</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8cc_source.html#l00361">calculate_time_step()</a>, <a class="el" href="simulation__control_8h_source.html#l00059">SimulationControl::current_time</a>, <a class="el" href="simulation__control_8h_source.html#l00683">SimulationControl::get_current_time()</a>, <a class="el" href="simulation__control_8h_source.html#l00628">SimulationControl::get_iteration_number()</a>, <a class="el" href="simulation__control_8cc_source.html#l00354">is_at_end()</a>, <a class="el" href="structParameters_1_1SimulationControl.html#afbdfe1836c2e09ec340042dc780c9d75a6f012ea8d7efd87146dd62db83f2ed99">Parameters::SimulationControl::iteration</a>, <a class="el" href="simulation__control_8h_source.html#l00942">no_more_output_times</a>, <a class="el" href="simulation__control_8h_source.html#l00958">output_control</a>, <a class="el" href="simulation__control_8h_source.html#l00213">SimulationControl::output_iteration_frequency</a>, <a class="el" href="simulation__control_8h_source.html#l00924">output_time_frequency</a>, <a class="el" href="simulation__control_8h_source.html#l00955">output_time_interval</a>, <a class="el" href="simulation__control_8h_source.html#l00934">output_times_counter</a>, <a class="el" href="simulation__control_8h_source.html#l00931">output_times_vector</a>, <a class="el" href="simulation__control_8h_source.html#l00062">SimulationControl::previous_time</a>, and <a class="el" href="simulation__control_8h_source.html#l00921">time_last_output</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8cc_source.html#l00376">calculate_time_step()</a>, <a class="el" href="simulation__control_8h_source.html#l00059">SimulationControl::current_time</a>, <a class="el" href="simulation__control_8h_source.html#l00690">SimulationControl::get_current_time()</a>, <a class="el" href="simulation__control_8h_source.html#l00635">SimulationControl::get_iteration_number()</a>, <a class="el" href="simulation__control_8cc_source.html#l00369">is_at_end()</a>, <a class="el" href="structParameters_1_1SimulationControl.html#afbdfe1836c2e09ec340042dc780c9d75a6f012ea8d7efd87146dd62db83f2ed99">Parameters::SimulationControl::iteration</a>, <a class="el" href="simulation__control_8h_source.html#l00949">no_more_output_times</a>, <a class="el" href="simulation__control_8h_source.html#l00965">output_control</a>, <a class="el" href="simulation__control_8h_source.html#l00213">SimulationControl::output_iteration_frequency</a>, <a class="el" href="simulation__control_8h_source.html#l00931">output_time_frequency</a>, <a class="el" href="simulation__control_8h_source.html#l00962">output_time_interval</a>, <a class="el" href="simulation__control_8h_source.html#l00941">output_times_counter</a>, <a class="el" href="simulation__control_8h_source.html#l00938">output_times_vector</a>, <a class="el" href="simulation__control_8h_source.html#l00062">SimulationControl::previous_time</a>, and <a class="el" href="simulation__control_8h_source.html#l00928">time_last_output</a>.</p>
 
 </div>
 </div>
@@ -554,9 +556,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented in <a class="el" href="classSimulationControlTransientDEM.html#a6760db7b27f43507bc6727a855beb4a3">SimulationControlTransientDEM</a>, and <a class="el" href="classSimulationControlAdjointSteady.html#aebd269a2d8349f0a48a995d259002fe7">SimulationControlAdjointSteady</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00273">273</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00288">288</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00184">SimulationControl::adapt_with_capillary_time_step_ratio</a>, <a class="el" href="core_2utilities_8h_source.html#l00468">announce_string()</a>, <a class="el" href="simulation__control_8h_source.html#l00059">SimulationControl::current_time</a>, <a class="el" href="simulation__control_8h_source.html#l00716">SimulationControl::get_CFL()</a>, <a class="el" href="simulation__control_8h_source.html#l00727">SimulationControl::get_current_capillary_time_step_ratio()</a>, <a class="el" href="simulation__control_8cc_source.html#l00185">SimulationControl::is_verbose_iteration()</a>, <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>, <a class="el" href="simulation__control_8h_source.html#l00229">SimulationControl::log_precision</a>, and <a class="el" href="simulation__control_8h_source.html#l00065">SimulationControl::time_step</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00184">SimulationControl::adapt_with_capillary_time_step_ratio</a>, <a class="el" href="core_2utilities_8h_source.html#l00468">announce_string()</a>, <a class="el" href="simulation__control_8h_source.html#l00059">SimulationControl::current_time</a>, <a class="el" href="simulation__control_8h_source.html#l00723">SimulationControl::get_CFL()</a>, <a class="el" href="simulation__control_8h_source.html#l00734">SimulationControl::get_current_capillary_time_step_ratio()</a>, <a class="el" href="simulation__control_8cc_source.html#l00200">SimulationControl::is_verbose_iteration()</a>, <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>, <a class="el" href="simulation__control_8h_source.html#l00229">SimulationControl::log_precision</a>, and <a class="el" href="simulation__control_8h_source.html#l00065">SimulationControl::time_step</a>.</p>
 
 </div>
 </div>
@@ -595,9 +597,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classSimulationControl.html#a414fd0b7da77e067991b56af939ee66f">SimulationControl</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00520">520</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00535">535</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00109">SimulationControl::CFL</a>, <a class="el" href="simulation__control_8h_source.html#l00068">SimulationControl::initial_time_step</a>, <a class="el" href="simulation__control_8h_source.html#l00958">output_control</a>, <a class="el" href="simulation__control_8h_source.html#l00934">output_times_counter</a>, <a class="el" href="simulation__control_8h_source.html#l00947">override_time_step_on_restart</a>, <a class="el" href="simulation__control_8cc_source.html#l00204">SimulationControl::read()</a>, <a class="el" href="simulation__control_8h_source.html#l00525">SimulationControl::set_CFL()</a>, <a class="el" href="simulation__control_8h_source.html#l00557">SimulationControl::set_current_time_step()</a>, <a class="el" href="structParameters_1_1SimulationControl.html#afbdfe1836c2e09ec340042dc780c9d75a07cc694b9b3fc636710fa08b6922c42b">Parameters::SimulationControl::time</a>, and <a class="el" href="simulation__control_8h_source.html#l00065">SimulationControl::time_step</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00109">SimulationControl::CFL</a>, <a class="el" href="simulation__control_8h_source.html#l00068">SimulationControl::initial_time_step</a>, <a class="el" href="simulation__control_8h_source.html#l00965">output_control</a>, <a class="el" href="simulation__control_8h_source.html#l00941">output_times_counter</a>, <a class="el" href="simulation__control_8h_source.html#l00954">override_time_step_on_restart</a>, <a class="el" href="simulation__control_8cc_source.html#l00219">SimulationControl::read()</a>, <a class="el" href="simulation__control_8h_source.html#l00532">SimulationControl::set_CFL()</a>, <a class="el" href="simulation__control_8h_source.html#l00564">SimulationControl::set_current_time_step()</a>, <a class="el" href="structParameters_1_1SimulationControl.html#afbdfe1836c2e09ec340042dc780c9d75a07cc694b9b3fc636710fa08b6922c42b">Parameters::SimulationControl::time</a>, and <a class="el" href="simulation__control_8h_source.html#l00065">SimulationControl::time_step</a>.</p>
 
 </div>
 </div>
@@ -636,9 +638,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Reimplemented from <a class="el" href="classSimulationControl.html#a9711044f9d9cba8a344f640d55c0e1ff">SimulationControl</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00507">507</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00522">522</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00958">output_control</a>, <a class="el" href="simulation__control_8h_source.html#l00934">output_times_counter</a>, <a class="el" href="simulation__control_8cc_source.html#l00191">SimulationControl::save()</a>, and <a class="el" href="structParameters_1_1SimulationControl.html#afbdfe1836c2e09ec340042dc780c9d75a07cc694b9b3fc636710fa08b6922c42b">Parameters::SimulationControl::time</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00965">output_control</a>, <a class="el" href="simulation__control_8h_source.html#l00941">output_times_counter</a>, <a class="el" href="simulation__control_8cc_source.html#l00206">SimulationControl::save()</a>, and <a class="el" href="structParameters_1_1SimulationControl.html#afbdfe1836c2e09ec340042dc780c9d75a07cc694b9b3fc636710fa08b6922c42b">Parameters::SimulationControl::time</a>.</p>
 
 </div>
 </div>
@@ -664,7 +666,7 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 <p>Boolean indicating if the CFL condition should be controlling the simulation time step. </p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00907">907</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00914">914</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -691,7 +693,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Time step scaling factor for adaptive time stepping. </p>
 <p>Used to scale the time step based on the ratio of max_CFL to current CFL when adaptive time stepping is enabled. </p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00915">915</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00922">922</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -717,7 +719,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Maximum allowed time step. </p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00918">918</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00925">925</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -744,7 +746,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Flag indicating whether there are more output times to check. </p>
 <p>Set to true when all specific output times in output_times_vector have been reached. </p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00942">942</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00949">949</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -770,7 +772,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Output control type: iteration-based or time-based. </p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00958">958</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00965">965</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -796,7 +798,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Output frequency for time-based output control. </p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00924">924</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00931">931</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -823,7 +825,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Time interval for output of transient iterations. </p>
 <p>Used with either time output control or iteration control to define intervals for output generation. </p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00955">955</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00962">962</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -849,7 +851,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Counter to move between output times given in output_times_vector. </p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00934">934</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00941">941</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -876,7 +878,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Specific output times for time output control. </p>
 <p>Vector containing specific times at which output should be generated. </p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00931">931</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00938">938</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -902,7 +904,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Flag to override the time step with the set value upon restart. </p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00947">947</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00954">954</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -928,7 +930,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Time of the last output. </p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00921">921</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00928">928</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -953,7 +955,7 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 <p>Boolean indicating if adaptive time-stepping is enabled. To enable it, enable either <a class="el" href="classSimulationControlTransient.html#aad1da23599dd5d081050fe8693489480">SimulationControlTransient::adapt_with_cfl</a> or <a class="el" href="classSimulationControl.html#aa5271d237d440530af5b536dd7d7932a" title="Enable adaptive time-stepping that respects the capillary time-step constraint.">SimulationControl::adapt_with_capillary_time_step_ratio</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00901">901</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l00908">908</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
