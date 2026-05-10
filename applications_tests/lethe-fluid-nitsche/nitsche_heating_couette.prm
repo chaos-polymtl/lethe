@@ -24,7 +24,7 @@ subsection multiphysics
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -95,7 +95,7 @@ subsection analytical solution
 end
 
 #---------------------------------------------------
-# Post-processing
+# Post-Processing
 #---------------------------------------------------
 
 subsection post-processing
@@ -128,6 +128,10 @@ subsection boundary conditions
     set type = slip
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions Heat Transfer
+#---------------------------------------------------
 
 subsection boundary conditions heat transfer
   set number = 4

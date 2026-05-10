@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 # Tests the p-multigrid feature within a mortar MMS example.
 
 # Listing of Parameters
@@ -83,8 +84,8 @@ subsection boundary conditions
   end
 end
 
-# --------------------------------------------------
-# Source term
+#---------------------------------------------------
+# Source Term
 #---------------------------------------------------
 
 subsection source term
@@ -95,7 +96,7 @@ subsection source term
   end
 end
 
-# --------------------------------------------------
+#---------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
 

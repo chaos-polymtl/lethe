@@ -36,7 +36,7 @@ subsection multiphysics
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -123,6 +123,10 @@ subsection boundary conditions
     set type = noslip
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions CLS
+#---------------------------------------------------
 
 subsection boundary conditions CLS
   set number = 1

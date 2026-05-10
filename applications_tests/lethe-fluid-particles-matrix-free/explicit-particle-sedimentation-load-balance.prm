@@ -11,6 +11,9 @@
 # /lethe-fluid-particles-matrix-free/explicit-particle-sedimentation.prm
 # but uses load balancing in parallel
 
+# Listing of Parameters
+#----------------------
+
 set dimension = 3
 
 #---------------------------------------------------
@@ -101,7 +104,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# Model parameters
+# Model Parameters
 #---------------------------------------------------
 
 subsection model parameters
@@ -116,7 +119,7 @@ subsection model parameters
 end
 
 #---------------------------------------------------
-# Physical Properties
+# Lagrangian Physical Properties
 #---------------------------------------------------
 
 subsection lagrangian physical properties

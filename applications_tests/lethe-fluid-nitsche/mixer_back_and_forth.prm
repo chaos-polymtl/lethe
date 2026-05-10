@@ -30,9 +30,9 @@ subsection FEM
   set temperature order = 1
 end
 
-#--------------------------------------------------
+#---------------------------------------------------
 # Restart
-#--------------------------------------------------
+#---------------------------------------------------
 
 subsection restart
   # Enable checkpointing
@@ -65,7 +65,7 @@ subsection timer
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -97,6 +97,10 @@ subsection boundary conditions
     set beta = 0
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions Heat Transfer
+#---------------------------------------------------
 
 subsection boundary conditions heat transfer
   set number = 1
@@ -150,6 +154,10 @@ subsection nitsche
     end
   end
 end
+
+#---------------------------------------------------
+# Test
+#---------------------------------------------------
 
 subsection test
   set enable = true

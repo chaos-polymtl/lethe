@@ -26,8 +26,8 @@ subsection FEM
   set pressure order = 1
 end
 
-#------------------------------------------------
-# Force
+#---------------------------------------------------
+# Forces
 #---------------------------------------------------
 
 subsection forces
@@ -35,7 +35,7 @@ subsection forces
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -84,9 +84,9 @@ subsection mesh
   set initial refinement = 5
 end
 
-#-----------------------------------------
-# Boundary conditions
-#-----------------------------------------
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
 
 subsection boundary conditions
   set number = 3
@@ -115,7 +115,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# IB particles
+# IB Particles
 #---------------------------------------------------
 
 subsection particles

@@ -28,7 +28,7 @@ subsection mesh
 end
 
 #---------------------------------------------------
-# Mesh adaptation
+# Mesh Adaptation Control
 #---------------------------------------------------
 
 subsection mesh adaptation
@@ -41,7 +41,7 @@ subsection mesh adaptation
 end
 
 #---------------------------------------------------
-# Boundary conditions
+# Boundary Conditions
 #---------------------------------------------------
 
 subsection boundary conditions

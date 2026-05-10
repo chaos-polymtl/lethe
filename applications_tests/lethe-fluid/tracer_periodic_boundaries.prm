@@ -7,11 +7,12 @@
 # We also check that the mass flow rates between paired boundaries are equal.
 
 # Listing of Parameters
-# ---------------------
+#----------------------
 
 set dimension = 2
 
-# Simulation and IO Control
+#---------------------------------------------------
+# Simulation Control
 #---------------------------------------------------
 
 subsection simulation control
@@ -43,7 +44,7 @@ subsection mesh
 end
 
 #---------------------------------------------------
-# Mesh Adaptation
+# Mesh Adaptation Control
 #---------------------------------------------------
 
 subsection mesh adaptation
@@ -51,7 +52,7 @@ subsection mesh adaptation
 end
 
 #---------------------------------------------------
-# Post-processing
+# Post-Processing
 #---------------------------------------------------
 
 subsection post-processing
@@ -62,7 +63,7 @@ subsection post-processing
 end
 
 #---------------------------------------------------
-# Boundary conditions Heat transfer
+# Boundary Conditions Tracer
 #---------------------------------------------------
 
 subsection boundary conditions tracer
@@ -82,7 +83,7 @@ subsection boundary conditions tracer
 end
 
 #---------------------------------------------------
-# Boundary conditions
+# Boundary Conditions
 #---------------------------------------------------
 
 subsection boundary conditions
@@ -109,7 +110,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# Physical properties
+# Physical Properties
 #---------------------------------------------------
 
 subsection physical properties
@@ -121,7 +122,7 @@ subsection physical properties
 end
 
 #---------------------------------------------------
-# Initial conditions
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -133,7 +134,7 @@ subsection initial conditions
   end
 end
 
-# --------------------------------------------------
+#---------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
 
@@ -150,7 +151,7 @@ subsection non-linear solver
   end
 end
 
-# --------------------------------------------------
+#---------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
 

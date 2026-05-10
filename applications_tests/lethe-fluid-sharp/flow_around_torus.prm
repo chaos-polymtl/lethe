@@ -27,7 +27,7 @@ subsection FEM
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -103,7 +103,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# IB particles
+# IB Particles
 #---------------------------------------------------
 
 subsection particles

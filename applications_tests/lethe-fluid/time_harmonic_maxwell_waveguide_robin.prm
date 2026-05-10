@@ -29,7 +29,7 @@ subsection simulation control
 end
 
 #---------------------------------------------------
-# Mesh Adaptation
+# Mesh Adaptation Control
 #---------------------------------------------------
 
 subsection mesh adaptation
@@ -44,6 +44,10 @@ subsection FEM
   set electromagnetics trial order = 1
   set electromagnetics test order  = 2
 end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
 
 subsection physical properties
   set number of fluids = 1
@@ -115,6 +119,10 @@ subsection boundary conditions
     set type = noslip
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions Time Harmonic Maxwell
+#---------------------------------------------------
 
 subsection boundary conditions time harmonic maxwell
   set number = 3

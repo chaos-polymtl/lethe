@@ -29,6 +29,10 @@ subsection multiphysics
   set cls = true
 end
 
+#---------------------------------------------------
+# CLS
+#---------------------------------------------------
+
 subsection CLS
   subsection surface tension force
     set enable                                    = true
@@ -39,7 +43,7 @@ subsection CLS
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -130,6 +134,10 @@ subsection boundary conditions
     set type = noslip
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions CLS
+#---------------------------------------------------
 
 subsection boundary conditions CLS
   set number = 4

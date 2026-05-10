@@ -19,7 +19,7 @@ subsection simulation control
   set output frequency = 0
 end
 
-#------------------------ ---------------------------
+#---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
 
@@ -29,6 +29,10 @@ subsection physical properties
   end
 end
 
+#---------------------------------------------------
+# Restart
+#---------------------------------------------------
+
 subsection restart
   set checkpoint = false
   set frequency  = 10
@@ -37,7 +41,7 @@ subsection restart
 end
 
 #---------------------------------------------------
-# Initial conditions
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -51,7 +55,7 @@ subsection initial conditions
 end
 
 #---------------------------------------------------
-# Source term
+# Source Term
 #---------------------------------------------------
 
 subsection source term

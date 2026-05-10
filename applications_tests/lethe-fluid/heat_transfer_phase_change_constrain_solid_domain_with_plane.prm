@@ -27,7 +27,7 @@ subsection multiphysics
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -37,7 +37,7 @@ subsection initial conditions
 end
 
 #---------------------------------------------------
-# Source term
+# Source Term
 #---------------------------------------------------
 
 subsection source term
@@ -103,6 +103,10 @@ subsection boundary conditions
   end
 end
 
+#---------------------------------------------------
+# Boundary Conditions Heat Transfer
+#---------------------------------------------------
+
 subsection boundary conditions heat transfer
   set number = 4
   subsection bc 0
@@ -147,7 +151,7 @@ subsection constrain stasis
 end
 
 #---------------------------------------------------
-# Post-processing
+# Post-Processing
 #---------------------------------------------------
 
 subsection post-processing

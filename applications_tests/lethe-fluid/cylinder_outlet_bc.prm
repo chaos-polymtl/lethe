@@ -35,7 +35,7 @@ subsection timer
 end
 
 #---------------------------------------------------
-# Force
+# Forces
 #---------------------------------------------------
 
 subsection forces
@@ -48,7 +48,7 @@ subsection forces
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions

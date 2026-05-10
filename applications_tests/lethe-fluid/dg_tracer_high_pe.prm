@@ -1,13 +1,24 @@
 # SPDX-FileCopyrightText: Copyright (c) 2022-2023 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+# Listing of Parameters
+#----------------------
+
 set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
 
 subsection simulation control
   set method            = steady
   set number mesh adapt = 2
   set output frequency  = 0
 end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
 
 subsection FEM
   set velocity order = 1
@@ -16,12 +27,20 @@ subsection FEM
   set tracer uses dg = true
 end
 
+#---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
+
 subsection initial conditions
   set type = nodal
   subsection uvwp
     set Function expression = 1; 0; 0
   end
 end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
 
 subsection physical properties
   set number of fluids = 1
@@ -30,6 +49,10 @@ subsection physical properties
   end
 end
 
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
 subsection mesh
   set type               = dealii
   set grid type          = hyper_rectangle
@@ -37,13 +60,25 @@ subsection mesh
   set initial refinement = 3
 end
 
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
 subsection multiphysics
   set tracer = true
 end
 
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
 subsection mesh adaptation
   set type = uniform
 end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
 
 subsection analytical solution
   set enable    = true
@@ -56,6 +91,10 @@ subsection analytical solution
     set Function expression = (exp(Pe*x)-1)/(exp(Pe)-1)
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
 
 subsection boundary conditions
   set number = 4
@@ -80,6 +119,10 @@ subsection boundary conditions
     set beta = 0
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions Tracer
+#---------------------------------------------------
 
 subsection boundary conditions tracer
   set number = 4
@@ -107,6 +150,10 @@ subsection boundary conditions tracer
   end
 end
 
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
 subsection non-linear solver
   subsection tracer
     set verbosity      = quiet
@@ -119,6 +166,10 @@ subsection non-linear solver
     set max iterations = 1
   end
 end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
 
 subsection linear solver
   subsection fluid dynamics

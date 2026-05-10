@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
-# ---------------------
+#----------------------
 
 set dimension = 2
 
-# --------------------------------------------------
+#---------------------------------------------------
 # Simulation Control
 #---------------------------------------------------
 
@@ -32,7 +32,7 @@ subsection cahn hilliard
 end
 
 #---------------------------------------------------
-# Initial Condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -68,6 +68,10 @@ subsection boundary conditions
   end
 end
 
+#---------------------------------------------------
+# Boundary Conditions Cahn Hilliard
+#---------------------------------------------------
+
 subsection boundary conditions cahn hilliard
   set number = 1
   subsection bc 0
@@ -95,7 +99,7 @@ subsection multiphysics
   set cahn hilliard = true
 end
 
-# --------------------------------------------------
+#---------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
 
@@ -108,7 +112,7 @@ subsection non-linear solver
   end
 end
 
-# --------------------------------------------------
+#---------------------------------------------------
 # Linear Solver Control
 #---------------------------------------------------
 

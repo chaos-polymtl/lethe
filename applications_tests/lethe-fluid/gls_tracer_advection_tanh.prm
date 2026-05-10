@@ -38,7 +38,7 @@ subsection timer
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -131,6 +131,10 @@ subsection boundary conditions
     set beta = 0
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions Tracer
+#---------------------------------------------------
 
 subsection boundary conditions tracer
   set number = 4

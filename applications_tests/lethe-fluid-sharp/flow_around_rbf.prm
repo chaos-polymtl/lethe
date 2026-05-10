@@ -101,7 +101,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# IB particles
+# IB Particles
 #---------------------------------------------------
 
 subsection particles
@@ -127,7 +127,7 @@ subsection particles
 end
 
 #---------------------------------------------------
-# Force
+# Forces
 #---------------------------------------------------
 
 subsection forces

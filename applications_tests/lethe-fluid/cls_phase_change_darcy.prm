@@ -28,7 +28,7 @@ subsection FEM
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -184,6 +184,10 @@ subsection boundary conditions
   end
 end
 
+#---------------------------------------------------
+# Boundary Conditions Heat Transfer
+#---------------------------------------------------
+
 subsection boundary conditions heat transfer
   set number = 4
   subsection bc 0
@@ -209,6 +213,10 @@ subsection boundary conditions heat transfer
     set type = noflux
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions CLS
+#---------------------------------------------------
 
 subsection boundary conditions CLS
   set number         = 4

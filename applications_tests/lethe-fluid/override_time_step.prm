@@ -1,7 +1,14 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+# Listing of Parameters
+#----------------------
+
 set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
 
 subsection simulation control
   set method                        = bdf1
@@ -11,9 +18,17 @@ subsection simulation control
   set output frequency              = 0
 end
 
+#---------------------------------------------------
+# Restart
+#---------------------------------------------------
+
 subsection restart
   set restart = true
 end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
 
 subsection physical properties
   subsection fluid 0
@@ -21,12 +36,20 @@ subsection physical properties
   end
 end
 
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
   set grid arguments     = 1,  1: -0.1, -0.1: 0.1, 0.1 : true
   set initial refinement = 3
 end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
 
 subsection boundary conditions
   set number         = 4
@@ -52,6 +75,10 @@ subsection boundary conditions
   end
 end
 
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
 subsection non-linear solver
   subsection fluid dynamics
     set verbosity      = quiet
@@ -59,6 +86,10 @@ subsection non-linear solver
     set max iterations = 10
   end
 end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
 
 subsection linear solver
   subsection fluid dynamics

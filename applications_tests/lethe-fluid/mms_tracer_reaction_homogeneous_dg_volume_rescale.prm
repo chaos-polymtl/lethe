@@ -1,9 +1,17 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 # This is a test for the rescale residuals parameter for the tracer.
 # We have a single non-linear iteration so it is not sensitive to the machine.
 
+# Listing of Parameters
+#----------------------
+
 set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
 
 subsection simulation control
   set method            = steady
@@ -11,10 +19,18 @@ subsection simulation control
   set number mesh adapt = 0
 end
 
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
 subsection multiphysics
   set fluid dynamics = true
   set tracer         = true
 end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
 
 subsection FEM
   set velocity order = 1
@@ -23,6 +39,10 @@ subsection FEM
   set tracer uses dg = true
 end
 
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
@@ -30,9 +50,17 @@ subsection mesh
   set initial refinement = 4
 end
 
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
 subsection mesh adaptation
   set type = uniform
 end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
 
 subsection boundary conditions
   set number = 4
@@ -53,6 +81,10 @@ subsection boundary conditions
     set type = noslip
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions Tracer
+#---------------------------------------------------
 
 subsection boundary conditions tracer
   set number         = 4
@@ -87,6 +119,10 @@ subsection boundary conditions tracer
   end
 end
 
+#---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
+
 subsection initial conditions
   set type = nodal
   subsection uvwp
@@ -96,6 +132,10 @@ subsection initial conditions
     set Function expression = sin(pi*x)*cos(pi*y)/2 + 1/2
   end
 end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
 
 subsection physical properties
   set number of fluids = 1
@@ -109,6 +149,10 @@ subsection physical properties
   end
 end
 
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
 subsection analytical solution
   set enable    = true
   set verbosity = verbose
@@ -120,6 +164,10 @@ subsection analytical solution
   end
 end
 
+#---------------------------------------------------
+# Source Term
+#---------------------------------------------------
+
 subsection source term
   subsection tracer
     set Function expression = pi*(-pi*sin(pi*x)^2*sin(pi*y)^2 + 2*sin(pi*x)^2*sin(pi*y)*cos(pi*x) + pi*sin(pi*x)^2 + 6*pi*sin(pi*x)*cos(pi*y) + pi)/4
@@ -128,6 +176,10 @@ subsection source term
     set Function expression = pi*(sin(pi*x)^3*sin(pi*y)^2*cos(pi*x) + 8*pi*sin(pi*x)^2*sin(pi*y)*cos(pi*y) - 2*pi*sin(pi*y)*cos(pi*y) + cos(pi*x)); pi*(sin(pi*x)^2*sin(pi*y)^3*cos(pi*y) - 8*pi*sin(pi*x)*sin(pi*y)^2*cos(pi*x) + 2*pi*sin(pi*x)*cos(pi*x) + cos(pi*y)); 0
   end
 end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
 
 subsection non-linear solver
   subsection fluid dynamics
@@ -141,6 +193,10 @@ subsection non-linear solver
     set max iterations = 1
   end
 end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
 
 subsection linear solver
   subsection fluid dynamics

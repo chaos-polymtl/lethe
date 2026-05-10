@@ -37,7 +37,7 @@ subsection physical properties
 end
 
 #---------------------------------------------------
-# Force
+# Forces
 #---------------------------------------------------
 
 subsection forces
@@ -79,7 +79,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# Source term
+# Source Term
 #---------------------------------------------------
 
 subsection source term

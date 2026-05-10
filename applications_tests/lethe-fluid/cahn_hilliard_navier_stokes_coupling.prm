@@ -46,7 +46,7 @@ subsection cahn hilliard
 end
 
 #---------------------------------------------------
-# Boundary conditions Cahn-Hilliard
+# Boundary Conditions Cahn Hilliard
 #---------------------------------------------------
 
 subsection boundary conditions cahn hilliard
@@ -71,7 +71,7 @@ subsection boundary conditions cahn hilliard
 end
 
 #---------------------------------------------------
-# Boundary conditions
+# Boundary Conditions
 #---------------------------------------------------
 
 subsection boundary conditions
@@ -95,7 +95,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# Initial conditions
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -105,7 +105,7 @@ subsection initial conditions
 end
 
 #---------------------------------------------------
-# Physical properties
+# Physical Properties
 #---------------------------------------------------
 
 subsection physical properties

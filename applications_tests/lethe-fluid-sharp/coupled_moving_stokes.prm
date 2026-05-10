@@ -58,6 +58,10 @@ subsection mesh
   set initial refinement = 3
 end
 
+#---------------------------------------------------
+# Box Refinement
+#---------------------------------------------------
+
 subsection box refinement
   set number of refinement boxes = 1
   subsection box 0
@@ -160,7 +164,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# IB particles
+# IB Particles
 #---------------------------------------------------
 
 subsection particles
@@ -215,7 +219,7 @@ subsection analytical solution
 end
 
 #---------------------------------------------------
-# Source term
+# Source Term
 #---------------------------------------------------
 
 subsection source term
@@ -258,7 +262,7 @@ subsection mesh adaptation
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions

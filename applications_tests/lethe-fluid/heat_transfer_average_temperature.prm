@@ -30,7 +30,7 @@ subsection multiphysics
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -71,7 +71,7 @@ subsection mesh
 end
 
 #---------------------------------------------------
-# Mesh adaptation
+# Mesh Adaptation Control
 #---------------------------------------------------
 
 subsection mesh adaptation
@@ -104,6 +104,10 @@ subsection boundary conditions
     set type = noslip
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions Heat Transfer
+#---------------------------------------------------
 
 subsection boundary conditions heat transfer
   set number = 4
@@ -147,7 +151,7 @@ subsection analytical solution
 end
 
 #---------------------------------------------------
-# Subsection post-processing
+# Post-Processing
 #---------------------------------------------------
 
 subsection post-processing

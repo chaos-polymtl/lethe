@@ -36,7 +36,7 @@ subsection timer
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -111,6 +111,10 @@ subsection boundary conditions
   end
 end
 
+#---------------------------------------------------
+# Boundary Conditions Tracer
+#---------------------------------------------------
+
 subsection boundary conditions tracer
   set number = 1
   subsection bc 0
@@ -123,7 +127,7 @@ subsection boundary conditions tracer
 end
 
 #---------------------------------------------------
-# Source term
+# Source Term
 #---------------------------------------------------
 
 subsection source term

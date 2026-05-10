@@ -11,6 +11,9 @@
 # /lethe-fluid-particles/explicit-particle-sedimentation.prm
 # but uses the matrix-free CFD-DEM formulation.
 
+# Listing of Parameters
+#----------------------
+
 set dimension = 3
 
 #---------------------------------------------------
@@ -101,7 +104,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# Model parameters
+# Model Parameters
 #---------------------------------------------------
 
 subsection model parameters
@@ -112,7 +115,7 @@ subsection model parameters
 end
 
 #---------------------------------------------------
-# Physical Properties
+# Lagrangian Physical Properties
 #---------------------------------------------------
 
 subsection lagrangian physical properties

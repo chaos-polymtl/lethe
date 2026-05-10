@@ -89,7 +89,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# IB particles
+# IB Particles
 #---------------------------------------------------
 
 subsection particles
@@ -141,7 +141,7 @@ subsection non-linear solver
 end
 
 #---------------------------------------------------
-# Force
+# Forces
 #---------------------------------------------------
 
 subsection forces
@@ -149,7 +149,7 @@ subsection forces
 end
 
 #---------------------------------------------------
-# Timer Control
+# Timer
 #---------------------------------------------------
 
 subsection timer

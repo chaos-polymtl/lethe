@@ -1,11 +1,22 @@
 # SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+# Listing of Parameters
+#----------------------
+
 set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
 
 subsection simulation control
   set output frequency = 1
 end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
 
 subsection physical properties
   subsection fluid 0
@@ -14,9 +25,17 @@ subsection physical properties
   end
 end
 
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
 subsection multiphysics
   set tracer = true
 end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
 
 subsection mesh
   set type               = dealii
@@ -24,6 +43,10 @@ subsection mesh
   set grid arguments     = 1,  1: -0.1, -0.1: 0.1, 0.1 : true
   set initial refinement = 3
 end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
 
 subsection boundary conditions
   set number         = 4
@@ -49,6 +72,10 @@ subsection boundary conditions
   end
 end
 
+#---------------------------------------------------
+# Boundary Conditions Tracer
+#---------------------------------------------------
+
 subsection boundary conditions tracer
   set number = 4
   subsection bc 0
@@ -72,6 +99,10 @@ subsection boundary conditions tracer
   end
 end
 
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
 subsection post-processing
   set verbosity                   = verbose
   set calculate tracer statistics = true
@@ -79,6 +110,10 @@ subsection post-processing
   set calculate tracer flow rate  = true
   set tracer flow rate name       = tracer_flow_rate_test
 end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
 
 subsection non-linear solver
   subsection fluid dynamics
@@ -92,6 +127,10 @@ subsection non-linear solver
     set max iterations = 30
   end
 end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
 
 subsection linear solver
   subsection fluid dynamics

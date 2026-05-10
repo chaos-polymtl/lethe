@@ -20,7 +20,7 @@ subsection simulation control
 end
 
 #---------------------------------------------------
-# Initial Condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -113,6 +113,10 @@ subsection boundary conditions
   end
 end
 
+#---------------------------------------------------
+# Boundary Conditions CLS
+#---------------------------------------------------
+
 subsection boundary conditions CLS
   set number = 3
   subsection bc 0
@@ -132,7 +136,7 @@ subsection boundary conditions CLS
 end
 
 #---------------------------------------------------
-# Post-processing
+# Post-Processing
 #---------------------------------------------------
 
 subsection post-processing

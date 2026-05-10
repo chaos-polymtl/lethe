@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/05/10
+
+### Changed
+
+- MINOR Make the comments used in the prm files for the application tests uniform. [#1986](https://github.com/chaos-polymtl/lethe/pull/1986)
+
 ## [Master] - 2026/05/09
 
 ### Changed

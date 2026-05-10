@@ -1,7 +1,14 @@
 # SPDX-FileCopyrightText: Copyright (c) 2024 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+# Listing of Parameters
+#----------------------
+
 set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
 
 subsection simulation control
   set method           = bdf1
@@ -11,6 +18,10 @@ subsection simulation control
   set output frequency = 0
 end
 
+#---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
+
 subsection initial conditions
   set type = L2projection
   subsection cahn hilliard
@@ -18,6 +29,10 @@ subsection initial conditions
     set Function expression = -tanh(sqrt(2*0.25)*(0.5 - sqrt(x*x+y*y))/(2^(-nbr_refs+1))); 0
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
 
 subsection boundary conditions
   set number         = 4
@@ -39,6 +54,10 @@ subsection boundary conditions
     set type = slip
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions Cahn Hilliard
+#---------------------------------------------------
 
 subsection boundary conditions cahn hilliard
   set number = 4
@@ -64,10 +83,18 @@ subsection boundary conditions cahn hilliard
   end
 end
 
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
 subsection multiphysics
   set fluid dynamics = true
   set cahn hilliard  = true
 end
+
+#---------------------------------------------------
+# Cahn Hilliard
+#---------------------------------------------------
 
 subsection cahn hilliard
   set potential smoothing coefficient = 0.0
@@ -76,6 +103,10 @@ subsection cahn hilliard
     set method = automatic
   end
 end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
 
 subsection physical properties
   set number of fluids = 2
@@ -102,12 +133,20 @@ subsection physical properties
   end
 end
 
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
 subsection mesh
   set type               = dealii
   set grid type          = hyper_cube
   set grid arguments     = -1 : 1 : true
   set initial refinement = 3
 end
+
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
 
 subsection post-processing
   set verbosity                  = verbose
@@ -116,12 +155,20 @@ subsection post-processing
   set calculate phase energy     = true
 end
 
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
 subsection FEM
   set phase cahn hilliard order     = 1
   set potential cahn hilliard order = 1
   set velocity order                = 1
   set pressure order                = 1
 end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
 
 subsection non-linear solver
   subsection fluid dynamics
@@ -131,6 +178,10 @@ subsection non-linear solver
     set verbosity = quiet
   end
 end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
 
 subsection linear solver
   subsection fluid dynamics

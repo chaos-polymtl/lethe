@@ -29,7 +29,7 @@ subsection FEM
 end
 
 #---------------------------------------------------
-# Source term
+# Source Term
 #---------------------------------------------------
 
 subsection source term
@@ -47,7 +47,7 @@ subsection timer
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -138,6 +138,10 @@ subsection boundary conditions
     set beta = 0
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions Heat Transfer
+#---------------------------------------------------
 
 subsection boundary conditions heat transfer
   set number = 4

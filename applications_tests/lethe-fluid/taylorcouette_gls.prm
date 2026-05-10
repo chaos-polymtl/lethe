@@ -104,7 +104,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# Post-processing
+# Post-Processing
 #---------------------------------------------------
 
 subsection post-processing

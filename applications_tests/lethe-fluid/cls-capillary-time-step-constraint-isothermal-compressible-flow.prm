@@ -35,7 +35,7 @@ subsection multiphysics
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -139,6 +139,10 @@ subsection boundary conditions
     end
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions CLS
+#---------------------------------------------------
 
 subsection boundary conditions CLS
   set number = 4

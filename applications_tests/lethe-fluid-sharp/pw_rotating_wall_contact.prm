@@ -8,6 +8,9 @@
 # frictional particle-wall contacts on opposite walls.
 #-------------------------------------------------------------------------------
 
+# Listing of Parameters
+#----------------------
+
 set dimension = 2
 
 #---------------------------------------------------
@@ -108,7 +111,7 @@ subsection DEM boundary conditions
 end
 
 #---------------------------------------------------
-# IB particles
+# IB Particles
 #---------------------------------------------------
 
 subsection particles
@@ -196,7 +199,7 @@ subsection mesh adaptation
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions

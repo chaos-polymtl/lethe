@@ -29,7 +29,7 @@ subsection FEM
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -63,9 +63,9 @@ subsection analytical solution
   end
 end
 
-#--------------------------------------------------
+#---------------------------------------------------
 # Restart
-#--------------------------------------------------
+#---------------------------------------------------
 
 subsection restart
   # Enable checkpointing

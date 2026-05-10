@@ -92,7 +92,7 @@ subsection analytical solution
 end
 
 #---------------------------------------------------
-# IB particles
+# IB Particles
 #---------------------------------------------------
 
 subsection particles
@@ -196,7 +196,7 @@ subsection forces
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -207,8 +207,8 @@ subsection initial conditions
 end
 
 #---------------------------------------------------
-# restart condition
-#-----------
+# Restart
+#---------------------------------------------------
 
 subsection restart
   # Enable checkpointing. Checkpointing creates a restartpoint from which the

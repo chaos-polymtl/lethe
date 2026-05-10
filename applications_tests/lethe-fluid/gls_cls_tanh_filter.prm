@@ -39,7 +39,7 @@ subsection CLS
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -53,7 +53,7 @@ subsection initial conditions
 end
 
 #---------------------------------------------------
-# Source term
+# Source Term
 #---------------------------------------------------
 
 subsection source term
@@ -89,7 +89,7 @@ subsection mesh
 end
 
 #---------------------------------------------------
-# Mesh Adaptation
+# Mesh Adaptation Control
 #---------------------------------------------------
 
 subsection mesh adaptation
@@ -127,6 +127,10 @@ subsection boundary conditions
     set type = slip
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions CLS
+#---------------------------------------------------
 
 subsection boundary conditions CLS
   set number = 4

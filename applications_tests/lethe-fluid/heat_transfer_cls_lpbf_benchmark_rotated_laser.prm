@@ -40,7 +40,7 @@ subsection mesh
 end
 
 #---------------------------------------------------
-# Mesh Adaptation
+# Mesh Adaptation Control
 #---------------------------------------------------
 
 subsection mesh adaptation
@@ -118,6 +118,10 @@ subsection boundary conditions
   end
 end
 
+#---------------------------------------------------
+# Boundary Conditions Heat Transfer
+#---------------------------------------------------
+
 subsection boundary conditions heat transfer
   set number = 10
   # Solid metal region
@@ -170,6 +174,10 @@ subsection boundary conditions heat transfer
   end
 end
 
+#---------------------------------------------------
+# Boundary Conditions CLS
+#---------------------------------------------------
+
 subsection boundary conditions CLS
   set number = 10
   # Solid metal region
@@ -217,7 +225,7 @@ subsection boundary conditions CLS
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -286,7 +294,7 @@ subsection physical properties
 end
 
 #---------------------------------------------------
-# Laser parameters
+# Laser Parameters
 #---------------------------------------------------
 
 subsection laser parameters
@@ -346,7 +354,7 @@ subsection evaporation
 end
 
 #---------------------------------------------------
-# Post-processing
+# Post-Processing
 #---------------------------------------------------
 
 subsection post-processing

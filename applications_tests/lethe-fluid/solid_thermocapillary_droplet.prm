@@ -7,7 +7,8 @@
 
 set dimension = 2
 
-# Simulation and IO Control
+#---------------------------------------------------
+# Simulation Control
 #---------------------------------------------------
 
 subsection simulation control
@@ -43,7 +44,7 @@ subsection CLS
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -105,7 +106,7 @@ subsection mesh
   set initial refinement = 6
 end
 
-# --------------------------------------------------
+#---------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
 
@@ -128,6 +129,10 @@ subsection boundary conditions
     set type = noslip
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions Heat Transfer
+#---------------------------------------------------
 
 subsection boundary conditions heat transfer
   set number = 4
@@ -155,12 +160,16 @@ subsection boundary conditions heat transfer
   end
 end
 
+#---------------------------------------------------
+# Boundary Conditions CLS
+#---------------------------------------------------
+
 subsection boundary conditions CLS
   set number = 4
 end
 
 #---------------------------------------------------
-# Post-processing
+# Post-Processing
 #---------------------------------------------------
 
 subsection post-processing
@@ -169,7 +178,7 @@ subsection post-processing
   set calculate mass conservation = false
 end
 
-# --------------------------------------------------
+#---------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
 

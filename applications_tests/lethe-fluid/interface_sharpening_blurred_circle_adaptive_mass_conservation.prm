@@ -25,6 +25,10 @@ subsection multiphysics
   set cls = true
 end
 
+#---------------------------------------------------
+# CLS
+#---------------------------------------------------
+
 subsection CLS
   subsection interface reinitialization method
     set type      = projection-based interface sharpening
@@ -42,7 +46,7 @@ subsection CLS
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -57,7 +61,7 @@ subsection initial conditions
 end
 
 #---------------------------------------------------
-# Source term
+# Source Term
 #---------------------------------------------------
 
 subsection source term
@@ -82,9 +86,9 @@ subsection physical properties
   end
 end
 
-#--------------------------------------------------
+#---------------------------------------------------
 # Restart
-#--------------------------------------------------
+#---------------------------------------------------
 
 subsection restart
   set checkpoint = true
@@ -136,6 +140,10 @@ subsection boundary conditions
     set beta = 0
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions CLS
+#---------------------------------------------------
 
 subsection boundary conditions CLS
   set number = 4

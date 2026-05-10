@@ -26,7 +26,7 @@ subsection multiphysics
 end
 
 #---------------------------------------------------
-# Post-processing
+# Post-Processing
 #---------------------------------------------------
 
 subsection post-processing
@@ -111,6 +111,10 @@ subsection boundary conditions
     set type = slip
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions CLS
+#---------------------------------------------------
 
 subsection boundary conditions CLS
   set number = 4

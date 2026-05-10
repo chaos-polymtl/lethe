@@ -7,7 +7,14 @@
 # on subsequent fluid output iterations.
 # ------------------------------------------------------------------------------
 
+# Listing of Parameters
+#----------------------
+
 set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
 
 subsection simulation control
   set method            = bdf1
@@ -18,12 +25,20 @@ subsection simulation control
   set output frequency  = 2
 end
 
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
 subsection physical properties
   subsection fluid 0
     set kinematic viscosity = 1
     set density             = 1
   end
 end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
 
 subsection mesh
   set type               = dealii
@@ -32,10 +47,18 @@ subsection mesh
   set initial refinement = 4
 end
 
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
 subsection FEM
   set velocity order = 1
   set pressure order = 1
 end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
 
 subsection boundary conditions
   set number         = 4
@@ -99,6 +122,10 @@ subsection boundary conditions
   end
 end
 
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
 subsection analytical solution
   set enable    = true
   set verbosity = verbose
@@ -108,11 +135,19 @@ subsection analytical solution
   end
 end
 
+#---------------------------------------------------
+# Source Term
+#---------------------------------------------------
+
 subsection source term
   subsection fluid dynamics
     set Function expression = 0; 0; 0
   end
 end
+
+#---------------------------------------------------
+# IB Particles
+#---------------------------------------------------
 
 subsection particles
   set number of particles                     = 1
@@ -159,6 +194,10 @@ subsection particles
   end
 end
 
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
 subsection mesh adaptation
   set fraction coarsening = 0
   set fraction refinement = 0
@@ -169,6 +208,10 @@ subsection mesh adaptation
   set variable            = velocity
 end
 
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
 subsection non-linear solver
   subsection fluid dynamics
     set tolerance             = 1e-8
@@ -178,9 +221,17 @@ subsection non-linear solver
   end
 end
 
+#---------------------------------------------------
+# Forces
+#---------------------------------------------------
+
 subsection forces
   set verbosity = quiet
 end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
 
 subsection linear solver
   subsection fluid dynamics

@@ -27,7 +27,7 @@ subsection FEM
 end
 
 #---------------------------------------------------
-# Initial Condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions
@@ -91,7 +91,7 @@ subsection CLS
 end
 
 #---------------------------------------------------
-# Post-processing
+# Post-Processing
 #---------------------------------------------------
 
 subsection post-processing
@@ -127,6 +127,10 @@ subsection boundary conditions
   end
 end
 
+#---------------------------------------------------
+# Boundary Conditions CLS
+#---------------------------------------------------
+
 subsection boundary conditions CLS
   set number = 4
   subsection bc 0 #inlet
@@ -151,7 +155,7 @@ subsection boundary conditions CLS
 end
 
 #---------------------------------------------------
-# Source term
+# Source Term
 #---------------------------------------------------
 
 subsection source term

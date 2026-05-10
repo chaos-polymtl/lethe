@@ -27,7 +27,7 @@ subsection simulation control
 end
 
 #---------------------------------------------------
-# Model parameters
+# Model Parameters
 #---------------------------------------------------
 
 subsection model parameters
@@ -45,8 +45,8 @@ subsection model parameters
 end
 
 #---------------------------------------------------
-# Physical Properties
-#---------------------------------------------------s
+# Lagrangian Physical Properties
+#---------------------------------------------------
 
 subsection lagrangian physical properties
   set g                        = 0.0, 0.0, 0.0
@@ -102,7 +102,7 @@ subsection mesh
 end
 
 #---------------------------------------------------
-# Boundary Condition
+# DEM Boundary Conditions
 #---------------------------------------------------
 
 subsection DEM boundary conditions

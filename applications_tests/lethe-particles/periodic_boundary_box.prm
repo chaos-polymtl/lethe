@@ -26,7 +26,7 @@ subsection test
 end
 
 #---------------------------------------------------
-# Model parameters
+# Model Parameters
 #---------------------------------------------------
 
 subsection model parameters
@@ -41,7 +41,7 @@ subsection model parameters
 end
 
 #---------------------------------------------------
-# Physical Properties
+# Lagrangian Physical Properties
 #---------------------------------------------------
 
 subsection lagrangian physical properties
@@ -90,7 +90,7 @@ subsection mesh
 end
 
 #---------------------------------------------------
-# Boundary conditions
+# DEM Boundary Conditions
 #---------------------------------------------------
 
 subsection DEM boundary conditions

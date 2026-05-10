@@ -31,7 +31,7 @@ subsection mesh
 end
 
 #---------------------------------------------------
-# Model parameters
+# Model Parameters
 #---------------------------------------------------
 
 subsection model parameters
@@ -58,7 +58,7 @@ subsection post-processing
 end
 
 #---------------------------------------------------
-# Physical Properties
+# Lagrangian Physical Properties
 #---------------------------------------------------
 
 subsection lagrangian physical properties
@@ -151,7 +151,7 @@ subsection cfd-dem
 end
 
 #---------------------------------------------------
-# Initial condition
+# Initial Conditions
 #---------------------------------------------------
 
 subsection initial conditions

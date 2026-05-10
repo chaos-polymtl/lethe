@@ -1,7 +1,14 @@
 # SPDX-FileCopyrightText: Copyright (c) 2022-2023 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+# Listing of Parameters
+#----------------------
+
 set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
 
 subsection simulation control
   set method           = bdf1
@@ -11,12 +18,20 @@ subsection simulation control
   set output frequency = 0
 end
 
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
 subsection FEM
   set velocity order = 1
   set pressure order = 1
   set tracer order   = 1
   set tracer uses dg = true
 end
+
+#---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
 
 subsection initial conditions
   set type = nodal
@@ -28,6 +43,10 @@ subsection initial conditions
   end
 end
 
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
 subsection physical properties
   set number of fluids = 1
   subsection fluid 0
@@ -35,9 +54,17 @@ subsection physical properties
   end
 end
 
+#---------------------------------------------------
+# Stabilization
+#---------------------------------------------------
+
 subsection stabilization
   set scalar limiter = moe
 end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
 
 subsection mesh
   set type               = dealii
@@ -46,9 +73,17 @@ subsection mesh
   set initial refinement = 5
 end
 
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
 subsection multiphysics
   set tracer = true
 end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
 
 subsection analytical solution
   set enable    = true
@@ -60,6 +95,10 @@ subsection analytical solution
     set Function expression = tanh(25-50*x+50*t)
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
 
 subsection boundary conditions
   set number = 4
@@ -85,6 +124,10 @@ subsection boundary conditions
   end
 end
 
+#---------------------------------------------------
+# Boundary Conditions Tracer
+#---------------------------------------------------
+
 subsection boundary conditions tracer
   set number = 4
   subsection bc 0
@@ -108,6 +151,10 @@ subsection boundary conditions tracer
   end
 end
 
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
 subsection non-linear solver
   subsection tracer
     set verbosity      = quiet
@@ -120,6 +167,10 @@ subsection non-linear solver
     set max iterations = 1
   end
 end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
 
 subsection linear solver
   subsection fluid dynamics

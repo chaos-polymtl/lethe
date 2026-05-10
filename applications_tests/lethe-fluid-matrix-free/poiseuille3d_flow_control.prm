@@ -57,7 +57,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# Source term
+# Source Term
 #---------------------------------------------------
 
 subsection source term
@@ -67,7 +67,7 @@ subsection source term
 end
 
 #---------------------------------------------------
-# Flow control
+# Flow Control
 #---------------------------------------------------
 
 subsection flow control

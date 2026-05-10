@@ -38,6 +38,10 @@ subsection physical properties
   end
 end
 
+#---------------------------------------------------
+# Initial Conditions
+#---------------------------------------------------
+
 subsection initial conditions
   set type = nodal
   subsection uvwp
@@ -122,7 +126,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# Post-processing
+# Post-Processing
 #---------------------------------------------------
 
 subsection post-processing

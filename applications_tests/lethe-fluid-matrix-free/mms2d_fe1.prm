@@ -17,9 +17,9 @@ subsection simulation control
   set output frequency  = 0
 end
 
-#--------------------------------------------------
+#---------------------------------------------------
 # Stabilization
-#--------------------------------------------------
+#---------------------------------------------------
 
 subsection stabilization
   set use default stabilization = false
@@ -70,7 +70,7 @@ subsection boundary conditions
 end
 
 #---------------------------------------------------
-# Source term
+# Source Term
 #---------------------------------------------------
 
 subsection source term

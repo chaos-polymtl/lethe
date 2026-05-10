@@ -5,7 +5,14 @@
 # In the test, we apply a 2nd order polynomial inlet velocity and tracer concentration,
 # which runs until reaching steady-state.
 
+# Listing of Parameters
+#----------------------
+
 set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
 
 subsection simulation control
   set method           = bdf1
@@ -14,12 +21,20 @@ subsection simulation control
   set output frequency = 0
 end
 
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
 subsection FEM
   set velocity order = 1
   set pressure order = 1
   set tracer order   = 1
   set tracer uses dg = true
 end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
 
 subsection physical properties
   set number of fluids = 1
@@ -28,6 +43,10 @@ subsection physical properties
   end
 end
 
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_cylinder
@@ -35,9 +54,17 @@ subsection mesh
   set initial refinement = 1
 end
 
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
 subsection multiphysics
   set tracer = true
 end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
 
 subsection boundary conditions
   set number = 3
@@ -58,6 +85,10 @@ subsection boundary conditions
   end
 end
 
+#---------------------------------------------------
+# Boundary Conditions Tracer
+#---------------------------------------------------
+
 subsection boundary conditions tracer
   set number = 3
   subsection bc 0
@@ -77,12 +108,20 @@ subsection boundary conditions tracer
   end
 end
 
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+
 subsection post-processing
   set verbosity                   = verbose
   set output frequency            = 1
   set calculate tracer statistics = true
   set calculate tracer flow rate  = true
 end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
 
 subsection non-linear solver
   subsection fluid dynamics
@@ -96,6 +135,10 @@ subsection non-linear solver
     set max iterations = 10
   end
 end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
 
 subsection linear solver
   subsection fluid dynamics

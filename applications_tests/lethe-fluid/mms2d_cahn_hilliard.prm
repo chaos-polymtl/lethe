@@ -26,7 +26,7 @@ subsection multiphysics
 end
 
 #---------------------------------------------------
-# Analytical solution
+# Analytical Solution
 #---------------------------------------------------
 
 subsection analytical solution
@@ -71,7 +71,7 @@ subsection cahn hilliard
 end
 
 #---------------------------------------------------
-# Physical properties
+# Physical Properties
 #---------------------------------------------------
 
 subsection physical properties
@@ -85,7 +85,7 @@ subsection physical properties
 end
 
 #---------------------------------------------------
-# Source term
+# Source Term
 #---------------------------------------------------
 
 subsection source term
@@ -95,7 +95,7 @@ subsection source term
 end
 
 #---------------------------------------------------
-# Boundary conditions Cahn-Hilliard
+# Boundary Conditions
 #---------------------------------------------------
 
 subsection boundary conditions
@@ -117,6 +117,10 @@ subsection boundary conditions
     set type = noslip
   end
 end
+
+#---------------------------------------------------
+# Boundary Conditions Cahn Hilliard
+#---------------------------------------------------
 
 subsection boundary conditions cahn hilliard
   set number = 4
