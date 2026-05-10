@@ -42,13 +42,13 @@ test()
     deallog << "*************************************************" << std::endl;
     deallog << "Constant time stepping - constant output" << std::endl;
     deallog << "*************************************************" << std::endl;
-    deallog << "Iteration : " << simulation_control.get_step_number()
+    deallog << "Iteration : " << simulation_control.get_iteration_number()
             << "    Time : " << simulation_control.get_current_time()
             << std::endl;
 
     while (simulation_control.integrate())
       {
-        deallog << "Iteration : " << simulation_control.get_step_number()
+        deallog << "Iteration : " << simulation_control.get_iteration_number()
                 << "    Time : " << simulation_control.get_current_time()
                 << std::endl;
       }

@@ -228,14 +228,15 @@ NavierStokesBase<dim, VectorType, DofsType>::dynamic_flow_control()
         *this->face_quadrature,
         *this->get_mapping());
 
-      this->flow_control.calculate_beta(average_velocity,
-                                        simulation_control->get_time_step(),
-                                        simulation_control->get_step_number());
+      this->flow_control.calculate_beta(
+        average_velocity,
+        simulation_control->get_time_step(),
+        simulation_control->get_iteration_number());
 
       // Showing results
       if (simulation_parameters.flow_control.verbosity ==
             Parameters::Verbosity::verbose &&
-          simulation_control->get_step_number() > 0 &&
+          simulation_control->get_iteration_number() > 0 &&
           this->this_mpi_process == 0)
         {
           announce_string(this->pcout, "Flow control summary");
@@ -571,8 +572,8 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
       this->simulation_control->set_CFL(CFL);
     }
   if (this->simulation_parameters.restart_parameters.checkpoint &&
-      simulation_control->get_step_number() != 0 &&
-      (simulation_control->get_step_number() %
+      simulation_control->get_iteration_number() != 0 &&
+      (simulation_control->get_iteration_number() %
            this->simulation_parameters.restart_parameters.frequency ==
          0 ||
        simulation_control->is_at_end()))
@@ -785,11 +786,11 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh()
 {
   bool refinement_step;
   if (this->simulation_parameters.mesh_adaptation.refinement_at_frequency)
-    refinement_step = this->simulation_control->get_step_number() %
+    refinement_step = this->simulation_control->get_iteration_number() %
                         this->simulation_parameters.mesh_adaptation.frequency ==
                       0;
   else
-    refinement_step = this->simulation_control->get_step_number() == 0;
+    refinement_step = this->simulation_control->get_iteration_number() == 0;
   if (refinement_step)
     {
       if (this->simulation_parameters.mesh_adaptation.type ==
@@ -1434,7 +1435,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         }
 
       // Output Enstrophy to a text file from processor 0
-      if (simulation_control->get_step_number() %
+      if (simulation_control->get_iteration_number() %
               this->simulation_parameters.post_processing.output_frequency ==
             0 &&
           this->this_mpi_process == 0)
@@ -1473,7 +1474,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         }
 
       // Output pressure power to a text file from processor 0
-      if (simulation_control->get_step_number() %
+      if (simulation_control->get_iteration_number() %
               this->simulation_parameters.post_processing.output_frequency ==
             0 &&
           this->this_mpi_process == 0)
@@ -1517,7 +1518,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         }
 
       // Output pressure power to a text file from processor 0
-      if (simulation_control->get_step_number() %
+      if (simulation_control->get_iteration_number() %
               this->simulation_parameters.post_processing.output_frequency ==
             0 &&
           this->this_mpi_process == 0)
@@ -1566,7 +1567,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         }
 
       // Output Kinetic Energy to a text file from processor 0
-      if ((simulation_control->get_step_number() %
+      if ((simulation_control->get_iteration_number() %
              this->simulation_parameters.post_processing.output_frequency ==
            0) &&
           this->this_mpi_process == 0)
@@ -1607,7 +1608,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         }
 
       // Output apparent viscosity to a text file from processor 0
-      if (simulation_control->get_step_number() %
+      if (simulation_control->get_iteration_number() %
               this->simulation_parameters.post_processing.output_frequency ==
             0 &&
           this->this_mpi_process == 0)
@@ -1659,7 +1660,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         }
 
       // Output pressure drop to a text file from processor 0
-      if ((simulation_control->get_step_number() %
+      if ((simulation_control->get_iteration_number() %
              this->simulation_parameters.post_processing.output_frequency ==
            0) &&
           this->this_mpi_process == 0)
@@ -1716,7 +1717,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         }
 
       // Output flow rate to a text file from processor 0
-      if ((simulation_control->get_step_number() %
+      if ((simulation_control->get_iteration_number() %
              this->simulation_parameters.post_processing.output_frequency ==
            0) &&
           this->this_mpi_process == 0)
@@ -1740,12 +1741,12 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       // Calculate forces on the boundary conditions
       if (this->simulation_parameters.forces_parameters.calculate_force)
         {
-          if (simulation_control->get_step_number() %
+          if (simulation_control->get_iteration_number() %
                 this->simulation_parameters.forces_parameters
                   .calculation_frequency ==
               0)
             this->postprocessing_forces(present_solution);
-          if (simulation_control->get_step_number() %
+          if (simulation_control->get_iteration_number() %
                 this->simulation_parameters.forces_parameters
                   .output_frequency ==
               0)
@@ -1755,12 +1756,12 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       // Calculate torques on the boundary conditions
       if (this->simulation_parameters.forces_parameters.calculate_torque)
         {
-          if (simulation_control->get_step_number() %
+          if (simulation_control->get_iteration_number() %
                 this->simulation_parameters.forces_parameters
                   .calculation_frequency ==
               0)
             this->postprocessing_torques(present_solution);
-          if (simulation_control->get_step_number() %
+          if (simulation_control->get_iteration_number() %
                 this->simulation_parameters.forces_parameters
                   .output_frequency ==
               0)
@@ -2935,7 +2936,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
 
   const std::string  folder        = simulation_control->get_output_path();
   const std::string  solution_name = simulation_control->get_output_name();
-  const unsigned int iter          = simulation_control->get_step_number();
+  const unsigned int iter          = simulation_control->get_iteration_number();
   const double       time          = simulation_control->get_current_time();
   const unsigned int subdivision = simulation_control->get_number_subdivision();
   const unsigned int group_files = simulation_control->get_group_files();
@@ -3063,7 +3064,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                          this->mpi_communicator);
 
   if (simulation_control->get_output_boundaries() &&
-      (simulation_control->get_step_number() == 0 ||
+      (simulation_control->get_iteration_number() == 0 ||
        simulation_parameters.mortar_parameters.enable))
     {
       DataOutFaces<dim> data_out_faces;

@@ -18,7 +18,7 @@ template <int dim, typename PropertiesIndex>
 inline void
 LagrangianLoadBalancing<dim, PropertiesIndex>::check_load_balance_once() const
 {
-  if (simulation_control->get_step_number() == load_balance_step)
+  if (simulation_control->get_iteration_number() == load_balance_step)
     DEMActionManager::get_action_manager()->load_balance_step();
 }
 
@@ -27,7 +27,8 @@ inline void
 LagrangianLoadBalancing<dim, PropertiesIndex>::check_load_balance_frequent()
   const
 {
-  if ((simulation_control->get_step_number() % load_balance_frequency) == 0)
+  if ((simulation_control->get_iteration_number() % load_balance_frequency) ==
+      0)
     DEMActionManager::get_action_manager()->load_balance_step();
 }
 
@@ -35,7 +36,7 @@ template <int dim, typename PropertiesIndex>
 inline void
 LagrangianLoadBalancing<dim, PropertiesIndex>::check_load_balance_dynamic()
 {
-  if (simulation_control->get_step_number() % dynamic_check_frequency == 0)
+  if (simulation_control->get_iteration_number() % dynamic_check_frequency == 0)
     {
       unsigned int maximum_particle_number_on_proc =
         Utilities::MPI::max(particle_handler->n_locally_owned_particles(),
@@ -59,7 +60,7 @@ inline void
 LagrangianLoadBalancing<dim, PropertiesIndex>::
   check_load_balance_with_sparse_contacts()
 {
-  if (simulation_control->get_step_number() % dynamic_check_frequency == 0)
+  if (simulation_control->get_iteration_number() % dynamic_check_frequency == 0)
     {
       // Process to accumulate the load of each process regards the number
       // of cells and particles with their selected weight and with a factor

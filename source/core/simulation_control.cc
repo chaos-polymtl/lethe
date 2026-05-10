@@ -70,7 +70,7 @@ SimulationControl::is_output_iteration()
   else
     {
       // Check if the current step number matches the output frequency
-      return (get_step_number() % output_iteration_frequency == 0);
+      return (get_iteration_number() % output_iteration_frequency == 0);
     }
 }
 
@@ -184,7 +184,7 @@ SimulationControl::get_number_of_stages(
 bool
 SimulationControl::is_verbose_iteration()
 {
-  return (get_step_number() % log_frequency == 0);
+  return (get_iteration_number() % log_frequency == 0);
 }
 
 void
@@ -407,7 +407,7 @@ SimulationControlTransient::is_output_iteration()
           // Check if the current step number matches the following condition:
           // (The step number matches the output frequency OR is the last
           // time step) AND the current time is within the output time interval
-          return ((get_step_number() % output_iteration_frequency == 0 ||
+          return ((get_iteration_number() % output_iteration_frequency == 0 ||
                    is_at_end()) &&
                   get_current_time() >= output_time_interval[0] &&
                   get_current_time() <= output_time_interval[1]);

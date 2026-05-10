@@ -1699,7 +1699,7 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
   // Always solve at the first step of the simulation (simulation start as 0 but
   // it is then incremented before solving the physics for the first time, so
   // the first time this function is called, the step number is 1).
-  if (this->simulation_control->get_step_number() == 1)
+  if (this->simulation_control->get_iteration_number() == 1)
     {
       return true;
     }
@@ -1714,7 +1714,7 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
           case Parameters::TimeHarmonicMaxwellCouplingStrategy::iteration:
             // Solve only if we are at a multiple of the specified iteration
             // frequency. We subtract 1 since the step number starts at 1.
-            if ((this->simulation_control->get_step_number() - 1) %
+            if ((this->simulation_control->get_iteration_number() - 1) %
                   thm_parameters.coupling_iteration ==
                 0)
               return true;

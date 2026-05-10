@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/lethe_grid_tools.h>
@@ -532,7 +532,7 @@ SerialSolid<dim, spacedim>::write_output_results(
                Utilities::int_to_string(id, 2);
       }
   }();
-  const unsigned int iter        = simulation_control->get_step_number();
+  const unsigned int iter        = simulation_control->get_iteration_number();
   const double       time        = simulation_control->get_current_time();
   const unsigned int group_files = simulation_control->get_group_files();
 

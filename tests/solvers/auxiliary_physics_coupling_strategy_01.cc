@@ -87,7 +87,7 @@ test()
     for (int i = 0; i < 5; ++i)
       {
         simulation_control->integrate();
-        deallog << "Step " << simulation_control->get_step_number() << ": "
+        deallog << "Step " << simulation_control->get_iteration_number() << ": "
                 << (electromagnetics_auxiliary_physics
                         .should_solve_auxiliary_physics() ?
                       "true" :
@@ -122,7 +122,7 @@ test()
     for (int i = 0; i < 7; ++i)
       {
         simulation_control->integrate();
-        deallog << "Step " << simulation_control->get_step_number() << ": "
+        deallog << "Step " << simulation_control->get_iteration_number() << ": "
                 << (electromagnetics_auxiliary_physics
                         .should_solve_auxiliary_physics() ?
                       "true" :
@@ -157,7 +157,7 @@ test()
     for (int i = 0; i < 10; ++i)
       {
         simulation_control->integrate();
-        deallog << "Step " << simulation_control->get_step_number()
+        deallog << "Step " << simulation_control->get_iteration_number()
                 << " (t=" << simulation_control->get_current_time() << "): "
                 << (electromagnetics_auxiliary_physics
                         .should_solve_auxiliary_physics() ?

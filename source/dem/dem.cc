@@ -428,7 +428,7 @@ inline void
 DEMSolver<dim, PropertiesIndex>::check_contact_search_iteration_dynamic()
 {
   const bool parallel_update =
-    (simulation_control->get_step_number() %
+    (simulation_control->get_iteration_number() %
      parameters.model_parameters.contact_detection_frequency) == 0;
   find_particle_contact_detection_step<dim, PropertiesIndex>(
     particle_handler,
@@ -443,7 +443,7 @@ template <int dim, typename PropertiesIndex>
 inline void
 DEMSolver<dim, PropertiesIndex>::check_contact_search_iteration_constant()
 {
-  if ((simulation_control->get_step_number() %
+  if ((simulation_control->get_iteration_number() %
        parameters.model_parameters.contact_detection_frequency) == 0)
     action_manager->contact_detection_step();
 }
@@ -457,9 +457,9 @@ DEMSolver<dim, PropertiesIndex>::insert_particles()
   if (parameters.insertion_info.insertion_frequency == 0)
     return;
 
-  if ((simulation_control->get_step_number() %
+  if ((simulation_control->get_iteration_number() %
        parameters.insertion_info.insertion_frequency) == 1 ||
-      simulation_control->get_step_number() == 1)
+      simulation_control->get_iteration_number() == 1)
     {
       insertion_object->insert(particle_handler, triangulation, parameters);
 
@@ -633,7 +633,7 @@ DEMSolver<dim, PropertiesIndex>::write_output_results()
   const std::string folder = parameters.simulation_control.output_folder;
   const std::string particles_solution_name =
     parameters.simulation_control.output_name;
-  const unsigned int iter        = simulation_control->get_step_number();
+  const unsigned int iter        = simulation_control->get_iteration_number();
   const double       time        = simulation_control->get_current_time();
   const unsigned int group_files = parameters.simulation_control.group_files;
 
@@ -698,15 +698,16 @@ DEMSolver<dim, PropertiesIndex>::post_process_results()
   if (parameters.post_processing.lagrangian_post_processing_enabled &&
       simulation_control->is_output_iteration())
     {
-      write_post_processing_results<dim>(triangulation,
-                                         grid_pvdhandler,
-                                         background_dh,
-                                         particle_handler,
-                                         parameters,
-                                         simulation_control->get_current_time(),
-                                         simulation_control->get_step_number(),
-                                         mpi_communicator,
-                                         sparse_contacts_object);
+      write_post_processing_results<dim>(
+        triangulation,
+        grid_pvdhandler,
+        background_dh,
+        particle_handler,
+        parameters,
+        simulation_control->get_current_time(),
+        simulation_control->get_iteration_number(),
+        mpi_communicator,
+        sparse_contacts_object);
     }
 }
 
@@ -723,7 +724,7 @@ DEMSolver<dim, PropertiesIndex>::report_statistics()
     std::min(number_of_list_built_since_last_log, contact_list.min);
   contact_list.total += number_of_list_built_since_last_log;
   contact_list.average = contact_list.total /
-                         (simulation_control->get_step_number()) *
+                         (simulation_control->get_iteration_number()) *
                          simulation_control->get_log_frequency();
 
   // Calculate statistics on the particles
@@ -1032,7 +1033,7 @@ DEMSolver<dim, PropertiesIndex>::solve()
 
       if (!disable_position_integration)
         {
-          if (simulation_control->get_step_number() == 0)
+          if (simulation_control->get_iteration_number() == 0)
             {
               integrator_object->integrate_half_step_location(
                 particle_handler,
@@ -1074,7 +1075,7 @@ DEMSolver<dim, PropertiesIndex>::solve()
       if (parameters.forces_torques.calculate_force_torque)
         {
           if ((this_mpi_process == 0) &&
-              (simulation_control->get_step_number() %
+              (simulation_control->get_iteration_number() %
                  parameters.forces_torques.output_frequency ==
                0) &&
               (parameters.forces_torques.force_torque_verbosity ==
@@ -1082,9 +1083,9 @@ DEMSolver<dim, PropertiesIndex>::solve()
             {
               write_forces_torques_output_locally(
                 forces_boundary_information[simulation_control
-                                              ->get_step_number()],
+                                              ->get_iteration_number()],
                 torques_boundary_information[simulation_control
-                                               ->get_step_number()]);
+                                               ->get_iteration_number()]);
             }
         }
 
@@ -1093,7 +1094,7 @@ DEMSolver<dim, PropertiesIndex>::solve()
 
       // Write checkpoint if needed
       if (checkpoint_controller.is_checkpoint_time_step(
-            simulation_control->get_step_number()))
+            simulation_control->get_iteration_number()))
         {
           write_checkpoint(computing_timer,
                            parameters,

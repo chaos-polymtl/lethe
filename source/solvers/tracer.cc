@@ -782,7 +782,7 @@ Tracer<dim>::postprocess(bool first_iteration)
   if (simulation_parameters.post_processing.calculate_tracer_statistics)
     {
       calculate_tracer_statistics();
-      if (simulation_control->get_step_number() %
+      if (simulation_control->get_iteration_number() %
             this->simulation_parameters.post_processing.output_frequency ==
           0)
         this->write_tracer_statistics();
@@ -1064,7 +1064,7 @@ Tracer<dim>::write_tracer_flow_rates(
     }
 
   auto mpi_communicator = triangulation->get_mpi_communicator();
-  if ((simulation_control->get_step_number() %
+  if ((simulation_control->get_iteration_number() %
          this->simulation_parameters.post_processing.output_frequency ==
        0) &&
       Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
