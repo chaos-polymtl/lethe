@@ -175,8 +175,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:af613e9cd4a87cf129de92f57685a15fa inherit pub_methods_classSimulationControl"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af2b966daa8ae1bc4395cfa86ffd05939 inherit pub_methods_classSimulationControl" id="r_af2b966daa8ae1bc4395cfa86ffd05939"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#af2b966daa8ae1bc4395cfa86ffd05939">get_current_capillary_time_step_ratio</a> () const</td></tr>
 <tr class="separator:af2b966daa8ae1bc4395cfa86ffd05939 inherit pub_methods_classSimulationControl"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62b6eb797cd39c75989300f8af3070f0 inherit pub_methods_classSimulationControl" id="r_a62b6eb797cd39c75989300f8af3070f0"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a62b6eb797cd39c75989300f8af3070f0">get_step_number</a> () const</td></tr>
-<tr class="separator:a62b6eb797cd39c75989300f8af3070f0 inherit pub_methods_classSimulationControl"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a50dfc7e2c4ff070a952d33c24ecf246e inherit pub_methods_classSimulationControl" id="r_a50dfc7e2c4ff070a952d33c24ecf246e"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a50dfc7e2c4ff070a952d33c24ecf246e">get_number_subdivision</a> () const</td></tr>
 <tr class="separator:a50dfc7e2c4ff070a952d33c24ecf246e inherit pub_methods_classSimulationControl"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82927e23a33ff258410b0d3ce50dbd07 inherit pub_methods_classSimulationControl" id="r_a82927e23a33ff258410b0d3ce50dbd07"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSimulationControl.html#a82927e23a33ff258410b0d3ce50dbd07">get_log_frequency</a> () const</td></tr>
@@ -283,7 +281,7 @@ Additional Inherited Members</h2></td></tr>
 <p>This class manages ray tracing simulations where photons are traced through a computational domain. The simulation terminates when all photons have exited the triangulation or been absorbed.</p>
 <p>Ray tracing simulations do not use time stepping in the traditional sense; instead, iterations represent photon propagation steps until all photons have completed their trajectories. </p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l01209">1209</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l01198">1198</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="af1278e7833c9988425bb097039a5183a" name="af1278e7833c9988425bb097039a5183a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af1278e7833c9988425bb097039a5183a">&#9670;&#160;</a></span>SimulationControlRayTracing()</h2>
@@ -388,7 +386,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classSimulationControl.html#a08bd0100d59a88e4aaf607f70f803aba">SimulationControl</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l01247">1247</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l01236">1236</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>
@@ -422,7 +420,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00673">673</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l01266">photon_handler</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l01255">photon_handler</a>.</p>
 
 </div>
 </div>
@@ -462,7 +460,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="simulation__control_8cc_source.html#l00679">679</a> of file <a class="el" href="simulation__control_8cc_source.html">simulation_control.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>, and <a class="el" href="simulation__control_8h_source.html#l01266">photon_handler</a>.</p>
+<p class="reference">References <a class="el" href="simulation__control_8h_source.html#l00097">SimulationControl::iteration_number</a>, and <a class="el" href="simulation__control_8h_source.html#l01255">photon_handler</a>.</p>
 
 </div>
 </div>
@@ -482,7 +480,7 @@ Additional Inherited Members</h2></td></tr>
 <p>Reference to the photon handler used during the ray-tracing simulation. </p>
 <p>This handler manages the photons being traced through the domain. </p>
 
-<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l01266">1266</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="simulation__control_8h_source.html#l01255">1255</a> of file <a class="el" href="simulation__control_8h_source.html">simulation_control.h</a>.</p>
 
 </div>
 </div>

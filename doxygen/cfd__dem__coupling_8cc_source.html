@@ -1054,9 +1054,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00928" name="l00928"></a><span class="lineno">  928</span>  <span class="keyword">const</span> <span class="keyword">auto</span> parallel_triangulation =</div>
 <div class="line"><a id="l00929" name="l00929"></a><span class="lineno">  929</span>    <span class="keyword">dynamic_cast&lt;</span>parallel::distributed::Triangulation&lt;dim&gt; *<span class="keyword">&gt;</span>(</div>
 <div class="line"><a id="l00930" name="l00930"></a><span class="lineno">  930</span>      &amp;*this-&gt;triangulation);</div>
-<div class="line"><a id="l00931" name="l00931"></a><span class="lineno">  931</span>  <span class="keywordflow">if</span> ((this-&gt;simulation_control-&gt;get_step_number() %</div>
+<div class="line"><a id="l00931" name="l00931"></a><span class="lineno">  931</span>  <span class="keywordflow">if</span> ((this-&gt;simulation_control-&gt;get_iteration_number() %</div>
 <div class="line"><a id="l00932" name="l00932"></a><span class="lineno">  932</span>       dem_parameters.insertion_info.insertion_frequency) == 1 ||</div>
-<div class="line"><a id="l00933" name="l00933"></a><span class="lineno">  933</span>      this-&gt;simulation_control-&gt;get_step_number() == 1)</div>
+<div class="line"><a id="l00933" name="l00933"></a><span class="lineno">  933</span>      this-&gt;simulation_control-&gt;get_iteration_number() == 1)</div>
 <div class="line"><a id="l00934" name="l00934"></a><span class="lineno">  934</span>    {</div>
 <div class="line"><a id="l00935" name="l00935"></a><span class="lineno">  935</span>      insertion_object-&gt;insert(this-&gt;particle_handler,</div>
 <div class="line"><a id="l00936" name="l00936"></a><span class="lineno">  936</span>                               *parallel_triangulation,</div>
@@ -1116,7 +1116,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00986" name="l00986"></a><span class="lineno">  986</span>  <span class="keyword">const</span> std::string folder = dem_parameters.simulation_control.output_folder;</div>
 <div class="line"><a id="l00987" name="l00987"></a><span class="lineno">  987</span>  <span class="keyword">const</span> std::string particles_solution_name =</div>
 <div class="line"><a id="l00988" name="l00988"></a><span class="lineno">  988</span>    dem_parameters.simulation_control.output_name + <span class="stringliteral">&quot;_particles&quot;</span>;</div>
-<div class="line"><a id="l00989" name="l00989"></a><span class="lineno">  989</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> iter = this-&gt;simulation_control-&gt;get_step_number();</div>
+<div class="line"><a id="l00989" name="l00989"></a><span class="lineno">  989</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> iter = this-&gt;simulation_control-&gt;get_iteration_number();</div>
 <div class="line"><a id="l00990" name="l00990"></a><span class="lineno">  990</span>  <span class="keyword">const</span> <span class="keywordtype">double</span>       time = this-&gt;simulation_control-&gt;get_current_time();</div>
 <div class="line"><a id="l00991" name="l00991"></a><span class="lineno">  991</span>  <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> group_files =</div>
 <div class="line"><a id="l00992" name="l00992"></a><span class="lineno">  992</span>    dem_parameters.simulation_control.group_files;</div>
@@ -1151,7 +1151,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01019" name="l01019"></a><span class="lineno"> 1019</span>    std::min(number_of_list_built_since_last_log, contact_list.min);</div>
 <div class="line"><a id="l01020" name="l01020"></a><span class="lineno"> 1020</span>  contact_list.total   = double(contact_search_total_number);</div>
 <div class="line"><a id="l01021" name="l01021"></a><span class="lineno"> 1021</span>  contact_list.average = contact_list.total /</div>
-<div class="line"><a id="l01022" name="l01022"></a><span class="lineno"> 1022</span>                         (this-&gt;simulation_control-&gt;get_step_number()) *</div>
+<div class="line"><a id="l01022" name="l01022"></a><span class="lineno"> 1022</span>                         (this-&gt;simulation_control-&gt;get_iteration_number()) *</div>
 <div class="line"><a id="l01023" name="l01023"></a><span class="lineno"> 1023</span>                         this-&gt;simulation_control-&gt;get_log_frequency();</div>
 <div class="line"><a id="l01024" name="l01024"></a><span class="lineno"> 1024</span> </div>
 <div class="line"><a id="l01025" name="l01025"></a><span class="lineno"> 1025</span>  <span class="comment">// Calculate statistics on the particles</span></div>
@@ -1226,7 +1226,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01094" name="l01094"></a><span class="lineno"> 1094</span>        this-&gt;particle_handler,</div>
 <div class="line"><a id="l01095" name="l01095"></a><span class="lineno"> 1095</span>        dem_parameters,</div>
 <div class="line"><a id="l01096" name="l01096"></a><span class="lineno"> 1096</span>        this-&gt;simulation_control-&gt;get_current_time(),</div>
-<div class="line"><a id="l01097" name="l01097"></a><span class="lineno"> 1097</span>        this-&gt;simulation_control-&gt;get_step_number(),</div>
+<div class="line"><a id="l01097" name="l01097"></a><span class="lineno"> 1097</span>        this-&gt;simulation_control-&gt;get_iteration_number(),</div>
 <div class="line"><a id="l01098" name="l01098"></a><span class="lineno"> 1098</span>        this-&gt;mpi_communicator,</div>
 <div class="line"><a id="l01099" name="l01099"></a><span class="lineno"> 1099</span>        sparse_contacts_object);</div>
 <div class="line"><a id="l01100" name="l01100"></a><span class="lineno"> 1100</span>    }</div>
@@ -1364,7 +1364,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01226" name="l01226"></a><span class="lineno"> 1226</span>        }</div>
 <div class="line"><a id="l01227" name="l01227"></a><span class="lineno"> 1227</span> </div>
 <div class="line"><a id="l01228" name="l01228"></a><span class="lineno"> 1228</span>      <span class="comment">// Output pressure drop to a text file from processor 0</span></div>
-<div class="line"><a id="l01229" name="l01229"></a><span class="lineno"> 1229</span>      <span class="keywordflow">if</span> ((this-&gt;simulation_control-&gt;get_step_number() %</div>
+<div class="line"><a id="l01229" name="l01229"></a><span class="lineno"> 1229</span>      <span class="keywordflow">if</span> ((this-&gt;simulation_control-&gt;get_iteration_number() %</div>
 <div class="line"><a id="l01230" name="l01230"></a><span class="lineno"> 1230</span>             this-&gt;simulation_parameters.post_processing.output_frequency ==</div>
 <div class="line"><a id="l01231" name="l01231"></a><span class="lineno"> 1231</span>           0) &amp;&amp;</div>
 <div class="line"><a id="l01232" name="l01232"></a><span class="lineno"> 1232</span>          this-&gt;this_mpi_process == 0)</div>
@@ -1409,7 +1409,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01269" name="l01269"></a><span class="lineno"> 1269</span>      this-&gt;flow_control.calculate_beta(</div>
 <div class="line"><a id="l01270" name="l01270"></a><span class="lineno"> 1270</span>        average_velocity,</div>
 <div class="line"><a id="l01271" name="l01271"></a><span class="lineno"> 1271</span>        this-&gt;simulation_control-&gt;get_time_step(),</div>
-<div class="line"><a id="l01272" name="l01272"></a><span class="lineno"> 1272</span>        this-&gt;simulation_control-&gt;get_step_number());</div>
+<div class="line"><a id="l01272" name="l01272"></a><span class="lineno"> 1272</span>        this-&gt;simulation_control-&gt;get_iteration_number());</div>
 <div class="line"><a id="l01273" name="l01273"></a><span class="lineno"> 1273</span> </div>
 <div class="line"><a id="l01274" name="l01274"></a><span class="lineno"> 1274</span>      Tensor&lt;1, 3&gt; beta_particle;</div>
 <div class="line"><a id="l01275" name="l01275"></a><span class="lineno"> 1275</span>      <span class="keywordflow">if</span> (this-&gt;simulation_parameters.flow_control.enable_beta_particle)</div>
@@ -1435,7 +1435,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01295" name="l01295"></a><span class="lineno"> 1295</span>      <span class="comment">// Showing results</span></div>
 <div class="line"><a id="l01296" name="l01296"></a><span class="lineno"> 1296</span>      <span class="keywordflow">if</span> (this-&gt;simulation_parameters.flow_control.verbosity ==</div>
 <div class="line"><a id="l01297" name="l01297"></a><span class="lineno"> 1297</span>            <a class="code hl_enumvalue" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::Verbosity::verbose</a> &amp;&amp;</div>
-<div class="line"><a id="l01298" name="l01298"></a><span class="lineno"> 1298</span>          this-&gt;simulation_control-&gt;get_step_number() &gt; 0 &amp;&amp;</div>
+<div class="line"><a id="l01298" name="l01298"></a><span class="lineno"> 1298</span>          this-&gt;simulation_control-&gt;get_iteration_number() &gt; 0 &amp;&amp;</div>
 <div class="line"><a id="l01299" name="l01299"></a><span class="lineno"> 1299</span>          this-&gt;this_mpi_process == 0)</div>
 <div class="line"><a id="l01300" name="l01300"></a><span class="lineno"> 1300</span>        {</div>
 <div class="line"><a id="l01301" name="l01301"></a><span class="lineno"> 1301</span>          <a class="code hl_function" href="core_2utilities_8h.html#a9329b0f36d22e7ab552519cfd2846612">announce_string</a>(this-&gt;pcout, <span class="stringliteral">&quot;Flow control summary&quot;</span>);</div>
@@ -1540,7 +1540,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01396" name="l01396"></a><span class="lineno"> 1396</span>  <span class="comment">// In the first step, we have to obtain location of particles at half-step</span></div>
 <div class="line"><a id="l01397" name="l01397"></a><span class="lineno"> 1397</span>  <span class="comment">// time</span></div>
 <div class="line"><a id="l01398" name="l01398"></a><span class="lineno"> 1398</span>  <span class="comment">// TODO do all DEM time step at first CFD time step are half step?</span></div>
-<div class="line"><a id="l01399" name="l01399"></a><span class="lineno"> 1399</span>  <span class="keywordflow">if</span> (this-&gt;simulation_control-&gt;get_step_number() == 0)</div>
+<div class="line"><a id="l01399" name="l01399"></a><span class="lineno"> 1399</span>  <span class="keywordflow">if</span> (this-&gt;simulation_control-&gt;get_iteration_number() == 0)</div>
 <div class="line"><a id="l01400" name="l01400"></a><span class="lineno"> 1400</span>    {</div>
 <div class="line"><a id="l01401" name="l01401"></a><span class="lineno"> 1401</span>      integrator_object-&gt;integrate_half_step_location(</div>
 <div class="line"><a id="l01402" name="l01402"></a><span class="lineno"> 1402</span>        this-&gt;particle_handler, g, dem_time_step, torque, force, MOI);</div>
@@ -1910,9 +1910,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aclassExplicitEulerIntegrator_html"><div class="ttname"><a href="classExplicitEulerIntegrator.html">ExplicitEulerIntegrator</a></div><div class="ttdoc">Implementation of a classical explicit euler scheme for the integration of the particle motion....</div><div class="ttdef"><b>Definition</b> <a href="explicit__euler__integrator_8h_source.html#l00025">explicit_euler_integrator.h:26</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsVANS_html"><div class="ttname"><a href="classFluidDynamicsVANS.html">FluidDynamicsVANS</a></div><div class="ttdoc">Solver class for Volume-Averaged Navier-Stokes (VANS) equations with GLS stabilization.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__vans_8h_source.html#l00045">fluid_dynamics_vans.h:46</a></div></div>
 <div class="ttc" id="aclassFluidDynamicsVANS_html_a6bc8c5994e39df48932dc40084900b8f"><div class="ttname"><a href="classFluidDynamicsVANS.html#a6bc8c5994e39df48932dc40084900b8f">FluidDynamicsVANS::monitor_mass_conservation</a></div><div class="ttdeci">virtual void monitor_mass_conservation()</div><div class="ttdoc">Monitor mass conservation in the VANS system.</div><div class="ttdef"><b>Definition</b> <a href="fluid__dynamics__vans_8cc_source.html#l00956">fluid_dynamics_vans.cc:956</a></div></div>
-<div class="ttc" id="aclassNavierStokesBase_html_a2932cb8c662806e38471f5e388fe4e65"><div class="ttname"><a href="classNavierStokesBase.html#a2932cb8c662806e38471f5e388fe4e65">NavierStokesBase::gather_tables</a></div><div class="ttdeci">virtual std::vector&lt; OutputStructTableHandler &gt; gather_tables()</div><div class="ttdoc">Returns a vector of references to TableHandler objects that needs to be serialized/ deserialized for ...</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l03137">navier_stokes_base.cc:3137</a></div></div>
-<div class="ttc" id="aclassNavierStokesBase_html_a57ffa198f9fabb15e3af4c9fa2921e18"><div class="ttname"><a href="classNavierStokesBase.html#a57ffa198f9fabb15e3af4c9fa2921e18">NavierStokesBase::refine_mesh</a></div><div class="ttdeci">virtual void refine_mesh()</div><div class="ttdoc">Allow the refinement of the mesh according to one of the 2 methods proposed.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l00784">navier_stokes_base.cc:784</a></div></div>
-<div class="ttc" id="aclassNavierStokesBase_html_aa5e0b2804ae3afe6bb89e0a25fc26ed2"><div class="ttname"><a href="classNavierStokesBase.html#aa5e0b2804ae3afe6bb89e0a25fc26ed2">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::postprocess_fd</a></div><div class="ttdeci">virtual void postprocess_fd(bool first_iteration)</div><div class="ttdoc">Post-process fluid dynamics after an iteration.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l00300">navier_stokes_base.cc:1411</a></div></div>
+<div class="ttc" id="aclassNavierStokesBase_html_a2932cb8c662806e38471f5e388fe4e65"><div class="ttname"><a href="classNavierStokesBase.html#a2932cb8c662806e38471f5e388fe4e65">NavierStokesBase::gather_tables</a></div><div class="ttdeci">virtual std::vector&lt; OutputStructTableHandler &gt; gather_tables()</div><div class="ttdoc">Returns a vector of references to TableHandler objects that needs to be serialized/ deserialized for ...</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l03138">navier_stokes_base.cc:3138</a></div></div>
+<div class="ttc" id="aclassNavierStokesBase_html_a57ffa198f9fabb15e3af4c9fa2921e18"><div class="ttname"><a href="classNavierStokesBase.html#a57ffa198f9fabb15e3af4c9fa2921e18">NavierStokesBase::refine_mesh</a></div><div class="ttdeci">virtual void refine_mesh()</div><div class="ttdoc">Allow the refinement of the mesh according to one of the 2 methods proposed.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l00785">navier_stokes_base.cc:785</a></div></div>
+<div class="ttc" id="aclassNavierStokesBase_html_aa5e0b2804ae3afe6bb89e0a25fc26ed2"><div class="ttname"><a href="classNavierStokesBase.html#aa5e0b2804ae3afe6bb89e0a25fc26ed2">NavierStokesBase&lt; dim, GlobalVectorType, IndexSet &gt;::postprocess_fd</a></div><div class="ttdeci">virtual void postprocess_fd(bool first_iteration)</div><div class="ttdoc">Post-process fluid dynamics after an iteration.</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__base_8cc_source.html#l00300">navier_stokes_base.cc:1412</a></div></div>
 <div class="ttc" id="aclassNavierStokesScratchData_html"><div class="ttname"><a href="classNavierStokesScratchData.html">NavierStokesScratchData</a></div><div class="ttdoc">Class that stores the information required by the assembly procedure for a Navier-Stokes equation....</div><div class="ttdef"><b>Definition</b> <a href="navier__stokes__scratch__data_8h_source.html#l00057">navier_stokes_scratch_data.h:58</a></div></div>
 <div class="ttc" id="aclassParameters_1_1Lagrangian_1_1ModelParameters_html"><div class="ttname"><a href="classParameters_1_1Lagrangian_1_1ModelParameters.html">Parameters::Lagrangian::ModelParameters</a></div><div class="ttdoc">Numerical model parameters for DEM simulations.</div><div class="ttdef"><b>Definition</b> <a href="parameters__lagrangian_8h_source.html#l00518">parameters_lagrangian.h:519</a></div></div>
 <div class="ttc" id="aclassParameters_1_1Lagrangian_1_1ModelParameters_html_a25b59506e85f5d1182f0692ea7397d33"><div class="ttname"><a href="classParameters_1_1Lagrangian_1_1ModelParameters.html#a25b59506e85f5d1182f0692ea7397d33">Parameters::Lagrangian::ModelParameters::contact_detection_method</a></div><div class="ttdeci">enum Parameters::Lagrangian::ModelParameters::ContactDetectionMethod contact_detection_method</div></div>

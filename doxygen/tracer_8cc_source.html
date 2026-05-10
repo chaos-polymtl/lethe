@@ -912,7 +912,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>  <span class="keywordflow">if</span> (simulation_parameters.post_processing.calculate_tracer_statistics)</div>
 <div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>    {</div>
 <div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>      calculate_tracer_statistics();</div>
-<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>      <span class="keywordflow">if</span> (simulation_control-&gt;get_step_number() %</div>
+<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>      <span class="keywordflow">if</span> (simulation_control-&gt;get_iteration_number() %</div>
 <div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>            this-&gt;simulation_parameters.post_processing.output_frequency ==</div>
 <div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>          0)</div>
 <div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>        this-&gt;write_tracer_statistics();</div>
@@ -1200,7 +1200,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01064" name="l01064"></a><span class="lineno"> 1064</span>    }</div>
 <div class="line"><a id="l01065" name="l01065"></a><span class="lineno"> 1065</span> </div>
 <div class="line"><a id="l01066" name="l01066"></a><span class="lineno"> 1066</span>  <span class="keyword">auto</span> mpi_communicator = triangulation-&gt;get_mpi_communicator();</div>
-<div class="line"><a id="l01067" name="l01067"></a><span class="lineno"> 1067</span>  <span class="keywordflow">if</span> ((simulation_control-&gt;get_step_number() %</div>
+<div class="line"><a id="l01067" name="l01067"></a><span class="lineno"> 1067</span>  <span class="keywordflow">if</span> ((simulation_control-&gt;get_iteration_number() %</div>
 <div class="line"><a id="l01068" name="l01068"></a><span class="lineno"> 1068</span>         this-&gt;simulation_parameters.post_processing.output_frequency ==</div>
 <div class="line"><a id="l01069" name="l01069"></a><span class="lineno"> 1069</span>       0) &amp;&amp;</div>
 <div class="line"><a id="l01070" name="l01070"></a><span class="lineno"> 1070</span>      Utilities::MPI::this_mpi_process(mpi_communicator) == 0)</div>

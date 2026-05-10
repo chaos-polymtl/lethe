@@ -838,7 +838,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span>  <span class="keywordflow">if</span> (simulation_parameters.post_processing.calculate_phase_statistics)</div>
 <div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span>    {</div>
 <div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span>      calculate_phase_statistics();</div>
-<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span>      <span class="keywordflow">if</span> (simulation_control-&gt;get_step_number() %</div>
+<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span>      <span class="keywordflow">if</span> (simulation_control-&gt;get_iteration_number() %</div>
 <div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span>            this-&gt;simulation_parameters.post_processing.output_frequency ==</div>
 <div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span>          0)</div>
 <div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span>        this-&gt;write_phase_statistics();</div>
@@ -848,7 +848,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span>    {</div>
 <div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span>      calculate_phase_energy();</div>
 <div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span>      <span class="comment">// Output phase energies to a text file from processor 0</span></div>
-<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span>      <span class="keywordflow">if</span> (simulation_control-&gt;get_step_number() %</div>
+<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span>      <span class="keywordflow">if</span> (simulation_control-&gt;get_iteration_number() %</div>
 <div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span>            this-&gt;simulation_parameters.post_processing.output_frequency ==</div>
 <div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span>          0)</div>
 <div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span>        {</div>
@@ -983,7 +983,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span>                                             position_and_velocity.second[2]);</div>
 <div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span> </div>
 <div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span> </div>
-<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span>          <span class="keywordflow">if</span> (this-&gt;simulation_control-&gt;get_step_number() %</div>
+<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span>          <span class="keywordflow">if</span> (this-&gt;simulation_control-&gt;get_iteration_number() %</div>
 <div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span>                this-&gt;simulation_parameters.post_processing.output_frequency ==</div>
 <div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span>              0)</div>
 <div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span>            {</div>
