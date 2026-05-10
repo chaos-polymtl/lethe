@@ -425,6 +425,13 @@ public:
     return time_step;
   }
 
+  /**
+   * @brief Check if the current step is a refinement step
+   *
+   * @param[in] MeshAdaptation Parameters that control dynamic mesh adaptation
+   */
+  bool
+  is_refinement_step(const Parameters::MeshAdaptation &mesh_adaptation);
 
   /**
    * @brief Print the current progress status of the simulation
