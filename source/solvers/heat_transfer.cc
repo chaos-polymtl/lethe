@@ -2251,7 +2251,11 @@ HeatTransfer<dim>::postprocess_geometric_melt_volume_and_surface()
   // Compute volume and surface integral
   std::tie(melt_volume, melt_surface) =
     InterfaceTools::integrate_volume_and_surface(
-      *this->dof_handler, *this->fe, melt_indicator_vector_relevant_copy);
+      *this->dof_handler,
+      *this->fe,
+      melt_indicator_vector_relevant_copy,
+      {this->simulation_control->get_current_time(),
+       this->simulation_control->get_end_time()});
 
   // Initialize table column names
   std::string melt_volume_column_name, melt_volume_console_string;

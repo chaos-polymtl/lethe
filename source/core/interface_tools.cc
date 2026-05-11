@@ -66,9 +66,10 @@ InterfaceTools::compute_cell_wise_volume(
 template <int dim, typename VectorType>
 std::pair<double, double>
 InterfaceTools::integrate_volume_and_surface(
-  const DoFHandler<dim>    &dof_handler,
-  const FiniteElement<dim> &fe,
-  const VectorType         &level_set_vector_relevant_copy)
+  const DoFHandler<dim>           &dof_handler,
+  const FiniteElement<dim>        &fe,
+  const VectorType                &level_set_vector_relevant_copy,
+  const std::pair<double, double> &current_time_and_end_time)
 {
   // Get MPI communicator
   const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
@@ -115,30 +116,38 @@ InterfaceTools::integrate_volume_and_surface(
           if (inside_fe_values)
             {
               // DEBUGGING Print q_point coordinates
-              {
-                if constexpr (dim == 3)
-                  {
-                    auto q_points = &inside_fe_values->get_quadrature_points();
-                    uint qi       = 0;
-                    for (const auto q_p : *q_points)
-                      {
-                        local_cells.push_back(cell->active_cell_index());
-                        local_qi.push_back(qi);
-                        local_q_point_x.push_back(q_p[0]);
-                        local_q_point_y.push_back(q_p[1]);
-                        local_q_point_z.push_back(q_p[2]);
-                        local_q_weights.push_back(inside_fe_values->JxW(qi));
+              if (current_time_and_end_time.first ==
+                  current_time_and_end_time.second)
+                {
+                  // if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+                  //   std::cout << "HERE!" << std::endl;
+                  if constexpr (dim == 3)
+                    {
+                      auto q_points =
+                        &inside_fe_values->get_quadrature_points();
+                      uint qi = 0;
+                      for (const auto q_p : *q_points)
+                        {
+                          local_cells.push_back(cell->active_cell_index());
+                          local_qi.push_back(qi);
+                          local_q_point_x.push_back(q_p[0]);
+                          local_q_point_y.push_back(q_p[1]);
+                          local_q_point_z.push_back(q_p[2]);
+                          local_q_weights.push_back(inside_fe_values->JxW(qi));
 
-                        // if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
-                        // == 0)
-                        //   std::cout
-                        //     << "cell: " << cell->active_cell_index() << "; "
-                        //     << "q_point[" << qi << "]: (" << q_p[0] << ", "
-                        //     << q_p[1] << ", " << q_p[2] << ")" << std::endl;
-                        //   qi++;
-                      }
-                  }
-              }
+                          // if
+                          // (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD)
+                          // == 0)
+                          //   std::cout
+                          //     << "cell: " << cell->active_cell_index() << ";
+                          //     "
+                          //     << "q_point[" << qi << "]: (" << q_p[0] << ", "
+                          //     << q_p[1] << ", " << q_p[2] << ")" <<
+                          //     std::endl;
+                          //   qi++;
+                        }
+                    }
+                }
               for (const unsigned int q :
                    inside_fe_values->quadrature_point_indices())
                 {
@@ -168,10 +177,8 @@ InterfaceTools::integrate_volume_and_surface(
   auto gathered_q_point_x =
     Utilities::MPI::gather(mpi_communicator, local_q_point_x, 0);
 
-
   auto gathered_q_point_y =
     Utilities::MPI::gather(mpi_communicator, local_q_point_y, 0);
-
 
   auto gathered_q_point_z =
     Utilities::MPI::gather(mpi_communicator, local_q_point_z, 0);
@@ -230,15 +237,17 @@ InterfaceTools::integrate_volume_and_surface(
 
 template std::pair<double, double>
 InterfaceTools::integrate_volume_and_surface(
-  const DoFHandler<2>    &dof_handler,
-  const FiniteElement<2> &fe,
-  const GlobalVectorType &level_set_vector_relevant_copy);
+  const DoFHandler<2>             &dof_handler,
+  const FiniteElement<2>          &fe,
+  const GlobalVectorType          &level_set_vector_relevant_copy,
+  const std::pair<double, double> &current_time_and_end_time);
 
 template std::pair<double, double>
 InterfaceTools::integrate_volume_and_surface(
-  const DoFHandler<3>    &dof_handler,
-  const FiniteElement<3> &fe,
-  const GlobalVectorType &level_set_vector_relevant_copy);
+  const DoFHandler<3>             &dof_handler,
+  const FiniteElement<3>          &fe,
+  const GlobalVectorType          &level_set_vector_relevant_copy,
+  const std::pair<double, double> &current_time_and_end_time);
 
 template <int dim, typename VectorType>
 std::pair<double, double>

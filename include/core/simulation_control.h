@@ -675,6 +675,17 @@ public:
   }
 
   /**
+   * @brief Get simulation end time
+   *
+   * @return Current simulation end time
+   */
+  double
+  get_end_time() const
+  {
+    return end_time;
+  }
+
+  /**
    * @brief Get current simulation time
    *
    * @return Current simulation time

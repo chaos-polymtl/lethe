@@ -230,9 +230,10 @@ namespace InterfaceTools
   template <int dim, typename VectorType>
   std::pair<double, double>
   integrate_volume_and_surface(
-    const DoFHandler<dim>    &dof_handler,
-    const FiniteElement<dim> &fe,
-    const VectorType         &level_set_vector_relevant_copy);
+    const DoFHandler<dim>           &dof_handler,
+    const FiniteElement<dim>        &fe,
+    const VectorType                &level_set_vector_relevant_copy,
+    const std::pair<double, double> &current_time_and_end_time = {0, 1});
 
   /**
    * @brief Overload of the function above. Here, the zero-contour of the level
