@@ -233,7 +233,8 @@ namespace InterfaceTools
     const DoFHandler<dim>           &dof_handler,
     const FiniteElement<dim>        &fe,
     const VectorType                &level_set_vector_relevant_copy,
-    const std::pair<double, double> &current_time_and_end_time = {0, 1});
+    const std::pair<double, double> &current_time_and_end_time = {0, 1},
+    const std::string               &output_folder_for_debug   = "./output/");
 
   /**
    * @brief Overload of the function above. Here, the zero-contour of the level

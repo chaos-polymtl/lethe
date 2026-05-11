@@ -69,7 +69,8 @@ InterfaceTools::integrate_volume_and_surface(
   const DoFHandler<dim>           &dof_handler,
   const FiniteElement<dim>        &fe,
   const VectorType                &level_set_vector_relevant_copy,
-  const std::pair<double, double> &current_time_and_end_time)
+  const std::pair<double, double> &current_time_and_end_time,
+  const std::string               &output_folder_for_debug)
 {
   // Get MPI communicator
   const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
@@ -228,7 +229,8 @@ InterfaceTools::integrate_volume_and_surface(
       melt_volume_geo_table_debugging.set_scientific("q_point_z", true);
       melt_volume_geo_table_debugging.set_scientific("q_weight", true);
 
-      std::ofstream output("./output/geometric_melt_volume_DEBUG.dat");
+      std::ofstream output(output_folder_for_debug +
+                           "/geometric_melt_volume_DEBUG.dat");
       melt_volume_geo_table_debugging.write_text(output);
     }
 
@@ -240,14 +242,16 @@ InterfaceTools::integrate_volume_and_surface(
   const DoFHandler<2>             &dof_handler,
   const FiniteElement<2>          &fe,
   const GlobalVectorType          &level_set_vector_relevant_copy,
-  const std::pair<double, double> &current_time_and_end_time);
+  const std::pair<double, double> &current_time_and_end_time,
+  const std::string               &output_folder_for_debug);
 
 template std::pair<double, double>
 InterfaceTools::integrate_volume_and_surface(
   const DoFHandler<3>             &dof_handler,
   const FiniteElement<3>          &fe,
   const GlobalVectorType          &level_set_vector_relevant_copy,
-  const std::pair<double, double> &current_time_and_end_time);
+  const std::pair<double, double> &current_time_and_end_time,
+  const std::string               &output_folder_for_debug);
 
 template <int dim, typename VectorType>
 std::pair<double, double>
