@@ -526,7 +526,7 @@ public:
  * According to the following weak form: (p-mu*grad_u)*n at the boundary
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
- * @param pressure_boundary_condition The boundary condition objects use to store the function.
+ * @param neumann_traction_boundary_condition The boundary condition objects use to store the function.
  * @ingroup assemblers
  */
 template <int dim>
@@ -536,10 +536,10 @@ public:
   NeumannTractionBoundaryCondition(
     const std::shared_ptr<SimulationControl> &simulation_control,
     const BoundaryConditions::NSBoundaryConditions<dim>
-      &neumann_traction_boundary_conditions_input)
+      &neumann_traction_boundary_condition_input)
     : simulation_control(simulation_control)
-    , neumann_traction_boundary_conditions(
-        neumann_traction_boundary_conditions_input)
+    , neumann_traction_boundary_condition(
+        neumann_traction_boundary_condition_input)
   {}
 
   /**
@@ -564,7 +564,7 @@ public:
 
   const std::shared_ptr<SimulationControl> simulation_control;
   const BoundaryConditions::NSBoundaryConditions<dim>
-    &neumann_traction_boundary_conditions;
+    &neumann_traction_boundary_condition;
 };
 
 

@@ -163,7 +163,7 @@ NavierStokesOperatorBase<dim, number>::reinit(
             update_values | update_quadrature_points | update_JxW_values |
             update_normal_vectors;
         }
-      else if (type == BoundaryConditions::BoundaryType::Neumann_traction)
+      else if (type == BoundaryConditions::BoundaryType::neumann_traction)
         {
           this->enable_face_terms = true;
           additional_data.mapping_update_flags_boundary_faces =
@@ -880,7 +880,7 @@ NavierStokesOperatorBase<dim, number>::evaluate_prescribed_neumann_traction()
             {
               if (this->boundary_conditions.type.at(
                     face_integrator.boundary_id()) ==
-                  BoundaryConditions::BoundaryType::Neumann_traction)
+                  BoundaryConditions::BoundaryType::neumann_traction)
                 {
                   Point<dim, VectorizedArray<number>> point_batch =
                     face_integrator.quadrature_point(q);
@@ -901,7 +901,7 @@ NavierStokesOperatorBase<dim, number>::evaluate_prescribed_neumann_traction()
                     evaluate_function<dim, number, dim + 1>(
                       this->boundary_conditions.navier_stokes_functions
                         .at(face_integrator.boundary_id())
-                        ->t,
+                        ->traction_fn,
                       point_batch);
                 }
             }
@@ -1489,14 +1489,11 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
 
   // If the boundary condition is not in our list of boundary
   // conditions or the boundary condition that is set in the list is
-  // not a weak function or outlet BC or Neumann traction, there is nothing to
-  // do, so we set the values to zero and return
-  if (this->boundary_conditions.type.at(integrator.boundary_id()) !=
-        BoundaryConditions::BoundaryType::function_weak &&
-      this->boundary_conditions.type.at(integrator.boundary_id()) !=
-        BoundaryConditions::BoundaryType::outlet &&
-      this->boundary_conditions.type.at(integrator.boundary_id()) !=
-        BoundaryConditions::BoundaryType::Neumann_traction)
+  // not a boundary condition that requires face asssembly (for example
+  // pressure, weak dirichlet or outlet or neumann traction), there is nothing
+  // to do, so we set the values to zero and return
+  if (boundary_condition_requires_face_assembly(
+        this->boundary_conditions.type.at(integrator.boundary_id())) == false)
     {
       const VectorizedArray<number> zero = 0.0;
 
@@ -1558,10 +1555,10 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
                            EvaluationFlags::EvaluationFlags::gradients);
     }
   // This part assembles the prescribed Neumann traction boundary condition  (σ
-  // . n , v)  = (t, v) only on the RHS (residual) since it does not depend on
-  // the solution
+  // . n , v)  = (traction_fn, v) only on the RHS (residual) since it does not
+  // depend on the solution
   else if (this->boundary_conditions.type.at(integrator.boundary_id()) ==
-           BoundaryConditions::BoundaryType::Neumann_traction)
+           BoundaryConditions::BoundaryType::neumann_traction)
     {
       integrator.evaluate(EvaluationFlags::values);
       {

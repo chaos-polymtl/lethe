@@ -2104,7 +2104,7 @@ NavierStokesBase<dim, VectorType, DofsType>::define_zero_constraints()
           /*The directional do-nothing boundary condition is implemented
            * in the matrix-based assemblers and the matrix-free operators*/
         }
-      else if (type == BoundaryConditions::BoundaryType::Neumann_traction)
+      else if (type == BoundaryConditions::BoundaryType::neumann_traction)
         {
           /*The Neumann traction boundary condition is implemented
            * in the  matrix-based assemblers and the matrix-free operators*/
@@ -2259,7 +2259,7 @@ NavierStokesBase<dim, VectorType, DofsType>::update_boundary_conditions()
           type == BoundaryConditions::BoundaryType::function_weak ||
           type == BoundaryConditions::BoundaryType::pressure ||
           type == BoundaryConditions::BoundaryType::partial_slip ||
-          type == BoundaryConditions::BoundaryType::Neumann_traction)
+          type == BoundaryConditions::BoundaryType::neumann_traction)
         {
           this->simulation_parameters.boundary_conditions
             .navier_stokes_functions.at(id)
@@ -2275,7 +2275,7 @@ NavierStokesBase<dim, VectorType, DofsType>::update_boundary_conditions()
             ->p.set_time(time);
           this->simulation_parameters.boundary_conditions
             .navier_stokes_functions.at(id)
-            ->t.set_time(time);
+            ->traction_fn.set_time(time);
         }
     }
   this->define_non_zero_constraints();

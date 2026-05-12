@@ -72,7 +72,7 @@ namespace BoundaryConditions
     function_weak,
     partial_slip,
     pressure,
-    Neumann_traction,
+    neumann_traction,
     //  for heat transfer
     noflux,
     temperature,
@@ -147,14 +147,12 @@ namespace BoundaryConditions
     Functions::ParsedFunction<dim> v;
     Functions::ParsedFunction<dim> w;
 
-
     /// Pressure
     Functions::ParsedFunction<dim> p;
 
     // Neumann Traction σ = 2με(u)− pI
     // σ.n = g
-
-    Functions::ParsedFunction<dim> t;
+    Functions::ParsedFunction<dim> traction_fn;
 
     /// Point for the center of rotation
     Point<dim> center_of_rotation;
@@ -181,8 +179,8 @@ namespace BoundaryConditions
     */
 
     NSBoundaryFunctions()
-      : t(dim +
-          1) // The traction function has dim components for the traction vector
+      : traction_fn(dim + 1) // The traction function has dim components for the
+                             // traction vector plus 1 for the pressure.
     {}
   };
 
@@ -301,9 +299,9 @@ namespace BoundaryConditions
       "type",
       "none",
       Patterns::Selection(
-        "none|noslip|slip|function|periodic|pressure|Neumann traction|function weak|partial slip|outlet"),
+        "none|noslip|slip|function|periodic|pressure|neumann traction|function weak|partial slip|outlet"),
       "Type of boundary condition"
-      "Choices are <noslip|slip|function|periodic|pressure|Neumann traction|function weak|partial slip|outlet>.");
+      "Choices are <noslip|slip|function|periodic|pressure|neumann traction|function weak|partial slip|outlet>.");
 
 
     prm.declare_entry("id",
@@ -357,10 +355,10 @@ namespace BoundaryConditions
       and 1 pressure component.
     */
 
-    prm.enter_subsection("t");
-    temporary_fluid_dynamics_functions.t.declare_parameters(prm, dim + 1);
+    prm.enter_subsection("traction fn");
+    temporary_fluid_dynamics_functions.traction_fn.declare_parameters(prm,
+                                                                      dim + 1);
     prm.leave_subsection();
-
 
     // Center of rotation of the boundary condition for torque calculation
     prm.enter_subsection("center of rotation");
@@ -431,8 +429,8 @@ namespace BoundaryConditions
         prm.leave_subsection();
 
 
-        prm.enter_subsection("t");
-        navier_stokes_functions[boundary_id]->t.parse_parameters(prm);
+        prm.enter_subsection("traction fn");
+        navier_stokes_functions[boundary_id]->traction_fn.parse_parameters(prm);
         prm.leave_subsection();
 
 
@@ -468,9 +466,9 @@ namespace BoundaryConditions
           {
             this->type[boundary_id] = BoundaryType::pressure;
           }
-        if (op == "Neumann traction")
+        if (op == "neumann traction")
           {
-            this->type[boundary_id] = BoundaryType::Neumann_traction;
+            this->type[boundary_id] = BoundaryType::neumann_traction;
           }
         if (op == "periodic")
           {
@@ -511,8 +509,9 @@ namespace BoundaryConditions
             prm.leave_subsection();
 
 
-            prm.enter_subsection("t");
-            navier_stokes_functions[boundary_id]->t.parse_parameters(prm);
+            prm.enter_subsection("traction fn");
+            navier_stokes_functions[boundary_id]->traction_fn.parse_parameters(
+              prm);
             prm.leave_subsection();
 
 
@@ -2059,16 +2058,14 @@ NavierStokesFunctionDefined<dim>::value(const Point<dim>  &point,
  * where the Neumann traction component are defined using individual functions
  */
 template <int dim>
-class NavierStokesTractionFunctionDefined
-  : public Functions::ParsedFunction<dim>
+class NavierStokesTractionFunctionDefined : public Function<dim>
 {
-  Functions::ParsedFunction<dim> *t;
-
+  Functions::ParsedFunction<dim> *traction_fn;
 
 public:
-  NavierStokesTractionFunctionDefined(Functions::ParsedFunction<dim> *pt)
-    : Functions::ParsedFunction<dim>(dim + 1)
-    , t(pt)
+  NavierStokesTractionFunctionDefined(Functions::ParsedFunction<dim> *p_t)
+    : Function<dim>(dim + 1)
+    , traction_fn(p_t)
   {}
 
 
@@ -2105,7 +2102,7 @@ NavierStokesTractionFunctionDefined<dim>::value(
     return 0.;
 
 
-  return t->value(point, component);
+  return traction_fn->value(point, component);
 }
 
 

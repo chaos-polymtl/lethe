@@ -409,7 +409,7 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
     }
 
   if (this->check_existance_of_bc(
-        BoundaryConditions::BoundaryType::Neumann_traction))
+        BoundaryConditions::BoundaryType::neumann_traction))
     {
       this->assemblers.emplace_back(
         std::make_shared<NeumannTractionBoundaryCondition<dim>>(
@@ -916,7 +916,11 @@ FluidDynamicsMatrixBased<dim>::assemble_local_system_matrix(
     {
       for (auto &assembler : this->assemblers)
         {
-          assembler->assemble_matrix(scratch_data, copy_data);
+          // Neumann traction BC assembler does not contribute to the system
+          // matrix, so we can skip it in the assembly of the matrix
+          if (!std::dynamic_pointer_cast<NeumannTractionBoundaryCondition<dim>>(
+                assembler))
+            assembler->assemble_matrix(scratch_data, copy_data);
         }
     }
 

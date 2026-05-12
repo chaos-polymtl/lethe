@@ -2248,6 +2248,10 @@ NeumannTractionBoundaryCondition<dim>::assemble_matrix(
   // This method is just for compilation purpose and no assembly is done.
   (void)scratch_data;
   (void)copy_data;
+  AssertThrow(
+    false,
+    ExcMessage(
+      "Neumann traction boundary condition does not have a matrix contribution"));
 }
 
 template <int dim>
@@ -2263,7 +2267,7 @@ NeumannTractionBoundaryCondition<dim>::assemble_rhs(
   prescribed_pressure_values = std::vector<std::vector<double>>(
     scratch_data.n_faces, std::vector<double>(scratch_data.n_faces_q_points));
 
-  std::vector<std::vector<Tensor<1, dim>>> gn_bc =
+  std::vector<std::vector<Tensor<1, dim>>> traction_vec_data =
     std::vector<std::vector<Tensor<1, dim>>>(scratch_data.n_faces,
                                              std::vector<Tensor<1, dim>>(
                                                scratch_data.n_faces_q_points));
@@ -2272,14 +2276,13 @@ NeumannTractionBoundaryCondition<dim>::assemble_rhs(
   auto &local_rhs = copy_data.local_rhs;
 
   // Neumann traction boundary condition, loop on faces
-  //    ∫_Γ_N  v · t  dΓ
+  //    ∫_Γ_N  v · t  dΓ_N
   //
   // where:
-  //   - Ω is the domain,
-  //   - Γ_N is the boundary where the Neumann traction condition is applied, n
-  //   is the outward normal vector on Γ_N,
+  //   - Γ_N is the boundary domain where the Neumann traction condition is
+  //   applied
   //   - v is the velocity test function,
-  //   - t is the prescribed traction (force per unit area) on the boundary Γ_N.
+  //   - t is the prescribed traction on the boundary Γ_N.
 
   for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
     {
@@ -2289,8 +2292,8 @@ NeumannTractionBoundaryCondition<dim>::assemble_rhs(
           types::boundary_id boundary_id = scratch_data.boundary_face_id[f];
           // Check if the face is part of the boundary that as a
           // Neumann traction BC.
-          if (this->neumann_traction_boundary_conditions.type.at(boundary_id) ==
-              BoundaryConditions::BoundaryType::Neumann_traction)
+          if (this->neumann_traction_boundary_condition.type.at(boundary_id) ==
+              BoundaryConditions::BoundaryType::neumann_traction)
             {
               // Assemble the rhs of the BC
               for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
@@ -2298,25 +2301,28 @@ NeumannTractionBoundaryCondition<dim>::assemble_rhs(
                   const double JxW = scratch_data.face_JxW[f][q];
 
 
-                  gn_bc[f][q][0] =
-                    neumann_traction_boundary_conditions.navier_stokes_functions
+                  traction_vec_data[f][q][0] =
+                    neumann_traction_boundary_condition.navier_stokes_functions
                       .at(boundary_id)
-                      ->t.value(scratch_data.face_quadrature_points[f][q], 0);
-                  gn_bc[f][q][1] =
-                    neumann_traction_boundary_conditions.navier_stokes_functions
+                      ->traction_fn.value(
+                        scratch_data.face_quadrature_points[f][q], 0);
+                  traction_vec_data[f][q][1] =
+                    neumann_traction_boundary_condition.navier_stokes_functions
                       .at(boundary_id)
-                      ->t.value(scratch_data.face_quadrature_points[f][q], 1);
+                      ->traction_fn.value(
+                        scratch_data.face_quadrature_points[f][q], 1);
                   if constexpr (dim == 3)
-                    gn_bc[f][q][2] =
-                      neumann_traction_boundary_conditions
+                    traction_vec_data[f][q][2] =
+                      neumann_traction_boundary_condition
                         .navier_stokes_functions.at(boundary_id)
-                        ->t.value(scratch_data.face_quadrature_points[f][q], 2);
+                        ->traction_fn.value(
+                          scratch_data.face_quadrature_points[f][q], 2);
 
                   for (const unsigned int i :
                        scratch_data.fe_face_values.dof_indices())
                     {
-                      local_rhs(i) -=
-                        -scratch_data.face_phi_u[f][q][i] * (gn_bc[f][q]) * JxW;
+                      local_rhs(i) -= scratch_data.face_phi_u[f][q][i] *
+                                      (traction_vec_data[f][q]) * JxW;
                     }
                 }
             }

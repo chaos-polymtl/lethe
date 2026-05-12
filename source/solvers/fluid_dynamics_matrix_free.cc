@@ -1064,7 +1064,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               /*The function weak boundary condition is implemented in the
                * operators*/
             }
-          else if (type == BoundaryConditions::BoundaryType::Neumann_traction)
+          else if (type == BoundaryConditions::BoundaryType::neumann_traction)
             {
               /*The Neumann traction boundary condition is implemented in the
                * operators*/
@@ -1626,7 +1626,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                    * in the operators*/
                 }
               else if (type ==
-                       BoundaryConditions::BoundaryType::Neumann_traction)
+                       BoundaryConditions::BoundaryType::neumann_traction)
                 {
                   /*The Neumann traction boundary condition is implemented in
                    * the operators*/
@@ -3324,8 +3324,8 @@ FluidDynamicsMatrixFree<dim>::assemble_system_rhs()
     this->evaluation_point);
 
   /*
-    (σ . n , v)  = (t, v) on Γ_N. computes traction vector for the prescribed
-    Neumann traction σ = 2με(u)− pI
+    (σ . n , v)  = (traction_fn, v) on Γ_N. computes traction vector for the
+    prescribed Neumann traction σ = 2με(u)− pI
   */
 
   this->system_operator->evaluate_prescribed_neumann_traction();

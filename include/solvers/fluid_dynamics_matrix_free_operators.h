@@ -142,7 +142,8 @@ boundary_condition_requires_face_assembly(
 {
   if (boundary_type == BoundaryConditions::BoundaryType::function_weak ||
       boundary_type == BoundaryConditions::BoundaryType::outlet ||
-      boundary_type == BoundaryConditions::BoundaryType::pressure)
+      boundary_type == BoundaryConditions::BoundaryType::pressure ||
+      boundary_type == BoundaryConditions::BoundaryType::neumann_traction)
     return true;
   else
     return false;
@@ -417,8 +418,8 @@ public:
 
   /**
    * @brief Store the values of the prescribed Neumann traction boundary condition to use it
-   * (σ . n , v)  = (t, v)
-   * in the residual assembly and Jacobian ?
+   * (σ . n , v)  = (traction_fn, v)
+   * in the residual assembly and Jacobian assembly of the matrix-free operator.
    */
   void
   evaluate_prescribed_neumann_traction();
@@ -806,7 +807,7 @@ protected:
    * @brief Table with correct alignment for vectorization to store the values
    * of the prescribed Neumann traction boundary condition values.
    *
-   * σ = 2με(u)− pI , σ.n = (2με(u)− pI).n = g_N
+   * σ = 2με(u)− pI , σ.n = (2με(u)− pI).n = traction_fn
    * assembled (v, g_N) on boundary faces where Neumann traction is prescribed.
    * our test function v involves both velocity and pressure components. Hence,
    * the prescribed_neumann_traction has dim components corresponding to
