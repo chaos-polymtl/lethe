@@ -63,7 +63,7 @@ constrain_solid_cell_velocity_dofs(
  * disconnected from the fluid.
  *
  * @param[in] non_zero_constraints If this parameter is true, it indicates
- * that the constraints used for the solid domainare the non-zero constraints.
+ * that the constraints used for the solid domain are the non-zero constraints.
  * If this is set to false, the constraints being used are zero constraints.
  *
  * @param[in] constraints Set of constraints on which the solid domain
