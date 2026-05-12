@@ -1639,8 +1639,7 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
   VectorizedArray<number> cell_mask(1.0);
   if (this->has_solids)
     {
-      Assert(cell < this->solid_cell_mask.size(),
-             ExcDimensionMismatch(cell, this->solid_cell_mask.size()));
+      AssertIndexRange(cell, this->solid_cell_mask.size());
       cell_mask = this->solid_cell_mask[cell];
     }
 
