@@ -680,91 +680,88 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>                           colorize);</div>
 <div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span> </div>
 <div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>  <span class="comment">// Attach manifold for id 0 required by deal.II</span></div>
-<div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span>  TransfiniteInterpolationManifold&lt;2&gt; tfi_manifold;</div>
-<div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span>  tfi_manifold.initialize(triangulation);</div>
-<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span>  triangulation.set_manifold(0, tfi_manifold);</div>
-<div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span>}</div>
+<div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span>  FlatManifold&lt;2, 2&gt; FlatManifold;</div>
+<div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span>  triangulation.set_manifold(0, FlatManifold);</div>
+<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span>}</div>
 </div>
+<div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span> </div>
 <div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span> </div>
-<div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span> </div>
-<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span><span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00587" data-start="{" data-end="}">
-<div class="line"><a id="l00587" name="l00587"></a><span class="lineno"><a class="line" href="classGridUniformChannelWithMeshedSquarePrism.html#a9d311ddf07acc1d24bb377363dddada8">  587</a></span><a class="code hl_function" href="classGridUniformChannelWithMeshedSquarePrism.html#ac5b9b78a3f811bbf1e3cf72d453df1d8">GridUniformChannelWithMeshedSquarePrism&lt;3, 3&gt;::make_grid</a>(</div>
-<div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span>  Triangulation&lt;3, 3&gt; &amp;triangulation)</div>
-<div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>{</div>
-<div class="line"><a id="l00590" name="l00590"></a><span class="lineno">  590</span>  <span class="comment">// Generate the 2D cross-section (geometry + material IDs + boundary IDs)</span></div>
-<div class="line"><a id="l00591" name="l00591"></a><span class="lineno">  591</span>  Triangulation&lt;2&gt; tria_2D;</div>
-<div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span>  generate_2d_channel_mesh(tria_2D,</div>
-<div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>                           Point&lt;2&gt;(bottom_left[0], bottom_left[1]),</div>
-<div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span>                           Point&lt;2&gt;(top_right[0], top_right[1]),</div>
-<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>                           Point&lt;2&gt;(center[0], center[1]),</div>
-<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>                           inner_half_side,</div>
-<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>                           outer_half_side,</div>
-<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span>                           inner_rotation_angle,</div>
-<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>                           pad_bottom,</div>
-<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>                           pad_top,</div>
-<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>                           pad_left,</div>
-<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span>                           pad_right,</div>
-<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span>                           colorize);</div>
-<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span> </div>
-<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>  <span class="comment">// Attach manifold id 0 on the 2D mesh before extrusion.</span></div>
-<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>  <span class="comment">// extrude_triangulation queries get_manifold() on the input 2D triangulation.</span></div>
-<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span>  TransfiniteInterpolationManifold&lt;2&gt; tfi_manifold_2d;</div>
-<div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span>  tfi_manifold_2d.initialize(tria_2D);</div>
-<div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span>  tria_2D.set_manifold(0, tfi_manifold_2d);</div>
-<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span> </div>
-<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>  <span class="comment">// Extrude the 2D cross-section along the z-axis. Manifold  and material IDs</span></div>
-<div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span>  <span class="comment">// from the 2D mesh are copied to the lateral faces of the 3D mesh.</span></div>
-<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>  GridGenerator::extrude_triangulation(</div>
-<div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span>    tria_2D, n_slices, height, triangulation, <span class="keyword">true</span>);</div>
-<div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span> </div>
-<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span>  <span class="comment">// Attach manifold for id 0 required by deal.II</span></div>
-<div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span>  TransfiniteInterpolationManifold&lt;3&gt; tfi_manifold;</div>
-<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span>  tfi_manifold.initialize(triangulation);</div>
-<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>  triangulation.set_manifold(0, tfi_manifold);</div>
-<div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span> </div>
-<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>  <span class="comment">// Set the boundary ids for the extruded top and bottom faces.</span></div>
-<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span>  <span class="keywordflow">if</span> (colorize)</div>
-<div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span>    {</div>
-<div class="line"><a id="l00624" name="l00624"></a><span class="lineno">  624</span>      <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;face : triangulation.active_face_iterators())</div>
-<div class="line"><a id="l00625" name="l00625"></a><span class="lineno">  625</span>        {</div>
-<div class="line"><a id="l00626" name="l00626"></a><span class="lineno">  626</span>          <span class="keywordflow">if</span> (!face-&gt;at_boundary())</div>
-<div class="line"><a id="l00627" name="l00627"></a><span class="lineno">  627</span>            <span class="keywordflow">continue</span>;</div>
-<div class="line"><a id="l00628" name="l00628"></a><span class="lineno">  628</span> </div>
-<div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span>          <span class="keyword">const</span> Point&lt;3&gt; face_center = face-&gt;center();</div>
-<div class="line"><a id="l00630" name="l00630"></a><span class="lineno">  630</span> </div>
-<div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span>          <span class="keywordflow">if</span> (std::abs(face_center[2] - bottom_left[2]) &lt; 1e-10 * height)</div>
-<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span>            face-&gt;set_boundary_id(4); <span class="comment">// bottom</span></div>
-<div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span>          <span class="keywordflow">else</span> <span class="keywordflow">if</span> (std::abs(face_center[2] - (bottom_left[2] + height)) &lt;</div>
-<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>                   1e-10 * height)</div>
-<div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span>            face-&gt;set_boundary_id(5); <span class="comment">// top</span></div>
-<div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span>        }</div>
-<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span>    }</div>
-<div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span>}</div>
+<div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span><span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00586" data-start="{" data-end="}">
+<div class="line"><a id="l00586" name="l00586"></a><span class="lineno"><a class="line" href="classGridUniformChannelWithMeshedSquarePrism.html#a9d311ddf07acc1d24bb377363dddada8">  586</a></span><a class="code hl_function" href="classGridUniformChannelWithMeshedSquarePrism.html#ac5b9b78a3f811bbf1e3cf72d453df1d8">GridUniformChannelWithMeshedSquarePrism&lt;3, 3&gt;::make_grid</a>(</div>
+<div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span>  Triangulation&lt;3, 3&gt; &amp;triangulation)</div>
+<div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span>{</div>
+<div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>  <span class="comment">// Generate the 2D cross-section (geometry + material IDs + boundary IDs)</span></div>
+<div class="line"><a id="l00590" name="l00590"></a><span class="lineno">  590</span>  Triangulation&lt;2&gt; tria_2D;</div>
+<div class="line"><a id="l00591" name="l00591"></a><span class="lineno">  591</span>  generate_2d_channel_mesh(tria_2D,</div>
+<div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span>                           Point&lt;2&gt;(bottom_left[0], bottom_left[1]),</div>
+<div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>                           Point&lt;2&gt;(top_right[0], top_right[1]),</div>
+<div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span>                           Point&lt;2&gt;(center[0], center[1]),</div>
+<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>                           inner_half_side,</div>
+<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>                           outer_half_side,</div>
+<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>                           inner_rotation_angle,</div>
+<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span>                           pad_bottom,</div>
+<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>                           pad_top,</div>
+<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>                           pad_left,</div>
+<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>                           pad_right,</div>
+<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span>                           colorize);</div>
+<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span> </div>
+<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span>  <span class="comment">// Attach manifold id 0 on the 2D mesh before extrusion.</span></div>
+<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>  <span class="comment">// extrude_triangulation queries get_manifold() on the input 2D triangulation.</span></div>
+<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>  FlatManifold&lt;2, 2&gt; FlatManifold_2d;</div>
+<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span>  tria_2D.set_manifold(0, FlatManifold_2d);</div>
+<div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span> </div>
+<div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span>  <span class="comment">// Extrude the 2D cross-section along the z-axis. Manifold  and material IDs</span></div>
+<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span>  <span class="comment">// from the 2D mesh are copied to the lateral faces of the 3D mesh.</span></div>
+<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>  GridGenerator::extrude_triangulation(</div>
+<div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span>    tria_2D, n_slices, height, triangulation, <span class="keyword">true</span>);</div>
+<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span> </div>
+<div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span>  <span class="comment">// Attach manifold for id 0 required by deal.II</span></div>
+<div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span>  FlatManifold&lt;3, 3&gt; FlatManifold;</div>
+<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span>  triangulation.set_manifold(0, FlatManifold);</div>
+<div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span> </div>
+<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span>  <span class="comment">// Set the boundary ids for the extruded top and bottom faces.</span></div>
+<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>  <span class="keywordflow">if</span> (colorize)</div>
+<div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span>    {</div>
+<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>      <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span> &amp;face : triangulation.active_face_iterators())</div>
+<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span>        {</div>
+<div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span>          <span class="keywordflow">if</span> (!face-&gt;at_boundary())</div>
+<div class="line"><a id="l00624" name="l00624"></a><span class="lineno">  624</span>            <span class="keywordflow">continue</span>;</div>
+<div class="line"><a id="l00625" name="l00625"></a><span class="lineno">  625</span> </div>
+<div class="line"><a id="l00626" name="l00626"></a><span class="lineno">  626</span>          <span class="keyword">const</span> Point&lt;3&gt; face_center = face-&gt;center();</div>
+<div class="line"><a id="l00627" name="l00627"></a><span class="lineno">  627</span> </div>
+<div class="line"><a id="l00628" name="l00628"></a><span class="lineno">  628</span>          <span class="keywordflow">if</span> (std::abs(face_center[2] - bottom_left[2]) &lt; 1e-10 * height)</div>
+<div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span>            face-&gt;set_boundary_id(4); <span class="comment">// bottom</span></div>
+<div class="line"><a id="l00630" name="l00630"></a><span class="lineno">  630</span>          <span class="keywordflow">else</span> <span class="keywordflow">if</span> (std::abs(face_center[2] - (bottom_left[2] + height)) &lt;</div>
+<div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span>                   1e-10 * height)</div>
+<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span>            face-&gt;set_boundary_id(5); <span class="comment">// top</span></div>
+<div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span>        }</div>
+<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>    }</div>
+<div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span>}</div>
 </div>
-<div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span> </div>
-<div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span><span class="comment">// Fallback make_grid definition for unsupported template parameters.</span></div>
-<div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keywordtype">int</span> spacedim&gt;</div>
-<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span><span class="keywordtype">void</span></div>
-<div class="foldopen" id="foldopen00643" data-start="{" data-end="}">
-<div class="line"><a id="l00643" name="l00643"></a><span class="lineno"><a class="line" href="classGridUniformChannelWithMeshedSquarePrism.html#ac5b9b78a3f811bbf1e3cf72d453df1d8">  643</a></span><a class="code hl_function" href="classGridUniformChannelWithMeshedSquarePrism.html#ac5b9b78a3f811bbf1e3cf72d453df1d8">GridUniformChannelWithMeshedSquarePrism&lt;dim, spacedim&gt;::make_grid</a>(</div>
-<div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span>  Triangulation&lt;dim, spacedim&gt; &amp; <span class="comment">/*triangulation*/</span>)</div>
-<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span>{</div>
-<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>  AssertThrow(</div>
-<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>    <span class="keyword">false</span>,</div>
-<div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span>    ExcMessage(</div>
-<div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span>      <span class="stringliteral">&quot;GridUniformChannelWithMeshedSquarePrism is only supported for &lt;2,2&gt; and &lt;3,3&gt; &lt;dim,spacedim&gt; specializations.&quot;</span>));</div>
-<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span>}</div>
+<div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span> </div>
+<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span><span class="comment">// Fallback make_grid definition for unsupported template parameters.</span></div>
+<div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> dim, <span class="keywordtype">int</span> spacedim&gt;</div>
+<div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span><span class="keywordtype">void</span></div>
+<div class="foldopen" id="foldopen00640" data-start="{" data-end="}">
+<div class="line"><a id="l00640" name="l00640"></a><span class="lineno"><a class="line" href="classGridUniformChannelWithMeshedSquarePrism.html#ac5b9b78a3f811bbf1e3cf72d453df1d8">  640</a></span><a class="code hl_function" href="classGridUniformChannelWithMeshedSquarePrism.html#ac5b9b78a3f811bbf1e3cf72d453df1d8">GridUniformChannelWithMeshedSquarePrism&lt;dim, spacedim&gt;::make_grid</a>(</div>
+<div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span>  Triangulation&lt;dim, spacedim&gt; &amp; <span class="comment">/*triangulation*/</span>)</div>
+<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>{</div>
+<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span>  AssertThrow(</div>
+<div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span>    <span class="keyword">false</span>,</div>
+<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span>    ExcMessage(</div>
+<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>      <span class="stringliteral">&quot;GridUniformChannelWithMeshedSquarePrism is only supported for &lt;2,2&gt; and &lt;3,3&gt; &lt;dim,spacedim&gt; specializations.&quot;</span>));</div>
+<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>}</div>
 </div>
-<div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span> </div>
-<div class="line"><a id="l00652" name="l00652"></a><span class="lineno">  652</span><span class="comment">// Explicit template instantiations</span></div>
-<div class="line"><a id="l00653" name="l00653"></a><span class="lineno">  653</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classGridUniformChannelWithMeshedSquarePrism.html">GridUniformChannelWithMeshedSquarePrism&lt;2, 2&gt;</a>;</div>
-<div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classGridUniformChannelWithMeshedSquarePrism.html">GridUniformChannelWithMeshedSquarePrism&lt;2, 3&gt;</a>;</div>
-<div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classGridUniformChannelWithMeshedSquarePrism.html">GridUniformChannelWithMeshedSquarePrism&lt;3, 3&gt;</a>;</div>
+<div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span> </div>
+<div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span><span class="comment">// Explicit template instantiations</span></div>
+<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classGridUniformChannelWithMeshedSquarePrism.html">GridUniformChannelWithMeshedSquarePrism&lt;2, 2&gt;</a>;</div>
+<div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classGridUniformChannelWithMeshedSquarePrism.html">GridUniformChannelWithMeshedSquarePrism&lt;2, 3&gt;</a>;</div>
+<div class="line"><a id="l00652" name="l00652"></a><span class="lineno">  652</span><span class="keyword">template</span> <span class="keyword">class </span><a class="code hl_class" href="classGridUniformChannelWithMeshedSquarePrism.html">GridUniformChannelWithMeshedSquarePrism&lt;3, 3&gt;</a>;</div>
 <div class="ttc" id="aclassGridUniformChannelWithMeshedSquarePrism_html"><div class="ttname"><a href="classGridUniformChannelWithMeshedSquarePrism.html">GridUniformChannelWithMeshedSquarePrism</a></div><div class="ttdoc">Generates a rectangular channel mesh with a meshed square obstacle in 2D (extruded to a square prism ...</div><div class="ttdef"><b>Definition</b> <a href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00041">grid_uniform_channel_with_meshed_square_prism.h:42</a></div></div>
 <div class="ttc" id="aclassGridUniformChannelWithMeshedSquarePrism_html_a6a61e2a41ec9fdec4b4d6b5a9074718d"><div class="ttname"><a href="classGridUniformChannelWithMeshedSquarePrism.html#a6a61e2a41ec9fdec4b4d6b5a9074718d">GridUniformChannelWithMeshedSquarePrism::generate_2d_channel_mesh</a></div><div class="ttdeci">void generate_2d_channel_mesh(Triangulation&lt; 2 &gt; &amp;triangulation, const Point&lt; 2 &gt; &amp;bottom_left, const Point&lt; 2 &gt; &amp;top_right, const Point&lt; 2 &gt; &amp;center, const double inner_half_side, const double outer_half_side, const double inner_rotation_angle, const unsigned int pad_bottom, const unsigned int pad_top, const unsigned int pad_left, const unsigned int pad_right, const bool colorize)</div><div class="ttdoc">Generate the 2D channel mesh geometry with a meshed square obstacle.</div><div class="ttdef"><b>Definition</b> <a href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html#l00167">grid_uniform_channel_with_meshed_square_prism.cc:168</a></div></div>
-<div class="ttc" id="aclassGridUniformChannelWithMeshedSquarePrism_html_ac5b9b78a3f811bbf1e3cf72d453df1d8"><div class="ttname"><a href="classGridUniformChannelWithMeshedSquarePrism.html#ac5b9b78a3f811bbf1e3cf72d453df1d8">GridUniformChannelWithMeshedSquarePrism::make_grid</a></div><div class="ttdeci">void make_grid(Triangulation&lt; dim, spacedim &gt; &amp;triangulation)</div><div class="ttdoc">Generate the 2D/3D channel mesh with a meshed square obstacle.</div><div class="ttdef"><b>Definition</b> <a href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html#l00643">grid_uniform_channel_with_meshed_square_prism.cc:643</a></div></div>
+<div class="ttc" id="aclassGridUniformChannelWithMeshedSquarePrism_html_ac5b9b78a3f811bbf1e3cf72d453df1d8"><div class="ttname"><a href="classGridUniformChannelWithMeshedSquarePrism.html#ac5b9b78a3f811bbf1e3cf72d453df1d8">GridUniformChannelWithMeshedSquarePrism::make_grid</a></div><div class="ttdeci">void make_grid(Triangulation&lt; dim, spacedim &gt; &amp;triangulation)</div><div class="ttdoc">Generate the 2D/3D channel mesh with a meshed square obstacle.</div><div class="ttdef"><b>Definition</b> <a href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html#l00640">grid_uniform_channel_with_meshed_square_prism.cc:640</a></div></div>
 <div class="ttc" id="aclassGridUniformChannelWithMeshedSquarePrism_html_adfe7383b3801ede498d7ba7eb7eb1e16"><div class="ttname"><a href="classGridUniformChannelWithMeshedSquarePrism.html#adfe7383b3801ede498d7ba7eb7eb1e16">GridUniformChannelWithMeshedSquarePrism::GridUniformChannelWithMeshedSquarePrism</a></div><div class="ttdeci">GridUniformChannelWithMeshedSquarePrism(const std::string &amp;grid_arguments)</div><div class="ttdoc">Constructor that parses geometry parameters from a colon-separated string.</div><div class="ttdef"><b>Definition</b> <a href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html#l00014">grid_uniform_channel_with_meshed_square_prism.cc:15</a></div></div>
 <div class="ttc" id="acore_2utilities_8h_html"><div class="ttname"><a href="core_2utilities_8h.html">utilities.h</a></div></div>
 <div class="ttc" id="agrid__uniform__channel__with__meshed__square__prism_8h_html"><div class="ttname"><a href="grid__uniform__channel__with__meshed__square__prism_8h.html">grid_uniform_channel_with_meshed_square_prism.h</a></div></div>
