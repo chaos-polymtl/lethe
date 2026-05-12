@@ -1,5 +1,8 @@
-# SPDX-FileCopyrightText: Copyright (c) 2020-2024 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# This test is based on case 2 from https://doi.org/10.1002/fld.5182.
+# It tests the LSMG preconditioner of the VANS matrix-free solver.
 
 # Listing of Parameters
 #----------------------
