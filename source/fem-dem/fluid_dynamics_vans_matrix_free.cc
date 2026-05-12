@@ -126,21 +126,44 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
       this->mg_transfer_ls_momentum_transfer_coefficient =
         std::make_shared<LSTransferType>();
 
-      this->mg_transfer_ls_void_fraction->build(particle_projector.dof_handler);
+      // Build each transfer with a level-partitioner lambda. This stores
+      // per-level partitioners (locally owned + locally relevant level DoFs)
+      // inside the transfer, so that interpolate_to_mg auto-sizes its
+      // destination level vectors with the ghost layout our operator needs
+      // for cell-by-cell dof index lookups. This mirrors the GCMG pattern.
+      const auto make_level_partitioner = [](const DoFHandler<dim> &dh) {
+        return [&dh](const unsigned int l, MGVectorType &vec) {
+          vec.reinit(dh.locally_owned_mg_dofs(l),
+                     DoFTools::extract_locally_relevant_level_dofs(dh, l),
+                     dh.get_mpi_communicator());
+        };
+      };
+
+      this->mg_transfer_ls_void_fraction->build(
+        particle_projector.dof_handler,
+        make_level_partitioner(particle_projector.dof_handler));
       this->mg_transfer_ls_pf_force->build(
         particle_projector.fluid_force_on_particles_two_way_coupling
-          .dof_handler);
+          .dof_handler,
+        make_level_partitioner(
+          particle_projector.fluid_force_on_particles_two_way_coupling
+            .dof_handler));
       this->mg_transfer_ls_pf_drag->build(
-        particle_projector.fluid_drag_on_particles.dof_handler);
+        particle_projector.fluid_drag_on_particles.dof_handler,
+        make_level_partitioner(
+          particle_projector.fluid_drag_on_particles.dof_handler));
       this->mg_transfer_ls_particle_velocity->build(
-        particle_projector.particle_velocity.dof_handler);
+        particle_projector.particle_velocity.dof_handler,
+        make_level_partitioner(
+          particle_projector.particle_velocity.dof_handler));
       this->mg_transfer_ls_momentum_transfer_coefficient->build(
-        particle_projector.momentum_transfer_coefficient.dof_handler);
+        particle_projector.momentum_transfer_coefficient.dof_handler,
+        make_level_partitioner(
+          particle_projector.momentum_transfer_coefficient.dof_handler));
 
       // Allocate level vectors indexed by triangulation level.
-      // MGTransferMatrixFree::interpolate_to_mg does not (re)size destination
-      // vectors; we must size them explicitly using each DoFHandler's level
-      // DoFs before calling the transfer.
+      // interpolate_to_mg will reinit each entry from the level partitioner
+      // stored in the transfer above.
       MGLevelObject<MGVectorType> mg_void_fraction_solution(min_h_level,
                                                             max_h_level);
       MGLevelObject<MGVectorType> mg_time_derivative_void_fraction(min_h_level,
@@ -152,28 +175,6 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
                                                                 max_h_level);
       MGLevelObject<MGVectorType> mg_momentum_transfer_coefficient_solution(
         min_h_level, max_h_level);
-
-      const auto init_mg_vec = [&](const DoFHandler<dim>       &dh,
-                                   MGLevelObject<MGVectorType> &mg_vec) {
-        const MPI_Comm comm = dh.get_mpi_communicator();
-        for (unsigned int l = mg_vec.min_level(); l <= mg_vec.max_level(); ++l)
-          mg_vec[l].reinit(dh.locally_owned_mg_dofs(l),
-                           DoFTools::extract_locally_relevant_level_dofs(dh, l),
-                           comm);
-      };
-
-      init_mg_vec(particle_projector.dof_handler, mg_void_fraction_solution);
-      init_mg_vec(particle_projector.dof_handler,
-                  mg_time_derivative_void_fraction);
-      init_mg_vec(particle_projector.fluid_force_on_particles_two_way_coupling
-                    .dof_handler,
-                  mg_pf_forces_solution);
-      init_mg_vec(particle_projector.fluid_drag_on_particles.dof_handler,
-                  mg_pf_drag_solution);
-      init_mg_vec(particle_projector.particle_velocity.dof_handler,
-                  mg_particle_velocity_solution);
-      init_mg_vec(particle_projector.momentum_transfer_coefficient.dof_handler,
-                  mg_momentum_transfer_coefficient_solution);
 
       // The transfers require ghosted source vectors.
       particle_projector.fluid_force_on_particles_two_way_coupling
@@ -552,6 +553,13 @@ FluidDynamicsVANSMatrixFree<dim>::FluidDynamicsVANSMatrixFree(
       this->pcout)
   , has_periodic_boundaries(false)
 {
+  // The matrix-free infrastructure relies on tensor-product (hex/quad)
+  // elements; simplex meshes are not supported by the VANS matrix-free
+  // solver nor by its multigrid preconditioners.
+  AssertThrow(
+    !this->cfd_dem_simulation_parameters.cfd_parameters.mesh.simplex,
+    ExcMessage("The VANS matrix-free solver does not support simplex meshes."));
+
   unsigned int n_pbc = 0;
   for (auto const &[id, type] :
        cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions.type)
