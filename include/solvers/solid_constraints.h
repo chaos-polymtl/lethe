@@ -21,12 +21,11 @@
  * Inherently, we assume that this fe has dim+1 component and corresponds
  * to a Navier-Stokes problem.
  *
- * @param[in] non_zero_constraints If this parameter is true, it indicates
- * that non-zero constraints are applied in the solid domain. If
- * this is set to false, homogeneous constraints are applied in the solid
- * domain.
- *
  * @param[in] local_dof_indices Vector of a cell's local DOF indices.
+ *
+ * @param[in] non_zero_constraints If this parameter is true, it indicates
+ * that the constraints used are non-zero constraints. If
+ * this is set to false, the constraints are zero constraints.
  *
  * @param[out] constraints Homogeneous constraints holding object.
  */
@@ -34,13 +33,13 @@ template <int dim>
 void
 constrain_solid_cell_velocity_dofs(
   const dealii::FiniteElement<dim>                   &fe,
-  const bool                                         &non_zero_constraints,
   const std::vector<dealii::types::global_dof_index> &local_dof_indices,
+  const bool                                         &non_zero_constraints,
   dealii::AffineConstraints<double>                  &constraints);
 
 /**
  * @brief Turn regions of the mesh where the @p material_id>0 into a solid
- * block by injecting velocity and pressure DOFs into the zero constraints.
+ * block by injecting velocity and pressure DOFs into the constraints.
  *
  * It is achieved by imposing \f$\mathbf{u}=0\f$ within the cells which have a
  * @p material_id>0. In addition, solid cells which are not connected to the
@@ -57,10 +56,15 @@ constrain_solid_cell_velocity_dofs(
  * be built at every level. In this case, this DoFHandler can be the
  * DoFHandler at any of the multigrid level.
  *
+ *
+ * @param[in] locally_owned_dofs The locally owned DoFs for the dof_handler.
+ * Used to filter pressure DoFs that should receive a
+ * Dirichlet constraint when their cell is fully
+ * disconnected from the fluid.
+ *
  * @param[in] non_zero_constraints If this parameter is true, it indicates
- * that non-zero constraints are being constrained for the solid domain. If
- * this is set to false, homogeneous constraints are constrained in the solid
- * domain.
+ * that the constraints used for the solid domainare the non-zero constraints.
+ * If this is set to false, the constraints being used are zero constraints.
  *
  * @param[in] constraints Set of constraints on which the solid domain
  * constraint is applied.

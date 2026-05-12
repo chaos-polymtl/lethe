@@ -140,8 +140,8 @@ template <int dim>
 void
 constrain_solid_cell_velocity_dofs(
   const FiniteElement<dim>                   &fe,
-  const bool                                 &non_zero_constraints,
   const std::vector<types::global_dof_index> &local_dof_indices,
+  const bool                                 &non_zero_constraints,
   AffineConstraints<double>                  &constraints)
 {
   Assert(fe.n_components() == dim + 1,
@@ -204,8 +204,8 @@ establish_solid_domain(const DoFHandler<dim>     &dof_handler,
           if (cell->material_id() > 0)
             {
               constrain_solid_cell_velocity_dofs(dof_handler.get_fe(),
-                                                 non_zero_constraints,
                                                  local_dof_indices,
+                                                 non_zero_constraints,
                                                  constraints);
             }
           else
@@ -286,8 +286,8 @@ establish_solid_domain_lsmg(const DoFHandler<dim>     &dof_handler,
       if (cell->material_id() > 0)
         {
           constrain_solid_cell_velocity_dofs(dof_handler.get_fe(),
-                                             non_zero_constraints,
                                              local_dof_indices,
+                                             non_zero_constraints,
                                              constraints);
         }
       else
@@ -329,14 +329,14 @@ establish_solid_domain_lsmg(const DoFHandler<dim>     &dof_handler,
 template void
 constrain_solid_cell_velocity_dofs<2>(
   const FiniteElement<2>                     &fe,
-  const bool                                 &non_zero_constraints,
   const std::vector<types::global_dof_index> &local_dof_indices,
+  const bool                                 &non_zero_constraints,
   AffineConstraints<double>                  &constraints);
 template void
 constrain_solid_cell_velocity_dofs<3>(
   const FiniteElement<3>                     &fe,
-  const bool                                 &non_zero_constraints,
   const std::vector<types::global_dof_index> &local_dof_indices,
+  const bool                                 &non_zero_constraints,
   AffineConstraints<double>                  &constraints);
 
 template void

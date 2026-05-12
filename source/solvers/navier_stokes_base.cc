@@ -2609,8 +2609,8 @@ NavierStokesBase<dim, VectorType, DofsType>::
         return;
     }
   constrain_solid_cell_velocity_dofs(*this->fe,
-                                     false,
                                      local_dof_indices,
+                                     false,
                                      this->dynamic_zero_constraints);
 }
 

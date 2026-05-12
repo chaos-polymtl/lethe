@@ -560,7 +560,8 @@ protected:
    * domain.
    *
    * @param[in] constraints Set of constraints on which the solid domain
-   * constraint is applied.
+   * constraint is applied. These constraints can be either zero or non-zero
+   * constraints, which is decided by the non_zero_constraints flag.
    */
   void
   make_solid_domain(const DoFHandler<dim>     &dof_handler,
