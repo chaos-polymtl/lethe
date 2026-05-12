@@ -197,6 +197,11 @@ public:
   /// called for the projector.
   bool matrix_requires_assembly;
 
+  /// When set, setup_dofs() will additionally call distribute_mg_dofs() on the
+  /// underlying DoFHandler. This is required by local-smoothing multigrid
+  /// (LSMG) so that the field can be interpolated to every triangulation level.
+  bool multigrid_level_dofs_required = false;
+
   /**
    * @brief Setup the degrees of freedom. This function allocates the necessary memory.
    */
@@ -324,6 +329,27 @@ public:
    */
   void
   setup_dofs() override;
+
+  /**
+   * @brief Request that all DoFHandlers managed by this projector also
+   * distribute multigrid level DoFs the next time setup_dofs() is called.
+   * This is required by the local-smoothing multigrid (LSMG) preconditioner
+   * of the VANS matrix-free solver, which needs the auxiliary fields on
+   * every triangulation level. Must be called before setup_dofs().
+   *
+   * @param[in] enabled If true, distribute_mg_dofs() will be called on the
+   * void-fraction DoFHandler and on every ParticleFieldQCM DoFHandler.
+   */
+  void
+  enable_multigrid_level_dofs(const bool enabled = true)
+  {
+    multigrid_level_dofs_required                   = enabled;
+    particle_velocity.multigrid_level_dofs_required = enabled;
+    fluid_force_on_particles_two_way_coupling.multigrid_level_dofs_required =
+      enabled;
+    fluid_drag_on_particles.multigrid_level_dofs_required       = enabled;
+    momentum_transfer_coefficient.multigrid_level_dofs_required = enabled;
+  }
 
   /**
    * @brief Establish the constraints of the void fraction systems.
@@ -725,6 +751,12 @@ private:
   /// projected once. This is mainly used for assertions and sanity checking
   /// purposes
   bool particle_have_been_projected;
+
+  /// When set, setup_dofs() will additionally call distribute_mg_dofs() on the
+  /// void-fraction DoFHandler. This is required by local-smoothing multigrid
+  /// (LSMG) of the VANS matrix-free solver. The flag is propagated to every
+  /// ParticleFieldQCM by enable_multigrid_level_dofs().
+  bool multigrid_level_dofs_required = false;
 
 public:
   /// Projector used to save the particle velocity field onto the mesh

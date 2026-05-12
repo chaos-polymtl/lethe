@@ -29,6 +29,12 @@ public:
   using MGNumber       = typename MFNavierStokesPreconditionGMG<dim>::MGNumber;
   using GCTransferType = MGTransferGlobalCoarsening<dim, MGVectorType>;
 
+  /// Local-smoothing transfer used for the auxiliary (particle-projected)
+  /// fields. The auxiliary fields live on a single triangulation that has
+  /// multigrid level DoFs distributed, so a plain MGTransferMatrixFree is
+  /// sufficient -- they do not need to support hp-coarsening.
+  using LSTransferType = MGTransferMatrixFree<dim, MGNumber>;
+
   /**
    * @brief Constructor
    * @param[in] param Complete set of parameters for the CFD-DEM or VANS
@@ -129,6 +135,16 @@ private:
 
   /// Transfer operator for global coarsening for the particle-fluid drag
   std::shared_ptr<GCTransferType> mg_transfer_gc_momentum_transfer_coefficient;
+
+  /// Local-smoothing transfer operators for every auxiliary field. These are
+  /// only built when the fluid_dynamics preconditioner is LSMG. The DoFHandler
+  /// inside the ParticleProjector is reused at every level (with multigrid
+  /// level DoFs distributed), so no per-level DoFHandler is stored.
+  std::shared_ptr<LSTransferType> mg_transfer_ls_void_fraction;
+  std::shared_ptr<LSTransferType> mg_transfer_ls_pf_force;
+  std::shared_ptr<LSTransferType> mg_transfer_ls_pf_drag;
+  std::shared_ptr<LSTransferType> mg_transfer_ls_particle_velocity;
+  std::shared_ptr<LSTransferType> mg_transfer_ls_momentum_transfer_coefficient;
 };
 
 /**
