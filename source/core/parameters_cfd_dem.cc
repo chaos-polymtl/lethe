@@ -46,6 +46,11 @@ namespace Parameters
       Patterns::Bool(),
       "Specify whether the virtual sphere has the same volume as the mesh element");
     prm.declare_entry(
+      "qcm filter type",
+      "spherical",
+      Patterns::Selection("spherical|gaussian"),
+      "Filter kernel used by the QCM to weigh particle contributions. With 'spherical' (default), half of 'qcm sphere diameter' is the averaging-sphere radius. With 'gaussian', half of 'qcm sphere diameter' is the standard deviation sigma of the Gaussian; sigma should be small compared to the QCM neighbor-cell stencil reach to avoid silent truncation bias.");
+    prm.declare_entry(
       "quadrature rule",
       "gauss",
       Patterns::Selection("gauss|gauss-lobatto"),
@@ -90,6 +95,16 @@ namespace Parameters
     particle_refinement_factor = prm.get_integer("particle refinement factor");
     qcm_sphere_diameter        = prm.get_double("qcm sphere diameter");
     qcm_sphere_equal_cell_volume = prm.get_bool("qcm sphere equal cell volume");
+
+    const std::string qcm_filter_type_op = prm.get("qcm filter type");
+    if (qcm_filter_type_op == "spherical")
+      qcm_filter_type = Parameters::QCMFilterType::spherical;
+    else if (qcm_filter_type_op == "gaussian")
+      qcm_filter_type = Parameters::QCMFilterType::gaussian;
+    else
+      throw(std::runtime_error(
+        "Invalid QCM filter type. Options are 'spherical' or 'gaussian'"));
+
     const std::string quadrature_rule_op = prm.get("quadrature rule");
 
     if (quadrature_rule_op == "gauss")

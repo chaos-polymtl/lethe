@@ -38,6 +38,28 @@ namespace Parameters
   };
 
   /**
+   * @brief Filter kernel used by the Quadrature-Centered Method (QCM) to weigh
+   * particle contributions onto the mesh.
+   *
+   * The characteristic length of the filter is taken from
+   * VoidFractionParameters::qcm_sphere_diameter and
+   * VoidFractionParameters::qcm_sphere_equal_cell_volume, with the
+   * interpretation depending on the filter:
+   * - spherical: half of qcm_sphere_diameter is the averaging-sphere radius.
+   * - gaussian:  half of qcm_sphere_diameter is the Gaussian standard deviation
+   *   sigma. Note that the Gaussian has non-compact support; sigma should be
+   *   small relative to the QCM neighbor-cell stencil reach to avoid silent
+   *   truncation bias.
+   */
+  enum class QCMFilterType
+  {
+    /// Spherical indicator (heaviside) filter (default, original QCM).
+    spherical,
+    /// Gaussian filter parametrised by a standard deviation sigma.
+    gaussian
+  };
+
+  /**
    * @brief Quadrature rule used for void fraction integration.
    */
   enum class VoidFractionQuadratureRule
@@ -187,6 +209,13 @@ namespace Parameters
 
     /// Use a sphere volume equal to the cell volume in QCM.
     bool qcm_sphere_equal_cell_volume;
+
+    /// Filter kernel used by the QCM to weigh particle contributions onto the
+    /// mesh. The characteristic length of the filter is taken from
+    /// qcm_sphere_diameter (and qcm_sphere_equal_cell_volume when no diameter
+    /// is set). For spherical, the length is the averaging-sphere radius. For
+    /// gaussian, the length is the standard deviation sigma.
+    QCMFilterType qcm_filter_type;
 
     /// Quadrature rule used for void fraction integration.
     VoidFractionQuadratureRule quadrature_rule;

@@ -87,6 +87,42 @@ particle_sphere_intersection_3d(double r_particle,
 }
 
 /**
+ * @brief Evaluate a Gaussian filter kernel between a particle and a point.
+ *
+ * The kernel is normalised so that its integral over R^dim equals the
+ * particle volume V_p. With this normalisation the same downstream
+ * normalisation procedure used by the spherical QCM filter (dividing by
+ * the accumulated volumetric_contribution to recover the particle volume)
+ * applies unchanged.
+ *
+ * The Gaussian has non-compact support: contributions outside the QCM
+ * neighbor-cell stencil are silently dropped. The accumulated normalisation
+ * absorbs the missing mass, but the projected shape will be biased if sigma
+ * is comparable to the stencil reach. Choose sigma accordingly.
+ *
+ * @tparam dim Number of spatial dimensions.
+ *
+ * @param[in] r_particle Radius of the particle.
+ * @param[in] sigma Standard deviation of the Gaussian (the QCM filter length).
+ * @param[in] distance Distance between the particle center and the evaluation
+ * point.
+ */
+template <int dim>
+inline double
+gaussian_filter_kernel(const double r_particle,
+                       const double sigma,
+                       const double distance)
+{
+  const double v_particle =
+    (dim == 3) ?
+      (4.0 / 3.0) * M_PI * Utilities::fixed_power<3, double>(r_particle) :
+      M_PI * Utilities::fixed_power<2, double>(r_particle);
+  const double inv_norm = 1.0 / std::pow(2.0 * M_PI * sigma * sigma, 0.5 * dim);
+  return v_particle * inv_norm *
+         std::exp(-0.5 * distance * distance / (sigma * sigma));
+}
+
+/**
  * @brief ParticleFieldQCM calculator.
  * This class stores the required information for the calculation of a
  * field or a particle-fluid interaction onto a mesh. This class does not solve
@@ -528,14 +564,19 @@ private:
   }
 
   /**
-   * @brief Calculate the radius of the QCM averaging sphere
+   * @brief Calculate the characteristic length of the QCM filter from a cell measure.
    *
-   * @param cell_measure The measure of the cell in wich QCM is calculated.
+   * The returned length is the averaging-sphere radius when the spherical
+   * filter is used, and the standard deviation sigma when the gaussian filter
+   * is used. The cell-measure-to-length mapping itself does not depend on the
+   * filter type.
    *
-   * @return The QCM radius used in the calculations.
+   * @param cell_measure The measure of the cell in which QCM is calculated.
+   *
+   * @return The QCM filter characteristic length used in the calculations.
    */
   inline double
-  calculate_qcm_radius_from_cell_measure(const double cell_measure)
+  calculate_filter_length_from_cell_measure(const double cell_measure)
   {
     if (void_fraction_parameters->qcm_sphere_equal_cell_volume == true)
       {
@@ -599,6 +640,44 @@ private:
   }
 
   /**
+   * @brief Evaluate the QCM filter kernel selected at compile time.
+   *
+   * Dispatches between the spherical indicator kernel
+   * (calculate_intersection_measure) and the Gaussian kernel
+   * (gaussian_filter_kernel) without runtime branching in the inner loop.
+   *
+   * @tparam filter_type The QCM filter type to evaluate.
+   *
+   * @param[in] r_particle Radius of the particle.
+   * @param[in] filter_length Characteristic length of the filter (averaging
+   * sphere radius for spherical, standard deviation sigma for gaussian).
+   * @param[in] distance Distance between the particle center and the evaluation
+   * point.
+   */
+  template <Parameters::QCMFilterType filter_type>
+  static inline double
+  evaluate_filter(const double r_particle,
+                  const double filter_length,
+                  const double distance)
+  {
+    if constexpr (filter_type == Parameters::QCMFilterType::spherical)
+      return calculate_intersection_measure(r_particle,
+                                            filter_length,
+                                            distance);
+    else if constexpr (filter_type == Parameters::QCMFilterType::gaussian)
+      return gaussian_filter_kernel<dim>(r_particle, filter_length, distance);
+    else
+      {
+        // Defensive: a new QCMFilterType was added but not handled here.
+        AssertThrow(
+          false,
+          ExcMessage(
+            "Unhandled QCMFilterType in ParticleProjector::evaluate_filter."));
+        return 0.0;
+      }
+  }
+
+  /**
    * @brief Calculate the void fraction using a function. This is a straightforward usage of VectorTools.
    *
    * @param[in] time Current time for which the void fraction is to be
@@ -625,9 +704,34 @@ private:
   /**
    * @brief Calculate the void fraction using the Quadrature-Centered Method (QCM).
    *
+   * Thin dispatcher that selects the filter kernel at runtime and forwards
+   * to the templated implementation calculate_void_fraction_qcm_impl.
    */
   void
   calculate_void_fraction_quadrature_centered_method();
+
+  /**
+   * @brief Templated implementation of the Quadrature-Centered Method (QCM).
+   *
+   * @tparam filter_type The QCM filter type used to weigh particle
+   * contributions. Selected at runtime by the public dispatcher.
+   */
+  template <Parameters::QCMFilterType filter_type>
+  void
+  calculate_void_fraction_qcm_impl();
+
+  /**
+   * @brief Templated implementation of calculate_field_projection.
+   *
+   * @tparam filter_type The QCM filter type used to weigh particle
+   * contributions. Selected at runtime by the public dispatcher.
+   */
+  template <Parameters::QCMFilterType filter_type,
+            int                       n_components,
+            int                       property_start_index>
+  void
+  calculate_field_projection_impl(
+    ParticleFieldQCM<dim, n_components, property_start_index> &field_qcm);
 
   /**
    * @brief Solve the linear system resulting from the assemblies.

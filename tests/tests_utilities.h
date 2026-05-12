@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef tests_utilities_h
@@ -36,6 +36,8 @@ make_default_void_fraction_parameters()
   void_fraction_parameters->n_quadrature_points          = 3;
   void_fraction_parameters->qcm_sphere_diameter          = 0.5;
   void_fraction_parameters->qcm_sphere_equal_cell_volume = false;
+  void_fraction_parameters->qcm_filter_type =
+    Parameters::QCMFilterType::spherical;
   void_fraction_parameters->quadrature_rule =
     Parameters::VoidFractionQuadratureRule::gauss;
   void_fraction_parameters->project_particle_velocity  = false;
