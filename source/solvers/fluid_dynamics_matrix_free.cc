@@ -1154,6 +1154,29 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                 levels[level].first, temp_constraints);
             }
 
+          // If there are solid regions, establish them as part of the
+          // multigrid by registering them as user constraints on
+          // mg_constrained_dofs (same pattern as the pressure-pin and slip
+          // BC handling above). This is required for LSMG: the smoother and
+          // transfer read Dirichlet info from mg_constrained_dofs, not from
+          // level_constraints. The subsequent merge_constraints call (with
+          // add_user_constraints = true) will then propagate them into
+          // level_constraints[level] for the operator.
+          if (simulation_parameters.physical_properties_manager
+                .get_number_of_solids() > 0)
+            {
+              AffineConstraints<double> solid_constraints;
+              solid_constraints.reinit(owned_dofs, relevant_dofs);
+              establish_solid_domain_lsmg(level_dof_handler,
+                                          levels[level].first,
+                                          owned_dofs,
+                                          false,
+                                          solid_constraints);
+              solid_constraints.close();
+              this->mg_constrained_dofs[p_level].add_user_constraints(
+                levels[level].first, solid_constraints);
+            }
+
           this->mg_constrained_dofs[p_level].merge_constraints(
             level_constraints[level],
             levels[level].first,
@@ -1652,6 +1675,16 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
                 level_constraint.add_line(min_index);
             }
 
+          // If there are solid regions. Also establish them as part of the
+          // multigrid
+          if (simulation_parameters.physical_properties_manager
+                .get_number_of_solids() > 0)
+            establish_solid_domain(level_dof_handler,
+                                   level_dof_handler.locally_owned_dofs(),
+                                   false,
+                                   level_constraint);
+
+          // constraints
           level_constraint.close();
 
           this->mg_setup_timer.leave_subsection("Set boundary conditions");

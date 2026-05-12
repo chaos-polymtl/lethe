@@ -193,6 +193,13 @@ NavierStokesOperatorBase<dim, number>::reinit(
 
   this->compute_element_size();
 
+  this->has_solids = (this->properties_manager &&
+                      this->properties_manager->get_number_of_solids() > 0);
+  if (this->has_solids)
+    this->compute_solid_cell_mask();
+  else
+    this->solid_cell_mask.clear();
+
   this->compute_forcing_term();
 
   bool_dof_mask = create_bool_dof_mask(dof_handler.get_fe(), quadrature);
@@ -296,6 +303,34 @@ NavierStokesOperatorBase<dim, number>::initialize_time_stepping_data() const
       // Otherwise, this is not a transient simulation
       data.is_transient = false;
       return data;
+    }
+}
+
+template <int dim, typename number>
+void
+NavierStokesOperatorBase<dim, number>::compute_solid_cell_mask()
+{
+  const unsigned int n_cells =
+    matrix_free.n_cell_batches() + matrix_free.n_ghost_cell_batches();
+  solid_cell_mask.resize(n_cells);
+
+  for (unsigned int cell = 0; cell < n_cells; ++cell)
+    {
+      // Inactive lanes never contribute to dst, but we set them to 0.0 for
+      // safety in case future code reads the mask before submission.
+      VectorizedArray<number> mask(0.0);
+
+      for (unsigned int lane = 0;
+           lane < matrix_free.n_active_entries_per_cell_batch(cell);
+           ++lane)
+        {
+          mask[lane] =
+            (matrix_free.get_cell_iterator(cell, lane)->material_id() == 0) ?
+              1.0 :
+              0.0;
+        }
+
+      solid_cell_mask[cell] = mask;
     }
 }
 
@@ -1598,6 +1633,16 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
 
   const unsigned int cell = integrator.get_current_cell_index();
 
+  // Solid-cell mask (1.0 for fluid lanes, 0.0 for solid lanes). Suppresses
+  // contributions from solid cells, mirroring the matrix-based behavior
+  // where solid cells are skipped during assembly.
+  VectorizedArray<number> cell_mask(1.0);
+  if (this->has_solids)
+    {
+      AssertIndexRange(cell, this->solid_cell_mask.size());
+      cell_mask = this->solid_cell_mask[cell];
+    }
+
   // Time stepping data information structure.
   // We create a small helper structure that contains everything related to
   // the time-stepping process and carries out all the flag checking.
@@ -1808,6 +1853,14 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
             }
         }
 
+      if (this->has_solids)
+        {
+          gradient_result = gradient_result * cell_mask;
+          value_result    = value_result * cell_mask;
+          if (this->enable_hessians_jacobian)
+            hessian_result = hessian_result * cell_mask;
+        }
+
       integrator.submit_gradient(gradient_result, q);
       integrator.submit_value(value_result, q);
 
@@ -1861,6 +1914,14 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
       else
         integrator.evaluate(EvaluationFlags::values |
                             EvaluationFlags::gradients);
+
+      // Solid-cell mask (1.0 for fluid lanes, 0.0 for solid lanes).
+      VectorizedArray<number> cell_mask(1.0);
+      if (this->has_solids)
+        {
+          AssertIndexRange(cell, this->solid_cell_mask.size());
+          cell_mask = this->solid_cell_mask[cell];
+        }
 
       // Time stepping data information structure.
       // We create a small helper structure that contains everything related to
@@ -2050,6 +2111,14 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
                 }
             }
 
+          if (this->has_solids)
+            {
+              gradient_result = gradient_result * cell_mask;
+              value_result    = value_result * cell_mask;
+              if (this->enable_hessians_residual)
+                hessian_result = hessian_result * cell_mask;
+            }
+
           integrator.submit_gradient(gradient_result, q);
           integrator.submit_value(value_result, q);
           if (this->enable_hessians_residual)
@@ -2107,6 +2176,14 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
     integrator.evaluate(EvaluationFlags::values | EvaluationFlags::gradients);
 
   const unsigned int cell = integrator.get_current_cell_index();
+
+  // Solid-cell mask (1.0 for fluid lanes, 0.0 for solid lanes).
+  VectorizedArray<number> cell_mask(1.0);
+  if (this->has_solids)
+    {
+      AssertIndexRange(cell, this->solid_cell_mask.size());
+      cell_mask = this->solid_cell_mask[cell];
+    }
 
   // Time stepping data information structure.
   // We create a small helper structure that contains everything related to
@@ -2314,6 +2391,14 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::do_cell_integral_local(
             }
         }
 
+      if (this->has_solids)
+        {
+          gradient_result = gradient_result * cell_mask;
+          value_result    = value_result * cell_mask;
+          if (this->enable_hessians_jacobian)
+            hessian_result = hessian_result * cell_mask;
+        }
+
       integrator.submit_gradient(gradient_result, q);
       integrator.submit_value(value_result, q);
 
@@ -2363,6 +2448,14 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
       else
         integrator.evaluate(EvaluationFlags::values |
                             EvaluationFlags::gradients);
+
+      // Solid-cell mask (1.0 for fluid lanes, 0.0 for solid lanes).
+      VectorizedArray<number> cell_mask(1.0);
+      if (this->has_solids)
+        {
+          AssertIndexRange(cell, this->solid_cell_mask.size());
+          cell_mask = this->solid_cell_mask[cell];
+        }
 
       // Time stepping data information structure.
       // We create a small helper structure that contains everything related to
@@ -2520,6 +2613,14 @@ NavierStokesNonNewtonianStabilizedOperator<dim, number>::
                       ((*bdf_coefficients)[0] * value[i] +
                        previous_time_derivatives[i]);
                 }
+            }
+
+          if (this->has_solids)
+            {
+              gradient_result = gradient_result * cell_mask;
+              value_result    = value_result * cell_mask;
+              if (this->enable_hessians_residual)
+                hessian_result = hessian_result * cell_mask;
             }
 
           integrator.submit_gradient(gradient_result, q);

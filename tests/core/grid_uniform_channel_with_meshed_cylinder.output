@@ -1,0 +1,46 @@
+
+DEAL::==================================================
+DEAL::Case: 2D half-unit outer radius, no padding
+DEAL::Grid arguments: "0,0:1,1:0.5,0.5:0.2:0.5"
+DEAL::Number of active cells : 20
+DEAL::Number of vertices     : 25
+DEAL::Mesh volume            : 1.00000
+DEAL::Boundary id 0 face count : 8
+DEAL::==================================================
+DEAL::Case: 2D 2x1 channel, padded
+DEAL::Grid arguments: "0,0:2,1:1,0.5:0.1:0.2:1:1:1:1"
+DEAL::Number of active cells : 32
+DEAL::Number of vertices     : 41
+DEAL::Mesh volume            : 2.00000
+DEAL::Boundary id 0 face count : 16
+DEAL::==================================================
+DEAL::Case: 2D 2x1 channel, padded, refined once
+DEAL::Grid arguments: "0,0:2,1:1,0.5:0.1:0.2:1:1:1:1"
+DEAL::Number of active cells : 128
+DEAL::Number of vertices     : 145
+DEAL::Mesh volume            : 2.00000
+DEAL::Boundary id 0 face count : 32
+DEAL::==================================================
+DEAL::Case: 3D 2x1x1 channel, padded, boundary ids, and no TFI region
+DEAL::Grid arguments: "0,0:2,1:1,0.5:0.1:0.2:1:1:1:1:1.0:2:false:true"
+DEAL::Number of active cells : 256
+DEAL::Number of vertices     : 435
+DEAL::Mesh volume            : 2.00000
+DEAL::Boundary id 0 face count : 16
+DEAL::Boundary id 1 face count : 16
+DEAL::Boundary id 2 face count : 16
+DEAL::Boundary id 3 face count : 16
+DEAL::Boundary id 4 face count : 128
+DEAL::Boundary id 5 face count : 128
+DEAL::==================================================
+DEAL::Case: 3D 2x1x1 channel, padded, boundary ids, and TFI region
+DEAL::Grid arguments: "0,0:2,1:1,0.5:0.1:0.2:1:1:1:1:1.0:2:true:true"
+DEAL::Number of active cells : 256
+DEAL::Number of vertices     : 435
+DEAL::Mesh volume            : 2.00000
+DEAL::Boundary id 0 face count : 16
+DEAL::Boundary id 1 face count : 16
+DEAL::Boundary id 2 face count : 16
+DEAL::Boundary id 3 face count : 16
+DEAL::Boundary id 4 face count : 128
+DEAL::Boundary id 5 face count : 128

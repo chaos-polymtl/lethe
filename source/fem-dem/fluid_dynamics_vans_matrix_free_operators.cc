@@ -314,6 +314,14 @@ VANSOperator<dim, number>::do_cell_integral_local(
 
   const unsigned int cell = integrator.get_current_cell_index();
 
+  // Solid-cell mask (1.0 for fluid lanes, 0.0 for solid lanes).
+  VectorizedArray<number> cell_mask(1.0);
+  if (this->has_solids)
+    {
+      AssertIndexRange(cell, this->solid_cell_mask.size());
+      cell_mask = this->solid_cell_mask[cell];
+    }
+
   // To identify whether the problem is transient or steady
   bool transient =
     (time_stepping_is_bdf(this->simulation_control->get_assembly_method())) ?
@@ -534,6 +542,14 @@ VANSOperator<dim, number>::do_cell_integral_local(
             }
         }
 
+      if (this->has_solids)
+        {
+          gradient_result = gradient_result * cell_mask;
+          value_result    = value_result * cell_mask;
+          if (this->enable_hessians_jacobian)
+            hessian_result = hessian_result * cell_mask;
+        }
+
       integrator.submit_gradient(gradient_result, q);
       integrator.submit_value(value_result, q);
 
@@ -585,6 +601,15 @@ VANSOperator<dim, number>::local_evaluate_residual(
       else
         integrator.evaluate(EvaluationFlags::values |
                             EvaluationFlags::gradients);
+
+      // Solid-cell mask (1.0 for fluid lanes, 0.0 for solid lanes).
+      VectorizedArray<number> cell_mask(1.0);
+      if (this->has_solids)
+        {
+          Assert(cell < this->solid_cell_mask.size(),
+                 ExcDimensionMismatch(cell, this->solid_cell_mask.size()));
+          cell_mask = this->solid_cell_mask[cell];
+        }
 
       // To identify whether the problem is transient or steady
       bool transient = (time_stepping_is_bdf(
@@ -775,6 +800,14 @@ VANSOperator<dim, number>::local_evaluate_residual(
                                              ((*bdf_coefs)[0] * value[i] +
                                               previous_time_derivatives[i]);
                 }
+            }
+
+          if (this->has_solids)
+            {
+              gradient_result = gradient_result * cell_mask;
+              value_result    = value_result * cell_mask;
+              if (this->enable_hessians_residual)
+                hessian_result = hessian_result * cell_mask;
             }
 
           integrator.submit_gradient(gradient_result, q);

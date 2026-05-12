@@ -35,7 +35,7 @@ GridUniformChannelWithMeshedCylinder<dim, spacedim>::
       AssertThrow(
         false,
         ExcMessage(
-          "Mandatory uniform channel with meshed cylinder parameters are (bottom left point : top right point : center of the cylinder : inner radius : outer radius). The points should be given as x,y and the radii should be given as a single number. The optional parameters are (pad bottom : pad top : pad left : pad right : height : n_slices : colorize). The padding parameters should be given as a single integer, the height should be given as a single double, the n_slices should be given as a single integer and the colorize parameter should be given as true/false."));
+          "Mandatory uniform channel with meshed cylinder parameters are (bottom left point : top right point : center of the cylinder : inner radius : outer radius). The points should be given as x,y and the radii should be given as a single number. The optional parameters are (pad bottom : pad top : pad left : pad right : height : n_slices : use_transfinite_region : colorize). The padding parameters should be given as a single integer, the height should be given as a single double, the n_slices should be given as a single integer, use_transfinite_region should be given as true/false, and the colorize parameter should be given as true/false."));
     }
   // Parse bottom_left point
   try
@@ -135,8 +135,10 @@ GridUniformChannelWithMeshedCylinder<dim, spacedim>::
     (arguments.size() > 9) ? Utilities::string_to_double(arguments[9]) : 1.0;
   this->n_slices =
     (arguments.size() > 10) ? Utilities::string_to_int(arguments[10]) : 2.;
-  this->colorize =
+  this->use_transfinite_region =
     (arguments.size() > 11 && arguments[11] == "true") ? true : false;
+  this->colorize =
+    (arguments.size() > 12 && arguments[12] == "true") ? true : false;
 }
 
 
@@ -155,6 +157,8 @@ GridUniformChannelWithMeshedCylinder<dim, spacedim>::generate_2d_channel_mesh(
   const unsigned int pad_right,
   const bool         colorize)
 {
+  const types::material_id fluid_material_id = 0;
+  const types::material_id solid_material_id = 1;
   const types::manifold_id tfi_manifold_id   = 0;
   const types::manifold_id polar_manifold_id = 1;
 
@@ -290,16 +294,24 @@ GridUniformChannelWithMeshedCylinder<dim, spacedim>::generate_2d_channel_mesh(
 
 
   // Assign material and manifold IDs:
-  //  - id 0 (TFI) on all cells and faces (default)
+  //  - id 0 (TFI) on all cells inside the transition region and on all faces
+  //  not on the inner cylinder boundary
   //  - id 1 (polar/cylindrical) on inner-cylinder boundary faces
   triangulation.reset_all_manifolds();
-  triangulation.set_all_manifold_ids(tfi_manifold_id);
+  triangulation.set_all_manifold_ids(
+    use_transfinite_region ? tfi_manifold_id : numbers::flat_manifold_id);
 
   for (const auto &cell : triangulation.active_cell_iterators())
     {
-      if (cell->center().distance(center) < inner_radius)
+      // If cell center is within the inner_radius, it's in the cylinder.
+      bool cell_in_cylinder = cell->center().distance(center) < inner_radius;
+
+      // The inner cylinder is marked with the polar manifold ID for the
+      // material and all faces that have all vertices on the inner circle are
+      // marked with the polar manifold ID for the manifold.
+      if (cell_in_cylinder)
         {
-          cell->set_material_id(polar_manifold_id);
+          cell->set_material_id(solid_material_id);
           for (const auto &face : cell->face_iterators())
             {
               bool all_vertices_on_circle = true;
@@ -317,9 +329,12 @@ GridUniformChannelWithMeshedCylinder<dim, spacedim>::generate_2d_channel_mesh(
                 face->set_all_manifold_ids(polar_manifold_id);
             }
         }
-      else
+
+      // Every other cells stay with the flat manifold and gets the fluid
+      // material ID.
+      if (!cell_in_cylinder)
         {
-          cell->set_material_id(tfi_manifold_id);
+          cell->set_material_id(fluid_material_id);
         }
     }
 
@@ -347,6 +362,19 @@ GridUniformChannelWithMeshedCylinder<dim, spacedim>::generate_2d_channel_mesh(
             face->set_boundary_id(3);
         }
     }
+
+  // Attach manifold objects for proper refinement behavior
+  PolarManifold<2, 2> polar_manifold(center);
+  triangulation.set_manifold(1, polar_manifold);
+
+  // If transfinite interpolation is enabled for the transition region, attach a
+  // TFI, else deal.II will use a default flat manifold.
+  if (use_transfinite_region)
+    {
+      TransfiniteInterpolationManifold<2> tfi_manifold;
+      tfi_manifold.initialize(triangulation);
+      triangulation.set_manifold(0, tfi_manifold);
+    }
 }
 
 
@@ -367,14 +395,6 @@ GridUniformChannelWithMeshedCylinder<2, 2>::make_grid(
                            pad_left,
                            pad_right,
                            colorize);
-
-  // Attach manifold objects for proper refinement behavior
-  PolarManifold<2, 2> polar_manifold(center);
-  triangulation.set_manifold(1, polar_manifold);
-
-  TransfiniteInterpolationManifold<2> tfi_manifold;
-  tfi_manifold.initialize(triangulation);
-  triangulation.set_manifold(0, tfi_manifold);
 }
 
 
@@ -408,9 +428,12 @@ GridUniformChannelWithMeshedCylinder<3, 3>::make_grid(
   const CylindricalManifold<3> cylindrical_manifold(direction, center);
   triangulation.set_manifold(1, cylindrical_manifold);
 
-  TransfiniteInterpolationManifold<3> tfi_manifold;
-  tfi_manifold.initialize(triangulation);
-  triangulation.set_manifold(0, tfi_manifold);
+  if (use_transfinite_region)
+    {
+      TransfiniteInterpolationManifold<3> tfi_manifold;
+      tfi_manifold.initialize(triangulation);
+      triangulation.set_manifold(0, tfi_manifold);
+    }
 
   // Set the boundary ids for the extruded top and bottom faces.
   if (colorize)

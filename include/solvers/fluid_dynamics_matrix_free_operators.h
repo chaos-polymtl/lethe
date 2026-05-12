@@ -263,6 +263,15 @@ public:
   compute_element_size();
 
   /**
+   * @brief Compute a per-cell-batch mask that suppresses contributions from
+   * solid cells (material_id > 0). Each lane of @p solid_cell_mask is set to
+   * 1.0 for fluid cells and 0.0 for solid cells, mirroring the matrix-based
+   * behavior where solid cells are skipped during assembly.
+   */
+  void
+  compute_solid_cell_mask();
+
+  /**
    * @brief Precompute forcing term.
    */
   void
@@ -624,6 +633,24 @@ protected:
    *
    */
   AlignedVector<VectorizedArray<number>> element_size;
+
+  /**
+   * @brief Per-cell-batch mask used to suppress contributions from solid
+   * cells (material_id > 0) inside the cell integrals. Each lane is 1.0 for
+   * fluid cells and 0.0 for solid cells. Mirrors the matrix-based behavior
+   * where solid cells are skipped during assembly. Only filled when
+   * @p has_solids is true.
+   *
+   */
+  AlignedVector<VectorizedArray<number>> solid_cell_mask;
+
+  /**
+   * @brief Flag indicating whether the simulation contains any solid region
+   * (material_id > 0). When false, the solid-cell masking is skipped
+   * entirely so the no-solid case has zero overhead in the inner loop.
+   *
+   */
+  bool has_solids = false;
 
   /**
    * @brief Finite element degree for the operator.
