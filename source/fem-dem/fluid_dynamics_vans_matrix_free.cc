@@ -69,6 +69,18 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
       // to all triangulation levels, and then dispatch the level vectors to
       // each level VANSOperator using the operator's own mg_level.
       // ---------------------------------------------------------------------
+#if !DEAL_II_VERSION_GTE(9, 8, 0)
+      AssertThrow(
+        false,
+        ExcMessage(
+          "The VANS matrix-free solver with the LSMG preconditioner is not "
+          "supported with deal.II 9.7 or older: the multigrid transfer of the "
+          "auxiliary (particle-projected) fields relies on behavior of "
+          "MGTransferMatrixFree that was only fixed in deal.II 9.8 (master). "
+          "Please either build against deal.II master, or switch to the GCMG "
+          "preconditioner for this simulation."));
+#endif
+
       const auto &linear_solver_parameters =
         this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics);
 
