@@ -107,6 +107,7 @@ VANSOperator<dim, number>::compute_void_fraction(
           const auto tria_cell =
             this->matrix_free.get_cell_iterator(cell, lane);
 
+          // Branch that is taken when LSMG preconditioner is used
           if (on_mg_level)
             {
               typename DoFHandler<dim>::level_cell_iterator dof_cell(
@@ -146,7 +147,8 @@ VANSOperator<dim, number>::compute_void_fraction(
                         local_void_fraction[i] * gphi;
                     }
                 }
-            }
+            } // on_mg_level
+          // Branch that is used when GCMG preconditioner is used
           else
             {
               fe_values.reinit(
@@ -252,6 +254,8 @@ VANSOperator<dim, number>::compute_particle_fluid_interaction(
     this->matrix_free.get_quadrature(),
     update_values);
 
+  // Data structures for the information we will gather from the FEValues.
+  // These will stored within tables stored within the operator.
   std::vector<Tensor<1, dim>> cell_fp_force(
     fe_values_force.n_quadrature_points);
   std::vector<Tensor<1, dim>> cell_fp_drag(fe_values_drag.n_quadrature_points);
@@ -260,6 +264,7 @@ VANSOperator<dim, number>::compute_particle_fluid_interaction(
   std::vector<double> cell_momentum_transfer_coefficient(
     fe_values_force.n_quadrature_points, 0.);
 
+  // Extractor for the velocity
   constexpr FEValuesExtractors::Vector vector_index(0);
 
   // When the operator is built on a multigrid level (LSMG), the cell iterator
@@ -272,6 +277,7 @@ VANSOperator<dim, number>::compute_particle_fluid_interaction(
   const unsigned int mg_level    = this->matrix_free.get_mg_level();
   const bool         on_mg_level = mg_level != numbers::invalid_unsigned_int;
 
+  // Data structures for the information we will gather for the lsmg.
   Vector<double> local_fp_force(
     fp_force_dof_handler.get_fe().n_dofs_per_cell());
   Vector<double> local_fp_drag(fp_drag_dof_handler.get_fe().n_dofs_per_cell());
@@ -289,6 +295,7 @@ VANSOperator<dim, number>::compute_particle_fluid_interaction(
           const auto tria_cell =
             this->matrix_free.get_cell_iterator(cell, lane);
 
+          // Branch that is used in the case of the LSMG preconditioner
           if (on_mg_level)
             {
               // Helper that gathers level dof values via mg indices (since
@@ -340,7 +347,7 @@ VANSOperator<dim, number>::compute_particle_fluid_interaction(
                                          cell_fp_drag);
                 }
 
-              if (is_implicit)
+              else // is_implicit
                 {
                   gather_and_eval_vector(fe_values_particle_velocity,
                                          particle_velocity_dof_handler,
@@ -378,7 +385,8 @@ VANSOperator<dim, number>::compute_particle_fluid_interaction(
                             i, q);
                     }
                 }
-            }
+            } // on_mg_level
+          // Branch that is used for GCMG preconditioner
           else
             {
               // Reinit the particle-fluid force
@@ -399,7 +407,7 @@ VANSOperator<dim, number>::compute_particle_fluid_interaction(
                     fp_drag_solution, cell_fp_drag);
                 }
 
-              if (is_implicit)
+              else // (is_implicit)
                 {
                   // Reinit the particle velocity
                   fe_values_particle_velocity.reinit(
