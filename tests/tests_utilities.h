@@ -34,7 +34,7 @@ make_default_void_fraction_parameters()
   void_fraction_parameters->mode = Parameters::VoidFractionMode::qcm;
   void_fraction_parameters->l2_smoothing_length          = 0.;
   void_fraction_parameters->n_quadrature_points          = 3;
-  void_fraction_parameters->qcm_sphere_diameter          = 0.5;
+  void_fraction_parameters->qcm_smoothing_length         = 0.5;
   void_fraction_parameters->qcm_sphere_equal_cell_volume = false;
   void_fraction_parameters->qcm_filter_type =
     Parameters::QCMFilterType::spherical;

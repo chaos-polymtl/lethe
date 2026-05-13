@@ -36,10 +36,12 @@ namespace Parameters
       Patterns::Double(),
       "The refinement factor used to calculate the number of pseudo-particles in the satellite point method");
     prm.declare_entry(
-      "qcm sphere diameter",
+      "qcm smoothing length",
       "0",
       Patterns::Double(),
-      "The diameter of the reference sphere for QCM void fraction scheme");
+      "The smoothing length of the QCM filter. With the spherical filter, half of this value is the averaging-sphere radius; with the gaussian filter, half of this value is the standard deviation sigma.");
+    // Backwards-compatible alias for the previous parameter name.
+    prm.declare_alias("qcm smoothing length", "qcm sphere diameter", true);
     prm.declare_entry(
       "qcm sphere equal cell volume",
       "false",
@@ -49,7 +51,7 @@ namespace Parameters
       "qcm filter type",
       "spherical",
       Patterns::Selection("spherical|gaussian"),
-      "Filter kernel used by the QCM to weigh particle contributions. With 'spherical' (default), half of 'qcm sphere diameter' is the averaging-sphere radius. With 'gaussian', half of 'qcm sphere diameter' is the standard deviation sigma of the Gaussian; sigma should be small compared to the QCM neighbor-cell stencil reach to avoid silent truncation bias.");
+      "Filter kernel used by the QCM to weigh particle contributions. With 'spherical' (default), half of 'qcm smoothing length' is the averaging-sphere radius. With 'gaussian', half of 'qcm smoothing length' is the standard deviation sigma of the Gaussian; sigma should be small compared to the QCM neighbor-cell stencil reach to avoid silent truncation bias.");
     prm.declare_entry(
       "quadrature rule",
       "gauss",
@@ -93,7 +95,7 @@ namespace Parameters
     dem_file_name              = prm.get("dem file name");
     l2_smoothing_length        = prm.get_double("l2 smoothing length");
     particle_refinement_factor = prm.get_integer("particle refinement factor");
-    qcm_sphere_diameter        = prm.get_double("qcm sphere diameter");
+    qcm_smoothing_length       = prm.get_double("qcm smoothing length");
     qcm_sphere_equal_cell_volume = prm.get_bool("qcm sphere equal cell volume");
 
     const std::string qcm_filter_type_op = prm.get("qcm filter type");

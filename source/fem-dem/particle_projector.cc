@@ -724,20 +724,20 @@ ParticleProjector<dim>::calculate_void_fraction_qcm_impl()
 
   // QCM filter characteristic length. For the spherical filter this is the
   // averaging-sphere radius; for the gaussian filter it is the standard
-  // deviation sigma. The same parameter (qcm_sphere_diameter) supplies it in
-  // both cases: half the diameter.
+  // deviation sigma. The same parameter (qcm_smoothing_length) supplies it in
+  // both cases: half the smoothing length.
   double filter_length = 0.0;
   double particles_volume_in_sphere;
   double quadrature_void_fraction;
-  double qcm_sphere_diameter = void_fraction_parameters->qcm_sphere_diameter;
+  double qcm_smoothing_length = void_fraction_parameters->qcm_smoothing_length;
 
-  // If the filter length is user-defined via qcm_sphere_diameter, it is
+  // If the filter length is user-defined via qcm_smoothing_length, it is
   // calculated from it once; otherwise, it must be recomputed from each cell
   // measure while looping over the cells.
   bool calculate_filter_length_from_cell = true;
-  if (qcm_sphere_diameter > 1e-16)
+  if (qcm_smoothing_length > 1e-16)
     {
-      filter_length                     = 0.5 * qcm_sphere_diameter;
+      filter_length                     = 0.5 * qcm_smoothing_length;
       calculate_filter_length_from_cell = false;
     }
 
@@ -1207,12 +1207,12 @@ ParticleProjector<dim>::calculate_field_projection_impl(
   double total_volume_of_particles_in_sphere;
   std::conditional_t<n_components == 1, double, Tensor<1, dim>>
          particle_field_in_sphere;
-  double qcm_sphere_diameter = void_fraction_parameters->qcm_sphere_diameter;
+  double qcm_smoothing_length = void_fraction_parameters->qcm_smoothing_length;
 
   bool calculate_filter_length_from_cell = true;
-  if (qcm_sphere_diameter > 1e-16)
+  if (qcm_smoothing_length > 1e-16)
     {
-      filter_length                     = 0.5 * qcm_sphere_diameter;
+      filter_length                     = 0.5 * qcm_smoothing_length;
       calculate_filter_length_from_cell = false;
     }
 

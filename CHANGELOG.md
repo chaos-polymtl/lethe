@@ -43,7 +43,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MAJOR The DEM and CFD-DEM solver could only manage one set of periodic boundary condition. This PR extends the periodicity to be able to manage multiple periodic boundary conditions such that up to three pair of periodic boundary faces can be declared in 3D. [#1983](https://github.com/chaos-polymtl/lethe/pull/1983)
 
-## [Master] - 2026/05/12
+## [Master] - 2026/05/11
 
 ### Fixed
 
