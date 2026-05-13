@@ -347,7 +347,7 @@ VANSOperator<dim, number>::compute_particle_fluid_interaction(
                                          cell_fp_drag);
                 }
 
-              else // is_implicit
+              if (is_implicit)
                 {
                   gather_and_eval_vector(fe_values_particle_velocity,
                                          particle_velocity_dof_handler,
@@ -407,7 +407,7 @@ VANSOperator<dim, number>::compute_particle_fluid_interaction(
                     fp_drag_solution, cell_fp_drag);
                 }
 
-              else // (is_implicit)
+              if (is_implicit)
                 {
                   // Reinit the particle velocity
                   fe_values_particle_velocity.reinit(
