@@ -83,7 +83,13 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set_tests_properties(lethe-fluid-vans-matrix-free/qcm_water_packed_bed_difelice_drag_explicit.debug PROPERTIES TIMEOUT 2000)
   set_tests_properties(lethe-fluid-vans-matrix-free/qcm_packed_bed_rong_drag_explicit.debug PROPERTIES TIMEOUT 2000)
   set_tests_properties(lethe-fluid-vans-matrix-free/qcm_packed_bed_rong_drag_implicit_gcmg.debug PROPERTIES TIMEOUT 2000)
-  set_tests_properties(lethe-fluid-vans-matrix-free/qcm_packed_bed_rong_drag_implicit_lsmg.debug PROPERTIES TIMEOUT 2000)
+  # The LSMG tests are only picked up when building against deal.II > 9.7
+  # (see the .with_dealii.geq.9.8. suffix on their .output files). Only
+  # extend the timeout when the test was actually registered, otherwise
+  # set_tests_properties fails the CMake configuration.
+  if ("${DEAL_II_VERSION_MAJOR}${DEAL_II_VERSION_MINOR}" GREATER 97)
+    set_tests_properties(lethe-fluid-vans-matrix-free/qcm_packed_bed_rong_drag_implicit_lsmg.debug PROPERTIES TIMEOUT 2000)
+  endif()
   set_tests_properties(lethe-fluid-vans-matrix-free/qcm_packed_bed_rong_drag_semi-implicit.debug PROPERTIES TIMEOUT 2000)
 
 endif()
