@@ -59,7 +59,213 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
   if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
         .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg)
     {
-      AssertThrow(false, ExcNotImplemented());
+      // ---------------------------------------------------------------------
+      // Local-smoothing branch.
+      //
+      // For LSMG the auxiliary fields all live on a single triangulation that
+      // has multigrid level DoFs distributed (enabled by
+      // ParticleProjector::enable_multigrid_level_dofs). For each auxiliary
+      // field we build one MGTransferMatrixFree, interpolate the fine vector
+      // to all triangulation levels, and then dispatch the level vectors to
+      // each level VANSOperator using the operator's own mg_level.
+      // ---------------------------------------------------------------------
+#if !DEAL_II_VERSION_GTE(9, 8, 0)
+      AssertThrow(
+        false,
+        ExcMessage(
+          "The VANS matrix-free solver with the LSMG preconditioner is not "
+          "supported with deal.II 9.7 or older: the multigrid transfer of the "
+          "auxiliary (particle-projected) fields relies on the behavior of "
+          "MGTransferMatrixFree that was only fixed in deal.II 9.8 (master). "
+          "Please either build against deal.II master, or switch to the GCMG "
+          "preconditioner for this simulation."));
+#endif
+
+      const auto &linear_solver_parameters =
+        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics);
+
+      // The combinations below have not been validated for the VANS LSMG path
+      // (they require additional plumbing in the auxiliary-field projections).
+      // They are explicitly forbidden as a first implementation step.
+      AssertThrow(
+        !linear_solver_parameters.mg_use_fe_q_iso_q1,
+        ExcMessage(
+          "The FE_Q_iso_Q1 coarse-grid option is not supported by the VANS "
+          "matrix-free solver with the LSMG preconditioner."));
+
+      AssertThrow(
+        !this->simulation_parameters.mortar_parameters.enable,
+        ExcMessage(
+          "Mortar coupling is not supported by the VANS matrix-free solver "
+          "with the LSMG preconditioner."));
+
+      AssertThrow(
+        linear_solver_parameters.mg_coarsening_type ==
+          Parameters::LinearSolver::MultigridCoarseningSequenceType::h,
+        ExcMessage(
+          "Only pure h-coarsening (set mg coarsening type = h) is currently "
+          "supported by the VANS matrix-free solver with the LSMG "
+          "preconditioner."));
+
+      // Identify the h-level range covered by the multigrid hierarchy. With
+      // pure h-coarsening, this is a contiguous range that we can read back
+      // from each level operator's MatrixFree object.
+      const unsigned int min_h_level = this->mg_operators[this->minlevel]
+                                         ->get_system_matrix_free()
+                                         .get_mg_level();
+      const unsigned int max_h_level = this->mg_operators[this->maxlevel]
+                                         ->get_system_matrix_free()
+                                         .get_mg_level();
+
+      AssertThrow(
+        min_h_level != numbers::invalid_unsigned_int &&
+          max_h_level != numbers::invalid_unsigned_int,
+        ExcMessage(
+          "VANS LSMG: level operators do not expose a valid mg_level. The "
+          "base setup_GMG was likely not run in LSMG mode."));
+
+      AssertThrow(max_h_level - min_h_level == this->maxlevel - this->minlevel,
+                  ExcMessage(
+                    "VANS LSMG: non-contiguous h-level range; only pure "
+                    "h-coarsening is supported."));
+
+      // Build a transfer for each auxiliary field. The DoFHandler stored in
+      // the projector already has multigrid level DoFs distributed.
+      this->mg_transfer_ls_void_fraction = std::make_shared<LSTransferType>();
+      this->mg_transfer_ls_pf_force      = std::make_shared<LSTransferType>();
+      this->mg_transfer_ls_pf_drag       = std::make_shared<LSTransferType>();
+      this->mg_transfer_ls_particle_velocity =
+        std::make_shared<LSTransferType>();
+      this->mg_transfer_ls_momentum_transfer_coefficient =
+        std::make_shared<LSTransferType>();
+
+      // Build each transfer with a level-partitioner lambda. This stores
+      // per-level partitioners (locally owned + locally relevant level DoFs)
+      // inside the transfer, so that interpolate_to_mg auto-sizes its
+      // destination level vectors with the ghost layout our operator needs
+      // for cell-by-cell dof index lookups. This mirrors the GCMG pattern.
+      const auto make_level_partitioner = [](const DoFHandler<dim> &dh) {
+        return [&dh](const unsigned int l, MGVectorType &vec) {
+          vec.reinit(dh.locally_owned_mg_dofs(l),
+                     DoFTools::extract_locally_relevant_level_dofs(dh, l),
+                     dh.get_mpi_communicator());
+        };
+      };
+
+      this->mg_transfer_ls_void_fraction->build(
+        particle_projector.dof_handler,
+        make_level_partitioner(particle_projector.dof_handler));
+      this->mg_transfer_ls_pf_force->build(
+        particle_projector.fluid_force_on_particles_two_way_coupling
+          .dof_handler,
+        make_level_partitioner(
+          particle_projector.fluid_force_on_particles_two_way_coupling
+            .dof_handler));
+      this->mg_transfer_ls_pf_drag->build(
+        particle_projector.fluid_drag_on_particles.dof_handler,
+        make_level_partitioner(
+          particle_projector.fluid_drag_on_particles.dof_handler));
+      this->mg_transfer_ls_particle_velocity->build(
+        particle_projector.particle_velocity.dof_handler,
+        make_level_partitioner(
+          particle_projector.particle_velocity.dof_handler));
+      this->mg_transfer_ls_momentum_transfer_coefficient->build(
+        particle_projector.momentum_transfer_coefficient.dof_handler,
+        make_level_partitioner(
+          particle_projector.momentum_transfer_coefficient.dof_handler));
+
+      // Allocate level vectors indexed by triangulation level.
+      // interpolate_to_mg will reinit each entry from the level partitioner
+      // stored in the transfer above.
+      MGLevelObject<MGVectorType> mg_void_fraction_solution(min_h_level,
+                                                            max_h_level);
+      MGLevelObject<MGVectorType> mg_time_derivative_void_fraction(min_h_level,
+                                                                   max_h_level);
+      MGLevelObject<MGVectorType> mg_pf_forces_solution(min_h_level,
+                                                        max_h_level);
+      MGLevelObject<MGVectorType> mg_pf_drag_solution(min_h_level, max_h_level);
+      MGLevelObject<MGVectorType> mg_particle_velocity_solution(min_h_level,
+                                                                max_h_level);
+      MGLevelObject<MGVectorType> mg_momentum_transfer_coefficient_solution(
+        min_h_level, max_h_level);
+
+      // The transfers require ghosted source vectors.
+      particle_projector.fluid_force_on_particles_two_way_coupling
+        .particle_field_solution.update_ghost_values();
+      particle_projector.fluid_drag_on_particles.particle_field_solution
+        .update_ghost_values();
+      particle_projector.particle_velocity.particle_field_solution
+        .update_ghost_values();
+      particle_projector.momentum_transfer_coefficient.particle_field_solution
+        .update_ghost_values();
+
+      this->mg_transfer_ls_void_fraction->interpolate_to_mg(
+        particle_projector.dof_handler,
+        mg_void_fraction_solution,
+        particle_projector.void_fraction_solution);
+
+      this->mg_transfer_ls_void_fraction->interpolate_to_mg(
+        particle_projector.dof_handler,
+        mg_time_derivative_void_fraction,
+        time_derivative_void_fraction);
+
+      this->mg_transfer_ls_pf_force->interpolate_to_mg(
+        particle_projector.fluid_force_on_particles_two_way_coupling
+          .dof_handler,
+        mg_pf_forces_solution,
+        particle_projector.fluid_force_on_particles_two_way_coupling
+          .particle_field_solution);
+
+      this->mg_transfer_ls_pf_drag->interpolate_to_mg(
+        particle_projector.fluid_drag_on_particles.dof_handler,
+        mg_pf_drag_solution,
+        particle_projector.fluid_drag_on_particles.particle_field_solution);
+
+      this->mg_transfer_ls_particle_velocity->interpolate_to_mg(
+        particle_projector.particle_velocity.dof_handler,
+        mg_particle_velocity_solution,
+        particle_projector.particle_velocity.particle_field_solution);
+
+      this->mg_transfer_ls_momentum_transfer_coefficient->interpolate_to_mg(
+        particle_projector.momentum_transfer_coefficient.dof_handler,
+        mg_momentum_transfer_coefficient_solution,
+        particle_projector.momentum_transfer_coefficient
+          .particle_field_solution);
+
+      // Dispatch the level vectors to the corresponding VANSOperator.
+      for (unsigned int l = this->minlevel; l <= this->maxlevel; ++l)
+        {
+          const unsigned int h_level =
+            this->mg_operators[l]->get_system_matrix_free().get_mg_level();
+
+          mg_void_fraction_solution[h_level].update_ghost_values();
+          mg_time_derivative_void_fraction[h_level].update_ghost_values();
+          mg_pf_forces_solution[h_level].update_ghost_values();
+          mg_pf_drag_solution[h_level].update_ghost_values();
+          mg_particle_velocity_solution[h_level].update_ghost_values();
+          mg_momentum_transfer_coefficient_solution[h_level]
+            .update_ghost_values();
+
+          if (auto mf_operator = dynamic_cast<VANSOperator<dim, double> *>(
+                &(*this->mg_operators[l])))
+            {
+              mf_operator->compute_void_fraction(
+                particle_projector.dof_handler,
+                mg_void_fraction_solution[h_level],
+                mg_time_derivative_void_fraction[h_level]);
+
+              mf_operator->compute_particle_fluid_interaction(
+                particle_projector.fluid_force_on_particles_two_way_coupling
+                  .dof_handler,
+                mg_pf_forces_solution[h_level],
+                particle_projector.fluid_drag_on_particles.dof_handler,
+                mg_pf_drag_solution[h_level],
+                particle_projector.particle_velocity.dof_handler,
+                mg_particle_velocity_solution[h_level],
+                particle_projector.momentum_transfer_coefficient.dof_handler,
+                mg_momentum_transfer_coefficient_solution[h_level]);
+            }
+        }
     }
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
@@ -197,7 +403,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
                      this->pf_force_dof_handlers[l].get_mpi_communicator());
         });
 
-      this->mg_transfer_gc_pf_force->build(
+      this->mg_transfer_gc_pf_drag->build(
         particle_projector.fluid_drag_on_particles.dof_handler,
         [&](const auto l, auto &vec) {
           vec.reinit(this->pf_drag_dof_handlers[l].locally_owned_dofs(),
@@ -360,6 +566,13 @@ FluidDynamicsVANSMatrixFree<dim>::FluidDynamicsVANSMatrixFree(
       this->pcout)
   , has_periodic_boundaries(false)
 {
+  // The matrix-free infrastructure relies on tensor-product (hex/quad)
+  // elements; simplex meshes are not supported by the VANS matrix-free
+  // solver nor by its multigrid preconditioners.
+  AssertThrow(
+    !this->cfd_dem_simulation_parameters.cfd_parameters.mesh.simplex,
+    ExcMessage("The VANS matrix-free solver does not support simplex meshes."));
+
   unsigned int n_pbc = 0;
   for (auto const &[id, type] :
        cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions.type)
@@ -389,6 +602,14 @@ void
 FluidDynamicsVANSMatrixFree<dim>::setup_dofs()
 {
   FluidDynamicsMatrixFree<dim>::setup_dofs();
+
+  // The LSMG preconditioner requires the auxiliary fields to be available on
+  // every triangulation level. We propagate the request to the projector so
+  // that distribute_mg_dofs() is called on every auxiliary DoFHandler.
+  particle_projector.enable_multigrid_level_dofs(
+    this->cfd_dem_simulation_parameters.cfd_parameters.linear_solver
+      .at(PhysicsID::fluid_dynamics)
+      .preconditioner == Parameters::LinearSolver::PreconditionerType::lsmg);
 
   particle_projector.setup_dofs();
   particle_projector.setup_constraints(

@@ -35,6 +35,8 @@ ParticleFieldQCM<dim, n_components, component_start>::setup_dofs()
   const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
 
   dof_handler.distribute_dofs(*fe);
+  if (multigrid_level_dofs_required)
+    dof_handler.distribute_mg_dofs();
   locally_owned_dofs = dof_handler.locally_owned_dofs();
 
   locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);
@@ -104,6 +106,8 @@ ParticleProjector<dim>::setup_dofs()
   const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
 
   dof_handler.distribute_dofs(*fe);
+  if (multigrid_level_dofs_required)
+    dof_handler.distribute_mg_dofs();
   locally_owned_dofs = dof_handler.locally_owned_dofs();
 
   locally_relevant_dofs = DoFTools::extract_locally_relevant_dofs(dof_handler);

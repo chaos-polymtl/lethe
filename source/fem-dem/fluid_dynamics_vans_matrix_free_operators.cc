@@ -81,6 +81,22 @@ VANSOperator<dim, number>::compute_void_fraction(
   std::vector<Tensor<1, dim>> cell_void_fraction_gradient(
     fe_values.n_quadrature_points);
 
+  // When the operator is built on a multigrid level (LSMG), the cell iterator
+  // returned by the MatrixFree is a level iterator (inactive on coarser
+  // levels). In that case we must construct a level DoF cell iterator on the
+  // auxiliary DoFHandler manually; as_dof_handler_iterator() only works for
+  // active cells. We also cannot use FEValues::get_function_values(global_vec)
+  // because its size check compares against dh.n_dofs() rather than
+  // dh.n_dofs(level); we go through get_function_values_from_local_dof_values
+  // instead, fed by the level cell's mg dof values.
+  const unsigned int mg_level    = this->matrix_free.get_mg_level();
+  const bool         on_mg_level = mg_level != numbers::invalid_unsigned_int;
+
+  const unsigned int dofs_per_cell =
+    void_fraction_dof_handler.get_fe().n_dofs_per_cell();
+  Vector<double> local_void_fraction(dofs_per_cell);
+  Vector<double> local_time_derivative_void_fraction(dofs_per_cell);
+  std::vector<types::global_dof_index> level_dof_indices(dofs_per_cell);
 
   for (unsigned int cell = 0; cell < n_cells; ++cell)
     {
@@ -88,16 +104,64 @@ VANSOperator<dim, number>::compute_void_fraction(
            lane < this->matrix_free.n_active_entries_per_cell_batch(cell);
            lane++)
         {
-          fe_values.reinit(
-            this->matrix_free.get_cell_iterator(cell, lane)
-              ->as_dof_handler_iterator(void_fraction_dof_handler));
+          const auto tria_cell =
+            this->matrix_free.get_cell_iterator(cell, lane);
 
-          fe_values.get_function_values(void_fraction_solution,
-                                        cell_void_fraction);
-          fe_values.get_function_values(time_derivative_void_fraction_solution,
-                                        cell_time_derivative_void_fraction);
-          fe_values.get_function_gradients(void_fraction_solution,
-                                           cell_void_fraction_gradient);
+          // Branch that is taken when LSMG preconditioner is used
+          if (on_mg_level)
+            {
+              typename DoFHandler<dim>::level_cell_iterator dof_cell(
+                &tria_cell->get_triangulation(),
+                tria_cell->level(),
+                tria_cell->index(),
+                &void_fraction_dof_handler);
+              fe_values.reinit(dof_cell);
+
+              // get_dof_values() asserts is_active() in deal.II 9.8 and above
+              // so we gather level dof values manually via the mg indices.
+              dof_cell->get_mg_dof_indices(level_dof_indices);
+              for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                {
+                  const auto idx         = level_dof_indices[i];
+                  local_void_fraction[i] = void_fraction_solution[idx];
+                  local_time_derivative_void_fraction[i] =
+                    time_derivative_void_fraction_solution[idx];
+                }
+
+              // Evaluate at quadrature points from the local mg dof values
+              // (FEValuesBase::get_function_values_from_local_dof_values is
+              // not available, so we do it via shape functions directly).
+              for (const auto q : fe_values.quadrature_point_indices())
+                {
+                  cell_void_fraction[q]                 = 0.;
+                  cell_time_derivative_void_fraction[q] = 0.;
+                  cell_void_fraction_gradient[q]        = 0.;
+                  for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                    {
+                      const double phi  = fe_values.shape_value(i, q);
+                      const auto   gphi = fe_values.shape_grad(i, q);
+                      cell_void_fraction[q] += local_void_fraction[i] * phi;
+                      cell_time_derivative_void_fraction[q] +=
+                        local_time_derivative_void_fraction[i] * phi;
+                      cell_void_fraction_gradient[q] +=
+                        local_void_fraction[i] * gphi;
+                    }
+                }
+            } // on_mg_level
+          // Branch that is used when GCMG preconditioner is used
+          else
+            {
+              fe_values.reinit(
+                tria_cell->as_dof_handler_iterator(void_fraction_dof_handler));
+
+              fe_values.get_function_values(void_fraction_solution,
+                                            cell_void_fraction);
+              fe_values.get_function_values(
+                time_derivative_void_fraction_solution,
+                cell_time_derivative_void_fraction);
+              fe_values.get_function_gradients(void_fraction_solution,
+                                               cell_void_fraction_gradient);
+            }
 
           for (const auto q : fe_values.quadrature_point_indices())
             {
@@ -190,6 +254,8 @@ VANSOperator<dim, number>::compute_particle_fluid_interaction(
     this->matrix_free.get_quadrature(),
     update_values);
 
+  // Data structures for the information we will gather from the FEValues.
+  // These will be stored within tables stored within the operator.
   std::vector<Tensor<1, dim>> cell_fp_force(
     fe_values_force.n_quadrature_points);
   std::vector<Tensor<1, dim>> cell_fp_drag(fe_values_drag.n_quadrature_points);
@@ -198,7 +264,27 @@ VANSOperator<dim, number>::compute_particle_fluid_interaction(
   std::vector<double> cell_momentum_transfer_coefficient(
     fe_values_force.n_quadrature_points, 0.);
 
+  // Extractor for the velocity
   constexpr FEValuesExtractors::Vector vector_index(0);
+
+  // When the operator is built on a multigrid level (LSMG), the cell iterator
+  // returned by the MatrixFree is a level iterator (inactive on coarser
+  // levels). In that case we must construct level DoF cell iterators on the
+  // auxiliary DoFHandlers manually, and gather dof values via the level cell
+  // iterator (which respects level_dof_access=true); FEValues' global
+  // get_function_values would otherwise fail its size check against
+  // dh.n_dofs() rather than dh.n_dofs(level).
+  const unsigned int mg_level    = this->matrix_free.get_mg_level();
+  const bool         on_mg_level = mg_level != numbers::invalid_unsigned_int;
+
+  // Data structures for the information we will gather for the lsmg.
+  Vector<double> local_fp_force(
+    fp_force_dof_handler.get_fe().n_dofs_per_cell());
+  Vector<double> local_fp_drag(fp_drag_dof_handler.get_fe().n_dofs_per_cell());
+  Vector<double> local_particle_velocity(
+    particle_velocity_dof_handler.get_fe().n_dofs_per_cell());
+  Vector<double> local_momentum_transfer_coefficient(
+    momentum_transfer_coefficient_dof_handler.get_fe().n_dofs_per_cell());
 
   for (unsigned int cell = 0; cell < n_cells; ++cell)
     {
@@ -206,45 +292,139 @@ VANSOperator<dim, number>::compute_particle_fluid_interaction(
            lane < this->matrix_free.n_active_entries_per_cell_batch(cell);
            lane++)
         {
-          // Reinit the particle-fluid force
-          fe_values_force.reinit(
-            this->matrix_free.get_cell_iterator(cell, lane)
-              ->as_dof_handler_iterator(fp_force_dof_handler));
+          const auto tria_cell =
+            this->matrix_free.get_cell_iterator(cell, lane);
 
-          fe_values_force[vector_index].get_function_values(fp_force_solution,
-                                                            cell_fp_force);
-
-          // Drag only needs to be re-init and collected if the drag model
-          // is explicit
-          if (is_explicit)
+          // Branch that is used in the case of the LSMG preconditioner
+          if (on_mg_level)
             {
-              fe_values_drag.reinit(
-                this->matrix_free.get_cell_iterator(cell, lane)
-                  ->as_dof_handler_iterator(fp_drag_dof_handler));
+              // Helper that gathers level dof values via mg indices
+              // and evaluates a vector-valued field at the
+              // quadrature points. We also avoid the FEValuesViews
+              // '_from_local_dof_values' overload because it is not
+              // instantiated for our Vector<double> input type.
+              const auto gather_and_eval_vector =
+                [&](FEValues<dim>                                    &fev,
+                    const DoFHandler<dim>                            &dh,
+                    const LinearAlgebra::distributed::Vector<double> &vec,
+                    Vector<double>                                   &local,
+                    std::vector<Tensor<1, dim>>                      &output) {
+                  typename DoFHandler<dim>::level_cell_iterator dof_cell(
+                    &tria_cell->get_triangulation(),
+                    tria_cell->level(),
+                    tria_cell->index(),
+                    &dh);
+                  fev.reinit(dof_cell);
 
-              fe_values_drag[vector_index].get_function_values(fp_drag_solution,
-                                                               cell_fp_drag);
-            }
+                  const unsigned int dpc = dh.get_fe().n_dofs_per_cell();
+                  std::vector<types::global_dof_index> indices(dpc);
+                  dof_cell->get_mg_dof_indices(indices);
+                  for (unsigned int i = 0; i < dpc; ++i)
+                    local[i] = vec[indices[i]];
 
-          if (is_implicit)
+                  for (const auto q : fev.quadrature_point_indices())
+                    {
+                      Tensor<1, dim> v;
+                      for (unsigned int i = 0; i < dpc; ++i)
+                        v += local[i] * fev[vector_index].value(i, q);
+                      output[q] = v;
+                    }
+                };
+
+              gather_and_eval_vector(fe_values_force,
+                                     fp_force_dof_handler,
+                                     fp_force_solution,
+                                     local_fp_force,
+                                     cell_fp_force);
+
+              if (is_explicit)
+                {
+                  gather_and_eval_vector(fe_values_drag,
+                                         fp_drag_dof_handler,
+                                         fp_drag_solution,
+                                         local_fp_drag,
+                                         cell_fp_drag);
+                }
+
+              if (is_implicit)
+                {
+                  gather_and_eval_vector(fe_values_particle_velocity,
+                                         particle_velocity_dof_handler,
+                                         particle_velocity_solution,
+                                         local_particle_velocity,
+                                         cell_particle_velocity);
+
+                  // Momentum transfer coefficient (scalar, single-component
+                  // FESystem): same gather pattern, but evaluate a scalar.
+                  typename DoFHandler<dim>::level_cell_iterator dof_cell_mtc(
+                    &tria_cell->get_triangulation(),
+                    tria_cell->level(),
+                    tria_cell->index(),
+                    &momentum_transfer_coefficient_dof_handler);
+                  fe_values_momentum_transfer_coefficient.reinit(dof_cell_mtc);
+
+                  const unsigned int mtc_dofs_per_cell =
+                    momentum_transfer_coefficient_dof_handler.get_fe()
+                      .n_dofs_per_cell();
+                  std::vector<types::global_dof_index> mtc_indices(
+                    mtc_dofs_per_cell);
+                  dof_cell_mtc->get_mg_dof_indices(mtc_indices);
+                  for (unsigned int i = 0; i < mtc_dofs_per_cell; ++i)
+                    local_momentum_transfer_coefficient[i] =
+                      momentum_transfer_coefficient_solution[mtc_indices[i]];
+
+                  for (const auto q : fe_values_momentum_transfer_coefficient
+                                        .quadrature_point_indices())
+                    {
+                      cell_momentum_transfer_coefficient[q] = 0.;
+                      for (unsigned int i = 0; i < mtc_dofs_per_cell; ++i)
+                        cell_momentum_transfer_coefficient[q] +=
+                          local_momentum_transfer_coefficient[i] *
+                          fe_values_momentum_transfer_coefficient.shape_value(
+                            i, q);
+                    }
+                }
+            } // on_mg_level
+          // Branch that is used for GCMG preconditioner
+          else
             {
-              // Reinit the particle velocity
-              fe_values_particle_velocity.reinit(
-                this->matrix_free.get_cell_iterator(cell, lane)
-                  ->as_dof_handler_iterator(particle_velocity_dof_handler));
+              // Reinit the particle-fluid force
+              fe_values_force.reinit(
+                tria_cell->as_dof_handler_iterator(fp_force_dof_handler));
 
-              fe_values_particle_velocity[vector_index].get_function_values(
-                particle_velocity_solution, cell_particle_velocity);
+              fe_values_force[vector_index].get_function_values(
+                fp_force_solution, cell_fp_force);
 
-              // Reinit the momentum transfer coefficient
-              fe_values_momentum_transfer_coefficient.reinit(
-                this->matrix_free.get_cell_iterator(cell, lane)
-                  ->as_dof_handler_iterator(
-                    momentum_transfer_coefficient_dof_handler));
+              // Drag only needs to be re-init and collected if the drag model
+              // is explicit
+              if (is_explicit)
+                {
+                  fe_values_drag.reinit(
+                    tria_cell->as_dof_handler_iterator(fp_drag_dof_handler));
 
-              fe_values_momentum_transfer_coefficient.get_function_values(
-                momentum_transfer_coefficient_solution,
-                cell_momentum_transfer_coefficient);
+                  fe_values_drag[vector_index].get_function_values(
+                    fp_drag_solution, cell_fp_drag);
+                }
+
+              if (is_implicit)
+                {
+                  // Reinit the particle velocity
+                  fe_values_particle_velocity.reinit(
+                    tria_cell->as_dof_handler_iterator(
+                      particle_velocity_dof_handler));
+
+                  fe_values_particle_velocity[vector_index].get_function_values(
+                    particle_velocity_solution, cell_particle_velocity);
+
+                  // Reinit the momentum transfer coefficient
+                  fe_values_momentum_transfer_coefficient.reinit(
+                    tria_cell->as_dof_handler_iterator(
+                      momentum_transfer_coefficient_dof_handler));
+
+                  fe_values_momentum_transfer_coefficient.get_function_values(
+                    momentum_transfer_coefficient_solution,
+                    cell_momentum_transfer_coefficient);
+                }
             }
 
           for (const auto q : fe_values_force.quadrature_point_indices())
