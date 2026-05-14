@@ -75,7 +75,7 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
         ExcMessage(
           "The VANS matrix-free solver with the LSMG preconditioner is not "
           "supported with deal.II 9.7 or older: the multigrid transfer of the "
-          "auxiliary (particle-projected) fields relies on behavior of "
+          "auxiliary (particle-projected) fields relies on the behavior of "
           "MGTransferMatrixFree that was only fixed in deal.II 9.8 (master). "
           "Please either build against deal.II master, or switch to the GCMG "
           "preconditioner for this simulation."));
