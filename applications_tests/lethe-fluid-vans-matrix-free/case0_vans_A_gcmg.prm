@@ -74,11 +74,6 @@ subsection boundary conditions
     set id   = 0
     set type = noslip
   end
-  #subsection bc 0
-  #  set   id = 0
-  #  set type = function weak
-  #  set beta = 1
-  #end
 end
 
 #---------------------------------------------------
