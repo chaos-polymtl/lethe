@@ -1707,9 +1707,6 @@ namespace Parameters
           boundary_rot_speed.insert({counter, 0});
           boundary_rot_vector.insert({counter, zero_tensor});
           point_on_rot_axis.insert({counter, Point<3>(zero_tensor)});
-          // periodic_bndry_0.insert({counter, 0});
-          // periodic_bndry_1.insert({counter, 0});
-          // periodic_dir.insert({counter, 0});
         }
 
       // NOTE This first vector should not be initialized this big.
