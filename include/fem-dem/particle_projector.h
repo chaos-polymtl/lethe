@@ -197,7 +197,7 @@ public:
   /// called for the projector.
   bool matrix_requires_assembly;
 
-  /// When set, setup_dofs() will additionally call distribute_mg_dofs() on the
+  /// When set to true, setup_dofs() will additionally call distribute_mg_dofs() on the
   /// underlying DoFHandler. This is required by local-smoothing multigrid
   /// (LSMG) so that the field can be interpolated to every triangulation level.
   bool multigrid_level_dofs_required = false;
