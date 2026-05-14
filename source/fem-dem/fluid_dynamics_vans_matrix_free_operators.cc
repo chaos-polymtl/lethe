@@ -255,7 +255,7 @@ VANSOperator<dim, number>::compute_particle_fluid_interaction(
     update_values);
 
   // Data structures for the information we will gather from the FEValues.
-  // These will stored within tables stored within the operator.
+  // These will be stored within tables stored within the operator.
   std::vector<Tensor<1, dim>> cell_fp_force(
     fe_values_force.n_quadrature_points);
   std::vector<Tensor<1, dim>> cell_fp_drag(fe_values_drag.n_quadrature_points);
