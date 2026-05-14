@@ -117,7 +117,7 @@ VANSOperator<dim, number>::compute_void_fraction(
                 &void_fraction_dof_handler);
               fe_values.reinit(dof_cell);
 
-              // get_dof_values() asserts is_active() in this deal.II build,
+              // get_dof_values() asserts is_active() in deal.II 9.8 and above
               // so we gather level dof values manually via the mg indices.
               dof_cell->get_mg_dof_indices(level_dof_indices);
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
@@ -298,9 +298,8 @@ VANSOperator<dim, number>::compute_particle_fluid_interaction(
           // Branch that is used in the case of the LSMG preconditioner
           if (on_mg_level)
             {
-              // Helper that gathers level dof values via mg indices (since
-              // DoFCellAccessor::get_dof_values asserts is_active() in this
-              // deal.II build) and evaluates a vector-valued field at the
+              // Helper that gathers level dof values via mg indices
+              // and evaluates a vector-valued field at the
               // quadrature points. We also avoid the FEValuesViews
               // '_from_local_dof_values' overload because it is not
               // instantiated for our Vector<double> input type.

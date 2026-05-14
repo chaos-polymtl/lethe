@@ -124,9 +124,10 @@ MFNavierStokesVANSPreconditionGMG<dim>::initialize(
           "VANS LSMG: level operators do not expose a valid mg_level. The "
           "base setup_GMG was likely not run in LSMG mode."));
 
-      Assert(max_h_level - min_h_level == this->maxlevel - this->minlevel,
-             ExcMessage("VANS LSMG: non-contiguous h-level range; only pure "
-                        "h-coarsening is supported."));
+      AssertThrow(max_h_level - min_h_level == this->maxlevel - this->minlevel,
+                  ExcMessage(
+                    "VANS LSMG: non-contiguous h-level range; only pure "
+                    "h-coarsening is supported."));
 
       // Build a transfer for each auxiliary field. The DoFHandler stored in
       // the projector already has multigrid level DoFs distributed.
