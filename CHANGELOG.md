@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- MAJOR Fixed the usage of matrix free solver with solid material id in the domain for both the GCMG and LSMG multigrid preconditioners. This has been tested with the `grid_uniform_channel_with_meshed_cylinder` and required the mesh to have an additional option to disable the transfinite manifold has it does not work for multi-grid which have also been added to this PR. Finally, a test for the mesh `grid_uniform_channel_with_meshed_cylinder` has also been created to keep track of its changes in the future. [#1984](https://github.com/chaos-polymtl/lethe/pull/1984)
+- MAJOR Fixed the usage of matrix free solver with solid material id in the domain for both the GCMG and LSMG multigrid preconditioners. This has been tested with the `grid_uniform_channel_with_meshed_cylinder` and required the mesh to have an additional option to disable the transfinite manifold as it does not work for multi-grid preconditioners with the matrix-free solvers. Finally, a test for the mesh `grid_uniform_channel_with_meshed_cylinder` has also been created to keep track of its changes in the future. [#1984](https://github.com/chaos-polymtl/lethe/pull/1984)
 
 ### Added
 
