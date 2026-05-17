@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <dem/dem_action_manager.h>
@@ -77,7 +77,7 @@ DEMContactManager<dim, PropertiesIndex>::update_contacts()
       // local_contact_pair_periodic_candidates
       update_fine_search_candidates<
         dim,
-        typename dem_data_structures<dim>::adjacent_particle_pairs,
+        typename dem_data_structures<dim>::periodic_adjacent_particle_pairs,
         typename dem_data_structures<dim>::particle_particle_candidates,
         ContactType::local_periodic_particle_particle>(
         local_local_periodic_adjacent_particles,
@@ -88,7 +88,7 @@ DEMContactManager<dim, PropertiesIndex>::update_contacts()
       // ghost_contact_pair_periodic_candidates
       update_fine_search_candidates<
         dim,
-        typename dem_data_structures<dim>::adjacent_particle_pairs,
+        typename dem_data_structures<dim>::periodic_adjacent_particle_pairs,
         typename dem_data_structures<dim>::particle_particle_candidates,
         ContactType::ghost_periodic_particle_particle>(
         local_ghost_periodic_adjacent_particles,
@@ -99,7 +99,7 @@ DEMContactManager<dim, PropertiesIndex>::update_contacts()
       // ghost_local_contact_pair_periodic_candidates
       update_fine_search_candidates<
         dim,
-        typename dem_data_structures<dim>::adjacent_particle_pairs,
+        typename dem_data_structures<dim>::periodic_adjacent_particle_pairs,
         typename dem_data_structures<dim>::particle_particle_candidates,
         ContactType::ghost_local_periodic_particle_particle>(
         ghost_local_periodic_adjacent_particles,
@@ -172,7 +172,7 @@ DEMContactManager<dim, PropertiesIndex>::update_local_particles_in_cells(
       // pairs in contact
       update_contact_container_iterators<
         dim,
-        typename dem_data_structures<dim>::adjacent_particle_pairs,
+        typename dem_data_structures<dim>::periodic_adjacent_particle_pairs,
         ContactType::local_periodic_particle_particle>(
         local_local_periodic_adjacent_particles, particle_container);
 
@@ -180,7 +180,7 @@ DEMContactManager<dim, PropertiesIndex>::update_local_particles_in_cells(
       // pairs in contact
       update_contact_container_iterators<
         dim,
-        typename dem_data_structures<dim>::adjacent_particle_pairs,
+        typename dem_data_structures<dim>::periodic_adjacent_particle_pairs,
         ContactType::ghost_periodic_particle_particle>(
         local_ghost_periodic_adjacent_particles, particle_container);
 
@@ -188,7 +188,7 @@ DEMContactManager<dim, PropertiesIndex>::update_local_particles_in_cells(
       // pairs in contact
       update_contact_container_iterators<
         dim,
-        typename dem_data_structures<dim>::adjacent_particle_pairs,
+        typename dem_data_structures<dim>::periodic_adjacent_particle_pairs,
         ContactType::ghost_local_periodic_particle_particle>(
         ghost_local_periodic_adjacent_particles, particle_container);
     }
@@ -399,43 +399,46 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_particle_fine_search(
   const double neighborhood_threshold)
 {
   // Fine search for local particle-particle
-  particle_particle_fine_search<dim>(particle_container,
-                                     local_adjacent_particles,
-                                     local_contact_pair_candidates,
-                                     neighborhood_threshold);
+  particle_particle_fine_search<dim, local_particle_particle>(
+    particle_container,
+    local_adjacent_particles,
+    local_contact_pair_candidates,
+    neighborhood_threshold);
 
   // Fine search for ghost particle-particle
-  particle_particle_fine_search<dim>(particle_container,
-                                     ghost_adjacent_particles,
-                                     ghost_contact_pair_candidates,
-                                     neighborhood_threshold);
+  particle_particle_fine_search<dim, ghost_particle_particle>(
+    particle_container,
+    ghost_adjacent_particles,
+    ghost_contact_pair_candidates,
+    neighborhood_threshold);
 
   if (DEMActionManager::get_action_manager()
         ->check_periodic_boundaries_enabled())
     {
       // Fine search for local-local periodic particle-particle
-      particle_particle_fine_search<dim>(
+      particle_particle_fine_search<dim, local_periodic_particle_particle>(
         particle_container,
         local_local_periodic_adjacent_particles,
         local_contact_pair_periodic_candidates,
         neighborhood_threshold,
-        periodic_offset);
+        combined_periodic_offsets);
 
       // Fine search for local-ghost periodic particle-particle
-      particle_particle_fine_search<dim>(
+      particle_particle_fine_search<dim, ghost_periodic_particle_particle>(
         particle_container,
         local_ghost_periodic_adjacent_particles,
         ghost_contact_pair_periodic_candidates,
         neighborhood_threshold,
-        periodic_offset);
+        combined_periodic_offsets);
 
       // Fine search for ghost-local periodic particle-particle
-      particle_particle_fine_search<dim>(
+      particle_particle_fine_search<dim,
+                                    ghost_local_periodic_particle_particle>(
         particle_container,
         ghost_local_periodic_adjacent_particles,
         ghost_local_contact_pair_periodic_candidates,
         neighborhood_threshold,
-        periodic_offset);
+        combined_periodic_offsets);
     }
 }
 

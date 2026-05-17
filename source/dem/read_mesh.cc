@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/grids.h>
@@ -23,12 +23,8 @@ read_mesh(const Parameters::Mesh   &mesh_parameters,
   attach_grid_to_triangulation(triangulation, mesh_parameters);
 
   // Check if there are periodic boundaries
-  for (unsigned int i_bc = 0; i_bc < bc_params.bc_types.size(); ++i_bc)
-    {
-      if (bc_params.bc_types[i_bc] ==
-          Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
-        match_periodic_boundaries(triangulation, bc_params);
-    }
+  if (!bc_params.periodic_bc_index.empty())
+    match_periodic_boundaries(triangulation, bc_params);
 
   if (!restart)
     {
@@ -64,11 +60,14 @@ match_periodic_boundaries(Triangulation<dim, spacedim>        &triangulation,
     typename Triangulation<dim, spacedim>::cell_iterator>>
     periodicity_vector;
 
-  GridTools::collect_periodic_faces(triangulation,
-                                    bc_param.periodic_boundary_0,
-                                    bc_param.periodic_boundary_1,
-                                    bc_param.periodic_direction,
-                                    periodicity_vector);
+  for (const auto &i_bc : bc_param.periodic_bc_index)
+    {
+      GridTools::collect_periodic_faces(triangulation,
+                                        bc_param.periodic_boundary_0.at(i_bc),
+                                        bc_param.periodic_boundary_1.at(i_bc),
+                                        bc_param.periodic_direction.at(i_bc),
+                                        periodicity_vector);
+    }
   triangulation.add_periodicity(periodicity_vector);
 }
 

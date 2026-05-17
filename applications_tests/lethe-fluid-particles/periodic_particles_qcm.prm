@@ -89,7 +89,6 @@ end
 subsection boundary conditions
   set number         = 5
   set time dependent = true
-  set number         = 5
   subsection bc 0
     set id   = 2
     set type = slip

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2024-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2024-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_force_chains_visualization_h
@@ -191,13 +191,11 @@ private:
    * @param[out] normal_forces_vector the vector of normal forces between each
    * touching particles.
    */
-  template <ContactType contact_type>
+  template <ContactType contact_type, typename ContactInfoContainer>
   inline void
-  execute_contact_calculation(
-    typename DEM::dem_data_structures<dim>::particle_contact_info
-                          &adjacent_particles_list,
-    std::vector<Point<3>> &vertices,
-    std::vector<double>   &normal_forces_vector)
+  execute_contact_calculation(ContactInfoContainer  &adjacent_particles_list,
+                              std::vector<Point<3>> &vertices,
+                              std::vector<double>   &normal_forces_vector)
   {
     // No contact calculation if no adjacent particles
     if (adjacent_particles_list.empty())

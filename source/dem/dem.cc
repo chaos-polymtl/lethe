@@ -117,7 +117,8 @@ DEMSolver<dim, PropertiesIndex>::setup_parameters()
   // Set up the solid objects
   setup_solid_objects();
 
-  // Check if there are periodic boundaries
+  // Check if there are any periodic boundaries. If any periodic boundary is
+  // found, set the information for all periodic boundaries and break loop.
   for (unsigned int i_bc = 0;
        i_bc < parameters.boundary_conditions.bc_types.size();
        ++i_bc)
@@ -127,7 +128,8 @@ DEMSolver<dim, PropertiesIndex>::setup_parameters()
         {
           periodic_boundaries_object.set_periodic_boundaries_information(
             parameters.boundary_conditions.periodic_boundary_0,
-            parameters.boundary_conditions.periodic_direction);
+            parameters.boundary_conditions.periodic_direction,
+            parameters.boundary_conditions.periodic_bc_index);
           break;
         }
     }
@@ -135,7 +137,7 @@ DEMSolver<dim, PropertiesIndex>::setup_parameters()
   // Assign gravity/acceleration
   g = parameters.lagrangian_physical_properties.g;
 
-  // If this is a start simulation
+  // If this is a restart simulation
   if (parameters.restart.restart)
     {
       action_manager->restart_simulation();
@@ -300,12 +302,31 @@ DEMSolver<dim, PropertiesIndex>::setup_triangulation_dependent_parameters()
   periodic_boundaries_object.map_periodic_cells(
     triangulation, periodic_boundaries_cells_information);
 
-  // Set the periodic offset to contact managers and particles contact forces
-  // for periodic contact detection (if PBC enabled)
-  contact_manager.set_periodic_offset(
-    periodic_boundaries_object.get_periodic_offset_distance());
-  particle_particle_contact_force_object->set_periodic_offset(
-    periodic_boundaries_object.get_periodic_offset_distance());
+  // Set the combined_periodic_offsets to contact managers and particles contact
+  // forces for periodic contact detection (if PBC enabled)
+  contact_manager.set_combined_periodic_offsets(
+    periodic_boundaries_object.get_combined_periodic_offsets());
+  particle_particle_contact_force_object->set_combined_periodic_offsets(
+    periodic_boundaries_object.get_combined_periodic_offsets());
+
+  // Set the periodic offsets of the periodic boundary pairs for other classes
+  auto const &periodic_bc_index =
+    periodic_boundaries_object.get_periodic_bc_index();
+  auto const &periodic_boundaries_ids =
+    periodic_boundaries_object.get_periodic_boundaries_ids();
+
+  for (const unsigned int pbc_index : periodic_bc_index)
+    {
+      auto it = periodic_boundaries_ids.find(pbc_index);
+      if (it != periodic_boundaries_ids.end())
+        {
+          auto const &pb_id = it->second;
+
+          particle_particle_contact_force_object->set_periodic_offset(
+            periodic_boundaries_object.get_periodic_offset_distance(pb_id),
+            pb_id);
+        }
+    }
 
   // Set up the local and ghost cells (if ASC enabled)
   sparse_contacts_object.update_local_and_ghost_cell_set(background_dh);
@@ -334,12 +355,26 @@ DEMSolver<dim, PropertiesIndex>::setup_background_dofs()
       background_constraints.reinit(background_dh.locally_owned_dofs(),
                                     locally_relevant_dofs);
 
-      DoFTools::make_periodicity_constraints(
-        background_dh,
-        parameters.boundary_conditions.periodic_boundary_0,
-        parameters.boundary_conditions.periodic_boundary_1,
-        parameters.boundary_conditions.periodic_direction,
-        background_constraints);
+      // Loop over the unordered_map of periodic boundary conditions.
+      for (auto const &[bc_index, id0] :
+           parameters.boundary_conditions.periodic_boundary_0)
+        {
+          const types::boundary_id id1 =
+            parameters.boundary_conditions.periodic_boundary_1.at(bc_index);
+          const unsigned int direction =
+            parameters.boundary_conditions.periodic_direction.at(bc_index);
+
+          // Default boundaries contain information for periodic boundary
+          // conditions that indicate id0 and id1 are 0 as default value To
+          // ensure these default values are not parsed, only make the
+          // periodicity constraints if id0 and id1 are distinct
+          // TODO - Refactor the way the DEM boundary conditions are stored to
+          // get rid of the vectors storage structure and use a map directly
+          // instead.
+          if (id0 != id1)
+            DoFTools::make_periodicity_constraints(
+              background_dh, id0, id1, direction, background_constraints);
+        }
 
       background_constraints.close();
 
