@@ -90,16 +90,18 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">particle_particle_fine_search.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;<a class="el" href="data__containers_8h_source.html">dem/data_containers.h</a>&gt;</code><br />
+<div class="textblock"><code>#include &lt;<a class="el" href="contact__type_8h_source.html">dem/contact_type.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="data__containers_8h_source.html">dem/data_containers.h</a>&gt;</code><br />
 <code>#include &lt;deal.II/base/tensor.h&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for particle_particle_fine_search.h:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="particle__particle__fine__search_8h__incl.svg" width="2714" height="403"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="particle__particle__fine__search_8h__incl.svg" width="2748" height="403"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div><div class="textblock"><div class="dynheader">
 This graph shows which files directly or indirectly include this file:</div>
@@ -109,31 +111,58 @@ This graph shows which files directly or indirectly include this file:</div>
 </div>
 <p><a href="particle__particle__fine__search_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:adac49a536881eedae454fa56e438bbda" id="r_adac49a536881eedae454fa56e438bbda"><td class="memTemplParams" colspan="2">template&lt;int dim, <a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6fa">ContactType</a> contact_type&gt; </td></tr>
+<tr class="memitem:adac49a536881eedae454fa56e438bbda"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="particle__particle__fine__search_8h.html#adac49a536881eedae454fa56e438bbda">adjacent_pairs_for_contact_t</a> = std::conditional_t&lt; contact_type==<a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6faaa280b5a0f0b0c770b0fa624dbc57de12">local_periodic_particle_particle</a>||contact_type==<a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6faa16be8ebed688d98d8e43741d5592f8c8">ghost_periodic_particle_particle</a>||contact_type==<a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6faa7622341096cc33c01e481878a4b9276c">ghost_local_periodic_particle_particle</a>, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::periodic_adjacent_particle_pairs, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &gt;</td></tr>
+<tr class="separator:adac49a536881eedae454fa56e438bbda"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a8d8c49c2c7b9373ff9df93ae8dc21a32" id="r_a8d8c49c2c7b9373ff9df93ae8dc21a32"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
-<tr class="memitem:a8d8c49c2c7b9373ff9df93ae8dc21a32"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="particle__particle__fine__search_8h.html#a8d8c49c2c7b9373ff9df93ae8dc21a32">particle_particle_fine_search</a> (typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_index_iterator_map const &amp;particle_container, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;adjacent_particles, const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_particle_candidates &amp;contact_pair_candidates, const double neighborhood_threshold, const Tensor&lt; 1, dim &gt; periodic_offset=Tensor&lt; 1, dim &gt;())</td></tr>
-<tr class="separator:a8d8c49c2c7b9373ff9df93ae8dc21a32"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37e78a86880daee0169acfd3ba16ac7f" id="r_a37e78a86880daee0169acfd3ba16ac7f"><td class="memTemplParams" colspan="2">template&lt;int dim, <a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6fa">ContactType</a> contact_type&gt; </td></tr>
+<tr class="memitem:a37e78a86880daee0169acfd3ba16ac7f"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="particle__particle__fine__search_8h.html#a37e78a86880daee0169acfd3ba16ac7f">particle_particle_fine_search</a> (const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_index_iterator_map &amp;particle_container, <a class="el" href="particle__particle__fine__search_8h.html#adac49a536881eedae454fa56e438bbda">adjacent_pairs_for_contact_t</a>&lt; dim, contact_type &gt; &amp;adjacent_particles, const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_particle_candidates &amp;contact_pair_candidates, const double neighborhood_threshold, const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;combined_periodic_offsets={})</td></tr>
+<tr class="separator:a37e78a86880daee0169acfd3ba16ac7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
-<a id="a8d8c49c2c7b9373ff9df93ae8dc21a32" name="a8d8c49c2c7b9373ff9df93ae8dc21a32"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8d8c49c2c7b9373ff9df93ae8dc21a32">&#9670;&#160;</a></span>particle_particle_fine_search()</h2>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="adac49a536881eedae454fa56e438bbda" name="adac49a536881eedae454fa56e438bbda"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adac49a536881eedae454fa56e438bbda">&#9670;&#160;</a></span>adjacent_pairs_for_contact_t</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, <a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6fa">ContactType</a> contact_type&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="particle__particle__fine__search_8h.html#adac49a536881eedae454fa56e438bbda">adjacent_pairs_for_contact_t</a> =  std::conditional_t&lt; contact_type == <a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6faaa280b5a0f0b0c770b0fa624dbc57de12">local_periodic_particle_particle</a> || contact_type == <a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6faa16be8ebed688d98d8e43741d5592f8c8">ghost_periodic_particle_particle</a> || contact_type == <a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6faa7622341096cc33c01e481878a4b9276c">ghost_local_periodic_particle_particle</a>, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt;dim&gt;::periodic_adjacent_particle_pairs, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt;dim&gt;::adjacent_particle_pairs&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Selects adjacent_particle_pairs or periodic_adjacent_particle_pairs based on the contact_type. </p>
+
+<p class="definition">Definition at line <a class="el" href="particle__particle__fine__search_8h_source.html#l00019">19</a> of file <a class="el" href="particle__particle__fine__search_8h_source.html">particle_particle_fine_search.h</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="a37e78a86880daee0169acfd3ba16ac7f" name="a37e78a86880daee0169acfd3ba16ac7f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a37e78a86880daee0169acfd3ba16ac7f">&#9670;&#160;</a></span>particle_particle_fine_search()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, <a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6fa">ContactType</a> contact_type&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void particle_particle_fine_search </td>
           <td>(</td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_index_iterator_map const &amp;&#160;</td>
+          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_index_iterator_map &amp;&#160;</td>
           <td class="paramname"><em>particle_container</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="particle__particle__fine__search_8h.html#adac49a536881eedae454fa56e438bbda">adjacent_pairs_for_contact_t</a>&lt; dim, contact_type &gt; &amp;&#160;</td>
           <td class="paramname"><em>adjacent_particles</em>, </td>
         </tr>
         <tr>
@@ -151,8 +180,8 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Tensor&lt; 1, dim &gt;&#160;</td>
-          <td class="paramname"><em>periodic_offset</em> = <code>Tensor&lt;&#160;1,&#160;dim&#160;&gt;()</code>&#160;</td>
+          <td class="paramtype">const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>combined_periodic_offsets</em> = <code>{}</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -165,16 +194,18 @@ template&lt;int dim&gt; </div>
 <p>Iterates over a vector of maps (pairs_in_contact) to see if the particles which were in contact in the last time step, are still in contact or not. If they are still in contact it will update the collision info, including tangential displacement, based on new properties of the particle pair, if they are not in contact anymore it will delete the pair from the pairs_in_contact and also its information from pairs_in_contact_info. Then it iterates over the contact candidates from broad search to see if they already exist in the pairs_in_contact or not, if they are not in the pairs_in_contact and have an overlap, the pair will be added to the pairs_in_contact and its contact information will be stored in the corresponding element of the pairs_in_contact_info. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">particle_container</td><td>A container that is used to obtain iterators to particles using their ids </td></tr>
-    <tr><td class="paramname">adjacent_particles</td><td>A map of maps which stores all the required information for calculation of the contact force of particle pairs </td></tr>
-    <tr><td class="paramname">contact_pair_candidates</td><td>The output of broad search which shows contact pair candidates </td></tr>
-    <tr><td class="paramname">neighborhood_threshold</td><td>A value which defines the neighbor particles </td></tr>
-    <tr><td class="paramname">periodic_offset</td><td>A tensor of the periodic offset to change the particle location of the particles on the periodic boundary 1 side, the tensor as 0.0 values by default </td></tr>
+    <tr><td class="paramname">particle_container</td><td>A container that is used to obtain iterators to particles using their ids. </td></tr>
+    <tr><td class="paramname">adjacent_particles</td><td>A map of maps which stores all the required information for calculation of the contact force of particle pairs. Can either be for non-periodic or periodic contact types. </td></tr>
+    <tr><td class="paramname">contact_pair_candidates</td><td>The output of broad search which shows contact pair candidates. </td></tr>
+    <tr><td class="paramname">neighborhood_threshold</td><td>A value which defines the neighbor particles. </td></tr>
+    <tr><td class="paramname">combined_periodic_offsets</td><td>A vector of tensors of the periodic offsets to change the location of the particles crossing periodic boundaries. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__fine__search_8cc_source.html#l00018">18</a> of file <a class="el" href="particle__particle__fine__search_8cc_source.html">particle_particle_fine_search.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__fine__search_8cc_source.html#l00021">21</a> of file <a class="el" href="particle__particle__fine__search_8cc_source.html">particle_particle_fine_search.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="contact__type_8h_source.html#l00016">ghost_local_periodic_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00013">ghost_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00015">ghost_periodic_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00012">local_particle_particle</a>, and <a class="el" href="contact__type_8h_source.html#l00014">local_periodic_particle_particle</a>.</p>
 
 </div>
 </div>

@@ -16,7 +16,9 @@ var searchData=
   ['particle_5ftriangle_5fcontact_5frecord_13',['particle_triangle_contact_record',['../classParticleWallContactForce.html#ac9d8a8049ee53958a46f6a8cbefefa0b',1,'ParticleWallContactForce']]],
   ['particle_5fwall_5fcandidates_14',['particle_wall_candidates',['../structDEM_1_1dem__data__structures.html#aa6ee0ba8f43d17a376fa64027f3ab1fc',1,'DEM::dem_data_structures']]],
   ['particle_5fwall_5fin_5fcontact_15',['particle_wall_in_contact',['../structDEM_1_1dem__data__structures.html#a192e455bef047459cba3816cd0c4874b',1,'DEM::dem_data_structures']]],
-  ['periodic_5fboundaries_5fcells_5finfo_16',['periodic_boundaries_cells_info',['../structDEM_1_1dem__data__structures.html#afa983e626eaa9743e96763cdddffff41',1,'DEM::dem_data_structures']]],
-  ['preconditionertypegc_17',['PreconditionerTypeGC',['../classMFNavierStokesPreconditionGMGBase.html#a36a22fea014ca1efd0c43ac656f99ef1',1,'MFNavierStokesPreconditionGMGBase']]],
-  ['preconditionertypels_18',['PreconditionerTypeLS',['../classMFNavierStokesPreconditionGMGBase.html#a2182b6449051eb85780675c00fd620b6',1,'MFNavierStokesPreconditionGMGBase']]]
+  ['periodic_5fadjacent_5fparticle_5fpairs_16',['periodic_adjacent_particle_pairs',['../structDEM_1_1dem__data__structures.html#a917e5c93b69193f6b15631787baab54a',1,'DEM::dem_data_structures']]],
+  ['periodic_5fboundaries_5fcells_5finfo_17',['periodic_boundaries_cells_info',['../structDEM_1_1dem__data__structures.html#a30d6f5561e8db3bf8d00538251a791ef',1,'DEM::dem_data_structures']]],
+  ['periodic_5fparticle_5fcontact_5finfo_18',['periodic_particle_contact_info',['../structDEM_1_1dem__data__structures.html#af8db211c9b9be852d5ab4a259d938cef',1,'DEM::dem_data_structures']]],
+  ['preconditionertypegc_19',['PreconditionerTypeGC',['../classMFNavierStokesPreconditionGMGBase.html#a36a22fea014ca1efd0c43ac656f99ef1',1,'MFNavierStokesPreconditionGMGBase']]],
+  ['preconditionertypels_20',['PreconditionerTypeLS',['../classMFNavierStokesPreconditionGMGBase.html#a2182b6449051eb85780675c00fd620b6',1,'MFNavierStokesPreconditionGMGBase']]]
 ];

@@ -102,15 +102,19 @@ Inheritance diagram for ParticleParticleContactForceBase&lt; dim, PropertiesInde
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a379ccdb348e7bb8694470721d88290e8" id="r_a379ccdb348e7bb8694470721d88290e8"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForceBase.html#a379ccdb348e7bb8694470721d88290e8">calculate_particle_particle_contact</a> (typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;local_adjacent_particles, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;ghost_adjacent_particles, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;local_local_periodic_adjacent_particles, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;local_ghost_periodic_adjacent_particles, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;ghost_local_periodic_adjacent_particles, const double dt, <a class="el" href="classParticleInteractionOutcomes.html">ParticleInteractionOutcomes</a>&lt; PropertiesIndex &gt; &amp;contact_outcome)=0</td></tr>
-<tr class="separator:a379ccdb348e7bb8694470721d88290e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ae253e94a721aa2dd3c9bd499465822" id="r_a8ae253e94a721aa2dd3c9bd499465822"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForceBase.html#a8ae253e94a721aa2dd3c9bd499465822">set_periodic_offset</a> (const Tensor&lt; 1, dim &gt; &amp;<a class="el" href="classParticleParticleContactForceBase.html#af316b7cb9f4e2ccf1703956c16c1b2e6">periodic_offset</a>)</td></tr>
-<tr class="separator:a8ae253e94a721aa2dd3c9bd499465822"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf6f1d46b26383c7d617d4eda3276389" id="r_acf6f1d46b26383c7d617d4eda3276389"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForceBase.html#acf6f1d46b26383c7d617d4eda3276389">calculate_particle_particle_contact</a> (typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;local_adjacent_particles, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;ghost_adjacent_particles, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::periodic_adjacent_particle_pairs &amp;local_local_periodic_adjacent_particles, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::periodic_adjacent_particle_pairs &amp;local_ghost_periodic_adjacent_particles, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::periodic_adjacent_particle_pairs &amp;ghost_local_periodic_adjacent_particles, const double dt, <a class="el" href="classParticleInteractionOutcomes.html">ParticleInteractionOutcomes</a>&lt; PropertiesIndex &gt; &amp;contact_outcome)=0</td></tr>
+<tr class="separator:acf6f1d46b26383c7d617d4eda3276389"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab614ad1e21931660b8fbbf5c083d2bac" id="r_ab614ad1e21931660b8fbbf5c083d2bac"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForceBase.html#ab614ad1e21931660b8fbbf5c083d2bac">set_periodic_offset</a> (const Tensor&lt; 1, dim &gt; &amp;offset, const types::boundary_id boundary_id)</td></tr>
+<tr class="separator:ab614ad1e21931660b8fbbf5c083d2bac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7704824f6741583a46f7fedc922b885" id="r_af7704824f6741583a46f7fedc922b885"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForceBase.html#af7704824f6741583a46f7fedc922b885">set_combined_periodic_offsets</a> (const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;offsets)</td></tr>
+<tr class="separator:af7704824f6741583a46f7fedc922b885"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:af316b7cb9f4e2ccf1703956c16c1b2e6" id="r_af316b7cb9f4e2ccf1703956c16c1b2e6"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForceBase.html#af316b7cb9f4e2ccf1703956c16c1b2e6">periodic_offset</a></td></tr>
-<tr class="separator:af316b7cb9f4e2ccf1703956c16c1b2e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae49ada619588946fcd3982b9a04bad20" id="r_ae49ada619588946fcd3982b9a04bad20"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; types::boundary_id, Tensor&lt; 1, dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForceBase.html#ae49ada619588946fcd3982b9a04bad20">periodic_offsets</a></td></tr>
+<tr class="separator:ae49ada619588946fcd3982b9a04bad20"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4933290fdded9cbe912dce0acdb0ca4c" id="r_a4933290fdded9cbe912dce0acdb0ca4c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Tensor&lt; 1, dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParticleParticleContactForceBase.html#a4933290fdded9cbe912dce0acdb0ca4c">combined_periodic_offsets</a></td></tr>
+<tr class="separator:a4933290fdded9cbe912dce0acdb0ca4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim, typename PropertiesIndex&gt;<br />
@@ -123,10 +127,10 @@ class ParticleParticleContactForceBase&lt; dim, PropertiesIndex &gt;</div><p>Bas
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00034">34</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00036">36</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a379ccdb348e7bb8694470721d88290e8" name="a379ccdb348e7bb8694470721d88290e8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a379ccdb348e7bb8694470721d88290e8">&#9670;&#160;</a></span>calculate_particle_particle_contact()</h2>
+<a id="acf6f1d46b26383c7d617d4eda3276389" name="acf6f1d46b26383c7d617d4eda3276389"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf6f1d46b26383c7d617d4eda3276389">&#9670;&#160;</a></span>calculate_particle_particle_contact()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -151,19 +155,19 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;&#160;</td>
+          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::periodic_adjacent_particle_pairs &amp;&#160;</td>
           <td class="paramname"><em>local_local_periodic_adjacent_particles</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;&#160;</td>
+          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::periodic_adjacent_particle_pairs &amp;&#160;</td>
           <td class="paramname"><em>local_ghost_periodic_adjacent_particles</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;&#160;</td>
+          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::periodic_adjacent_particle_pairs &amp;&#160;</td>
           <td class="paramname"><em>ghost_local_periodic_adjacent_particles</em>, </td>
         </tr>
         <tr>
@@ -205,12 +209,52 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="classParticleParticleContactForce.html#a61c4a971844e85a904894453767cc632">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;</a>, and <a class="el" href="classParticleParticleContactForce.html#a61c4a971844e85a904894453767cc632">ParticleParticleContactForce&lt; dim, PropertiesIndex, force_model, rolling_friction_model &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classParticleParticleContactForce.html#a76ca3564a6c2571cdde883bc0c6e5d9f">ParticleParticleContactForce&lt; dim, PropertiesIndex, contact_model, rolling_friction_model &gt;</a>, and <a class="el" href="classParticleParticleContactForce.html#a76ca3564a6c2571cdde883bc0c6e5d9f">ParticleParticleContactForce&lt; dim, PropertiesIndex, force_model, rolling_friction_model &gt;</a>.</p>
 
 </div>
 </div>
-<a id="a8ae253e94a721aa2dd3c9bd499465822" name="a8ae253e94a721aa2dd3c9bd499465822"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8ae253e94a721aa2dd3c9bd499465822">&#9670;&#160;</a></span>set_periodic_offset()</h2>
+<a id="af7704824f6741583a46f7fedc922b885" name="af7704824f6741583a46f7fedc922b885"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af7704824f6741583a46f7fedc922b885">&#9670;&#160;</a></span>set_combined_periodic_offsets()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename PropertiesIndex &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classParticleParticleContactForceBase.html">ParticleParticleContactForceBase</a>&lt; dim, PropertiesIndex &gt;::set_combined_periodic_offsets </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>offsets</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the value of the combined periodic offsets for this class. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">offsets</td><td>Combined periodic offsets from the <a class="el" href="classPeriodicBoundariesManipulator.html">PeriodicBoundariesManipulator</a> class. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00098">98</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+
+<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00116">ParticleParticleContactForceBase&lt; dim, PropertiesIndex &gt;::combined_periodic_offsets</a>.</p>
+
+</div>
+</div>
+<a id="ab614ad1e21931660b8fbbf5c083d2bac" name="ab614ad1e21931660b8fbbf5c083d2bac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab614ad1e21931660b8fbbf5c083d2bac">&#9670;&#160;</a></span>set_periodic_offset()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -224,8 +268,18 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
           <td class="memname">void <a class="el" href="classParticleParticleContactForceBase.html">ParticleParticleContactForceBase</a>&lt; dim, PropertiesIndex &gt;::set_periodic_offset </td>
           <td>(</td>
           <td class="paramtype">const Tensor&lt; 1, dim &gt; &amp;&#160;</td>
-          <td class="paramname"><em>periodic_offset</em></td><td>)</td>
+          <td class="paramname"><em>offset</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const types::boundary_id&#160;</td>
+          <td class="paramname"><em>boundary_id</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -235,15 +289,24 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00074">74</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p>Set the distance between a principal periodic boundary pb0 (with mesh ID boundary_id) and its associated periodic boundary pb1 in the periodic_offsets map. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">offset</td><td>Distance between the pair of periodic boundaries. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">boundary_id</td><td>Mesh ID of the principal periodic boundary of the pair. </td></tr>
+  </table>
+  </dd>
+</dl>
 
-<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00080">ParticleParticleContactForceBase&lt; dim, PropertiesIndex &gt;::periodic_offset</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00085">85</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+
+<p class="reference">References <a class="el" href="particle__particle__contact__force_8h_source.html#l00110">ParticleParticleContactForceBase&lt; dim, PropertiesIndex &gt;::periodic_offsets</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="af316b7cb9f4e2ccf1703956c16c1b2e6" name="af316b7cb9f4e2ccf1703956c16c1b2e6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af316b7cb9f4e2ccf1703956c16c1b2e6">&#9670;&#160;</a></span>periodic_offset</h2>
+<a id="a4933290fdded9cbe912dce0acdb0ca4c" name="a4933290fdded9cbe912dce0acdb0ca4c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4933290fdded9cbe912dce0acdb0ca4c">&#9670;&#160;</a></span>combined_periodic_offsets</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -254,7 +317,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Tensor&lt;1, dim&gt; <a class="el" href="classParticleParticleContactForceBase.html">ParticleParticleContactForceBase</a>&lt; dim, PropertiesIndex &gt;::periodic_offset</td>
+          <td class="memname">std::vector&lt;Tensor&lt;1, dim&gt; &gt; <a class="el" href="classParticleParticleContactForceBase.html">ParticleParticleContactForceBase</a>&lt; dim, PropertiesIndex &gt;::combined_periodic_offsets</td>
         </tr>
       </table>
   </td>
@@ -264,7 +327,37 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00080">80</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+<p>Storage for all 9 (2D) or 27 (3D) precomputed periodic translation vectors. Calculated from periodic_offsets. </p>
+
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00116">116</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
+
+</div>
+</div>
+<a id="ae49ada619588946fcd3982b9a04bad20" name="ae49ada619588946fcd3982b9a04bad20"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae49ada619588946fcd3982b9a04bad20">&#9670;&#160;</a></span>periodic_offsets</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, typename PropertiesIndex &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unordered_map&lt;types::boundary_id, Tensor&lt;1, dim&gt; &gt; <a class="el" href="classParticleParticleContactForceBase.html">ParticleParticleContactForceBase</a>&lt; dim, PropertiesIndex &gt;::periodic_offsets</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Map storing offset distance between periodic boundaries, keyed by the boundary ID (pb0). It is calculated from the first pair of cells on periodic boundaries, so all pairs of cells on a given peridodic boundary are assumed to have the same offset. </p>
+
+<p class="definition">Definition at line <a class="el" href="particle__particle__contact__force_8h_source.html#l00110">110</a> of file <a class="el" href="particle__particle__contact__force_8h_source.html">particle_particle_contact_force.h</a>.</p>
 
 </div>
 </div>

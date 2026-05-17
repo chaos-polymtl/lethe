@@ -31,7 +31,7 @@ var searchData=
   ['ghost_5fcontact_5fpair_5fperiodic_5fcandidates_28',['ghost_contact_pair_periodic_candidates',['../classDEMContactManager.html#aa1f747ef226f4d5ebb9669e9a7910673',1,'DEMContactManager']]],
   ['ghost_5flocal_5fcontact_5fpair_5fcandidates_29',['ghost_local_contact_pair_candidates',['../classDEMContactManager.html#afa21945b8228a4059e21ce12c9a4610d',1,'DEMContactManager']]],
   ['ghost_5flocal_5fcontact_5fpair_5fperiodic_5fcandidates_30',['ghost_local_contact_pair_periodic_candidates',['../classDEMContactManager.html#acb3987da2d6aa98420a9e0f2ef26c599',1,'DEMContactManager']]],
-  ['ghost_5flocal_5fperiodic_5fadjacent_5fparticles_31',['ghost_local_periodic_adjacent_particles',['../classDEMContactManager.html#af922486c20e92e3bbbffb600f7d30483',1,'DEMContactManager']]],
+  ['ghost_5flocal_5fperiodic_5fadjacent_5fparticles_31',['ghost_local_periodic_adjacent_particles',['../classDEMContactManager.html#a8578b385ef05cd7c0082a33e9960409b',1,'DEMContactManager']]],
   ['global_5fboundary_5fcells_5finformation_32',['global_boundary_cells_information',['../classBoundaryCellsInformation.html#ac885b979649013457df549a5de350a27',1,'BoundaryCellsInformation']]],
   ['global_5fboundary_5fcells_5fwith_5ffaces_33',['global_boundary_cells_with_faces',['../classBoundaryCellsInformation.html#a7a0063e1483d2fcb4400cd78fe8f74a8',1,'BoundaryCellsInformation']]],
   ['global_5fdelta_5ft_5fref_34',['global_delta_T_ref',['../classHeatTransferScratchData.html#ab0d218b2b86e54557b8538333a1f8c09',1,'HeatTransferScratchData']]],

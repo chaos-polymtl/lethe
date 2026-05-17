@@ -322,10 +322,10 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:a9c694da51ca94e4d3f4321a57c1798d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4a63e1c827e7f8eba761bc4632d3d7d7" id="r_a4a63e1c827e7f8eba761bc4632d3d7d7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANS.html#a4a63e1c827e7f8eba761bc4632d3d7d7">has_periodic_boundaries</a></td></tr>
 <tr class="separator:a4a63e1c827e7f8eba761bc4632d3d7d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac800ded010d152830fae721977fd65ee" id="r_ac800ded010d152830fae721977fd65ee"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANS.html#ac800ded010d152830fae721977fd65ee">periodic_offset</a></td></tr>
-<tr class="separator:ac800ded010d152830fae721977fd65ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ace1e23549a5b4d63d0a81c3e08a86f74" id="r_ace1e23549a5b4d63d0a81c3e08a86f74"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANS.html#ace1e23549a5b4d63d0a81c3e08a86f74">periodic_direction</a></td></tr>
-<tr class="separator:ace1e23549a5b4d63d0a81c3e08a86f74"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea88eba199ea335c2c80e4577b004b27" id="r_aea88eba199ea335c2c80e4577b004b27"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, Tensor&lt; 1, dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANS.html#aea88eba199ea335c2c80e4577b004b27">cfd_periodic_offsets</a></td></tr>
+<tr class="separator:aea88eba199ea335c2c80e4577b004b27"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb862062b4ccadf1cb2f4e7bf943aa8f" id="r_afb862062b4ccadf1cb2f4e7bf943aa8f"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, unsigned int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANS.html#afb862062b4ccadf1cb2f4e7bf943aa8f">cfd_periodic_directions</a></td></tr>
+<tr class="separator:afb862062b4ccadf1cb2f4e7bf943aa8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_classFluidDynamicsMatrixBased"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classFluidDynamicsMatrixBased')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classFluidDynamicsMatrixBased.html">FluidDynamicsMatrixBased&lt; dim &gt;</a></td></tr>
 <tr class="memitem:a0d03f9703705ebc5243aaa8d3914dfec inherit pro_attribs_classFluidDynamicsMatrixBased" id="r_a0d03f9703705ebc5243aaa8d3914dfec"><td class="memItemLeft" align="right" valign="top">TrilinosWrappers::SparseMatrix&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsMatrixBased.html#a0d03f9703705ebc5243aaa8d3914dfec">system_matrix</a></td></tr>
 <tr class="separator:a0d03f9703705ebc5243aaa8d3914dfec inherit pro_attribs_classFluidDynamicsMatrixBased"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1267,6 +1267,62 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
+<a id="afb862062b4ccadf1cb2f4e7bf943aa8f" name="afb862062b4ccadf1cb2f4e7bf943aa8f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb862062b4ccadf1cb2f4e7bf943aa8f">&#9670;&#160;</a></span>cfd_periodic_directions</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::map&lt;types::boundary_id, unsigned int&gt; <a class="el" href="classFluidDynamicsVANS.html">FluidDynamicsVANS</a>&lt; dim &gt;::cfd_periodic_directions</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Map of direction indices for periodic boundary conditions. </p>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00320">320</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
+
+</div>
+</div>
+<a id="aea88eba199ea335c2c80e4577b004b27" name="aea88eba199ea335c2c80e4577b004b27"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea88eba199ea335c2c80e4577b004b27">&#9670;&#160;</a></span>cfd_periodic_offsets</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::map&lt;types::boundary_id, Tensor&lt;1, dim&gt; &gt; <a class="el" href="classFluidDynamicsVANS.html">FluidDynamicsVANS</a>&lt; dim &gt;::cfd_periodic_offsets</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Map of offset vectors for periodic boundary condition calculations. </p>
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00317">317</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
+
+</div>
+</div>
 <a id="aa17ba0f5277a91b19a4b066e5312ea8f" name="aa17ba0f5277a91b19a4b066e5312ea8f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa17ba0f5277a91b19a4b066e5312ea8f">&#9670;&#160;</a></span>GLS_u_scale</h2>
 
@@ -1432,62 +1488,6 @@ template&lt;int dim&gt; </div>
 <p>Particle projector for calculating void fraction and particle effects. </p>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00311">311</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
-
-</div>
-</div>
-<a id="ace1e23549a5b4d63d0a81c3e08a86f74" name="ace1e23549a5b4d63d0a81c3e08a86f74"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ace1e23549a5b4d63d0a81c3e08a86f74">&#9670;&#160;</a></span>periodic_direction</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">unsigned int <a class="el" href="classFluidDynamicsVANS.html">FluidDynamicsVANS</a>&lt; dim &gt;::periodic_direction</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Direction index for periodic boundary conditions. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00320">320</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
-
-</div>
-</div>
-<a id="ac800ded010d152830fae721977fd65ee" name="ac800ded010d152830fae721977fd65ee"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac800ded010d152830fae721977fd65ee">&#9670;&#160;</a></span>periodic_offset</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Tensor&lt;1, dim&gt; <a class="el" href="classFluidDynamicsVANS.html">FluidDynamicsVANS</a>&lt; dim &gt;::periodic_offset</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Offset vector for periodic boundary condition calculations. </p>
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans_8h_source.html#l00317">317</a> of file <a class="el" href="fluid__dynamics__vans_8h_source.html">fluid_dynamics_vans.h</a>.</p>
 
 </div>
 </div>

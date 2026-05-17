@@ -96,47 +96,65 @@ $(function() {
 <div class="contents">
 <div class="textblock"><code>#include &lt;<a class="el" href="dem__properties_8h_source.html">core/dem_properties.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="contact__info_8h_source.html">dem/contact_info.h</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="contact__type_8h_source.html">dem/contact_type.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="dem__contact__manager_8h_source.html">dem/dem_contact_manager.h</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="particle__particle__fine__search_8h_source.html">dem/particle_particle_fine_search.h</a>&gt;</code><br />
 <code>#include &lt;deal.II/particles/particle.h&gt;</code><br />
 <code>#include &lt;boost/range/adaptor/map.hpp&gt;</code><br />
+<code>#include &lt;unordered_map&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for particle_particle_fine_search.cc:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="particle__particle__fine__search_8cc__incl.svg" width="3191" height="770"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="particle__particle__fine__search_8cc__incl.svg" width="3376" height="770"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 </div>
 </div>
 <p><a href="particle__particle__fine__search_8cc_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:aed03eb463efc479d74a34286d37a22e4" id="r_aed03eb463efc479d74a34286d37a22e4"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
-<tr class="memitem:aed03eb463efc479d74a34286d37a22e4"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="particle__particle__fine__search_8cc.html#aed03eb463efc479d74a34286d37a22e4">particle_particle_fine_search</a> (const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_index_iterator_map &amp;particle_container, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;adjacent_particles, const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_particle_candidates &amp;contact_pair_candidates, const double neighborhood_threshold, const Tensor&lt; 1, dim &gt; periodic_offset)</td></tr>
-<tr class="separator:aed03eb463efc479d74a34286d37a22e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1ee2a53ea31730236641070f17d17b89" id="r_a1ee2a53ea31730236641070f17d17b89"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__particle__fine__search_8cc.html#a1ee2a53ea31730236641070f17d17b89">particle_particle_fine_search&lt; 2 &gt;</a> (typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_index_iterator_map const &amp;particle_container, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::adjacent_particle_pairs &amp;adjacent_particles, const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_particle_candidates &amp;contact_pair_candidates, const double neighborhood_threshold, const Tensor&lt; 1, 2 &gt; periodic_offset=Tensor&lt; 1, 2 &gt;())</td></tr>
-<tr class="separator:a1ee2a53ea31730236641070f17d17b89"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a776e75bb3624ea2ca88d5a1c4f25d8db" id="r_a776e75bb3624ea2ca88d5a1c4f25d8db"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__particle__fine__search_8cc.html#a776e75bb3624ea2ca88d5a1c4f25d8db">particle_particle_fine_search&lt; 3 &gt;</a> (typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_index_iterator_map const &amp;particle_container, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::adjacent_particle_pairs &amp;adjacent_particles, const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_particle_candidates &amp;contact_pair_candidates, const double neighborhood_threshold, const Tensor&lt; 1, 3 &gt; periodic_offset=Tensor&lt; 1, 3 &gt;())</td></tr>
-<tr class="separator:a776e75bb3624ea2ca88d5a1c4f25d8db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7bd0993954d49f74cbc26e0a3aa149c6" id="r_a7bd0993954d49f74cbc26e0a3aa149c6"><td class="memTemplParams" colspan="2">template&lt;int dim, <a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6fa">ContactType</a> contact_type&gt; </td></tr>
+<tr class="memitem:a7bd0993954d49f74cbc26e0a3aa149c6"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="particle__particle__fine__search_8cc.html#a7bd0993954d49f74cbc26e0a3aa149c6">particle_particle_fine_search</a> (const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_index_iterator_map &amp;particle_container, <a class="el" href="particle__particle__fine__search_8h.html#adac49a536881eedae454fa56e438bbda">adjacent_pairs_for_contact_t</a>&lt; dim, contact_type &gt; &amp;adjacent_particles, const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_particle_candidates &amp;contact_pair_candidates, const double neighborhood_threshold, const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;combined_periodic_offsets)</td></tr>
+<tr class="separator:a7bd0993954d49f74cbc26e0a3aa149c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8326ade45a44236328e90a9d565e0932" id="r_a8326ade45a44236328e90a9d565e0932"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__particle__fine__search_8cc.html#a8326ade45a44236328e90a9d565e0932">particle_particle_fine_search&lt; 2, local_particle_particle &gt;</a> (const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_index_iterator_map &amp;particle_container, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::adjacent_particle_pairs &amp;adjacent_particles, const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_particle_candidates &amp;contact_pair_candidates, const double neighborhood_threshold, const std::vector&lt; Tensor&lt; 1, 2 &gt; &gt; &amp;combined_periodic_offsets)</td></tr>
+<tr class="separator:a8326ade45a44236328e90a9d565e0932"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3219be318b35cedf750dc9731e450be7" id="r_a3219be318b35cedf750dc9731e450be7"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__particle__fine__search_8cc.html#a3219be318b35cedf750dc9731e450be7">particle_particle_fine_search&lt; 2, ghost_particle_particle &gt;</a> (const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_index_iterator_map &amp;particle_container, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::adjacent_particle_pairs &amp;adjacent_particles, const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_particle_candidates &amp;contact_pair_candidates, const double neighborhood_threshold, const std::vector&lt; Tensor&lt; 1, 2 &gt; &gt; &amp;combined_periodic_offsets)</td></tr>
+<tr class="separator:a3219be318b35cedf750dc9731e450be7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a54d1d36ae0bd8a1cbc4d7fdadad5d1ab" id="r_a54d1d36ae0bd8a1cbc4d7fdadad5d1ab"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__particle__fine__search_8cc.html#a54d1d36ae0bd8a1cbc4d7fdadad5d1ab">particle_particle_fine_search&lt; 2, local_periodic_particle_particle &gt;</a> (const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_index_iterator_map &amp;particle_container, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::periodic_adjacent_particle_pairs &amp;adjacent_particles, const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_particle_candidates &amp;contact_pair_candidates, const double neighborhood_threshold, const std::vector&lt; Tensor&lt; 1, 2 &gt; &gt; &amp;combined_periodic_offsets)</td></tr>
+<tr class="separator:a54d1d36ae0bd8a1cbc4d7fdadad5d1ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d5155da01a1cfeba93be89ec03d0aff" id="r_a5d5155da01a1cfeba93be89ec03d0aff"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__particle__fine__search_8cc.html#a5d5155da01a1cfeba93be89ec03d0aff">particle_particle_fine_search&lt; 2, ghost_periodic_particle_particle &gt;</a> (const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_index_iterator_map &amp;particle_container, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::periodic_adjacent_particle_pairs &amp;adjacent_particles, const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_particle_candidates &amp;contact_pair_candidates, const double neighborhood_threshold, const std::vector&lt; Tensor&lt; 1, 2 &gt; &gt; &amp;combined_periodic_offsets)</td></tr>
+<tr class="separator:a5d5155da01a1cfeba93be89ec03d0aff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2002a33382e0abde2fad636d804aea0" id="r_ac2002a33382e0abde2fad636d804aea0"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__particle__fine__search_8cc.html#ac2002a33382e0abde2fad636d804aea0">particle_particle_fine_search&lt; 2, ghost_local_periodic_particle_particle &gt;</a> (const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_index_iterator_map &amp;particle_container, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::periodic_adjacent_particle_pairs &amp;adjacent_particles, const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_particle_candidates &amp;contact_pair_candidates, const double neighborhood_threshold, const std::vector&lt; Tensor&lt; 1, 2 &gt; &gt; &amp;combined_periodic_offsets)</td></tr>
+<tr class="separator:ac2002a33382e0abde2fad636d804aea0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5def3e8bb22d5fcd185debc217dbe924" id="r_a5def3e8bb22d5fcd185debc217dbe924"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__particle__fine__search_8cc.html#a5def3e8bb22d5fcd185debc217dbe924">particle_particle_fine_search&lt; 3, local_particle_particle &gt;</a> (const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_index_iterator_map &amp;particle_container, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::adjacent_particle_pairs &amp;adjacent_particles, const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_particle_candidates &amp;contact_pair_candidates, const double neighborhood_threshold, const std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;combined_periodic_offsets)</td></tr>
+<tr class="separator:a5def3e8bb22d5fcd185debc217dbe924"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01b4649001acb1087768b38e226b87fb" id="r_a01b4649001acb1087768b38e226b87fb"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__particle__fine__search_8cc.html#a01b4649001acb1087768b38e226b87fb">particle_particle_fine_search&lt; 3, ghost_particle_particle &gt;</a> (const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_index_iterator_map &amp;particle_container, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::adjacent_particle_pairs &amp;adjacent_particles, const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_particle_candidates &amp;contact_pair_candidates, const double neighborhood_threshold, const std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;combined_periodic_offsets)</td></tr>
+<tr class="separator:a01b4649001acb1087768b38e226b87fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6fae1d436e965cab9db41c82d294693" id="r_ab6fae1d436e965cab9db41c82d294693"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__particle__fine__search_8cc.html#ab6fae1d436e965cab9db41c82d294693">particle_particle_fine_search&lt; 3, local_periodic_particle_particle &gt;</a> (const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_index_iterator_map &amp;particle_container, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::periodic_adjacent_particle_pairs &amp;adjacent_particles, const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_particle_candidates &amp;contact_pair_candidates, const double neighborhood_threshold, const std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;combined_periodic_offsets)</td></tr>
+<tr class="separator:ab6fae1d436e965cab9db41c82d294693"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0168df4e00b7581a5951811ecff9cc97" id="r_a0168df4e00b7581a5951811ecff9cc97"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__particle__fine__search_8cc.html#a0168df4e00b7581a5951811ecff9cc97">particle_particle_fine_search&lt; 3, ghost_periodic_particle_particle &gt;</a> (const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_index_iterator_map &amp;particle_container, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::periodic_adjacent_particle_pairs &amp;adjacent_particles, const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_particle_candidates &amp;contact_pair_candidates, const double neighborhood_threshold, const std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;combined_periodic_offsets)</td></tr>
+<tr class="separator:a0168df4e00b7581a5951811ecff9cc97"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2bdfb10dc5bfb3f3402cbff161609c6" id="r_af2bdfb10dc5bfb3f3402cbff161609c6"><td class="memItemLeft" align="right" valign="top">template void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__particle__fine__search_8cc.html#af2bdfb10dc5bfb3f3402cbff161609c6">particle_particle_fine_search&lt; 3, ghost_local_periodic_particle_particle &gt;</a> (const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_index_iterator_map &amp;particle_container, typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::periodic_adjacent_particle_pairs &amp;adjacent_particles, const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_particle_candidates &amp;contact_pair_candidates, const double neighborhood_threshold, const std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;combined_periodic_offsets)</td></tr>
+<tr class="separator:af2bdfb10dc5bfb3f3402cbff161609c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="aed03eb463efc479d74a34286d37a22e4" name="aed03eb463efc479d74a34286d37a22e4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aed03eb463efc479d74a34286d37a22e4">&#9670;&#160;</a></span>particle_particle_fine_search()</h2>
+<a id="a7bd0993954d49f74cbc26e0a3aa149c6" name="a7bd0993954d49f74cbc26e0a3aa149c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7bd0993954d49f74cbc26e0a3aa149c6">&#9670;&#160;</a></span>particle_particle_fine_search()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int dim&gt; </div>
+template&lt;int dim, <a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6fa">ContactType</a> contact_type&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">void particle_particle_fine_search </td>
           <td>(</td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_index_iterator_map const &amp;&#160;</td>
+          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::particle_index_iterator_map &amp;&#160;</td>
           <td class="paramname"><em>particle_container</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; dim &gt;::adjacent_particle_pairs &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="particle__particle__fine__search_8h.html#adac49a536881eedae454fa56e438bbda">adjacent_pairs_for_contact_t</a>&lt; dim, contact_type &gt; &amp;&#160;</td>
           <td class="paramname"><em>adjacent_particles</em>, </td>
         </tr>
         <tr>
@@ -154,8 +172,8 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Tensor&lt; 1, dim &gt;&#160;</td>
-          <td class="paramname"><em>periodic_offset</em> = <code>Tensor&lt;&#160;1,&#160;dim&#160;&gt;()</code>&#160;</td>
+          <td class="paramtype">const std::vector&lt; Tensor&lt; 1, dim &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>combined_periodic_offsets</em> = <code>{}</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -168,29 +186,77 @@ template&lt;int dim&gt; </div>
 <p>Iterates over a vector of maps (pairs_in_contact) to see if the particles which were in contact in the last time step, are still in contact or not. If they are still in contact it will update the collision info, including tangential displacement, based on new properties of the particle pair, if they are not in contact anymore it will delete the pair from the pairs_in_contact and also its information from pairs_in_contact_info. Then it iterates over the contact candidates from broad search to see if they already exist in the pairs_in_contact or not, if they are not in the pairs_in_contact and have an overlap, the pair will be added to the pairs_in_contact and its contact information will be stored in the corresponding element of the pairs_in_contact_info. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">particle_container</td><td>A container that is used to obtain iterators to particles using their ids </td></tr>
-    <tr><td class="paramname">adjacent_particles</td><td>A map of maps which stores all the required information for calculation of the contact force of particle pairs </td></tr>
-    <tr><td class="paramname">contact_pair_candidates</td><td>The output of broad search which shows contact pair candidates </td></tr>
-    <tr><td class="paramname">neighborhood_threshold</td><td>A value which defines the neighbor particles </td></tr>
-    <tr><td class="paramname">periodic_offset</td><td>A tensor of the periodic offset to change the particle location of the particles on the periodic boundary 1 side, the tensor as 0.0 values by default </td></tr>
+    <tr><td class="paramname">particle_container</td><td>A container that is used to obtain iterators to particles using their ids. </td></tr>
+    <tr><td class="paramname">adjacent_particles</td><td>A map of maps which stores all the required information for calculation of the contact force of particle pairs. Can either be for non-periodic or periodic contact types. </td></tr>
+    <tr><td class="paramname">contact_pair_candidates</td><td>The output of broad search which shows contact pair candidates. </td></tr>
+    <tr><td class="paramname">neighborhood_threshold</td><td>A value which defines the neighbor particles. </td></tr>
+    <tr><td class="paramname">combined_periodic_offsets</td><td>A vector of tensors of the periodic offsets to change the location of the particles crossing periodic boundaries. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__particle__fine__search_8cc_source.html#l00018">18</a> of file <a class="el" href="particle__particle__fine__search_8cc_source.html">particle_particle_fine_search.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__particle__fine__search_8cc_source.html#l00021">21</a> of file <a class="el" href="particle__particle__fine__search_8cc_source.html">particle_particle_fine_search.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="contact__type_8h_source.html#l00016">ghost_local_periodic_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00013">ghost_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00015">ghost_periodic_particle_particle</a>, <a class="el" href="contact__type_8h_source.html#l00012">local_particle_particle</a>, and <a class="el" href="contact__type_8h_source.html#l00014">local_periodic_particle_particle</a>.</p>
 
 </div>
 </div>
-<a id="a1ee2a53ea31730236641070f17d17b89" name="a1ee2a53ea31730236641070f17d17b89"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1ee2a53ea31730236641070f17d17b89">&#9670;&#160;</a></span>particle_particle_fine_search&lt; 2 &gt;()</h2>
+<a id="ac2002a33382e0abde2fad636d804aea0" name="ac2002a33382e0abde2fad636d804aea0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac2002a33382e0abde2fad636d804aea0">&#9670;&#160;</a></span>particle_particle_fine_search&lt; 2, ghost_local_periodic_particle_particle &gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template void <a class="el" href="particle__particle__fine__search_8h.html#a8d8c49c2c7b9373ff9df93ae8dc21a32">particle_particle_fine_search</a>&lt; 2 &gt; </td>
+          <td class="memname">template void <a class="el" href="particle__particle__fine__search_8h.html#a37e78a86880daee0169acfd3ba16ac7f">particle_particle_fine_search</a>&lt; 2, <a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6faa7622341096cc33c01e481878a4b9276c">ghost_local_periodic_particle_particle</a> &gt; </td>
           <td>(</td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_index_iterator_map const &amp;&#160;</td>
+          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_index_iterator_map &amp;&#160;</td>
+          <td class="paramname"><em>particle_container</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::periodic_adjacent_particle_pairs &amp;&#160;</td>
+          <td class="paramname"><em>adjacent_particles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_particle_candidates &amp;&#160;</td>
+          <td class="paramname"><em>contact_pair_candidates</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>neighborhood_threshold</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Tensor&lt; 1, 2 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>combined_periodic_offsets</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3219be318b35cedf750dc9731e450be7" name="a3219be318b35cedf750dc9731e450be7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3219be318b35cedf750dc9731e450be7">&#9670;&#160;</a></span>particle_particle_fine_search&lt; 2, ghost_particle_particle &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="particle__particle__fine__search_8h.html#a37e78a86880daee0169acfd3ba16ac7f">particle_particle_fine_search</a>&lt; 2, <a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6faa68a8a4ba6e02dff9747fee8bbdd6d778">ghost_particle_particle</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_index_iterator_map &amp;&#160;</td>
           <td class="paramname"><em>particle_container</em>, </td>
         </tr>
         <tr>
@@ -214,8 +280,8 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Tensor&lt; 1, 2 &gt;&#160;</td>
-          <td class="paramname"><em>periodic_offset</em> = <code>Tensor&lt;&#160;1,&#160;2&#160;&gt;()</code>&#160;</td>
+          <td class="paramtype">const std::vector&lt; Tensor&lt; 1, 2 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>combined_periodic_offsets</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -227,16 +293,200 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a776e75bb3624ea2ca88d5a1c4f25d8db" name="a776e75bb3624ea2ca88d5a1c4f25d8db"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a776e75bb3624ea2ca88d5a1c4f25d8db">&#9670;&#160;</a></span>particle_particle_fine_search&lt; 3 &gt;()</h2>
+<a id="a5d5155da01a1cfeba93be89ec03d0aff" name="a5d5155da01a1cfeba93be89ec03d0aff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5d5155da01a1cfeba93be89ec03d0aff">&#9670;&#160;</a></span>particle_particle_fine_search&lt; 2, ghost_periodic_particle_particle &gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">template void <a class="el" href="particle__particle__fine__search_8h.html#a8d8c49c2c7b9373ff9df93ae8dc21a32">particle_particle_fine_search</a>&lt; 3 &gt; </td>
+          <td class="memname">template void <a class="el" href="particle__particle__fine__search_8h.html#a37e78a86880daee0169acfd3ba16ac7f">particle_particle_fine_search</a>&lt; 2, <a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6faa16be8ebed688d98d8e43741d5592f8c8">ghost_periodic_particle_particle</a> &gt; </td>
           <td>(</td>
-          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_index_iterator_map const &amp;&#160;</td>
+          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_index_iterator_map &amp;&#160;</td>
+          <td class="paramname"><em>particle_container</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::periodic_adjacent_particle_pairs &amp;&#160;</td>
+          <td class="paramname"><em>adjacent_particles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_particle_candidates &amp;&#160;</td>
+          <td class="paramname"><em>contact_pair_candidates</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>neighborhood_threshold</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Tensor&lt; 1, 2 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>combined_periodic_offsets</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a8326ade45a44236328e90a9d565e0932" name="a8326ade45a44236328e90a9d565e0932"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8326ade45a44236328e90a9d565e0932">&#9670;&#160;</a></span>particle_particle_fine_search&lt; 2, local_particle_particle &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="particle__particle__fine__search_8h.html#a37e78a86880daee0169acfd3ba16ac7f">particle_particle_fine_search</a>&lt; 2, <a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6faa73f9762a894ea1663807203676102150">local_particle_particle</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_index_iterator_map &amp;&#160;</td>
+          <td class="paramname"><em>particle_container</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::adjacent_particle_pairs &amp;&#160;</td>
+          <td class="paramname"><em>adjacent_particles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_particle_candidates &amp;&#160;</td>
+          <td class="paramname"><em>contact_pair_candidates</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>neighborhood_threshold</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Tensor&lt; 1, 2 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>combined_periodic_offsets</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a54d1d36ae0bd8a1cbc4d7fdadad5d1ab" name="a54d1d36ae0bd8a1cbc4d7fdadad5d1ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a54d1d36ae0bd8a1cbc4d7fdadad5d1ab">&#9670;&#160;</a></span>particle_particle_fine_search&lt; 2, local_periodic_particle_particle &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="particle__particle__fine__search_8h.html#a37e78a86880daee0169acfd3ba16ac7f">particle_particle_fine_search</a>&lt; 2, <a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6faaa280b5a0f0b0c770b0fa624dbc57de12">local_periodic_particle_particle</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_index_iterator_map &amp;&#160;</td>
+          <td class="paramname"><em>particle_container</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::periodic_adjacent_particle_pairs &amp;&#160;</td>
+          <td class="paramname"><em>adjacent_particles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 2 &gt;::particle_particle_candidates &amp;&#160;</td>
+          <td class="paramname"><em>contact_pair_candidates</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>neighborhood_threshold</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Tensor&lt; 1, 2 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>combined_periodic_offsets</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af2bdfb10dc5bfb3f3402cbff161609c6" name="af2bdfb10dc5bfb3f3402cbff161609c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af2bdfb10dc5bfb3f3402cbff161609c6">&#9670;&#160;</a></span>particle_particle_fine_search&lt; 3, ghost_local_periodic_particle_particle &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="particle__particle__fine__search_8h.html#a37e78a86880daee0169acfd3ba16ac7f">particle_particle_fine_search</a>&lt; 3, <a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6faa7622341096cc33c01e481878a4b9276c">ghost_local_periodic_particle_particle</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_index_iterator_map &amp;&#160;</td>
+          <td class="paramname"><em>particle_container</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::periodic_adjacent_particle_pairs &amp;&#160;</td>
+          <td class="paramname"><em>adjacent_particles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_particle_candidates &amp;&#160;</td>
+          <td class="paramname"><em>contact_pair_candidates</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>neighborhood_threshold</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>combined_periodic_offsets</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a01b4649001acb1087768b38e226b87fb" name="a01b4649001acb1087768b38e226b87fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01b4649001acb1087768b38e226b87fb">&#9670;&#160;</a></span>particle_particle_fine_search&lt; 3, ghost_particle_particle &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="particle__particle__fine__search_8h.html#a37e78a86880daee0169acfd3ba16ac7f">particle_particle_fine_search</a>&lt; 3, <a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6faa68a8a4ba6e02dff9747fee8bbdd6d778">ghost_particle_particle</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_index_iterator_map &amp;&#160;</td>
           <td class="paramname"><em>particle_container</em>, </td>
         </tr>
         <tr>
@@ -260,8 +510,146 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const Tensor&lt; 1, 3 &gt;&#160;</td>
-          <td class="paramname"><em>periodic_offset</em> = <code>Tensor&lt;&#160;1,&#160;3&#160;&gt;()</code>&#160;</td>
+          <td class="paramtype">const std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>combined_periodic_offsets</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0168df4e00b7581a5951811ecff9cc97" name="a0168df4e00b7581a5951811ecff9cc97"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0168df4e00b7581a5951811ecff9cc97">&#9670;&#160;</a></span>particle_particle_fine_search&lt; 3, ghost_periodic_particle_particle &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="particle__particle__fine__search_8h.html#a37e78a86880daee0169acfd3ba16ac7f">particle_particle_fine_search</a>&lt; 3, <a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6faa16be8ebed688d98d8e43741d5592f8c8">ghost_periodic_particle_particle</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_index_iterator_map &amp;&#160;</td>
+          <td class="paramname"><em>particle_container</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::periodic_adjacent_particle_pairs &amp;&#160;</td>
+          <td class="paramname"><em>adjacent_particles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_particle_candidates &amp;&#160;</td>
+          <td class="paramname"><em>contact_pair_candidates</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>neighborhood_threshold</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>combined_periodic_offsets</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a5def3e8bb22d5fcd185debc217dbe924" name="a5def3e8bb22d5fcd185debc217dbe924"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5def3e8bb22d5fcd185debc217dbe924">&#9670;&#160;</a></span>particle_particle_fine_search&lt; 3, local_particle_particle &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="particle__particle__fine__search_8h.html#a37e78a86880daee0169acfd3ba16ac7f">particle_particle_fine_search</a>&lt; 3, <a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6faa73f9762a894ea1663807203676102150">local_particle_particle</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_index_iterator_map &amp;&#160;</td>
+          <td class="paramname"><em>particle_container</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::adjacent_particle_pairs &amp;&#160;</td>
+          <td class="paramname"><em>adjacent_particles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_particle_candidates &amp;&#160;</td>
+          <td class="paramname"><em>contact_pair_candidates</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>neighborhood_threshold</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>combined_periodic_offsets</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ab6fae1d436e965cab9db41c82d294693" name="ab6fae1d436e965cab9db41c82d294693"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6fae1d436e965cab9db41c82d294693">&#9670;&#160;</a></span>particle_particle_fine_search&lt; 3, local_periodic_particle_particle &gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">template void <a class="el" href="particle__particle__fine__search_8h.html#a37e78a86880daee0169acfd3ba16ac7f">particle_particle_fine_search</a>&lt; 3, <a class="el" href="contact__type_8h.html#a280ac7ff91d81eba6f834d2de978f6faaa280b5a0f0b0c770b0fa624dbc57de12">local_periodic_particle_particle</a> &gt; </td>
+          <td>(</td>
+          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_index_iterator_map &amp;&#160;</td>
+          <td class="paramname"><em>particle_container</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::periodic_adjacent_particle_pairs &amp;&#160;</td>
+          <td class="paramname"><em>adjacent_particles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const typename <a class="el" href="structDEM_1_1dem__data__structures.html">DEM::dem_data_structures</a>&lt; 3 &gt;::particle_particle_candidates &amp;&#160;</td>
+          <td class="paramname"><em>contact_pair_candidates</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>neighborhood_threshold</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; Tensor&lt; 1, 3 &gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>combined_periodic_offsets</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

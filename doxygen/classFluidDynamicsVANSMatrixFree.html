@@ -300,10 +300,10 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:a899b33fbf7b3134148beb4692963d0cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac33a8c63495f78d28921f7584e822108" id="r_ac33a8c63495f78d28921f7584e822108"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANSMatrixFree.html#ac33a8c63495f78d28921f7584e822108">has_periodic_boundaries</a></td></tr>
 <tr class="separator:ac33a8c63495f78d28921f7584e822108"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a416ece969765f0c9d1ce21cd94419912" id="r_a416ece969765f0c9d1ce21cd94419912"><td class="memItemLeft" align="right" valign="top">Tensor&lt; 1, dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANSMatrixFree.html#a416ece969765f0c9d1ce21cd94419912">periodic_offset</a></td></tr>
-<tr class="separator:a416ece969765f0c9d1ce21cd94419912"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b4df791060b759a497143d47d7c1211" id="r_a6b4df791060b759a497143d47d7c1211"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANSMatrixFree.html#a6b4df791060b759a497143d47d7c1211">periodic_direction</a></td></tr>
-<tr class="separator:a6b4df791060b759a497143d47d7c1211"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a530a121011f941c590afab5194ecc5d5" id="r_a530a121011f941c590afab5194ecc5d5"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, Tensor&lt; 1, dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANSMatrixFree.html#a530a121011f941c590afab5194ecc5d5">cfd_periodic_offsets</a></td></tr>
+<tr class="separator:a530a121011f941c590afab5194ecc5d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8d880f0709dfbbed3ad57910df28c96" id="r_ab8d880f0709dfbbed3ad57910df28c96"><td class="memItemLeft" align="right" valign="top">std::map&lt; types::boundary_id, unsigned int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANSMatrixFree.html#ab8d880f0709dfbbed3ad57910df28c96">cfd_periodic_directions</a></td></tr>
+<tr class="separator:ab8d880f0709dfbbed3ad57910df28c96"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a37db2c5c976191fc2b44298664f4d1ab" id="r_a37db2c5c976191fc2b44298664f4d1ab"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classFluidDynamicsVANSMatrixFree.html#aa049d8322f1def098025a4102ff3b98a">VectorType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classFluidDynamicsVANSMatrixFree.html#a37db2c5c976191fc2b44298664f4d1ab">time_derivative_void_fraction</a></td></tr>
 <tr class="separator:a37db2c5c976191fc2b44298664f4d1ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_classFluidDynamicsMatrixFree"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classFluidDynamicsMatrixFree')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classFluidDynamicsMatrixFree.html">FluidDynamicsMatrixFree&lt; dim &gt;</a></td></tr>
@@ -861,6 +861,58 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
+<a id="ab8d880f0709dfbbed3ad57910df28c96" name="ab8d880f0709dfbbed3ad57910df28c96"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8d880f0709dfbbed3ad57910df28c96">&#9670;&#160;</a></span>cfd_periodic_directions</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::map&lt;types::boundary_id, unsigned int&gt; <a class="el" href="classFluidDynamicsVANSMatrixFree.html">FluidDynamicsVANSMatrixFree</a>&lt; dim &gt;::cfd_periodic_directions</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00260">260</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
+
+</div>
+</div>
+<a id="a530a121011f941c590afab5194ecc5d5" name="a530a121011f941c590afab5194ecc5d5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a530a121011f941c590afab5194ecc5d5">&#9670;&#160;</a></span>cfd_periodic_offsets</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::map&lt;types::boundary_id, Tensor&lt;1, dim&gt; &gt; <a class="el" href="classFluidDynamicsVANSMatrixFree.html">FluidDynamicsVANSMatrixFree</a>&lt; dim &gt;::cfd_periodic_offsets</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00259">259</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
+
+</div>
+</div>
 <a id="ac33a8c63495f78d28921f7584e822108" name="ac33a8c63495f78d28921f7584e822108"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac33a8c63495f78d28921f7584e822108">&#9670;&#160;</a></span>has_periodic_boundaries</h2>
 
@@ -969,58 +1021,6 @@ template&lt;int dim&gt; </div>
 <p>Object that manages the void fraction calculation from functions or from parameters. </p>
 
 <p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00255">255</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a6b4df791060b759a497143d47d7c1211" name="a6b4df791060b759a497143d47d7c1211"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6b4df791060b759a497143d47d7c1211">&#9670;&#160;</a></span>periodic_direction</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">unsigned int <a class="el" href="classFluidDynamicsVANSMatrixFree.html">FluidDynamicsVANSMatrixFree</a>&lt; dim &gt;::periodic_direction</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00260">260</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
-
-</div>
-</div>
-<a id="a416ece969765f0c9d1ce21cd94419912" name="a416ece969765f0c9d1ce21cd94419912"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a416ece969765f0c9d1ce21cd94419912">&#9670;&#160;</a></span>periodic_offset</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">Tensor&lt;1, dim&gt; <a class="el" href="classFluidDynamicsVANSMatrixFree.html">FluidDynamicsVANSMatrixFree</a>&lt; dim &gt;::periodic_offset</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html#l00259">259</a> of file <a class="el" href="fluid__dynamics__vans__matrix__free_8h_source.html">fluid_dynamics_vans_matrix_free.h</a>.</p>
 
 </div>
 </div>

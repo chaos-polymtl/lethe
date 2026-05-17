@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
 <area shape="rect" id="Node000000" href="$structparticle__particle__contact__info.html" title="Handle the information related to the calculation of the particle&#45;particle contact force...." alt="" coords="5,5,188,45"/>
+<area shape="rect" id="Node000001" href="$structperiodic__particle__particle__contact__info.html" title="Derived struct of the base struct particle_particle_contact_info for periodic particle&#45;particle conta..." alt="" coords="236,5,423,45"/>
+<area shape="poly" id="edge93_Node000000_Node000001" title=" " alt="" coords="202,23,236,23,236,28,202,28"/>
 </map>

@@ -137,7 +137,7 @@ The ``plane`` insertion method inserts particles at the centroid of insertion ce
 --------------------
 List
 --------------------
-The ``list`` insertion method insert particles at precis coordinates with specific velocities (translational and angular) and diameters.  This method is preferred for small number of particles.
+The ``list`` insertion method inserts particles at precise coordinates with specific velocities (translational and angular) and diameters.  This method is preferred for small numbers of particles.
 
 * ``insertion frequency`` defines the frequency of the insertion of particles based on the list. If the list contains 3 coordinates, 3 new particles will be inserted at the same positions at each insertion step.
 

@@ -451,7 +451,7 @@
   # Total number of boundary motion
   set number of boundary conditions = 3
 
-  # For each motion, we need a separate subsection
+  # For each boundary condition, we need a separate subsection
   subsection boundary condition 0
     # ID of boundary
     set boundary id         = 0
@@ -483,22 +483,36 @@
     set speed y     = 0
     set speed z     = 0
   end
+
+  # OR for periodic boundaries
+  subsection boundary condition 2
+    # Boundary type
+    set type               = periodic
+
+    # ID of principal boundary
+    set periodic id 0      = 3
+
+    # ID of associated periodic boundary
+    set periodic id 1      = 2
+
+    # Direction normal to the periodic boundary faces (x=0, y=1, z=2)
+    set periodic direction = 1
 end
 </pre></div>
 </div>
 <ul class="simple">
 <li><p>The <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">boundary</span> <span class="pre">conditions</span></code> parameter defines the number of desired boundary conditions to be specified. Note that if a boundary condition <code class="docutils literal notranslate"><span class="pre">type</span></code> is not defined explicitly, Lethe defines it as a fixed static wall.</p></li>
-<li><p>For each boundary condition, we have to define a separate subsection. In the sample parameter list above, the <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">boundary</span> <span class="pre">conditions</span></code> is equal to 2. Hence, we need to define two subsections (<code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">boundary</span> <span class="pre">condition</span> <span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">boundary</span> <span class="pre">condition</span> <span class="pre">1</span></code>).</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">id</span></code> parameter specifies the boundary ID for which the boundary condition should be applied, periodic boundaries are an exception.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">id</span> <span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">id</span> <span class="pre">1</span></code> parameters specify the periodic boundaries ID for which the periodic boundary condition should be applied.</p></li>
+<li><p>For each boundary condition, we have to define a separate subsection. In the sample parameter list above, the <code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">boundary</span> <span class="pre">conditions</span></code> is equal to 3. Hence, we need to define three subsections (<code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">boundary</span> <span class="pre">condition</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">boundary</span> <span class="pre">condition</span> <span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">subsection</span> <span class="pre">boundary</span> <span class="pre">condition</span> <span class="pre">2`</span></code>).</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">boundary</span> <span class="pre">id</span></code> parameter specifies the boundary ID for which the boundary condition should be applied. Periodic boundaries are an exception.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">type</span></code> parameter specifies the type of the boundary condition. Acceptable types are: <code class="docutils literal notranslate"><span class="pre">fixed_wall</span></code>, <code class="docutils literal notranslate"><span class="pre">outlet</span></code>, <code class="docutils literal notranslate"><span class="pre">rotational</span></code>, <code class="docutils literal notranslate"><span class="pre">translational</span></code> and <code class="docutils literal notranslate"><span class="pre">periodic</span></code>. The default boundary condition type is <code class="docutils literal notranslate"><span class="pre">fixed_wall</span></code>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">id</span> <span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">id</span> <span class="pre">1</span></code> parameters specify the periodic boundaries ID for which the periodic boundary condition should be applied. By convention, <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">id</span> <span class="pre">0</span></code> should correspond to the boundary ID for which the boundary is further along the coordinate axis (this is the principal boundary).</p></li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Only periodic boundaries which have co-linear normal vectors which align along one axis of the problem (e.g., x axis) are currently supported.</p>
+<p>Only periodic boundaries which have co-linear normal vectors which align along an axis of the problem (e.g., x axis) are currently supported. Multiple simultaneous periodic directions are supported.</p>
 </div>
 <ul class="simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">type</span></code> parameter specifies the type of the boundary condition. Acceptable types are: <code class="docutils literal notranslate"><span class="pre">fixed_wall</span></code>, <code class="docutils literal notranslate"><span class="pre">outlet</span></code>, <code class="docutils literal notranslate"><span class="pre">rotational</span></code>, <code class="docutils literal notranslate"><span class="pre">translational</span></code> and <code class="docutils literal notranslate"><span class="pre">periodic</span></code>. The default boundary condition type is <code class="docutils literal notranslate"><span class="pre">fixed_wall</span></code>.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">direction</span></code> parameter specifies the perpendicular axis to the periodic boundaries.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">periodic</span> <span class="pre">direction</span></code> parameter specifies the perpendicular axis to a pair of periodic boundaries (<code class="docutils literal notranslate"><span class="pre">0</span></code> is the <cite>x</cite> axis, <code class="docutils literal notranslate"><span class="pre">1</span></code> is the <cite>y</cite> and <code class="docutils literal notranslate"><span class="pre">2</span></code> is the <cite>z</cite>).</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">rotational</span> <span class="pre">speed</span></code> parameter defines the rotational speed of the specified boundary.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">rotational</span> <span class="pre">vector</span></code> parameter specifies the rotational vector in <cite>x</cite>, <cite>y</cite>, and <cite>z</cite> directions.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">point</span> <span class="pre">on</span> <span class="pre">rotational</span> <span class="pre">vector</span></code> parameter specifies a point <cite>x, y, z</cite> on the rotating axis.</p></li>
