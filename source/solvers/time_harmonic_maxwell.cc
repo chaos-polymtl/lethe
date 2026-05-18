@@ -1264,28 +1264,33 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
   // Define constraints
   define_constraints();
 
-
   // Sparse matrices initialization
-  DynamicSparsityPattern dsp(this->locally_relevant_dofs_trial_skeleton);
-  // In DPG, the sparse matrix and the system matrix are really expensive so we
-  // only build them if we need to compute a new physical solution.
+  // In DPG, the sparse matrix and the dynamic sparsity pattern are really expensive so we
+  // only build them if we need to compute a new physical solution. Additionally, we recast the dynamic sparsity pattern to a sparsity pattern before initializing the system matrix to save memory because the dynamic sparsity pattern is much more expensive in terms of memory than the sparsity pattern.
+  TrilinosWrappers::SparsityPattern sparsity_pattern; // This needs to be defined outside the if statement because it is used in extra_verbose to report the memory consumption of the sparsity pattern.
   if (should_solve_auxiliary_physics())
     {
-      DoFTools::make_sparsity_pattern(*this->dof_handler_trial_skeleton,
-                                      dsp,
-                                      this->nonzero_constraints,
-                                      /*keep_constrained_dofs = */ false);
-      SparsityTools::distribute_sparsity_pattern(
-        dsp,
-        this->locally_owned_dofs_trial_skeleton,
-        mpi_communicator,
-        this->locally_relevant_dofs_trial_skeleton);
 
+      {
+        DynamicSparsityPattern dsp(this->locally_relevant_dofs_trial_skeleton);
+        DoFTools::make_sparsity_pattern(*this->dof_handler_trial_skeleton,
+                                        dsp,
+                                        this->nonzero_constraints,
+                                        /*keep_constrained_dofs = */ false);
+        SparsityTools::distribute_sparsity_pattern(
+          dsp,
+          this->locally_owned_dofs_trial_skeleton,
+          mpi_communicator,
+          this->locally_relevant_dofs_trial_skeleton);
 
-      this->system_matrix.reinit(this->locally_owned_dofs_trial_skeleton,
-                                 this->locally_owned_dofs_trial_skeleton,
-                                 dsp,
-                                 mpi_communicator);
+        sparsity_pattern.reinit(this->locally_owned_dofs_trial_skeleton,
+                           this->locally_owned_dofs_trial_skeleton,
+                           dsp,
+                           mpi_communicator);
+        sparsity_pattern.compress();
+      }
+
+      this->system_matrix.reinit(sparsity_pattern);
     }
   else
     {
@@ -1312,8 +1317,7 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
         this->present_DPG_error_indicator->memory_consumption() * bytes_to_gb;
       const auto system_rhs_memory =
         this->system_rhs.memory_consumption() * bytes_to_gb;
-      const auto sparsity_pattern_memory =
-        dsp.memory_consumption() * bytes_to_gb;
+      const auto sparsity_pattern_memory = sparsity_pattern.n_nonzero_elements() * sizeof(TrilinosWrappers::types::int_type) * bytes_to_gb; // We use a proxy for the memory consumption of the sparsity pattern based on the number of non-zero elements and the size of the integer type used to store the sparsity pattern, since the TrilinosWrappers::SparsityPattern class does not have a memory_consumption() function implemented.
       const auto system_matrix_memory =
         this->system_matrix.memory_consumption() * bytes_to_gb;
       const auto dof_handler_trial_interior_memory =
@@ -1431,7 +1435,7 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
                    rank < sparsity_pattern_memory_by_rank.size();
                    ++rank)
                 {
-                  this->pcout << "  dsp rank " << rank << " : "
+                  this->pcout << "  sparsity_pattern rank " << rank << " : "
                               << sparsity_pattern_memory_by_rank[rank]
                               << std::endl;
                 }
@@ -1480,7 +1484,7 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
                       << present_dpg_error_indicator_memory_total << std::endl;
           this->pcout << "  system_rhs : " << system_rhs_memory_total
                       << std::endl;
-          this->pcout << "  dsp : " << sparsity_pattern_memory_total
+          this->pcout << "  sparsity_pattern : " << sparsity_pattern_memory_total
                       << std::endl;
           this->pcout << "  system_matrix : " << system_matrix_memory_total
                       << std::endl;
@@ -1848,7 +1852,7 @@ TimeHarmonicMaxwell<dim>::solve_linear_system()
     std::max(relative_residual * rescaled_residual, absolute_residual);
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
-        .verbosity == Parameters::Verbosity::verbose)
+        .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
@@ -1869,7 +1873,7 @@ TimeHarmonicMaxwell<dim>::solve_linear_system()
                *this->preconditioner);
 
   if (simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
-        .verbosity == Parameters::Verbosity::verbose)
+        .verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -CG iterative solver took : "
                   << solver_control.last_step()
