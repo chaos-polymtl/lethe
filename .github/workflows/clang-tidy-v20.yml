@@ -18,7 +18,7 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
-  COMPILE_JOBS: 8
+  COMPILE_JOBS: 12
 
 jobs:
   tidy:
