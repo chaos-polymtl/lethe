@@ -1290,6 +1290,7 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
         Utilities::MPI::this_mpi_process(mpi_communicator);
       constexpr double bytes_to_gb = 1.0 / (1024.0 * 1024.0 * 1024.0);
 
+      // Fetch memory consumption information on each process
       const auto present_solution_memory =
         this->present_solution->memory_consumption() * bytes_to_gb;
       const auto present_solution_skeleton_memory =
@@ -1302,7 +1303,14 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
         dsp.memory_consumption() * bytes_to_gb;
       const auto system_matrix_memory =
         this->system_matrix.memory_consumption() * bytes_to_gb;
+      const auto dof_handler_trial_interior_memory =
+        this->dof_handler_trial_interior->memory_consumption() * bytes_to_gb;
+      const auto dof_handler_trial_skeleton_memory =
+        this->dof_handler_trial_skeleton->memory_consumption() * bytes_to_gb;
+      const auto dof_handler_test_memory =
+        this->dof_handler_test->memory_consumption() * bytes_to_gb;
 
+      // Gather memory consumption information from all ranks to rank 0
       const auto present_solution_memory_by_rank =
         Utilities::MPI::gather(mpi_communicator, present_solution_memory, 0);
       const auto present_solution_skeleton_memory_by_rank =
@@ -1319,7 +1327,18 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
         Utilities::MPI::gather(mpi_communicator, sparsity_pattern_memory, 0);
       const auto system_matrix_memory_by_rank =
         Utilities::MPI::gather(mpi_communicator, system_matrix_memory, 0);
+      const auto dof_handler_trial_interior_memory_by_rank =
+        Utilities::MPI::gather(mpi_communicator,
+                               dof_handler_trial_interior_memory,
+                               0);
+      const auto dof_handler_trial_skeleton_memory_by_rank =
+        Utilities::MPI::gather(mpi_communicator,
+                               dof_handler_trial_skeleton_memory,
+                               0);
+      const auto dof_handler_test_memory_by_rank =
+        Utilities::MPI::gather(mpi_communicator, dof_handler_test_memory, 0);
 
+      // Sum memory consumption across all ranks to get total memory usage
       const auto present_solution_memory_total =
         Utilities::MPI::sum(present_solution_memory, mpi_communicator);
       const auto present_solution_skeleton_memory_total =
@@ -1333,7 +1352,16 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
         Utilities::MPI::sum(sparsity_pattern_memory, mpi_communicator);
       const auto system_matrix_memory_total =
         Utilities::MPI::sum(system_matrix_memory, mpi_communicator);
+      const auto dof_handler_trial_interior_memory_total =
+        Utilities::MPI::sum(dof_handler_trial_interior_memory,
+                            mpi_communicator);
+      const auto dof_handler_trial_skeleton_memory_total =
+        Utilities::MPI::sum(dof_handler_trial_skeleton_memory,
+                            mpi_communicator);
+      const auto dof_handler_test_memory_total =
+        Utilities::MPI::sum(dof_handler_test_memory, mpi_communicator);
 
+      // Print memory consumption information on rank 0
       if (this_mpi_process == 0)
         {
           this->pcout
@@ -1345,9 +1373,9 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
           // to true to have the memory consumption of each rank printed,
           // otherwise only the total memory consumption across all ranks will
           // be printed.
-          pcout << " Printing total memory consumption, if you "
+          this->pcout << " Printing total memory consumption, if you "
                 << "want to see the memory consumption by rank, set "
-                << "`print_memory_by_rank` to true." << std::endl;
+                << "`print_memory_by_rank` to true in source code." << std::endl;
           bool print_memory_by_rank = false;
           if (print_memory_by_rank)
             {
@@ -1401,6 +1429,32 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
                               << system_matrix_memory_by_rank[rank]
                               << std::endl;
                 }
+              for (unsigned int rank = 0;
+                   rank < dof_handler_trial_interior_memory_by_rank.size();
+                   ++rank)
+                {
+                  this->pcout << "  dof_handler_trial_interior rank " << rank
+                              << " : "
+                              << dof_handler_trial_interior_memory_by_rank[rank]
+                              << std::endl;
+                }
+              for (unsigned int rank = 0;
+                   rank < dof_handler_trial_skeleton_memory_by_rank.size();
+                   ++rank)
+                {
+                  this->pcout << "  dof_handler_trial_skeleton rank " << rank
+                              << " : "
+                              << dof_handler_trial_skeleton_memory_by_rank[rank]
+                              << std::endl;
+                }
+              for (unsigned int rank = 0;
+                   rank < dof_handler_test_memory_by_rank.size();
+                   ++rank)
+                {
+                  this->pcout << "  dof_handler_test rank " << rank << " : "
+                              << dof_handler_test_memory_by_rank[rank]
+                              << std::endl;
+                }
             }
 
           this->pcout << "  *** Totals memory (GB) *** " << std::endl;
@@ -1416,6 +1470,12 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
                       << std::endl;
           this->pcout << "  system_matrix : " << system_matrix_memory_total
                       << std::endl;
+          this->pcout << "  dof_handler_trial_interior : "
+                      << dof_handler_trial_interior_memory_total << std::endl;
+          this->pcout << "  dof_handler_trial_skeleton : "
+                      << dof_handler_trial_skeleton_memory_total << std::endl;
+          this->pcout << "  dof_handler_test : "
+                      << dof_handler_test_memory_total << std::endl;
           this->pcout
             << " =================================================================="
             << std::endl;
