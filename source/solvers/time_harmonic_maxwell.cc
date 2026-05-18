@@ -1264,23 +1264,36 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
   // Define constraints
   define_constraints();
 
+
   // Sparse matrices initialization
   DynamicSparsityPattern dsp(this->locally_relevant_dofs_trial_skeleton);
-  DoFTools::make_sparsity_pattern(*this->dof_handler_trial_skeleton,
-                                  dsp,
-                                  this->nonzero_constraints,
-                                  /*keep_constrained_dofs = */ false);
-  SparsityTools::distribute_sparsity_pattern(
-    dsp,
-    this->locally_owned_dofs_trial_skeleton,
-    mpi_communicator,
-    this->locally_relevant_dofs_trial_skeleton);
+  // In DPG, the sparse matrix and the system matrix are really expensive so we
+  // only build them if we need to compute a new physical solution.
+  if (should_solve_auxiliary_physics())
+    {
+      DoFTools::make_sparsity_pattern(*this->dof_handler_trial_skeleton,
+                                      dsp,
+                                      this->nonzero_constraints,
+                                      /*keep_constrained_dofs = */ false);
+      SparsityTools::distribute_sparsity_pattern(
+        dsp,
+        this->locally_owned_dofs_trial_skeleton,
+        mpi_communicator,
+        this->locally_relevant_dofs_trial_skeleton);
 
 
-  this->system_matrix.reinit(this->locally_owned_dofs_trial_skeleton,
-                             this->locally_owned_dofs_trial_skeleton,
-                             dsp,
-                             mpi_communicator);
+      this->system_matrix.reinit(this->locally_owned_dofs_trial_skeleton,
+                                 this->locally_owned_dofs_trial_skeleton,
+                                 dsp,
+                                 mpi_communicator);
+    }
+  else
+    {
+      // If we are not solving the physical system, we don't need to build the
+      // system matrix and sparsity pattern, so we can skip their initialization
+      // to save time and memory.
+      this->system_matrix.clear();
+    }
 
 
   if (this->simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
@@ -1374,8 +1387,9 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
           // otherwise only the total memory consumption across all ranks will
           // be printed.
           this->pcout << " Printing total memory consumption, if you "
-                << "want to see the memory consumption by rank, set "
-                << "`print_memory_by_rank` to true in source code." << std::endl;
+                      << "want to see the memory consumption by rank, set "
+                      << "`print_memory_by_rank` to true in source code."
+                      << std::endl;
           bool print_memory_by_rank = false;
           if (print_memory_by_rank)
             {
@@ -1550,8 +1564,7 @@ template <int dim>
 void
 TimeHarmonicMaxwell<dim>::setup_preconditioner()
 {
-  // No preconditioner is currently implemented for the time-harmonic Maxwell
-  // solver.
+  preconditioner = std::make_shared<TrilinosWrappers::PreconditionIdentity>();
 }
 
 template <int dim>
@@ -1898,10 +1911,8 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
       return true;
     }
 
-  // Always solve at the first step of the simulation (simulation start as 0 but
-  // it is then incremented before solving the physics for the first time, so
-  // the first time this function is called, the step number is 1).
-  if (this->simulation_control->get_iteration_number() == 1)
+  // Always solve at the first step of the simulation (simulation start as 0  when the set up is performed, and then it is incremented before solving the physics for the first time, so  we want this function to return true in both cases.
+  if (this->simulation_control->get_iteration_number() <= 1)
     {
       return true;
     }
