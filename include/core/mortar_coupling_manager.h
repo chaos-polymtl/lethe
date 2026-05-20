@@ -38,11 +38,10 @@ public:
    * axis at the mortar interface, which should be 0 for 2D problems
    */
   template <int dim2>
-  MortarManagerBase(unsigned int            n_subdivisions,
-                    double                  radius,
-                    const Quadrature<dim2> &quadrature,
-                    const double            rotation_angle,
-                    const double            stage_heights = 0.0);
+  MortarManagerBase(unsigned int                    n_subdivisions,
+                    const std::pair<double, double> stage_geometry,
+                    const Quadrature<dim2>         &quadrature,
+                    const double                    rotation_angle);
 
   /**
    * @brief Mortar manager base constructor used in 3D problems
@@ -58,11 +57,11 @@ public:
    * mortar interface
    */
   template <int dim2>
-  MortarManagerBase(const std::vector<unsigned int> &n_subdivisions,
-                    const std::vector<double>       &radius,
-                    const Quadrature<dim2>          &quadrature,
-                    const double                     rotation_angle,
-                    const std::vector<double> stage_heights = {0.0, 1.0});
+  MortarManagerBase(
+    const std::vector<unsigned int>              &n_subdivisions,
+    const std::vector<std::pair<double, double>> &stage_geometry,
+    const Quadrature<dim2>                       &quadrature,
+    const double                                  rotation_angle);
 
   /**
    * @brief Default destructor
@@ -161,7 +160,7 @@ public:
   std::vector<unsigned int> n_subdivisions;
   /// Vector containing the radius at the mortar interface and the domain length
   /// in the direction of the rotation axis
-  std::vector<double> radius;
+  // std::vector<double> radius;
 
 protected:
   /**
@@ -220,7 +219,7 @@ protected:
   /// Stage heights at the mortar interface along the rotation axis
   /// in 3D problems. A stage is defined as a plane perpendicular to the
   /// rotation axis containing vertices of the same height.
-  const std::vector<double> stage_heights;
+  const std::vector<std::pair<double, double>> stage_geometry;
 };
 
 /**
@@ -251,7 +250,7 @@ compute_number_interface_cells(
  * @return pre_rotation_angle Rotation angle of the initial mesh configuration
  */
 template <int dim>
-std::tuple<std::vector<double>, double>
+std::tuple<std::vector<std::pair<double, double>>, double>
 compute_interface_dimensions_circular(
   const Triangulation<dim>      &triangulation,
   const Mapping<dim>            &mapping,
@@ -345,13 +344,12 @@ public:
    * aligned with the x axis
    */
   template <int dim2>
-  MortarManagerCircle(unsigned int            n_subdivisions,
-                      double                  radius,
-                      const Quadrature<dim2> &quadrature,
-                      const double            rotation_angle,
-                      const double            stage_heights      = 0.0,
-                      const Point<dim>       &center_of_rotation = Point<dim>(),
-                      const double            pre_rotation_angle = 0.0);
+  MortarManagerCircle(unsigned int              n_subdivisions,
+                      std::pair<double, double> stage_geometry,
+                      const Quadrature<dim2>   &quadrature,
+                      const double              rotation_angle,
+                      const Point<dim> &center_of_rotation = Point<dim>(),
+                      const double      pre_rotation_angle = 0.0);
 
   /**
    * @brief Class constructor for circular mortar interface used in 3D
@@ -372,13 +370,12 @@ public:
    * aligned with the x axis
    */
   template <int dim2>
-  MortarManagerCircle(std::vector<unsigned int> n_subdivisions,
-                      std::vector<double>       radius,
-                      const Quadrature<dim2>   &quadrature,
-                      const double              rotation_angle,
-                      const std::vector<double> stage_heights = {0.0, 1.0},
-                      const Point<dim> &center_of_rotation    = Point<dim>(),
-                      const double      pre_rotation_angle    = 0.0);
+  MortarManagerCircle(std::vector<unsigned int>              n_subdivisions,
+                      std::vector<std::pair<double, double>> stage_geometry,
+                      const Quadrature<dim2>                &quadrature,
+                      const double                           rotation_angle,
+                      const Point<dim> &center_of_rotation = Point<dim>(),
+                      const double      pre_rotation_angle = 0.0);
 
   /**
    * @brief Class constructor for circular interface used within the Navier-Stokes
@@ -455,50 +452,47 @@ protected:
 
 template <int dim>
 template <int dim2>
-MortarManagerBase<dim>::MortarManagerBase(unsigned int n_subdivisions,
-                                          double       radius,
-                                          const Quadrature<dim2> &quadrature_in,
-                                          const double rotation_angle,
-                                          const double stage_heights)
+MortarManagerBase<dim>::MortarManagerBase(
+  unsigned int              n_subdivisions,
+  std::pair<double, double> stage_geometry,
+  const Quadrature<dim2>   &quadrature_in,
+  const double              rotation_angle)
   : MortarManagerBase(std::vector<unsigned int>{n_subdivisions, 1},
-                      std::vector<double>{radius, 1.0},
+                      std::vector<std::pair<double, double>>{
+                        stage_geometry,
+                        {stage_geometry.first, stage_geometry.second + 1.0}},
                       quadrature_in,
-                      rotation_angle,
-                      std::vector<double>{stage_heights, stage_heights + 1.0})
+                      rotation_angle)
 {}
 
 
 template <int dim>
 template <int dim2>
 MortarManagerBase<dim>::MortarManagerBase(
-  const std::vector<unsigned int> &n_subdivisions,
-  const std::vector<double>       &radius,
-  const Quadrature<dim2>          &quadrature_in,
-  const double                     rotation_angle,
-  const std::vector<double>        stage_heights)
+  const std::vector<unsigned int>              &n_subdivisions,
+  const std::vector<std::pair<double, double>> &stage_geometry,
+  const Quadrature<dim2>                       &quadrature_in,
+  const double                                  rotation_angle)
   : n_subdivisions(n_subdivisions)
-  , radius(radius)
+  , stage_geometry(stage_geometry)
   , quadrature(quadrature_in.get_tensor_basis()[0])
   , n_quadrature_points(quadrature.size())
   , rotation_angle(rotation_angle)
-  , stage_heights(stage_heights)
 {}
 
 template <int dim>
 template <int dim2>
 MortarManagerCircle<dim>::MortarManagerCircle(
-  unsigned int            n_subdivisions,
-  double                  radius,
-  const Quadrature<dim2> &quadrature,
-  const double            rotation_angle,
-  const double            stage_heights,
-  const Point<dim>       &center_of_rotation,
-  const double            pre_rotation_angle)
+  unsigned int              n_subdivisions,
+  std::pair<double, double> stage_geometry,
+  const Quadrature<dim2>   &quadrature,
+  const double              rotation_angle,
+  const Point<dim>         &center_of_rotation,
+  const double              pre_rotation_angle)
   : MortarManagerBase<dim>(n_subdivisions,
-                           radius,
+                           stage_geometry,
                            quadrature,
-                           rotation_angle,
-                           stage_heights)
+                           rotation_angle)
   , pre_rotation_angle(pre_rotation_angle)
   , center_of_rotation(center_of_rotation)
 {}
@@ -506,18 +500,16 @@ MortarManagerCircle<dim>::MortarManagerCircle(
 template <int dim>
 template <int dim2>
 MortarManagerCircle<dim>::MortarManagerCircle(
-  std::vector<unsigned int> n_subdivisions,
-  std::vector<double>       radius,
-  const Quadrature<dim2>   &quadrature,
-  const double              rotation_angle,
-  std::vector<double>       stage_heights,
-  const Point<dim>         &center_of_rotation,
-  const double              pre_rotation_angle)
+  std::vector<unsigned int>              n_subdivisions,
+  std::vector<std::pair<double, double>> stage_geometry,
+  const Quadrature<dim2>                &quadrature,
+  const double                           rotation_angle,
+  const Point<dim>                      &center_of_rotation,
+  const double                           pre_rotation_angle)
   : MortarManagerBase<dim>(n_subdivisions,
-                           radius,
+                           stage_geometry,
                            quadrature,
-                           rotation_angle,
-                           stage_heights)
+                           rotation_angle)
   , pre_rotation_angle(pre_rotation_angle)
   , center_of_rotation(center_of_rotation)
 {}
@@ -539,7 +531,6 @@ MortarManagerCircle<dim>::MortarManagerCircle(
                                               mortar_parameters)),
       construct_quadrature(quadrature, mortar_parameters),
       mortar_parameters.rotor_rotation_angle->value(Point<dim>()),
-      compute_stage_heights(dof_handler.get_triangulation(), mortar_parameters),
       mortar_parameters.center_of_rotation,
       std::get<1>(
         compute_interface_dimensions_circular(dof_handler.get_triangulation(),
@@ -557,15 +548,17 @@ MortarManagerLinear<dim>::MortarManagerLinear(
   : MortarManagerBase<dim>(
       compute_number_interface_cells(dof_handler.get_triangulation(),
                                      mortar_parameters)[0],
-      (std::get<1>(
-         compute_interface_dimensions_linear(dof_handler.get_triangulation(),
-                                             mapping,
-                                             mortar_parameters)) -
-       std::get<0>(
-         compute_interface_dimensions_linear(dof_handler.get_triangulation(),
-                                             mapping,
-                                             mortar_parameters))) /
-        (2.0 * numbers::PI),
+      std::pair<double, double>(
+        (std::get<1>(
+           compute_interface_dimensions_linear(dof_handler.get_triangulation(),
+                                               mapping,
+                                               mortar_parameters)) -
+         std::get<0>(
+           compute_interface_dimensions_linear(dof_handler.get_triangulation(),
+                                               mapping,
+                                               mortar_parameters))) /
+          (2.0 * numbers::PI),
+        0.0),
       quadrature,
       0.0)
 {

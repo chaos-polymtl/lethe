@@ -161,7 +161,7 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
   double delta_1 = 1.0;
 
   if constexpr (dim == 3)
-    delta_1 = stage_heights[id_out_plane + 1] - stage_heights[id_out_plane];
+    delta_1 = stage_geometry[id_out_plane + 1].second - stage_geometry[id_out_plane].second;
 
   if (type == 0) // aligned
     {
@@ -176,7 +176,7 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
             points.emplace_back(
               x[0],
               x[1],
-              stage_heights[id_out_plane] +
+              stage_geometry[id_out_plane].second +
                 quadrature.point(q)[1] *
                   delta_1); // TODO Generalize for x and y directions
           else
