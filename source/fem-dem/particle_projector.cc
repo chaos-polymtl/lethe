@@ -828,7 +828,7 @@ ParticleProjector<dim>::calculate_void_fraction_qcm_impl()
                   if (calculate_filter_length_from_cell)
                     {
                       filter_length = calculate_filter_length_from_cell_measure(
-                        active_neighbors[n]->measure());
+                        active_neighbors[m]->measure());
                     }
 
                   // Loop over quadrature points
@@ -860,7 +860,7 @@ ParticleProjector<dim>::calculate_void_fraction_qcm_impl()
                   if (calculate_filter_length_from_cell)
                     {
                       filter_length = calculate_filter_length_from_cell_measure(
-                        active_periodic_neighbors[n]->measure());
+                        active_periodic_neighbors[m]->measure());
                     }
 
                   // Loop over quadrature points
