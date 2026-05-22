@@ -630,6 +630,8 @@ compute_interface_dimensions_circular(
                                   mortar_parameters.center_of_rotation,
                                   mortar_parameters.rotation_axis,
                                   v);
+                              // std::cout << "Vertex: " << v "<< ", radius: " << radius_current
+                              //           << std::endl;"
                             }
 
                           radius_min = std::min(radius_min, radius_current);
