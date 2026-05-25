@@ -186,8 +186,8 @@ The FEM subsection specifies the order of the elements used for both velocity an
 .. code-block:: text
 
     subsection FEM
-      set velocity order = 1
-      set pressure order = 1
+      set velocity degree = 1
+      set pressure degree = 1
     end
 
 For this example we simply consider Q1-Q1 elements. However, it can also be run using Q2-Q2 elements.

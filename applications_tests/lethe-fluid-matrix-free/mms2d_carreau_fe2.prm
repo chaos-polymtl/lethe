@@ -53,9 +53,9 @@ end
 
 subsection FEM
   # interpolation order velocity
-  set velocity order = 2
+  set velocity degree = 2
   # interpolation order pressure
-  set pressure order = 2
+  set pressure degree = 2
 end
 
 #---------------------------------------------------

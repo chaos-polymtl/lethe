@@ -189,7 +189,7 @@ We use the ``FEM`` subsection to define the order of the finite element method u
 .. code-block:: text
 
   subsection FEM
-    set temperature order = 2
+    set temperature degree = 2
   end
   
 Postprocessing 

@@ -141,13 +141,13 @@ For this analysis, the Reynolds number (based on the maximum velocity in the dom
 FEM Interpolation
 ~~~~~~~~~~~~~~~~~
 
-Similarly to the ``initial refinement`` parameter in the case of a simplex mesh, ``velocity order`` and ``pressure order``  are set to the ``{{Poly_deg_u}}`` and ``{{Poly_deg_p}}`` parameter variables, respectively, in Jinja2 format.
+Similarly to the ``initial refinement`` parameter in the case of a simplex mesh, ``velocity degree`` and ``pressure degree``  are set to the ``{{Poly_deg_u}}`` and ``{{Poly_deg_p}}`` parameter variables, respectively, in Jinja2 format.
 
 .. code-block:: text
 
   subsection FEM
-    set velocity order = {{Poly_deg_u}}
-    set pressure order = {{Poly_deg_p}}
+    set velocity degree = {{Poly_deg_u}}
+    set pressure degree = {{Poly_deg_p}}
   end
 
 Non-linear Solver

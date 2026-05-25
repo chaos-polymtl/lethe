@@ -2,31 +2,31 @@
 Finite Element Interpolation (FEM)
 ==================================
 
-This subsection specifies the characteristics of the finite element method used in the simulations. The interpolation orders of velocity, pressure and other physics are specified. An additional option is also present to enable the use of high-order mapping throughout the entire mesh. At the moment, all variables are interpolated using Lagrange elements. On quad/hex meshes, `FE_Q <https://www.dealii.org/current/doxygen/deal.II/classFE__Q.html>`_ elements are used whereas on simplex meshes (triangles, tetrahedron), `FE_P <https://www.dealii.org/current/doxygen/deal.II/classFE__SimplexP.html>`_ elements are used.
+This subsection specifies the characteristics of the finite element method used in the simulations. The polynomial degrees for velocity, pressure and other physics are specified. An additional option is also present to enable the use of high-order mapping throughout the entire mesh. At the moment, all variables are interpolated using Lagrange elements. On quad/hex meshes, `FE_Q <https://www.dealii.org/current/doxygen/deal.II/classFE__Q.html>`_ elements are used whereas on simplex meshes (triangles, tetrahedron), `FE_P <https://www.dealii.org/current/doxygen/deal.II/classFE__SimplexP.html>`_ elements are used.
 
 
 .. code-block:: text
 
   subsection FEM
-    # interpolation order pressure
-    set pressure order     = 1
+    # interpolation degree pressure
+    set pressure degree     = 1
 
-    # interpolation order velocity
-    set velocity order     = 1
+    # interpolation degree velocity
+    set velocity degree     = 1
 
-    # interpolation order temperature
-    set temperature order  = 1
+    # interpolation degree temperature
+    set temperature degree  = 1
 
-    # interpolation order tracer
-    set tracer order       = 1
-    set tracer uses dg     = false
+    # interpolation degree tracer
+    set tracer degree       = 1
+    set tracer uses dg      = false
 
-    # interpolation order CLS
-    set CLS order          = 1
+    # interpolation degree CLS
+    set CLS degree          = 1
 
-    # interpolation order cahn hilliard
-    set phase cahn hilliard order     = 1
-    set potential cahn hilliard order = 1
+    # interpolation degree cahn hilliard
+    set phase cahn hilliard degree     = 1
+    set potential cahn hilliard degree = 1
 
     # bubble enrichment function
     set enable bubble function velocity = false
@@ -34,13 +34,13 @@ This subsection specifies the characteristics of the finite element method used 
   end
 
 
-* ``velocity order`` specifies the interpolation order for velocity.
+* ``velocity degree`` specifies the polynomial degree for velocity.
 
-* ``pressure order`` specifies the interpolation order for pressure. For the **lethe-fluid** family of solvers, the interpolation order for pressure can be equal or lower than that of velocity. For the **lethe-fluid-block** family of solvers, the interpolation order for pressure has to be one degree lower than that of velocity.
+* ``pressure degree`` specifies the polynomial degree for pressure. For the **lethe-fluid** family of solvers, the polynomial degree for pressure can be equal or lower than that of velocity. For the **lethe-fluid-block** family of solvers, the polynomial degree for pressure has to be one degree lower than that of velocity.
 
-* ``temperature order`` specifies the interpolation order for temperature for the heat transfer physics.
+* ``temperature degree`` specifies the polynomial degree for temperature for the heat transfer physics.
 
-* ``tracer order`` specifies the interpolation order for the tracer physics.
+* ``tracer degree`` specifies the polynomial degree for the tracer physics.
 
 * ``tracer uses dg`` specifies if the Discontinuous Galerkin (DG) formulation is used instead of the Continuous Galerkin (CG) that is used by default, for the tracer physics. This formulation allows discontinuities between elements and at boundaries, and only penalizes them; this prevents oscillations and enforces local conservation of mass, at the cost of more numerous degrees of freedom.
 
@@ -48,9 +48,9 @@ This subsection specifies the characteristics of the finite element method used 
 
     The DG formulation is sensitive to the CFL value. Use a small time step to  keep the tracer value bounded. From our experience, a CFL of 1 or lower is recommended.
 
-* ``CLS order`` specifies the interpolation for the CLS phase indicator. It is not recommended to use higher order interpolation for the CLS method as this may conflict with the bounding and the sharpening mechanism used therein.
+* ``CLS degree`` specifies the polynomial degree for the CLS phase indicator. It is not recommended to use higher polynomial degrees for the CLS method as this may conflict with the bounding and the sharpening mechanism used therein.
 
-* ``phase cahn hilliard order`` and ``potential cahn hilliard order`` specify the interpolation order for the phase order parameter and the chemical potential in the Cahn-Hilliard equations. The orders chosen should be equal. They are left as two separate parameters for debugging purposes.
+* ``phase cahn hilliard degree`` and ``potential cahn hilliard degree`` specify the polynomial degree for the phase order parameter and the chemical potential in the Cahn-Hilliard equations. The degrees chosen should be equal. They are left as two separate parameters for debugging purposes.
 
 * ``enable bubble function velocity`` and ``enable bubble function pressure`` specifies if the bubble enrichment function is used in the velocity and pressure fields, respectively. This is a polynomial enrichment function centered at the mid-point of the cell and that vanishes at the element boundary. It can be used to improve accuracy and stability in Galerkin FEM, similarly to SUPG stabilization; we refer the reader to the work of  `Franca and Farhat 1995 <https://www.sciencedirect.com/science/article/abs/pii/004578259400721X>`_ and `Brezzi et al 1992 <https://www.sciencedirect.com/science/article/abs/pii/004578259290102P>`_ for more detail.
 

@@ -133,8 +133,8 @@ The results obtained for the Taylor-Green vortex are highly dependent on the num
 .. code-block:: text
 
     subsection FEM
-        set velocity order = 2 #3 for Q3
-        set pressure order = 2 #3 for Q3
+        set velocity degree = 2 #3 for Q3
+        set pressure degree = 2 #3 for Q3
     end
 
 Post-processing

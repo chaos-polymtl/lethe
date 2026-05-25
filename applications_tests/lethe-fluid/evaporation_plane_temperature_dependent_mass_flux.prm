@@ -30,7 +30,7 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set temperature order = 1
+  set temperature degree = 1
 end
 
 #---------------------------------------------------

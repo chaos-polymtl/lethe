@@ -152,8 +152,8 @@ A linear interpolation order is chosen for the velocity and pressure fields for 
 .. code-block:: text
 
     subsection FEM
-      set pressure order = 1
-      set velocity order = 1
+      set pressure degree = 1
+      set velocity degree = 1
     end
 
 Boundary Conditions

@@ -162,8 +162,8 @@ The results obtained for the turbulent flow around a cylinder are highly mesh an
 .. code-block:: text
 
     subsection FEM
-      set velocity order = 1  
-      set pressure order = 1  
+      set velocity degree = 1  
+      set pressure degree = 1  
     end
 
 Forces

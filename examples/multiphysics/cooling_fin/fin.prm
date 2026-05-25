@@ -21,7 +21,7 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set temperature order = 2
+  set temperature degree = 2
 end
 
 #---------------------------------------------------

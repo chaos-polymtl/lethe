@@ -127,8 +127,8 @@ Lethe supports the use of arbitrary interpolation order. The :math:`\mathcal{L}^
 .. code-block:: text
 
     subsection FEM
-        set velocity order = 2
-        set pressure order = 1
+        set velocity degree = 2
+        set pressure degree = 1
     end
 
 .. note::

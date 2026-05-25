@@ -196,8 +196,8 @@ The results obtained for the turbulent Taylor-Couette flow are highly dependent 
 .. code-block:: text
 
     subsection FEM
-      set velocity order = 2  #3 for Q3
-      set pressure order = 2  #3 for Q3
+      set velocity degree = 2  #3 for Q3
+      set pressure degree = 2  #3 for Q3
     end
 
 Forces

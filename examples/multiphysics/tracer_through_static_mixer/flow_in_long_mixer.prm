@@ -26,9 +26,9 @@ subsection multiphysics
 end
 
 subsection FEM
-  set velocity order = 1
-  set pressure order = 1
-  set tracer order   = 1
+  set velocity degree = 1
+  set pressure degree = 1
+  set tracer degree   = 1
 end
 
 # The problem is set in cm, seconds and grams

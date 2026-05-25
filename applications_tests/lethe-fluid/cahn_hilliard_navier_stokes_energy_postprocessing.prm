@@ -160,10 +160,10 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set phase cahn hilliard order     = 1
-  set potential cahn hilliard order = 1
-  set velocity order                = 1
-  set pressure order                = 1
+  set phase cahn hilliard degree     = 1
+  set potential cahn hilliard degree = 1
+  set velocity degree                = 1
+  set pressure degree                = 1
 end
 
 #---------------------------------------------------

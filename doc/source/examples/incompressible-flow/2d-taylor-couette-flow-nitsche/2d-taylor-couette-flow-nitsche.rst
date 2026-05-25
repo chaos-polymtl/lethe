@@ -162,8 +162,8 @@ FEM Interpolation
 .. code-block:: text
 
     subsection FEM
-      set velocity order = 1
-      set pressure order = 1
+      set velocity degree = 1
+      set pressure degree = 1
     end
 
 Analytical Solution

@@ -70,8 +70,8 @@ The interpolation orders for the velocity and pressure are set to Q2-Q1 in the `
 .. code-block:: text
 
     subsection FEM
-      set velocity order = 2
-      set pressure order = 1
+      set velocity degree = 2
+      set pressure degree = 1
     end
 
 Mesh

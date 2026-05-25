@@ -142,8 +142,8 @@ In this example, the interpolation order has been set to one for both velocity a
 .. code-block:: text
 
     subsection FEM
-      set pressure order = 1
-      set velocity order = 1
+      set pressure degree = 1
+      set velocity degree = 1
     end
 
 Boundary Conditions

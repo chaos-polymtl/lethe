@@ -34,8 +34,8 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set velocity order = 3
-  set pressure order = 3
+  set velocity degree = 3
+  set pressure degree = 3
 end
 
 #---------------------------------------------------
