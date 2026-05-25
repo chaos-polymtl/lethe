@@ -65,7 +65,7 @@ public:
    * |  8 | pad_right    | int        | no       | N cells right of the transition (default: 0)       |
    * |  9 | height       | double     | no       | Extrusion height in z, 3D only (default: 1.0)      |
    * | 10 | n_slices     | int        | no       | Number of z-layers, 3D only (default and min: 2)   |
-   * | 11 | use_tfi      | true/false | no       | Use transfinite interpolation (default: false)     |
+   * | 11 | use_transfinite_region | true/false | no | Use transfinite interpolation (default: false)     |
    * | 12 | mesh_obstacle| true/false | no       | Keep obstacle meshed (default: false)              |
    * | 13 | colorize     | true/false | no       | Assign distinct boundary IDs (default: false)      |
    *

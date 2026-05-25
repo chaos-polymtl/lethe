@@ -5,6 +5,7 @@
 #include <core/utilities.h>
 
 #include <numbers>
+#include <set>
 
 template <int dim, int spacedim>
 GridUniformChannelWithMeshedCylinder<dim, spacedim>::
@@ -135,6 +136,7 @@ GridUniformChannelWithMeshedCylinder<dim, spacedim>::
     (arguments.size() > 9) ? Utilities::string_to_double(arguments[9]) : 1.0;
   this->n_slices =
     (arguments.size() > 10) ? Utilities::string_to_int(arguments[10]) : 2.;
+  AssertThrow(n_slices >= 2, ExcMessage("The minimum number of slices is 2."));
   this->use_transfinite_region =
     (arguments.size() > 11 && arguments[11] == "true") ? true : false;
   this->mesh_obstacle =
@@ -324,35 +326,8 @@ GridUniformChannelWithMeshedCylinder<dim, spacedim>::generate_2d_channel_mesh(
         }
     }
 
-  if (mesh_obstacle)
-    {
-      // Assign boundary IDs following the subdivided_hyper_rectangle
-      // convention:
-      //   0: left (-x),  1: right (+x),  2: bottom (-y),  3: top (+y)
-      if (colorize)
-        {
-          const double tol_x = 1e-10 * (top_right[0] - bottom_left[0]);
-          const double tol_y = 1e-10 * (top_right[1] - bottom_left[1]);
-
-          for (const auto &face : triangulation.active_face_iterators())
-            {
-              if (!face->at_boundary())
-                continue;
-
-              const Point<2> face_center = face->center();
-
-              if (std::abs(face_center[0] - bottom_left[0]) < tol_x)
-                face->set_boundary_id(0);
-              else if (std::abs(face_center[0] - top_right[0]) < tol_x)
-                face->set_boundary_id(1);
-              else if (std::abs(face_center[1] - bottom_left[1]) < tol_y)
-                face->set_boundary_id(2);
-              else if (std::abs(face_center[1] - top_right[1]) < tol_y)
-                face->set_boundary_id(3);
-            }
-        }
-    }
-  else
+  // Remove the cells of the inner cylinder if the mesh_obstacle flag is false.
+  if (!mesh_obstacle)
     {
       std::set<typename Triangulation<2>::active_cell_iterator> obstacle_cells;
       for (const auto &cell : triangulation.active_cell_iterators())
@@ -365,33 +340,33 @@ GridUniformChannelWithMeshedCylinder<dim, spacedim>::generate_2d_channel_mesh(
                                                              temp_tria);
       triangulation.clear();
       triangulation.copy_triangulation(temp_tria);
+    }
 
-      // Assign boundary IDs following the subdivided_hyper_rectangle
-      // convention:
-      //   0: obstacle, 1: left (-x), 2: right (+x), 3: bottom (-y), 4: top (+y)
-      if (colorize)
+  // Assign boundary IDs following the subdivided_hyper_rectangle
+  // convention:
+  //   0: obstacle, 1: left (-x), 2: right (+x), 3: bottom (-y), 4: top (+y)
+  if (colorize)
+    {
+      const double tol_x = 1e-10 * (top_right[0] - bottom_left[0]);
+      const double tol_y = 1e-10 * (top_right[1] - bottom_left[1]);
+
+      for (const auto &face : triangulation.active_face_iterators())
         {
-          const double tol_x = 1e-10 * (top_right[0] - bottom_left[0]);
-          const double tol_y = 1e-10 * (top_right[1] - bottom_left[1]);
+          if (!face->at_boundary())
+            continue;
 
-          for (const auto &face : triangulation.active_face_iterators())
-            {
-              if (!face->at_boundary())
-                continue;
+          const Point<2> face_center = face->center();
 
-              const Point<2> face_center = face->center();
-
-              if (std::abs(face_center[0] - bottom_left[0]) < tol_x)
-                face->set_boundary_id(1);
-              else if (std::abs(face_center[0] - top_right[0]) < tol_x)
-                face->set_boundary_id(2);
-              else if (std::abs(face_center[1] - bottom_left[1]) < tol_y)
-                face->set_boundary_id(3);
-              else if (std::abs(face_center[1] - top_right[1]) < tol_y)
-                face->set_boundary_id(4);
-              else
-                face->set_boundary_id(0);
-            }
+          if (std::abs(face_center[0] - bottom_left[0]) < tol_x)
+            face->set_boundary_id(mesh_obstacle ? 0 : 1);
+          else if (std::abs(face_center[0] - top_right[0]) < tol_x)
+            face->set_boundary_id(mesh_obstacle ? 1 : 2);
+          else if (std::abs(face_center[1] - bottom_left[1]) < tol_y)
+            face->set_boundary_id(mesh_obstacle ? 2 : 3);
+          else if (std::abs(face_center[1] - top_right[1]) < tol_y)
+            face->set_boundary_id(mesh_obstacle ? 3 : 4);
+          else
+            face->set_boundary_id(0);
         }
     }
 
