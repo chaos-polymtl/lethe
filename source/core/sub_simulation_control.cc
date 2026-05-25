@@ -3,6 +3,8 @@
 
 #include <core/sub_simulation_control.h>
 
+#include <cmath>
+
 
 SubSimulationControlDEM::SubSimulationControlDEM(
   const DEMSubIterationLogic iteration_logic,
