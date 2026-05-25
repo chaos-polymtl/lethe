@@ -25,7 +25,7 @@ subsection FEM
   set velocity degree = 1
   set pressure degree = 1
   set tracer degree   = 2
-  set tracer uses dg = true
+  set tracer uses dg  = true
 end
 
 #---------------------------------------------------
