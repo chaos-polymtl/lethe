@@ -104,7 +104,7 @@ After installation, add the following lines variable to your ``.bashrc`` :
 .. code-block:: text
   :class: copy-button
     
-    source cand/install/prefix/configuration/enable.sh
+    source candi/install/prefix/configuration/enable.sh
     export DEAL_II_DIR=cand/install/prefix/deal.II-v.<version>
 
 
