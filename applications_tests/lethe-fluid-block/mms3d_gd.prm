@@ -63,9 +63,9 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  # interpolation order velocity
+  # degree of the polynomial for velocity
   set velocity degree = 2
-  # interpolation order pressure
+  # degree of the polynomial for pressure
   set pressure degree = 1
 end
 
