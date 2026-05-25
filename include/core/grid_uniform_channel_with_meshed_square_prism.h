@@ -62,10 +62,11 @@ public:
    * |  9 | pad_right       | int        | no       | N cells right of the transition (default: 0)                         |
    * | 10 | height          | double     | no       | Extrusion height in z, 3D only (default: 1.0)                        |
    * | 11 | n_slices        | int        | no       | Number of z-layers, 3D only (default and min: 2)                     |
-   * | 12 | colorize        | true/false | no       | Assign distinct boundary IDs (default: false)                        |
+   * | 12 | mesh_obstacle   | true/false | no       | Whether to mesh the inner square obstacle (default: false)           |
+   * | 13 | colorize        | true/false | no       | Assign distinct boundary IDs (default: false)                        |
    *
    * Example: @code "0,0 : 10,2 : 5,1 : 0.1 : 0.3 : 15 : 2 : 2 : 5 : 5 : 2. : 2
-   * : true "
+   * : false: true "
    * @endcode
    *
    * When @p colorize is true, boundary IDs follow the
@@ -129,6 +130,8 @@ private:
    * @param[in]  pad_top        Number of subdivisions in the top padding.
    * @param[in]  pad_left       Number of subdivisions in the left padding.
    * @param[in]  pad_right      Number of subdivisions in the right padding.
+   * @param[in]  mesh_obstacle  Whether to mesh the inner square obstacle or
+   * leave it as a hole.
    * @param[in]  colorize       Whether to assign distinct boundary IDs.
    */
   void
@@ -178,6 +181,8 @@ private:
   /// Number of layers in the z direction, 3D only. Minimum is 2, which
   /// corresponds to a single layer of cells in the z direction.
   unsigned int n_slices;
+  /// Whether to mesh the inner square obstacle or leave it as a hole.
+  bool mesh_obstacle;
   /// Whether to assign distinct boundary IDs to the channel boundaries
   /// following the subdivided_hyper_rectangle convention.
   bool colorize;

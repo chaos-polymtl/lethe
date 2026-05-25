@@ -76,7 +76,11 @@ main()
                   1);
 
       run_test<3>("3D 2x1x1 channel, 80 deg rotation, padded, boundary ids",
-                  "0,0:2,1:1,0.5:0.2:0.3:80:1:1:1:1:1.0:2:true");
+                  "0,0:2,1:1,0.5:0.2:0.3:80:1:1:1:1:1.0:2:false:true");
+
+      run_test<3>(
+        "3D 2x1x1 channel, 80 deg rotation, padded, obstacle, boundary ids",
+        "0,0:2,1:1,0.5:0.2:0.3:20:1:1:1:1:1.0:2:true:true");
     }
   catch (std::exception &exc)
     {
