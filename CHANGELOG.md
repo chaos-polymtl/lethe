@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/06/01
+
+### Added
+
+- MINOR A new feature to the `grid_uniform_channel_with_meshed_cylinder` and `grid_uniform_channel_with_meshed_square_prism` is added so it is now possible to mesh or not the object inside the channel. The default behavior of the meshes is also change so the obstacle is not meshed.[#1997](https://github.com/chaos-polymtl/lethe/pull/1997)
+
 ## [Master] - 2026/05/29
 
 ### Added
@@ -24,13 +30,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 
 - MINOR Fixed an intermittent (hard to reproduce) failure of the `particle_projector_03` MPI unit test that occurred with the Ninja build system. The `exchange_ghost_particles` call was moved out of `generate_particle_grid` so it no longer overlaps with the destructor of the local `particle_triangulation`. A missing `MPI_Barrier` was also added to the per-rank output loop to match the pattern established in `particle_projector_02`. [#1992](https://github.com/chaos-polymtl/lethe/pull/1992)
-
-## [Master] - 2026/05/14
-
-### Added
-
-- MINOR A new feature to the `grid_uniform_channel_with_meshed_cylinder` and `grid_uniform_channel_with_meshed_square_prism` is added so it is now possible to mesh or not the object inside the channel. The default behavior of the meshes is also change so the obstacle is not meshed.[#1997](https://github.com/chaos-polymtl/lethe/pull/1997)
-
 
 ## [Master] - 2026/05/14
 
