@@ -1265,12 +1265,18 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
   define_constraints();
 
   // Sparse matrices initialization
-  // In DPG, the sparse matrix and the dynamic sparsity pattern are really expensive so we
-  // only build them if we need to compute a new physical solution. Additionally, we recast the dynamic sparsity pattern to a sparsity pattern before initializing the system matrix to save memory because the dynamic sparsity pattern is much more expensive in terms of memory than the sparsity pattern.
-  TrilinosWrappers::SparsityPattern sparsity_pattern; // This needs to be defined outside the if statement because it is used in extra_verbose to report the memory consumption of the sparsity pattern.
+  // In DPG, the sparse matrix and the dynamic sparsity pattern are really
+  // expensive so we only build them if we need to compute a new physical
+  // solution. Additionally, we recast the dynamic sparsity pattern to a
+  // sparsity pattern before initializing the system matrix to save memory
+  // because the dynamic sparsity pattern is much more expensive in terms of
+  // memory than the sparsity pattern.
+  TrilinosWrappers::SparsityPattern
+    sparsity_pattern; // This needs to be defined outside the if statement
+                      // because it is used in extra_verbose to report the
+                      // memory consumption of the sparsity pattern.
   if (should_solve_auxiliary_physics())
     {
-
       {
         DynamicSparsityPattern dsp(this->locally_relevant_dofs_trial_skeleton);
         DoFTools::make_sparsity_pattern(*this->dof_handler_trial_skeleton,
@@ -1284,9 +1290,9 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
           this->locally_relevant_dofs_trial_skeleton);
 
         sparsity_pattern.reinit(this->locally_owned_dofs_trial_skeleton,
-                           this->locally_owned_dofs_trial_skeleton,
-                           dsp,
-                           mpi_communicator);
+                                this->locally_owned_dofs_trial_skeleton,
+                                dsp,
+                                mpi_communicator);
         sparsity_pattern.compress();
       }
 
@@ -1317,7 +1323,15 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
         this->present_DPG_error_indicator->memory_consumption() * bytes_to_gb;
       const auto system_rhs_memory =
         this->system_rhs.memory_consumption() * bytes_to_gb;
-      const auto sparsity_pattern_memory = sparsity_pattern.n_nonzero_elements() * sizeof(TrilinosWrappers::types::int_type) * bytes_to_gb; // We use a proxy for the memory consumption of the sparsity pattern based on the number of non-zero elements and the size of the integer type used to store the sparsity pattern, since the TrilinosWrappers::SparsityPattern class does not have a memory_consumption() function implemented.
+      const auto sparsity_pattern_memory =
+        sparsity_pattern.n_nonzero_elements() *
+        sizeof(TrilinosWrappers::types::int_type) *
+        bytes_to_gb; // We use a proxy for the memory consumption of the
+                     // sparsity pattern based on the number of non-zero
+                     // elements and the size of the integer type used to store
+                     // the sparsity pattern, since the
+                     // TrilinosWrappers::SparsityPattern class does not have a
+                     // memory_consumption() function implemented.
       const auto system_matrix_memory =
         this->system_matrix.memory_consumption() * bytes_to_gb;
       const auto dof_handler_trial_interior_memory =
@@ -1484,8 +1498,8 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
                       << present_dpg_error_indicator_memory_total << std::endl;
           this->pcout << "  system_rhs : " << system_rhs_memory_total
                       << std::endl;
-          this->pcout << "  sparsity_pattern : " << sparsity_pattern_memory_total
-                      << std::endl;
+          this->pcout << "  sparsity_pattern : "
+                      << sparsity_pattern_memory_total << std::endl;
           this->pcout << "  system_matrix : " << system_matrix_memory_total
                       << std::endl;
           this->pcout << "  dof_handler_trial_interior : "
@@ -1915,7 +1929,10 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
       return true;
     }
 
-  // Always solve at the first step of the simulation (simulation start as 0  when the set up is performed, and then it is incremented before solving the physics for the first time, so  we want this function to return true in both cases.
+  // Always solve at the first step of the simulation (simulation start as 0
+  // when the set up is performed, and then it is incremented before solving the
+  // physics for the first time, so  we want this function to return true in
+  // both cases.
   if (this->simulation_control->get_iteration_number() <= 1)
     {
       return true;
