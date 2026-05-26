@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Master] - 2026/06/01
 
+### Fixed
+
+- MINOR This PR refactor the verbosity of the THM solver and add a memory consumption diagnostic for the extra verbose case. Additionally, when running the diagnostics, it was noticed that the memory consumption of the dynamic sparsity pattern (dsp) was large. From discussion with @blaisb we established that recasting the dsp to a sparsity pattern will help the memory consumption. However, the `TrilinosWrappers::SparsityPattern` do not have the `memory_consumption` function and it is therefore not clear if the cost is really reduced as the proxy used to estimate it (`sparsity_pattern.n_nonzero_elements() * sizeof(TrilinosWrappers::types::int_type) * bytes_to_gb;`) actually show an increase in memory usage in comparison to the value obtained from `dsp.memory_consumption()`). Finally, the sparsity pattern and the sparse matrix are now only set up when the function `should_solve_auxiliary_physics()` returns true. Again this is to free memory when the THM solver is not required to be called. [#1998](https://github.com/chaos-polymtl/lethe/pull/1998)
+
+## [Master] - 2026/06/01
+
 ### Added
 
 - MINOR A new feature to the `grid_uniform_channel_with_meshed_cylinder` and `grid_uniform_channel_with_meshed_square_prism` is added so it is now possible to mesh or not the obstacle inside the channel. The default behavior of the meshes is also change so the obstacle is not meshed.[#1997](https://github.com/chaos-polymtl/lethe/pull/1997)
