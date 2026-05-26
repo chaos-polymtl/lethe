@@ -29,6 +29,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
+- MINOR A new feature to the `grid_uniform_channel_with_meshed_cylinder` and `grid_uniform_channel_with_meshed_square_prism` is added so it is now possible to mesh or not the object inside the channel. The default behavior of the meshes is also change so the obstacle is not meshed.[#1997](https://github.com/chaos-polymtl/lethe/pull/1997)
+
+
+## [Master] - 2026/05/14
+
+### Added
+
 - MAJOR The DEM and CFD-DEM solver could only manage one set of periodic boundary condition. This PR extends the periodicity to be able to manage multiple periodic boundary conditions such that up to three pair of periodic boundary faces can be declared in 3D. [#1983](https://github.com/chaos-polymtl/lethe/pull/1983)
 
 ## [Master] - 2026/05/12
