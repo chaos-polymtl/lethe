@@ -33,7 +33,7 @@ DEAL::Boundary id 3 face count : 16
 DEAL::Boundary id 4 face count : 128
 DEAL::Boundary id 5 face count : 128
 DEAL::==================================================
-DEAL::Case: 3D 2x1x1 channel, padded, boundary ids, no obstacle, and no TFI region
+DEAL::Case: 3D 2x1x1 channel, padded, boundary ids, and no TFI region
 DEAL::Grid arguments: "0,0:2,1:1,0.5:0.1:0.2:1:1:1:1:1.0:2:false:false:true"
 DEAL::Number of active cells : 160
 DEAL::Number of vertices     : 312

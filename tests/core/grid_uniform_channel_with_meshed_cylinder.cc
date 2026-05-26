@@ -79,10 +79,9 @@ main()
         "0,0:2,1:1,0.5:0.1:0.2:1:1:1:1:1.0:2:false:true:true",
         1);
 
-      run_test<3>(
-        "3D 2x1x1 channel, padded, boundary ids, no obstacle, and no TFI region",
-        "0,0:2,1:1,0.5:0.1:0.2:1:1:1:1:1.0:2:false:false:true",
-        1);
+      run_test<3>("3D 2x1x1 channel, padded, boundary ids, and no TFI region",
+                  "0,0:2,1:1,0.5:0.1:0.2:1:1:1:1:1.0:2:false:false:true",
+                  1);
 
       run_test<3>(
         "3D 2x1x1 channel, padded, boundary ids, obstacle, and TFI region",
