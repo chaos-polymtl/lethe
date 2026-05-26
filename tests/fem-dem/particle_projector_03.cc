@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2015-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2015-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -87,8 +87,6 @@ generate_particle_grid(const Point<dim>          pt1,
                                            mapping,
                                            properties);
 
-  particle_handler.exchange_ghost_particles(true);
-
   deallog << "Number of particles inserted: "
           << particle_handler.n_global_particles() << std::endl;
 }
@@ -145,6 +143,11 @@ test_void_fraction_qcm(const unsigned int fe_degree,
                          5,
                          domain_triangulation,
                          particle_handler);
+
+  // Exchange ghost particles after particle_triangulation has gone out of scope
+  // so that its destructor does not overlap with MPI operations from the ghost
+  // exchange.
+  particle_handler.exchange_ghost_particles(true);
 
   // We fix the diameter of all the particles to have a void fraction of 0.9 and
   // a solid fraction of 0.1. The volume of the underlying grid is 1.
@@ -230,6 +233,7 @@ test_void_fraction_qcm(const unsigned int fe_degree,
             deallog << i << " ";
           deallog << std::endl;
         }
+      MPI_Barrier(MPI_COMM_WORLD);
     }
 
   // Integrate the force field over the cells to check force conservation

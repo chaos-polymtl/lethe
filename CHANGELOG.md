@@ -3,6 +3,12 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/05/18
+
+### Fixed
+
+- MINOR Fixed an intermittent (hard to reproduce) failure of the `particle_projector_03` MPI unit test that occurred with the Ninja build system. The `exchange_ghost_particles` call was moved out of `generate_particle_grid` so it no longer overlaps with the destructor of the local `particle_triangulation`. A missing `MPI_Barrier` was also added to the per-rank output loop to match the pattern established in `particle_projector_02`. [#1992](https://github.com/chaos-polymtl/lethe/pull/1992)
+
 ## [Master] - 2026/05/14
 
 ### Added
