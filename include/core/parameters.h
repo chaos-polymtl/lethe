@@ -1202,7 +1202,7 @@ namespace Parameters
   struct FEM
   {
     // Interpolation degree velocity
-    unsigned int velocity_order;
+    unsigned int velocity_degree;
 
     // Interpolation degree pressure
     unsigned int pressure_order;
