@@ -1931,8 +1931,8 @@ TimeHarmonicMaxwell<dim>::should_solve_auxiliary_physics()
 
   // Always solve at the first step of the simulation (simulation start as 0
   // when the set up is performed, and then it is incremented before solving the
-  // physics for the first time, so  we want this function to return true in
-  // both cases.
+  // physics for the first time, so we want this function to return true in both
+  // cases.
   if (this->simulation_control->get_iteration_number() <= 1)
     {
       return true;

@@ -264,7 +264,7 @@ public:
     dealii::Vector<float> &estimated_error_per_cell) override;
 
   /**
-   * @brief Compute the Kelly error estimator on the electromanetic variable for mesh refinement.
+   * @brief Compute the Kelly error estimator on the electromagnetic variable for mesh refinement.
    * See :
    * https://www.dealii.org/current/doxygen/deal.II/classKellyErrorEstimator.html
    * for more information on the Kelly error estimator.
