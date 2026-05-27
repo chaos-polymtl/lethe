@@ -21,15 +21,15 @@ base_dir = os.getcwd()
 path=Path(base_dir)
 
 poly_deg_min=1
-poly_deg_max=2
-n_poly_deg = 2
+poly_deg_max=3
+n_poly_deg = 3
 
 poly_deg = (np.linspace(poly_deg_min, poly_deg_max, n_poly_deg)).astype(int)
 
 col_widths = [6, 12, 5, 11, 5, 8, 7]  # Adjust output files structure
 
 for poly_deg_u in poly_deg:
-    for poly_deg_p in  range(1, poly_deg_u+1):
+   for poly_deg_p in  range(max(int(poly_deg_u)-1,1), int(poly_deg_u)+1):
         mat=[]
         folder_name = f"mms_2d_steady_degu_{poly_deg_u}_degp_{poly_deg_p}"
         folder_path = os.path.join(base_dir, folder_name)
