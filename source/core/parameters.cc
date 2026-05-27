@@ -1826,20 +1826,20 @@ namespace Parameters
   {
     prm.enter_subsection("FEM");
     {
-      velocity_order            = prm.get_integer("velocity degree");
-      pressure_order            = prm.get_integer("pressure degree");
-      void_fraction_order       = prm.get_integer("void fraction degree");
-      temperature_order         = prm.get_integer("temperature degree");
-      tracer_order              = prm.get_integer("tracer degree");
+      velocity_degree           = prm.get_integer("velocity degree");
+      pressure_degree           = prm.get_integer("pressure degree");
+      void_fraction_degree      = prm.get_integer("void fraction degree");
+      temperature_degree        = prm.get_integer("temperature degree");
+      tracer_degree             = prm.get_integer("tracer degree");
       tracer_uses_dg            = prm.get_bool("tracer uses dg");
-      CLS_order                 = prm.get_integer("cls degree");
+      CLS_degree                = prm.get_integer("cls degree");
       CLS_uses_dg               = prm.get_bool("cls uses dg");
       phase_cahn_hilliard_order = prm.get_integer("phase cahn hilliard degree");
       potential_cahn_hilliard_order =
         prm.get_integer("potential cahn hilliard degree");
-      electromagnetics_trial_order =
+      electromagnetics_trial_degree =
         prm.get_integer("electromagnetics trial degree");
-      electromagnetics_test_order =
+      electromagnetics_test_degree =
         prm.get_integer("electromagnetics test degree");
       enable_bubble_function_velocity =
         prm.get_bool("enable bubble function velocity");

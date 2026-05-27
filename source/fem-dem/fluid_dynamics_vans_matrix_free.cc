@@ -561,7 +561,7 @@ FluidDynamicsVANSMatrixFree<dim>::FluidDynamicsVANSMatrixFree(
         PhysicsID::void_fraction),
       &particle_handler,
       this->cfd_dem_simulation_parameters.cfd_parameters.fem_parameters
-        .void_fraction_order,
+        .void_fraction_degree,
       this->cfd_dem_simulation_parameters.cfd_parameters.mesh.simplex,
       this->pcout)
   , has_periodic_boundaries(false)

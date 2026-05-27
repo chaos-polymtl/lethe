@@ -60,7 +60,7 @@ public:
       {
         // For simplex meshes
         this->fe = std::make_shared<FE_SimplexP<dim>>(
-          this->simulation_parameters.fem_parameters.CLS_order);
+          this->simulation_parameters.fem_parameters.CLS_degree);
         this->mapping = std::make_shared<MappingFE<dim>>(*this->fe);
         this->cell_quadrature =
           std::make_shared<QGaussSimplex<dim>>(this->fe->degree + 1);
@@ -69,7 +69,7 @@ public:
       {
         // Usual case, for quad/hex meshes
         this->fe = std::make_shared<FE_Q<dim>>(
-          this->simulation_parameters.fem_parameters.CLS_order);
+          this->simulation_parameters.fem_parameters.CLS_degree);
         this->mapping = std::make_shared<MappingQ<dim>>(this->fe->degree);
         this->cell_quadrature =
           std::make_shared<QGauss<dim>>(this->fe->degree + 1);

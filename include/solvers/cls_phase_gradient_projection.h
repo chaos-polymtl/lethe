@@ -82,7 +82,7 @@ public:
       {
         // For simplex meshes
         const FE_SimplexP<dim> subequation_fe(
-          this->simulation_parameters.fem_parameters.CLS_order);
+          this->simulation_parameters.fem_parameters.CLS_degree);
         this->fe      = std::make_shared<FESystem<dim>>(subequation_fe, dim);
         this->mapping = std::make_shared<MappingFE<dim>>(*this->fe);
 
@@ -93,7 +93,7 @@ public:
       {
         // Usual case, for quad/hex meshes
         const FE_Q<dim> subequation_fe(
-          this->simulation_parameters.fem_parameters.CLS_order);
+          this->simulation_parameters.fem_parameters.CLS_degree);
         this->fe      = std::make_shared<FESystem<dim>>(subequation_fe, dim);
         this->mapping = std::make_shared<MappingQ<dim>>(this->fe->degree);
 

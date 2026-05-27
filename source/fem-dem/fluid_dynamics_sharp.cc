@@ -106,7 +106,7 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
   // overconstrained. We therefore only have to check when the velocity order
   // == 1.
   const bool mapping_overconstrained_cells =
-    this->simulation_parameters.fem_parameters.velocity_order == 1;
+    this->simulation_parameters.fem_parameters.velocity_degree == 1;
 
   cut_cells_map.clear();
   cells_inside_map.clear();
@@ -1036,16 +1036,16 @@ FluidDynamicsSharp<dim>::force_on_ib()
   // Initalize fe value objects in order to do calculation with it later
   QGauss<dim>            q_formula(this->number_quadrature_points);
   MappingQ<dim - 1, dim> local_face_map(
-    (2 > this->simulation_parameters.fem_parameters.velocity_order) ?
+    (2 > this->simulation_parameters.fem_parameters.velocity_degree) ?
       2 :
-      this->simulation_parameters.fem_parameters.velocity_order);
+      this->simulation_parameters.fem_parameters.velocity_degree);
 
   FESystem<dim - 1, dim> local_face_fe(
     FE_Q<dim - 1, dim>(
-      this->simulation_parameters.fem_parameters.velocity_order),
+      this->simulation_parameters.fem_parameters.velocity_degree),
     dim,
     FE_Q<dim - 1, dim>(
-      this->simulation_parameters.fem_parameters.pressure_order),
+      this->simulation_parameters.fem_parameters.pressure_degree),
     1);
   FEValues<dim - 1, dim> fe_face_projection_values(local_face_map,
                                                    local_face_fe,
@@ -1443,7 +1443,7 @@ FluidDynamicsSharp<dim>::force_on_ib()
                               try
                                 {
                                   if (this->simulation_parameters.fem_parameters
-                                        .velocity_order > 1)
+                                        .velocity_degree > 1)
                                     {
                                       FullMatrix<double> interpolation_matrix(
                                         local_face_dof_indices.size(),

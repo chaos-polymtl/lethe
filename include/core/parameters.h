@@ -1205,22 +1205,22 @@ namespace Parameters
     unsigned int velocity_degree;
 
     // Interpolation degree pressure
-    unsigned int pressure_order;
+    unsigned int pressure_degree;
 
     // Interpolation degree void fraction
-    unsigned int void_fraction_order;
+    unsigned int void_fraction_degree;
 
     // Interpolation degree temperature
-    unsigned int temperature_order;
+    unsigned int temperature_degree;
 
     // Interpolation degree tracer
-    unsigned int tracer_order;
+    unsigned int tracer_degree;
 
     // Switch tracer to DG formulation instead of CG
     bool tracer_uses_dg;
 
     // Interpolation degree cls model
-    unsigned int CLS_order;
+    unsigned int CLS_degree;
 
     // Switch cls to DG formulation instead of CG
     bool CLS_uses_dg;
@@ -1237,8 +1237,8 @@ namespace Parameters
     /// The trial degree sets the polynomial degree for the solution and the
     /// test degree is used for the computation of the cell matrix necessary
     /// when solving a system using the DPG method.
-    unsigned int electromagnetics_trial_order;
-    unsigned int electromagnetics_test_order;
+    unsigned int electromagnetics_trial_degree;
+    unsigned int electromagnetics_test_degree;
 
     static void
     declare_parameters(ParameterHandler &prm);

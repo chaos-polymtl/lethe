@@ -72,7 +72,7 @@ ConservativeLevelSet<dim>::ConservativeLevelSet(
     {
       // for simplex meshes
       fe = std::make_shared<FE_SimplexP<dim>>(
-        simulation_parameters.fem_parameters.CLS_order);
+        simulation_parameters.fem_parameters.CLS_degree);
       mapping         = std::make_shared<MappingFE<dim>>(*fe);
       cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
       face_quadrature =
@@ -84,12 +84,12 @@ ConservativeLevelSet<dim>::ConservativeLevelSet(
       if (simulation_parameters.fem_parameters.CLS_uses_dg)
         {
           fe = std::make_shared<FE_DGQ<dim>>(
-            simulation_parameters.fem_parameters.CLS_order);
+            simulation_parameters.fem_parameters.CLS_degree);
         }
       else
         {
           fe = std::make_shared<FE_Q<dim>>(
-            simulation_parameters.fem_parameters.CLS_order);
+            simulation_parameters.fem_parameters.CLS_degree);
         }
       // Mapping has to be at least Q1, but DGQ0 is allowed
       mapping = std::make_shared<MappingQ<dim>>(std::max(fe->degree, uint(1)));
