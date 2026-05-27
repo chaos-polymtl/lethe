@@ -1730,33 +1730,33 @@ namespace Parameters
     {
       prm.declare_entry("velocity degree",
                         "1",
-                        Patterns::Integer(),
-                        "interpolation degree velocity");
+                        Patterns::Integer(0),
+                        "interpolation degree for velocity");
       prm.declare_alias("velocity degree", "velocity order", true);
       prm.declare_entry("pressure degree",
                         "1",
-                        Patterns::Integer(),
-                        "interpolation degree pressure");
+                        Patterns::Integer(0),
+                        "interpolation degree for pressure");
       prm.declare_alias("pressure degree", "pressure order", true);
       prm.declare_entry("void fraction degree",
                         "1",
-                        Patterns::Integer(),
-                        "interpolation degree void fraction");
+                        Patterns::Integer(0),
+                        "interpolation degree for void fraction");
       prm.declare_alias("void fraction degree", "void fraction order", true);
       prm.declare_entry("temperature degree",
                         "1",
-                        Patterns::Integer(),
-                        "interpolation degree temperature");
+                        Patterns::Integer(0),
+                        "interpolation degree for temperature");
       prm.declare_alias("temperature degree", "temperature order", true);
       prm.declare_entry("tracer degree",
                         "1",
-                        Patterns::Integer(),
-                        "interpolation degree tracer");
+                        Patterns::Integer(0),
+                        "interpolation degree for tracer");
       prm.declare_alias("tracer degree", "tracer order", true);
       prm.declare_entry("cls degree",
                         "1",
-                        Patterns::Integer(),
-                        "interpolation degree cls");
+                        Patterns::Integer(0),
+                        "interpolation degree for cls");
       prm.declare_alias("cls degree", "VOF degree");
       prm.declare_alias("cls degree", "cls order", true);
       prm.declare_alias("cls degree", "VOF order", true);
@@ -1764,7 +1764,7 @@ namespace Parameters
         "phase cahn hilliard degree",
         "1",
         Patterns::Integer(),
-        "interpolation degree phase parameter in the Cahn-Hilliard equations");
+        "interpolation degree phase parameter for the Cahn-Hilliard equations");
       prm.declare_alias("phase cahn hilliard degree",
                         "phase cahn hilliard order",
                         true);
@@ -1772,7 +1772,7 @@ namespace Parameters
         "potential cahn hilliard degree",
         "1",
         Patterns::Integer(),
-        "interpolation degree chemical potential in the Cahn-Hilliard equations");
+        "interpolation degree chemical potential for the Cahn-Hilliard equations");
       prm.declare_alias("potential cahn hilliard degree",
                         "potential cahn hilliard order",
                         true);
@@ -1806,15 +1806,17 @@ namespace Parameters
         "Switch CLS to Discontinuous Galerkin (DG) formulation");
       prm.declare_alias("cls uses dg", "VOF uses dg", true);
 
-      prm.declare_entry("enable bubble function velocity",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable bubble enrichment function for velocity field");
+      prm.declare_entry(
+        "enable bubble function velocity",
+        "false",
+        Patterns::Bool(),
+        "Enable bubble enrichment function for the velocity field");
 
-      prm.declare_entry("enable bubble function pressure",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable bubble enrichment function for pressure field");
+      prm.declare_entry(
+        "enable bubble function pressure",
+        "false",
+        Patterns::Bool(),
+        "Enable bubble enrichment function for the pressure field");
     }
     prm.leave_subsection();
   }
