@@ -158,8 +158,7 @@ FEM Interpolation
 .. note::
 
   In `Example 2 <https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html>`_ we have used Q2 (quadratic) elements for velocity.
-  In this problem, since we are using immersed boundary conditions, moving to higher degree polynomials would not enhance the order of convergence
-   as the solid boundary is not represented with high accuracy with the Nitsche immersed boundary method.
+  In this problem, since we are using immersed boundary conditions, moving to higher degree polynomials would not enhance the order of convergence as the solid boundary is not represented with high accuracy with the Nitsche immersed boundary method.
 
 .. code-block:: text
 
