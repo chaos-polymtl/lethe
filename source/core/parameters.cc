@@ -3707,6 +3707,11 @@ namespace Parameters
                         Patterns::Selection("none|phase_change"),
                         "Darcy-like permeability term"
                         "Choices are <none|phase_change>.");
+      prm.declare_entry(
+        "Enable Darcy multiply by density",
+        "false",
+        Patterns::Bool(),
+        "Enable the multiplication of the Darcy force term by the density for dimensional consistency when solving the pressure rather than the kinematic pressure in the momentum balance.");
     }
     prm.leave_subsection();
   }
@@ -3731,6 +3736,9 @@ namespace Parameters
         darcy_type = DarcySourceType::phase_change;
       else
         throw std::logic_error("Error, invalid Darcy source type");
+
+      enable_darcy_multiply_by_density =
+        prm.get_bool("Enable Darcy multiply by density");
 
       omega_x = prm.get_double("omega_x");
       omega_y = prm.get_double("omega_y");
