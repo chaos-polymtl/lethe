@@ -147,7 +147,7 @@ The ``mesh refinement controller`` feature aims to maintain the total number of 
 FEM
 ~~~
 
-A linear interpolation order is chosen for the velocity and pressure fields for both :math:`\textrm{Re}` values:
+A linear interpolation is chosen for the velocity and pressure fields for both :math:`\textrm{Re}` values:
 
 .. code-block:: text
 

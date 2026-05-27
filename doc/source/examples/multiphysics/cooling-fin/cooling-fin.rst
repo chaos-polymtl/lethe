@@ -257,7 +257,7 @@ We see that even with a relatively coarse mesh, the heat fluxes calculated by th
 Possibilities for Extension
 ----------------------------
 
-- The heat flux is sensitive to the finite element order used for the temperature field. Try the simulations again with first-order Q1 elements and compare the results.
+- The heat flux is sensitive to the finite element used for the temperature field. Try the simulations again with first-degree (Q1) elements and compare the results.
 
 ------------
 References

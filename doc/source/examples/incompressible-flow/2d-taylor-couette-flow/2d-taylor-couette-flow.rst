@@ -122,7 +122,7 @@ The analytical solution for the Taylor-Couette problem is only valid at low Reyn
 FEM Interpolation
 ~~~~~~~~~~~~~~~~~
 
-Lethe supports the use of arbitrary interpolation order. The :math:`\mathcal{L}^2` norm of the error is :math:`\mathcal{O}\left(h^{p+1} \right)` where :math:`h` is a measure of the element size and
+Lethe supports the use of arbitrary interpolation degree. The :math:`\mathcal{L}^2` norm of the error is :math:`\mathcal{O}\left(h^{p+1} \right)` where :math:`h` is a measure of the element size and
  :math:`p` is the degree of the polynomial shape function of the velocity. However, since the torque applied on the inner cylinder depends on the deviatoric stress tensor, which depends on the velocity gradient,
  its error will be :math:`\mathcal{O}(h^p)`. Taking this into account, we use second degree polynomials to obtain higher accuracy on the torque. We specify the polynomial degree for both
  pressure and velocity using the ``FEM`` subsection:
@@ -230,7 +230,7 @@ Using Paraview, the steady-state velocity profile can be visualized:
     :align: center
     :height: 10cm
 
-As it can be seen, each cell is curved because a Q2 isoparametric mapping was used. To visualize these high-order cells, we need to subdivide the regular cell to store additional information onto them. A good practice is to use as many subdivisions as the interpolation order of the scheme. Hence, we used ``subdivision = 2`` in the simulation control subsection. Finally, by default, Paraview does not render high-order elements. To enable the rendering of high-order elements, the *Nonlinear Subdivision Level* slider must be increased above one. For more information on this topic, please consult the deal.II wiki page on `rendering high-order elements <https://github.com/dealii/dealii/wiki/Notes-on-visualizing-high-order-output>`_.
+As it can be seen, each cell is curved because a Q2 isoparametric mapping was used. To visualize these high-order cells, we need to subdivide the regular cell to store additional information onto them. A good practice is to use as many subdivisions as the polynomial degree of the scheme. Hence, we used ``subdivision = 2`` in the simulation control subsection. Finally, by default, Paraview does not render high-order elements. To enable the rendering of high-order elements, the *Nonlinear Subdivision Level* slider must be increased above one. For more information on this topic, please consult the deal.II wiki page on `rendering high-order elements <https://github.com/dealii/dealii/wiki/Notes-on-visualizing-high-order-output>`_.
 
 .. note::
   To showcase the curvature of the cells, we have illustrated the results on a mesh coarser that the initial mesh used in this simulation.
