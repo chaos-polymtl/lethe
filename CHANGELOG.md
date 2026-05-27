@@ -3,6 +3,10 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+### Changed
+
+- MINOR The project version in `CMakeLists.txt` has been updated with the latest released version. [#2001](https://github.com/chaos-polymtl/lethe/pull/2001)
+
 ## [Master] - 2026/05/18
 
 ### Fixed
