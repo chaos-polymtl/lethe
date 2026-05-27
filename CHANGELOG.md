@@ -68,8 +68,28 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 - MINOR Description (#1965).
-This PR implements Neumann traction boundary condition assembler for both matrix-based and matrix-free solvers to solve for the incompressible Navier-Stokes equations.
+This PR implements Neumann traction boundary condition assembler for both matrix-based and matrix-free solvers to solve for the incompressible Navier-Stokes equations. The feature has been tested with the `method of manufactured solutions - 2d problem` adapted to have Neumann boundary condition on the top edge of the domain. Finally, a test is added for both Matrix-based and Matrix-free Navier-Stokes solvers solving the adapted mms_2d_problem with the `mms_2d_fe2_neumann_traction_navierstokes.prm` to keep track of its changes in the future. [#1965](https://github.com/chaos-polymtl/lethe/pull/1965)
 
-The motivation for this implementation is to utilize the lethe multiphysics (fluid + heat transfer) for ocean modelling.
+[Sample] - YYYY/MM/DD
+Added
+
+    MAJOR/MINOR/PATCH Description (#PR).
+
+Changed
+
+    MAJOR/MINOR/PATCH Description (#PR).
+
+Deprecated
+
+    MAJOR/MINOR/PATCH Description (#PR).
+
+Removed
+
+    MAJOR/MINOR/PATCH Description (#PR).
+
+Fixed
+
+    MAJOR/MINOR/PATCH Description (#PR).
+
 
 

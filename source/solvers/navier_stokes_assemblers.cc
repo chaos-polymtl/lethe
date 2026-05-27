@@ -2242,17 +2242,9 @@ template class PressureBoundaryCondition<3>;
 template <int dim>
 void
 NeumannTractionBoundaryCondition<dim>::assemble_matrix(
-  const NavierStokesScratchData<dim>   &scratch_data,
-  StabilizedMethodsTensorCopyData<dim> &copy_data)
-{
-  // This method is just for compilation purpose and no assembly is done.
-  (void)scratch_data;
-  (void)copy_data;
-  AssertThrow(
-    false,
-    ExcMessage(
-      "Neumann traction boundary condition does not have a matrix contribution"));
-}
+  [[maybe_unused]] const NavierStokesScratchData<dim>   &scratch_data,
+  [[maybe_unused]] StabilizedMethodsTensorCopyData<dim> &copy_data)
+{}
 
 template <int dim>
 void
@@ -2276,13 +2268,13 @@ NeumannTractionBoundaryCondition<dim>::assemble_rhs(
   auto &local_rhs = copy_data.local_rhs;
 
   // Neumann traction boundary condition, loop on faces
-  //    ∫_Γ_N  v · t  dΓ_N
+  //    ∫_Γ_N  v · traction_fn  dΓ_N
   //
   // where:
   //   - Γ_N is the boundary domain where the Neumann traction condition is
   //   applied
   //   - v is the velocity test function,
-  //   - t is the prescribed traction on the boundary Γ_N.
+  //   - traction_fn is the prescribed traction on the boundary Γ_N.
 
   for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
     {

@@ -23,7 +23,7 @@ or in Einstein notation:
     \nu \partial_i u_j n_j  - p n_i - \beta ( u_k n_k)_{-} u_i = 0
 
 where :math:`\beta` is a constant  and :math:`(\mathbf{u}\cdot \mathbf{n})_{-}` is :math:`\min (0,\mathbf{u}\cdot \mathbf{n})`. We refer the reader to the work of `Arndt et al 2015 <https://www.mathsim.eu/~darndt/files/ENUMATH_2015.pdf>`_  for more detail.
-
+* ``neumann traction`` imposes Neumann boundary conditions on the boundary.
 .. code-block:: text
 
   subsection boundary conditions
@@ -61,6 +61,12 @@ where :math:`\beta` is a constant  and :math:`(\mathbf{u}\cdot \mathbf{n})_{-}` 
     subsection bc 1
       set type = noslip
     end
+    subsection bc 2
+      set type = neumann traction
+      subsection traction fn
+        set Function expression = 2x; 5xy; 3yz; 0
+      end
+
   end
 
 * ``number`` specifies the number of boundary conditions of the problem. Hence, ``set number`` refers to the number of ``bc`` subsections, and not the number of boundary ids in the mesh. For instance, periodicity between 2 boundaries counts as 1 condition even if it requires two distinct boundary ids.
@@ -97,6 +103,7 @@ where :math:`\beta` is a constant  and :math:`(\mathbf{u}\cdot \mathbf{n})_{-}` 
 
     * ``boundary layer thickness`` (:math:`d_w`) is the parameter applied to the ``partial slip`` boundary condition. It is used to estimate the tangential shear stress :math:`\tau_t = -\mu \frac{u}{d_w}`. For very high ``boundary layer thicknes``, the boundary layer should behave exactly like the ``slip`` condition.
 
+    * ``traction fn`` is used to specify the prescribed Neumann traction vector-valued function on the boundary using function expressions. The function should be defined as a vector of size :math:`dim + 1`, where the first :math:`dim` components correspond to the traction in the x, y (in 2D) and x, y, z directions (in 3D), and the last component is for compatibility reasons (during assembly, we test this traction function with a test function that has 4 components in Matrix Free)
 .. caution::
 	While using the ``lethe-fluid-sharp`` solver, it is wise to assign a weak type of boundary (``outlet``, ``partial slip``, or ``function weak``) to at least one boundary. The presence of particle(s) has a non-null contribution to the divergence of the problem, making it much harder for the linear solver to converge unless it is given some flexibility through of boundaries.
 

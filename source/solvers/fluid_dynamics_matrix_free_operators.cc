@@ -1571,7 +1571,7 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
                 // faces, a value must be provided even when the operator is
                 // assembled. When the RHS is being assembled, we provide the
                 // value of the traction, and when the operator is assembled, we
-                // provide a zero value. This contexpr if has zero cost.
+                // provide a zero value.
                 if constexpr (assemble_residual)
                   // The matrix free solver assembles the residual and not - the
                   // residual, so a minus sign here is necessary.

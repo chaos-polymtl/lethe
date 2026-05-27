@@ -233,7 +233,10 @@ namespace BoundaryConditions
   class NSBoundaryConditions : public BoundaryConditions
   {
   public:
-    /// Functions for (u, v, w, p, (Neumann traction: t)) for all boundaries
+    /// Functions for (u : x component of the velocity, v : y component of the
+    /// velocity
+    ///, w : z-component of the velocity, p : pressure, Neumann traction:
+    /// traction_fn) for all boundaries
     std::map<types::boundary_id, std::shared_ptr<NSBoundaryFunctions<dim>>>
       navier_stokes_functions;
 
@@ -2062,6 +2065,15 @@ class NavierStokesTractionFunctionDefined : public Function<dim>
 {
   Functions::ParsedFunction<dim> *traction_fn;
 
+  /**
+   * @brief Constructor that initializes the traction_fn , a pointer to
+   * the ParsedFunction type with the parameter p_t and calls the constructor
+   * of the base class Function with the appropriate number of components
+   *
+   * @param[in] p_t A pointer to the function that defines the traction boundary
+   * condition
+   */
+
 public:
   NavierStokesTractionFunctionDefined(Functions::ParsedFunction<dim> *p_t)
     : Function<dim>(dim + 1)
@@ -2091,16 +2103,6 @@ NavierStokesTractionFunctionDefined<dim>::value(
 {
   Assert(component < this->n_components,
          ExcIndexRange(component, 0, this->n_components));
-
-  /*
-   DofHandler associated with MatrixFree is based on an FE system where the last
-   component is associated with the pressure. Thus, if the component corresponds
-   to the pressure, we return 0 since the traction boundary condition is only
-   applied on the velocity components.
-  */
-  if (component == this->n_components - 1)
-    return 0.;
-
 
   return traction_fn->value(point, component);
 }

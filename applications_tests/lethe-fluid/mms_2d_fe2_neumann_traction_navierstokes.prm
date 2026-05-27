@@ -38,14 +38,6 @@ subsection mesh
 end
 
 #---------------------------------------------------
-# Timer
-#---------------------------------------------------
-
-subsection timer
-  set type = iteration
-end
-
-#---------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
 
@@ -112,7 +104,7 @@ end
 subsection non-linear solver
   subsection fluid dynamics
     set tolerance = 1e-10
-    set verbosity = verbose
+    set verbosity = quiet
   end
 end
 
@@ -125,6 +117,6 @@ subsection linear solver
     # Set type of preconditioner for the iterative solver
     set preconditioner              = amg
     set amg preconditioner ilu fill = 3
-    set verbosity                   = verbose
+    set verbosity                   = quiet
   end
 end
