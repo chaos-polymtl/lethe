@@ -122,7 +122,10 @@ The analytical solution for the Taylor-Couette problem is only valid at low Reyn
 FEM Interpolation
 ~~~~~~~~~~~~~~~~~
 
-Lethe supports the use of arbitrary interpolation order. The :math:`\mathcal{L}^2` norm of the error is :math:`\mathcal{O}\left(h^{n+1} \right)` where :math:`h` is a measure of the element size and :math:`n` is the interpolation order of the velocity. However, since the torque applied on the inner cylinder depends on the deviatoric stress tensor, which depends on the velocity gradient, its error will be :math:`\mathcal{O}(h^n)`. Taking this into account, we use second order polynomials in this example to obtain higher accuracy on the torque. We specify the interpolation order for both pressure and velocity using the ``FEM`` subsection:
+Lethe supports the use of arbitrary interpolation order. The :math:`\mathcal{L}^2` norm of the error is :math:`\mathcal{O}\left(h^{p+1} \right)` where :math:`h` is a measure of the element size and
+ :math:`p` is the degree of the polynomial shape function of the velocity. However, since the torque applied on the inner cylinder depends on the deviatoric stress tensor, which depends on the velocity gradient,
+ its error will be :math:`\mathcal{O}(h^p)`. Taking this into account, we use second degree polynomials to obtain higher accuracy on the torque. We specify the polynomial degree for both
+ pressure and velocity using the ``FEM`` subsection:
 
 .. code-block:: text
 

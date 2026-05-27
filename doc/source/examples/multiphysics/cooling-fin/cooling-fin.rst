@@ -184,7 +184,7 @@ In the ``mesh`` subsection, we define a cylinder with the appropriate dimensions
 FEM 
 ~~~~
 
-We use the ``FEM`` subsection to define the order of the finite element method used in the simulation. We set the order to 2 for the temperature field.
+We use the ``FEM`` subsection to define the polynomial degree of the elements used in the simulation. We set the polynomial degree to 2 for the temperature.
 
 .. code-block:: text
 

@@ -128,7 +128,7 @@ By default, simulations only contain a single fluid which is labeled ``0``.
 FEM Interpolation
 ~~~~~~~~~~~~~~~~~
 
-Lethe supports the use of polynomial interpolation of arbitrary degree. The default solver for this case is ``lethe-fluid`` which uses a stabilized method and supports equal order interpolation.
+Lethe supports the use of polynomial interpolation of arbitrary degree. The default solver for this case is ``lethe-fluid`` which uses a stabilized method and supports the use of equal polynomial degree for both pressure and velocity.
 
 We specify the interpolation polynomial degree for both pressure and velocity using the ``FEM`` subsection:
 

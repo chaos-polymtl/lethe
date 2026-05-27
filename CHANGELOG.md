@@ -17,7 +17,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Deprecated
 
-- MINOR The FEM subsection parameters `velocity order`, `pressure order`, `temperature order`, `tracer order`, `cls order` (and its alias `VOF order`), `void fraction order`, `phase cahn hilliard order`, `potential cahn hilliard order`, `electromagnetics trial order`, and `electromagnetics test order` have been renamed to use `degree` instead of `order` (e.g., `velocity degree`, `pressure degree`). The parameter name `degree` is more adequate, since it refers to the degree of the underlying shape functions that are used. The old names are kept as deprecated aliases and will continue to work but will trigger a deprecation warning. All examples, application tests, and documentation have been updated to use the new names. [#1994](https://github.com/chaos-polymtl/lethe/pull/1994)
+- MAJOR The FEM subsection parameters `velocity order`, `pressure order`, `temperature order`, `tracer order`, `cls order` (and its alias `VOF order`), `void fraction order`, `phase cahn hilliard order`, `potential cahn hilliard order`, `electromagnetics trial order`, and `electromagnetics test order` have been renamed to use `degree` instead of `order` (e.g., `velocity degree`, `pressure degree`). The parameter name `degree` is more adequate, since it refers to the degree of the underlying shape functions that are used. The old names are kept as deprecated aliases and will continue to work but will trigger a deprecation warning. All examples, application tests, and documentation have been updated to use the new names. [#1994](https://github.com/chaos-polymtl/lethe/pull/1994)
 
 ## [Master] - 2026/05/18
 
