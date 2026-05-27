@@ -1201,31 +1201,31 @@ namespace Parameters
    */
   struct FEM
   {
-    // Interpolation order velocity
+    // Interpolation degree velocity
     unsigned int velocity_order;
 
-    // Interpolation order pressure
+    // Interpolation degree pressure
     unsigned int pressure_order;
 
-    // Interpolation order void fraction
+    // Interpolation degree void fraction
     unsigned int void_fraction_order;
 
-    // Interpolation order temperature
+    // Interpolation degree temperature
     unsigned int temperature_order;
 
-    // Interpolation order tracer
+    // Interpolation degree tracer
     unsigned int tracer_order;
 
     // Switch tracer to DG formulation instead of CG
     bool tracer_uses_dg;
 
-    // Interpolation order cls model
+    // Interpolation degree cls model
     unsigned int CLS_order;
 
     // Switch cls to DG formulation instead of CG
     bool CLS_uses_dg;
 
-    // Interpolation order Cahn-Hilliard
+    // Interpolation degree Cahn-Hilliard
     unsigned int phase_cahn_hilliard_order;
     unsigned int potential_cahn_hilliard_order;
 
@@ -1233,10 +1233,10 @@ namespace Parameters
     bool enable_bubble_function_velocity;
     bool enable_bubble_function_pressure;
 
-    /// Polynomial order for the different electromagnetics spaces.
-    /// The trial order sets the polynomial degree for the solution and the test
-    /// order is used for the computation of the cell matrix necessary when
-    /// solving a system using the DPG method.
+    /// Polynomial degree for the different electromagnetics spaces.
+    /// The trial degree sets the polynomial degree for the solution and the
+    /// test degree is used for the computation of the cell matrix necessary
+    /// when solving a system using the DPG method.
     unsigned int electromagnetics_trial_order;
     unsigned int electromagnetics_test_order;
 

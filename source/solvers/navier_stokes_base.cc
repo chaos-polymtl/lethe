@@ -3010,7 +3010,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       DataOutFaces<dim> data_out_faces;
 
       // Add the additional flag to enable high-order cells output when the
-      // velocity interpolation order is larger than 1
+      // velocity interpolation degree is larger than 1
       DataOutBase::VtkFlags flags;
       if (this->velocity_fem_degree > 1)
         flags.write_higher_order_cells = true;
