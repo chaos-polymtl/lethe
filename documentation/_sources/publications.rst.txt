@@ -9,9 +9,11 @@ Preprints
 
 This section regroups preprints of journal articles already submitted, but which are still under review.
 
-* `H. Papillon-Laroche, A. Alphonius, M. Schreter-Fleischhacker, J.-P. Harvey, and B. Blais. "Geometric Reinitialization for Capillary Flows: a Comparative Study with State-of-the-Art Conservative Level-Set Methods," arXiv preprint arXiv:2602.00275, 2026. <https://doi.org/10.48550/arXiv.2602.00275>`_.
+* `H. Papillon-Laroche, A. Alphonius, M. Schreter-Fleischhacker, J.-P. Harvey, and B. Blais, "Geometric Reinitialization for Capillary Flows: a Comparative Study with State-of-the-Art Conservative Level-Set Methods," arXiv preprint arXiv:2602.00275, 2026. <https://doi.org/10.48550/arXiv.2602.00275>`_.
 
-* `O. Guévremont, O. Gazil, F. Galli, N. Virgilio, and B Blais. "Surface-access limitation in catalytic porous monoliths: Performance diagnosis using pore-resolved CFD," arXiv preprint arXiv:2604.03514, 2026. <https://doi.org/10.48550/arXiv.2604.03514>`_.
+* `O. Guévremont, O. Gazil, F. Galli, N. Virgilio, and B. Blais, "Surface-access limitation in catalytic porous monoliths: Performance diagnosis using pore-resolved CFD," arXiv preprint arXiv:2604.03514, 2026. <https://doi.org/10.48550/arXiv.2604.03514>`_.
+
+* `O. Gaboriault, A. Succar, C. Delêtre, A. Timercan, R. Pelletier, D. Melancon and B. Blais, "From Angle of Repose to Heap Morphology: Full-Field Calibration of DEM for Granular Powders,"  arXiv preprint arXiv:2605.09371, 2026. <https://doi.org/10.48550/arXiv.2605.09371>`_.
 
 2026
 ----
