@@ -191,7 +191,7 @@ The ``type`` is set to ``nodal``. Then we choose the ``uvwp subsection`` which a
 FEM Interpolation
 ~~~~~~~~~~~~~~~~~
 
-The results obtained for the turbulent Taylor-Couette flow are highly dependent on the numerical dissipation that occurs within the CFD scheme. Generally, high-order methods outperform traditional second-order accurate methods for this type of flow. In the present case, we will compare the usage of second (Q2) and third degree (Q3) polynomial.
+The results obtained for the turbulent Taylor-Couette flow are highly dependent on the numerical dissipation that occurs within the CFD scheme. Generally, high-order methods outperform traditional second-order accurate methods for this type of flow. In the present case, we will compare the usage of second (Q2) and third degree (Q3) polynomials.
 
 .. code-block:: text
 
