@@ -3740,6 +3740,12 @@ namespace Parameters
       enable_darcy_multiply_by_density =
         prm.get_bool("enable Darcy multiply by density");
 
+      AssertThrow(
+        !(enable_darcy_multiply_by_density &&
+          darcy_type == DarcySourceType::none),
+        ExcMessage(
+          "Inconsistency in parameters, 'enable Darcy multiply by density' is set to 'true', but 'Darcy type' is set to 'none'. To enable the multiplication of the density in the Darcy term, the 'Darcy type' should be set to 'phase_change'."));
+
       omega_x = prm.get_double("omega_x");
       omega_y = prm.get_double("omega_y");
       omega_z = prm.get_double("omega_z");
