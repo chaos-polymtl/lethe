@@ -14,7 +14,7 @@ plt.rc('font', **font)
 
 # read text file into pandas DataFrame and create 
 # header with names.
-df = pd.read_csv(sys.argv[1], sep=" ", 
+df = pd.read_csv(sys.argv[1], sep=r"\s+",
                  names=["Date", "Code","Test"])
 
 # transform date to datetime
