@@ -91,19 +91,35 @@ Models A and B differ from each other in the way the momentum equation is calcul
 Model A:
 
 .. math:: 
-    \rho_f \left ( \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right ) \right ) = -\varepsilon_f \nabla p + \varepsilon_f \nabla \cdot \tau + \mathbf{f}_{\mathrm{pf},\mathrm{A}}
+    \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right )  = \frac{1}{\rho_f} \left (-\varepsilon_f \nabla p^* + \varepsilon_f \nabla \cdot \tau + \mathbf{f}_{\mathrm{pf},\mathrm{A}} \right )
 
 Model B:
 
 .. math:: 
-    \rho_f \left ( \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right ) \right ) = -\nabla p + \nabla \cdot \tau +  \mathbf{f}_{\mathrm{pf},\mathrm{B}}
+    \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right ) = \frac{1}{\rho_f} \left (-\nabla p^* + \nabla \cdot \tau +  \mathbf{f}_{\mathrm{pf},\mathrm{B}}\right )
 
 where:
 
 * :math:`\rho_f` is the density of the fluid;
 * :math:`p` is the pressure;
 * :math:`\tau` is the deviatoric stress tensor;
-* :math:`\mathbf{f}_\mathrm{A}^{\mathrm{pf}}` and :math:`\mathbf{f}_\mathrm{B}^{\mathrm{pf}}` denote the interphase momentum exchange terms resulting from fluid–particle interactions in Models A and B, respectively. The term :math:`\mathbf{f}_{\mathrm{pf}}`, which has units of a volumetric force, is obtained by regularizing the particle-fluid interaction forces using a kernel function :math:`k_r` :
+* :math:`\mathbf{f}_\mathrm{A}^{\mathrm{pf}}` and :math:`\mathbf{f}_\mathrm{B}^{\mathrm{pf}}` denote the interphase momentum exchange terms resulting from fluid–particle interactions in Models A and B, respectively. 
+
+It is worth noting that the VANS solver in Lethe solves a kinematic pressure variable defined as:
+
+.. math::
+    p = \frac{p^*}{\rho_f}
+
+where :math:`p^*` is the physical pressure, not withstanding the gravitational contribution, as mentioned earlier. In fact, for numerical convenience, the governing equations are also written in a hydrostatically reduced form, in which the gravitational contribution is absorbed into the pressure definition. As a result, the solved pressure corresponds to a dynamic pressure field.
+
+The full physical pressure can be recovered as:
+
+.. math::
+    p^{\mathrm{phys}} = \rho_f \left(p + \mathbf{g}\cdot\mathbf{x}\right) = p^* + \rho_f \mathbf{g}\cdot\mathbf{x}
+
+where :math:`\mathbf{g}` is the gravitational acceleration vector and :math:`\mathbf{x}` is the position vector.
+
+The term :math:`\mathbf{f}_{\mathrm{pf}}`, which has units of a volumetric force, is obtained by regularizing the particle-fluid interaction forces using a kernel function :math:`k_r` :
 
 
 .. math::
