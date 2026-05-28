@@ -36,10 +36,22 @@ A Darcy-like source term can be added to the simulation using the following para
 .. code-block:: text
 
   subsection velocity source
-    set Darcy type = none
+    set Darcy type                       = none
+    set enable Darcy multiply by density = false
   end
 
 * The ``Darcy type`` parameter specifies the type of Darcy penalization term to be applied to the Navier-Stokes equations. The options are ``none`` or ``phase_change``. The ``phase_change`` model uses the values of the ``Darcy penalty liquid``  and ``Darcy penalty solid`` set-up within the ``phase change`` subsection of the :doc:`physical_properties`.
 
-.. caution::
-  The phase change Darcy model does not currently have a Cahn-Hilliard implementation.
+  .. caution::
+    The phase change Darcy model does not currently have a Cahn-Hilliard implementation.
+
+* The ``enable Darcy multiply by density`` parameter enables the multiplication by the density within the Darcy force term (:math:`\vec{F}_\mathrm{Darcy}`). This is for dimensional consistency when solving the pressure (:math:`p`) rather than the kinematic pressure (:math:`p^* = p / \rho`, with :math:`\rho` the density of the fluid) in the momentum balance. This is the case for the coupling of the :doc:`CLS equation<../../theory/multiphase/cfd/cls>` with the :doc:`incompressible Navier-Stokes equations<../../theory/multiphysics/fluid_dynamics/navier-stokes>`.
+
+  .. math::
+    \vec{F}_\mathrm{Darcy} = \tilde{\rho} \tilde{K} \vec{u}
+
+  where
+
+  * :math:`\tilde{\rho} = (1-\phi)\rho_0 + \phi \rho_1` is the phase indicator (:math:`\phi`) weighted density;
+  * :math:`\tilde{K} = (1-\phi)[\alpha_\mathrm{l}K_\mathrm{0,l} + (1-\alpha_\mathrm{l})K_\mathrm{0,s}] + \phi[\alpha_\mathrm{l}K_\mathrm{1,l} + (1-\alpha_\mathrm{l})K_\mathrm{1,s}]` is the Darcy penalty weighted by the liquid fraction (:math:`\alpha_\mathrm{l}`) and phase indicator, and;
+  * :math:`\vec{u}` is the velocity vector.
