@@ -11,6 +11,7 @@ Multiphysics
     heat-transfer
     tracer
     chns
+    waveguide
 
 .. graphviz:: 
 
