@@ -70,8 +70,8 @@ For this example, Q1 elements are used for both velocity and pressure. The bubbl
 
   subsection FEM
     set enable bubble function velocity = true
-    set velocity order                  = 1
-    set pressure order                  = 1
+    set velocity degree                  = 1
+    set pressure degree                  = 1
   end
 
 Mesh

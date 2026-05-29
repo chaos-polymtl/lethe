@@ -605,10 +605,10 @@ end
 </section>
 <section id="fem-interpolation">
 <h3>FEM Interpolation<a class="headerlink" href="#fem-interpolation" title="Link to this heading">#</a></h3>
-<p>The results obtained for the turbulent Taylor-Couette flow are highly dependent on the numerical dissipation that occurs within the CFD scheme. Generally, high-order methods outperform traditional second-order accurate methods for this type of flow. In the present case, we will compare the usage of second (Q2) and third degree (Q3) polynomial.</p>
+<p>The results obtained for the turbulent Taylor-Couette flow are highly dependent on the numerical dissipation that occurs within the CFD scheme. Generally, high-order methods outperform traditional second-order accurate methods for this type of flow. In the present case, we will compare the usage of second (Q2) and third degree (Q3) polynomials.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection FEM
-  set velocity order = 2  #3 for Q3
-  set pressure order = 2  #3 for Q3
+  set velocity degree = 2  #3 for Q3
+  set pressure degree = 2  #3 for Q3
 end
 </pre></div>
 </div>
@@ -651,7 +651,7 @@ end
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>A good practice is to use as many subdivisions as the interpolation order scheme.</p>
+<p>A good practice is to use as many subdivisions as the highest polynomial degree used in the simulation.</p>
 </div>
 </section>
 <section id="other-subsections">
@@ -694,7 +694,7 @@ end
 </tbody>
 </table>
 </div>
-<p>We note that the enstrophy history does not match either reference scheme. Increasing the order from Q2 to Q3 leads to the following results, which are quite close to the P4 and P5 solutions:</p>
+<p>We note that the enstrophy history does not match either reference scheme. Increasing the polynomial degree from Q2 to Q3 leads to the following results, which are quite close to the P4 and P5 solutions:</p>
 <div class="table-wrapper docutils container">
 <table class="docutils align-default">
 <tbody>
@@ -706,7 +706,7 @@ end
 </tbody>
 </table>
 </div>
-<p>We then revert the scheme order back to Q2 and refine the mesh by setting the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">=</span> <span class="pre">5</span></code> in the mesh subsection resulting in a total of 942,080 cells. This simulation closely matches the references for the first 30 seconds and captures the second peak of enstrophy better than the previous simulations:</p>
+<p>We then revert the degree back to Q2 and refine the mesh by setting the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span> <span class="pre">=</span> <span class="pre">5</span></code> in the mesh subsection resulting in a total of 942,080 cells. This simulation closely matches the references for the first 30 seconds and captures the second peak of enstrophy better than the previous simulations:</p>
 <div class="table-wrapper docutils container">
 <table class="docutils align-default">
 <tbody>

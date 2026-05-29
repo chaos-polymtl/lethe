@@ -65,13 +65,13 @@ This example uses a 2nd order backward differentiation (``method = bdf2``) for t
 FEM Interpolation
 ~~~~~~~~~~~~~~~~~
 
-The interpolation orders for the velocity and pressure are set to Q2-Q1 in the ``FEM`` subsection:
+The polynomial degree for the velocity and pressure are set to Q2-Q1 in the ``FEM`` subsection:
 
 .. code-block:: text
 
     subsection FEM
-      set velocity order = 2
-      set pressure order = 1
+      set velocity degree = 2
+      set pressure degree = 1
     end
 
 Mesh

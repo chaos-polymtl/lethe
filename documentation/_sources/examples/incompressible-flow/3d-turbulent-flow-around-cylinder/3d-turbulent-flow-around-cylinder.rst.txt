@@ -157,13 +157,14 @@ The Reynolds number is defined as: :math:`Re = \frac{U_{\infty}D}{\nu}`, where :
 FEM Interpolation
 ~~~~~~~~~~~~~~~~~
 
-The results obtained for the turbulent flow around a cylinder are highly mesh and order dependent. The present example consider both :math:`Q_1Q_1` and :math:`Q_2Q_2` elements. The order of the velocity and pressure interpolation can be set in the ``FEM`` subsection.
+The results obtained for the turbulent flow around a cylinder are highly mesh and order dependent. The present example considers both :math:`Q_1Q_1` and :math:`Q_2Q_2` elements.
+The polynomial degree for the velocity and pressure interpolation can be set in the ``FEM`` subsection.
 
 .. code-block:: text
 
     subsection FEM
-      set velocity order = 1  
-      set pressure order = 1  
+      set velocity degree = 1  
+      set pressure degree = 1  
     end
 
 Forces

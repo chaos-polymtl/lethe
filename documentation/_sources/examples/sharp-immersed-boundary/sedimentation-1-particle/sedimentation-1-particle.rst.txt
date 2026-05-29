@@ -83,8 +83,8 @@ FEM
 .. code-block:: text
 
     subsection FEM
-      set velocity order = 1
-      set pressure order = 1
+      set velocity degree = 1
+      set pressure degree = 1
     end
 
 Here we use Q1-Q1 elements. This case is only for demonstration purposes as such we want to propose a simulation that is not too costly to run.

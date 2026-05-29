@@ -68,14 +68,14 @@ Time integration is defined by a 2nd order backward differentiation (``bdf2``), 
 FEM
 ~~~~~~~~~~~~~~
 
-The order of resolution for the ``velocity``, ``pressure`` and ``temperature`` are given in the subsection FEM:
+The polynomial degree for the ``velocity``, ``pressure`` and ``temperature`` are given in the subsection FEM:
 
 .. code-block:: text
 
     subsection FEM
-      set velocity order    = 1
-      set pressure order    = 1
-      set temperature order = 2
+      set velocity degree    = 1
+      set pressure degree    = 1
+      set temperature degree = 2
     end
 
 Physical Properties
@@ -407,4 +407,4 @@ Possibilities for Extension
 
 * Study the **sensitivity to the time step**, namely to assess how large the ``time step`` can be before stating any difference in the heat transfer solution.
 * Test a **different time integration scheme** and see if there is any difference in the computational cost and/or the precision with regards to the analytical solution.
-* See how the **resolution order** (``velocity order``, ``pressure order`` and ``temperature order``) affects the precision with regards to the analytical solution.
+* See how the **degree of the polynomial interpolation** (``velocity degree``, ``pressure degree`` and ``temperature degree``) affects the accuracy with regards to the analytical solution.

@@ -497,11 +497,11 @@ end
 </section>
 <section id="fem">
 <h3>FEM<a class="headerlink" href="#fem" title="Link to this heading">#</a></h3>
-<p>The order of resolution for the <code class="docutils literal notranslate"><span class="pre">velocity</span></code>, <code class="docutils literal notranslate"><span class="pre">pressure</span></code> and <code class="docutils literal notranslate"><span class="pre">temperature</span></code> are given in the subsection FEM:</p>
+<p>The polynomial degree for the <code class="docutils literal notranslate"><span class="pre">velocity</span></code>, <code class="docutils literal notranslate"><span class="pre">pressure</span></code> and <code class="docutils literal notranslate"><span class="pre">temperature</span></code> are given in the subsection FEM:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection FEM
-  set velocity order    = 1
-  set pressure order    = 1
-  set temperature order = 2
+  set velocity degree    = 1
+  set pressure degree    = 1
+  set temperature degree = 2
 end
 </pre></div>
 </div>
@@ -766,7 +766,7 @@ end
 <ul class="simple">
 <li><p>Study the <strong>sensitivity to the time step</strong>, namely to assess how large the <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">step</span></code> can be before stating any difference in the heat transfer solution.</p></li>
 <li><p>Test a <strong>different time integration scheme</strong> and see if there is any difference in the computational cost and/or the precision with regards to the analytical solution.</p></li>
-<li><p>See how the <strong>resolution order</strong> (<code class="docutils literal notranslate"><span class="pre">velocity</span> <span class="pre">order</span></code>, <code class="docutils literal notranslate"><span class="pre">pressure</span> <span class="pre">order</span></code> and <code class="docutils literal notranslate"><span class="pre">temperature</span> <span class="pre">order</span></code>) affects the precision with regards to the analytical solution.</p></li>
+<li><p>See how the <strong>degree of the polynomial interpolation</strong> (<code class="docutils literal notranslate"><span class="pre">velocity</span> <span class="pre">degree</span></code>, <code class="docutils literal notranslate"><span class="pre">pressure</span> <span class="pre">degree</span></code> and <code class="docutils literal notranslate"><span class="pre">temperature</span> <span class="pre">degree</span></code>) affects the accuracy with regards to the analytical solution.</p></li>
 </ul>
 </section>
 </section>

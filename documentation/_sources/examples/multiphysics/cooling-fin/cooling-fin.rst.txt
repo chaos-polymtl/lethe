@@ -184,12 +184,12 @@ In the ``mesh`` subsection, we define a cylinder with the appropriate dimensions
 FEM 
 ~~~~
 
-We use the ``FEM`` subsection to define the order of the finite element method used in the simulation. We set the order to 2 for the temperature field.
+We use the ``FEM`` subsection to define the polynomial degree of the elements used in the simulation. We set the polynomial degree to 2 for the temperature.
 
 .. code-block:: text
 
   subsection FEM
-    set temperature order = 2
+    set temperature degree = 2
   end
   
 Postprocessing 
@@ -257,7 +257,7 @@ We see that even with a relatively coarse mesh, the heat fluxes calculated by th
 Possibilities for Extension
 ----------------------------
 
-- The heat flux is sensitive to the finite element order used for the temperature field. Try the simulations again with first-order Q1 elements and compare the results.
+- The heat flux is sensitive to the finite element used for the temperature field. Try the simulations again with first-degree (Q1) elements and compare the results.
 
 ------------
 References

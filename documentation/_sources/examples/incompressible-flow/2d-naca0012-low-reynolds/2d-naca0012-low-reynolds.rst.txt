@@ -294,7 +294,7 @@ The fundamental frequency is :math:`f_1=0.72 \ \text{Hz}`, which gives a sheddin
 Possibilities for Extension
 ---------------------------
 
-- **High-order elements**: In order to get more precise results on the forces and the coefficients, Q2-Q2 elements may be used. It can be modified by setting ``set velocity order = 2`` and ``set pressure order = 2`` in the ``FEM`` subsection of ``naca.prm`` .
+- **High-order elements**: In order to get more precise results on the forces and the coefficients, Q2-Q2 elements may be used. It can be modified by setting ``set velocity degree = 2`` and ``set pressure degree = 2`` in the ``FEM`` subsection of ``naca.prm``.
 
 - **Going 3D**: the mesh can be extruded into the third dimension. Some modifications will be required in the boundary conditions, and getting the correct boundaries id is not trivial. However, with periodic boundary conditions set on the sides of the box, spanwise effects can be taken into account, which should yield much better results.
 

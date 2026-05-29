@@ -562,10 +562,11 @@ end
 </section>
 <section id="fem-interpolation">
 <h3>FEM Interpolation<a class="headerlink" href="#fem-interpolation" title="Link to this heading">#</a></h3>
-<p>The results obtained for the turbulent flow around a cylinder are highly mesh and order dependent. The present example consider both <span class="math notranslate nohighlight">\(Q_1Q_1\)</span> and <span class="math notranslate nohighlight">\(Q_2Q_2\)</span> elements. The order of the velocity and pressure interpolation can be set in the <code class="docutils literal notranslate"><span class="pre">FEM</span></code> subsection.</p>
+<p>The results obtained for the turbulent flow around a cylinder are highly mesh and order dependent. The present example considers both <span class="math notranslate nohighlight">\(Q_1Q_1\)</span> and <span class="math notranslate nohighlight">\(Q_2Q_2\)</span> elements.
+The polynomial degree for the velocity and pressure interpolation can be set in the <code class="docutils literal notranslate"><span class="pre">FEM</span></code> subsection.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection FEM
-  set velocity order = 1
-  set pressure order = 1
+  set velocity degree = 1
+  set pressure degree = 1
 end
 </pre></div>
 </div>

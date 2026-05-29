@@ -547,8 +547,8 @@ end
 <h3>FEM Interpolation<a class="headerlink" href="#fem-interpolation" title="Link to this heading">#</a></h3>
 <p>The results obtained for the Taylor-Green vortex are highly dependent on the numerical dissipation that occurs within the CFD scheme. Generally, high-order methods outperform traditional second-order accurate methods for this type of flow. In the present case, we will investigate the usage of both second and third degree polynomials.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection FEM
-    set velocity order = 2 #3 for Q3
-    set pressure order = 2 #3 for Q3
+    set velocity degree = 2 #3 for Q3
+    set pressure degree = 2 #3 for Q3
 end
 </pre></div>
 </div>

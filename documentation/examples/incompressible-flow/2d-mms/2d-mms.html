@@ -500,7 +500,10 @@ p &amp;= \sin(\pi x)\sin(\pi y)\end{split}\]</div>
 </section>
 <section id="parameter-file">
 <h2>Parameter File<a class="headerlink" href="#parameter-file" title="Link to this heading">#</a></h2>
-<p>The simulations are conducted on the domain <span class="math notranslate nohighlight">\(\Omega = [-1,1] \times [-1,1]\)</span> using two types of meshes: one composed of quadrilateral cells and the other of triangular cells (simplex mesh). The polynomial degree <span class="math notranslate nohighlight">\(k_v\)</span> of the velocity interpolation was varied from <span class="math notranslate nohighlight">\(k_v=1\)</span> to <span class="math notranslate nohighlight">\(k_v=3\)</span> for the quadrilateral mesh, and from <span class="math notranslate nohighlight">\(k_v=1\)</span> to <span class="math notranslate nohighlight">\(k_v=2\)</span> for the triangular mesh, as deal.II does not yet support higher-order polynomials for simplex mesh elements. Additionally, for each velocity approximation degree <span class="math notranslate nohighlight">\(k_v\)</span>, the pressure field polynomial degree <span class="math notranslate nohighlight">\(k_p\)</span> ranged from <span class="math notranslate nohighlight">\(k_p=1\)</span>  up to  <span class="math notranslate nohighlight">\(k_p = k_v\)</span>. Finally, for each combination of velocity and pressure shape functions, six different mesh resolutions were tested on the quadrilateral mesh, while four resolutions were tested on the triangular mesh.</p>
+<p>The simulations are conducted on the domain <span class="math notranslate nohighlight">\(\Omega = [-1,1] \times [-1,1]\)</span> using two types of meshes: one composed of quadrilateral cells and the other of triangular cells (simplex mesh).
+The polynomial degree <span class="math notranslate nohighlight">\(k_v\)</span> of the velocity interpolation was varied from <span class="math notranslate nohighlight">\(k_v=1\)</span> to <span class="math notranslate nohighlight">\(k_v=3\)</span> for the quadrilateral mesh, and from <span class="math notranslate nohighlight">\(k_v=1\)</span> to <span class="math notranslate nohighlight">\(k_v=2\)</span> for the triangular mesh.
+Additionally, for each velocity approximation degree <span class="math notranslate nohighlight">\(k_v\)</span>, the pressure field polynomial degree <span class="math notranslate nohighlight">\(k_p\)</span> ranged from <span class="math notranslate nohighlight">\(k_p=1\)</span>  up to  <span class="math notranslate nohighlight">\(k_p = k_v\)</span>.
+Finally, for each combination of velocity and pressure shape functions, six different mesh resolutions were tested on the quadrilateral mesh, while four resolutions were tested on the triangular mesh.</p>
 <p>Since several parameter files are needed with a common syntax, except for the three parameters varied, a <a class="reference external" href="https://chaos-polymtl.github.io/lethe/documentation/tools/automatic_launch/automatic_launch.html">parameter file template</a> is employed for automated file launch.</p>
 <section id="simulation-control">
 <span id="simulation-control-section"></span><h3>Simulation control<a class="headerlink" href="#simulation-control" title="Link to this heading">#</a></h3>
@@ -555,10 +558,10 @@ end
 </section>
 <section id="fem-interpolation">
 <h3>FEM Interpolation<a class="headerlink" href="#fem-interpolation" title="Link to this heading">#</a></h3>
-<p>Similarly to the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> parameter in the case of a simplex mesh, <code class="docutils literal notranslate"><span class="pre">velocity</span> <span class="pre">order</span></code> and <code class="docutils literal notranslate"><span class="pre">pressure</span> <span class="pre">order</span></code>  are set to the <code class="docutils literal notranslate"><span class="pre">{{Poly_deg_u}}</span></code> and <code class="docutils literal notranslate"><span class="pre">{{Poly_deg_p}}</span></code> parameter variables, respectively, in Jinja2 format.</p>
+<p>Similarly to the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> parameter in the case of a simplex mesh, <code class="docutils literal notranslate"><span class="pre">velocity</span> <span class="pre">degree</span></code> and <code class="docutils literal notranslate"><span class="pre">pressure</span> <span class="pre">degree</span></code>  are set to the <code class="docutils literal notranslate"><span class="pre">{{Poly_deg_u}}</span></code> and <code class="docutils literal notranslate"><span class="pre">{{Poly_deg_p}}</span></code> parameter variables, respectively, in Jinja2 format.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection FEM
-  set velocity order = {{Poly_deg_u}}
-  set pressure order = {{Poly_deg_p}}
+  set velocity degree = {{Poly_deg_u}}
+  set pressure degree = {{Poly_deg_p}}
 end
 </pre></div>
 </div>

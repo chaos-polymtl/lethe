@@ -557,11 +557,12 @@ end
 <h3>FEM Interpolation<a class="headerlink" href="#fem-interpolation" title="Link to this heading">#</a></h3>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>In <a class="reference external" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html">Example 2</a> we have used second order element for velocity. In this problem, since we are using immersed boundary conditions, moving to higher order polynomials would not enhance the order of convergence as the solid boundary is not represented with high accuracy.</p>
+<p>In <a class="reference external" href="https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-taylor-couette-flow/2d-taylor-couette-flow.html">Example 2</a> we have used Q2 (quadratic) elements for velocity.
+In this problem, since we are using immersed boundary conditions, moving to higher degree polynomials would not enhance the order of convergence as the solid boundary is not represented with high accuracy with the Nitsche immersed boundary method.</p>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection FEM
-  set velocity order = 1
-  set pressure order = 1
+  set velocity degree = 1
+  set pressure degree = 1
 end
 </pre></div>
 </div>

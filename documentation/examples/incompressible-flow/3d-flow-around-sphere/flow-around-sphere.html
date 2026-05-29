@@ -568,11 +568,11 @@ end
 </section>
 <section id="fem-interpolation">
 <h3>FEM Interpolation<a class="headerlink" href="#fem-interpolation" title="Link to this heading">#</a></h3>
-<p>The default FEM parameters for this example use first order polynomials. They can be easily changed to Q2-Q1 elements.</p>
-<p>We specify the interpolation order for both pressure and velocity using the <code class="docutils literal notranslate"><span class="pre">FEM</span></code> subsection:</p>
+<p>The default FEM parameters for this example use first degree polynomials. They can be easily changed to Q2-Q1 elements.</p>
+<p>We specify the polynomial degree for both pressure and velocity using the <code class="docutils literal notranslate"><span class="pre">FEM</span></code> subsection:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection FEM
-  set velocity order = 1
-  set pressure order = 1
+  set velocity degree = 1
+  set pressure degree = 1
 end
 </pre></div>
 </div>

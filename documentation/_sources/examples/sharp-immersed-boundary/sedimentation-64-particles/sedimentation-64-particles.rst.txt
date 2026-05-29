@@ -82,8 +82,8 @@ FEM
 .. code-block:: text
 
     subsection FEM
-      set velocity order = 1
-      set pressure order = 1
+      set velocity degree = 1
+      set pressure degree = 1
     end
 
 Here we use Q1Q1 elements to reduce the computational cost.

@@ -536,14 +536,15 @@ end
 </section>
 <section id="fem-interpolation">
 <h3>FEM Interpolation<a class="headerlink" href="#fem-interpolation" title="Link to this heading">#</a></h3>
-<p>Lethe supports the use of arbitrary interpolation order. The default solver for this case is <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code> which uses a stabilized method and supports equal order interpolation.</p>
-<p>We specify the interpolation order for both pressure and velocity using the <code class="docutils literal notranslate"><span class="pre">FEM</span></code> subsection:</p>
+<p>Lethe supports the use of polynomial interpolation of arbitrary degree. The default solver for this case is <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code> which uses a stabilized method and supports the use of equal polynomial degree for both pressure and velocity.</p>
+<p>We specify the interpolation polynomial degree for both pressure and velocity using the <code class="docutils literal notranslate"><span class="pre">FEM</span></code> subsection:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection FEM
-  set velocity order = 1
-  set pressure order = 1
+  set velocity degree = 1
+  set pressure degree = 1
 end
 </pre></div>
 </div>
+<p>Since first-degree polynomials are used, the resulting formulation will be second-order accurate for velocity.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>An alternative would be to use the <code class="docutils literal notranslate"><span class="pre">lethe-fluid-block</span></code> solver for which <a class="reference external" href="https://en.wikipedia.org/wiki/Ladyzhenskaya%E2%80%93Babu%C5%A1ka%E2%80%93Brezzi_condition">LBB</a> stable elements must be used (e.g. Qn-Q(n-1)). Only the stabilized solver supports the use of equal order elements.</p>

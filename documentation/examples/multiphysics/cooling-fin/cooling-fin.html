@@ -605,9 +605,9 @@ end
 </section>
 <section id="fem">
 <h3>FEM<a class="headerlink" href="#fem" title="Link to this heading">#</a></h3>
-<p>We use the <code class="docutils literal notranslate"><span class="pre">FEM</span></code> subsection to define the order of the finite element method used in the simulation. We set the order to 2 for the temperature field.</p>
+<p>We use the <code class="docutils literal notranslate"><span class="pre">FEM</span></code> subsection to define the polynomial degree of the elements used in the simulation. We set the polynomial degree to 2 for the temperature.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection FEM
-  set temperature order = 2
+  set temperature degree = 2
 end
 </pre></div>
 </div>
@@ -678,7 +678,7 @@ end
 <section id="possibilities-for-extension">
 <h2>Possibilities for Extension<a class="headerlink" href="#possibilities-for-extension" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>The heat flux is sensitive to the finite element order used for the temperature field. Try the simulations again with first-order Q1 elements and compare the results.</p></li>
+<li><p>The heat flux is sensitive to the finite element used for the temperature field. Try the simulations again with first-degree (Q1) elements and compare the results.</p></li>
 </ul>
 </section>
 <section id="references">

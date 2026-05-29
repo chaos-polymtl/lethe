@@ -128,16 +128,18 @@ By default, simulations only contain a single fluid which is labeled ``0``.
 FEM Interpolation
 ~~~~~~~~~~~~~~~~~
 
-Lethe supports the use of arbitrary interpolation order. The default solver for this case is ``lethe-fluid`` which uses a stabilized method and supports equal order interpolation. 
+Lethe supports the use of polynomial interpolation of arbitrary degree. The default solver for this case is ``lethe-fluid`` which uses a stabilized method and supports the use of equal polynomial degree for both pressure and velocity.
 
-We specify the interpolation order for both pressure and velocity using the ``FEM`` subsection:
+We specify the interpolation polynomial degree for both pressure and velocity using the ``FEM`` subsection:
 
 .. code-block:: text
 
     subsection FEM
-      set velocity order = 1
-      set pressure order = 1
+      set velocity degree = 1
+      set pressure degree = 1
     end
+
+Since first-degree polynomials are used, the resulting formulation will be second-order accurate for velocity.
 
 .. warning:: 
     An alternative would be to use the ``lethe-fluid-block`` solver for which `LBB <https://en.wikipedia.org/wiki/Ladyzhenskaya%E2%80%93Babu%C5%A1ka%E2%80%93Brezzi_condition>`_ stable elements must be used (e.g. Qn-Q(n-1)). Only the stabilized solver supports the use of equal order elements. 

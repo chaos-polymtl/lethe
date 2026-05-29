@@ -137,13 +137,13 @@ For higher Reynolds numbers with adjoint time stepping, ``frequency = 5`` can be
 FEM
 ~~~
 
-In this example, the interpolation order has been set to one for both velocity and pressure.
+In this example, the degree of the polynomial interpolation used for both velocity and pressure is set to one.
 
 .. code-block:: text
 
     subsection FEM
-      set pressure order = 1
-      set velocity order = 1
+      set pressure degree = 1
+      set velocity degree = 1
     end
 
 Boundary Conditions

@@ -445,27 +445,27 @@
         <article role="main">
           <section id="finite-element-interpolation-fem">
 <h1>Finite Element Interpolation (FEM)<a class="headerlink" href="#finite-element-interpolation-fem" title="Link to this heading">#</a></h1>
-<p>This subsection specifies the characteristics of the finite element method used in the simulations. The interpolation orders of velocity, pressure and other physics are specified. An additional option is also present to enable the use of high-order mapping throughout the entire mesh. At the moment, all variables are interpolated using Lagrange elements. On quad/hex meshes, <a class="reference external" href="https://www.dealii.org/current/doxygen/deal.II/classFE__Q.html">FE_Q</a> elements are used whereas on simplex meshes (triangles, tetrahedron), <a class="reference external" href="https://www.dealii.org/current/doxygen/deal.II/classFE__SimplexP.html">FE_P</a> elements are used.</p>
+<p>This subsection specifies the characteristics of the finite element method used in the simulations. The polynomial degrees for velocity, pressure and other physics are specified. An additional option is also present to enable the use of high-order mapping throughout the entire mesh. At the moment, all variables are interpolated using Lagrange elements. On quad/hex meshes, <a class="reference external" href="https://www.dealii.org/current/doxygen/deal.II/classFE__Q.html">FE_Q</a> elements are used whereas on simplex meshes (triangles, tetrahedron), <a class="reference external" href="https://www.dealii.org/current/doxygen/deal.II/classFE__SimplexP.html">FE_P</a> elements are used.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection FEM
-  # interpolation order pressure
-  set pressure order     = 1
+  # interpolation degree pressure
+  set pressure degree     = 1
 
-  # interpolation order velocity
-  set velocity order     = 1
+  # interpolation degree velocity
+  set velocity degree     = 1
 
-  # interpolation order temperature
-  set temperature order  = 1
+  # interpolation degree temperature
+  set temperature degree  = 1
 
-  # interpolation order tracer
-  set tracer order       = 1
-  set tracer uses dg     = false
+  # interpolation degree tracer
+  set tracer degree       = 1
+  set tracer uses dg      = false
 
-  # interpolation order CLS
-  set CLS order          = 1
+  # interpolation degree CLS
+  set CLS degree          = 1
 
-  # interpolation order cahn hilliard
-  set phase cahn hilliard order     = 1
-  set potential cahn hilliard order = 1
+  # interpolation degree cahn hilliard
+  set phase cahn hilliard degree     = 1
+  set potential cahn hilliard degree = 1
 
   # bubble enrichment function
   set enable bubble function velocity = false
@@ -474,10 +474,10 @@ end
 </pre></div>
 </div>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">velocity</span> <span class="pre">order</span></code> specifies the interpolation order for velocity.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">pressure</span> <span class="pre">order</span></code> specifies the interpolation order for pressure. For the <strong>lethe-fluid</strong> family of solvers, the interpolation order for pressure can be equal or lower than that of velocity. For the <strong>lethe-fluid-block</strong> family of solvers, the interpolation order for pressure has to be one degree lower than that of velocity.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">temperature</span> <span class="pre">order</span></code> specifies the interpolation order for temperature for the heat transfer physics.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">tracer</span> <span class="pre">order</span></code> specifies the interpolation order for the tracer physics.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">velocity</span> <span class="pre">degree</span></code> specifies the polynomial degree for velocity.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pressure</span> <span class="pre">degree</span></code> specifies the polynomial degree for pressure. For the <strong>lethe-fluid</strong> family of solvers, the polynomial degree for pressure can be equal or lower than that of velocity. For the <strong>lethe-fluid-block</strong> family of solvers, the polynomial degree for pressure has to be one degree lower than that of velocity.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">temperature</span> <span class="pre">degree</span></code> specifies the polynomial degree for temperature for the heat transfer physics.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tracer</span> <span class="pre">degree</span></code> specifies the polynomial degree for the tracer physics.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">tracer</span> <span class="pre">uses</span> <span class="pre">dg</span></code> specifies if the Discontinuous Galerkin (DG) formulation is used instead of the Continuous Galerkin (CG) that is used by default, for the tracer physics. This formulation allows discontinuities between elements and at boundaries, and only penalizes them; this prevents oscillations and enforces local conservation of mass, at the cost of more numerous degrees of freedom.</p></li>
 </ul>
 <div class="admonition important">
@@ -485,8 +485,8 @@ end
 <p>The DG formulation is sensitive to the CFL value. Use a small time step to  keep the tracer value bounded. From our experience, a CFL of 1 or lower is recommended.</p>
 </div>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">CLS</span> <span class="pre">order</span></code> specifies the interpolation for the CLS phase indicator. It is not recommended to use higher order interpolation for the CLS method as this may conflict with the bounding and the sharpening mechanism used therein.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">cahn</span> <span class="pre">hilliard</span> <span class="pre">order</span></code> and <code class="docutils literal notranslate"><span class="pre">potential</span> <span class="pre">cahn</span> <span class="pre">hilliard</span> <span class="pre">order</span></code> specify the interpolation order for the phase order parameter and the chemical potential in the Cahn-Hilliard equations. The orders chosen should be equal. They are left as two separate parameters for debugging purposes.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CLS</span> <span class="pre">degree</span></code> specifies the polynomial degree for the CLS phase indicator. It is not recommended to use higher polynomial degrees for the CLS method as this may conflict with the bounding and the sharpening mechanism used therein.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">cahn</span> <span class="pre">hilliard</span> <span class="pre">degree</span></code> and <code class="docutils literal notranslate"><span class="pre">potential</span> <span class="pre">cahn</span> <span class="pre">hilliard</span> <span class="pre">degree</span></code> specify the polynomial degree for the phase order parameter and the chemical potential in the Cahn-Hilliard equations. The degrees chosen should be equal. They are left as two separate parameters for debugging purposes.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">bubble</span> <span class="pre">function</span> <span class="pre">velocity</span></code> and <code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">bubble</span> <span class="pre">function</span> <span class="pre">pressure</span></code> specifies if the bubble enrichment function is used in the velocity and pressure fields, respectively. This is a polynomial enrichment function centered at the mid-point of the cell and that vanishes at the element boundary. It can be used to improve accuracy and stability in Galerkin FEM, similarly to SUPG stabilization; we refer the reader to the work of  <a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/004578259400721X">Franca and Farhat 1995</a> and <a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/004578259290102P">Brezzi et al 1992</a> for more detail.</p></li>
 </ul>
 <div class="admonition warning">
