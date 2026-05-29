@@ -449,7 +449,7 @@
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>Solvers: <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code> with the velocity and pressure polynomial approximations <span class="math notranslate nohighlight">\(\in \{Q_1, Q_2, Q_3\}\)</span> and  <span class="math notranslate nohighlight">\(\in \{P_1, P_2\}\)</span></p></li>
+<li><p>Solvers: <code class="docutils literal notranslate"><span class="pre">lethe-fluid</span></code> with the velocity and pressure polynomial approximations <span class="math notranslate nohighlight">\(\in \{Q_1, Q_2, Q_3\}\)</span> and  <span class="math notranslate nohighlight">\(\in \{P_1, P_2, P_3\}\)</span></p></li>
 <li><p>Steady-state problem</p></li>
 <li><p>Introduction of a source term in the NS equations</p></li>
 <li><p>Output of the <span class="math notranslate nohighlight">\(L^2\)</span> norm of the <a class="reference external" href="https://chaos-polymtl.github.io/lethe/documentation/parameters/cfd/analytical_solution.html#analytical-solution">error relative to the chosen manufactured solution</a></p></li>
@@ -631,7 +631,7 @@ h_{simplex} &amp;= \frac{l_\Omega}{\sqrt{(n_{cells}/8)}}*0.5\end{split}\]</div>
 <p>The following figure shows the variation of  <span class="math notranslate nohighlight">\(|e_p|_2\)</span> with <span class="math notranslate nohighlight">\(h\)</span></p>
 <a class="reference internal image-reference" href="../../../_images/order_of_convergence_pressure.png" id="pressure-convergence"><img alt=":math:`|e_{p}|_2`" class="align-center" id="pressure-convergence" src="../../../_images/order_of_convergence_pressure.png" style="width: 600px;" /></a>
 <p>In both plots, the continuous lines correspond to the quadrilateral mesh, while the dashed lines represent the simplex mesh. It can be seen that the velocity converges to the order <span class="math notranslate nohighlight">\((k_v+1)\)</span> for a velocity shape function of degree <span class="math notranslate nohighlight">\(k_v\)</span>.`</p>
-<p>As for the pressure, it converges at the second-order for the shape functions pairs <span class="math notranslate nohighlight">\(\in \{Q_1-Q_1, Q_2-Q_1, Q_2-Q_2\}\)</span> and <span class="math notranslate nohighlight">\(\in \{P_1-P_1, P_2-P_1, P_2-P_2\}\)</span>, and to the third-order for combinations <span class="math notranslate nohighlight">\(\in \{Q_3-Q_2, Q_3-Q_3\}\)</span>.</p>
+<p>As for the pressure, it converges at order <span class="math notranslate nohighlight">\(\approx 1.6\)</span>  for the shape functions pairs <span class="math notranslate nohighlight">\(\in \{Q_1-Q_1, P_1-P_1\}\)</span>, at second order for the shape functions pairs <span class="math notranslate nohighlight">\(\in \{Q_2-Q_1, Q_2-Q_2, P_1-P_1, P_2-P_1, P_2-P_2\}\)</span>, and to the third-order for combinations <span class="math notranslate nohighlight">\(\in \{Q_3-Q_2, Q_3-Q_3, P_3-P_2, P_3-P_3\}\)</span>.</p>
 <p>Finally, for the same degree of the velocity and pressure approximations and the same mesh resolution, the error is smaller for a quadrilateral mesh, for both the pressure and velocity fields.</p>
 </section>
 <section id="possibilities-for-extension">
