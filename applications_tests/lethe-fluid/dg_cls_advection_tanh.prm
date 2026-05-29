@@ -22,10 +22,10 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set velocity order = 1
-  set pressure order = 1
-  set cls order      = 1
-  set cls uses dg    = true
+  set velocity degree = 1
+  set pressure degree = 1
+  set cls degree      = 1
+  set cls uses dg     = true
 end
 
 #---------------------------------------------------

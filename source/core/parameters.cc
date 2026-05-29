@@ -1728,51 +1728,70 @@ namespace Parameters
   {
     prm.enter_subsection("FEM");
     {
-      prm.declare_entry("velocity order",
+      prm.declare_entry("velocity degree",
                         "1",
-                        Patterns::Integer(),
-                        "interpolation order velocity");
-      prm.declare_entry("pressure order",
+                        Patterns::Integer(0),
+                        "interpolation degree for velocity");
+      prm.declare_alias("velocity degree", "velocity order", true);
+      prm.declare_entry("pressure degree",
                         "1",
-                        Patterns::Integer(),
-                        "interpolation order pressure");
-      prm.declare_entry("void fraction order",
+                        Patterns::Integer(0),
+                        "interpolation degree for pressure");
+      prm.declare_alias("pressure degree", "pressure order", true);
+      prm.declare_entry("void fraction degree",
                         "1",
-                        Patterns::Integer(),
-                        "interpolation order void fraction");
-      prm.declare_entry("temperature order",
+                        Patterns::Integer(0),
+                        "interpolation degree for void fraction");
+      prm.declare_alias("void fraction degree", "void fraction order", true);
+      prm.declare_entry("temperature degree",
                         "1",
-                        Patterns::Integer(),
-                        "interpolation order temperature");
-      prm.declare_entry("tracer order",
+                        Patterns::Integer(0),
+                        "interpolation degree for temperature");
+      prm.declare_alias("temperature degree", "temperature order", true);
+      prm.declare_entry("tracer degree",
                         "1",
-                        Patterns::Integer(),
-                        "interpolation order tracer");
-      prm.declare_entry("cls order",
+                        Patterns::Integer(0),
+                        "interpolation degree for tracer");
+      prm.declare_alias("tracer degree", "tracer order", true);
+      prm.declare_entry("cls degree",
                         "1",
-                        Patterns::Integer(),
-                        "interpolation order tracer");
-      prm.declare_alias("cls order", "VOF order", true);
+                        Patterns::Integer(0),
+                        "interpolation degree for cls");
+      prm.declare_alias("cls degree", "VOF degree");
+      prm.declare_alias("cls degree", "cls order", true);
+      prm.declare_alias("cls degree", "VOF order", true);
       prm.declare_entry(
-        "phase cahn hilliard order",
+        "phase cahn hilliard degree",
         "1",
         Patterns::Integer(),
-        "interpolation order phase parameter in the Cahn-Hilliard equations");
+        "interpolation degree phase parameter for the Cahn-Hilliard equations");
+      prm.declare_alias("phase cahn hilliard degree",
+                        "phase cahn hilliard order",
+                        true);
       prm.declare_entry(
-        "potential cahn hilliard order",
+        "potential cahn hilliard degree",
         "1",
         Patterns::Integer(),
-        "interpolation order chemical potential in the Cahn-Hilliard equations");
+        "interpolation degree chemical potential for the Cahn-Hilliard equations");
+      prm.declare_alias("potential cahn hilliard degree",
+                        "potential cahn hilliard order",
+                        true);
       prm.declare_entry(
-        "electromagnetics trial order",
+        "electromagnetics trial degree",
         "1",
         Patterns::Integer(),
-        "interpolation order for the trial space of the electromagnetics physics (time-harmonic Maxwell equations).");
+        "interpolation degree for the trial space of the electromagnetics physics (time-harmonic Maxwell equations).");
+      prm.declare_alias("electromagnetics trial degree",
+                        "electromagnetics trial order",
+                        true);
       prm.declare_entry(
-        "electromagnetics test order",
+        "electromagnetics test degree",
         "2",
         Patterns::Integer(),
-        "interpolation order for the test space of the electromagnetics physics (time-harmonic Maxwell equations).");
+        "interpolation degree for the test space of the electromagnetics physics (time-harmonic Maxwell equations).");
+      prm.declare_alias("electromagnetics test degree",
+                        "electromagnetics test order",
+                        true);
 
       prm.declare_entry(
         "tracer uses dg",
@@ -1787,15 +1806,17 @@ namespace Parameters
         "Switch CLS to Discontinuous Galerkin (DG) formulation");
       prm.declare_alias("cls uses dg", "VOF uses dg", true);
 
-      prm.declare_entry("enable bubble function velocity",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable bubble enrichment function for velocity field");
+      prm.declare_entry(
+        "enable bubble function velocity",
+        "false",
+        Patterns::Bool(),
+        "Enable bubble enrichment function for the velocity field");
 
-      prm.declare_entry("enable bubble function pressure",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable bubble enrichment function for pressure field");
+      prm.declare_entry(
+        "enable bubble function pressure",
+        "false",
+        Patterns::Bool(),
+        "Enable bubble enrichment function for the pressure field");
     }
     prm.leave_subsection();
   }
@@ -1805,21 +1826,22 @@ namespace Parameters
   {
     prm.enter_subsection("FEM");
     {
-      velocity_order            = prm.get_integer("velocity order");
-      pressure_order            = prm.get_integer("pressure order");
-      void_fraction_order       = prm.get_integer("void fraction order");
-      temperature_order         = prm.get_integer("temperature order");
-      tracer_order              = prm.get_integer("tracer order");
-      tracer_uses_dg            = prm.get_bool("tracer uses dg");
-      CLS_order                 = prm.get_integer("cls order");
-      CLS_uses_dg               = prm.get_bool("cls uses dg");
-      phase_cahn_hilliard_order = prm.get_integer("phase cahn hilliard order");
-      potential_cahn_hilliard_order =
-        prm.get_integer("potential cahn hilliard order");
-      electromagnetics_trial_order =
-        prm.get_integer("electromagnetics trial order");
-      electromagnetics_test_order =
-        prm.get_integer("electromagnetics test order");
+      velocity_degree      = prm.get_integer("velocity degree");
+      pressure_degree      = prm.get_integer("pressure degree");
+      void_fraction_degree = prm.get_integer("void fraction degree");
+      temperature_degree   = prm.get_integer("temperature degree");
+      tracer_degree        = prm.get_integer("tracer degree");
+      tracer_uses_dg       = prm.get_bool("tracer uses dg");
+      CLS_degree           = prm.get_integer("cls degree");
+      CLS_uses_dg          = prm.get_bool("cls uses dg");
+      phase_cahn_hilliard_degree =
+        prm.get_integer("phase cahn hilliard degree");
+      potential_cahn_hilliard_degree =
+        prm.get_integer("potential cahn hilliard degree");
+      electromagnetics_trial_degree =
+        prm.get_integer("electromagnetics trial degree");
+      electromagnetics_test_degree =
+        prm.get_integer("electromagnetics test degree");
       enable_bubble_function_velocity =
         prm.get_bool("enable bubble function velocity");
       enable_bubble_function_pressure =

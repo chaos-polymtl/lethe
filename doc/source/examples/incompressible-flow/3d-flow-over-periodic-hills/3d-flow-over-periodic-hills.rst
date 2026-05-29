@@ -181,16 +181,16 @@ In this example, we enable the calculation of average velocities through the par
 
 FEM
 ~~~
-The FEM subsection specifies the order of the elements used for both velocity and pressure.
+The FEM subsection specifies the polynomial degree used for both pressure and velocity.
 
 .. code-block:: text
 
     subsection FEM
-      set velocity order = 1
-      set pressure order = 1
+      set velocity degree = 1
+      set pressure degree = 1
     end
 
-For this example we simply consider Q1-Q1 elements. However, it can also be run using Q2-Q2 elements.
+For this example we simply consider Q1-Q1 elements. However, it can also be run using Q2-Q2 or Q3-Q3 elements.
 
 Non-linear Solver
 ~~~~~~~~~~~~~~~~~

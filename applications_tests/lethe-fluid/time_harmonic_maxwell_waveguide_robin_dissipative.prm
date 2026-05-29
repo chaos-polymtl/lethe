@@ -41,8 +41,8 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set electromagnetics trial order = 1
-  set electromagnetics test order  = 2
+  set electromagnetics trial degree = 1
+  set electromagnetics test degree  = 2
 end
 
 #---------------------------------------------------

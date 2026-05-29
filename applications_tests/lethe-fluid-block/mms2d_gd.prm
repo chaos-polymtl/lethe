@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2019, 2021, 2023-2024 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2019-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -44,10 +44,10 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  # interpolation order velocity
-  set velocity order = 2
-  # interpolation order pressure
-  set pressure order = 1
+  # degree of the polynomial for velocity
+  set velocity degree = 2
+  # degree of the polynomial for pressure
+  set pressure degree = 1
 end
 
 #---------------------------------------------------

@@ -1196,49 +1196,49 @@ namespace Parameters
   /**
    * @brief FEM - The finite element section
    * controls the properties of the finite element method. This section
-   * controls the order of polynomial integration and the number of quadrature
-   * points within the cells.
+   * controls the interpolation degree of polynomial integration
+   * and the number of quadrature points within the cells.
    */
   struct FEM
   {
-    // Interpolation order velocity
-    unsigned int velocity_order;
+    // Interpolation degree velocity
+    unsigned int velocity_degree;
 
-    // Interpolation order pressure
-    unsigned int pressure_order;
+    // Interpolation degree pressure
+    unsigned int pressure_degree;
 
-    // Interpolation order void fraction
-    unsigned int void_fraction_order;
+    // Interpolation degree void fraction
+    unsigned int void_fraction_degree;
 
-    // Interpolation order temperature
-    unsigned int temperature_order;
+    // Interpolation degree temperature
+    unsigned int temperature_degree;
 
-    // Interpolation order tracer
-    unsigned int tracer_order;
+    // Interpolation degree tracer
+    unsigned int tracer_degree;
 
     // Switch tracer to DG formulation instead of CG
     bool tracer_uses_dg;
 
-    // Interpolation order cls model
-    unsigned int CLS_order;
+    // Interpolation degree cls model
+    unsigned int CLS_degree;
 
     // Switch cls to DG formulation instead of CG
     bool CLS_uses_dg;
 
-    // Interpolation order Cahn-Hilliard
-    unsigned int phase_cahn_hilliard_order;
-    unsigned int potential_cahn_hilliard_order;
+    // Interpolation degree Cahn-Hilliard
+    unsigned int phase_cahn_hilliard_degree;
+    unsigned int potential_cahn_hilliard_degree;
 
     // Option for bubble enrichment functions
     bool enable_bubble_function_velocity;
     bool enable_bubble_function_pressure;
 
-    /// Polynomial order for the different electromagnetics spaces.
-    /// The trial order sets the polynomial degree for the solution and the test
-    /// order is used for the computation of the cell matrix necessary when
-    /// solving a system using the DPG method.
-    unsigned int electromagnetics_trial_order;
-    unsigned int electromagnetics_test_order;
+    /// Polynomial degree for the different electromagnetics spaces.
+    /// The trial degree sets the polynomial degree for the solution and the
+    /// test degree is used for the computation of the cell matrix necessary
+    /// when solving a system using the DPG method.
+    unsigned int electromagnetics_trial_degree;
+    unsigned int electromagnetics_test_degree;
 
     static void
     declare_parameters(ParameterHandler &prm);

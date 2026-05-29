@@ -68,9 +68,9 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set velocity order      = 2
-  set pressure order      = 2
-  set void fraction order = 2
+  set velocity degree      = 2
+  set pressure degree      = 2
+  set void fraction degree = 2
 end
 
 #---------------------------------------------------

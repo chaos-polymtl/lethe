@@ -156,15 +156,15 @@ By default, simulations only contain a single fluid which is labeled ``0``.
 FEM Interpolation
 ~~~~~~~~~~~~~~~~~
 
-The default FEM parameters for this example use first order polynomials. They can be easily changed to Q2-Q1 elements.
+The default FEM parameters for this example use first degree polynomials. They can be easily changed to Q2-Q1 elements.
 
-We specify the interpolation order for both pressure and velocity using the ``FEM`` subsection:
+We specify the polynomial degree for both pressure and velocity using the ``FEM`` subsection:
 
 .. code-block:: text
 
     subsection FEM
-      set velocity order = 1
-      set pressure order = 1
+      set velocity degree = 1
+      set pressure degree = 1
     end
 
 .. warning:: 

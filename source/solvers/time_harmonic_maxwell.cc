@@ -44,43 +44,43 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
       AssertThrow(dim == 3, TimeHarmonicMaxwellDimensionNotSupported(dim));
 
       AssertThrow(
-        simulation_parameters.fem_parameters.electromagnetics_trial_order <
-          simulation_parameters.fem_parameters.electromagnetics_test_order,
+        simulation_parameters.fem_parameters.electromagnetics_trial_degree <
+          simulation_parameters.fem_parameters.electromagnetics_test_degree,
         ExcMessage(
           "The DPG method requires the test space to be of higher order than the trial space."));
 
       // Usual case, for quad/hex meshes
       fe_trial_interior = std::make_shared<FESystem<dim>>(
         FE_DGQ<dim>(
-          simulation_parameters.fem_parameters.electromagnetics_trial_order) ^
+          simulation_parameters.fem_parameters.electromagnetics_trial_degree) ^
           dim,
         FE_DGQ<dim>(
-          simulation_parameters.fem_parameters.electromagnetics_trial_order) ^
+          simulation_parameters.fem_parameters.electromagnetics_trial_degree) ^
           dim,
         FE_DGQ<dim>(
-          simulation_parameters.fem_parameters.electromagnetics_trial_order) ^
+          simulation_parameters.fem_parameters.electromagnetics_trial_degree) ^
           dim,
         FE_DGQ<dim>(
-          simulation_parameters.fem_parameters.electromagnetics_trial_order) ^
+          simulation_parameters.fem_parameters.electromagnetics_trial_degree) ^
           dim);
       fe_trial_skeleton = std::make_shared<FESystem<dim>>(
         FE_Nedelec<dim>(
-          simulation_parameters.fem_parameters.electromagnetics_trial_order),
+          simulation_parameters.fem_parameters.electromagnetics_trial_degree),
         FE_Nedelec<dim>(
-          simulation_parameters.fem_parameters.electromagnetics_trial_order),
+          simulation_parameters.fem_parameters.electromagnetics_trial_degree),
         FE_Nedelec<dim>(
-          simulation_parameters.fem_parameters.electromagnetics_trial_order),
+          simulation_parameters.fem_parameters.electromagnetics_trial_degree),
         FE_Nedelec<dim>(
-          simulation_parameters.fem_parameters.electromagnetics_trial_order));
+          simulation_parameters.fem_parameters.electromagnetics_trial_degree));
       fe_test = std::make_shared<FESystem<dim>>(
         FE_Nedelec<dim>(
-          simulation_parameters.fem_parameters.electromagnetics_test_order),
+          simulation_parameters.fem_parameters.electromagnetics_test_degree),
         FE_Nedelec<dim>(
-          simulation_parameters.fem_parameters.electromagnetics_test_order),
+          simulation_parameters.fem_parameters.electromagnetics_test_degree),
         FE_Nedelec<dim>(
-          simulation_parameters.fem_parameters.electromagnetics_test_order),
+          simulation_parameters.fem_parameters.electromagnetics_test_degree),
         FE_Nedelec<dim>(
-          simulation_parameters.fem_parameters.electromagnetics_test_order));
+          simulation_parameters.fem_parameters.electromagnetics_test_degree));
       mapping = std::make_shared<MappingQ<dim>>(fe_trial_interior->degree);
       cell_quadrature = std::make_shared<QGauss<dim>>(fe_test->degree + 1);
       face_quadrature = std::make_shared<QGauss<dim - 1>>(fe_test->degree + 1);

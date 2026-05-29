@@ -74,7 +74,7 @@ public:
       {
         // for simplex meshes
         fe = std::make_shared<FE_SimplexP<dim>>(
-          simulation_parameters.fem_parameters.tracer_order);
+          simulation_parameters.fem_parameters.tracer_degree);
         mapping         = std::make_shared<MappingFE<dim>>(*fe);
         cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
         face_quadrature =
@@ -90,10 +90,10 @@ public:
         // Usual case, for quad/hex meshes
         if (simulation_parameters.fem_parameters.tracer_uses_dg)
           fe = std::make_shared<FE_DGQ<dim>>(
-            simulation_parameters.fem_parameters.tracer_order);
+            simulation_parameters.fem_parameters.tracer_degree);
         else
           fe = std::make_shared<FE_Q<dim>>(
-            simulation_parameters.fem_parameters.tracer_order);
+            simulation_parameters.fem_parameters.tracer_degree);
         // The mapping must be a minimum of degree 1. This is necessary in the
         // DG method since DG_Q(0) elements are adequate but a mapping of degree
         // 0 does not make sense.

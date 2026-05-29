@@ -191,13 +191,13 @@ The ``type`` is set to ``nodal``. Then we choose the ``uvwp subsection`` which a
 FEM Interpolation
 ~~~~~~~~~~~~~~~~~
 
-The results obtained for the turbulent Taylor-Couette flow are highly dependent on the numerical dissipation that occurs within the CFD scheme. Generally, high-order methods outperform traditional second-order accurate methods for this type of flow. In the present case, we will compare the usage of second (Q2) and third degree (Q3) polynomial.
+The results obtained for the turbulent Taylor-Couette flow are highly dependent on the numerical dissipation that occurs within the CFD scheme. Generally, high-order methods outperform traditional second-order accurate methods for this type of flow. In the present case, we will compare the usage of second (Q2) and third degree (Q3) polynomials.
 
 .. code-block:: text
 
     subsection FEM
-      set velocity order = 2  #3 for Q3
-      set pressure order = 2  #3 for Q3
+      set velocity degree = 2  #3 for Q3
+      set pressure degree = 2  #3 for Q3
     end
 
 Forces
@@ -247,7 +247,7 @@ The ``simulation control`` subsection controls the flow of the simulation. To ma
 
 .. tip::
 
-  A good practice is to use as many subdivisions as the interpolation order scheme. 
+  A good practice is to use as many subdivisions as the highest polynomial degree used in the simulation.
 
 Other Subsections
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -296,7 +296,7 @@ The enstrophy plot features a zoomed section of the enstrophy cascade. The follo
 +-------------------------------------------------------------------------------------------------------------------+
 
 
-We note that the enstrophy history does not match either reference scheme. Increasing the order from Q2 to Q3 leads to the following results, which are quite close to the P4 and P5 solutions:
+We note that the enstrophy history does not match either reference scheme. Increasing the polynomial degree from Q2 to Q3 leads to the following results, which are quite close to the P4 and P5 solutions:
 
 +-------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/enstrophy_comparison_Q3Q3_153k.png                                                            |
@@ -304,7 +304,7 @@ We note that the enstrophy history does not match either reference scheme. Incre
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
-We then revert the scheme order back to Q2 and refine the mesh by setting the ``initial refinement = 5`` in the mesh subsection resulting in a total of 942,080 cells. This simulation closely matches the references for the first 30 seconds and captures the second peak of enstrophy better than the previous simulations:
+We then revert the degree back to Q2 and refine the mesh by setting the ``initial refinement = 5`` in the mesh subsection resulting in a total of 942,080 cells. This simulation closely matches the references for the first 30 seconds and captures the second peak of enstrophy better than the previous simulations:
 
 +-------------------------------------------------------------------------------------------------------------------+
 |  .. figure:: images/enstrophy_comparison_Q2Q2_942k.png                                                            |

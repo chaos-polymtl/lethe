@@ -95,11 +95,11 @@ HeatTransfer<dim>::assemble_nitsche_heat_restriction(bool assemble_matrix)
               // if (dim == 2)
               //   h_cell =
               //     std::sqrt(4. * cell->measure() / M_PI) /
-              //     this->simulation_parameters.fem_parameters.velocity_order;
+              //     this->simulation_parameters.fem_parameters.velocity_degree;
               // else if (dim == 3)
               //   h_cell =
               //     pow(6 * cell->measure() / M_PI, 1. / 3.) /
-              //     this->simulation_parameters.fem_parameters.velocity_order;
+              //     this->simulation_parameters.fem_parameters.velocity_degree;
               //  Penalty parameter is disabled for heat transfer from since we
               //  don't necessarily want to strictly impose a Dirichlet BC
               const double penalty_parameter =

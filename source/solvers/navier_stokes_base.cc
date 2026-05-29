@@ -59,18 +59,18 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
                     TimerOutput::wall_times)
   , simulation_parameters(p_nsparam)
   , flow_control(simulation_parameters.flow_control)
-  , velocity_fem_degree(p_nsparam.fem_parameters.velocity_order)
-  , pressure_fem_degree(p_nsparam.fem_parameters.pressure_order)
-  , number_quadrature_points(p_nsparam.fem_parameters.velocity_order + 1)
+  , velocity_fem_degree(p_nsparam.fem_parameters.velocity_degree)
+  , pressure_fem_degree(p_nsparam.fem_parameters.pressure_degree)
+  , number_quadrature_points(p_nsparam.fem_parameters.velocity_degree + 1)
   , mesh_controller(p_nsparam.mesh_adaptation.maximum_number_elements)
 {
   if (simulation_parameters.mesh.simplex)
     {
       // for simplex meshes
       const FE_SimplexP<dim> velocity_fe(
-        p_nsparam.fem_parameters.velocity_order);
+        p_nsparam.fem_parameters.velocity_degree);
       const FE_SimplexP<dim> pressure_fe(
-        p_nsparam.fem_parameters.pressure_order);
+        p_nsparam.fem_parameters.pressure_degree);
       fe = std::make_shared<FESystem<dim>>(velocity_fe, dim, pressure_fe, 1);
 
       AssertThrow(
@@ -97,17 +97,17 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
 
       if (p_nsparam.fem_parameters.enable_bubble_function_velocity)
         fe_u = std::make_shared<FE_Q_Bubbles<dim>>(
-          p_nsparam.fem_parameters.velocity_order);
+          p_nsparam.fem_parameters.velocity_degree);
       else
         fe_u =
-          std::make_shared<FE_Q<dim>>(p_nsparam.fem_parameters.velocity_order);
+          std::make_shared<FE_Q<dim>>(p_nsparam.fem_parameters.velocity_degree);
 
       if (p_nsparam.fem_parameters.enable_bubble_function_pressure)
         fe_p = std::make_shared<FE_Q_Bubbles<dim>>(
-          p_nsparam.fem_parameters.pressure_order);
+          p_nsparam.fem_parameters.pressure_degree);
       else
         fe_p =
-          std::make_shared<FE_Q<dim>>(p_nsparam.fem_parameters.pressure_order);
+          std::make_shared<FE_Q<dim>>(p_nsparam.fem_parameters.pressure_degree);
 
       fe              = std::make_shared<FESystem<dim>>(*fe_u, dim, *fe_p, 1);
       mapping         = std::make_shared<MappingQ<dim>>(velocity_fem_degree);
@@ -3010,7 +3010,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       DataOutFaces<dim> data_out_faces;
 
       // Add the additional flag to enable high-order cells output when the
-      // velocity interpolation order is larger than 1
+      // velocity interpolation degree is larger than 1
       DataOutBase::VtkFlags flags;
       if (this->velocity_fem_degree > 1)
         flags.write_higher_order_cells = true;

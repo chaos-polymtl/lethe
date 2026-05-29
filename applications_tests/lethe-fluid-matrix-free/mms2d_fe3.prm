@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2023-2024 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2023-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Listing of Parameters
@@ -31,8 +31,8 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set velocity order = 3
-  set pressure order = 3
+  set velocity degree = 3
+  set pressure degree = 3
 end
 
 #---------------------------------------------------

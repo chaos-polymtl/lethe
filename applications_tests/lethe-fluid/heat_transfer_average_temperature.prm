@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Verify if the time-averaged temperature calculation leads to a segfault. The validity of the average temperature is tested in tests/solvers. This is the heat_transfer_conduction in solid test. The subsections post-processing, mesh refinement and restart have been added.
@@ -169,8 +169,8 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set velocity order = 1
-  set pressure order = 1
+  set velocity degree = 1
+  set pressure degree = 1
 end
 
 #---------------------------------------------------

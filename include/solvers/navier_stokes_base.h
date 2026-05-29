@@ -874,7 +874,7 @@ protected:
    */
   SDIRKVectors sdirk_vectors;
 
-  // Finite element order used
+  // Finite element degree used
   const unsigned int velocity_fem_degree;
   const unsigned int pressure_fem_degree;
   unsigned int       number_quadrature_points;

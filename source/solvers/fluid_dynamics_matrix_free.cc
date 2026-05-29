@@ -2669,13 +2669,13 @@ FluidDynamicsMatrixFree<dim>::FluidDynamicsMatrixFree(
   : NavierStokesBase<dim, VectorType, IndexSet>(nsparam)
 {
   AssertThrow(
-    nsparam.fem_parameters.velocity_order ==
-      nsparam.fem_parameters.pressure_order,
+    nsparam.fem_parameters.velocity_degree ==
+      nsparam.fem_parameters.pressure_degree,
     dealii::ExcMessage(
       "Matrix free Navier-Stokes does not support different orders for the velocity and the pressure!"));
 
   this->fe = std::make_shared<FESystem<dim>>(
-    FE_Q<dim>(nsparam.fem_parameters.velocity_order), dim + 1);
+    FE_Q<dim>(nsparam.fem_parameters.velocity_degree), dim + 1);
 
   // Initialize solution shared_ptr
   multiphysics_present_solution =

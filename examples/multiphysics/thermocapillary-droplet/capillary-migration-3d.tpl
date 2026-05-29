@@ -283,10 +283,10 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set velocity order    = 1
-  set pressure order    = 1
-  set cls order         = 1
-  set temperature order = 1
+  set velocity degree    = 1
+  set pressure degree    = 1
+  set cls degree         = 1
+  set temperature degree = 1
 end
 
 # --------------------------------------------------

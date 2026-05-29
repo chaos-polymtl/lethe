@@ -1,8 +1,8 @@
-# SPDX-FileCopyrightText: Copyright (c) 2022-2025 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # Tests DG approach to tracer for a flow inside a cylindrical pipe.
-# In the test, we apply a 2nd order polynomial inlet velocity and tracer concentration,
+# In the test, we apply a 2nd degree polynomial inlet velocity and tracer concentration,
 # which runs until reaching steady-state.
 
 # Listing of Parameters
@@ -26,10 +26,10 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set velocity order = 1
-  set pressure order = 1
-  set tracer order   = 1
-  set tracer uses dg = true
+  set velocity degree = 1
+  set pressure degree = 1
+  set tracer degree   = 1
+  set tracer uses dg  = true
 end
 
 #---------------------------------------------------
