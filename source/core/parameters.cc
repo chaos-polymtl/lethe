@@ -1826,16 +1826,17 @@ namespace Parameters
   {
     prm.enter_subsection("FEM");
     {
-      velocity_degree           = prm.get_integer("velocity degree");
-      pressure_degree           = prm.get_integer("pressure degree");
-      void_fraction_degree      = prm.get_integer("void fraction degree");
-      temperature_degree        = prm.get_integer("temperature degree");
-      tracer_degree             = prm.get_integer("tracer degree");
-      tracer_uses_dg            = prm.get_bool("tracer uses dg");
-      CLS_degree                = prm.get_integer("cls degree");
-      CLS_uses_dg               = prm.get_bool("cls uses dg");
-      phase_cahn_hilliard_order = prm.get_integer("phase cahn hilliard degree");
-      potential_cahn_hilliard_order =
+      velocity_degree      = prm.get_integer("velocity degree");
+      pressure_degree      = prm.get_integer("pressure degree");
+      void_fraction_degree = prm.get_integer("void fraction degree");
+      temperature_degree   = prm.get_integer("temperature degree");
+      tracer_degree        = prm.get_integer("tracer degree");
+      tracer_uses_dg       = prm.get_bool("tracer uses dg");
+      CLS_degree           = prm.get_integer("cls degree");
+      CLS_uses_dg          = prm.get_bool("cls uses dg");
+      phase_cahn_hilliard_degree =
+        prm.get_integer("phase cahn hilliard degree");
+      potential_cahn_hilliard_degree =
         prm.get_integer("potential cahn hilliard degree");
       electromagnetics_trial_degree =
         prm.get_integer("electromagnetics trial degree");

@@ -81,23 +81,23 @@ public:
         // for simplex meshes
         fe = std::make_shared<FESystem<dim>>(
           FE_SimplexP<dim>(
-            simulation_parameters.fem_parameters.phase_cahn_hilliard_order),
+            simulation_parameters.fem_parameters.phase_cahn_hilliard_degree),
           1,
-          FE_SimplexP<dim>(
-            simulation_parameters.fem_parameters.potential_cahn_hilliard_order),
+          FE_SimplexP<dim>(simulation_parameters.fem_parameters
+                             .potential_cahn_hilliard_degree),
           1);
         mapping         = std::make_shared<MappingFE<dim>>(*fe);
         cell_quadrature = std::make_shared<QGaussSimplex<dim>>(
           std::max(
-            simulation_parameters.fem_parameters.phase_cahn_hilliard_order,
+            simulation_parameters.fem_parameters.phase_cahn_hilliard_degree,
             simulation_parameters.fem_parameters
-              .potential_cahn_hilliard_order) +
+              .potential_cahn_hilliard_degree) +
           1);
         face_quadrature = std::make_shared<QGaussSimplex<dim - 1>>(
           std::max(
-            simulation_parameters.fem_parameters.phase_cahn_hilliard_order,
+            simulation_parameters.fem_parameters.phase_cahn_hilliard_degree,
             simulation_parameters.fem_parameters
-              .potential_cahn_hilliard_order) +
+              .potential_cahn_hilliard_degree) +
           1);
         ;
       }
@@ -106,25 +106,25 @@ public:
         // Usual case, for quad/hex meshes
         fe = std::make_shared<FESystem<dim>>(
           FE_Q<dim>(
-            simulation_parameters.fem_parameters.phase_cahn_hilliard_order),
+            simulation_parameters.fem_parameters.phase_cahn_hilliard_degree),
           1,
-          FE_Q<dim>(
-            simulation_parameters.fem_parameters.potential_cahn_hilliard_order),
+          FE_Q<dim>(simulation_parameters.fem_parameters
+                      .potential_cahn_hilliard_degree),
           1);
         mapping         = std::make_shared<MappingQ<dim>>(std::max(
-          simulation_parameters.fem_parameters.phase_cahn_hilliard_order,
-          simulation_parameters.fem_parameters.potential_cahn_hilliard_order));
+          simulation_parameters.fem_parameters.phase_cahn_hilliard_degree,
+          simulation_parameters.fem_parameters.potential_cahn_hilliard_degree));
         cell_quadrature = std::make_shared<QGauss<dim>>(
           std::max(
-            simulation_parameters.fem_parameters.phase_cahn_hilliard_order,
+            simulation_parameters.fem_parameters.phase_cahn_hilliard_degree,
             simulation_parameters.fem_parameters
-              .potential_cahn_hilliard_order) +
+              .potential_cahn_hilliard_degree) +
           1);
         face_quadrature = std::make_shared<QGauss<dim - 1>>(
           std::max(
-            simulation_parameters.fem_parameters.phase_cahn_hilliard_order,
+            simulation_parameters.fem_parameters.phase_cahn_hilliard_degree,
             simulation_parameters.fem_parameters
-              .potential_cahn_hilliard_order) +
+              .potential_cahn_hilliard_degree) +
           1);
       }
 

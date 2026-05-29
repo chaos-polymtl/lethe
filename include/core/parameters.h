@@ -1196,8 +1196,8 @@ namespace Parameters
   /**
    * @brief FEM - The finite element section
    * controls the properties of the finite element method. This section
-   * controls the order of polynomial integration and the number of quadrature
-   * points within the cells.
+   * controls the interpolation degree of polynomial integration
+   * and the number of quadrature points within the cells.
    */
   struct FEM
   {
@@ -1226,8 +1226,8 @@ namespace Parameters
     bool CLS_uses_dg;
 
     // Interpolation degree Cahn-Hilliard
-    unsigned int phase_cahn_hilliard_order;
-    unsigned int potential_cahn_hilliard_order;
+    unsigned int phase_cahn_hilliard_degree;
+    unsigned int potential_cahn_hilliard_degree;
 
     // Option for bubble enrichment functions
     bool enable_bubble_function_velocity;
