@@ -1,6 +1,6 @@
 # Change Log
 All notable changes to the Lethe project must be documented. Each change should be documented in a separate file.
-That file should be located in /release_notes/current/. The name of the file should be YEAR_MONTH_DAY_LASTNAME.
+That file should be located in /release_notes/current/. The name of the file should be YEAR_MONTH_DAY_LASTNAME.md.
 YEAR, MONTH and DAY indicate the moment of the change (e.g. 2026_05_01). LASTNAME is the last name of the author of the PR.
 The format is based on [Keep a Changelog](http://keepachangelog.com/). MAJOR change include the addition of any new significant
 feature as well as any change to a parameter name. MINOR changes are simple fixes and/or corrections that do not have any
