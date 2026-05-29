@@ -283,17 +283,16 @@ legend_labels = []
 for i in range(highlight_x.shape[1]):  # Iterate over the columns
     # Fill legend labels for each line
     legend_labels.append(f"P{v_degu_s[i]} - P{v_degp_s[i]}")
-    if (int(v_degu_s[i]) != 3):
-      x_coords = highlight_x[:, i]  # Get the x-coordinates for the triangle
-      y_coords = highlight_y[:, i]  # Get the y-coordinates for the triangle
-    
-      # Plot the shaded triangle
-      plt.fill(x_coords, y_coords, 'gray', alpha=0.3)  # 'b' is blue, alpha controls transparency
-      # Write the order of convergence next to the filled triangle
-      alpha = 1.075
-      x_center = highlight_x[1,i]*alpha  # You can calculate the center of the triangle to place the text
-      y_center = 5*(highlight_y[1,i] + highlight_y[2,i])/12
-      plt.text(x_center, y_center, f"{v_O_u_mean_s[i]}", fontsize=order_font, ha='center', va='center')
+    x_coords = highlight_x[:, i]  # Get the x-coordinates for the triangle
+    y_coords = highlight_y[:, i]  # Get the y-coordinates for the triangle
+
+    # Plot the shaded triangle
+    plt.fill(x_coords, y_coords, 'gray', alpha=0.3)  # 'b' is blue, alpha controls transparency
+    # Write the order of convergence next to the filled triangle
+    alpha = 1.075
+    x_center = highlight_x[1,i]*alpha  # You can calculate the center of the triangle to place the text
+    y_center = 5*(highlight_y[1,i] + highlight_y[2,i])/12
+    plt.text(x_center, y_center, f"{v_O_u_mean_s[i]}", fontsize=order_font, ha='center', va='center')
 
 # We do this because the files are not read in increasing order of degu and then degp
 # Combine degu and degp into a list of tuples (degu, degp)
@@ -430,18 +429,17 @@ row_to_add = highlight_y[0,:].reshape(1,-1)
 highlight_y = np.vstack((highlight_y, row_to_add))
 
 for i in range(highlight_x.shape[1]):  # Iterate over the columns
-    if (int(v_degu_s[i]) != 3):
-      x_coords = highlight_x[:, i]  # Get the x-coordinates for the triangle
-      y_coords = highlight_y[:, i]  # Get the y-coordinates for the triangle
+    x_coords = highlight_x[:, i]  # Get the x-coordinates for the triangle
+    y_coords = highlight_y[:, i]  # Get the y-coordinates for the triangle
     
-      # Plot the shaded triangle
-      plt.fill(x_coords, y_coords, 'gray', alpha=0.3)  # 'b' is blue, alpha controls transparency
-      # Write the order of convergence next to the filled triangle
-      alpha = 1.075
-      x_center = highlight_x[1,i]*alpha  # You can calculate the center of the triangle to place the text
-      y_center = 5*(highlight_y[1,i] + highlight_y[2,i])/12
-      # y_center = highlight_y[2,i] 
-      plt.text(x_center, y_center, f"{v_O_p_mean_s[i]}", fontsize=order_font, ha='center', va='center')
+    # Plot the shaded triangle
+    plt.fill(x_coords, y_coords, 'gray', alpha=0.3)  # 'b' is blue, alpha controls transparency
+    # Write the order of convergence next to the filled triangle
+    alpha = 1.075
+    x_center = highlight_x[1,i]*alpha  # You can calculate the center of the triangle to place the text
+    y_center = 5*(highlight_y[1,i] + highlight_y[2,i])/12
+    # y_center = highlight_y[2,i] 
+    plt.text(x_center, y_center, f"{v_O_p_mean_s[i]}", fontsize=order_font, ha='center', va='center')
 
 
 lines = [lines[i] for i in sorted_indices_s]

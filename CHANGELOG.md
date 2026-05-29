@@ -3,6 +3,14 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/05/29
+
+### Added
+
+- MINOR The Method of Manufactured Solution example now features results with P3-P2 and P3-P2 elements. The right order of convergence is recovered. [#2003](https://github.com/chaos-polymtl/lethe/pull/2003)
+
+## [Master] - 2026/05/27
+
 ### Changed
 
 - MINOR The project version in `CMakeLists.txt` has been updated with the latest released version. [#2001](https://github.com/chaos-polymtl/lethe/pull/2001)

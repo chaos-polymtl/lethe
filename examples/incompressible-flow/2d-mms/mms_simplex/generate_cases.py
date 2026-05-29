@@ -16,17 +16,16 @@ PATH = os.getcwd()
 # User input
 CASE_PREFIX = 'mms_2d_steady_'
 PRM_FILE = 'mms_2d_steady.prm'
-n_poly_deg = 2
 
 # Generation of data points
 coarse_mesh_ref = 3
 fine_mesh_ref = 7
 poly_deg_min=1
-poly_deg_max=2
+poly_deg_max=3
 
 # ref = np.linspace(coarse_mesh_ref, fine_mesh_ref, number_of_refinements)
-poly_deg = np.linspace(poly_deg_min, poly_deg_max, n_poly_deg)
-mesh_ref = np.linspace(coarse_mesh_ref, fine_mesh_ref, fine_mesh_ref-coarse_mesh_ref+1)
+poly_deg = range(poly_deg_min, poly_deg_max+1)
+mesh_ref = range(coarse_mesh_ref, fine_mesh_ref+1)
 
 # Create Jinja template
 templateLoader = jinja2.FileSystemLoader(searchpath=PATH)
@@ -37,7 +36,7 @@ template = templateEnv.get_template(PRM_FILE)
 # for r in ref:
 for ref in mesh_ref:
   for poly_deg_u in poly_deg:
-      for poly_deg_p in  range(1, int(poly_deg_u)+1):
+      for poly_deg_p in  range(max(int(poly_deg_u)-1,1), int(poly_deg_u)+1):
 
           case_folder_name = f'{CASE_PREFIX}' + 'mesh_ref_' + f'{ref:.0f}' + '_degu_' + f'{poly_deg_u:.0f}' + '_degp_' + f'{poly_deg_p:.0f}'
 
