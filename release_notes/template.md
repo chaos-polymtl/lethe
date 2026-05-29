@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/). MAJOR cha
 feature as well as any change to a parameter name. MINOR changes are simple fixes and/or corrections that do not have any
 impact on simulation results. The content of the change file should follow the following guidelines:
 
-## [Sample] - YYYY/MM/DD
+## [Master] - YYYY/MM/DD
 
 ### Added
 
