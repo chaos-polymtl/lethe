@@ -10,24 +10,24 @@ impact on simulation results. The content of the change file should follow the f
 
 ### Added
 
-- MAJOR/MINOR This PR adds a new feature or a new parameter (#PR).
+- MAJOR/MINOR This PR adds a new feature or a new parameter. [#PR](link)
 
 ### Changed
 
-- MAJOR/MINOR This PR changes the behavior of an existsing feature of parameter (#PR).
+- MAJOR/MINOR This PR changes the behavior of an existing feature of parameter. [#PR](link)
 
 ### Deprecated
 
-- MAJOR/MINOR This PR deprecates a feature or a parameter (#PR).
+- MAJOR/MINOR This PR deprecates a feature or a parameter. [#PR](link)
 
 ### Removed
 
-- MAJOR/MINOR This PR deprecates a feature or a parameter (#PR).
+- MAJOR/MINOR This PR removes a feature or a parameter. [#PR](link)
 
 ### Fixed
 
-- MAJOR/MINOR This PR fixes a bug in an existing feature (#PR).
+- MAJOR/MINOR This PR fixes a bug in an existing feature. [#PR](link)
 
 ### Documentation
 
-- MAJOR/MINOR This PR modifies the documentation including the explanation of the parameters, the theory guide or the examples (#PR).
+- MAJOR/MINOR This PR modifies the documentation including the explanation of the parameters, the theory guide or the examples. [#PR](link)
