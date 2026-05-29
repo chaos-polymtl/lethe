@@ -1,0 +1,5 @@
+## [Sample] - 2026/05/29
+
+### Changed
+
+- MAJOR The CHANGELOG structure of Lethe has been completly changed. The previous implementation relied on a single .md file that would contain the contents of everyone. Regrettably, this led to multiple file conflicts and a large number of rebase that were not necessary. This PR fixes this by introducing a new CHANGELOG structure where every change is now stored in /release_notes/current/. The release_notes/template.md file contains the instruction regarding the content of the individual changelog files (#PR).
