@@ -35,14 +35,15 @@ struct boundary_cells_info_struct
 };
 
 /**
- * @brief Handle the information related to the periodic boundary cells
- * which will be used for particle-wall contact detection.
+ * @brief Handle the information related to the periodic boundary cells,
+ * which will be used for particle-wall contact detection and to find periodic
+ * cell neighbors.
  */
 template <int dim>
 struct periodic_boundaries_cells_info_struct
 {
   // The boundary cell
-  typename Triangulation<dim>::active_cell_iterator cell;
+  typename Triangulation<dim>::active_cell_iterator primary_cell;
 
   // ID of boundary
   types::boundary_id boundary_id;
@@ -53,7 +54,7 @@ struct periodic_boundaries_cells_info_struct
   // A point on the boundary face
   Point<dim> point_on_face;
 
-  // The periodic boundary cell
+  // The associated periodic cell
   typename Triangulation<dim>::active_cell_iterator periodic_cell;
 
   // Normal vector of the periodic boundary face

@@ -86,14 +86,15 @@ particle_particle_fine_search(
               // Getting contact information and particle 2 as local variables
               auto &adjacent_pair_information =
                 adjacent_particles_list_iterator->second;
-              auto &particle_two = adjacent_pair_information.particle_two;
+              auto &particle_two_informations =
+                adjacent_pair_information.particle_two;
 
               // Finding the properties of the particles in contact
               Point<dim, double> particle_two_real_location =
-                particle_two->get_location();
+                particle_two_informations->get_location();
 
-              // Find minimum periodic distance squared between particle one and
-              // the set of periodic images of particle two. The nearest
+              // Find the minimum periodic distance squared between particle one
+              // and the set of periodic images of particle two. The nearest
               // periodic image corresponds to a given periodic offset,
               // indicating if the particles are in contact through a periodic
               // edge, face, or corner.

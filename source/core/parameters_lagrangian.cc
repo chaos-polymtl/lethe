@@ -1554,7 +1554,7 @@ namespace Parameters
                             point_on_rotation_axis,
                             outlet_boundaries,
                             bc_types,
-                            periodic_bc_index);
+                            prm_periodic_boundary_index);
 
       for (unsigned int counter = 0; counter < DEM_BC_number; ++counter)
         {
@@ -1677,7 +1677,7 @@ namespace Parameters
       else if (boundary_type == "periodic")
         {
           this->bc_types.push_back(BoundaryType::periodic);
-          this->periodic_bc_index.push_back(i_bc);
+          this->prm_periodic_boundary_index.push_back(i_bc);
           this->periodic_boundary_0[i_bc] = prm.get_integer("periodic id 0");
           this->periodic_boundary_1[i_bc] = prm.get_integer("periodic id 1");
           this->periodic_direction[i_bc] =

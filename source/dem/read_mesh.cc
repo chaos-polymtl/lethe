@@ -23,7 +23,7 @@ read_mesh(const Parameters::Mesh   &mesh_parameters,
   attach_grid_to_triangulation(triangulation, mesh_parameters);
 
   // Check if there are periodic boundaries
-  if (!bc_params.periodic_bc_index.empty())
+  if (!bc_params.prm_periodic_boundary_index.empty())
     match_periodic_boundaries(triangulation, bc_params);
 
   if (!restart)
@@ -60,7 +60,7 @@ match_periodic_boundaries(Triangulation<dim, spacedim>        &triangulation,
     typename Triangulation<dim, spacedim>::cell_iterator>>
     periodicity_vector;
 
-  for (const auto &i_bc : bc_param.periodic_bc_index)
+  for (const auto &i_bc : bc_param.prm_periodic_boundary_index)
     {
       GridTools::collect_periodic_faces(triangulation,
                                         bc_param.periodic_boundary_0.at(i_bc),

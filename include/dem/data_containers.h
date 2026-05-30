@@ -159,10 +159,12 @@ namespace DEM
                                          std::vector<types::particle_index>>
       particle_particle_candidates;
 
+    // [cell iterators]
+    typedef std::vector<typename Triangulation<dim>::active_cell_iterator>
+      cell_vector;
+
     // [[cell iterator]]
-    typedef std::vector<
-      std::vector<typename Triangulation<dim>::active_cell_iterator>>
-      cells_neighbor_list;
+    typedef std::vector<cell_vector> cells_neighbor_list;
 
     // [[(background cell iterator, solid surface cell iterator)]]
     typedef std::vector<std::vector<
@@ -193,10 +195,6 @@ namespace DEM
         vector_on_boundary;
 
     // [cell iterators]
-    typedef std::vector<typename Triangulation<dim>::active_cell_iterator>
-      cell_vector;
-
-    // [cell iterators]
     typedef std::set<typename Triangulation<dim>::active_cell_iterator>
       cell_set;
 
@@ -208,6 +206,11 @@ namespace DEM
     // <cell id, integer value>
     typedef ankerl::unordered_dense::map<types::global_cell_index, unsigned int>
       cell_index_int_map;
+
+    // <cell iterator, [cell iterator]>
+    typedef std::unordered_map<types::global_cell_index,
+                               std::set<types::boundary_id>>
+      cell_touch_boundary_id;
   };
 
 } // namespace DEM

@@ -126,10 +126,14 @@ DEMSolver<dim, PropertiesIndex>::setup_parameters()
       if (parameters.boundary_conditions.bc_types[i_bc] ==
           Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
         {
+          // number_of_periodic_boundaries_conditions =
+          //   parameters.boundary_conditions.periodic_boundary_0.size();
+
           periodic_boundaries_object.set_periodic_boundaries_information(
             parameters.boundary_conditions.periodic_boundary_0,
+            parameters.boundary_conditions.periodic_boundary_1,
             parameters.boundary_conditions.periodic_direction,
-            parameters.boundary_conditions.periodic_bc_index);
+            parameters.boundary_conditions.prm_periodic_boundary_index);
           break;
         }
     }
@@ -300,22 +304,27 @@ DEMSolver<dim, PropertiesIndex>::setup_triangulation_dependent_parameters()
 
   // Set up the periodic boundaries (if PBC enabled)
   periodic_boundaries_object.map_periodic_cells(
-    triangulation, periodic_boundaries_cells_information);
+    triangulation,
+    periodic_boundaries_cells_information,
+    cell_to_pbc_mesh_id_set);
 
   // Set the combined_periodic_offsets to contact managers and particles contact
   // forces for periodic contact detection (if PBC enabled)
   contact_manager.set_combined_periodic_offsets(
     periodic_boundaries_object.get_combined_periodic_offsets());
+  contact_manager.set_number_of_declared_periodic_boundaries(
+    periodic_boundaries_object.get_number_of_declared_periodic_boundaries());
+
   particle_particle_contact_force_object->set_combined_periodic_offsets(
     periodic_boundaries_object.get_combined_periodic_offsets());
 
   // Set the periodic offsets of the periodic boundary pairs for other classes
-  auto const &periodic_bc_index =
-    periodic_boundaries_object.get_periodic_bc_index();
+  auto const &primary_periodic_bc_index =
+    periodic_boundaries_object.get_primary_periodic_bc_index();
   auto const &periodic_boundaries_ids =
     periodic_boundaries_object.get_periodic_boundaries_ids();
 
-  for (const unsigned int pbc_index : periodic_bc_index)
+  for (const unsigned int pbc_index : primary_periodic_bc_index)
     {
       auto it = periodic_boundaries_ids.find(pbc_index);
       if (it != periodic_boundaries_ids.end())
@@ -416,14 +425,17 @@ DEMSolver<dim, PropertiesIndex>::load_balance()
 
   // If PBC are enabled, update the periodic cells
   periodic_boundaries_object.map_periodic_cells(
-    triangulation, periodic_boundaries_cells_information);
+    triangulation,
+    periodic_boundaries_cells_information,
+    cell_to_pbc_mesh_id_set);
 
   // If ASC is enabled, update the local and ghost cell set
   sparse_contacts_object.update_local_and_ghost_cell_set(background_dh);
 
   // Update neighbors of cells after load balance
   contact_manager.update_cell_neighbors(triangulation,
-                                        periodic_boundaries_cells_information);
+                                        periodic_boundaries_cells_information,
+                                        cell_to_pbc_mesh_id_set);
 
   boundary_cell_object.build(
     triangulation,
@@ -901,7 +913,10 @@ DEMSolver<dim, PropertiesIndex>::solve()
 
   // Build the mapping of the cell neighbors
   contact_manager.execute_cell_neighbors_search(
-    triangulation, periodic_boundaries_cells_information);
+    triangulation,
+    periodic_boundaries_cells_information,
+    cell_to_pbc_mesh_id_set,
+    boundary_id_to_container_index);
 
   // Find boundary cells with faces
   boundary_cell_object.build(

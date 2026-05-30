@@ -19,8 +19,8 @@ find_cell_neighbors(
   // The output vectors of the function are cells_local_neighbor_list and
   // cells_ghost_neighbor_list. The first contains all the local neighbors cells
   // of all local cells; while the second contains all the ghost cells of all
-  // local cells. They are two vectors with size of the number of active cells.
-  // The first elements of all vectors are the main cells
+  // local cells. They are two vectors with the size of the number of active
+  // cells. The first elements of all vectors are the main cells
   typename dem_data_structures<dim>::cell_vector local_neighbor_vector;
   typename dem_data_structures<dim>::cell_vector ghost_neighbor_vector;
 
@@ -107,17 +107,19 @@ find_cell_periodic_neighbors(
   const parallel::distributed::Triangulation<dim> &triangulation,
   const typename dem_data_structures<dim>::periodic_boundaries_cells_info
     &periodic_boundaries_cells_information,
-  typename dem_data_structures<dim>::cells_neighbor_list
-    &cells_local_periodic_neighbor_list,
-  typename dem_data_structures<dim>::cells_neighbor_list
-    &cells_ghost_periodic_neighbor_list,
-  typename dem_data_structures<dim>::cells_neighbor_list
-    &cells_ghost_local_periodic_neighbor_list)
+  const typename dem_data_structures<dim>::cell_touch_boundary_id
+                                     &cell_to_pbc_mesh_id_set,
+  PeriodicBoundariesManipulator<dim> &periodic_boundaries_object,
+  std::vector<typename dem_data_structures<dim>::cells_neighbor_list>
+    &cells_local_periodic_neighbor_lists,
+  std::vector<typename dem_data_structures<dim>::cells_neighbor_list>
+    &cells_ghost_periodic_neighbor_lists,
+  std::vector<typename dem_data_structures<dim>::cells_neighbor_list>
+    &cells_ghost_local_periodic_neighbor_lists)
 {
-  typename dem_data_structures<dim>::cell_vector local_periodic_neighbor_vector;
-  typename dem_data_structures<dim>::cell_vector ghost_periodic_neighbor_vector;
-  typename dem_data_structures<dim>::cell_vector
-    ghost_local_periodic_neighbor_vector;
+  std::map<std::uint8_t, typename dem_data_structures<dim>::cell_vector>
+    local_periodic_neighbor_vectors, ghost_periodic_neighbor_vectors,
+    ghost_local_periodic_neighbor_vectors;
 
   typename dem_data_structures<dim>::cell_set total_cell_list;
   typename dem_data_structures<dim>::cell_set total_ghost_cell_list;
@@ -142,114 +144,138 @@ find_cell_periodic_neighbors(
   // since periodic_boundaries_cells_information is an unordered_multimap
   std::set<typename Triangulation<dim>::active_cell_iterator> processed_cells;
 
-  // Looping over cells struct at periodic boundaries 0
-  for (const auto &pb_cell_struct : periodic_boundaries_cells_information)
+  // Looping on every periodic main cell
+  for (const auto &[main_cell, main_cell_touching_boundaries] :
+       cell_to_pbc_mesh_id_set)
     {
-      auto &cell = pb_cell_struct.second.cell;
-
-      // Skip if we already mapped this cell's periodic neighbors
-      if (processed_cells.find(cell) != processed_cells.end())
+      // Skip if we already mapped this primary cell.
+      // NOTE: Since we are looping of the cell_to_pbc_mesh_id_set container, I
+      // think this if is no longer required since we are looping on
+      // cell_to_pbc_mesh_id_set. Each cell has one entry inside this container,
+      // which wasn't the case when using the periodic info struc, since a cell
+      // touching two periodic boundaries has two structs.
+      if (processed_cells.contains(main_cell))
         continue;
 
-      processed_cells.insert(cell);
+      processed_cells.insert(main_cell);
 
-      // If the cell is owned by the processor
-      if (cell->is_locally_owned())
+      // If the main cell is owned by the processor
+      if (main_cell->is_locally_owned())
         {
-          // The first element of each vector is the cell itself.
-          local_periodic_neighbor_vector.push_back(cell);
-
           // Store every main cell
-          total_cell_list.insert(cell);
+          total_cell_list.insert(main_cell);
 
-          // Empty list of periodic cell neighbor
-          typename dem_data_structures<dim>::cell_vector periodic_neighbor_list;
+          // Empty list of periodic cell neighbors
+          typename dem_data_structures<dim>::cell_vector
+            periodic_neighbor_vector;
 
-          // Get the periodic neighbor of the cell
-          get_periodic_neighbor_list<dim>(cell,
+          // Get the periodic neighbor(s) of the main cell
+          get_periodic_neighbor_list<dim>(main_cell,
                                           coinciding_vertex_groups,
                                           vertex_to_coinciding_vertex_group,
                                           v_to_c,
-                                          periodic_neighbor_list);
+                                          periodic_neighbor_vector);
 
-          for (const auto &periodic_neighbor : periodic_neighbor_list)
+          // Loop on every periodic neighboring cell, determine in which
+          // container it should go
+          for (const auto &periodic_neighbor : periodic_neighbor_vector)
             {
+              // Find the boundaries that are touching the current neighboring
+              // cell.
+              const std::set<types::boundary_id>
+                &neighboring_cell_touching_boundaries =
+                  cell_to_pbc_mesh_id_set.at(periodic_neighbor);
+
+              // Find which boundary (or boundaries) is shared between the main
+              // cell and its neighboring cell
+              std::set<types::boundary_id> combination_of_shared_boundaries =
+                periodic_boundaries_object.find_shared_periodic_boundaries(
+                  main_cell_touching_boundaries,
+                  neighboring_cell_touching_boundaries);
+
+              // From the shared periodic boundaries 0 between the main and
+              // neighboring cell, we find in which container the neighboring
+              // cell should be inserted in.
+              std::uint8_t container_index =
+                periodic_boundaries_object.get_container_index(
+                  combination_of_shared_boundaries);
+
+              // If the neighboring cell is locally owned
               if (periodic_neighbor->is_locally_owned())
                 {
-                  // Check if the neighbor cell has been processed as a
-                  // main cell
+                  // Check if the neighbor cell has been processed as a main
+                  // cell.
                   auto search_iterator =
                     total_cell_list.find(periodic_neighbor);
 
-                  // Check if the neighbor cell is in already in the
-                  // local_periodic_neighbor_vector
-                  // Note from Gabo: I don't understand how this could happen
-                  // since we are looping over cell on boundary 1.
-                  // I think the only case would be if periodic_neighbor_list
-                  // has duplicate cell. If this is the case, it is weird that
-                  // get_periodic_neighbor_list returns a list with duplicates.
-                  auto local_search_iterator =
-                    std::find(local_periodic_neighbor_vector.begin(),
-                              local_periodic_neighbor_vector.end(),
-                              periodic_neighbor);
-
-                  // If the cell neighbor is a local cell and not present
-                  // in the total_cell_list vector, it will be added as the
-                  // neighbor of the main cell.
-                  if (search_iterator == total_cell_list.end() &&
-                      local_search_iterator ==
-                        local_periodic_neighbor_vector.end())
+                  // If the neighboring cell is a local cell and has still not
+                  // been treated as a main cell, it will be added as to the
+                  // neighboring cells of the current main cell.
+                  if (search_iterator == total_cell_list.end())
                     {
-                      local_periodic_neighbor_vector.push_back(
-                        periodic_neighbor);
+                      // Check if
+                      // local_periodic_neighbor_vectors[container_index] exist,
+                      // if not, create it and add the main cell inside, since
+                      // the main cell is always the first iterator of the
+                      // vector.
+                      if (!local_periodic_neighbor_vectors.contains(
+                            container_index))
+                        local_periodic_neighbor_vectors.insert(
+                          {container_index, {main_cell}});
+
+                      // Add the neighboring cell to the vectors
+                      local_periodic_neighbor_vectors[container_index]
+                        .push_back(periodic_neighbor);
                     }
                 }
               else if (periodic_neighbor->is_ghost())
                 {
                   // If the cell neighbor is a ghost, it should be added in
-                  // the ghost_periodic_neighbor_vector container
-                  auto ghost_search_iterator =
-                    std::find(ghost_periodic_neighbor_vector.begin(),
-                              ghost_periodic_neighbor_vector.end(),
-                              periodic_neighbor);
-                  if (ghost_search_iterator ==
-                      ghost_periodic_neighbor_vector.end())
-                    {
-                      if (ghost_periodic_neighbor_vector.empty())
-                        {
-                          ghost_periodic_neighbor_vector.push_back(cell);
-                        }
+                  // ghost_periodic_neighbor_vectors[container_index]
 
-                      ghost_periodic_neighbor_vector.push_back(
-                        periodic_neighbor);
-                    }
+                  // Check if
+                  // ghost_periodic_neighbor_vectors[container_index] exist,
+                  // if not, create it and add the main cell inside, since
+                  // the main cell is always the first iterator of the vector.
+                  if (!ghost_periodic_neighbor_vectors.contains(
+                        container_index))
+                    ghost_periodic_neighbor_vectors.insert(
+                      {container_index, {main_cell}});
+
+                  // Add the neighboring cell to the vectors
+                  ghost_periodic_neighbor_vectors[container_index].push_back(
+                    periodic_neighbor);
                 }
             }
-          if (!local_periodic_neighbor_vector.empty())
-            cells_local_periodic_neighbor_list.push_back(
-              local_periodic_neighbor_vector);
-          if (!ghost_periodic_neighbor_vector.empty())
-            cells_ghost_periodic_neighbor_list.push_back(
-              ghost_periodic_neighbor_vector);
-          local_periodic_neighbor_vector.clear();
-          ghost_periodic_neighbor_vector.clear();
+
+          // Now that every neighboring cell of the main cell has been treated,
+          // we store the cell_vectors in the appropriate containers
+          if (!local_periodic_neighbor_vectors.empty())
+            {
+              for (const auto &[key, value] : local_periodic_neighbor_vectors)
+                cells_local_periodic_neighbor_lists[key].push_back(value);
+              local_periodic_neighbor_vectors.clear();
+            }
+
+          if (!ghost_periodic_neighbor_vectors.empty())
+            {
+              for (const auto &[key, value] : ghost_periodic_neighbor_vectors)
+                cells_ghost_periodic_neighbor_lists[key].push_back(value);
+              ghost_periodic_neighbor_vectors.clear();
+            }
         }
-      else if (cell->is_ghost())
+      else if (main_cell->is_ghost())
         {
           // Since periodic cells are mapped on one side only (cells on pb 0
-          // with cells on pb 1), we need a 3rd container for ghost-local
-          // contacts for force calculation. Here we store local neighbors of
-          // ghost cells.
-
-          // The first element of each vector is the cell itself
-          ghost_local_periodic_neighbor_vector.push_back(cell);
-          total_ghost_cell_list.insert(cell);
+          // with cells on pb 1), we need a 3rd type of container for
+          // ghost-local contacts for force calculation, where the local cell is
+          // on the pb 1 side. Here we store local neighbors of ghost cells.
 
           // Empty list of periodic cell neighbor
           typename dem_data_structures<dim>::cell_vector periodic_neighbor_list;
 
           // Get the periodic neighbor of the cell
-          get_periodic_neighbor_list<dim>(cell,
+          get_periodic_neighbor_list<dim>(main_cell,
                                           coinciding_vertex_groups,
                                           vertex_to_coinciding_vertex_group,
                                           v_to_c,
@@ -259,27 +285,50 @@ find_cell_periodic_neighbors(
             {
               if (periodic_neighbor->is_locally_owned())
                 {
-                  auto search_iterator =
-                    total_ghost_cell_list.find(periodic_neighbor);
+                  // Find the boundaries that are touching the current
+                  // neighboring cell.
+                  const std::set<types::boundary_id>
+                    neighboring_cell_touching_boundaries =
+                      cell_to_pbc_mesh_id_set.at(
+                        periodic_neighbor->active_cell_index());
 
-                  auto local_search_iterator =
-                    std::find(ghost_local_periodic_neighbor_vector.begin(),
-                              ghost_local_periodic_neighbor_vector.end(),
-                              periodic_neighbor);
+                  // Find which boundary (or boundaries) is shared between
+                  // the main cell and its neighboring cell
+                  std::set<types::boundary_id>
+                    combination_of_shared_boundaries =
+                      periodic_boundaries_object
+                        .find_shared_periodic_boundaries(
+                          main_cell_touching_boundaries,
+                          neighboring_cell_touching_boundaries);
 
-                  if (search_iterator == total_ghost_cell_list.end() &&
-                      local_search_iterator ==
-                        ghost_local_periodic_neighbor_vector.end())
-                    {
-                      ghost_local_periodic_neighbor_vector.push_back(
-                        periodic_neighbor);
-                    }
+                  // From the shared boundaries, we find in which container
+                  // the neighboring cell should be inserted in.
+                  std::uint8_t container_index =
+                    periodic_boundaries_object.get_container_index(
+                      combination_of_shared_boundaries);
+
+                  if (!ghost_periodic_neighbor_vectors.contains(
+                        container_index))
+                    ghost_local_periodic_neighbor_vectors[container_index]
+                      .push_back(main_cell);
+
+                  ghost_local_periodic_neighbor_vectors[container_index]
+                    .push_back(periodic_neighbor);
                 }
             }
-          if (!ghost_local_periodic_neighbor_vector.empty())
-            cells_ghost_local_periodic_neighbor_list.push_back(
-              ghost_local_periodic_neighbor_vector);
-          ghost_local_periodic_neighbor_vector.clear();
+
+          // Loop on the ghost_local_periodic_neighbor_vector key and values.
+          // Insert the value inside the
+          // ells_ghost_local_periodic_neighbor_lists[key]
+          if (!ghost_local_periodic_neighbor_vectors.empty())
+            {
+              for (const auto &[key, value] :
+                   ghost_local_periodic_neighbor_vectors)
+                {
+                  cells_ghost_local_periodic_neighbor_lists[key].push_back(
+                    value);
+                }
+            }
         }
     }
 }
@@ -344,37 +393,36 @@ get_periodic_neighbor_list(
                                                  &v_to_c,
   typename dem_data_structures<dim>::cell_vector &periodic_neighbor_list)
 {
-  // Loop over all vertices of the cell (periodic and non periodic)
+  std::set<typename Triangulation<dim>::active_cell_iterator> unique_neighbors;
+
+  // Loop over all vertices of the cell
   for (unsigned int vertex = 0; vertex < cell->n_vertices(); ++vertex)
     {
-      // Get global id of vertex
-      unsigned int vertex_id = cell->vertex_index(vertex);
+      const unsigned int vertex_id = cell->vertex_index(vertex);
 
-      // Check if vertex is at periodic boundary, there should be a key if so
-      if (vertex_to_coinciding_vertex_group.find(vertex_id) !=
-          vertex_to_coinciding_vertex_group.end())
+      auto group_it = vertex_to_coinciding_vertex_group.find(vertex_id);
+
+      if (group_it == vertex_to_coinciding_vertex_group.end())
+        continue;
+
+      const unsigned int coinciding_vertex_key = group_it->second;
+
+      for (const auto coinciding_vertex :
+           coinciding_vertex_groups.at(coinciding_vertex_key))
         {
-          // Get the coinciding vertex key to the current vertex
-          unsigned int coinciding_vertex_key =
-            vertex_to_coinciding_vertex_group.at(vertex_id);
+          // Skip the current vertex
+          if (coinciding_vertex == vertex_id)
+            continue;
 
-          // Store the neighbor cells in list
-          for (auto coinciding_vertex :
-               coinciding_vertex_groups.at(coinciding_vertex_key))
+          for (const auto &neighbor_cell : v_to_c[coinciding_vertex])
             {
-              // Skip the current vertex since we want only cells linked
-              // to the periodic vertices
-              if (coinciding_vertex != vertex_id)
-                {
-                  // Loop over all periodic neighbor
-                  for (const auto &neighbor_id : v_to_c[coinciding_vertex])
-                    {
-                      periodic_neighbor_list.push_back(neighbor_id);
-                    }
-                }
+              unique_neighbors.insert(neighbor_cell);
             }
         }
     }
+
+  periodic_neighbor_list.assign(unique_neighbors.begin(),
+                                unique_neighbors.end());
 }
 
 template void
@@ -404,26 +452,32 @@ find_cell_neighbors<3, true>(
 template void
 find_cell_periodic_neighbors<2>(
   const parallel::distributed::Triangulation<2> &triangulation,
-  const dem_data_structures<2>::periodic_boundaries_cells_info
+  const typename dem_data_structures<2>::periodic_boundaries_cells_info
     &periodic_boundaries_cells_information,
-  dem_data_structures<2>::cells_neighbor_list
-    &cells_local_periodic_neighbor_list,
-  dem_data_structures<2>::cells_neighbor_list
-    &cells_ghost_periodic_neighbor_list,
-  dem_data_structures<2>::cells_neighbor_list
-    &cells_ghost_local_periodic_neighbor_list);
+  const typename dem_data_structures<2>::cell_touch_boundary_id
+                                   &cell_to_pbc_mesh_id_set,
+  PeriodicBoundariesManipulator<2> &periodic_boundaries_object,
+  std::vector<typename dem_data_structures<2>::cells_neighbor_list>
+    &cells_local_periodic_neighbor_lists,
+  std::vector<typename dem_data_structures<2>::cells_neighbor_list>
+    &cells_ghost_periodic_neighbor_lists,
+  std::vector<typename dem_data_structures<2>::cells_neighbor_list>
+    &cells_ghost_local_periodic_neighbor_lists);
 
 template void
 find_cell_periodic_neighbors<3>(
   const parallel::distributed::Triangulation<3> &triangulation,
-  const dem_data_structures<3>::periodic_boundaries_cells_info
+  const typename dem_data_structures<3>::periodic_boundaries_cells_info
     &periodic_boundaries_cells_information,
-  dem_data_structures<3>::cells_neighbor_list
-    &cells_local_periodic_neighbor_list,
-  dem_data_structures<3>::cells_neighbor_list
-    &cells_ghost_periodic_neighbor_list,
-  dem_data_structures<3>::cells_neighbor_list
-    &cells_ghost_local_periodic_neighbor_list);
+  const typename dem_data_structures<3>::cell_touch_boundary_id
+                                   &cell_to_pbc_mesh_id_set,
+  PeriodicBoundariesManipulator<3> &periodic_boundaries_object,
+  std::vector<typename dem_data_structures<3>::cells_neighbor_list>
+    &cells_local_periodic_neighbor_lists,
+  std::vector<typename dem_data_structures<3>::cells_neighbor_list>
+    &cells_ghost_periodic_neighbor_lists,
+  std::vector<typename dem_data_structures<3>::cells_neighbor_list>
+    &cells_ghost_local_periodic_neighbor_lists);
 
 template void
 find_full_cell_neighbors<2>(

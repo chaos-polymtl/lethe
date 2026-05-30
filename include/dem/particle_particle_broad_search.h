@@ -132,11 +132,14 @@ find_particle_particle_periodic_contact_pairs(
     &cells_ghost_periodic_neighbor_list,
   const typename DEM::dem_data_structures<dim>::cells_neighbor_list
     &cells_ghost_local_periodic_neighbor_list,
-  typename DEM::dem_data_structures<dim>::particle_particle_candidates
+  std::vector<
+    typename DEM::dem_data_structures<dim>::particle_particle_candidates>
     &local_contact_pair_periodic_candidates,
-  typename DEM::dem_data_structures<dim>::particle_particle_candidates
+  std::vector<
+    typename DEM::dem_data_structures<dim>::particle_particle_candidates>
     &ghost_contact_pair_periodic_candidates,
-  typename DEM::dem_data_structures<dim>::particle_particle_candidates
+  std::vector<
+    typename DEM::dem_data_structures<dim>::particle_particle_candidates>
     &ghost_local_contact_pair_periodic_candidates);
 
 /**

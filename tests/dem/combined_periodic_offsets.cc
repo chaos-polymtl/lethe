@@ -63,17 +63,20 @@ test()
   // the primary face id (2*d) as both the BC index key and the principal
   // boundary id.
   std::unordered_map<unsigned int, types::boundary_id> primary_ids;
+  std::unordered_map<unsigned int, types::boundary_id> secondary_ids;
   std::unordered_map<unsigned int, unsigned int>       directions;
   std::vector<unsigned int>                            bc_indices;
   for (int d = 0; d < dim; ++d)
     {
-      primary_ids[d] = 2 * d;
-      directions[d]  = d;
+      primary_ids[d]   = 2 * d;
+      secondary_ids[d] = (2 * d) + 1;
+      directions[d]    = d;
       bc_indices.push_back(d);
     }
 
   PeriodicBoundariesManipulator<dim> manipulator;
   manipulator.set_periodic_boundaries_information(primary_ids,
+                                                  secondary_ids,
                                                   directions,
                                                   bc_indices);
 

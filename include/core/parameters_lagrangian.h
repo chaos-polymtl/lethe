@@ -796,7 +796,7 @@ namespace Parameters
       std::vector<unsigned int> outlet_boundaries;
 
       /// Index of boundary conditions that are periodic.
-      std::vector<unsigned int> periodic_bc_index;
+      std::vector<unsigned int> prm_periodic_boundary_index;
 
       /// Translational velocity of each moving boundary.
       std::unordered_map<unsigned int, Tensor<1, 3>>

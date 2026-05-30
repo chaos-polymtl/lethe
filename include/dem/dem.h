@@ -459,6 +459,16 @@ private:
   typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
     periodic_boundaries_cells_information;
 
+  unsigned int number_of_periodic_boundaries_conditions = 0;
+
+  /**
+   * @brief
+   *
+   */
+  typename DEM::dem_data_structures<dim>::cell_touch_boundary_id
+    cell_to_pbc_mesh_id_set;
+
+
   /**
    * @brief The periodic boundaries manipulator.
    * Only used with a simulation with periodic boundaries.

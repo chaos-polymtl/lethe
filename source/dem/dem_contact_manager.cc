@@ -19,7 +19,11 @@ void
 DEMContactManager<dim, PropertiesIndex>::execute_cell_neighbors_search(
   const parallel::distributed::Triangulation<dim> &triangulation,
   const typename dem_data_structures<dim>::periodic_boundaries_cells_info
-    periodic_boundaries_cells_information)
+    &periodic_boundaries_cells_information,
+  const typename DEM::dem_data_structures<dim>::cell_touch_boundary_id
+    &cell_to_pbc_mesh_id_set,
+  const std::map<std::set<types::boundary_id>, std::uint8_t>
+    &boundary_id_set_to_container_index)
 {
   // Get action manager
   auto *action_manager = DEMActionManager::get_action_manager();
@@ -35,9 +39,11 @@ DEMContactManager<dim, PropertiesIndex>::execute_cell_neighbors_search(
       find_cell_periodic_neighbors<dim>(
         triangulation,
         periodic_boundaries_cells_information,
-        cells_local_periodic_neighbor_list,
-        cells_ghost_periodic_neighbor_list,
-        cells_ghost_local_periodic_neighbor_list);
+        cell_to_pbc_mesh_id_set,
+        number_of_declared_periodic_boundaries,
+        cells_local_periodic_neighbor_lists,
+        cells_ghost_periodic_neighbor_lists,
+        cells_ghost_local_periodic_neighbor_lists);
     }
 
   // Get total (with repetition) neighbors list for floating mesh.
@@ -257,9 +263,9 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_particle_broad_search(
         {
           find_particle_particle_periodic_contact_pairs<dim>(
             particle_handler,
-            cells_local_periodic_neighbor_list,
-            cells_ghost_periodic_neighbor_list,
-            cells_ghost_local_periodic_neighbor_list,
+            cells_local_periodic_neighbor_lists,
+            cells_ghost_periodic_neighbor_lists,
+            cells_ghost_local_periodic_neighbor_lists,
             local_contact_pair_periodic_candidates,
             ghost_contact_pair_periodic_candidates,
             ghost_local_contact_pair_periodic_candidates);

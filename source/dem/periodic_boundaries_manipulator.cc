@@ -12,7 +12,7 @@
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_values.h>
 
-#include <algorithm>
+#include <ranges>
 #include <unordered_map>
 
 using namespace dealii;
@@ -24,7 +24,7 @@ PeriodicBoundariesManipulator<dim>::PeriodicBoundariesManipulator()
 
 template <int dim>
 void
-PeriodicBoundariesManipulator<dim>::get_periodic_boundaries_info(
+PeriodicBoundariesManipulator<dim>::set_periodic_boundaries_info(
   typename Triangulation<dim>::cell_iterator  cell,
   const unsigned int                          face_id,
   periodic_boundaries_cells_info_struct<dim> &boundaries_information)
@@ -41,8 +41,8 @@ PeriodicBoundariesManipulator<dim>::get_periodic_boundaries_info(
   Point<dim>        quad_point;
 
   // Store information of the cell
-  boundaries_information.cell        = cell;
-  boundaries_information.boundary_id = cell->face(face_id)->boundary_id();
+  boundaries_information.primary_cell = cell;
+  boundaries_information.boundary_id  = cell->face(face_id)->boundary_id();
 
   // Store information of the periodic cell
   boundaries_information.periodic_cell = cell->periodic_neighbor(face_id);
@@ -67,75 +67,98 @@ void
 PeriodicBoundariesManipulator<dim>::map_periodic_cells(
   const parallel::distributed::Triangulation<dim> &triangulation,
   typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
-    &periodic_boundaries_cells_information)
+    &periodic_boundaries_cells_information,
+  typename DEM::dem_data_structures<dim>::cell_touch_boundary_id
+    &cell_ID_to_pbc_mesh_id_set)
 {
   if (!periodic_boundaries_enabled)
     return;
 
   periodic_boundaries_cells_information.clear();
   periodic_offsets.clear();
+  cell_ID_to_pbc_mesh_id_set.clear();
 
-  // Temp storage to calculate offsets only once per ID
+  // Temporary storage used to store if the offset of a given periodic boundary
+  // condition has been calculated. The keys of that map are the mesh boundary
+  // IDs of the primary boundary of every pbc.
   std::map<types::boundary_id, bool> offset_calculated;
-  for (auto [bc_index, id] : periodic_boundaries_ids)
+
+  // id is the value of periodic_boundaries_ids, which is the primary boundary
+  // of the pbc.
+  for (auto id : primary_periodic_boundaries_ids | std::views::values)
     offset_calculated[id] = false;
 
   // Iterating over the active cells in the triangulation
   for (const auto &cell : triangulation.active_cell_iterators())
     {
-      if (cell->is_locally_owned() || cell->is_ghost())
+      if ((cell->is_locally_owned() || cell->is_ghost()) && cell->at_boundary())
         {
-          if (cell->at_boundary())
+          // Iterating over cell faces
+          for (const auto &face : cell->face_iterators())
             {
-              // Iterating over cell faces
-              for (const auto &face : cell->face_iterators())
+              types::boundary_id face_boundary_id = face->boundary_id();
+
+              // Loop on every pbc declared in the prm
+              for (const unsigned int prm_pbc_index : prm_periodic_bc_index)
                 {
-                  unsigned int face_boundary_id = face->boundary_id();
+                  // What is the primary boundary ID of the associated PBC.
+                  const types::boundary_id &primary_boundary_mesh_id =
+                    primary_periodic_boundaries_ids.at(prm_pbc_index);
 
-                  // Check if face matches any of the PB IDs
-                  for (const unsigned int pbc_index : periodic_bc_index)
+                  // Check if the face of the current cell is on the PBC
+                  if (face_boundary_id == primary_boundary_mesh_id)
                     {
-                      auto it = periodic_boundaries_ids.find(pbc_index);
-                      if (it != periodic_boundaries_ids.end())
+                      // Get direction corresponding to this BC index
+                      unsigned int current_direction =
+                        directions.at(prm_pbc_index);
+
+                      periodic_boundaries_cells_info_struct<dim>
+                                   boundaries_info;
+                      unsigned int face_id = cell->face_iterator_to_index(face);
+
+                      // Write the needed information boundaries_info
+                      set_periodic_boundaries_info(cell,
+                                                   face_id,
+                                                   boundaries_info);
+
+                      // Insert boundaries_info into multimap
+                      // One entry per boundary found
+                      periodic_boundaries_cells_information.insert(
+                        {cell->global_active_cell_index(), boundaries_info});
+
+                      // We need to store which boundary(ies) the primary and
+                      // secondary cells are touching.
+                      const types::boundary_id &secondary_boundary_mesh_id =
+                        secondary_periodic_boundaries_ids.at(prm_pbc_index);
+
+                      // Iterator of the secondary cell
+                      typename Triangulation<dim>::active_cell_iterator
+                        secondary_cell = boundaries_info.periodic_cell;
+
+                      // Primary cell
+                      cell_ID_to_pbc_mesh_id_set[cell
+                                                   ->global_active_cell_index()]
+                        .insert(primary_boundary_mesh_id);
+
+                      // Secondary cell
+                      cell_ID_to_pbc_mesh_id_set[secondary_cell
+                                                   ->global_active_cell_index()]
+                        .insert(secondary_boundary_mesh_id);
+
+
+                      // Compute and store the offset between the faces of the
+                      // periodic cells if not already done for this boundary
+                      // ID.
+                      if (!offset_calculated[primary_boundary_mesh_id])
                         {
-                          auto const &primary_mesh_id = it->second;
+                          Tensor<1, dim> offset;
+                          offset[current_direction] =
+                            boundaries_info
+                              .point_on_periodic_face[current_direction] -
+                            boundaries_info.point_on_face[current_direction];
 
-                          if (face_boundary_id == primary_mesh_id)
-                            {
-                              // Get direction corresponding to this BC index
-                              unsigned int current_direction =
-                                directions.at(pbc_index);
-
-                              periodic_boundaries_cells_info_struct<dim>
-                                           boundaries_information;
-                              unsigned int face_id =
-                                cell->face_iterator_to_index(face);
-
-                              get_periodic_boundaries_info(
-                                cell, face_id, boundaries_information);
-
-                              // Insert into multimap
-                              // One entry per boundary found
-                              periodic_boundaries_cells_information.insert(
-                                {boundaries_information.cell
-                                   ->global_active_cell_index(),
-                                 boundaries_information});
-
-                              // Calculate offset if not yet done for this PB ID
-                              if (!offset_calculated[face_boundary_id])
-                                {
-                                  Tensor<1, dim> offset;
-                                  offset[current_direction] =
-                                    boundaries_information
-                                      .point_on_periodic_face
-                                        [current_direction] -
-                                    boundaries_information
-                                      .point_on_face[current_direction];
-
-                                  periodic_offsets[face_boundary_id]  = offset;
-                                  offset_calculated[face_boundary_id] = true;
-                                }
-                            }
+                          periodic_offsets[face_boundary_id]  = offset;
+                          offset_calculated[face_boundary_id] = true;
                         }
                     }
                 }
@@ -144,13 +167,13 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
     }
 
   // Once periodic offsets calculated, combine them
-  this->compute_combined_periodic_offsets();
+  compute_combined_periodic_offsets();
 }
 
 template <int dim>
 void
 PeriodicBoundariesManipulator<dim>::check_and_move_particles(
-  const periodic_boundaries_cells_info_struct<dim> &boundaries_cells_content,
+  const periodic_boundaries_cells_info_struct<dim> &pb_pair_cell_info,
   const bool                                       &particles_in_pb0_cell,
   typename Particles::ParticleHandler<dim>::particle_iterator_range
        &particles_in_cell,
@@ -168,7 +191,7 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
 
   // boundaries_cells_content.boundary_id corresponds to the face on the
   // "main" side (pb0)
-  auto offset_it = periodic_offsets.find(boundaries_cells_content.boundary_id);
+  auto offset_it = periodic_offsets.find(pb_pair_cell_info.boundary_id);
   if (offset_it != periodic_offsets.end())
     {
       relevant_offset = offset_it->second;
@@ -181,7 +204,7 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
                   ExcMessage(
                     "PeriodicBoundariesManipulator: no periodic offset found "
                     "for boundary id " +
-                    std::to_string(boundaries_cells_content.boundary_id) +
+                    std::to_string(pb_pair_cell_info.boundary_id) +
                     ". This means map_periodic_cells() did not populate "
                     "periodic_offsets for this boundary."));
     }
@@ -200,14 +223,14 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
 
       if (particles_in_pb0_cell)
         {
-          point_on_face          = boundaries_cells_content.point_on_face;
-          normal_vector          = boundaries_cells_content.normal_vector;
+          point_on_face          = pb_pair_cell_info.point_on_face;
+          normal_vector          = pb_pair_cell_info.normal_vector;
           distance_between_faces = relevant_offset;
         }
       else
         {
-          point_on_face = boundaries_cells_content.point_on_periodic_face;
-          normal_vector = boundaries_cells_content.periodic_normal_vector;
+          point_on_face          = pb_pair_cell_info.point_on_periodic_face;
+          normal_vector          = pb_pair_cell_info.periodic_normal_vector;
           distance_between_faces = -relevant_offset;
         }
 
@@ -235,34 +258,35 @@ template <int dim>
 void
 PeriodicBoundariesManipulator<dim>::compute_combined_periodic_offsets()
 {
-  this->combined_periodic_offsets.clear();
-
-  for (auto const &[id, offset] : this->periodic_offsets)
+  combined_periodic_offsets.clear();
+  combined_periodic_offsets.reserve(
+    std::pow(3, number_of_declared_periodic_boundaries) - 1);
+  for (auto const &[id, offset] : periodic_offsets)
     {
-      size_t current_size = this->combined_periodic_offsets.size();
+      size_t current_size = combined_periodic_offsets.size();
 
       if (current_size == 0)
         {
           // Seed with +/- offest for first PB pair
-          this->combined_periodic_offsets.push_back(offset);
-          this->combined_periodic_offsets.push_back(-offset);
+          combined_periodic_offsets.push_back(offset);
+          combined_periodic_offsets.push_back(-offset);
         }
       else
         {
           // Pure +/- offset for the new direction: a particle may cross only
           // this boundary pair without crossing any of the previous ones.
-          this->combined_periodic_offsets.push_back(offset);
-          this->combined_periodic_offsets.push_back(-offset);
+          combined_periodic_offsets.push_back(offset);
+          combined_periodic_offsets.push_back(-offset);
 
           for (size_t i = 0; i < current_size; ++i)
             {
               // A particle next to a periodic boundary can be next to pb0 or
               // pb1. We need to account for its periodic images across periodic
               // directions, hence the +/- offset.
-              this->combined_periodic_offsets.push_back(
-                this->combined_periodic_offsets[i] + offset);
-              this->combined_periodic_offsets.push_back(
-                this->combined_periodic_offsets[i] - offset);
+              combined_periodic_offsets.push_back(combined_periodic_offsets[i] +
+                                                  offset);
+              combined_periodic_offsets.push_back(combined_periodic_offsets[i] -
+                                                  offset);
             }
         }
     }
@@ -292,25 +316,26 @@ PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
            ++boundaries_cells_information_iterator)
         {
           // Get the cell and periodic cell from map
-          auto boundaries_cells_content =
+          auto periodic_cell_pair_info =
             boundaries_cells_information_iterator->second;
-          auto cell          = boundaries_cells_content.cell;
-          auto periodic_cell = boundaries_cells_content.periodic_cell;
+          auto primary_cell  = periodic_cell_pair_info.primary_cell;
+          auto periodic_cell = periodic_cell_pair_info.periodic_cell;
 
           // Check and execute displacement of particles crossing a periodic
           // wall.
           // Case when particle goes from periodic boundary 0 to 1
-          if (cell->is_locally_owned())
+          if (primary_cell->is_locally_owned())
             {
               typename Particles::ParticleHandler<dim>::particle_iterator_range
-                particles_in_cell = particle_handler.particles_in_cell(cell);
+                particles_in_cell =
+                  particle_handler.particles_in_cell(primary_cell);
               const bool particles_exist_in_main_cell =
                 !particles_in_cell.empty();
 
               if (particles_exist_in_main_cell)
                 {
                   bool particles_in_pb0_cell = true;
-                  check_and_move_particles(boundaries_cells_content,
+                  check_and_move_particles(periodic_cell_pair_info,
                                            particles_in_pb0_cell,
                                            particles_in_cell,
                                            particle_has_been_moved);
@@ -329,7 +354,7 @@ PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
               if (particles_exist_in_periodic_cell)
                 {
                   bool particles_in_pb0_cell = false;
-                  check_and_move_particles(boundaries_cells_content,
+                  check_and_move_particles(periodic_cell_pair_info,
                                            particles_in_pb0_cell,
                                            particles_in_periodic_cell,
                                            particle_has_been_moved);

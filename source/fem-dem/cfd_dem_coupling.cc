@@ -135,8 +135,9 @@ CFDDEMSolver<dim>::dem_setup_parameters()
 
           periodic_boundaries_object.set_periodic_boundaries_information(
             dem_parameters.boundary_conditions.periodic_boundary_0,
+            dem_parameters.boundary_conditions.periodic_boundary_1,
             dem_parameters.boundary_conditions.periodic_direction,
-            dem_parameters.boundary_conditions.periodic_bc_index);
+            dem_parameters.boundary_conditions.prm_periodic_boundary_index);
 
           break;
         }
@@ -242,12 +243,12 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
     periodic_boundaries_object.get_combined_periodic_offsets());
 
   // Set the periodic offsets of the periodic boundary pairs for other classes
-  auto const &periodic_bc_index =
-    periodic_boundaries_object.get_periodic_bc_index();
+  auto const &primary_periodic_bc_index =
+    periodic_boundaries_object.get_primary_periodic_bc_index();
   auto const &periodic_boundaries_ids =
     periodic_boundaries_object.get_periodic_boundaries_ids();
 
-  for (const unsigned int pbc_index : periodic_bc_index)
+  for (const unsigned int pbc_index : primary_periodic_bc_index)
     {
       auto it = periodic_boundaries_ids.find(pbc_index);
       if (it != periodic_boundaries_ids.end())
