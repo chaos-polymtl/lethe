@@ -18,7 +18,7 @@ using namespace dealii;
  * @brief Generates a rectangular channel mesh with a meshed cylinder
  * obstacle. By default, this geometry defines two material IDs. The
  * obstacle is assigned the material_id = 1 and the remaining domain is
- * assigned material_id = 0. The obstacle can be optionally removed.
+ * assigned material_id = 0. The obstacle can be optionally removed by setting @p mesh_obstacle to false, in which case the entire domain is assigned material_id = 0.
  *
  * The mesh consists of three concentric regions around the cylinder:
  * -# An inner balanced disk of radius @p inner_radius (hyper_ball_balanced).
@@ -185,7 +185,8 @@ private:
   /// Whether to use transfinite interpolation for the transition region between
   /// the cylinder and the channel.
   bool use_transfinite_region;
-  /// Whether to keep the obstacle mesh (false removes the cylinder cells).
+  /// Whether to keep the obstacle mesh (false removes the cylinder cells from
+  /// the cylinder).
   bool mesh_obstacle;
   /// Whether to assign distinct boundary IDs to the channel boundaries
   /// following the subdivided_hyper_rectangle convention.

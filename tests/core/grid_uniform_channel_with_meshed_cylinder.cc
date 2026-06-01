@@ -70,12 +70,12 @@ main()
 
       run_test<2>("2D 2x1 channel, padded", "0,0:2,1:1,0.5:0.1:0.2:1:1:1:1");
 
-      run_test<2>("2D 2x1 channel, padded, refined once, obstacle",
+      run_test<2>("2D 2x1 channel, padded, refined once, meshed cylinder",
                   "0,0:2,1:1,0.5:0.1:0.2:1:1:1:1:1.0:2:false:true",
                   1);
 
       run_test<3>(
-        "3D 2x1x1 channel, padded, boundary ids, obstacle, and no TFI region",
+        "3D 2x1x1 channel, padded, boundary ids, meshed cylinder, and no TFI region",
         "0,0:2,1:1,0.5:0.1:0.2:1:1:1:1:1.0:2:false:true:true",
         1);
 
@@ -84,7 +84,7 @@ main()
                   1);
 
       run_test<3>(
-        "3D 2x1x1 channel, padded, boundary ids, obstacle, and TFI region",
+        "3D 2x1x1 channel, padded, boundary ids, meshed cylinder, and TFI region",
         "0,0:2,1:1,0.5:0.1:0.2:1:1:1:1:1.0:2:true:true:true",
         1);
     }

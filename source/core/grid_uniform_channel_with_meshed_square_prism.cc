@@ -20,7 +20,7 @@ GridUniformChannelWithMeshedSquarePrism<dim, spacedim>::
       AssertThrow(
         false,
         ExcMessage(
-          "GridUniformChannelWithMeshedSquarePrism is only supported for <2,2> and <3,3> <dim,spacedim> specializations."));
+          "The uniform_channel_with_meshed_square_prism is only supported for <2,2> and <3,3> <dim,spacedim> specializations."));
       return;
     }
   else if constexpr (dim == 2 && spacedim == 3)
@@ -28,7 +28,7 @@ GridUniformChannelWithMeshedSquarePrism<dim, spacedim>::
       AssertThrow(
         false,
         ExcMessage(
-          "GridUniformChannelWithMeshedSquarePrism is only supported for <2,2> and <3,3> <dim,spacedim> specializations."));
+          "The uniform_channel_with_meshed_square_prism is only supported for <2,2> and <3,3> <dim,spacedim> specializations."));
       return;
     }
 
@@ -40,7 +40,7 @@ GridUniformChannelWithMeshedSquarePrism<dim, spacedim>::
       AssertThrow(
         false,
         ExcMessage(
-          "Mandatory parameters are (bottom left point : top right point : center of the obstacle : inner half-side : outer half-side). The points should be given as x,y and the half-sides should be single numbers. The optional parameters are (rotation_deg : pad_bottom : pad_top : pad_left : pad_right : height : n_slices : mesh_obstacle : colorize )."));
+          "Mandatory uniform_channel_with_meshed_square_prism parameters are (bottom left point : top right point : center of the obstacle : inner half-side : outer half-side). The points should be given as x,y and the half-sides should be single numbers. The optional parameters are (rotation_deg : pad_bottom : pad_top : pad_left : pad_right : height : n_slices : mesh_obstacle : colorize )."));
     }
 
   // Parse bottom_left point

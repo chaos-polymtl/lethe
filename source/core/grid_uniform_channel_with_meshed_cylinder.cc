@@ -16,7 +16,7 @@ GridUniformChannelWithMeshedCylinder<dim, spacedim>::
       AssertThrow(
         false,
         ExcMessage(
-          "The uniform channel with meshed cylinder mesh is only supported in 2D and 3D space."));
+          "The uniform_channel_with_meshed_cylinder mesh is only supported in 2D and 3D space."));
       return;
     }
   else if constexpr (dim == 2 && spacedim == 3)
@@ -24,7 +24,7 @@ GridUniformChannelWithMeshedCylinder<dim, spacedim>::
       AssertThrow(
         false,
         ExcMessage(
-          "The uniform channel with meshed cylinder mesh is only supported in 3D space with 3D elements."));
+          "The uniform_channel_with_meshed_cylinder mesh is only supported in 3D space with 3D elements."));
       return;
     }
 
@@ -36,7 +36,7 @@ GridUniformChannelWithMeshedCylinder<dim, spacedim>::
       AssertThrow(
         false,
         ExcMessage(
-          "Mandatory uniform channel with meshed cylinder parameters are (bottom left point : top right point : center of the cylinder : inner radius : outer radius). The points should be given as x,y and the radii should be given as a single number. The optional parameters are (pad bottom : pad top : pad left : pad right : height : n_slices : use_transfinite_region : mesh_obstacle : colorize). The padding parameters should be given as a single integer, the height should be given as a single double, the n_slices should be given as a single integer, use_transfinite_region should be given as true/false, mesh_obstacle should be given as true/false, and the colorize parameter should be given as true/false."));
+          "Mandatory uniform_channel_with_meshed_cylinder parameters are (bottom left point : top right point : center of the cylinder : inner radius : outer radius). The points should be given as x,y and the radii should be given as a single number. The optional parameters are (pad bottom : pad top : pad left : pad right : height : n_slices : use_transfinite_region : mesh_obstacle : colorize). The padding parameters should be given as a single integer, the height should be given as a single double, the n_slices should be given as a single integer, use_transfinite_region should be given as true/false, mesh_obstacle should be given as true/false, and the colorize parameter should be given as true/false."));
     }
   // Parse bottom_left point
   try

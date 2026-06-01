@@ -202,7 +202,7 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
           AssertThrow(
             !mesh_parameters.simplex,
             ExcMessage(
-              "Unsupported mesh type - uniform channel with meshed cylinder mesh with simplex is not supported"));
+              "Unsupported mesh type - uniform_channel_with_meshed_cylinder mesh with simplex is not supported"));
 
           GridUniformChannelWithMeshedCylinder<dim, spacedim> grid(
             mesh_parameters.grid_arguments);
@@ -215,7 +215,7 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
           AssertThrow(
             !mesh_parameters.simplex,
             ExcMessage(
-              "Unsupported mesh type - uniform channel with rotated meshed rectangle mesh with simplex is not supported"));
+              "Unsupported mesh type - uniform_channel_with_meshed_square_prism mesh with simplex is not supported"));
 
           GridUniformChannelWithMeshedSquarePrism<dim, spacedim> grid(
             mesh_parameters.grid_arguments);

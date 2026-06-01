@@ -14,14 +14,14 @@ DEAL::Number of vertices     : 32
 DEAL::Mesh volume            : 1.97172
 DEAL::Boundary id 0 face count : 24
 DEAL::==================================================
-DEAL::Case: 2D 2x1 channel, padded, refined once, obstacle
+DEAL::Case: 2D 2x1 channel, padded, refined once, meshed cylinder
 DEAL::Grid arguments: "0,0:2,1:1,0.5:0.1:0.2:1:1:1:1:1.0:2:false:true"
 DEAL::Number of active cells : 128
 DEAL::Number of vertices     : 145
 DEAL::Mesh volume            : 2.00000
 DEAL::Boundary id 0 face count : 32
 DEAL::==================================================
-DEAL::Case: 3D 2x1x1 channel, padded, boundary ids, obstacle, and no TFI region
+DEAL::Case: 3D 2x1x1 channel, padded, boundary ids, meshed cylinder, and no TFI region
 DEAL::Grid arguments: "0,0:2,1:1,0.5:0.1:0.2:1:1:1:1:1.0:2:false:true:true"
 DEAL::Number of active cells : 256
 DEAL::Number of vertices     : 435
@@ -46,7 +46,7 @@ DEAL::Boundary id 4 face count : 16
 DEAL::Boundary id 5 face count : 80
 DEAL::Boundary id 6 face count : 80
 DEAL::==================================================
-DEAL::Case: 3D 2x1x1 channel, padded, boundary ids, obstacle, and TFI region
+DEAL::Case: 3D 2x1x1 channel, padded, boundary ids, meshed cylinder, and TFI region
 DEAL::Grid arguments: "0,0:2,1:1,0.5:0.1:0.2:1:1:1:1:1.0:2:true:true:true"
 DEAL::Number of active cells : 256
 DEAL::Number of vertices     : 435
