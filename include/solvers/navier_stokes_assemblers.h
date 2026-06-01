@@ -25,7 +25,7 @@ DeclExceptionMsg(
 
 DeclExceptionMsg(
   SingleFluidPhaseChangeDarcyModelDoesNotSupportDensityMultiplication,
-  "Single-fluid simulations with Darcy phase change model does not support the multiplication by density since the kinematic pressure is used in the momentum balance.");
+  "Single-fluid simulations with Darcy phase change model does not support the multiplication by density since the kinematic pressure is used in the momentum equation.");
 
 
 /**

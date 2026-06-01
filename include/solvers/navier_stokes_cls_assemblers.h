@@ -124,7 +124,7 @@ class PhaseChangeDarcyCLSAssembler : public NavierStokesAssemblerBase<dim>
 public:
   PhaseChangeDarcyCLSAssembler(
     const std::vector<Parameters::PhaseChange> &phase_change_parameters_vector,
-    bool enable_darcy_multiply_by_density)
+    const bool enable_darcy_multiply_by_density)
     : phase_change_parameters_vector(phase_change_parameters_vector)
     , enable_darcy_multiply_by_density(enable_darcy_multiply_by_density)
   {}

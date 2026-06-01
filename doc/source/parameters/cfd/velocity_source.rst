@@ -49,7 +49,7 @@ A Darcy-like source term can be added to the simulation using the following para
   .. caution::
     The phase change Darcy model does not currently have a Cahn-Hilliard implementation.
 
-* The ``enable Darcy multiply by density`` parameter enables the multiplication by the density within the Darcy force term (:math:`\vec{F}_\mathrm{Darcy}`). This is for dimensional consistency when solving the pressure (:math:`p`) rather than the kinematic pressure (:math:`p^* = p / \rho`, with :math:`\rho` the density of the fluid) in the momentum balance. This is the case for the coupling of the :doc:`CLS equation<../../theory/multiphase/cfd/cls>` with the :doc:`incompressible Navier-Stokes equations<../../theory/multiphysics/fluid_dynamics/navier-stokes>`.
+* The ``enable Darcy multiply by density`` parameter enables the multiplication by the density within the Darcy force term (:math:`\vec{F}_\mathrm{Darcy}`). This is for dimensional consistency when solving the pressure (:math:`p`) rather than the kinematic pressure (:math:`p^* = p / \rho`, with :math:`\rho` the density of the fluid) in the momentum equation. This parameter should be used when coupling of the :doc:`CLS equation<../../theory/multiphase/cfd/cls>` with the :doc:`incompressible Navier-Stokes equations<../../theory/multiphysics/fluid_dynamics/navier-stokes>`.
 
   .. math::
     \vec{F}_\mathrm{Darcy} = \tilde{\rho} \tilde{K} \vec{u}

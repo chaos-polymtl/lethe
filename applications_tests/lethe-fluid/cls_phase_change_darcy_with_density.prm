@@ -4,8 +4,13 @@
 #-------------------------------------------------------------------------------
 # DESCRIPTION:
 # This test checks that the Darcy penalty term with density in the solid phase
-#  when simulating a two-phase flow with CLS.
+# when simulating a two-phase flow with CLS.
 # This simulates the 2D development of a 3 layers Couette flow with 2 fluids.
+# The layers are as follows:
+#  - for all y in [-0.25, -0.025[: fluid 0
+#  - for all y in [-0.025, 0.025[: fluid 1
+#  - for all y in [0.025, 0.25[: fluid 0
+# Transition between the layers is smoothen with a tanh function.
 #-------------------------------------------------------------------------------
 
 # Listing of Parameters
@@ -18,10 +23,10 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method           = bdf1
+  set method           = bdf2
   set output frequency = 0
-  set time end         = 5
-  set time step        = 1
+  set time end         = 0.5
+  set time step        = 0.1
 end
 
 #---------------------------------------------------

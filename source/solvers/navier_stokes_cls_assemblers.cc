@@ -525,21 +525,20 @@ PhaseChangeDarcyCLSAssembler<dim>::assemble_matrix(
         ((1 - filtered_phase[q]) * darcy_penalties[0] +
          filtered_phase[q] * darcy_penalties[1]);
 
-      auto local_residual_contribution =
-        (enable_darcy_multiply_by_density) ?
-          current_density * darcy_penalty * velocities[q] :
-          darcy_penalty * velocities[q];
+      auto real_darcy_penalty = (enable_darcy_multiply_by_density) ?
+                                  current_density * darcy_penalty :
+                                  darcy_penalty;
 
-      strong_residual[q] += local_residual_contribution;
+      strong_residual[q] += real_darcy_penalty * velocities[q];
 
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
-          auto local_jacobian_contribution =
-            (enable_darcy_multiply_by_density) ?
-              current_density * darcy_penalty * scratch_data.phi_u[q][j] :
-              darcy_penalty * scratch_data.phi_u[q][j];
+          auto real_darcy_penalty = (enable_darcy_multiply_by_density) ?
+                                      current_density * darcy_penalty :
+                                      darcy_penalty;
 
-          strong_jacobian[q][j] += local_jacobian_contribution;
+          strong_jacobian[q][j] +=
+            real_darcy_penalty * scratch_data.phi_u[q][j];
         }
 
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -618,25 +617,23 @@ PhaseChangeDarcyCLSAssembler<dim>::assemble_rhs(
         ((1 - filtered_phase[q]) * darcy_penalties[0] +
          filtered_phase[q] * darcy_penalties[1]);
 
-      // If specified, multiply by density
-      auto local_residual_contribution =
-        (enable_darcy_multiply_by_density) ?
-          current_density * darcy_penalty * velocities[q] :
-          darcy_penalty * velocities[q];
+      // If enabled, multiply by density
+      auto real_darcy_penalty = (enable_darcy_multiply_by_density) ?
+                                  current_density * darcy_penalty :
+                                  darcy_penalty;
 
-      strong_residual[q] += local_residual_contribution;
+      strong_residual[q] += real_darcy_penalty * velocities[q];
 
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto phi_u_i = scratch_data.phi_u[q][i];
-          auto       local_rhs_i_contribution =
-            (enable_darcy_multiply_by_density) ?
-                    current_density * darcy_penalty * velocities[q] * phi_u_i * JxW :
-                    darcy_penalty * velocities[q] * phi_u_i * JxW;
+          const auto phi_u_i            = scratch_data.phi_u[q][i];
+          auto       real_darcy_penalty = (enable_darcy_multiply_by_density) ?
+                                            current_density * darcy_penalty :
+                                            darcy_penalty;
 
           // Laplacian on the velocity terms
-          local_rhs(i) -= local_rhs_i_contribution;
+          local_rhs(i) -= real_darcy_penalty * velocities[q] * phi_u_i * JxW;
         }
     }
 }
