@@ -571,9 +571,18 @@ private:
     announce_string(pcout, "Memory consumption of " + str + " (GB) :");
     for (unsigned int i = 0; i < n_rank; ++i)
       {
-        pcout << "Rank " << i << " : " << memory_object[i] << " GB" << std::endl;
+        pcout << "   Rank " << i << " : " << memory_object[i] << std::endl;
       }
   }
+
+  /**
+   * @brief Print memory usage diagnostics after the THM setup.
+    * @note The sparsity pattern is passed in because it is a local variable in
+    * setup_dofs and is not stored as a class member.
+   */
+  void
+  print_THM_setup_memory(
+    const TrilinosWrappers::SparsityPattern &sparsity_pattern);
 
 
   /**

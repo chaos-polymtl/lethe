@@ -96,6 +96,191 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
     *dof_handler_trial_interior);
 }
 
+template <int dim>
+void
+TimeHarmonicMaxwell<dim>::print_THM_setup_memory(
+  const TrilinosWrappers::SparsityPattern &sparsity_pattern)
+{
+  auto mpi_communicator = triangulation->get_mpi_communicator();
+  const auto this_mpi_process =
+    Utilities::MPI::this_mpi_process(mpi_communicator);
+  constexpr double bytes_to_gb = 1.0 / (1024.0 * 1024.0 * 1024.0);
+
+  // Fetch memory consumption information on each process
+  const auto present_solution_memory =
+    this->present_solution->memory_consumption() * bytes_to_gb;
+  const auto present_solution_skeleton_memory =
+    this->present_solution_skeleton->memory_consumption() * bytes_to_gb;
+  const auto present_dpg_error_indicator_memory =
+    this->present_DPG_error_indicator->memory_consumption() * bytes_to_gb;
+  const auto system_rhs_memory =
+    this->system_rhs.memory_consumption() * bytes_to_gb;
+  const auto sparsity_pattern_memory =
+    sparsity_pattern.n_nonzero_elements() *
+    sizeof(TrilinosWrappers::types::int_type) *
+    bytes_to_gb; // We use a proxy for the memory consumption of the
+                 // sparsity pattern based on the number of non-zero
+                 // elements and the size of the integer type used to store
+                 // the sparsity pattern, since the
+                 // TrilinosWrappers::SparsityPattern class does not have a
+                 // memory_consumption() function implemented.
+  const auto system_matrix_memory =
+    this->system_matrix.memory_consumption() * bytes_to_gb;
+  const auto dof_handler_trial_interior_memory =
+    this->dof_handler_trial_interior->memory_consumption() * bytes_to_gb;
+  const auto dof_handler_trial_skeleton_memory =
+    this->dof_handler_trial_skeleton->memory_consumption() * bytes_to_gb;
+  const auto dof_handler_test_memory =
+    this->dof_handler_test->memory_consumption() * bytes_to_gb;
+
+  // Gather memory consumption information from all ranks to rank 0
+  const auto present_solution_memory_by_rank =
+    Utilities::MPI::gather(mpi_communicator, present_solution_memory, 0);
+  const auto present_solution_skeleton_memory_by_rank =
+    Utilities::MPI::gather(mpi_communicator,
+                           present_solution_skeleton_memory,
+                           0);
+  const auto present_dpg_error_indicator_memory_by_rank =
+    Utilities::MPI::gather(mpi_communicator,
+                           present_dpg_error_indicator_memory,
+                           0);
+  const auto system_rhs_memory_by_rank =
+    Utilities::MPI::gather(mpi_communicator, system_rhs_memory, 0);
+  const auto sparsity_pattern_memory_by_rank =
+    Utilities::MPI::gather(mpi_communicator, sparsity_pattern_memory, 0);
+  const auto system_matrix_memory_by_rank =
+    Utilities::MPI::gather(mpi_communicator, system_matrix_memory, 0);
+  const auto dof_handler_trial_interior_memory_by_rank =
+    Utilities::MPI::gather(mpi_communicator,
+                           dof_handler_trial_interior_memory,
+                           0);
+  const auto dof_handler_trial_skeleton_memory_by_rank =
+    Utilities::MPI::gather(mpi_communicator,
+                           dof_handler_trial_skeleton_memory,
+                           0);
+  const auto dof_handler_test_memory_by_rank =
+    Utilities::MPI::gather(mpi_communicator, dof_handler_test_memory, 0);
+
+  // Sum memory consumption across all ranks to get total memory usage
+  const auto present_solution_memory_total =
+    Utilities::MPI::sum(present_solution_memory, mpi_communicator);
+  const auto present_solution_skeleton_memory_total =
+    Utilities::MPI::sum(present_solution_skeleton_memory, mpi_communicator);
+  const auto present_dpg_error_indicator_memory_total =
+    Utilities::MPI::sum(present_dpg_error_indicator_memory, mpi_communicator);
+  const auto system_rhs_memory_total =
+    Utilities::MPI::sum(system_rhs_memory, mpi_communicator);
+  const auto sparsity_pattern_memory_total =
+    Utilities::MPI::sum(sparsity_pattern_memory, mpi_communicator);
+  const auto system_matrix_memory_total =
+    Utilities::MPI::sum(system_matrix_memory, mpi_communicator);
+  const auto dof_handler_trial_interior_memory_total =
+    Utilities::MPI::sum(dof_handler_trial_interior_memory, mpi_communicator);
+  const auto dof_handler_trial_skeleton_memory_total =
+    Utilities::MPI::sum(dof_handler_trial_skeleton_memory, mpi_communicator);
+  const auto dof_handler_test_memory_total =
+    Utilities::MPI::sum(dof_handler_test_memory, mpi_communicator);
+
+  // Print memory consumption information on rank 0
+  if (this_mpi_process == 0)
+    {
+
+      const auto total_memory = present_solution_memory_total +
+                                present_solution_skeleton_memory_total +
+                                present_dpg_error_indicator_memory_total +
+                                system_rhs_memory_total +
+                                sparsity_pattern_memory_total +
+                                system_matrix_memory_total +
+                                dof_handler_trial_interior_memory_total +
+                                dof_handler_trial_skeleton_memory_total +
+                                dof_handler_test_memory_total;
+
+      announce_string(this->pcout,
+                      "Time-Harmonic Maxwell Memory Diagnostics",
+                      65,
+                      '=');
+
+      // When debugging memory issues if rank is needed turn this parameter
+      // to true to have the memory consumption of each rank printed,
+      // otherwise only the total memory consumption across all ranks will
+      // be printed.
+      bool print_memory_by_rank = true;
+      if (print_memory_by_rank)
+        {
+          this->pcout << "  *** By rank memory *** " << std::endl;
+
+          print_memory_consumption(this->pcout,
+                                   "present_solution",
+                                   present_solution_memory_by_rank.size(),
+                                   present_solution_memory_by_rank);
+          print_memory_consumption(
+            this->pcout,
+            "present_solution_skeleton",
+            present_solution_skeleton_memory_by_rank.size(),
+            present_solution_skeleton_memory_by_rank);
+          print_memory_consumption(
+            this->pcout,
+            "present_DPG_error_indicator",
+            present_dpg_error_indicator_memory_by_rank.size(),
+            present_dpg_error_indicator_memory_by_rank);
+          print_memory_consumption(this->pcout,
+                                   "system_rhs",
+                                   system_rhs_memory_by_rank.size(),
+                                   system_rhs_memory_by_rank);
+
+          print_memory_consumption(this->pcout,
+                                   "sparsity_pattern",
+                                   sparsity_pattern_memory_by_rank.size(),
+                                   sparsity_pattern_memory_by_rank);
+          print_memory_consumption(this->pcout,
+                                   "system_matrix",
+                                   system_matrix_memory_by_rank.size(),
+                                   system_matrix_memory_by_rank);
+          print_memory_consumption(
+            this->pcout,
+            "dof_handler_trial_interior",
+            dof_handler_trial_interior_memory_by_rank.size(),
+            dof_handler_trial_interior_memory_by_rank);
+          print_memory_consumption(
+            this->pcout,
+            "dof_handler_trial_skeleton",
+            dof_handler_trial_skeleton_memory_by_rank.size(),
+            dof_handler_trial_skeleton_memory_by_rank);
+          print_memory_consumption(this->pcout,
+                                   "dof_handler_test",
+                                   dof_handler_test_memory_by_rank.size(),
+                                   dof_handler_test_memory_by_rank);
+
+          this->pcout
+            << "=================================================================="
+            << std::endl;
+        }
+
+      this->pcout << "  *** Totals memory (GB) *** " << std::endl;
+      this->pcout << "  present_solution : " << present_solution_memory_total
+                  << std::endl;
+      this->pcout << "  present_solution_skeleton : "
+                  << present_solution_skeleton_memory_total << std::endl;
+      this->pcout << "  present_DPG_error_indicator : "
+                  << present_dpg_error_indicator_memory_total << std::endl;
+      this->pcout << "  system_rhs : " << system_rhs_memory_total << std::endl;
+      this->pcout << "  sparsity_pattern : "
+                  << sparsity_pattern_memory_total << std::endl;
+      this->pcout << "  system_matrix : " << system_matrix_memory_total
+                  << std::endl;
+      this->pcout << "  dof_handler_trial_interior : "
+                  << dof_handler_trial_interior_memory_total << std::endl;
+      this->pcout << "  dof_handler_trial_skeleton : "
+                  << dof_handler_trial_skeleton_memory_total << std::endl;
+      this->pcout << "  dof_handler_test : " << dof_handler_test_memory_total
+                  << std::endl;
+      this->pcout << "  Total DPG solver memory consumption : " << total_memory << std::endl;
+      this->pcout
+        << " =================================================================="
+        << std::endl;
+    }
+}
+
 
 template <>
 std::pair<Tensor<1, 2, std::complex<double>>,
@@ -1310,187 +1495,7 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
   if (this->simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
         .verbosity == Parameters::Verbosity::extra_verbose)
     {
-      const auto this_mpi_process =
-        Utilities::MPI::this_mpi_process(mpi_communicator);
-      constexpr double bytes_to_gb = 1.0 / (1024.0 * 1024.0 * 1024.0);
-
-      // Fetch memory consumption information on each process
-      const auto present_solution_memory =
-        this->present_solution->memory_consumption() * bytes_to_gb;
-      const auto present_solution_skeleton_memory =
-        this->present_solution_skeleton->memory_consumption() * bytes_to_gb;
-      const auto present_dpg_error_indicator_memory =
-        this->present_DPG_error_indicator->memory_consumption() * bytes_to_gb;
-      const auto system_rhs_memory =
-        this->system_rhs.memory_consumption() * bytes_to_gb;
-      const auto sparsity_pattern_memory =
-        sparsity_pattern.n_nonzero_elements() *
-        sizeof(TrilinosWrappers::types::int_type) *
-        bytes_to_gb; // We use a proxy for the memory consumption of the
-                     // sparsity pattern based on the number of non-zero
-                     // elements and the size of the integer type used to store
-                     // the sparsity pattern, since the
-                     // TrilinosWrappers::SparsityPattern class does not have a
-                     // memory_consumption() function implemented.
-      const auto system_matrix_memory =
-        this->system_matrix.memory_consumption() * bytes_to_gb;
-      const auto dof_handler_trial_interior_memory =
-        this->dof_handler_trial_interior->memory_consumption() * bytes_to_gb;
-      const auto dof_handler_trial_skeleton_memory =
-        this->dof_handler_trial_skeleton->memory_consumption() * bytes_to_gb;
-      const auto dof_handler_test_memory =
-        this->dof_handler_test->memory_consumption() * bytes_to_gb;
-
-      // Gather memory consumption information from all ranks to rank 0
-      const auto present_solution_memory_by_rank =
-        Utilities::MPI::gather(mpi_communicator, present_solution_memory, 0);
-      const auto present_solution_skeleton_memory_by_rank =
-        Utilities::MPI::gather(mpi_communicator,
-                               present_solution_skeleton_memory,
-                               0);
-      const auto present_dpg_error_indicator_memory_by_rank =
-        Utilities::MPI::gather(mpi_communicator,
-                               present_dpg_error_indicator_memory,
-                               0);
-      const auto system_rhs_memory_by_rank =
-        Utilities::MPI::gather(mpi_communicator, system_rhs_memory, 0);
-      const auto sparsity_pattern_memory_by_rank =
-        Utilities::MPI::gather(mpi_communicator, sparsity_pattern_memory, 0);
-      const auto system_matrix_memory_by_rank =
-        Utilities::MPI::gather(mpi_communicator, system_matrix_memory, 0);
-      const auto dof_handler_trial_interior_memory_by_rank =
-        Utilities::MPI::gather(mpi_communicator,
-                               dof_handler_trial_interior_memory,
-                               0);
-      const auto dof_handler_trial_skeleton_memory_by_rank =
-        Utilities::MPI::gather(mpi_communicator,
-                               dof_handler_trial_skeleton_memory,
-                               0);
-      const auto dof_handler_test_memory_by_rank =
-        Utilities::MPI::gather(mpi_communicator, dof_handler_test_memory, 0);
-
-      // Sum memory consumption across all ranks to get total memory usage
-      const auto present_solution_memory_total =
-        Utilities::MPI::sum(present_solution_memory, mpi_communicator);
-      const auto present_solution_skeleton_memory_total =
-        Utilities::MPI::sum(present_solution_skeleton_memory, mpi_communicator);
-      const auto present_dpg_error_indicator_memory_total =
-        Utilities::MPI::sum(present_dpg_error_indicator_memory,
-                            mpi_communicator);
-      const auto system_rhs_memory_total =
-        Utilities::MPI::sum(system_rhs_memory, mpi_communicator);
-      const auto sparsity_pattern_memory_total =
-        Utilities::MPI::sum(sparsity_pattern_memory, mpi_communicator);
-      const auto system_matrix_memory_total =
-        Utilities::MPI::sum(system_matrix_memory, mpi_communicator);
-      const auto dof_handler_trial_interior_memory_total =
-        Utilities::MPI::sum(dof_handler_trial_interior_memory,
-                            mpi_communicator);
-      const auto dof_handler_trial_skeleton_memory_total =
-        Utilities::MPI::sum(dof_handler_trial_skeleton_memory,
-                            mpi_communicator);
-      const auto dof_handler_test_memory_total =
-        Utilities::MPI::sum(dof_handler_test_memory, mpi_communicator);
-
-      // Print memory consumption information on rank 0
-      if (this_mpi_process == 0)
-        {
-
-                const auto total_memory_by_rank =
-        present_solution_memory_by_rank+ present_solution_skeleton_memory_by_rank +
-        present_dpg_error_indicator_memory_by_rank + system_rhs_memory_by_rank +
-        sparsity_pattern_memory_by_rank + system_matrix_memory_by_rank +
-        dof_handler_trial_interior_memory_by_rank + dof_handler_trial_skeleton_memory_by_rank +
-        dof_handler_test_memory_by_rank;
-
-          const auto total_memory = present_solution_memory_total +
-                                  present_solution_skeleton_memory_total +
-                                  present_dpg_error_indicator_memory_total +
-                                  system_rhs_memory_total +
-                                  sparsity_pattern_memory_total +
-                                  system_matrix_memory_total +
-                                  dof_handler_trial_interior_memory_total +
-                                  dof_handler_trial_skeleton_memory_total +
-                                  dof_handler_test_memory_total;
-
-          announce_string(this->pcout, "Time-Harmonic Maxwell Memory Diagnostics", 65, '=');
-
-          // When debugging memory issues if rank is needed turn this parameter
-          // to true to have the memory consumption of each rank printed,
-          // otherwise only the total memory consumption across all ranks will
-          // be printed.
-          bool print_memory_by_rank = false;
-          if (print_memory_by_rank)
-            {                              
-              this->pcout << "  *** By rank memory *** " << std::endl;
-
-              print_memory_consumption(this->pcout,
-                                       "present_solution",
-                                       present_solution_memory_by_rank.size(),
-                                       present_solution_memory_by_rank);
-              print_memory_consumption(this->pcout,
-                                       "present_solution_skeleton",
-                                       present_solution_skeleton_memory_by_rank.size(),
-                                       present_solution_skeleton_memory_by_rank);
-              print_memory_consumption(this->pcout,
-                                       "present_DPG_error_indicator",
-                                       present_dpg_error_indicator_memory_by_rank.size(),
-                                       present_dpg_error_indicator_memory_by_rank);
-              print_memory_consumption(this->pcout,
-                                       "system_rhs",
-                                       system_rhs_memory_by_rank.size(),
-                                       system_rhs_memory_by_rank);
-
-              print_memory_consumption(this->pcout,
-                                       "sparsity_pattern",
-                                       sparsity_pattern_memory_by_rank.size(),
-                                       sparsity_pattern_memory_by_rank);
-              print_memory_consumption(this->pcout,
-                                       "system_matrix",
-                                       system_matrix_memory_by_rank.size(),
-                                       system_matrix_memory_by_rank);
-              print_memory_consumption(this->pcout,
-                                       "dof_handler_trial_interior",
-                                       dof_handler_trial_interior_memory_by_rank.size(),
-                                       dof_handler_trial_interior_memory_by_rank);
-              print_memory_consumption(this->pcout,
-                                       "dof_handler_trial_skeleton",
-                                       dof_handler_trial_skeleton_memory_by_rank.size(),
-                                       dof_handler_trial_skeleton_memory_by_rank);
-              print_memory_consumption(this->pcout,
-                                       "dof_handler_test",
-                                       dof_handler_test_memory_by_rank.size(),   dof_handler_test_memory_by_rank);
-              print_memory_consumption(this->pcout,
-                                       "total",
-                                       total_memory_by_rank.size(),
-                                       total_memory_by_rank);
-
-            }
-
-          this->pcout << "  *** Totals memory (GB) *** " << std::endl;
-          this->pcout << "  present_solution : "
-                      << present_solution_memory_total << std::endl;
-          this->pcout << "  present_solution_skeleton : "
-                      << present_solution_skeleton_memory_total << std::endl;
-          this->pcout << "  present_DPG_error_indicator : "
-                      << present_dpg_error_indicator_memory_total << std::endl;
-          this->pcout << "  system_rhs : " << system_rhs_memory_total
-                      << std::endl;
-          this->pcout << "  sparsity_pattern : "
-                      << sparsity_pattern_memory_total << std::endl;
-          this->pcout << "  system_matrix : " << system_matrix_memory_total
-                      << std::endl;
-          this->pcout << "  dof_handler_trial_interior : "
-                      << dof_handler_trial_interior_memory_total << std::endl;
-          this->pcout << "  dof_handler_trial_skeleton : "
-                      << dof_handler_trial_skeleton_memory_total << std::endl;
-          this->pcout << "  dof_handler_test : "
-                      << dof_handler_test_memory_total << std::endl;
-          this->pcout << "  Total memory : " << total_memory << std::endl;
-          this->pcout
-            << " =================================================================="
-            << std::endl;
-        }
+      print_THM_setup_memory(sparsity_pattern);
     }
   this->pcout << "  DPG system for Time-Harmonic Maxwell Equations:"
               << std::endl;
@@ -1510,6 +1515,7 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
   multiphysics->set_solution(PhysicsID::electromagnetics,
                              this->present_solution);
 }
+
 
 template <int dim>
 void
