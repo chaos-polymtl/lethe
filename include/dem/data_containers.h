@@ -125,14 +125,14 @@ namespace DEM
     typedef std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
                      std::unordered_map<types::particle_index,
                                         Particles::ParticleIterator<dim>>,
-                     /* mapped_type */ cut_cell_comparison<dim>>
+                     /* mapped_type */ cell_comparaison<dim>>
       particle_floating_wall_from_mesh_candidates;
 
     // <cell iterator, <particle id, particle-wall info>>
     typedef std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
                      std::unordered_map<types::particle_index,
                                         particle_wall_contact_info<dim>>,
-                     /* mapped_type */ cut_cell_comparison<dim>>
+                     /* mapped_type */ cell_comparaison<dim>>
       particle_triangle_cell_from_mesh_potentially_in_contact;
 
     // [<cell iterator, <particle id, particle iterator>>]
@@ -147,7 +147,7 @@ namespace DEM
     // <cell iterator, [cell iterator]>
     typedef std::map<typename Triangulation<dim - 1, dim>::active_cell_iterator,
                      triangulation_cell_vector,
-                     cut_cell_comparison<dim>>
+                     cell_comparaison<dim>>
       triangulation_cell_map;
 
     // [<cell iterator, <particle id, particle-wall info>>]
@@ -194,6 +194,8 @@ namespace DEM
       map<unsigned int, std::map<types::boundary_id, Tensor<1, 3>>>
         vector_on_boundary;
 
+
+
     // [cell iterators]
     typedef std::set<typename Triangulation<dim>::active_cell_iterator>
       cell_set;
@@ -208,8 +210,10 @@ namespace DEM
       cell_index_int_map;
 
     // <cell iterator, [cell iterator]>
-    typedef std::unordered_map<types::global_cell_index,
-                               std::set<types::boundary_id>>
+    typedef std::unordered_map<
+      typename Triangulation<dim>::active_cell_iterator,
+      std::set<types::boundary_id>,
+      cell_hasher<dim>>
       cell_touch_boundary_id;
   };
 

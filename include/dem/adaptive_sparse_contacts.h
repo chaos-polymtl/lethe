@@ -151,7 +151,7 @@ public:
    * floating walls or mesh.
    */
 
-  enum mobility_status : unsigned int
+  enum mobility_status : std::uint8_t
   {
     inactive        = 0, // used for cells
     static_active   = 1, // used for cells and nodes

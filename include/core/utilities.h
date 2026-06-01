@@ -1106,7 +1106,7 @@ convert_string_to_vector(const ParameterHandler &prm,
  */
 
 template <int dim>
-struct cell_comparison
+struct primary_periodic_bc_index
 {
   inline bool
   operator()(
@@ -1139,7 +1139,7 @@ struct particle_comparison
 using namespace dealii;
 
 template <int dim>
-struct cut_cell_comparison
+struct cell_comparaison
 {
   inline bool
   operator()(
@@ -1149,6 +1149,18 @@ struct cut_cell_comparison
   {
     return cell_1->global_active_cell_index() <
            cell_2->global_active_cell_index();
+  }
+};
+
+template <int dim>
+struct cell_hasher
+{
+  std::size_t
+  operator()(
+    const typename dealii::Triangulation<dim>::active_cell_iterator &cell) const
+  {
+    return std::hash<types::global_cell_index>()(
+      cell->global_active_cell_index());
   }
 };
 

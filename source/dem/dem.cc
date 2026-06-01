@@ -313,7 +313,7 @@ DEMSolver<dim, PropertiesIndex>::setup_triangulation_dependent_parameters()
   contact_manager.set_combined_periodic_offsets(
     periodic_boundaries_object.get_combined_periodic_offsets());
   contact_manager.set_number_of_declared_periodic_boundaries(
-    periodic_boundaries_object.get_number_of_declared_periodic_boundaries());
+    periodic_boundaries_object.get_number_of_pbc());
 
   particle_particle_contact_force_object->set_combined_periodic_offsets(
     periodic_boundaries_object.get_combined_periodic_offsets());
@@ -435,7 +435,8 @@ DEMSolver<dim, PropertiesIndex>::load_balance()
   // Update neighbors of cells after load balance
   contact_manager.update_cell_neighbors(triangulation,
                                         periodic_boundaries_cells_information,
-                                        cell_to_pbc_mesh_id_set);
+                                        cell_to_pbc_mesh_id_set,
+                                        periodic_boundaries_object);
 
   boundary_cell_object.build(
     triangulation,
@@ -916,7 +917,7 @@ DEMSolver<dim, PropertiesIndex>::solve()
     triangulation,
     periodic_boundaries_cells_information,
     cell_to_pbc_mesh_id_set,
-    boundary_id_to_container_index);
+    periodic_boundaries_object);
 
   // Find boundary cells with faces
   boundary_cell_object.build(

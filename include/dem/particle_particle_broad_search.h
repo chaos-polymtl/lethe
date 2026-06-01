@@ -96,51 +96,53 @@ find_particle_particle_contact_pairs(
  *
  * @param[in] particle_handler The particle handler of particles in the broad
  * search.
- * @param[in] cells_local_periodic_neighbor_list A vector (with size equal to
- * the number of local periodic cells at boundary 0) of vectors. Each sub-vector
- * have a size equal to the number of adjacent local cells of the main cell plus
- * one. The first element of each sub-vector shows the main cell itself.
- * @param[in] cells_ghost_periodic_neighbor_list A vector (with size equal to
- * the number of local periodic cells at boundary 0) of vectors. Each sub-vector
- * have a size equal to the number of adjacent ghost cells of the main cell plus
- * one. The first element of each sub-vector shows the main cell itself.
- * @param[in] cells_ghost_local_periodic_neighbor_list A vector (with size equal
- * to the number of ghost periodic cells at boundary 0) of vectors. Each
+ * @param[in] cells_local_local_periodic_neighbor_lists A vector (with size
+ * equal to the number of local periodic cells at boundary 0) of vectors. Each
+ * sub-vector have a size equal to the number of adjacent local cells of the
+ * main cell plus one. The first element of each sub-vector shows the main cell
+ * itself.
+ * @param[in] cells_local_ghost_periodic_neighbor_lists A vector (with size
+ * equal to the number of local periodic cells at boundary 0) of vectors. Each
+ * sub-vector have a size equal to the number of adjacent ghost cells of the
+ * main cell plus one. The first element of each sub-vector shows the main cell
+ * itself.
+ * @param[in] cells_ghost_local_periodic_neighbor_lists A vector (with size
+ * equal to the number of ghost periodic cells at boundary 0) of vectors. Each
  * sub-vector have a size equal to the number of adjacent local cells of the
  * main ghost cell plus one. The first element of each sub-vector shows the main
  * ghost cell itself.
- * @param[out] local_contact_pair_periodic_candidates Ankerl unordered dense
- * map. Stores potential pairs of local-local periodic particles in contact.
- * Keys are local particle ids at boundary 0 and mapped types are vectors of
- * local particle ids at boundary 1.
- * @param[out] ghost_contact_pair_periodic_candidates Ankerl unordered dense
- * map. Stores potential pairs of local-ghost periodic particles in contact.
- * Keys are local particle ids at boundary 0 and mapped types are vectors of
- * ghost particle ids at boundary 1.
- * @param[out] ghost_local_contact_pair_periodic_candidates Ankerl unordered
- * dense map. Stores potential pairs of local-ghost periodic particles in
- * contact. Keys are ghost at boundary 0 particle ids and mapped types are
+ * @param[out] local_local_contact_pair_periodic_candidates_lists Ankerl
+ * unordered dense map. Stores potential pairs of local-local periodic particles
+ * in contact. Keys are local particle ids at boundary 0 and mapped types are
+ * vectors of local particle ids at boundary 1.
+ * @param[out] local_ghost_contact_pair_periodic_candidates_lists Ankerl
+ * unordered dense map. Stores potential pairs of local-ghost periodic particles
+ * in contact. Keys are local particle ids at boundary 0 and mapped types are
+ * vectors of ghost particle ids at boundary 1.
+ * @param[out] ghost_local_contact_pair_periodic_candidates_lists Ankerl
+ * unordered dense map. Stores potential pairs of local-ghost periodic particles
+ * in contact. Keys are ghost at boundary 0 particle ids and mapped types are
  * vectors of local particle ids at boundary 1.
  */
 template <int dim>
 void
 find_particle_particle_periodic_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  const typename DEM::dem_data_structures<dim>::cells_neighbor_list
-    &cells_local_periodic_neighbor_list,
-  const typename DEM::dem_data_structures<dim>::cells_neighbor_list
-    &cells_ghost_periodic_neighbor_list,
-  const typename DEM::dem_data_structures<dim>::cells_neighbor_list
-    &cells_ghost_local_periodic_neighbor_list,
+  const std::vector<typename DEM::dem_data_structures<dim>::cells_neighbor_list>
+    &cells_local_local_periodic_neighbor_lists,
+  const std::vector<typename DEM::dem_data_structures<dim>::cells_neighbor_list>
+    &cells_local_ghost_periodic_neighbor_lists,
+  const std::vector<typename DEM::dem_data_structures<dim>::cells_neighbor_list>
+    &cells_ghost_local_periodic_neighbor_lists,
   std::vector<
     typename DEM::dem_data_structures<dim>::particle_particle_candidates>
-    &local_contact_pair_periodic_candidates,
+    &local_local_contact_pair_periodic_candidates_lists,
   std::vector<
     typename DEM::dem_data_structures<dim>::particle_particle_candidates>
-    &ghost_contact_pair_periodic_candidates,
+    &local_ghost_contact_pair_periodic_candidates_lists,
   std::vector<
     typename DEM::dem_data_structures<dim>::particle_particle_candidates>
-    &ghost_local_contact_pair_periodic_candidates);
+    &ghost_local_contact_pair_periodic_candidates_lists);
 
 /**
  * @brief Finds a vector of pairs (particle_particle_candidates) which contains the
@@ -151,30 +153,32 @@ find_particle_particle_periodic_contact_pairs(
  *
  * @param[in] particle_handler The particle handler of particles in the broad
  * search.
- * @param[in] cells_local_periodic_neighbor_list A vector (with size equal to
- * the number of local periodic cells at boundary 0) of vectors. Each sub-vector
- * have a size equal to the number of adjacent local cells of the main cell plus
- * one. The first element of each sub-vector shows the main cell itself.
- * @param[in] cells_ghost_periodic_neighbor_list A vector (with size equal to
- * the number of local periodic cells at boundary 0) of vectors. Each sub-vector
- * have a size equal to the number of adjacent ghost cells of the main cell plus
- * one. The first element of each sub-vector shows the main cell itself.
- * @param[in] cells_ghost_local_periodic_neighbor_list A vector (with size equal
- * to the number of ghost periodic cells at boundary 0) of vectors. Each
+ * @param[in] cells_local_local_periodic_neighbor_lists A vector (with size
+ * equal to the number of local periodic cells at boundary 0) of vectors. Each
+ * sub-vector have a size equal to the number of adjacent local cells of the
+ * main cell plus one. The first element of each sub-vector shows the main cell
+ * itself.
+ * @param[in] cells_local_ghost_periodic_neighbor_lists A vector (with size
+ * equal to the number of local periodic cells at boundary 0) of vectors. Each
+ * sub-vector have a size equal to the number of adjacent ghost cells of the
+ * main cell plus one. The first element of each sub-vector shows the main cell
+ * itself.
+ * @param[in] cells_ghost_local_periodic_neighbor_lists A vector (with size
+ * equal to the number of ghost periodic cells at boundary 0) of vectors. Each
  * sub-vector have a size equal to the number of adjacent local cells of the
  * main ghost cell plus one. The first element of each sub-vector shows the main
  * ghost cell itself.
- * @param[out] local_contact_pair_periodic_candidates Ankerl unordered dense
- * map. Stores potential pairs of local-local periodic particles in contact.
- * Keys are local particle ids at boundary 0 and mapped types are vectors of
- * local particle ids at boundary 1.
- * @param[out] ghost_contact_pair_periodic_candidates Ankerl unordered dense
- * map. Stores potential pairs of local-ghost periodic particles in contact.
- * Keys are local particle ids at boundary 0 and mapped types are vectors of
- * ghost particle ids at boundary 1.
- * @param[out] ghost_local_contact_pair_periodic_candidates Ankerl unordered
- * dense map. Stores potential pairs of local-ghost periodic particles in
- * contact. Keys are ghost at boundary 0 particle ids and mapped types are
+ * @param[out] local_local_contact_pair_periodic_candidates_lists Ankerl
+ * unordered dense map. Stores potential pairs of local-local periodic particles
+ * in contact. Keys are local particle ids at boundary 0 and mapped types are
+ * vectors of local particle ids at boundary 1.
+ * @param[out] local_ghost_contact_pair_periodic_candidates_lists Ankerl
+ * unordered dense map. Stores potential pairs of local-ghost periodic particles
+ * in contact. Keys are local particle ids at boundary 0 and mapped types are
+ * vectors of ghost particle ids at boundary 1.
+ * @param[out] ghost_local_contact_pair_periodic_candidates_lists Ankerl
+ * unordered dense map. Stores potential pairs of local-ghost periodic particles
+ * in contact. Keys are ghost at boundary 0 particle ids and mapped types are
  * vectors of local particle ids at boundary 1.
  * @param sparse_contacts_object The object that contains the
  * information about the mobility status of cells
@@ -183,18 +187,21 @@ template <int dim, typename PropertiesIndex>
 void
 find_particle_particle_periodic_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  const typename DEM::dem_data_structures<dim>::cells_neighbor_list
-    &cells_local_periodic_neighbor_list,
-  const typename DEM::dem_data_structures<dim>::cells_neighbor_list
-    &cells_ghost_periodic_neighbor_list,
-  const typename DEM::dem_data_structures<dim>::cells_neighbor_list
-    &cells_ghost_local_periodic_neighbor_list,
-  typename DEM::dem_data_structures<dim>::particle_particle_candidates
-    &local_contact_pair_periodic_candidates,
-  typename DEM::dem_data_structures<dim>::particle_particle_candidates
-    &ghost_contact_pair_periodic_candidates,
-  typename DEM::dem_data_structures<dim>::particle_particle_candidates
-    &ghost_local_contact_pair_periodic_candidates,
+  std::vector<typename DEM::dem_data_structures<dim>::cells_neighbor_list>
+    &cells_local_local_periodic_neighbor_lists,
+  std::vector<typename DEM::dem_data_structures<dim>::cells_neighbor_list>
+    &cells_local_ghost_periodic_neighbor_lists,
+  std::vector<typename DEM::dem_data_structures<dim>::cells_neighbor_list>
+    &cells_ghost_local_periodic_neighbor_lists,
+  std::vector<
+    typename DEM::dem_data_structures<dim>::particle_particle_candidates>
+    &local_local_contact_pair_periodic_candidates_lists,
+  std::vector<
+    typename DEM::dem_data_structures<dim>::particle_particle_candidates>
+    &local_ghost_contact_pair_periodic_candidates_lists,
+  std::vector<
+    typename DEM::dem_data_structures<dim>::particle_particle_candidates>
+    &ghost_local_contact_pair_periodic_candidates_lists,
   const AdaptiveSparseContacts<dim, PropertiesIndex> &sparse_contacts_object);
 
 /**

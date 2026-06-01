@@ -212,7 +212,7 @@ public:
    * @param[in] triangulation Triangulation.
    * @param[out] periodic_boundaries_cells_information Map (multimap) of
    * information of the pair of cells on periodic boundaries.
-   * @param cell_ID_to_pbc_mesh_id_set
+   * @param cell_to_pbc_mesh_id_set
    */
   void
   map_periodic_cells(
@@ -220,7 +220,7 @@ public:
     typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
       &periodic_boundaries_cells_information,
     typename DEM::dem_data_structures<dim>::cell_touch_boundary_id
-      &cell_ID_to_pbc_mesh_id_set);
+      &cell_to_pbc_mesh_id_set);
 
   /**
    * @brief Moves particles crossing periodic boundaries (any side)

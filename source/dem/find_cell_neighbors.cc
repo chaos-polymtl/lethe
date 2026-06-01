@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include "core/lethe_grid_tools.h"
+
 #include <dem/find_cell_neighbors.h>
 
 #include <deal.II/grid/grid_tools.h>
@@ -105,16 +107,16 @@ template <int dim>
 void
 find_cell_periodic_neighbors(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const typename dem_data_structures<dim>::periodic_boundaries_cells_info
+  const typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
     &periodic_boundaries_cells_information,
-  const typename dem_data_structures<dim>::cell_touch_boundary_id
-                                     &cell_to_pbc_mesh_id_set,
-  PeriodicBoundariesManipulator<dim> &periodic_boundaries_object,
-  std::vector<typename dem_data_structures<dim>::cells_neighbor_list>
+  const typename DEM::dem_data_structures<dim>::cell_touch_boundary_id
+                                           &cell_to_pbc_mesh_id_set,
+  const PeriodicBoundariesManipulator<dim> &periodic_boundaries_object,
+  std::vector<typename DEM::dem_data_structures<dim>::cells_neighbor_list>
     &cells_local_periodic_neighbor_lists,
-  std::vector<typename dem_data_structures<dim>::cells_neighbor_list>
+  std::vector<typename DEM::dem_data_structures<dim>::cells_neighbor_list>
     &cells_ghost_periodic_neighbor_lists,
-  std::vector<typename dem_data_structures<dim>::cells_neighbor_list>
+  std::vector<typename DEM::dem_data_structures<dim>::cells_neighbor_list>
     &cells_ghost_local_periodic_neighbor_lists)
 {
   std::map<std::uint8_t, typename dem_data_structures<dim>::cell_vector>
@@ -170,11 +172,12 @@ find_cell_periodic_neighbors(
             periodic_neighbor_vector;
 
           // Get the periodic neighbor(s) of the main cell
-          get_periodic_neighbor_list<dim>(main_cell,
-                                          coinciding_vertex_groups,
-                                          vertex_to_coinciding_vertex_group,
-                                          v_to_c,
-                                          periodic_neighbor_vector);
+          LetheGridTools::get_periodic_neighbor_list<dim>(
+            main_cell,
+            coinciding_vertex_groups,
+            vertex_to_coinciding_vertex_group,
+            v_to_c,
+            periodic_neighbor_vector);
 
           // Loop on every periodic neighboring cell, determine in which
           // container it should go
@@ -275,11 +278,12 @@ find_cell_periodic_neighbors(
           typename dem_data_structures<dim>::cell_vector periodic_neighbor_list;
 
           // Get the periodic neighbor of the cell
-          get_periodic_neighbor_list<dim>(main_cell,
-                                          coinciding_vertex_groups,
-                                          vertex_to_coinciding_vertex_group,
-                                          v_to_c,
-                                          periodic_neighbor_list);
+          LetheGridTools::get_periodic_neighbor_list<dim>(
+            main_cell,
+            coinciding_vertex_groups,
+            vertex_to_coinciding_vertex_group,
+            v_to_c,
+            periodic_neighbor_list);
 
           for (const auto &periodic_neighbor : periodic_neighbor_list)
             {
@@ -289,8 +293,7 @@ find_cell_periodic_neighbors(
                   // neighboring cell.
                   const std::set<types::boundary_id>
                     neighboring_cell_touching_boundaries =
-                      cell_to_pbc_mesh_id_set.at(
-                        periodic_neighbor->active_cell_index());
+                      cell_to_pbc_mesh_id_set.at(periodic_neighbor);
 
                   // Find which boundary (or boundaries) is shared between
                   // the main cell and its neighboring cell
@@ -382,48 +385,50 @@ find_full_cell_neighbors(
     }
 }
 
-template <int dim>
-void
-get_periodic_neighbor_list(
-  const typename Triangulation<dim>::active_cell_iterator &cell,
-  const std::map<unsigned int, std::vector<unsigned int>>
-                                             &coinciding_vertex_groups,
-  const std::map<unsigned int, unsigned int> &vertex_to_coinciding_vertex_group,
-  const std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
-                                                 &v_to_c,
-  typename dem_data_structures<dim>::cell_vector &periodic_neighbor_list)
-{
-  std::set<typename Triangulation<dim>::active_cell_iterator> unique_neighbors;
-
-  // Loop over all vertices of the cell
-  for (unsigned int vertex = 0; vertex < cell->n_vertices(); ++vertex)
-    {
-      const unsigned int vertex_id = cell->vertex_index(vertex);
-
-      auto group_it = vertex_to_coinciding_vertex_group.find(vertex_id);
-
-      if (group_it == vertex_to_coinciding_vertex_group.end())
-        continue;
-
-      const unsigned int coinciding_vertex_key = group_it->second;
-
-      for (const auto coinciding_vertex :
-           coinciding_vertex_groups.at(coinciding_vertex_key))
-        {
-          // Skip the current vertex
-          if (coinciding_vertex == vertex_id)
-            continue;
-
-          for (const auto &neighbor_cell : v_to_c[coinciding_vertex])
-            {
-              unique_neighbors.insert(neighbor_cell);
-            }
-        }
-    }
-
-  periodic_neighbor_list.assign(unique_neighbors.begin(),
-                                unique_neighbors.end());
-}
+// template <int dim>
+// void
+// get_periodic_neighbor_list(
+//   const typename Triangulation<dim>::active_cell_iterator &cell,
+//   const std::map<unsigned int, std::vector<unsigned int>>
+//                                              &coinciding_vertex_groups,
+//   const std::map<unsigned int, unsigned int>
+//   &vertex_to_coinciding_vertex_group, const std::vector<std::set<typename
+//   Triangulation<dim>::active_cell_iterator>>
+//                                                  &v_to_c,
+//   typename dem_data_structures<dim>::cell_vector &periodic_neighbor_list)
+// {
+//   std::set<typename Triangulation<dim>::active_cell_iterator>
+//   unique_neighbors;
+//
+//   // Loop over all vertices of the cell
+//   for (unsigned int vertex = 0; vertex < cell->n_vertices(); ++vertex)
+//     {
+//       const unsigned int vertex_id = cell->vertex_index(vertex);
+//
+//       auto group_it = vertex_to_coinciding_vertex_group.find(vertex_id);
+//
+//       if (group_it == vertex_to_coinciding_vertex_group.end())
+//         continue;
+//
+//       const unsigned int coinciding_vertex_key = group_it->second;
+//
+//       for (const auto coinciding_vertex :
+//            coinciding_vertex_groups.at(coinciding_vertex_key))
+//         {
+//           // Skip the current vertex
+//           if (coinciding_vertex == vertex_id)
+//             continue;
+//
+//           for (const auto &neighbor_cell : v_to_c[coinciding_vertex])
+//             {
+//               unique_neighbors.insert(neighbor_cell);
+//             }
+//         }
+//     }
+//
+//   periodic_neighbor_list.assign(unique_neighbors.begin(),
+//                                 unique_neighbors.end());
+// }
 
 template void
 find_cell_neighbors<2, false>(
@@ -455,8 +460,8 @@ find_cell_periodic_neighbors<2>(
   const typename dem_data_structures<2>::periodic_boundaries_cells_info
     &periodic_boundaries_cells_information,
   const typename dem_data_structures<2>::cell_touch_boundary_id
-                                   &cell_to_pbc_mesh_id_set,
-  PeriodicBoundariesManipulator<2> &periodic_boundaries_object,
+                                         &cell_to_pbc_mesh_id_set,
+  const PeriodicBoundariesManipulator<2> &periodic_boundaries_object,
   std::vector<typename dem_data_structures<2>::cells_neighbor_list>
     &cells_local_periodic_neighbor_lists,
   std::vector<typename dem_data_structures<2>::cells_neighbor_list>
@@ -470,8 +475,8 @@ find_cell_periodic_neighbors<3>(
   const typename dem_data_structures<3>::periodic_boundaries_cells_info
     &periodic_boundaries_cells_information,
   const typename dem_data_structures<3>::cell_touch_boundary_id
-                                   &cell_to_pbc_mesh_id_set,
-  PeriodicBoundariesManipulator<3> &periodic_boundaries_object,
+                                         &cell_to_pbc_mesh_id_set,
+  const PeriodicBoundariesManipulator<3> &periodic_boundaries_object,
   std::vector<typename dem_data_structures<3>::cells_neighbor_list>
     &cells_local_periodic_neighbor_lists,
   std::vector<typename dem_data_structures<3>::cells_neighbor_list>

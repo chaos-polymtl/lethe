@@ -186,7 +186,7 @@ public:
   typedef std::map<
     typename Triangulation<dim, spacedim>::active_cell_iterator,
     std::vector<typename Triangulation<dim, spacedim>::active_cell_iterator>,
-    cut_cell_comparison<spacedim>>
+    cell_comparaison<spacedim>>
     triangulation_cell_neighbors_map;
 
   /**

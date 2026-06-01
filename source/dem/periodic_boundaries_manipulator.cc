@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#include <core/lethe_grid_tools.h>
 #include <core/tensors_and_points_dimension_manipulation.h>
 
 #include <dem/periodic_boundaries_manipulator.h>
@@ -11,6 +12,8 @@
 
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_values.h>
+
+#include <deal.II/grid/grid_tools.h>
 
 #include <ranges>
 #include <unordered_map>
@@ -69,14 +72,14 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
   typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
     &periodic_boundaries_cells_information,
   typename DEM::dem_data_structures<dim>::cell_touch_boundary_id
-    &cell_ID_to_pbc_mesh_id_set)
+    &cell_to_pbc_mesh_id_set)
 {
   if (!periodic_boundaries_enabled)
     return;
 
   periodic_boundaries_cells_information.clear();
   periodic_offsets.clear();
-  cell_ID_to_pbc_mesh_id_set.clear();
+  cell_to_pbc_mesh_id_set.clear();
 
   // Temporary storage used to store if the offset of a given periodic boundary
   // condition has been calculated. The keys of that map are the mesh boundary
@@ -87,6 +90,22 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
   // of the pbc.
   for (auto id : primary_periodic_boundaries_ids | std::views::values)
     offset_calculated[id] = false;
+
+  // For each cell, the cell vertices are found and used to find adjacent cells.
+  // The reason is to find the cells located on the corners of the main cell.
+  auto v_to_c = GridTools::vertex_to_cell_map(triangulation);
+
+  // A map of coinciding vertices labeled by an arbitrary element from them
+  std::map<unsigned int, std::vector<unsigned int>> coinciding_vertex_groups;
+
+  // Map of a vertex to the label of a group of coinciding vertices
+  std::map<unsigned int, unsigned int> vertex_to_coinciding_vertex_group;
+
+  // Collects for a given triangulation all locally relevant vertices that
+  // coincide due to periodicity.
+  GridTools::collect_coinciding_vertices(triangulation,
+                                         coinciding_vertex_groups,
+                                         vertex_to_coinciding_vertex_group);
 
   // Iterating over the active cells in the triangulation
   for (const auto &cell : triangulation.active_cell_iterators())
@@ -108,6 +127,44 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
                   // Check if the face of the current cell is on the PBC
                   if (face_boundary_id == primary_boundary_mesh_id)
                     {
+                      // Primary cell
+                      cell_to_pbc_mesh_id_set[cell].insert(
+                        primary_boundary_mesh_id);
+
+                      // What is the secondary boundary ID of the associated
+                      // PBC.
+                      const types::boundary_id &secondary_boundary_mesh_id =
+                        secondary_periodic_boundaries_ids.at(prm_pbc_index);
+
+                      // Empty list of periodic cell neighbors
+                      typename DEM::dem_data_structures<dim>::cell_vector
+                        periodic_neighbor_vector;
+
+                      // Get the periodic neighbor(s) of the main cell
+                      LetheGridTools::get_periodic_neighbor_list<dim>(
+                        cell,
+                        coinciding_vertex_groups,
+                        vertex_to_coinciding_vertex_group,
+                        v_to_c,
+                        periodic_neighbor_vector);
+
+                      // Loop on the periodic neighbors
+                      for (const auto &periodic_neighbor :
+                           periodic_neighbor_vector)
+                        {
+                          // Loop on its face
+                          for (const auto &neigh_face :
+                               periodic_neighbor->face_iterators())
+                            {
+                              types::boundary_id neigh_face_boundary_id =
+                                neigh_face->boundary_id();
+
+                              if (neigh_face_boundary_id ==
+                                  secondary_boundary_mesh_id)
+                                cell_to_pbc_mesh_id_set[periodic_neighbor]
+                                  .insert(secondary_boundary_mesh_id);
+                            }
+                        }
                       // Get direction corresponding to this BC index
                       unsigned int current_direction =
                         directions.at(prm_pbc_index);
@@ -116,7 +173,7 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
                                    boundaries_info;
                       unsigned int face_id = cell->face_iterator_to_index(face);
 
-                      // Write the needed information boundaries_info
+                      // Write the necessary information boundaries_info
                       set_periodic_boundaries_info(cell,
                                                    face_id,
                                                    boundaries_info);
@@ -125,26 +182,6 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
                       // One entry per boundary found
                       periodic_boundaries_cells_information.insert(
                         {cell->global_active_cell_index(), boundaries_info});
-
-                      // We need to store which boundary(ies) the primary and
-                      // secondary cells are touching.
-                      const types::boundary_id &secondary_boundary_mesh_id =
-                        secondary_periodic_boundaries_ids.at(prm_pbc_index);
-
-                      // Iterator of the secondary cell
-                      typename Triangulation<dim>::active_cell_iterator
-                        secondary_cell = boundaries_info.periodic_cell;
-
-                      // Primary cell
-                      cell_ID_to_pbc_mesh_id_set[cell
-                                                   ->global_active_cell_index()]
-                        .insert(primary_boundary_mesh_id);
-
-                      // Secondary cell
-                      cell_ID_to_pbc_mesh_id_set[secondary_cell
-                                                   ->global_active_cell_index()]
-                        .insert(secondary_boundary_mesh_id);
-
 
                       // Compute and store the offset between the faces of the
                       // periodic cells if not already done for this boundary

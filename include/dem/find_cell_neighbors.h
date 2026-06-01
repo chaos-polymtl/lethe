@@ -62,7 +62,6 @@ find_cell_neighbors(
  * on periodic boundary 0
  * @param cell_to_pbc_mesh_id_set
  * @param periodic_boundaries_object
- * @param number_of_periodic_bc
  * @param cells_local_periodic_neighbor_lists A vector (with its size equal to the
  * number of local cells) of vectors (local adjacent cells of each local cell).
  * The first element of each set shows the main cell itself
@@ -134,15 +133,17 @@ find_full_cell_neighbors(
  * @param periodic_neighbor_list A vector which is the list of periodic cell
  * neighbors
  */
-template <int dim>
-void
-get_periodic_neighbor_list(
-  const typename Triangulation<dim>::active_cell_iterator &cell,
-  const std::map<unsigned int, std::vector<unsigned int>>
-                                             &coinciding_vertex_groups,
-  const std::map<unsigned int, unsigned int> &vertex_to_coinciding_vertex_group,
-  const std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
-                                                      &v_to_c,
-  typename DEM::dem_data_structures<dim>::cell_vector &periodic_neighbor_list);
+// template <int dim>
+// void
+// get_periodic_neighbor_list(
+//   const typename Triangulation<dim>::active_cell_iterator &cell,
+//   const std::map<unsigned int, std::vector<unsigned int>>
+//                                              &coinciding_vertex_groups,
+//   const std::map<unsigned int, unsigned int>
+//   &vertex_to_coinciding_vertex_group, const std::vector<std::set<typename
+//   Triangulation<dim>::active_cell_iterator>>
+//                                                       &v_to_c,
+//   typename DEM::dem_data_structures<dim>::cell_vector
+//   &periodic_neighbor_list);
 
 #endif

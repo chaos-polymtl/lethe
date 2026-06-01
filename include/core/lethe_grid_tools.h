@@ -1,10 +1,12 @@
 // SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#ifndef lethe_lethe_grid_tools_h
-#define lethe_lethe_grid_tools_h
+#ifndef lethe_grid_tools_h
+#define lethe_grid_tools_h
 
 #include <core/serial_solid.h>
+
+#include "dem/data_containers.h"
 
 #include <deal.II/base/tensor.h>
 
@@ -514,5 +516,45 @@ namespace LetheGridTools
       &vertices_cell_map,
     const typename Triangulation<dim, spacedim>::active_cell_iterator &cell);
 
+  /**
+   * @brief Generate a periodic neighbor cells list of the cell. With the
+   * coinciding_vertex_groups and the vertex_to_coinciding_vertex_group, we can
+   * get the coinciding vertices on a periodic boundary and with v_to_c we can
+   * get the list of the periodic neighbor cells to the main cell.
+   *
+   * Here is an example to understand how the search works:
+   * Cell 8 has vertices 0, 1, 2, 3 on the periodic boundary. First,
+   * it checks in the coinciding_vertex_groups if vertex 0 is a key in the
+   * map, and if it is, it gets a label, let's say that label is 10. In the
+   * vertex_to_coinciding_vertex_group, it can find the coinciding vertices
+   * with the label. Using label 10, it gets vertices 0 and 34, which
+   * means that vertices 0 and 34 are periodic. We do not want the cells
+   * attached to the vertex 0 since they are already found with the regular
+   * find_cell_neighbor function, so it skips vertex 0, but gets the cells 21,
+   * 22, 23, 24 attached to the vertex 34. The same checks are done for vertices
+   * 1, 2 and 3, and all periodic cells are returned as a vector.
+   *
+   * @param cell The cell that needs the periodic neighbor list
+   * @param coinciding_vertex_groups A map of coinciding vertices labeled by an
+   * arbitrary element from them
+   * @param vertex_to_coinciding_vertex_group Map of a vertex to the label of a
+   * group of coinciding vertices
+   * @param v_to_c A vector of sets with adjacent cells of all the vertices
+   * @param periodic_neighbor_list A vector which is the list of periodic cell
+   * neighbors
+   */
+  template <int dim>
+  void
+  get_periodic_neighbor_list(
+    const typename Triangulation<dim>::active_cell_iterator &cell,
+    const std::map<unsigned int, std::vector<unsigned int>>
+      &coinciding_vertex_groups,
+    const std::map<unsigned int, unsigned int>
+      &vertex_to_coinciding_vertex_group,
+    const std::vector<
+      std::set<typename Triangulation<dim>::active_cell_iterator>> &v_to_c,
+    typename DEM::dem_data_structures<dim>::cell_vector
+      &periodic_neighbor_list);
+
 } // namespace LetheGridTools
-#endif // lethe_lethegridtools_h
+#endif // lethe_grid_tools_h

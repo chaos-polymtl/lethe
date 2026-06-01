@@ -1940,6 +1940,77 @@ LetheGridTools::find_cells_around_cell(
   return cells_sharing_vertices;
 }
 
+/**
+ * @brief Generate a periodic neighbor cells list of the cell. With the
+ * coinciding_vertex_groups and the vertex_to_coinciding_vertex_group, we can
+ * get the coinciding vertices on a periodic boundary and with v_to_c we can
+ * get the list of the periodic neighbor cells to the main cell.
+ *
+ * Here is an example to understand how the search works:
+ * Cell 8 has vertices 0, 1, 2, 3 on the periodic boundary. First,
+ * it checks in the coinciding_vertex_groups if vertex 0 is a key in the
+ * map, and if it is, it gets a label, let's say that label is 10. In the
+ * vertex_to_coinciding_vertex_group, it can find the coinciding vertices
+ * with the label. Using label 10, it gets vertices 0 and 34, which
+ * means that vertices 0 and 34 are periodic. We do not want the cells
+ * attached to the vertex 0 since they are already found with the regular
+ * find_cell_neighbor function, so it skips vertex 0, but gets the cells 21,
+ * 22, 23, 24 attached to the vertex 34. The same checks are done for vertices
+ * 1, 2 and 3, and all periodic cells are returned as a vector.
+ *
+ * @param cell The cell that needs the periodic neighbor list
+ * @param coinciding_vertex_groups A map of coinciding vertices labeled by an
+ * arbitrary element from them
+ * @param vertex_to_coinciding_vertex_group Map of a vertex to the label of a
+ * group of coinciding vertices
+ * @param v_to_c A vector of sets with adjacent cells of all the vertices
+ * @param periodic_neighbor_list A vector which is the list of periodic cell
+ * neighbors
+ */
+
+template <int dim>
+void
+LetheGridTools::get_periodic_neighbor_list(
+  const typename Triangulation<dim>::active_cell_iterator &cell,
+  const std::map<unsigned int, std::vector<unsigned int>>
+                                             &coinciding_vertex_groups,
+  const std::map<unsigned int, unsigned int> &vertex_to_coinciding_vertex_group,
+  const std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
+                                                      &v_to_c,
+  typename DEM::dem_data_structures<dim>::cell_vector &periodic_neighbor_list)
+{
+  std::set<typename Triangulation<dim>::active_cell_iterator> unique_neighbors;
+
+  // Loop over all vertices of the cell
+  for (unsigned int vertex = 0; vertex < cell->n_vertices(); ++vertex)
+    {
+      const unsigned int vertex_id = cell->vertex_index(vertex);
+
+      auto group_it = vertex_to_coinciding_vertex_group.find(vertex_id);
+
+      if (group_it == vertex_to_coinciding_vertex_group.end())
+        continue;
+
+      const unsigned int coinciding_vertex_key = group_it->second;
+
+      for (const auto coinciding_vertex :
+           coinciding_vertex_groups.at(coinciding_vertex_key))
+        {
+          // Skip the current vertex
+          if (coinciding_vertex == vertex_id)
+            continue;
+
+          for (const auto &neighbor_cell : v_to_c[coinciding_vertex])
+            {
+              unique_neighbors.insert(neighbor_cell);
+            }
+        }
+    }
+
+  periodic_neighbor_list.assign(unique_neighbors.begin(),
+                                unique_neighbors.end());
+}
+
 template std::vector<typename Triangulation<1, 2>::active_cell_iterator>
 LetheGridTools::find_cells_around_cell<1, 2>(
   std::map<unsigned int, std::set<Triangulation<1, 2>::active_cell_iterator>>
@@ -1966,3 +2037,23 @@ LetheGridTools::find_cells_around_cell<3>(
            std::set<typename Triangulation<3>::active_cell_iterator>>
                                                         &vertices_cell_map,
   const typename Triangulation<3>::active_cell_iterator &cell);
+
+template void
+LetheGridTools::get_periodic_neighbor_list<2>(
+  const typename Triangulation<2>::active_cell_iterator &cell,
+  const std::map<unsigned int, std::vector<unsigned int>>
+                                             &coinciding_vertex_groups,
+  const std::map<unsigned int, unsigned int> &vertex_to_coinciding_vertex_group,
+  const std::vector<std::set<typename Triangulation<2>::active_cell_iterator>>
+                                                    &v_to_c,
+  typename DEM::dem_data_structures<2>::cell_vector &periodic_neighbor_list);
+
+template void
+LetheGridTools::get_periodic_neighbor_list<3>(
+  const typename Triangulation<3>::active_cell_iterator &cell,
+  const std::map<unsigned int, std::vector<unsigned int>>
+                                             &coinciding_vertex_groups,
+  const std::map<unsigned int, unsigned int> &vertex_to_coinciding_vertex_group,
+  const std::vector<std::set<typename Triangulation<3>::active_cell_iterator>>
+                                                    &v_to_c,
+  typename DEM::dem_data_structures<3>::cell_vector &periodic_neighbor_list);

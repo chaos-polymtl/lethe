@@ -10,6 +10,7 @@
 #include <dem/find_boundary_cells_information.h>
 #include <dem/particle_particle_broad_search.h>
 #include <dem/particle_wall_broad_search.h>
+#include <dem/periodic_boundaries_manipulator.h>
 
 using namespace DEM;
 
@@ -42,18 +43,17 @@ public:
    * cells.
    * @param[in] periodic_boundaries_cells_information Information of periodic
    * cells used if periodic boundaries are enabled (next parameter).
-   * @param cell_to_pbc_mesh_id_vector
-   * @param boundary_id_set_to_container_index
+   * @param cell_to_pbc_mesh_id_set
+   * @param periodic_boundaries_object
    */
   void
   execute_cell_neighbors_search(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    const dem_data_structures<dim>::periodic_boundaries_cells_info
+    const typename dem_data_structures<dim>::periodic_boundaries_cells_info
       &periodic_boundaries_cells_information,
-    const dem_data_structures<dim>::cell_touch_boundary_id
-      &cell_to_pbc_mesh_id_vector,
-    const std::map<std::set<types::boundary_id>, std::uint8_t>
-      &boundary_id_set_to_container_index);
+    const typename DEM::dem_data_structures<dim>::cell_touch_boundary_id
+                                             &cell_to_pbc_mesh_id_set,
+    const PeriodicBoundariesManipulator<dim> &periodic_boundaries_object);
 
   /**
    * @brief Execute functions to clear and update the neighbor lists of all the
@@ -64,7 +64,7 @@ public:
    * @param[in] periodic_boundaries_cells_information Information of periodic
    * cells used if periodic boundaries are enabled (next parameter).
    * @param cell_to_pbc_mesh_id_vector
-   * @param boundary_id_set_to_container_index
+   * @param periodic_boundaries_object
    */
   void
   update_cell_neighbors(
@@ -72,9 +72,8 @@ public:
     const dem_data_structures<dim>::periodic_boundaries_cells_info
       &periodic_boundaries_cells_information,
     const dem_data_structures<dim>::cell_touch_boundary_id
-      &cell_to_pbc_mesh_id_vector,
-    const std::map<std::set<types::boundary_id>, std::uint8_t>
-      &boundary_id_set_to_container_index)
+                                             &cell_to_pbc_mesh_id_vector,
+    const PeriodicBoundariesManipulator<dim> &periodic_boundaries_object)
   {
     cells_local_neighbor_list.clear();
     cells_ghost_neighbor_list.clear();
@@ -84,12 +83,12 @@ public:
     total_neighbor_list.clear();
 
     // Number of lists
-    reserve_periodic_containers();
+    resize_periodic_containers();
 
     execute_cell_neighbors_search(triangulation,
                                   periodic_boundaries_cells_information,
                                   cell_to_pbc_mesh_id_vector,
-                                  boundary_id_set_to_container_index);
+                                  periodic_boundaries_object);
   }
 
   /**
@@ -336,14 +335,18 @@ public:
    * @brief
    */
   void
-  reserve_periodic_containers()
+  resize_periodic_containers()
   {
     // Number of lists
-    unsigned int n_lists =
-      std::pow(3, number_of_declared_periodic_boundaries) - 1;
-    cells_local_periodic_neighbor_lists.reserve(n_lists);
-    cells_ghost_periodic_neighbor_lists.reserve(n_lists);
-    cells_ghost_local_periodic_neighbor_lists.reserve(n_lists);
+    unsigned int n_lists = 3;
+    for (unsigned int i = 1; i < number_of_declared_periodic_boundaries; ++i)
+      n_lists *= 3;
+
+    n_lists -= 1;
+
+    cells_local_periodic_neighbor_lists.resize(n_lists);
+    cells_ghost_periodic_neighbor_lists.resize(n_lists);
+    cells_ghost_local_periodic_neighbor_lists.resize(n_lists);
   }
 
 private:
@@ -359,14 +362,11 @@ private:
     cells_local_neighbor_list;
   typename dem_data_structures<dim>::cells_neighbor_list
     cells_ghost_neighbor_list;
-  std::unordered_map<std::uint8_t,
-                     typename dem_data_structures<dim>::cells_neighbor_list>
+  std::vector<typename dem_data_structures<dim>::cells_neighbor_list>
     cells_local_periodic_neighbor_lists;
-  std::unordered_map<std::uint8_t,
-                     typename dem_data_structures<dim>::cells_neighbor_list>
+  std::vector<typename dem_data_structures<dim>::cells_neighbor_list>
     cells_ghost_periodic_neighbor_lists;
-  std::unordered_map<std::uint8_t,
-                     typename dem_data_structures<dim>::cells_neighbor_list>
+  std::vector<typename dem_data_structures<dim>::cells_neighbor_list>
     cells_ghost_local_periodic_neighbor_lists;
 
   unsigned int number_of_declared_periodic_boundaries = 0;
@@ -378,12 +378,12 @@ private:
     ghost_contact_pair_candidates;
   typename dem_data_structures<dim>::particle_particle_candidates
     ghost_local_contact_pair_candidates;
-  typename dem_data_structures<dim>::particle_particle_candidates
-    local_contact_pair_periodic_candidates;
-  typename dem_data_structures<dim>::particle_particle_candidates
-    ghost_contact_pair_periodic_candidates;
-  typename dem_data_structures<dim>::particle_particle_candidates
-    ghost_local_contact_pair_periodic_candidates;
+  std::vector<typename dem_data_structures<dim>::particle_particle_candidates>
+    local_local_contact_pair_periodic_candidates_lists;
+  std::vector<typename dem_data_structures<dim>::particle_particle_candidates>
+    local_ghost_contact_pair_periodic_candidates_lists;
+  std::vector<typename dem_data_structures<dim>::particle_particle_candidates>
+    ghost_local_contact_pair_periodic_candidates_lists;
   typename dem_data_structures<dim>::particle_floating_mesh_candidates
     particle_floating_mesh_candidates;
   typename dem_data_structures<dim>::particle_floating_wall_candidates

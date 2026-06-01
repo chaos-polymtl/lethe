@@ -226,7 +226,9 @@ CFDDEMMatrixFree<dim>::initialize_dem_parameters()
 
   // Remap periodic cells (if PBC enabled)
   periodic_boundaries_object.map_periodic_cells(
-    *parallel_triangulation, periodic_boundaries_cells_information);
+    *parallel_triangulation,
+    periodic_boundaries_cells_information,
+    cell_to_pbc_mesh_id_set);
 
   // Set the combined_periodic_offsets to contact managers and particles contact
   // forces for periodic contact detection (if PBC enabled)
@@ -255,7 +257,10 @@ CFDDEMMatrixFree<dim>::initialize_dem_parameters()
 
   // Find cell neighbors
   contact_manager.execute_cell_neighbors_search(
-    *parallel_triangulation, periodic_boundaries_cells_information);
+    *parallel_triangulation,
+    periodic_boundaries_cells_information,
+    cell_to_pbc_mesh_id_set,
+    periodic_boundaries_object);
 
   // Find boundary cells with faces
   boundary_cell_object.build(
@@ -793,11 +798,15 @@ CFDDEMMatrixFree<dim>::load_balance()
 
   // If PBC are enabled remap periodic cells
   periodic_boundaries_object.map_periodic_cells(
-    *parallel_triangulation, periodic_boundaries_cells_information);
+    *parallel_triangulation,
+    periodic_boundaries_cells_information,
+    cell_to_pbc_mesh_id_set);
 
   // Update cell neighbors
   contact_manager.update_cell_neighbors(*parallel_triangulation,
-                                        periodic_boundaries_cells_information);
+                                        periodic_boundaries_cells_information,
+                                        cell_to_pbc_mesh_id_set,
+                                        periodic_boundaries_object);
 
   boundary_cell_object.build(
     *parallel_triangulation,
