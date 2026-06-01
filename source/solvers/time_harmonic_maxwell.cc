@@ -101,7 +101,7 @@ void
 TimeHarmonicMaxwell<dim>::print_THM_setup_memory(
   const TrilinosWrappers::SparsityPattern &sparsity_pattern)
 {
-  auto mpi_communicator = triangulation->get_mpi_communicator();
+  auto       mpi_communicator = triangulation->get_mpi_communicator();
   const auto this_mpi_process =
     Utilities::MPI::this_mpi_process(mpi_communicator);
   constexpr double bytes_to_gb = 1.0 / (1024.0 * 1024.0 * 1024.0);
@@ -184,16 +184,12 @@ TimeHarmonicMaxwell<dim>::print_THM_setup_memory(
   // Print memory consumption information on rank 0
   if (this_mpi_process == 0)
     {
-
-      const auto total_memory = present_solution_memory_total +
-                                present_solution_skeleton_memory_total +
-                                present_dpg_error_indicator_memory_total +
-                                system_rhs_memory_total +
-                                sparsity_pattern_memory_total +
-                                system_matrix_memory_total +
-                                dof_handler_trial_interior_memory_total +
-                                dof_handler_trial_skeleton_memory_total +
-                                dof_handler_test_memory_total;
+      const auto total_memory =
+        present_solution_memory_total + present_solution_skeleton_memory_total +
+        present_dpg_error_indicator_memory_total + system_rhs_memory_total +
+        sparsity_pattern_memory_total + system_matrix_memory_total +
+        dof_handler_trial_interior_memory_total +
+        dof_handler_trial_skeleton_memory_total + dof_handler_test_memory_total;
 
       announce_string(this->pcout,
                       "Time-Harmonic Maxwell Memory Diagnostics",
@@ -264,8 +260,8 @@ TimeHarmonicMaxwell<dim>::print_THM_setup_memory(
       this->pcout << "  present_DPG_error_indicator : "
                   << present_dpg_error_indicator_memory_total << std::endl;
       this->pcout << "  system_rhs : " << system_rhs_memory_total << std::endl;
-      this->pcout << "  sparsity_pattern : "
-                  << sparsity_pattern_memory_total << std::endl;
+      this->pcout << "  sparsity_pattern : " << sparsity_pattern_memory_total
+                  << std::endl;
       this->pcout << "  system_matrix : " << system_matrix_memory_total
                   << std::endl;
       this->pcout << "  dof_handler_trial_interior : "
@@ -274,7 +270,8 @@ TimeHarmonicMaxwell<dim>::print_THM_setup_memory(
                   << dof_handler_trial_skeleton_memory_total << std::endl;
       this->pcout << "  dof_handler_test : " << dof_handler_test_memory_total
                   << std::endl;
-      this->pcout << "  Total DPG solver memory consumption : " << total_memory << std::endl;
+      this->pcout << "  Total DPG solver memory consumption : " << total_memory
+                  << std::endl;
       this->pcout
         << " =================================================================="
         << std::endl;
