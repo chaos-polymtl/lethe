@@ -56,5 +56,5 @@ A Darcy-like source term can be added to the simulation using the following para
 
   where
 
-  * :math:`\left(\rho K\right)_\mathrm{eff} = (1-\phi)\rho_0 [\alpha_\mathrm{l}K_\mathrm{0,l} + (1-\alpha_\mathrm{l})K_\mathrm{0,s}] + \phi \rho_1 [\alpha_\mathrm{l}K_\mathrm{1,l} + (1-\alpha_\mathrm{l})K_\mathrm{1,s}]` is the effective Darcy penalization coefficient, obtained by weighting the product of the Darcy penalty (:math:`K_\mathrm{i} [=] T^{-1}`) and the density (:math:`\rho_\mathrm{i}[=] M L^{-3}`) by the phase indicator (:math:`\phi`) and the liquid fraction (:math:`\alpha_\mathrm{l}`), and;
+  * :math:`\left(\rho K\right)_\mathrm{eff} = (1-\phi)\rho_0 [\alpha_\mathrm{l}K_\mathrm{0,l} + (1-\alpha_\mathrm{l})K_\mathrm{0,s}] + \phi \rho_1 [\alpha_\mathrm{l}K_\mathrm{1,l} + (1-\alpha_\mathrm{l})K_\mathrm{1,s}]` is the effective Darcy penalization coefficient, obtained by weighting the product of the Darcy penalty :math:`\left(K_\mathrm{i} [=] T^{-1}\right)` and the density :math:`\left(\rho_\mathrm{i}[=] M L^{-3}\right)` by the phase indicator (:math:`\phi`) and the liquid fraction (:math:`\alpha_\mathrm{l}`), and;
   * :math:`\boldsymbol{u}` is the velocity vector.
