@@ -25,7 +25,7 @@ set dimension = 2
 subsection simulation control
   set method           = bdf2
   set output frequency = 0
-  set time end         = 0.5
+  set time end         = 0.3
   set time step        = 0.1
 end
 
@@ -67,7 +67,7 @@ end
 subsection physical properties
   set number of fluids = 2
   subsection fluid 1
-    set density = 0.1
+    set density = 10
   end
   subsection fluid 0
     set density = 0.1

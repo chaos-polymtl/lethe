@@ -19,8 +19,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- MAJOR This PR adds a dimensionally consistent formulation of the Darcy force term in CLS two-phase flows simulation. Setting to `true` the `enable Darcy multiply by density` parameter enables the multiplication of the previously implemented term by the density. This formulation is more appropriate when the solved momentum equation solves with the pressure variable rather than the kinematic pressure. This is the case when solving the coupled Navier-Stokes equations with the CLS one. Adding this term has shown to reduce the stiffness of the non-linear solving. A simple regression application test is also added. [#2005](https://github.com/chaos-polymtl/lethe/pull/2005)
-
 - MINOR The Method of Manufactured Solution example now features results with P3-P2 and P3-P2 elements. The right order of convergence is recovered. [#2003](https://github.com/chaos-polymtl/lethe/pull/2003)
 
 ## [Master] - 2026/05/27
