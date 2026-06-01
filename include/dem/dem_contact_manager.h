@@ -41,16 +41,12 @@ public:
    *
    * @param[in] triangulation The triangulation to access the information of the
    * cells.
-   * @param[in] periodic_boundaries_cells_information Information of periodic
-   * cells used if periodic boundaries are enabled (next parameter).
    * @param cell_to_pbc_mesh_id_set
    * @param periodic_boundaries_object
    */
   void
   execute_cell_neighbors_search(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    const typename dem_data_structures<dim>::periodic_boundaries_cells_info
-      &periodic_boundaries_cells_information,
     const typename DEM::dem_data_structures<dim>::cell_touch_boundary_id
                                              &cell_to_pbc_mesh_id_set,
     const PeriodicBoundariesManipulator<dim> &periodic_boundaries_object);
@@ -61,16 +57,12 @@ public:
    *
    * @param[in] triangulation The triangulation to access the information of the
    * cells.
-   * @param[in] periodic_boundaries_cells_information Information of periodic
-   * cells used if periodic boundaries are enabled (next parameter).
    * @param cell_to_pbc_mesh_id_vector
    * @param periodic_boundaries_object
    */
   void
   update_cell_neighbors(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    const dem_data_structures<dim>::periodic_boundaries_cells_info
-      &periodic_boundaries_cells_information,
     const dem_data_structures<dim>::cell_touch_boundary_id
                                              &cell_to_pbc_mesh_id_vector,
     const PeriodicBoundariesManipulator<dim> &periodic_boundaries_object)
@@ -86,7 +78,6 @@ public:
     resize_periodic_containers();
 
     execute_cell_neighbors_search(triangulation,
-                                  periodic_boundaries_cells_information,
                                   cell_to_pbc_mesh_id_vector,
                                   periodic_boundaries_object);
   }

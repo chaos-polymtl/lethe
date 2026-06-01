@@ -331,7 +331,7 @@ find_particle_particle_periodic_contact_pairs(
   ghost_local_contact_pair_periodic_candidates_lists.clear();
 
   // Resize containers
-  std::uint8_t number_of_lists =
+  unsigned int number_of_lists =
     cells_local_local_periodic_neighbor_lists.size();
   local_local_contact_pair_periodic_candidates_lists.resize(number_of_lists);
   local_ghost_contact_pair_periodic_candidates_lists.resize(number_of_lists);

@@ -185,7 +185,12 @@ public:
                             neighbor_boundaries.contains(primary_id));
 
         if (match)
-          shared_pbc_ids.insert(pbc_id);
+          {
+            if (main_boundaries.contains(primary_id))
+              shared_pbc_ids.insert(primary_id);
+            else
+              shared_pbc_ids.insert(secondary_id);
+          }
       }
 
     return shared_pbc_ids;
@@ -301,6 +306,12 @@ public:
   get_number_of_pbc() const
   {
     return number_of_declared_periodic_boundaries;
+  }
+
+  unsigned int
+  get_number_of_containers() const
+  {
+    return boundary_combination_set_to_index.size();
   }
 
   std::map<std::set<types::boundary_id>, std::uint8_t>

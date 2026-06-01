@@ -57,9 +57,6 @@ find_cell_neighbors(
  * and contact forces.
  *
  * @param triangulation Triangulation to access the information of the cells
- * @param periodic_boundaries_cells_information A container of information
- * related to the pairs of cells at periodic boundaries, used to get the cells
- * on periodic boundary 0
  * @param cell_to_pbc_mesh_id_set
  * @param periodic_boundaries_object
  * @param cells_local_periodic_neighbor_lists A vector (with its size equal to the
@@ -76,8 +73,6 @@ template <int dim>
 void
 find_cell_periodic_neighbors(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
-    &periodic_boundaries_cells_information,
   const typename DEM::dem_data_structures<dim>::cell_touch_boundary_id
                                            &cell_to_pbc_mesh_id_set,
   const PeriodicBoundariesManipulator<dim> &periodic_boundaries_object,

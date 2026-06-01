@@ -256,11 +256,9 @@ CFDDEMMatrixFree<dim>::initialize_dem_parameters()
     }
 
   // Find cell neighbors
-  contact_manager.execute_cell_neighbors_search(
-    *parallel_triangulation,
-    periodic_boundaries_cells_information,
-    cell_to_pbc_mesh_id_set,
-    periodic_boundaries_object);
+  contact_manager.execute_cell_neighbors_search(*parallel_triangulation,
+                                                cell_to_pbc_mesh_id_set,
+                                                periodic_boundaries_object);
 
   // Find boundary cells with faces
   boundary_cell_object.build(
@@ -804,7 +802,6 @@ CFDDEMMatrixFree<dim>::load_balance()
 
   // Update cell neighbors
   contact_manager.update_cell_neighbors(*parallel_triangulation,
-                                        periodic_boundaries_cells_information,
                                         cell_to_pbc_mesh_id_set,
                                         periodic_boundaries_object);
 

@@ -107,8 +107,6 @@ template <int dim>
 void
 find_cell_periodic_neighbors(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
-    &periodic_boundaries_cells_information,
   const typename DEM::dem_data_structures<dim>::cell_touch_boundary_id
                                            &cell_to_pbc_mesh_id_set,
   const PeriodicBoundariesManipulator<dim> &periodic_boundaries_object,
@@ -292,7 +290,7 @@ find_cell_periodic_neighbors(
                   // Find the boundaries that are touching the current
                   // neighboring cell.
                   const std::set<types::boundary_id>
-                    neighboring_cell_touching_boundaries =
+                    &neighboring_cell_touching_boundaries =
                       cell_to_pbc_mesh_id_set.at(periodic_neighbor);
 
                   // Find which boundary (or boundaries) is shared between
@@ -385,51 +383,6 @@ find_full_cell_neighbors(
     }
 }
 
-// template <int dim>
-// void
-// get_periodic_neighbor_list(
-//   const typename Triangulation<dim>::active_cell_iterator &cell,
-//   const std::map<unsigned int, std::vector<unsigned int>>
-//                                              &coinciding_vertex_groups,
-//   const std::map<unsigned int, unsigned int>
-//   &vertex_to_coinciding_vertex_group, const std::vector<std::set<typename
-//   Triangulation<dim>::active_cell_iterator>>
-//                                                  &v_to_c,
-//   typename dem_data_structures<dim>::cell_vector &periodic_neighbor_list)
-// {
-//   std::set<typename Triangulation<dim>::active_cell_iterator>
-//   unique_neighbors;
-//
-//   // Loop over all vertices of the cell
-//   for (unsigned int vertex = 0; vertex < cell->n_vertices(); ++vertex)
-//     {
-//       const unsigned int vertex_id = cell->vertex_index(vertex);
-//
-//       auto group_it = vertex_to_coinciding_vertex_group.find(vertex_id);
-//
-//       if (group_it == vertex_to_coinciding_vertex_group.end())
-//         continue;
-//
-//       const unsigned int coinciding_vertex_key = group_it->second;
-//
-//       for (const auto coinciding_vertex :
-//            coinciding_vertex_groups.at(coinciding_vertex_key))
-//         {
-//           // Skip the current vertex
-//           if (coinciding_vertex == vertex_id)
-//             continue;
-//
-//           for (const auto &neighbor_cell : v_to_c[coinciding_vertex])
-//             {
-//               unique_neighbors.insert(neighbor_cell);
-//             }
-//         }
-//     }
-//
-//   periodic_neighbor_list.assign(unique_neighbors.begin(),
-//                                 unique_neighbors.end());
-// }
-
 template void
 find_cell_neighbors<2, false>(
   const parallel::distributed::Triangulation<2> &triangulation,
@@ -457,8 +410,6 @@ find_cell_neighbors<3, true>(
 template void
 find_cell_periodic_neighbors<2>(
   const parallel::distributed::Triangulation<2> &triangulation,
-  const typename dem_data_structures<2>::periodic_boundaries_cells_info
-    &periodic_boundaries_cells_information,
   const typename dem_data_structures<2>::cell_touch_boundary_id
                                          &cell_to_pbc_mesh_id_set,
   const PeriodicBoundariesManipulator<2> &periodic_boundaries_object,
@@ -472,8 +423,6 @@ find_cell_periodic_neighbors<2>(
 template void
 find_cell_periodic_neighbors<3>(
   const parallel::distributed::Triangulation<3> &triangulation,
-  const typename dem_data_structures<3>::periodic_boundaries_cells_info
-    &periodic_boundaries_cells_information,
   const typename dem_data_structures<3>::cell_touch_boundary_id
                                          &cell_to_pbc_mesh_id_set,
   const PeriodicBoundariesManipulator<3> &periodic_boundaries_object,
