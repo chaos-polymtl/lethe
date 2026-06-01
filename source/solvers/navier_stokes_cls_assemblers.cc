@@ -479,7 +479,8 @@ PhaseChangeDarcyCLSAssembler<dim>::assemble_matrix(
   const unsigned int n_dofs         = scratch_data.n_dofs;
   const auto        &velocities     = scratch_data.velocity_values;
   const auto        &temperatures   = scratch_data.temperature_values;
-  const auto        &densities      = scratch_data.density;
+  const auto        &densities_0    = scratch_data.density_0;
+  const auto        &densities_1    = scratch_data.density_1;
   const auto        &filtered_phase = scratch_data.filtered_phase_values;
 
   auto &local_matrix    = copy_data.local_matrix;
@@ -499,7 +500,8 @@ PhaseChangeDarcyCLSAssembler<dim>::assemble_matrix(
       const double JxW = JxW_vec[q];
       // Current temperature and density values
       double current_temperature = temperatures[q];
-      double current_density     = densities[q];
+      double current_density_0   = densities_0[q];
+      double current_density_1   = densities_1[q];
       // Loop to calculate the liquid fraction and Darcy permeability of each
       // fluid. Calculated Darcy permeability coefficients depend on the
       // temperature and material (fluid) properties. A min(max) approach is
@@ -519,26 +521,21 @@ PhaseChangeDarcyCLSAssembler<dim>::assemble_matrix(
               phase_change_parameters_vector[p].penalty_s);
         }
 
-      // For a CLS two-fluid system, the global Darcy penalty coefficient
-      // takes into account the phase change parameters in both fluids
+      // For a CLS two-fluid system, the global Darcy permeability coefficient
+      // takes into account the phase change parameters in both fluids.
+      // If enabled,we also multiply by density.
       const double darcy_penalty =
-        ((1 - filtered_phase[q]) * darcy_penalties[0] +
-         filtered_phase[q] * darcy_penalties[1]);
+        (enable_darcy_multiply_by_density) ?
+          ((1 - filtered_phase[q]) * darcy_penalties[0] * current_density_0) +
+            (filtered_phase[q] * darcy_penalties[1] * current_density_1) :
+          ((1 - filtered_phase[q]) * darcy_penalties[0]) +
+            (filtered_phase[q] * darcy_penalties[1]);
 
-      auto real_darcy_penalty = (enable_darcy_multiply_by_density) ?
-                                  current_density * darcy_penalty :
-                                  darcy_penalty;
-
-      strong_residual[q] += real_darcy_penalty * velocities[q];
+      strong_residual[q] += darcy_penalty * velocities[q];
 
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
-          auto real_darcy_penalty = (enable_darcy_multiply_by_density) ?
-                                      current_density * darcy_penalty :
-                                      darcy_penalty;
-
-          strong_jacobian[q][j] +=
-            real_darcy_penalty * scratch_data.phi_u[q][j];
+          strong_jacobian[q][j] += darcy_penalty * scratch_data.phi_u[q][j];
         }
 
       for (unsigned int i = 0; i < n_dofs; ++i)
@@ -547,11 +544,7 @@ PhaseChangeDarcyCLSAssembler<dim>::assemble_matrix(
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
               const auto &phi_u_j = scratch_data.phi_u[q][j];
-              auto        local_matrix_i_j_contribution =
-                (enable_darcy_multiply_by_density) ?
-                         current_density * darcy_penalty * phi_u_i * phi_u_j * JxW :
-                         darcy_penalty * phi_u_i * phi_u_j * JxW;
-              local_matrix(i, j) += local_matrix_i_j_contribution;
+              local_matrix(i, j) += darcy_penalty * phi_u_i * phi_u_j * JxW;
             }
         }
       liquid_fractions.clear();
@@ -571,7 +564,8 @@ PhaseChangeDarcyCLSAssembler<dim>::assemble_rhs(
   const unsigned int n_dofs         = scratch_data.n_dofs;
   const auto        &velocities     = scratch_data.velocity_values;
   const auto        &temperatures   = scratch_data.temperature_values;
-  const auto        &densities      = scratch_data.density;
+  const auto        &densities_0    = scratch_data.density_0;
+  const auto        &densities_1    = scratch_data.density_1;
   const auto        &filtered_phase = scratch_data.filtered_phase_values;
 
   auto &local_rhs       = copy_data.local_rhs;
@@ -590,7 +584,8 @@ PhaseChangeDarcyCLSAssembler<dim>::assemble_rhs(
       const double JxW = JxW_vec[q];
       // Current temperature and density values
       double current_temperature = temperatures[q];
-      double current_density     = densities[q];
+      double current_density_0   = densities_0[q];
+      double current_density_1   = densities_1[q];
 
       // Loop to calculate the liquid fraction and Darcy permeability of each
       // fluid. Calculated Darcy penalty coefficients depend on the
@@ -612,28 +607,24 @@ PhaseChangeDarcyCLSAssembler<dim>::assemble_rhs(
         }
 
       // For a CLS two-fluid system, the global Darcy permeability coefficient
-      // takes into account the phase change parameters in both fluids
+      // takes into account the phase change parameters in both fluids.
+      // If enabled,we also multiply by density.
       const double darcy_penalty =
-        ((1 - filtered_phase[q]) * darcy_penalties[0] +
-         filtered_phase[q] * darcy_penalties[1]);
+        (enable_darcy_multiply_by_density) ?
+          ((1 - filtered_phase[q]) * darcy_penalties[0] * current_density_0) +
+            (filtered_phase[q] * darcy_penalties[1] * current_density_1) :
+          ((1 - filtered_phase[q]) * darcy_penalties[0]) +
+            (filtered_phase[q] * darcy_penalties[1]);
 
-      // If enabled, multiply by density
-      auto real_darcy_penalty = (enable_darcy_multiply_by_density) ?
-                                  current_density * darcy_penalty :
-                                  darcy_penalty;
-
-      strong_residual[q] += real_darcy_penalty * velocities[q];
+      strong_residual[q] += darcy_penalty * velocities[q];
 
       // Assembly of the right-hand side
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto phi_u_i            = scratch_data.phi_u[q][i];
-          auto       real_darcy_penalty = (enable_darcy_multiply_by_density) ?
-                                            current_density * darcy_penalty :
-                                            darcy_penalty;
+          const auto phi_u_i = scratch_data.phi_u[q][i];
 
           // Laplacian on the velocity terms
-          local_rhs(i) -= real_darcy_penalty * velocities[q] * phi_u_i * JxW;
+          local_rhs(i) -= darcy_penalty * velocities[q] * phi_u_i * JxW;
         }
     }
 }

@@ -52,10 +52,9 @@ A Darcy-like source term can be added to the simulation using the following para
 * The ``enable Darcy multiply by density`` parameter enables the multiplication by the density within the Darcy force term (:math:`\vec{F}_\mathrm{Darcy}`). This is for dimensional consistency when solving the pressure (:math:`p`) rather than the kinematic pressure (:math:`p^* = p / \rho`, with :math:`\rho` the density of the fluid) in the momentum equation. This parameter should be used when coupling of the :doc:`CLS equation<../../theory/multiphase/cfd/cls>` with the :doc:`incompressible Navier-Stokes equations<../../theory/multiphysics/fluid_dynamics/navier-stokes>`.
 
   .. math::
-    \vec{F}_\mathrm{Darcy} = \tilde{\rho} \tilde{K} \vec{u}
+    \vec{F}_\mathrm{Darcy} = \left(\rho K\right)_\mathrm{eff} \vec{u}
 
   where
 
-  * :math:`\tilde{\rho} = (1-\phi)\rho_0 + \phi \rho_1` is the phase indicator (:math:`\phi`) weighted density;
-  * :math:`\tilde{K} = (1-\phi)[\alpha_\mathrm{l}K_\mathrm{0,l} + (1-\alpha_\mathrm{l})K_\mathrm{0,s}] + \phi[\alpha_\mathrm{l}K_\mathrm{1,l} + (1-\alpha_\mathrm{l})K_\mathrm{1,s}]` is the Darcy penalty weighted by the liquid fraction (:math:`\alpha_\mathrm{l}`) and phase indicator, and;
+  * :math:`\left(\rho K\right)_\mathrm{eff} = (1-\phi)\rho_0 [\alpha_\mathrm{l}K_\mathrm{0,l} + (1-\alpha_\mathrm{l})K_\mathrm{0,s}] + \phi \rho_1 [\alpha_\mathrm{l}K_\mathrm{1,l} + (1-\alpha_\mathrm{l})K_\mathrm{1,s}]` is the effective Darcy penalization coefficient, obtained by weighting the product of the Darcy penalty (:math:`K_\mathrm{i} [=] T^{-1}`) and the density (:math:`\rho_\mathrm{i}[=] M L^{-3}`) by the phase indicator (:math:`\phi`) and the liquid fraction (:math:`\alpha_\mathrm{l}`), and;
   * :math:`\vec{u}` is the velocity vector.
