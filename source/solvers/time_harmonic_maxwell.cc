@@ -252,7 +252,7 @@ TimeHarmonicMaxwell<dim>::print_THM_setup_memory(
             << std::endl;
         }
 
-      this->pcout << "  *** Totals memory (GB) *** " << std::endl;
+      this->pcout << "  *** Total memory consumption (GB) *** " << std::endl;
       this->pcout << "  present_solution : " << present_solution_memory_total
                   << std::endl;
       this->pcout << "  present_solution_skeleton : "
