@@ -555,6 +555,26 @@ private:
     return result;
   }
 
+    /**
+   * This helper function helps to compute the memory consumption of different objects on each rank and print it out. It is useful to debug memory issues and understand the memory distribution across ranks.
+   *
+   * @param pcout The output stream to print the memory consumption information.
+   * @param str The name of the object for which the memory consumption is being printed. This is used for clarity in the output. 
+   * @param n_rank The total number of ranks in the MPI communicator.
+   * @param memory_object The object containing the memory information to be printed. 
+   */
+  void inline print_memory_consumption(const dealii::ConditionalOStream &pcout,
+                                    const std::string &str,
+                                  const unsigned int              n_rank,
+                                  const std::vector<double> &memory_object)
+  { 
+    announce_string(pcout, "Memory consumption of " + str + " (GB) :");
+    for (unsigned int i = 0; i < n_rank; ++i)
+      {
+        pcout << "Rank " << i << " : " << memory_object[i] << " GB" << std::endl;
+      }
+  }
+
 
   /**
    * @brief This helper function computes the incident electromagnetic fields

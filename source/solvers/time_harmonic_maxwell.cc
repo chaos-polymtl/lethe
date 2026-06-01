@@ -1265,12 +1265,12 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
   define_constraints();
 
   // Sparse matrices initialization
-  // In DPG, the sparse matrix and the dynamic sparsity pattern are really
+  // In DPG, the sparse matrix and the dynamic sparsity pattern are very
   // expensive so we only build them if we need to compute a new physical
   // solution. Additionally, we recast the dynamic sparsity pattern to a
   // sparsity pattern before initializing the system matrix to save memory
-  // because the dynamic sparsity pattern is much more expensive in terms of
-  // memory than the sparsity pattern.
+  // because the dynamic sparsity pattern is more expensive in terms of
+  // memory consumption than the static sparsity pattern.
   TrilinosWrappers::SparsityPattern
     sparsity_pattern; // This needs to be defined outside the if statement
                       // because it is used in extra_verbose to report the
@@ -1395,98 +1395,76 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
       // Print memory consumption information on rank 0
       if (this_mpi_process == 0)
         {
-          this->pcout
-            << " =================================================================="
-            << std::endl;
-          this->pcout << "  [THM memory diagnostics]" << std::endl;
+
+                const auto total_memory_by_rank =
+        present_solution_memory_by_rank+ present_solution_skeleton_memory_by_rank +
+        present_dpg_error_indicator_memory_by_rank + system_rhs_memory_by_rank +
+        sparsity_pattern_memory_by_rank + system_matrix_memory_by_rank +
+        dof_handler_trial_interior_memory_by_rank + dof_handler_trial_skeleton_memory_by_rank +
+        dof_handler_test_memory_by_rank;
+
+          const auto total_memory = present_solution_memory_total +
+                                  present_solution_skeleton_memory_total +
+                                  present_dpg_error_indicator_memory_total +
+                                  system_rhs_memory_total +
+                                  sparsity_pattern_memory_total +
+                                  system_matrix_memory_total +
+                                  dof_handler_trial_interior_memory_total +
+                                  dof_handler_trial_skeleton_memory_total +
+                                  dof_handler_test_memory_total;
+
+          announce_string(this->pcout, "Time-Harmonic Maxwell Memory Diagnostics", 65, '=');
 
           // When debugging memory issues if rank is needed turn this parameter
           // to true to have the memory consumption of each rank printed,
           // otherwise only the total memory consumption across all ranks will
           // be printed.
-          this->pcout << " Printing total memory consumption, if you "
-                      << "want to see the memory consumption by rank, set "
-                      << "`print_memory_by_rank` to true in source code."
-                      << std::endl;
           bool print_memory_by_rank = false;
           if (print_memory_by_rank)
-            {
-              this->pcout << "  *** By rank memory (GB) *** " << std::endl;
-              for (unsigned int rank = 0;
-                   rank < present_solution_memory_by_rank.size();
-                   ++rank)
-                {
-                  this->pcout << "  present_solution rank " << rank << " : "
-                              << present_solution_memory_by_rank[rank]
-                              << std::endl;
-                }
-              for (unsigned int rank = 0;
-                   rank < present_solution_skeleton_memory_by_rank.size();
-                   ++rank)
-                {
-                  this->pcout << "  present_solution_skeleton rank " << rank
-                              << " : "
-                              << present_solution_skeleton_memory_by_rank[rank]
-                              << std::endl;
-                }
-              for (unsigned int rank = 0;
-                   rank < present_dpg_error_indicator_memory_by_rank.size();
-                   ++rank)
-                {
-                  this->pcout
-                    << "  present_DPG_error_indicator rank " << rank << " : "
-                    << present_dpg_error_indicator_memory_by_rank[rank]
-                    << std::endl;
-                }
-              for (unsigned int rank = 0;
-                   rank < system_rhs_memory_by_rank.size();
-                   ++rank)
-                {
-                  this->pcout << "  system_rhs rank " << rank << " : "
-                              << system_rhs_memory_by_rank[rank] << std::endl;
-                }
-              for (unsigned int rank = 0;
-                   rank < sparsity_pattern_memory_by_rank.size();
-                   ++rank)
-                {
-                  this->pcout << "  sparsity_pattern rank " << rank << " : "
-                              << sparsity_pattern_memory_by_rank[rank]
-                              << std::endl;
-                }
-              for (unsigned int rank = 0;
-                   rank < system_matrix_memory_by_rank.size();
-                   ++rank)
-                {
-                  this->pcout << "  system_matrix rank " << rank << " : "
-                              << system_matrix_memory_by_rank[rank]
-                              << std::endl;
-                }
-              for (unsigned int rank = 0;
-                   rank < dof_handler_trial_interior_memory_by_rank.size();
-                   ++rank)
-                {
-                  this->pcout << "  dof_handler_trial_interior rank " << rank
-                              << " : "
-                              << dof_handler_trial_interior_memory_by_rank[rank]
-                              << std::endl;
-                }
-              for (unsigned int rank = 0;
-                   rank < dof_handler_trial_skeleton_memory_by_rank.size();
-                   ++rank)
-                {
-                  this->pcout << "  dof_handler_trial_skeleton rank " << rank
-                              << " : "
-                              << dof_handler_trial_skeleton_memory_by_rank[rank]
-                              << std::endl;
-                }
-              for (unsigned int rank = 0;
-                   rank < dof_handler_test_memory_by_rank.size();
-                   ++rank)
-                {
-                  this->pcout << "  dof_handler_test rank " << rank << " : "
-                              << dof_handler_test_memory_by_rank[rank]
-                              << std::endl;
-                }
+            {                              
+              this->pcout << "  *** By rank memory *** " << std::endl;
+
+              print_memory_consumption(this->pcout,
+                                       "present_solution",
+                                       present_solution_memory_by_rank.size(),
+                                       present_solution_memory_by_rank);
+              print_memory_consumption(this->pcout,
+                                       "present_solution_skeleton",
+                                       present_solution_skeleton_memory_by_rank.size(),
+                                       present_solution_skeleton_memory_by_rank);
+              print_memory_consumption(this->pcout,
+                                       "present_DPG_error_indicator",
+                                       present_dpg_error_indicator_memory_by_rank.size(),
+                                       present_dpg_error_indicator_memory_by_rank);
+              print_memory_consumption(this->pcout,
+                                       "system_rhs",
+                                       system_rhs_memory_by_rank.size(),
+                                       system_rhs_memory_by_rank);
+
+              print_memory_consumption(this->pcout,
+                                       "sparsity_pattern",
+                                       sparsity_pattern_memory_by_rank.size(),
+                                       sparsity_pattern_memory_by_rank);
+              print_memory_consumption(this->pcout,
+                                       "system_matrix",
+                                       system_matrix_memory_by_rank.size(),
+                                       system_matrix_memory_by_rank);
+              print_memory_consumption(this->pcout,
+                                       "dof_handler_trial_interior",
+                                       dof_handler_trial_interior_memory_by_rank.size(),
+                                       dof_handler_trial_interior_memory_by_rank);
+              print_memory_consumption(this->pcout,
+                                       "dof_handler_trial_skeleton",
+                                       dof_handler_trial_skeleton_memory_by_rank.size(),
+                                       dof_handler_trial_skeleton_memory_by_rank);
+              print_memory_consumption(this->pcout,
+                                       "dof_handler_test",
+                                       dof_handler_test_memory_by_rank.size(),   dof_handler_test_memory_by_rank);
+              print_memory_consumption(this->pcout,
+                                       "total",
+                                       total_memory_by_rank.size(),
+                                       total_memory_by_rank);
+
             }
 
           this->pcout << "  *** Totals memory (GB) *** " << std::endl;
@@ -1508,6 +1486,7 @@ TimeHarmonicMaxwell<dim>::setup_dofs()
                       << dof_handler_trial_skeleton_memory_total << std::endl;
           this->pcout << "  dof_handler_test : "
                       << dof_handler_test_memory_total << std::endl;
+          this->pcout << "  Total memory : " << total_memory << std::endl;
           this->pcout
             << " =================================================================="
             << std::endl;
