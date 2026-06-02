@@ -1407,6 +1407,8 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
 
   if (this->simulation_parameters.post_processing.calculate_mass_conservation)
     {
+      TimerOutput::Scope                            t(this->computing_timer,
+                           "Calculate mass conservation");
       const std::vector<Parameters::FluidIndicator> fluid_indicators = {
         Parameters::FluidIndicator::fluid0, Parameters::FluidIndicator::fluid1};
 
