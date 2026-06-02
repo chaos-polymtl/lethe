@@ -758,7 +758,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#a4fd20b9411d6ac816873465deae02530">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01269">1269</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01273">1273</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="structParameters_1_1MultipleAdaptationParameters.html#a0415d48307e584ae60c4c4fc9ee053c0aae074a5692dfb7c26aae5147e52ceb40">Parameters::MultipleAdaptationParameters::kelly</a>, and <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaeef438f7e448aa48c1f8db568d27b591">temperature</a>.</p>
 
@@ -801,7 +801,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01293">1293</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01297">1297</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
 </div>
 </div>
@@ -972,7 +972,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#a764abbac51050515970d14a13b5e8aad">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01309">1309</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01313">1313</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
 </div>
 </div>
@@ -1361,7 +1361,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#a3870a0c5dc427098c9bec1afc9a668c0">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01236">1236</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01240">1240</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
 </div>
 </div>
@@ -1429,7 +1429,7 @@ template&lt;int dim&gt; </div>
 <p>Compute the algebraic (phase indicator and liquid fraction weighted) melt volume (3D) or surface (2D) in a domain. The monitored fluid must be selected with <a class="el" href="structParameters_1_1PostProcessing.html#a58a5e611386e05110f007e086388649d" title="FluidIndicator corresponding to the fluid which has phase change.">Parameters::PostProcessing::monitored_fluid_with_phase_change</a>. </p>
 <dl class="section remark"><dt>Remarks</dt><dd>For CLS multiphase flow, only one of the fluids can be monitored. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01993">1993</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01997">1997</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="phase__change_8h_source.html#l00021">calculate_liquid_fraction()</a>, <a class="el" href="multiphysics_8h_source.html#l00033">CLS</a>, <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e86df18a83727e4a5dc8dc2859a097c">Parameters::fluid0</a>, <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e04d9b58aa70e6fb6501fde7608fd13">Parameters::fluid1</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
@@ -1463,7 +1463,7 @@ template&lt;int dim&gt; </div>
 <p>Compute the geometric melt volume (3D) or surface (2D) and the contour surface area (3D) or length (2D) in a domain. The melt region is delimited by the <a class="el" href="structParameters_1_1PostProcessing.html#a6bec5114f14ca1735bc998f2d5788b1e" title="Melting temperature iso-value.">Parameters::PostProcessing::melting_temperature</a> isosurface (3D) or isocurve (2D) within the subdomain occupied by the fluid selected with <a class="el" href="structParameters_1_1PostProcessing.html#a58a5e611386e05110f007e086388649d" title="FluidIndicator corresponding to the fluid which has phase change.">Parameters::PostProcessing::monitored_fluid_with_phase_change</a>. </p>
 <dl class="section remark"><dt>Remarks</dt><dd>For CLS multiphase flow, only one of the fluids can be monitored. The volume is computed as the geometrical volume with respect to the phase indicator isocurve (isosurface) of value 0.5. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02168">2168</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02172">2172</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00033">CLS</a>, <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e04d9b58aa70e6fb6501fde7608fd13">Parameters::fluid1</a>, <a class="el" href="interface__tools_8cc_source.html#l00068">InterfaceTools::integrate_volume_and_surface()</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
@@ -1515,7 +1515,7 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02318">2318</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02322">2322</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00297">calculate_point_property()</a>, <a class="el" href="multiphysics_8h_source.html#l00033">CLS</a>, <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
@@ -1612,7 +1612,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01766">1766</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01770">1770</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00033">CLS</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
@@ -1679,7 +1679,7 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02598">2598</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02602">2602</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00297">calculate_point_property()</a>, <a class="el" href="multiphysics_8h_source.html#l00033">CLS</a>, <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
@@ -1714,7 +1714,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#ae80e26995eb53ee0ea0239a2390d082f">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01220">1220</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01224">1224</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
 </div>
 </div>
@@ -1747,7 +1747,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#ab68fa8d211549189803ddd8ba1fcc4ff">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01400">1400</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01404">1404</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00592">deserialize_tables_vector()</a>.</p>
 
@@ -1782,7 +1782,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#aeecb470de43133aa878a5e9499509b31">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01671">1671</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01675">1675</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
 </div>
 </div>
@@ -1842,7 +1842,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02826">2826</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02830">2830</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e86df18a83727e4a5dc8dc2859a097c">Parameters::fluid0</a>, and <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e04d9b58aa70e6fb6501fde7608fd13">Parameters::fluid1</a>.</p>
 
@@ -1910,7 +1910,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#a3d0c0d037152ce2e8552227c3dda383e">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01471">1471</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01475">1475</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00028">heat_transfer</a>, <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::periodic</a>, and <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8aeef438f7e448aa48c1f8db568d27b591">BoundaryConditions::temperature</a>.</p>
 
@@ -1945,7 +1945,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a375f91bc1e5a05dac2c71f5ae5575f84">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01684">1684</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01688">1688</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00028">heat_transfer</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>.</p>
 
@@ -1980,7 +1980,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classAuxiliaryPhysics.html#aa4eb967dee8229dc43ff95182df011fe">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01611">1611</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01615">1615</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::periodic</a>, and <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8aeef438f7e448aa48c1f8db568d27b591">BoundaryConditions::temperature</a>.</p>
 
@@ -2046,7 +2046,7 @@ template&lt;int dim&gt; </div>
 
 <p>Post-processing. Write the algebraic melt volume to an output file. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02149">2149</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02153">2153</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
 </div>
 </div>
@@ -2079,7 +2079,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#aac6b380b7f28d81bef3a7d33eb13ec34">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01361">1361</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01365">1365</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00570">serialize_tables_vector()</a>.</p>
 
@@ -2112,7 +2112,7 @@ template&lt;int dim&gt; </div>
 
 <p>Write the geometric melt volume to an output file. </p>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02298">2298</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02302">2302</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
 </div>
 </div>
@@ -2150,7 +2150,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02808">2808</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l02812">2812</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
 </div>
 </div>
@@ -2188,7 +2188,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01975">1975</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="heat__transfer_8cc_source.html#l01979">1979</a> of file <a class="el" href="heat__transfer_8cc_source.html">heat_transfer.cc</a>.</p>
 
 </div>
 </div>
