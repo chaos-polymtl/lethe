@@ -5,6 +5,7 @@
 #include <core/utilities.h>
 
 #include <numbers>
+#include <set>
 
 template <int dim, int spacedim>
 GridUniformChannelWithMeshedCylinder<dim, spacedim>::
@@ -15,7 +16,7 @@ GridUniformChannelWithMeshedCylinder<dim, spacedim>::
       AssertThrow(
         false,
         ExcMessage(
-          "The uniform channel with meshed cylinder mesh is only supported in 2D and 3D space."));
+          "The uniform_channel_with_meshed_cylinder mesh is only supported in 2D and 3D space."));
       return;
     }
   else if constexpr (dim == 2 && spacedim == 3)
@@ -23,7 +24,7 @@ GridUniformChannelWithMeshedCylinder<dim, spacedim>::
       AssertThrow(
         false,
         ExcMessage(
-          "The uniform channel with meshed cylinder mesh is only supported in 3D space with 3D elements."));
+          "The uniform_channel_with_meshed_cylinder mesh is only supported in 3D space with 3D elements."));
       return;
     }
 
@@ -35,7 +36,7 @@ GridUniformChannelWithMeshedCylinder<dim, spacedim>::
       AssertThrow(
         false,
         ExcMessage(
-          "Mandatory uniform channel with meshed cylinder parameters are (bottom left point : top right point : center of the cylinder : inner radius : outer radius). The points should be given as x,y and the radii should be given as a single number. The optional parameters are (pad bottom : pad top : pad left : pad right : height : n_slices : use_transfinite_region : colorize). The padding parameters should be given as a single integer, the height should be given as a single double, the n_slices should be given as a single integer, use_transfinite_region should be given as true/false, and the colorize parameter should be given as true/false."));
+          "Mandatory uniform_channel_with_meshed_cylinder parameters are (bottom left point : top right point : center of the cylinder : inner radius : outer radius). The points should be given as x,y and the radii should be given as a single number. The optional parameters are (pad bottom : pad top : pad left : pad right : height : n_slices : use_transfinite_region : mesh_obstacle : colorize). The padding parameters should be given as a single integer, the height should be given as a single double, the n_slices should be given as a single integer, use_transfinite_region should be given as true/false, mesh_obstacle should be given as true/false, and the colorize parameter should be given as true/false."));
     }
   // Parse bottom_left point
   try
@@ -135,10 +136,13 @@ GridUniformChannelWithMeshedCylinder<dim, spacedim>::
     (arguments.size() > 9) ? Utilities::string_to_double(arguments[9]) : 1.0;
   this->n_slices =
     (arguments.size() > 10) ? Utilities::string_to_int(arguments[10]) : 2.;
+  AssertThrow(n_slices >= 2, ExcMessage("The minimum number of slices is 2."));
   this->use_transfinite_region =
     (arguments.size() > 11 && arguments[11] == "true") ? true : false;
-  this->colorize =
+  this->mesh_obstacle =
     (arguments.size() > 12 && arguments[12] == "true") ? true : false;
+  this->colorize =
+    (arguments.size() > 13 && arguments[13] == "true") ? true : false;
 }
 
 
@@ -312,34 +316,35 @@ GridUniformChannelWithMeshedCylinder<dim, spacedim>::generate_2d_channel_mesh(
       if (cell_in_cylinder)
         {
           cell->set_material_id(solid_material_id);
-          for (const auto &face : cell->face_iterators())
-            {
-              bool all_vertices_on_circle = true;
-              for (unsigned int v = 0; v < GeometryInfo<2>::vertices_per_face;
-                   ++v)
-                {
-                  if (std::abs(face->vertex(v).distance(center) -
-                               inner_radius) > 1e-10 * inner_radius)
-                    {
-                      all_vertices_on_circle = false;
-                      break;
-                    }
-                }
-              if (all_vertices_on_circle)
-                face->set_all_manifold_ids(polar_manifold_id);
-            }
         }
 
       // Every other cells stay with the flat manifold and gets the fluid
       // material ID.
-      if (!cell_in_cylinder)
+      else
         {
           cell->set_material_id(fluid_material_id);
         }
     }
 
-  // Assign boundary IDs following the subdivided_hyper_rectangle convention:
-  //   0: left (-x),  1: right (+x),  2: bottom (-y),  3: top (+y)
+  // Remove the cells of the inner cylinder if the mesh_obstacle flag is false.
+  if (!mesh_obstacle)
+    {
+      std::set<typename Triangulation<2>::active_cell_iterator> obstacle_cells;
+      for (const auto &cell : triangulation.active_cell_iterators())
+        if (cell->material_id() == solid_material_id)
+          obstacle_cells.insert(cell);
+
+      Triangulation<2> temp_tria;
+      GridGenerator::create_triangulation_with_removed_cells(triangulation,
+                                                             obstacle_cells,
+                                                             temp_tria);
+      triangulation.clear();
+      triangulation.copy_triangulation(temp_tria);
+    }
+
+  // Assign boundary IDs following the subdivided_hyper_rectangle
+  // convention:
+  //   0: obstacle, 1: left (-x), 2: right (+x), 3: bottom (-y), 4: top (+y)
   if (colorize)
     {
       const double tol_x = 1e-10 * (top_right[0] - bottom_left[0]);
@@ -353,17 +358,37 @@ GridUniformChannelWithMeshedCylinder<dim, spacedim>::generate_2d_channel_mesh(
           const Point<2> face_center = face->center();
 
           if (std::abs(face_center[0] - bottom_left[0]) < tol_x)
-            face->set_boundary_id(0);
+            face->set_boundary_id(mesh_obstacle ? 0 : 1);
           else if (std::abs(face_center[0] - top_right[0]) < tol_x)
-            face->set_boundary_id(1);
+            face->set_boundary_id(mesh_obstacle ? 1 : 2);
           else if (std::abs(face_center[1] - bottom_left[1]) < tol_y)
-            face->set_boundary_id(2);
+            face->set_boundary_id(mesh_obstacle ? 2 : 3);
           else if (std::abs(face_center[1] - top_right[1]) < tol_y)
-            face->set_boundary_id(3);
+            face->set_boundary_id(mesh_obstacle ? 3 : 4);
+          else
+            face->set_boundary_id(0);
         }
     }
 
   // Attach manifold objects for proper refinement behavior
+  for (const auto &cell : triangulation.active_cell_iterators())
+    {
+      for (const auto &face : cell->face_iterators())
+        {
+          bool all_vertices_on_circle = true;
+          for (unsigned int v = 0; v < GeometryInfo<2>::vertices_per_face; ++v)
+            {
+              if (std::abs(face->vertex(v).distance(center) - inner_radius) >
+                  1e-10 * inner_radius)
+                {
+                  all_vertices_on_circle = false;
+                  break;
+                }
+            }
+          if (all_vertices_on_circle)
+            face->set_all_manifold_ids(polar_manifold_id);
+        }
+    }
   PolarManifold<2, 2> polar_manifold(center);
   triangulation.set_manifold(1, polar_manifold);
 
@@ -446,10 +471,10 @@ GridUniformChannelWithMeshedCylinder<3, 3>::make_grid(
           const Point<3> face_center = face->center();
 
           if (std::abs(face_center[2] - bottom_left[2]) < 1e-10 * height)
-            face->set_boundary_id(4); // bottom
+            face->set_boundary_id(mesh_obstacle ? 4 : 5); // bottom
           else if (std::abs(face_center[2] - (bottom_left[2] + height)) <
                    1e-10 * height)
-            face->set_boundary_id(5); // top
+            face->set_boundary_id(mesh_obstacle ? 5 : 6); // top
         }
     }
 }

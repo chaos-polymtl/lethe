@@ -18,7 +18,7 @@ using namespace dealii;
  * @brief Generates a rectangular channel mesh with a meshed cylinder
  * obstacle. By default, this geometry defines two material IDs. The
  * obstacle is assigned the material_id = 1 and the remaining domain is
- * assigned material_id = 0.
+ * assigned material_id = 0. The obstacle can be optionally removed by setting @p mesh_obstacle to false, in which case the entire domain is assigned material_id = 0.
  *
  * The mesh consists of three concentric regions around the cylinder:
  * -# An inner balanced disk of radius @p inner_radius (hyper_ball_balanced).
@@ -65,15 +65,20 @@ public:
    * |  8 | pad_right    | int        | no       | N cells right of the transition (default: 0)       |
    * |  9 | height       | double     | no       | Extrusion height in z, 3D only (default: 1.0)      |
    * | 10 | n_slices     | int        | no       | Number of z-layers, 3D only (default and min: 2)   |
-   * | 11 | colorize     | true/false | no       | Assign distinct boundary IDs (default: false)      |
+   * | 11 | use_transfinite_region | true/false | no | Use transfinite interpolation (default: false)     |
+   * | 12 | mesh_obstacle| true/false | no       | Keep obstacle meshed (default: false)              |
+   * | 13 | colorize     | true/false | no       | Assign distinct boundary IDs (default: false)      |
    *
    * Example: @code "0,0 : 10,2 : 5,1 : 0.1 : 0.3 : 2 : 2 : 5 : 5 : 2. : 2 :
-   * true"
+   * true : true : true"
    * @endcode
    *
-   * When @p colorize is true, boundary IDs follow the
-   * subdivided_hyper_rectangle convention: 0 (-x), 1 (+x), 2 (-y), 3 (+y).
+   * When @p colorize is true and @p mesh_obstacle is true, boundary IDs follow
+   * the subdivided_hyper_rectangle convention: 0 (-x), 1 (+x), 2 (-y), 3 (+y).
    * In 3D, the extruded bottom (z=0) gets id 4 and top (z=height) gets id 5.
+   * When @p mesh_obstacle is false, boundary id 0 is used for the obstacle
+   * boundary, and the channel boundaries are 1 (-x), 2 (+x), 3 (-y), 4 (+y).
+   * In 3D, the extruded bottom (z=0) gets id 5 and top (z=height) gets id 6.
    */
   GridUniformChannelWithMeshedCylinder(const std::string &grid_arguments);
 
@@ -87,15 +92,19 @@ public:
    * - TransfiniteInterpolationManifold on the remaining domain (manifold_id =
    * 0).
    * The boundary IDs are assigned following the subdivided_hyper_rectangle
-   * convention when colorize is enabled: 0 (-x), 1 (+x), 2 (-y), 3 (+y).
+   * convention when colorize is enabled: 0 (-x), 1 (+x), 2 (-y), 3 (+y). When
+   * mesh_obstacle is false, boundary id 0 is used for the obstacle boundary
+   * and the channel boundaries are 1 (-x), 2 (+x), 3 (-y), 4 (+y).
    *
    * For 3D: Delegates geometry construction to generate_2d_channel_mesh(), then
    * extrudes the mesh along the z-axis and attaches:
    * - CylindricalManifold on the cylinder surface (manifold_id = 1).
    * - TransfiniteInterpolationManifold on the remaining domain (manifold_id =
    * 0). The lateral boundary IDs are inherited from the 2D mesh when colorize
-   * is enabled. The extruded bottom (z = 0) gets boundary_id = 4 and the top (z
-   * = height) gets boundary_id = 5.
+   * is enabled. When mesh_obstacle is true, the extruded bottom (z = 0) gets
+   * boundary_id = 4 and the top (z = height) gets boundary_id = 5. When
+   * mesh_obstacle is false, the extruded bottom (z = 0) gets boundary_id = 5
+   * and the top (z = height) gets boundary_id = 6.
    *
    * @param[out] triangulation The triangulation to fill with the channel mesh.
    */
@@ -117,7 +126,9 @@ private:
    * objects are attached — the caller must do that after this function returns.
    *
    * If @p colorize is true, boundary IDs are set following the
-   * subdivided_hyper_rectangle convention: 0 (-x), 1 (+x), 2 (-y), 3 (+y).
+   * subdivided_hyper_rectangle convention: 0 (-x), 1 (+x), 2 (-y), 3 (+y). When
+   * mesh_obstacle is false, boundary id 0 is used for the obstacle boundary and
+   * the channel boundaries are 1 (-x), 2 (+x), 3 (-y), 4 (+y).
    *
    * @param[out] triangulation  The triangulation to fill.
    * @param[in]  bottom_left    Bottom-left corner of the channel.
@@ -174,6 +185,9 @@ private:
   /// Whether to use transfinite interpolation for the transition region between
   /// the cylinder and the channel.
   bool use_transfinite_region;
+  /// Whether to keep the obstacle mesh (false removes the cylinder cells from
+  /// the cylinder).
+  bool mesh_obstacle;
   /// Whether to assign distinct boundary IDs to the channel boundaries
   /// following the subdivided_hyper_rectangle convention.
   bool colorize;
