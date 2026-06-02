@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['b_0',['b',['../classThermalConductivityLinear.html#a65bdace70d96173f07f99231031daeb6',1,'ThermalConductivityLinear::B'],['../structSDIRKTable.html#a8dffb0a6775b20ebc05ab9950fd83948',1,'SDIRKTable::b']]],
+  ['b_0',['b',['../structSDIRKTable.html#a8dffb0a6775b20ebc05ab9950fd83948',1,'SDIRKTable::b'],['../classThermalConductivityLinear.html#a65bdace70d96173f07f99231031daeb6',1,'ThermalConductivityLinear::B']]],
   ['b_201_20b_20gamma_20gamma_1',['|   b    1-b-gamma  gamma|',['../sdirk_8cc.html#autotoc_md1',1,'']]],
   ['b_5fi_2',['b_i',['../classSDIRKStageData.html#a3d7c3a736a0cdc2529e9d705e84ea427',1,'SDIRKStageData']]],
   ['background_5fconstraints_3',['background_constraints',['../classDEMSolver.html#a3926006d70a9fb14cfffe6f79bdce0d4',1,'DEMSolver']]],
