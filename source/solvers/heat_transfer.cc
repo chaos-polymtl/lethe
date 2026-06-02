@@ -1183,6 +1183,8 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
   // Algebraic melt volume
   if (simulation_parameters.post_processing.calculate_algebraic_melt_volume)
     {
+      TimerOutput::Scope t(this->computing_timer,
+                           "Calculate algebraic melt volume");
       AssertThrow(
         simulation_parameters.physical_properties_manager.has_phase_change(),
         MeltVolumeRequiresPhaseChange());
@@ -1197,6 +1199,8 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
   // Geometric melt volume
   if (simulation_parameters.post_processing.calculate_geometric_melt_volume)
     {
+      TimerOutput::Scope t(this->computing_timer,
+                           "Calculate geometric melt volume");
       postprocess_geometric_melt_volume_and_surface();
       if (simulation_control->get_iteration_number() %
             this->simulation_parameters.post_processing.output_frequency ==
