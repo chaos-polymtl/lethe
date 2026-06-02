@@ -45,7 +45,7 @@ using adjacent_pairs_for_contact_t = std::conditional_t<
  * @param contact_pair_candidates The output of broad search which shows
  * contact pair candidates.
  * @param neighborhood_threshold A value which defines the neighbor particles.
- * @param combined_periodic_offsets A vector of tensors of the periodic offsets
+ * @param combined_periodic_offset A vector of tensors of the periodic offsets
  * to change the location of the particles crossing periodic boundaries.
  */
 template <int dim, ContactType contact_type>
@@ -55,8 +55,8 @@ particle_particle_fine_search(
                                                   &particle_container,
   adjacent_pairs_for_contact_t<dim, contact_type> &adjacent_particles,
   const typename DEM::dem_data_structures<dim>::particle_particle_candidates
-                                    &contact_pair_candidates,
-  const double                       neighborhood_threshold,
-  const std::vector<Tensor<1, dim>> &combined_periodic_offsets = {});
+                       &contact_pair_candidates,
+  const double          neighborhood_threshold,
+  const Tensor<1, dim> &combined_periodic_offset = Tensor<1, dim>{});
 
 #endif

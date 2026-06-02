@@ -119,13 +119,8 @@ update_fine_search_candidates(pairs_structure      &pairs_in_contact,
                             continue;
                           }
 
-                        if constexpr (
-                          contact_type ==
-                            ContactType::ghost_particle_particle ||
-                          contact_type ==
-                            ContactType::ghost_periodic_particle_particle ||
-                          contact_type ==
-                            ContactType::ghost_local_periodic_particle_particle)
+                        if constexpr (contact_type ==
+                                        ContactType::ghost_particle_particle)
                           {
                             // The current particle from history list is still a
                             // candidate to the 2nd particle and the contact is
@@ -138,14 +133,46 @@ update_fine_search_candidates(pairs_structure      &pairs_in_contact,
                                 adjacent_map_iterator);
                             continue;
                           }
+
+                        if constexpr (
+                          contact_type ==
+                            ContactType::ghost_periodic_particle_particle ||
+                          contact_type ==
+                            ContactType::ghost_local_periodic_particle_particle)
+                          {
+                            // For periodic boundary conditions, the periodic
+                            // contact must be kept in the history even if it
+                            // is found in the broad search. The contact is
+                            // removed from the 2nd particle's broad search
+                            // results as it is already being processed
+                            object_contact_candidates->second.erase(
+                              search_object_to_particle_iterator);
+                            ++adjacent_map_iterator;
+                            continue;
+                          }
                       }
                   }
 
                 // Current particles are no longer contact candidates.
                 // The particle is then removed as a candidate for fine
-                // search contact candidates list
-                adjacent_map_iterator =
-                  adjacent_pairs_content->erase(adjacent_map_iterator);
+                // search contact candidates list. However, for periodic
+                // contacts, they should be retained to maintain consistency
+                // across time steps and processor boundaries.
+                if constexpr (contact_type ==
+                                ContactType::local_periodic_particle_particle ||
+                              contact_type ==
+                                ContactType::ghost_periodic_particle_particle ||
+                              contact_type ==
+                                ContactType::ghost_local_periodic_particle_particle)
+                  {
+                    // Keep periodic contacts in history
+                    ++adjacent_map_iterator;
+                  }
+                else
+                  {
+                    adjacent_map_iterator =
+                      adjacent_pairs_content->erase(adjacent_map_iterator);
+                  }
               }
 
             if constexpr (contact_type == ContactType::particle_wall ||

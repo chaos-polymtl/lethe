@@ -335,7 +335,7 @@ find_particle_particle_periodic_contact_pairs(
     cells_local_local_periodic_neighbor_lists.size();
   local_local_contact_pair_periodic_candidates_lists.resize(number_of_lists);
   local_ghost_contact_pair_periodic_candidates_lists.resize(number_of_lists);
-  local_ghost_contact_pair_periodic_candidates_lists.resize(number_of_lists);
+  ghost_local_contact_pair_periodic_candidates_lists.resize(number_of_lists);
 
   // Going through the local-local cell pairs
   for (std::size_t n_list = 0;
@@ -358,34 +358,31 @@ find_particle_particle_periodic_contact_pairs(
            ++cell_periodic_neighbor_list_iterator)
         {
           // The main cell is the first iterator and is on periodic boundary 0
-          auto cell_periodic_neighbor_iterator =
-            cell_periodic_neighbor_list_iterator->begin();
+          auto main_cell = cell_periodic_neighbor_list_iterator->begin();
 
           // Particles in the main cell
           typename Particles::ParticleHandler<dim>::particle_iterator_range
-            particles_in_main_cell = particle_handler.particles_in_cell(
-              *cell_periodic_neighbor_iterator);
+            particles_in_main_cell =
+              particle_handler.particles_in_cell(*main_cell);
 
           // Check if the main cell has any particles
           const bool particles_exist_in_main_cell =
             !particles_in_main_cell.empty();
           if (particles_exist_in_main_cell)
             {
-              // Going through periodic neighbor cells on the periodic boundary
-              // 1 of the main cell. We start at the second iterator since the
+              // Going through periodic neighboring cells of the main cell.
+              // We start at the second iterator since the
               // first one is the main cell.
-              ++cell_periodic_neighbor_iterator;
-              for (; cell_periodic_neighbor_iterator !=
-                     cell_periodic_neighbor_list_iterator->end();
-                   ++cell_periodic_neighbor_iterator)
+              ++main_cell;
+              for (; main_cell != cell_periodic_neighbor_list_iterator->end();
+                   ++main_cell)
                 {
                   // Defining iterator on particles in the local periodic
                   // neighboring cell
                   typename Particles::ParticleHandler<
                     dim>::particle_iterator_range
                     particles_in_periodic_neighbor_cell =
-                      particle_handler.particles_in_cell(
-                        *cell_periodic_neighbor_iterator);
+                      particle_handler.particles_in_cell(*main_cell);
 
                   // Looping on every particle in the main cell.
                   // For each particle, we store all the particles present in

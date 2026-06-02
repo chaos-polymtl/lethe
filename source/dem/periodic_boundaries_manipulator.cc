@@ -131,44 +131,6 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
                       cell_to_pbc_mesh_id_set[cell].insert(
                         primary_boundary_mesh_id);
 
-                      // What is the secondary boundary ID of the associated
-                      // PBC.
-                      const types::boundary_id &secondary_boundary_mesh_id =
-                        secondary_periodic_boundaries_ids.at(prm_pbc_index);
-
-                      // Empty list of periodic cell neighbors
-                      typename DEM::dem_data_structures<dim>::cell_vector
-                        periodic_neighbor_vector;
-
-                      // Get the periodic neighbor(s) of the main cell
-                      LetheGridTools::get_periodic_neighbor_list<dim>(
-                        cell,
-                        coinciding_vertex_groups,
-                        vertex_to_coinciding_vertex_group,
-                        v_to_c,
-                        periodic_neighbor_vector);
-
-                      // Loop on the periodic neighbors
-                      for (const auto &periodic_neighbor :
-                           periodic_neighbor_vector)
-                        {
-                          // Loop on its face
-                          for (const auto &neigh_face :
-                               periodic_neighbor->face_iterators())
-                            {
-                              types::boundary_id neigh_face_boundary_id =
-                                neigh_face->boundary_id();
-
-                              if (neigh_face_boundary_id ==
-                                  secondary_boundary_mesh_id)
-                                cell_to_pbc_mesh_id_set[periodic_neighbor]
-                                  .insert(secondary_boundary_mesh_id);
-                            }
-                        }
-                      // Get direction corresponding to this BC index
-                      unsigned int current_direction =
-                        directions.at(prm_pbc_index);
-
                       periodic_boundaries_cells_info_struct<dim>
                                    boundaries_info;
                       unsigned int face_id = cell->face_iterator_to_index(face);
@@ -188,15 +150,31 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
                       // ID.
                       if (!offset_calculated[primary_boundary_mesh_id])
                         {
-                          Tensor<1, dim> offset;
-                          offset[current_direction] =
-                            boundaries_info
-                              .point_on_periodic_face[current_direction] -
-                            boundaries_info.point_on_face[current_direction];
+                          Tensor<1, dim> offset =
+                            boundaries_info.point_on_periodic_face -
+                            boundaries_info.point_on_face;
 
-                          periodic_offsets[face_boundary_id]  = offset;
+                          periodic_offsets[face_boundary_id] = offset;
+                          periodic_offsets
+                            [secondary_periodic_boundaries_ids[prm_pbc_index]] =
+                              -offset;
                           offset_calculated[face_boundary_id] = true;
+                          offset_calculated
+                            [secondary_periodic_boundaries_ids[prm_pbc_index]] =
+                              true;
                         }
+                    }
+
+                  // What is the primary boundary ID of the associated PBC.
+                  const types::boundary_id &secondary_boundary_mesh_id =
+                    secondary_periodic_boundaries_ids.at(prm_pbc_index);
+
+                  // Check if the face of the current cell is on the PBC
+                  if (face_boundary_id == secondary_boundary_mesh_id)
+                    {
+                      // Primary cell
+                      cell_to_pbc_mesh_id_set[cell].insert(
+                        secondary_boundary_mesh_id);
                     }
                 }
             }
@@ -296,36 +274,37 @@ void
 PeriodicBoundariesManipulator<dim>::compute_combined_periodic_offsets()
 {
   combined_periodic_offsets.clear();
-  combined_periodic_offsets.reserve(
-    std::pow(3, number_of_declared_periodic_boundaries) - 1);
-  for (auto const &[id, offset] : periodic_offsets)
+
+  // Resize to hold exactly as many offsets as there are combinations
+  combined_periodic_offsets.resize(boundary_combination_set_to_index.size());
+
+  // Loop on every combination
+  for (const auto &[set_bc_id, index] : boundary_combination_set_to_index)
     {
-      size_t current_size = combined_periodic_offsets.size();
+      // Initialize the combined_offset to zero.
+      Tensor<1, dim> combined_offset = Tensor<1, dim>();
 
-      if (current_size == 0)
+      // Loop on each boundary in the set
+      for (const auto &boundary_id : set_bc_id)
         {
-          // Seed with +/- offest for first PB pair
-          combined_periodic_offsets.push_back(offset);
-          combined_periodic_offsets.push_back(-offset);
+          // Add the offset associated with the boundary to the combined_offset
+          combined_offset += periodic_offsets.at(boundary_id);
         }
-      else
-        {
-          // Pure +/- offset for the new direction: a particle may cross only
-          // this boundary pair without crossing any of the previous ones.
-          combined_periodic_offsets.push_back(offset);
-          combined_periodic_offsets.push_back(-offset);
 
-          for (size_t i = 0; i < current_size; ++i)
-            {
-              // A particle next to a periodic boundary can be next to pb0 or
-              // pb1. We need to account for its periodic images across periodic
-              // directions, hence the +/- offset.
-              combined_periodic_offsets.push_back(combined_periodic_offsets[i] +
-                                                  offset);
-              combined_periodic_offsets.push_back(combined_periodic_offsets[i] -
-                                                  offset);
-            }
-        }
+      // Store the combined_offset in the corresponding index in the
+      // combined_periodic_offsets vector
+      combined_periodic_offsets[index] = combined_offset;
+
+      std::cout << "Boundary set for combination index "
+                << static_cast<unsigned int>(index) << ": { ";
+
+      for (const auto &id : set_bc_id)
+        std::cout << id << " ";
+
+      std::cout << "}" << std::endl;
+      std::cout << "Combined offset for combination index "
+                << static_cast<unsigned int>(index) << ": "
+                << combined_periodic_offsets[index] << std::endl;
     }
 }
 

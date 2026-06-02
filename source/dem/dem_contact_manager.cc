@@ -94,15 +94,11 @@ DEMContactManager<dim, PropertiesIndex>::update_contacts()
             ContactType::local_periodic_particle_particle>(
             local_local_periodic_adjacent_particles,
             local_local_contact_pair_periodic_candidates_lists[n_list]);
-        }
 
-      // Update periodic particle-particle contacts in
-      // local_ghost_periodic_adjacent_particles of fine search step with
-      // ghost_contact_pair_periodic_candidates
-      for (std::uint8_t n_list = 0;
-           n_list < local_ghost_contact_pair_periodic_candidates_lists.size();
-           ++n_list)
-        {
+          // Update periodic particle-particle contacts in
+          // local_ghost_periodic_adjacent_particles of fine search step with
+          // ghost_contact_pair_periodic_candidates
+
           update_fine_search_candidates<
             dim,
             typename dem_data_structures<dim>::periodic_adjacent_particle_pairs,
@@ -110,12 +106,8 @@ DEMContactManager<dim, PropertiesIndex>::update_contacts()
             ContactType::ghost_periodic_particle_particle>(
             local_ghost_periodic_adjacent_particles,
             local_ghost_contact_pair_periodic_candidates_lists[n_list]);
-        }
 
-      for (std::uint8_t n_list = 0;
-           n_list < ghost_local_contact_pair_periodic_candidates_lists.size();
-           ++n_list)
-        {
+
           // Update periodic particle-particle contacts in
           // ghost_local_periodic_adjacent_particles of fine search step with
           // ghost_local_contact_pair_periodic_candidates
@@ -438,36 +430,35 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_particle_fine_search(
   if (DEMActionManager::get_action_manager()
         ->check_periodic_boundaries_enabled())
     {
-      for (std::uint8_t n_list = 0;
+      for (unsigned int n_list = 0;
            n_list < local_local_contact_pair_periodic_candidates_lists.size();
            ++n_list)
         {
           // Fine search for local-local periodic particle-particle
+          for (auto &[particle_one_id, second_particle_container] :
+               local_local_contact_pair_periodic_candidates_lists[n_list])
+            {
+              if (!second_particle_container.empty())
+                std::cout << "Container index " << n_list
+                          << " : Particle 1 and 2 IDs " << particle_one_id
+                          << ": " << second_particle_container[0] << std::endl;
+            }
+
           particle_particle_fine_search<dim, local_periodic_particle_particle>(
             particle_container,
             local_local_periodic_adjacent_particles,
             local_local_contact_pair_periodic_candidates_lists[n_list],
             neighborhood_threshold,
-            combined_periodic_offsets);
-        }
+            combined_periodic_offsets[n_list]);
 
-      for (std::uint8_t n_list = 0;
-           n_list < local_ghost_contact_pair_periodic_candidates_lists.size();
-           ++n_list)
-        {
           // Fine search for local-ghost periodic particle-particle
           particle_particle_fine_search<dim, ghost_periodic_particle_particle>(
             particle_container,
             local_ghost_periodic_adjacent_particles,
             local_ghost_contact_pair_periodic_candidates_lists[n_list],
             neighborhood_threshold,
-            combined_periodic_offsets);
-        }
+            combined_periodic_offsets[n_list]);
 
-      for (std::uint8_t n_list = 0;
-           n_list < ghost_local_contact_pair_periodic_candidates_lists.size();
-           ++n_list)
-        {
           // Fine search for ghost-local periodic particle-particle
           particle_particle_fine_search<dim,
                                         ghost_local_periodic_particle_particle>(
@@ -475,7 +466,7 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_particle_fine_search(
             ghost_local_periodic_adjacent_particles,
             ghost_local_contact_pair_periodic_candidates_lists[n_list],
             neighborhood_threshold,
-            combined_periodic_offsets);
+            combined_periodic_offsets[n_list]);
         }
     }
 }

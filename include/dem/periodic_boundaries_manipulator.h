@@ -70,9 +70,6 @@ public:
 
     number_of_declared_periodic_boundaries = prm_periodic_bc_index.size();
     boundary_combination_set_to_index = build_periodic_boundary_combinations();
-
-    // Initialize offset map
-    this->periodic_offsets.clear();
   }
 
   using BoundarySet = std::set<types::boundary_id>;
@@ -361,6 +358,39 @@ private:
   /**
    * @brief Compute the combined periodic offsets and store them in
    * combined_periodic_offsets.
+   *
+   * Example, we have two PBC, between boundary 0 to 1 and 6 to 3, respectively:
+   *   PBC 0: (0 <-> 1)
+   *   PBC 1: (6 <-> 3)
+   *
+   * The simulation domain is from (0.,0.) to (1., 1.) in 2D.
+   * Boundary 0, X = 0
+   * Boundary 1, X = 1
+   * Boundary 6, Y = 0
+   * Boundary 3, Y = 1
+   *
+   * Valid combinations generated:
+   *   Set of boundary ID | Index
+   *         {0}          |  0
+   *         {1}          |  1
+   *         {6}          |  2
+   *         {3}          |  3
+   *         {0,6}        |  4
+   *         {0,3}        |  5
+   *         {1,6}        |  6
+   *         {1,3}        |  7
+   *
+   * Expected output:
+   *  Index    |  Combined offset (Tensor)
+   *    0      |          1., 0.
+   *    1      |         -1., 0.
+   *    2      |          0., 1.
+   *    3      |          0.,-1.
+   *    4      |          1., 1.
+   *    5      |          1.,-1.
+   *    6      |         -1., 1.
+   *    7      |         -1.,-1.
+   *
    */
   void
   compute_combined_periodic_offsets();
@@ -370,6 +400,8 @@ private:
    * exit function when there are no periodic boundaries.
    */
   bool periodic_boundaries_enabled;
+
+
 
   /**
    * @brief Direction of the periodic boundaries, it is the perpendicular axis

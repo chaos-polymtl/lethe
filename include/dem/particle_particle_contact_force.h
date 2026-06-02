@@ -304,10 +304,10 @@ protected:
                         const Tensor<1, 3> &periodic_offset) &
   {
     if constexpr (dim == 3)
-      return (particle->get_location() + periodic_offset);
+      return (particle->get_location() - periodic_offset);
 
     if constexpr (dim == 2)
-      return point_nd_to_3d(particle->get_location()) + periodic_offset;
+      return point_nd_to_3d(particle->get_location()) - periodic_offset;
   }
 
   /**
@@ -1730,7 +1730,7 @@ private:
     const double                                  dt,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome)
   {
-    // No contact calculation if no adjacent particles
+    //  No contact calculation if no adjacent particles
     if (adjacent_particles_list.empty())
       return;
 
@@ -1755,7 +1755,6 @@ private:
 
     // Fix particle one location for 2d and 3d
     Point<3> particle_one_location = get_location(particle_one);
-
     for (auto &&contact_info :
          adjacent_particles_list | boost::adaptors::map_values)
       {
@@ -1771,7 +1770,6 @@ private:
           {
             particle_two_location = get_location(particle_two);
           }
-
         // Get particle 2 location in periodic boundary
         if constexpr (contact_type ==
                         ContactType::local_periodic_particle_particle ||

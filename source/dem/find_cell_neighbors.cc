@@ -169,7 +169,7 @@ find_cell_periodic_neighbors(
           typename dem_data_structures<dim>::cell_vector
             periodic_neighbor_vector;
 
-          // Get the periodic neighbor(s) of the main cell
+          // Get the periodic neighbors of the main cell
           LetheGridTools::get_periodic_neighbor_list<dim>(
             main_cell,
             coinciding_vertex_groups,
@@ -204,15 +204,10 @@ find_cell_periodic_neighbors(
               // If the neighboring cell is locally owned
               if (periodic_neighbor->is_locally_owned())
                 {
-                  // Check if the neighbor cell has been processed as a main
-                  // cell.
-                  auto search_iterator =
-                    total_cell_list.find(periodic_neighbor);
-
-                  // If the neighboring cell is a local cell and has still not
+                  // If the neighboring cell is a local cell and has not
                   // been treated as a main cell, it will be added as to the
                   // neighboring cells of the current main cell.
-                  if (search_iterator == total_cell_list.end())
+                  if (!total_cell_list.contains(periodic_neighbor))
                     {
                       // Check if
                       // local_periodic_neighbor_vectors[container_index] exist,
@@ -221,8 +216,8 @@ find_cell_periodic_neighbors(
                       // vector.
                       if (!local_periodic_neighbor_vectors.contains(
                             container_index))
-                        local_periodic_neighbor_vectors.insert(
-                          {container_index, {main_cell}});
+                        local_periodic_neighbor_vectors[container_index] = {
+                          main_cell};
 
                       // Add the neighboring cell to the vectors
                       local_periodic_neighbor_vectors[container_index]
@@ -240,8 +235,8 @@ find_cell_periodic_neighbors(
                   // the main cell is always the first iterator of the vector.
                   if (!ghost_periodic_neighbor_vectors.contains(
                         container_index))
-                    ghost_periodic_neighbor_vectors.insert(
-                      {container_index, {main_cell}});
+                    ghost_periodic_neighbor_vectors[container_index] = {
+                      main_cell};
 
                   // Add the neighboring cell to the vectors
                   ghost_periodic_neighbor_vectors[container_index].push_back(
@@ -272,7 +267,7 @@ find_cell_periodic_neighbors(
           // ghost-local contacts for force calculation, where the local cell is
           // on the pb 1 side. Here we store local neighbors of ghost cells.
 
-          // Empty list of periodic cell neighbor
+          // Empty list of periodic cell neighbors
           typename dem_data_structures<dim>::cell_vector periodic_neighbor_list;
 
           // Get the periodic neighbor of the cell
@@ -308,7 +303,7 @@ find_cell_periodic_neighbors(
                     periodic_boundaries_object.get_container_index(
                       combination_of_shared_boundaries);
 
-                  if (!ghost_periodic_neighbor_vectors.contains(
+                  if (!ghost_local_periodic_neighbor_vectors.contains(
                         container_index))
                     ghost_local_periodic_neighbor_vectors[container_index]
                       .push_back(main_cell);
