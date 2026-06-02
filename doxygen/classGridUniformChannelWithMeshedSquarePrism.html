@@ -138,6 +138,8 @@ Private Attributes</h2></td></tr>
 <tr class="separator:aac52c37241274f470fb19065bd204277"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6ec34a1dfecfa84feea6f6628a873ad7" id="r_a6ec34a1dfecfa84feea6f6628a873ad7"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGridUniformChannelWithMeshedSquarePrism.html#a6ec34a1dfecfa84feea6f6628a873ad7">n_slices</a></td></tr>
 <tr class="separator:a6ec34a1dfecfa84feea6f6628a873ad7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac770d1ef6325591edc2e0c11b4d48ff3" id="r_ac770d1ef6325591edc2e0c11b4d48ff3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGridUniformChannelWithMeshedSquarePrism.html#ac770d1ef6325591edc2e0c11b4d48ff3">mesh_obstacle</a></td></tr>
+<tr class="separator:ac770d1ef6325591edc2e0c11b4d48ff3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6fb76fa7fd720fafe13f6c2035286178" id="r_a6fb76fa7fd720fafe13f6c2035286178"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classGridUniformChannelWithMeshedSquarePrism.html#a6fb76fa7fd720fafe13f6c2035286178">colorize</a></td></tr>
 <tr class="separator:a6fb76fa7fd720fafe13f6c2035286178"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -206,13 +208,15 @@ template&lt;int dim, int spacedim&gt; </div>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">11   </td><td class="markdownTableBodyNone">n_slices   </td><td class="markdownTableBodyNone">int   </td><td class="markdownTableBodyNone">no   </td><td class="markdownTableBodyNone">Number of z-layers, 3D only (default and min: 2)    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">12   </td><td class="markdownTableBodyNone">colorize   </td><td class="markdownTableBodyNone">true/false   </td><td class="markdownTableBodyNone">no   </td><td class="markdownTableBodyNone">Assign distinct boundary IDs (default: false)   </td></tr>
+<td class="markdownTableBodyNone">12   </td><td class="markdownTableBodyNone">mesh_obstacle   </td><td class="markdownTableBodyNone">true/false   </td><td class="markdownTableBodyNone">no   </td><td class="markdownTableBodyNone">Whether to mesh the inner square obstacle (default: false)    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">13   </td><td class="markdownTableBodyNone">colorize   </td><td class="markdownTableBodyNone">true/false   </td><td class="markdownTableBodyNone">no   </td><td class="markdownTableBodyNone">Assign distinct boundary IDs (default: false)   </td></tr>
 </table>
 <p>Example: </p><div class="fragment"><div class="line"> <span class="stringliteral">&quot;0,0 : 10,2 : 5,1 : 0.1 : 0.3 : 15 : 2 : 2 : 5 : 5 : 2. : 2</span></div>
-<div class="line"><span class="stringliteral">: true &quot;</span></div>
+<div class="line"><span class="stringliteral">: false: true &quot;</span></div>
 </div><!-- fragment --><p>When <code>colorize</code> is true, boundary IDs follow the subdivided_hyper_rectangle convention: 0 (-x), 1 (+x), 2 (-y), 3 (+y). In 3D, the extruded bottom (z=0) gets id 4 and top (z=height) gets id 5. </p>
 
-<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html#l00014">14</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html">grid_uniform_channel_with_meshed_square_prism.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html#l00015">15</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html">grid_uniform_channel_with_meshed_square_prism.cc</a>.</p>
 
 </div>
 </div>
@@ -333,12 +337,13 @@ template&lt;int dim, int spacedim&gt; </div>
     <tr><td class="paramdir">[in]</td><td class="paramname">pad_top</td><td>Number of subdivisions in the top padding. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">pad_left</td><td>Number of subdivisions in the left padding. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">pad_right</td><td>Number of subdivisions in the right padding. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">mesh_obstacle</td><td>Whether to mesh the inner square obstacle or leave it as a hole. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">colorize</td><td>Whether to assign distinct boundary IDs. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html#l00167">167</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html">grid_uniform_channel_with_meshed_square_prism.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html#l00171">171</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html">grid_uniform_channel_with_meshed_square_prism.cc</a>.</p>
 
 </div>
 </div>
@@ -358,7 +363,7 @@ template&lt;int dim, int spacedim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html#l00562">562</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html">grid_uniform_channel_with_meshed_square_prism.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html#l00590">590</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html">grid_uniform_channel_with_meshed_square_prism.cc</a>.</p>
 
 </div>
 </div>
@@ -378,7 +383,7 @@ template&lt;int dim, int spacedim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html#l00586">586</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html">grid_uniform_channel_with_meshed_square_prism.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html#l00614">614</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html">grid_uniform_channel_with_meshed_square_prism.cc</a>.</p>
 
 </div>
 </div>
@@ -410,7 +415,7 @@ template&lt;int dim, int spacedim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html#l00640">640</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html">grid_uniform_channel_with_meshed_square_prism.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html#l00668">668</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8cc_source.html">grid_uniform_channel_with_meshed_square_prism.cc</a>.</p>
 
 </div>
 </div>
@@ -439,7 +444,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Point that define the bottom-left of the channel in the xy-plane. </p>
 
-<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00149">149</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00152">152</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
 
 </div>
 </div>
@@ -467,7 +472,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Point that define the center of the obstacle in the xy-plane. </p>
 
-<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00153">153</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00156">156</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
 
 </div>
 </div>
@@ -494,7 +499,7 @@ template&lt;int dim, int spacedim&gt; </div>
 </div><div class="memdoc">
 <p>Whether to assign distinct boundary IDs to the channel boundaries following the subdivided_hyper_rectangle convention. </p>
 
-<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00183">183</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00188">188</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
 
 </div>
 </div>
@@ -522,7 +527,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Extrusion height in the z direction, 3D only. </p>
 
-<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00177">177</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00180">180</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
 
 </div>
 </div>
@@ -550,7 +555,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Half-side of the inner square obstacle. </p>
 
-<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00155">155</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00158">158</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
 
 </div>
 </div>
@@ -578,7 +583,35 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>In-plane rotation angle in radians applied to the inner mesh pattern. </p>
 
-<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00159">159</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00162">162</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
+
+</div>
+</div>
+<a id="ac770d1ef6325591edc2e0c11b4d48ff3" name="ac770d1ef6325591edc2e0c11b4d48ff3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac770d1ef6325591edc2e0c11b4d48ff3">&#9670;&#160;</a></span>mesh_obstacle</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim, int spacedim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classGridUniformChannelWithMeshedSquarePrism.html">GridUniformChannelWithMeshedSquarePrism</a>&lt; dim, spacedim &gt;::mesh_obstacle</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Whether to mesh the inner square obstacle or leave it as a hole. </p>
+
+<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00185">185</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
 
 </div>
 </div>
@@ -605,7 +638,7 @@ template&lt;int dim, int spacedim&gt; </div>
 </div><div class="memdoc">
 <p>Number of layers in the z direction, 3D only. Minimum is 2, which corresponds to a single layer of cells in the z direction. </p>
 
-<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00180">180</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00183">183</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
 
 </div>
 </div>
@@ -633,7 +666,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Half-side of the outer transition square. </p>
 
-<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00157">157</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00160">160</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
 
 </div>
 </div>
@@ -660,7 +693,7 @@ template&lt;int dim, int spacedim&gt; </div>
 </div><div class="memdoc">
 <p>Number of additional cells to be added to pad the channel from center - inner_half_side - outer_half_side to the channel bottom boundary (-y direction). </p>
 
-<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00163">163</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00166">166</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
 
 </div>
 </div>
@@ -687,7 +720,7 @@ template&lt;int dim, int spacedim&gt; </div>
 </div><div class="memdoc">
 <p>Number of additional cells to be added to pad the channel from center - inner_half_side - outer_half_side to the channel left boundary (-x direction). </p>
 
-<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00171">171</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00174">174</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
 
 </div>
 </div>
@@ -714,7 +747,7 @@ template&lt;int dim, int spacedim&gt; </div>
 </div><div class="memdoc">
 <p>Number of additional cells to be added to pad the channel from center + inner_half_side + outer_half_side to the channel right boundary (+x direction). </p>
 
-<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00175">175</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00178">178</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
 
 </div>
 </div>
@@ -741,7 +774,7 @@ template&lt;int dim, int spacedim&gt; </div>
 </div><div class="memdoc">
 <p>Number of additional cells to be added to pad the channel from center + inner_half_side + outer_half_side to the channel top boundary (+y direction). </p>
 
-<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00167">167</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00170">170</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
 
 </div>
 </div>
@@ -769,7 +802,7 @@ template&lt;int dim, int spacedim&gt; </div>
 
 <p>Point that define the top-right of the channel in the xy-plane. </p>
 
-<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00151">151</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html#l00154">154</a> of file <a class="el" href="grid__uniform__channel__with__meshed__square__prism_8h_source.html">grid_uniform_channel_with_meshed_square_prism.h</a>.</p>
 
 </div>
 </div>

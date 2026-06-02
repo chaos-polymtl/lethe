@@ -1,11 +1,13 @@
 <map id="/home/runner/work/lethe/lethe/source/core/grid_uniform_channel_with_meshed_cylinder.cc" name="/home/runner/work/lethe/lethe/source/core/grid_uniform_channel_with_meshed_cylinder.cc">
-<area shape="rect" id="Node000001" title=" " alt="" coords="2224,5,2456,75"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="2284,5,2516,75"/>
 <area shape="rect" id="Node000002" href="$grid__uniform__channel__with__meshed__cylinder_8h.html" title=" " alt="" coords="500,123,695,163"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="2224,51,708,138,708,132,2224,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="2284,50,709,138,708,133,2284,45"/>
 <area shape="rect" id="Node000008" href="$core_2utilities_8h.html" title=" " alt="" coords="2283,130,2397,155"/>
-<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="2343,75,2343,116,2337,116,2337,75"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="2382,77,2356,119,2352,117,2377,74"/>
 <area shape="rect" id="Node000028" title=" " alt="" coords="2422,130,2501,155"/>
-<area shape="poly" id="edge28_Node000001_Node000028" title=" " alt="" coords="2382,73,2439,119,2435,123,2379,77"/>
+<area shape="poly" id="edge28_Node000001_Node000028" title=" " alt="" coords="2423,74,2449,117,2445,119,2418,77"/>
+<area shape="rect" id="Node000029" title=" " alt="" coords="2525,130,2568,155"/>
+<area shape="poly" id="edge29_Node000001_Node000029" title=" " alt="" coords="2451,73,2520,120,2517,125,2448,77"/>
 <area shape="rect" id="Node000003" title=" " alt="" coords="5,218,168,243"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="500,161,180,213,155,218,154,213,180,208,499,156"/>
 <area shape="rect" id="Node000004" title=" " alt="" coords="193,218,394,243"/>
