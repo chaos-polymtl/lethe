@@ -102,8 +102,8 @@ Inheritance diagram for PhaseChangeDarcyCLSAssembler&lt; dim &gt;:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:afb3a9d5937b9c030373bc023b38f18db" id="r_afb3a9d5937b9c030373bc023b38f18db"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhaseChangeDarcyCLSAssembler.html#afb3a9d5937b9c030373bc023b38f18db">PhaseChangeDarcyCLSAssembler</a> (const std::vector&lt; <a class="el" href="structParameters_1_1PhaseChange.html">Parameters::PhaseChange</a> &gt; &amp;<a class="el" href="classPhaseChangeDarcyCLSAssembler.html#ab24ecb24c36162b72a3aac2f4820d26b">phase_change_parameters_vector</a>)</td></tr>
-<tr class="separator:afb3a9d5937b9c030373bc023b38f18db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0c9771f4833ef34825be71368714366" id="r_aa0c9771f4833ef34825be71368714366"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhaseChangeDarcyCLSAssembler.html#aa0c9771f4833ef34825be71368714366">PhaseChangeDarcyCLSAssembler</a> (const std::vector&lt; <a class="el" href="structParameters_1_1PhaseChange.html">Parameters::PhaseChange</a> &gt; &amp;<a class="el" href="classPhaseChangeDarcyCLSAssembler.html#ab24ecb24c36162b72a3aac2f4820d26b">phase_change_parameters_vector</a>, const bool <a class="el" href="classPhaseChangeDarcyCLSAssembler.html#a907f13850db74effd4828e7a2ad83e9f">enable_darcy_multiply_by_density</a>)</td></tr>
+<tr class="separator:aa0c9771f4833ef34825be71368714366"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a928394693339cce15b1be5e5efc1ed61" id="r_a928394693339cce15b1be5e5efc1ed61"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhaseChangeDarcyCLSAssembler.html#a928394693339cce15b1be5e5efc1ed61">assemble_matrix</a> (const <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData</a>&lt; dim &gt; &amp;copy_data) override</td></tr>
 <tr class="separator:a928394693339cce15b1be5e5efc1ed61"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac09bffe24ff7fb1a39df085c88e04e18" id="r_ac09bffe24ff7fb1a39df085c88e04e18"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhaseChangeDarcyCLSAssembler.html#ac09bffe24ff7fb1a39df085c88e04e18">assemble_rhs</a> (const <a class="el" href="classNavierStokesScratchData.html">NavierStokesScratchData</a>&lt; dim &gt; &amp;scratch_data, <a class="el" href="classStabilizedMethodsTensorCopyData.html">StabilizedMethodsTensorCopyData</a>&lt; dim &gt; &amp;copy_data) override</td></tr>
@@ -120,6 +120,8 @@ Public Member Functions</h2></td></tr>
 Private Attributes</h2></td></tr>
 <tr class="memitem:ab24ecb24c36162b72a3aac2f4820d26b" id="r_ab24ecb24c36162b72a3aac2f4820d26b"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; <a class="el" href="structParameters_1_1PhaseChange.html">Parameters::PhaseChange</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhaseChangeDarcyCLSAssembler.html#ab24ecb24c36162b72a3aac2f4820d26b">phase_change_parameters_vector</a></td></tr>
 <tr class="separator:ab24ecb24c36162b72a3aac2f4820d26b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a907f13850db74effd4828e7a2ad83e9f" id="r_a907f13850db74effd4828e7a2ad83e9f"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhaseChangeDarcyCLSAssembler.html#a907f13850db74effd4828e7a2ad83e9f">enable_darcy_multiply_by_density</a></td></tr>
+<tr class="separator:a907f13850db74effd4828e7a2ad83e9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
@@ -133,8 +135,8 @@ class PhaseChangeDarcyCLSAssembler&lt; dim &gt;</div><p>Assembles a phase change
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__cls__assemblers_8h_source.html#l00122">122</a> of file <a class="el" href="navier__stokes__cls__assemblers_8h_source.html">navier_stokes_cls_assemblers.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="afb3a9d5937b9c030373bc023b38f18db" name="afb3a9d5937b9c030373bc023b38f18db"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afb3a9d5937b9c030373bc023b38f18db">&#9670;&#160;</a></span>PhaseChangeDarcyCLSAssembler()</h2>
+<a id="aa0c9771f4833ef34825be71368714366" name="aa0c9771f4833ef34825be71368714366"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0c9771f4833ef34825be71368714366">&#9670;&#160;</a></span>PhaseChangeDarcyCLSAssembler()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -148,8 +150,18 @@ template&lt;int dim&gt; </div>
           <td class="memname"><a class="el" href="classPhaseChangeDarcyCLSAssembler.html">PhaseChangeDarcyCLSAssembler</a>&lt; dim &gt;<a class="el" href="classPhaseChangeDarcyCLSAssembler.html">::PhaseChangeDarcyCLSAssembler</a> </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; <a class="el" href="structParameters_1_1PhaseChange.html">Parameters::PhaseChange</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>phase_change_parameters_vector</em></td><td>)</td>
+          <td class="paramname"><em>phase_change_parameters_vector</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const bool&#160;</td>
+          <td class="paramname"><em>enable_darcy_multiply_by_density</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -211,7 +223,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="navier__stokes__cls__assemblers_8cc_source.html#l00472">472</a> of file <a class="el" href="navier__stokes__cls__assemblers_8cc_source.html">navier_stokes_cls_assemblers.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01577">NavierStokesScratchData&lt; dim &gt;::filtered_phase_values</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01539">NavierStokesScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="copy__data_8h_source.html#l00203">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_matrix</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01527">NavierStokesScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01528">NavierStokesScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01563">NavierStokesScratchData&lt; dim &gt;::phi_u</a>, <a class="el" href="copy__data_8h_source.html#l00207">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_jacobian</a>, <a class="el" href="copy__data_8h_source.html#l00206">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_residual</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01655">NavierStokesScratchData&lt; dim &gt;::temperature_values</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01546">NavierStokesScratchData&lt; dim &gt;::velocity_values</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01492">NavierStokesScratchData&lt; dim &gt;::density_0</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01493">NavierStokesScratchData&lt; dim &gt;::density_1</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01577">NavierStokesScratchData&lt; dim &gt;::filtered_phase_values</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01539">NavierStokesScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="copy__data_8h_source.html#l00203">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_matrix</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01527">NavierStokesScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01528">NavierStokesScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01563">NavierStokesScratchData&lt; dim &gt;::phi_u</a>, <a class="el" href="copy__data_8h_source.html#l00207">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_jacobian</a>, <a class="el" href="copy__data_8h_source.html#l00206">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_residual</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01655">NavierStokesScratchData&lt; dim &gt;::temperature_values</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01546">NavierStokesScratchData&lt; dim &gt;::velocity_values</a>.</p>
 
 </div>
 </div>
@@ -260,13 +272,46 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__cls__assemblers_8cc_source.html#l00549">549</a> of file <a class="el" href="navier__stokes__cls__assemblers_8cc_source.html">navier_stokes_cls_assemblers.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__cls__assemblers_8cc_source.html#l00557">557</a> of file <a class="el" href="navier__stokes__cls__assemblers_8cc_source.html">navier_stokes_cls_assemblers.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01577">NavierStokesScratchData&lt; dim &gt;::filtered_phase_values</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01539">NavierStokesScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="copy__data_8h_source.html#l00204">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_rhs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01527">NavierStokesScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01528">NavierStokesScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01563">NavierStokesScratchData&lt; dim &gt;::phi_u</a>, <a class="el" href="copy__data_8h_source.html#l00206">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_residual</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01655">NavierStokesScratchData&lt; dim &gt;::temperature_values</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01546">NavierStokesScratchData&lt; dim &gt;::velocity_values</a>.</p>
+<p class="reference">References <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01492">NavierStokesScratchData&lt; dim &gt;::density_0</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01493">NavierStokesScratchData&lt; dim &gt;::density_1</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01577">NavierStokesScratchData&lt; dim &gt;::filtered_phase_values</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01539">NavierStokesScratchData&lt; dim &gt;::JxW</a>, <a class="el" href="copy__data_8h_source.html#l00204">StabilizedMethodsTensorCopyData&lt; dim &gt;::local_rhs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01527">NavierStokesScratchData&lt; dim &gt;::n_dofs</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01528">NavierStokesScratchData&lt; dim &gt;::n_q_points</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01563">NavierStokesScratchData&lt; dim &gt;::phi_u</a>, <a class="el" href="copy__data_8h_source.html#l00206">StabilizedMethodsTensorCopyData&lt; dim &gt;::strong_residual</a>, <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01655">NavierStokesScratchData&lt; dim &gt;::temperature_values</a>, and <a class="el" href="navier__stokes__scratch__data_8h_source.html#l01546">NavierStokesScratchData&lt; dim &gt;::velocity_values</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="a907f13850db74effd4828e7a2ad83e9f" name="a907f13850db74effd4828e7a2ad83e9f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a907f13850db74effd4828e7a2ad83e9f">&#9670;&#160;</a></span>enable_darcy_multiply_by_density</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const bool <a class="el" href="classPhaseChangeDarcyCLSAssembler.html">PhaseChangeDarcyCLSAssembler</a>&lt; dim &gt;::enable_darcy_multiply_by_density</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Enable the multiplication of the Darcy force term ( \(\vec{F}_\mathrm{Darcy}\)) by the density for dimensional consistency when solving the pressure rather than the kinematic pressure in the momentum balance.</p>
+<p class="formulaDsp">
+\[
+\vec{F}_\mathrm{Darcy} = \rho K \vec{u}
+\]
+</p>
+<p>with \(\rho\) the density, \(K\) the Darcy penalty, and \(\vec{u}\) the velocity. </p>
+
+<p class="definition">Definition at line <a class="el" href="navier__stokes__cls__assemblers_8h_source.html#l00171">171</a> of file <a class="el" href="navier__stokes__cls__assemblers_8h_source.html">navier_stokes_cls_assemblers.h</a>.</p>
+
+</div>
+</div>
 <a id="ab24ecb24c36162b72a3aac2f4820d26b" name="ab24ecb24c36162b72a3aac2f4820d26b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab24ecb24c36162b72a3aac2f4820d26b">&#9670;&#160;</a></span>phase_change_parameters_vector</h2>
 
@@ -289,7 +334,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__cls__assemblers_8h_source.html#l00154">154</a> of file <a class="el" href="navier__stokes__cls__assemblers_8h_source.html">navier_stokes_cls_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__cls__assemblers_8h_source.html#l00156">156</a> of file <a class="el" href="navier__stokes__cls__assemblers_8h_source.html">navier_stokes_cls_assemblers.h</a>.</p>
 
 </div>
 </div>

@@ -137,6 +137,8 @@ Functions</h2></td></tr>
 <tr class="separator:af9dee96c801839c3fb4373d9c716ee79"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaf227f185844172ecc32f0b055bb84bf" id="r_aaf227f185844172ecc32f0b055bb84bf"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="navier__stokes__assemblers_8h.html#aaf227f185844172ecc32f0b055bb84bf">DeclExceptionMsg</a> (PhaseChangeDarcyModelDoesNotSupportCHN, &quot;The <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a> change Darcy model does not currently have a Cahn-Hilliard implementation.&quot;)</td></tr>
 <tr class="separator:aaf227f185844172ecc32f0b055bb84bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af866f3e5e20548cc61e7b8fd52b27f7f" id="r_af866f3e5e20548cc61e7b8fd52b27f7f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="navier__stokes__assemblers_8h.html#af866f3e5e20548cc61e7b8fd52b27f7f">DeclExceptionMsg</a> (SingleFluidPhaseChangeDarcyModelDoesNotSupportDensityMultiplication, &quot;Single-fluid simulations with Darcy <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a> change model does not support the multiplication by density since the kinematic <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a8e7f8389b914e827058d694b31468b3a">pressure</a> is used in the momentum equation.&quot;)</td></tr>
+<tr class="separator:af866f3e5e20548cc61e7b8fd52b27f7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Typedef Documentation</h2>
 <a id="a26641e967456860ca3880098d2769ce5" name="a26641e967456860ca3880098d2769ce5"></a>
@@ -161,13 +163,13 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="navier__stokes__assemblers_8h_source.html#l00036">36</a> of file <a class="el" href="navier__stokes__assemblers_8h_source.html">navier_stokes_assemblers.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="navier__stokes__assemblers_8h_source.html#l00040">40</a> of file <a class="el" href="navier__stokes__assemblers_8h_source.html">navier_stokes_assemblers.h</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="aaf227f185844172ecc32f0b055bb84bf" name="aaf227f185844172ecc32f0b055bb84bf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaf227f185844172ecc32f0b055bb84bf">&#9670;&#160;</a></span>DeclExceptionMsg() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf227f185844172ecc32f0b055bb84bf">&#9670;&#160;</a></span>DeclExceptionMsg() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -195,7 +197,7 @@ template&lt;int dim&gt; </div>
 </div>
 </div>
 <a id="af9dee96c801839c3fb4373d9c716ee79" name="af9dee96c801839c3fb4373d9c716ee79"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af9dee96c801839c3fb4373d9c716ee79">&#9670;&#160;</a></span>DeclExceptionMsg() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#af9dee96c801839c3fb4373d9c716ee79">&#9670;&#160;</a></span>DeclExceptionMsg() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -210,6 +212,34 @@ template&lt;int dim&gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">&quot;Using the <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a> change Darcy model requires to run a multiphysics simulation with the heat transfer solver enabled.&quot;&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af866f3e5e20548cc61e7b8fd52b27f7f" name="af866f3e5e20548cc61e7b8fd52b27f7f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af866f3e5e20548cc61e7b8fd52b27f7f">&#9670;&#160;</a></span>DeclExceptionMsg() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DeclExceptionMsg </td>
+          <td>(</td>
+          <td class="paramtype">SingleFluidPhaseChangeDarcyModelDoesNotSupportDensityMultiplication&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&quot;Single-fluid simulations with Darcy <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a> change model does not support the multiplication by density since the kinematic <a class="el" href="physical__property__model_8h.html#a0b2c854385812ebfac83689a5c3ead58a8e7f8389b914e827058d694b31468b3a">pressure</a> is used in the momentum equation.&quot;&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>

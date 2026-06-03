@@ -134,6 +134,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:ad88ff5629eb12f5f137ff7b34e537439"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6d47f52bb3c7a4fb87c7fa7765564687" id="r_a6d47f52bb3c7a4fb87c7fa7765564687"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structParameters_1_1VelocitySource.html#af088b392f0017e6e5b4564b28a1aca99">DarcySourceType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1VelocitySource.html#a6d47f52bb3c7a4fb87c7fa7765564687">darcy_type</a></td></tr>
 <tr class="separator:a6d47f52bb3c7a4fb87c7fa7765564687"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acfd0c5620afc94293acd5203b9bfe04d" id="r_acfd0c5620afc94293acd5203b9bfe04d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1VelocitySource.html#acfd0c5620afc94293acd5203b9bfe04d">enable_darcy_multiply_by_density</a></td></tr>
+<tr class="separator:acfd0c5620afc94293acd5203b9bfe04d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="structParameters_1_1VelocitySource.html" title="VelocitySource - Adds velocity-dependent source term to the Navier-Stokes equations with the appropri...">VelocitySource</a> - Adds velocity-dependent source term to the Navier-Stokes equations with the appropriate jacobian matrix. Currently only a change to a rotating frame is supported, but additional terms such as a Darcy force or similar could be easily added. </p>
@@ -241,9 +243,9 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l03715">3715</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l03720">3720</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l01762">darcy_type</a>, <a class="el" href="structParameters_1_1VelocitySource.html#a87edcf555de06bd89d26e35b4c670e19a334c4a4c42fdb79d7ebc3e73b517e6f8">none</a>, <a class="el" href="parameters_8h_source.html#l01755">omega_x</a>, <a class="el" href="parameters_8h_source.html#l01756">omega_y</a>, <a class="el" href="parameters_8h_source.html#l01757">omega_z</a>, <a class="el" href="structParameters_1_1VelocitySource.html#af088b392f0017e6e5b4564b28a1aca99ad0b50e5bdf6e59d6f8ce448465e09069">phase_change</a>, <a class="el" href="parameters_8h_source.html#l01754">rotating_frame_type</a>, and <a class="el" href="structParameters_1_1VelocitySource.html#a87edcf555de06bd89d26e35b4c670e19a9fa1e546d34dd62a768567052aaa9f92">srf</a>.</p>
+<p class="reference">References <a class="el" href="parameters_8h_source.html#l01762">darcy_type</a>, <a class="el" href="parameters_8h_source.html#l01777">enable_darcy_multiply_by_density</a>, <a class="el" href="structParameters_1_1VelocitySource.html#a87edcf555de06bd89d26e35b4c670e19a334c4a4c42fdb79d7ebc3e73b517e6f8">none</a>, <a class="el" href="parameters_8h_source.html#l01755">omega_x</a>, <a class="el" href="parameters_8h_source.html#l01756">omega_y</a>, <a class="el" href="parameters_8h_source.html#l01757">omega_z</a>, <a class="el" href="structParameters_1_1VelocitySource.html#af088b392f0017e6e5b4564b28a1aca99ad0b50e5bdf6e59d6f8ce448465e09069">phase_change</a>, <a class="el" href="parameters_8h_source.html#l01754">rotating_frame_type</a>, and <a class="el" href="structParameters_1_1VelocitySource.html#a87edcf555de06bd89d26e35b4c670e19a9fa1e546d34dd62a768567052aaa9f92">srf</a>.</p>
 
 </div>
 </div>
@@ -261,6 +263,29 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01762">1762</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="acfd0c5620afc94293acd5203b9bfe04d" name="acfd0c5620afc94293acd5203b9bfe04d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acfd0c5620afc94293acd5203b9bfe04d">&#9670;&#160;</a></span>enable_darcy_multiply_by_density</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Parameters::VelocitySource::enable_darcy_multiply_by_density</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Enable the multiplication of the Darcy force term ( \(\vec{F}_\mathrm{Darcy}\)) by the density for dimensional consistency when solving the pressure rather than the kinematic pressure in the momentum balance.</p>
+<p class="formulaDsp">
+\[
+\vec{F}_\mathrm{Darcy} = \rho K \vec{u}
+\]
+</p>
+<p>with \(\rho\) the density, \(K\) the Darcy penalty, and \(\vec{u}\) the velocity. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01777">1777</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>

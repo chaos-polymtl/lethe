@@ -468,17 +468,30 @@ end
 <h2>Darcy Penalization<a class="headerlink" href="#darcy-penalization" title="Link to this heading">#</a></h2>
 <p>A Darcy-like source term can be added to the simulation using the following parameters:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection velocity source
-  set Darcy type = none
+  set Darcy type                       = none
+  set enable Darcy multiply by density = false
 end
 </pre></div>
 </div>
-<ul class="simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">Darcy</span> <span class="pre">type</span></code> parameter specifies the type of Darcy penalization term to be applied to the Navier-Stokes equations. The options are <code class="docutils literal notranslate"><span class="pre">none</span></code> or <code class="docutils literal notranslate"><span class="pre">phase_change</span></code>. The <code class="docutils literal notranslate"><span class="pre">phase_change</span></code> model uses the values of the <code class="docutils literal notranslate"><span class="pre">Darcy</span> <span class="pre">penalty</span> <span class="pre">liquid</span></code>  and <code class="docutils literal notranslate"><span class="pre">Darcy</span> <span class="pre">penalty</span> <span class="pre">solid</span></code> set-up within the <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">change</span></code> subsection of the <a class="reference internal" href="physical_properties.html"><span class="doc">Physical Properties</span></a>.</p></li>
-</ul>
+<ul>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">Darcy</span> <span class="pre">type</span></code> parameter specifies the type of Darcy penalization term to be applied to the Navier-Stokes equations. The options are <code class="docutils literal notranslate"><span class="pre">none</span></code> or <code class="docutils literal notranslate"><span class="pre">phase_change</span></code>. The <code class="docutils literal notranslate"><span class="pre">phase_change</span></code> model uses the values of the <code class="docutils literal notranslate"><span class="pre">Darcy</span> <span class="pre">penalty</span> <span class="pre">liquid</span></code>  and <code class="docutils literal notranslate"><span class="pre">Darcy</span> <span class="pre">penalty</span> <span class="pre">solid</span></code> set-up within the <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">change</span></code> subsection of the <a class="reference internal" href="physical_properties.html"><span class="doc">Physical Properties</span></a>.</p>
 <div class="admonition caution">
 <p class="admonition-title">Caution</p>
 <p>The phase change Darcy model does not currently have a Cahn-Hilliard implementation.</p>
 </div>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">Darcy</span> <span class="pre">multiply</span> <span class="pre">by</span> <span class="pre">density</span></code> parameter enables the multiplication by the density within the Darcy force term (<span class="math notranslate nohighlight">\(\boldsymbol{F}_\mathrm{Darcy}\)</span>). This is for dimensional consistency when solving the pressure (<span class="math notranslate nohighlight">\(p\)</span>) rather than the kinematic pressure (<span class="math notranslate nohighlight">\(p^* = p / \rho\)</span>, with <span class="math notranslate nohighlight">\(\rho\)</span> the density of the fluid) in the momentum equation. This parameter should be used when coupling of the <a class="reference internal" href="../../theory/multiphase/cfd/cls.html"><span class="doc">CLS equation</span></a> with the <a class="reference internal" href="../../theory/multiphysics/fluid_dynamics/navier-stokes.html"><span class="doc">incompressible Navier-Stokes equations</span></a>.</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\boldsymbol{F}_\mathrm{Darcy} = \left(\rho K\right)_\mathrm{eff} \boldsymbol{u}\]</div>
+</div>
+<p>where</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\left(\rho K\right)_\mathrm{eff} = (1-\phi)\rho_0 K_\mathrm{0} + \phi \rho_1 K_\mathrm{1}\)</span> is the effective Darcy penalization coefficient. It corresponds to the weighted product of the Darcy penalty <span class="math notranslate nohighlight">\(\left(K_i [=] T^{-1}\right)\)</span> and the density <span class="math notranslate nohighlight">\(\left(\rho_i[=] M L^{-3}\right)\)</span> by the phase indicator (<span class="math notranslate nohighlight">\(\phi\)</span>). If the <code class="docutils literal notranslate"><span class="pre">phase_change</span></code> model is enabled in a fluid, the Darcy penalty in this fluid is computed with the penalty values in the liquid (<span class="math notranslate nohighlight">\(K_{i\mathrm{,l}}\)</span>) and solid (<span class="math notranslate nohighlight">\(K_{i\mathrm{,s}}\)</span>), and the liquid fraction (<span class="math notranslate nohighlight">\(\alpha_\mathrm{l}\)</span>): <span class="math notranslate nohighlight">\(K_i = \alpha_\mathrm{l}K_{i\mathrm{,l}} + (1-\alpha_\mathrm{l})K_{i\mathrm{,s}}\)</span>, and;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\boldsymbol{u}\)</span> is the velocity vector.</p></li>
+</ul>
+</li>
+</ul>
 </section>
 </section>
 
