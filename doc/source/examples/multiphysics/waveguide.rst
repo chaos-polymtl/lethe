@@ -7,4 +7,4 @@ Waveguide
     :glob:
     :titlesonly:
 
-    standing-EM-waves/standing-EM-waves
+    EM-waves/EM-waves

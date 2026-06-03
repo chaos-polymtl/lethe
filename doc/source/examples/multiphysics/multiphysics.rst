@@ -76,7 +76,7 @@ Multiphysics
 
       multiphysics_5 [label="Waveguide", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/waveguide.html"];
 
-      multiphysics_5_1 [label="Standing EM Waves", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/standing-EM-waves/standing-EM-waves.html"];
+      multiphysics_5_1 [label="EM Waves", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/EM-waves/EM-waves.html"];
 
 
       multiphysics -> multiphysics_1:w;
