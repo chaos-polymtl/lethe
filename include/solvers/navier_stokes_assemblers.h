@@ -16,12 +16,12 @@
  */
 
 DeclExceptionMsg(
-  PhaseChangeDarcyModelRequiresTemperature,
-  "Using the phase change Darcy model requires to run a multiphysics simulation with the heat transfer solver enabled.");
+  PhaseChangePermeabilityModelRequiresTemperature,
+  "Using the phase change permeability models require to run a multiphysics simulation with the heat transfer solver enabled.");
 
 DeclExceptionMsg(
-  PhaseChangeDarcyModelDoesNotSupportCHN,
-  "The phase change Darcy model does not currently have a Cahn-Hilliard implementation.");
+  PhaseChangePermeabilityModelDoesNotSupportCHN,
+  "The phase change permeability models do not currently have a Cahn-Hilliard implementation.");
 
 DeclExceptionMsg(
   SingleFluidPhaseChangeDarcyModelDoesNotSupportDensityMultiplication,
@@ -194,7 +194,7 @@ public:
    * @param velocity_gradient The velocity gradient tensor on the quadrature point
      @param velocity_hessians The velocity hessian tensor on the quadrature point
      @param non_newtonian_viscosity The viscosity at which the gradient is calculated
-     @param d_gamma_dot Th difference in the shear rate magnitude to approximate the
+     @param d_gamma_dot The difference in the shear rate magnitude to approximate the
      viscosity variation with a slight change in the shear_rate magnitude
    */
   inline Tensor<1, dim>
@@ -273,7 +273,7 @@ public:
  * @brief Class that assembles the transient time arising from BDF time
  * integration for the Navier Stokes equations. For example, if a BDF1 scheme is
  * chosen, the following is assembled
- * \f$\frac{\mathbf{u}^{t+\Delta t}-\mathbf{u}^{t}{\Delta t}
+ * \f$\frac{\mathbf{u}^{t+\Delta t}-\mathbf{u}^{t}{\Delta t}\f$
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -749,6 +749,110 @@ private:
    * calculate, on the fly, the inverse permeability (\f$ \beta_D \f$).
    */
   const Parameters::PhaseChange phase_change_parameters;
+};
+
+/**
+ * @brief Assembler of the non-linear Carman-Kozeny permeability model for
+ * simulations with phase change.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ */
+template <int dim>
+class PhaseChangeCarmanKozenyAssembler : public NavierStokesAssemblerBase<dim>
+{
+public:
+  /**
+   * @brief Assembler for the Carman-Kozeny permeability source term used for
+   * phase change modelling.
+   *
+   * \f[
+   * \boldsymbol{F}_\mathrm{Carman-Kozeny} = \frac{-\nu}{A_\mathrm{perm}}
+   * \left[ \frac{(1-\alpha_\mathrm{l})^2}{(\alpha_\mathrm{l})^3 +
+   * \delta}\right] \boldsymbol{u}
+   * \f]
+   *
+   * with \f$\nu\f$ the kinematic viscosity, \f$A_\mathrm{perm}\f$ the
+   * permeability area, \f$\alpha_\mathrm{l}\f$ the liquid fraction,
+   * \f$\delta\f$ a tolerance to avoid division by zero in the solid, and
+   * \f$\boldsymbol{u}\f$ the velocity.
+   *
+   * @param[in] carman_kozeny_permeability_area Permeability a area of the solid
+   * (pseudo-porous media).
+   * @param[in] carman_kozeny_tolerance Tolerance to avoid division by zero in
+   * the solid.
+   * @param[in] liquidus_temperature Liquidus temperature of the fluid used for
+   * computing the liquid fraction.
+   * @param[in] solidus_temperature Solidus temperature of the fluid used for
+   * computing the liquid fraction.
+   */
+  PhaseChangeCarmanKozenyAssembler(const double carman_kozeny_permeability_area,
+                                   const double carman_kozeny_tolerance,
+                                   const double liquidus_temperature,
+                                   const double solidus_temperature)
+    : carman_kozeny_permeability_area_inv(1. / carman_kozeny_permeability_area)
+    , carman_kozeny_tolerance(carman_kozeny_tolerance)
+    , liquidus_temperature(liquidus_temperature)
+    , solidus_temperature(solidus_temperature)
+  {}
+
+  /**
+   * @brief Assembles the matrix of:
+   * \f[
+   * \boldsymbol{F}_\mathrm{Carman-Kozeny} = \frac{-\nu}{A_\mathrm{perm}}
+   * \left[ \frac{(1-\alpha_\mathrm{l})^2}{(\alpha_\mathrm{l})^3 +
+   * \delta}\right] \boldsymbol{u} \f]
+   *
+   * with \f$\nu\f$ the kinematic viscosity, \f$A_\mathrm{perm}\f$ the
+   * permeability area, \f$\alpha_\mathrm{l}\f$ the liquid fraction,
+   * \f$\delta\f$ a tolerance to avoid division by zero in the solid, and
+   * \f$\boldsymbol{u}\f$ the velocity.
+   *
+   * @param[in] scratch_data Scratch data containing the information required
+   * for system assembly.
+   * It is important to note that the scratch data has to have been re-inited
+   * before calling for matrix assembly.
+   *
+   * @param[in,out] copy_data Destination where the local_matrix is copied to.
+   */
+  virtual void
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  /**
+   * @brief Assemble the right-hand side (rhs) of:
+   * \f[
+   * \boldsymbol{F}_\mathrm{Carman-Kozeny} = \frac{-\nu}{A_\mathrm{perm}}
+   * \left[ \frac{(1-\alpha_\mathrm{l})^2}{(\alpha_\mathrm{l})^3 +
+   * \delta}\right] \boldsymbol{u} \f]
+   *
+   * with \f$\nu\f$ the kinematic viscosity, \f$A_\mathrm{perm}\f$ the
+   * permeability area, \f$\alpha_\mathrm{l}\f$ the liquid fraction,
+   * \f$\delta\f$ a tolerance to avoid division by zero in the solid, and
+   * \f$\boldsymbol{u}\f$ the velocity.
+   *
+   * @param[in] scratch_data Scratch data containing the information required
+   * for system assembly.
+   * It is important to note that the scratch data has to have been re-inited
+   * before calling for rhs assembly.
+   *
+   * @param[in,out] copy_data Destination where the local_rhs is copied to.
+   */
+  virtual void
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+private:
+  /// One over the permeability area of the pseudo-porous bed (solid phase).
+  const double carman_kozeny_permeability_area_inv;
+
+  /// Tolerance in the Carman-Kozeny source term that avoids division by zero.
+  const double carman_kozeny_tolerance;
+
+  /// Liquidus temperature
+  const double liquidus_temperature;
+
+  /// Solidus temperature
+  const double solidus_temperature;
 };
 
 

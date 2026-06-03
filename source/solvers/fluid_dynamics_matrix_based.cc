@@ -441,9 +441,10 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
               this->simulation_control));
         }
 
-      AssertThrow(this->simulation_parameters.velocity_sources.darcy_type !=
-                    Parameters::VelocitySource::DarcySourceType::phase_change,
-                  PhaseChangeDarcyModelDoesNotSupportCHN());
+      AssertThrow(
+        this->simulation_parameters.velocity_sources.permeability_model ==
+          Parameters::VelocitySource::PermeabilityModel::none,
+        PhaseChangePermeabilityModelDoesNotSupportCHN());
 
       this->assemblers.emplace_back(
         std::make_shared<GLSNavierStokesCahnHilliardAssemblerCore<dim>>(
@@ -500,17 +501,41 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
         }
 
       // Darcy force for phase change simulations
-      if (this->simulation_parameters.velocity_sources.darcy_type ==
-          Parameters::VelocitySource::DarcySourceType::phase_change)
+      if (this->simulation_parameters.velocity_sources.permeability_model ==
+          Parameters::VelocitySource::PermeabilityModel::darcy_phase_change)
         {
           AssertThrow(this->simulation_parameters.multiphysics.heat_transfer,
-                      PhaseChangeDarcyModelRequiresTemperature());
+                      PhaseChangePermeabilityModelRequiresTemperature());
           this->assemblers.emplace_back(
             std::make_shared<PhaseChangeDarcyCLSAssembler<dim>>(
               this->simulation_parameters.physical_properties_manager
                 .get_phase_change_parameters_vector(),
               this->simulation_parameters.velocity_sources
                 .enable_darcy_multiply_by_density));
+        }
+      // Carman-Kozeny force for phase change simulations
+      else if (this->simulation_parameters.velocity_sources
+                 .permeability_model ==
+               Parameters::VelocitySource::PermeabilityModel::
+                 carman_kozeny_phase_change)
+        {
+          AssertThrow(this->simulation_parameters.multiphysics.heat_transfer,
+                      PhaseChangePermeabilityModelRequiresTemperature());
+          this->assemblers.emplace_back(
+            std::make_shared<PhaseChangeCarmanKozenyAssembler<dim>>(
+              this->simulation_parameters.velocity_sources
+                .carman_kozeny_permeability_area,
+              this->simulation_parameters.velocity_sources
+                .carman_kozeny_tolerance,
+              this->simulation_parameters.physical_properties_manager
+                .get_physical_properties_parameters()
+                .fluids[0]
+                .phase_change_parameters.T_liquidus,
+
+              this->simulation_parameters.physical_properties_manager
+                .get_physical_properties_parameters()
+                .fluids[0]
+                .phase_change_parameters.T_solidus)); // TODO AA Change for CLS
         }
 
       if (this->simulation_parameters.physical_properties_manager
@@ -578,11 +603,11 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
         }
 
       // Darcy force for phase change simulations in single phase
-      if (this->simulation_parameters.velocity_sources.darcy_type ==
-          Parameters::VelocitySource::DarcySourceType::phase_change)
+      if (this->simulation_parameters.velocity_sources.permeability_model ==
+          Parameters::VelocitySource::PermeabilityModel::darcy_phase_change)
         {
           AssertThrow(this->simulation_parameters.multiphysics.heat_transfer,
-                      PhaseChangeDarcyModelRequiresTemperature());
+                      PhaseChangePermeabilityModelRequiresTemperature());
           AssertThrow(
             !this->simulation_parameters.velocity_sources
                .enable_darcy_multiply_by_density,
@@ -594,6 +619,30 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
                 .get_physical_properties_parameters()
                 .fluids[0]
                 .phase_change_parameters));
+        }
+      // Carman-Kozeny force for phase change simulations in single phase
+      else if (this->simulation_parameters.velocity_sources
+                 .permeability_model ==
+               Parameters::VelocitySource::PermeabilityModel::
+                 carman_kozeny_phase_change)
+        {
+          AssertThrow(this->simulation_parameters.multiphysics.heat_transfer,
+                      PhaseChangePermeabilityModelRequiresTemperature());
+          this->assemblers.emplace_back(
+            std::make_shared<PhaseChangeCarmanKozenyAssembler<dim>>(
+              this->simulation_parameters.velocity_sources
+                .carman_kozeny_permeability_area,
+              this->simulation_parameters.velocity_sources
+                .carman_kozeny_tolerance,
+              this->simulation_parameters.physical_properties_manager
+                .get_physical_properties_parameters()
+                .fluids[0]
+                .phase_change_parameters.T_liquidus,
+
+              this->simulation_parameters.physical_properties_manager
+                .get_physical_properties_parameters()
+                .fluids[0]
+                .phase_change_parameters.T_solidus));
         }
 
       if (this->simulation_parameters.physical_properties_manager
