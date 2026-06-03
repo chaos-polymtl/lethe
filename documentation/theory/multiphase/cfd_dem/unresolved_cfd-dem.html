@@ -519,20 +519,33 @@ I_i \frac{\mathrm{d}\mathbf{\omega}_i}{\mathrm{d}t} = \mathbf{M}_{\mathrm{fp},i}
 <p>Model A:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\rho_f \left ( \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right ) \right ) = -\varepsilon_f \nabla p + \varepsilon_f \nabla \cdot \tau + \mathbf{f}_{\mathrm{pf},\mathrm{A}}\]</div>
+\[\frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right )  = \frac{1}{\rho_f} \left (-\varepsilon_f \nabla p^* + \varepsilon_f \nabla \cdot \tau + \mathbf{f}_{\mathrm{pf},\mathrm{A}} \right )\]</div>
 </div>
 <p>Model B:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\rho_f \left ( \frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right ) \right ) = -\nabla p + \nabla \cdot \tau +  \mathbf{f}_{\mathrm{pf},\mathrm{B}}\]</div>
+\[\frac{\partial \left ( \varepsilon_f \mathbf{u} \right )}{\partial t} + \nabla \cdot \left ( \varepsilon_f \mathbf{u} \otimes \mathbf{u} \right ) = \frac{1}{\rho_f} \left (-\nabla p^* + \nabla \cdot \tau +  \mathbf{f}_{\mathrm{pf},\mathrm{B}}\right )\]</div>
 </div>
 <p>where:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\rho_f\)</span> is the density of the fluid;</p></li>
 <li><p><span class="math notranslate nohighlight">\(p\)</span> is the pressure;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\tau\)</span> is the deviatoric stress tensor;</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mathbf{f}_\mathrm{A}^{\mathrm{pf}}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{f}_\mathrm{B}^{\mathrm{pf}}\)</span> denote the interphase momentum exchange terms resulting from fluid–particle interactions in Models A and B, respectively. The term <span class="math notranslate nohighlight">\(\mathbf{f}_{\mathrm{pf}}\)</span>, which has units of a volumetric force, is obtained by regularizing the particle-fluid interaction forces using a kernel function <span class="math notranslate nohighlight">\(k_r\)</span> :</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{f}_\mathrm{A}^{\mathrm{pf}}\)</span> and <span class="math notranslate nohighlight">\(\mathbf{f}_\mathrm{B}^{\mathrm{pf}}\)</span> denote the interphase momentum exchange terms resulting from fluid–particle interactions in Models A and B, respectively.</p></li>
 </ul>
+<p>It is worth noting that the VANS solver in Lethe solves a kinematic pressure variable defined as:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[p = \frac{p^*}{\rho_f}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(p^*\)</span> is the physical pressure, not withstanding the gravitational contribution, as mentioned earlier. In fact, for numerical convenience, the governing equations are also written in a hydrostatically reduced form, in which the gravitational contribution is absorbed into the pressure definition. As a result, the solved pressure corresponds to a dynamic pressure field normalized by the fluid density.</p>
+<p>The full physical pressure can be recovered as:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[p^{\mathrm{phys}} = \rho_f \left(p + \mathbf{g}\cdot\mathbf{x}\right) = p^* + \rho_f \mathbf{g}\cdot\mathbf{x}\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{g}\)</span> is the gravitational acceleration vector and <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> is the position vector.</p>
+<p>The term <span class="math notranslate nohighlight">\(\mathbf{f}_{\mathrm{pf}}\)</span>, which has units of a volumetric force, is obtained by regularizing the particle-fluid interaction forces using a kernel function <span class="math notranslate nohighlight">\(k_r\)</span> :</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\begin{split}\mathbf{f}_{\mathrm{pf},\mathrm{A}} &amp;= \sum_{i} k_r \left (\lVert \mathbf{x} - \mathbf{x}_i \rVert \right ) \left(- \left (\mathbf{F}_{\mathrm{fp},i} - \mathbf{F}_{\nabla p,i} - \mathbf{F}_{\nabla \cdot \mathbf{\tau},i} \right ) \right) \\
