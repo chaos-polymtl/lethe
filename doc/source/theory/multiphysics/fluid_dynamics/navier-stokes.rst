@@ -32,7 +32,8 @@ In `Einstein notation <https://en.wikipedia.org/wiki/Einstein_notation>`_, they 
     \partial_t u_k + u_l \partial_l u_k &= -\frac{1}{\rho} \partial_k p^* + \nu \partial_l \partial_l u_k + f_k
 
 
-In Lethe, instead of solving for pressure directly, we solve for a kinematic pressure :math:`p=\frac{p^*}{\rho}`. This has two advantages, first the scaling of the pressure is more adequate with respect to that of the velocity and, secondly, for single phase simulations, this means that we require a single physical property: the kinematic viscosity. Consequently, unless specified otherwise, you should assume that pressure actually refers to the kinematic pressure :math:`p`. Although it may seem confusing at first, this is standard in incompressible fluid dynamics.
+In Lethe, instead of solving for pressure directly, we solve for a kinematic pressure :math:`p=\frac{p^*}{\rho}`. This has two advantages, first the scaling of the pressure is more adequate with respect to that of the velocity and, secondly, for single phase simulations, this means that we require a single physical property: the kinematic viscosity. It should also be noted that the incompressible Navier–Stokes equations are written without a gravitational forcing term, i.e., the momentum equation does not include gravity. As a result, the solved pressure represents a purely dynamic pressure field, and hydrostatic contributions are not represented in the fluid pressure. Consequently, unless specified otherwise, “pressure” refers to this kinematic pressure :math:`p`.
+
 
 .. note::
     The choice to use :math:`p^*` for the pressure and :math:`p` for the kinematic pressure was made to lighten the writing throughout the documentation.
