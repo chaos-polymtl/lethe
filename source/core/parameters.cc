@@ -3775,7 +3775,7 @@ namespace Parameters
       AssertThrow(
         carman_kozeny_tolerance > 0,
         ExcMessage(
-          "The 'carman_kozeny_tolerance' should be strictly positive."));
+          "The 'Carman-Kozeny division tolerance' should be strictly positive."));
 
       AssertThrow(
         carman_kozeny_permeability_area > 0,

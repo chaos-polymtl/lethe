@@ -522,20 +522,13 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
           AssertThrow(this->simulation_parameters.multiphysics.heat_transfer,
                       PhaseChangePermeabilityModelRequiresTemperature());
           this->assemblers.emplace_back(
-            std::make_shared<PhaseChangeCarmanKozenyAssembler<dim>>(
+            std::make_shared<PhaseChangeCarmanKozenyCLSAssembler<dim>>(
               this->simulation_parameters.velocity_sources
                 .carman_kozeny_permeability_area,
               this->simulation_parameters.velocity_sources
                 .carman_kozeny_tolerance,
               this->simulation_parameters.physical_properties_manager
-                .get_physical_properties_parameters()
-                .fluids[0]
-                .phase_change_parameters.T_liquidus,
-
-              this->simulation_parameters.physical_properties_manager
-                .get_physical_properties_parameters()
-                .fluids[0]
-                .phase_change_parameters.T_solidus)); // TODO AA Change for CLS
+                .get_phase_change_parameters_vector()));
         }
 
       if (this->simulation_parameters.physical_properties_manager

@@ -3,15 +3,15 @@
 
 #-------------------------------------------------------------------------------
 # DESCRIPTION:
-# This test checks that the Darcy penalty term with density in the solid phase
-# when simulating a two-phase flow with CLS.
+# This test checks that the Carman-Kozeny permeabilty source term imposes stasis
+# adequately in the solid phase for phase change simulation.
 # This simulates the 2D development of a 3 layers Couette flow with 2 fluids.
 # The layers are as follows:
 #  - for all y in [-0.25, -0.025[: fluid 0
 #  - for all y in [-0.025, 0.025[: fluid 1
 #  - for all y in [0.025, 0.25[: fluid 0
 # Transition between the layers is smoothened with a tanh function.
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 
 # Listing of Parameters
 #----------------------
@@ -24,7 +24,7 @@ set dimension = 2
 
 subsection simulation control
   set method           = bdf2
-  set output frequency = 0
+  set output frequency = 1
   set time end         = 0.3
   set time step        = 0.1
 end
@@ -35,9 +35,6 @@ end
 
 subsection initial conditions
   set type = nodal
-  subsection uvwp
-    set Function expression = 0; 0; 0;
-  end
   subsection CLS
     set Function constants  = halfThickness=0.0003125, xInterface=0.025
     set Function expression = 0.5 - 0.5 * tanh((sqrt(y*y) - xInterface)/(2*halfThickness))
@@ -67,23 +64,18 @@ end
 subsection physical properties
   set number of fluids = 2
   subsection fluid 0
-    set density = 0.1
     subsection phase change
       set latent enthalpy      = 0
       set liquidus temperature = 0.51
       set solidus temperature  = 0.49
-      set Darcy penalty liquid = 0
-      set Darcy penalty solid  = 1e5
     end
   end
   subsection fluid 1
-    set density             = 10
+    set density = 10
     subsection phase change
       set latent enthalpy      = 0
       set liquidus temperature = 0.51
       set solidus temperature  = 0.49
-      set Darcy penalty liquid = 0
-      set Darcy penalty solid  = 1e5
     end
   end
 end
@@ -105,8 +97,9 @@ end
 #---------------------------------------------------
 
 subsection velocity source
-  set permeability model               = darcy phase change
-  set enable Darcy multiply by density = true
+  set permeability model               = carman-kozeny phase change
+  set Carman-Kozeny permeability area  = 5e-1
+  set Carman-Kozeny division tolerance = 1e-5
 end
 
 #---------------------------------------------------
@@ -132,11 +125,11 @@ subsection boundary conditions
     set periodic id        = 1
     set periodic direction = 0
   end
-  subsection bc 1
+  subsection bc 2
     set type = noslip
     set id   = 3
   end
-  subsection bc 2
+  subsection bc 1
     set id   = 2
     set type = function
     subsection u
@@ -211,12 +204,12 @@ subsection non-linear solver
   subsection heat transfer
     set verbosity      = quiet
     set tolerance      = 1e-8
-    set max iterations = 15
+    set max iterations = 5
   end
   subsection fluid dynamics
     set verbosity      = quiet
     set tolerance      = 1e-8
-    set max iterations = 15
+    set max iterations = 5
   end
   subsection CLS
     set verbosity      = quiet
@@ -252,6 +245,6 @@ subsection linear solver
     set max iters         = 5000
     set relative residual = 1e-6
     set minimum residual  = 1e-11
-    set preconditioner    = ilu
+    set preconditioner    = amg
   end
 end
