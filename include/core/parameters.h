@@ -2015,6 +2015,12 @@ namespace Parameters
     /// Tolerance in the Carman-Kozeny source term that avoids division by zero.
     std::vector<double> carman_kozeny_tolerance{1e-3, 1e-3};
 
+    /// Permeability area of the pseudo-porous bed (solid phase).
+    double carman_kozeny_permeability_area;
+
+    /// Tolerance in the Carman-Kozeny source term that avoids division by zero.
+    double carman_kozeny_tolerance;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
