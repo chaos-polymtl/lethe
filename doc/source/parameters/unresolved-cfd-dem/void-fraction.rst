@@ -27,7 +27,7 @@ If the ``mode`` chosen is ``pcm``, then the void fraction is calculated using th
 .. code-block:: text
 
   # in the void fraction subsection
-  set qcm sphere diameter          = 0
+  set qcm smoothing length         = 0
   set qcm sphere equal cell volume = false
   set qcm filter type              = spherical
   set particle refinement factor   = 0
@@ -39,8 +39,8 @@ If the ``mode`` chosen is ``pcm``, then the void fraction is calculated using th
 * The ``read dem`` allows us to read an already existing dem simulation result which can be obtained from checkpointing the Lethe-DEM simulation. This is important as the `lethe-fluid-vans` solver requires reading an initial dem triangulation and particle information to simulate flows in the presence of particles. 
 * The ``dem_file_name`` parameter specifies the prefix of the dem files that must be read.
 * The ``l2 smoothing length`` is a smoothing length used for smoothing the L2 projection of the void fraction to avoid sharp discontinuities which can lead to instabilities in the simulation.
-* The ``qcm sphere diameter`` allows us to fix the diameter of all reference spheres in the simulation to a given value. If this option is used (a value other than 0 is specified), it overrides the default calculation of the size of the sphere and sets its diameter to the value specified.
-* The ``qcm sphere equal cell volume`` determines whether or not we want to use a reference sphere with the same volume as the element in which it is located. If it is disabled, then each sphere will have a radius equal to the size of the element in which it is located. This parameter is important only when the ``qcm sphere diameter`` is not used or is set to 0.
+* The ``qcm smoothing length`` allows us to fix the characteristic length of the QCM filter in the simulation to a given value. When the ``spherical`` filter is used, half of this value is the radius of the averaging sphere; when the ``gaussian`` filter is used, half of this value is the standard deviation :math:`\sigma`. If this option is used (a value other than 0 is specified), it overrides the default calculation based on the local cell measure. The previous parameter name ``qcm sphere diameter`` is kept as a deprecated alias and remains accepted in ``.prm`` files.
+* The ``qcm sphere equal cell volume`` determines whether or not we want to use a reference sphere with the same volume as the element in which it is located. If it is disabled, then each sphere will have a radius equal to the size of the element in which it is located. This parameter is important only when the ``qcm smoothing length`` is not used or is set to 0.
 * The ``qcm filter type`` selects the kernel used to weigh particle contributions onto the mesh in the ``qcm`` method. Two options are available: ``spherical`` (default) and ``gaussian``. The user always sets ``qcm smoothing length`` to the **diameter** of the averaging sphere (spherical filter) or to **2σ** (Gaussian filter); the code halves this value internally to obtain the kernel characteristic length. For each particle of radius :math:`r_p` and volume :math:`V_p`, the kernel value at distance :math:`d` from the particle centre to a quadrature point is evaluated and then normalised by the sum of all kernel values over the neighbour-cell stencil so that the total particle volume is conserved.
 
   * **Spherical** (``spherical``): the kernel is the intersection volume between the particle sphere (radius :math:`r_p`) and an averaging sphere of radius :math:`\ell = \tfrac{1}{2}\,d_{\text{filter}}` centred at the quadrature point. In 3-D, for an overlap distance :math:`0 < d < r_p + \ell`, this is
