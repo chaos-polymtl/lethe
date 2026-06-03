@@ -479,6 +479,8 @@ PhaseChangeDarcyCLSAssembler<dim>::assemble_matrix(
   const unsigned int n_dofs         = scratch_data.n_dofs;
   const auto        &velocities     = scratch_data.velocity_values;
   const auto        &temperatures   = scratch_data.temperature_values;
+  const auto        &densities_0    = scratch_data.density_0;
+  const auto        &densities_1    = scratch_data.density_1;
   const auto        &filtered_phase = scratch_data.filtered_phase_values;
 
   auto &local_matrix    = copy_data.local_matrix;
@@ -496,8 +498,10 @@ PhaseChangeDarcyCLSAssembler<dim>::assemble_matrix(
     {
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
-      // Current temperature values
+      // Current temperature and density values
       double current_temperature = temperatures[q];
+      double current_density_0   = densities_0[q];
+      double current_density_1   = densities_1[q];
       // Loop to calculate the liquid fraction and Darcy permeability of each
       // fluid. Calculated Darcy permeability coefficients depend on the
       // temperature and material (fluid) properties. A min(max) approach is
@@ -517,11 +521,15 @@ PhaseChangeDarcyCLSAssembler<dim>::assemble_matrix(
               phase_change_parameters_vector[p].penalty_s);
         }
 
-      // For a CLS two-fluid system, the global Darcy penalty coefficient
-      // takes into account the phase change parameters in both fluids
+      // For a CLS two-fluid system, the global Darcy permeability coefficient
+      // takes into account the phase change parameters in both fluids.
+      // If enabled,we also multiply by density.
       const double darcy_penalty =
-        ((1 - filtered_phase[q]) * darcy_penalties[0] +
-         filtered_phase[q] * darcy_penalties[1]);
+        (enable_darcy_multiply_by_density) ?
+          ((1 - filtered_phase[q]) * darcy_penalties[0] * current_density_0) +
+            (filtered_phase[q] * darcy_penalties[1] * current_density_1) :
+          ((1 - filtered_phase[q]) * darcy_penalties[0]) +
+            (filtered_phase[q] * darcy_penalties[1]);
 
       strong_residual[q] += darcy_penalty * velocities[q];
 
@@ -556,6 +564,8 @@ PhaseChangeDarcyCLSAssembler<dim>::assemble_rhs(
   const unsigned int n_dofs         = scratch_data.n_dofs;
   const auto        &velocities     = scratch_data.velocity_values;
   const auto        &temperatures   = scratch_data.temperature_values;
+  const auto        &densities_0    = scratch_data.density_0;
+  const auto        &densities_1    = scratch_data.density_1;
   const auto        &filtered_phase = scratch_data.filtered_phase_values;
 
   auto &local_rhs       = copy_data.local_rhs;
@@ -572,8 +582,11 @@ PhaseChangeDarcyCLSAssembler<dim>::assemble_rhs(
     {
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
-      // Current temperature values
+      // Current temperature and density values
       double current_temperature = temperatures[q];
+      double current_density_0   = densities_0[q];
+      double current_density_1   = densities_1[q];
+
       // Loop to calculate the liquid fraction and Darcy permeability of each
       // fluid. Calculated Darcy penalty coefficients depend on the
       // temperature and material (fluid) properties. A min(max) approach is
@@ -594,10 +607,14 @@ PhaseChangeDarcyCLSAssembler<dim>::assemble_rhs(
         }
 
       // For a CLS two-fluid system, the global Darcy permeability coefficient
-      // takes into account the phase change parameters in both fluids
+      // takes into account the phase change parameters in both fluids.
+      // If enabled,we also multiply by density.
       const double darcy_penalty =
-        ((1 - filtered_phase[q]) * darcy_penalties[0] +
-         filtered_phase[q] * darcy_penalties[1]);
+        (enable_darcy_multiply_by_density) ?
+          ((1 - filtered_phase[q]) * darcy_penalties[0] * current_density_0) +
+            (filtered_phase[q] * darcy_penalties[1] * current_density_1) :
+          ((1 - filtered_phase[q]) * darcy_penalties[0]) +
+            (filtered_phase[q] * darcy_penalties[1]);
 
       strong_residual[q] += darcy_penalty * velocities[q];
 

@@ -508,7 +508,9 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
           this->assemblers.emplace_back(
             std::make_shared<PhaseChangeDarcyCLSAssembler<dim>>(
               this->simulation_parameters.physical_properties_manager
-                .get_phase_change_parameters_vector()));
+                .get_phase_change_parameters_vector(),
+              this->simulation_parameters.velocity_sources
+                .enable_darcy_multiply_by_density));
         }
 
       if (this->simulation_parameters.physical_properties_manager
@@ -581,6 +583,11 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
         {
           AssertThrow(this->simulation_parameters.multiphysics.heat_transfer,
                       PhaseChangeDarcyModelRequiresTemperature());
+          AssertThrow(
+            !this->simulation_parameters.velocity_sources
+               .enable_darcy_multiply_by_density,
+            SingleFluidPhaseChangeDarcyModelDoesNotSupportDensityMultiplication());
+
           this->assemblers.emplace_back(
             std::make_shared<PhaseChangeDarcyAssembly<dim>>(
               this->simulation_parameters.physical_properties_manager

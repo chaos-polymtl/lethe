@@ -23,6 +23,10 @@ DeclExceptionMsg(
   PhaseChangeDarcyModelDoesNotSupportCHN,
   "The phase change Darcy model does not currently have a Cahn-Hilliard implementation.");
 
+DeclExceptionMsg(
+  SingleFluidPhaseChangeDarcyModelDoesNotSupportDensityMultiplication,
+  "Single-fluid simulations with Darcy phase change model does not support the multiplication by density since the kinematic pressure is used in the momentum equation.");
+
 
 /**
  * @brief A pure virtual class that serves as an interface for all

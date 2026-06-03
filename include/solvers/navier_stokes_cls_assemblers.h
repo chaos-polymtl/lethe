@@ -123,8 +123,10 @@ class PhaseChangeDarcyCLSAssembler : public NavierStokesAssemblerBase<dim>
 {
 public:
   PhaseChangeDarcyCLSAssembler(
-    const std::vector<Parameters::PhaseChange> &phase_change_parameters_vector)
+    const std::vector<Parameters::PhaseChange> &phase_change_parameters_vector,
+    const bool enable_darcy_multiply_by_density)
     : phase_change_parameters_vector(phase_change_parameters_vector)
+    , enable_darcy_multiply_by_density(enable_darcy_multiply_by_density)
   {}
 
   /**
@@ -152,6 +154,21 @@ private:
    * calculate, on the fly, the inverse permeability (\f$ \beta_D \f$).
    */
   const std::vector<Parameters::PhaseChange> phase_change_parameters_vector;
+
+  /**
+   * Enable the multiplication of the Darcy force term
+   * (\f$\vec{F}_\mathrm{Darcy}\f$) by the density for dimensional consistency
+   * when solving the pressure rather than the kinematic pressure in the
+   * momentum balance.
+   *
+   * \f[
+   * \vec{F}_\mathrm{Darcy} = \rho K \vec{u}
+   * \f]
+   *
+   * with \f$\rho\f$ the density, \f$K\f$ the Darcy penalty, and \f$\vec{u}\f$
+   * the velocity.
+   */
+  const bool enable_darcy_multiply_by_density;
 };
 
 

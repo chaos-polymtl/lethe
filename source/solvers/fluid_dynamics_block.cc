@@ -98,7 +98,9 @@ FluidDynamicsBlock<dim>::setup_assemblers()
           this->assemblers.emplace_back(
             std::make_shared<PhaseChangeDarcyCLSAssembler<dim>>(
               this->simulation_parameters.physical_properties_manager
-                .get_phase_change_parameters_vector()));
+                .get_phase_change_parameters_vector(),
+              this->simulation_parameters.velocity_sources
+                .enable_darcy_multiply_by_density));
         }
 
       if (!this->simulation_parameters.physical_properties_manager
