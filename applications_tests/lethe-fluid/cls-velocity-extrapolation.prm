@@ -1,6 +1,15 @@
 # SPDX-FileCopyrightText: Copyright (c) 2024, 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#-------------------------------------------------------------------------------
+# DESCRIPTION:
+# This test simulates the damping of a gravity wave.
+# It checks the 2nd order velocity extrapolation when the time-stepping
+# scheme selected is bdf2.
+# The calculation frequency of the post-processed quantities is also checked
+# here.
+#-------------------------------------------------------------------------------
+
 # Listing of Parameters
 #----------------------
 
@@ -140,6 +149,8 @@ end
 #---------------------------------------------------
 
 subsection post-processing
+  set calculation frequency        = 2
+  set output frequency             = 2
   set verbosity                    = verbose
   set calculate average velocities = true
 end

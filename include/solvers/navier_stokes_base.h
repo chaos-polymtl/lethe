@@ -211,8 +211,14 @@ protected:
   virtual void
   postprocess(bool first_iteration)
   {
-    postprocess_fd(first_iteration);
-    multiphysics->postprocess(first_iteration);
+    if (simulation_control->get_iteration_number() %
+            this->simulation_parameters.post_processing.calculation_frequency ==
+          0 ||
+        first_iteration || simulation_control->is_at_end())
+      {
+        postprocess_fd(first_iteration);
+        multiphysics->postprocess(first_iteration);
+      }
 
     if (this->simulation_control->is_output_iteration())
       this->write_output_results(*this->present_solution);
