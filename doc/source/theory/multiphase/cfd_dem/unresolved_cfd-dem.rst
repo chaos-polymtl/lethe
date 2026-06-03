@@ -110,7 +110,7 @@ It is worth noting that the VANS solver in Lethe solves a kinematic pressure var
 .. math::
     p = \frac{p^*}{\rho_f}
 
-where :math:`p^*` is the physical pressure, not withstanding the gravitational contribution, as mentioned earlier. In fact, for numerical convenience, the governing equations are also written in a hydrostatically reduced form, in which the gravitational contribution is absorbed into the pressure definition. As a result, the solved pressure corresponds to a dynamic pressure field.
+where :math:`p^*` is the physical pressure, not withstanding the gravitational contribution, as mentioned earlier. In fact, for numerical convenience, the governing equations are also written in a hydrostatically reduced form, in which the gravitational contribution is absorbed into the pressure definition. As a result, the solved pressure corresponds to a dynamic pressure field normalized by the fluid density.
 
 The full physical pressure can be recovered as:
 
