@@ -77,7 +77,7 @@ subsection physical properties
     end
   end
   subsection fluid 1
-    set density             = 10
+    set density = 10
     subsection phase change
       set latent enthalpy      = 0
       set liquidus temperature = 0.51
