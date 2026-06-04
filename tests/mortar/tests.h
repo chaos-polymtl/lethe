@@ -504,7 +504,7 @@ public:
   {
     const std::shared_ptr<CouplingEvaluationBase<dim, Number>>
       coupling_evaluator =
-        std::make_shared<CouplingEvaluationSIPG<dim, n_components, Number>>(
+        std::make_shared<ScalarCouplingEvaluation<dim, n_components, Number>>(
           *matrix_free.get_mapping_info().mapping,
           matrix_free.get_dof_handler());
 
@@ -1287,7 +1287,7 @@ public:
 
     const std::shared_ptr<CouplingEvaluationBase<dim, Number>>
       coupling_evaluator =
-        std::make_shared<CouplingEvaluationSIPG<dim, n_components, Number>>(
+        std::make_shared<ScalarCouplingEvaluation<dim, n_components, Number>>(
           *matrix_free.get_mapping_info().mapping,
           matrix_free.get_dof_handler());
 

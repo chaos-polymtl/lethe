@@ -1098,13 +1098,13 @@ private:
 
 
 template <int dim, int n_components, typename Number>
-class CouplingEvaluationSIPG : public CouplingEvaluationBase<dim, Number>
+class ScalarCouplingEvaluation : public CouplingEvaluationBase<dim, Number>
 {
 public:
   using FEPointIntegrator = FEPointEvaluation<n_components, dim, dim, Number>;
   using value_type        = typename FEPointIntegrator::value_type;
 
-  CouplingEvaluationSIPG(const Mapping<dim>    &mapping,
+  ScalarCouplingEvaluation(const Mapping<dim>    &mapping,
                          const DoFHandler<dim> &dof_handler,
                          const unsigned int     first_selected_component = 0);
 

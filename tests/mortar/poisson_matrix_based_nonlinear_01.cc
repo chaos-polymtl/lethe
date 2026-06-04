@@ -90,7 +90,7 @@ public:
     // create coupling evaluator
     const std::shared_ptr<CouplingEvaluationBase<dim, double>>
       mortar_coupling_evaluator =
-        std::make_shared<CouplingEvaluationSIPG<dim, 1, double>>(mapping,
+        std::make_shared<ScalarCouplingEvaluation<dim, 1, double>>(mapping,
                                                                  dof_handler);
 
     // create coupling operator
