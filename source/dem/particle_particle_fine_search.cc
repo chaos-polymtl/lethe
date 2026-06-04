@@ -42,7 +42,7 @@ particle_particle_fine_search(
       if constexpr (contact_type == local_particle_particle ||
                     contact_type == ghost_particle_particle)
         {
-          // Iterating over each map which contains the contact information
+          // Iterating over each map that contains the contact information
           for (auto adjacent_particles_list_iterator =
                  adjacent_particles_list.begin();
                adjacent_particles_list_iterator !=
@@ -132,6 +132,7 @@ particle_particle_fine_search(
   for (auto &[particle_one_id, second_particle_container] :
        contact_pair_candidates)
     {
+      // If this particle has no other particle close to it.
       if (second_particle_container.empty())
         continue;
 
