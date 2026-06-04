@@ -1105,8 +1105,8 @@ public:
   using value_type        = typename FEPointIntegrator::value_type;
 
   ScalarCouplingEvaluation(const Mapping<dim>    &mapping,
-                         const DoFHandler<dim> &dof_handler,
-                         const unsigned int     first_selected_component = 0);
+                           const DoFHandler<dim> &dof_handler,
+                           const unsigned int     first_selected_component = 0);
 
   unsigned int
   data_size() const override;

@@ -85,7 +85,7 @@ public:
     const std::shared_ptr<CouplingEvaluationBase<dim, double>>
       mortar_coupling_evaluator =
         std::make_shared<ScalarCouplingEvaluation<dim, 1, double>>(mapping,
-                                                                 dof_handler);
+                                                                   dof_handler);
 
     // create coupling operator
     mortar_coupling_operator =
