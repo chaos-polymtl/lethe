@@ -3727,7 +3727,6 @@ namespace Parameters
           "none|darcy phase change|carman-kozeny phase change"),
         "Permeability models for phase change modelling."
         "Choices are <none|darcy phase change|carman-kozeny phase change>.");
-      prm.mark_as_deprecated("Darcy type");
 
       prm.declare_entry(
         "Carman-Kozeny division tolerance",
