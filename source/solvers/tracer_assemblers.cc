@@ -31,7 +31,6 @@ TracerAssemblerCore<dim>::assemble_matrix(
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
-
   // Copy data elements
   auto &strong_jacobian_vec = copy_data.strong_jacobian;
   auto &local_matrix        = copy_data.local_matrix;
@@ -46,6 +45,13 @@ TracerAssemblerCore<dim>::assemble_matrix(
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
+
+      // Implementation of a Discontinuity-Capturing Directional Dissipation
+      // (DCDD) shock capturing scheme. For more information see Tezduyar,
+      // T. E. (2003). Computation of moving boundaries and interfaces and
+      // stabilization parameters. International Journal for Numerical
+      // Methods in Fluids, 43(5), 555-575. Our implementation is based on
+      // equations (70) and (79), which are adapted for the tracer solver.
 
       // We use the previous concentration for the shock capture if the
       // simulation is transient
@@ -79,8 +85,6 @@ TracerAssemblerCore<dim>::assemble_matrix(
             pow(tracer_gradient_for_dcdd_norm * h, order - 1) :
           0;
 
-
-
       // Calculation of the magnitude of the velocity for the
       // stabilization parameter
       const double u_mag = std::max(velocity.norm(), tolerance);
@@ -98,36 +102,36 @@ TracerAssemblerCore<dim>::assemble_matrix(
 
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
-          const Tensor<1, dim> grad_phi_T_j = scratch_data.grad_phi[q][j];
-          const double laplacian_phi_T_j    = scratch_data.laplacian_phi[q][j];
+          const Tensor<1, dim> grad_phi_C_j = scratch_data.grad_phi[q][j];
+          const double laplacian_phi_C_j    = scratch_data.laplacian_phi[q][j];
           strong_jacobian_vec[q][j] +=
-            velocity * grad_phi_T_j - diffusivity * laplacian_phi_T_j;
+            velocity * grad_phi_C_j - diffusivity * laplacian_phi_C_j;
         }
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto phi_T_i      = scratch_data.phi[q][i];
-          const auto grad_phi_T_i = scratch_data.grad_phi[q][i];
+          const auto phi_C_i      = scratch_data.phi[q][i];
+          const auto grad_phi_C_i = scratch_data.grad_phi[q][i];
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              const Tensor<1, dim> grad_phi_T_j = scratch_data.grad_phi[q][j];
+              const Tensor<1, dim> grad_phi_C_j = scratch_data.grad_phi[q][j];
 
-              // Weak form : - D * laplacian T +  u * gradT - f=0
-              local_matrix(i, j) += (diffusivity * grad_phi_T_i * grad_phi_T_j +
-                                     phi_T_i * velocity * grad_phi_T_j) *
+              // Weak form : - k * laplacian C +  u * gradC - f = 0
+              local_matrix(i, j) += (diffusivity * grad_phi_C_i * grad_phi_C_j +
+                                     phi_C_i * velocity * grad_phi_C_j) *
                                     JxW;
 
-
-
+              // GLS stabilization
               local_matrix(i, j) += tau * strong_jacobian_vec[q][j] *
-                                    (grad_phi_T_i * velocity) * JxW;
+                                    (grad_phi_C_i * velocity) * JxW;
 
+              // DCDD shock-capturing
               local_matrix(i, j) +=
                 (vdcdd *
-                   scalar_product(grad_phi_T_i, dcdd_factor * grad_phi_T_j) +
-                 d_vdcdd * grad_phi_T_j.norm() *
-                   scalar_product(grad_phi_T_i,
+                   scalar_product(grad_phi_C_i, dcdd_factor * grad_phi_C_j) +
+                 d_vdcdd * grad_phi_C_j.norm() *
+                   scalar_product(grad_phi_C_i,
                                   dcdd_factor * tracer_gradient)) *
                 JxW;
             }
@@ -221,21 +225,21 @@ TracerAssemblerCore<dim>::assemble_rhs(
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto phi_T_i      = scratch_data.phi[q][i];
-          const auto grad_phi_T_i = scratch_data.grad_phi[q][i];
+          const auto phi_C_i      = scratch_data.phi[q][i];
+          const auto grad_phi_C_i = scratch_data.grad_phi[q][i];
 
-          // rhs for : - D * laplacian T +  u * grad T - f=0
-          local_rhs(i) -= (diffusivity * grad_phi_T_i * tracer_gradient +
-                           phi_T_i * velocity * tracer_gradient -
-                           scratch_data.source[q] * phi_T_i) *
+          // rhs for : - k * laplacian C +  u * grad C - f = 0
+          local_rhs(i) -= (diffusivity * grad_phi_C_i * tracer_gradient +
+                           phi_C_i * velocity * tracer_gradient -
+                           scratch_data.source[q] * phi_C_i) *
                           JxW;
 
           local_rhs(i) -=
-            tau * (strong_residual_vec[q] * (grad_phi_T_i * velocity)) * JxW;
+            tau * (strong_residual_vec[q] * (grad_phi_C_i * velocity)) * JxW;
 
           local_rhs(i) -=
             vdcdd *
-            scalar_product(grad_phi_T_i, dcdd_factor * tracer_gradient) * JxW;
+            scalar_product(grad_phi_C_i, dcdd_factor * tracer_gradient) * JxW;
         }
     } // end loop on quadrature points
 }
@@ -332,18 +336,18 @@ TracerAssemblerDGCore<dim>::assemble_rhs(
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto phi_T_i      = scratch_data.phi[q][i];
-          const auto grad_phi_T_i = scratch_data.grad_phi[q][i];
+          const auto phi_C_i      = scratch_data.phi[q][i];
+          const auto grad_phi_C_i = scratch_data.grad_phi[q][i];
 
-          // rhs for : - D * laplacian T + u * grad T - f=0
-          local_rhs(i) -= (diffusivity * grad_phi_T_i * tracer_gradient -
-                           grad_phi_T_i * velocity * tracer_value -
-                           scratch_data.source[q] * phi_T_i) *
+          // rhs for : - k * laplacian C + u * grad C - f = 0
+          local_rhs(i) -= (diffusivity * grad_phi_C_i * tracer_gradient -
+                           grad_phi_C_i * velocity * tracer_value -
+                           scratch_data.source[q] * phi_C_i) *
                           JxW;
 
           // This term is added to correct for the influence of the
           // non-divergence-free velocity field on the concentration.
-          local_rhs(i) -= -phi_T_i * velocity_divergence * tracer_value * JxW;
+          local_rhs(i) -= -phi_C_i * velocity_divergence * tracer_value * JxW;
         }
     } // end loop on quadrature points
 }
@@ -748,11 +752,11 @@ TracerAssemblerReaction<dim>::assemble_matrix(
       // It comes from the derivative -d/dC (k * C) = -(k + C*dk/dC).
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
-          const auto phi_T_j = scratch_data.phi[q][j];
+          const auto phi_C_j = scratch_data.phi[q][j];
           strong_jacobian_vec[q][j] +=
             -(reaction_coeff +
               scratch_data.grad_tracer_reaction_prefactor[q] * C) *
-            phi_T_j;
+            phi_C_j;
         }
 
       // Store JxW in a local variable for faster access.
@@ -760,13 +764,13 @@ TracerAssemblerReaction<dim>::assemble_matrix(
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto &phi_T_i = scratch_data.phi[q][i];
+          const auto &phi_C_i = scratch_data.phi[q][i];
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              const auto &phi_T_j = scratch_data.phi[q][j];
+              const auto &phi_C_j = scratch_data.phi[q][j];
 
-              local_matrix(i, j) += reaction_coeff * phi_T_i * phi_T_j * JxW;
+              local_matrix(i, j) += reaction_coeff * phi_C_i * phi_C_j * JxW;
             }
         }
     } // end loop on quadrature points
@@ -807,7 +811,7 @@ TracerAssemblerReaction<dim>::assemble_rhs(
           const auto &phi_T_i = scratch_data.phi[q][i];
 
           // Add reaction term to the RHS
-          local_rhs(i) -= k[q] * phi_T_i * C * JxW;
+          local_rhs(i) -= k[q] * phi_C_i * C * JxW;
         }
     } // end loop on quadrature points
 }
