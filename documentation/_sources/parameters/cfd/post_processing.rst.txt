@@ -11,15 +11,16 @@ This subsection controls the post-processing other than the forces and torque on
 .. code-block:: text
 
   subsection post-processing
-    set verbosity                        = quiet
-    set output frequency                 = 1
+    set verbosity             = quiet
+    set output frequency      = 1
+    set calculation frequency = 1
 
     #---------------------------------------------------
     # Fluid dynamic post-processing
     #---------------------------------------------------
     # Kinetic energy calculation
-    set calculate kinetic energy         = false
-    set kinetic energy name              = kinetic_energy
+    set calculate kinetic energy = false
+    set kinetic energy name      = kinetic_energy
 
     # Average velocities calculation
     set calculate average velocities      = false
@@ -30,50 +31,50 @@ This subsection controls the post-processing other than the forces and torque on
     set initial time for average temperature and heat flux = 0.0
 
     # Pressure drop calculation
-    set calculate pressure drop          = false
-    set pressure drop name               = pressure_drop
-    set inlet boundary id                = 0
-    set outlet boundary id               = 1
+    set calculate pressure drop = false
+    set pressure drop name      = pressure_drop
+    set inlet boundary id       = 0
+    set outlet boundary id      = 1
 
     # Flow rate at boundaries calculation
-    set calculate flow rate              = false
-    set flow rate name                   = flow_rate
+    set calculate flow rate = false
+    set flow rate name      = flow_rate
 
     # Enstrophy calculation
-    set calculate enstrophy              = false
-    set enstrophy name                   = enstrophy
+    set calculate enstrophy = false
+    set enstrophy name      = enstrophy
 
     # Viscous dissipation
-    set calculate viscous dissipation    = false
-    set viscous dissipation name         = viscous_dissipation
+    set calculate viscous dissipation = false
+    set viscous dissipation name      = viscous_dissipation
 
     # Pressure power
-    set calculate pressure power         = false
-    set pressure power name              = pressure_power
+    set calculate pressure power = false
+    set pressure power name      = pressure_power
 
     # Output Q-criterion
-    set output qcriterion                = true
+    set output qcriterion = true
 
     # Output vorticity
-    set output vorticity                 = true
+    set output vorticity = true
 
     # Output velocity gradient
-    set output velocity gradient         = true
+    set output velocity gradient = true
 
     #---------------------------------------------------
     # Physical properties post-processing
     #---------------------------------------------------
-    set calculate apparent viscosity     = false
-    set apparent viscosity name          = apparent_viscosity
+    set calculate apparent viscosity = false
+    set apparent viscosity name      = apparent_viscosity
 
     #---------------------------------------------------
     # Multiphysics post-processing
     #---------------------------------------------------
     # Tracer postprocessing
-    set calculate tracer statistics      = false
-    set tracer statistics name           = tracer_statistics
-    set calculate tracer flow rate       = false
-    set tracer flow rate name            = tracer_flow_rate
+    set calculate tracer statistics = false
+    set tracer statistics name      = tracer_statistics
+    set calculate tracer flow rate  = false
+    set tracer flow rate name       = tracer_flow_rate
 
     # Thermal postprocessing
     set postprocessed fluid               = both
@@ -89,29 +90,37 @@ This subsection controls the post-processing other than the forces and torque on
     set melting temperature               = 0
 
     # Multiphase postprocessing
-    set calculate barycenter             = false
-    set barycenter name                  = barycenter_information
-    set calculate mass conservation      = true
-    set mass conservation name           = mass_conservation_information
+    set calculate barycenter        = false
+    set barycenter name             = barycenter_information
+    set calculate mass conservation = true
+    set mass conservation name      = mass_conservation_information
 
     # Other Cahn-Hilliard postprocessing
-    set calculate phase statistics       = false
-    set phase statistics name            = phase_statistics
-    set calculate phase energy           = false
-    set phase energy name                = phase_energy
+    set calculate phase statistics = false
+    set phase statistics name      = phase_statistics
+    set calculate phase energy     = false
+    set phase energy name          = phase_energy
 
     #---------------------------------------------------
     # Multiphase post-processing
     #---------------------------------------------------
     # CFD-DEM postprocessing
-    set calculate volume phases          = false
-    set phase volumes name               = phase_volumes
+    set calculate volume phases = false
+    set phase volumes name      = phase_volumes
     
   end
 
 * ``verbosity``: enables the display of the post-processing values in the terminal. This does not affect the printing of output files. Choices are: ``quiet`` (default, no output) or ``verbose`` (output at every iteration).
 
+* ``calculation frequency``: frequency at which the post-processed quantities are computed.
+
+  .. note::
+    Regardless of the value of the ``calculation frequency``, the quantities will be post-processed at the first and last time steps.
+
 * ``output frequency``: frequency at which the enabled post-processing is outputted in the respective file. For ``output frequency = 1`` (default value), results are outputted at each iteration.
+
+  .. attention::
+    The ``output frequency`` must be a multiple of the ``calculation frequency``.
 
 * ``calculate kinetic energy``: controls if calculation of kinetic energy is enabled. 
     * ``kinetic energy name``: output filename for kinetic energy calculations.
