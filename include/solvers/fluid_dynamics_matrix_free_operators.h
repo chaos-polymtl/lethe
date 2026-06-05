@@ -418,7 +418,9 @@ public:
 
   /**
    * @brief Store the values of the prescribed Neumann traction boundary condition to use it
-   * (σ . n , v)  = (traction_fn, v)
+   * \f$
+   * (\boldsymbol{\sigma} \cdot \mathbf{n},\, \mathbf{v}) =
+   * (\mathrm{traction\_fn},\, \mathbf{v})\f$.
    * in the residual assembly and Jacobian assembly of the matrix-free operator.
    */
   void
@@ -807,12 +809,15 @@ protected:
    * @brief Table with correct alignment for vectorization to store the values
    * of the prescribed Neumann traction boundary condition values.
    *
-   * σ = 2με(u)− pI , σ.n = (2με(u)− pI).n = traction_fn
-   * assembled (v, g_N) on boundary faces where Neumann traction is prescribed.
-   * our test function v involves both velocity and pressure components. Hence,
-   * the prescribed_neumann_traction has dim components corresponding to
-   * velocity and 1 component corresponding to pressure (which is dummy),
-   * totalling dim+1 components.
+   * \f$
+   * (\boldsymbol{\sigma} \cdot \mathbf{n},\, \mathbf{v}) =
+   * (\mathrm{traction\_fn},\, \mathbf{v})\f$.
+   * assembled \f$(\mathbf{v},\mathrm{traction\_fn})\f$ on boundary faces where
+   * Neumann traction is prescribed. our test function v involves both velocity
+   * and pressure components. Hence, the prescribed_neumann_traction has
+   * \f$\dim\f$ components corresponding to velocity and 1 component
+   * corresponding to pressure (which is dummy), totalling \f$\dim+1\f$
+   * components.
    */
   Table<2, Tensor<1, dim + 1, VectorizedArray<number>>>
     prescribed_neumann_traction;

@@ -23,52 +23,34 @@ or in Einstein notation:
     \nu \partial_i u_j n_j  - p n_i - \beta ( u_k n_k)_{-} u_i = 0
 
 where :math:`\beta` is a constant  and :math:`(\mathbf{u}\cdot \mathbf{n})_{-}` is :math:`\min (0,\mathbf{u}\cdot \mathbf{n})`. We refer the reader to the work of `Arndt et al 2015 <https://www.mathsim.eu/~darndt/files/ENUMATH_2015.pdf>`_  for more detail.
-* ``neumann traction`` imposes Neumann boundary conditions on the boundary.
+* ``neumann traction`` imposes Neumann boundary conditions on the Neumann part of the boundary of the domain. (:math: `\mathrm{traction\_fn}` is a vector-valued function prescribed on the Neuman boundary.)
+
+..math::
+    \nu \nabla \mathbf{u} \cdot \mathbf{n} - p \mathcal{I} \cdot \mathbf{n} = \mathrm{traction\_fn}
+
+or in Einstein notation:
+
+.. math::
+    \nu \partial_i u_j n_j  - p n_i = \mathrm{traction\_fn}_i
+
 .. code-block:: text
 
-  subsection boundary conditions
-    set number                = 2
-    set time dependent        = false
-    set fix pressure constant = false
-    subsection bc 0
-      set id                 = 0
-      set type               = function
-
-      subsection u
-        set Function expression = -y
-      end
-      subsection v
-        set Function expression = x
-      end
-      subsection w
-        set Function expression = 0
-      end
-      subsection p
-        set Function expression = 0
-      end
-
-      # Center of rotation used for torque calculation
-      subsection center of rotation
-        set x = 0
-        set y = 0
-        set z = 0
-      end
-
-      set periodic id        = 1
-      set periodic direction = 0
-      set beta               = 1
-    end
-    subsection bc 1
-      set type = noslip
-    end
-    subsection bc 2
-      set type = neumann traction
-      subsection traction fn
-        set Function expression = 2x; 5xy; 3yz; 0
-      end
-
+subsection boundary conditions
+  set number                = 3
+  set fix pressure constant = true
+  subsection bc 0
+    set id   = 0, 1, 2
+    set type = noslip
   end
-
+  subsection bc 1
+    set id   = 3
+    set type = neumann traction
+    subsection traction fn
+      set Function expression = -2.0*pi*sin(pi*x)*sin(pi*x)*cos(2*pi*y); sin(pi*x)*sin(pi*y) - 4*pi*sin(pi*x)*sin(pi*y)*cos(pi*x)*cos(pi*y); 0.0
+    end
+  end
+end 
+  
 * ``number`` specifies the number of boundary conditions of the problem. Hence, ``set number`` refers to the number of ``bc`` subsections, and not the number of boundary ids in the mesh. For instance, periodicity between 2 boundaries counts as 1 condition even if it requires two distinct boundary ids.
 
 .. warning::

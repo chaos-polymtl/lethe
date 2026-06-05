@@ -37,6 +37,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MAJOR The FEM subsection parameters `velocity order`, `pressure order`, `temperature order`, `tracer order`, `cls order` (and its alias `VOF order`), `void fraction order`, `phase cahn hilliard order`, `potential cahn hilliard order`, `electromagnetics trial order`, and `electromagnetics test order` have been renamed to use `degree` instead of `order` (e.g., `velocity degree`, `pressure degree`). The parameter name `degree` is more adequate, since it refers to the degree of the underlying shape functions that are used. The old names are kept as deprecated aliases and will continue to work but will trigger a deprecation warning. All examples, application tests, and documentation have been updated to use the new names. [#1994](https://github.com/chaos-polymtl/lethe/pull/1994)
 
+
+
+
 ## [Master] - 2026/05/18
 
 ### Fixed
@@ -63,12 +66,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The GCMG (global-coarsening multigrid) preconditioner of the VANS matrix-free solver was building the particle-fluid force transfer twice and never building the particle-fluid drag transfer (copy-paste bug). This left the drag contribution missing on coarse multigrid levels. The correct transfer is now built for each auxiliary field. [#1991](https://github.com/chaos-polymtl/lethe/pull/1991)
 
-## [Master] - 2026/05/11
 
-### Added
-
-- MINOR Description (#1965).
-This PR implements Neumann traction boundary condition assembler for both matrix-based and matrix-free solvers to solve for the incompressible Navier-Stokes equations. The feature has been tested with the `method of manufactured solutions - 2d problem` adapted to have Neumann boundary condition on the top edge of the domain. Finally, a test is added for both Matrix-based and Matrix-free Navier-Stokes solvers solving the adapted mms_2d_problem with the `mms_2d_fe2_neumann_traction_navierstokes.prm` to keep track of its changes in the future. [#1965](https://github.com/chaos-polymtl/lethe/pull/1965)
 
 [Sample] - YYYY/MM/DD
 Added

@@ -2057,8 +2057,8 @@ NavierStokesFunctionDefined<dim>::value(const Point<dim>  &point,
 }
 
 /**
- * @brief This class implements a boundary conditions for the Navier-Stokes equation
- * where the Neumann traction component are defined using individual functions
+ * @brief This class implements a boundary conditions for the Navier-Stokes equations
+ * where the Neumann traction component are defined using individual functions.
  */
 template <int dim>
 class NavierStokesTractionFunctionDefined : public Function<dim>
@@ -2068,10 +2068,10 @@ class NavierStokesTractionFunctionDefined : public Function<dim>
   /**
    * @brief Constructor that initializes the traction_fn , a pointer to
    * the ParsedFunction type with the parameter p_t and calls the constructor
-   * of the base class Function with the appropriate number of components
+   * of the base class Function with the appropriate number of components.
    *
    * @param[in] p_t A pointer to the function that defines the traction boundary
-   * condition
+   * condition.
    */
 
 public:
@@ -2087,11 +2087,11 @@ public:
 
 
 /**
- * @brief Calculates the value of a Function-type Navier-Stokes traction boundary condition
+ * @brief Calculates the value of a Function-type Navier-Stokes traction boundary condition.
  *
- * @param point A point at which the function will be evaluated
+ * @param point A point at which the function will be evaluated.
  *
- * @param component The vector component of the boundary condition (0-x, 1-y and 2-z)
+ * @param component The vector component of the boundary condition (0-x, 1-y and 2-z).
  */
 
 

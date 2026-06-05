@@ -523,9 +523,10 @@ public:
 
 /**
  * @brief Class that assembles a Neumann traction boundary condition.
- * According to the following weak form: (p-mu*grad_u)*n at the boundary
+ * According to the following weak form: \f$(p-\mu\nabla \mathbf{u})\cdot
+ * \mathbf{n}\f$ at the boundary.
  *
- * @tparam dim An integer that denotes the number of spatial dimensions
+ * @tparam dim An integer that denotes the number of spatial dimensions.
  * @param neumann_traction_boundary_condition The boundary condition objects use to store the function.
  * @ingroup assemblers
  */

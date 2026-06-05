@@ -1477,7 +1477,8 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_range(
 // (v,β·(u-u_target)) - ν(v,∇δu·n) - ν(∇v·n,(u-u_target))
 // 2. Outlet boundary conditions using the directional do-nothing method.
 // It adds the following term: -(v,β(u·n)_·u) where (u·n)_=min(0,u·n)
-// 3. Neumann traction boundary conditions adding the term (t,v) on the RHS
+// 3. Neumann traction boundary conditions adding the term
+// \f$(\mathrm{traction\_fn},\, \mathbf{v})\f$ on the RHS.
 template <int dim, typename number>
 template <bool assemble_residual>
 void
@@ -1490,7 +1491,7 @@ NavierStokesOperatorBase<dim, number>::do_boundary_face_integral_local(
   // If the boundary condition is not in our list of boundary
   // conditions or the boundary condition that is set in the list is
   // not a boundary condition that requires face asssembly (for example
-  // pressure, weak dirichlet or outlet or neumann traction), there is nothing
+  // pressure, weak dirichlet, outlet or neumann traction), there is nothing
   // to do, so we set the values to zero and return
   if (boundary_condition_requires_face_assembly(
         this->boundary_conditions.type.at(integrator.boundary_id())) == false)

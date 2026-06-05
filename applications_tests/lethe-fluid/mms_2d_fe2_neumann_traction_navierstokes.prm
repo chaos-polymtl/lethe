@@ -1,6 +1,10 @@
 # SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+# This test verifies the Neumann boundary conditions implementation of the matrix-based Navier-Stokes solver for incompressible flows
+# Here we solve the mms 2D problem shown in the examples section of the lethe page https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/2d-mms/2d-mms.html
+# with Neumann traction boundary condition on the top edge of a unit square domain instead of an no-slip boundary condition.
+
 # Listing of Parameters
 #----------------------
 
