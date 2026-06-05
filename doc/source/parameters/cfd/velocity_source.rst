@@ -55,8 +55,8 @@ A permeability source term can be added to the simulation using the following pa
 
     where
 
-    - :math:`K= \alpha_\mathrm{l}K_\mathrm{l} + (1-\alpha_\mathrm{l})K_\mathrm{s}` is the liquid fraction :math:`\left(\alpha_\mathrm{l} \right)` weighted Darcy penalty with :math:`K_\mathrm{l}` and :math:`K_\mathrm{s}` respectively the Darcy penalty in the liquid and the solid phases;
-    - :math:`\boldsymbol{u}` is the velocity.
+    - :math:`K= \alpha_\mathrm{l}K_\mathrm{l} + (1-\alpha_\mathrm{l})K_\mathrm{s} \, [\mathsf{T^{-1}}]` is the liquid fraction :math:`\left(\alpha_\mathrm{l} \right)` weighted Darcy penalty with :math:`K_\mathrm{l}` and :math:`K_\mathrm{s}` respectively the Darcy penalty in the liquid and the solid phases;
+    - :math:`\boldsymbol{u} \, [\mathsf{LT^{-1}}]` is the velocity.
 
   - The ``carman_kozeny_phase_change`` uses the ``Carman-Kozeny permeability area``, the ``Carman-Kozeny division tolerance``, the ``kinematic viscosity`` specified in the the :doc:`physical_properties` and the liquid fraction (:math:`\alpha_\mathrm{l}`) to compute it's penalty. The added source term corresponds to:
 
@@ -65,10 +65,10 @@ A permeability source term can be added to the simulation using the following pa
 
     where
 
-    - :math:`\nu` is the kinematic viscosity;
-    - :math:`A_\mathrm{perm}` is the permeability area;
+    - :math:`\nu \, [\mathsf{L^2T^{-1}}]` is the kinematic viscosity;
+    - :math:`A_\mathrm{perm} \, [\mathsf{L^2}]` is the permeability area;
     - :math:`\delta` a tolerance to avoid division by zero in the solid, and;
-    - :math:`\boldsymbol{u}` is the velocity.
+    - :math:`\boldsymbol{u} \, [\mathsf{LT^{-1}}]` is the velocity.
 
     The figure below gives an idea of how the different parameters influence the resulting force term.
 
@@ -90,7 +90,7 @@ A permeability source term can be added to the simulation using the following pa
     where
 
     - :math:`w_i = \begin{cases}  1-\phi \quad &\mathrm{if} \quad  i = 0\\ \phi \quad &\mathrm{if} \quad  i = 1\\ \end{cases}` is the phase indicator weight, and;
-    - :math:`\mu` is the dynamic viscosity.
+    - :math:`\mu \, [\mathsf{ML^{-1}T^{-1}}]` is the dynamic viscosity.
 
     .. note::
       Here, the dynamic viscosity is used, since in the CLS formulation of the Navier-Stokes equations, we solve for the pressure (:math:`p`) rather than the kinematic pressure (:math:`p^* = p / \rho`, with :math:`\rho` the density of the fluid).
@@ -105,7 +105,7 @@ A permeability source term can be added to the simulation using the following pa
 
   where
 
-  * :math:`\left(\rho K\right)_\mathrm{eff} = (1-\phi)\rho_0 K_\mathrm{0} + \phi \rho_1 K_\mathrm{1}` is the effective Darcy penalization coefficient. It corresponds to the weighted product of the Darcy penalty :math:`\left(K_i [=] T^{-1}\right)` and the density :math:`\left(\rho_i[=] M L^{-3}\right)` by the phase indicator (:math:`\phi`). If the ``phase_change`` model is enabled in a fluid, the Darcy penalty in this fluid is computed with the penalty values in the liquid (:math:`K_{i\mathrm{,l}}`) and solid (:math:`K_{i\mathrm{,s}}`), and the liquid fraction (:math:`\alpha_\mathrm{l}`): :math:`K_i = \alpha_\mathrm{l}K_{i\mathrm{,l}} + (1-\alpha_\mathrm{l})K_{i\mathrm{,s}}`, and;
+  * :math:`\left(\rho K\right)_\mathrm{eff} = (1-\phi)\rho_0 K_\mathrm{0} + \phi \rho_1 K_\mathrm{1}` is the effective Darcy penalization coefficient. It corresponds to the weighted product of the Darcy penalty :math:`\left(K_i \, [\mathsf{T^{-1}}]\right)` and the density :math:`\left(\rho_i \, [\mathsf{M L^{-3}}]\right)` by the phase indicator (:math:`\phi`). If the ``phase_change`` model is enabled in a fluid, the Darcy penalty in this fluid is computed with the penalty values in the liquid (:math:`K_{i\mathrm{,l}}`) and solid (:math:`K_{i\mathrm{,s}}`), and the liquid fraction (:math:`\alpha_\mathrm{l}`): :math:`K_i = \alpha_\mathrm{l}K_{i\mathrm{,l}} + (1-\alpha_\mathrm{l})K_{i\mathrm{,s}}`, and;
   * :math:`\boldsymbol{u}` is the velocity vector.
 
 * The ``Carman-Kozeny permeability area`` parameter corresponds to :math:`A_\mathrm{perm}` in :math:`\boldsymbol{F}_\mathrm{Carman-Kozeny}`. It represents the permeability area of the pseudo-porous bed (or solid phase) that is simulated.
