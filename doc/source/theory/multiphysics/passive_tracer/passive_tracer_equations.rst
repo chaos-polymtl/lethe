@@ -5,15 +5,15 @@ Passive Tracer Equations
 Lethe allows the simulation of a passive tracer, which is governed by the equation:
 
 .. math::
-    \frac{\partial T}{\partial t} + \mathbf{u} \cdot \nabla T - \kappa \nabla^2 T + S = 0
+    \frac{\partial C}{\partial t} + \mathbf{u} \cdot \nabla C - \kappa \nabla^2 C + f = 0
 
 where:
 
-* :math:`T` is the tracer concentration;
+* :math:`C` is the tracer concentration;
 * :math:`\mathbf{u}` is the velocity of the fluid;
 * :math:`\nabla` is the `del operator <https://en.wikipedia.org/wiki/Del>`_;
 * :math:`\kappa` is the diffusivity coefficient;
-* :math:`S` is the tracer source term per unit of mass.
+* :math:`f` is the tracer source term per unit of mass.
 
 ==========================
 Finite Element Formulation
@@ -22,31 +22,44 @@ Finite Element Formulation
 To obtain the finite element discretization, we start from the strong form previously presented and integrate it over a domain :math:`\Omega` with boundary :math:`\Gamma` such that:
 
 .. math::
-    \int_{\Omega} \left( \frac{\partial T}{\partial t} + \mathbf{u} \cdot \nabla T - \kappa \nabla^2 T - S \right) d\Omega = 0
+    \int_{\Omega} \left( \frac{\partial C}{\partial t} + \mathbf{u} \cdot \nabla C - \kappa \nabla^2 C - f \right) \: d\Omega = 0
 
 To obtain the corresponding weak form, we multiply the equation above by a test function :math:`q` and apply integration by parts on the Laplacian term:
 
 .. math::
-    \int_{\Omega} q \frac{\partial T}{\partial t} d\Omega + \int_{\Omega} q \mathbf{u} \cdot \nabla T d\Omega + \int_{\Omega} \nabla q \kappa \nabla T d\Omega - \int_{\Omega} q S d\Omega = 0
+    F(C) := (q, \partial_t C)_{\Omega} + (q, \mathbf{u} \cdot \nabla C)_{\Omega} + (\nabla q, \kappa \: \nabla C)_{\Omega} - (q, f)_{\Omega} = 0
 
-Using the discrete form of the tracer concentration field :math:`T = \sum_j T_j \phi_j` and the test function :math:`q = \phi_i`:
+To ensure that the integral is well defined in the domain :math:`\Omega`, we use appropriate solution spaces:
 
 .. math::
-    \int_{\Omega} \phi_i \frac{\partial \phi_j}{\partial t} d\Omega + \int_{\Omega} \phi_i \mathbf{u} \cdot \nabla \phi_j d\Omega + \int_{\Omega} \nabla \phi_i \kappa \nabla \phi_j d\Omega - \int_{\Omega} \phi_i S d\Omega = 0
+    C \in \mathcal{C} (\Omega) = \mathcal{H}^1 (\Omega), \qquad q \in \mathcal{Q} (\Omega) = \mathcal{L}^2 (\Omega)
+
+and the weak formulation is formulated as finding :math:`C \in \mathcal{C} (\Omega) \times (0, T]` such that 
+
+.. math::
+    (q, \partial_t C)_{\Omega} + (q, \mathbf{u} \cdot \nabla C)_{\Omega} + (\nabla q, \kappa \: \nabla C)_{\Omega} - (q, f)_{\Omega} = 0 \qquad \forall \: q \in \mathcal{Q}
 
 ========================
 Stabilization Techniques
 ========================
 
-The GLS stabilization term added is given by:
+Two stabilization terms are added to the weak form of the passive tracer equation:
 
 .. math::
-    a_{GLS} = \int_{\Omega} \tau (\mathbf{u} \cdot \nabla q) \mathrm{R}(T),
+   F(C)_{\text{stab}} := F(C) + \underbrace{\int_{\Omega} \tau \: (\mathbf{u} \cdot \nabla q) \: \mathrm{R}(C)}_{a_{\text{GLS}}} + \underbrace{(v_{\text{DCDD}} \nabla q, \mathbf{d}_{\text{DCDD}} \cdot \nabla C)}_{a_{\text{DCDD}}}
 
-where :math:`\mathrm{R}(T)` is the strong residual of the governing equation. The stabilization parameter definition herein used is the one presented by `Tezduyar (1992) <https://doi.org/10.1016/0045-7825(92)90141-6>`_ and presented in the `Fluid Dynamics <../fluid_dynamics/stabilization.html>`_ subsection.
+In the GLS stabilization :math:`a_{\text{GLS}}`, :math:`\mathrm{R}(C)` is the strong residual of the governing equation, and the stabilization parameter :math:`\tau_k` is the one presented by `Tezduyar (1992) <https://doi.org/10.1016/0045-7825(92)90141-6>`_:
 
-====================
-Shock-capturing term
-====================
+.. math::
 
-**Under construction**
+   \tau = \left[ \left( \frac{1}{\Delta t} \right)^{2} + \left( \frac{2 |\mathrm{u}|}{h_{\text{conv}}} \right)^{2} + 9 \left( \frac{4 \nu}{h^2_{\text{diff}}} \right)^{2} \right]^{-1/2}
+
+where :math:`\Delta t` is the time step, and :math:`h_{\text{conv}}` and :math:`h_{\text{diff}}` are the size of the element related to the convection transport and diffusion mechanism, respectively. In Lethe, both element sizes are set to the diameter of a sphere having a volume equivalent to that of the cell. 
+
+.. note::
+    The same definition of the stabilization parameter is used in the `Fluid Dynamics <../fluid_dynamics/stabilization.html>`_ solver.
+
+The second stabilization term is a Discontinuity-Capturing Directional Dissipation (DCDD) shock-capturing scheme proposed by `Tezduyar (2003) <https://doi.org/10.1002/fld.505>`_ that aims to deal with crosswind oscillations. 
+
+.. note::
+    The DCDD shock-capturing scheme is also used in the `CLS <../../multiphase/cfd/cls.html>`_ and `Heat Transfer <../heat_transfer/heat_transfer.html>`_ modules. The CLS DCDD implementation is detailed `here <https://doi.org/10.1016/j.cpc.2025.109880>`_, and it is analogous to the tracer module.
