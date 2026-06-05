@@ -15,10 +15,6 @@ where:
 * :math:`\kappa` is the diffusivity coefficient;
 * :math:`f` is the tracer source term per unit of mass.
 
-==========================
-Finite Element Formulation
-==========================
-
 To obtain the finite element discretization, we start from the strong form previously presented and integrate it over a domain :math:`\Omega` with boundary :math:`\Gamma` such that:
 
 .. math::
