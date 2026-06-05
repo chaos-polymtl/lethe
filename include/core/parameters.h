@@ -1077,7 +1077,7 @@ namespace Parameters
     /// average heat flux
     double initial_time_for_average_temp_and_hf;
 
-    /// Frequency of the calculation of the post-processed quantity
+    /// Frequency of the calculation of post-processed quantities
     unsigned int calculation_frequency;
 
     /// Frequency of the output

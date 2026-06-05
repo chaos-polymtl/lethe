@@ -1880,7 +1880,7 @@ namespace Parameters
       prm.declare_entry("output precision",
                         "10",
                         Patterns::Integer(),
-                        "Calculation frequency");
+                        "Precision of the values outputted.");
       prm.declare_entry("calculation frequency",
                         "1",
                         Patterns::Integer(),
@@ -2313,6 +2313,11 @@ namespace Parameters
                         Patterns::Integer(),
                         "Output frequency");
 
+      prm.declare_entry("calculation frequency",
+                        "1",
+                        Patterns::Integer(),
+                        "Calculation frequency of post-processed quantities.");
+
       prm.declare_entry("calculate tracer statistics",
                         "false",
                         Patterns::Bool(),
@@ -2512,6 +2517,13 @@ namespace Parameters
       viscous_dissipation_output_name = prm.get("viscous dissipation name");
       apparent_viscosity_output_name  = prm.get("apparent viscosity name");
       output_frequency                = prm.get_integer("output frequency");
+      calculation_frequency = prm.get_integer("calculation frequency");
+
+      AssertThrow(
+        output_frequency % calculation_frequency == 0,
+        ExcMessage(
+          "The post-processing 'output frequency' must be a multiple of the 'calculation frequency'."));
+
       calculate_tracer_statistics = prm.get_bool("calculate tracer statistics");
       tracer_output_name          = prm.get("tracer statistics name");
       calculate_phase_statistics  = prm.get_bool("calculate phase statistics");

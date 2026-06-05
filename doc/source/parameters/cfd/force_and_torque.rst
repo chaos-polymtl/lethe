@@ -1,3 +1,7 @@
+..
+  SPDX-FileCopyrightText: Copyright (c) 2022-2026 The Lethe Authors
+  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
 ============================
 Force and Torque Calculation
 ============================
@@ -8,28 +12,28 @@ This subsection controls the post-processing of the force and the torque on the 
 
   subsection forces
     # Enable calculation of force
-    set calculate force       = true
+    set calculate force = true
 
     # Enable calculation of torque
-    set calculate torque      = true
+    set calculate torque = true
 
     # Calculation frequency
     set calculation frequency = 1
 
     # File output force prefix
-    set force name            = force
+    set force name = force
 
     # File output torque prefix
-    set torque name           = torque
+    set torque name = torque
 
     # Output frequency
-    set output frequency      = 1
+    set output frequency = 1
 
-    # Calculation frequency
-    set output precision      = 10
+    # Precision of outputted values
+    set output precision = 10
 
     # State whether information from the non-linear solver should be printed (quiet or verbose).
-    set verbosity             = quiet
+    set verbosity = quiet
   end
 
 * ``calculate force`` enables the calculation of the force on all boundaries. If multiple walls bear the same ID, the total force for this ID will be calculated.
