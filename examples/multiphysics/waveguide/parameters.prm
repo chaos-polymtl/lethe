@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 # This test case runs the time-harmonic electromagnetic solver to simulate the
-# propagation of an electromagnetic excitation in a waveguide with perfectly 
-# conducting walls. It imposes Robin boundary conditions: build-in waveguide port 
-# excitation at the inlet and an absorbing impedance boundary at the outlet. The 
-# mode tested is the TM10. 
+# propagation of an electromagnetic excitation in a waveguide with perfectly
+# conducting walls. It imposes Robin boundary conditions: build-in waveguide port
+# excitation at the inlet and an absorbing impedance boundary at the outlet. The
+# mode tested is the TM10.
 
 # Listing of Parameters
 #----------------------
@@ -19,13 +19,14 @@ set dimension = 3
 subsection simulation control
   set method            = steady
   set output frequency  = 1
-  set output path = ./degree_1/
+  set output path       = ./degree_1/
   set number mesh adapt = 3
 end
 
 #---------------------------------------------------
 # Mesh Adaptation
 #---------------------------------------------------
+prmindent*
 
 subsection mesh adaptation
   set type = uniform
@@ -144,13 +145,12 @@ subsection boundary conditions time harmonic maxwell
       set Function expression = 0
     end
     subsection surface admittance real part
-      set Function expression =   0.968987646
+      set Function expression = 0.968987646
     end
     subsection surface admittance imag part
       set Function expression = 0.
     end
   end
-
 end
 
 #---------------------------------------------------
@@ -161,7 +161,7 @@ subsection analytical solution
   set enable    = true
   set verbosity = verbose
   subsection electromagnetics
-    set Function constants = k = 51.348203, k_x = 12.5663706, k_z = 49.78678822
+    set Function constants  = k = 51.348203, k_x = 12.5663706, k_z = 49.78678822
     set Function expression = 0. ; (-k/k_x)* sin(k_x*x) * sin(k_z*z);  0.;0; (k/k_x)* sin(k_x*x) * cos(k_z*z);   0;  (k_z/k_x)* sin(k_x*x) * sin(k_z*z);    0.;   cos(k_x * x)*cos(k_z*z) ; -(k_z/k_x)* sin(k_x*x) * cos(k_z*z);    0.;  cos(k_x * x) *sin(k_z*z)
   end
 end
