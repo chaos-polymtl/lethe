@@ -3730,7 +3730,7 @@ namespace Parameters
 
       prm.declare_entry(
         "Carman-Kozeny division tolerance",
-        "1e-4",
+        "1e-3",
         Patterns::Double(),
         "This tolerance avoids a division by zero in the Carman-Kozeny source term.");
 
