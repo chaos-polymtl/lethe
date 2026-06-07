@@ -566,15 +566,21 @@ read_mesh_and_manifolds_for_stator_and_rotor(
     Utilities::MPI::sum(n_faces_stator_interface,
                         triangulation.get_mpi_communicator());
 
+  // The rotor and stator interface meshes no longer need the same number of
+  // faces: the mortar coupling builds a segment arrangement from the union of
+  // both sides' interface vertices, so a face may be cut by an arbitrary number
+  // of faces on the other side. We only require that both interfaces actually
+  // have faces.
   AssertThrow(
-    n_faces_rotor_interface_total == n_faces_stator_interface_total,
+    n_faces_rotor_interface_total > 0 && n_faces_stator_interface_total > 0,
     ExcMessage(
-      "The number of faces at the rotor interface ID #" +
+      "No faces were found at the rotor interface ID #" +
       std::to_string(mortar_parameters.rotor_boundary_id) + " (" +
       std::to_string(n_faces_rotor_interface_total) +
-      ") is different from the number of faces at the stator interface ID #" +
+      ") or at the stator interface ID #" +
       std::to_string(mortar_parameters.stator_boundary_id) + " (" +
-      std::to_string(n_faces_stator_interface_total) + ")."));
+      std::to_string(n_faces_stator_interface_total) +
+      "). Check the rotor and stator boundary IDs."));
 }
 
 template <int dim, int spacedim>

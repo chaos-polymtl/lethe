@@ -34,9 +34,16 @@ main()
                                                rotate,
                                                stage_heights);
 
-      std::cout << manager.get_n_mortars() << std::endl;
+      // Representative face center used to query the (now per-face) mortar
+      // counts; for a uniform interface mesh these counts are the same for
+      // every face.
+      auto sample_point     = radius_to_point<dim>(radius[0], delta * 0.5);
+      sample_point[dim - 1] = stage_heights[0] +
+                              0.5 * (stage_heights[1] - stage_heights[0]);
+
+      std::cout << manager.get_n_mortars(sample_point, false) << std::endl;
       std::cout << manager.get_n_total_mortars() << std::endl;
-      std::cout << manager.get_n_points() << std::endl;
+      std::cout << manager.get_n_points(sample_point, false) << std::endl;
       std::cout << manager.get_n_total_points() << std::endl;
       std::cout << std::endl;
 

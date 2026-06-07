@@ -40,7 +40,7 @@ The mortar section is used when simulating rotor-stator geometries, in which the
 * The mesh parameters in the :doc:`../cfd/mesh` subsection refer to the stator domain. The ``mesh`` subsection herein mentioned contains the parameters of the rotor domain; nonetheless, the input format is the same as in :doc:`../cfd/mesh`.
 
 .. note::
-  The initial number of cells at the rotor-stator interface has to be the same; the simulation will be aborted if that is not respected. This restriction will be automatically constrained throughout the simulation if the mesh is refined.
+  The rotor and stator interface meshes may now have a different number of cells and non-uniform (graded) cell sizes in the circumferential (``theta``) direction: the mortar coupling builds a segment arrangement from the union of both sides' interface vertices, so a face may be cut by an arbitrary number of faces on the other side. The size ratio between adjacent cells of the two sides should remain moderate to keep the number of cuts per face small. In 3D, the rotor and stator must still share the same subdivisions (stage heights) along the rotation axis.
  
 * The ``rotor boundary id`` and ``stator boundary id`` refer to the boundary index at the rotor-stator interface.
 

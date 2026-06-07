@@ -82,10 +82,14 @@ public:
   get_n_total_mortars() const;
 
   /**
-   * @brief Returns the number of mortars per face
+   * @brief Returns the number of mortars covered by a given face
+   *
+   * @param[in] face_center Face center
+   * @param[in] is_inner Boolean that indicates whether the face is part of the
+   * rotor (inner) side of the mortar interface
    */
   unsigned int
-  get_n_mortars() const;
+  get_n_mortars(const Point<dim> &face_center, const bool is_inner) const;
 
   /**
    * @brief Returns the indices of all mortars at both sides of the interface
@@ -104,10 +108,24 @@ public:
   get_n_total_points() const;
 
   /**
-   * @brief Returns the coordinates of the quadrature points at both sides of the interface
+   * @brief Returns the number of quadrature points per mortar segment
    */
   unsigned int
-  get_n_points() const;
+  get_n_quadrature_points() const
+  {
+    return n_quadrature_points;
+  }
+
+  /**
+   * @brief Returns the number of quadrature points on a given face (summed over
+   * all mortars covered by the face)
+   *
+   * @param[in] face_center Face center
+   * @param[in] is_inner Boolean that indicates whether the face is part of the
+   * rotor (inner) side of the mortar interface
+   */
+  unsigned int
+  get_n_points(const Point<dim> &face_center, const bool is_inner) const;
 
   /**
    * @brief Returns the coordinates of the quadrature points at both sides of the interface
@@ -165,24 +183,53 @@ public:
 
 protected:
   /**
-   * @brief Returns the mesh alignment type and cell index
+   * @brief Build the global mortar segment arrangement from the rotor and
+   * stator interface breakpoint angles.
+   *
+   * The merged, sorted, deduplicated union of both breakpoint sets defines the
+   * mortar segments. Because both sides index the same merged arrangement, a
+   * given segment is the same physical arc on the rotor and stator sides, which
+   * preserves the matching invariant used by the coupling operator.
+   *
+   * @param[in] rotor_bp Rotor interface breakpoint angles (rotated position)
+   * @param[in] stator_bp Stator interface breakpoint angles
+   */
+  void
+  build_arrangement(std::vector<double> rotor_bp, std::vector<double> stator_bp);
+
+  /**
+   * @brief Gather the interface breakpoint angles of both sides from the mesh.
+   *
+   * Uses the manager's own to_1D() transform, so it works for both circular and
+   * linear interfaces. The returned lists are raw (unsorted, with duplicates);
+   * build_arrangement() performs the normalization, sorting and deduplication.
+   *
+   * @param[in] triangulation The triangulation object
+   * @param[in] mapping Mapping associated to the domain
+   * @param[in] mortar_parameters Mortar method control parameters
+   *
+   * @return Pair {rotor breakpoint angles, stator breakpoint angles}
+   */
+  std::pair<std::vector<double>, std::vector<double>>
+  compute_breakpoints_from_mesh(
+    const Triangulation<dim>      &triangulation,
+    const Mapping<dim>            &mapping,
+    const Parameters::Mortar<dim> &mortar_parameters) const;
+
+  /**
+   * @brief Locate the mortar segments covered by a face.
    *
    * @param[in] face_center Face center
    * @param[in] is_inner Boolean that indicates whether the face is part of the
    * rotor (inner) side of the mortar interface
    *
-   * @return type Cell configuration type at the interface
-   * type = 0: mesh aligned
-   * type = 1: mesh not aligned, inner domain (allows rotation)
-   * type = 2: mesh not aligned, outer domain (fixed)
-   * @return id_in_plane Index of the cell in which lies the rotated cell center
-   * @return id_out_plane Second index of the cell in which lies the rotated cell center.
-   *
-   * The id_out_plane corresponds to indexes along the rotation axis, and it is
-   * necessary only for 3D problems
+   * @return id_out_plane Axial stage index (0 in 2D)
+   * @return start_index Global in-plane index of the first covered segment
+   * @return arc_breaks Increasing physical breakpoint angles spanning the face
+   * arc; the face covers arc_breaks.size() - 1 consecutive segments
    */
-  std::tuple<unsigned int, unsigned int, unsigned int>
-  get_config(const Point<dim> &face_center, const bool is_inner) const;
+  std::tuple<unsigned int, unsigned int, std::vector<double>>
+  get_face_arrangement(const Point<dim> &face_center, const bool is_inner) const;
 
   /**
    * @brief Convert angle (in radians) to quadrature point in real space
@@ -221,6 +268,20 @@ protected:
   /// in 3D problems. A stage is defined as a plane perpendicular to the
   /// rotation axis containing vertices of the same height.
   const std::vector<double> stage_heights;
+
+  /// Sorted, deduplicated rotor interface breakpoint angles in [0, 2*pi),
+  /// taken in their current rotated position
+  std::vector<double> rotor_breakpoints;
+  /// Sorted, deduplicated stator interface breakpoint angles in [0, 2*pi)
+  std::vector<double> stator_breakpoints;
+  /// Sorted, deduplicated union of the rotor and stator breakpoints. Segment k
+  /// spans [merged_breakpoints[k], merged_breakpoints[(k + 1) % size]) with the
+  /// periodic wrap on the last segment.
+  std::vector<double> merged_breakpoints;
+  /// Number of mortar segments in one axial stage plane
+  unsigned int n_segments_per_plane = 0;
+  /// Angular tolerance used to deduplicate and match breakpoints
+  static constexpr double breakpoint_tolerance = 1e-8;
 };
 
 /**
@@ -482,7 +543,27 @@ MortarManagerBase<dim>::MortarManagerBase(
   , n_quadrature_points(quadrature.size())
   , rotation_angle(rotation_angle)
   , stage_heights(stage_heights)
-{}
+{
+  if constexpr (dim != 1)
+    {
+      // Synthesize uniform breakpoints reproducing the legacy equal-cell
+      // behavior. The Navier-Stokes path overwrites these with the actual
+      // interface breakpoints after construction.
+      const unsigned int n       = this->n_subdivisions[0];
+      const double       delta_0 = 2 * numbers::PI / n;
+      const double       rot_min =
+        rotation_angle - std::floor(rotation_angle / delta_0) * delta_0;
+      std::vector<double> rotor_bp, stator_bp;
+      rotor_bp.reserve(n);
+      stator_bp.reserve(n);
+      for (unsigned int k = 0; k < n; ++k)
+        {
+          stator_bp.push_back(k * delta_0);
+          rotor_bp.push_back(k * delta_0 + rot_min);
+        }
+      this->build_arrangement(rotor_bp, stator_bp);
+    }
+}
 
 template <int dim>
 template <int dim2>
@@ -545,7 +626,19 @@ MortarManagerCircle<dim>::MortarManagerCircle(
         compute_interface_dimensions_circular(dof_handler.get_triangulation(),
                                               mapping,
                                               mortar_parameters)))
-{}
+{
+  if constexpr (dim != 1)
+    {
+      // Replace the uniform placeholder arrangement built by the base
+      // constructor with the actual (possibly non-uniform) interface
+      // breakpoints read from the mesh.
+      const auto [rotor_bp, stator_bp] =
+        this->compute_breakpoints_from_mesh(dof_handler.get_triangulation(),
+                                            mapping,
+                                            mortar_parameters);
+      this->build_arrangement(rotor_bp, stator_bp);
+    }
+}
 
 template <int dim>
 template <int dim2>
@@ -573,6 +666,18 @@ MortarManagerLinear<dim>::MortarManagerLinear(
     compute_interface_dimensions_linear(dof_handler.get_triangulation(),
                                         mapping,
                                         mortar_parameters);
+
+  if constexpr (dim != 1)
+    {
+      // Replace the uniform placeholder arrangement with the actual interface
+      // breakpoints read from the mesh (coord_min/coord_max must be set first,
+      // since they are used by to_1D()).
+      const auto [rotor_bp, stator_bp] =
+        this->compute_breakpoints_from_mesh(dof_handler.get_triangulation(),
+                                            mapping,
+                                            mortar_parameters);
+      this->build_arrangement(rotor_bp, stator_bp);
+    }
 }
 
 /**
@@ -1013,6 +1118,12 @@ protected:
 
   std::vector<types::global_dof_index> dof_indices;
   std::vector<types::global_dof_index> dof_indices_ghost;
+
+  /// Number of mortars covered by each locally-owned interface face, stored in
+  /// the same order in which the faces are visited during assembly. Drives the
+  /// per-face quadrature-point and dof pointer advancement, since the number of
+  /// mortars per face is no longer a global constant.
+  std::vector<unsigned int> n_mortars_per_face;
 
   /// Vectors storing information at quadrature points for all cells at the
   /// rotor-stator interface

@@ -26,11 +26,11 @@ MortarManagerBase<dim>::is_mesh_aligned() const
 {
   AssertThrow(dim != 1, ExcInternalError());
 
-  constexpr double tolerance = 1e-8;
-  const double     delta_0   = 2 * numbers::PI / n_subdivisions[0];
-
-  return std::abs(rotation_angle / delta_0 -
-                  std::round(rotation_angle / delta_0)) < tolerance;
+  // The meshes are aligned when merging the rotor and stator breakpoints does
+  // not introduce any additional segments, i.e. every rotor breakpoint
+  // coincides with a stator breakpoint.
+  return merged_breakpoints.size() == rotor_breakpoints.size() &&
+         merged_breakpoints.size() == stator_breakpoints.size();
 }
 
 template <int dim>
@@ -40,31 +40,30 @@ MortarManagerBase<dim>::get_n_total_mortars() const
   if constexpr (dim == 1)
     return 1;
 
-  unsigned int n_total_subdivisions = n_subdivisions[0];
+  // Total number of mortar segments: one in-plane arrangement, repeated for
+  // every axial stage in 3D.
+  unsigned int n_total = n_segments_per_plane;
 
-  // In 3D, besides the subdivisions in the plane perpendicular to the rotation
-  // axis, we also need to account for the number of subdivisions along the
-  // rotation axis direction
   if constexpr (dim == 3)
-    n_total_subdivisions *= n_subdivisions[1];
+    n_total *= n_subdivisions[1];
 
-  if (this->is_mesh_aligned()) // aligned
-    return n_total_subdivisions;
-  else // inside/outside
-    return 2 * n_total_subdivisions;
+  return n_total;
 }
 
 template <int dim>
 unsigned int
-MortarManagerBase<dim>::get_n_mortars() const
+MortarManagerBase<dim>::get_n_mortars(const Point<dim> &face_center,
+                                      const bool        is_inner) const
 {
   if constexpr (dim == 1)
     return 1;
 
-  if (this->is_mesh_aligned()) // aligned
-    return 1;
-  else // inside/outside
-    return 2;
+  const auto [id_out_plane, start_index, arc_breaks] =
+    get_face_arrangement(face_center, is_inner);
+  (void)id_out_plane;
+  (void)start_index;
+
+  return static_cast<unsigned int>(arc_breaks.size() - 1);
 }
 
 template <int dim>
@@ -75,53 +74,24 @@ MortarManagerBase<dim>::get_mortar_indices(const Point<dim> &face_center,
   if constexpr (dim == 1)
     return std::vector<unsigned int>{0};
 
-  // Mesh alignment type and cell indexes
-  const auto [type, id_in_plane, id_out_plane] =
-    get_config(face_center, is_inner);
+  const auto [id_out_plane, start_index, arc_breaks] =
+    get_face_arrangement(face_center, is_inner);
 
-  if (type == 0) // aligned
+  const unsigned int n_seg = static_cast<unsigned int>(arc_breaks.size() - 1);
+
+  std::vector<unsigned int> indices;
+  indices.reserve(n_seg);
+
+  for (unsigned int i = 0; i < n_seg; ++i)
     {
-      std::vector<unsigned int> indices;
+      const unsigned int index = (start_index + i) % n_segments_per_plane;
 
-      const unsigned int index = id_in_plane;
+      AssertIndexRange(index, n_segments_per_plane);
 
-      AssertIndexRange(index, n_subdivisions[0]);
-
-      indices.emplace_back(index + n_subdivisions[0] * id_out_plane);
-
-      return indices;
+      indices.emplace_back(index + n_segments_per_plane * id_out_plane);
     }
-  else if (type == 1) // inside
-    {
-      std::vector<unsigned int> indices;
 
-      for (unsigned int q = 0; q < 2; ++q)
-        {
-          const unsigned int index =
-            (id_in_plane * 2 + 1 + q) % (n_subdivisions[0] * 2);
-
-          AssertIndexRange(index, n_subdivisions[0] * 2);
-
-          indices.emplace_back(index + 2 * n_subdivisions[0] * id_out_plane);
-        }
-
-      return indices;
-    }
-  else // outside
-    {
-      std::vector<unsigned int> indices;
-
-      for (unsigned int q = 0; q < 2; ++q)
-        {
-          const unsigned int index = id_in_plane * 2 + q;
-
-          AssertIndexRange(index, n_subdivisions[0] * 2);
-
-          indices.emplace_back(index + 2 * n_subdivisions[0] * id_out_plane);
-        }
-
-      return indices;
-    }
+  return indices;
 }
 
 template <int dim>
@@ -136,12 +106,13 @@ MortarManagerBase<dim>::get_n_total_points() const
 
 template <int dim>
 unsigned int
-MortarManagerBase<dim>::get_n_points() const
+MortarManagerBase<dim>::get_n_points(const Point<dim> &face_center,
+                                     const bool        is_inner) const
 {
   if constexpr (dim == 1)
     return 1;
 
-  return get_n_mortars() * n_quadrature_points;
+  return get_n_mortars(face_center, is_inner) * n_quadrature_points;
 }
 
 template <int dim>
@@ -152,25 +123,29 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
   if constexpr (dim == 1)
     return std::vector<Point<dim>>{face_center};
 
-  // Mesh alignment type and cell index
-  const auto [type, id_in_plane, id_out_plane] =
-    get_config(face_center, is_inner);
-  // Angle variation within each cell
-  const double delta_0 = 2 * numbers::PI / n_subdivisions[0];
+  const auto [id_out_plane, start_index, arc_breaks] =
+    get_face_arrangement(face_center, is_inner);
+
   // Height of the cell in the direction of the rotation axis
   double delta_1 = 1.0;
-
   if constexpr (dim == 3)
     delta_1 = stage_heights[id_out_plane + 1] - stage_heights[id_out_plane];
 
-  if (type == 0) // aligned
+  const unsigned int n_seg = static_cast<unsigned int>(arc_breaks.size() - 1);
+
+  std::vector<Point<dim>> points;
+  points.reserve(n_seg * n_quadrature_points);
+
+  // Loop over the mortar segments covered by this face, emitting the
+  // quadrature points of each segment in increasing-angle order.
+  for (unsigned int s = 0; s < n_seg; ++s)
     {
-      std::vector<Point<dim>> points;
+      const double s_lo = arc_breaks[s];
+      const double s_hi = arc_breaks[s + 1];
 
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
         {
-          const auto x =
-            from_1D((id_in_plane + quadrature.point(q)[0]) * delta_0);
+          const auto x = from_1D(s_lo + quadrature.point(q)[0] * (s_hi - s_lo));
 
           if constexpr (dim == 3)
             points.emplace_back(
@@ -182,69 +157,9 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
           else
             points.emplace_back(x);
         }
-
-      return points;
     }
-  else // Point at the inner boundary lies somewhere in the face of the outer
-       // boundary cell
-    {
-      // rad_0: first cell vertex (fixed)
-      // rad_1: shifted vertex
-      // rad_2: last cell vertex (fixed)
-      double rad_0, rad_1, rad_2;
-      // Minimum rotation angle
-      double rot_min =
-        rotation_angle - std::floor(rotation_angle / delta_0) * delta_0;
 
-      if (type == 2) // outside
-        {
-          rad_0 = id_in_plane * delta_0;
-          rad_1 = id_in_plane * delta_0 + rot_min;
-          rad_2 = (id_in_plane + 1) * delta_0;
-        }
-      else // inside
-        {
-          rad_0 = id_in_plane * delta_0 + rot_min;
-          rad_1 = (id_in_plane + 1) * delta_0;
-          rad_2 = (id_in_plane + 1) * delta_0 + rot_min;
-        }
-
-      std::vector<Point<dim>> points;
-
-      for (unsigned int q = 0; q < n_quadrature_points; ++q)
-        {
-          const auto x =
-            from_1D(rad_0 + quadrature.point(q)[0] * (rad_1 - rad_0));
-
-          if constexpr (dim == 3)
-            points.emplace_back(
-              x[0],
-              x[1],
-              stage_heights[id_out_plane] +
-                quadrature.point(q)[1] *
-                  delta_1); // TODO Generalize for x and y directions
-          else
-            points.emplace_back(x);
-        }
-
-      for (unsigned int q = 0; q < n_quadrature_points; ++q)
-        {
-          const auto x =
-            from_1D(rad_1 + quadrature.point(q)[0] * (rad_2 - rad_1));
-
-          if constexpr (dim == 3)
-            points.emplace_back(
-              x[0],
-              x[1],
-              stage_heights[id_out_plane] +
-                quadrature.point(q)[1] *
-                  delta_1); // TODO Generalize for x and y directions
-          else
-            points.emplace_back(x);
-        }
-
-      return points;
-    }
+  return points;
 }
 
 template <int dim>
@@ -256,66 +171,39 @@ MortarManagerBase<dim>::get_points_ref(const Point<dim> &face_center,
     return std::vector<Point<std::max(1, dim - 1)>>{
       Point<std::max(1, dim - 1)>()};
 
-  const auto [type, _, __] = get_config(face_center, is_inner);
+  const auto [id_out_plane, start_index, arc_breaks] =
+    get_face_arrangement(face_center, is_inner);
+  (void)id_out_plane;
+  (void)start_index;
 
-  const double delta_0 = 2 * numbers::PI / n_subdivisions[0];
+  const unsigned int n_seg = static_cast<unsigned int>(arc_breaks.size() - 1);
 
-  if (type == 0) // aligned
+  // The reference coordinate is expressed within the face's own arc, which
+  // spans [arc_breaks.front(), arc_breaks.back()].
+  const double face_lo    = arc_breaks.front();
+  const double face_width = arc_breaks.back() - face_lo;
+
+  std::vector<Point<std::max(1, dim - 1)>> points;
+  points.reserve(n_seg * n_quadrature_points);
+
+  for (unsigned int s = 0; s < n_seg; ++s)
     {
-      std::vector<Point<std::max(1, dim - 1)>> points;
-      points.reserve(n_quadrature_points);
-
-      for (unsigned int q = 0; q < n_quadrature_points; ++q)
-        points.emplace_back(quadrature.point(q));
-
-      return points;
-    }
-  else // inside/outside
-    {
-      double rad_0, rad_1, rad_2;
-
-      double rot_min =
-        (rotation_angle - std::floor(rotation_angle / delta_0) * delta_0) /
-        delta_0;
-
-      if (type == 2) // outside
-        {
-          rad_0 = 0.0;
-          rad_1 = rot_min;
-          rad_2 = 1.0;
-        }
-      else // inside
-        {
-          rad_0 = 0.0;
-          rad_1 = 1.0 - rot_min;
-          rad_2 = 1.0;
-        }
-
-      std::vector<Point<std::max(1, dim - 1)>> points;
-      points.reserve(2 * n_quadrature_points);
+      const double s_lo = arc_breaks[s];
+      const double s_hi = arc_breaks[s + 1];
 
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
         {
-          const double x = rad_0 + quadrature.point(q)[0] * (rad_1 - rad_0);
+          const double angle = s_lo + quadrature.point(q)[0] * (s_hi - s_lo);
+          const double x      = (angle - face_lo) / face_width;
 
           if (dim == 2)
             points.emplace_back(x);
           else
             points.emplace_back(x, quadrature.point(q)[1]);
         }
-
-      for (unsigned int q = 0; q < n_quadrature_points; ++q)
-        {
-          const double x = rad_1 + quadrature.point(q)[0] * (rad_2 - rad_1);
-
-          if (dim == 2)
-            points.emplace_back(x);
-          else
-            points.emplace_back(x, quadrature.point(q)[1]);
-        }
-
-      return points;
     }
+
+  return points;
 }
 
 template <int dim>
@@ -326,60 +214,29 @@ MortarManagerBase<dim>::get_weights(const Point<dim> &face_center,
   if (dim == 1)
     return std::vector<double>{1.0};
 
-  // Mesh alignment type and cell index
-  const auto [type, id_in_plane, id_out_plane] =
-    get_config(face_center, is_inner);
-  // Angle variation within each cell
-  const double delta_0 = 2 * numbers::PI / n_subdivisions[0];
-  double       delta_1 = 1.0;
+  const auto [id_out_plane, start_index, arc_breaks] =
+    get_face_arrangement(face_center, is_inner);
+  (void)start_index;
 
+  double delta_1 = 1.0;
   if (dim == 3)
     delta_1 = stage_heights[id_out_plane + 1] - stage_heights[id_out_plane];
 
-  if (type == 0) // aligned
+  const unsigned int n_seg = static_cast<unsigned int>(arc_breaks.size() - 1);
+
+  std::vector<double> weights;
+  weights.reserve(n_seg * n_quadrature_points);
+
+  for (unsigned int s = 0; s < n_seg; ++s)
     {
-      std::vector<double> weights;
-      weights.reserve(n_quadrature_points);
+      const double seg_width = arc_breaks[s + 1] - arc_breaks[s];
 
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
-        weights.emplace_back(radius[0] * quadrature.weight(q) * delta_0 *
+        weights.emplace_back(radius[0] * quadrature.weight(q) * seg_width *
                              delta_1);
-
-      return weights;
     }
-  else // inside/outside
-    {
-      double rad_0, rad_1, rad_2;
 
-      double rot_min =
-        rotation_angle - std::floor(rotation_angle / delta_0) * delta_0;
-
-      if (type == 2) // outside
-        {
-          rad_0 = id_in_plane * delta_0;
-          rad_1 = id_in_plane * delta_0 + rot_min;
-          rad_2 = (id_in_plane + 1) * delta_0;
-        }
-      else // inside
-        {
-          rad_0 = id_in_plane * delta_0 + rot_min;
-          rad_1 = (id_in_plane + 1) * delta_0;
-          rad_2 = (id_in_plane + 1) * delta_0 + rot_min;
-        }
-
-      std::vector<double> weights;
-      weights.reserve(2 * n_quadrature_points);
-
-      for (unsigned int q = 0; q < n_quadrature_points; ++q)
-        weights.emplace_back(radius[0] * quadrature.weight(q) *
-                             (rad_1 - rad_0) * delta_1);
-
-      for (unsigned int q = 0; q < n_quadrature_points; ++q)
-        weights.emplace_back(radius[0] * quadrature.weight(q) *
-                             (rad_2 - rad_1) * delta_1);
-
-      return weights;
-    }
+  return weights;
 }
 
 template <int dim>
@@ -401,63 +258,195 @@ MortarManagerBase<dim>::get_normals(const Point<dim> &face_center,
 }
 
 template <int dim>
-std::tuple<unsigned int, unsigned int, unsigned int>
-MortarManagerBase<dim>::get_config(const Point<dim> &face_center,
-                                   const bool        is_inner) const
+void
+MortarManagerBase<dim>::build_arrangement(std::vector<double> rotor_bp,
+                                          std::vector<double> stator_bp)
 {
-  const auto angle_cell_center = to_1D(face_center);
+  if constexpr (dim == 1)
+    return;
 
-  // Angular variation in each cell
-  const double delta_0 = 2 * numbers::PI / n_subdivisions[0];
-  // Minimum rotation angle
-  const double rot_min =
-    rotation_angle - std::floor(rotation_angle / delta_0) * delta_0;
+  const double two_pi = 2 * numbers::PI;
+  const double tol    = breakpoint_tolerance;
 
-  AssertThrow(rot_min <= delta_0, ExcInternalError());
+  // Normalize angles into [0, 2*pi), sort, and remove duplicates (including the
+  // periodic duplicate of a breakpoint near 0 with one near 2*pi).
+  const auto normalize_sort_unique = [&](std::vector<double> &v) {
+    for (auto &a : v)
+      {
+        a = std::fmod(a, two_pi);
+        if (a < 0.0)
+          a += two_pi;
+      }
+    std::sort(v.begin(), v.end());
+    v.erase(std::unique(v.begin(),
+                        v.end(),
+                        [&](double a, double b) {
+                          return std::abs(a - b) < tol;
+                        }),
+            v.end());
+    if (v.size() > 1 && std::abs((v.front() + two_pi) - v.back()) < tol)
+      v.pop_back();
+  };
 
-  // Point position in the cell
-  const double segment = (angle_cell_center - delta_0 / 2) / delta_0;
-  // Point position after rotation
-  const double segment_rot =
-    (angle_cell_center - delta_0 / 2 - rot_min) / delta_0;
-  // Cell index in the direction of the rotation axis
+  normalize_sort_unique(rotor_bp);
+  normalize_sort_unique(stator_bp);
+
+  rotor_breakpoints  = rotor_bp;
+  stator_breakpoints = stator_bp;
+
+  // The merged, sorted, deduplicated union of both breakpoint sets defines the
+  // mortar segments. Segment k spans [merged[k], merged[(k + 1) % size]).
+  std::vector<double> merged;
+  merged.reserve(rotor_bp.size() + stator_bp.size());
+  merged.insert(merged.end(), rotor_bp.begin(), rotor_bp.end());
+  merged.insert(merged.end(), stator_bp.begin(), stator_bp.end());
+  normalize_sort_unique(merged);
+
+  merged_breakpoints   = merged;
+  n_segments_per_plane = static_cast<unsigned int>(merged.size());
+}
+
+template <int dim>
+std::pair<std::vector<double>, std::vector<double>>
+MortarManagerBase<dim>::compute_breakpoints_from_mesh(
+  const Triangulation<dim>      &triangulation,
+  const Mapping<dim>            &mapping,
+  const Parameters::Mortar<dim> &mortar_parameters) const
+{
+  std::vector<double> rotor_local, stator_local;
+
+  // Collect the in-plane angle of every interface vertex, using the manager's
+  // own to_1D() transform (so this works for both circular and linear
+  // interfaces, and accounts for the rotor rotation already baked into the
+  // rotated mapping).
+  for (const auto &cell : triangulation.active_cell_iterators())
+    if (cell->is_locally_owned())
+      for (const auto face_no : cell->face_indices())
+        {
+          const auto face = cell->face(face_no);
+
+          if (!face->at_boundary())
+            continue;
+
+          const bool is_rotor =
+            face->boundary_id() == mortar_parameters.rotor_boundary_id;
+          const bool is_stator =
+            face->boundary_id() == mortar_parameters.stator_boundary_id;
+
+          if (!is_rotor && !is_stator)
+            continue;
+
+          const auto vertices = mapping.get_vertices(cell, face_no);
+
+          for (unsigned int v = 0; v < face->n_vertices(); ++v)
+            (is_rotor ? rotor_local : stator_local)
+              .push_back(this->to_1D(vertices[v]));
+        }
+
+  // Gather the breakpoints from all processes so that every rank holds the full
+  // global arrangement (mirrors compute_stage_heights).
+  const auto gather = [&](const std::vector<double> &local) {
+    std::vector<double> global;
+    const auto          all =
+      Utilities::MPI::all_gather(triangulation.get_mpi_communicator(), local);
+    for (const auto &per_process : all)
+      global.insert(global.end(), per_process.begin(), per_process.end());
+    return global;
+  };
+
+  return {gather(rotor_local), gather(stator_local)};
+}
+
+template <int dim>
+std::tuple<unsigned int, unsigned int, std::vector<double>>
+MortarManagerBase<dim>::get_face_arrangement(const Point<dim> &face_center,
+                                             const bool        is_inner) const
+{
+  const double two_pi = 2 * numbers::PI;
+  const double tol    = breakpoint_tolerance;
+
+  // Axial stage index (always 0 in 2D)
   unsigned int id_out_plane = 0;
-
   if constexpr (dim == 3)
     {
-      // Return the iterator of the first element in stage_heights that is
-      // greater than the face center height
-      auto upper_height_iterator = std::upper_bound(
-        stage_heights.begin(),
-        stage_heights.end(),
-        face_center[2]); // TODO Generalize for x and y directions
-      // The id_out_plane of the cell can be obtained with the distance between
-      // the iterator obtained and the lowest stage height iterator
+      auto upper_height_iterator =
+        std::upper_bound(stage_heights.begin(),
+                         stage_heights.end(),
+                         face_center[2]); // TODO Generalize for x and y
       id_out_plane =
         std::distance(stage_heights.begin(), upper_height_iterator) - 1;
     }
 
-  if (this->is_mesh_aligned())
+  // Angle of the face center
+  double c = std::fmod(to_1D(face_center), two_pi);
+  if (c < 0.0)
+    c += two_pi;
+
+  // Locate, on the face's own side, the arc [lo, hi) that contains the center,
+  // treating the breakpoint list cyclically (the last arc wraps past 2*pi).
+  const auto &own = is_inner ? rotor_breakpoints : stator_breakpoints;
+
+  double     lo, hi;
+  const auto it = std::upper_bound(own.begin(), own.end(), c);
+  if (it == own.begin() || it == own.end())
     {
-      // Case 1: mesh is aligned
-      return {0, static_cast<unsigned int>(std::round(segment)), id_out_plane};
+      lo = own.back();
+      hi = own.front() + two_pi;
     }
   else
     {
-      // Case 2: mesh is not aligned
-      if (!is_inner)
-        // outer (fixed) domain
-        return {2,
-                static_cast<unsigned int>(std::round(segment)),
-                id_out_plane};
-      else
-        // inner (rotated) domain
-        return {1,
-                (static_cast<unsigned int>(std::round(segment_rot)) +
-                 2 * n_subdivisions[0]) %
-                  (2 * n_subdivisions[0]),
-                id_out_plane};
+      lo = *(it - 1);
+      hi = *it;
     }
+
+  // Find the merged-breakpoint index closest to lo (lo is itself a breakpoint,
+  // hence present in the merged arrangement within tolerance).
+  const auto find_merged = [&](const double angle) -> unsigned int {
+    const unsigned int S  = n_segments_per_plane;
+    const auto         lb = std::lower_bound(merged_breakpoints.begin(),
+                                     merged_breakpoints.end(),
+                                     angle);
+    const long         base = lb - merged_breakpoints.begin();
+
+    unsigned int best  = 0;
+    double       bestd = std::numeric_limits<double>::max();
+    for (long off = -1; off <= 1; ++off)
+      {
+        const unsigned int k =
+          static_cast<unsigned int>(((base + off) % S + S) % S);
+        double d = std::abs(merged_breakpoints[k] - angle);
+        d        = std::min(d, two_pi - d);
+        if (d < bestd)
+          {
+            bestd = d;
+            best  = k;
+          }
+      }
+    return best;
+  };
+
+  const unsigned int p = find_merged(lo);
+
+  // Walk the merged breakpoints from p, accumulating physical (unwrapped)
+  // angles until reaching hi. The face arc is a union of whole merged segments,
+  // so this terminates cleanly on a breakpoint coinciding with hi.
+  std::vector<double> arc_breaks;
+  arc_breaks.push_back(merged_breakpoints[p]);
+
+  unsigned int k       = p;
+  double       current = merged_breakpoints[p];
+  while (current < hi - tol)
+    {
+      const unsigned int knext = (k + 1) % n_segments_per_plane;
+      double             next  = merged_breakpoints[knext];
+      while (next <= current + tol)
+        next += two_pi;
+      arc_breaks.push_back(next);
+      current = next;
+      k       = knext;
+    }
+
+  return {id_out_plane, p, arc_breaks};
 }
 
 
@@ -1035,6 +1024,12 @@ CouplingOperator<dim, Number>::CouplingOperator(
             const auto indices = mortar_manager->get_mortar_indices(
               center, cell->face(face_no)->boundary_id() == bid_m);
 
+            // Number of mortars covered by this face (1, 2, or more). Stored in
+            // face-iteration order so the assembly loops can advance their
+            // per-face pointers without relying on a global constant.
+            this->n_mortars_per_face.emplace_back(
+              static_cast<unsigned int>(indices.size()));
+
             const auto local_dofs = this->get_dof_indices(cell);
 
             // Loop over the mortar indices at the rotor-stator
@@ -1178,8 +1173,10 @@ CouplingOperator<dim, Number>::CouplingOperator(
             // Penalty parameter
             const Number penalty_parameter = compute_penalty_parameter(cell);
 
-            // Store penalty parameter for all quadrature points
-            for (unsigned int i = 0; i < mortar_manager->get_n_points(); ++i)
+            // Store penalty parameter for all quadrature points of this face
+            const unsigned int n_face_points = mortar_manager->get_n_points(
+              center, face->boundary_id() == bid_m);
+            for (unsigned int i = 0; i < n_face_points; ++i)
               data.all_penalty_parameter.emplace_back(penalty_parameter);
           }
 
@@ -1262,8 +1259,7 @@ CouplingOperator<dim, Number>::CouplingOperator(
                      dof_handler.get_mpi_communicator());
 
   // Finalized penalty parameters
-  const unsigned n_q_points =
-    mortar_manager->get_n_points() / mortar_manager->get_n_mortars();
+  const unsigned n_q_points = mortar_manager->get_n_quadrature_points();
   std::vector<Number> all_penalty_parameter_ghost(
     data.all_penalty_parameter.size());
   partitioner.export_to_ghosted_array<Number, 0>(data.all_penalty_parameter,
@@ -1422,8 +1418,13 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
   src_internal = src;
   src_internal.update_ghost_values();
 
+  // Number of quadrature points per mortar segment (constant; only the number
+  // of mortars per face varies).
+  const unsigned int n_q_per_mortar = mortar_manager->get_n_quadrature_points();
+
   // 1) Evaluate
-  unsigned int ptr_q = 0;
+  unsigned int ptr_q      = 0;
+  unsigned int face_index = 0;
 
   Vector<Number> buffer;
 
@@ -1435,9 +1436,9 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
       for (const auto &face : cell->face_iterators())
         if ((face->boundary_id() == bid_m) || (face->boundary_id() == bid_p))
           {
-            // Quadrature points at the current face. Note: we process
-            // all mortars of the face together here.
-            const unsigned int n_q_points = mortar_manager->get_n_points();
+            // Quadrature points at the current face (all mortars together).
+            const unsigned int n_q_points =
+              n_mortars_per_face[face_index] * n_q_per_mortar;
 
             evaluator->local_reinit(
               cell,
@@ -1459,29 +1460,28 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
                                         ptr_q * q_data_size);
 
             ptr_q += n_q_points;
+            ++face_index;
           }
 
   // 2) Communicate
-  const unsigned n_q_points =
-    mortar_manager->get_n_points() / mortar_manager->get_n_mortars();
   partitioner.export_to_ghosted_array<Number, 0>(
     ArrayView<const Number>(reinterpret_cast<Number *>(all_values_local.data()),
                             all_values_local.size()),
     ArrayView<Number>(reinterpret_cast<Number *>(all_values_ghost.data()),
                       all_values_ghost.size()),
-    n_q_points * q_data_size);
+    n_q_per_mortar * q_data_size);
 
   // 3) Integrate
-  ptr_q = 0;
+  ptr_q      = 0;
+  face_index = 0;
   for (const auto &cell : dof_handler.active_cell_iterators())
     if (cell->is_locally_owned())
       for (const auto &face : cell->face_iterators())
         if ((face->boundary_id() == bid_m) || (face->boundary_id() == bid_p))
           {
-            // Quadrature points at the current face. Note: we process
-            // all mortars of the face together here.
+            // Quadrature points at the current face (all mortars together).
             const unsigned int total_n_q_points =
-              mortar_manager->get_n_points();
+              n_mortars_per_face[face_index] * n_q_per_mortar;
 
             evaluator->local_reinit(
               cell,
@@ -1504,6 +1504,7 @@ CouplingOperator<dim, Number>::vmult_add(VectorType       &dst,
                                                             dst_internal);
 
             ptr_q += total_n_q_points;
+            ++face_index;
           }
 
   dst_internal.compress(VectorOperation::add);
@@ -1526,7 +1527,10 @@ CouplingOperator<dim, Number>::add_diagonal_entries(VectorType &diagonal) const
   else
     diagonal_internal.reinit(this->partitioner_extended);
 
-  unsigned int ptr_q = 0;
+  const unsigned int n_q_per_mortar = mortar_manager->get_n_quadrature_points();
+
+  unsigned int ptr_q      = 0;
+  unsigned int face_index = 0;
 
   Vector<Number>      buffer, diagonal_local;
   std::vector<Number> all_values_local, all_values_ghost;
@@ -1536,9 +1540,9 @@ CouplingOperator<dim, Number>::add_diagonal_entries(VectorType &diagonal) const
       for (const auto &face : cell->face_iterators())
         if ((face->boundary_id() == bid_m) || (face->boundary_id() == bid_p))
           {
-            // Quadrature points at the current face. Note: we process
-            // all mortars of the face together here.
-            const unsigned int n_q_points = mortar_manager->get_n_points();
+            // Quadrature points at the current face (all mortars together).
+            const unsigned int n_q_points =
+              n_mortars_per_face[face_index] * n_q_per_mortar;
 
             evaluator->local_reinit(
               cell,
@@ -1580,6 +1584,7 @@ CouplingOperator<dim, Number>::add_diagonal_entries(VectorType &diagonal) const
                                                             diagonal_internal);
 
             ptr_q += n_q_points;
+            ++face_index;
           }
 
   diagonal_internal.compress(VectorOperation::add);
@@ -1615,7 +1620,10 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
   std::vector<Number> all_values_ghost(data.all_normals.size() *
                                        n_dofs_per_cell * q_data_size);
 
-  unsigned int ptr_q = 0;
+  const unsigned int n_q_per_mortar = mortar_manager->get_n_quadrature_points();
+
+  unsigned int ptr_q      = 0;
+  unsigned int face_index = 0;
 
   Vector<Number> buffer;
 
@@ -1625,9 +1633,9 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
       for (const auto &face : cell->face_iterators())
         if ((face->boundary_id() == bid_m) || (face->boundary_id() == bid_p))
           {
-            // Quadrature points at the current face. Note: we process
-            // all mortars of the face together here.
-            const unsigned int n_q_points = mortar_manager->get_n_points();
+            // Quadrature points at the current face (all mortars together).
+            const unsigned int n_q_points =
+              n_mortars_per_face[face_index] * n_q_per_mortar;
 
             // Initialize coupling evaluator with the current cell and
             // the relevant quadrature points
@@ -1656,10 +1664,8 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
               }
 
             ptr_q += n_q_points;
+            ++face_index;
           }
-
-  const unsigned n_q_points =
-    mortar_manager->get_n_points() / mortar_manager->get_n_mortars();
 
   // 2) Communicate: export data from local to ghost side
   partitioner.export_to_ghosted_array<Number, 0>(
@@ -1667,11 +1673,12 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
                             all_values_local.size()),
     ArrayView<Number>(reinterpret_cast<Number *>(all_values_ghost.data()),
                       all_values_ghost.size()),
-    n_dofs_per_cell * n_q_points * q_data_size);
+    n_dofs_per_cell * n_q_per_mortar * q_data_size);
 
 
   ptr_q                 = 0;
   unsigned int ptr_dofs = 0;
+  face_index            = 0;
 
   // 3) Integrate
   for (const auto &cell : dof_handler.active_cell_iterators())
@@ -1679,9 +1686,10 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
       for (const auto &face : cell->face_iterators())
         if ((face->boundary_id() == bid_m) || (face->boundary_id() == bid_p))
           {
-            // Number of mortars attached to the current cell (i.e. 1 for
-            // aligned rotor-stator meshes and 2 for non-aligned case)
-            const unsigned int n_mortars = mortar_manager->get_n_mortars();
+            // Number of mortars covered by the current face (1 for aligned
+            // meshes, 2 for the legacy non-aligned case, 3 or more for
+            // non-uniform interface meshes).
+            const unsigned int n_mortars = n_mortars_per_face[face_index];
 
             // Loop over mortars
             for (unsigned int m = 0; m < n_mortars; ++m)
@@ -1689,7 +1697,7 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
                 evaluator->local_reinit(cell,
                                         ArrayView<const Point<dim, Number>>(
                                           all_points_ref.data() + ptr_q,
-                                          n_q_points));
+                                          n_q_per_mortar));
 
                 // Loop over local and ghost cells attached the mortar
                 for (unsigned int b = 0; b < 2; ++b)
@@ -1756,8 +1764,10 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
 
                 ptr_dofs += n_dofs_per_cell;
 
-                ptr_q += n_q_points;
+                ptr_q += n_q_per_mortar;
               }
+
+            ++face_index;
           }
 
   AssertDimension(ptr_q, data.all_normals.size());
