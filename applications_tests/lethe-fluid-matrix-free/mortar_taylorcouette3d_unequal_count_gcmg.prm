@@ -1,0 +1,204 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Checks the 3D MATRIX-FREE mortar implementation with global coarsening
+# multigrid (gcmg) for a Taylor-Couette example where the rotor and stator
+# interface meshes have a DIFFERENT number of cells in the circumferential
+# (theta) direction (rotor: 6, stator: 4), so a face is cut by 2 or 3 faces on
+# the other side. The axial (z) subdivisions are EQUAL on both sides so the 3D
+# stage heights match. This exercises the per-multigrid-level mortar coupling
+# operators built in fluid_dynamics_matrix_free.cc.
+#
+# Geometry (same radii as the 2D mortar Taylor-Couette tests, extruded in z):
+#   - rotor  : inner cylindrical shell, radius 0.25 -> 0.5 (rotating)
+#   - stator : outer cylindrical shell, radius 0.5  -> 1.0 (fixed)
+#   - interface at r = 0.5
+#
+# Boundary IDs (deal.II cylinder_shell colorize gives 0=inner, 1=outer,
+# 2,3=z-caps; Lethe shifts the rotor IDs by the number of stator boundary IDs,
+# i.e. +4):
+#   - stator: 0 = interface, 1 = outer wall, 2/3 = z-caps
+#   - rotor : 4 = inner rotating wall, 5 = interface, 6/7 = z-caps
+#
+# The laminar Taylor-Couette solution is z-independent (w = 0), so imposing the
+# analytical velocity on the z-caps makes it an exact solution in 3D.
+
+set dimension = 3
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method            = steady
+  set number mesh adapt = 1
+  set output frequency  = 0
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set kinematic viscosity = 1.0000
+  end
+end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set enable = true
+  subsection uvwp
+    # A = -(kappa * kappa) / (1 - kappa * kappa); B = ri * ri / (1 - kappa * kappa)
+    set Function constants  = kappa=0.25, ri=0.25, A=-0.06666666666666667, B=0.06666666666666667
+    set Function expression = -sin(atan2(y,x))*(-(kappa*kappa)/(1-kappa*kappa)*sqrt(x*x+y*y)+ ri*ri/(1-kappa*kappa)/sqrt(x*x+y*y)); cos(atan2(y,x))*(-(kappa*kappa)/(1-kappa*kappa)*sqrt(x*x+y*y)+ ri*ri/(1-kappa*kappa)/sqrt(x*x+y*y)); 0; A*A*(x^2+y^2)/2 + 2*A*B*ln(sqrt(x^2+y^2)) - 0.5*B*B/(x^2+y^2)
+  end
+end
+
+#---------------------------------------------------
+# Mesh (stator: outer cylindrical shell)
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = cylinder_shell
+  # length : inner_radius : outer_radius : n_theta_cells : n_axial_cells : colorize
+  set grid arguments     = 1.0 : 0.5 : 1.0 : 4 : 2 : true
+  set initial refinement = 1
+end
+
+#---------------------------------------------------
+# Mortar (rotor: inner cylindrical shell)
+#---------------------------------------------------
+
+subsection mortar
+  set enable = true
+  subsection mesh
+    set type                   = dealii
+    set grid type              = cylinder_shell
+    set grid arguments         = 1.0 : 0.25 : 0.5 : 6 : 2 : true
+    set initial refinement     = 1
+    set initial rotation angle = 0
+  end
+  set rotor boundary id  = 5
+  set stator boundary id = 0
+  set rotation axis      = 0, 0, 1
+  set center of rotation = 0, 0, 0
+  set penalty factor     = 1
+  set radius tolerance   = 1e-6
+  set verbosity          = verbose
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set velocity degree = 2
+  set pressure degree = 2
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number                = 4
+  set fix pressure constant = true
+
+  # Mortar interfaces (handled by the mortar coupling, not a physical BC)
+  subsection bc 0
+    set id   = 0, 5
+    set type = none
+  end
+
+  # Outer fixed wall (r = 1.0)
+  subsection bc 1
+    set id   = 1
+    set type = noslip
+  end
+
+  # Inner rotating wall (r = 0.25), solid-body rotation omega = 1
+  subsection bc 2
+    set id   = 4
+    set type = function
+    subsection u
+      set Function expression = -y
+    end
+    subsection v
+      set Function expression = x
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
+
+  # z-caps (rotor and stator): impose the z-independent analytical velocity
+  subsection bc 3
+    set id   = 2, 3, 6, 7
+    set type = function
+    subsection u
+      set Function constants  = A=-0.06666666666666667, B=0.06666666666666667
+      set Function expression = -(A*y + B*y/(x*x+y*y))
+    end
+    subsection v
+      set Function constants  = A=-0.06666666666666667, B=0.06666666666666667
+      set Function expression = A*x + B*x/(x*x+y*y)
+    end
+    subsection w
+      set Function expression = 0
+    end
+  end
+end
+
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type = uniform
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection fluid dynamics
+    set tolerance      = 1e-10
+    set max iterations = 10
+    set verbosity      = quiet
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set method            = gmres
+    set max iters         = 200
+    set relative residual = 1e-7
+    set minimum residual  = 1e-11
+    set preconditioner    = gcmg
+    set verbosity         = quiet
+
+    # MG parameters
+    set mg verbosity       = quiet
+    set mg level min cells = 16
+
+    # Smoother
+    set mg smoother iterations     = 10
+    set mg smoother eig estimation = true
+
+    # Eigenvalue estimation parameters
+    set eig estimation smoothing range = 5
+    set eig estimation cg n iterations = 10
+    set eig estimation verbosity       = quiet
+  end
+end
