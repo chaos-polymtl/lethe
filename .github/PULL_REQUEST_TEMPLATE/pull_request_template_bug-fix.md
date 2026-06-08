@@ -30,7 +30,7 @@
          Any comments or highlights for the reviewers. -->
 
 ### Checklist (will be removed when merged)
-See [this page](https://chaos-polymtl.github.io/lethe/documentation/contributing.html#pull-requests) for more information about the pull request process.
+See [this page](https://chaos-polymtl.github.io/lethe/documentation/contributing/pull-requests.html) for more information about the pull request process.
 
 Code related list:
 - [ ] All in-code documentation related to this PR is up to date (Doxygen format)
@@ -38,12 +38,11 @@ Code related list:
 - [ ] Lethe documentation is up to date
 - [ ] Fix has unit test(s) (preferred) or application test(s), and restart files are in the generator folder
 - [ ] The branch is rebased onto master
-- [ ] Changelog (CHANGELOG.md) is up to date
+- [ ] An entry describing the origin of the bug as well as its fix has been added in `/release_notes/current/` following the instructions of `/release_notes/template.md`
 - [ ] Code is indented with indent-all and .prm files (examples and tests) with prm-indent
 
 Pull request related list:
 - [ ] Labels are applied
-- [ ] There are at least 2 reviewers (or 1 if small feature) excluding the responsible for the merge
-- [ ] If this PR closes an issue or is related to a project, it is linked in the "Projects" or "Development" section
+- [ ] There are at least 2 reviewers (or 1 if small feature)
 - [ ] If the fix is temporary, an issue is opened
-- [ ] The PR description is cleaned and ready for merge
+- [ ] The PR description is clean and is ready to be used as the commit message when merging the PR

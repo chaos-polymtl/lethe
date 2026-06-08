@@ -25,7 +25,7 @@
          Any comments or highlights for the reviewers -->
 
 ### Checklist (will be removed when merged)
-See [this page](https://chaos-polymtl.github.io/lethe/documentation/contributing.html#pull-requests) for more information about the pull request process.
+See [this page](https://chaos-polymtl.github.io/lethe/documentation/contributing/pull-requests.html) for more information about the pull request process.
 
 Code related list:
 - [ ] All in-code documentation related to this PR is up to date (Doxygen format)
@@ -34,12 +34,11 @@ Code related list:
 - [ ] The branch is rebased onto master
 - [ ] Code is indented with indent-all and .prm files (examples and tests) with prm-indent
 - [ ] If parameters are modified, the tests and the documentation of examples are up to date
-- [ ] Changelog (CHANGELOG.md) is up to date if the refactor affects the user experience or the codebase
+- [ ] An entry describing the change has been added in `/release_notes/current/` following the instructions of `/release_notes/template.md`
 
 Pull request related list:
 - [ ] No other PR is open related to this refactoring
 - [ ] Labels are applied
-- [ ] There are at least 2 reviewers (or 1 if small feature) excluding the responsible for the merge
-- [ ] If this PR closes an issue or is related to a project, it is linked in the "Projects" or "Development" section
-- [ ] If any future works is planned, an issue is opened
-- [ ] The PR description is cleaned and ready for merge
+- [ ] There are at least 2 reviewers (or 1 if small feature)
+- [ ] If any future work is planned, an issue is opened
+- [ ] The PR description is clean and is ready to be used as the commit message when merging the PR
