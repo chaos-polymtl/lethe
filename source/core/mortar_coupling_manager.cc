@@ -545,8 +545,8 @@ compute_number_interface_cells(const Triangulation<dim>      &triangulation,
                         {
                           // Check if the current cell is contained in the same
                           // plane as the reference cell
-                          if (std::abs(cell->center()[rotation_axis] - coord_ref) <
-                              radius_tolerance)
+                          if (std::abs(cell->center()[rotation_axis] -
+                                       coord_ref) < radius_tolerance)
                             n_subdivisions_plane_local++;
                         }
                       else
@@ -622,16 +622,16 @@ compute_interface_dimensions_circular(
                           // point is contained within the rotation axis line
                           if constexpr (dim == 3)
                             {
-                              vertex_min = std::min(vertex_min, v[rotation_axis]);
-                              vertex_max = std::max(vertex_max, v[rotation_axis]);
+                              vertex_min =
+                                std::min(vertex_min, v[rotation_axis]);
+                              vertex_max =
+                                std::max(vertex_max, v[rotation_axis]);
 
                               radius_current =
                                 LetheGridTools::find_point_line_distance(
                                   mortar_parameters.center_of_rotation,
                                   mortar_parameters.rotation_axis,
                                   v);
-                              // std::cout << "Vertex: " << v "<< ", radius: " << radius_current
-                              //           << std::endl;"
                             }
 
                           radius_min = std::min(radius_min, radius_current);
