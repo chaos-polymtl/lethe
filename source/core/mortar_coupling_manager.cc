@@ -26,11 +26,15 @@ MortarManagerBase<dim>::is_mesh_aligned() const
 {
   AssertThrow(dim != 1, ExcInternalError());
 
-  // The meshes are aligned when merging the rotor and stator breakpoints does
-  // not introduce any additional segments, i.e. every rotor breakpoint
-  // coincides with a stator breakpoint.
-  return merged_breakpoints.size() == rotor_breakpoints.size() &&
-         merged_breakpoints.size() == stator_breakpoints.size();
+  // The meshes are aligned when, on every axial stage, merging the rotor and
+  // stator breakpoints does not introduce any additional segments, i.e. every
+  // rotor breakpoint coincides with a stator breakpoint.
+  for (unsigned int s = 0; s < n_stages(); ++s)
+    if (merged_breakpoints[s].size() != rotor_breakpoints[s].size() ||
+        merged_breakpoints[s].size() != stator_breakpoints[s].size())
+      return false;
+
+  return true;
 }
 
 template <int dim>
@@ -40,14 +44,9 @@ MortarManagerBase<dim>::get_n_total_mortars() const
   if constexpr (dim == 1)
     return 1;
 
-  // Total number of mortar segments: one in-plane arrangement, repeated for
-  // every axial stage in 3D.
-  unsigned int n_total = n_segments_per_plane;
-
-  if constexpr (dim == 3)
-    n_total *= n_subdivisions[1];
-
-  return n_total;
+  // Total number of mortar segments summed over all axial stages. The per-stage
+  // prefix sum already accounts for every stage.
+  return segment_offset.back();
 }
 
 template <int dim>
@@ -78,17 +77,19 @@ MortarManagerBase<dim>::get_mortar_indices(const Point<dim> &face_center,
     get_face_arrangement(face_center, is_inner);
 
   const unsigned int n_seg = static_cast<unsigned int>(arc_breaks.size() - 1);
+  const unsigned int n_seg_stage =
+    static_cast<unsigned int>(merged_breakpoints[id_out_plane].size());
 
   std::vector<unsigned int> indices;
   indices.reserve(n_seg);
 
   for (unsigned int i = 0; i < n_seg; ++i)
     {
-      const unsigned int index = (start_index + i) % n_segments_per_plane;
+      const unsigned int local = (start_index + i) % n_seg_stage;
 
-      AssertIndexRange(index, n_segments_per_plane);
+      AssertIndexRange(local, n_seg_stage);
 
-      indices.emplace_back(index + n_segments_per_plane * id_out_plane);
+      indices.emplace_back(segment_offset[id_out_plane] + local);
     }
 
   return indices;
@@ -259,11 +260,14 @@ MortarManagerBase<dim>::get_normals(const Point<dim> &face_center,
 
 template <int dim>
 void
-MortarManagerBase<dim>::build_arrangement(std::vector<double> rotor_bp,
-                                          std::vector<double> stator_bp)
+MortarManagerBase<dim>::build_arrangement(
+  const std::vector<std::vector<double>> &rotor_bp_per_stage,
+  const std::vector<std::vector<double>> &stator_bp_per_stage)
 {
   if constexpr (dim == 1)
     return;
+
+  AssertDimension(rotor_bp_per_stage.size(), stator_bp_per_stage.size());
 
   const double two_pi = 2 * numbers::PI;
   const double tol    = breakpoint_tolerance;
@@ -288,37 +292,71 @@ MortarManagerBase<dim>::build_arrangement(std::vector<double> rotor_bp,
       v.pop_back();
   };
 
-  normalize_sort_unique(rotor_bp);
-  normalize_sort_unique(stator_bp);
+  const unsigned int n_st = static_cast<unsigned int>(rotor_bp_per_stage.size());
 
-  rotor_breakpoints  = rotor_bp;
-  stator_breakpoints = stator_bp;
+  rotor_breakpoints.assign(n_st, {});
+  stator_breakpoints.assign(n_st, {});
+  merged_breakpoints.assign(n_st, {});
+  segment_offset.assign(n_st + 1, 0);
 
-  // The merged, sorted, deduplicated union of both breakpoint sets defines the
-  // mortar segments. Segment k spans [merged[k], merged[(k + 1) % size]).
-  std::vector<double> merged;
-  merged.reserve(rotor_bp.size() + stator_bp.size());
-  merged.insert(merged.end(), rotor_bp.begin(), rotor_bp.end());
-  merged.insert(merged.end(), stator_bp.begin(), stator_bp.end());
-  normalize_sort_unique(merged);
+  // Build one independent in-plane arrangement per axial stage, then accumulate
+  // the per-stage segment counts into a prefix sum so that the global index of
+  // local segment k in stage s is segment_offset[s] + k.
+  for (unsigned int s = 0; s < n_st; ++s)
+    {
+      std::vector<double> rotor_bp  = rotor_bp_per_stage[s];
+      std::vector<double> stator_bp = stator_bp_per_stage[s];
 
-  merged_breakpoints   = merged;
-  n_segments_per_plane = static_cast<unsigned int>(merged.size());
+      normalize_sort_unique(rotor_bp);
+      normalize_sort_unique(stator_bp);
+
+      rotor_breakpoints[s]  = rotor_bp;
+      stator_breakpoints[s] = stator_bp;
+
+      // The merged, sorted, deduplicated union of both breakpoint sets defines
+      // the mortar segments of this stage. Segment k spans
+      // [merged[k], merged[(k + 1) % size]).
+      std::vector<double> merged;
+      merged.reserve(rotor_bp.size() + stator_bp.size());
+      merged.insert(merged.end(), rotor_bp.begin(), rotor_bp.end());
+      merged.insert(merged.end(), stator_bp.begin(), stator_bp.end());
+      normalize_sort_unique(merged);
+
+      merged_breakpoints[s] = merged;
+
+      segment_offset[s + 1] =
+        segment_offset[s] + static_cast<unsigned int>(merged.size());
+    }
 }
 
 template <int dim>
-std::pair<std::vector<double>, std::vector<double>>
+void
+MortarManagerBase<dim>::build_arrangement(std::vector<double> rotor_bp,
+                                          std::vector<double> stator_bp)
+{
+  // Wrap the flat (single-stage) breakpoints used by 2D problems and unit-test
+  // subclasses into the per-stage representation.
+  build_arrangement(std::vector<std::vector<double>>{std::move(rotor_bp)},
+                    std::vector<std::vector<double>>{std::move(stator_bp)});
+}
+
+template <int dim>
+std::pair<std::vector<std::vector<double>>, std::vector<std::vector<double>>>
 MortarManagerBase<dim>::compute_breakpoints_from_mesh(
   const Triangulation<dim>      &triangulation,
   const Mapping<dim>            &mapping,
   const Parameters::Mortar<dim> &mortar_parameters) const
 {
-  std::vector<double> rotor_local, stator_local;
+  // One bucket of breakpoint angles per axial stage (a single bucket in 2D).
+  const unsigned int n_st = (dim == 3) ? stage_heights.size() - 1 : 1;
+
+  std::vector<std::vector<double>> rotor_local(n_st), stator_local(n_st);
 
   // Collect the in-plane angle of every interface vertex, using the manager's
   // own to_1D() transform (so this works for both circular and linear
   // interfaces, and accounts for the rotor rotation already baked into the
-  // rotated mapping).
+  // rotated mapping). Each interface face lies entirely within one axial stage
+  // band, so it contributes its vertex angles to that stage's bucket only.
   for (const auto &cell : triangulation.active_cell_iterators())
     if (cell->is_locally_owned())
       for (const auto face_no : cell->face_indices())
@@ -338,13 +376,32 @@ MortarManagerBase<dim>::compute_breakpoints_from_mesh(
 
           const auto vertices = mapping.get_vertices(cell, face_no);
 
+          // Determine the axial stage of this face from its center height. The
+          // rotation axis is aligned with z (component 2) in 3D.
+          unsigned int stage = 0;
+          if constexpr (dim == 3)
+            {
+              double z_sum = 0.0;
+              for (unsigned int v = 0; v < face->n_vertices(); ++v)
+                z_sum += vertices[v][2];
+              const double face_z = z_sum / face->n_vertices();
+
+              const auto it =
+                std::upper_bound(stage_heights.begin(),
+                                 stage_heights.end(),
+                                 face_z);
+              stage = static_cast<unsigned int>(
+                std::min<long>(std::distance(stage_heights.begin(), it) - 1,
+                               static_cast<long>(n_st) - 1));
+            }
+
           for (unsigned int v = 0; v < face->n_vertices(); ++v)
-            (is_rotor ? rotor_local : stator_local)
-              .push_back(this->to_1D(vertices[v]));
+            (is_rotor ? rotor_local : stator_local)[stage].push_back(
+              this->to_1D(vertices[v]));
         }
 
-  // Gather the breakpoints from all processes so that every rank holds the full
-  // global arrangement (mirrors compute_stage_heights).
+  // Gather the breakpoints of each stage from all processes so that every rank
+  // holds the full global arrangement (mirrors compute_stage_heights).
   const auto gather = [&](const std::vector<double> &local) {
     std::vector<double> global;
     const auto          all =
@@ -354,7 +411,14 @@ MortarManagerBase<dim>::compute_breakpoints_from_mesh(
     return global;
   };
 
-  return {gather(rotor_local), gather(stator_local)};
+  std::vector<std::vector<double>> rotor_global(n_st), stator_global(n_st);
+  for (unsigned int s = 0; s < n_st; ++s)
+    {
+      rotor_global[s]  = gather(rotor_local[s]);
+      stator_global[s] = gather(stator_local[s]);
+    }
+
+  return {rotor_global, stator_global};
 }
 
 template <int dim>
@@ -382,10 +446,14 @@ MortarManagerBase<dim>::get_face_arrangement(const Point<dim> &face_center,
   if (c < 0.0)
     c += two_pi;
 
+  // This stage's own and merged arrangements.
+  const auto &own =
+    (is_inner ? rotor_breakpoints : stator_breakpoints)[id_out_plane];
+  const auto        &merged = merged_breakpoints[id_out_plane];
+  const unsigned int S      = static_cast<unsigned int>(merged.size());
+
   // Locate, on the face's own side, the arc [lo, hi) that contains the center,
   // treating the breakpoint list cyclically (the last arc wraps past 2*pi).
-  const auto &own = is_inner ? rotor_breakpoints : stator_breakpoints;
-
   double     lo, hi;
   const auto it = std::upper_bound(own.begin(), own.end(), c);
   if (it == own.begin() || it == own.end())
@@ -402,11 +470,8 @@ MortarManagerBase<dim>::get_face_arrangement(const Point<dim> &face_center,
   // Find the merged-breakpoint index closest to lo (lo is itself a breakpoint,
   // hence present in the merged arrangement within tolerance).
   const auto find_merged = [&](const double angle) -> unsigned int {
-    const unsigned int S  = n_segments_per_plane;
-    const auto         lb = std::lower_bound(merged_breakpoints.begin(),
-                                     merged_breakpoints.end(),
-                                     angle);
-    const long         base = lb - merged_breakpoints.begin();
+    const auto lb   = std::lower_bound(merged.begin(), merged.end(), angle);
+    const long base = lb - merged.begin();
 
     unsigned int best  = 0;
     double       bestd = std::numeric_limits<double>::max();
@@ -414,7 +479,7 @@ MortarManagerBase<dim>::get_face_arrangement(const Point<dim> &face_center,
       {
         const unsigned int k =
           static_cast<unsigned int>(((base + off) % S + S) % S);
-        double d = std::abs(merged_breakpoints[k] - angle);
+        double d = std::abs(merged[k] - angle);
         d        = std::min(d, two_pi - d);
         if (d < bestd)
           {
@@ -431,14 +496,14 @@ MortarManagerBase<dim>::get_face_arrangement(const Point<dim> &face_center,
   // angles until reaching hi. The face arc is a union of whole merged segments,
   // so this terminates cleanly on a breakpoint coinciding with hi.
   std::vector<double> arc_breaks;
-  arc_breaks.push_back(merged_breakpoints[p]);
+  arc_breaks.push_back(merged[p]);
 
   unsigned int k       = p;
-  double       current = merged_breakpoints[p];
+  double       current = merged[p];
   while (current < hi - tol)
     {
-      const unsigned int knext = (k + 1) % n_segments_per_plane;
-      double             next  = merged_breakpoints[knext];
+      const unsigned int knext = (k + 1) % S;
+      double             next  = merged[knext];
       while (next <= current + tol)
         next += two_pi;
       arc_breaks.push_back(next);

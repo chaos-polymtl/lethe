@@ -191,6 +191,25 @@ protected:
    * given segment is the same physical arc on the rotor and stator sides, which
    * preserves the matching invariant used by the coupling operator.
    *
+   * One independent arrangement is built per axial stage, so different stages
+   * may have different circumferential discretizations.
+   *
+   * @param[in] rotor_bp_per_stage Rotor interface breakpoint angles (rotated
+   * position), indexed [stage][k]
+   * @param[in] stator_bp_per_stage Stator interface breakpoint angles, indexed
+   * [stage][k]
+   */
+  void
+  build_arrangement(
+    const std::vector<std::vector<double>> &rotor_bp_per_stage,
+    const std::vector<std::vector<double>> &stator_bp_per_stage);
+
+  /**
+   * @brief Convenience overload wrapping a single-stage (flat) arrangement.
+   *
+   * Used by 2D problems and unit-test subclasses that inject one in-plane set of
+   * breakpoints directly.
+   *
    * @param[in] rotor_bp Rotor interface breakpoint angles (rotated position)
    * @param[in] stator_bp Stator interface breakpoint angles
    */
@@ -208,9 +227,10 @@ protected:
    * @param[in] mapping Mapping associated to the domain
    * @param[in] mortar_parameters Mortar method control parameters
    *
-   * @return Pair {rotor breakpoint angles, stator breakpoint angles}
+   * @return Pair {rotor breakpoint angles, stator breakpoint angles}, each
+   * bucketed per axial stage (a single bucket in 2D)
    */
-  std::pair<std::vector<double>, std::vector<double>>
+  std::pair<std::vector<std::vector<double>>, std::vector<std::vector<double>>>
   compute_breakpoints_from_mesh(
     const Triangulation<dim>      &triangulation,
     const Mapping<dim>            &mapping,
@@ -224,7 +244,8 @@ protected:
    * rotor (inner) side of the mortar interface
    *
    * @return id_out_plane Axial stage index (0 in 2D)
-   * @return start_index Global in-plane index of the first covered segment
+   * @return start_index Stage-local index of the first covered segment within
+   * that stage's merged arrangement
    * @return arc_breaks Increasing physical breakpoint angles spanning the face
    * arc; the face covers arc_breaks.size() - 1 consecutive segments
    */
@@ -270,18 +291,32 @@ protected:
   const std::vector<double> stage_heights;
 
   /// Sorted, deduplicated rotor interface breakpoint angles in [0, 2*pi),
-  /// taken in their current rotated position
-  std::vector<double> rotor_breakpoints;
-  /// Sorted, deduplicated stator interface breakpoint angles in [0, 2*pi)
-  std::vector<double> stator_breakpoints;
-  /// Sorted, deduplicated union of the rotor and stator breakpoints. Segment k
-  /// spans [merged_breakpoints[k], merged_breakpoints[(k + 1) % size]) with the
+  /// taken in their current rotated position. One independent arrangement per
+  /// axial stage; index as rotor_breakpoints[stage][k] (a single stage in 2D).
+  std::vector<std::vector<double>> rotor_breakpoints;
+  /// Sorted, deduplicated stator interface breakpoint angles in [0, 2*pi), one
+  /// arrangement per axial stage; index as stator_breakpoints[stage][k].
+  std::vector<std::vector<double>> stator_breakpoints;
+  /// Sorted, deduplicated union of the rotor and stator breakpoints, one
+  /// arrangement per axial stage. In stage s, segment k spans
+  /// [merged_breakpoints[s][k], merged_breakpoints[s][(k + 1) % size]) with the
   /// periodic wrap on the last segment.
-  std::vector<double> merged_breakpoints;
-  /// Number of mortar segments in one axial stage plane
-  unsigned int n_segments_per_plane = 0;
+  std::vector<std::vector<double>> merged_breakpoints;
+  /// Prefix sum of the per-stage segment counts (size n_stages + 1). The global
+  /// index of local segment k in stage s is segment_offset[s] + k, and the total
+  /// number of mortar segments in a plane sum is segment_offset.back().
+  std::vector<unsigned int> segment_offset;
   /// Angular tolerance used to deduplicate and match breakpoints
   static constexpr double breakpoint_tolerance = 1e-8;
+
+  /**
+   * @brief Number of axial stages in the arrangement (1 in 2D).
+   */
+  unsigned int
+  n_stages() const
+  {
+    return merged_breakpoints.size();
+  }
 };
 
 /**
@@ -548,7 +583,9 @@ MortarManagerBase<dim>::MortarManagerBase(
     {
       // Synthesize uniform breakpoints reproducing the legacy equal-cell
       // behavior. The Navier-Stokes path overwrites these with the actual
-      // interface breakpoints after construction.
+      // interface breakpoints after construction. The same uniform in-plane
+      // arrangement is replicated for every axial stage, which makes the
+      // per-stage indexing collapse back to the legacy uniform stride.
       const unsigned int n       = this->n_subdivisions[0];
       const double       delta_0 = 2 * numbers::PI / n;
       const double       rot_min =
@@ -561,7 +598,12 @@ MortarManagerBase<dim>::MortarManagerBase(
           stator_bp.push_back(k * delta_0);
           rotor_bp.push_back(k * delta_0 + rot_min);
         }
-      this->build_arrangement(rotor_bp, stator_bp);
+
+      // One stage in 2D; n_subdivisions[1] axial stages in 3D.
+      const unsigned int n_st = (dim == 3) ? this->n_subdivisions[1] : 1;
+      this->build_arrangement(
+        std::vector<std::vector<double>>(n_st, rotor_bp),
+        std::vector<std::vector<double>>(n_st, stator_bp));
     }
 }
 
