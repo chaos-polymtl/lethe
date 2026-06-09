@@ -15,6 +15,9 @@ where:
 * :math:`\kappa` is the diffusivity coefficient;
 * :math:`f` is the tracer source term per unit of mass.
 
+.. important::
+    The tracer can be advected with the same velocity of the fluid, or a `drift velocity <../../../parameters/cfd/tracer_drift_velocity.html>`_ can be added. A reactive tracer feature also allows the prescription of a tracer consumption rate.
+
 To obtain the finite element discretization, we start from the strong form previously presented and integrate it over a domain :math:`\Omega` with boundary :math:`\Gamma` such that:
 
 .. math::
@@ -42,9 +45,9 @@ Stabilization Techniques
 Two stabilization terms are added to the weak form of the passive tracer equation:
 
 .. math::
-   F(C)_{\text{stab}} := F(C) + \underbrace{\int_{\Omega} \tau \: (\mathbf{u} \cdot \nabla q) \: \mathrm{R}(C)}_{a_{\text{GLS}}} + \underbrace{(v_{\text{DCDD}} \nabla q, \mathbf{d}_{\text{DCDD}} \cdot \nabla C)}_{a_{\text{DCDD}}}
+   F(C)_{\text{stab}} := F(C) + \underbrace{(\tau \: [\mathbf{u} \cdot \nabla q], \: \mathcal{R}(C))}_{a_{\text{GLS}}} + \underbrace{(v_{\text{DCDD}} \nabla q, \: \mathbf{d}_{\text{DCDD}} \cdot \nabla C)}_{a_{\text{DCDD}}}
 
-In the GLS stabilization :math:`a_{\text{GLS}}`, :math:`\mathrm{R}(C)` is the strong residual of the governing equation, and the stabilization parameter :math:`\tau_k` is the one presented by `Tezduyar (1992) <https://doi.org/10.1016/0045-7825(92)90141-6>`_:
+In the GLS stabilization :math:`a_{\text{GLS}}`, :math:`\mathcal{R}(C)` is the strong residual of the governing equation, and the stabilization parameter :math:`\tau_k` is defined as in `Tezduyar (1992) <https://doi.org/10.1016/0045-7825(92)90141-6>`_:
 
 .. math::
 
@@ -52,10 +55,10 @@ In the GLS stabilization :math:`a_{\text{GLS}}`, :math:`\mathrm{R}(C)` is the st
 
 where :math:`\Delta t` is the time step, and :math:`h_{\text{conv}}` and :math:`h_{\text{diff}}` are the size of the element related to the convection transport and diffusion mechanism, respectively. In Lethe, both element sizes are set to the diameter of a sphere having a volume equivalent to that of the cell. 
 
-.. note::
+.. seealso::
     The same definition of the stabilization parameter is used in the `Fluid Dynamics <../fluid_dynamics/stabilization.html>`_ solver.
 
 The second stabilization term is a Discontinuity-Capturing Directional Dissipation (DCDD) shock-capturing scheme proposed by `Tezduyar (2003) <https://doi.org/10.1002/fld.505>`_ that aims to deal with crosswind oscillations. 
 
-.. note::
+.. seealso::
     The DCDD shock-capturing scheme is also used in the `CLS <../../multiphase/cfd/cls.html>`_ and `Heat Transfer <../heat_transfer/heat_transfer.html>`_ modules. The CLS DCDD implementation is detailed `here <https://doi.org/10.1016/j.cpc.2025.109880>`_, and it is analogous to the tracer module.
