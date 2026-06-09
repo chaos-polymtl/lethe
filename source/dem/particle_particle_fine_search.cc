@@ -188,7 +188,8 @@ particle_particle_fine_search(
               Tensor<1, dim> periodic_offset_applied_to_particle_two =
                 particle_index_periodic_offset_map[particle_two->get_id()];
 
-              Tensor<1, dim> total_offset = periodic_offset_applied_to_particle_one -
+              Tensor<1, dim> total_offset =
+                periodic_offset_applied_to_particle_one -
                 combined_periodic_offset -
                 periodic_offset_applied_to_particle_two;
 
@@ -217,8 +218,7 @@ particle_particle_fine_search(
                 {
                   std::cout << " True" << std::endl;
                   // Save a translation that falls within the threshold
-                  Tensor<1, 3> offset_3d =
-                    [total_offset]() -> Tensor<1, 3> {
+                  Tensor<1, 3> offset_3d = [total_offset]() -> Tensor<1, 3> {
                     if constexpr (dim == 2)
                       return tensor_nd_to_3d(total_offset);
                     else

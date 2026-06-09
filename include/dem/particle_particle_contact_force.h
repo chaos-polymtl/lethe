@@ -63,11 +63,14 @@ public:
       &local_adjacent_particles,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
       &ghost_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::periodic_adjacent_particle_pairs
+    std::vector<
+      typename DEM::dem_data_structures<dim>::periodic_adjacent_particle_pairs>
       &local_local_periodic_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::periodic_adjacent_particle_pairs
+    std::vector<
+      typename DEM::dem_data_structures<dim>::periodic_adjacent_particle_pairs>
       &local_ghost_periodic_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::periodic_adjacent_particle_pairs
+    std::vector<
+      typename DEM::dem_data_structures<dim>::periodic_adjacent_particle_pairs>
                 &ghost_local_periodic_adjacent_particles,
     const double dt,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) = 0;
@@ -170,11 +173,14 @@ public:
       &local_adjacent_particles,
     typename DEM::dem_data_structures<dim>::adjacent_particle_pairs
       &ghost_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::periodic_adjacent_particle_pairs
+    std::vector<
+      typename DEM::dem_data_structures<dim>::periodic_adjacent_particle_pairs>
       &local_local_periodic_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::periodic_adjacent_particle_pairs
+    std::vector<
+      typename DEM::dem_data_structures<dim>::periodic_adjacent_particle_pairs>
       &local_ghost_periodic_adjacent_particles,
-    typename DEM::dem_data_structures<dim>::periodic_adjacent_particle_pairs
+    std::vector<
+      typename DEM::dem_data_structures<dim>::periodic_adjacent_particle_pairs>
                 &ghost_local_periodic_adjacent_particles,
     const double dt,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) override;
@@ -1780,6 +1786,13 @@ private:
           {
             particle_two_location =
               get_periodic_location(particle_two, contact_info.periodic_offset);
+            std::cout << " Force Calculation :" << std::endl;
+            std::cout << " Particle 1 location : " << particle_one_location
+                      << std::endl;
+            std::cout << " Particle 2 location : " << particle_two_location
+                      << std::endl;
+            std::cout << " Offset : " << contact_info.periodic_offset
+                      << std::endl;
           }
 
         // Calculation of normal overlap

@@ -83,7 +83,9 @@ DEMContactManager<dim, PropertiesIndex>::update_contacts()
       // Update periodic particle-particle contacts in
       // local_local_periodic_adjacent_particles of fine search step with
       // local_contact_pair_periodic_candidates
-      for (std::uint8_t n_list = 0;
+      std::cout << __LINE__ << " "
+                << local_local_periodic_adjacent_particles.size() << std::endl;
+      for (unsigned int n_list = 0;
            n_list < local_local_contact_pair_periodic_candidates_lists.size();
            ++n_list)
         {
@@ -92,7 +94,7 @@ DEMContactManager<dim, PropertiesIndex>::update_contacts()
             typename dem_data_structures<dim>::periodic_adjacent_particle_pairs,
             typename dem_data_structures<dim>::particle_particle_candidates,
             ContactType::local_periodic_particle_particle>(
-            local_local_periodic_adjacent_particles,
+            local_local_periodic_adjacent_particles[n_list],
             local_local_contact_pair_periodic_candidates_lists[n_list]);
 
           // Update periodic particle-particle contacts in
@@ -104,7 +106,7 @@ DEMContactManager<dim, PropertiesIndex>::update_contacts()
             typename dem_data_structures<dim>::periodic_adjacent_particle_pairs,
             typename dem_data_structures<dim>::particle_particle_candidates,
             ContactType::ghost_periodic_particle_particle>(
-            local_ghost_periodic_adjacent_particles,
+            local_ghost_periodic_adjacent_particles[n_list],
             local_ghost_contact_pair_periodic_candidates_lists[n_list]);
 
 
@@ -116,7 +118,7 @@ DEMContactManager<dim, PropertiesIndex>::update_contacts()
             typename dem_data_structures<dim>::periodic_adjacent_particle_pairs,
             typename dem_data_structures<dim>::particle_particle_candidates,
             ContactType::ghost_local_periodic_particle_particle>(
-            ghost_local_periodic_adjacent_particles,
+            ghost_local_periodic_adjacent_particles[n_list],
             ghost_local_contact_pair_periodic_candidates_lists[n_list]);
         }
     }
@@ -185,27 +187,35 @@ DEMContactManager<dim, PropertiesIndex>::update_local_particles_in_cells(
     {
       // Update contact containers for local-local periodic particle-particle
       // pairs in contact
-      update_contact_container_iterators<
-        dim,
-        typename dem_data_structures<dim>::periodic_adjacent_particle_pairs,
-        ContactType::local_periodic_particle_particle>(
-        local_local_periodic_adjacent_particles, particle_container);
+      for (unsigned int n_list = 0;
+           n_list < local_local_periodic_adjacent_particles.size();
+           ++n_list)
+        {
+          update_contact_container_iterators<
+            dim,
+            typename dem_data_structures<dim>::periodic_adjacent_particle_pairs,
+            ContactType::local_periodic_particle_particle>(
+            local_local_periodic_adjacent_particles[n_list],
+            particle_container);
 
-      // Update contact containers for local-ghost periodic particle-particle
-      // pairs in contact
-      update_contact_container_iterators<
-        dim,
-        typename dem_data_structures<dim>::periodic_adjacent_particle_pairs,
-        ContactType::ghost_periodic_particle_particle>(
-        local_ghost_periodic_adjacent_particles, particle_container);
+          // Update contact containers for local-ghost periodic
+          // particle-particle pairs in contact
+          update_contact_container_iterators<
+            dim,
+            typename dem_data_structures<dim>::periodic_adjacent_particle_pairs,
+            ContactType::ghost_periodic_particle_particle>(
+            local_ghost_periodic_adjacent_particles[n_list],
+            particle_container);
 
-      // Update contact containers for ghost-local periodic particle-particle
-      // pairs in contact
-      update_contact_container_iterators<
-        dim,
-        typename dem_data_structures<dim>::periodic_adjacent_particle_pairs,
-        ContactType::ghost_local_periodic_particle_particle>(
-        ghost_local_periodic_adjacent_particles, particle_container);
+          // Update contact containers for ghost-local periodic
+          // particle-particle pairs in contact
+          update_contact_container_iterators<
+            dim,
+            typename dem_data_structures<dim>::periodic_adjacent_particle_pairs,
+            ContactType::ghost_local_periodic_particle_particle>(
+            ghost_local_periodic_adjacent_particles[n_list],
+            particle_container);
+        }
     }
 
   // Update contact containers for particle-wall pairs in contact
@@ -441,7 +451,7 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_particle_fine_search(
           // Fine search for local-local periodic particle-particle
           particle_particle_fine_search<dim, local_periodic_particle_particle>(
             particle_container,
-            local_local_periodic_adjacent_particles,
+            local_local_periodic_adjacent_particles[n_list],
             local_local_contact_pair_periodic_candidates_lists[n_list],
             neighborhood_threshold,
             particle_index_periodic_offset_map,
@@ -450,7 +460,7 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_particle_fine_search(
           // Fine search for local-ghost periodic particle-particle
           particle_particle_fine_search<dim, ghost_periodic_particle_particle>(
             particle_container,
-            local_ghost_periodic_adjacent_particles,
+            local_ghost_periodic_adjacent_particles[n_list],
             local_ghost_contact_pair_periodic_candidates_lists[n_list],
             neighborhood_threshold,
             particle_index_periodic_offset_map,
@@ -460,7 +470,7 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_particle_fine_search(
           particle_particle_fine_search<dim,
                                         ghost_local_periodic_particle_particle>(
             particle_container,
-            ghost_local_periodic_adjacent_particles,
+            ghost_local_periodic_adjacent_particles[n_list],
             ghost_local_contact_pair_periodic_candidates_lists[n_list],
             neighborhood_threshold,
             particle_index_periodic_offset_map,

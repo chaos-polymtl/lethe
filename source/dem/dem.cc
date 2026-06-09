@@ -314,6 +314,7 @@ DEMSolver<dim, PropertiesIndex>::setup_triangulation_dependent_parameters()
     periodic_boundaries_object.get_combined_periodic_offsets());
   contact_manager.set_number_of_declared_periodic_boundaries(
     periodic_boundaries_object.get_number_of_pbc());
+  contact_manager.resize_periodic_containers();
 
   particle_particle_contact_force_object->set_combined_periodic_offsets(
     periodic_boundaries_object.get_combined_periodic_offsets());

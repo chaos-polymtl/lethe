@@ -275,7 +275,8 @@ public:
   /**
    * @brief Return the local-local periodic particle contact container.
    */
-  inline typename dem_data_structures<dim>::periodic_adjacent_particle_pairs &
+  inline std::vector<
+    typename dem_data_structures<dim>::periodic_adjacent_particle_pairs> &
   get_local_local_periodic_adjacent_particles()
   {
     return local_local_periodic_adjacent_particles;
@@ -284,7 +285,8 @@ public:
   /**
    * @brief Return the local-ghost periodic particle contact container.
    */
-  inline typename dem_data_structures<dim>::periodic_adjacent_particle_pairs &
+  inline std::vector<
+    typename dem_data_structures<dim>::periodic_adjacent_particle_pairs> &
   get_local_ghost_periodic_adjacent_particles()
   {
     return local_ghost_periodic_adjacent_particles;
@@ -293,7 +295,8 @@ public:
   /**
    * @brief Return the ghost-local periodic particle contact container.
    */
-  inline typename dem_data_structures<dim>::periodic_adjacent_particle_pairs &
+  inline std::vector<
+    typename dem_data_structures<dim>::periodic_adjacent_particle_pairs> &
   get_ghost_local_periodic_adjacent_particles()
   {
     return ghost_local_periodic_adjacent_particles;
@@ -342,6 +345,10 @@ public:
     cells_local_periodic_neighbor_lists.resize(n_lists);
     cells_ghost_periodic_neighbor_lists.resize(n_lists);
     cells_ghost_local_periodic_neighbor_lists.resize(n_lists);
+
+    local_local_periodic_adjacent_particles.resize(n_lists);
+    local_ghost_periodic_adjacent_particles.resize(n_lists);
+    ghost_local_periodic_adjacent_particles.resize(n_lists);
   }
 
 private:
@@ -411,11 +418,16 @@ private:
     local_adjacent_particles;
   typename dem_data_structures<dim>::adjacent_particle_pairs
     ghost_adjacent_particles;
-  typename dem_data_structures<dim>::periodic_adjacent_particle_pairs
+
+
+  std::vector<
+    typename dem_data_structures<dim>::periodic_adjacent_particle_pairs>
     local_local_periodic_adjacent_particles;
-  typename dem_data_structures<dim>::periodic_adjacent_particle_pairs
+  std::vector<
+    typename dem_data_structures<dim>::periodic_adjacent_particle_pairs>
     local_ghost_periodic_adjacent_particles;
-  typename dem_data_structures<dim>::periodic_adjacent_particle_pairs
+  std::vector<
+    typename dem_data_structures<dim>::periodic_adjacent_particle_pairs>
     ghost_local_periodic_adjacent_particles;
 
   // Containers with other information

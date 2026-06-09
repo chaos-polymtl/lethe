@@ -42,11 +42,14 @@ ParticleParticleContactForce<dim,
       &local_adjacent_particles,
     typename dem_data_structures<dim>::adjacent_particle_pairs
       &ghost_adjacent_particles,
-    typename dem_data_structures<dim>::periodic_adjacent_particle_pairs
+    std::vector<
+      typename dem_data_structures<dim>::periodic_adjacent_particle_pairs>
       &local_local_periodic_adjacent_particles,
-    typename dem_data_structures<dim>::periodic_adjacent_particle_pairs
+    std::vector<
+      typename dem_data_structures<dim>::periodic_adjacent_particle_pairs>
       &local_ghost_periodic_adjacent_particles,
-    typename dem_data_structures<dim>::periodic_adjacent_particle_pairs
+    std::vector<
+      typename dem_data_structures<dim>::periodic_adjacent_particle_pairs>
                 &ghost_local_periodic_adjacent_particles,
     const double dt,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome)
@@ -71,32 +74,47 @@ ParticleParticleContactForce<dim,
 
   // Calculating the contact forces and heat transfer rates for local-local
   // periodic adjacent particles.
-  for (auto &&periodic_adjacent_particles_list :
-       local_local_periodic_adjacent_particles | boost::adaptors::map_values)
+  for (unsigned int n_list = 0;
+       n_list < local_local_periodic_adjacent_particles.size();
+       ++n_list)
     {
-      execute_contact_calculation<
-        ContactType::local_periodic_particle_particle>(
-        periodic_adjacent_particles_list, dt, contact_outcome);
-    }
+      auto local_local_periodic_adjacent_particles_n =
+        local_local_periodic_adjacent_particles[n_list];
+      auto local_ghost_periodic_adjacent_particles_n =
+        local_ghost_periodic_adjacent_particles[n_list];
+      auto ghost_local_periodic_adjacent_particles_n =
+        ghost_local_periodic_adjacent_particles[n_list];
 
-  // Calculating the contact forces and heat transfer rates for local-ghost
-  // periodic adjacent particles.
-  for (auto &&periodic_adjacent_particles_list :
-       local_ghost_periodic_adjacent_particles | boost::adaptors::map_values)
-    {
-      execute_contact_calculation<
-        ContactType::ghost_periodic_particle_particle>(
-        periodic_adjacent_particles_list, dt, contact_outcome);
-    }
+      for (auto &&periodic_adjacent_particles_list :
+           local_local_periodic_adjacent_particles_n |
+             boost::adaptors::map_values)
+        {
+          execute_contact_calculation<
+            ContactType::local_periodic_particle_particle>(
+            periodic_adjacent_particles_list, dt, contact_outcome);
+        }
 
-  // Calculating the contact forces and heat transfer rates for ghost-local
-  // periodic adjacent particles.
-  for (auto &&periodic_adjacent_particles_list :
-       ghost_local_periodic_adjacent_particles | boost::adaptors::map_values)
-    {
-      execute_contact_calculation<
-        ContactType::ghost_local_periodic_particle_particle>(
-        periodic_adjacent_particles_list, dt, contact_outcome);
+      // Calculating the contact forces and heat transfer rates for local-ghost
+      // periodic adjacent particles.
+      for (auto &&periodic_adjacent_particles_list :
+           local_ghost_periodic_adjacent_particles_n |
+             boost::adaptors::map_values)
+        {
+          execute_contact_calculation<
+            ContactType::ghost_periodic_particle_particle>(
+            periodic_adjacent_particles_list, dt, contact_outcome);
+        }
+
+      // Calculating the contact forces and heat transfer rates for ghost-local
+      // periodic adjacent particles.
+      for (auto &&periodic_adjacent_particles_list :
+           ghost_local_periodic_adjacent_particles_n |
+             boost::adaptors::map_values)
+        {
+          execute_contact_calculation<
+            ContactType::ghost_local_periodic_particle_particle>(
+            periodic_adjacent_particles_list, dt, contact_outcome);
+        }
     }
 }
 
