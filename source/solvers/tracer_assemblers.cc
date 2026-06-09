@@ -234,9 +234,11 @@ TracerAssemblerCore<dim>::assemble_rhs(
                            scratch_data.source[q] * phi_C_i) *
                           JxW;
 
+          // GLS stabilization
           local_rhs(i) -=
             tau * (strong_residual_vec[q] * (grad_phi_C_i * velocity)) * JxW;
 
+          // DCDD shock-capturing
           local_rhs(i) -=
             vdcdd *
             scalar_product(grad_phi_C_i, dcdd_factor * tracer_gradient) * JxW;
