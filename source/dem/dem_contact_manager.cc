@@ -411,21 +411,25 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_wall_broad_search(
 template <int dim, typename PropertiesIndex>
 void
 DEMContactManager<dim, PropertiesIndex>::execute_particle_particle_fine_search(
-  const double neighborhood_threshold)
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<dim>::particle_index_tensor_map
+    &particle_index_periodic_offset_map)
 {
   // Fine search for local particle-particle
   particle_particle_fine_search<dim, local_particle_particle>(
     particle_container,
     local_adjacent_particles,
     local_contact_pair_candidates,
-    neighborhood_threshold);
+    neighborhood_threshold,
+    particle_index_periodic_offset_map);
 
   // Fine search for ghost particle-particle
   particle_particle_fine_search<dim, ghost_particle_particle>(
     particle_container,
     ghost_adjacent_particles,
     ghost_contact_pair_candidates,
-    neighborhood_threshold);
+    neighborhood_threshold,
+    particle_index_periodic_offset_map);
 
   if (DEMActionManager::get_action_manager()
         ->check_periodic_boundaries_enabled())
@@ -435,20 +439,12 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_particle_fine_search(
            ++n_list)
         {
           // Fine search for local-local periodic particle-particle
-          for (auto &[particle_one_id, second_particle_container] :
-               local_local_contact_pair_periodic_candidates_lists[n_list])
-            {
-              if (!second_particle_container.empty())
-                std::cout << "Container index " << n_list
-                          << " : Particle 1 and 2 IDs " << particle_one_id
-                          << ": " << second_particle_container[0] << std::endl;
-            }
-
           particle_particle_fine_search<dim, local_periodic_particle_particle>(
             particle_container,
             local_local_periodic_adjacent_particles,
             local_local_contact_pair_periodic_candidates_lists[n_list],
             neighborhood_threshold,
+            particle_index_periodic_offset_map,
             combined_periodic_offsets[n_list]);
 
           // Fine search for local-ghost periodic particle-particle
@@ -457,6 +453,7 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_particle_fine_search(
             local_ghost_periodic_adjacent_particles,
             local_ghost_contact_pair_periodic_candidates_lists[n_list],
             neighborhood_threshold,
+            particle_index_periodic_offset_map,
             combined_periodic_offsets[n_list]);
 
           // Fine search for ghost-local periodic particle-particle
@@ -466,6 +463,7 @@ DEMContactManager<dim, PropertiesIndex>::execute_particle_particle_fine_search(
             ghost_local_periodic_adjacent_particles,
             ghost_local_contact_pair_periodic_candidates_lists[n_list],
             neighborhood_threshold,
+            particle_index_periodic_offset_map,
             combined_periodic_offsets[n_list]);
         }
     }

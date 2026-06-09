@@ -57,6 +57,10 @@ namespace DEM
                                          Particles::ParticleIterator<dim>>
       particle_index_iterator_map;
 
+    // <particle id, Tensor<1,dim>>
+    typedef ankerl::unordered_dense::map<types::particle_index, Tensor<1, dim>>
+      particle_index_tensor_map;
+
     // <particle id, line info>
     typedef std::unordered_map<types::particle_index,
                                particle_line_contact_info<dim>>

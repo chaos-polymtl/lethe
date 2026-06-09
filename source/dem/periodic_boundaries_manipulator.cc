@@ -192,7 +192,9 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
   const bool                                       &particles_in_pb0_cell,
   typename Particles::ParticleHandler<dim>::particle_iterator_range
        &particles_in_cell,
-  bool &particle_has_been_moved)
+  bool &particle_has_been_moved,
+  typename DEM::dem_data_structures<dim>::particle_index_tensor_map
+    &particle_to_total_periodic_displacement)
 {
   // Retrieve correct offset for this specific boundary interaction.
   // boundaries_cells_content contains a single cell on a periodic boundary
@@ -262,6 +264,8 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
           // Move particle outside the current cell to the periodic cell.
           particle_position += distance_between_faces;
           particle->set_location(particle_position);
+          particle_to_total_periodic_displacement[particle->get_id()] +=
+            distance_between_faces;
 
           // Update flag to indicate that particle has been moved
           particle_has_been_moved = true;
@@ -313,7 +317,9 @@ bool
 PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
   const Particles::ParticleHandler<dim> &particle_handler,
   const typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
-    &periodic_boundaries_cells_information)
+    &periodic_boundaries_cells_information,
+  typename DEM::dem_data_structures<dim>::particle_index_tensor_map
+    &particle_to_total_periodic_displacement)
 {
   if (!periodic_boundaries_enabled)
     return false;
@@ -351,10 +357,12 @@ PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
               if (particles_exist_in_main_cell)
                 {
                   bool particles_in_pb0_cell = true;
-                  check_and_move_particles(periodic_cell_pair_info,
-                                           particles_in_pb0_cell,
-                                           particles_in_cell,
-                                           particle_has_been_moved);
+                  check_and_move_particles(
+                    periodic_cell_pair_info,
+                    particles_in_pb0_cell,
+                    particles_in_cell,
+                    particle_has_been_moved,
+                    particle_to_total_periodic_displacement);
                 }
             }
 
@@ -370,10 +378,12 @@ PeriodicBoundariesManipulator<dim>::execute_particles_displacement(
               if (particles_exist_in_periodic_cell)
                 {
                   bool particles_in_pb0_cell = false;
-                  check_and_move_particles(periodic_cell_pair_info,
-                                           particles_in_pb0_cell,
-                                           particles_in_periodic_cell,
-                                           particle_has_been_moved);
+                  check_and_move_particles(
+                    periodic_cell_pair_info,
+                    particles_in_pb0_cell,
+                    particles_in_periodic_cell,
+                    particle_has_been_moved,
+                    particle_to_total_periodic_displacement);
                 }
             }
         }

@@ -1464,7 +1464,9 @@ CFDDEMMatrixFree<dim>::dem_contact_build()
 
       // Execute periodic boundaries (if PBC enabled)
       periodic_boundaries_object.execute_particles_displacement(
-        this->particle_handler, periodic_boundaries_cells_information);
+        this->particle_handler,
+        periodic_boundaries_cells_information,
+        particle_index_periodic_offset_map);
 
       // Sort particles into subdomains and cells and reset the vectors that
       // the local particle if is their index
@@ -1503,7 +1505,7 @@ CFDDEMMatrixFree<dim>::dem_contact_build()
       // Execute fine search by updating particle-particle contact
       // containers regards the neighborhood threshold
       contact_manager.execute_particle_particle_fine_search(
-        neighborhood_threshold_squared);
+        neighborhood_threshold_squared, particle_index_periodic_offset_map);
 
       // Execute fine search by updating particle-wall contact containers
       // regards the neighborhood threshold

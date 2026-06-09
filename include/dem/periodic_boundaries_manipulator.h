@@ -233,6 +233,7 @@ public:
    * boundary cells.
    * @param[in] periodic_boundaries_cells_information Map of information of the
    * pair of cells on periodic boundaries.
+   * @param particle_to_total_periodic_displacement
    *
    * @return Flag if at least one particle has been moved to the other periodic
    * cell.
@@ -241,7 +242,9 @@ public:
   execute_particles_displacement(
     const Particles::ParticleHandler<dim> &particle_handler,
     const typename DEM::dem_data_structures<dim>::periodic_boundaries_cells_info
-      &periodic_boundaries_cells_information);
+      &periodic_boundaries_cells_information,
+    typename DEM::dem_data_structures<dim>::particle_index_tensor_map
+      &particle_to_total_periodic_displacement);
 
   /**
    * @brief Return the periodic offset distance for a specific pb0 boundary ID.
@@ -346,6 +349,7 @@ private:
    * @param[in,out] particles_in_cell Iterator to the particles in cell.
    * @param[out] particle_has_been_moved Flag the particle has been moved to
    * the other periodic cell.
+   * @param particle_to_total_periodic_displacement
    */
   void
   check_and_move_particles(
@@ -353,7 +357,9 @@ private:
     const bool                                       &particles_in_pb0_cell,
     typename Particles::ParticleHandler<dim>::particle_iterator_range
          &particles_in_cell,
-    bool &particle_has_been_moved);
+    bool &particle_has_been_moved,
+    typename DEM::dem_data_structures<dim>::particle_index_tensor_map
+      &particle_to_total_periodic_displacement);
 
   /**
    * @brief Compute the combined periodic offsets and store them in

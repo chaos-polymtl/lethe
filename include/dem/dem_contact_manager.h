@@ -172,9 +172,13 @@ public:
    * compute the contact information of the collision pairs.
    *
    * @param[in] neighborhood_threshold Threshold value of contact detection.
+   * @param[in] particle_index_periodic_offset_map
    */
   void
-  execute_particle_particle_fine_search(const double neighborhood_threshold);
+  execute_particle_particle_fine_search(
+    const double neighborhood_threshold,
+    typename DEM::dem_data_structures<dim>::particle_index_tensor_map
+      &particle_index_periodic_offset_map);
 
   /**
    * @brief Execute the particle-wall fine searches.

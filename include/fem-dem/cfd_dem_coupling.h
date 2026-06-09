@@ -520,5 +520,11 @@ private:
 
   /// Pointer to DEM action manager for handling DEM-specific operations
   DEMActionManager *dem_action_manager;
+
+  /**
+   * @brief
+   */
+  typename dem_data_structures<dim>::particle_index_tensor_map
+    particle_index_periodic_offset_map;
 };
 #endif

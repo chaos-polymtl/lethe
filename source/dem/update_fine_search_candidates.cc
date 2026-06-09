@@ -120,7 +120,7 @@ update_fine_search_candidates(pairs_structure      &pairs_in_contact,
                           }
 
                         if constexpr (contact_type ==
-                                        ContactType::ghost_particle_particle)
+                                      ContactType::ghost_particle_particle)
                           {
                             // The current particle from history list is still a
                             // candidate to the 2nd particle and the contact is
@@ -163,7 +163,8 @@ update_fine_search_candidates(pairs_structure      &pairs_in_contact,
                               contact_type ==
                                 ContactType::ghost_periodic_particle_particle ||
                               contact_type ==
-                                ContactType::ghost_local_periodic_particle_particle)
+                                ContactType::
+                                  ghost_local_periodic_particle_particle)
                   {
                     // Keep periodic contacts in history
                     ++adjacent_map_iterator;

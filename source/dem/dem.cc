@@ -855,6 +855,12 @@ DEMSolver<dim, PropertiesIndex>::sort_particles_into_subdomains_and_cells()
         particle_handler.get_max_local_particle_index();
       // Resize displacement container
       displacement.resize(number_of_particles);
+
+      // Reserve the map
+      particle_index_periodic_offset_map.clear();
+      particle_index_periodic_offset_map.reserve(
+        particle_handler.n_global_particles());
+
       // Resize outcome containers
       contact_outcome.resize_interaction_containers(number_of_particles);
       MOI.resize(number_of_particles);
@@ -979,7 +985,9 @@ DEMSolver<dim, PropertiesIndex>::solve()
           // Particles displacement if passing through a periodic boundary
           // (if PBC enabled)
           periodic_boundaries_object.execute_particles_displacement(
-            particle_handler, periodic_boundaries_cells_information);
+            particle_handler,
+            periodic_boundaries_cells_information,
+            particle_index_periodic_offset_map);
 
           sort_particles_into_subdomains_and_cells();
 
@@ -1016,7 +1024,7 @@ DEMSolver<dim, PropertiesIndex>::solve()
           // Execute fine search by updating particle-particle contact
           // containers according to the neighborhood threshold
           contact_manager.execute_particle_particle_fine_search(
-            neighborhood_threshold_squared);
+            neighborhood_threshold_squared, particle_index_periodic_offset_map);
 
           // Execute fine search by updating particle-wall contact
           // containers according to the neighborhood threshold

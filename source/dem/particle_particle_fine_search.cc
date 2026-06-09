@@ -23,8 +23,10 @@ particle_particle_fine_search(
                                                   &particle_container,
   adjacent_pairs_for_contact_t<dim, contact_type> &adjacent_particles,
   const typename DEM::dem_data_structures<dim>::particle_particle_candidates
-                       &contact_pair_candidates,
-  const double          neighborhood_threshold,
+              &contact_pair_candidates,
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<dim>::particle_index_tensor_map
+                       &particle_index_periodic_offset_map,
   const Tensor<1, dim> &combined_periodic_offset)
 {
   // First iterating over adjacent_particles
@@ -77,8 +79,7 @@ particle_particle_fine_search(
                     contact_type == ghost_periodic_particle_particle ||
                     contact_type == ghost_local_periodic_particle_particle)
         {
-
-          // Iterating over each map which contains the contact information
+          // Iterating over each map that contains the contact information
           for (auto adjacent_particles_list_iterator =
                  adjacent_particles_list.begin();
                adjacent_particles_list_iterator !=
@@ -87,21 +88,26 @@ particle_particle_fine_search(
               // Getting contact information and particle 2 as local variables
               auto &adjacent_pair_information =
                 adjacent_particles_list_iterator->second;
-              auto &particle_two_informations =
+              auto &particle_two_information =
                 adjacent_pair_information.particle_two;
 
               // Finding the properties of the particles in contact
-              Point<dim, double> particle_two_real_location =
-                particle_two_informations->get_location();
+              Point<dim> particle_two_real_location =
+                particle_two_information->get_location();
 
-              Tensor <1,dim> offset;
-              if constexpr (dim == 2)
-                offset = tensor_nd_to_2d(adjacent_particles_list.begin()->second.periodic_offset);
-              else
-                offset = adjacent_particles_list.begin()->second.periodic_offset;
+              Tensor<1, dim> periodic_offset_applied_to_particle_one =
+                particle_index_periodic_offset_map[particle_one->get_id()];
 
+              Tensor<1, dim> periodic_offset_applied_to_particle_two =
+                particle_index_periodic_offset_map[particle_two_information
+                                                     ->get_id()];
+
+              // (Particle one location - Particle two location)
               double square_distance = particle_one_location.distance_square(
-                particle_two_real_location - offset);
+                particle_two_real_location +
+                periodic_offset_applied_to_particle_one -
+                combined_periodic_offset -
+                periodic_offset_applied_to_particle_two);
 
               if (square_distance > neighborhood_threshold)
                 {
@@ -114,11 +120,11 @@ particle_particle_fine_search(
                   // Save a translation that falls within the threshold
                   if constexpr (dim == 2)
                     adjacent_pair_information.periodic_offset =
-                      tensor_nd_to_3d(offset);
+                      tensor_nd_to_3d(combined_periodic_offset);
                   else
                     {
-                    adjacent_pair_information.periodic_offset =
-                      offset;
+                      adjacent_pair_information.periodic_offset =
+                        combined_periodic_offset;
                     }
                   ++adjacent_particles_list_iterator;
                 }
@@ -173,17 +179,33 @@ particle_particle_fine_search(
                         contact_type == ghost_periodic_particle_particle ||
                         contact_type == ghost_local_periodic_particle_particle)
             {
-
               Point<dim, double> particle_two_location =
                 particle_two->get_location();
 
-              double square_distance = particle_one_location.distance_square(
-                particle_two_location - combined_periodic_offset);
+              Tensor<1, dim> periodic_offset_applied_to_particle_one =
+                particle_index_periodic_offset_map[particle_one->get_id()];
 
+              Tensor<1, dim> periodic_offset_applied_to_particle_two =
+                particle_index_periodic_offset_map[particle_two->get_id()];
+
+              Tensor<1, dim> total_offset = periodic_offset_applied_to_particle_one -
+                combined_periodic_offset -
+                periodic_offset_applied_to_particle_two;
+
+              // (Particle one location - Particle two location)
+              double square_distance = particle_one_location.distance_square(
+                particle_two_location + total_offset);
+
+              std::cout << " Particle 1-2 id    : " << particle_one->get_id()
+                        << " : " << particle_two->get_id() << std::endl;
               std::cout << " Particle 1 location: " << particle_one_location
                         << std::endl;
               std::cout << " Particle 2 location: " << particle_two_location
                         << std::endl;
+              std::cout << " Particle 1 applied periodic offset: "
+                        << periodic_offset_applied_to_particle_one << std::endl;
+              std::cout << " Particle 2 applied periodic offset: "
+                        << periodic_offset_applied_to_particle_two << std::endl;
               std::cout << " Periodic offset    : " << combined_periodic_offset
                         << std::endl;
               std::cout << " Square_distance    : " << square_distance
@@ -196,11 +218,11 @@ particle_particle_fine_search(
                   std::cout << " True" << std::endl;
                   // Save a translation that falls within the threshold
                   Tensor<1, 3> offset_3d =
-                    [combined_periodic_offset]() -> Tensor<1, 3> {
+                    [total_offset]() -> Tensor<1, 3> {
                     if constexpr (dim == 2)
-                      return tensor_nd_to_3d(combined_periodic_offset);
+                      return tensor_nd_to_3d(total_offset);
                     else
-                      return combined_periodic_offset;
+                      return total_offset;
                   }();
 
                   auto &particle_one_contact_list =
@@ -228,8 +250,10 @@ particle_particle_fine_search<2, local_particle_particle>(
   typename DEM::dem_data_structures<2>::adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<2>::particle_particle_candidates
-                     &contact_pair_candidates,
-  const double        neighborhood_threshold,
+              &contact_pair_candidates,
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<2>::particle_index_tensor_map
+                     &particle_index_periodic_offset_map,
   const Tensor<1, 2> &combined_periodic_offset);
 
 template void
@@ -239,8 +263,10 @@ particle_particle_fine_search<2, ghost_particle_particle>(
   typename DEM::dem_data_structures<2>::adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<2>::particle_particle_candidates
-                     &contact_pair_candidates,
-  const double        neighborhood_threshold,
+              &contact_pair_candidates,
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<2>::particle_index_tensor_map
+                     &particle_index_periodic_offset_map,
   const Tensor<1, 2> &combined_periodic_offset);
 
 template void
@@ -250,8 +276,10 @@ particle_particle_fine_search<2, local_periodic_particle_particle>(
   typename DEM::dem_data_structures<2>::periodic_adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<2>::particle_particle_candidates
-                     &contact_pair_candidates,
-  const double        neighborhood_threshold,
+              &contact_pair_candidates,
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<2>::particle_index_tensor_map
+                     &particle_index_periodic_offset_map,
   const Tensor<1, 2> &combined_periodic_offset);
 
 template void
@@ -261,8 +289,10 @@ particle_particle_fine_search<2, ghost_periodic_particle_particle>(
   typename DEM::dem_data_structures<2>::periodic_adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<2>::particle_particle_candidates
-                     &contact_pair_candidates,
-  const double        neighborhood_threshold,
+              &contact_pair_candidates,
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<2>::particle_index_tensor_map
+                     &particle_index_periodic_offset_map,
   const Tensor<1, 2> &combined_periodic_offset);
 
 template void
@@ -272,8 +302,10 @@ particle_particle_fine_search<2, ghost_local_periodic_particle_particle>(
   typename DEM::dem_data_structures<2>::periodic_adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<2>::particle_particle_candidates
-                     &contact_pair_candidates,
-  const double        neighborhood_threshold,
+              &contact_pair_candidates,
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<2>::particle_index_tensor_map
+                     &particle_index_periodic_offset_map,
   const Tensor<1, 2> &combined_periodic_offset);
 
 
@@ -285,8 +317,10 @@ particle_particle_fine_search<3, local_particle_particle>(
   typename DEM::dem_data_structures<3>::adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<3>::particle_particle_candidates
-                     &contact_pair_candidates,
-  const double        neighborhood_threshold,
+              &contact_pair_candidates,
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<3>::particle_index_tensor_map
+                     &particle_index_periodic_offset_map,
   const Tensor<1, 3> &combined_periodic_offset);
 
 template void
@@ -296,8 +330,10 @@ particle_particle_fine_search<3, ghost_particle_particle>(
   typename DEM::dem_data_structures<3>::adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<3>::particle_particle_candidates
-                     &contact_pair_candidates,
-  const double        neighborhood_threshold,
+              &contact_pair_candidates,
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<3>::particle_index_tensor_map
+                     &particle_index_periodic_offset_map,
   const Tensor<1, 3> &combined_periodic_offset);
 
 template void
@@ -307,8 +343,10 @@ particle_particle_fine_search<3, local_periodic_particle_particle>(
   typename DEM::dem_data_structures<3>::periodic_adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<3>::particle_particle_candidates
-                     &contact_pair_candidates,
-  const double        neighborhood_threshold,
+              &contact_pair_candidates,
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<3>::particle_index_tensor_map
+                     &particle_index_periodic_offset_map,
   const Tensor<1, 3> &combined_periodic_offset);
 
 template void
@@ -318,8 +356,10 @@ particle_particle_fine_search<3, ghost_periodic_particle_particle>(
   typename DEM::dem_data_structures<3>::periodic_adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<3>::particle_particle_candidates
-                     &contact_pair_candidates,
-  const double        neighborhood_threshold,
+              &contact_pair_candidates,
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<3>::particle_index_tensor_map
+                     &particle_index_periodic_offset_map,
   const Tensor<1, 3> &combined_periodic_offset);
 
 template void
@@ -329,6 +369,8 @@ particle_particle_fine_search<3, ghost_local_periodic_particle_particle>(
   typename DEM::dem_data_structures<3>::periodic_adjacent_particle_pairs
     &adjacent_particles,
   const typename DEM::dem_data_structures<3>::particle_particle_candidates
-                     &contact_pair_candidates,
-  const double        neighborhood_threshold,
+              &contact_pair_candidates,
+  const double neighborhood_threshold,
+  typename DEM::dem_data_structures<3>::particle_index_tensor_map
+                     &particle_index_periodic_offset_map,
   const Tensor<1, 3> &combined_periodic_offset);

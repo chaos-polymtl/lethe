@@ -534,6 +534,12 @@ private:
    * with a packed bed, loaded with another prm.
    */
   bool disable_position_integration;
+
+  /**
+   * @brief
+   */
+  typename dem_data_structures<dim>::particle_index_tensor_map
+    particle_index_periodic_offset_map;
 };
 
 #endif
