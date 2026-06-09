@@ -105,6 +105,7 @@ main(int argc, char **argv)
     std::vector<double>{0.5 * radius, radius},
     construct_quadrature(quadrature),
     0.0,
+    2,
     std::vector<double>{0.0, 0.25, 0.5, 0.75, 1.0});
 
   op.add_coupling(mortar_manager, 1, 2);
