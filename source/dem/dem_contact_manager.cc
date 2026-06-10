@@ -83,8 +83,6 @@ DEMContactManager<dim, PropertiesIndex>::update_contacts()
       // Update periodic particle-particle contacts in
       // local_local_periodic_adjacent_particles of fine search step with
       // local_contact_pair_periodic_candidates
-      std::cout << __LINE__ << " "
-                << local_local_periodic_adjacent_particles.size() << std::endl;
       for (unsigned int n_list = 0;
            n_list < local_local_contact_pair_periodic_candidates_lists.size();
            ++n_list)

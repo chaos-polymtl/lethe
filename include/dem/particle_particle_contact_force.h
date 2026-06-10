@@ -310,10 +310,10 @@ protected:
                         const Tensor<1, 3> &periodic_offset) &
   {
     if constexpr (dim == 3)
-      return (particle->get_location() - periodic_offset);
+      return (particle->get_location() + periodic_offset);
 
     if constexpr (dim == 2)
-      return point_nd_to_3d(particle->get_location()) - periodic_offset;
+      return point_nd_to_3d(particle->get_location()) + periodic_offset;
   }
 
   /**
@@ -1739,6 +1739,7 @@ private:
     //  No contact calculation if no adjacent particles
     if (adjacent_particles_list.empty())
       return;
+    // std::cout << __LINE__ << " " << __FILE__ << std::endl;
 
     // Define local variables which will be used within the contact calculation
     Tensor<1, 3> normal_unit_vector;

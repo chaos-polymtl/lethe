@@ -78,6 +78,8 @@ ParticleParticleContactForce<dim,
        n_list < local_local_periodic_adjacent_particles.size();
        ++n_list)
     {
+      //std::cout << " " << n_list << std::endl;
+
       auto local_local_periodic_adjacent_particles_n =
         local_local_periodic_adjacent_particles[n_list];
       auto local_ghost_periodic_adjacent_particles_n =

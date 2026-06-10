@@ -860,7 +860,7 @@ DEMSolver<dim, PropertiesIndex>::sort_particles_into_subdomains_and_cells()
       // Reserve the map
       particle_index_periodic_offset_map.clear();
       particle_index_periodic_offset_map.reserve(
-        particle_handler.n_global_particles());
+        particle_handler.get_max_local_particle_index());
 
       // Resize outcome containers
       contact_outcome.resize_interaction_containers(number_of_particles);

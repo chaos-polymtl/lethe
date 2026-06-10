@@ -188,6 +188,7 @@ particle_particle_fine_search(
               Tensor<1, dim> periodic_offset_applied_to_particle_two =
                 particle_index_periodic_offset_map[particle_two->get_id()];
 
+              std::cout << " Periodic offset: " << combined_periodic_offset << std::endl;
               Tensor<1, dim> total_offset =
                 periodic_offset_applied_to_particle_one -
                 combined_periodic_offset -
@@ -207,6 +208,7 @@ particle_particle_fine_search(
                         << periodic_offset_applied_to_particle_one << std::endl;
               std::cout << " Particle 2 applied periodic offset: "
                         << periodic_offset_applied_to_particle_two << std::endl;
+              std::cout << " Particle 2 relative position:" << particle_two_location + total_offset << std::endl;
               std::cout << " Periodic offset    : " << combined_periodic_offset
                         << std::endl;
               std::cout << " Square_distance    : " << square_distance
@@ -217,7 +219,7 @@ particle_particle_fine_search(
               if (square_distance < neighborhood_threshold)
                 {
                   std::cout << " True" << std::endl;
-                  // Save a translation that falls within the threshold
+                  //  Save a translation that falls within the threshold
                   Tensor<1, 3> offset_3d = [total_offset]() -> Tensor<1, 3> {
                     if constexpr (dim == 2)
                       return tensor_nd_to_3d(total_offset);
