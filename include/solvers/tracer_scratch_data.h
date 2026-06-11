@@ -1,10 +1,11 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_tracer_scratch_data_h
 #define lethe_tracer_scratch_data_h
 
 #include <core/ale.h>
+#include <core/lethe_grid_tools.h>
 
 #include <solvers/physical_properties_manager.h>
 #include <solvers/physics_scratch_data.h>
@@ -486,6 +487,58 @@ public:
       }
   }
 
+  /**
+   * @brief Renitialize the content of the scratch data for mortar
+   *
+   * @param[in] cell The cell over which the assembly is being carried.
+   * This cell must be compatible with the FE which is used to fill the
+   * FeValues.
+   *
+   * @param[in] mortar_parameters Parameters for the mortar method
+   */
+  void
+  reinit_mortar(const typename DoFHandler<dim>::active_cell_iterator &cell,
+                const Parameters::Mortar<dim> &mortar_parameters,
+                const double                  &time)
+  {
+    // Get updated rotor angular velocity
+    mortar_parameters.rotor_angular_velocity->set_time(time);
+    const double rotor_angular_velocity =
+      mortar_parameters.rotor_angular_velocity->value(Point<dim>());
+
+    // Apply prescribed rotor angular velocity only at rotor cells
+    // (material_id = 1)
+    double omega = 0.0;
+    if (cell->material_id() == 1)
+      omega = rotor_angular_velocity;
+
+    // The mortar implementation is not defined for more than two
+    // materials. Throw when running debug mode as a security measure to prevent
+    // this case
+    Assert(
+      cell->material_id() < 2,
+      ExcMessage(
+        "The material id in a cell was identified as equal or greater than 2, however the mortar implementation is not defined for more than two materials."));
+
+    // Compute rotor linear velocity at quadrature points
+    rotor_linear_velocity_values =
+      std::vector<Tensor<1, dim>>(this->n_q_points);
+    for (unsigned int q = 0; q < n_q_points; ++q)
+      {
+        // Shift quadrature point by the center of rotation
+        const auto p = fe_values_tracer.quadrature_point(q) -
+                       mortar_parameters.center_of_rotation;
+
+        // Compute terms of u_ale
+        rotor_linear_velocity_values[q] =
+          LetheGridTools::angular_to_linear_velocity(
+            omega, p, mortar_parameters.rotation_axis);
+
+        // Subtract u_ale from the advective velocity
+        velocity_values[q] -= rotor_linear_velocity_values[q];
+      }
+  }
+
   /** @brief Calculates the physical properties at a face
    */
   void
@@ -575,6 +628,11 @@ public:
   Table<2, double>         laplacian_phi;
   Table<2, Tensor<1, dim>> grad_phi;
 
+  /**
+   * Scratch components for the mortar method
+   */
+  bool                        gather_mortar;
+  std::vector<Tensor<1, dim>> rotor_linear_velocity_values;
 
   /**
    * Scratch component for the Navier-Stokes component
