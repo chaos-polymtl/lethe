@@ -2146,7 +2146,7 @@ NavierStokesBase<dim, VectorType, DofsType>::reinit_mortar_operators()
 
   // Create mortar coupling evaluator
   this->mortar_coupling_evaluator =
-    std::make_shared<NavierStokesCouplingEvaluation<dim, double>>(
+    std::make_shared<NavierStokesCouplingEvaluationSIPG<dim, double>>(
       *this->get_mapping(),
       *this->dof_handler,
       this->simulation_parameters.physical_properties_manager

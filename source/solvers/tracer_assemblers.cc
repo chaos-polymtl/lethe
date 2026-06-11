@@ -39,9 +39,9 @@ TracerAssemblerCore<dim>::assemble_matrix(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
-      const double         diffusivity     = diffusivity_vector[q];
-      const Tensor<1, dim> tracer_gradient = scratch_data.tracer_gradients[q];
-      const Tensor<1, dim> velocity        = scratch_data.velocity_values[q];
+      const double          diffusivity     = diffusivity_vector[q];
+      const Tensor<1, dim> &tracer_gradient = scratch_data.tracer_gradients[q];
+      const Tensor<1, dim> &velocity        = scratch_data.velocity_values[q];
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -102,22 +102,22 @@ TracerAssemblerCore<dim>::assemble_matrix(
 
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
-          const Tensor<1, dim> grad_phi_C_j = scratch_data.grad_phi[q][j];
-          const double laplacian_phi_C_j    = scratch_data.laplacian_phi[q][j];
+          const Tensor<1, dim> &grad_phi_C_j = scratch_data.grad_phi[q][j];
+          const double &laplacian_phi_C_j    = scratch_data.laplacian_phi[q][j];
           strong_jacobian_vec[q][j] +=
             velocity * grad_phi_C_j - diffusivity * laplacian_phi_C_j;
         }
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto phi_C_i      = scratch_data.phi[q][i];
-          const auto grad_phi_C_i = scratch_data.grad_phi[q][i];
+          const double         &phi_C_i      = scratch_data.phi[q][i];
+          const Tensor<1, dim> &grad_phi_C_i = scratch_data.grad_phi[q][i];
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              const Tensor<1, dim> grad_phi_C_j = scratch_data.grad_phi[q][j];
+              const Tensor<1, dim> &grad_phi_C_j = scratch_data.grad_phi[q][j];
 
-              // Weak form : - k * laplacian C +  u * gradC - f = 0
+              // Weak form : - D * laplacian C +  u * gradC - f = 0
               local_matrix(i, j) += (diffusivity * grad_phi_C_i * grad_phi_C_j +
                                      phi_C_i * velocity * grad_phi_C_j) *
                                     JxW;
@@ -171,12 +171,12 @@ TracerAssemblerCore<dim>::assemble_rhs(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
-      const double         diffusivity     = diffusivity_vector[q];
-      const Tensor<1, dim> tracer_gradient = scratch_data.tracer_gradients[q];
-      const Tensor<1, dim> previous_tracer_gradient =
+      const double          diffusivity     = diffusivity_vector[q];
+      const Tensor<1, dim> &tracer_gradient = scratch_data.tracer_gradients[q];
+      const Tensor<1, dim> &previous_tracer_gradient =
         scratch_data.previous_tracer_gradients[q];
-      const double         tracer_laplacian = scratch_data.tracer_laplacians[q];
-      const Tensor<1, dim> velocity         = scratch_data.velocity_values[q];
+      const double &tracer_laplacian = scratch_data.tracer_laplacians[q];
+      const Tensor<1, dim> &velocity = scratch_data.velocity_values[q];
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -225,10 +225,10 @@ TracerAssemblerCore<dim>::assemble_rhs(
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto phi_C_i      = scratch_data.phi[q][i];
-          const auto grad_phi_C_i = scratch_data.grad_phi[q][i];
+          const double         &phi_C_i      = scratch_data.phi[q][i];
+          const Tensor<1, dim> &grad_phi_C_i = scratch_data.grad_phi[q][i];
 
-          // rhs for : - k * laplacian C +  u * grad C - f = 0
+          // RHS for: - D * laplacian C +  u * grad C - f = 0
           local_rhs(i) -= (diffusivity * grad_phi_C_i * tracer_gradient +
                            phi_C_i * velocity * tracer_gradient -
                            scratch_data.source[q] * phi_C_i) *
@@ -271,24 +271,24 @@ TracerAssemblerDGCore<dim>::assemble_matrix(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
-      const double         diffusivity = diffusivity_vector[q];
-      const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
-      const double velocity_divergence = scratch_data.velocity_divergences[q];
+      const double          diffusivity = diffusivity_vector[q];
+      const Tensor<1, dim> &velocity    = scratch_data.velocity_values[q];
+      const double &velocity_divergence = scratch_data.velocity_divergences[q];
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto grad_phi_C_i = scratch_data.grad_phi[q][i];
-          const auto phi_C_i      = scratch_data.phi[q][i];
+          const double         &phi_C_i      = scratch_data.phi[q][i];
+          const Tensor<1, dim> &grad_phi_C_i = scratch_data.grad_phi[q][i];
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              const Tensor<1, dim> grad_phi_C_j = scratch_data.grad_phi[q][j];
-              const auto           phi_C_j      = scratch_data.phi[q][j];
+              const double         &phi_C_j      = scratch_data.phi[q][j];
+              const Tensor<1, dim> &grad_phi_C_j = scratch_data.grad_phi[q][j];
 
-              // Weak form of: - k * laplacian C + u * gradC - f = 0
+              // Weak form of: - D * laplacian C + u * gradC - f = 0
               // Note that the advection term has been weakened for it to appear
               // explicitly in the weak form as a boundary term.
               local_matrix(i, j) += (diffusivity * grad_phi_C_i * grad_phi_C_j -
@@ -327,21 +327,21 @@ TracerAssemblerDGCore<dim>::assemble_rhs(
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
-      const double         diffusivity     = diffusivity_vector[q];
-      const double         tracer_value    = scratch_data.tracer_values[q];
-      const Tensor<1, dim> tracer_gradient = scratch_data.tracer_gradients[q];
-      const Tensor<1, dim> velocity        = scratch_data.velocity_values[q];
-      const double velocity_divergence = scratch_data.velocity_divergences[q];
+      const double          diffusivity     = diffusivity_vector[q];
+      const double         &tracer_value    = scratch_data.tracer_values[q];
+      const Tensor<1, dim> &tracer_gradient = scratch_data.tracer_gradients[q];
+      const Tensor<1, dim> &velocity        = scratch_data.velocity_values[q];
+      const double &velocity_divergence = scratch_data.velocity_divergences[q];
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto phi_C_i      = scratch_data.phi[q][i];
-          const auto grad_phi_C_i = scratch_data.grad_phi[q][i];
+          const double         &phi_C_i      = scratch_data.phi[q][i];
+          const Tensor<1, dim> &grad_phi_C_i = scratch_data.grad_phi[q][i];
 
-          // rhs for : - k * laplacian C + u * grad C - f = 0
+          // RHS for: - D * laplacian C + u * grad C - f = 0
           local_rhs(i) -= (diffusivity * grad_phi_C_i * tracer_gradient -
                            grad_phi_C_i * velocity * tracer_value -
                            scratch_data.source[q] * phi_C_i) *
@@ -754,7 +754,7 @@ TracerAssemblerReaction<dim>::assemble_matrix(
       // It comes from the derivative -d/dC (k * C) = -(k + C*dk/dC).
       for (unsigned int j = 0; j < n_dofs; ++j)
         {
-          const auto phi_C_j = scratch_data.phi[q][j];
+          const double &phi_C_j = scratch_data.phi[q][j];
           strong_jacobian_vec[q][j] +=
             -(reaction_coeff +
               scratch_data.grad_tracer_reaction_prefactor[q] * C) *

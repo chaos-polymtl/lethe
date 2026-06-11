@@ -1765,12 +1765,12 @@ CouplingOperator<dim, Number>::add_system_matrix_entries(
 }
 
 
-/*-------------- ScalarCouplingEvaluation -------------------------------*/
+/*-------------- ScalarCouplingEvaluationSIPG -------------------------------*/
 template <int dim, int n_components, typename Number>
-ScalarCouplingEvaluation<dim, n_components, Number>::ScalarCouplingEvaluation(
-  const Mapping<dim>    &mapping,
-  const DoFHandler<dim> &dof_handler,
-  const unsigned int     first_selected_component)
+ScalarCouplingEvaluationSIPG<dim, n_components, Number>::
+  ScalarCouplingEvaluationSIPG(const Mapping<dim>    &mapping,
+                               const DoFHandler<dim> &dof_handler,
+                               const unsigned int     first_selected_component)
   : fe_sub(dof_handler.get_fe().base_element(
              dof_handler.get_fe()
                .component_to_base_index(first_selected_component)
@@ -1788,22 +1788,22 @@ ScalarCouplingEvaluation<dim, n_components, Number>::ScalarCouplingEvaluation(
 
 template <int dim, int n_components, typename Number>
 unsigned int
-ScalarCouplingEvaluation<dim, n_components, Number>::data_size() const
+ScalarCouplingEvaluationSIPG<dim, n_components, Number>::data_size() const
 {
   return n_components * 2;
 }
 
 template <int dim, int n_components, typename Number>
 const std::vector<unsigned int> &
-ScalarCouplingEvaluation<dim, n_components, Number>::get_relevant_dof_indices()
-  const
+ScalarCouplingEvaluationSIPG<dim, n_components, Number>::
+  get_relevant_dof_indices() const
 {
   return relevant_dof_indices;
 }
 
 template <int dim, int n_components, typename Number>
 void
-ScalarCouplingEvaluation<dim, n_components, Number>::local_reinit(
+ScalarCouplingEvaluationSIPG<dim, n_components, Number>::local_reinit(
   const typename Triangulation<dim>::cell_iterator &cell,
   const ArrayView<const Point<dim, Number>>        &points) const
 {
@@ -1812,7 +1812,7 @@ ScalarCouplingEvaluation<dim, n_components, Number>::local_reinit(
 
 template <int dim, int n_components, typename Number>
 void
-ScalarCouplingEvaluation<dim, n_components, Number>::local_evaluate(
+ScalarCouplingEvaluationSIPG<dim, n_components, Number>::local_evaluate(
   const CouplingEvaluationData<dim, Number> &data,
   const Vector<Number>                      &buffer,
   const unsigned int                         ptr_q,
@@ -1844,7 +1844,7 @@ ScalarCouplingEvaluation<dim, n_components, Number>::local_evaluate(
 
 template <int dim, int n_components, typename Number>
 void
-ScalarCouplingEvaluation<dim, n_components, Number>::local_integrate(
+ScalarCouplingEvaluationSIPG<dim, n_components, Number>::local_integrate(
   const CouplingEvaluationData<dim, Number> &data,
   Vector<Number>                            &buffer,
   const unsigned int                         ptr_q,
@@ -1898,13 +1898,13 @@ ScalarCouplingEvaluation<dim, n_components, Number>::local_integrate(
 }
 
 
-/*----------- NavierStokesCouplingEvaluation -------------------------*/
+/*----------- NavierStokesCouplingEvaluationSIPG -------------------------*/
 
 template <int dim, typename Number>
-NavierStokesCouplingEvaluation<dim, Number>::NavierStokesCouplingEvaluation(
-  const Mapping<dim>    &mapping,
-  const DoFHandler<dim> &dof_handler,
-  const double           kinematic_viscosity)
+NavierStokesCouplingEvaluationSIPG<dim, Number>::
+  NavierStokesCouplingEvaluationSIPG(const Mapping<dim>    &mapping,
+                                     const DoFHandler<dim> &dof_handler,
+                                     const double           kinematic_viscosity)
   : fe_sub_u(dof_handler.get_fe().base_element(
                dof_handler.get_fe().component_to_base_index(0).first),
              dim)
@@ -1929,21 +1929,22 @@ NavierStokesCouplingEvaluation<dim, Number>::NavierStokesCouplingEvaluation(
 
 template <int dim, typename Number>
 unsigned int
-NavierStokesCouplingEvaluation<dim, Number>::data_size() const
+NavierStokesCouplingEvaluationSIPG<dim, Number>::data_size() const
 {
   return 4 * dim;
 }
 
 template <int dim, typename Number>
 const std::vector<unsigned int> &
-NavierStokesCouplingEvaluation<dim, Number>::get_relevant_dof_indices() const
+NavierStokesCouplingEvaluationSIPG<dim, Number>::get_relevant_dof_indices()
+  const
 {
   return relevant_dof_indices;
 }
 
 template <int dim, typename Number>
 void
-NavierStokesCouplingEvaluation<dim, Number>::local_reinit(
+NavierStokesCouplingEvaluationSIPG<dim, Number>::local_reinit(
   const typename Triangulation<dim>::cell_iterator &cell,
   const ArrayView<const Point<dim, Number>>        &points) const
 {
@@ -1953,7 +1954,7 @@ NavierStokesCouplingEvaluation<dim, Number>::local_reinit(
 
 template <int dim, typename Number>
 void
-NavierStokesCouplingEvaluation<dim, Number>::local_evaluate(
+NavierStokesCouplingEvaluationSIPG<dim, Number>::local_evaluate(
   const CouplingEvaluationData<dim, Number> &data,
   const Vector<Number>                      &buffer,
   const unsigned int                         ptr_q,
@@ -1999,7 +2000,7 @@ NavierStokesCouplingEvaluation<dim, Number>::local_evaluate(
 
 template <int dim, typename Number>
 void
-NavierStokesCouplingEvaluation<dim, Number>::local_integrate(
+NavierStokesCouplingEvaluationSIPG<dim, Number>::local_integrate(
   const CouplingEvaluationData<dim, Number> &data,
   Vector<Number>                            &buffer,
   const unsigned int                         ptr_q,
@@ -2154,17 +2155,17 @@ template void
 CouplingOperator<3, double>::add_diagonal_entries(
   LinearAlgebra::distributed::Vector<float> &) const;
 
-template class ScalarCouplingEvaluation<1, 1, double>;
-template class ScalarCouplingEvaluation<1, 2, double>;
-template class ScalarCouplingEvaluation<2, 1, double>;
-template class ScalarCouplingEvaluation<2, 2, double>;
-template class ScalarCouplingEvaluation<2, 3, double>;
-template class ScalarCouplingEvaluation<3, 1, double>;
-template class ScalarCouplingEvaluation<3, 3, double>;
-template class ScalarCouplingEvaluation<3, 4, double>;
+template class ScalarCouplingEvaluationSIPG<1, 1, double>;
+template class ScalarCouplingEvaluationSIPG<1, 2, double>;
+template class ScalarCouplingEvaluationSIPG<2, 1, double>;
+template class ScalarCouplingEvaluationSIPG<2, 2, double>;
+template class ScalarCouplingEvaluationSIPG<2, 3, double>;
+template class ScalarCouplingEvaluationSIPG<3, 1, double>;
+template class ScalarCouplingEvaluationSIPG<3, 3, double>;
+template class ScalarCouplingEvaluationSIPG<3, 4, double>;
 
-template class NavierStokesCouplingEvaluation<2, double>;
-template class NavierStokesCouplingEvaluation<3, double>;
+template class NavierStokesCouplingEvaluationSIPG<2, double>;
+template class NavierStokesCouplingEvaluationSIPG<3, double>;
 
 template std::vector<unsigned int>
 compute_number_interface_cells<2>(

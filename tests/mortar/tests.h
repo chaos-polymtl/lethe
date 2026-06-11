@@ -503,10 +503,9 @@ public:
                const double                                  sip_factor = 1.0)
   {
     const std::shared_ptr<CouplingEvaluationBase<dim, Number>>
-      coupling_evaluator =
-        std::make_shared<ScalarCouplingEvaluation<dim, n_components, Number>>(
-          *matrix_free.get_mapping_info().mapping,
-          matrix_free.get_dof_handler());
+      coupling_evaluator = std::make_shared<
+        ScalarCouplingEvaluationSIPG<dim, n_components, Number>>(
+        *matrix_free.get_mapping_info().mapping, matrix_free.get_dof_handler());
 
     coupling_operator = std::make_shared<CouplingOperator<dim, Number>>(
       *matrix_free.get_mapping_info().mapping,
@@ -1286,10 +1285,9 @@ public:
                                                  rotate_pi);
 
     const std::shared_ptr<CouplingEvaluationBase<dim, Number>>
-      coupling_evaluator =
-        std::make_shared<ScalarCouplingEvaluation<dim, n_components, Number>>(
-          *matrix_free.get_mapping_info().mapping,
-          matrix_free.get_dof_handler());
+      coupling_evaluator = std::make_shared<
+        ScalarCouplingEvaluationSIPG<dim, n_components, Number>>(
+        *matrix_free.get_mapping_info().mapping, matrix_free.get_dof_handler());
 
     coupling_operator = std::make_shared<CouplingOperator<dim, Number>>(
       *matrix_free.get_mapping_info().mapping,

@@ -35,8 +35,8 @@
 /*
  * Implementation of tracer as an auxiliary physics.
  * Equation solved:
- * dC/dt +  u * gradC = k * div(grad C) + f
- * where C is the tracer concentration, k the diffusivity and f the forcing
+ * dC/dt +  u * gradC = D * div(grad C) + f
+ * where C is the tracer concentration, D the diffusivity and f the forcing
  */
 
 DeclException1(

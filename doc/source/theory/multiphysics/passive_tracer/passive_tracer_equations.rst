@@ -2,31 +2,31 @@
 Passive Tracer Equations
 =========================
 
-Lethe allows the simulation of a passive tracer, which is governed by the equation:
+Lethe allows the simulation of a passive tracer, which is governed by the following advection-diffusion equation:
 
 .. math::
-    \frac{\partial C}{\partial t} + \mathbf{u} \cdot \nabla C - \kappa \nabla^2 C + f = 0,
+    \frac{\partial C}{\partial t} + \mathbf{u} \cdot \nabla C - D \nabla^2 C + f = 0,
 
 where:
 
 * :math:`C` is the tracer concentration;
 * :math:`\mathbf{u}` is the velocity of the fluid;
 * :math:`\nabla` is the `del operator <https://en.wikipedia.org/wiki/Del>`_;
-* :math:`\kappa` is the diffusivity coefficient;
+* :math:`D` is the diffusivity coefficient;
 * :math:`f` is the tracer source term per unit of mass.
 
 .. important::
-    The tracer can be advected with the same velocity of the fluid, or a `drift velocity <../../../parameters/cfd/tracer_drift_velocity.html>`_ can be added. A reactive tracer feature also allows the prescription of a tracer consumption rate.
+    The tracer is advected by the fluid velocity, to which can be added a `drift velocity <../../../parameters/cfd/tracer_drift_velocity.html>`_. A reactive tracer feature also allows the prescription of a tracer consumption rate.
 
-To obtain the finite element discretization, we start from the strong form previously presented and integrate it over a domain :math:`\Omega` with boundary :math:`\Gamma` such that:
-
-.. math::
-    \int_{\Omega} \left( \frac{\partial C}{\partial t} + \mathbf{u} \cdot \nabla C - \kappa \nabla^2 C - f \right) \: d\Omega = 0.
-
-To obtain the corresponding weak form, we multiply the equation above by a test function :math:`q` and apply integration by parts on the Laplacian term:
+To obtain the finite element discretization, we start from the strong form previously presented, multiply it by a test function :math:`q`, then integrate it over the domain :math:`\Omega` with boundary :math:`\Gamma` such that:
 
 .. math::
-    F(C) := (q, \partial_t C)_{\Omega} + (q, \mathbf{u} \cdot \nabla C)_{\Omega} + (\nabla q, \kappa \: \nabla C)_{\Omega} - (q, f)_{\Omega} = 0.
+    \int_{\Omega} q \: \left( \frac{\partial C}{\partial t} + \mathbf{u} \cdot \nabla C - D \nabla^2 C - f \right) \: d\Omega = 0.
+
+To obtain the corresponding weak form, we then apply integration by parts on the Laplacian term:
+
+.. math::
+    F(C) := (q, \partial_t C)_{\Omega} + (q, \mathbf{u} \cdot \nabla C)_{\Omega} + (\nabla q, D \: \nabla C)_{\Omega} - (q, f)_{\Omega} = 0.
 
 To ensure that the integral is well defined in the domain :math:`\Omega`, we use appropriate solution spaces:
 
@@ -39,7 +39,7 @@ Both DG and CG tracer formulations are available in Lethe (see how to assign the
 The weak formulation is written as: find :math:`C \in \mathcal{C} (\Omega) \times (0, T]` such that 
 
 .. math::
-    (q, \partial_t C)_{\Omega} + (q, \mathbf{u} \cdot \nabla C)_{\Omega} + (\nabla q, \kappa \: \nabla C)_{\Omega} - (q, f)_{\Omega} = 0 \qquad \forall \: q \in \mathcal{Q}.
+    (q, \partial_t C)_{\Omega} + (q, \mathbf{u} \cdot \nabla C)_{\Omega} + (\nabla q, D \: \nabla C)_{\Omega} - (q, f)_{\Omega} = 0 \qquad \forall \: q \in \mathcal{Q}.
 
 ========================
 Stabilization Techniques

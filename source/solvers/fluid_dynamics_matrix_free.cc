@@ -1762,7 +1762,8 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
 
               // Coupling evaluator
               this->mg_operators[level]->mortar_coupling_evaluator_mf =
-                std::make_shared<NavierStokesCouplingEvaluation<dim, double>>(
+                std::make_shared<
+                  NavierStokesCouplingEvaluationSIPG<dim, double>>(
                   *level_mapping,
                   level_dof_handler,
                   physical_properties_manager->get_rheology()
@@ -3132,7 +3133,7 @@ FluidDynamicsMatrixFree<dim>::reinit_mortar_operators_mf()
 
   // Create mortar coupling evaluator
   this->system_operator->mortar_coupling_evaluator_mf =
-    std::make_shared<NavierStokesCouplingEvaluation<dim, double>>(
+    std::make_shared<NavierStokesCouplingEvaluationSIPG<dim, double>>(
       *this->get_mapping(),
       *this->dof_handler,
       this->physical_properties_manager->get_rheology()
