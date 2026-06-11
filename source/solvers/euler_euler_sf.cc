@@ -13,9 +13,10 @@
 template <int dim>
 EulerEulerOneWay<dim>::EulerEulerOneWay(
   CFDDEMSimulationParameters<dim> &fluid_parameters,
-  const SolidPhaseParameters      &solid_parameters)
+  const SolidPhaseParameters<dim> &solid_parameters)
   : FluidDynamicsVANS<dim>(fluid_parameters)
   , solid_solver(solid_parameters,
+                 this->simulation_control,
                  dynamic_cast<parallel::distributed::Triangulation<dim> &>(
                    *this->triangulation),
                  this->mpi_communicator)
@@ -250,24 +251,7 @@ EulerEulerOneWay<dim>::solve()
        */
       this->iterate();
 
-      //   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
-      //     {
-      //       const Point<dim> probe =
-      //         (dim == 2 ? Point<dim>(0.12, 0.5) : Point<dim>(0.12, 0.5,
-      //         0.5));
 
-      //       Vector<double> value(dim + 1);
-
-      //       VectorTools::point_value(this->dof_handler,
-      //                                this->present_solution,
-      //                                probe,
-      //                                value);
-
-      //       this->pcout << "Fluid AFTER solve at probe " << probe << " = ";
-      //       for (unsigned int d = 0; d < dim; ++d)
-      //         this->pcout << value[d] << " ";
-      //       this->pcout << std::endl;
-      //     }
 
       this->postprocess(false);
       this->finish_time_step_fd();

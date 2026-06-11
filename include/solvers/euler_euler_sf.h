@@ -89,7 +89,7 @@ class EulerEulerOneWay : public FluidDynamicsVANS<dim>
 {
 public:
   EulerEulerOneWay(CFDDEMSimulationParameters<dim> &fluid_parameters,
-                   const SolidPhaseParameters      &solid_parameters);
+                   const SolidPhaseParameters<dim> &solid_parameters);
 
   void
   solve() override;

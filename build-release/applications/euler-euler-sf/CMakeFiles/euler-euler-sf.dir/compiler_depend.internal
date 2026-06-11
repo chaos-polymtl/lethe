@@ -2400,7 +2400,10 @@ applications/euler-euler-sf/CMakeFiles/euler-euler-sf.dir/euler_euler_sf_main.cc
  /opt/lethe/include/solvers/euler_euler_prm.h
  /opt/lethe/include/solvers/euler_void_fraction.h
  /opt/lethe/include/solvers/solid_phase.h
+ /opt/lethe/include/core/boundary_conditions.h
  /opt/lethe/include/core/pvd_handler.h
+ /opt/lethe/include/core/simulation_control.h
+ /opt/lethe/include/core/bdf.h
  /opt/lethe/include/solvers/fluid_dynamics_matrix_based.h
  /opt/lethe/include/core/exceptions.h
  /opt/lethe/include/core/vector.h
@@ -2427,8 +2430,6 @@ applications/euler-euler-sf/CMakeFiles/euler-euler-sf.dir/euler_euler_sf_main.cc
  /usr/include/nvector/nvector_serial.h
  /usr/include/sundials/sundials_math.h
  /opt/lethe/include/core/newton_non_linear_solver.h
- /opt/lethe/include/core/simulation_control.h
- /opt/lethe/include/core/bdf.h
  /opt/lethe/include/solvers/flow_control.h
  /opt/lethe/include/solvers/multiphysics_interface.h
  /opt/lethe/include/core/parameters_multiphysics.h
@@ -3186,7 +3187,6 @@ applications/euler-euler-sf/CMakeFiles/euler-euler-sf.dir/euler_euler_sf_main.cc
  /opt/lethe/include/solvers/auxiliary_physics.h
  /opt/lethe/include/solvers/simulation_parameters.h
  /opt/lethe/include/core/ale.h
- /opt/lethe/include/core/boundary_conditions.h
  /opt/lethe/include/core/manifolds.h
  /usr/local/include/deal.II/numerics/data_postprocessor.h
  /usr/local/include/deal.II/numerics/data_component_interpretation.h

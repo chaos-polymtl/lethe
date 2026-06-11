@@ -40,7 +40,7 @@ main(int argc, char *argv[])
 
       ParameterHandler prm;
 
-      SolidPhaseParameters::declare_parameters(prm);
+      SolidPhaseParameters<dim>::declare_parameters(prm);
 
       CFDDEMSimulationParameters<dim> fluid_parameters;
 
@@ -92,7 +92,7 @@ main(int argc, char *argv[])
 
       prm.parse_input(prm_file);
 
-      SolidPhaseParameters solid_parameters;
+      SolidPhaseParameters<dim> solid_parameters;
       solid_parameters.parse_parameters(prm);
 
       fluid_parameters.parse(prm);
