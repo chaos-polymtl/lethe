@@ -986,28 +986,16 @@ Parameters::TimeHarmonicMaxwell<dim>::parse_parameters(
                     "Invalid electromagnetic scaling type. "
                     "Options are <none|electric field|magnetic field|power>."));
 
-    // By default, the electric field dimensionality is in V/m, but if the user
-    // changed the dimensionality of the problem, we need to change the
-    // dimensionality of the electric field accordingly to ensure that the
-    // correct physical solution is obtained in dimensional units. This needs to
-    // be apply to the power later on as well if the user chooses power-based
-    // scaling which we cannot make dimensionless yet to recover the amplitude
-    // scaling.
-    TimeHarmonicMaxwell::electric_field_dimensionality =
-      dimensions.electric_amplitude_scaling;
-    // The same applies for the magnetic field, which is in A/m by default.
-    TimeHarmonicMaxwell::magnetic_field_dimensionality =
-      dimensions.magnetic_amplitude_scaling;
 
-    // If the choose other scaling, we can already apply the dimensionality to
-    // the amplitude provided.
+
+    // The user always provides the electric and magnetic field amplitudes in
+    // dimensional units (V/m and A/m respectively). The scaling factors will be
+    // applied in the time_harmonic_maxwell class.
     TimeHarmonicMaxwell::electric_field_amplitude =
-      prm.get_double("electric field amplitude") *
-      TimeHarmonicMaxwell::electric_field_dimensionality;
+      prm.get_double("electric field amplitude");
 
     TimeHarmonicMaxwell::magnetic_field_amplitude =
-      prm.get_double("magnetic field amplitude") *
-      TimeHarmonicMaxwell::magnetic_field_dimensionality;
+      prm.get_double("magnetic field amplitude");
 
     TimeHarmonicMaxwell::number_of_waveguide_inlets =
       prm.get_integer("number of waveguide inlets");

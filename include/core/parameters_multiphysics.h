@@ -491,21 +491,16 @@ namespace Parameters
     // of the electromagnetic wave to the power injected in the waveguide
     std::vector<double> waveguide_power;
 
-    // Electric field amplitude used for the normalization of the solution
+    // Electric field amplitude used for the normalization of the solution (in
+    // V/m)
     double electric_field_amplitude;
 
-    // Magnetic field amplitude used for the normalization of the solution
+    // Magnetic field amplitude used for the normalization of the solution (in
+    // A/m)
     double magnetic_field_amplitude;
 
     // Type of scaling to apply to the solution after solving the linear system
     Parameters::ElectromagneticScalingType electromagnetic_scaling_type;
-
-    // When the scaling is applied, we need to know the dimensionality of the
-    // electric and magnetic fields to be able to recover the physical solution
-    // from the dimensionless one. Those parameters are used for that purpose
-    // and stores the value obtain from the dimensionality class.
-    double electric_field_dimensionality;
-    double magnetic_field_dimensionality;
 
     // Waveguide mode to simulate (TE|TM)
     std::vector<Parameters::WaveguideMode> waveguide_mode;
