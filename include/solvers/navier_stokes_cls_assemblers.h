@@ -197,7 +197,7 @@ public:
    * \f$\delta\f$ a tolerance to avoid division by zero in the solid, and
    * \f$\boldsymbol{u}\f$ the velocity.
    *
-   * @param[in] carman_kozeny_permeability_area Permeability a area of the solid
+   * @param[in] carman_kozeny_permeability_area Permeability area of the solid
    * (pseudo-porous media).
    * @param[in] carman_kozeny_tolerance Tolerance to avoid division by zero in
    * the solid.

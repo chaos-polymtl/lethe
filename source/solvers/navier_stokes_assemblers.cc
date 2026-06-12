@@ -2005,7 +2005,7 @@ PhaseChangeCarmanKozenyAssembler<dim>::assemble_matrix(
       // Compute penalty term
       const double carman_kozeny_penalty =
         kinematic_viscosity * carman_kozeny_permeability_area_inv *
-        Utilities::fixed_power<2>(1 + liquid_fraction) *
+        Utilities::fixed_power<2>(1 - liquid_fraction) *
         carman_kozeny_penalty_denominator_inv;
 
       strong_residual[q] += carman_kozeny_penalty * velocities[q];
@@ -2072,7 +2072,7 @@ PhaseChangeCarmanKozenyAssembler<dim>::assemble_rhs(
       // Compute penalty term
       const double carman_kozeny_penalty =
         kinematic_viscosity * carman_kozeny_permeability_area_inv *
-        Utilities::fixed_power<2>(1 + liquid_fraction) *
+        Utilities::fixed_power<2>(1 - liquid_fraction) *
         carman_kozeny_penalty_denominator_inv;
 
       strong_residual[q] += carman_kozeny_penalty * velocities[q];

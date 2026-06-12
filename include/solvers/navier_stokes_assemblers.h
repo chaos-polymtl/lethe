@@ -17,7 +17,7 @@
 
 DeclExceptionMsg(
   PhaseChangePermeabilityModelRequiresTemperature,
-  "Using the phase change permeability models require to run a multiphysics simulation with the heat transfer solver enabled.");
+  "Using a phase change permeability model requires running a multiphysics simulation with the heat transfer solver enabled.");
 
 DeclExceptionMsg(
   PhaseChangePermeabilityModelDoesNotSupportCHN,
@@ -273,7 +273,7 @@ public:
  * @brief Class that assembles the transient time arising from BDF time
  * integration for the Navier Stokes equations. For example, if a BDF1 scheme is
  * chosen, the following is assembled
- * \f$\frac{\mathbf{u}^{t+\Delta t}-\mathbf{u}^{t}{\Delta t}\f$
+ * \f$\frac{\mathbf{u}^{t+\Delta t}-\mathbf{u}^{t}}{\Delta t}\f$
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -776,7 +776,7 @@ public:
    * \f$\delta\f$ a tolerance to avoid division by zero in the solid, and
    * \f$\boldsymbol{u}\f$ the velocity.
    *
-   * @param[in] carman_kozeny_permeability_area Permeability a area of the solid
+   * @param[in] carman_kozeny_permeability_area Permeability area of the solid
    * (pseudo-porous media).
    * @param[in] carman_kozeny_tolerance Tolerance to avoid division by zero in
    * the solid.

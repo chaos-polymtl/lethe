@@ -3785,11 +3785,8 @@ namespace Parameters
         prm.get_bool("enable Darcy multiply by density");
 
       AssertThrow(
-        !(enable_darcy_multiply_by_density &&
-          permeability_model == PermeabilityModel::none) &&
-          !(enable_darcy_multiply_by_density &&
-            permeability_model ==
-              PermeabilityModel::carman_kozeny_phase_change),
+        (!enable_darcy_multiply_by_density ||
+         permeability_model == PermeabilityModel::darcy_phase_change),
         ExcMessage(
           "Inconsistency in parameters, 'enable Darcy multiply by density' is set to 'true', but 'permeability model' is not set to 'darcy phase change'."));
 

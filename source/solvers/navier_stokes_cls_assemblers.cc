@@ -488,11 +488,8 @@ PhaseChangeDarcyCLSAssembler<dim>::assemble_matrix(
   auto &strong_jacobian = copy_data.strong_jacobian;
 
   const unsigned int  number_of_fluids = phase_change_parameters_vector.size();
-  std::vector<double> liquid_fractions;
-  std::vector<double> darcy_penalties;
-  liquid_fractions.reserve(number_of_fluids);
-  darcy_penalties.reserve(number_of_fluids);
-
+  std::vector<double> liquid_fractions(number_of_fluids);
+  std::vector<double> darcy_penalties(number_of_fluids);
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -508,17 +505,17 @@ PhaseChangeDarcyCLSAssembler<dim>::assemble_matrix(
       // used to calculate the liquid fractions avoiding if conditions.
       for (unsigned int p = 0; p < number_of_fluids; p++)
         {
-          liquid_fractions.emplace_back(
-            (std::min(1.,
-                      std::max((current_temperature -
-                                phase_change_parameters_vector[p].T_solidus) /
-                                 (phase_change_parameters_vector[p].T_liquidus -
-                                  phase_change_parameters_vector[p].T_solidus),
-                               0.))));
-          darcy_penalties.emplace_back(
+          liquid_fractions[p] =
+            std::min(1.,
+                     std::max((current_temperature -
+                               phase_change_parameters_vector[p].T_solidus) /
+                                (phase_change_parameters_vector[p].T_liquidus -
+                                 phase_change_parameters_vector[p].T_solidus),
+                              0.));
+          darcy_penalties[p] =
             phase_change_parameters_vector[p].penalty_l * liquid_fractions[p] +
             (1. - liquid_fractions[p]) *
-              phase_change_parameters_vector[p].penalty_s);
+              phase_change_parameters_vector[p].penalty_s;
         }
 
       // For a CLS two-fluid system, the global Darcy permeability coefficient
@@ -547,8 +544,6 @@ PhaseChangeDarcyCLSAssembler<dim>::assemble_matrix(
               local_matrix(i, j) += darcy_penalty * phi_u_i * phi_u_j * JxW;
             }
         }
-      liquid_fractions.clear();
-      darcy_penalties.clear();
     }
 }
 
@@ -572,10 +567,8 @@ PhaseChangeDarcyCLSAssembler<dim>::assemble_rhs(
   auto &strong_residual = copy_data.strong_residual;
 
   const unsigned int  number_of_fluids = phase_change_parameters_vector.size();
-  std::vector<double> liquid_fractions;
-  std::vector<double> darcy_penalties;
-  liquid_fractions.reserve(number_of_fluids);
-  darcy_penalties.reserve(number_of_fluids);
+  std::vector<double> liquid_fractions(number_of_fluids);
+  std::vector<double> darcy_penalties(number_of_fluids);
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -593,17 +586,17 @@ PhaseChangeDarcyCLSAssembler<dim>::assemble_rhs(
       // used to calculate the liquid fractions avoiding if conditions.
       for (unsigned int p = 0; p < number_of_fluids; p++)
         {
-          liquid_fractions.emplace_back(
-            (std::min(1.,
-                      std::max((current_temperature -
-                                phase_change_parameters_vector[p].T_solidus) /
-                                 (phase_change_parameters_vector[p].T_liquidus -
-                                  phase_change_parameters_vector[p].T_solidus),
-                               0.))));
-          darcy_penalties.emplace_back(
+          liquid_fractions[p] =
+            std::min(1.,
+                     std::max((current_temperature -
+                               phase_change_parameters_vector[p].T_solidus) /
+                                (phase_change_parameters_vector[p].T_liquidus -
+                                 phase_change_parameters_vector[p].T_solidus),
+                              0.));
+          darcy_penalties[p] =
             phase_change_parameters_vector[p].penalty_l * liquid_fractions[p] +
             (1. - liquid_fractions[p]) *
-              phase_change_parameters_vector[p].penalty_s);
+              phase_change_parameters_vector[p].penalty_s;
         }
 
       // For a CLS two-fluid system, the global Darcy permeability coefficient
@@ -653,10 +646,9 @@ PhaseChangeCarmanKozenyCLSAssembler<dim>::assemble_matrix(
   auto &strong_residual = copy_data.strong_residual;
   auto &strong_jacobian = copy_data.strong_jacobian;
 
-  const unsigned int number_of_fluids = phase_change_parameters_vector.size();
-  std::vector<double>
-    liquid_fraction_factors; // (1-alpha_{i_l})^2 * (alpha_{i,l}^3 + tol)^{-1}
-  liquid_fraction_factors.reserve(number_of_fluids);
+  const unsigned int  number_of_fluids = phase_change_parameters_vector.size();
+  std::vector<double> liquid_fraction_factors(
+    number_of_fluids); // (1-alpha_{i_l})^2 * (alpha_{i,l}^3 + tol)^{-1}
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -687,8 +679,8 @@ PhaseChangeCarmanKozenyCLSAssembler<dim>::assemble_matrix(
                  carman_kozeny_tolerance);
 
           // Compute liquid fraction factor
-          liquid_fraction_factors.emplace_back(
-            Utilities::fixed_power<2>(1 + liquid_fraction) * denominator_inv);
+          liquid_fraction_factors[p] =
+            Utilities::fixed_power<2>(1 - liquid_fraction) * denominator_inv;
         }
 
       // For a CLS two-fluid system, the global Carman-Kozeny penalty term
@@ -718,7 +710,6 @@ PhaseChangeCarmanKozenyCLSAssembler<dim>::assemble_matrix(
                 carman_kozeny_penalty * phi_u_i * phi_u_j * JxW;
             }
         }
-      liquid_fraction_factors.clear();
     }
 }
 
@@ -741,10 +732,9 @@ PhaseChangeCarmanKozenyCLSAssembler<dim>::assemble_rhs(
   auto &local_rhs       = copy_data.local_rhs;
   auto &strong_residual = copy_data.strong_residual;
 
-  const unsigned int number_of_fluids = phase_change_parameters_vector.size();
-  std::vector<double>
-    liquid_fraction_factors; // (1-alpha_{i_l})^2 * (alpha_{i,l}^3 + tol)^{-1}
-  liquid_fraction_factors.reserve(number_of_fluids);
+  const unsigned int  number_of_fluids = phase_change_parameters_vector.size();
+  std::vector<double> liquid_fraction_factors(
+    number_of_fluids); // (1-alpha_{i_l})^2 * (alpha_{i,l}^3 + tol)^{-1}
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -775,8 +765,8 @@ PhaseChangeCarmanKozenyCLSAssembler<dim>::assemble_rhs(
                  carman_kozeny_tolerance);
 
           // Compute liquid fraction factor
-          liquid_fraction_factors.emplace_back(
-            Utilities::fixed_power<2>(1 + liquid_fraction) * denominator_inv);
+          liquid_fraction_factors[p] =
+            Utilities::fixed_power<2>(1 - liquid_fraction) * denominator_inv;
         }
 
       // For a CLS two-fluid system, the global Carman-Kozeny penalty term
@@ -833,7 +823,7 @@ GLSNavierStokesCLSAssemblerSTF<dim>::assemble_rhs(
       // Surface tension coefficient
       const double surface_tension_coef = scratch_data.surface_tension[q];
 
-      // Gather PIG and curvature values
+      // Gather curvature value
       const double &curvature_value = scratch_data.curvature_values[q];
 
       // Gather phase indicator gradient

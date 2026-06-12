@@ -5,7 +5,8 @@
 # DESCRIPTION:
 # This test checks that the Carman-Kozeny permeabilty source term imposes stasis
 # adequately in the solid phase for phase change simulation.
-# This simulates the 2D development of a Couette flow.
+# This simulates the transient development of a 2D Couette flow between parallel
+# plates.
 #------------------------------------------------------------------------------
 
 # Listing of Parameters
@@ -20,8 +21,8 @@ set dimension = 2
 subsection simulation control
   set method           = bdf2
   set output frequency = 0
-  set time end         = 0.05
-  set time step        = 0.01
+  set time end         = 20
+  set time step        = 2
 end
 
 #---------------------------------------------------
@@ -31,14 +32,10 @@ end
 subsection physical properties
   set number of fluids = 1
   subsection fluid 0
-    set rheological model   = phase_change
-    set specific heat model = phase_change
     subsection phase change
       set latent enthalpy      = 0
       set liquidus temperature = 0.51
       set solidus temperature  = 0.49
-      set specific heat liquid = 1
-      set specific heat solid  = 1
     end
   end
 end
@@ -50,7 +47,7 @@ end
 subsection analytical solution
   set enable = true
   subsection uvwp
-    set Function expression = if(y>=0.5, 0, 2*(0.25-y)) ; 0 ; 0
+    set Function expression = if(y>=0.25, 0, (-4*y + 1) ); 0 ; 0
   end
 end
 
@@ -60,8 +57,8 @@ end
 
 subsection velocity source
   set permeability model               = carman-kozeny phase change
-  set Carman-Kozeny permeability area  = 1e-2
-  set Carman-Kozeny division tolerance = 1e-4
+  set Carman-Kozeny permeability area  = 1e-6
+  set Carman-Kozeny division tolerance = 1e-5
 end
 
 #---------------------------------------------------
