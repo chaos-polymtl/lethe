@@ -692,6 +692,7 @@ namespace Parameters
           "1.",
           Patterns::Double(),
           "Maximum position offset when insertion of particles");
+
         prm.declare_entry(
           "insertion prn seed",
           "1",
@@ -705,6 +706,17 @@ namespace Parameters
                           "0.0, 0.0, 0.0",
                           Patterns::List(Patterns::Double()),
                           "Initial angular velocity (x, y, z)");
+        // Packed
+        prm.declare_entry(
+          "displacement factor",
+          "0.05",
+          Patterns::Double(0.0, 0.5),
+          "Factor used to shift the particles location when using "
+          "the \"packed\" insertion method. The shift applied to a particle,"
+          " when a contact occur with an other particle, is proportional  to its"
+          "diameter times this factor.");
+
+        // Multi-physics
         auto initial_temperature_function_parsed =
           std::make_shared<Functions::ParsedFunction<dim>>(1);
         prm.enter_subsection("initial temperature function");
@@ -884,6 +896,7 @@ namespace Parameters
         distance_threshold = prm.get_double("insertion distance threshold");
         insertion_maximum_offset = prm.get_double("insertion maximum offset");
         seed_for_insertion       = prm.get_integer("insertion prn seed");
+        displacement_factor      = prm.get_double("displacement factor");
 
         initial_vel = value_string_to_tensor<3>(prm.get("initial velocity"));
         initial_omega =
