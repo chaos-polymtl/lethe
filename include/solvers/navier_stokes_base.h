@@ -893,7 +893,7 @@ protected:
   // Mortar coupling manager and operator
   std::shared_ptr<MortarManagerBase<dim>>        mortar_manager;
   std::shared_ptr<CouplingOperator<dim, double>> mortar_coupling_operator;
-  std::shared_ptr<NavierStokesCouplingEvaluation<dim, double>>
+  std::shared_ptr<NavierStokesCouplingEvaluationSIPG<dim, double>>
     mortar_coupling_evaluator;
 
   // Mapping cache used in rotor mesh rotation in mortar method

@@ -478,7 +478,7 @@ public:
    */
   std::shared_ptr<MortarManagerBase<dim>>        mortar_manager_mf;
   std::shared_ptr<CouplingOperator<dim, double>> mortar_coupling_operator_mf;
-  std::shared_ptr<NavierStokesCouplingEvaluation<dim, double>>
+  std::shared_ptr<NavierStokesCouplingEvaluationSIPG<dim, double>>
     mortar_coupling_evaluator_mf;
 
 protected:

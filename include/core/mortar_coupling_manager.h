@@ -1098,15 +1098,15 @@ private:
 
 
 template <int dim, int n_components, typename Number>
-class CouplingEvaluationSIPG : public CouplingEvaluationBase<dim, Number>
+class ScalarCouplingEvaluationSIPG : public CouplingEvaluationBase<dim, Number>
 {
 public:
   using FEPointIntegrator = FEPointEvaluation<n_components, dim, dim, Number>;
   using value_type        = typename FEPointIntegrator::value_type;
 
-  CouplingEvaluationSIPG(const Mapping<dim>    &mapping,
-                         const DoFHandler<dim> &dof_handler,
-                         const unsigned int     first_selected_component = 0);
+  ScalarCouplingEvaluationSIPG(const Mapping<dim>    &mapping,
+                               const DoFHandler<dim> &dof_handler,
+                               const unsigned int first_selected_component = 0);
 
   unsigned int
   data_size() const override;
@@ -1146,7 +1146,7 @@ public:
 };
 
 template <int dim, typename Number>
-class NavierStokesCouplingEvaluation
+class NavierStokesCouplingEvaluationSIPG
   : public CouplingEvaluationBase<dim, Number>
 {
 public:
@@ -1161,14 +1161,14 @@ public:
    * @param[in] dof_handler DoFHandler associated to the triangulation
    * @param[in] kinematic_vicosity Kinematic viscosity
    */
-  NavierStokesCouplingEvaluation(const Mapping<dim>    &mapping,
-                                 const DoFHandler<dim> &dof_handler,
-                                 const double           kinematic_viscosity);
+  NavierStokesCouplingEvaluationSIPG(const Mapping<dim>    &mapping,
+                                     const DoFHandler<dim> &dof_handler,
+                                     const double kinematic_viscosity);
 
   /**
    * @brief Default destructor
    */
-  virtual ~NavierStokesCouplingEvaluation() = default;
+  virtual ~NavierStokesCouplingEvaluationSIPG() = default;
 
   unsigned int
   data_size() const override;

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -90,8 +90,8 @@ public:
     // create coupling evaluator
     const std::shared_ptr<CouplingEvaluationBase<dim, double>>
       mortar_coupling_evaluator =
-        std::make_shared<CouplingEvaluationSIPG<dim, 1, double>>(mapping,
-                                                                 dof_handler);
+        std::make_shared<ScalarCouplingEvaluationSIPG<dim, 1, double>>(
+          mapping, dof_handler);
 
     // create coupling operator
     mortar_coupling_operator =
