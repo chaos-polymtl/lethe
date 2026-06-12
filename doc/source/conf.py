@@ -18,8 +18,8 @@
 # -- Project information -----------------------------------------------------
 
 project = 'Lethe'
-copyright = '2021-2025, Lethe'
-author = 'Lethe-CFD'
+copyright = '2021-2026, Lethe'
+author = 'CHAOS Laboratory'
 
 # The full version, including alpha/beta/rc tags
 # release = 'v0.1'
