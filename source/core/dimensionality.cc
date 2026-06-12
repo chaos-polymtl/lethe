@@ -14,7 +14,7 @@ namespace Parameters
     const double M     = mass;
     const double theta = temperature;
     const double T     = time;
-    const double A     = electric_current;
+    const double I     = electric_current;
 
     density_scaling                  = 1. * L * L * L / M;
     specific_gas_constant_scaling    = 1. / L / L * T * T * theta;
@@ -35,10 +35,10 @@ namespace Parameters
                    // necessary to rescale by time because in the time harmonic
                    // form the time scale cancels out as the solution is
                    // independent of it.
-    electric_amplitude_scaling  = 1 * A * T * T * T / M / L;
-    magnetic_amplitude_scaling  = 1 * L / A;
-    vacuum_permittivity_scaling = 1 * M * L * L * L / A / A / T / T / T / T;
-    vacuum_permeability_scaling = 1 * T * T * A * A / M / L;
+    electric_amplitude_scaling  = 1 * I * T * T * T / M / L;
+    magnetic_amplitude_scaling  = 1 * L / I;
+    vacuum_permittivity_scaling = 1 * M * L * L * L / I / I / T / T / T / T;
+    vacuum_permeability_scaling = 1 * T * T * I * I / M / L;
   }
 
   void
