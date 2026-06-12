@@ -24,11 +24,11 @@ ParticlesForceChains<dim,
                      PropertiesIndex,
                      contact_model,
                      rolling_friction_model>::
-  ParticlesForceChains(const DEMSolverParameters<dim> &dem_parameters_in)
+  ParticlesForceChains(const DEMSolverParameters<dim> &dem_parameters)
   : ParticleParticleContactForce<dim,
                                  PropertiesIndex,
                                  contact_model,
-                                 rolling_friction_model>(dem_parameters_in)
+                                 rolling_friction_model>(dem_parameters)
 {}
 
 template <int dim,

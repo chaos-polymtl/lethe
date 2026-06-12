@@ -1511,6 +1511,16 @@ private:
     normal_force += cohesive_term * normal_unit_vector;
   }
 
+  /**
+   * @brief
+   *
+   * @param[in,out] contact_info A container that contains the required
+   * information for calculation of the contact force for a particle pair in
+   * contact.
+   * @param normal_unit_vector
+   * @param normal_overlap
+   *
+   */
   inline void
   shift_particle_using_normal_overlap(
     particle_particle_contact_info<dim> &contact_info,
@@ -1539,13 +1549,25 @@ private:
     if constexpr (dim == 3)
       {
         particle_one_new_position =
-          particle_one_position - 0.5005 * normal_overlap * normal_unit_vector;
+          particle_one_position -
+          displacement_factor *
+            particle_one->get_properties()[PropertiesIndex::dp] *
+            normal_unit_vector;
         particle_two_new_position =
-          particle_two_position + 0.5005 * normal_overlap * normal_unit_vector;
+          particle_two_position +
+          displacement_factor *
+            particle_two->get_properties()[PropertiesIndex::dp] *
+            normal_unit_vector;
       }
 
-    particle_one->set_location(particle_one_new_position);
-    particle_two->set_location(particle_two_new_position);
+    auto cell_one = particle_one->get_surrounding_cell();
+    auto cell_two = particle_two->get_surrounding_cell();
+
+    if (cell_one->is_locally_owned())
+      particle_one->set_location(particle_one_new_position);
+
+    if (cell_two->is_locally_owned())
+      particle_two->set_location(particle_two_new_position);
   }
 
   /**
@@ -2101,6 +2123,8 @@ private:
   std::vector<double> thermal_conductivity_particle;
   std::vector<double> gas_parameter_m;
   double              thermal_conductivity_gas;
+
+  const double displacement_factor;
 };
 
 #endif

@@ -495,6 +495,9 @@ namespace Parameters
       /// Random seed for particle insertion.
       int seed_for_insertion;
 
+      /// Displacement factor used for the packed insertion method.
+      double displacement_factor;
+
       /**
        * @brief Declare the parameters in the parameter handler.
        *

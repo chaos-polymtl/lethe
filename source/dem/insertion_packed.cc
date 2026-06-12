@@ -75,6 +75,10 @@ InsertionPacked<dim, PropertiesIndex>::insert(
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim>                  &dem_parameters)
 {
+  // We only insert once with this method.
+  if (particle_handler.n_global_particles() != 0)
+    return;
+
   MPI_Comm           communicator = triangulation.get_mpi_communicator();
   ConditionalOStream pcout(std::cout,
                            Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
@@ -95,14 +99,21 @@ InsertionPacked<dim, PropertiesIndex>::insert(
   insertion_points_on_proc.reserve(this->inserted_this_step_this_proc);
 
   // 1. Initialize the Random Number Generator using the configured seed
-  std::mt19937 rng(dem_parameters.insertion_info.seed_for_insertion);
   std::uniform_real_distribution<double> distribution(0.0, 1.0);
 
+
+  // We insert all the particle for every type all at once.
   for (unsigned int particle_type = 0;
        particle_type <
        dem_parameters.lagrangian_physical_properties.particle_type_number;
        particle_type++)
     {
+      // We add the particle type, otherwise the position of the Nth particle
+      // for type 0 and 1 will be the exact same.
+      std::mt19937 rng(dem_parameters.insertion_info.seed_for_insertion +
+                       this_mpi_process * n_mpi_process + particle_type);
+
+
       this->inserted_this_step =
         dem_parameters.lagrangian_physical_properties.number.at(particle_type);
 
