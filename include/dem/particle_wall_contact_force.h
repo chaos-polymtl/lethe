@@ -70,6 +70,32 @@ public:
     const double dt,
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) = 0;
+
+
+  /**
+   * @brief
+   *
+   * @param
+   */
+  unsigned int
+  get_number_of_contacts() const
+  {
+    return n_contact;
+  }
+
+  /**
+   * @brief
+   *
+   * @param
+   */
+  void
+  reset_number_of_contacts()
+  {
+    n_contact = 0;
+  }
+
+protected:
+  unsigned int n_contact = 0;
 };
 
 /**
@@ -1071,6 +1097,7 @@ private:
     // Contact particle-wall + constant cohesive force.
     if (normal_overlap > 0.)
       {
+        ++this->n_contact;
         // i is the particle, j is the wall.
         // there is a minus sign in front of the normal_vector to respect the
         // convention (i -> j), the forces are thus calculated on the wall
