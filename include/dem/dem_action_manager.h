@@ -133,6 +133,20 @@ public:
     mobility_status_reset_trigger = true;
   }
 
+
+  /**
+   * @brief Flag that the sparse contacts is disabled and trigger a
+   * mobility status reset to initialize the containers.
+   */
+  inline void
+  set_sparse_contacts_disabled()
+  {
+    this->sparse_contacts_enabled = false;
+
+    // Allowing the full broad search without mobility status at first iteration
+    mobility_status_reset_trigger = false;
+  }
+
   /**
    * @brief Check if the sparse contacts is enabled to perform some actions
    * that are not handled by triggers of the action manager.

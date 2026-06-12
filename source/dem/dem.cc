@@ -205,16 +205,37 @@ template <int dim, typename PropertiesIndex>
 void
 DEMSolver<dim, PropertiesIndex>::setup_functions_and_pointers()
 {
-  contact_detection_iteration_check_function =
-    set_contact_search_iteration_function();
-
   // Set insertion object type before the restart because the restart only
   // rebuilds the member of the insertion object
   insertion_object =
     set_insertion_type<dim, PropertiesIndex>(size_distribution_object_container,
                                              triangulation,
                                              parameters,
-                                             maximum_particle_diameter);
+                                             maximum_particle_diameter,
+                                             is_packed_insertion_method);
+
+  if (is_packed_insertion_method)
+    {
+      disable_position_integration = true;
+      parameters.model_parameters.particle_particle_contact_force_model =
+        ParticleParticleContactForceModel::shift;
+      parameters.model_parameters.particle_wall_contact_force_method =
+        ParticleWallContactForceModel::shift;
+      parameters.model_parameters.contact_detection_method =
+        ModelParameters<dim>::ContactDetectionMethod::constant;
+      parameters.model_parameters.contact_detection_frequency = 1;
+
+
+      if (parameters.model_parameters.sparse_particle_contacts)
+        {
+          sparse_contacts_object =
+            AdaptiveSparseContacts<dim, PropertiesIndex>();
+          DEMActionManager::get_action_manager()
+            ->set_sparse_contacts_disabled();
+        }
+    }
+  contact_detection_iteration_check_function =
+    set_contact_search_iteration_function();
 
   // Setting chosen contact force, insertion and integration methods
   integrator_object = set_integrator_type();

@@ -393,6 +393,11 @@ protected:
                               tangential_torque,
                               rolling_resistance_torque);
       }
+
+    if constexpr (contact_model == ParticleWallContactForceModel::shift)
+      {
+        calculate_shift_contact(contact_info, normal_overlap);
+      }
   }
 
   /**
@@ -1019,6 +1024,44 @@ private:
         contact_info.rolling_resistance_spring_torque.clear();
       }
     normal_force += cohesive_term * normal_vector;
+  }
+
+  /**
+   * @brief
+   *
+   *
+   */
+
+  inline void
+  calculate_shift_contact(particle_wall_contact_info<dim> &contact_info,
+                          const double                     normal_overlap)
+  {
+    // Contact particle-wall + constant cohesive force.
+    if (normal_overlap > 0.)
+      {
+        // i is the particle, j is the wall.
+        // there is a minus sign in front of the normal_vector to respect the
+        // convention (i -> j), the forces are thus calculated on the wall
+        const Tensor<1, 3> normal_vector = -contact_info.normal_vector;
+
+        auto particle = contact_info.particle;
+
+        Point<dim> particle_position = particle->get_location();
+        Point<dim> particle_new_position;
+
+        if constexpr (dim == 2)
+          {
+            particle_new_position =
+              particle_position -
+              0.5005 * normal_overlap * tensor_nd_to_2d(normal_vector);
+          }
+        if constexpr (dim == 3)
+          {
+            particle_new_position =
+              particle_position - 0.5005 * normal_overlap * normal_vector;
+          }
+        particle->set_location(particle_new_position);
+      }
   }
 
 

@@ -18,6 +18,7 @@ add_library(lethe-dem
   insertion.cc
   insertion_file.cc
   insertion_list.cc
+  insertion_packed.cc
   insertion_plane.cc
   insertion_volume.cc
   integrator.cc
@@ -71,6 +72,7 @@ add_library(lethe-dem
   ../../include/dem/insertion.h
   ../../include/dem/insertion_file.h
   ../../include/dem/insertion_list.h
+  ../../include/dem/insertion_packed.h
   ../../include/dem/insertion_plane.h
   ../../include/dem/insertion_volume.h
   ../../include/dem/integrator.h

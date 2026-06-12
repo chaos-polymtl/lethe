@@ -455,6 +455,13 @@ protected:
                                     particle_two_tangential_torque,
                                     rolling_resistance_torque);
       }
+
+    if constexpr (contact_model == ParticleParticleContactForceModel::shift)
+      {
+        this->shift_particle_using_normal_overlap(contact_info,
+                                                  normal_unit_vector,
+                                                  normal_overlap);
+      }
   }
 
   /**
@@ -1504,22 +1511,59 @@ private:
     normal_force += cohesive_term * normal_unit_vector;
   }
 
+  inline void
+  shift_particle_using_normal_overlap(
+    particle_particle_contact_info<dim> &contact_info,
+    const Tensor<1, 3>                  &normal_unit_vector,
+    const double                         normal_overlap)
+  {
+    // Particle iterator
+    auto particle_one = contact_info.particle_one;
+    auto particle_two = contact_info.particle_two;
+
+    Point<dim> particle_one_position = particle_one->get_location();
+    Point<dim> particle_two_position = particle_two->get_location();
+
+    Point<dim> particle_one_new_position;
+    Point<dim> particle_two_new_position;
+
+    if constexpr (dim == 2)
+      {
+        particle_one_new_position =
+          particle_one_position -
+          0.5005 * normal_overlap * tensor_nd_to_2d(normal_unit_vector);
+        particle_two_new_position =
+          particle_two_position +
+          0.5005 * normal_overlap * tensor_nd_to_2d(normal_unit_vector);
+      }
+    if constexpr (dim == 3)
+      {
+        particle_one_new_position =
+          particle_one_position - 0.5005 * normal_overlap * normal_unit_vector;
+        particle_two_new_position =
+          particle_two_position + 0.5005 * normal_overlap * normal_unit_vector;
+      }
+
+    particle_one->set_location(particle_one_new_position);
+    particle_two->set_location(particle_two_new_position);
+  }
+
   /**
-   * @brief Return the index for accessing the properties vectors for a given
-   * combinations of particle types.
+   * @brief Return the index to access the property vectors for a given
+   * combination of particle types.
    *
    * @param[in] i First particle type index.
    * @param[in] j Second particle type index.
    * @return index associated with the combinations of particle types.
    */
   inline unsigned int
-  vec_particle_type_index(const unsigned int i, const unsigned int j)
+  vec_particle_type_index(const unsigned int i, const unsigned int j) const
   {
     return i * n_particle_types + j;
   }
 
   /**
-   * @brief Set every containers needed to carry the particle-particle force
+   * @brief Set every container needed to carry the particle-particle force
    * calculation.
    *
    * @param[in] dem_parameters DEM parameters declared in the .prm file.
@@ -1634,7 +1678,7 @@ private:
   }
 
   /**
-   * @brief Set every containers needed to carry the heat transfer rate
+   * @brief Set every container needed to carry the heat transfer rate
    * calculation.
    *
    * @param[in] dem_parameters DEM parameters declared in the .prm

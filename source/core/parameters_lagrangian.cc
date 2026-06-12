@@ -555,9 +555,9 @@ namespace Parameters
       {
         prm.declare_entry("insertion method",
                           "volume",
-                          Patterns::Selection("file|list|plane|volume"),
+                          Patterns::Selection("file|list|plane|volume|packed"),
                           "Choosing insertion method. "
-                          "Choices are <file|plane|list|volume>.");
+                          "Choices are <file|plane|list|volume|packed>.");
         prm.declare_entry("inserted number of particles at each time step",
                           "0",
                           Patterns::Integer(),
@@ -709,6 +709,8 @@ namespace Parameters
           insertion_method = InsertionMethod::list;
         else if (insertion == "volume")
           insertion_method = InsertionMethod::volume;
+        else if (insertion == "packed")
+          insertion_method = InsertionMethod::packed;
         else
           {
             throw(std::runtime_error("Invalid insertion method "));

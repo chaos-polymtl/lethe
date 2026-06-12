@@ -103,7 +103,7 @@ InsertionVolume<dim, PropertiesIndex>::insert(
         dem_parameters.insertion_info.insertion_maximum_offset,
         dem_parameters.insertion_info.seed_for_insertion);
 
-      Point<dim>              insertion_location;
+      Point<dim>              insertion_locations;
       std::vector<Point<dim>> insertion_points_on_proc;
       insertion_points_on_proc.reserve(this->inserted_this_step_this_proc);
 
@@ -129,14 +129,15 @@ InsertionVolume<dim, PropertiesIndex>::insert(
       unsigned int particle_counter = 0;
       for (unsigned int id = first_id; id < last_id; ++id, ++particle_counter)
         {
-          find_insertion_location_volume(
-            insertion_location,
+          find_insertion_location(
+            insertion_locations,
             id,
             random_number_vector[particle_counter],
             random_number_vector[this->inserted_this_step - particle_counter -
                                  1],
             dem_parameters.insertion_info);
-          insertion_points_on_proc.push_back(insertion_location);
+
+          insertion_points_on_proc.push_back(insertion_locations);
         }
 
       std::vector<std::vector<double>> particle_properties;
@@ -164,66 +165,151 @@ InsertionVolume<dim, PropertiesIndex>::insert(
     }
 }
 
-// This function assigns the insertion points of the inserted particles
 template <int dim, typename PropertiesIndex>
 void
-InsertionVolume<dim, PropertiesIndex>::find_insertion_location_volume(
+InsertionVolume<dim, PropertiesIndex>::find_insertion_location(
   Point<dim>                                       &insertion_location,
   const unsigned int                                id,
   const double                                      random_number1,
   const double                                      random_number2,
   const Parameters::Lagrangian::InsertionInfo<dim> &insertion_information)
 {
-  std::vector<int> insertion_index;
-  insertion_index.resize(dim);
+  // Map random numbers to their corresponding insertion sequence order
+  // axis_sequence[0] uses random_number1, axis_sequence[1] uses random_number2,
+  // axis_sequence[2] uses random_number1
+  const double random_numbers[3] = {random_number1,
+                                    random_number2,
+                                    random_number1};
 
-  unsigned int axis_0, axis_1;
-  int          number_of_particles_0, number_of_particles_1;
+  // Unflatten the 1D 'id' into structured grid indices based on the direction
+  // sequence
+  std::vector<int> insertion_index(dim);
+  unsigned int     remainder = id;
 
-  // First direction (axis) to have particles inserted
-  axis_0                  = insertion_information.direction_sequence.at(0);
-  number_of_particles_0   = this->number_of_particles_directions[axis_0];
-  insertion_index[axis_0] = id % number_of_particles_0;
-  insertion_location[axis_0] =
-    this->axis_min[axis_0] + ((insertion_index[axis_0] + 0.5) *
-                                insertion_information.distance_threshold -
-                              random_number1) *
-                               this->maximum_diameter;
+  for (unsigned int i = 0; i < dim; ++i)
+    {
+      const unsigned int axis = insertion_information.direction_sequence.at(i);
+      const int particles_in_axis = this->number_of_particles_directions[axis];
 
-  // Second direction (axis) to have particles inserted
-  axis_1 = insertion_information.direction_sequence.at(1);
+      // Extract the coordinate index for this specific axis
+      if (i < dim - 1)
+        {
+          insertion_index[axis] = remainder % particles_in_axis;
+          remainder /= particles_in_axis;
+        }
+      else
+        {
+          // For the final axis, the remaining quotient is the index
+          insertion_index[axis] = remainder;
+        }
 
+      // Calculate the spatial location for this axis
+      insertion_location[axis] =
+        this->axis_min[axis] + ((insertion_index[axis] + 0.5) *
+                                  insertion_information.distance_threshold -
+                                random_numbers[i]) *
+                                 this->maximum_diameter;
+    }
+}
+
+template <int dim, typename PropertiesIndex>
+void
+InsertionVolume<dim, PropertiesIndex>::
+  calculate_insertion_domain_maximum_particle_number(
+    const DEMSolverParameters<dim> &dem_parameters,
+    const ConditionalOStream       &pcout)
+{
+  // Getting properties as local parameters
+  const auto insertion_information = dem_parameters.insertion_info;
+
+  // Checking if the insertion directions are valid (no repetition)
+  int axis_sum = 0;
   if constexpr (dim == 2)
     {
-      insertion_index[axis_1] = static_cast<int>(id / number_of_particles_0);
-      insertion_location[axis_1] =
-        this->axis_min[axis_1] + ((insertion_index[axis_1] + 0.5) *
-                                    insertion_information.distance_threshold -
-                                  random_number2) *
-                                   this->maximum_diameter;
+      axis_sum = insertion_information.direction_sequence[0] +
+                 insertion_information.direction_sequence[1];
+
+      AssertThrow(
+        axis_sum == 1,
+        ExcMessage("Invalid insertion directions: 2 directions are the same "));
+    }
+  if constexpr (dim == 3)
+    {
+      axis_sum = insertion_information.direction_sequence[0] +
+                 insertion_information.direction_sequence[1] +
+                 insertion_information.direction_sequence[2];
+
+      AssertThrow(
+        axis_sum == 3,
+        ExcMessage(
+          "Invalid insertion directions: at least 2 directions are the same "));
+    }
+
+
+  // This variable is used for calculation of the maximum number of particles
+  // that can fit in the chosen insertion box
+  int maximum_particle_number = 1;
+
+  number_of_particles_directions.resize(dim);
+  axis_min.resize(dim);
+  axis_max.resize(dim);
+
+  std::vector<unsigned int> axis_list = {
+    insertion_information.direction_sequence[0],
+    insertion_information.direction_sequence[1]};
+
+  if constexpr (dim == 3)
+    {
+      axis_list.push_back(insertion_information.direction_sequence[2]);
+    }
+
+  // Assigning the minimum and maximum positions of the insertion box in respect
+  // to the axis order
+  for (unsigned int axis : axis_list)
+    {
+      switch (axis)
+        {
+          case 0:
+            axis_min[0] = insertion_information.insertion_box_point_1(0);
+            axis_max[0] = insertion_information.insertion_box_point_2(0);
+            break;
+          case 1:
+            axis_min[1] = insertion_information.insertion_box_point_1(1);
+            axis_max[1] = insertion_information.insertion_box_point_2(1);
+            break;
+          case 2:
+            axis_min[2] = insertion_information.insertion_box_point_1(2);
+            axis_max[2] = insertion_information.insertion_box_point_2(2);
+            break;
+          default:
+            AssertThrow(false,
+                        ExcMessage("Insertion direction must be 0, 1 or 2"));
+        }
+
+      // Assign max number of particles according to the direction and calculate
+      // the total max number (maximum_particle_number = max_x * max_y * max_z)
+      int number_of_particles = static_cast<int>(
+        (axis_max[axis] - axis_min[axis]) /
+        (insertion_information.distance_threshold * this->maximum_diameter));
+      number_of_particles_directions[axis] = number_of_particles;
+      maximum_particle_number *= number_of_particles;
+    }
+
+  // If the inserted number of particles at this step exceeds the maximum
+  // number, a warning is printed
+  if (insertion_information.inserted_this_step > maximum_particle_number)
+    {
+      pcout << "Warning: the requested number of particles for insertion ("
+            << insertion_information.inserted_this_step
+            << ") is higher than maximum expected number of particles ("
+            << maximum_particle_number << ")" << std::endl;
+
+      // Updating the number of inserted particles at each step
+      this->inserted_this_step = maximum_particle_number;
     }
   else
     {
-      number_of_particles_1 = this->number_of_particles_directions[axis_1];
-      insertion_index[axis_1] =
-        static_cast<int>(id % (number_of_particles_0 * number_of_particles_1)) /
-        (number_of_particles_0);
-      insertion_location[axis_1] =
-        this->axis_min[axis_1] + ((insertion_index[axis_1] + 0.5) *
-                                    insertion_information.distance_threshold -
-                                  random_number2) *
-                                   this->maximum_diameter;
-
-      // Third direction (axis) to have particles inserted
-      unsigned int axis_2;
-      axis_2 = insertion_information.direction_sequence.at(2);
-      insertion_index[axis_2] =
-        static_cast<int>(id / (number_of_particles_0 * number_of_particles_1));
-      insertion_location[axis_2] =
-        this->axis_min[axis_2] + ((insertion_index[axis_2] + 0.5) *
-                                    insertion_information.distance_threshold -
-                                  random_number1) *
-                                   this->maximum_diameter;
+      this->inserted_this_step = insertion_information.inserted_this_step;
     }
 }
 

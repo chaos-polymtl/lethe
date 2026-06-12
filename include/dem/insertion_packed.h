@@ -1,15 +1,15 @@
 // SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-#ifndef lethe_insertion_volume_h
-#define lethe_insertion_volume_h
+#ifndef lethe_insertion_packed_h
+#define lethe_insertion_packed_h
 
 #include <dem/insertion.h>
 
 using namespace dealii;
 
 template <int dim, typename PropertiesIndex>
-class InsertionVolume : public Insertion<dim, PropertiesIndex>
+class InsertionPacked : public Insertion<dim, PropertiesIndex>
 {
 public:
   /**
@@ -29,7 +29,7 @@ public:
    * @param maximum_particle_diameter Maximum particle diameter based on values
    * defined in the parameter handler
    */
-  InsertionVolume(
+  InsertionPacked(
     const std::vector<std::shared_ptr<Distribution>>
       &size_distribution_object_container,
     const parallel::distributed::Triangulation<dim> &triangulation,
@@ -50,7 +50,6 @@ public:
   insert(Particles::ParticleHandler<dim>                 &particle_handler,
          const parallel::distributed::Triangulation<dim> &triangulation,
          const DEMSolverParameters<dim> &dem_parameters) override;
-
 
 
   /**
@@ -76,39 +75,23 @@ public:
     ar &particles_of_each_type_remaining &current_inserting_particle_type;
   }
 
-protected:
+private:
   /**
    * @brief Converts id of particles to volume insertion location
    *
    * @param insertion_location Insertion location of the particle
-   * @param id Particle_id
-   * @param random_number1 A random number to create randomness in volume insertion
-   * @param random_number2 A random number to create randomness in volume insertion
-   * @param insertion_information DEM insertion parameters declared in the .prm
+   * @param rng
+   * @param insertion_information
+   * @param distribution
    * file
    */
   void
   find_insertion_location(
+
     Point<dim>                                       &insertion_location,
-    const unsigned int                                id,
-    const double                                      random_number1,
-    const double                                      random_number2,
-    const Parameters::Lagrangian::InsertionInfo<dim> &insertion_information);
-
-
-  /**
-   * @brief Carries out finding the maximum number of inserted particles based on the
-   * insertion box size. If the requested number of particles for insertion in
-   * each insertion step is larger than this maximum, it is limited to this
-   * value and a warning is printed.
-   *
-   * @param dem_parameters DEM parameters declared in the .prm file
-   * @param pcout Printing in parallel
-   */
-  void
-  calculate_insertion_domain_maximum_particle_number(
-    const DEMSolverParameters<dim> &dem_parameters,
-    const ConditionalOStream       &pcout);
+    std::mt19937                                     &rng,
+    const Parameters::Lagrangian::InsertionInfo<dim> &insertion_information,
+    std::uniform_real_distribution<double>           &distribution);
 
   unsigned int current_inserting_particle_type;
 
@@ -116,10 +99,7 @@ protected:
   // upcoming insertion steps
   unsigned int particles_of_each_type_remaining;
 
-  // Number of insertion points in the x, y and z directions
-  std::vector<int> number_of_particles_directions;
-
-  // Minimum and maximum boundaries of the insertion box in the direction order
+  // Minimum and maximum boundaries of the insertion box  in the direction order
   // It means that axis 0 is not necessarily x, since it depends on the order
   // of the insertion direction.
   std::vector<double> axis_min, axis_max;
