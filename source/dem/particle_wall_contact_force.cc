@@ -1100,6 +1100,14 @@ template class ParticleWallContactForce<
   DEM::DEMMPProperties::PropertiesIndex,
   ParticleWallContactForceModel::nonlinear,
   RollingResistanceMethod::none>;
+template class ParticleWallContactForce<2,
+                                        DEM::DEMProperties::PropertiesIndex,
+                                        ParticleWallContactForceModel::shift,
+                                        RollingResistanceMethod::none>;
+template class ParticleWallContactForce<3,
+                                        DEM::DEMProperties::PropertiesIndex,
+                                        ParticleWallContactForceModel::shift,
+                                        RollingResistanceMethod::none>;
 
 // Constant resistance
 template class ParticleWallContactForce<2,

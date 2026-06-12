@@ -75,6 +75,25 @@ set_particle_particle_contact_force_model(
             dem_parameters, particle_particle_contact_force_object);
           break;
         }
+      case ParticleParticleContactForceModel::shift:
+        {
+          if constexpr (std::is_same_v<PropertiesIndex,
+                                       DEM::DEMProperties::PropertiesIndex>)
+            {
+              particle_particle_contact_force_object =
+                std::make_shared<ParticleParticleContactForce<
+                  dim,
+                  PropertiesIndex,
+                  ParticleParticleContactForceModel::shift,
+                  RollingResistanceMethod::none>>(dem_parameters);
+            }
+          else
+            {
+              throw std::runtime_error(
+                "The shift contact force model is only available for DEM simulations");
+            }
+          break;
+        }
       default:
         {
           throw std::runtime_error(
