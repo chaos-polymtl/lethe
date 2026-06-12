@@ -43,7 +43,9 @@ namespace Parameters
       /// Hertz model with Johnson-Kendall-Roberts cohesive force
       hertz_JKR,
       /// Derjaguin-Muller-Toporov model
-      DMT
+      DMT,
+
+      shift
     };
 
     /**
@@ -59,7 +61,9 @@ namespace Parameters
       /// Johnson-Kendall-Roberts model
       JKR,
       /// Derjaguin-Muller-Toporov model
-      DMT
+      DMT,
+
+      shift
     };
 
     /**
@@ -423,7 +427,9 @@ namespace Parameters
         /// Insertion from a plane defined by a point and a normal
         plane,
         /// Insertion within a volume defined by a box
-        volume
+        volume,
+        /// Insertion using the packed method
+        packed
       } insertion_method; ///< Method used to insert particles
 
       /// Number of particles inserted at each insertion step.
