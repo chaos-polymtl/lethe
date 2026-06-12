@@ -1583,27 +1583,26 @@ private:
           particle_one_position -
           std::min(displacement_factor *
                      particle_two->get_properties()[PropertiesIndex::dp],
-                   1.001 * normal_overlap) *
+                   0.501 * normal_overlap) *
             normal_unit_vector;
 
         particle_two_new_position =
           particle_two_position +
           std::min(displacement_factor *
                      particle_two->get_properties()[PropertiesIndex::dp],
-                   1.001 * normal_overlap) *
+                   0.501 * normal_overlap) *
             normal_unit_vector;
       }
 
-    // auto cell_one = particle_one->get_surrounding_cell();
+    auto cell_one = particle_one->get_surrounding_cell();
     auto cell_two = particle_two->get_surrounding_cell();
 
-    // if (cell_one->is_locally_owned())
-    //   particle_one->set_location(particle_one_new_position);
+    if (cell_one->is_locally_owned())
+      particle_one->set_location(particle_one_new_position);
 
     if (cell_two->is_locally_owned())
       particle_two->set_location(particle_two_new_position);
-    else // ghost-ghost never happends
-      particle_one->set_location(particle_one_new_position);
+
   }
 
   /**
