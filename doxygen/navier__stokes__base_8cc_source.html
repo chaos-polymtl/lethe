@@ -2324,7 +2324,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l02146" name="l02146"></a><span class="lineno"> 2146</span> </div>
 <div class="line"><a id="l02147" name="l02147"></a><span class="lineno"> 2147</span>  <span class="comment">// Create mortar coupling evaluator</span></div>
 <div class="line"><a id="l02148" name="l02148"></a><span class="lineno"> 2148</span>  this-&gt;mortar_coupling_evaluator =</div>
-<div class="line"><a id="l02149" name="l02149"></a><span class="lineno"> 2149</span>    std::make_shared&lt;NavierStokesCouplingEvaluation&lt;dim, double&gt;&gt;(</div>
+<div class="line"><a id="l02149" name="l02149"></a><span class="lineno"> 2149</span>    std::make_shared&lt;NavierStokesCouplingEvaluationSIPG&lt;dim, double&gt;&gt;(</div>
 <div class="line"><a id="l02150" name="l02150"></a><span class="lineno"> 2150</span>      *this-&gt;get_mapping(),</div>
 <div class="line"><a id="l02151" name="l02151"></a><span class="lineno"> 2151</span>      *this-&gt;dof_handler,</div>
 <div class="line"><a id="l02152" name="l02152"></a><span class="lineno"> 2152</span>      this-&gt;simulation_parameters.physical_properties_manager</div>

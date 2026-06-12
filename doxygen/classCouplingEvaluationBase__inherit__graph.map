@@ -1,7 +1,7 @@
 <map id="CouplingEvaluationBase&lt; dim, Number &gt;" name="CouplingEvaluationBase&lt; dim, Number &gt;">
-<area shape="rect" id="Node000001" title="Base class for coupling evaluation routines." alt="" coords="5,37,185,77"/>
-<area shape="rect" id="Node000002" href="$classCouplingEvaluationSIPG.html" title=" " alt="" coords="233,5,473,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="199,42,233,38,234,43,199,47"/>
-<area shape="rect" id="Node000003" href="$classNavierStokesCouplingEvaluation.html" title=" " alt="" coords="236,69,471,109"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="199,68,236,72,236,77,199,73"/>
+<area shape="rect" id="Node000001" title="Base class for coupling evaluation routines." alt="" coords="5,41,185,81"/>
+<area shape="rect" id="Node000002" href="$classNavierStokesCouplingEvaluationSIPG.html" title=" " alt="" coords="233,5,468,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="198,44,233,39,234,45,199,49"/>
+<area shape="rect" id="Node000003" href="$classScalarCouplingEvaluationSIPG.html" title=" " alt="" coords="251,70,450,125"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="199,73,251,81,251,86,199,79"/>
 </map>

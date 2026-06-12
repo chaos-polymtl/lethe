@@ -67,12 +67,11 @@ var searchData=
   ['copydataface_64',['CopyDataFace',['../structStabilizedDGMethodsCopyData_1_1CopyDataFace.html',1,'StabilizedDGMethodsCopyData']]],
   ['couplingevaluationbase_65',['CouplingEvaluationBase',['../classCouplingEvaluationBase.html',1,'']]],
   ['couplingevaluationdata_66',['CouplingEvaluationData',['../structCouplingEvaluationData.html',1,'']]],
-  ['couplingevaluationsipg_67',['CouplingEvaluationSIPG',['../classCouplingEvaluationSIPG.html',1,'']]],
-  ['couplingoperator_68',['CouplingOperator',['../classCouplingOperator.html',1,'']]],
-  ['customdistribution_69',['CustomDistribution',['../classCustomDistribution.html',1,'']]],
-  ['cut_5fcell_5fcomparison_70',['cut_cell_comparison',['../structcut__cell__comparison.html',1,'']]],
-  ['cuthollowsphere_71',['CutHollowSphere',['../classCutHollowSphere.html',1,'']]],
-  ['cylinder_72',['Cylinder',['../classCylinder.html',1,'']]],
-  ['cylindricalhelix_73',['CylindricalHelix',['../classCylindricalHelix.html',1,'']]],
-  ['cylindricaltube_74',['CylindricalTube',['../classCylindricalTube.html',1,'']]]
+  ['couplingoperator_67',['CouplingOperator',['../classCouplingOperator.html',1,'']]],
+  ['customdistribution_68',['CustomDistribution',['../classCustomDistribution.html',1,'']]],
+  ['cut_5fcell_5fcomparison_69',['cut_cell_comparison',['../structcut__cell__comparison.html',1,'']]],
+  ['cuthollowsphere_70',['CutHollowSphere',['../classCutHollowSphere.html',1,'']]],
+  ['cylinder_71',['Cylinder',['../classCylinder.html',1,'']]],
+  ['cylindricalhelix_72',['CylindricalHelix',['../classCylindricalHelix.html',1,'']]],
+  ['cylindricaltube_73',['CylindricalTube',['../classCylindricalTube.html',1,'']]]
 ];

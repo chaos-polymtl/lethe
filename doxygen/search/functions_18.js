@@ -29,7 +29,7 @@ var searchData=
   ['_7emortarmanagerbase_26',['~MortarManagerBase',['../classMortarManagerBase.html#ad501074cbbda0ffbbdbc1bfd1e10861c',1,'MortarManagerBase']]],
   ['_7emultiphysicsinterface_27',['~MultiphysicsInterface',['../classMultiphysicsInterface.html#a5881a82ed5b1d0c2b1d4179ea47a887d',1,'MultiphysicsInterface']]],
   ['_7enavierstokesbase_28',['~NavierStokesBase',['../classNavierStokesBase.html#a7b587e7c3ac1c5996c579bb0b2817c41',1,'NavierStokesBase']]],
-  ['_7enavierstokescouplingevaluation_29',['~NavierStokesCouplingEvaluation',['../classNavierStokesCouplingEvaluation.html#ab390a27c2415ce09a23cfa05113edf6b',1,'NavierStokesCouplingEvaluation']]],
+  ['_7enavierstokescouplingevaluationsipg_29',['~NavierStokesCouplingEvaluationSIPG',['../classNavierStokesCouplingEvaluationSIPG.html#a52fd27acad67531a498f94dde54ed520',1,'NavierStokesCouplingEvaluationSIPG']]],
   ['_7eparticlefluidassemblerbase_30',['~ParticleFluidAssemblerBase',['../classParticleFluidAssemblerBase.html#a2be34034f9dbc8964ba19e966f3dc0f3',1,'ParticleFluidAssemblerBase']]],
   ['_7eparticleparticlecontactforce_31',['~ParticleParticleContactForce',['../classParticleParticleContactForce.html#a237d1f527c7214176df419e510afc5c9',1,'ParticleParticleContactForce']]],
   ['_7eparticlesforcechains_32',['~ParticlesForceChains',['../classParticlesForceChains.html#a8ce3c5f895e4a810199c9894ea59f057',1,'ParticlesForceChains']]],

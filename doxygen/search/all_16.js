@@ -1,7 +1,7 @@
 var searchData=
 [
   ['u_0',['u',['../classBoundaryConditions_1_1NSBoundaryFunctions.html#a5f38f4daa23429562d9592444c26288f',1,'BoundaryConditions::NSBoundaryFunctions::u'],['../classNavierStokesFunctionDefined.html#af65b09b287e7646437fc45ab5ebec3a6',1,'NavierStokesFunctionDefined::u']]],
-  ['u_5fvalue_5ftype_1',['u_value_type',['../classNavierStokesCouplingEvaluation.html#a70155e394dc1b0c3277efdd4806b3d4e',1,'NavierStokesCouplingEvaluation']]],
+  ['u_5fvalue_5ftype_1',['u_value_type',['../classNavierStokesCouplingEvaluationSIPG.html#ac1d2b3ac079fac894271b164e42744ef',1,'NavierStokesCouplingEvaluationSIPG']]],
   ['uniform_2',['uniform',['../namespaceParameters_1_1Lagrangian.html#a83e8d3abd57e25e255ac5702e20b98dfaa489ffed938ef1b9e86889bc413501ee',1,'Parameters::Lagrangian::uniform'],['../structParameters_1_1MeshAdaptation.html#a0dae814a46649ee467996963ded2be83aa489ffed938ef1b9e86889bc413501ee',1,'Parameters::MeshAdaptation::uniform']]],
   ['uniform_5fheat_5fflux_5fcls_5finterface_3',['uniform_heat_flux_cls_interface',['../classParameters_1_1Laser.html#a14ac1bd39f7f864b8997ea5a263ec575aee8799a43bc6b94c34446c4721a1156b',1,'Parameters::Laser']]],
   ['uniformdistribution_4',['uniformdistribution',['../classUniformDistribution.html',1,'UniformDistribution'],['../classUniformDistribution.html#a1d9ed09ab99cc4425b0588127a27a18d',1,'UniformDistribution::UniformDistribution()']]],

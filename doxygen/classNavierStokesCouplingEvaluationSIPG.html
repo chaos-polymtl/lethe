@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Lethe Open-Source Library: NavierStokesCouplingEvaluation&lt; dim, Number &gt; Class Template Reference</title>
+<title>Lethe Open-Source Library: NavierStokesCouplingEvaluationSIPG&lt; dim, Number &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -89,69 +89,69 @@ $(function() {
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="classNavierStokesCouplingEvaluation-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">NavierStokesCouplingEvaluation&lt; dim, Number &gt; Class Template Reference</div></div>
+<a href="classNavierStokesCouplingEvaluationSIPG-members.html">List of all members</a>  </div>
+  <div class="headertitle"><div class="title">NavierStokesCouplingEvaluationSIPG&lt; dim, Number &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>&gt;</code></p>
 <div class="dynheader">
-Inheritance diagram for NavierStokesCouplingEvaluation&lt; dim, Number &gt;:</div>
+Inheritance diagram for NavierStokesCouplingEvaluationSIPG&lt; dim, Number &gt;:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classNavierStokesCouplingEvaluation__inherit__graph.svg" width="246" height="139"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classNavierStokesCouplingEvaluationSIPG__inherit__graph.svg" width="246" height="139"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a08d9ac10ef5348181c92b179a2136935" id="r_a08d9ac10ef5348181c92b179a2136935"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluation.html#a08d9ac10ef5348181c92b179a2136935">FEPointIntegratorU</a> = FEPointEvaluation&lt; dim, dim, dim, Number &gt;</td></tr>
-<tr class="separator:a08d9ac10ef5348181c92b179a2136935"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a61298464226b9fd4c0fae275d11d1854" id="r_a61298464226b9fd4c0fae275d11d1854"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluation.html#a61298464226b9fd4c0fae275d11d1854">FEPointIntegratorP</a> = FEPointEvaluation&lt; 1, dim, dim, Number &gt;</td></tr>
-<tr class="separator:a61298464226b9fd4c0fae275d11d1854"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a70155e394dc1b0c3277efdd4806b3d4e" id="r_a70155e394dc1b0c3277efdd4806b3d4e"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluation.html#a70155e394dc1b0c3277efdd4806b3d4e">u_value_type</a> = typename FEPointIntegratorU::value_type</td></tr>
-<tr class="separator:a70155e394dc1b0c3277efdd4806b3d4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2d1fc6a725b695aef9cdf787efb93b07" id="r_a2d1fc6a725b695aef9cdf787efb93b07"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluationSIPG.html#a2d1fc6a725b695aef9cdf787efb93b07">FEPointIntegratorU</a> = FEPointEvaluation&lt; dim, dim, dim, Number &gt;</td></tr>
+<tr class="separator:a2d1fc6a725b695aef9cdf787efb93b07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72e2c5f2d1b222a07172f14ffabe89b6" id="r_a72e2c5f2d1b222a07172f14ffabe89b6"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluationSIPG.html#a72e2c5f2d1b222a07172f14ffabe89b6">FEPointIntegratorP</a> = FEPointEvaluation&lt; 1, dim, dim, Number &gt;</td></tr>
+<tr class="separator:a72e2c5f2d1b222a07172f14ffabe89b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac1d2b3ac079fac894271b164e42744ef" id="r_ac1d2b3ac079fac894271b164e42744ef"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluationSIPG.html#ac1d2b3ac079fac894271b164e42744ef">u_value_type</a> = typename FEPointIntegratorU::value_type</td></tr>
+<tr class="separator:ac1d2b3ac079fac894271b164e42744ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a255e2a67225589ccf1a8e8a39a8d490d" id="r_a255e2a67225589ccf1a8e8a39a8d490d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluation.html#a255e2a67225589ccf1a8e8a39a8d490d">NavierStokesCouplingEvaluation</a> (const Mapping&lt; dim &gt; &amp;mapping, const DoFHandler&lt; dim &gt; &amp;dof_handler, const double <a class="el" href="classNavierStokesCouplingEvaluation.html#abc46c6236f52e08f1383b9e67fc08b2c">kinematic_viscosity</a>)</td></tr>
-<tr class="separator:a255e2a67225589ccf1a8e8a39a8d490d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab390a27c2415ce09a23cfa05113edf6b" id="r_ab390a27c2415ce09a23cfa05113edf6b"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluation.html#ab390a27c2415ce09a23cfa05113edf6b">~NavierStokesCouplingEvaluation</a> ()=default</td></tr>
-<tr class="separator:ab390a27c2415ce09a23cfa05113edf6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a906cf61e4a065e6abf79ca811f9b04d4" id="r_a906cf61e4a065e6abf79ca811f9b04d4"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluation.html#a906cf61e4a065e6abf79ca811f9b04d4">data_size</a> () const override</td></tr>
-<tr class="separator:a906cf61e4a065e6abf79ca811f9b04d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5986f39ed8f28971249df24671e36951" id="r_a5986f39ed8f28971249df24671e36951"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; unsigned int &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluation.html#a5986f39ed8f28971249df24671e36951">get_relevant_dof_indices</a> () const override</td></tr>
-<tr class="separator:a5986f39ed8f28971249df24671e36951"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96cb8395c6fb2f308416b55e3767bc51" id="r_a96cb8395c6fb2f308416b55e3767bc51"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluation.html#a96cb8395c6fb2f308416b55e3767bc51">local_reinit</a> (const typename Triangulation&lt; dim &gt;::cell_iterator &amp;cell, const ArrayView&lt; const Point&lt; dim, Number &gt; &gt; &amp;points) const override</td></tr>
-<tr class="separator:a96cb8395c6fb2f308416b55e3767bc51"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a90790d79c488aaa59b1f4ae53a76676c" id="r_a90790d79c488aaa59b1f4ae53a76676c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluation.html#a90790d79c488aaa59b1f4ae53a76676c">local_evaluate</a> (const <a class="el" href="structCouplingEvaluationData.html">CouplingEvaluationData</a>&lt; dim, Number &gt; &amp;data, const Vector&lt; Number &gt; &amp;buffer, const unsigned int ptr_q, const unsigned int q_stride, Number *all_values_local) const override</td></tr>
-<tr class="separator:a90790d79c488aaa59b1f4ae53a76676c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a28ffcc16176e0d331720a2ef311e28b7" id="r_a28ffcc16176e0d331720a2ef311e28b7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluation.html#a28ffcc16176e0d331720a2ef311e28b7">local_integrate</a> (const <a class="el" href="structCouplingEvaluationData.html">CouplingEvaluationData</a>&lt; dim, Number &gt; &amp;data, Vector&lt; Number &gt; &amp;buffer, const unsigned int ptr_q, const unsigned int q_stride, Number *all_values_m, Number *all_values_p) const override</td></tr>
-<tr class="separator:a28ffcc16176e0d331720a2ef311e28b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a782a1ed3feca03c65220b5acad8dd23b" id="r_a782a1ed3feca03c65220b5acad8dd23b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluationSIPG.html#a782a1ed3feca03c65220b5acad8dd23b">NavierStokesCouplingEvaluationSIPG</a> (const Mapping&lt; dim &gt; &amp;mapping, const DoFHandler&lt; dim &gt; &amp;dof_handler, const double <a class="el" href="classNavierStokesCouplingEvaluationSIPG.html#ae06f4bfded29a8a4942fe3be973e42c8">kinematic_viscosity</a>)</td></tr>
+<tr class="separator:a782a1ed3feca03c65220b5acad8dd23b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52fd27acad67531a498f94dde54ed520" id="r_a52fd27acad67531a498f94dde54ed520"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluationSIPG.html#a52fd27acad67531a498f94dde54ed520">~NavierStokesCouplingEvaluationSIPG</a> ()=default</td></tr>
+<tr class="separator:a52fd27acad67531a498f94dde54ed520"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aacc36e566759890629ab41e90dee1376" id="r_aacc36e566759890629ab41e90dee1376"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluationSIPG.html#aacc36e566759890629ab41e90dee1376">data_size</a> () const override</td></tr>
+<tr class="separator:aacc36e566759890629ab41e90dee1376"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8667fa77ea2c660c59d024aa65bbe708" id="r_a8667fa77ea2c660c59d024aa65bbe708"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; unsigned int &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluationSIPG.html#a8667fa77ea2c660c59d024aa65bbe708">get_relevant_dof_indices</a> () const override</td></tr>
+<tr class="separator:a8667fa77ea2c660c59d024aa65bbe708"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1bbb47e4a162c0dbcaa363d76314f0cf" id="r_a1bbb47e4a162c0dbcaa363d76314f0cf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluationSIPG.html#a1bbb47e4a162c0dbcaa363d76314f0cf">local_reinit</a> (const typename Triangulation&lt; dim &gt;::cell_iterator &amp;cell, const ArrayView&lt; const Point&lt; dim, Number &gt; &gt; &amp;points) const override</td></tr>
+<tr class="separator:a1bbb47e4a162c0dbcaa363d76314f0cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac90230c0dbadb9cd69ec22399c5be6b2" id="r_ac90230c0dbadb9cd69ec22399c5be6b2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluationSIPG.html#ac90230c0dbadb9cd69ec22399c5be6b2">local_evaluate</a> (const <a class="el" href="structCouplingEvaluationData.html">CouplingEvaluationData</a>&lt; dim, Number &gt; &amp;data, const Vector&lt; Number &gt; &amp;buffer, const unsigned int ptr_q, const unsigned int q_stride, Number *all_values_local) const override</td></tr>
+<tr class="separator:ac90230c0dbadb9cd69ec22399c5be6b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a997d4eaed26999cacef04d7cbc3c2c04" id="r_a997d4eaed26999cacef04d7cbc3c2c04"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluationSIPG.html#a997d4eaed26999cacef04d7cbc3c2c04">local_integrate</a> (const <a class="el" href="structCouplingEvaluationData.html">CouplingEvaluationData</a>&lt; dim, Number &gt; &amp;data, Vector&lt; Number &gt; &amp;buffer, const unsigned int ptr_q, const unsigned int q_stride, Number *all_values_m, Number *all_values_p) const override</td></tr>
+<tr class="separator:a997d4eaed26999cacef04d7cbc3c2c04"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classCouplingEvaluationBase"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classCouplingEvaluationBase')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classCouplingEvaluationBase.html">CouplingEvaluationBase&lt; dim, Number &gt;</a></td></tr>
 <tr class="memitem:a9e67247dd52621ec1add9d16e26f5794 inherit pub_methods_classCouplingEvaluationBase" id="r_a9e67247dd52621ec1add9d16e26f5794"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCouplingEvaluationBase.html#a9e67247dd52621ec1add9d16e26f5794">~CouplingEvaluationBase</a> ()=default</td></tr>
 <tr class="separator:a9e67247dd52621ec1add9d16e26f5794 inherit pub_methods_classCouplingEvaluationBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:aa4e50247390d1e5d85d7380f898d6afa" id="r_aa4e50247390d1e5d85d7380f898d6afa"><td class="memItemLeft" align="right" valign="top">const FESystem&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluation.html#aa4e50247390d1e5d85d7380f898d6afa">fe_sub_u</a></td></tr>
-<tr class="separator:aa4e50247390d1e5d85d7380f898d6afa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a18aa18f2f5099132ad10c72566f8cc32" id="r_a18aa18f2f5099132ad10c72566f8cc32"><td class="memItemLeft" align="right" valign="top">const FESystem&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluation.html#a18aa18f2f5099132ad10c72566f8cc32">fe_sub_p</a></td></tr>
-<tr class="separator:a18aa18f2f5099132ad10c72566f8cc32"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a289b67fb09a3394906630d10f2fc0f46" id="r_a289b67fb09a3394906630d10f2fc0f46"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNavierStokesCouplingEvaluation.html#a08d9ac10ef5348181c92b179a2136935">FEPointIntegratorU</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluation.html#a289b67fb09a3394906630d10f2fc0f46">phi_u_m</a></td></tr>
-<tr class="separator:a289b67fb09a3394906630d10f2fc0f46"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63939da7b03866de8caff23666d41b91" id="r_a63939da7b03866de8caff23666d41b91"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNavierStokesCouplingEvaluation.html#a61298464226b9fd4c0fae275d11d1854">FEPointIntegratorP</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluation.html#a63939da7b03866de8caff23666d41b91">phi_p_m</a></td></tr>
-<tr class="separator:a63939da7b03866de8caff23666d41b91"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a280b06d191647ee1904e549e0366715f" id="r_a280b06d191647ee1904e549e0366715f"><td class="memItemLeft" align="right" valign="top">std::vector&lt; unsigned int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluation.html#a280b06d191647ee1904e549e0366715f">relevant_dof_indices</a></td></tr>
-<tr class="separator:a280b06d191647ee1904e549e0366715f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abc46c6236f52e08f1383b9e67fc08b2c" id="r_abc46c6236f52e08f1383b9e67fc08b2c"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluation.html#abc46c6236f52e08f1383b9e67fc08b2c">kinematic_viscosity</a></td></tr>
-<tr class="separator:abc46c6236f52e08f1383b9e67fc08b2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51b4529da1f0b5de8ca32a7a6a2629c4" id="r_a51b4529da1f0b5de8ca32a7a6a2629c4"><td class="memItemLeft" align="right" valign="top">const FESystem&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluationSIPG.html#a51b4529da1f0b5de8ca32a7a6a2629c4">fe_sub_u</a></td></tr>
+<tr class="separator:a51b4529da1f0b5de8ca32a7a6a2629c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95269110e6b535aac1a7e3aa3169a707" id="r_a95269110e6b535aac1a7e3aa3169a707"><td class="memItemLeft" align="right" valign="top">const FESystem&lt; dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluationSIPG.html#a95269110e6b535aac1a7e3aa3169a707">fe_sub_p</a></td></tr>
+<tr class="separator:a95269110e6b535aac1a7e3aa3169a707"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4587070931f1aa92a2765353a76a6b6" id="r_aa4587070931f1aa92a2765353a76a6b6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNavierStokesCouplingEvaluationSIPG.html#a2d1fc6a725b695aef9cdf787efb93b07">FEPointIntegratorU</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluationSIPG.html#aa4587070931f1aa92a2765353a76a6b6">phi_u_m</a></td></tr>
+<tr class="separator:aa4587070931f1aa92a2765353a76a6b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae8e700d81448adbdb5aeff83e64b234" id="r_aae8e700d81448adbdb5aeff83e64b234"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classNavierStokesCouplingEvaluationSIPG.html#a72e2c5f2d1b222a07172f14ffabe89b6">FEPointIntegratorP</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluationSIPG.html#aae8e700d81448adbdb5aeff83e64b234">phi_p_m</a></td></tr>
+<tr class="separator:aae8e700d81448adbdb5aeff83e64b234"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd333f93f1507ff1907593391abe0a22" id="r_afd333f93f1507ff1907593391abe0a22"><td class="memItemLeft" align="right" valign="top">std::vector&lt; unsigned int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluationSIPG.html#afd333f93f1507ff1907593391abe0a22">relevant_dof_indices</a></td></tr>
+<tr class="separator:afd333f93f1507ff1907593391abe0a22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae06f4bfded29a8a4942fe3be973e42c8" id="r_ae06f4bfded29a8a4942fe3be973e42c8"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classNavierStokesCouplingEvaluationSIPG.html#ae06f4bfded29a8a4942fe3be973e42c8">kinematic_viscosity</a></td></tr>
+<tr class="separator:ae06f4bfded29a8a4942fe3be973e42c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim, typename Number&gt;<br />
-class NavierStokesCouplingEvaluation&lt; dim, Number &gt;</div>
+class NavierStokesCouplingEvaluationSIPG&lt; dim, Number &gt;</div>
 <p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8h_source.html#l01149">1149</a> of file <a class="el" href="mortar__coupling__manager_8h_source.html">mortar_coupling_manager.h</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a61298464226b9fd4c0fae275d11d1854" name="a61298464226b9fd4c0fae275d11d1854"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a61298464226b9fd4c0fae275d11d1854">&#9670;&#160;</a></span>FEPointIntegratorP</h2>
+<a id="a72e2c5f2d1b222a07172f14ffabe89b6" name="a72e2c5f2d1b222a07172f14ffabe89b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a72e2c5f2d1b222a07172f14ffabe89b6">&#9670;&#160;</a></span>FEPointIntegratorP</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -159,7 +159,7 @@ class NavierStokesCouplingEvaluation&lt; dim, Number &gt;</div>
 template&lt;int dim, typename Number &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classNavierStokesCouplingEvaluation.html">NavierStokesCouplingEvaluation</a>&lt; dim, Number &gt;::FEPointIntegratorP =  FEPointEvaluation&lt;1, dim, dim, Number&gt;</td>
+          <td class="memname">using <a class="el" href="classNavierStokesCouplingEvaluationSIPG.html">NavierStokesCouplingEvaluationSIPG</a>&lt; dim, Number &gt;::FEPointIntegratorP =  FEPointEvaluation&lt;1, dim, dim, Number&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -168,8 +168,8 @@ template&lt;int dim, typename Number &gt; </div>
 
 </div>
 </div>
-<a id="a08d9ac10ef5348181c92b179a2136935" name="a08d9ac10ef5348181c92b179a2136935"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a08d9ac10ef5348181c92b179a2136935">&#9670;&#160;</a></span>FEPointIntegratorU</h2>
+<a id="a2d1fc6a725b695aef9cdf787efb93b07" name="a2d1fc6a725b695aef9cdf787efb93b07"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d1fc6a725b695aef9cdf787efb93b07">&#9670;&#160;</a></span>FEPointIntegratorU</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -177,7 +177,7 @@ template&lt;int dim, typename Number &gt; </div>
 template&lt;int dim, typename Number &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classNavierStokesCouplingEvaluation.html">NavierStokesCouplingEvaluation</a>&lt; dim, Number &gt;::FEPointIntegratorU =  FEPointEvaluation&lt;dim, dim, dim, Number&gt;</td>
+          <td class="memname">using <a class="el" href="classNavierStokesCouplingEvaluationSIPG.html">NavierStokesCouplingEvaluationSIPG</a>&lt; dim, Number &gt;::FEPointIntegratorU =  FEPointEvaluation&lt;dim, dim, dim, Number&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -186,8 +186,8 @@ template&lt;int dim, typename Number &gt; </div>
 
 </div>
 </div>
-<a id="a70155e394dc1b0c3277efdd4806b3d4e" name="a70155e394dc1b0c3277efdd4806b3d4e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a70155e394dc1b0c3277efdd4806b3d4e">&#9670;&#160;</a></span>u_value_type</h2>
+<a id="ac1d2b3ac079fac894271b164e42744ef" name="ac1d2b3ac079fac894271b164e42744ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac1d2b3ac079fac894271b164e42744ef">&#9670;&#160;</a></span>u_value_type</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -195,7 +195,7 @@ template&lt;int dim, typename Number &gt; </div>
 template&lt;int dim, typename Number &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classNavierStokesCouplingEvaluation.html">NavierStokesCouplingEvaluation</a>&lt; dim, Number &gt;::u_value_type =  typename FEPointIntegratorU::value_type</td>
+          <td class="memname">using <a class="el" href="classNavierStokesCouplingEvaluationSIPG.html">NavierStokesCouplingEvaluationSIPG</a>&lt; dim, Number &gt;::u_value_type =  typename FEPointIntegratorU::value_type</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -205,8 +205,8 @@ template&lt;int dim, typename Number &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a255e2a67225589ccf1a8e8a39a8d490d" name="a255e2a67225589ccf1a8e8a39a8d490d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a255e2a67225589ccf1a8e8a39a8d490d">&#9670;&#160;</a></span>NavierStokesCouplingEvaluation()</h2>
+<a id="a782a1ed3feca03c65220b5acad8dd23b" name="a782a1ed3feca03c65220b5acad8dd23b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a782a1ed3feca03c65220b5acad8dd23b">&#9670;&#160;</a></span>NavierStokesCouplingEvaluationSIPG()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -214,7 +214,7 @@ template&lt;int dim, typename Number &gt; </div>
 template&lt;int dim, typename Number &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classNavierStokesCouplingEvaluation.html">NavierStokesCouplingEvaluation</a>&lt; dim, Number &gt;<a class="el" href="classNavierStokesCouplingEvaluation.html">::NavierStokesCouplingEvaluation</a> </td>
+          <td class="memname"><a class="el" href="classNavierStokesCouplingEvaluationSIPG.html">NavierStokesCouplingEvaluationSIPG</a>&lt; dim, Number &gt;<a class="el" href="classNavierStokesCouplingEvaluationSIPG.html">::NavierStokesCouplingEvaluationSIPG</a> </td>
           <td>(</td>
           <td class="paramtype">const Mapping&lt; dim &gt; &amp;&#160;</td>
           <td class="paramname"><em>mapping</em>, </td>
@@ -251,12 +251,12 @@ template&lt;int dim, typename Number &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01904">1904</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="mortar__coupling__manager_8h_source.html#l01209">NavierStokesCouplingEvaluation&lt; dim, Number &gt;::relevant_dof_indices</a>.</p>
+<p class="reference">References <a class="el" href="mortar__coupling__manager_8h_source.html#l01209">NavierStokesCouplingEvaluationSIPG&lt; dim, Number &gt;::relevant_dof_indices</a>.</p>
 
 </div>
 </div>
-<a id="ab390a27c2415ce09a23cfa05113edf6b" name="ab390a27c2415ce09a23cfa05113edf6b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab390a27c2415ce09a23cfa05113edf6b">&#9670;&#160;</a></span>~NavierStokesCouplingEvaluation()</h2>
+<a id="a52fd27acad67531a498f94dde54ed520" name="a52fd27acad67531a498f94dde54ed520"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52fd27acad67531a498f94dde54ed520">&#9670;&#160;</a></span>~NavierStokesCouplingEvaluationSIPG()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -267,7 +267,7 @@ template&lt;int dim, typename Number &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual <a class="el" href="classNavierStokesCouplingEvaluation.html">NavierStokesCouplingEvaluation</a>&lt; dim, Number &gt;::~<a class="el" href="classNavierStokesCouplingEvaluation.html">NavierStokesCouplingEvaluation</a> </td>
+          <td class="memname">virtual <a class="el" href="classNavierStokesCouplingEvaluationSIPG.html">NavierStokesCouplingEvaluationSIPG</a>&lt; dim, Number &gt;::~<a class="el" href="classNavierStokesCouplingEvaluationSIPG.html">NavierStokesCouplingEvaluationSIPG</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -285,8 +285,8 @@ template&lt;int dim, typename Number &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a906cf61e4a065e6abf79ca811f9b04d4" name="a906cf61e4a065e6abf79ca811f9b04d4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a906cf61e4a065e6abf79ca811f9b04d4">&#9670;&#160;</a></span>data_size()</h2>
+<a id="aacc36e566759890629ab41e90dee1376" name="aacc36e566759890629ab41e90dee1376"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aacc36e566759890629ab41e90dee1376">&#9670;&#160;</a></span>data_size()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -297,7 +297,7 @@ template&lt;int dim, typename Number &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">unsigned int <a class="el" href="classNavierStokesCouplingEvaluation.html">NavierStokesCouplingEvaluation</a>&lt; dim, Number &gt;::data_size </td>
+          <td class="memname">unsigned int <a class="el" href="classNavierStokesCouplingEvaluationSIPG.html">NavierStokesCouplingEvaluationSIPG</a>&lt; dim, Number &gt;::data_size </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -317,8 +317,8 @@ template&lt;int dim, typename Number &gt; </div>
 
 </div>
 </div>
-<a id="a5986f39ed8f28971249df24671e36951" name="a5986f39ed8f28971249df24671e36951"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5986f39ed8f28971249df24671e36951">&#9670;&#160;</a></span>get_relevant_dof_indices()</h2>
+<a id="a8667fa77ea2c660c59d024aa65bbe708" name="a8667fa77ea2c660c59d024aa65bbe708"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8667fa77ea2c660c59d024aa65bbe708">&#9670;&#160;</a></span>get_relevant_dof_indices()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -329,7 +329,7 @@ template&lt;int dim, typename Number &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const std::vector&lt; unsigned int &gt; &amp; <a class="el" href="classNavierStokesCouplingEvaluation.html">NavierStokesCouplingEvaluation</a>&lt; dim, Number &gt;::get_relevant_dof_indices </td>
+          <td class="memname">const std::vector&lt; unsigned int &gt; &amp; <a class="el" href="classNavierStokesCouplingEvaluationSIPG.html">NavierStokesCouplingEvaluationSIPG</a>&lt; dim, Number &gt;::get_relevant_dof_indices </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -350,8 +350,8 @@ template&lt;int dim, typename Number &gt; </div>
 
 </div>
 </div>
-<a id="a90790d79c488aaa59b1f4ae53a76676c" name="a90790d79c488aaa59b1f4ae53a76676c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a90790d79c488aaa59b1f4ae53a76676c">&#9670;&#160;</a></span>local_evaluate()</h2>
+<a id="ac90230c0dbadb9cd69ec22399c5be6b2" name="ac90230c0dbadb9cd69ec22399c5be6b2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac90230c0dbadb9cd69ec22399c5be6b2">&#9670;&#160;</a></span>local_evaluate()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -362,7 +362,7 @@ template&lt;int dim, typename Number &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classNavierStokesCouplingEvaluation.html">NavierStokesCouplingEvaluation</a>&lt; dim, Number &gt;::local_evaluate </td>
+          <td class="memname">void <a class="el" href="classNavierStokesCouplingEvaluationSIPG.html">NavierStokesCouplingEvaluationSIPG</a>&lt; dim, Number &gt;::local_evaluate </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structCouplingEvaluationData.html">CouplingEvaluationData</a>&lt; dim, Number &gt; &amp;&#160;</td>
           <td class="paramname"><em>data</em>, </td>
@@ -418,14 +418,14 @@ template&lt;int dim, typename Number &gt; </div>
 
 <p>Implements <a class="el" href="classCouplingEvaluationBase.html#a75c244e6a0ce001458698e0b5c4c1c24">CouplingEvaluationBase&lt; dim, Number &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01956">1956</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01957">1957</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="mortar__coupling__manager_8h_source.html#l00768">CouplingEvaluationData&lt; dim, Number &gt;::all_normals</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00588">contract()</a>, and <a class="el" href="mortar__coupling__manager_8h_source.html#l01049">BufferRW&lt; T &gt;::write()</a>.</p>
 
 </div>
 </div>
-<a id="a28ffcc16176e0d331720a2ef311e28b7" name="a28ffcc16176e0d331720a2ef311e28b7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a28ffcc16176e0d331720a2ef311e28b7">&#9670;&#160;</a></span>local_integrate()</h2>
+<a id="a997d4eaed26999cacef04d7cbc3c2c04" name="a997d4eaed26999cacef04d7cbc3c2c04"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a997d4eaed26999cacef04d7cbc3c2c04">&#9670;&#160;</a></span>local_integrate()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -436,7 +436,7 @@ template&lt;int dim, typename Number &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classNavierStokesCouplingEvaluation.html">NavierStokesCouplingEvaluation</a>&lt; dim, Number &gt;::local_integrate </td>
+          <td class="memname">void <a class="el" href="classNavierStokesCouplingEvaluationSIPG.html">NavierStokesCouplingEvaluationSIPG</a>&lt; dim, Number &gt;::local_integrate </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structCouplingEvaluationData.html">CouplingEvaluationData</a>&lt; dim, Number &gt; &amp;&#160;</td>
           <td class="paramname"><em>data</em>, </td>
@@ -500,14 +500,14 @@ template&lt;int dim, typename Number &gt; </div>
 
 <p>Implements <a class="el" href="classCouplingEvaluationBase.html#a7ffaee40ffe734e4724b927ca33e3ee6">CouplingEvaluationBase&lt; dim, Number &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l02002">2002</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l02003">2003</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="mortar__coupling__manager_8h_source.html#l00768">CouplingEvaluationData&lt; dim, Number &gt;::all_normals</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00764">CouplingEvaluationData&lt; dim, Number &gt;::all_penalty_parameter</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00766">CouplingEvaluationData&lt; dim, Number &gt;::all_weights</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00588">contract()</a>, <a class="el" href="mortar__coupling__manager_8h_source.html#l00642">outer()</a>, and <a class="el" href="mortar__coupling__manager_8h_source.html#l00762">CouplingEvaluationData&lt; dim, Number &gt;::penalty_factor</a>.</p>
 
 </div>
 </div>
-<a id="a96cb8395c6fb2f308416b55e3767bc51" name="a96cb8395c6fb2f308416b55e3767bc51"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a96cb8395c6fb2f308416b55e3767bc51">&#9670;&#160;</a></span>local_reinit()</h2>
+<a id="a1bbb47e4a162c0dbcaa363d76314f0cf" name="a1bbb47e4a162c0dbcaa363d76314f0cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1bbb47e4a162c0dbcaa363d76314f0cf">&#9670;&#160;</a></span>local_reinit()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -518,7 +518,7 @@ template&lt;int dim, typename Number &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classNavierStokesCouplingEvaluation.html">NavierStokesCouplingEvaluation</a>&lt; dim, Number &gt;::local_reinit </td>
+          <td class="memname">void <a class="el" href="classNavierStokesCouplingEvaluationSIPG.html">NavierStokesCouplingEvaluationSIPG</a>&lt; dim, Number &gt;::local_reinit </td>
           <td>(</td>
           <td class="paramtype">const typename Triangulation&lt; dim &gt;::cell_iterator &amp;&#160;</td>
           <td class="paramname"><em>cell</em>, </td>
@@ -553,13 +553,13 @@ template&lt;int dim, typename Number &gt; </div>
 
 <p>Implements <a class="el" href="classCouplingEvaluationBase.html#a4c818592f30a0f686ea67ba788bfb246">CouplingEvaluationBase&lt; dim, Number &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01946">1946</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mortar__coupling__manager_8cc_source.html#l01947">1947</a> of file <a class="el" href="mortar__coupling__manager_8cc_source.html">mortar_coupling_manager.cc</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a18aa18f2f5099132ad10c72566f8cc32" name="a18aa18f2f5099132ad10c72566f8cc32"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a18aa18f2f5099132ad10c72566f8cc32">&#9670;&#160;</a></span>fe_sub_p</h2>
+<a id="a95269110e6b535aac1a7e3aa3169a707" name="a95269110e6b535aac1a7e3aa3169a707"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a95269110e6b535aac1a7e3aa3169a707">&#9670;&#160;</a></span>fe_sub_p</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -567,7 +567,7 @@ template&lt;int dim, typename Number &gt; </div>
 template&lt;int dim, typename Number &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">const FESystem&lt;dim&gt; <a class="el" href="classNavierStokesCouplingEvaluation.html">NavierStokesCouplingEvaluation</a>&lt; dim, Number &gt;::fe_sub_p</td>
+          <td class="memname">const FESystem&lt;dim&gt; <a class="el" href="classNavierStokesCouplingEvaluationSIPG.html">NavierStokesCouplingEvaluationSIPG</a>&lt; dim, Number &gt;::fe_sub_p</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -576,8 +576,8 @@ template&lt;int dim, typename Number &gt; </div>
 
 </div>
 </div>
-<a id="aa4e50247390d1e5d85d7380f898d6afa" name="aa4e50247390d1e5d85d7380f898d6afa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa4e50247390d1e5d85d7380f898d6afa">&#9670;&#160;</a></span>fe_sub_u</h2>
+<a id="a51b4529da1f0b5de8ca32a7a6a2629c4" name="a51b4529da1f0b5de8ca32a7a6a2629c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a51b4529da1f0b5de8ca32a7a6a2629c4">&#9670;&#160;</a></span>fe_sub_u</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -585,7 +585,7 @@ template&lt;int dim, typename Number &gt; </div>
 template&lt;int dim, typename Number &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">const FESystem&lt;dim&gt; <a class="el" href="classNavierStokesCouplingEvaluation.html">NavierStokesCouplingEvaluation</a>&lt; dim, Number &gt;::fe_sub_u</td>
+          <td class="memname">const FESystem&lt;dim&gt; <a class="el" href="classNavierStokesCouplingEvaluationSIPG.html">NavierStokesCouplingEvaluationSIPG</a>&lt; dim, Number &gt;::fe_sub_u</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -595,8 +595,8 @@ template&lt;int dim, typename Number &gt; </div>
 
 </div>
 </div>
-<a id="abc46c6236f52e08f1383b9e67fc08b2c" name="abc46c6236f52e08f1383b9e67fc08b2c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abc46c6236f52e08f1383b9e67fc08b2c">&#9670;&#160;</a></span>kinematic_viscosity</h2>
+<a id="ae06f4bfded29a8a4942fe3be973e42c8" name="ae06f4bfded29a8a4942fe3be973e42c8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae06f4bfded29a8a4942fe3be973e42c8">&#9670;&#160;</a></span>kinematic_viscosity</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -604,7 +604,7 @@ template&lt;int dim, typename Number &gt; </div>
 template&lt;int dim, typename Number &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">const double <a class="el" href="classNavierStokesCouplingEvaluation.html">NavierStokesCouplingEvaluation</a>&lt; dim, Number &gt;::kinematic_viscosity</td>
+          <td class="memname">const double <a class="el" href="classNavierStokesCouplingEvaluationSIPG.html">NavierStokesCouplingEvaluationSIPG</a>&lt; dim, Number &gt;::kinematic_viscosity</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -615,8 +615,8 @@ template&lt;int dim, typename Number &gt; </div>
 
 </div>
 </div>
-<a id="a63939da7b03866de8caff23666d41b91" name="a63939da7b03866de8caff23666d41b91"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a63939da7b03866de8caff23666d41b91">&#9670;&#160;</a></span>phi_p_m</h2>
+<a id="aae8e700d81448adbdb5aeff83e64b234" name="aae8e700d81448adbdb5aeff83e64b234"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae8e700d81448adbdb5aeff83e64b234">&#9670;&#160;</a></span>phi_p_m</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -627,7 +627,7 @@ template&lt;int dim, typename Number &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classNavierStokesCouplingEvaluation.html#a61298464226b9fd4c0fae275d11d1854">FEPointIntegratorP</a> <a class="el" href="classNavierStokesCouplingEvaluation.html">NavierStokesCouplingEvaluation</a>&lt; dim, Number &gt;::phi_p_m</td>
+          <td class="memname"><a class="el" href="classNavierStokesCouplingEvaluationSIPG.html#a72e2c5f2d1b222a07172f14ffabe89b6">FEPointIntegratorP</a> <a class="el" href="classNavierStokesCouplingEvaluationSIPG.html">NavierStokesCouplingEvaluationSIPG</a>&lt; dim, Number &gt;::phi_p_m</td>
         </tr>
       </table>
   </td>
@@ -641,8 +641,8 @@ template&lt;int dim, typename Number &gt; </div>
 
 </div>
 </div>
-<a id="a289b67fb09a3394906630d10f2fc0f46" name="a289b67fb09a3394906630d10f2fc0f46"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a289b67fb09a3394906630d10f2fc0f46">&#9670;&#160;</a></span>phi_u_m</h2>
+<a id="aa4587070931f1aa92a2765353a76a6b6" name="aa4587070931f1aa92a2765353a76a6b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa4587070931f1aa92a2765353a76a6b6">&#9670;&#160;</a></span>phi_u_m</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -653,7 +653,7 @@ template&lt;int dim, typename Number &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classNavierStokesCouplingEvaluation.html#a08d9ac10ef5348181c92b179a2136935">FEPointIntegratorU</a> <a class="el" href="classNavierStokesCouplingEvaluation.html">NavierStokesCouplingEvaluation</a>&lt; dim, Number &gt;::phi_u_m</td>
+          <td class="memname"><a class="el" href="classNavierStokesCouplingEvaluationSIPG.html#a2d1fc6a725b695aef9cdf787efb93b07">FEPointIntegratorU</a> <a class="el" href="classNavierStokesCouplingEvaluationSIPG.html">NavierStokesCouplingEvaluationSIPG</a>&lt; dim, Number &gt;::phi_u_m</td>
         </tr>
       </table>
   </td>
@@ -669,8 +669,8 @@ template&lt;int dim, typename Number &gt; </div>
 
 </div>
 </div>
-<a id="a280b06d191647ee1904e549e0366715f" name="a280b06d191647ee1904e549e0366715f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a280b06d191647ee1904e549e0366715f">&#9670;&#160;</a></span>relevant_dof_indices</h2>
+<a id="afd333f93f1507ff1907593391abe0a22" name="afd333f93f1507ff1907593391abe0a22"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afd333f93f1507ff1907593391abe0a22">&#9670;&#160;</a></span>relevant_dof_indices</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -678,7 +678,7 @@ template&lt;int dim, typename Number &gt; </div>
 template&lt;int dim, typename Number &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;unsigned int&gt; <a class="el" href="classNavierStokesCouplingEvaluation.html">NavierStokesCouplingEvaluation</a>&lt; dim, Number &gt;::relevant_dof_indices</td>
+          <td class="memname">std::vector&lt;unsigned int&gt; <a class="el" href="classNavierStokesCouplingEvaluationSIPG.html">NavierStokesCouplingEvaluationSIPG</a>&lt; dim, Number &gt;::relevant_dof_indices</td>
         </tr>
       </table>
 </div><div class="memdoc">

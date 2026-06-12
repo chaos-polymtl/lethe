@@ -364,6 +364,7 @@
 </li>
 <li class="toctree-l3 current has-children"><a class="reference internal" href="passive_tracer.html">Passive Tracer</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" role="switch" type="checkbox"/><label for="toctree-checkbox-24"><div class="visually-hidden">Toggle navigation of Passive Tracer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l4 current current-page"><a class="current reference internal" href="#">Passive Tracer Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stabilization-techniques">Stabilization Techniques</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../electromagnetism/electromagnetism.html">Electromagnetism</a><input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" role="switch" type="checkbox"/><label for="toctree-checkbox-25"><div class="visually-hidden">Toggle navigation of Electromagnetism</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -445,7 +446,68 @@
         <article role="main">
           <section id="passive-tracer-equations">
 <h1>Passive Tracer Equations<a class="headerlink" href="#passive-tracer-equations" title="Link to this heading">#</a></h1>
-<p><strong>Under construction</strong></p>
+<p>Lethe allows the simulation of a passive tracer, which is governed by the following advection-diffusion equation:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\frac{\partial C}{\partial t} + \mathbf{u} \cdot \nabla C - D \nabla^2 C + f = 0,\]</div>
+</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(C\)</span> is the tracer concentration;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{u}\)</span> is the velocity of the fluid;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\nabla\)</span> is the <a class="reference external" href="https://en.wikipedia.org/wiki/Del">del operator</a>;</p></li>
+<li><p><span class="math notranslate nohighlight">\(D\)</span> is the diffusivity coefficient;</p></li>
+<li><p><span class="math notranslate nohighlight">\(f\)</span> is the tracer source term per unit of mass.</p></li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The tracer is advected by the fluid velocity, to which can be added a <a class="reference external" href="../../../parameters/cfd/tracer_drift_velocity.html">drift velocity</a>. A reactive tracer feature also allows the prescription of a tracer consumption rate.</p>
+</div>
+<p>To obtain the finite element discretization, we start from the strong form previously presented, multiply it by a test function <span class="math notranslate nohighlight">\(q\)</span>, then integrate it over the domain <span class="math notranslate nohighlight">\(\Omega\)</span> with boundary <span class="math notranslate nohighlight">\(\Gamma\)</span> such that:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\int_{\Omega} q \: \left( \frac{\partial C}{\partial t} + \mathbf{u} \cdot \nabla C - D \nabla^2 C - f \right) \: d\Omega = 0.\]</div>
+</div>
+<p>To obtain the corresponding weak form, we then apply integration by parts on the Laplacian term:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[F(C) := (q, \partial_t C)_{\Omega} + (q, \mathbf{u} \cdot \nabla C)_{\Omega} + (\nabla q, D \: \nabla C)_{\Omega} - (q, f)_{\Omega} = 0.\]</div>
+</div>
+<p>To ensure that the integral is well defined in the domain <span class="math notranslate nohighlight">\(\Omega\)</span>, we use appropriate solution spaces:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[C \in \mathcal{C} (\Omega) = \mathcal{H}^1 (\Omega), \qquad q \in \mathcal{Q} (\Omega) = \mathcal{H}^1 (\Omega),\]</div>
+</div>
+<p>noting that this solution space for <span class="math notranslate nohighlight">\(q\)</span> is suitable for a Continuous Galerkin formulation. If a Discontinuous Galerkin framework is assumed, the appropriate solution is defined in <span class="math notranslate nohighlight">\(\mathcal{L}^2 (\Omega)\)</span>.
+Both DG and CG tracer formulations are available in Lethe (see how to assign them in the <a class="reference external" href="../../../parameters/cfd/fem.html">FEM parameters</a> section).</p>
+<p>The weak formulation is written as: find <span class="math notranslate nohighlight">\(C \in \mathcal{C} (\Omega) \times (0, T]\)</span> such that</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[(q, \partial_t C)_{\Omega} + (q, \mathbf{u} \cdot \nabla C)_{\Omega} + (\nabla q, D \: \nabla C)_{\Omega} - (q, f)_{\Omega} = 0 \qquad \forall \: q \in \mathcal{Q}.\]</div>
+</div>
+</section>
+<section id="stabilization-techniques">
+<h1>Stabilization Techniques<a class="headerlink" href="#stabilization-techniques" title="Link to this heading">#</a></h1>
+<p>Two stabilization terms are added to the weak form of the passive tracer equation:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[F(C)_{\text{stab}} := F(C) + \underbrace{(\tau \: [\mathbf{u} \cdot \nabla q], \: \mathcal{R}(C))}_{a_{\text{GLS}}} + \underbrace{(v_{\text{DCDD}} \nabla q, \: \mathbf{d}_{\text{DCDD}} \cdot \nabla C)}_{a_{\text{DCDD}}} ,\]</div>
+</div>
+<p>In the GLS stabilization term <span class="math notranslate nohighlight">\(a_{\text{GLS}}\)</span>, <span class="math notranslate nohighlight">\(\mathcal{R}(C)\)</span> is the strong residual of the governing equation, and the stabilization parameter <span class="math notranslate nohighlight">\(\tau_k\)</span> is defined as in <a class="reference external" href="https://doi.org/10.1016/0045-7825(92)90141-6">Tezduyar (1992)</a>:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\tau = \left[ \left( \frac{1}{\Delta t} \right)^{2} + \left( \frac{2 |\mathrm{u}|}{h_{\text{conv}}} \right)^{2} + 9 \left( \frac{4 \nu}{h^2_{\text{diff}}} \right)^{2} \right]^{-1/2},\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(\Delta t\)</span> is the time step, and <span class="math notranslate nohighlight">\(h_{\text{conv}}\)</span> and <span class="math notranslate nohighlight">\(h_{\text{diff}}\)</span> are the size of the element related to the convection transport and diffusion mechanism, respectively. In Lethe, both element sizes are set to the diameter of a sphere having a volume equivalent to that of the cell.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>The same definition of the stabilization parameter is used in the <a class="reference external" href="../fluid_dynamics/stabilization.html">Fluid Dynamics</a> solver.</p>
+</div>
+<p>The second stabilization term is a Discontinuity-Capturing Directional Dissipation (DCDD) shock-capturing scheme proposed by <a class="reference external" href="https://doi.org/10.1002/fld.505">Tezduyar (2003)</a> that aims to deal with crosswind oscillations.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>The DCDD shock-capturing scheme is also used in the <a class="reference external" href="../../multiphase/cfd/cls.html">CLS</a> and <a class="reference external" href="../heat_transfer/heat_transfer.html">Heat Transfer</a> modules. The CLS DCDD implementation is detailed in <a class="reference external" href="https://doi.org/10.1016/j.cpc.2025.109880">this publication</a>, and it is analogous to the tracer module.</p>
+</div>
 </section>
 
         </article>
@@ -503,5 +565,6 @@
     <script src="../../../_static/scripts/furo.js?v=32e29ea5"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=7cec7674"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </body>
 </html>
