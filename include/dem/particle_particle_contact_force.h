@@ -100,7 +100,31 @@ public:
     this->combined_periodic_offsets = offsets;
   }
 
+  /**
+   * @brief
+   *
+   * @param
+   */
+  unsigned int
+  get_number_of_contacts() const
+  {
+    return n_contact;
+  }
+
+  /**
+   * @brief
+   *
+   * @param
+   */
+  void
+  reset_number_of_contacts()
+  {
+    n_contact = 0;
+  }
+
 protected:
+  unsigned int n_contact = 0;
+
   /**
    * @brief Map storing offset distance between periodic boundaries, keyed by
    * the boundary ID (pb0). It is calculated from the first pair of cells on
@@ -1527,6 +1551,8 @@ private:
     const Tensor<1, 3>                  &normal_unit_vector,
     const double                         normal_overlap)
   {
+    ++this->n_contact;
+
     // Particle iterator
     auto particle_one = contact_info.particle_one;
     auto particle_two = contact_info.particle_two;
@@ -1541,33 +1567,43 @@ private:
       {
         particle_one_new_position =
           particle_one_position -
-          0.5005 * normal_overlap * tensor_nd_to_2d(normal_unit_vector);
+          displacement_factor *
+            particle_two->get_properties()[PropertiesIndex::dp] *
+            tensor_nd_to_2d(normal_unit_vector);
         particle_two_new_position =
           particle_two_position +
-          0.5005 * normal_overlap * tensor_nd_to_2d(normal_unit_vector);
+          std::min(displacement_factor *
+                     particle_two->get_properties()[PropertiesIndex::dp],
+                   normal_overlap) *
+            tensor_nd_to_2d(normal_unit_vector);
       }
     if constexpr (dim == 3)
       {
         particle_one_new_position =
           particle_one_position -
-          displacement_factor *
-            particle_one->get_properties()[PropertiesIndex::dp] *
+          std::min(displacement_factor *
+                     particle_two->get_properties()[PropertiesIndex::dp],
+                   1.001 * normal_overlap) *
             normal_unit_vector;
+
         particle_two_new_position =
           particle_two_position +
-          displacement_factor *
-            particle_two->get_properties()[PropertiesIndex::dp] *
+          std::min(displacement_factor *
+                     particle_two->get_properties()[PropertiesIndex::dp],
+                   1.001 * normal_overlap) *
             normal_unit_vector;
       }
 
-    auto cell_one = particle_one->get_surrounding_cell();
+    // auto cell_one = particle_one->get_surrounding_cell();
     auto cell_two = particle_two->get_surrounding_cell();
 
-    if (cell_one->is_locally_owned())
-      particle_one->set_location(particle_one_new_position);
+    // if (cell_one->is_locally_owned())
+    //   particle_one->set_location(particle_one_new_position);
 
     if (cell_two->is_locally_owned())
       particle_two->set_location(particle_two_new_position);
+    else // ghost-ghost never happends
+      particle_one->set_location(particle_one_new_position);
   }
 
   /**
