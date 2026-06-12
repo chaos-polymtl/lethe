@@ -400,6 +400,14 @@ SolidPhaseSolver<dim>::setup_dofs()
           VectorTools::interpolate_boundary_values(
             dof_handler, id, alpha_bc, constraints, alpha_mask);
         }
+      else if (type == BoundaryConditions::BoundaryType::outlet)
+        {
+          // Natural boundary condition.
+
+          // Outlet flux terms are assembled in assemble_boundary_face().
+        }
+
+
       else if (type == BoundaryConditions::BoundaryType::periodic)
         {
           DoFTools::make_periodicity_constraints(
@@ -411,9 +419,11 @@ SolidPhaseSolver<dim>::setup_dofs()
         }
       else
         {
-          AssertThrow(false,
-                      ExcMessage(
-                        "Unsupported solid boundary type in setup_dofs()."));
+          AssertThrow(
+            false,
+            ExcMessage(
+              "Unsupported solid boundary type in setup_dofs() for boundary ID " +
+              std::to_string(static_cast<unsigned int>(id))));
         }
     }
 
@@ -1109,14 +1119,6 @@ public:
 
             // --------------------------------------------------
             // Continuity equation:
-            //
-            // d(alpha)/dt
-            // - div(alpha u) integrated by parts:
-            //
-            // - ∫ alpha^{k+1} u^k · grad(q_i) dΩ
-            //
-            // Boundary flux is assembled separately in
-            // assemble_boundary_face().
             // --------------------------------------------------
             if (comp_i == dim)
               {
@@ -1127,8 +1129,7 @@ public:
 
                 const double u_norm = std::max(u_pic.norm(), tiny_velocity);
 
-                // const double div_u_pic =
-                // scratch.picard_velocity_divergences[q];
+                const double div_u_pic = scratch.picard_velocity_divergences[q];
 
                 const double tau_alpha =
                   alpha_supg_factor /
@@ -1158,24 +1159,16 @@ public:
 
                     // --------------------------------------------------
                     // Alpha SUPG stabilization:
-                    //
-                    // ∫ tau (u^k · grad(q_i)) R_alpha dΩ
-                    //
-                    // R_alpha =
-                    //   alpha^{k+1}/dt
-                    // + u^k · grad(alpha^{k+1})
-                    // + alpha^{k+1} div(u^k)
-                    // - alpha^n/dt
                     // --------------------------------------------------
                     if (use_alpha_supg)
                       {
-                        // val += tau_alpha * u_dot_grad_q_i * (alpha_j / dt);
+                        val += tau_alpha * u_dot_grad_q_i * (alpha_j / dt);
 
                         val +=
                           tau_alpha * u_dot_grad_q_i * (u_pic * grad_alpha_j);
 
-                        // val +=
-                        //   tau_alpha * u_dot_grad_q_i * (alpha_j * div_u_pic);
+                        val +=
+                          tau_alpha * u_dot_grad_q_i * (alpha_j * div_u_pic);
                       }
 
                     A(i, j) += val * JxW;
@@ -1184,13 +1177,12 @@ public:
 
 
                 // SUPG RHS part:
-                //
-                // ∫ tau (u^k · grad(q_i)) alpha^n/dt dΩ
-                // if (use_alpha_supg)
-                //   {
-                //     // F(i) += tau_alpha * u_dot_grad_q_i *
-                //     //         (scratch.old_alpha_values[q] / dt) * JxW;
-                //   }
+
+                if (use_alpha_supg)
+                  {
+                    F(i) += tau_alpha * u_dot_grad_q_i *
+                            (scratch.old_alpha_values[q] / dt) * JxW;
+                  }
 
 
                 // -------------------------------
@@ -1216,13 +1208,6 @@ public:
 
             // --------------------------------------------------
             // Momentum equation:
-            //
-            // - rho_s ∫ (alpha^k u^{k+1} ⊗ u^k) : grad(v_i) dΩ
-            // + beta ∫ alpha^k u^{k+1} · v_i dΩ
-            // = beta ∫ alpha^k u_f · v_i dΩ
-            //
-            // Time term is assembled in SolidAssemblerBDF.
-            // Boundary convective flux is assembled separately.
             // --------------------------------------------------
             else if (comp_i < dim)
               {
@@ -1254,10 +1239,6 @@ public:
 
                     double val = 0.0;
 
-                    // - rho_s alpha^k (u_trial_j ⊗ u^k) : grad(v_i)
-                    //
-                    // Equivalent code form:
-                    // u_trial_j · [grad(v_i) u^k]
                     val += -rho_s * a_pic * (u_trial_j * (grad_v_i * u_pic));
 
                     // + beta alpha^k v_i · u_trial_j
@@ -1265,22 +1246,20 @@ public:
 
                     if (use_momentum_supg)
                       {
-                        // Tensor<1, dim> residual_matrix_part;
+                        Tensor<1, dim> residual_matrix_part;
 
-                        // // rho_s alpha^k u^{k+1} / dt
-                        // residual_matrix_part +=
-                        //   (rho_s * a_pic / dt) * u_trial_j;
+                        // rho_s alpha^k u^{k+1} / dt
+                        residual_matrix_part +=
+                          (rho_s * a_pic / dt) * u_trial_j;
 
-                        // // rho_s alpha^k (u^k · grad) u^{k+1}
-                        // residual_matrix_part +=
-                        //   rho_s * a_pic * (grad_u_j * u_pic);
+                        // rho_s alpha^k (u^k · grad) u^{k+1}
+                        residual_matrix_part +=
+                          rho_s * a_pic * (grad_u_j * u_pic);
 
-                        // // beta alpha^k u^{k+1}
-                        // residual_matrix_part +=
-                        //   beta * a_pic * u_trial_j;
+                        // beta alpha^k u^{k+1}
+                        residual_matrix_part += beta * a_pic * u_trial_j;
 
-                        // val += tau_u *
-                        //       (supg_test_u * residual_matrix_part);
+                        val += tau_u * (supg_test_u * residual_matrix_part);
 
                         val += tau_u * rho_s * a_pic *
                                (supg_test_u * (grad_u_j * u_pic));
@@ -1320,44 +1299,26 @@ public:
 
 
                 // RHS drag:
-                // beta alpha^k v_i · u_f
-                // F(i) += beta * a_pic * (v_i * u_f) * JxW;
-
                 F(i) += beta * a_pic * (v_i * u_pic) * JxW;
 
 
-                // if (use_momentum_supg)
-                //   {
-                //     // Tensor<1, dim> residual_rhs_part;
+                if (use_momentum_supg)
+                  {
+                    Tensor<1, dim> residual_rhs_part;
 
-                //     // // rho_s alpha^n u^n / dt
-                //     // residual_rhs_part +=
-                //     //   (rho_s * scratch.old_alpha_values[q] / dt) *
-                //     //   scratch.old_velocity_values[q];
+                    // rho_s alpha^n u^n / dt
+                    residual_rhs_part +=
+                      (rho_s * scratch.old_alpha_values[q] / dt) *
+                      scratch.old_velocity_values[q];
 
-                //     // // beta alpha^k u_f
-                //     // residual_rhs_part +=
-                //     //   beta * a_pic * u_f;
+                    // beta alpha^k u_f
+                    residual_rhs_part += beta * a_pic * u_f;
 
-                //     // F(i) += tau_u *
-                //     //         (supg_test_u * residual_rhs_part) *
-                //     //         JxW;
-
-
-                //   }
+                    F(i) += tau_u * (supg_test_u * residual_rhs_part) * JxW;
+                  }
 
                 // --------------------------------------------------
-                // Lethe-like grad-div stabilization for solid phase:
-                //
-                // + rho_s * gamma_gd *
-                //   [ d(alpha)/dt + div(alpha u_s) ] * div(v_i)
-                //
-                // Monolithic Picard linearization:
-                // R_alpha = alpha^{k+1}/dt
-                //         + div(alpha^k u^{k+1})
-                //         + div(alpha^{k+1} u^k)
-                //         - div(alpha^k u^k)
-                //         - alpha^n/dt
+                // grad-div stabilization
                 // --------------------------------------------------
                 if (use_solid_grad_div)
                   {
@@ -1456,18 +1417,8 @@ public:
     const unsigned int n_face_q = scratch.n_face_q_points;
     const unsigned int n_dof    = scratch.n_dofs;
 
-    /*
-     * Strong Dirichlet boundaries are already handled by constraints
-     * in setup_dofs().
-     *
-     * Therefore:
-     * - do not assemble flux on function inlet boundaries,
-     * - do not assemble flux on no-slip/slip walls,
-     * - assemble only on natural outlet/do-nothing boundaries.
-     *
-     * In your setup, outlet can be left out of boundary_conditions.type.
-     */
-    if (boundary_id != 2)
+
+    if (!is_outlet_boundary(boundary_id))
       return;
 
     for (unsigned int q = 0; q < n_face_q; ++q)
@@ -1588,29 +1539,83 @@ public:
   }
 
 private:
-  bool
-  is_strong_or_wall_boundary(const types::boundary_id boundary_id) const
+  // bool
+  // is_strong_or_wall_boundary(const types::boundary_id boundary_id) const
+  // {
+  //   const auto it = parameters.boundary_conditions.type.find(boundary_id);
+
+  //   if (it == parameters.boundary_conditions.type.end())
+  //     {
+  //       // Boundary not listed in the solid BC section:
+  //       // treat as natural outlet/do-nothing.
+  //       return false;
+  //     }
+
+  //   const auto type = it->second;
+
+  //   if (type == BoundaryConditions::BoundaryType::function ||
+  //       type == BoundaryConditions::BoundaryType::noslip ||
+  //       type == BoundaryConditions::BoundaryType::slip ||
+  //       type == BoundaryConditions::BoundaryType::periodic)
+  //     {
+  //       return true;
+  //     }
+
+  //   return false;
+  // }
+
+  BoundaryConditions::BoundaryType
+  get_boundary_type(const types::boundary_id boundary_id) const
   {
     const auto it = parameters.boundary_conditions.type.find(boundary_id);
 
-    if (it == parameters.boundary_conditions.type.end())
-      {
-        // Boundary not listed in the solid BC section:
-        // treat as natural outlet/do-nothing.
-        return false;
-      }
+    AssertThrow(it != parameters.boundary_conditions.type.end(),
+                ExcMessage(
+                  "No solid boundary condition specified for boundary ID " +
+                  std::to_string(static_cast<unsigned int>(boundary_id))));
 
-    const auto type = it->second;
+    return it->second;
+  }
 
-    if (type == BoundaryConditions::BoundaryType::function ||
-        type == BoundaryConditions::BoundaryType::noslip ||
-        type == BoundaryConditions::BoundaryType::slip ||
-        type == BoundaryConditions::BoundaryType::periodic)
-      {
-        return true;
-      }
+  bool
+  is_inlet_boundary(const types::boundary_id boundary_id) const
+  {
+    return get_boundary_type(boundary_id) ==
+           BoundaryConditions::BoundaryType::function;
+  }
 
-    return false;
+  bool
+  is_outlet_boundary(const types::boundary_id boundary_id) const
+  {
+    return get_boundary_type(boundary_id) ==
+           BoundaryConditions::BoundaryType::outlet;
+  }
+
+  bool
+  is_wall_boundary(const types::boundary_id boundary_id) const
+  {
+    const auto type = get_boundary_type(boundary_id);
+
+    return type == BoundaryConditions::BoundaryType::noslip ||
+           type == BoundaryConditions::BoundaryType::slip;
+  }
+
+  bool
+  is_periodic_boundary(const types::boundary_id boundary_id) const
+  {
+    return get_boundary_type(boundary_id) ==
+           BoundaryConditions::BoundaryType::periodic;
+  }
+
+  bool
+  is_strong_or_wall_boundary(const types::boundary_id boundary_id) const
+  {
+    const auto type = get_boundary_type(boundary_id);
+
+    return type == BoundaryConditions::BoundaryType::function ||
+           type == BoundaryConditions::BoundaryType::noslip ||
+           type == BoundaryConditions::BoundaryType::slip ||
+           type == BoundaryConditions::BoundaryType::periodic;
   }
 
   const SolidPhaseParameters<dim>         &parameters;
@@ -1734,6 +1739,17 @@ SolidPhaseSolver<dim>::check_solid_mass_and_divergence() const
           const types::boundary_id boundary_id =
             cell->face(face)->boundary_id();
 
+          const auto boundary_it =
+            parameters.boundary_conditions.type.find(boundary_id);
+
+          AssertThrow(
+            boundary_it != parameters.boundary_conditions.type.end(),
+            ExcMessage(
+              "No solid boundary condition specified for mesh boundary ID " +
+              std::to_string(static_cast<unsigned int>(boundary_id))));
+
+          const auto boundary_type = boundary_it->second;
+
           for (unsigned int q = 0; q < n_face_q; ++q)
             {
               const double JxW = fe_face_values.JxW(q);
@@ -1744,21 +1760,45 @@ SolidPhaseSolver<dim>::check_solid_mass_and_divergence() const
 
               const double flux = face_alpha_values[q] * un * JxW;
 
-              local_flux_total += flux;
-
-              if (boundary_id == 0)
-                local_flux_wall += flux;
-              else if (boundary_id == 1)
-                local_flux_inlet += flux;
-              else if (boundary_id == 2)
+              // Function boundaries are currently treated as inlets.
+              if (boundary_type == BoundaryConditions::BoundaryType::function)
+                {
+                  local_flux_inlet += flux;
+                  local_flux_total += flux;
+                }
+              else if (boundary_type ==
+                       BoundaryConditions::BoundaryType::outlet)
                 {
                   local_flux_outlet += flux;
+                  local_flux_total += flux;
 
                   if (un < 0.0)
                     {
                       local_outlet_backflow_flux += flux;
                       local_outlet_backflow_area += JxW;
                     }
+                }
+              else if (boundary_type ==
+                         BoundaryConditions::BoundaryType::noslip ||
+                       boundary_type == BoundaryConditions::BoundaryType::slip)
+                {
+                  local_flux_wall += flux;
+                  local_flux_total += flux;
+                }
+              else if (boundary_type ==
+                       BoundaryConditions::BoundaryType::periodic)
+                {
+                  // Periodic boundaries are paired internally.
+                  // Do not include them in the physical boundary-flux total.
+                }
+              else
+                {
+                  AssertThrow(
+                    false,
+                    ExcMessage(
+                      "Unsupported solid boundary type in mass diagnostics for "
+                      "boundary ID " +
+                      std::to_string(static_cast<unsigned int>(boundary_id))));
                 }
             }
         }
@@ -1961,19 +2001,6 @@ SolidPhaseSolver<dim>::assemble_system()
 
   system_matrix.compress(VectorOperation::add);
   system_rhs.compress(VectorOperation::add);
-
-  // pcout << "NNZ A_uu      = " << system_matrix.block(0,
-  // 0).n_nonzero_elements()
-  //       << '\n'
-  //       << "NNZ A_u_alpha = " << system_matrix.block(0,
-  //       1).n_nonzero_elements()
-  //       << '\n'
-  //       << "NNZ A_alpha_u = " << system_matrix.block(1,
-  //       0).n_nonzero_elements()
-  //       << '\n'
-  //       << "NNZ A_alpha   = " << system_matrix.block(1,
-  //       1).n_nonzero_elements()
-  //       << std::endl;
 }
 
 
@@ -2248,18 +2275,14 @@ SolidPhaseSolver<dim>::setup()
   picard_solution_ptr = &locally_relevant_picard_solution;
 
   timestep_number = 0;
-  // output_results(0.0);
-
-
-  // cfl_length_scale = 1.0;
 }
 
 template <int dim>
 bool
 SolidPhaseSolver<dim>::advance_one_step()
 {
-  if (finished())
-    return false;
+  // if (finished())
+  //   return false;
 
   ++timestep_number;
 

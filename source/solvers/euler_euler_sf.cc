@@ -138,10 +138,17 @@ EulerEulerOneWay<dim>::assemble_fluid_drag_exchange_rhs()
 
               if (comp_i < dim)
                 {
-                  const double v_i =
-                    fluid_fe_values[fluid_velocities].value(i, q)[comp_i];
+                  // const double v_i =
+                  //   fluid_fe_values[fluid_velocities].value(i, q)[comp_i];
 
-                  cell_rhs(i) += v_i * drag_q[comp_i] * fluid_fe_values.JxW(q);
+                  // cell_rhs(i) += v_i * drag_q[comp_i] * fluid_fe_values.JxW(q);
+
+                  const Tensor<1, dim> v_i =
+                    fluid_fe_values[fluid_velocities].value(i, q);
+
+                  cell_rhs(i) +=
+                    (v_i * drag_q) *
+                    fluid_fe_values.JxW(q);
                 }
             }
         }
@@ -170,26 +177,63 @@ EulerEulerOneWay<dim>::solve()
       this->cfd_dem_simulation_parameters.void_fraction->read_dem == true,
     this->cfd_dem_simulation_parameters.cfd_parameters.boundary_conditions);
 
+  // for (const auto &cell : this->triangulation->active_cell_iterators())
+  //   for (const auto &face : cell->face_iterators())
+  //     if (face->at_boundary())
+  //       {
+  //         const auto center = face->center();
+
+  //         if (std::abs(center[0] - 0.0) < 1e-12)
+  //           face->set_boundary_id(1); // inlet
+  //         else if (std::abs(center[0] - 1.0) < 1e-12)
+  //           face->set_boundary_id(2); // outlet
+  //         else
+  //           face->set_boundary_id(0); // walls
+  //       }
+    std::map<types::boundary_id, double> local_boundary_area;
+
   for (const auto &cell : this->triangulation->active_cell_iterators())
-    for (const auto &face : cell->face_iterators())
-      if (face->at_boundary())
+    {
+      if (!cell->is_locally_owned())
+        continue;
+
+      for (unsigned int face = 0;
+          face < GeometryInfo<dim>::faces_per_cell;
+          ++face)
         {
-          const auto center = face->center();
+          if (!cell->face(face)->at_boundary())
+            continue;
 
-          if (std::abs(center[0] - 0.0) < 1e-12)
-            face->set_boundary_id(1); // inlet
-          else if (std::abs(center[0] - 1.0) < 1e-12)
-            face->set_boundary_id(2); // outlet
-          else
-            face->set_boundary_id(0); // walls
+          const types::boundary_id id =
+            cell->face(face)->boundary_id();
+
+          local_boundary_area[id] += cell->face(face)->measure();
         }
+    }
 
-  //   for (const auto &cell : this->triangulation->active_cell_iterators())
-  //     for (const auto &face : cell->face_iterators())
-  //       if (face->at_boundary())
-  //         this->pcout << "face center = " << face->center()
-  //                     << " boundary id = " << face->boundary_id() <<
-  //                     std::endl;
+  // Expected Gmsh IDs for your current mesh
+  for (const types::boundary_id id : {1, 2, 3, 4})
+    {
+      const double global_area =
+        Utilities::MPI::sum(local_boundary_area[id],
+                            this->mpi_communicator);
+
+      this->pcout
+        << "Imported boundary ID "
+        << static_cast<unsigned int>(id)
+        << " area = " << global_area
+        << std::endl;
+    }
+
+  // Check whether any untagged boundary remains as ID 0
+  const double boundary_zero_area =
+    Utilities::MPI::sum(local_boundary_area[0],
+                        this->mpi_communicator);
+
+  this->pcout << "Imported boundary ID 0 area = "
+              << boundary_zero_area
+              << std::endl;
+
 
   this->setup_dofs();
 
@@ -218,7 +262,7 @@ EulerEulerOneWay<dim>::solve()
 
       if (!this->simulation_control->is_at_start())
         {
-          NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
+          //NavierStokesBase<dim, GlobalVectorType, IndexSet>::refine_mesh();
           this->vertices_cell_mapping();
         }
 

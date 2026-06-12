@@ -45,7 +45,7 @@ main(int argc, char *argv[])
       CFDDEMSimulationParameters<dim> fluid_parameters;
 
       Parameters::SizeOfSubsections size_of_subsections;
-      size_of_subsections.boundary_conditions = 3;
+      size_of_subsections.boundary_conditions = 5;
       size_of_subsections.manifolds           = 1;
 
       fluid_parameters.declare(prm, size_of_subsections);

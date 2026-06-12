@@ -158,7 +158,8 @@ struct SolidBoundaryConditionsParameters
   {
     prm.declare_entry("type",
                       "noslip",
-                      Patterns::Selection("noslip|slip|function|periodic"));
+                      Patterns::Selection(
+                        "noslip|slip|function|outlet|periodic"));
     prm.declare_entry("id",
                       Utilities::int_to_string(default_id, 2),
                       Patterns::Integer());
@@ -178,7 +179,7 @@ struct SolidBoundaryConditionsParameters
   }
 
   static void
-  declare_parameters(ParameterHandler &prm, unsigned int max_bc = 3)
+  declare_parameters(ParameterHandler &prm, unsigned int max_bc = 5)
   {
     prm.enter_subsection("Boundary conditions");
     {
@@ -205,6 +206,8 @@ struct SolidBoundaryConditionsParameters
       type[id] = BoundaryConditions::BoundaryType::noslip;
     else if (type_str == "slip")
       type[id] = BoundaryConditions::BoundaryType::slip;
+    else if (type_str == "outlet")
+      type[id] = BoundaryConditions::BoundaryType::outlet;
     else if (type_str == "function")
       {
         type[id] = BoundaryConditions::BoundaryType::function;
@@ -422,9 +425,6 @@ struct SolidPhaseParameters
 };
 
 
-// -----------------------------------------------------------------------------
-// Forward declarations
-// -----------------------------------------------------------------------------
 
 template <int dim>
 class SolidScratchData;
@@ -433,9 +433,6 @@ template <int dim>
 struct SolidCopyData;
 
 
-// -----------------------------------------------------------------------------
-// FULL BASE CLASS DEFINITION (needed before derived assembler)
-// -----------------------------------------------------------------------------
 
 template <int dim>
 class SolidTimeAssemblerBase
@@ -452,17 +449,11 @@ public:
 };
 
 
-// -----------------------------------------------------------------------------
-// Forward declaration of core assembler
-// -----------------------------------------------------------------------------
 
 template <int dim>
 class SolidCoreAssembler;
 
 
-// -----------------------------------------------------------------------------
-// SolidPhaseSolver class
-// -----------------------------------------------------------------------------
 
 template <int dim>
 class SolidPhaseSolver
