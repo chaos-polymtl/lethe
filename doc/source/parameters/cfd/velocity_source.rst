@@ -133,12 +133,12 @@ For :doc:`CLS<../../theory/multiphase/cfd/cls>` simulations, the source term tak
 * The ``Carman-Kozeny permeability area`` parameter corresponds to :math:`A_\mathrm{perm}` in :math:`\boldsymbol{F}_\mathrm{Carman-Kozeny}`. It represents the permeability area of the pseudo-porous bed (or solid phase) that is simulated. Typically the value of :math:`A_\mathrm{perm}` is chosen in function of :math:`\mu`, such that :math:`\frac{\mu}{A_\mathrm{perm}} \in [10^{3}, 10^{6}]`.
 
   .. caution::
-    When ``Carman-Kozeny fluid with phase change = both``, two values of ``Carman-Kozeny permeability area`` separated by a comma must be specified.
+    When ``Carman-Kozeny fluid with phase change = both``, two values of ``Carman-Kozeny permeability area`` separated by a comma must be specified. The first value corresponds to ``fluid 0``, and the second to ``fluid 1``.
 
 * The ``Carman-Kozeny division tolerance`` parameter avoids division by zero in :math:`\boldsymbol{F}_\mathrm{Carman-Kozeny}` when in the solid phase (:math:`\alpha_\mathrm{l} = 0`). Typically, :math:`\delta \in [10^{-3},10^{-6}]`.
 
   .. caution::
-    When ``Carman-Kozeny fluid with phase change = both``, two values of ``Carman-Kozeny division tolerance`` separated by a comma must be specified.
+    When ``Carman-Kozeny fluid with phase change = both``, two values of ``Carman-Kozeny division tolerance`` separated by a comma must be specified. The first value corresponds to ``fluid 0``, and the second to ``fluid 1``.
 
 
 References
