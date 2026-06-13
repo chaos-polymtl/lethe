@@ -364,7 +364,7 @@ fill_string_vectors_from_file(
 void
 create_output_folder(const std::string &dirname)
 {
-  std::filesystem::create_directory(dirname);
+  std::filesystem::create_directories(dirname);
 }
 
 void
