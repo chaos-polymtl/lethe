@@ -40,14 +40,14 @@ A permeability source term can be added to the simulation using the following pa
 .. code-block:: text
 
   subsection velocity source
-    set permeability model               = none
-    set enable Darcy multiply by density = false
-    set Carman-Kozeny permeability area  = 1e-3
-    set Carman-Kozeny division tolerance = 1e-3
+    set permeability model                    = none
+    set enable Darcy multiply by density      = false
+    set Carman-Kozeny fluid with phase change = fluid 0
+    set Carman-Kozeny permeability area       = 1e-3
+    set Carman-Kozeny division tolerance      = 1e-3
   end
 
 * The ``permeability model`` parameter specifies the type of penalization term to be applied to the Navier-Stokes equations. The options are ``none``, ``darcy phase change``, or ``carman-kozeny phase change``.
-
 
   .. caution::
     The phase change Darcy and Carman-Kozeny models do not currently have a Cahn-Hilliard implementation.
@@ -115,16 +115,30 @@ The figure below gives an idea of how the different parameters influence the res
 For :doc:`CLS<../../theory/multiphase/cfd/cls>` simulations, the source term takes the following form:
 
   .. math::
-     \boldsymbol{F}_\mathrm{Carman-Kozeny} =  \left[ \frac{1}{A_\mathrm{perm}} \sum_{i=0}^1 w_i \mu_i  \left[ \frac{(1-\alpha_{i,\mathrm{l}})^2}{(\alpha_{i,\mathrm{l}})^3 + \delta}\right] \right] \boldsymbol{u}
+     \boldsymbol{F}_\mathrm{Carman-Kozeny} =  \left[ \sum_{i=0}^1 \frac{w_i \mu_i}{A_{i,\mathrm{perm}}}  \left[ \frac{(1-\alpha_{i,\mathrm{l}})^2}{(\alpha_{i,\mathrm{l}})^3 + \delta}\right] \right] \boldsymbol{u}
 
   where
 
   - :math:`w_i = \begin{cases}  1-\phi \quad &\mathrm{if} \quad  i = 0\\ \phi \quad &\mathrm{if} \quad  i = 1\\ \end{cases}` is the phase indicator weight, and;
   - :math:`\mu \, [\mathsf{ML^{-1}T^{-1}}]` is the dynamic viscosity.
 
+* The ``Carman-Kozeny fluid with phase change`` specifies on which fluid(s) the permeability model should be applied on. The options are ``fluid 0``, ``fluid 1``, or ``both``.
+
+  .. note::
+    This only affects the ``carman-kozeny phase change`` permeability model. For the ``darcy phase change`` model, the penalization is computed according to the ``Darcy penalty liquid``  and ``Darcy penalty solid`` as described above.
+
+  .. attention::
+    When ``Carman-Kozeny fluid with phase change`` is set to ``fluid 1`` or ``both``, ensure that the ``cls`` physics is enabled in the :doc:`multiphysics` subsection.
+
 * The ``Carman-Kozeny permeability area`` parameter corresponds to :math:`A_\mathrm{perm}` in :math:`\boldsymbol{F}_\mathrm{Carman-Kozeny}`. It represents the permeability area of the pseudo-porous bed (or solid phase) that is simulated. Typically the value of :math:`A_\mathrm{perm}` is chosen in function of :math:`\mu`, such that :math:`\frac{\mu}{A_\mathrm{perm}} \in [10^{3}, 10^{6}]`.
 
+  .. caution::
+    When ``Carman-Kozeny fluid with phase change = both``, two values of ``Carman-Kozeny permeability area`` separated by a comma must be specified.
+
 * The ``Carman-Kozeny division tolerance`` parameter avoids division by zero in :math:`\boldsymbol{F}_\mathrm{Carman-Kozeny}` when in the solid phase (:math:`\alpha_\mathrm{l} = 0`). Typically, :math:`\delta \in [10^{-3},10^{-6}]`.
+
+  .. caution::
+    When ``Carman-Kozeny fluid with phase change = both``, two values of ``Carman-Kozeny division tolerance`` separated by a comma must be specified.
 
 
 References

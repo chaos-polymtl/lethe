@@ -524,6 +524,8 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
           this->assemblers.emplace_back(
             std::make_shared<PhaseChangeCarmanKozenyCLSAssembler<dim>>(
               this->simulation_parameters.velocity_sources
+                .fluid_with_phase_change,
+              this->simulation_parameters.velocity_sources
                 .carman_kozeny_permeability_area,
               this->simulation_parameters.velocity_sources
                 .carman_kozeny_tolerance,
@@ -624,9 +626,9 @@ FluidDynamicsMatrixBased<dim>::setup_assemblers()
           this->assemblers.emplace_back(
             std::make_shared<PhaseChangeCarmanKozenyAssembler<dim>>(
               this->simulation_parameters.velocity_sources
-                .carman_kozeny_permeability_area,
+                .carman_kozeny_permeability_area[0],
               this->simulation_parameters.velocity_sources
-                .carman_kozeny_tolerance,
+                .carman_kozeny_tolerance[0],
               this->simulation_parameters.physical_properties_manager
                 .get_physical_properties_parameters()
                 .fluids[0]

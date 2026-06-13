@@ -647,8 +647,7 @@ PhaseChangeCarmanKozenyCLSAssembler<dim>::assemble_matrix(
   auto &strong_jacobian = copy_data.strong_jacobian;
 
   const unsigned int  number_of_fluids = phase_change_parameters_vector.size();
-  std::vector<double> liquid_fraction_factors(
-    number_of_fluids); // (1-alpha_{i_l})^2 * (alpha_{i,l}^3 + tol)^{-1}
+  std::vector<double> liquid_fraction_factors(number_of_fluids);
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -664,6 +663,13 @@ PhaseChangeCarmanKozenyCLSAssembler<dim>::assemble_matrix(
       // Compute the liquid fraction and compute penalty term
       for (unsigned int p = 0; p < number_of_fluids; p++)
         {
+          // Skip to next fluid if there is no phase change
+          if (!enable_phase_change[p])
+            {
+              liquid_fraction_factors[p] = 0;
+              continue;
+            }
+
           // Compute the liquid fraction
           double liquid_fraction =
             (std::min(1.,
@@ -676,9 +682,10 @@ PhaseChangeCarmanKozenyCLSAssembler<dim>::assemble_matrix(
           // Pre-compute the denominator inverse
           double denominator_inv =
             1 / (Utilities::fixed_power<3>(liquid_fraction) +
-                 carman_kozeny_tolerance);
+                 carman_kozeny_tolerance[p]);
 
-          // Compute liquid fraction factor
+          // Compute liquid fraction factor (1-alpha_{i_l})^2 * (alpha_{i,l}^3 +
+          // tol)^{-1}
           liquid_fraction_factors[p] =
             Utilities::fixed_power<2>(1 - liquid_fraction) * denominator_inv;
         }
@@ -686,11 +693,10 @@ PhaseChangeCarmanKozenyCLSAssembler<dim>::assemble_matrix(
       // For a CLS two-fluid system, the global Carman-Kozeny penalty term
       // takes into account the phase change parameters in both fluids.
       const double carman_kozeny_penalty =
-        carman_kozeny_permeability_area_inv *
-        (((1 - filtered_phase[q]) * liquid_fraction_factors[0] *
-          dynamic_viscosity_0) +
-         (filtered_phase[q] * liquid_fraction_factors[1] *
-          dynamic_viscosity_1));
+        (carman_kozeny_permeability_area_inv[0] * (1 - filtered_phase[q]) *
+         liquid_fraction_factors[0] * dynamic_viscosity_0) +
+        (carman_kozeny_permeability_area_inv[1] * filtered_phase[q] *
+         liquid_fraction_factors[1] * dynamic_viscosity_1);
 
       strong_residual[q] += carman_kozeny_penalty * velocities[q];
 
@@ -733,8 +739,7 @@ PhaseChangeCarmanKozenyCLSAssembler<dim>::assemble_rhs(
   auto &strong_residual = copy_data.strong_residual;
 
   const unsigned int  number_of_fluids = phase_change_parameters_vector.size();
-  std::vector<double> liquid_fraction_factors(
-    number_of_fluids); // (1-alpha_{i_l})^2 * (alpha_{i,l}^3 + tol)^{-1}
+  std::vector<double> liquid_fraction_factors(number_of_fluids);
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -750,6 +755,13 @@ PhaseChangeCarmanKozenyCLSAssembler<dim>::assemble_rhs(
       // Compute the liquid fraction and compute penalty term
       for (unsigned int p = 0; p < number_of_fluids; p++)
         {
+          // Skip to next fluid if there is no phase change
+          if (!enable_phase_change[p])
+            {
+              liquid_fraction_factors[p] = 0;
+              continue;
+            }
+
           // Compute the liquid fraction
           double liquid_fraction =
             (std::min(1.,
@@ -762,9 +774,10 @@ PhaseChangeCarmanKozenyCLSAssembler<dim>::assemble_rhs(
           // Pre-compute the denominator inverse
           double denominator_inv =
             1 / (Utilities::fixed_power<3>(liquid_fraction) +
-                 carman_kozeny_tolerance);
+                 carman_kozeny_tolerance[p]);
 
-          // Compute liquid fraction factor
+          // Compute liquid fraction factor (1-alpha_{i_l})^2 * (alpha_{i,l}^3 +
+          // tol)^{-1}
           liquid_fraction_factors[p] =
             Utilities::fixed_power<2>(1 - liquid_fraction) * denominator_inv;
         }
@@ -772,11 +785,10 @@ PhaseChangeCarmanKozenyCLSAssembler<dim>::assemble_rhs(
       // For a CLS two-fluid system, the global Carman-Kozeny penalty term
       // takes into account the phase change parameters in both fluids.
       const double carman_kozeny_penalty =
-        carman_kozeny_permeability_area_inv *
-        (((1 - filtered_phase[q]) * liquid_fraction_factors[0] *
-          dynamic_viscosity_0) +
-         (filtered_phase[q] * liquid_fraction_factors[1] *
-          dynamic_viscosity_1));
+        (carman_kozeny_permeability_area_inv[0] * (1 - filtered_phase[q]) *
+         liquid_fraction_factors[0] * dynamic_viscosity_0) +
+        (carman_kozeny_permeability_area_inv[1] * filtered_phase[q] *
+         liquid_fraction_factors[1] * dynamic_viscosity_1);
 
       strong_residual[q] += carman_kozeny_penalty * velocities[q];
 

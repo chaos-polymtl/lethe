@@ -21,8 +21,8 @@ set dimension = 2
 subsection simulation control
   set method           = bdf2
   set output frequency = 0
-  set time end         = 20
-  set time step        = 2
+  set time end         = 0.50
+  set time step        = 0.01
 end
 
 #---------------------------------------------------

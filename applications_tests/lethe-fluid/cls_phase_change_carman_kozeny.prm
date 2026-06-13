@@ -12,6 +12,8 @@
 #  - for all y in [-0.05, 0.05[: fluid 1
 #  - for all y in [0.05, 0.25[: fluid 0
 # Transition between the layers is smoothened with a tanh function.
+# The results do not perfectly converge towards the expected analytical solution
+# due to spurious currents appearing near the interface between fluids.
 #------------------------------------------------------------------------------
 
 # Listing of Parameters
@@ -85,9 +87,10 @@ end
 #---------------------------------------------------
 
 subsection velocity source
-  set permeability model               = carman-kozeny phase change
-  set Carman-Kozeny permeability area  = 5e-6
-  set Carman-Kozeny division tolerance = 1e-3
+  set permeability model                    = carman-kozeny phase change
+  set Carman-Kozeny permeability area       = 5e-6, 5e-7
+  set Carman-Kozeny division tolerance      = 1e-3, 1e-3
+  set Carman-Kozeny fluid with phase change = both
 end
 
 #---------------------------------------------------

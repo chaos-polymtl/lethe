@@ -12,6 +12,8 @@
 #  - for all y in [-0.05, 0.05[: fluid 1
 #  - for all y in [0.05, 0.25[: fluid 0
 # Transition between the layers is smoothened with a tanh function.
+# The results do not perfectly converge towards the expected analytical solution
+# due to spurious currents appearing near the interface between fluids.
 #------------------------------------------------------------------------------
 
 # Listing of Parameters

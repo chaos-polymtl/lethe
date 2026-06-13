@@ -498,6 +498,14 @@ public:
         ExcMessage(
           "The current implementation only allows the capillary time-step constraint \n "
           "to be respected for CLS multiphase flows with surface tension.\n "));
+
+    AssertThrow(
+      velocity_sources.fluid_with_phase_change ==
+          Parameters::FluidIndicator::fluid0 ||
+        multiphysics.CLS,
+      ExcMessage(
+        "Inconsistency in .prm!\n"
+        "The 'cls' multiphysics is disabled and the 'fluid with phase change' parameter (subsection velocity source) has not been to 'fluid 0'."));
   }
 
   inline bool

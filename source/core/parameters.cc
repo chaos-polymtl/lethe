@@ -3728,17 +3728,23 @@ namespace Parameters
         "Permeability models for phase change modelling."
         "Choices are <none|darcy phase change|carman-kozeny phase change>.");
 
+      prm.declare_entry("Carman-Kozeny fluid with phase change",
+                        "fluid 0",
+                        Patterns::Selection("fluid 0|fluid 1|both"),
+                        "Select which fluids have phase change"
+                        "Choices are <fluid 0|fluid 1|both>.");
+
       prm.declare_entry(
         "Carman-Kozeny division tolerance",
         "1e-3",
-        Patterns::Double(),
-        "This tolerance avoids a division by zero in the Carman-Kozeny source term.");
+        Patterns::List(Patterns::Double()),
+        "This tolerance avoids a division by zero in the Carman-Kozeny source term. For multiple fluids with phase change, separate values with a comma.");
 
       prm.declare_entry(
         "Carman-Kozeny permeability area",
         "1e-3",
-        Patterns::Double(),
-        "This represents the permeability area of the pseudo-porous bed in the Carman-Kozeny source term.");
+        Patterns::List(Patterns::Double()),
+        "This represents the permeability area of the pseudo-porous bed in the Carman-Kozeny source term. For multiple fluids with phase change, separate values with a comma.");
     }
     prm.leave_subsection();
   }
@@ -3756,30 +3762,103 @@ namespace Parameters
       else
         throw std::logic_error("Error, invalid velocity source type");
 
-      const std::string permeabilty_model_str = prm.get("permeability model");
-      if (permeabilty_model_str == "none")
+      const std::string permeability_model_str = prm.get("permeability model");
+      if (permeability_model_str == "none")
         permeability_model = PermeabilityModel::none;
-      else if (permeabilty_model_str == "darcy phase change")
+      else if (permeability_model_str == "darcy phase change")
         permeability_model = PermeabilityModel::darcy_phase_change;
-      else if (permeabilty_model_str == "carman-kozeny phase change")
+      else if (permeability_model_str == "carman-kozeny phase change")
         permeability_model = PermeabilityModel::carman_kozeny_phase_change;
       else
-        throw std::logic_error("Error, invalid permeability model");
+        throw std::logic_error(
+          "Error, invalid permeability model. Options are <none|darcy phase change|carman-kozeny phase change>.");
 
-      carman_kozeny_tolerance =
-        prm.get_double("Carman-Kozeny division tolerance");
-      carman_kozeny_permeability_area =
-        prm.get_double("Carman-Kozeny permeability area");
+      const std::string fluid_indicator_str =
+        prm.get("Carman-Kozeny fluid with phase change");
+      if (fluid_indicator_str == "fluid 0")
+        fluid_with_phase_change = FluidIndicator::fluid0;
+      else if (fluid_indicator_str == "fluid 1")
+        fluid_with_phase_change = FluidIndicator::fluid1;
+      else if (fluid_indicator_str == "both")
+        fluid_with_phase_change = FluidIndicator::both;
+      else
+        throw std::logic_error(
+          "Error, invalid fluid with phase change. Options are <fluid 0|fluid 1|both>.");
 
-      AssertThrow(
-        carman_kozeny_tolerance > 0,
-        ExcMessage(
-          "The 'Carman-Kozeny division tolerance' should be strictly positive."));
+      carman_kozeny_permeability_area.resize(2);
+      carman_kozeny_tolerance.resize(2);
+      const std::string carman_kozeny_permeability_area_list =
+        prm.get("Carman-Kozeny permeability area");
+      std::vector<std::string> carman_kozeny_permeability_area_vec =
+        Utilities::split_string_list(carman_kozeny_permeability_area_list);
 
-      AssertThrow(
-        carman_kozeny_permeability_area > 0,
-        ExcMessage(
-          "The chosen value of 'Carman-Kozeny permeability area' has to be strictly positive."));
+      const std::string carman_kozeny_tolerance_list =
+        prm.get("Carman-Kozeny division tolerance");
+      std::vector<std::string> carman_kozeny_tolerance_vec =
+        Utilities::split_string_list(carman_kozeny_tolerance_list);
+
+      // Check that dimensions agree
+      AssertDimension(carman_kozeny_permeability_area_vec.size(),
+                      carman_kozeny_tolerance_vec.size());
+
+      if (fluid_with_phase_change == FluidIndicator::fluid0)
+        {
+          AssertDimension(carman_kozeny_permeability_area_vec.size(), 1);
+          AssertDimension(carman_kozeny_tolerance_vec.size(), 1);
+
+          carman_kozeny_permeability_area[0] =
+            std::stod(carman_kozeny_permeability_area_vec[0]);
+          carman_kozeny_tolerance[0] =
+            std::stod(carman_kozeny_tolerance_vec[0]);
+
+          // Assign default values to fluid 1
+          carman_kozeny_permeability_area[1] = 1e-3;
+          carman_kozeny_tolerance[1]         = 1e-3;
+        }
+      else if (fluid_with_phase_change == FluidIndicator::fluid1)
+        {
+          AssertDimension(carman_kozeny_permeability_area_vec.size(), 1);
+          AssertDimension(carman_kozeny_tolerance_vec.size(), 1);
+
+          carman_kozeny_permeability_area[1] =
+            std::stod(carman_kozeny_permeability_area_vec[0]);
+          carman_kozeny_tolerance[1] =
+            std::stod(carman_kozeny_tolerance_vec[0]);
+
+          // Assign default values to fluid 0
+          carman_kozeny_permeability_area[0] = 1e-3;
+          carman_kozeny_tolerance[0]         = 1e-3;
+        }
+      else if (fluid_with_phase_change == FluidIndicator::both)
+        {
+          AssertDimension(carman_kozeny_permeability_area_vec.size(),
+                          carman_kozeny_permeability_area.size());
+          AssertDimension(carman_kozeny_tolerance_vec.size(),
+                          carman_kozeny_tolerance.size());
+
+          for (unsigned int i = 0; i < carman_kozeny_permeability_area.size();
+               ++i)
+            {
+              carman_kozeny_permeability_area[i] =
+                std::stod(carman_kozeny_permeability_area_vec[i]);
+              carman_kozeny_tolerance[i] =
+                std::stod(carman_kozeny_tolerance_vec[i]);
+            }
+        }
+
+      // Check that all values are strictly positive
+      for (unsigned int i = 0; i < carman_kozeny_permeability_area.size(); ++i)
+        {
+          AssertThrow(
+            carman_kozeny_permeability_area[i] > 0,
+            ExcMessage(
+              "The chosen value of 'Carman-Kozeny permeability area' has to be strictly positive."));
+
+          AssertThrow(
+            carman_kozeny_tolerance[i] > 0,
+            ExcMessage(
+              "The 'Carman-Kozeny division tolerance' should be strictly positive."));
+        }
 
       enable_darcy_multiply_by_density =
         prm.get_bool("enable Darcy multiply by density");

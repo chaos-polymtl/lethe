@@ -21,8 +21,8 @@ set dimension = 2
 subsection simulation control
   set method           = bdf2
   set output frequency = 0
-  set time end         = 20
-  set time step        = 2
+  set time end         = 0.50
+  set time step        = 0.01
 end
 
 #---------------------------------------------------
@@ -57,8 +57,8 @@ end
 
 subsection velocity source
   set permeability model               = carman-kozeny phase change
-  set Carman-Kozeny permeability area  = 1e-6
-  set Carman-Kozeny division tolerance = 1e-5
+  set Carman-Kozeny permeability area  = 5e-6
+  set Carman-Kozeny division tolerance = 1e-4
 end
 
 #---------------------------------------------------
