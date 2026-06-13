@@ -37,30 +37,19 @@ IBParticlesDEM<dim>::is_boundary_excluded(
   if (!boundary_conditions_parameters)
     return false;
 
-  const auto &outlet_boundaries =
-    boundary_conditions_parameters->outlet_boundaries;
-  if (std::ranges::find(outlet_boundaries, boundary_id) !=
-      outlet_boundaries.end())
+  if (boundary_conditions_parameters->outlet_boundaries.contains(boundary_id))
     return true;
 
-  const auto &bc_types = boundary_conditions_parameters->bc_types;
-  const bool  has_periodic =
-    std::ranges::find(bc_types,
-                      Parameters::Lagrangian::BCDEM::BoundaryType::periodic) !=
-    bc_types.end();
-  if (has_periodic)
-    {
-      const auto &pb0 = boundary_conditions_parameters->periodic_boundary_0;
-      const auto &pb1 = boundary_conditions_parameters->periodic_boundary_1;
-      if (std::ranges::any_of(pb0,
-                              [boundary_id](const auto &p) {
-                                return p.second == boundary_id;
-                              }) ||
-          std::ranges::any_of(pb1, [boundary_id](const auto &p) {
-            return p.second == boundary_id;
-          }))
-        return true;
-    }
+  // A boundary is periodic if it is a principal periodic boundary (a key of
+  // periodic_neighbor_id) or a neighbor periodic boundary (one of its values).
+  const auto &periodic_neighbor_id =
+    boundary_conditions_parameters->periodic_neighbor_id;
+  if (periodic_neighbor_id.contains(boundary_id) ||
+      std::ranges::any_of(periodic_neighbor_id, [boundary_id](const auto &p) {
+        return p.second == boundary_id;
+      }))
+    return true;
+
   return false;
 }
 

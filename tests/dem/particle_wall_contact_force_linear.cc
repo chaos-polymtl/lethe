@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -121,7 +121,7 @@ test()
 
   // Finding boundary cells
   BoundaryCellsInformation<dim> boundary_cells_object;
-  std::vector<unsigned int>     outlet_boundaries;
+  std::set<types::boundary_id>  outlet_boundaries;
   boundary_cells_object.build(
     tr,
     outlet_boundaries,

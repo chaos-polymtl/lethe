@@ -77,8 +77,8 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
 
   // Temp storage to calculate offsets only once per ID
   std::map<types::boundary_id, bool> offset_calculated;
-  for (auto [bc_index, id] : periodic_boundaries_ids)
-    offset_calculated[id] = false;
+  for (auto const &[primary_mesh_id, direction] : directions)
+    offset_calculated[primary_mesh_id] = false;
 
   // Iterating over the active cells in the triangulation
   for (const auto &cell : triangulation.active_cell_iterators())
@@ -92,50 +92,40 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
                 {
                   unsigned int face_boundary_id = face->boundary_id();
 
-                  // Check if face matches any of the PB IDs
-                  for (const unsigned int pbc_index : periodic_bc_index)
+                  // Check if face matches any of the principal PB IDs
+                  auto it = directions.find(face_boundary_id);
+                  if (it != directions.end())
                     {
-                      auto it = periodic_boundaries_ids.find(pbc_index);
-                      if (it != periodic_boundaries_ids.end())
+                      // Get direction corresponding to this periodic boundary
+                      const unsigned int current_direction = it->second;
+
+                      periodic_boundaries_cells_info_struct<dim>
+                                   boundaries_information;
+                      unsigned int face_id = cell->face_iterator_to_index(face);
+
+                      get_periodic_boundaries_info(cell,
+                                                   face_id,
+                                                   boundaries_information);
+
+                      // Insert into multimap
+                      // One entry per boundary found
+                      periodic_boundaries_cells_information.insert(
+                        {boundaries_information.cell
+                           ->global_active_cell_index(),
+                         boundaries_information});
+
+                      // Calculate offset if not yet done for this PB ID
+                      if (!offset_calculated[face_boundary_id])
                         {
-                          auto const &primary_mesh_id = it->second;
+                          Tensor<1, dim> offset;
+                          offset[current_direction] =
+                            boundaries_information
+                              .point_on_periodic_face[current_direction] -
+                            boundaries_information
+                              .point_on_face[current_direction];
 
-                          if (face_boundary_id == primary_mesh_id)
-                            {
-                              // Get direction corresponding to this BC index
-                              unsigned int current_direction =
-                                directions.at(pbc_index);
-
-                              periodic_boundaries_cells_info_struct<dim>
-                                           boundaries_information;
-                              unsigned int face_id =
-                                cell->face_iterator_to_index(face);
-
-                              get_periodic_boundaries_info(
-                                cell, face_id, boundaries_information);
-
-                              // Insert into multimap
-                              // One entry per boundary found
-                              periodic_boundaries_cells_information.insert(
-                                {boundaries_information.cell
-                                   ->global_active_cell_index(),
-                                 boundaries_information});
-
-                              // Calculate offset if not yet done for this PB ID
-                              if (!offset_calculated[face_boundary_id])
-                                {
-                                  Tensor<1, dim> offset;
-                                  offset[current_direction] =
-                                    boundaries_information
-                                      .point_on_periodic_face
-                                        [current_direction] -
-                                    boundaries_information
-                                      .point_on_face[current_direction];
-
-                                  periodic_offsets[face_boundary_id]  = offset;
-                                  offset_calculated[face_boundary_id] = true;
-                                }
-                            }
+                          periodic_offsets[face_boundary_id]  = offset;
+                          offset_calculated[face_boundary_id] = true;
                         }
                     }
                 }

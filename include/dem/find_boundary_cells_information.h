@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_find_boundary_cells_information_h
@@ -13,6 +13,7 @@
 
 #include <deal.II/grid/grid_tools.h>
 
+#include <set>
 #include <vector>
 
 using namespace dealii;
@@ -38,7 +39,7 @@ public:
    * @param triangulation Triangulation to access the information of the cells
    * @param floating_wall_properties Properties of floating walls specified in
    * the parameter handler file
-   * @param outlet_boundaries A vector which contains the outlet boundary IDs
+   * @param outlet_boundaries A set which contains the outlet boundary IDs
    * @param check_diamond_cells If true, the diamond shaped cells are found
    * and added to the particle-wall contact search cells
    * @param expand_particle_wall_contact_search If true, expands the
@@ -51,14 +52,14 @@ public:
   build(
     const parallel::distributed::Triangulation<dim>  &triangulation,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
-    const std::vector<unsigned int>                  &outlet_boundaries,
+    const std::set<types::boundary_id>               &outlet_boundaries,
     const bool                                       &check_diamond_cells,
     const bool               &expand_particle_wall_contact_search,
     const ConditionalOStream &pcout);
 
   void
   build(const parallel::distributed::Triangulation<dim> &triangulation,
-        const std::vector<unsigned int>                 &outlet_boundaries,
+        const std::set<types::boundary_id>              &outlet_boundaries,
         const bool                                      &check_diamond_cells,
         const ConditionalOStream                        &pcout);
 
@@ -107,12 +108,12 @@ private:
    * locating on the face are obtained
    *
    * @param triangulation Triangulation to access the information of the cells
-   * @param outlet_boundaries A vector which contains the outlet boundary IDs
+   * @param outlet_boundaries A set which contains the outlet boundary IDs
    */
   void
   find_boundary_cells_information(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    const std::vector<unsigned int>                 &outlet_boundaries);
+    const std::set<types::boundary_id>              &outlet_boundaries);
 
   /**
    * Loops over all the cells to find boundary cells, find the global boundary
@@ -121,12 +122,12 @@ private:
    * stores all the boundary cells with faces.
    *
    * @param triangulation Triangulation to access the information of the cells
-   * @param outlet_boundaries A vector which contains the outlet boundary IDs
+   * @param outlet_boundaries A set which contains the outlet boundary IDs
    */
   void
   find_global_boundary_cells_with_faces(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    const std::vector<unsigned int>                 &outlet_boundaries);
+    const std::set<types::boundary_id>              &outlet_boundaries);
 
   /**
    * Loops over all the cells to find cells which should be searched for
@@ -156,14 +157,14 @@ private:
    * cell.
    *
    * @param triangulation Triangulation to access the information of the cells
-   * @param outlet_boundaries A vector which contains the outlet boundary IDs
+   * @param outlet_boundaries A set which contains the outlet boundary IDs
    * @param check_diamond_cells If true, the diamond shaped cells are found and added to the particle-wall contact search cells
    * @param pcout
    */
   void
   add_cells_with_boundary_lines_to_boundary_cells(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    const std::vector<unsigned int>                 &outlet_boundaries,
+    const std::set<types::boundary_id>              &outlet_boundaries,
     const bool                                      &check_diamond_cells,
     const ConditionalOStream                        &pcout);
 
@@ -195,14 +196,14 @@ private:
    *
    * @param boundary_cells_information A container that contains the information
    * of all the boundary cells with boundary faces
-   * @param outlet_boundaries A vector which contains the outlet boundary IDs
+   * @param outlet_boundaries A set which contains the outlet boundary IDs
    * @param global_boundary_cells_information A vector that contains the geometrical
    * information of all (global) boundary cells
    */
   void
   add_boundary_neighbors_of_boundary_cells(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    const std::vector<unsigned int>                 &outlet_boundaries,
+    const std::set<types::boundary_id>              &outlet_boundaries,
     std::map<int, boundary_cells_info_struct<dim>>  &boundary_cells_information,
     const std::map<int, boundary_cells_info_struct<dim>>
       &global_boundary_cells_information);

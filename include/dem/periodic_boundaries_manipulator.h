@@ -12,6 +12,7 @@
 
 #include <deal.II/particles/particle_handler.h>
 
+#include <map>
 #include <unordered_map>
 #include <vector>
 
@@ -39,20 +40,16 @@ public:
   /**
    * @brief Sets the periodic boundaries parameters.
    *
-   * @param[in] periodic_boundary_ids_0 Map of IDs of the first boundary of each
-   * PB pair.
-   * @param[in] periodic_directions Map of perpendicular axes of each PB pair.
-   * @param[in] periodic_bc_ind Index of the PB conditions in the .prm file.
+   * @param[in] periodic_directions Map of perpendicular axes of each PB pair,
+   * keyed by the principal periodic boundary id (periodic id 0). The keys are
+   * the principal periodic boundary ids.
    */
   void
   set_periodic_boundaries_information(
-    const std::unordered_map<unsigned int, types::boundary_id>
-      &periodic_boundary_ids_0,
-    const std::unordered_map<unsigned int, unsigned int> &periodic_directions,
-    const std::vector<unsigned int>                      &periodic_bc_ind)
+    const std::map<types::boundary_id, unsigned int> &periodic_directions)
   {
-    // If function is reached and vectors are not empty
-    if (periodic_boundary_ids_0.empty())
+    // If function is reached and the map is not empty
+    if (periodic_directions.empty())
       return;
 
     periodic_boundaries_enabled = true;
@@ -60,9 +57,7 @@ public:
     // Communicate to the action manager that there are periodic boundaries
     DEMActionManager::get_action_manager()->set_periodic_boundaries_enabled();
 
-    this->periodic_boundaries_ids = periodic_boundary_ids_0;
-    this->directions              = periodic_directions;
-    this->periodic_bc_index       = periodic_bc_ind;
+    this->directions = periodic_directions;
 
     // Initialize offset map
     this->periodic_offsets.clear();
@@ -125,25 +120,16 @@ public:
   }
 
   /**
-   * @brief Return the index of the periodic boundary conditions in the .prm.
+   * @brief Return the directions of the periodic boundary pairs, keyed by the
+   * principal periodic boundary id (periodic id 0). The keys are the principal
+   * periodic boundary ids.
    *
-   * @return Index of the periodic boundary conditions.
+   * @return Map of periodic directions keyed by principal periodic boundary id.
    */
-  inline const std::vector<unsigned int> &
-  get_periodic_bc_index() const
+  inline const std::map<types::boundary_id, unsigned int> &
+  get_periodic_directions() const
   {
-    return periodic_bc_index;
-  }
-
-  /**
-   * @brief Return the mesh IDs of the principal periodic boundaries
-   *
-   * @return Mesh IDS of the principal periodic boundaries.
-   */
-  inline const std::unordered_map<unsigned int, types::boundary_id> &
-  get_periodic_boundaries_ids() const
-  {
-    return periodic_boundaries_ids;
+    return directions;
   }
 
   /**
@@ -210,26 +196,10 @@ private:
 
   /**
    * @brief Direction of the periodic boundaries, it is the perpendicular axis
-   * of the periodic boundaries. Keys of this map are periodic boundary
-   * condition indices in the .prm (subsection numbers)
+   * of the periodic boundaries. Keys of this map are the principal periodic
+   * boundary ids (periodic id 0).
    */
-  std::unordered_map<unsigned int, unsigned int> directions;
-
-  /**
-   * @brief Index of the boundary conditions in the .prm (subsection numbers)
-   * that correspond to periodic boundary conditions.
-   */
-  std::vector<unsigned int> periodic_bc_index;
-
-  /**
-   * @brief Mesh ID of the first periodic boundary for all periodic boundary
-   * pairs. No need to store the second one since they are linked on the
-   * triangulation, and accessible through functions on cells on the boundary
-   * condition 0.
-   *    Map key: index of BC from .prm
-   *    Map value: ID of a primary periodic boundary
-   */
-  std::unordered_map<unsigned int, types::boundary_id> periodic_boundaries_ids;
+  std::map<types::boundary_id, unsigned int> directions;
 
   /**
    * @brief Map storing offset distance between periodic boundaries, keyed by

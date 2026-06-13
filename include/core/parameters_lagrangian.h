@@ -18,6 +18,8 @@
 
 #include <deal.II/base/parameter_handler.h>
 
+#include <map>
+#include <set>
 #include <string>
 
 using namespace dealii;
@@ -761,8 +763,10 @@ namespace Parameters
     /**
      * @brief Boundary conditions for DEM simulations.
      *
-     * This structure stores the boundary types, motion parameters, and
-     * periodic boundary information for each boundary of the DEM domain.
+     * This structure stores the motion parameters and periodic boundary
+     * information for each boundary of the DEM domain. A boundary's type is
+     * encoded by which container holds it (see outlet_boundaries below); fixed
+     * walls are the default and are not stored in any container.
      */
     struct BCDEM
     {
@@ -770,55 +774,38 @@ namespace Parameters
       /// Number of DEM boundary conditions.
       unsigned int DEM_BC_number;
 
-      /**
-       * @brief Type of boundary condition applied to a DEM domain boundary.
-       */
-      enum class BoundaryType
-      {
-        /// Static wall
-        fixed_wall,
-        /// Open boundary where particles may exit (outlet)
-        outlet,
-        /// Translating boundary at the velocity
-        /// BCDEM::boundary_translational_velocity.
-        translational,
-        /// Rotating boundary described with BCDEM::boundary_rotational_vector,
-        /// BCDEM::point_on_rotation_axis, and BCDEM::boundary_rotational_speed.
-        rotational,
-        /// Periodic boundary in the specified BCDEM::periodic_direction
-        periodic
-      };
+      /// Boundary ids designated as outlets. A boundary's DEM boundary
+      /// condition type is encoded by which container holds it: outlets here,
+      /// translational/rotational boundaries in the motion maps below, and
+      /// periodic boundaries in periodic_neighbor_id. Fixed walls (the default)
+      /// appear in none of these containers.
+      std::set<types::boundary_id> outlet_boundaries;
 
-      /// Boundary condition type for each boundary.
-      std::vector<BoundaryType> bc_types;
-
-      /// Boundary IDs designated as outlets.
-      std::vector<unsigned int> outlet_boundaries;
-
-      /// Index of boundary conditions that are periodic.
-      std::vector<unsigned int> periodic_bc_index;
-
-      /// Translational velocity of each moving boundary.
-      std::unordered_map<unsigned int, Tensor<1, 3>>
+      /// Translational velocity of each translational boundary, keyed by the
+      /// mesh boundary id. Only translational boundaries have an entry.
+      std::map<types::boundary_id, Tensor<1, 3>>
         boundary_translational_velocity;
 
-      /// Rotational speed of each rotating boundary (rad/s).
-      std::unordered_map<unsigned int, double> boundary_rotational_speed;
+      /// Rotational speed (rad/s) of each rotational boundary, keyed by the
+      /// mesh boundary id. Only rotational boundaries have an entry.
+      std::map<types::boundary_id, double> boundary_rotational_speed;
 
-      /// Rotational axis vector of each rotating boundary.
-      std::unordered_map<unsigned int, Tensor<1, 3>> boundary_rotational_vector;
+      /// Rotational axis vector of each rotational boundary, keyed by the mesh
+      /// boundary id. Only rotational boundaries have an entry.
+      std::map<types::boundary_id, Tensor<1, 3>> boundary_rotational_vector;
 
-      /// Point on the rotational axis of each rotating boundary.
-      std::unordered_map<unsigned int, Point<3>> point_on_rotation_axis;
+      /// Point on the rotational axis of each rotational boundary, keyed by the
+      /// mesh boundary id. Only rotational boundaries have an entry.
+      std::map<types::boundary_id, Point<3>> point_on_rotation_axis;
 
-      /// Principal periodic boundary IDs.
-      std::unordered_map<unsigned int, types::boundary_id> periodic_boundary_0;
+      /// Neighbor periodic boundary id for each periodic boundary pair, keyed
+      /// by the principal periodic boundary id (periodic id 0 -> periodic id
+      /// 1).
+      std::map<types::boundary_id, types::boundary_id> periodic_neighbor_id;
 
-      /// Secondary periodic boundary IDs.
-      std::unordered_map<unsigned int, types::boundary_id> periodic_boundary_1;
-
-      /// Directions of periodicity.
-      std::unordered_map<unsigned int, unsigned int> periodic_direction;
+      /// Direction of periodicity for each periodic boundary pair, keyed by the
+      /// principal periodic boundary id (periodic id 0).
+      std::map<types::boundary_id, unsigned int> periodic_direction;
 
       /**
        * @brief Declare the parameters in the parameter handler.
@@ -849,36 +836,14 @@ namespace Parameters
        * @brief Parse boundary condition parameters for a single boundary.
        *
        * @param[in] prm The parameter handler.
-       * @param[in] i_bc Index of the boundary condition subsection.
        */
       void
-      parse_boundary_conditions(const ParameterHandler &prm,
-                                const unsigned int      i_bc);
+      parse_boundary_conditions(const ParameterHandler &prm);
 
     private:
+      /// Maximum number of boundary condition subsections declared in the
+      /// parameter handler.
       unsigned int DEM_BC_number_max = 10;
-
-      /**
-       * @brief Initialize the containers used to store boundary condition
-       * parameters.
-       *
-       * @param[in,out] boundary_trans_velocity Translational velocities.
-       * @param[in,out] boundary_rot_speed Rotational speeds.
-       * @param[in,out] boundary_rot_vector Rotational axis vectors.
-       * @param[in,out] point_on_rot_axis Points on rotation axes.
-       * @param[in,out] outlet_boundaries_id Outlet boundary IDs.
-       * @param[in,out] boundaries_types Boundary types.
-       * @param[in,out] periodic_bc_ind Index of periodic BCs.
-       */
-      void
-      initialize_containers(
-        std::unordered_map<unsigned int, Tensor<1, 3>> &boundary_trans_velocity,
-        std::unordered_map<unsigned int, double>       &boundary_rot_speed,
-        std::unordered_map<unsigned int, Tensor<1, 3>> &boundary_rot_vector,
-        std::unordered_map<unsigned int, Point<3>>     &point_on_rot_axis,
-        std::vector<unsigned int>                      &outlet_boundaries_id,
-        std::vector<BoundaryType>                      &boundaries_types,
-        std::vector<unsigned int>                      &periodic_bc_ind) const;
     };
 
     /**

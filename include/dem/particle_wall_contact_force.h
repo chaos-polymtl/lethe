@@ -17,6 +17,7 @@
 
 #include <boost/math/special_functions.hpp>
 
+#include <map>
 #include <vector>
 
 using namespace dealii;
@@ -167,27 +168,59 @@ protected:
       particle_location +
       0.5 * particle_properties[PropertiesIndex::dp] * normal_vector;
 
+    // Look up the boundary motion for this boundary. Boundaries without a
+    // translational or rotational DEM boundary condition simply have no entry
+    // in the maps, in which case the corresponding contribution is zero. The
+    // maps are looked up with find() rather than operator[] to avoid inserting
+    // entries during the contact force evaluation.
+    const auto translational_velocity_it =
+      this->boundary_translational_velocity_map.find(boundary_id);
+    const Tensor<1, 3> boundary_translational_velocity =
+      (translational_velocity_it !=
+       this->boundary_translational_velocity_map.end()) ?
+        translational_velocity_it->second :
+        Tensor<1, 3>();
+
+    const auto rotational_speed_it =
+      this->boundary_rotational_speed_map.find(boundary_id);
+    const double boundary_rotational_speed =
+      (rotational_speed_it != this->boundary_rotational_speed_map.end()) ?
+        rotational_speed_it->second :
+        0.;
+
+    const auto rotational_vector_it =
+      this->boundary_rotational_vector.find(boundary_id);
+    const Tensor<1, 3> boundary_rotational_vector =
+      (rotational_vector_it != this->boundary_rotational_vector.end()) ?
+        rotational_vector_it->second :
+        Tensor<1, 3>();
+
+    const auto rotation_point_it =
+      this->point_on_rotation_vector.find(boundary_id);
+    const Point<3> point_on_rotation_vector =
+      (rotation_point_it != this->point_on_rotation_vector.end()) ?
+        rotation_point_it->second :
+        Point<3>();
+
     // Getting vector pointing from the contact point to the origin of the
     // rotation axis
     Tensor<1, 3> vector_to_rotating_axis =
-      contact_point - this->point_on_rotation_vector[boundary_id];
+      contact_point - point_on_rotation_vector;
 
     // Removing the rotating axis component of that vector
-    vector_to_rotating_axis = vector_to_rotating_axis -
-                              (vector_to_rotating_axis *
-                               this->boundary_rotational_vector[boundary_id]) *
-                                this->boundary_rotational_vector[boundary_id];
+    vector_to_rotating_axis =
+      vector_to_rotating_axis -
+      (vector_to_rotating_axis * boundary_rotational_vector) *
+        boundary_rotational_vector;
 
     // Defining relative contact velocity using the convention
     // v_ij = v_j - v_i
     Tensor<1, 3> contact_relative_velocity =
-      this->boundary_translational_velocity_map[boundary_id] -
-      particle_velocity +
+      boundary_translational_velocity - particle_velocity +
       cross_product_3d((-0.5 * particle_properties[PropertiesIndex::dp] *
                         particle_angular_velocity),
                        normal_vector) +
-      cross_product_3d(this->boundary_rotational_speed_map[boundary_id] *
-                         this->boundary_rotational_vector[boundary_id],
+      cross_product_3d(boundary_rotational_speed * boundary_rotational_vector,
                        vector_to_rotating_axis);
 
     // Calculating normal relative velocity
@@ -1076,13 +1109,13 @@ private:
   const double        dmt_cut_off_threshold;
   const double        f_coefficient_epsd;
 
-  std::unordered_map<unsigned int, double> boundary_rotational_speed_map;
-  std::unordered_map<unsigned int, Tensor<1, 3>>
+  std::map<types::boundary_id, double> boundary_rotational_speed_map;
+  std::map<types::boundary_id, Tensor<1, 3>>
     boundary_translational_velocity_map;
-  std::unordered_map<unsigned int, Tensor<1, 3>> boundary_rotational_vector;
-  std::unordered_map<unsigned int, Point<3>>     point_on_rotation_vector;
-  const unsigned int                             vertices_per_triangle = 3;
-  Point<3>                                       center_mass_container;
+  std::map<types::boundary_id, Tensor<1, 3>> boundary_rotational_vector;
+  std::map<types::boundary_id, Point<3>>     point_on_rotation_vector;
+  const unsigned int                         vertices_per_triangle = 3;
+  Point<3>                                   center_mass_container;
 
   // Containers
   typedef std::vector<
