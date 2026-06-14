@@ -824,11 +824,11 @@ ParticleProjector<dim>::calculate_void_fraction_qcm_impl()
                   // the averaging volume for the QCM. If the reference sphere
                   // diameter was given by the user the value is already
                   // defined since it is not dependent on any measure of the
-// Define the length of the reference kernel to be used as
-// the averaging volume for the QCM. If the reference kernel
-// length was given by the user the value is already
-// defined since it is not dependent on any measure of the
-// active cell
+                  // Define the length of the reference kernel to be used as
+                  // the averaging volume for the QCM. If the reference kernel
+                  // length was given by the user the value is already
+                  // defined since it is not dependent on any measure of the
+                  // active cell
                   if (calculate_filter_length_from_cell)
                     {
                       filter_length = calculate_filter_length_from_cell_measure(

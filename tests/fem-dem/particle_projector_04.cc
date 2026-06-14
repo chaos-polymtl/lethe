@@ -205,7 +205,7 @@ test_void_fraction_qcm_gaussian(const unsigned int fe_degree,
                                  (1. - void_fraction_values[q]);
     }
   deallog << "Total particle volume " << total_particle_volume << std::endl;
-deallog.get_file_stream() << std::endl;
+  deallog.get_file_stream() << std::endl;
 }
 
 int
