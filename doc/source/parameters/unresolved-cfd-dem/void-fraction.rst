@@ -51,7 +51,7 @@ If the ``mode`` chosen is ``pcm``, then the void fraction is calculated using th
          \left(d^2 + 2d\,r_p - 3r_p^2 + 2d\,r_{\mathrm{avg}} + 6\,r_p\,r_{\mathrm{avg}} - 3r_{\mathrm{avg}}^2\right)}
          {12\,d}
 
-    and zero when :math:`d \geq r_p + \ell`, or :math:`V_p` when :math:`d \leq \ell - r_p`.
+    and zero when :math:`d \geq r_p +r_{\mathrm{avg}}`, or :math:`V_p` when :math:`d \leq r_{\mathrm{avg}} - r_p`.
 
   * **Gaussian** (``gaussian``): the kernel is the :math:`n`-dimensional isotropic Gaussian probability density scaled by the particle volume,
 
