@@ -3798,13 +3798,22 @@ namespace Parameters
         Utilities::split_string_list(carman_kozeny_tolerance_list);
 
       // Check that dimensions agree
-      AssertDimension(carman_kozeny_permeability_area_vec.size(),
-                      carman_kozeny_tolerance_vec.size());
+      AssertThrow(carman_kozeny_permeability_area_vec.size() ==
+                    carman_kozeny_tolerance_vec.size(),
+                  dealii::ExcDimensionMismatch(
+                    (carman_kozeny_permeability_area_vec.size()),
+                    (carman_kozeny_tolerance_vec.size())));
 
       if (fluid_with_phase_change == FluidIndicator::fluid0)
         {
-          AssertDimension(carman_kozeny_permeability_area_vec.size(), 1);
-          AssertDimension(carman_kozeny_tolerance_vec.size(), 1);
+          AssertThrow(
+            carman_kozeny_permeability_area_vec.size() == 1,
+            ExcMessage(
+              "The expected size of the 'Carman-Kozeny permeability area' list of 1 is not met."));
+          AssertThrow(
+            carman_kozeny_tolerance_vec.size() == 1,
+            ExcMessage(
+              "The expected size of the 'Carman-Kozeny division tolerance' list of 1 is not met."));
 
           carman_kozeny_permeability_area[0] =
             std::stod(carman_kozeny_permeability_area_vec[0]);
@@ -3817,8 +3826,14 @@ namespace Parameters
         }
       else if (fluid_with_phase_change == FluidIndicator::fluid1)
         {
-          AssertDimension(carman_kozeny_permeability_area_vec.size(), 1);
-          AssertDimension(carman_kozeny_tolerance_vec.size(), 1);
+          AssertThrow(
+            carman_kozeny_permeability_area_vec.size() == 1,
+            ExcMessage(
+              "The expected size of the 'Carman-Kozeny permeability area' list of 1 is not met."));
+          AssertThrow(
+            carman_kozeny_tolerance_vec.size() == 1,
+            ExcMessage(
+              "The expected size of the 'Carman-Kozeny division tolerance' list of 1 is not met."));
 
           carman_kozeny_permeability_area[1] =
             std::stod(carman_kozeny_permeability_area_vec[0]);
@@ -3831,10 +3846,16 @@ namespace Parameters
         }
       else if (fluid_with_phase_change == FluidIndicator::both)
         {
-          AssertDimension(carman_kozeny_permeability_area_vec.size(),
-                          carman_kozeny_permeability_area.size());
-          AssertDimension(carman_kozeny_tolerance_vec.size(),
-                          carman_kozeny_tolerance.size());
+          AssertThrow(
+            carman_kozeny_permeability_area_vec.size() ==
+              carman_kozeny_permeability_area.size(),
+            ExcMessage(
+              "The expected size of the 'Carman-Kozeny permeability area' list of 1 is not met."));
+          AssertThrow(
+            carman_kozeny_tolerance_vec.size() ==
+              carman_kozeny_tolerance.size(),
+            ExcMessage(
+              "The expected size of the 'Carman-Kozeny division tolerance' list of 2 is not met."));
 
           for (unsigned int i = 0; i < carman_kozeny_permeability_area.size();
                ++i)
