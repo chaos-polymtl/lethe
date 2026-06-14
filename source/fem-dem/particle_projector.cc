@@ -727,7 +727,7 @@ ParticleProjector<dim>::calculate_void_fraction_qcm_impl()
   // deviation sigma. The same parameter (qcm_smoothing_length) supplies it in
   // both cases: half the smoothing length.
   double filter_length = 0.0;
-  double particles_volume_in_sphere;
+  double particles_volume_in_kernel;
   double quadrature_void_fraction;
   double qcm_smoothing_length = void_fraction_parameters->qcm_smoothing_length;
 
@@ -965,7 +965,7 @@ ParticleProjector<dim>::calculate_void_fraction_qcm_impl()
 
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
-              particles_volume_in_sphere = 0;
+              particles_volume_in_kernel = 0;
               quadrature_void_fraction   = 0;
 
               for (unsigned int m = 0; m < active_neighbors.size(); m++)
@@ -997,7 +997,7 @@ ParticleProjector<dim>::calculate_void_fraction_qcm_impl()
                         quadrature_point_location[q]);
 
                       // Calculate the normalized particle contribution
-                      particles_volume_in_sphere +=
+                      particles_volume_in_kernel +=
                         particle_volume_ratio *
                         evaluate_filter<filter_type>(r_particle,
                                                      filter_length,
@@ -1068,16 +1068,16 @@ ParticleProjector<dim>::calculate_void_fraction_qcm_impl()
                              volumetric_contribution];
 
                       // Calculate the normalized particle contribution
-                      particles_volume_in_sphere +=
+                      particles_volume_in_kernel +=
                         particle_volume_ratio *
                         evaluate_filter<filter_type>(r_particle,
                                                      filter_length,
                                                      distance);
                     }
-                  if (particles_volume_in_sphere > 1.001)
+                  if (particles_volume_in_kernel > 1.001)
                     {
-                      std::cout << "WARNING: particles_volume_in_sphere = "
-                                << particles_volume_in_sphere << " at cell "
+                      std::cout << "WARNING: particles_volume_in_kernel = "
+                                << particles_volume_in_kernel << " at cell "
                                 << cell->center() << std::endl;
                     }
                 }
@@ -1087,7 +1087,7 @@ ParticleProjector<dim>::calculate_void_fraction_qcm_impl()
               quadrature_void_fraction =
                 ((fe_values_void_fraction.JxW(q) * cell->measure() /
                   sum_quadrature_weights) -
-                 particles_volume_in_sphere) /
+                 particles_volume_in_kernel) /
                 (fe_values_void_fraction.JxW(q) * cell->measure() /
                  sum_quadrature_weights);
 
