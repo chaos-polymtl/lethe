@@ -1074,7 +1074,7 @@ FluidDynamicsSharp<dim>::force_on_ib()
   double length_ratio =
     this->simulation_parameters.particlesParameters->length_ratio;
   IBStencil<dim>      stencil;
-  std::vector<double> ib_coef = stencil.coefficients(order, length_ratio);
+  std::vector<double> ib_coef = stencil.coefficients(degree, length_ratio);
 
   // Rheological model for viscosity properties
   double     kinematic_viscosity;
@@ -3401,7 +3401,7 @@ FluidDynamicsSharp<dim>::sharp_edge()
     this->simulation_parameters.particlesParameters->length_ratio;
 
   IBStencil<dim>      stencil;
-  std::vector<double> ib_coef = stencil.coefficients(order, length_ratio);
+  std::vector<double> ib_coef = stencil.coefficients(degree, length_ratio);
 
   unsigned int n_q_points = q_formula.size();
 
