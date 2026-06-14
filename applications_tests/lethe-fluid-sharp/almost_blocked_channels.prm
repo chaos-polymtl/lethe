@@ -104,7 +104,7 @@ subsection particles
   set number of particles = 3
 
   subsection extrapolation function
-    set stencil order = 1
+    set stencil degree = 1
     set length ratio  = 1
   end
 

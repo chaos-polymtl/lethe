@@ -263,7 +263,7 @@ IB Particles
       
       subsection extrapolation function
         set length ratio  = 2
-        set stencil order = 2
+        set stencil degree = 2
       end
       
       subsection local mesh refinement
@@ -292,7 +292,7 @@ IB Particles
 
 In this subsection, we define most of the parameters that are related to the particle.
 
-* The ``stencil order`` is set to 2 since it improves the results in the force evaluation step and does not make the matrix resolution significantly harder.
+* The ``stencil degree`` is set to 2 since it improves the results in the force evaluation step and does not make the matrix resolution significantly harder.
 
 * The ``refine mesh inside radius factor`` is set to 0. This creates a mesh refinement inside the particle that avoids having hanging nodes in the calculation and helps ensure a small enough mesh around the particle.
 

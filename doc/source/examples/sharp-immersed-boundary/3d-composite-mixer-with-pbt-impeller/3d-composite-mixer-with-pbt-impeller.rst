@@ -95,7 +95,7 @@ The section defining each parameter for the particles has certain requirements:
       set number of particles                     = 1
       set assemble Navier-Stokes inside particles = false
       subsection extrapolation function
-        set stencil order = 2
+        set stencil degree = 2
         set length ratio  = 3
       end
       subsection local mesh refinement

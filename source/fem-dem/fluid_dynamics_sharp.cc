@@ -1065,7 +1065,7 @@ FluidDynamicsSharp<dim>::force_on_ib()
            .density_is_constant(),
          RequiresConstantDensity("FluidDynamicsSharp<dim>::force_on_ib"));
 
-  int  order = this->simulation_parameters.particlesParameters->order;
+  int  degree = this->simulation_parameters.particlesParameters->stencil_degree;
   auto density_model =
     this->simulation_parameters.physical_properties_manager.get_density(0);
   std::map<field, double> field_values;
@@ -1257,7 +1257,7 @@ FluidDynamicsSharp<dim>::force_on_ib()
                                       auto [point, interpolation_points] =
                                         stencil
                                           .support_points_for_interpolation(
-                                            order,
+                                            degree,
                                             length_ratio,
                                             particles[p],
                                             support_points
@@ -3396,7 +3396,7 @@ FluidDynamicsSharp<dim>::sharp_edge()
                           update_quadrature_points | update_JxW_values);
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
-  int    order = this->simulation_parameters.particlesParameters->order;
+  int    degree = this->simulation_parameters.particlesParameters->stencil_degree;
   double length_ratio =
     this->simulation_parameters.particlesParameters->length_ratio;
 
@@ -3691,14 +3691,14 @@ FluidDynamicsSharp<dim>::sharp_edge()
                           this->system_matrix.clear_row(global_index_overwrite);
 
                           // Define the points for the IB stencil based on the
-                          // order, particle position, and DOF position. The
+                          // degree, particle position, and DOF position. The
                           // definition of the output variable "point" changes
-                          // depending on the order. In the case of stencil
-                          // orders 1 to 4, the variable point returns the
+                          // depending on the degree. In the case of stencil
+                          // degrees 1 to 4, the variable point returns the
                           // position of the DOF directly. In the case of higher
-                          // order stencil (5 or more), it returns the position
+                          // degree stencil (5 or more), it returns the position
                           // of the point that is on the IB. This is because
-                          // stencil orders higher than four are not
+                          // stencil degrees higher than four are not
                           // implemented. The function extrapolates the element
                           // at the particle's surface in these cases. To do so,
                           // we use the point at the surface of the particle.
@@ -3709,7 +3709,7 @@ FluidDynamicsSharp<dim>::sharp_edge()
 
                           auto [point, interpolation_points] =
                             stencil.support_points_for_interpolation(
-                              order,
+                              degree,
                               length_ratio,
                               particles[ib_particle_id],
                               support_points[local_dof_indices[i]],
@@ -3773,7 +3773,7 @@ FluidDynamicsSharp<dim>::sharp_edge()
                             point_in_cell = cell_cut->point_inside(
                               interpolation_points
                                 [stencil.number_of_interpolation_support_points(
-                                   order) -
+                                   degree) -
                                  1]);
                           else
                             point_in_cell = cell_cut->point_inside(
@@ -3862,7 +3862,7 @@ FluidDynamicsSharp<dim>::sharp_edge()
                                       //  Define the solution at each point used
                                       //  for the stencil and applied the
                                       //  stencil for the specific DOF. For
-                                      //  stencils of order 4 or higher, the
+                                      //  stencils of degree 4 or higher, the
                                       //  stencil is defined through direct
                                       //  extrapolation of the cell_cut. This
                                       //  can only be done when using a

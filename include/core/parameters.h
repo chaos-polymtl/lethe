@@ -1801,8 +1801,8 @@ namespace Parameters
     // solved inside the particles.
     bool assemble_navier_stokes_inside;
 
-    // Polynomial order of the IB stencil
-    unsigned int order;
+    // Polynomial degree of the IB stencil
+    unsigned int stencil_degree;
     // The length ratio used for the stencil calculation of the IB condition.
     double length_ratio;
     // Boolean controlling whether extrapolation is used to impose the

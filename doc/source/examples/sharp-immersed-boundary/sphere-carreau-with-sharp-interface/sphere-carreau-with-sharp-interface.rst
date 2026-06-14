@@ -191,7 +191,7 @@ In this case, we want to define a spherical boundary of radius :math:`0.5`, with
       set number of particles                     = 1
       set assemble Navier-Stokes inside particles = false
       subsection extrapolation function
-        set stencil order = 2
+        set stencil degree = 2
         set length ratio  = 1
       end
       subsection local mesh refinement

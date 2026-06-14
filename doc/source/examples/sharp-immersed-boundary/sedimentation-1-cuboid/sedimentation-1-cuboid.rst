@@ -156,7 +156,7 @@ IB Particles
     subsection particles
       subsection extrapolation function
         set length ratio  = 2
-        set stencil order = 3
+        set stencil degree = 3
       end
 
       subsection local mesh refinement

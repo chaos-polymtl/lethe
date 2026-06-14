@@ -84,7 +84,7 @@ The ``local mesh refinement`` is set to 3 to ensure we resolve the boundary laye
     set number of particles                     = 1
     set assemble Navier-Stokes inside particles = false
     subsection extrapolation function
-      set stencil order = 2
+      set stencil degree = 2
       set length ratio  = 1
     end
     subsection local mesh refinement
