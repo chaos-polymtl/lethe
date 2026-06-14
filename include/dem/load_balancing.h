@@ -182,23 +182,20 @@ public:
    * Attach the correct functions to the signals inside
    * parallel::distributed::Triangulation, which will be called every time the
    * load balancing or refinement functions are called.
-   *
-   * TODO: Remove preprocessor directives after deal.ii v.9.6 release
    */
   inline void
   connect_weight_signals()
   {
     triangulation->signals.weight.connect(
       [&](const typename Triangulation<dim>::cell_iterator &cell,
-          const typename Triangulation<dim>::CellStatus) -> unsigned int {
+          const CellStatus) -> unsigned int {
         return static_cast<int>(cell_weight_function->value(cell->center()));
       });
 
     triangulation->signals.weight.connect(
       [&](const typename parallel::distributed::Triangulation<
             dim>::cell_iterator &cell,
-          const typename parallel::distributed::Triangulation<dim>::CellStatus
-            status) -> unsigned int {
+          const CellStatus       status) -> unsigned int {
         return this->calculate_total_cell_weight(cell, status);
       });
   }
@@ -207,8 +204,6 @@ public:
    * @brief Connects the weight signals of the cells to the triangulation with
    * the mobility status. Cells are reconnected when load balancing is checked
    * with the new mobility status.
-   *
-   * TODO: Remove preprocessor directives after deal.ii v.9.6 release
    */
   inline void
   connect_mobility_status_weight_signals()
