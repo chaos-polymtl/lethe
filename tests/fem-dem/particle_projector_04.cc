@@ -96,7 +96,7 @@ test_void_fraction_qcm_gaussian(const unsigned int fe_degree,
   // We refine this triangulation for a given number of refinement
   domain_triangulation.refine_global(n_refinements);
 
-  // We initialze the particle handler
+  // We initialize the particle handler
   const MappingQ1<3>            mapping;
   Particles::ParticleHandler<3> particle_handler;
   particle_handler.initialize(domain_triangulation,
