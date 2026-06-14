@@ -116,7 +116,7 @@ subsection particles
   set assemble Navier-Stokes inside particles = false
   subsection extrapolation function
     set stencil degree = 2
-    set length ratio  = 3
+    set length ratio   = 3
   end
   subsection local mesh refinement
     set initial refinement                = 6

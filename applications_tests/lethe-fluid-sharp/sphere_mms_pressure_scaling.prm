@@ -158,7 +158,7 @@ subsection particles
 
   subsection extrapolation function
     set stencil degree = 1
-    set length ratio  = 1
+    set length ratio   = 1
   end
 
   subsection particle info 0

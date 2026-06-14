@@ -3396,7 +3396,7 @@ FluidDynamicsSharp<dim>::sharp_edge()
                           update_quadrature_points | update_JxW_values);
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
-  int    degree = this->simulation_parameters.particlesParameters->stencil_degree;
+  int degree = this->simulation_parameters.particlesParameters->stencil_degree;
   double length_ratio =
     this->simulation_parameters.particlesParameters->length_ratio;
 

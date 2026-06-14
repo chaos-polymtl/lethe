@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/ib_stencil.h>
@@ -8,7 +8,8 @@
 
 template <int dim>
 unsigned int
-IBStencil<dim>::number_of_interpolation_support_points(const unsigned int degree)
+IBStencil<dim>::number_of_interpolation_support_points(
+  const unsigned int degree)
 {
   // The number of points used in the stencil excluding the DOF is equal to the
   // degree.

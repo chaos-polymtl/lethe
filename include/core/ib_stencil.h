@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_ib_stencil_h
@@ -39,10 +39,10 @@ public:
    * position as well as the DOF position. Depending on the degree, the output
    * variable "point" change definition. In the case of stencil degrees 1 to 4
    * the variable point returns the position of the DOF directly. In the case of
-   * high degree stencil, it returns the position of the point that is on the IB.
-   * The variable "interpolation points" return the points used to define the
-   * cell used for the stencil definition and the locations of the points used
-   * in the stencil calculation.
+   * high degree stencil, it returns the position of the point that is on the
+   * IB. The variable "interpolation points" return the points used to define
+   * the cell used for the stencil definition and the locations of the points
+   * used in the stencil calculation.
    *
    * @param[in] degree Stencil degree.
    *

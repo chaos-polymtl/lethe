@@ -110,7 +110,7 @@ subsection particles
   set assemble Navier-Stokes inside particles = false
 
   subsection extrapolation function
-    set length ratio  = 2
+    set length ratio   = 2
     set stencil degree = 2
   end
 
