@@ -47,7 +47,7 @@ If the ``mode`` chosen is ``pcm``, then the void fraction is calculated using th
 
     .. math::
 
-       K_{\text{sph}}(r_p,\ell,d) = \frac{\pi\,(r_p + \ell - d)^2
+       K_{\text{sph}}(r_p,r_{\mathrm{avg}},d) = \frac{\pi\,(r_p + r_{\mathrm{avg}}- d)^2
          \left(d^2 + 2d\,r_p - 3r_p^2 + 2d\,\ell + 6\,r_p\,\ell - 3\ell^2\right)}
          {12\,d}
 
