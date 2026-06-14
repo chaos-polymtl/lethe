@@ -74,7 +74,7 @@ Line-by-line:
 * The next operations build iteratively on this intermediate shape.
 * The result of the last defined operation is considered the definitive shape to be used for simulation, regardless of its ID number.
 
-For more detail on the the definition of the shape see: :doc:`../../../parameters/sharp-immersed-boundary/sharp-immersed-boundary` and :doc:`../simple-plane-model-from-composite/simple-plane-model-from-composite`.
+For more detail on the definition of the shape see: :doc:`../../../parameters/sharp-immersed-boundary/sharp-immersed-boundary` and :doc:`../simple-plane-model-from-composite/simple-plane-model-from-composite`.
 
 ---------------
 Parameter File

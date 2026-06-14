@@ -146,7 +146,7 @@ a phase indicator threshold (generally :math:`0.5`), and :math:`\alpha` correspo
 Geometric Interface Reinitialization
 """"""""""""""""""""""""""""""""""""""""
 
-The geometric interface reinitialization implemented in Lethe uses the signed distance :math:`d` from the interface to regularize the phase indicator field.  The method is based on the work of Ausas *et al.* (2011) [#ausas2011]_, originaly proposed in a level-set framework. Once computed, the signed distance is transformed into a phase indicator field using a transformation function :math:`g` such as :math:`\phi = g(d)`.
+The geometric interface reinitialization implemented in Lethe uses the signed distance :math:`d` from the interface to regularize the phase indicator field.  The method is based on the work of Ausas *et al.* (2011) [#ausas2011]_, originally proposed in a level-set framework. Once computed, the signed distance is transformed into a phase indicator field using a transformation function :math:`g` such as :math:`\phi = g(d)`.
 
 To compute the signed distance, the interface is linearly reconstructed from the iso-contour :math:`\phi=0.5` using the `Marching Cube algorithm implemented in deal.II <https://dealii.org/current/doxygen/deal.II/classGridTools_1_1MarchingCubeAlgorithm.html>`_. Then, the signed distance is computed layer-by-layer, from the interface until the user-defined maximum distance :math:`d_\mathrm{max}` is reached on each side of the interface. 
 

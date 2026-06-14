@@ -111,7 +111,7 @@ This subsection contains the parameters related to the sharp immersed boundary s
     .. note::
 	    The stencil order used does not alter the order of convergence of the solution.
 
-    * The ``length ratio`` parameter controls the length of the zone used to define the Lagrange polynomial (see `this article <https://www.sciencedirect.com/science/article/pii/S0045793022000780?via%3Dihub>`_ for more details). The length ratio should be kept as small as possible and above 1. When using a Cartesian homogenous mesh (aspect ratio of 1), the length ratio should be 1.
+    * The ``length ratio`` parameter controls the length of the zone used to define the Lagrange polynomial (see `this article <https://www.sciencedirect.com/science/article/pii/S0045793022000780?via%3Dihub>`_ for more details). The length ratio should be kept as small as possible and above 1. When using a Cartesian homogeneous mesh (aspect ratio of 1), the length ratio should be 1.
 
     .. tip::
 	    A good starting value is twice the average aspect ratio of the elements in the mesh multiplied by the order of the underlying FEM scheme.
@@ -242,9 +242,9 @@ The following parameter and subsection are all inside the subsection ``particle 
 * The ``shape arguments`` parameter is used to define the parameters of the shape in the form of a list separated by ``;``. The required arguments and the effective radius, used for near-particle refinement, are:
     * Sphere: *radius*; the effective radius is the *radius*;
 
-    * Hyper Rectangle: *x half length*, *y half length*, [*z half length* (if 3D)]; the effective radius is the Euclidian norm of the half lengths;
+    * Hyper Rectangle: *x half length*, *y half length*, [*z half length* (if 3D)]; the effective radius is the Euclidean norm of the half lengths;
 
-    * Ellipsoid: *x radius*, *y radius*, [*z radius* (if 3D)]; the effective radius is the Euclidian norm of the radii;
+    * Ellipsoid: *x radius*, *y radius*, [*z radius* (if 3D)]; the effective radius is the Euclidean norm of the radii;
 
     * Torus: *torus radius*, *torus thickness radius*; the effective radius is the *torus thickness radius*;
 
@@ -260,7 +260,7 @@ The following parameter and subsection are all inside the subsection ``particle 
 
     * Death Star: *sphere radius*, *hole radius*, *distance between centers*; the effective radius is the *sphere radius*;
 
-    * Superquadric: *x half length* (or :math:`a`), *y half length* (or :math:`b`), *z half length* (or :math:`c`), *x exponent* (or :math:`r`), *y exponent* (or :math:`s`), *z exponent* (or :math:`t`); the effective radius is the Euclidian norm of the half lengths. The exponents represent the blockiness in each direction. The surface is implicitly described by :math:`\left|\frac{x}{a}\right|^r + \left|\frac{y}{b}\right|^s + \left|\frac{z}{c}\right|^t - 1 = 0`;
+    * Superquadric: *x half length* (or :math:`a`), *y half length* (or :math:`b`), *z half length* (or :math:`c`), *x exponent* (or :math:`r`), *y exponent* (or :math:`s`), *z exponent* (or :math:`t`); the effective radius is the Euclidean norm of the half lengths. The exponents represent the blockiness in each direction. The surface is implicitly described by :math:`\left|\frac{x}{a}\right|^r + \left|\frac{y}{b}\right|^s + \left|\frac{z}{c}\right|^t - 1 = 0`;
 
     * Composite: *file name*.
    

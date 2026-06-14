@@ -271,7 +271,7 @@ We can notice that the kinematic viscosity rapidly reaches a plateau at :math:`\
 .. image:: images/carreau.png
     :align: center
 
-We get the following torques and forces applied on the particle for each of the mesh refinements. The drag force applied on the particle is the effective force in the same direction fo the flow, which is in the :math:`x` direction in this case.
+We get the following torques and forces applied on the particle for each of the mesh refinements. The drag force applied on the particle is the effective force in the same direction of the flow, which is in the :math:`x` direction in this case.
 
 .. code-block:: text
 

@@ -162,7 +162,7 @@ These parameters are used for simulations using the Nitsche immersed boundary me
 * ``subsection solid temperature``: defines the temperature of the solid mesh. This temperature is defined by a ``Function expression`` and can depend on both space and time. This parameter is used only if:
 
   * ``enable heat boundary condition = true``, and
-  * ``heat transfert = true`` in :doc:`multiphysics` subsection.
+  * ``heat transfer = true`` in :doc:`multiphysics` subsection.
 
 * ``calculate force on solid``: controls if force calculation on the immersed geometry is enabled. If set to ``true``, forces will written in the output file named ``solid force name``, with the solid index automatically added at the end.
 

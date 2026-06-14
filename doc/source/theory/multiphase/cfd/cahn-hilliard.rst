@@ -119,12 +119,12 @@ Find :math:`(\phi^h,\eta^h) \in \psi^h` such that:
 Stabilization
 ---------------------------
    
-While developping the code, it turned useful to add a numerical diffusion term in the chemical potential form for some example. The new equation is:
+While developing the code, it turned useful to add a numerical diffusion term in the chemical potential form for some example. The new equation is:
 
 .. math::
   \eta = \lambda\left(-\frac{\phi(1-\phi^2)}{\varepsilon^2} + \nabla^2\phi\right) - \xi h^2 \nabla^2 \eta = 0
   
-With :math:`h` the local cell size and :math:`\xi` a user-defined smoothing coefficient (in general between 0 and 1). This fonctionnality may be deprecated later.
+With :math:`h` the local cell size and :math:`\xi` a user-defined smoothing coefficient (in general between 0 and 1). This functionality may be deprecated later.
 
 Coupling to the Navier-Stokes equations
 ----------------------------------------

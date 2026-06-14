@@ -178,7 +178,7 @@ Log file parameters
 
 * ``log frequency``: frequency at which information is written in the terminal.
 
-* ``log precision``: number of significant digits used when writting in the terminal.
+* ``log precision``: number of significant digits used when writing in the terminal.
 
 --------------------------------
 Paraview output file parameters

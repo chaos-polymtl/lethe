@@ -232,7 +232,7 @@ As it can be seen, each cell is curved because a Q2 isoparametric mapping was us
 .. note::
   To showcase the curvature of the cells, we have illustrated the results on a mesh coarser that the initial mesh used in this simulation.
 
-A python script provided in the example folder allows to compare the velocity profile along the radius with the analytical solution. Using this script, the following resuts are obtained for the initial mesh:
+A python script provided in the example folder allows to compare the velocity profile along the radius with the analytical solution. Using this script, the following results are obtained for the initial mesh:
 
 .. image:: images/lethe-analytical-taylor-couette-comparison.png
     :alt: Azimuthal velocity compared with the analytical solution

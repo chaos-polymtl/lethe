@@ -70,7 +70,7 @@ In this section we introduce the different sections of the parameter file ``load
 Mesh
 ----
 
-In this example, we simulate the transport of particles in a 1 m wide long 0.084 m diameter pipe. The conveying is processed in the x-direction through periodic boundary conditions. We use the lethe custom `cylinder_balanced <../../../parameters/cfd/mesh.html>`_ , which is prefered over the regular deal.II option for having an uniform cell size distribution in the radial direction. Cells' size are approximately 2 times the diameter of the particles in both longitudinal and radial directions.
+In this example, we simulate the transport of particles in a 1 m wide long 0.084 m diameter pipe. The conveying is processed in the x-direction through periodic boundary conditions. We use the lethe custom `cylinder_balanced <../../../parameters/cfd/mesh.html>`_ , which is preferred over the regular deal.II option for having an uniform cell size distribution in the radial direction. Cells' size are approximately 2 times the diameter of the particles in both longitudinal and radial directions.
 
 .. code-block:: text
 
@@ -289,7 +289,7 @@ Checkpointing is enabled since we need the output to rerun the DEM solver to set
 Settling Particles
 ~~~~~~~~~~~~~~~~~~
 
-In this section we show the difference in the parameter file ``settling-particles.prm`` needed to settle the particles with the same gravity vector as the pneumatic conveying simulation. Consequently, many sections related to the loading are not needed such as the the insertion info, the floating walls, and the solid objects.
+In this section we show the difference in the parameter file ``settling-particles.prm`` needed to settle the particles with the same gravity vector as the pneumatic conveying simulation. Consequently, many sections related to the loading are not needed such as the insertion info, the floating walls, and the solid objects.
 
 Simulation Control
 ------------------
