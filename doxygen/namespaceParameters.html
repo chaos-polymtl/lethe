@@ -240,6 +240,10 @@ Enumerations</h2></td></tr>
 , <a class="el" href="namespaceParameters.html#a59bccd897a552f378b3da967e9fa803fa51762626b4f785729159fd35eea74deb">spm</a>
  }</td></tr>
 <tr class="separator:a59bccd897a552f378b3da967e9fa803f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b2ee398829a9f3d25a3ce471a53b101" id="r_a7b2ee398829a9f3d25a3ce471a53b101"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce471a53b101">QCMFilterType</a> { <a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce471a53b101a6683a3be9c0472d8c680cc93a424c198">spherical</a>
+, <a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce471a53b101a304e2a3b544f6b9f267a151e1bcee487">gaussian</a>
+ }</td></tr>
+<tr class="separator:a7b2ee398829a9f3d25a3ce471a53b101"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3c3b515caf96bc00d4181a1085dfdb84" id="r_a3c3b515caf96bc00d4181a1085dfdb84"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceParameters.html#a3c3b515caf96bc00d4181a1085dfdb84">VoidFractionQuadratureRule</a> { <a class="el" href="namespaceParameters.html#a3c3b515caf96bc00d4181a1085dfdb84a710a4950250286365cf841f765a790f1">gauss</a>
 , <a class="el" href="namespaceParameters.html#a3c3b515caf96bc00d4181a1085dfdb84a9a8a1f8739356c62c5da46aef8be53fb">gauss_lobatto</a>
  }</td></tr>
@@ -401,7 +405,7 @@ Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__cfd__dem_8h_source.html#l00105">105</a> of file <a class="el" href="parameters__cfd__dem_8h_source.html">parameters_cfd_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__cfd__dem_8h_source.html#l00127">127</a> of file <a class="el" href="parameters__cfd__dem_8h_source.html">parameters_cfd_dem.h</a>.</p>
 
 </div>
 </div>
@@ -441,7 +445,7 @@ Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__cfd__dem_8h_source.html#l00054">54</a> of file <a class="el" href="parameters__cfd__dem_8h_source.html">parameters_cfd_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__cfd__dem_8h_source.html#l00076">76</a> of file <a class="el" href="parameters__cfd__dem_8h_source.html">parameters_cfd_dem.h</a>.</p>
 
 </div>
 </div>
@@ -646,6 +650,42 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a7b2ee398829a9f3d25a3ce471a53b101" name="a7b2ee398829a9f3d25a3ce471a53b101"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b2ee398829a9f3d25a3ce471a53b101">&#9670;&#160;</a></span>QCMFilterType</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="namespaceParameters.html#a7b2ee398829a9f3d25a3ce471a53b101">Parameters::QCMFilterType</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Filter kernel used by the Quadrature-Centered Method (QCM) to weigh particle contributions onto the mesh. </p>
+<p>The characteristic length of the filter is taken from <a class="el" href="classParameters_1_1VoidFractionParameters.html#a8c4f0e8d4e3b79114e7e3e0dcd19b2d6">VoidFractionParameters::qcm_smoothing_length</a> and <a class="el" href="classParameters_1_1VoidFractionParameters.html#ad98c6364af35dac3ebc7196abf9c7b34" title="Use a sphere volume equal to the cell volume in QCM.">VoidFractionParameters::qcm_sphere_equal_cell_volume</a>, with the interpretation depending on the filter:</p><ul>
+<li>spherical: half of qcm_smoothing_length is the averaging-sphere radius.</li>
+<li>gaussian: half of qcm_smoothing_length is the Gaussian standard deviation sigma. Note that the Gaussian has non-compact support; sigma should be small relative to the QCM neighbor-cell stencil reach to avoid silent truncation bias. </li>
+</ul>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a7b2ee398829a9f3d25a3ce471a53b101a6683a3be9c0472d8c680cc93a424c198" name="a7b2ee398829a9f3d25a3ce471a53b101a6683a3be9c0472d8c680cc93a424c198"></a>spherical&#160;</td><td class="fielddoc"><p>Spherical indicator (heaviside) filter (default, original QCM). </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a7b2ee398829a9f3d25a3ce471a53b101a304e2a3b544f6b9f267a151e1bcee487" name="a7b2ee398829a9f3d25a3ce471a53b101a304e2a3b544f6b9f267a151e1bcee487"></a>gaussian&#160;</td><td class="fielddoc"><p>Gaussian filter parametrised by a standard deviation sigma. </p>
+</td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="parameters__cfd__dem_8h_source.html#l00054">54</a> of file <a class="el" href="parameters__cfd__dem_8h_source.html">parameters_cfd_dem.h</a>.</p>
+
+</div>
+</div>
 <a id="a34edd9cb3faad925234f73958172eb84" name="a34edd9cb3faad925234f73958172eb84"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a34edd9cb3faad925234f73958172eb84">&#9670;&#160;</a></span>RedistanciationTransformationType</h2>
 
@@ -847,7 +887,7 @@ iteration".</li>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__cfd__dem_8h_source.html#l00119">119</a> of file <a class="el" href="parameters__cfd__dem_8h_source.html">parameters_cfd_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__cfd__dem_8h_source.html#l00141">141</a> of file <a class="el" href="parameters__cfd__dem_8h_source.html">parameters_cfd_dem.h</a>.</p>
 
 </div>
 </div>
@@ -944,7 +984,7 @@ iteration".</li>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters__cfd__dem_8h_source.html#l00043">43</a> of file <a class="el" href="parameters__cfd__dem_8h_source.html">parameters_cfd_dem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__cfd__dem_8h_source.html#l00065">65</a> of file <a class="el" href="parameters__cfd__dem_8h_source.html">parameters_cfd_dem.h</a>.</p>
 
 </div>
 </div>

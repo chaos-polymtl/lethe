@@ -10,7 +10,7 @@ var searchData=
   ['slip_7',['slip',['../namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a3daec8dea85232fa2baef18aeb2334d8',1,'BoundaryConditions']]],
   ['specific_5fheat_8',['specific_heat',['../namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8aa71ab952dba2769feb0df52178f69331',1,'DEM::DEMMPProperties']]],
   ['sphere_9',['sphere',['../classShape.html#a394819ce751267dc955abe4ad18ebdebaa9f2d0e0ebfe9aaa1e10b43015fa3710',1,'Shape']]],
-  ['spherical_10',['spherical',['../classParameters_1_1Manifolds.html#a104ef04cd60eac47ebd1636a0a9fe68aa6683a3be9c0472d8c680cc93a424c198',1,'Parameters::Manifolds']]],
+  ['spherical_10',['spherical',['../classParameters_1_1Manifolds.html#a104ef04cd60eac47ebd1636a0a9fe68aa6683a3be9c0472d8c680cc93a424c198',1,'Parameters::Manifolds::spherical'],['../namespaceParameters.html#a7b2ee398829a9f3d25a3ce471a53b101a6683a3be9c0472d8c680cc93a424c198',1,'Parameters::spherical']]],
   ['spm_11',['spm',['../namespaceParameters.html#a59bccd897a552f378b3da967e9fa803fa51762626b4f785729159fd35eea74deb',1,'Parameters']]],
   ['srf_12',['srf',['../structParameters_1_1VelocitySource.html#a87edcf555de06bd89d26e35b4c670e19a9fa1e546d34dd62a768567052aaa9f92',1,'Parameters::VelocitySource']]],
   ['static_5factive_13',['static_active',['../classAdaptiveSparseContacts.html#a9cf65bd3e1a790313fcf3f6b708ab230acffa179e4b26eec5f34ced718d2fa4e4',1,'AdaptiveSparseContacts']]],

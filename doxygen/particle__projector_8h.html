@@ -139,8 +139,75 @@ Functions</h2></td></tr>
 <tr class="separator:a295257336d7ec7de9c5303816983fe23"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a54147426ca2e61a0d8fda082850714f8" id="r_a54147426ca2e61a0d8fda082850714f8"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__projector_8h.html#a54147426ca2e61a0d8fda082850714f8">particle_sphere_intersection_3d</a> (double r_particle, double r_sphere, double neighbor_distance)</td></tr>
 <tr class="separator:a54147426ca2e61a0d8fda082850714f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae027c7115ed06a31397c9c6913cf53aa" id="r_ae027c7115ed06a31397c9c6913cf53aa"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
+<tr class="memitem:ae027c7115ed06a31397c9c6913cf53aa"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="particle__projector_8h.html#ae027c7115ed06a31397c9c6913cf53aa">gaussian_filter_kernel</a> (const double r_particle, const double sigma, const double distance)</td></tr>
+<tr class="separator:ae027c7115ed06a31397c9c6913cf53aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="ae027c7115ed06a31397c9c6913cf53aa" name="ae027c7115ed06a31397c9c6913cf53aa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae027c7115ed06a31397c9c6913cf53aa">&#9670;&#160;</a></span>gaussian_filter_kernel()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double gaussian_filter_kernel </td>
+          <td>(</td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>r_particle</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>sigma</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>distance</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Evaluate a Gaussian filter kernel between a particle and a point. </p>
+<p>The kernel is normalised so that its integral over R^dim equals the particle volume V_p. With this normalisation the same downstream normalisation procedure used by the spherical QCM filter (dividing by the accumulated volumetric_contribution to recover the particle volume) applies unchanged.</p>
+<p>The Gaussian has non-compact support: contributions outside the QCM neighbor-cell stencil are silently dropped. The accumulated normalisation absorbs the missing mass, but the projected shape will be biased if sigma is comparable to the stencil reach. Choose sigma accordingly.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">dim</td><td>Number of spatial dimensions.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">r_particle</td><td>Radius of the particle. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">sigma</td><td>Standard deviation of the Gaussian (the QCM filter length). </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">distance</td><td>Distance between the particle center and the evaluation point. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00112">112</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+
+</div>
+</div>
 <a id="a295257336d7ec7de9c5303816983fe23" name="a295257336d7ec7de9c5303816983fe23"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a295257336d7ec7de9c5303816983fe23">&#9670;&#160;</a></span>particle_circle_intersection_2d()</h2>
 
