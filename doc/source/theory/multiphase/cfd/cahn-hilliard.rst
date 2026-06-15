@@ -119,7 +119,7 @@ Find :math:`(\phi^h,\eta^h) \in \psi^h` such that:
 Stabilization
 ---------------------------
    
-While developing the code, it turned useful to add a numerical diffusion term in the chemical potential form for some example. The new equation is:
+While developing the code, it turned useful to add a numerical diffusion term to the chemical potential equation. The new equation is:
 
 .. math::
   \eta = \lambda\left(-\frac{\phi(1-\phi^2)}{\varepsilon^2} + \nabla^2\phi\right) - \xi h^2 \nabla^2 \eta = 0
