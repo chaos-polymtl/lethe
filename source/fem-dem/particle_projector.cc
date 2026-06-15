@@ -687,6 +687,26 @@ template <int dim>
 void
 ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
 {
+  switch (void_fraction_parameters->qcm_filter_type)
+    {
+      case Parameters::QCMFilterType::spherical:
+        calculate_void_fraction_qcm_impl<
+          Parameters::QCMFilterType::spherical>();
+        break;
+      case Parameters::QCMFilterType::gaussian:
+        calculate_void_fraction_qcm_impl<Parameters::QCMFilterType::gaussian>();
+        break;
+      default:
+        AssertThrow(false,
+                    ExcMessage("Unhandled QCMFilterType in QCM dispatcher."));
+    }
+}
+
+template <int dim>
+template <Parameters::QCMFilterType filter_type>
+void
+ParticleProjector<dim>::calculate_void_fraction_qcm_impl()
+{
   FEValues<dim> fe_values_void_fraction(*mapping,
                                         *fe,
                                         *quadrature,
@@ -702,19 +722,23 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
   std::vector<double> phi_vf(dofs_per_cell);
   std::vector<Tensor<1, dim>> grad_phi_vf(dofs_per_cell);
 
-  double r_sphere = 0.0;
-  double particles_volume_in_sphere;
+  // QCM filter characteristic length. For the spherical filter this is the
+  // averaging-sphere radius; for the gaussian filter it is the standard
+  // deviation sigma. The same parameter (qcm_smoothing_length) supplies it in
+  // both cases: half the smoothing length.
+  double filter_length = 0.0;
+  double particles_volume_in_kernel;
   double quadrature_void_fraction;
-  double qcm_sphere_diameter = void_fraction_parameters->qcm_sphere_diameter;
+  double qcm_smoothing_length = void_fraction_parameters->qcm_smoothing_length;
 
-  // If the reference sphere diameter is user-defined, the radius is
-  // calculated from it, otherwise, the value must be calculated while looping
-  // over the cells.
-  bool calculate_reference_sphere_radius = true;
-  if (qcm_sphere_diameter > 1e-16)
+  // If the filter length is user-defined via qcm_smoothing_length, it is
+  // calculated from it once; otherwise, it must be recomputed from each cell
+  // measure while looping over the cells.
+  bool calculate_filter_length_from_cell = true;
+  if (qcm_smoothing_length > 1e-16)
     {
-      r_sphere                          = 0.5 * qcm_sphere_diameter;
-      calculate_reference_sphere_radius = false;
+      filter_length                     = 0.5 * qcm_smoothing_length;
+      calculate_filter_length_from_cell = false;
     }
 
   system_rhs_void_fraction    = 0;
@@ -800,10 +824,14 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
                   // the averaging volume for the QCM. If the reference sphere
                   // diameter was given by the user the value is already
                   // defined since it is not dependent on any measure of the
+                  // Define the length of the reference kernel to be used as
+                  // the averaging volume for the QCM. If the reference kernel
+                  // length was given by the user the value is already
+                  // defined since it is not dependent on any measure of the
                   // active cell
-                  if (calculate_reference_sphere_radius)
+                  if (calculate_filter_length_from_cell)
                     {
-                      r_sphere = calculate_qcm_radius_from_cell_measure(
+                      filter_length = calculate_filter_length_from_cell_measure(
                         active_neighbors[m]->measure());
                     }
 
@@ -815,14 +843,14 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
                         particle.get_location().distance(
                           neighbor_quadrature_point_location[m][k]);
 
-                      // Add the intersection volume to the particle
-                      // contribution
+                      // Add the filter kernel contribution to the particle's
+                      // volumetric contribution.
                       particle_properties
                         [DEM::CFDDEMProperties::PropertiesIndex::
                            volumetric_contribution] +=
-                        calculate_intersection_measure(r_particle,
-                                                       r_sphere,
-                                                       neighbor_distance);
+                        evaluate_filter<filter_type>(r_particle,
+                                                     filter_length,
+                                                     neighbor_distance);
                     }
                 }
 
@@ -833,9 +861,9 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
               for (unsigned int m = 0; m < active_periodic_neighbors.size();
                    m++)
                 {
-                  if (calculate_reference_sphere_radius)
+                  if (calculate_filter_length_from_cell)
                     {
-                      r_sphere = calculate_qcm_radius_from_cell_measure(
+                      filter_length = calculate_filter_length_from_cell_measure(
                         active_periodic_neighbors[m]->measure());
                     }
 
@@ -873,13 +901,15 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
                         particle_location.distance(
                           periodic_neighbor_quadrature_point_location[m][k]);
 
-                      // Add the intersection volume to the particle
-                      // contribution
+                      // Add the filter kernel contribution to the particle's
+                      // volumetric contribution.
                       particle_properties
                         [DEM::CFDDEMProperties::PropertiesIndex::
                            volumetric_contribution] +=
-                        calculate_intersection_measure(
-                          r_particle, r_sphere, periodic_neighbor_distance);
+                        evaluate_filter<filter_type>(
+                          r_particle,
+                          filter_length,
+                          periodic_neighbor_distance);
                     }
                 }
             }
@@ -911,12 +941,11 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
             ExcMessage(
               "The sum of the quadrature weight should be strictly positive."));
 
-          // Define the volume of the reference sphere to be used as the
-          // averaging volume for the QCM
-          if (calculate_reference_sphere_radius)
+          // Define the QCM filter characteristic length for this cell.
+          if (calculate_filter_length_from_cell)
             {
-              r_sphere =
-                calculate_qcm_radius_from_cell_measure(cell->measure());
+              filter_length =
+                calculate_filter_length_from_cell_measure(cell->measure());
             }
 
           // Array of real locations for the quadrature points
@@ -936,7 +965,7 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
 
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
-              particles_volume_in_sphere = 0;
+              particles_volume_in_kernel = 0;
               quadrature_void_fraction   = 0;
 
               for (unsigned int m = 0; m < active_neighbors.size(); m++)
@@ -968,11 +997,11 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
                         quadrature_point_location[q]);
 
                       // Calculate the normalized particle contribution
-                      particles_volume_in_sphere +=
+                      particles_volume_in_kernel +=
                         particle_volume_ratio *
-                        calculate_intersection_measure(r_particle,
-                                                       r_sphere,
-                                                       distance);
+                        evaluate_filter<filter_type>(r_particle,
+                                                     filter_length,
+                                                     distance);
                     }
                 }
 
@@ -1039,16 +1068,16 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
                              volumetric_contribution];
 
                       // Calculate the normalized particle contribution
-                      particles_volume_in_sphere +=
+                      particles_volume_in_kernel +=
                         particle_volume_ratio *
-                        calculate_intersection_measure(r_particle,
-                                                       r_sphere,
-                                                       distance);
+                        evaluate_filter<filter_type>(r_particle,
+                                                     filter_length,
+                                                     distance);
                     }
-                  if (particles_volume_in_sphere > 1.001)
+                  if (particles_volume_in_kernel > 1.001)
                     {
-                      std::cout << "WARNING: particles_volume_in_sphere = "
-                                << particles_volume_in_sphere << " at cell "
+                      std::cout << "WARNING: particles_volume_in_kernel = "
+                                << particles_volume_in_kernel << " at cell "
                                 << cell->center() << std::endl;
                     }
                 }
@@ -1058,7 +1087,7 @@ ParticleProjector<dim>::calculate_void_fraction_quadrature_centered_method()
               quadrature_void_fraction =
                 ((fe_values_void_fraction.JxW(q) * cell->measure() /
                   sum_quadrature_weights) -
-                 particles_volume_in_sphere) /
+                 particles_volume_in_kernel) /
                 (fe_values_void_fraction.JxW(q) * cell->measure() /
                  sum_quadrature_weights);
 
@@ -1109,6 +1138,34 @@ void
 ParticleProjector<dim>::calculate_field_projection(
   ParticleFieldQCM<dim, n_components, property_start_index> &field_qcm)
 {
+  switch (void_fraction_parameters->qcm_filter_type)
+    {
+      case Parameters::QCMFilterType::spherical:
+        calculate_field_projection_impl<Parameters::QCMFilterType::spherical>(
+          field_qcm);
+        break;
+      case Parameters::QCMFilterType::gaussian:
+        calculate_field_projection_impl<Parameters::QCMFilterType::gaussian>(
+          field_qcm);
+        break;
+      default:
+        AssertThrow(
+          false,
+          ExcMessage(
+            "Unhandled QCMFilterType in calculate_field_projection dispatcher."));
+    }
+}
+
+// first: the template of the class
+template <int dim>
+// second: the template of the method
+template <Parameters::QCMFilterType filter_type,
+          int                       n_components,
+          int                       property_start_index>
+void
+ParticleProjector<dim>::calculate_field_projection_impl(
+  ParticleFieldQCM<dim, n_components, property_start_index> &field_qcm)
+{
   AssertThrow(n_components == 1 || n_components == dim,
               ExcMessage(
                 "QCM projection of a field only supports 1 or dim components"));
@@ -1148,20 +1205,19 @@ ParticleProjector<dim>::calculate_field_projection(
                      std::vector<Tensor<2, dim>>>
     grad_phi_vf(dofs_per_cell);
 
-  double r_sphere = 0.0;
+  // QCM filter characteristic length (averaging-sphere radius for spherical,
+  // sigma for gaussian).
+  double filter_length = 0.0;
   double total_volume_of_particles_in_sphere;
   std::conditional_t<n_components == 1, double, Tensor<1, dim>>
          particle_field_in_sphere;
-  double qcm_sphere_diameter = void_fraction_parameters->qcm_sphere_diameter;
+  double qcm_smoothing_length = void_fraction_parameters->qcm_smoothing_length;
 
-  // If the reference sphere diameter is user-defined, the radius is
-  // calculated from it, otherwise, the value must be calculated while looping
-  // over the cells.
-  bool calculate_reference_sphere_radius = true;
-  if (qcm_sphere_diameter > 1e-16)
+  bool calculate_filter_length_from_cell = true;
+  if (qcm_smoothing_length > 1e-16)
     {
-      r_sphere                          = 0.5 * qcm_sphere_diameter;
-      calculate_reference_sphere_radius = false;
+      filter_length                     = 0.5 * qcm_smoothing_length;
+      calculate_filter_length_from_cell = false;
     }
 
   // Set the system rhs to zero, but also zero out the ghost values so that
@@ -1195,12 +1251,11 @@ ParticleProjector<dim>::calculate_field_projection(
             LetheGridTools::find_cells_around_cell<dim>(
               vertices_to_periodic_cell, cell);
 
-          // Define the volume of the reference sphere to be used as the
-          // averaging volume for the QCM
-          if (calculate_reference_sphere_radius)
+          // Define the QCM filter characteristic length for this cell.
+          if (calculate_filter_length_from_cell)
             {
-              r_sphere =
-                calculate_qcm_radius_from_cell_measure(cell->measure());
+              filter_length =
+                calculate_filter_length_from_cell_measure(cell->measure());
             }
 
           for (unsigned int q = 0; q < n_q_points; ++q)
@@ -1229,9 +1284,9 @@ ParticleProjector<dim>::calculate_field_projection(
                         quadrature_point_location[q]);
 
                       const double particle_volume_in_sphere =
-                        calculate_intersection_measure(r_particle,
-                                                       r_sphere,
-                                                       distance);
+                        evaluate_filter<filter_type>(r_particle,
+                                                     filter_length,
+                                                     distance);
 
                       total_volume_of_particles_in_sphere +=
                         particle_volume_in_sphere;
@@ -1322,9 +1377,9 @@ ParticleProjector<dim>::calculate_field_projection(
                         quadrature_point_location[q]);
 
                       const double particle_volume_in_sphere =
-                        calculate_intersection_measure(r_particle,
-                                                       r_sphere,
-                                                       distance);
+                        evaluate_filter<filter_type>(r_particle,
+                                                     filter_length,
+                                                     distance);
 
                       total_volume_of_particles_in_sphere +=
                         particle_volume_in_sphere;

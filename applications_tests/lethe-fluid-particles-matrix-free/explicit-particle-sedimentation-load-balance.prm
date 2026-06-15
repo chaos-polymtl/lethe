@@ -65,7 +65,7 @@ end
 subsection void fraction
   set mode                         = qcm
   set qcm sphere equal cell volume = false
-  set qcm sphere diameter          = 0.0075
+  set qcm smoothing length         = 0.0075
   set read dem                     = false
   set dem file name                = dem
   set l2 smoothing length          = 0.0125
