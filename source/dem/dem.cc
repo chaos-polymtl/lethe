@@ -841,6 +841,7 @@ DEMSolver<dim, PropertiesIndex>::sort_particles_into_subdomains_and_cells()
         particle_handler.get_max_local_particle_index();
       // Resize displacement container
       displacement.resize(number_of_particles);
+      previous_position.reserve(number_of_particles);
       // Resize outcome containers
       contact_outcome.resize_interaction_containers(number_of_particles);
       MOI.resize(number_of_particles);
@@ -864,9 +865,10 @@ template <int dim, typename PropertiesIndex>
 void
 DEMSolver<dim, PropertiesIndex>::update_previous_position()
 {
+  previous_position.clear();
   for (auto cell : triangulation.active_cell_iterators())
     {
-      if (!cell->is_locally_owned())
+      if (!cell->is_locally_owned() && !cell->is_ghost())
         continue;
 
       // Particles in the cell
@@ -881,7 +883,7 @@ DEMSolver<dim, PropertiesIndex>::update_previous_position()
            particle_in_cell != particles_in_cell.end();
            ++particle_in_cell)
         {
-          unsigned int particle_id       = particle_in_cell->get_local_index();
+          unsigned int particle_id       = particle_in_cell->get_id();
           previous_position[particle_id] = particle_in_cell->get_location();
         }
     }
@@ -891,47 +893,42 @@ template <int dim, typename PropertiesIndex>
 void
 DEMSolver<dim, PropertiesIndex>::clamp_displacement()
 {
-  // loop of the locally owned cells
-  for (auto cell : triangulation.active_cell_iterators())
+  const double max_disp = 2.5 * maximum_particle_diameter;
+
+  for (const auto &cell : triangulation.active_cell_iterators())
     {
       if (!cell->is_locally_owned())
         continue;
 
-      // Particles in the cell
-      typename Particles::ParticleHandler<dim>::particle_iterator_range
-        particles_in_cell = particle_handler.particles_in_cell(cell);
-
-      // If the main cell is not empty
+      const auto particles_in_cell =
+        particle_handler.particles_in_cell(cell);
       if (particles_in_cell.empty())
         continue;
 
-      for (auto particle_in_cell = particles_in_cell.begin();
-           particle_in_cell != particles_in_cell.end();
-           ++particle_in_cell)
+      for (auto &particle : particles_in_cell)
         {
-          unsigned int particle_id = particle_in_cell->get_local_index();
-          Point<dim>   particle_current_position =
-            particle_in_cell->get_location();
-          Point<dim> particle_previous_position =
-            previous_position[particle_id];
+          const unsigned int particle_id = particle.get_id();
 
-          Tensor<1, dim> displacement_tensor =
-            particle_current_position - particle_previous_position;
+          const Tensor<1, dim> displacement_tensor =
+            particle.get_location() - previous_position[particle_id];
 
-          double displacement_norm = displacement_tensor.norm() + DBL_MIN;
-          if (std::isnan(displacement_norm))
+          const double disp_norm = displacement_tensor.norm();
+
+          // No mouvement
+          if (std::isnan(disp_norm))
             continue;
 
-          if (displacement_norm > 0.5 * maximum_particle_diameter)
+          if (disp_norm > max_disp)
             {
-              particle_in_cell->set_location(particle_previous_position +
-                                             0.5 * maximum_particle_diameter *
-                                               displacement_tensor /
-                                               displacement_norm);
-              displacement[particle_id] += 0.5 * maximum_particle_diameter;
+              // Clamp position to at most max_disp from the previous position
+              particle.set_location(previous_position[particle_id] +
+                                    (max_disp / disp_norm) * displacement_tensor);
+              displacement[particle_id] += max_disp; // actual travel = max_disp
             }
           else
-            displacement[particle_id] += displacement_norm;
+            {
+              displacement[particle_id] += disp_norm;
+            }
         }
     }
 }
@@ -1000,7 +997,6 @@ DEMSolver<dim, PropertiesIndex>::solve()
 
       // Insert particle if needed
       insert_particles();
-      pcout << particle_handler.n_global_particles() << std::endl;
 
       // Load balancing (if load balancing enabled and if needed)
       load_balance();
