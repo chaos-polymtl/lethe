@@ -40,6 +40,8 @@
 
 #include <deal.II/numerics/vector_tools.h>
 
+#include <cmath>
+
 /**
  * @brief A base class of preconditioners used by the smoother.
  */
@@ -3738,43 +3740,86 @@ FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const double absolute_residual,
 
   this->computing_timer.enter_subsection("Solve linear system");
 
-  if ((this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-         .preconditioner ==
-       Parameters::LinearSolver::PreconditionerType::lsmg) ||
-      (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-         .preconditioner == Parameters::LinearSolver::PreconditionerType::gcmg))
+  // The matrix-free solver does not retry the linear solve with a higher
+  // preconditioner fill level when it fails. If the linear solver fails and the
+  // user requested to force its continuation through the <force linear solver
+  // continuation> parameter, we ignore the failure and continue the Newton step
+  // with the current Newton update. Otherwise, the exception is rethrown.
+  try
     {
-      solver.solve(*(this->system_operator),
-                   this->newton_update,
-                   this->system_rhs,
-                   *(this->gmg_preconditioner));
-
-      if (this->simulation_parameters.linear_solver
-            .at(PhysicsID::fluid_dynamics)
-            .mg_verbosity != Parameters::Verbosity::quiet)
-        this->gmg_preconditioner->print_relevant_info();
-    }
-  else if (this->simulation_parameters.linear_solver
+      if ((this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
              .preconditioner ==
-           Parameters::LinearSolver::PreconditionerType::ilu)
-    solver.solve(*(this->system_operator),
-                 this->newton_update,
-                 this->system_rhs,
-                 *(this->ilu_preconditioner));
-  else
-    AssertThrow(
-      this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-            .preconditioner ==
-          Parameters::LinearSolver::PreconditionerType::ilu ||
-        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-            .preconditioner ==
-          Parameters::LinearSolver::PreconditionerType::lsmg ||
-        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-            .preconditioner ==
-          Parameters::LinearSolver::PreconditionerType::gcmg,
-      ExcMessage(
-        "This linear solver does not support this preconditioner. Only <ilu|lsmg|gcmg> preconditioners are supported."));
+           Parameters::LinearSolver::PreconditionerType::lsmg) ||
+          (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::gcmg))
+        {
+          solver.solve(*(this->system_operator),
+                       this->newton_update,
+                       this->system_rhs,
+                       *(this->gmg_preconditioner));
+
+          if (this->simulation_parameters.linear_solver
+                .at(PhysicsID::fluid_dynamics)
+                .mg_verbosity != Parameters::Verbosity::quiet)
+            this->gmg_preconditioner->print_relevant_info();
+        }
+      else if (this->simulation_parameters.linear_solver
+                 .at(PhysicsID::fluid_dynamics)
+                 .preconditioner ==
+               Parameters::LinearSolver::PreconditionerType::ilu)
+        solver.solve(*(this->system_operator),
+                     this->newton_update,
+                     this->system_rhs,
+                     *(this->ilu_preconditioner));
+      else
+        AssertThrow(
+          this->simulation_parameters.linear_solver
+                .at(PhysicsID::fluid_dynamics)
+                .preconditioner ==
+              Parameters::LinearSolver::PreconditionerType::ilu ||
+            this->simulation_parameters.linear_solver
+                .at(PhysicsID::fluid_dynamics)
+                .preconditioner ==
+              Parameters::LinearSolver::PreconditionerType::lsmg ||
+            this->simulation_parameters.linear_solver
+                .at(PhysicsID::fluid_dynamics)
+                .preconditioner ==
+              Parameters::LinearSolver::PreconditionerType::gcmg,
+          ExcMessage(
+            "This linear solver does not support this preconditioner. Only <ilu|lsmg|gcmg> preconditioners are supported."));
+    }
+  catch (std::exception &e)
+    {
+      if (!this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .force_linear_solver_continuation)
+        {
+          this->computing_timer.leave_subsection("Solve linear system");
+          throw e;
+        }
+
+      this->pcout
+        << " GMRES solver failed! Continuing the Newton step as requested by the <force linear solver continuation> parameter."
+        << std::endl;
+
+      // A failed linear solve may leave the Newton update with non-finite
+      // entries (e.g. a preconditioner or operator breakdown). Continuing with
+      // such a Newton update would propagate NaNs/Infs through the whole Newton
+      // iteration. To stay defensive, we reset the Newton update to zero in
+      // that case so that this Newton step makes no progress instead of
+      // poisoning the solution. The l2_norm() call is collective and triggers
+      // the MPI reduction required for a global check across all processes.
+      if (!std::isfinite(this->newton_update.l2_norm()))
+        {
+          this->pcout
+            << " The Newton update contains non-finite values; resetting it to zero."
+            << std::endl;
+          this->newton_update = 0.0;
+        }
+    }
 
   this->computing_timer.leave_subsection("Solve linear system");
 
