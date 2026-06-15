@@ -165,7 +165,7 @@ The simulation is run for 5 seconds with a time step of 0.001 seconds. The time 
 Boundary Conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Regarding the boundary conditions, we apply slip boundary condition to the wall, a uniform Dirichlet boundary condition at the bottom of the small channel, and outlet to the top of the cylinder. The following schematic figure describes the ID of each boundary and the position of the floating wall.
+Regarding the boundary conditions, we apply slip boundary conditions to the walls, a uniform Dirichlet boundary condition at the bottom of the small channel, and outlet to the top of the cylinder. The following schematic figure illustrates the ID of each boundary and the position of the floating wall.
 
 .. image:: images/ID.png
     :alt: The geometry and boundary conditions
