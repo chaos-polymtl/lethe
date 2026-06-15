@@ -55,7 +55,7 @@ The ``mesh`` subsection specifies the computational grid:
 Simulation Control
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Another subsection, which is generally the one we put at the top of the parameter files, is the ``simulation control`` . ``time step``, end time, log and ``output frequency`` are defined here. Additionally, users can specify the output folder for the simulation results in this subsection. The ``log frequency`` parameter controls the frequency at which the iteration number is printed on the terminal. If ``log frequency = 1000`` the iteration number will be printed out every 1000 iterations. This is an easy way to monitor the progress of the simulation. A simulation time of 0.6 s was chosen with a time step of 1e-5 s. It is important to choose a long enough time as to allow all particles to come to rest. We store the output files generated in the folder ``output_dem``:
+Another subsection, which is generally the one we put at the top of the parameter files, is the ``simulation control`` . ``time step``, end time, log and ``output frequency`` are defined here. Additionally, users can specify the output folder for the simulation results in this subsection. The ``log frequency`` parameter controls the frequency at which the iteration number is printed on the terminal. If ``log frequency = 1000`` the iteration number will be printed out every 1000 iterations. This is an easy way to monitor the progress of the simulation. A simulation time of 0.6 s was chosen with a time step of 1e-5 s. It is important to choose a long enough time for all particles to come to rest. We store the output files generated in the folder ``output_dem``:
 
 .. code-block:: text
 
