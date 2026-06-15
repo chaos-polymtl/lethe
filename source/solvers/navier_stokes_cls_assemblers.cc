@@ -664,7 +664,7 @@ PhaseChangeCarmanKozenyCLSAssembler<dim>::assemble_matrix(
       for (unsigned int p = 0; p < number_of_fluids; p++)
         {
           // Skip to next fluid if there is no phase change
-          if (!enable_phase_change[p])
+          if (!fluid_has_phase_change[p])
             {
               liquid_fraction_factors[p] = 0;
               continue;
@@ -756,7 +756,7 @@ PhaseChangeCarmanKozenyCLSAssembler<dim>::assemble_rhs(
       for (unsigned int p = 0; p < number_of_fluids; p++)
         {
           // Skip to next fluid if there is no phase change
-          if (!enable_phase_change[p])
+          if (!fluid_has_phase_change[p])
             {
               liquid_fraction_factors[p] = 0;
               continue;

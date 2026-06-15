@@ -3816,9 +3816,9 @@ namespace Parameters
               "The expected size of the 'Carman-Kozeny division tolerance' list of 1 is not met."));
 
           carman_kozeny_permeability_area[0] =
-            std::stod(carman_kozeny_permeability_area_vec[0]);
+            Utilities::string_to_double(carman_kozeny_permeability_area_vec[0]);
           carman_kozeny_tolerance[0] =
-            std::stod(carman_kozeny_tolerance_vec[0]);
+            Utilities::string_to_double(carman_kozeny_tolerance_vec[0]);
 
           // Assign default values to fluid 1
           carman_kozeny_permeability_area[1] = 1e-3;
@@ -3836,9 +3836,9 @@ namespace Parameters
               "The expected size of the 'Carman-Kozeny division tolerance' list of 1 is not met."));
 
           carman_kozeny_permeability_area[1] =
-            std::stod(carman_kozeny_permeability_area_vec[0]);
+            Utilities::string_to_double(carman_kozeny_permeability_area_vec[0]);
           carman_kozeny_tolerance[1] =
-            std::stod(carman_kozeny_tolerance_vec[0]);
+            Utilities::string_to_double(carman_kozeny_tolerance_vec[0]);
 
           // Assign default values to fluid 0
           carman_kozeny_permeability_area[0] = 1e-3;
@@ -3860,10 +3860,10 @@ namespace Parameters
           for (unsigned int i = 0; i < carman_kozeny_permeability_area.size();
                ++i)
             {
-              carman_kozeny_permeability_area[i] =
-                std::stod(carman_kozeny_permeability_area_vec[i]);
+              carman_kozeny_permeability_area[i] = Utilities::string_to_double(
+                carman_kozeny_permeability_area_vec[i]);
               carman_kozeny_tolerance[i] =
-                std::stod(carman_kozeny_tolerance_vec[i]);
+                Utilities::string_to_double(carman_kozeny_tolerance_vec[i]);
             }
         }
 

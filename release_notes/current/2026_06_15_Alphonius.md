@@ -1,4 +1,4 @@
-## [Master] - 2026/06/11
+## [Master] - 2026/06/15
 
 ### Added
 
@@ -6,4 +6,4 @@
 
 ### Fixed
 
-- MAJOR Fixes the RHS of the Darcy source term in the ``PhaseChangeDarcyCLSAssembler``. The Darcy penalty was precalculated and appended to a vector, but the value added to the source term was wrongly indexed. [#2013](https://github.com/chaos-polymtl/lethe/pull/2013)
+- MAJOR Fixes the RHS of the Darcy source term in the ``PhaseChangeDarcyCLSAssembler``. The Darcy penalty was precalculated and appended to a vector, but the value added to the source term was wrongly indexed. Additionally, the ``cls_phase_change_darcy`` application test was modified since the problem was not well-defined. The fluids in the test used to be stacked orthogonal to the flow which resulted in their smearing. Additionally, both fluids had the same properties. The density of fluid 1 has been modified to take into account differences in properties in multiple fluid flows. [#2013](https://github.com/chaos-polymtl/lethe/pull/2013)

@@ -211,7 +211,7 @@ public:
     const std::vector<double>                  &carman_kozeny_permeability_area,
     const std::vector<double>                  &carman_kozeny_tolerance,
     const std::vector<Parameters::PhaseChange> &phase_change_parameters_vector)
-    : enable_phase_change(indentify_fluid_with_phase_change(
+    : fluid_has_phase_change(indentify_fluid_with_phase_change(
         fluid_with_phase_change,
         phase_change_parameters_vector.size()))
     , carman_kozeny_permeability_area_inv(
@@ -320,7 +320,7 @@ private:
    * Vector where each bool indicates if the corresponding fluid has phase
    * change or not.
    */
-  const std::vector<bool> enable_phase_change;
+  const std::vector<bool> fluid_has_phase_change;
 
   /**
    * Vector of one over the permeability area of the pseudo-porous bed
