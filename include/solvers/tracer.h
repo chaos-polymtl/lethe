@@ -685,7 +685,7 @@ private:
   // Mortar coupling manager and operator
   std::shared_ptr<MortarManagerBase<dim>>        mortar_manager;
   std::shared_ptr<CouplingOperator<dim, double>> mortar_coupling_operator;
-  std::shared_ptr<ScalarCouplingEvaluation<dim, 1, double>>
+  std::shared_ptr<ScalarCouplingEvaluationSIPG<dim, 1, double>>
     mortar_coupling_evaluator;
   // Mapping cache used in rotor mesh rotation in mortar method
   std::shared_ptr<MappingQCache<dim>> mapping_cache;
