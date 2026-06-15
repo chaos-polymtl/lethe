@@ -46,7 +46,7 @@ The default values of the Cahn-Hilliard parameters are given in the text box bel
   
 * ``potential smoothing coefficient``: defines the :math:`\xi` parameter in the equations above. Its value should be increased if the potential presents excessive oscillations (in advective problems for instance).
 
-* ``epsilon``: defines the :math:`\epsilon` parameter. The reader is referred to the :doc:`../../../theory/multiphase/cfd/cahn-hilliard` section for additional details about this parameter.
+* ``epsilon``: defines the :math:`\varepsilon` parameter. The reader is referred to the :doc:`../../../theory/multiphase/cfd/cahn-hilliard` section for additional details about this parameter.
  
   * ``verbosity``: enables the display of the interface thickness values in the terminal. This does not affect the printing of output files. Choices are ``quiet`` (default, no output) or ``verbose`` (output at every iteration).
 
