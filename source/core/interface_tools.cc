@@ -1431,11 +1431,11 @@ template class InterfaceTools::
   SignedDistanceSolver<3, LinearAlgebra::distributed::Vector<double>>;
 #endif
 
-template struct InterfaceTools::InterfaceBoundingValues<2>;
+template struct InterfaceTools::IsocontourBoundingValues<2>;
 
 template <int dim, typename VectorType>
-InterfaceTools::InterfaceBoundingValues<dim>
-InterfaceTools::compute_interface_bounding_values(
+InterfaceTools::IsocontourBoundingValues<dim>
+InterfaceTools::compute_isocontour_bounding_values(
   const DoFHandler<dim>    &dof_handler,
   const FiniteElement<dim> &fe,
   const VectorType         &solution_vector,
@@ -1446,13 +1446,13 @@ InterfaceTools::compute_interface_bounding_values(
 
   bool isocontour_exists = false;
 
-  // Initialize InterfaceBoundingValues object and reference variables for
+  // Initialize IsocontourBoundingValues object and reference variables for
   // readability
-  InterfaceTools::InterfaceBoundingValues<dim> interface_bounding_values;
-  double &x_min = interface_bounding_values.x_min;
-  double &x_max = interface_bounding_values.x_max;
-  double &y_min = interface_bounding_values.y_min;
-  double &y_max = interface_bounding_values.y_max;
+  InterfaceTools::IsocontourBoundingValues<dim> isocontour_bounding_values;
+  double &x_min = isocontour_bounding_values.x_min;
+  double &x_max = isocontour_bounding_values.x_max;
+  double &y_min = isocontour_bounding_values.y_min;
+  double &y_max = isocontour_bounding_values.y_max;
 
   // Copy values of owned DoFs
   VectorType solution_vector_owned_copy(dof_handler.locally_owned_dofs(),
@@ -1491,7 +1491,7 @@ InterfaceTools::compute_interface_bounding_values(
     {
       if (cell->is_locally_owned())
         {
-          // Reinitialize and
+          // Reinitialize and get surface FE values
           non_matching_fe_values.reinit(cell);
           const std::optional<NonMatching::FEImmersedSurfaceValues<dim>>
             &surface_fe_values = non_matching_fe_values.get_surface_fe_values();
@@ -1511,10 +1511,10 @@ InterfaceTools::compute_interface_bounding_values(
                   y_max = std::max(y_max, p[1]);
                   if constexpr (dim == 3)
                     {
-                      interface_bounding_values.z_min =
-                        std::min(interface_bounding_values.z_min, p[2]);
-                      interface_bounding_values.z_max =
-                        std::max(interface_bounding_values.z_max, p[2]);
+                      isocontour_bounding_values.z_min =
+                        std::min(isocontour_bounding_values.z_min, p[2]);
+                      isocontour_bounding_values.z_max =
+                        std::max(isocontour_bounding_values.z_max, p[2]);
                     }
                 }
             }
@@ -1528,26 +1528,26 @@ InterfaceTools::compute_interface_bounding_values(
   y_max = Utilities::MPI::max(y_max, mpi_communicator);
   if constexpr (dim == 3)
     {
-      interface_bounding_values.z_min =
-        Utilities::MPI::min(interface_bounding_values.z_min, mpi_communicator);
-      interface_bounding_values.z_max =
-        Utilities::MPI::max(interface_bounding_values.z_max, mpi_communicator);
+      isocontour_bounding_values.z_min =
+        Utilities::MPI::min(isocontour_bounding_values.z_min, mpi_communicator);
+      isocontour_bounding_values.z_max =
+        Utilities::MPI::max(isocontour_bounding_values.z_max, mpi_communicator);
     }
-  interface_bounding_values.isocontour_exists =
+  isocontour_bounding_values.isocontour_exists =
     Utilities::MPI::logical_or(isocontour_exists, mpi_communicator);
 
-  return interface_bounding_values;
+  return isocontour_bounding_values;
 }
 
-template InterfaceTools::InterfaceBoundingValues<2>
-InterfaceTools::compute_interface_bounding_values(
+template InterfaceTools::IsocontourBoundingValues<2>
+InterfaceTools::compute_isocontour_bounding_values(
   const DoFHandler<2>    &dof_handler,
   const FiniteElement<2> &fe,
   const GlobalVectorType &solution_vector,
   const double            isovalue);
 
-template InterfaceTools::InterfaceBoundingValues<3>
-InterfaceTools::compute_interface_bounding_values(
+template InterfaceTools::IsocontourBoundingValues<3>
+InterfaceTools::compute_isocontour_bounding_values(
   const DoFHandler<3>    &dof_handler,
   const FiniteElement<3> &fe,
   const GlobalVectorType &solution_vector,

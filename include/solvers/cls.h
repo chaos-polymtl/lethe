@@ -767,7 +767,7 @@ private:
 
   /**
    * @brief Identifies the bounding values of requested isocontours using
-   * InterfaceTools::compute_interface_bounding_values.
+   * InterfaceTools::compute_isocontour_bounding_values.
    */
   void
   postprocess_phase_indicator_isocontour_bounding_values();

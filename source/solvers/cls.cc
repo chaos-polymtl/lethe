@@ -1813,7 +1813,7 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
         }
     }
 
-  // Phase indicator isocontour bounding values
+  // Phase indicator isocontour bounding boxes
   if (!this->simulation_parameters.post_processing.isocontour_bounding_boxes
          .isocontour_ids_per_variable[Variable::phase]
          .empty())
@@ -3557,15 +3557,16 @@ ConservativeLevelSet<
             .isocontours[isocontour_ids[i]];
 
       // Get isocontour bounding values
-      InterfaceTools::InterfaceBoundingValues<dim> isocontour_bounding_values =
-        InterfaceTools::compute_interface_bounding_values(
+      InterfaceTools::IsocontourBoundingValues<dim> isocontour_bounding_values =
+        InterfaceTools::compute_isocontour_bounding_values(
           *this->dof_handler,
           *this->fe,
           *this->present_solution,
           isocontour.isovalue);
 
       if (isocontour_bounding_values.isocontour_exists)
-        { // Initialize table column names
+        {
+          // Initialize table column names
           std::vector<std::string> bounding_values_column_names(2 * dim);
           bounding_values_column_names[0] = "x_min";
           bounding_values_column_names[1] = "x_max";

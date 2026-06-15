@@ -1063,6 +1063,7 @@ namespace Parameters
         std::string output_name;
       };
 
+      /// Number of monitored isocontours
       unsigned int number_of_isocontour_bounding_boxes;
 
       /// Map of isocontours with their ID
@@ -1088,6 +1089,7 @@ namespace Parameters
       parse_parameters(ParameterHandler &prm);
     };
 
+    /// Contains all isocontour bounding boxes
     static inline IsocontourBoundingBoxes isocontour_bounding_boxes;
 
     /// Verbosity level of the post-processed quantities

@@ -1082,12 +1082,12 @@ namespace InterfaceTools
   };
 
   /**
-   * @brief Regroupment of interface bounding values in the \f$x\f$ and \f$y\f$
-   * coordinates. A boolean is also defined to indicate when the interface is
-   * not in the simulated domain.
+   * @brief Interface bounding values in the \f$x\f$ and \f$y\f$ coordinates.
+   * A boolean is also defined to indicate when the interface is present in the
+   * simulated domain.
    */
   template <int dim>
-  struct InterfaceBoundingValues
+  struct IsocontourBoundingValues
   {
     /// Minimum x value of the interface
     double x_min = std::numeric_limits<double>::max();
@@ -1098,19 +1098,20 @@ namespace InterfaceTools
     /// Maximum y value of the interface
     double y_max = -std::numeric_limits<double>::max();
     /**
-     * Boolean that indicates that at least one cell contains the interface.
-     * This is used to indicate when to write values on the console and in the
-     * data table. If @p false, the bounding values are invalid.
+     * Boolean that indicates that at least one cell of the domain contains the
+     * interface. This is used to indicate when to write values on the console
+     * and in the data table. If @p false, the bounding values are invalid and
+     * not added to the tables nor displayed on console.
      */
     bool isocontour_exists = false;
   };
 
   /**
-   * @brief Specialization of InterfaceTools::InterfaceBoundingValues when
-   * 3D. We add coordinates in the third direction.
+   * @brief Specialization of InterfaceTools::IsocontourBoundingValues for
+   * 3D simulations. We add coordinates in the third direction.
    */
   template <>
-  struct InterfaceBoundingValues<3>
+  struct IsocontourBoundingValues<3>
   {
     /// Minimum x value of the interface
     double x_min = std::numeric_limits<double>::max();
@@ -1125,9 +1126,10 @@ namespace InterfaceTools
     /// Maximum z value of the interface
     double z_max = -std::numeric_limits<double>::max();
     /**
-     * Boolean that indicates that at least one cell contains the interface.
-     * This is used to indicate when to write values on the console and in the
-     * data table. If @p false, the bounding values are invalid.
+     * Boolean that indicates that at least one cell of the domain contains the
+     * interface. This is used to indicate when to write values on the console
+     * and in the data table. If @p false, the bounding values are invalid and
+     * not added to the table nor displayed on console.
      */
     bool isocontour_exists = false;
   };
@@ -1149,11 +1151,11 @@ namespace InterfaceTools
    * @return Struct with the bounding isocontour's bounding values.
    */
   template <int dim, typename VectorType>
-  InterfaceBoundingValues<dim>
-  compute_interface_bounding_values(const DoFHandler<dim>    &dof_handler,
-                                    const FiniteElement<dim> &fe,
-                                    const VectorType         &solution_vector,
-                                    const double              isovalue);
+  IsocontourBoundingValues<dim>
+  compute_isocontour_bounding_values(const DoFHandler<dim>    &dof_handler,
+                                     const FiniteElement<dim> &fe,
+                                     const VectorType         &solution_vector,
+                                     const double              isovalue);
 
 } // namespace InterfaceTools
 

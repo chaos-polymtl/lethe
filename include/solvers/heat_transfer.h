@@ -620,7 +620,7 @@ private:
 
   /**
    * @brief Identifies the bounding values of requested isocontours using
-   * InterfaceTools::compute_interface_bounding_values.
+   * InterfaceTools::compute_isocontour_bounding_values.
    */
   void
   postprocess_temperature_isocontour_bounding_values();
