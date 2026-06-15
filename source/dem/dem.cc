@@ -221,10 +221,6 @@ DEMSolver<dim, PropertiesIndex>::setup_functions_and_pointers()
         ParticleParticleContactForceModel::shift;
       parameters.model_parameters.particle_wall_contact_force_method =
         ParticleWallContactForceModel::shift;
-      parameters.model_parameters.contact_detection_method =
-        ModelParameters<dim>::ContactDetectionMethod::constant;
-      parameters.model_parameters.contact_detection_frequency = 1;
-
 
       if (parameters.model_parameters.sparse_particle_contacts)
         {
@@ -477,6 +473,7 @@ DEMSolver<dim, PropertiesIndex>::load_balance()
         << average_minimum_maximum_cells.max << std::endl;
 
   setup_background_dofs();
+  update_previous_position();
 }
 
 template <int dim, typename PropertiesIndex>
@@ -521,6 +518,9 @@ DEMSolver<dim, PropertiesIndex>::insert_particles()
 
       action_manager->particle_insertion_step();
     }
+
+  if (is_packed_insertion_method)
+    update_previous_position();
 }
 
 template <int dim, typename PropertiesIndex>
@@ -887,6 +887,82 @@ DEMSolver<dim, PropertiesIndex>::sort_particles_into_subdomains_and_cells()
 
 template <int dim, typename PropertiesIndex>
 void
+DEMSolver<dim, PropertiesIndex>::update_previous_position()
+{
+  for (auto cell : triangulation.active_cell_iterators())
+    {
+      if (!cell->is_locally_owned())
+        continue;
+
+      // Particles in the cell
+      typename Particles::ParticleHandler<dim>::particle_iterator_range
+        particles_in_cell = particle_handler.particles_in_cell(cell);
+
+      // If the main cell is not empty
+      if (particles_in_cell.empty())
+        continue;
+
+      for (auto particle_in_cell = particles_in_cell.begin();
+           particle_in_cell != particles_in_cell.end();
+           ++particle_in_cell)
+        {
+          unsigned int particle_id       = particle_in_cell->get_local_index();
+          previous_position[particle_id] = particle_in_cell->get_location();
+        }
+    }
+}
+
+template <int dim, typename PropertiesIndex>
+void
+DEMSolver<dim, PropertiesIndex>::clamp_displacement()
+{
+  // loop of the locally owned cells
+  for (auto cell : triangulation.active_cell_iterators())
+    {
+      if (!cell->is_locally_owned())
+        continue;
+
+      // Particles in the cell
+      typename Particles::ParticleHandler<dim>::particle_iterator_range
+        particles_in_cell = particle_handler.particles_in_cell(cell);
+
+      // If the main cell is not empty
+      if (particles_in_cell.empty())
+        continue;
+
+      for (auto particle_in_cell = particles_in_cell.begin();
+           particle_in_cell != particles_in_cell.end();
+           ++particle_in_cell)
+        {
+          unsigned int particle_id = particle_in_cell->get_local_index();
+          Point<dim>   particle_current_position =
+            particle_in_cell->get_location();
+          Point<dim> particle_previous_position =
+            previous_position[particle_id];
+
+          Tensor<1, dim> displacement_tensor =
+            particle_current_position - particle_previous_position;
+
+          double displacement_norm = displacement_tensor.norm() + DBL_MIN;
+          if (std::isnan(displacement_norm))
+            continue;
+
+          if (displacement_norm > 0.5 * maximum_particle_diameter)
+            {
+              particle_in_cell->set_location(particle_previous_position +
+                                             0.5 * maximum_particle_diameter *
+                                               displacement_tensor /
+                                               displacement_norm);
+              displacement[particle_id] += 0.5 * maximum_particle_diameter;
+            }
+          else
+            displacement[particle_id] += displacement_norm;
+        }
+    }
+}
+
+template <int dim, typename PropertiesIndex>
+void
 DEMSolver<dim, PropertiesIndex>::solve()
 {
   // Set up the parameters
@@ -949,6 +1025,7 @@ DEMSolver<dim, PropertiesIndex>::solve()
 
       // Insert particle if needed
       insert_particles();
+      pcout << particle_handler.n_global_particles() << std::endl;
 
       // Load balancing (if load balancing enabled and if needed)
       load_balance();
@@ -1114,6 +1191,40 @@ DEMSolver<dim, PropertiesIndex>::solve()
             }
         }
 
+      if (is_packed_insertion_method)
+        {
+          unsigned int number_of_pp_contact_on_proc =
+            particle_particle_contact_force_object->get_number_of_contacts();
+
+          unsigned int number_of_pw_contact_on_proc =
+            particle_wall_contact_force_object->get_number_of_contacts();
+
+          const unsigned int total_number_of_pp_contacts =
+            Utilities::MPI::sum(number_of_pp_contact_on_proc, mpi_communicator);
+
+          const unsigned int total_number_of_pw_contacts =
+            Utilities::MPI::sum(number_of_pw_contact_on_proc, mpi_communicator);
+          if (total_number_of_pp_contacts + total_number_of_pw_contacts == 0)
+            {
+              pcout << "No contact detected. Exiting simulation." << std::endl;
+              write_output_results();
+              break;
+            }
+          if (simulation_control->is_verbose_iteration())
+            pcout << std::endl
+                  << "Total number of p-p contacts: "
+                  << total_number_of_pp_contacts << std::endl
+                  << "Total number of p-w contacts: "
+                  << total_number_of_pw_contacts << std::endl
+                  << std::endl;
+
+          particle_particle_contact_force_object->reset_number_of_contacts();
+          particle_wall_contact_force_object->reset_number_of_contacts();
+
+          clamp_displacement();
+          update_previous_position();
+        }
+
       // Visualization
       if (simulation_control->is_output_iteration())
         write_output_results();
@@ -1170,36 +1281,6 @@ DEMSolver<dim, PropertiesIndex>::solve()
 
       // Reset all trigger flags
       action_manager->reset_triggers();
-
-      if (is_packed_insertion_method)
-        {
-          unsigned int number_of_pp_contact_on_proc =
-            particle_particle_contact_force_object->get_number_of_contacts();
-
-          unsigned int number_of_pw_contact_on_proc =
-            particle_wall_contact_force_object->get_number_of_contacts();
-
-          const unsigned int total_number_of_pp_contacts =
-            Utilities::MPI::sum(number_of_pp_contact_on_proc, mpi_communicator);
-
-          const unsigned int total_number_of_pw_contacts =
-            Utilities::MPI::sum(number_of_pw_contact_on_proc, mpi_communicator);
-          if (total_number_of_pp_contacts + total_number_of_pw_contacts == 0)
-            {
-              pcout << "No contact detected. Exiting simulation." << std::endl;
-              write_output_results();
-              break;
-            }
-          if (simulation_control->is_verbose_iteration())
-            pcout << std::endl
-                  << "Total number of p-p contacts: " << total_number_of_pp_contacts << std::endl
-                  << "Total number of p-w contacts: " << total_number_of_pw_contacts << std::endl
-
-                  << std::endl;
-
-          particle_particle_contact_force_object->reset_number_of_contacts();
-          particle_wall_contact_force_object->reset_number_of_contacts();
-        }
     }
 
   // Write particle-wall collision statistics file if enabled

@@ -1080,12 +1080,12 @@ private:
           {
             particle_new_position =
               particle_position -
-              0.5005 * normal_overlap * tensor_nd_to_2d(normal_vector);
+              1.25 * normal_overlap * tensor_nd_to_2d(normal_vector);
           }
         if constexpr (dim == 3)
           {
             particle_new_position =
-              particle_position - 0.5005 * normal_overlap * normal_vector;
+              particle_position - 1.25 * normal_overlap * normal_vector;
           }
         particle->set_location(particle_new_position);
       }
