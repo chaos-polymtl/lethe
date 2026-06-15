@@ -515,7 +515,7 @@ By default, parameters are set to the values of dry air evaluated under normal t
 Thermal Conductivity Models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Constant, linear and phase_change thermal conductivities are supported in Lethe. Constant thermal conductivity assumes a constant value of the thermal conductivity. Linear thermal conductivity assumes that the thermal conductivity :math:`k` varies linearly with the temperature, taking the following form:
+``constant``, ``linear`` and ``phase_change`` thermal conductivity models are supported in Lethe. Constant thermal conductivity assumes a constant value of the thermal conductivity. Linear thermal conductivity assumes that the thermal conductivity :math:`k` varies linearly with the temperature, taking the following form:
 
 .. math::
   k = k_{A,0}+ k_{A,1} T 
