@@ -315,6 +315,18 @@ public:
   solve_linear_system() override;
 
   /**
+   * @brief Set up the ILU preconditioner stored in ilu_preconditioner.
+   */
+  void
+  setup_ilu();
+
+  /**
+   * @brief Set up the AMG preconditioner stored in amg_preconditioner.
+   */
+  void
+  setup_amg();
+
+  /**
    * @brief Getter method to access the private attribute dof_handler for the
    * physic currently solved. NB : dof_handler is now passed to the
    * multiphysics interface at the end of the setup_dofs method.
@@ -796,6 +808,16 @@ private:
    * @brief The system matrix.
    */
   TrilinosWrappers::SparseMatrix system_matrix;
+
+  /**
+   * @brief ILU preconditioner used by the iterative linear solver.
+   */
+  std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
+
+  /**
+   * @brief AMG preconditioner used by the iterative linear solver.
+   */
+  std::shared_ptr<TrilinosWrappers::PreconditionAMG> amg_preconditioner;
 
 
   /**
