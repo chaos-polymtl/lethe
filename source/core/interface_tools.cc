@@ -1430,3 +1430,125 @@ template class InterfaceTools::
 template class InterfaceTools::
   SignedDistanceSolver<3, LinearAlgebra::distributed::Vector<double>>;
 #endif
+
+template struct InterfaceTools::InterfaceBoundingValues<2>;
+
+template <int dim, typename VectorType>
+InterfaceTools::InterfaceBoundingValues<dim>
+InterfaceTools::compute_interface_bounding_values(
+  const DoFHandler<dim>    &dof_handler,
+  const FiniteElement<dim> &fe,
+  const VectorType         &solution_vector,
+  const double              isovalue)
+{
+  // Get MPI communicator
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
+
+  bool isocontour_exists = false;
+
+  // Initialize InterfaceBoundingValues object and reference variables for
+  // readability
+  InterfaceTools::InterfaceBoundingValues<dim> interface_bounding_values;
+  double &x_min = interface_bounding_values.x_min;
+  double &x_max = interface_bounding_values.x_max;
+  double &y_min = interface_bounding_values.y_min;
+  double &y_max = interface_bounding_values.y_max;
+
+  // Copy values of owned DoFs
+  VectorType solution_vector_owned_copy(dof_handler.locally_owned_dofs(),
+                                        mpi_communicator);
+  solution_vector_owned_copy = solution_vector;
+
+  // Offset field to impose 0 at the isovalue
+  solution_vector_owned_copy.add(-isovalue);
+
+  // Make relevant copy
+  VectorType solution_vector_relevant_copy(
+    dof_handler.locally_owned_dofs(),
+    DoFTools::extract_locally_relevant_dofs(dof_handler),
+    mpi_communicator);
+  solution_vector_relevant_copy = solution_vector_owned_copy;
+
+  // Initialize MeshClassifier
+  NonMatching::MeshClassifier<dim> mesh_classifier(
+    dof_handler, solution_vector_relevant_copy);
+  mesh_classifier.reclassify();
+
+  // Initialize FEValues
+  const hp::FECollection<dim>    fe_collection(fe);
+  const QGauss<1>                quadrature_1D(fe.degree + 1);
+  NonMatching::RegionUpdateFlags region_update_flags;
+  region_update_flags.surface = update_quadrature_points;
+  NonMatching::FEValues<dim> non_matching_fe_values(
+    fe_collection,
+    quadrature_1D,
+    region_update_flags,
+    mesh_classifier,
+    dof_handler,
+    solution_vector_relevant_copy);
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          // Reinitialize and
+          non_matching_fe_values.reinit(cell);
+          const std::optional<NonMatching::FEImmersedSurfaceValues<dim>>
+            &surface_fe_values = non_matching_fe_values.get_surface_fe_values();
+
+          // If the surface does exist, approximate the bounding values with
+          // quadrature points
+          if (surface_fe_values)
+            {
+              const auto &q_points = surface_fe_values->get_quadrature_points();
+              if (q_points.size() > 0)
+                isocontour_exists = true;
+              for (const auto &p : q_points)
+                {
+                  x_min = std::min(x_min, p[0]);
+                  x_max = std::max(x_max, p[0]);
+                  y_min = std::min(y_min, p[1]);
+                  y_max = std::max(y_max, p[1]);
+                  if constexpr (dim == 3)
+                    {
+                      interface_bounding_values.z_min =
+                        std::min(interface_bounding_values.z_min, p[2]);
+                      interface_bounding_values.z_max =
+                        std::max(interface_bounding_values.z_max, p[2]);
+                    }
+                }
+            }
+        }
+    }
+
+  // Reduce across ranks
+  x_min = Utilities::MPI::min(x_min, mpi_communicator);
+  x_max = Utilities::MPI::max(x_max, mpi_communicator);
+  y_min = Utilities::MPI::min(y_min, mpi_communicator);
+  y_max = Utilities::MPI::max(y_max, mpi_communicator);
+  if constexpr (dim == 3)
+    {
+      interface_bounding_values.z_min =
+        Utilities::MPI::min(interface_bounding_values.z_min, mpi_communicator);
+      interface_bounding_values.z_max =
+        Utilities::MPI::max(interface_bounding_values.z_max, mpi_communicator);
+    }
+  interface_bounding_values.isocontour_exists =
+    Utilities::MPI::logical_or(isocontour_exists, mpi_communicator);
+
+  return interface_bounding_values;
+}
+
+template InterfaceTools::InterfaceBoundingValues<2>
+InterfaceTools::compute_interface_bounding_values(
+  const DoFHandler<2>    &dof_handler,
+  const FiniteElement<2> &fe,
+  const GlobalVectorType &solution_vector,
+  const double            isovalue);
+
+template InterfaceTools::InterfaceBoundingValues<3>
+InterfaceTools::compute_interface_bounding_values(
+  const DoFHandler<3>    &dof_handler,
+  const FiniteElement<3> &fe,
+  const GlobalVectorType &solution_vector,
+  const double            isovalue);

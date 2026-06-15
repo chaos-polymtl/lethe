@@ -62,6 +62,25 @@ DeclException3(ParameterStrictlyGreaterThanError,
                << ". However, it should be strictly greater than " << arg3
                << ".");
 
+DeclException3(
+  ListSizeIncoherentWithDeclaredNumber,
+  unsigned int,
+  std::string,
+  unsigned int,
+  << "'number of isocontour bounding boxes' was set to " << arg1
+  << " and the list '" << arg2 << "' has a size of " << arg3
+  << ". However, the size should correspond to the number of declared isocontour boxes.");
+
+DeclException4(ListsSizeMismatch,
+               std::string,
+               std::string,
+               unsigned int,
+               unsigned int,
+               << "There is a size mismatch between 2 lists. The list '" << arg1
+               << "' and the list '" << arg2 << "' have respectively sizes of "
+               << arg3 << " and " << arg4
+               << ". However, they should be of the same size.");
+
 // DeclException
 
 namespace Parameters
@@ -2174,6 +2193,126 @@ namespace Parameters
   }
 
   void
+  PostProcessing::IsocontourBoundingBoxes::declare_parameters(
+    ParameterHandler &prm)
+  {
+    prm.enter_subsection("isocontour bounding box");
+    {
+      prm.declare_entry("number of isocontour bounding boxes",
+                        "0",
+                        Patterns::Integer(0),
+                        "Number of monitored isocontours");
+      prm.declare_entry(
+        "variable",
+        "temperature",
+        Patterns::List(Patterns::Selection("temperature|phase")),
+        "Variable(s) of monitored isocontour(s)"
+        "Choices are <temperature|phase>."
+        "For multiple isocontours, separate the different variables with a comma "
+        "(ex/ 'set variables = phase,temperature,temperature')");
+      prm.declare_entry(
+        "isovalue",
+        "0.0",
+        Patterns::List(Patterns::Double()),
+        "Isovalue(s) of monitored isocontour(s)."
+        "For multiple isocontours, separate the different isovalues with a comma "
+        "(ex/ 'set isovalue = 0.5,300,500')");
+      prm.declare_entry(
+        "bounding box filename",
+        "isocontour_bounding_box",
+        Patterns::List(Patterns::FileName()),
+        "Filenames for outputted isocontours"
+        "For multiple isocontours, separate the different filenames with a comma "
+        "(ex/ 'set isovalue = interface_bounding_box,solidus_bounding_box,liquidus_bounding_box')");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  PostProcessing::IsocontourBoundingBoxes::parse_parameters(
+    ParameterHandler &prm)
+  {
+    prm.enter_subsection("isocontour bounding box");
+    {
+      isocontour_bounding_boxes.number_of_isocontour_bounding_boxes =
+        prm.get_integer("number of isocontour bounding boxes");
+
+      // Get lists and split them into a vector
+      const std::string        variables_list = prm.get("variable");
+      std::vector<std::string> variables_vec =
+        Utilities::split_string_list(variables_list);
+      const std::string        isovalue_list = prm.get("isovalue");
+      std::vector<std::string> isovalue_vec =
+        Utilities::split_string_list(isovalue_list);
+      const std::string        filename_list = prm.get("bounding box filename");
+      std::vector<std::string> filename_vec =
+        Utilities::split_string_list(filename_list);
+
+      // Check that sizes are coherent with each-other
+      if (isocontour_bounding_boxes.number_of_isocontour_bounding_boxes > 0)
+        AssertThrow(
+          variables_vec.size() ==
+            isocontour_bounding_boxes.number_of_isocontour_bounding_boxes,
+          ListSizeIncoherentWithDeclaredNumber(
+            isocontour_bounding_boxes.number_of_isocontour_bounding_boxes,
+            "variable",
+            variables_vec.size()));
+      AssertThrow(variables_vec.size() == isovalue_vec.size(),
+                  ListsSizeMismatch("variable",
+                                    "isovalue",
+                                    variables_vec.size(),
+                                    isovalue_vec.size()));
+      AssertThrow(variables_vec.size() == filename_vec.size(),
+                  ListsSizeMismatch("variable",
+                                    "bounding box filename",
+                                    variables_vec.size(),
+                                    filename_vec.size()));
+
+      // Initialize per variable maps. At the moment, only the variables
+      // "temperature" and "phase " are accepted
+      isocontour_bounding_boxes.isocontour_ids_per_variable.insert(
+        {Variable::temperature, std::vector<unsigned int>()});
+      isocontour_bounding_boxes.isocontour_ids_per_variable.insert(
+        {Variable::phase, std::vector<unsigned int>()});
+
+      if (isocontour_bounding_boxes.number_of_isocontour_bounding_boxes > 0)
+        // Build maps of isocontours
+        for (unsigned int i = 0; i < variables_vec.size(); ++i)
+          {
+            // Initialize Isocontour
+            Isocontour isocontour;
+
+            // Parse variables
+            if (variables_vec[i] == "temperature")
+              {
+                isocontour.variable = Variable::temperature;
+                isocontour_bounding_boxes
+                  .isocontour_ids_per_variable[Variable::temperature]
+                  .emplace_back(i);
+              }
+            else if (variables_vec[i] == "phase")
+              {
+                isocontour.variable = Variable::phase;
+                isocontour_bounding_boxes
+                  .isocontour_ids_per_variable[Variable::phase]
+                  .emplace_back(i);
+              }
+            else
+              throw std::invalid_argument(
+                "Error, the only valid variables for a 'isocontour bounding box' are: 'temperature' or 'phase'.");
+
+            // Get isovalue and output filename
+            isocontour.isovalue    = std::stod(isovalue_vec[i]);
+            isocontour.output_name = filename_vec[i];
+
+            // Insert isocontour in map
+            isocontour_bounding_boxes.isocontours.insert({i, isocontour});
+          }
+    }
+    prm.leave_subsection();
+  }
+
+  void
   PostProcessing::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("post-processing");
@@ -2473,6 +2612,8 @@ namespace Parameters
         "true",
         Patterns::Bool(),
         "Enable output of velocity gradient field <true|false>");
+
+      isocontour_bounding_boxes.declare_parameters(prm);
     }
     prm.leave_subsection();
   }
@@ -2573,6 +2714,8 @@ namespace Parameters
         throw(
           std::runtime_error("Invalid postprocessed fluid. "
                              "Options are 'fluid 0', 'fluid 1' or 'both'."));
+
+      isocontour_bounding_boxes.parse_parameters(prm);
     }
     prm.leave_subsection();
   }

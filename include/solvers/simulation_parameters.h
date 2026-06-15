@@ -506,6 +506,22 @@ public:
       ExcMessage(
         "Inconsistency in .prm!\n"
         "The 'cls' multiphysics is disabled and the 'fluid with phase change' parameter (subsection velocity source) has not been to 'fluid 0'."));
+
+    // For isocontour bounding boxes
+    if (!post_processing.isocontour_bounding_boxes
+           .isocontour_ids_per_variable[Variable::temperature]
+           .empty())
+      AssertThrow(
+        multiphysics.heat_transfer,
+        ExcMessage(
+          "You are attempting to monitor temperature isocontours, but 'heat transfer = false' in the 'multiphysics' subsection."));
+    if (!post_processing.isocontour_bounding_boxes
+           .isocontour_ids_per_variable[Variable::phase]
+           .empty())
+      AssertThrow(
+        multiphysics.CLS,
+        ExcMessage(
+          "You are attempting to monitor phase indicator isocontours, but 'cls = false' in the 'multiphysics' subsection."));
   }
 
   inline bool

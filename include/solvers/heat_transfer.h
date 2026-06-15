@@ -93,7 +93,10 @@ public:
     , thermal_conductivity_models(
         p_simulation_parameters.physical_properties_manager
           .get_thermal_conductivity_vector())
-
+    , temperature_isocontour_bounding_values_tables(
+        p_simulation_parameters.post_processing.isocontour_bounding_boxes
+          .isocontour_ids_per_variable[Variable::temperature]
+          .size())
   {
     this->pcout << std::setprecision(simulation_control->get_log_precision())
                 << std::scientific;
@@ -616,6 +619,19 @@ private:
   write_geometric_melt_volume();
 
   /**
+   * @brief Identifies the bounding values of requested isocontours using
+   * InterfaceTools::compute_interface_bounding_values.
+   */
+  void
+  postprocess_temperature_isocontour_bounding_values();
+
+  /**
+   * @brief Writes the bounding values of the specified isocontours.
+   */
+  void
+  write_temperature_isocontour_bounding_values();
+
+  /**
    * Post-processing. Calculate the heat flux at heat transfer boundary
    * conditions.
    *
@@ -917,6 +933,12 @@ private:
    * @brief Evolution of the melt volume in the simulated domain.
    */
   TableHandler melt_volume_geo_table;
+
+  /**
+   * @brief Vector of tables containing evolution of temperature isocontour
+   * bounding values.
+   */
+  std::vector<TableHandler> temperature_isocontour_bounding_values_tables;
 };
 
 

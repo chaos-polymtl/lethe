@@ -15,6 +15,21 @@ CLS Barycenter
 ---------------
     time         x_cls         y_cls        vx_cls       vy_cls    
 0.000000e+00 -1.181863e-13 -1.247898e-13 2.500000e-02 0.000000e+00 
+Isocontour 0: interface
+x_min: -7.318238e-01
+x_max: 7.318238e-01
+y_min: -7.318238e-01
+y_max: 7.318238e-01
+Isocontour 1: interface_min
+x_min: -1.108874e+00
+x_max: 1.108874e+00
+y_min: -1.108874e+00
+y_max: 1.108874e+00
+Isocontour 2: interface_max
+x_min: -2.890802e-01
+x_max: 2.890802e-01
+y_min: -2.890802e-01
+y_max: 2.890802e-01
 
 *******************************************************************************
 Transient iteration: 1        Time: 1        Time step: 1        CFL: 0.770874
@@ -31,6 +46,21 @@ CLS Barycenter
 ---------------
     time        x_cls        y_cls        vx_cls       vy_cls    
 1.000000e+00 2.505197e-02 7.843821e-12 2.500000e-02 0.000000e+00 
+Isocontour 0: interface
+x_min: -7.130779e-01
+x_max: 7.638567e-01
+y_min: -7.357860e-01
+y_max: 7.357860e-01
+Isocontour 1: interface_min
+x_min: -9.221843e-01
+x_max: 9.742344e-01
+y_min: -9.365548e-01
+y_max: 9.365548e-01
+Isocontour 2: interface_max
+x_min: -5.056826e-01
+x_max: 5.625016e-01
+y_min: -5.249372e-01
+y_max: 5.249372e-01
 
 *******************************************************************************
 Transient iteration: 2        Time: 2        Time step: 1        CFL: 0.770874
@@ -47,6 +77,21 @@ CLS Barycenter
 ---------------
     time        x_cls         y_cls        vx_cls       vy_cls    
 2.000000e+00 5.012926e-02 -5.289089e-11 2.500000e-02 0.000000e+00 
+Isocontour 0: interface
+x_min: -6.893230e-01
+x_max: 7.888331e-01
+y_min: -7.359055e-01
+y_max: 7.359055e-01
+Isocontour 1: interface_min
+x_min: -8.693420e-01
+x_max: 9.775605e-01
+y_min: -9.226538e-01
+y_max: 9.226538e-01
+Isocontour 2: interface_max
+x_min: -5.052303e-01
+x_max: 6.016246e-01
+y_min: -5.582889e-01
+y_max: 5.582889e-01
 
 *******************************************************************************
 Transient iteration: 3        Time: 3        Time step: 1        CFL: 0.770874
@@ -63,6 +108,21 @@ CLS Barycenter
 ---------------
     time        x_cls         y_cls        vx_cls       vy_cls    
 3.000000e+00 7.521034e-02 -5.544285e-11 2.500000e-02 0.000000e+00 
+Isocontour 0: interface
+x_min: -6.628542e-01
+x_max: 8.156083e-01
+y_min: -7.353105e-01
+y_max: 7.353105e-01
+Isocontour 1: interface_min
+x_min: -8.484718e-01
+x_max: 9.946386e-01
+y_min: -9.207179e-01
+y_max: 9.207179e-01
+Isocontour 2: interface_max
+x_min: -4.785488e-01
+x_max: 6.313948e-01
+y_min: -5.602055e-01
+y_max: 5.602055e-01
 
 *******************************************************************************
 Transient iteration: 4        Time: 4        Time step: 1        CFL: 0.770874
@@ -79,6 +139,21 @@ CLS Barycenter
 ---------------
     time        x_cls         y_cls        vx_cls       vy_cls    
 4.000000e+00 1.002919e-01 -5.649577e-11 2.500000e-02 0.000000e+00 
+Isocontour 0: interface
+x_min: -6.391442e-01
+x_max: 8.406972e-01
+y_min: -7.345272e-01
+y_max: 7.345272e-01
+Isocontour 1: interface_min
+x_min: -8.114797e-01
+x_max: 1.023704e+00
+y_min: -9.199684e-01
+y_max: 9.199684e-01
+Isocontour 2: interface_max
+x_min: -4.514509e-01
+x_max: 6.516576e-01
+y_min: -5.587016e-01
+y_max: 5.587016e-01
 
 *******************************************************************************
 Transient iteration: 5        Time: 5        Time step: 1        CFL: 0.770874
@@ -95,6 +170,21 @@ CLS Barycenter
 ---------------
     time        x_cls         y_cls        vx_cls       vy_cls    
 5.000000e+00 1.253738e-01 -6.725158e-11 2.500000e-02 0.000000e+00 
+Isocontour 0: interface
+x_min: -6.123542e-01
+x_max: 8.652644e-01
+y_min: -7.341368e-01
+y_max: 7.341368e-01
+Isocontour 1: interface_min
+x_min: -7.973589e-01
+x_max: 1.050167e+00
+y_min: -9.196025e-01
+y_max: 9.196025e-01
+Isocontour 2: interface_max
+x_min: -4.380855e-01
+x_max: 6.887157e-01
+y_min: -5.580422e-01
+y_max: 5.580422e-01
 
 *******************************************************************************
 Transient iteration: 6        Time: 6        Time step: 1        CFL: 0.770874
@@ -111,6 +201,21 @@ CLS Barycenter
 ---------------
     time        x_cls         y_cls        vx_cls       vy_cls    
 6.000000e+00 1.504560e-01 -7.774638e-11 2.500000e-02 0.000000e+00 
+Isocontour 0: interface
+x_min: -5.885895e-01
+x_max: 8.924856e-01
+y_min: -7.337027e-01
+y_max: 7.337027e-01
+Isocontour 1: interface_min
+x_min: -7.685780e-01
+x_max: 1.066447e+00
+y_min: -9.192105e-01
+y_max: 9.192105e-01
+Isocontour 2: interface_max
+x_min: -4.001701e-01
+x_max: 7.034985e-01
+y_min: -5.572134e-01
+y_max: 5.572134e-01
 
 *******************************************************************************
 Transient iteration: 7        Time: 7        Time step: 1        CFL: 0.770874
@@ -127,6 +232,21 @@ CLS Barycenter
 ---------------
     time        x_cls         y_cls        vx_cls       vy_cls    
 7.000000e+00 1.755384e-01 -8.807296e-11 2.500000e-02 0.000000e+00 
+Isocontour 0: interface
+x_min: -5.638394e-01
+x_max: 9.165970e-01
+y_min: -7.333305e-01
+y_max: 7.333305e-01
+Isocontour 1: interface_min
+x_min: -7.430822e-01
+x_max: 1.103343e+00
+y_min: -9.188641e-01
+y_max: 9.188641e-01
+Isocontour 2: interface_max
+x_min: -3.810531e-01
+x_max: 7.338069e-01
+y_min: -5.565368e-01
+y_max: 5.565368e-01
 
 *******************************************************************************
 Transient iteration: 8        Time: 8        Time step: 1        CFL: 0.770874
@@ -143,6 +263,21 @@ CLS Barycenter
 ---------------
     time        x_cls         y_cls        vx_cls       vy_cls    
 8.000000e+00 2.006212e-01 -9.716275e-11 2.500000e-02 0.000000e+00 
+Isocontour 0: interface
+x_min: -5.378004e-01
+x_max: 9.435997e-01
+y_min: -7.329335e-01
+y_max: 7.329335e-01
+Isocontour 1: interface_min
+x_min: -7.231729e-01
+x_max: 1.121003e+00
+y_min: -9.185088e-01
+y_max: 9.185088e-01
+Isocontour 2: interface_max
+x_min: -3.538332e-01
+x_max: 7.582446e-01
+y_min: -5.557419e-01
+y_max: 5.557419e-01
 
 *******************************************************************************
 Transient iteration: 9        Time: 9        Time step: 1        CFL: 0.770874
@@ -159,6 +294,21 @@ CLS Barycenter
 ---------------
     time        x_cls         y_cls        vx_cls       vy_cls    
 9.000000e+00 2.257042e-01 -1.075279e-10 2.500000e-02 0.000000e+00 
+Isocontour 0: interface
+x_min: -5.142476e-01
+x_max: 9.686470e-01
+y_min: -7.323876e-01
+y_max: 7.323876e-01
+Isocontour 1: interface_min
+x_min: -6.865019e-01
+x_max: 1.153057e+00
+y_min: -9.180417e-01
+y_max: 9.180417e-01
+Isocontour 2: interface_max
+x_min: -3.266080e-01
+x_max: 7.804400e-01
+y_min: -5.545681e-01
+y_max: 5.545681e-01
 
 *******************************************************************************
 Transient iteration: 10       Time: 10       Time step: 1        CFL: 0.770874
@@ -175,6 +325,21 @@ CLS Barycenter
 ---------------
     time        x_cls         y_cls        vx_cls       vy_cls    
 1.000000e+01 2.507874e-01 -1.167583e-10 2.500000e-02 0.000000e+00 
+Isocontour 0: interface
+x_min: -4.875880e-01
+x_max: 9.937649e-01
+y_min: -7.321670e-01
+y_max: 7.321670e-01
+Isocontour 1: interface_min
+x_min: -6.725210e-01
+x_max: 1.177349e+00
+y_min: -9.178073e-01
+y_max: 9.178073e-01
+Isocontour 2: interface_max
+x_min: -3.130959e-01
+x_max: 8.150071e-01
+y_min: -5.542212e-01
+y_max: 5.542212e-01
 
 *******************************************************************************
 Transient iteration: 11       Time: 11       Time step: 1        CFL: 0.770874
@@ -191,6 +356,21 @@ CLS Barycenter
 ---------------
     time        x_cls         y_cls        vx_cls       vy_cls    
 1.100000e+01 2.758710e-01 -1.261269e-10 2.500000e-02 0.000000e+00 
+Isocontour 0: interface
+x_min: -4.638973e-01
+x_max: 1.020779e+00
+y_min: -7.318279e-01
+y_max: 7.318279e-01
+Isocontour 1: interface_min
+x_min: -6.440866e-01
+x_max: 1.197928e+00
+y_min: -9.174804e-01
+y_max: 9.174804e-01
+Isocontour 2: interface_max
+x_min: -2.755844e-01
+x_max: 8.314304e-01
+y_min: -5.535869e-01
+y_max: 5.535869e-01
 
 *******************************************************************************
 Transient iteration: 12       Time: 12       Time step: 1        CFL: 0.770874
@@ -207,6 +387,21 @@ CLS Barycenter
 ---------------
     time        x_cls         y_cls        vx_cls       vy_cls    
 1.200000e+01 3.009548e-01 -1.357156e-10 2.500000e-02 0.000000e+00 
+Isocontour 0: interface
+x_min: -4.390936e-01
+x_max: 1.044994e+00
+y_min: -7.314825e-01
+y_max: 7.314825e-01
+Isocontour 1: interface_min
+x_min: -6.182989e-01
+x_max: 1.231545e+00
+y_min: -9.171484e-01
+y_max: 9.171484e-01
+Isocontour 2: interface_max
+x_min: -2.562981e-01
+x_max: 8.650349e-01
+y_min: -5.529372e-01
+y_max: 5.529372e-01
 
 *******************************************************************************
 Transient iteration: 13       Time: 13       Time step: 1        CFL: 0.770874
@@ -223,6 +418,21 @@ CLS Barycenter
 ---------------
     time        x_cls         y_cls        vx_cls       vy_cls    
 1.300000e+01 3.260389e-01 -1.461035e-10 2.500000e-02 0.000000e+00 
+Isocontour 0: interface
+x_min: -4.132442e-01
+x_max: 1.072397e+00
+y_min: -7.311235e-01
+y_max: 7.311235e-01
+Isocontour 1: interface_min
+x_min: -5.986880e-01
+x_max: 1.247624e+00
+y_min: -9.168115e-01
+y_max: 9.168115e-01
+Isocontour 2: interface_max
+x_min: -2.296196e-01
+x_max: 8.855134e-01
+y_min: -5.522108e-01
+y_max: 5.522108e-01
 
 *******************************************************************************
 Transient iteration: 14       Time: 14       Time step: 1        CFL: 0.770874
@@ -239,6 +449,21 @@ CLS Barycenter
 ---------------
     time        x_cls         y_cls        vx_cls       vy_cls    
 1.400000e+01 3.511232e-01 -1.567146e-10 2.500000e-02 0.000000e+00 
+Isocontour 0: interface
+x_min: -3.897701e-01
+x_max: 1.097074e+00
+y_min: -7.306653e-01
+y_max: 7.306653e-01
+Isocontour 1: interface_min
+x_min: -5.617073e-01
+x_max: 1.282701e+00
+y_min: -9.163865e-01
+y_max: 9.163865e-01
+Isocontour 2: interface_max
+x_min: -2.020302e-01
+x_max: 9.101735e-01
+y_min: -5.512792e-01
+y_max: 5.512792e-01
 
 *******************************************************************************
 Transient iteration: 15       Time: 15       Time step: 1        CFL: 0.770874
@@ -255,3 +480,18 @@ CLS Barycenter
 ---------------
     time        x_cls         y_cls        vx_cls       vy_cls    
 1.500000e+01 3.762079e-01 -1.682456e-10 2.500000e-02 0.000000e+00 
+Isocontour 0: interface
+x_min: -3.631701e-01
+x_max: 1.122906e+00
+y_min: -7.304846e-01
+y_max: 7.304846e-01
+Isocontour 1: interface_min
+x_min: -5.479556e-01
+x_max: 1.304616e+00
+y_min: -9.161714e-01
+y_max: 9.161714e-01
+Isocontour 2: interface_max
+x_min: -1.882438e-01
+x_max: 9.417795e-01
+y_min: -5.510352e-01
+y_max: 5.510352e-01

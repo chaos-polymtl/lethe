@@ -36,6 +36,10 @@ ConservativeLevelSet<dim>::ConservativeLevelSet(
   , dof_handler(std::make_shared<DoFHandler<dim>>(*triangulation))
   , sharpening_threshold(simulation_parameters.multiphysics.cls_parameters
                            .reinitialization_method.sharpening.threshold)
+  , phase_indicator_isocontour_bounding_values_tables(
+      p_simulation_parameters.post_processing.isocontour_bounding_boxes
+        .isocontour_ids_per_variable[Variable::phase]
+        .size())
 {
   this->pcout << std::setprecision(simulation_control->get_log_precision())
               << std::scientific;
@@ -1809,6 +1813,20 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
         }
     }
 
+  // Phase indicator isocontour bounding values
+  if (!this->simulation_parameters.post_processing.isocontour_bounding_boxes
+         .isocontour_ids_per_variable[Variable::phase]
+         .empty())
+    {
+      this->postprocess_phase_indicator_isocontour_bounding_values();
+
+      if (simulation_control->get_iteration_number() %
+            this->simulation_parameters.post_processing.output_frequency ==
+          0)
+        this->write_phase_indicator_isocontour_bounding_values();
+    }
+
+
   // Compute and update current capillary time-step constraint
   if (this->simulation_parameters.simulation_control.method !=
         Parameters::SimulationControl::TimeSteppingMethod::steady &&
@@ -2413,6 +2431,28 @@ ConservativeLevelSet<dim>::gather_tables()
       prefix +
         this->simulation_parameters.post_processing.barycenter_output_name +
         suffix);
+
+  if (!this->simulation_parameters.post_processing.isocontour_bounding_boxes
+         .isocontour_ids_per_variable[Variable::phase]
+         .empty())
+    {
+      const std::vector<unsigned int> &isocontour_ids =
+        this->simulation_parameters.post_processing.isocontour_bounding_boxes
+          .isocontour_ids_per_variable[Variable::phase];
+
+      for (unsigned int i = 0;
+           i < this->phase_indicator_isocontour_bounding_values_tables.size();
+           ++i)
+        {
+          table_output_structs.emplace_back(
+            this->phase_indicator_isocontour_bounding_values_tables[i],
+            prefix +
+              this->simulation_parameters.post_processing
+                .isocontour_bounding_boxes.isocontours[isocontour_ids[i]]
+                .output_name +
+              suffix);
+        }
+    }
 
   return table_output_structs;
 }
@@ -3498,6 +3538,143 @@ ConservativeLevelSet<dim>::reinitialize_interface_with_geometric_method()
   compute_phase_indicator_from_level_set(this->level_set,
                                          *this->present_solution);
 }
+
+template <int dim>
+void
+ConservativeLevelSet<
+  dim>::postprocess_phase_indicator_isocontour_bounding_values()
+{
+  const std::vector<unsigned int> &isocontour_ids =
+    this->simulation_parameters.post_processing.isocontour_bounding_boxes
+      .isocontour_ids_per_variable[Variable::phase];
+
+  for (unsigned int i = 0; i < isocontour_ids.size(); ++i)
+    {
+      // Get isocontour
+      const Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour
+        &isocontour =
+          this->simulation_parameters.post_processing.isocontour_bounding_boxes
+            .isocontours[isocontour_ids[i]];
+
+      // Get isocontour bounding values
+      InterfaceTools::InterfaceBoundingValues<dim> isocontour_bounding_values =
+        InterfaceTools::compute_interface_bounding_values(
+          *this->dof_handler,
+          *this->fe,
+          *this->present_solution,
+          isocontour.isovalue);
+
+      if (isocontour_bounding_values.isocontour_exists)
+        { // Initialize table column names
+          std::vector<std::string> bounding_values_column_names(2 * dim);
+          bounding_values_column_names[0] = "x_min";
+          bounding_values_column_names[1] = "x_max";
+          bounding_values_column_names[2] = "y_min";
+          bounding_values_column_names[3] = "y_max";
+          if constexpr (dim == 3)
+            {
+              bounding_values_column_names[4] = "z_min";
+              bounding_values_column_names[5] = "z_max";
+            }
+
+          // Console output
+          if (simulation_parameters.post_processing.verbosity ==
+              Parameters::Verbosity::verbose)
+            {
+              this->pcout << "Isocontour " << isocontour_ids[i] << ": "
+                          << isocontour.output_name << std::endl;
+              this->pcout << bounding_values_column_names[0] << ": "
+                          << isocontour_bounding_values.x_min << std::endl;
+              this->pcout << bounding_values_column_names[1] << ": "
+                          << isocontour_bounding_values.x_max << std::endl;
+              this->pcout << bounding_values_column_names[2] << ": "
+                          << isocontour_bounding_values.y_min << std::endl;
+              this->pcout << bounding_values_column_names[3] << ": "
+                          << isocontour_bounding_values.y_max << std::endl;
+              if constexpr (dim == 3)
+                {
+                  this->pcout << bounding_values_column_names[4] << ": "
+                              << isocontour_bounding_values.z_min << std::endl;
+                  this->pcout << bounding_values_column_names[5] << ": "
+                              << isocontour_bounding_values.z_max << std::endl;
+                }
+            }
+
+          // Fill table
+          const double  table_precision = 6;
+          TableHandler &current_table =
+            phase_indicator_isocontour_bounding_values_tables[i];
+
+          current_table.add_value("time",
+                                  this->simulation_control->get_current_time());
+          current_table.set_scientific("time", true);
+          current_table.add_value(bounding_values_column_names[0],
+                                  isocontour_bounding_values.x_min);
+          current_table.set_precision(bounding_values_column_names[0],
+                                      table_precision);
+          current_table.set_scientific(bounding_values_column_names[0], true);
+          current_table.add_value(bounding_values_column_names[1],
+                                  isocontour_bounding_values.x_max);
+          current_table.set_precision(bounding_values_column_names[1],
+                                      table_precision);
+          current_table.set_scientific(bounding_values_column_names[1], true);
+          current_table.add_value(bounding_values_column_names[2],
+                                  isocontour_bounding_values.y_min);
+          current_table.set_precision(bounding_values_column_names[2],
+                                      table_precision);
+          current_table.set_scientific(bounding_values_column_names[2], true);
+          current_table.add_value(bounding_values_column_names[3],
+                                  isocontour_bounding_values.y_max);
+          current_table.set_precision(bounding_values_column_names[3],
+                                      table_precision);
+          current_table.set_scientific(bounding_values_column_names[3], true);
+          if constexpr (dim == 3)
+            {
+              current_table.add_value(bounding_values_column_names[4],
+                                      isocontour_bounding_values.z_min);
+              current_table.set_precision(bounding_values_column_names[4],
+                                          table_precision);
+              current_table.set_scientific(bounding_values_column_names[4],
+                                           true);
+              current_table.add_value(bounding_values_column_names[5],
+                                      isocontour_bounding_values.z_max);
+              current_table.set_precision(bounding_values_column_names[5],
+                                          table_precision);
+              current_table.set_scientific(bounding_values_column_names[5],
+                                           true);
+            }
+        }
+    }
+}
+
+template <int dim>
+void
+ConservativeLevelSet<dim>::write_phase_indicator_isocontour_bounding_values()
+{
+  auto mpi_communicator = triangulation->get_mpi_communicator();
+
+  if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+    {
+      const std::vector<unsigned int> &isocontour_ids =
+        this->simulation_parameters.post_processing.isocontour_bounding_boxes
+          .isocontour_ids_per_variable[Variable::phase];
+
+      for (unsigned int i = 0; i < isocontour_ids.size(); ++i)
+        {
+          std::string filename =
+            this->simulation_parameters.simulation_control.output_folder +
+            this->simulation_parameters.post_processing
+              .isocontour_bounding_boxes.isocontours[isocontour_ids[i]]
+              .output_name +
+            ".dat";
+          std::ofstream output(filename.c_str());
+
+          this->phase_indicator_isocontour_bounding_values_tables[i].write_text(
+            output);
+        }
+    }
+}
+
 
 
 template class ConservativeLevelSet<2>;

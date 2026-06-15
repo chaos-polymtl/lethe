@@ -1031,6 +1031,66 @@ namespace Parameters
    */
   struct PostProcessing
   {
+    /**
+     * @brief Isocontour bounding box parameters. This is used to get the
+     * evolution of the bounding values (In 2D: \f$x_\mathrm{min}\f$,
+     * \f$x_\mathrm{max}\f$, \f$y_\mathrm{min}\f$, and \f$y_\mathrm{max}\f$;
+     * In 3D: \f$x_\mathrm{min}\f$, \f$x_\mathrm{max}\f$, \f$y_\mathrm{min}\f$,
+     * \f$y_\mathrm{max}\f$, \f$z_\mathrm{min}\f$, and \f$z_\mathrm{max}\f$) of
+     * one or many specified isocontours.
+     * The data of each isocontour is written in a separate file.
+     *
+     * @remark At the moment, this is only implemented for the variables
+     * 'temperature' and 'phase' (CLS phase indicator).
+     */
+    struct IsocontourBoundingBoxes
+    {
+      /**
+       * Set of parameters related to an isocontour required for identifying the
+       * bounding values (\f$x_\mathrm{min}\f$, \f$x_\mathrm{max}\f$,
+       * \f$y_\mathrm{min}\f$, \f$y_\mathrm{max}\f$, \f$z_\mathrm{min}\f$, and
+       * \f$z_\mathrm{max}\f$).
+       */
+      struct Isocontour
+      {
+        /// Isocontour variable
+        Variable variable;
+
+        /// Isocontour value
+        double isovalue;
+
+        /// Isocontour output filename
+        std::string output_name;
+      };
+
+      unsigned int number_of_isocontour_bounding_boxes;
+
+      /// Map of isocontours with their ID
+      std::map<unsigned int, Isocontour> isocontours;
+
+      /// Map that regroups all isocontour ids of a same variable
+      std::map<Variable, std::vector<unsigned int>> isocontour_ids_per_variable;
+
+      /**
+       * @brief Declare the parameters in the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
+      static void
+      declare_parameters(ParameterHandler &prm);
+
+      /**
+       * @brief Parse the parameters from the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
+      static void
+      parse_parameters(ParameterHandler &prm);
+    };
+
+    static inline IsocontourBoundingBoxes isocontour_bounding_boxes;
+
+    /// Verbosity level of the post-processed quantities
     Verbosity verbosity;
 
     /// Enable total kinetic energy post-processing
