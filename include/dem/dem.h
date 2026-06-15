@@ -57,6 +57,12 @@ public:
   void
   solve();
 
+  void
+  update_previous_position();
+
+  void
+  clamp_displacement();
+
 private:
   /**
    * @brief Set the parameters for the DEM simulation
@@ -413,6 +419,8 @@ private:
    * detection.
    */
   std::vector<double> displacement;
+
+  std::unordered_map<unsigned int, Point<dim>> previous_position;
 
   /**
    * @brief The moment of inertia of particles.

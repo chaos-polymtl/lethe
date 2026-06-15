@@ -484,7 +484,9 @@ protected:
       {
         this->shift_particle_using_normal_overlap(contact_info,
                                                   normal_unit_vector,
-                                                  normal_overlap);
+                                                  normal_overlap,
+                                                  particle_one_properties,
+                                                  particle_two_properties);
       }
   }
 
@@ -1543,13 +1545,17 @@ private:
    * contact.
    * @param normal_unit_vector
    * @param normal_overlap
+   * @param particle_one_properties
+   * @param particle_two_properties
    *
    */
   inline void
   shift_particle_using_normal_overlap(
     particle_particle_contact_info<dim> &contact_info,
     const Tensor<1, 3>                  &normal_unit_vector,
-    const double                         normal_overlap)
+    const double                         normal_overlap,
+    const ArrayView<const double>       &particle_one_properties,
+    const ArrayView<const double>       &particle_two_properties)
   {
     ++this->n_contact;
 
@@ -1560,38 +1566,32 @@ private:
     Point<dim> particle_one_position = particle_one->get_location();
     Point<dim> particle_two_position = particle_two->get_location();
 
-    Point<dim> particle_one_new_position;
-    Point<dim> particle_two_new_position;
+    // Get particle diameter references;
+    const double &diameter_one = particle_one_properties[PropertiesIndex::dp];
+    const double &diameter_two = particle_two_properties[PropertiesIndex::dp];
+
+    Point<dim> particle_one_new_position, particle_two_new_position;
 
     if constexpr (dim == 2)
       {
         particle_one_new_position =
           particle_one_position -
-          displacement_factor *
-            particle_two->get_properties()[PropertiesIndex::dp] *
+          (0.501 * normal_overlap + 0.005 * diameter_one) *
             tensor_nd_to_2d(normal_unit_vector);
         particle_two_new_position =
           particle_two_position +
-          std::min(displacement_factor *
-                     particle_two->get_properties()[PropertiesIndex::dp],
-                   normal_overlap) *
+          (0.501 * normal_overlap + 0.005 * diameter_one) *
             tensor_nd_to_2d(normal_unit_vector);
       }
     if constexpr (dim == 3)
       {
         particle_one_new_position =
           particle_one_position -
-          std::min(displacement_factor *
-                     particle_two->get_properties()[PropertiesIndex::dp],
-                   0.501 * normal_overlap) *
-            normal_unit_vector;
+          (0.501 * normal_overlap + 0.005 * diameter_one) * normal_unit_vector;
 
         particle_two_new_position =
           particle_two_position +
-          std::min(displacement_factor *
-                     particle_two->get_properties()[PropertiesIndex::dp],
-                   0.501 * normal_overlap) *
-            normal_unit_vector;
+          (0.501 * normal_overlap + +0.005 * diameter_two) * normal_unit_vector;
       }
 
     auto cell_one = particle_one->get_surrounding_cell();
@@ -1602,7 +1602,6 @@ private:
 
     if (cell_two->is_locally_owned())
       particle_two->set_location(particle_two_new_position);
-
   }
 
   /**

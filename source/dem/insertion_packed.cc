@@ -94,12 +94,14 @@ InsertionPacked<dim, PropertiesIndex>::insert(
     Utilities::MPI::all_gather(communicator, my_bounding_box);
 
   std::vector<Point<dim>> insertion_points_on_proc;
-  // Note: Reserved based on total expected particles across all types for this
-  // proc
-  insertion_points_on_proc.reserve(this->inserted_this_step_this_proc);
 
   // 1. Initialize the Random Number Generator using the configured seed
   std::uniform_real_distribution<double> distribution(0.0, 1.0);
+
+  // We add the particle type, otherwise the position of the Nth particle
+  // for type 0 and 1 will be the exact same.
+  std::mt19937 rng(dem_parameters.insertion_info.seed_for_insertion +
+                   this_mpi_process);
 
 
   // We insert all the particle for every type all at once.
@@ -108,12 +110,6 @@ InsertionPacked<dim, PropertiesIndex>::insert(
        dem_parameters.lagrangian_physical_properties.particle_type_number;
        particle_type++)
     {
-      // We add the particle type, otherwise the position of the Nth particle
-      // for type 0 and 1 will be the exact same.
-      std::mt19937 rng(dem_parameters.insertion_info.seed_for_insertion +
-                       this_mpi_process * n_mpi_process + particle_type);
-
-
       this->inserted_this_step =
         dem_parameters.lagrangian_physical_properties.number.at(particle_type);
 
@@ -128,6 +124,10 @@ InsertionPacked<dim, PropertiesIndex>::insert(
           this->inserted_this_step -
           (n_mpi_process - 1) *
             floor(this->inserted_this_step / n_mpi_process));
+
+      // Clear and reserve space for insertion points for this particle type
+      insertion_points_on_proc.clear();
+      insertion_points_on_proc.reserve(this->inserted_this_step_this_proc);
 
       Point<dim> insertion_location;
 
