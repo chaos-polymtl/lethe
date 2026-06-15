@@ -1149,7 +1149,7 @@ namespace InterfaceTools
    * @return Struct with the bounding isocontour's bounding values.
    */
   template <int dim, typename VectorType>
-  InterfaceTools::InterfaceBoundingValues<dim>
+  InterfaceBoundingValues<dim>
   compute_interface_bounding_values(const DoFHandler<dim>    &dof_handler,
                                     const FiniteElement<dim> &fe,
                                     const VectorType         &solution_vector,

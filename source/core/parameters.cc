@@ -2209,21 +2209,21 @@ namespace Parameters
         "Variable(s) of monitored isocontour(s)"
         "Choices are <temperature|phase>."
         "For multiple isocontours, separate the different variables with a comma "
-        "(ex/ 'set variables = phase,temperature,temperature')");
+        "(e.g., 'set variables = phase,temperature,temperature')");
       prm.declare_entry(
         "isovalue",
         "0.0",
         Patterns::List(Patterns::Double()),
         "Isovalue(s) of monitored isocontour(s)."
         "For multiple isocontours, separate the different isovalues with a comma "
-        "(ex/ 'set isovalue = 0.5,300,500')");
+        "(e.g., 'set isovalue = 0.5,300,500')");
       prm.declare_entry(
         "bounding box filename",
         "isocontour_bounding_box",
         Patterns::List(Patterns::FileName()),
-        "Filenames for outputted isocontours"
+        "Filename(s) for outputted isocontour(s)"
         "For multiple isocontours, separate the different filenames with a comma "
-        "(ex/ 'set isovalue = interface_bounding_box,solidus_bounding_box,liquidus_bounding_box')");
+        "(e.g., 'set isovalue = interface_bounding_box,solidus_bounding_box,liquidus_bounding_box')");
     }
     prm.leave_subsection();
   }
