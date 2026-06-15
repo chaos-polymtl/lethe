@@ -5,7 +5,7 @@ Command-line Interface Options
 --------------------------------
 Print deal.II and Lethe Versions
 --------------------------------
-The flag ``-V`` allos the user to print the deal.II and Lethe versions used to
+The flag ``-V`` allows the user to print the deal.II and Lethe versions used to
 run an application. In an example of usage, ``lethe-fluid -V`` yields:
 
 .. code-block:: shell

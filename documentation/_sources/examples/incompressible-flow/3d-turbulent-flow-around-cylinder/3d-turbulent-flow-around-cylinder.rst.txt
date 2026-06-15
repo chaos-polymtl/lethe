@@ -230,7 +230,7 @@ and choosing the number of processes ``n_proc`` according to the resources you h
 
 .. note::
 
-  The simulation takes approximatively 10 hours on 16 cores of a AMD Ryzen 9 7950X 16-Core Processor.
+  The simulation takes approximately 10 hours on 16 cores of a AMD Ryzen 9 7950X 16-Core Processor.
 
 ----------------------
 Results and Discussion
@@ -249,7 +249,7 @@ First, the following animation displays the evolution of the velocity magnitude 
 +----------------------------------------------------------------------------------------------------------------------------------------------------+
 
 
-The secondanimation also present the velocity magnitude on the same slice but for a finer mesh and using high-order elements (:math:`Q_2Q_2` with box refinement of 3). We we can clearly see much more details in the flow structure, such as the boundary layer and the wake region.
+The second animation also presents the velocity magnitude on the same slice but for a finer mesh and using high-order elements (:math:`Q_2Q_2` with box refinement of 3). We can clearly see much more details in the flow structure, such as the boundary layer and the wake region.
 
 +----------------------------------------------------------------------------------------------------------------------------------------------------+
 | .. raw:: html                                                                                                                                      |

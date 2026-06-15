@@ -64,7 +64,7 @@ Parameter File
 For simplicity, we present only the parameter file for :math:`Ra=10^4`.
 
 .. note::   
-    Note that the resolution (256x256) is set to match the one of the article results [#ouertatani]_ . If desired, you can choose to reduced to 7 or 6 the ``initial refinement level`` in the parameter files to reduce the simulation time without loosing too much accuracy.
+    Note that the resolution (256x256) is set to match the one of the article results [#ouertatani]_ . If desired, you can choose to reduced to 7 or 6 the ``initial refinement level`` in the parameter files to reduce the simulation time without losing too much accuracy.
 
 Simulation Control
 ~~~~~~~~~~~~~~~~~~
@@ -183,7 +183,7 @@ The following animation shows the evolution of the temperature field with the fl
 
     <iframe width="640" height="360" src="https://www.youtube.com/embed/NSJJpPauiXo" frameborder="0" allowfullscreen></iframe>
 
-Below, we also present the velocity profiles at steady-state of our simulation compared to the ones presented by Ouertatani *et al.* [#ouertatani]_ as a verfification of the Lethe software. 
+Below, we also present the velocity profiles at steady-state of our simulation compared to the ones presented by Ouertatani *et al.* [#ouertatani]_ as a verification of the Lethe software. 
 
 |fig1| |fig2|
 

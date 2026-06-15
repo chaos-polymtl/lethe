@@ -325,7 +325,7 @@ Here are a few examples of other job directives you may want to specify in your 
   #SBATCH --job-name=$yourjobname
   #SBATCH --mail-type=END                 #email preferences
   #SBATCH --mail-type=FAIL
-  #SBATCH --mail-user=$your.email.adress@email.provider
+  #SBATCH --mail-user=$your.email.address@email.provider
 
 .. note::
 

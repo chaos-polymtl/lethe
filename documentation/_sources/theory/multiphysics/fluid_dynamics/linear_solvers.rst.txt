@@ -58,7 +58,7 @@ One may choose instead  :math:`\mathcal{C}_k = \mathcal{K}_k(\mathcal{A}^T, r_0)
 
 * In the case of the BiCGStab method, the iteration is known as a transpose-free bi-Lanczos iteration. This kind of iteration has a fixed cost per iteration and no restart is ever needed. This method has a three-term recurrence, however, it needs two matrix-vector multiplications per iteration as it uses the system matrix twice to avoid the use of its transpose.  
 
-* In Lethe we use the Trilinos implentation of the BiCGStab method through `deal.II <https://www.dealii.org/>`_: `TrilinosWrappers::SolverBiCGStab <https://dealii.org/developer/doxygen/deal.II/classTrilinosWrappers_1_1SolverBicgstab.html>`_. One can specify the same parameters as in the GMRES solver with the exception of the maximum Krylov vectors parameters as a restart is not needed.
+* In Lethe we use the Trilinos implementation of the BiCGStab method through `deal.II <https://www.dealii.org/>`_: `TrilinosWrappers::SolverBiCGStab <https://dealii.org/developer/doxygen/deal.II/classTrilinosWrappers_1_1SolverBicgstab.html>`_. One can specify the same parameters as in the GMRES solver with the exception of the maximum Krylov vectors parameters as a restart is not needed.
 
 Some Remarks
 _____________

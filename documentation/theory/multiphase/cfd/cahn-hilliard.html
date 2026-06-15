@@ -543,12 +543,16 @@
 </section>
 <section id="stabilization">
 <h2>Stabilization<a class="headerlink" href="#stabilization" title="Link to this heading">#</a></h2>
-<p>While developping the code, it turned useful to add a numerical diffusion term in the chemical potential form for some example. The new equation is:</p>
+<p>While developing the code, it turned useful to add a numerical diffusion term to the chemical potential equation. The new equation is:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\eta = \lambda\left(-\frac{\phi(1-\phi^2)}{\varepsilon^2} + \nabla^2\phi\right) - \xi h^2 \nabla^2 \eta = 0\]</div>
 </div>
-<p>With <span class="math notranslate nohighlight">\(h\)</span> the local cell size and <span class="math notranslate nohighlight">\(\xi\)</span> a user-defined smoothing coefficient (in general between 0 and 1). This fonctionnality may be deprecated later.</p>
+<p>With <span class="math notranslate nohighlight">\(h\)</span> the local cell size and <span class="math notranslate nohighlight">\(\xi\)</span> a user-defined smoothing coefficient (in general between 0 and 1).</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This functionality may be deprecated later.</p>
+</div>
 </section>
 <section id="coupling-to-the-navier-stokes-equations">
 <h2>Coupling to the Navier-Stokes equations<a class="headerlink" href="#coupling-to-the-navier-stokes-equations" title="Link to this heading">#</a></h2>

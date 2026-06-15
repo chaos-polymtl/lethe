@@ -500,7 +500,7 @@ The geometry of the pipe and the particle properties are based on the work of La
 <p>In this section we introduce the different sections of the parameter file <code class="docutils literal notranslate"><span class="pre">loading-particles.prm</span></code>.</p>
 <section id="mesh">
 <h4>Mesh<a class="headerlink" href="#mesh" title="Link to this heading">#</a></h4>
-<p>In this example, we simulate the transport of particles in a 1 m wide long 0.084 m diameter pipe. The conveying is processed in the x-direction through periodic boundary conditions. We use the lethe custom <a class="reference external" href="../../../parameters/cfd/mesh.html">cylinder_balanced</a> , which is prefered over the regular deal.II option for having an uniform cell size distribution in the radial direction. Cells’ size are approximately 2 times the diameter of the particles in both longitudinal and radial directions.</p>
+<p>In this example, we simulate the transport of particles in a 1 m wide long 0.084 m diameter pipe. The conveying is processed in the x-direction through periodic boundary conditions. We use the lethe custom <a class="reference external" href="../../../parameters/cfd/mesh.html">cylinder_balanced</a> , which is preferred over the regular deal.II option for having an uniform cell size distribution in the radial direction. Cells’ size are approximately 2 times the diameter of the particles in both longitudinal and radial directions.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection mesh
   set type                                = lethe
   set grid type                           = cylinder_balanced
@@ -697,7 +697,7 @@ end
 </section>
 <section id="settling-particles">
 <h3>Settling Particles<a class="headerlink" href="#settling-particles" title="Link to this heading">#</a></h3>
-<p>In this section we show the difference in the parameter file <code class="docutils literal notranslate"><span class="pre">settling-particles.prm</span></code> needed to settle the particles with the same gravity vector as the pneumatic conveying simulation. Consequently, many sections related to the loading are not needed such as the the insertion info, the floating walls, and the solid objects.</p>
+<p>In this section we show the difference in the parameter file <code class="docutils literal notranslate"><span class="pre">settling-particles.prm</span></code> needed to settle the particles with the same gravity vector as the pneumatic conveying simulation. Consequently, many sections related to the loading are not needed such as the insertion info, the floating walls, and the solid objects.</p>
 <section id="id4">
 <h4>Simulation Control<a class="headerlink" href="#id4" title="Link to this heading">#</a></h4>
 <p>Here we allow a 2.5 seconds for the settling of the particles. Since this simulation is a restart of the loading particle simulation, the end time is 32.5 seconds.</p>

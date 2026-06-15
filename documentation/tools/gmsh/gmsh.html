@@ -455,7 +455,7 @@
 <p>See the <a class="reference external" href="https://gmsh.info/">GMSH website</a> for installation. For the stable release, the GMSH executable needs to be extracted from a compressed file.</p>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
-<p>For Linux users, after extracting the TGZ file, it is recommanded to add the <code class="docutils literal notranslate"><span class="pre">bin</span></code> folder of the GMSH installation in your <code class="docutils literal notranslate"><span class="pre">.bashrc</span></code> script with <code class="docutils literal notranslate"><span class="pre">export</span></code>. It will be easier to access GMSH.</p>
+<p>For Linux users, after extracting the TGZ file, it is recommended to add the <code class="docutils literal notranslate"><span class="pre">bin</span></code> folder of the GMSH installation in your <code class="docutils literal notranslate"><span class="pre">.bashrc</span></code> script with <code class="docutils literal notranslate"><span class="pre">export</span></code>. It will be easier to access GMSH.</p>
 </div>
 </section>
 <section id="geometry">
@@ -485,12 +485,12 @@
 <p>You can then open the created <code class="docutils literal notranslate"><span class="pre">.geo</span></code> file in a simple text editor, either by:</p>
 <ul class="simple">
 <li><p>opening the file in your folder, or</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Left</span> <span class="pre">pannel:</span> <span class="pre">Modules</span> <span class="pre">&gt;</span> <span class="pre">Geometry</span> <span class="pre">&gt;</span> <span class="pre">Edit</span> <span class="pre">script</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Left</span> <span class="pre">panel:</span> <span class="pre">Modules</span> <span class="pre">&gt;</span> <span class="pre">Geometry</span> <span class="pre">&gt;</span> <span class="pre">Edit</span> <span class="pre">script</span></code></p></li>
 </ul>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <dl class="simple">
-<dt>After each modification in the <code class="docutils literal notranslate"><span class="pre">.geo</span></code> file, save it and load the modifications in <code class="docutils literal notranslate"><span class="pre">GMSH</span></code>:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">Left</span> <span class="pre">pannel:</span> <span class="pre">Modules</span> <span class="pre">&gt;</span> <span class="pre">Geometry</span> <span class="pre">&gt;</span> <span class="pre">Reload</span> <span class="pre">script</span></code></p>
+<dt>After each modification in the <code class="docutils literal notranslate"><span class="pre">.geo</span></code> file, save it and load the modifications in <code class="docutils literal notranslate"><span class="pre">GMSH</span></code>:</dt><dd><p><code class="docutils literal notranslate"><span class="pre">Left</span> <span class="pre">panel:</span> <span class="pre">Modules</span> <span class="pre">&gt;</span> <span class="pre">Geometry</span> <span class="pre">&gt;</span> <span class="pre">Reload</span> <span class="pre">script</span></code></p>
 </dd>
 </dl>
 </div>
@@ -571,7 +571,7 @@
 </section>
 <section id="opencascade-kernel">
 <span id="id3"></span><h3>OpenCASCADE Kernel<a class="headerlink" href="#opencascade-kernel" title="Link to this heading">#</a></h3>
-<p>In the GMSH geometry section of the GMSH GUI (see <code class="docutils literal notranslate"><span class="pre">Left</span> <span class="pre">pannel:</span> <span class="pre">Modules</span> <span class="pre">&gt;</span> <span class="pre">Geometry</span> <span class="pre">&gt;</span> <span class="pre">Elementary</span> <span class="pre">entities</span> <span class="pre">&gt;</span> <span class="pre">Add</span></code>), you can add directly multiple 2D or 3D common geometries with a simple click thanks to OpenCASCADE kernel. GMSH will automatically open a window where you can easily set the characteristic lenghts of the geometry, and update the <code class="docutils literal notranslate"><span class="pre">.geo</span></code> file.</p>
+<p>In the GMSH geometry section of the GMSH GUI (see <code class="docutils literal notranslate"><span class="pre">Left</span> <span class="pre">panel:</span> <span class="pre">Modules</span> <span class="pre">&gt;</span> <span class="pre">Geometry</span> <span class="pre">&gt;</span> <span class="pre">Elementary</span> <span class="pre">entities</span> <span class="pre">&gt;</span> <span class="pre">Add</span></code>), you can add directly multiple 2D or 3D common geometries with a simple click thanks to OpenCASCADE kernel. GMSH will automatically open a window where you can easily set the characteristic lengths of the geometry, and update the <code class="docutils literal notranslate"><span class="pre">.geo</span></code> file.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Always save your <code class="docutils literal notranslate"><span class="pre">.geo</span></code> file in your text editor before modifying it through the GMSH GUI. If you modify the <code class="docutils literal notranslate"><span class="pre">.geo</span></code> file without saving it, GMSH will not update it.</p>
@@ -686,11 +686,11 @@ end
 <p>Basic:</p>
 <ol class="arabic simple">
 <li><p>(optional) <code class="docutils literal notranslate"><span class="pre">Tools</span> <span class="pre">&gt;</span> <span class="pre">Options</span> <span class="pre">&gt;</span> <span class="pre">Mesh</span></code> and <code class="docutils literal notranslate"><span class="pre">General</span></code> panel, check <code class="docutils literal notranslate"><span class="pre">Recombine</span> <span class="pre">all</span> <span class="pre">triangular</span> <span class="pre">meshes</span></code>: generate a quad mesh.</p></li>
-<li><p>(optional) In the same panel, change <code class="docutils literal notranslate"><span class="pre">Min/Max</span> <span class="pre">element</span> <span class="pre">size</span></code> to have smaller/bigger elements, therefor a finer/coarser mesh.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Left</span> <span class="pre">pannel:</span> <span class="pre">Modules</span> <span class="pre">&gt;</span> <span class="pre">Mesh</span> <span class="pre">&gt;</span> <span class="pre">2D</span></code> or <code class="docutils literal notranslate"><span class="pre">3D</span></code>: create the mesh</p></li>
+<li><p>(optional) In the same panel, change <code class="docutils literal notranslate"><span class="pre">Min/Max</span> <span class="pre">element</span> <span class="pre">size</span></code> to have smaller/bigger elements, therefore a finer/coarser mesh.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Left</span> <span class="pre">panel:</span> <span class="pre">Modules</span> <span class="pre">&gt;</span> <span class="pre">Mesh</span> <span class="pre">&gt;</span> <span class="pre">2D</span></code> or <code class="docutils literal notranslate"><span class="pre">3D</span></code>: create the mesh</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Tools</span> <span class="pre">&gt;</span> <span class="pre">Statistics</span></code>: check that the mesh is generated appropriately (by default, triangles for 2D and hexahedra for 3D)</p></li>
-<li><p>(optional) <code class="docutils literal notranslate"><span class="pre">Left</span> <span class="pre">pannel:</span> <span class="pre">Modules</span> <span class="pre">&gt;</span> <span class="pre">Mesh</span> <span class="pre">&gt;</span> <span class="pre">Refine</span> <span class="pre">by</span> <span class="pre">splitting</span></code>: refine the mesh (beware, it takes more and more time for each refinement)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Left</span> <span class="pre">pannel:</span> <span class="pre">Modules</span> <span class="pre">&gt;</span> <span class="pre">Mesh</span> <span class="pre">&gt;</span> <span class="pre">Save</span></code>: save the mesh in a <code class="docutils literal notranslate"><span class="pre">.msh</span></code> file, to be used in Lethe (see <a class="reference internal" href="../../parameters/cfd/mesh.html"><span class="doc">Mesh</span></a>)</p></li>
+<li><p>(optional) <code class="docutils literal notranslate"><span class="pre">Left</span> <span class="pre">panel:</span> <span class="pre">Modules</span> <span class="pre">&gt;</span> <span class="pre">Mesh</span> <span class="pre">&gt;</span> <span class="pre">Refine</span> <span class="pre">by</span> <span class="pre">splitting</span></code>: refine the mesh (beware, it takes more and more time for each refinement)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Left</span> <span class="pre">panel:</span> <span class="pre">Modules</span> <span class="pre">&gt;</span> <span class="pre">Mesh</span> <span class="pre">&gt;</span> <span class="pre">Save</span></code>: save the mesh in a <code class="docutils literal notranslate"><span class="pre">.msh</span></code> file, to be used in Lethe (see <a class="reference internal" href="../../parameters/cfd/mesh.html"><span class="doc">Mesh</span></a>)</p></li>
 </ol>
 <p>By following all the previous steps, the mesh generated looks like below.</p>
 <img alt="2D mesh with quads" class="align-center" id="unstructured-mesh" src="../../_images/unstructured.png" />
@@ -737,7 +737,7 @@ end
 </pre></div>
 </div>
 <p>Here is the mesh generated with an attractor around the sphere:</p>
-<img alt="The mesh generated with an attractor arround the sphere" class="align-center" id="attractor" src="../../_images/attractor.png" />
+<img alt="The mesh generated with an attractor around the sphere" class="align-center" id="attractor" src="../../_images/attractor.png" />
 </section>
 <section id="structured-quad-mesh">
 <span id="structured-mesh"></span><h3>Structured - Quad Mesh<a class="headerlink" href="#structured-quad-mesh" title="Link to this heading">#</a></h3>
@@ -751,7 +751,7 @@ end
 </ol>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>Converting an unstructured mesh to a structured mesh usually requires rewritting a good part of the geometry. Begin by drawing by-hand and check that all of your surfaces have only four points each.</p>
+<p>Converting an unstructured mesh to a structured mesh usually requires rewriting a good part of the geometry. Begin by drawing by-hand and check that all of your surfaces have only four points each.</p>
 </div>
 <ol class="arabic simple" start="2">
 <li><p>Define <code class="docutils literal notranslate"><span class="pre">Transfinite</span> <span class="pre">Line</span></code> (before <code class="docutils literal notranslate"><span class="pre">Line</span> <span class="pre">Loop</span></code>), with:</p></li>
@@ -811,7 +811,7 @@ This section first gives an example of the use of the Field Boundary Layer in a 
 </pre></div>
 </div>
 <p>Here is the mesh generated with the previous settings around the plate:</p>
-<a class="reference internal image-reference" href="../../_images/noFan.png" id="bondary-layer-basic"><img alt="The mesh generated with a BoundaryLayer Field around the plate" class="align-center" id="bondary-layer-basic" src="../../_images/noFan.png" style="width: 600px;" /></a>
+<a class="reference internal image-reference" href="../../_images/noFan.png" id="boundary-layer-basic"><img alt="The mesh generated with a BoundaryLayer Field around the plate" class="align-center" id="boundary-layer-basic" src="../../_images/noFan.png" style="width: 600px;" /></a>
 <ol class="arabic simple" start="5">
 <li><p>The result is interesting, although the elements at the corners are skewed. This can be solved by feeding the field a list of the points at the corners which will be defined as FanPoints. Then, one may refine the mesh by specifying a number of elements for each fan. Alternatively, the size can be defined as the same for all points, see the commented line below.</p></li>
 </ol>
