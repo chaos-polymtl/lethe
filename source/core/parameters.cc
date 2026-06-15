@@ -832,6 +832,33 @@ namespace Parameters
         "Choices are <pspg_supg|gls|grad_div>.");
 
       prm.declare_entry(
+        "stabilization parameter definition",
+        "tezduyar",
+        Patterns::Selection("tezduyar|metric_tensor"),
+        "Definition used to compute the stabilization parameter tau. "
+        "<tezduyar> uses the classical scalar isotropic element-size "
+        "definition. <metric_tensor> uses the residual-based variational "
+        "multiscale (VMS) definition built from the covariant element metric "
+        "tensor, which is direction-aware and better suited to stretched, "
+        "sheared or unstructured meshes. Only supported by the matrix-free "
+        "solver.");
+
+      prm.declare_entry(
+        "vms c_i",
+        "36",
+        Patterns::Double(),
+        "Constant C_I of the metric_tensor (VMS) stabilization parameter, "
+        "scaling the viscous term. It is degree-dependent; the default targets "
+        "linear elements.");
+
+      prm.declare_entry(
+        "vms c_t",
+        "4",
+        Patterns::Double(),
+        "Constant C_t of the metric_tensor (VMS) stabilization parameter, "
+        "scaling the transient term.");
+
+      prm.declare_entry(
         "heat transfer dcdd stabilization",
         "false",
         Patterns::Bool(),
@@ -893,6 +920,18 @@ namespace Parameters
         else
           throw(std::runtime_error("Invalid stabilization strategy"));
       }
+      {
+        std::string op = prm.get("stabilization parameter definition");
+        if (op == "tezduyar")
+          tau_definition = StabilizationParameterDefinition::tezduyar;
+        else if (op == "metric_tensor")
+          tau_definition = StabilizationParameterDefinition::metric_tensor;
+        else
+          throw(std::runtime_error(
+            "Invalid stabilization parameter definition"));
+      }
+      vms_c_i = prm.get_double("vms c_i");
+      vms_c_t = prm.get_double("vms c_t");
       {
         std::string op = prm.get("scalar limiter");
         if (op == "none")

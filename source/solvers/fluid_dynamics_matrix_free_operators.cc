@@ -86,7 +86,7 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
   const Quadrature<dim>                            &quadrature,
   const std::shared_ptr<Function<dim>>              forcing_function,
   const std::shared_ptr<PhysicalPropertiesManager> &physical_properties_manager,
-  const StabilizationType                           stabilization,
+  const Parameters::Stabilization                  &stabilization_parameters,
   const unsigned int                                mg_level,
   const std::shared_ptr<SimulationControl>         &simulation_control,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
@@ -102,7 +102,7 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
                quadrature,
                forcing_function,
                physical_properties_manager,
-               stabilization,
+               stabilization_parameters,
                mg_level,
                simulation_control,
                boundary_conditions,
@@ -120,7 +120,7 @@ NavierStokesOperatorBase<dim, number>::reinit(
   const Quadrature<dim>                            &quadrature,
   const std::shared_ptr<Function<dim>>              forcing_function,
   const std::shared_ptr<PhysicalPropertiesManager> &physical_properties_manager,
-  const StabilizationType                           stabilization,
+  const Parameters::Stabilization                  &stabilization_parameters,
   const unsigned int                                mg_level,
   const std::shared_ptr<SimulationControl>         &simulation_control,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
@@ -174,12 +174,14 @@ NavierStokesOperatorBase<dim, number>::reinit(
 
   this->properties_manager = physical_properties_manager;
 
-  if (stabilization ==
+  this->stabilization_parameters = stabilization_parameters;
+
+  if (stabilization_parameters.stabilization ==
         Parameters::Stabilization::NavierStokesStabilization::pspg_supg ||
-      stabilization ==
+      stabilization_parameters.stabilization ==
         Parameters::Stabilization::NavierStokesStabilization::gls)
     {
-      this->stabilization = stabilization;
+      this->stabilization = stabilization_parameters.stabilization;
     }
   else
     throw std::runtime_error(
@@ -910,6 +912,60 @@ NavierStokesOperatorBase<dim, number>::
       // Get previously calculated element size needed for tau
       const auto h = integrator.read_cell_data(this->get_element_size());
 
+      // Whether the directional metric-tensor (VMS) definition of tau is used
+      const bool use_metric_tau =
+        this->stabilization_parameters.tau_definition ==
+        Parameters::Stabilization::StabilizationParameterDefinition::
+          metric_tensor;
+
+      // Lambda computing the stabilization parameter tau for a given advective
+      // velocity u and kinematic viscosity at quadrature point q. The classical
+      // Tezduyar scalar form uses the isotropic element size h, while the
+      // metric_tensor (VMS) form uses the covariant element metric tensor
+      // G = 4 * Jinv^T * Jinv built from the mapping inverse Jacobian, which is
+      // direction-aware and better suited to stretched or distorted meshes
+      // (Bazilevs et al. 2007, Tezduyar & Osawa 2000). The factor 4 converts
+      // deal.II's [0,1]^dim reference-cell metric to the [-1,1]^dim metric the
+      // literature constants assume.
+      const auto compute_tau =
+        [&](const unsigned int                        q,
+            const Tensor<1, dim, VectorizedArray<number>> &u,
+            const VectorizedArray<number> &u_mag_squared,
+            const VectorizedArray<number> &viscosity) {
+          if (use_metric_tau)
+            {
+              const auto Jinv = integrator.inverse_jacobian(q);
+
+              VectorizedArray<number> u_G_u = 0.0;
+              VectorizedArray<number> G_d_G = 0.0;
+              for (int i = 0; i < dim; ++i)
+                for (int j = 0; j < dim; ++j)
+                  {
+                    VectorizedArray<number> G_ij = 0.0;
+                    for (int k = 0; k < dim; ++k)
+                      G_ij += Jinv[k][i] * Jinv[k][j];
+                    G_ij *= 4.0;
+                    u_G_u += u[i] * G_ij * u[j];
+                    G_d_G += G_ij * G_ij;
+                  }
+
+              return 1. /
+                     std::sqrt(this->stabilization_parameters.vms_c_t *
+                                 Utilities::fixed_power<2>(sdt) +
+                               u_G_u +
+                               this->stabilization_parameters.vms_c_i *
+                                 Utilities::fixed_power<2>(viscosity) * G_d_G);
+            }
+          else
+            {
+              return 1. /
+                     std::sqrt(Utilities::fixed_power<2>(sdt) +
+                               4. * u_mag_squared / h / h +
+                               9. * Utilities::fixed_power<2>(
+                                      4. * viscosity / (h * h)));
+            }
+        };
+
       for (const auto q : integrator.quadrature_point_indices())
         {
           nonlinear_previous_values(cell, q)   = integrator.get_value(q);
@@ -930,16 +986,16 @@ NavierStokesOperatorBase<dim, number>::
             }
 
           // Calculate tau
-          VectorizedArray<number> u_mag_squared = 1e-12;
+          Tensor<1, dim, VectorizedArray<number>> u;
+          VectorizedArray<number>                 u_mag_squared = 1e-12;
           for (int k = 0; k < dim; ++k)
-            u_mag_squared += Utilities::fixed_power<2>(
-              this->nonlinear_previous_advective_values(cell, q)[k]);
+            {
+              u[k] = this->nonlinear_previous_advective_values(cell, q)[k];
+              u_mag_squared += Utilities::fixed_power<2>(u[k]);
+            }
 
           stabilization_parameter(cell, q) =
-            1. / std::sqrt(Utilities::fixed_power<2>(sdt) +
-                           4. * u_mag_squared / h / h +
-                           9. * Utilities::fixed_power<2>(
-                                  4. * kinematic_viscosity / (h * h)));
+            compute_tau(q, u, u_mag_squared, kinematic_viscosity);
 
           stabilization_parameter_lsic(cell, q) =
             std::sqrt(u_mag_squared) * h * 0.5;
@@ -1032,16 +1088,16 @@ NavierStokesOperatorBase<dim, number>::
 
               // Recalculate stabilization parameter using kinematic
               // viscosity vector
-              VectorizedArray<number> u_mag_squared = 1e-12;
+              Tensor<1, dim, VectorizedArray<number>> u;
+              VectorizedArray<number>                 u_mag_squared = 1e-12;
               for (int k = 0; k < dim; ++k)
-                u_mag_squared +=
-                  Utilities::fixed_power<2>(integrator.get_value(q)[k]);
+                {
+                  u[k] = integrator.get_value(q)[k];
+                  u_mag_squared += Utilities::fixed_power<2>(u[k]);
+                }
 
               stabilization_parameter(cell, q) =
-                1. /
-                std::sqrt(
-                  Utilities::fixed_power<2>(sdt) + 4. * u_mag_squared / h / h +
-                  9. * Utilities::fixed_power<2>(4. * viscosity / (h * h)));
+                compute_tau(q, u, u_mag_squared, viscosity);
             }
         }
     }

@@ -819,6 +819,27 @@ namespace Parameters
       grad_div
     } stabilization;
 
+    /// Definition used to compute the stabilization parameter tau. The
+    /// @p tezduyar option uses the classical scalar definition based on a single
+    /// isotropic element size. The @p metric_tensor option uses the
+    /// residual-based variational multiscale (VMS) definition built from the
+    /// covariant element metric tensor (Bazilevs et al. 2007, Tezduyar & Osawa
+    /// 2000), which is direction-aware and better suited to stretched, sheared
+    /// or unstructured meshes. Only supported by the matrix-free solver.
+    enum class StabilizationParameterDefinition : std::int8_t
+    {
+      tezduyar,
+      metric_tensor
+    } tau_definition;
+
+    /// Constant C_I of the VMS metric-tensor tau (inverse-estimate constant
+    /// scaling the viscous term). It is degree-dependent; the default targets
+    /// linear elements.
+    double vms_c_i;
+
+    /// Constant C_t of the VMS metric-tensor tau (scaling the transient term).
+    double vms_c_t;
+
     enum class ScalarLimiters : std::int8_t
     {
       moe,

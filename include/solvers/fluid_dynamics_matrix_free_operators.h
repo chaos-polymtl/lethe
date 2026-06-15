@@ -183,7 +183,8 @@ public:
    * term.
    * @param[in] properties_manager The physical properties manager (see
    physical_properties_manager.h)
-   * @param[in] stabilization Stabilization type specified in parameter file.
+   * @param[in] stabilization_parameters Stabilization parameters specified in
+   * the parameter file (stabilization type, tau definition and VMS constants).
    * @param[in] mg_level Level of the operator in case of MG methods.
    * @param[in] simulation_control Required to get the time stepping method.
    * @param[in] physical_properties_manager Required to have the updated values
@@ -205,7 +206,7 @@ public:
     const std::shared_ptr<Function<dim>> forcing_function,
     const std::shared_ptr<PhysicalPropertiesManager>
                                              &physical_properties_manager,
-    const StabilizationType                   stabilization,
+    const Parameters::Stabilization          &stabilization_parameters,
     const unsigned int                        mg_level,
     const std::shared_ptr<SimulationControl> &simulation_control,
     const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
@@ -227,7 +228,8 @@ public:
    * term.
    * @param[in] properties_manager The physical properties manager (see
    * physical_properties_manager.h)
-   * @param[in] stabilization Stabilization type specified in parameter file.
+   * @param[in] stabilization_parameters Stabilization parameters specified in
+   * the parameter file (stabilization type, tau definition and VMS constants).
    * @param[in] mg_level Level of the operator in case of MG methods.
    * @param[in] simulation_control Required to get the time stepping method.
    * @param[in] boundary_conditions Contains information regarding all
@@ -247,7 +249,7 @@ public:
     const std::shared_ptr<Function<dim>> forcing_function,
     const std::shared_ptr<PhysicalPropertiesManager>
                                              &physical_properties_manager,
-    const StabilizationType                   stabilization,
+    const Parameters::Stabilization          &stabilization_parameters,
     const unsigned int                        mg_level,
     const std::shared_ptr<SimulationControl> &simulation_control,
     const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
@@ -675,6 +677,13 @@ protected:
    *
    */
   StabilizationType stabilization;
+
+  /**
+   * @brief Stabilization parameters specified in the parameter file. Stored to
+   * access the stabilization parameter (tau) definition and its associated
+   * VMS constants when pre-calculating tau.
+   */
+  Parameters::Stabilization stabilization_parameters;
 
   /**
    * @brief Object storing the information regarding the time stepping method.
