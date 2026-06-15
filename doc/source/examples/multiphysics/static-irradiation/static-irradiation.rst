@@ -51,7 +51,7 @@ In this example, we consider the static irradiation of Ti6Al4V bare plate (witho
 |                                                                                                                   |
 +-------------------------------------------------------------------------------------------------------------------+
 
-The dimensions (:math:`H, \Delta h`, and :math:`L`) and the Dirichlet boundary condition values (:math:`u_{\text{in}}, T_\text{in}`, and :math:`T_\text{0}`) are listed bellow.
+The dimensions (:math:`H, \Delta h`, and :math:`L`) and the Dirichlet boundary condition values (:math:`u_{\text{in}}, T_\text{in}`, and :math:`T_\text{0}`) are listed below.
 
 +---------------------------+---------------------------+----------------------------+-----------------------------+
 | Parameter                 | Value                     | Parameter                  | Value                       |
@@ -252,9 +252,9 @@ Initial Conditions
 
 In the ``initial conditions`` subsection, we set the initial condition for all the solvers:
 
-- NS intial conditions are :math:`0.0` for both velocity components and for the pressure
-- HT intial condition corresponds to a uniform temperature :math:`T_\text{0} = 298\;\text{K}`
-- CLS intial condition allows us to described the metal and gas phases. The bottom part of the domain (:math:`y<430\;\mu\text{m}`) corresponds to the Ti6Al4V metal phase (``fluid 1``), while Argon (``fluid 0``) fills the top part.
+- NS initial conditions are :math:`0.0` for both velocity components and for the pressure
+- HT initial condition corresponds to a uniform temperature :math:`T_\text{0} = 298\;\text{K}`
+- CLS initial condition allows us to described the metal and gas phases. The bottom part of the domain (:math:`y<430\;\mu\text{m}`) corresponds to the Ti6Al4V metal phase (``fluid 1``), while Argon (``fluid 0``) fills the top part.
 
 .. code-block:: text
 

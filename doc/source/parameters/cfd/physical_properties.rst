@@ -163,7 +163,7 @@ Physical Properties
 
     * The ``solidus temperature`` and ``liquidus temperature`` parameters are used in the calculation of the surface tension using the ``phase_change`` surface tension model (see `Surface Tension Models`_).
 
-    * The ``cahn hilliard mobility model`` specifies the model used to calculate the mobility used in the Cahn-Hilliard equations for the pair of fluid. Two models are available: a ``constant`` mobility and a ``quartic`` mobility. The reader is refered to :doc:`cahn_hilliard` for more details.
+    * The ``cahn hilliard mobility model`` specifies the model used to calculate the mobility used in the Cahn-Hilliard equations for the pair of fluid. Two models are available: a ``constant`` mobility and a ``quartic`` mobility. The reader is referred to the :doc:`Cahn-Hilliard theory guide <cahn_hilliard>` for more details.
 
     * The ``cahn hilliard mobility coefficient`` parameter is the constant mobility coefficient of the two interacting fluids used in the Cahn-Hilliard equations. Its units are :math:`\text{Length}^{2} \cdot \text{Time}^{-1}`.
 
@@ -515,7 +515,7 @@ By default, parameters are set to the values of dry air evaluated under normal t
 Thermal Conductivity Models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Constant, linear and phase_change thermal conductivities are supported in Lethe. Constant thermal conductivity assumes a constant value of the thermal conductivity. Linear thermal conductivity assumes that that the thermal conductivity :math:`k` varies linearly with the temperature, taking the following form:
+``constant``, ``linear`` and ``phase_change`` thermal conductivity models are supported in Lethe. Constant thermal conductivity assumes a constant value of the thermal conductivity. Linear thermal conductivity assumes that the thermal conductivity :math:`k` varies linearly with the temperature, taking the following form:
 
 .. math::
   k = k_{A,0}+ k_{A,1} T 

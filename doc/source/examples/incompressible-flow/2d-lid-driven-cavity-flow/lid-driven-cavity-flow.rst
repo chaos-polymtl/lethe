@@ -219,7 +219,7 @@ Using Paraview, the steady-state velocity profile and the streamlines can be vis
     :alt: velocity distribution
     :align: center
 
-It is also very interesting to compare the results with those obtained in the literature. A python script provided in the example folder allows to compare the velocity profile along de y axis for :math:`x=0.5` with results from the literature. Using this script, the following resuts are obtained for ``initial refinement = 6``
+It is also very interesting to compare the results with those obtained in the literature. A python script provided in the example folder allows to compare the velocity profile along de y axis for :math:`x=0.5` with results from the literature. Using this script, the following results are obtained for ``initial refinement = 6``
 
 .. image:: images/lethe-ghia-re-400-comparison.png
     :alt: re_400_comparison

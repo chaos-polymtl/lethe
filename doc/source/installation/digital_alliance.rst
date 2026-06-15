@@ -135,7 +135,7 @@ Simulations are sent to the scheduler via batch scripts. Visit the Digital Resea
   #SBATCH --mem=120G #memory usage per node. See cluster specification for maximal amount.
   #SBATCH --job-name=$yourjobname
   #SBATCH --mail-type=ALL
-  #SBATCH --mail-user=$your.email.adress@email.provider
+  #SBATCH --mail-user=$your.email.address@email.provider
 
   source $HOME/.dealii
   mpirun lethe_application_name_wanted parameter_file_name.prm

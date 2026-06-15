@@ -264,7 +264,7 @@ The automatic generator script is named ``launch_cases.py``. Here is an example 
 	#SBATCH --ntasks=1
 	#SBATCH --mem-per-cpu=32G
 	#SBATCH --mail-type=FAIL
-	#SBATCH --mail-user=$your.email.adress@email.provider
+	#SBATCH --mail-user=$your.email.address@email.provider
 	#SBATCH --output=%x-%j.out
 
 	source $SCRATCH/ENV/bin/activate

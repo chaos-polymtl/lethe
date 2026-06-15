@@ -118,7 +118,7 @@ Mesh Adaptation
       # Fraction of refined elements
       set fraction refinement = 0.05
     
-      # How the fraction of refinement/coarsening are interepreted. Choices are
+      # How the fraction of refinement/coarsening are interpreted. Choices are
       # <number|fraction>.
       set fraction type = number
     

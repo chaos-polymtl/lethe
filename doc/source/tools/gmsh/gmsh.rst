@@ -12,7 +12,7 @@ Installation
 See the `GMSH website <https://gmsh.info/>`_ for installation. For the stable release, the GMSH executable needs to be extracted from a compressed file.
 
 .. hint::
-	For Linux users, after extracting the TGZ file, it is recommanded to add the ``bin`` folder of the GMSH installation in your ``.bashrc`` script with ``export``. It will be easier to access GMSH.
+	For Linux users, after extracting the TGZ file, it is recommended to add the ``bin`` folder of the GMSH installation in your ``.bashrc`` script with ``export``. It will be easier to access GMSH.
 
 --------------------------
 Geometry
@@ -40,11 +40,11 @@ The geometry is written in a ``.geo`` file:
 You can then open the created ``.geo`` file in a simple text editor, either by:
 
 * opening the file in your folder, or
-* ``Left pannel: Modules > Geometry > Edit script``
+* ``Left panel: Modules > Geometry > Edit script``
 
 .. warning::
 	After each modification in the ``.geo`` file, save it and load the modifications in ``GMSH``:
-	    ``Left pannel: Modules > Geometry > Reload script``
+	    ``Left panel: Modules > Geometry > Reload script``
 
 .. _built-in kernel:
 
@@ -118,7 +118,7 @@ It is quite easy to create a ``.geo`` file directly by coding line by line the g
 """"""""""""""""""""""""""
 OpenCASCADE Kernel
 """"""""""""""""""""""""""
-In the GMSH geometry section of the GMSH GUI (see ``Left pannel: Modules > Geometry > Elementary entities > Add``), you can add directly multiple 2D or 3D common geometries with a simple click thanks to OpenCASCADE kernel. GMSH will automatically open a window where you can easily set the characteristic lenghts of the geometry, and update the ``.geo`` file.
+In the GMSH geometry section of the GMSH GUI (see ``Left panel: Modules > Geometry > Elementary entities > Add``), you can add directly multiple 2D or 3D common geometries with a simple click thanks to OpenCASCADE kernel. GMSH will automatically open a window where you can easily set the characteristic lengths of the geometry, and update the ``.geo`` file.
 
 .. warning::
 	Always save your ``.geo`` file in your text editor before modifying it through the GMSH GUI. If you modify the ``.geo`` file without saving it, GMSH will not update it. 
@@ -238,11 +238,11 @@ Unstructured
 Basic:
 
 1. (optional) ``Tools > Options > Mesh`` and ``General`` panel, check ``Recombine all triangular meshes``: generate a quad mesh.
-2. (optional) In the same panel, change ``Min/Max element size`` to have smaller/bigger elements, therefor a finer/coarser mesh.
-3. ``Left pannel: Modules > Mesh > 2D`` or ``3D``: create the mesh
+2. (optional) In the same panel, change ``Min/Max element size`` to have smaller/bigger elements, therefore a finer/coarser mesh.
+3. ``Left panel: Modules > Mesh > 2D`` or ``3D``: create the mesh
 4. ``Tools > Statistics``: check that the mesh is generated appropriately (by default, triangles for 2D and hexahedra for 3D)
-5. (optional) ``Left pannel: Modules > Mesh > Refine by splitting``: refine the mesh (beware, it takes more and more time for each refinement)
-6. ``Left pannel: Modules > Mesh > Save``: save the mesh in a ``.msh`` file, to be used in Lethe (see :doc:`../../parameters/cfd/mesh`)
+5. (optional) ``Left panel: Modules > Mesh > Refine by splitting``: refine the mesh (beware, it takes more and more time for each refinement)
+6. ``Left panel: Modules > Mesh > Save``: save the mesh in a ``.msh`` file, to be used in Lethe (see :doc:`../../parameters/cfd/mesh`)
 
 By following all the previous steps, the mesh generated looks like below.
 
@@ -298,7 +298,7 @@ Attractors can also be used to refine the mesh towards specific edges or surface
 Here is the mesh generated with an attractor around the sphere:
 
 .. image:: images/attractor.png
-    :alt: The mesh generated with an attractor arround the sphere
+    :alt: The mesh generated with an attractor around the sphere
     :align: center
     :name: attractor
 
@@ -315,7 +315,7 @@ Creating a structured quad-mesh usually takes a lot more time than an unstructur
 1. Create the geometry accordingly and add construction elements where needed
 
 .. tip::
-	Converting an unstructured mesh to a structured mesh usually requires rewritting a good part of the geometry. Begin by drawing by-hand and check that all of your surfaces have only four points each.
+	Converting an unstructured mesh to a structured mesh usually requires rewriting a good part of the geometry. Begin by drawing by-hand and check that all of your surfaces have only four points each.
 
 2. Define ``Transfinite Line`` (before ``Line Loop``), with:
 	
@@ -392,7 +392,7 @@ Here is the mesh generated with the previous settings around the plate:
 .. image:: images/boundaryLayer/noFan.png
     :alt: The mesh generated with a BoundaryLayer Field around the plate
     :align: center
-    :name: bondary layer basic
+    :name: boundary layer basic
     :width: 600
     
 5. The result is interesting, although the elements at the corners are skewed. This can be solved by feeding the field a list of the points at the corners which will be defined as FanPoints. Then, one may refine the mesh by specifying a number of elements for each fan. Alternatively, the size can be defined as the same for all points, see the commented line below.

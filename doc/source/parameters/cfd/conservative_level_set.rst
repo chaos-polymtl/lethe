@@ -90,7 +90,7 @@ Interface Reinitialization Method
 
 The ``subsection interface reinitialization method`` defines parameters to counter numerical diffusion of the CLS method and to avoid the interface between the two fluids becoming more and more blurry after each time step.
 
-* ``type``: sets the method of reinitialization. There are four methods available:``none``, ``projection-based interface sharpening``, ``geometric interface reinitialization``, and ``pde-based interface reinitialization``. If ``none`` is selected, the interface is not regularized. The three other types are described bellow along with their corresponding subsection.
+* ``type``: sets the method of reinitialization. There are four methods available:``none``, ``projection-based interface sharpening``, ``geometric interface reinitialization``, and ``pde-based interface reinitialization``. If ``none`` is selected, the interface is not regularized. The three other types are described below along with their corresponding subsection.
 * ``frequency``: indicates the frequency at which the reinitialization process is applied to the CLS phase indicator field. For instance, if the user specifies ``frequency = 2``, the interface will be regularized once every :math:`2` time steps.
 
 * ``verbosity``: displays the solution process of the reinitialization method. The different levels of verbosity are:

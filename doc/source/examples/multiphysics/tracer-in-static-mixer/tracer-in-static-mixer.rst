@@ -242,7 +242,7 @@ We use ``average_velocity_profile`` from the previous simulation as the initial 
 Running the Simulation
 ----------------------
 
-As previously mentionned, the case is run in two steps:
+As previously mentioned, the case is run in two steps:
 
 #. Simulation to reach a pseudo steady-state of the flow field;
 #. Transient simulation to transport tracer through the domain.

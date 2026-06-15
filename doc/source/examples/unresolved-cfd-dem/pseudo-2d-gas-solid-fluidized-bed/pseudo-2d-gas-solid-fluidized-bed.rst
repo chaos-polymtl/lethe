@@ -283,7 +283,7 @@ For the fluid boundary conditions, the left and right walls (ID = 3) are treated
 Void Fraction
 ~~~~~~~~~~~~~~~
 
-The void fraction calculation uses the checkpoint files from the previous DEM simulation, with the ``dem`` prefix. Then, the Quadrature Centered Method (``qcm``) is employed to carry out the calculation. We set a very small smoothing coefficient of approximatively :math:`d_p` to ensure that the void fraction remains bounded. More information about the different methods used to calculate the void fraction is given in the Lethe documentation (`Void fraction section <../../../theory/multiphase/cfd_dem/unresolved_cfd-dem.html#void-fraction>`_).
+The void fraction calculation uses the checkpoint files from the previous DEM simulation, with the ``dem`` prefix. Then, the Quadrature Centered Method (``qcm``) is employed to carry out the calculation. We set a very small smoothing coefficient of approximately :math:`d_p` to ensure that the void fraction remains bounded. More information about the different methods used to calculate the void fraction is given in the Lethe documentation (`Void fraction section <../../../theory/multiphase/cfd_dem/unresolved_cfd-dem.html#void-fraction>`_).
 
 .. code-block:: text
 

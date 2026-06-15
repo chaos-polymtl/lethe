@@ -252,7 +252,7 @@ The ``simulation control`` subsection controls the flow of the simulation. To ma
 Other Subsections
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-The ``non-linear solver`` and ``linear solver`` subsections use the same parameters as the `Taylor-Green Vortex <https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-taylor-green-vortex/3d-taylor-green-vortex.html>`_ example. More details can be found in this example and a complete overview of the ``lethe-fluid-matrix-free`` linear solver can be found in the the :doc:`../../../parameters/cfd/linear_solver_control` section.
+The ``non-linear solver`` and ``linear solver`` subsections use the same parameters as the `Taylor-Green Vortex <https://chaos-polymtl.github.io/lethe/documentation/examples/incompressible-flow/3d-taylor-green-vortex/3d-taylor-green-vortex.html>`_ example. More details can be found in this example and a complete overview of the ``lethe-fluid-matrix-free`` linear solver can be found in the :doc:`../../../parameters/cfd/linear_solver_control` section.
 
 ----------------------
 Running the Simulation

@@ -232,7 +232,7 @@ to run the post-processing script:
 .. warning::
     Make sure the simulations using the parameter files ``cylinder-xi-0_01.prm``, ``cylinder-xi-1.prm`` and ``cylinder-xi-100.prm`` were launched before calling the script.
 
-To vizualise the results:
+To visualize the results:
 
 .. code-block:: text
   :class: copy-button

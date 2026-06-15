@@ -70,7 +70,7 @@ Here, the constructor ``lethe_pyvista_tools`` receives three arguments: ``case_p
 
 .. note:: 
   
-  If we set ``first = 2``, ``particles.time_list[0]`` will return the time corresponding to the second time step. In all situations from now on, everytime we refer to a time step, it will correspond to a dataset.
+  If we set ``first = 2``, ``particles.time_list[0]`` will return the time corresponding to the second time step. In all situations from now on, every time we refer to a time step, it will correspond to a dataset.
 
 .. tip::
   Together with the object ``particles``, ``lethe_pyvista_tools`` creates a dictionary with all parameters in the ``.prm`` file. To access the parameter, we can use ``particles.prm_dict['$NAME_OF_THE_PARAMETER']``. In the present case for example, the diameter of the particles can be easily printed using ``print(particles.prm_dict['diameter'])``. This can be useful for post-processing routines with multiple simulations.

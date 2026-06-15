@@ -211,7 +211,7 @@ The ``enable lubrication force`` is set to false as the subgrid model use to cal
 
 Since our particle is a cuboid, we will have to define a few more parameters than for a sphere.
 
-* ``type`` is set to ``superquadric``. In the experimental setup, the cuboid particle has a beveled edge, for which the dimentions are not properly reported in the paper of reference. In order to represent this cuboid shape, we make use of a superquadric. The rounded edges will therefore give a rough approximation of the beveled geometry and help reduce difficulties of modelling with sharp edges. The shape arguments are set to ``1.;1.;1.;5;5;5``. The first three parameters are the half-lengths of the cuboid in the x, y and z directions. The last three parameters are the exponents of the superquadric shape; the higher the exponent, the sharper the edge. 
+* ``type`` is set to ``superquadric``. In the experimental setup, the cuboid particle has a beveled edge, for which the dimensions are not properly reported in the paper of reference. In order to represent this cuboid shape, we make use of a superquadric. The rounded edges will therefore give a rough approximation of the beveled geometry and help reduce difficulties of modelling with sharp edges. The shape arguments are set to ``1.;1.;1.;5;5;5``. The first three parameters are the half-lengths of the cuboid in the x, y and z directions. The last three parameters are the exponents of the superquadric shape; the higher the exponent, the sharper the edge. 
 
 * ``position`` Function expression is set to ``20;70;20``. This is the initial position corresponds to the center of the drop tower.
 
@@ -263,7 +263,7 @@ First, we can look at a slice of the velocity profile during the simulation. The
 
     <iframe width="560" height="315" src="https://www.youtube.com/embed/JkuSbaswFao" frameborder="0" allowfullscreen></iframe>
 
-We can also compare the results obtained for the velocity in time with the results proposed by the article of Wang `et al.` [#Wang2024]_, which are stored in the ``S18.dat`` file. They chose to represent the velocity as a function of a dimentionless settling time :math:`t^*`, defined as:
+We can also compare the results obtained for the velocity in time with the results proposed by the article of Wang `et al.` [#Wang2024]_, which are stored in the ``S18.dat`` file. They chose to represent the velocity as a function of a dimensionless settling time :math:`t^*`, defined as:
 
 .. math:: t^* = \frac{a}{U_c}, \quad U_c = \sqrt{\frac{4 g a |\rho_p - \rho_f|}{3 \rho_f}}
 

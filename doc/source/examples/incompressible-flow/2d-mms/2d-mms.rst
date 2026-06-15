@@ -261,7 +261,7 @@ Finally, for the same degree of the velocity and pressure approximations and the
 Possibilities for Extension
 ----------------------------
 
-- **Use more complex analytical functions:**  Using a non-divergence free velocity field leads to the apperance of a source term in the mass conservation equation, as well as the contribution of all the components of the stress tensor in the momentum conservation equations. More complex manufactured solutions may be found in Blais and Bertrand (2015) [#Blais2015]_.
+- **Use more complex analytical functions:**  Using a non-divergence free velocity field leads to the appearance of a source term in the mass conservation equation, as well as the contribution of all the components of the stress tensor in the momentum conservation equations. More complex manufactured solutions may be found in Blais and Bertrand (2015) [#Blais2015]_.
 
 - **Unsteady equations:** Using the transient form of the equations with a manufactured solution that also depends on time provides insight into the convergence in time.
 

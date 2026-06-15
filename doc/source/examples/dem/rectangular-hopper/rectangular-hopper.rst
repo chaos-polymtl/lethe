@@ -138,7 +138,7 @@ Model parameters are based on the `Silo example <../silo/silo.html>`_.
         set dynamic contact search size coefficient = 0.9
         set neighborhood threshold                  = 1.3
       end
-      subsection load balacing
+      subsection load balancing
         set load balance method                     = frequent
         set frequency                               = 50000
       end

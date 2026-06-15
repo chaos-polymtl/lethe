@@ -243,7 +243,7 @@ We call the lethe-fluid by invoking:
   mpirun -np $number_of_CPU_cores lethe-fluid 3d-dam-break.prm
 
 .. warning::
-    Make sure to compile Lethe in `Release` mode and run in parallel using ``mpirun``. This simulation took :math:`\approx` 17 hours on 64 processes (runned on the `Narval <https://docs.alliancecan.ca/wiki/Narval/en>`_ cluster).
+    Make sure to compile Lethe in `Release` mode and run in parallel using ``mpirun``. This simulation took :math:`\approx` 17 hours on 64 processes (run on the `Narval <https://docs.alliancecan.ca/wiki/Narval/en>`_ cluster).
 
 .. _Results:
 
