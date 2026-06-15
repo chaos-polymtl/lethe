@@ -69,7 +69,7 @@ html_favicon = '_static/lethe_favicon.ico'
 latex_engine = 'xelatex'
 latex_elements = {
     'preamble': r'''
-% Enable unicode and use Courier New to ensure unicode characters are redender correctly
+% Enable unicode and use Courier New to ensure unicode characters are rendered correctly
 \usepackage{fontspec}
 \setmonofont{Courier New}
 ''',
