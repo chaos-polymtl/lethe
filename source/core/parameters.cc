@@ -2303,7 +2303,8 @@ namespace Parameters
                   "Error, the only valid variables for a 'isocontour bounding box' are: 'temperature' or 'phase'.");
 
               // Get isovalue and output filename
-              isocontour.isovalue    = std::stod(isovalue_vec[i]);
+              isocontour.isovalue =
+                Utilities::string_to_double(isovalue_vec[i]);
               isocontour.output_name = filename_vec[i];
 
               // Insert isocontour in map
@@ -3700,8 +3701,10 @@ namespace Parameters
             throw std::logic_error(
               "Error, invalid mesh adaptation error estimator. Choices are kelly or dpg");
 
-          var_adaptation_param.coarsening_fraction = std::stod(coars_vec[i]);
-          var_adaptation_param.refinement_fraction = std::stod(refin_vec[i]);
+          var_adaptation_param.coarsening_fraction =
+            Utilities::string_to_double(coars_vec[i]);
+          var_adaptation_param.refinement_fraction =
+            Utilities::string_to_double(refin_vec[i]);
 
           // defining adaptation map for this variable
           variables[vars] = var_adaptation_param;
