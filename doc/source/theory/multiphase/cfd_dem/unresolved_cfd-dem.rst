@@ -216,35 +216,60 @@ This function is similar to the weighting function used in the Particle-in-Cell 
 
 The Quadrature Centered Method
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The Quadrature Centered Method (QCM) [#geitani2023]_  is an analytical method that decouples the averaging volume from the mesh cells. It constructs an averaging sphere centered at each quadrature point in a given cell, and it calculates the void fraction directly in the averaging volume at the quadrature point. Since the sphere-sphere (particle-averaging sphere) intersection is analytically easier to calculate than sphere-polyhedron (particle-mesh cell), this method is less expensive than other analytical methods as the intersection does not involve the calculation of trigonometric functions at each CFD time step. The advantage of this method is that the void fraction varies within a cell. Additionally, particles in neighboring cells can affect the void fraction of the current cell. This allows the method to be continuous in both space and time. This is advantageous, especially in solid-liquid systems where the term :math:`\rho_f \frac{\partial \epsilon_f}{\partial t}` of the continuity equation is very stiff and unstable, when there exist even small discontinuities in the void fraction, and where it explodes when :math:`\Delta t_{CFD} \to 0`.
+The Quadrature Centered Method (QCM) [#geitani2023]_  is an analytical method that decouples the averaging volume from the mesh cells. It constructs a weighting kernel centered at each quadrature point in a given cell, and it calculates the void fraction directly at the quadrature point. The advantage of this approach is that the void fraction varies within a cell. Additionally, particles in neighboring cells can affect the void fraction of the current cell. This allows the method to be continuous in both space and time. This is advantageous, especially in solid-liquid systems where the term :math:`\rho_f \frac{\partial \epsilon_f}{\partial t}` of the continuity equation is very stiff and unstable: even small discontinuities in the void fraction can lead to unbounded behavior of this term as :math:`\Delta t_{\mathrm{CFD}} \to 0`.
 
-An averaging volume sphere is constructed around each quadrature point. All particles lying in the sphere will contribute to the void fraction value of this quadrature point. Therefore, a cell will be affected by the particles lying in it and in its neighboring cells.
+The void fraction at the quadrature point using QCM is calculated as:
+
+.. math:: 
+      \epsilon_f (\mathbf{x}_q,t) = 1-\sum_{i}{k_r \left (\lVert \mathbf{x}_q - \mathbf{x}_i \rVert \right ) V_{\mathrm{p},i}}
+    
+The weighting function is also used to compute the fluid–particle momentum exchange term. Integrating this term over the computational domain demonstrates that the formulation also satisfies Newton’s third law for both kernels (the corresponding expression is shown for Model B without loss of generality):
+
+.. math:: 
+      \int_{\Omega} \mathbf{f}_{\mathrm{pf}}  d\mathbf{x} = \sum_{q} \sum_{i}{\left(-\mathbf{F}_{{\mathrm{fp},i}} \right) k_r \left (\lVert \mathbf{x}_q - \mathbf{x}_i \rVert \right )} \times w_q|J| = \sum_{i} \left(-\mathbf{F}_{{\mathrm{fp},i}} \right)
+
+where :math:`w_q|J|` is the weight at the quadrature point located at :math:`\mathbf{x}_q`, multiplied by the volume of the cell containing the quadrature point. 
+
+Two types of weighting kernels centered on the quadrature points can be used in Lethe: a top hat kernel defined using the intersection of the particles with a sphere and a Gaussian kernel.
+
+The Particle-Sphere Intersection Kernel
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+An averaging volume sphere is constructed around each quadrature point. All particles lying in the sphere will contribute to the void fraction value at this quadrature point. Therefore, a cell will be affected by the particles lying in it and in its neighboring cells.
 
 .. image:: images/qcm.png
    :width: 49% 
    :align: center
 
-The void fraction at the quadrature point using QCM is:
-
-.. math:: 
-      \epsilon_f (\mathbf{x}_q,t) = 1-\sum_{i}{\frac{V_{\mathrm{p},i}}{\sum_{q}{V_{\mathrm{p}\cap S_q}}}V_{\mathrm{p}\cap S_Q}\frac{1}{w_q|J|}}
-    
-where :math:`S_q` is the sphere centered at :math:`\mathbf{x}_q`, :math:`V_{p\cap S_q}` is the intersection volume of the particle with the sphere, :math:`w_q|J|` is the weight at the quadrature point located at :math:`\mathbf{x}_q`, multiplied by the volume of the cell containing the quadrature point. The division by the product of the latter term and :math:`\sum_{q}{V_{\mathrm{p}\cap S_q}}` is done to ensure mass conservation over the whole domain. The corresponding weighting function is:
+The resulting kernel is a smoothed top-hat kernel defined by the intersection of the particles with the sphere centered at the quadrature point, as follows:
 
 .. math:: 
       k_r \left (\lVert \mathbf{x}_q - \mathbf{x}_i \rVert \right )  = \frac{1}{\sum_{q}{V_{p\cap S_q}}}V_{p\cap S_q}\frac{1}{w_q|J|}
 
-This weighting function is also used to compute the fluid–particle momentum exchange term. Integrating this term over the computational domain demonstrates that the formulation also satisfies Newton’s third law (the corresponding expression is shown for Model B without loss of generality):
+where :math:`S_q` is the sphere centered at :math:`\mathbf{x}_q`, and :math:`V_{p\cap S_q}` is the intersection volume of the particle with the sphere. The division by the product of the latter term and :math:`\sum_{q}{V_{\mathrm{p}\cap S_q}}` is done to ensure mass conservation over the whole domain.
+
+Since the sphere-sphere (particle-averaging sphere) intersection is analytically easier to calculate than sphere-polyhedron (particle-mesh cell), this method is less expensive than other analytical methods as the intersection does not involve the calculation of trigonometric functions at each CFD time step.
+
+The Gaussian Kernel
+^^^^^^^^^^^^^^^^^^^
+The Gaussian kernel is defined as a smooth function that assigns weights to particles based on their distance from the quadrature point, as follows:
 
 .. math:: 
-      \int_{\Omega} \mathbf{f}_{\mathrm{pf}}  d\mathbf{x} = \sum_{q} \sum_{i}{\left(-\mathbf{F}_{{\mathrm{fp},i}} \right)\frac{1}{\sum_{q}{V_{p\cap S_q}}}V_{p\cap S_q}\frac{1}{w_q|J|}} \times w_q|J| = \sum_{i} \left(-\mathbf{F}_{{\mathrm{fp},i}} \right)
+      k_r \left (\lVert \mathbf{x}_q - \mathbf{x}_i \rVert \right )  = \frac{G\left (\lVert \mathbf{x}_q - \mathbf{x}_i \rVert \right )}{\sum_{q}G\left (\lVert \mathbf{x}_q - \mathbf{x}_i \rVert \right )}\frac{1}{w_q|J|}
 
-The averaging spheres must be sufficiently large to ensure that all particles in the domain contribute to the averaged void fraction, which can be achieved by selecting an adequate number of quadrature points together with an appropriate averaging radius, :math:`R_s`. However, in Lethe, the radius of the averaging spheres is currently constrained by the mesh resolution. Since each cell only has access to its direct neighboring cells, the averaging volume cannot extend beyond this local neighborhood. Consequently, the radius of the averaging spheres must satisfy:
+where :math:`G\left (\lVert \mathbf{x}_q - \mathbf{x}_i \rVert \right )` is the Gaussian function defined as:
+ 
+.. math:: 
+    G\left (\lVert \mathbf{x}_q - \mathbf{x}_i \rVert \right ) = \frac{1}{(2\pi\sigma^2)^{3/2}} \exp\left(-\frac{\lVert \mathbf{x}_q - \mathbf{x}_i \rVert^2}{2\sigma^2}\right)
+
+with :math:`\sigma` being the standard deviation of the Gaussian distribution, controlling the spread of the kernel. This kernel is also normalized to ensure mass conservation over the whole domain.
+
+
+Regardless of its type, the kernel must be sufficiently wide to ensure that all particles in the domain contribute to the averaged void fraction. This can be achieved by selecting an adequate number of quadrature points together with an appropriate kernel length, :math:`R_{\rm{qcm}}` (radius of the sphere intersection kernel and standard deviation for the Gaussian kernel). However, in Lethe, the kernel length is currently constrained by the mesh resolution. Since each cell only has access to its direct neighboring cells, the weighting kernel cannot extend beyond this local neighborhood. Consequently, the kernel length must satisfy:
 
 .. math:: 
-    R_s \leq h_{\Omega}
+    R_{\rm{qcm}} \leq h_{\Omega}
 
-where :math:`h_{\Omega}` denotes the characteristic cell size. This limitation may be relaxed in future versions of Lethe.
+where :math:`h_{\Omega}` denotes the characteristic cell size to ensure access to the particles. In addition, for the Gaussian kernel, larger values of :math:`\sigma` would produce a filter increasingly similar to a top-hat kernel, so the smoothing properties of the Gaussian formulation would not be fully exploited. This limitation may be relaxed in future versions of Lethe.
 
 References
 -----------
