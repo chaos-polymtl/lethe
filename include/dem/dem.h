@@ -420,8 +420,6 @@ private:
    */
   std::vector<double> displacement;
 
-  std::unordered_map<unsigned int, Point<dim>> previous_position;
-
   /**
    * @brief The moment of inertia of particles.
    */

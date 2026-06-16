@@ -1576,22 +1576,22 @@ private:
       {
         particle_one_new_position =
           particle_one_position -
-          (0.501 * normal_overlap + 0.005 * diameter_one) *
+          (0.501 * normal_overlap + 0.001 * diameter_one) *
             tensor_nd_to_2d(normal_unit_vector);
         particle_two_new_position =
           particle_two_position +
-          (0.501 * normal_overlap + 0.005 * diameter_one) *
+          (0.501 * normal_overlap + 0.001 * diameter_one) *
             tensor_nd_to_2d(normal_unit_vector);
       }
     if constexpr (dim == 3)
       {
         particle_one_new_position =
           particle_one_position -
-          (0.501 * normal_overlap + 0.005 * diameter_one) * normal_unit_vector;
+          (0.501 * normal_overlap + 0.001 * diameter_one) * normal_unit_vector;
 
         particle_two_new_position =
           particle_two_position +
-          (0.501 * normal_overlap + +0.005 * diameter_two) * normal_unit_vector;
+          (0.501 * normal_overlap + 0.001 * diameter_two) * normal_unit_vector;
       }
 
     auto cell_one = particle_one->get_surrounding_cell();

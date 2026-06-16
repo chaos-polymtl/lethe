@@ -841,7 +841,6 @@ DEMSolver<dim, PropertiesIndex>::sort_particles_into_subdomains_and_cells()
         particle_handler.get_max_local_particle_index();
       // Resize displacement container
       displacement.resize(number_of_particles);
-      previous_position.reserve(number_of_particles);
       // Resize outcome containers
       contact_outcome.resize_interaction_containers(number_of_particles);
       MOI.resize(number_of_particles);
@@ -865,10 +864,9 @@ template <int dim, typename PropertiesIndex>
 void
 DEMSolver<dim, PropertiesIndex>::update_previous_position()
 {
-  previous_position.clear();
   for (auto cell : triangulation.active_cell_iterators())
     {
-      if (!cell->is_locally_owned() && !cell->is_ghost())
+      if (!cell->is_locally_owned())
         continue;
 
       // Particles in the cell
@@ -883,8 +881,19 @@ DEMSolver<dim, PropertiesIndex>::update_previous_position()
            particle_in_cell != particles_in_cell.end();
            ++particle_in_cell)
         {
-          unsigned int particle_id       = particle_in_cell->get_id();
-          previous_position[particle_id] = particle_in_cell->get_location();
+          auto particle_properties = particle_in_cell->get_properties();
+          particle_in_cell->get_properties();
+
+          Point<dim> particle_previous_position =
+            particle_in_cell->get_location();
+
+          particle_properties[PropertiesIndex::v_x] =
+            particle_previous_position[0];
+          particle_properties[PropertiesIndex::v_y] =
+            particle_previous_position[1];
+          if constexpr (dim == 3)
+            particle_properties[PropertiesIndex::v_z] =
+              particle_previous_position[2];
         }
     }
 }
@@ -893,42 +902,40 @@ template <int dim, typename PropertiesIndex>
 void
 DEMSolver<dim, PropertiesIndex>::clamp_displacement()
 {
-  const double max_disp = 2.5 * maximum_particle_diameter;
+  const double max_disp = maximum_particle_diameter;
 
-  for (const auto &cell : triangulation.active_cell_iterators())
+  for (auto particle = particle_handler.begin();
+       particle != particle_handler.end();
+       ++particle)
     {
-      if (!cell->is_locally_owned())
+      auto particle_properties = particle->get_properties();
+
+      Point<dim> previous_position;
+      previous_position[0] = particle_properties[PropertiesIndex::v_x];
+      previous_position[1] = particle_properties[PropertiesIndex::v_y];
+      if constexpr (dim == 3)
+        previous_position[2] = particle_properties[PropertiesIndex::v_z];
+
+      const Tensor<1, dim> displacement_tensor =
+        particle->get_location() - previous_position;
+
+      const double disp_norm = displacement_tensor.norm();
+
+      // No movement
+      if (std::isnan(disp_norm))
         continue;
 
-      const auto particles_in_cell =
-        particle_handler.particles_in_cell(cell);
-      if (particles_in_cell.empty())
-        continue;
-
-      for (auto &particle : particles_in_cell)
+      const unsigned int particle_id = particle->get_local_index();
+      if (disp_norm > max_disp)
         {
-          const unsigned int particle_id = particle.get_id();
-
-          const Tensor<1, dim> displacement_tensor =
-            particle.get_location() - previous_position[particle_id];
-
-          const double disp_norm = displacement_tensor.norm();
-
-          // No mouvement
-          if (std::isnan(disp_norm))
-            continue;
-
-          if (disp_norm > max_disp)
-            {
-              // Clamp position to at most max_disp from the previous position
-              particle.set_location(previous_position[particle_id] +
-                                    (max_disp / disp_norm) * displacement_tensor);
-              displacement[particle_id] += max_disp; // actual travel = max_disp
-            }
-          else
-            {
-              displacement[particle_id] += disp_norm;
-            }
+          // Clamp position to at most max_disp from the previous position
+          particle->set_location(previous_position +
+                                (max_disp / disp_norm) * displacement_tensor);
+          displacement[particle_id] += max_disp;
+        }
+      else
+        {
+          displacement[particle_id] += disp_norm;
         }
     }
 }
