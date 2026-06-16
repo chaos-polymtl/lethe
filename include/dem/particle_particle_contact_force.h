@@ -23,10 +23,10 @@ using namespace dealii;
 
 /**
  * @brief Base class for the particle-particle contact force models
- * This class does not implement any of the models, but ensures that
+ * This class does not implement any of the models but ensures that
  * an interface without template specialization is available. All the
- * actual implementation of the models are carried out in the
- * ParticleParticleContactForce class which is templated by the contact model
+ * actual implementations of the models are carried out in the
+ * ParticleParticleContactForce class, which is templated by the contact model
  * type.
  * @tparam dim An integer that denotes the number of spatial dimensions.
  * @tparam PropertiesIndex Index of the properties used within the
@@ -101,9 +101,8 @@ public:
   }
 
   /**
-   * @brief
-   *
-   * @param
+   * @brief Return the number of contact that occurred in the
+   * present pseudo-time step when using the shift insertion method.
    */
   unsigned int
   get_number_of_contacts() const
@@ -112,9 +111,7 @@ public:
   }
 
   /**
-   * @brief
-   *
-   * @param
+   * @brief Reset the counter of number of contact for the next pseudo-time step.
    */
   void
   reset_number_of_contacts()
@@ -123,6 +120,7 @@ public:
   }
 
 protected:
+  // Number of contact counter
   unsigned int n_contact = 0;
 
   /**
@@ -209,7 +207,7 @@ protected:
    * calculations.
    *
    * @param[out] contact_info Contact information of a particle pair in
-   * neighborhood.
+   * the neighborhood.
    * @param[out] tangential_relative_velocity Tangential relative velocity.
    * @param[out] normal_relative_velocity_value Normal relative contact
    * velocity.
@@ -272,7 +270,7 @@ protected:
       normal_unit_vector));
 
     // Calculation of normal relative velocity. Note that in the
-    // following line the product acts as inner product since both
+    // following line the product acts as the inner product since both
     // sides are vectors, while in the second line the product is
     // scalar and vector product
     normal_relative_velocity_value =
@@ -284,11 +282,11 @@ protected:
       contact_relative_velocity -
       (normal_relative_velocity_value * normal_unit_vector);
 
-    // Calculation of new tangential_displacement, since this value is history
-    // dependent it needs the value at previous time step. This variable is the
-    // main reason that we have iteration over two different vectors :
-    // tangential_displacement of the particles which were already in contact
-    // needs to be modified using its history, while the
+    // Calculation of new tangential_displacement, since this value is
+    // history-dependent, it needs the value at a previous time step. This
+    // variable is the main reason that we have iteration over two different
+    // vectors: tangential_displacement of the particles which were already in
+    // contact needs to be modified using its history, while the
     // tangential_displacements of new particles are equal to zero
     // delta_t_new = delta_t_old + v_rt*dt
     contact_info.tangential_displacement += tangential_relative_velocity * dt;
@@ -343,7 +341,8 @@ protected:
    * contact.
    * @param[in] tangential_relative_velocity Tangential relative velocity.
    * @param[in] normal_relative_velocity_value Normal relative contact velocity.
-   * @param[in] normal_unit_vector Contact normal unit vector.
+   * @param[in] normal_unit_vector Normal unit vector between particles in
+   * interaction.
    * @param[in] normal_overlap Contact normal overlap.
    * @param[in] dt DEM time step.
    * @param[in] particle_one_properties Properties of particle one in contact.
@@ -514,7 +513,7 @@ protected:
           *(std::min_element(this->effective_surface_energy.begin(),
                              this->effective_surface_energy.end()));
 
-        // Return the critical delta_0. We put a minus sign in front of since a
+        // Return the critical delta_0. We put a minus sign in front since a
         // positive overlap means that particles are in contact.
         return -std::sqrt(
           max_effective_hamaker_constant /
@@ -591,7 +590,7 @@ private:
   }
 
   /**
-   * @brief Calculate the effective mass and the effective radius of particle
+   * @brief Calculate the effective mass and the effective radius of the particle
    * pair.
    *
    * @param[in] particle_one_properties Properties of particle one in contact.
@@ -626,7 +625,6 @@ private:
    * @param[in] rolling_friction_coeff Effective rolling friction coefficient.
    * @param[in] rolling_viscous_damping_coeff Effective rolling viscous damping
    * coefficient
-   * @param[in] f_coeff Model parameter for the EPSD model.
    * @param[in] dt DEM time step.
    * @param[in] normal_spring_constant normal contact stiffness constant.
    * @param[in] normal_force_norm Norm of the normal force.
@@ -702,7 +700,8 @@ private:
    * contact.
    * @param[in] tangential_relative_velocity Tangential relative velocity.
    * @param[in] normal_relative_velocity_value Normal relative contact velocity.
-   * @param[in] normal_unit_vector Contact normal unit vector.
+   * @param[in] normal_unit_vector Normal unit vector between particles in
+   * interaction.
    * @param[in] normal_overlap Contact normal overlap.
    * @param[in] dt DEM time step.
    * @param[in] particle_one_properties Properties of particle one in contact.
@@ -771,8 +770,8 @@ private:
           0.2);
 
     // Calculate the tangential spring constant
-    // REF :  R. Garg, J. Galvin-Carney, T. Li, and S. Pannala,“Documentation of
-    // open-source MFIX–DEM software for gas-solids flows,” Tingwen Li Dr., p.
+    // REF: R. Garg, J. Galvin-Carney, T. Li, and S. Pannala, “Documentation of
+    // open-source MFIX–DEM software for gas-solids flows”, Tingwen Li Dr., p.
     // 10, Sep. 2012.
     double tangential_spring_constant = normal_spring_constant * 0.4;
 
@@ -805,8 +804,8 @@ private:
     // Check for gross sliding
     if (tangential_force.norm() > coulomb_threshold)
       {
-        // Gross sliding occurs and the tangential displacement is recalculated
-        // from the tangential force limited to Coulomb's criterion
+        // Gross sliding occurs. The tangential displacement is recalculated
+        // from the tangential force limited to Coulomb's criterion.
         const Tensor<1, 3> limited_tangential_force =
           coulomb_threshold *
           (tangential_force / (tangential_force.norm() + DBL_MIN));
@@ -857,7 +856,8 @@ private:
    * contact.
    * @param[in] tangential_relative_velocity Tangential relative velocity.
    * @param[in] normal_relative_velocity_value Normal relative contact velocity.
-   * @param[in] normal_unit_vector Contact normal unit vector.
+   * @param[in] normal_unit_vector Normal unit vector between particles in
+   * interaction.
    * @param[in] normal_overlap Contact normal overlap.
    * @param[in] dt DEM time step.
    * @param[in] particle_one_properties Properties of particle one in contact.
@@ -937,7 +937,7 @@ private:
     double tangential_spring_constant =
       8.0 * shear_modulus * radius_times_overlap_sqrt;
 
-    // Calculate the tangential damping constant from ratio with the normal
+    // Calculate the tangential damping constant from the ratio with the normal
     // damping constant, but the equation is:
     // eta_t = -2 * sqrt(5/6) * beta * sqrt(St * me)
     double tangential_damping_constant =
@@ -962,7 +962,7 @@ private:
     // Check for gross sliding
     if (tangential_force.norm() > coulomb_threshold)
       {
-        // Gross sliding occurs and the tangential displacement is recalculated
+        // Gross sliding occurs. The tangential displacement is recalculated
         // from the tangential force limited to Coulomb's criterion
         const Tensor<1, 3> limited_tangential_force =
           coulomb_threshold *
@@ -1091,7 +1091,7 @@ private:
     double tangential_spring_constant =
       8.0 * shear_modulus * radius_times_overlap_sqrt;
 
-    // Calculate the tangential damping constant from ratio with the normal
+    // Calculate the tangential damping constant from the ratio with the normal
     // damping constant, but the equation is:
     // eta_t = -2 * sqrt(5/6) * beta * sqrt(St * me)
     double tangential_damping_constant =
@@ -1116,7 +1116,7 @@ private:
     // Check for gross sliding
     if (tangential_force.norm() > coulomb_threshold)
       {
-        // Gross sliding occurs and the tangential displacement and tangential
+        // Gross sliding occurs. The tangential displacement and tangential
         // force are limited to Coulomb's criterion
         tangential_force =
           coulomb_threshold *
@@ -1245,7 +1245,7 @@ private:
     // Check for gross sliding
     if (tangential_force.norm() > coulomb_threshold)
       {
-        // Gross sliding occurs and the tangential displacement and tangential
+        // Gross sliding occurs. The tangential displacement and tangential
         // force are limited to Coulomb's criterion
         tangential_force =
           coulomb_threshold *
@@ -1345,7 +1345,7 @@ private:
       2.0 * youngs_modulus * radius_times_overlap_sqrt;
     double model_parameter_st = 8.0 * shear_modulus * radius_times_overlap_sqrt;
 
-    // Calculation of the  contact path radius using the Ferrari analitycal
+    // Calculation of the contact path radius using the Ferrari analytical
     // solution.
     const double c0 =
       Utilities::fixed_power<2>(effective_radius * normal_overlap);
@@ -1402,7 +1402,7 @@ private:
 
     if (tangential_force.norm() > modified_coulomb_threshold)
       {
-        // Gross sliding occurs and the tangential displacement and tangential
+        // Gross sliding occurs. The tangential displacement and tangential
         // force are limited to Coulomb's criterion
         tangential_force =
           modified_coulomb_threshold *
@@ -1498,7 +1498,7 @@ private:
     // first vector inside the tuple.
     double cohesive_term;
 
-    // Contact between particle + constant cohesive force.
+    // Contact between particles + constant cohesive force.
     if (normal_overlap > 0.)
       {
         cohesive_term = -F_po;
@@ -1525,7 +1525,7 @@ private:
         contact_info.tangential_displacement.clear();
         contact_info.rolling_resistance_spring_torque.clear();
       }
-    // No contact. Particle are far from each other. The cohesive force is not
+    // No contact. Particles are far from each other. The cohesive force is not
     // constant. It needs to be computed.
     else
       {
@@ -1873,7 +1873,7 @@ private:
             particle_two_location = get_location(particle_two);
           }
 
-        // Get particle 2 location in periodic boundary
+        // Get particle 2 periodic location.
         if constexpr (contact_type ==
                         ContactType::local_periodic_particle_particle ||
                       contact_type ==
@@ -1891,8 +1891,8 @@ private:
                  particle_two_properties[PropertiesIndex::dp]) -
           particle_one_location.distance(particle_two_location);
 
-        // Get the threshold distance for contact force, this is useful for non-
-        // contact cohesive force models such as the DMT.
+        // Get the threshold distance for contact force, this is useful for
+        // non-contact cohesive force models such as the DMT.
         const double force_calculation_threshold_distance =
           get_force_calculation_threshold_distance();
 
@@ -1902,7 +1902,7 @@ private:
             // are the same for all local-local and local-ghost contact.
             // However, they are based on particle two for ghost-local periodic
             // contact, where particle one is the ghost particle, so the order
-            // of particles given to the function are reversed.
+            // of particles given to the function is reversed.
             if constexpr (contact_type ==
                             ContactType::local_particle_particle ||
                           contact_type ==
@@ -1923,7 +1923,7 @@ private:
                                                  particle_two_location,
                                                  dt);
 
-                // Calculation the contact force
+                // Calculation of the contact force
                 this->calculate_contact(contact_info,
                                         tangential_relative_velocity,
                                         normal_relative_velocity_value,
@@ -1960,7 +1960,7 @@ private:
                                                  particle_one_location,
                                                  dt);
 
-                // Calculation the contact force
+                // Calculation of the contact force
                 this->calculate_contact(contact_info,
                                         tangential_relative_velocity,
                                         normal_relative_velocity_value,
@@ -2158,8 +2158,6 @@ private:
   std::vector<double> thermal_conductivity_particle;
   std::vector<double> gas_parameter_m;
   double              thermal_conductivity_gas;
-
-  const double displacement_factor;
 };
 
 #endif
