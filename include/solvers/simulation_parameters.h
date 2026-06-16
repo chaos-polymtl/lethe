@@ -136,7 +136,7 @@ public:
                                                         cls_subequation_name);
       }
 
-    Parameters::PostProcessing::declare_parameters(prm);
+    post_processing.declare_parameters(prm);
     Parameters::DynamicFlowControl ::declare_parameters(prm);
     particlesParameters = std::make_shared<Parameters::IBParticles<dim>>();
     particlesParameters->declare_parameters(prm);

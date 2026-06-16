@@ -1432,6 +1432,7 @@ template class InterfaceTools::
 #endif
 
 template struct InterfaceTools::IsocontourBoundingValues<2>;
+template struct InterfaceTools::IsocontourBoundingValues<3>;
 
 template <int dim, typename VectorType>
 InterfaceTools::IsocontourBoundingValues<dim>
@@ -1449,10 +1450,14 @@ InterfaceTools::compute_isocontour_bounding_values(
   // Initialize IsocontourBoundingValues object and reference variables for
   // readability
   InterfaceTools::IsocontourBoundingValues<dim> isocontour_bounding_values;
-  double &x_min = isocontour_bounding_values.x_min;
-  double &x_max = isocontour_bounding_values.x_max;
-  double &y_min = isocontour_bounding_values.y_min;
-  double &y_max = isocontour_bounding_values.y_max;
+  double                                       &x_min =
+    isocontour_bounding_values.bounding_values[BoundingCoordinates::x_min];
+  double &x_max =
+    isocontour_bounding_values.bounding_values[BoundingCoordinates::x_max];
+  double &y_min =
+    isocontour_bounding_values.bounding_values[BoundingCoordinates::y_min];
+  double &y_max =
+    isocontour_bounding_values.bounding_values[BoundingCoordinates::y_max];
 
   // Copy values of owned DoFs
   VectorType solution_vector_owned_copy(dof_handler.locally_owned_dofs(),
@@ -1511,10 +1516,16 @@ InterfaceTools::compute_isocontour_bounding_values(
                   y_max = std::max(y_max, p[1]);
                   if constexpr (dim == 3)
                     {
-                      isocontour_bounding_values.z_min =
-                        std::min(isocontour_bounding_values.z_min, p[2]);
-                      isocontour_bounding_values.z_max =
-                        std::max(isocontour_bounding_values.z_max, p[2]);
+                      isocontour_bounding_values
+                        .bounding_values[BoundingCoordinates::z_min] =
+                        std::min(isocontour_bounding_values
+                                   .bounding_values[BoundingCoordinates::z_min],
+                                 p[2]);
+                      isocontour_bounding_values
+                        .bounding_values[BoundingCoordinates::z_max] =
+                        std::max(isocontour_bounding_values
+                                   .bounding_values[BoundingCoordinates::z_max],
+                                 p[2]);
                     }
                 }
             }
@@ -1528,10 +1539,14 @@ InterfaceTools::compute_isocontour_bounding_values(
   y_max = Utilities::MPI::max(y_max, mpi_communicator);
   if constexpr (dim == 3)
     {
-      isocontour_bounding_values.z_min =
-        Utilities::MPI::min(isocontour_bounding_values.z_min, mpi_communicator);
-      isocontour_bounding_values.z_max =
-        Utilities::MPI::max(isocontour_bounding_values.z_max, mpi_communicator);
+      isocontour_bounding_values.bounding_values[BoundingCoordinates::z_min] =
+        Utilities::MPI::min(isocontour_bounding_values
+                              .bounding_values[BoundingCoordinates::z_min],
+                            mpi_communicator);
+      isocontour_bounding_values.bounding_values[BoundingCoordinates::z_max] =
+        Utilities::MPI::max(isocontour_bounding_values
+                              .bounding_values[BoundingCoordinates::z_max],
+                            mpi_communicator);
     }
   isocontour_bounding_values.isocontour_exists =
     Utilities::MPI::logical_or(isocontour_exists, mpi_communicator);
@@ -1552,3 +1567,126 @@ InterfaceTools::compute_isocontour_bounding_values(
   const FiniteElement<3> &fe,
   const GlobalVectorType &solution_vector,
   const double            isovalue);
+
+template <int dim, typename VectorType>
+void
+InterfaceTools::postprocess_isocontour_bounding_values(
+  const std::vector<unsigned int> &isocontour_ids,
+  const std::map<
+    unsigned int,
+    Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour>
+                              &isocontours,
+  const DoFHandler<dim>       &dof_handler,
+  const FiniteElement<dim>    &fe,
+  const VectorType            &solution_vector,
+  const double                 current_time,
+  const Parameters::Verbosity &verbosity,
+  const ConditionalOStream    &pcout,
+  std::vector<TableHandler>   &isocontour_bounding_values_tables)
+{
+  for (unsigned int i = 0; i < isocontour_ids.size(); ++i)
+    {
+      // Get isocontour
+      const Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour
+        &isocontour = isocontours.at(isocontour_ids[i]);
+
+      // Get isocontour bounding values
+      InterfaceTools::IsocontourBoundingValues<dim> isocontour_bounding_values =
+        InterfaceTools::compute_isocontour_bounding_values(dof_handler,
+                                                           fe,
+                                                           solution_vector,
+                                                           isocontour.isovalue);
+
+      if (isocontour_bounding_values.isocontour_exists)
+        {
+          const auto &bounding_coordinates_names =
+            isocontour_bounding_values.bounding_coordinates_names;
+          // Console output
+          if (verbosity == Parameters::Verbosity::verbose)
+            {
+              pcout << "Isocontour " << isocontour_ids[i] << ": "
+                    << isocontour.output_name << std::endl;
+
+              for (unsigned int j = 0; j < bounding_coordinates_names.size();
+                   ++j)
+                {
+                  pcout << bounding_coordinates_names[j] << ": "
+                        << isocontour_bounding_values.bounding_values[j]
+                        << std::endl;
+                }
+            }
+
+          // Fill table
+          const unsigned int table_precision = 6;
+          TableHandler &current_table = isocontour_bounding_values_tables[i];
+
+          current_table.add_value("time", current_time);
+          current_table.set_scientific("time", true);
+          for (unsigned int j = 0; j < bounding_coordinates_names.size(); ++j)
+            {
+              current_table.add_value(
+                bounding_coordinates_names[j],
+                isocontour_bounding_values.bounding_values[j]);
+              current_table.set_precision(bounding_coordinates_names[j],
+                                          table_precision);
+              current_table.set_scientific(bounding_coordinates_names[j], true);
+            }
+        }
+    }
+}
+
+template void
+InterfaceTools::postprocess_isocontour_bounding_values(
+  const std::vector<unsigned int> &isocontour_ids,
+  const std::map<
+    unsigned int,
+    Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour>
+                              &isocontours,
+  const DoFHandler<2>         &dof_handler,
+  const FiniteElement<2>      &fe,
+  const GlobalVectorType      &solution_vector,
+  const double                 current_time,
+  const Parameters::Verbosity &verbosity,
+  const ConditionalOStream    &pcout,
+  std::vector<TableHandler>   &isocontour_bounding_values_tables);
+
+template void
+InterfaceTools::postprocess_isocontour_bounding_values(
+  const std::vector<unsigned int> &isocontour_ids,
+  const std::map<
+    unsigned int,
+    Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour>
+                              &isocontours,
+  const DoFHandler<3>         &dof_handler,
+  const FiniteElement<3>      &fe,
+  const GlobalVectorType      &solution_vector,
+  const double                 current_time,
+  const Parameters::Verbosity &verbosity,
+  const ConditionalOStream    &pcout,
+  std::vector<TableHandler>   &isocontour_bounding_values_tables);
+
+
+void
+InterfaceTools::write_isocontour_bounding_values_tables(
+  const MPI_Comm                  &mpi_communicator,
+  const std::string               &output_folder,
+  const std::vector<unsigned int> &isocontour_ids,
+  const std::map<
+    unsigned int,
+    Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour>
+                                  &isocontours,
+  const std::vector<TableHandler> &isocontour_bounding_values_tables)
+{
+  if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+    {
+      for (unsigned int i = 0; i < isocontour_ids.size(); ++i)
+        {
+          std::string filename = output_folder +
+                                 isocontours.at(isocontour_ids[i]).output_name +
+                                 ".dat";
+          std::ofstream output(filename.c_str());
+
+          isocontour_bounding_values_tables[i].write_text(output);
+        }
+    }
+}

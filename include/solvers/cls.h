@@ -765,18 +765,6 @@ private:
       }
   }
 
-  /**
-   * @brief Identifies the bounding values of requested isocontours using
-   * InterfaceTools::compute_isocontour_bounding_values.
-   */
-  void
-  postprocess_phase_indicator_isocontour_bounding_values();
-
-  /**
-   * @brief Writes the bounding values of the specified isocontours.
-   */
-  void
-  write_phase_indicator_isocontour_bounding_values();
 
   GlobalVectorType nodal_phase_indicator_owned;
 

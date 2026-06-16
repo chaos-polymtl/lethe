@@ -1077,7 +1077,7 @@ namespace Parameters
        *
        * @param[in,out] prm The parameter handler.
        */
-      static void
+      void
       declare_parameters(ParameterHandler &prm);
 
       /**
@@ -1085,12 +1085,12 @@ namespace Parameters
        *
        * @param[in,out] prm The parameter handler.
        */
-      static void
+      void
       parse_parameters(ParameterHandler &prm);
     };
 
     /// Contains all isocontour bounding boxes
-    static inline IsocontourBoundingBoxes isocontour_bounding_boxes;
+    IsocontourBoundingBoxes isocontour_bounding_boxes; // TODO AA check static
 
     /// Verbosity level of the post-processed quantities
     Verbosity verbosity;
@@ -1248,7 +1248,7 @@ namespace Parameters
     /// Enable output of velocity gradient field
     bool output_velocity_gradient;
 
-    static void
+    void
     declare_parameters(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);

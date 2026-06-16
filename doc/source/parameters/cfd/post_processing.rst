@@ -404,10 +404,10 @@ Multiphase Post-processing
 
 
 * ``phase volumes name``: name of the output file containing phase energies from Cahn-Hilliard simulations. The default file name is ``phase_volumes``.
-        
+
 Isocontour Bounding Box
 ~~~~~~~~~~~~~~~~~~~~~~~
-The ``isocontour bounding box`` subsection defines isocontours to be monitored. This is used to get the time evolution of one or multiple isocontours' bounding values:
+The ``isocontour bounding box`` subsection defines isocontours to be monitored. This is used to get the time evolution of isocontours of one or multiple fields:
   - In 2D: :math:`x_\mathrm{min}`, :math:`x_\mathrm{max}`, :math:`y_\mathrm{min}`, and :math:`y_\mathrm{max}`;
   - In 3D: :math:`x_\mathrm{min}`, :math:`x_\mathrm{max}`, :math:`y_\mathrm{min}`, :math:`y_\mathrm{max}`, :math:`z_\mathrm{min}`, and :math:`z_\mathrm{max}`.
 

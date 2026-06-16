@@ -62,14 +62,15 @@ DeclException3(ParameterStrictlyGreaterThanError,
                << ". However, it should be strictly greater than " << arg3
                << ".");
 
-DeclException3(
+DeclException4(
   ListSizeIncoherentWithDeclaredNumber,
+  std::string,
   unsigned int,
   std::string,
   unsigned int,
-  << "'number of isocontour bounding boxes' was set to " << arg1
-  << " and the list '" << arg2 << "' has a size of " << arg3
-  << ". However, the size should correspond to the number of declared isocontour boxes.");
+  << "'" << arg1 << "' was set to " << arg2 << " and the list '" << arg3
+  << "' has a size of " << arg4
+  << ". However, the size should correspond to the number declared.");
 
 DeclException4(ListsSizeMismatch,
                std::string,
@@ -2223,7 +2224,7 @@ namespace Parameters
         Patterns::List(Patterns::FileName()),
         "Filename(s) for outputted isocontour(s)"
         "For multiple isocontours, separate the different filenames with a comma "
-        "(e.g., 'set isovalue = interface_bounding_box,solidus_bounding_box,liquidus_bounding_box')");
+        "(e.g., 'set bounding box filename = interface_bounding_box,solidus_bounding_box,liquidus_bounding_box')");
     }
     prm.leave_subsection();
   }
@@ -2234,7 +2235,7 @@ namespace Parameters
   {
     prm.enter_subsection("isocontour bounding box");
     {
-      isocontour_bounding_boxes.number_of_isocontour_bounding_boxes =
+      number_of_isocontour_bounding_boxes =
         prm.get_integer("number of isocontour bounding boxes");
 
       // Get lists and split them into a vector
@@ -2249,14 +2250,13 @@ namespace Parameters
         Utilities::split_string_list(filename_list);
 
       // Check that sizes are coherent with each-other
-      if (isocontour_bounding_boxes.number_of_isocontour_bounding_boxes > 0)
-        AssertThrow(
-          variables_vec.size() ==
-            isocontour_bounding_boxes.number_of_isocontour_bounding_boxes,
-          ListSizeIncoherentWithDeclaredNumber(
-            isocontour_bounding_boxes.number_of_isocontour_bounding_boxes,
-            "variable",
-            variables_vec.size()));
+      if (number_of_isocontour_bounding_boxes > 0)
+        AssertThrow(variables_vec.size() == number_of_isocontour_bounding_boxes,
+                    ListSizeIncoherentWithDeclaredNumber(
+                      "number of isocontour bounding boxes",
+                      number_of_isocontour_bounding_boxes,
+                      "variable",
+                      variables_vec.size()));
       AssertThrow(variables_vec.size() == isovalue_vec.size(),
                   ListsSizeMismatch("variable",
                                     "isovalue",
@@ -2270,12 +2270,12 @@ namespace Parameters
 
       // Initialize per variable maps. At the moment, only the variables
       // "temperature" and "phase " are accepted
-      isocontour_bounding_boxes.isocontour_ids_per_variable.insert(
+      isocontour_ids_per_variable.insert(
         {Variable::temperature, std::vector<unsigned int>()});
-      isocontour_bounding_boxes.isocontour_ids_per_variable.insert(
+      isocontour_ids_per_variable.insert(
         {Variable::phase, std::vector<unsigned int>()});
 
-      if (isocontour_bounding_boxes.number_of_isocontour_bounding_boxes > 0)
+      if (number_of_isocontour_bounding_boxes > 0)
         {
           // Build maps of isocontours
           for (unsigned int i = 0; i < variables_vec.size(); ++i)
@@ -2287,16 +2287,13 @@ namespace Parameters
               if (variables_vec[i] == "temperature")
                 {
                   isocontour.variable = Variable::temperature;
-                  isocontour_bounding_boxes
-                    .isocontour_ids_per_variable[Variable::temperature]
+                  isocontour_ids_per_variable[Variable::temperature]
                     .emplace_back(i);
                 }
               else if (variables_vec[i] == "phase")
                 {
                   isocontour.variable = Variable::phase;
-                  isocontour_bounding_boxes
-                    .isocontour_ids_per_variable[Variable::phase]
-                    .emplace_back(i);
+                  isocontour_ids_per_variable[Variable::phase].emplace_back(i);
                 }
               else
                 throw std::invalid_argument(
@@ -2308,7 +2305,7 @@ namespace Parameters
               isocontour.output_name = filename_vec[i];
 
               // Insert isocontour in map
-              isocontour_bounding_boxes.isocontours.insert({i, isocontour});
+              isocontours.insert({i, isocontour});
             }
         }
     }
