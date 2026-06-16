@@ -90,7 +90,7 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
               // Iterating over cell faces
               for (const auto &face : cell->face_iterators())
                 {
-                  unsigned int face_boundary_id = face->boundary_id();
+                  const types::boundary_id face_boundary_id = face->boundary_id();
 
                   // Check if face matches any of the principal PB IDs
                   auto it = directions.find(face_boundary_id);
