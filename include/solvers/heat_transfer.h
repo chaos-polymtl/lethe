@@ -29,6 +29,7 @@
 
 #include <deal.II/grid/grid_tools.h>
 
+#include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
