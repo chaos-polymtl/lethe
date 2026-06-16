@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# This test case runs the time-harmonic electromagnetic solver to simulate the
+# This file runs the time-harmonic electromagnetic solver to simulate the
 # propagation of an electromagnetic excitation in a waveguide with perfectly
-# conducting walls. It imposes Robin boundary conditions: build-in waveguide port
+# conducting walls. It imposes different boundary conditions: build-in waveguide port
 # excitation at the inlet and an absorbing impedance boundary at the outlet. The
-# mode tested is the TM10.
+# mode tested is the TE10.
 
 # Listing of Parameters
 #----------------------
@@ -26,7 +26,6 @@ end
 #---------------------------------------------------
 # Mesh Adaptation
 #---------------------------------------------------
-prmindent*
 
 subsection mesh adaptation
   set type = uniform
@@ -37,8 +36,8 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set electromagnetics trial order = 1
-  set electromagnetics test order  = 2
+  set electromagnetics trial degree = 1
+  set electromagnetics test degree  = 2
 end
 
 subsection physical properties
@@ -116,7 +115,7 @@ end
 subsection boundary conditions time harmonic maxwell
   set number = 3
   subsection bc 0
-    set id   = 0, 1, 2, 3,
+    set id   = 0, 1, 2, 3
     set type = pec
   end
   subsection bc 1
