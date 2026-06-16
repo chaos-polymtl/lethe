@@ -76,7 +76,7 @@ public:
     ar &particles_of_each_type_remaining &current_inserting_particle_type;
   }
 
-protected:
+private:
   /**
    * @brief Converts id of particles to volume insertion location
    *

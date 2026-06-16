@@ -42,7 +42,8 @@ namespace Parameters
       hertz_JKR,
       /// Derjaguin-Muller-Toporov model
       DMT,
-
+      /// Shift the particles using their overlap. Used for the packed
+      /// insertion method
       shift
     };
 
@@ -60,7 +61,8 @@ namespace Parameters
       JKR,
       /// Derjaguin-Muller-Toporov model
       DMT,
-
+      /// Shift the particle in contact with a wall using their overlap. Used
+      /// for the packed insertion method
       shift
     };
 
@@ -494,9 +496,6 @@ namespace Parameters
 
       /// Random seed for particle insertion.
       int seed_for_insertion;
-
-      /// Displacement factor used for the packed insertion method.
-      double displacement_factor;
 
       /**
        * @brief Declare the parameters in the parameter handler.

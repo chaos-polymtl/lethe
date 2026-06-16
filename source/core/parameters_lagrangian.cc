@@ -684,15 +684,6 @@ namespace Parameters
                           "0.0, 0.0, 0.0",
                           Patterns::List(Patterns::Double()),
                           "Initial angular velocity (x, y, z)");
-        // Packed
-        prm.declare_entry(
-          "displacement factor",
-          "0.05",
-          Patterns::Double(0.0, 0.5),
-          "Factor used to shift the particles location when using "
-          "the \"packed\" insertion method. The shift applied to a particle,"
-          " when a contact occur with an other particle, is proportional  to its"
-          "diameter times this factor.");
 
         // Multi-physics
         auto initial_temperature_function_parsed =
@@ -853,8 +844,6 @@ namespace Parameters
         distance_threshold = prm.get_double("insertion distance threshold");
         insertion_maximum_offset = prm.get_double("insertion maximum offset");
         seed_for_insertion       = prm.get_integer("insertion prn seed");
-        displacement_factor      = prm.get_double("displacement factor");
-
         initial_vel = value_string_to_tensor<3>(prm.get("initial velocity"));
         initial_omega =
           value_string_to_tensor<3>(prm.get("initial angular velocity"));
