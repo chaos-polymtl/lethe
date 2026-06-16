@@ -1,0 +1,52 @@
+
+DEAL::Beginning dimensionality scaling tests
+DEAL::--- Scenario 1: SI base units (all = 1) ---
+DEAL::  OK  density_scaling = 1.00000
+DEAL::  OK  specific_gas_constant_scaling = 1.00000
+DEAL::  OK  viscosity_scaling = 1.00000
+DEAL::  OK  specific_heat_scaling = 1.00000
+DEAL::  OK  thermal_conductivity_scaling = 1.00000
+DEAL::  OK  enthalpy_scaling = 1.00000
+DEAL::  OK  diffusivity_scaling = 1.00000
+DEAL::  OK  thermal_expansion_scaling = 1.00000
+DEAL::  OK  surface_tension_scaling = 1.00000
+DEAL::  OK  surface_tension_gradient_scaling = 1.00000
+DEAL::  OK  electric_amplitude_scaling = 1.00000
+DEAL::  OK  magnetic_amplitude_scaling = 1.00000
+DEAL::  OK  vacuum_permittivity_scaling = 1.00000
+DEAL::  OK  vacuum_permeability_scaling = 1.00000
+DEAL::--- Scenario 2: CGS ---
+DEAL::  OK  density_scaling = 0.00100000
+DEAL::  OK  specific_gas_constant_scaling = 10000.0
+DEAL::  OK  viscosity_scaling = 10000.0
+DEAL::  OK  specific_heat_scaling = 10000.0
+DEAL::  OK  thermal_conductivity_scaling = 100000.
+DEAL::  OK  enthalpy_scaling = 1.00000e+07
+DEAL::  OK  diffusivity_scaling = 10000.0
+DEAL::  OK  thermal_expansion_scaling = 1.00000
+DEAL::  OK  surface_tension_scaling = 1000.00
+DEAL::  OK  surface_tension_gradient_scaling = 1000.00
+DEAL::  OK  electric_amplitude_scaling = 100000.
+DEAL::  OK  magnetic_amplitude_scaling = 0.0100000
+DEAL::  OK  vacuum_permittivity_scaling = 1.00000e-09
+DEAL::  OK  vacuum_permeability_scaling = 100000.
+DEAL::  OK  electromagnetic_frequency_scaling = 3.33564e-11
+DEAL::--- Scenario 3b: Randomized scaling & outputs ---
+DEAL::  OK  density_scaling = 1.20602e-06
+DEAL::  OK  specific_gas_constant_scaling = 981.738
+DEAL::  OK  viscosity_scaling = 584.368
+DEAL::  OK  specific_heat_scaling = 981.738
+DEAL::  OK  thermal_conductivity_scaling = 0.691892
+DEAL::  OK  enthalpy_scaling = 11.1308
+DEAL::  OK  diffusivity_scaling = 584.368
+DEAL::  OK  thermal_expansion_scaling = 2.10000
+DEAL::  OK  surface_tension_scaling = 0.0152381
+DEAL::  OK  surface_tension_gradient_scaling = 0.0320000
+DEAL::  OK  cahn_hilliard_mobility_scaling = 1.03646e+06
+DEAL::  OK  cahn_hilliard_epsilon_scaling = 27.0270
+DEAL::  OK  electric_amplitude_scaling = 0.428314
+DEAL::  OK  magnetic_amplitude_scaling = 0.0284615
+DEAL::  OK  vacuum_permittivity_scaling = 0.00307332
+DEAL::  OK  vacuum_permeability_scaling = 0.696010
+DEAL::  OK  electromagnetic_frequency_scaling = 1.23419e-10
+DEAL::OK
