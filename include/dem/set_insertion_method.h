@@ -61,11 +61,13 @@ set_insertion_type(std::vector<std::shared_ptr<Distribution>>
       case InsertionInfo<dim>::InsertionMethod::packed:
         {
           if constexpr (std::is_same_v<PropertiesIndex,
-                               DEM::DEMProperties::PropertiesIndex>)
+                                       DEM::DEMProperties::PropertiesIndex>)
             {
               packing_method = true;
               return std::make_shared<InsertionPacked<dim, PropertiesIndex>>(
-                size_distribution_object_container, triangulation, dem_parameters);
+                size_distribution_object_container,
+                triangulation,
+                dem_parameters);
             }
           else
             {
