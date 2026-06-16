@@ -196,7 +196,7 @@ void
 DEMSolver<dim, PropertiesIndex>::setup_functions_and_pointers()
 {
   contact_detection_iteration_check_function =
-  set_contact_search_iteration_function();
+    set_contact_search_iteration_function();
 
   // Set the insertion object type before the restart because the restart only
   // rebuilds the member of the insertion object
