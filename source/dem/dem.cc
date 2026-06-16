@@ -195,6 +195,9 @@ template <int dim, typename PropertiesIndex>
 void
 DEMSolver<dim, PropertiesIndex>::setup_functions_and_pointers()
 {
+  contact_detection_iteration_check_function =
+  set_contact_search_iteration_function();
+
   // Set the insertion object type before the restart because the restart only
   // rebuilds the member of the insertion object
   insertion_object =
@@ -220,8 +223,6 @@ DEMSolver<dim, PropertiesIndex>::setup_functions_and_pointers()
             ->set_sparse_contacts_disabled();
         }
     }
-  contact_detection_iteration_check_function =
-    set_contact_search_iteration_function();
 
   // Setting chosen contact force, insertion and integration methods
   integrator_object = set_integrator_type();
@@ -448,7 +449,6 @@ DEMSolver<dim, PropertiesIndex>::load_balance()
         << average_minimum_maximum_cells.max << std::endl;
 
   setup_background_dofs();
-  update_previous_position();
 }
 
 template <int dim, typename PropertiesIndex>
@@ -930,7 +930,7 @@ DEMSolver<dim, PropertiesIndex>::clamp_displacement()
         {
           // Clamp position to at most max_disp from the previous position
           particle->set_location(previous_position +
-                                (max_disp / disp_norm) * displacement_tensor);
+                                 (max_disp / disp_norm) * displacement_tensor);
           displacement[particle_id] += max_disp;
         }
       else

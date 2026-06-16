@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_insertion_packed_h
@@ -13,31 +13,28 @@ class InsertionPacked : public Insertion<dim, PropertiesIndex>
 {
 public:
   /**
-   * @brief The constructor investigates if the insertion box is large enough
-   * to handle the desired number of particles with the specified insertion
-   * parameters.
-   * If the insertion box is not adequately large, the number of
-   * inserted particles at each insertion step is updated. It also finds the
-   * insertion points in each direction (number_of_particles_x_direction,
-   * number_of_particles_y_direction and number_of_particles_z_direction).
+   * @brief Insert particles using the packed insertion method.
+   *
+   * Particles are inserted by randomly generating points inside the insertion
+   * region and assigning them particle properties (such as their diameter).
+   * Because the generated configuration may contain particle-particle and
+   * particle-wall overlaps, particles are iteratively displaced along the
+   * corresponding contact normal directions until all overlaps are resolved.
    *
    * @param size_distribution_object_container Contains all distribution for each
    * particle type
    * @param triangulation Triangulation to access the cells in which the
    * particles are inserted
    * @param dem_parameters DEM parameters declared in the .prm file
-   * @param maximum_particle_diameter Maximum particle diameter based on values
-   * defined in the parameter handler
    */
   InsertionPacked(
     const std::vector<std::shared_ptr<Distribution>>
       &size_distribution_object_container,
     const parallel::distributed::Triangulation<dim> &triangulation,
-    const DEMSolverParameters<dim>                  &dem_parameters,
-    const double                                     maximum_particle_diameter);
+    const DEMSolverParameters<dim>                  &dem_parameters);
 
   /**
-   * @brief Carries out the volume insertion of particles.
+   * @brief Carries out the packed insertion of particles.
    *
    * @param particle_handler The particle handler of particles which are being
    * inserted
@@ -77,29 +74,26 @@ public:
 
 private:
   /**
-   * @brief Converts id of particles to volume insertion location
+   * @brief Generate an insertion point inside an insertion box.
    *
-   * @param insertion_location Insertion location of the particle
-   * @param rng
-   * @param insertion_information
-   * @param distribution
-   * file
+   * @param insertion_location Generated insertion location.
+   * @param rng Random number generator.
+   * @param insertion_information Insertion parameters read from the .prm file.
    */
   void
-  find_insertion_location(
+  generate_insertion_location(
 
-    Point<dim>                                       &insertion_location,
-    std::mt19937                                     &rng,
-    const Parameters::Lagrangian::InsertionInfo<dim> &insertion_information,
-    std::uniform_real_distribution<double>           &distribution);
+    Point<dim>               &insertion_location,
+    std::mt19937             &rng,
+    const InsertionInfo<dim> &insertion_information);
 
-  unsigned int current_inserting_particle_type;
+  unsigned int current_inserting_particle_type = 0;
 
   // Number of particles of each type that remain to be inserted in the
   // upcoming insertion steps
   unsigned int particles_of_each_type_remaining;
 
-  // Minimum and maximum boundaries of the insertion box  in the direction order
+  // Minimum and maximum boundaries of the insertion box in the direction order
   // It means that axis 0 is not necessarily x, since it depends on the order
   // of the insertion direction.
   std::vector<double> axis_min, axis_max;

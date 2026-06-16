@@ -60,12 +60,20 @@ set_insertion_type(std::vector<std::shared_ptr<Distribution>>
           maximum_particle_diameter);
       case InsertionInfo<dim>::InsertionMethod::packed:
         {
-          packing_method = true;
-          return std::make_shared<InsertionPacked<dim, PropertiesIndex>>(
-            size_distribution_object_container,
-            triangulation,
-            dem_parameters,
-            maximum_particle_diameter);
+          if constexpr (std::is_same_v<PropertiesIndex,
+                               DEM::DEMProperties::PropertiesIndex>)
+            {
+              packing_method = true;
+              return std::make_shared<InsertionPacked<dim, PropertiesIndex>>(
+                size_distribution_object_container, triangulation, dem_parameters);
+            }
+          else
+            {
+              AssertThrow(false,
+                          ExcMessage("InsertionPacked is not valid for "
+                                     "the current solver type. It only works "
+                                     "for the standard DEM solver."));
+            }
         }
       default:
         AssertThrow(false, ExcMessage("Invalid insertion method."));

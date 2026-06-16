@@ -121,7 +121,7 @@ public:
   }
 
   /**
-   * @brief Flag that the sparse contacts is enabled and trigger a
+   * @brief Flag that the ASC is enabled and trigger a
    * mobility status reset to initialize the containers.
    */
   inline void
@@ -135,8 +135,7 @@ public:
 
 
   /**
-   * @brief Flag that the sparse contacts is disabled and trigger a
-   * mobility status reset to initialize the containers.
+   * @brief Disables the ASC.
    */
   inline void
   set_sparse_contacts_disabled()

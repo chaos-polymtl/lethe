@@ -19,7 +19,6 @@ ParticleParticleContactForce<dim,
   ParticleParticleContactForce(const DEMSolverParameters<dim> &dem_parameters)
   : dmt_cut_off_threshold(dem_parameters.model_parameters.dmt_cut_off_threshold)
   , f_coefficient_epsd(dem_parameters.model_parameters.f_coefficient_epsd)
-  , displacement_factor(dem_parameters.insertion_info.displacement_factor)
 {
   set_effective_properties(dem_parameters);
   if constexpr (std::is_same_v<PropertiesIndex,
