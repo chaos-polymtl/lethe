@@ -1298,6 +1298,12 @@ CahnHilliard<dim>::solve_linear_system()
 {
   TimerOutput::Scope t(this->computing_timer, "Solve linear system");
 
+  AssertThrow(
+    simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
+        .preconditioner == Parameters::LinearSolver::PreconditionerType::ilu,
+    ExcMessage(
+      "The Cahn-Hilliard physics only supports the <ilu> preconditioner. The <amg> preconditioner is not yet implemented for this physics."));
+
   auto mpi_communicator = triangulation->get_mpi_communicator();
 
   const AffineConstraints<double> &constraints_used = this->zero_constraints;

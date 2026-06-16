@@ -2850,6 +2850,12 @@ ConservativeLevelSet<dim>::solve_linear_system()
 {
   TimerOutput::Scope t(this->computing_timer, "Solve linear system");
 
+  AssertThrow(
+    simulation_parameters.linear_solver.at(PhysicsID::CLS).preconditioner ==
+      Parameters::LinearSolver::PreconditionerType::ilu,
+    ExcMessage(
+      "The Conservative Level Set physics only supports the <ilu> preconditioner. The <amg> preconditioner is not yet implemented for this physics."));
+
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
   const AffineConstraints<double> &constraints_used = this->zero_constraints;
