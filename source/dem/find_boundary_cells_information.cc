@@ -224,7 +224,7 @@ template <int dim>
 void
 BoundaryCellsInformation<dim>::update_boundary_info_after_grid_motion(
   typename DEM::dem_data_structures<dim>::boundary_points_and_normal_vectors
-    &updated_boundary_points_and_normal_vectors)
+    &new_boundary_points_and_normal_vectors)
 {
   // If there is no grid motion, exit the function
   if (!DEMActionManager::get_action_manager()->check_grid_motion_enabled())
@@ -271,7 +271,7 @@ BoundaryCellsInformation<dim>::update_boundary_info_after_grid_motion(
                     quad_point =
                       point_nd_to_3d(fe_face_values.quadrature_point(0));
 
-                  updated_boundary_points_and_normal_vectors[cell->face_index(
+                  new_boundary_points_and_normal_vectors[cell->face_index(
                     face_id)] = std::make_pair(normal_vector, quad_point);
                 }
             }

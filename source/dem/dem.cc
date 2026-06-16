@@ -117,13 +117,13 @@ DEMSolver<dim, PropertiesIndex>::setup_parameters()
   // Set up the solid objects
   setup_solid_objects();
 
-  // Check if there are any periodic boundaries. If any periodic boundary is
-  // found, set the information for all periodic boundaries.
+  // Check whether periodic boundaries are present. If at least one periodic
+  // boundary is found, initialize the information for all periodic boundaries.
   if (!parameters.boundary_conditions.periodic_direction.empty())
     periodic_boundaries_object.set_periodic_boundaries_information(
       parameters.boundary_conditions.periodic_direction);
 
-  // Assign gravity/acceleration
+  // Assign gravity
   g = parameters.lagrangian_physical_properties.g;
 
   // If this is a restart simulation

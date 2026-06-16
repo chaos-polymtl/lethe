@@ -753,7 +753,7 @@ namespace Parameters
        * @param[in,out] prm The parameter handler.
        */
       void
-      parse_floating_wall(ParameterHandler &prm);
+      parse_floating_wall(const ParameterHandler &prm);
 
     private:
       unsigned int max_number_floating_walls = 9;

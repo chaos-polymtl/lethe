@@ -190,14 +190,14 @@ protected:
 
     const auto rotational_vector_it =
       this->boundary_rotational_vector.find(boundary_id);
-    const Tensor<1, 3> boundary_rotational_vector =
+    const Tensor<1, 3> boundary_rotation =
       (rotational_vector_it != this->boundary_rotational_vector.end()) ?
         rotational_vector_it->second :
         Tensor<1, 3>();
 
     const auto rotation_point_it =
       this->point_on_rotation_vector.find(boundary_id);
-    const Point<3> point_on_rotation_vector =
+    const Point<3> point_on_axis_of_rotation =
       (rotation_point_it != this->point_on_rotation_vector.end()) ?
         rotation_point_it->second :
         Point<3>();
@@ -205,13 +205,12 @@ protected:
     // Getting vector pointing from the contact point to the origin of the
     // rotation axis
     Tensor<1, 3> vector_to_rotating_axis =
-      contact_point - point_on_rotation_vector;
+      contact_point - point_on_axis_of_rotation;
 
     // Removing the rotating axis component of that vector
     vector_to_rotating_axis =
       vector_to_rotating_axis -
-      (vector_to_rotating_axis * boundary_rotational_vector) *
-        boundary_rotational_vector;
+      (vector_to_rotating_axis * boundary_rotation) * boundary_rotation;
 
     // Defining relative contact velocity using the convention
     // v_ij = v_j - v_i
@@ -220,7 +219,7 @@ protected:
       cross_product_3d((-0.5 * particle_properties[PropertiesIndex::dp] *
                         particle_angular_velocity),
                        normal_vector) +
-      cross_product_3d(boundary_rotational_speed * boundary_rotational_vector,
+      cross_product_3d(boundary_rotational_speed * boundary_rotation,
                        vector_to_rotating_axis);
 
     // Calculating normal relative velocity

@@ -1500,7 +1500,7 @@ namespace Parameters
 
     template <int dim>
     void
-    FloatingWalls<dim>::parse_floating_wall(ParameterHandler &prm)
+    FloatingWalls<dim>::parse_floating_wall(const ParameterHandler &prm)
     {
       // Position
       Point<dim> wall_point(
@@ -1675,7 +1675,7 @@ namespace Parameters
         }
       else
         {
-          throw(std::runtime_error("Invalid boundary condition type "));
+          AssertThrow(false, ExcMessage("Invalid DEM boundary condition type"));
         }
     }
 

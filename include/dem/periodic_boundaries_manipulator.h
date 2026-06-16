@@ -21,14 +21,13 @@ using namespace dealii;
 /**
  * This class corresponds to a manipulator of the particles crossing periodic
  * cells in DEM. It maps cell information of the pairs of periodic cells
- * and manipulate the particles location when they cross periodic boundaries,
+ * and manipulate the particles' location when they cross periodic boundaries,
  * i.e. when a particle cross a periodic boundary (0 or 1) its location is
  * modified with the offset between faces of periodic cells on periodic
  * boundaries.
  *
- * @note Currently the code only supports one pair of periodic boundaries and
- * those boundaries must be parallel and aligned with an axis of the domain
- * (e.g., x axis).
+ * @note Currently the code only supports periodic boundaries that are
+ * parallel and aligned with an axis of the domain (e.g., x axis).
  */
 
 template <int dim>
@@ -48,7 +47,7 @@ public:
   set_periodic_boundaries_information(
     const std::map<types::boundary_id, unsigned int> &periodic_directions)
   {
-    // If function is reached and the map is not empty
+    // If this function is reached and the map is not empty
     if (periodic_directions.empty())
       return;
 

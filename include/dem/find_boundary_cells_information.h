@@ -93,13 +93,13 @@ public:
    * Carries out updating the boundary information (point on boundary face and
    * its normal vector) after moving the grid.
    *
-   * @param updated_boundary_points_and_normal_vectors Normal vector and a point
+   * @param new_boundary_points_and_normal_vectors Normal vector and a point
    * on the boundary faces which are updated after motion of the grid
    */
   void
   update_boundary_info_after_grid_motion(
     typename DEM::dem_data_structures<dim>::boundary_points_and_normal_vectors
-      &updated_boundary_points_and_normal_vectors);
+      &new_boundary_points_and_normal_vectors);
 
 private:
   /**
@@ -134,14 +134,7 @@ private:
    * particle-line contact, boundary lines and a point locating on each line are
    * obtained
    *
-   * @param boundary_cells_with_faces A vector which contains all the boundary
-   * cells which has atleast one boundary face
    * @param triangulation Triangulation to access the information of the cells
-   * @param boundary_cells_with_lines A vector of tuples which contains the
-   * cells with boundary lines and locations of the beginning and ending
-   * vertices of the boundary line
-   * @param boundary_cells_with_points A vector of pairs which contains the
-   * cells with boundary points, and the location of the point
    */
   void
   find_particle_point_and_line_contact_cells(
@@ -175,8 +168,6 @@ private:
    * @param triangulation Triangulation to access the information of the cells
    * @param floating_wall_properties Properties of floating walls specified in
    * the parameter handler file
-   * @param boundary_cells_for_floating_walls An unordered_set which contains
-   * all the boundary cells of floating walls
    * @param maximum_cell_diameter Maximum cell length in the triangulation
    */
   void
@@ -194,6 +185,7 @@ private:
    * cells. This function is used to solve the problem of late contact detection
    * in triangulations with curved boundaries.
    *
+   * @param triangulation Triangulation used in the DEM simulation
    * @param boundary_cells_information A container that contains the information
    * of all the boundary cells with boundary faces
    * @param outlet_boundaries A set which contains the outlet boundary IDs
@@ -212,7 +204,7 @@ private:
   std::map<int, boundary_cells_info_struct<dim>> boundary_cells_information;
 
   // A vector that contains the geometrical information of all (global) boundary
-  // cells. This vector is used in
+  // cells. This vector is used in the
   // add_cells_with_boundary_lines_to_boundary_cells function
   std::map<int, boundary_cells_info_struct<dim>>
     global_boundary_cells_information;
