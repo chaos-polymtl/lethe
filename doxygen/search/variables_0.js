@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['a_0',['a',['../classThermalConductivityLinear.html#a94e5190ba0c0fc2104533e3e2898bc37',1,'ThermalConductivityLinear::A'],['../structSDIRKTable.html#ae1417a4a022a84850f33cc4aab21e29b',1,'SDIRKTable::A'],['../classCarreau.html#a14d008c2e57031e28b6412b66aecbbd8',1,'Carreau::a'],['../structParameters_1_1CarreauParameters.html#a36393ea781a3c9d512aa324008541c30',1,'Parameters::CarreauParameters::a']]],
+  ['a_0',['a',['../classCarreau.html#a14d008c2e57031e28b6412b66aecbbd8',1,'Carreau::a'],['../structParameters_1_1CarreauParameters.html#a36393ea781a3c9d512aa324008541c30',1,'Parameters::CarreauParameters::a'],['../classThermalConductivityLinear.html#a94e5190ba0c0fc2104533e3e2898bc37',1,'ThermalConductivityLinear::A'],['../structSDIRKTable.html#ae1417a4a022a84850f33cc4aab21e29b',1,'SDIRKTable::A']]],
   ['a_5fii_1',['a_ii',['../structTimeSteppingData.html#a3bb8c78f16bcb7a94b4d9c4effd05822',1,'TimeSteppingData']]],
   ['a_5fij_2',['a_ij',['../classSDIRKStageData.html#ae03ac44622ed29f42ce5741bbd50be55',1,'SDIRKStageData']]],
   ['a_5finverse_3',['A_inverse',['../classBlockDiagPreconditioner.html#aaebbf0f342b00811c1839c90176936bc',1,'BlockDiagPreconditioner']]],
@@ -37,7 +37,7 @@ var searchData=
   ['amg_5fprecond_5filu_5fatol_34',['amg_precond_ilu_atol',['../structParameters_1_1LinearSolver.html#ae6b6cc9f43f463b67838d7d237af2b06',1,'Parameters::LinearSolver']]],
   ['amg_5fprecond_5filu_5ffill_35',['amg_precond_ilu_fill',['../structParameters_1_1LinearSolver.html#a14f39d70e10c8073fc9c83dd3f6edbd6',1,'Parameters::LinearSolver']]],
   ['amg_5fprecond_5filu_5frtol_36',['amg_precond_ilu_rtol',['../structParameters_1_1LinearSolver.html#a0893a9bc9ef15dc7703d39e309e59dfd',1,'Parameters::LinearSolver']]],
-  ['amg_5fpreconditioner_37',['amg_preconditioner',['../classFluidDynamicsMatrixBased.html#a476d1d3416d3012852293a9ebf041fb4',1,'FluidDynamicsMatrixBased']]],
+  ['amg_5fpreconditioner_37',['amg_preconditioner',['../classFluidDynamicsMatrixBased.html#a476d1d3416d3012852293a9ebf041fb4',1,'FluidDynamicsMatrixBased::amg_preconditioner'],['../classHeatTransfer.html#a255c2c0e684aeda9956ddc71a812f888',1,'HeatTransfer::amg_preconditioner']]],
   ['amg_5fsmoother_5foverlap_38',['amg_smoother_overlap',['../structParameters_1_1LinearSolver.html#a6ebd5c5e15c7f66bd0c9a023701b2f77',1,'Parameters::LinearSolver']]],
   ['amg_5fsmoother_5fsweeps_39',['amg_smoother_sweeps',['../structParameters_1_1LinearSolver.html#aabda8bc8a4c9a81911e9a9b6f84587e8',1,'Parameters::LinearSolver']]],
   ['amg_5fw_5fcycles_40',['amg_w_cycles',['../structParameters_1_1LinearSolver.html#a0915237b11c93345b8f712fd549a6062',1,'Parameters::LinearSolver']]],
