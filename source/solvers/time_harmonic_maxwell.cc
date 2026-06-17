@@ -1832,7 +1832,13 @@ TimeHarmonicMaxwell<dim>::solve_linear_system()
 {
   TimerOutput::Scope t(this->computing_timer, "Solve linear system");
 
-  auto mpi_communicator = this->triangulation->get_mpi_communicator();
+  AssertThrow(simulation_parameters.linear_solver
+                  .at(PhysicsID::electromagnetics)
+                  .preconditioner ==
+                Parameters::LinearSolver::PreconditionerType::none,
+              ExcMessage())
+
+    auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
   // Define the linear solver tolerance
   const double absolute_residual =

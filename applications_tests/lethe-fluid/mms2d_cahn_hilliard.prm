@@ -181,8 +181,8 @@ end
 
 subsection linear solver
   subsection cahn hilliard
-    set verbosity = quiet
-    set preconditioner                        = amg
+    set verbosity      = quiet
+    set preconditioner = amg
   end
   subsection fluid dynamics
     set verbosity = quiet

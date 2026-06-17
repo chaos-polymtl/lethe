@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-
 #-------------------------------------------------------------------------------
 # DESCRIPTION:
 # This test checks a static CLS-Navier-Stokes problem in which
@@ -9,7 +8,6 @@
 # drives the flow. The analytical solution is given by the hydrostatic pressure.
 # This test also ensures that the AMG preconditioner works with CLS.
 #-------------------------------------------------------------------------------
-
 
 # Listing of Parameters
 #----------------------
@@ -192,11 +190,11 @@ subsection linear solver
     set max krylov vectors                    = 200
   end
   subsection CLS
-    set verbosity                             = quiet
-    set method                                = gmres
-    set relative residual                     = 1e-10
-    set minimum residual                      = 1e-10
-    set preconditioner                        = amg
-    set max krylov vectors                    = 200
+    set verbosity          = quiet
+    set method             = gmres
+    set relative residual  = 1e-10
+    set minimum residual   = 1e-10
+    set preconditioner     = amg
+    set max krylov vectors = 200
   end
 end

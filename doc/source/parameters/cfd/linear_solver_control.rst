@@ -134,16 +134,18 @@ The preconditioners supported by each physics are summarized in the table below.
 
 .. list-table::
    :header-rows: 1
-   :widths: 40 15 15 15 15
+   :widths: 40 15 15 15 15 15
 
    * - Physics
      - ``ilu``
      - ``amg``
      - ``lsmg``
      - ``gcmg``
+     - ``none``
    * - Fluid dynamics (matrix-based) 
      - ✓
      - ✓
+     -
      -
      -
    * - Fluid dynamics (matrix-free) 
@@ -151,9 +153,11 @@ The preconditioners supported by each physics are summarized in the table below.
      -
      - ✓
      - ✓
+     -
    * - VANS (matrix-based) 
      - ✓
      - ✓
+     -
      -
      -
    * - VANS (matrix-free) 
@@ -161,9 +165,11 @@ The preconditioners supported by each physics are summarized in the table below.
      - 
      - ✓
      - ✓
-   * - Heat transfer
+     -
+   * - Heat Transfer
      - ✓
      - ✓
+     -
      -
      -
    * - Tracer
@@ -171,9 +177,11 @@ The preconditioners supported by each physics are summarized in the table below.
      - ✓
      -
      -
-   * - Conservative level set (CLS)
+     -
+   * - Conservative Level Set (CLS)
      - ✓
      - ✓
+     -
      -
      -
    * - Cahn-Hilliard
@@ -181,6 +189,13 @@ The preconditioners supported by each physics are summarized in the table below.
      - ✓
      -
      -
+     -
+   * - Time Harmonic Electromagnetism
+     -
+     -
+     -
+     -
+     - ✓
 
 .. caution:: 
 		Be aware that the setup of the ``amg`` preconditioner is very expensive and does not scale linearly with the size of the matrix. As such, it is generally preferable to minimize the number of assembly of such preconditioner. This can be achieved by using the ``inexact newton`` for the nonlinear solver (see :doc:`non-linear_solver_control`).

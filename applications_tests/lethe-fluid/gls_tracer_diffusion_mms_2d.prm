@@ -165,16 +165,16 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set verbosity                             = quiet
-    set method                                = gmres
-    set relative residual                     = 1e-13
-    set minimum residual                      = 1e-14
+    set verbosity         = quiet
+    set method            = gmres
+    set relative residual = 1e-13
+    set minimum residual  = 1e-14
   end
   subsection tracer
-    set verbosity                             = quiet
-    set method                                = gmres
-    set relative residual                     = 1e-13
-    set minimum residual                      = 1e-14
-    set preconditioner                        = amg
+    set verbosity         = quiet
+    set method            = gmres
+    set relative residual = 1e-13
+    set minimum residual  = 1e-14
+    set preconditioner    = amg
   end
 end
