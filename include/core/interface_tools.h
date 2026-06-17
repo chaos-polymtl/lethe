@@ -1088,7 +1088,7 @@ namespace InterfaceTools
    *
    * This enum defines named indices for the minimum and maximum coordinates
    * stored in IsocontourBoundingValues::bounding_values. The values are ordered
-   * by spatial direction: x, y, then z.
+   * by spatial direction: \f$x\f$, \f$y\f$, then \f$z\f$.
    */
   enum BoundingCoordinates : unsigned int
   {

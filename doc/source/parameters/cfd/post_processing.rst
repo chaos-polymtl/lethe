@@ -418,11 +418,11 @@ This feature can be used to evaluate heights, depths, or lengths when quantities
 
 * ``number of isocontour bounding boxes``: number of monitored isocontours.
 
-* ``variable``: variable(s) of monitored isocontour(s). For multiple isocontours, the different variables must be separated with a comma (e.g., ``set variable = phase, temperature, temperature``).
+* ``variable``: variable(s) used to define the monitored isocontour(s). Each entry corresponds to a different isocontour. When multiple isocontours are defined, the different variables must be separated by commas (e.g., ``set variable = phase, temperature, temperature``) and follow the same order as ``isovalue`` and ``bounding box filename``.
 
   .. note::
     At the moment, only isocontours on the ``temperature`` and ``phase`` (:doc:`CLS<../../../theory/multiphase/cfd/cls>` phase indicator) are implemented.
 
-* ``isovalue``: isovalue(s) of monitored isocontour(s). For multiple isocontours, the different isovalues must be separated with a comma (e.g., ``set isovalue = 0.5, 300, 500``).
+* ``isovalue``: isovalue(s) of monitored isocontour(s). When multiple isocontours are defined, the different isovalues must be separated by commas (e.g., ``set isovalue = 0.5, 300, 500``) and follow the same order as ``variable`` and ``bounding box filename``.
 
-* ``bounding box filename``: filename(s) for outputted isocontour(s). For multiple isocontours, the different filenames must be separated with a comma (e.g., ``set bounding box filename = interface_bounding_box, solidus_bounding_box, liquidus_bounding_box``)
+* ``bounding box filename``: filename(s) for outputted isocontour(s). When multiple isocontours are defined, the different filenames must be separated by commas (e.g., ``set bounding box filename = interface_bounding_box, solidus_bounding_box, liquidus_bounding_box``) and follow the same order as ``variable`` and ``isovalue``.

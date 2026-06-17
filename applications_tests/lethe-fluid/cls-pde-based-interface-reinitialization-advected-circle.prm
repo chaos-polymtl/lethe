@@ -5,7 +5,7 @@
 # DESCRIPTION:
 # This test simulates a circle advected along the positive x-axis.
 # It checks that the PDE-based interface reinitialization works well.
-# It also checks the post-processing of isocontour bounding box on the
+# It also checks the post-processing of isocontour bounding boxes on the
 # CLS phase indicator field.
 #-------------------------------------------------------------------------------
 

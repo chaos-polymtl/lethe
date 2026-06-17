@@ -70,7 +70,7 @@ DeclException4(
   unsigned int,
   << "'" << arg1 << "' was set to " << arg2 << " and the list '" << arg3
   << "' has a size of " << arg4
-  << ". However, the size should correspond to the number declared.");
+  << ". However, the list size should correspond to the number declared.");
 
 DeclException4(ListsSizeMismatch,
                std::string,
@@ -2209,22 +2209,26 @@ namespace Parameters
         Patterns::List(Patterns::Selection("temperature|phase")),
         "Variable(s) of monitored isocontour(s). "
         "Choices are <temperature|phase>. "
-        "For multiple isocontours, separate the different variables with a comma "
-        "(e.g., 'set variable = phase,temperature,temperature').");
+        "Each entry corresponds to a different isocontour. "
+        "When multiple isocontours are defined, the different variables must "
+        "be separated by commas (e.g., ``set variable = phase, temperature, temperature``) "
+        "and follow the same order as ``isovalue`` and ``bounding box filename``.");
       prm.declare_entry(
         "isovalue",
         "0.0",
         Patterns::List(Patterns::Double()),
         "Isovalue(s) of monitored isocontour(s). "
-        "For multiple isocontours, separate the different isovalues with a comma "
-        "(e.g., 'set isovalue = 0.5,300,500').");
+        "When multiple isocontours are defined, the different isovalues "
+        "must be separated by commas (e.g., ``set isovalue = 0.5, 300, 500``) "
+        "and follow the same order as ``variable`` and ``bounding box filename``.");
       prm.declare_entry(
         "bounding box filename",
         "isocontour_bounding_box",
         Patterns::List(Patterns::FileName()),
         "Filename(s) for outputted isocontour(s). "
-        "For multiple isocontours, separate the different filenames with a comma "
-        "(e.g., 'set bounding box filename = interface_bounding_box,solidus_bounding_box,liquidus_bounding_box').");
+        "When multiple isocontours are defined, the different filenames must be "
+        "separated by commas (e.g., ``set bounding box filename = interface_bounding_box, solidus_bounding_box, liquidus_bounding_box``) "
+        "and follow the same order as ``variable`` and ``isovalue``.");
     }
     prm.leave_subsection();
   }
