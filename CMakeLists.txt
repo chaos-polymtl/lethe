@@ -168,4 +168,11 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   endif()
 endif()
 
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(
+          -Wno-unknown-warning-option
+          -Wno-unused-command-line-argument
+  )
+endif()
+
 ADD_SUBDIRECTORY(doc/doxygen)
