@@ -203,8 +203,8 @@ private:
   // Structure that contains the necessary information for boundaries
   std::map<int, boundary_cells_info_struct<dim>> boundary_cells_information;
 
-  // A vector that contains the geometrical information of all (global) boundary
-  // cells. This vector is used in the
+  // A structure that contains the geometrical information of all (global)
+  // boundary cells. This structure is used in the
   // add_cells_with_boundary_lines_to_boundary_cells function
   std::map<int, boundary_cells_info_struct<dim>>
     global_boundary_cells_information;

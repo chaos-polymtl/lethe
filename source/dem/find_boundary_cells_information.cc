@@ -157,9 +157,10 @@ BoundaryCellsInformation<dim>::find_boundary_cells_information(
         {
           // We search to see if the boundary is defined as an outlet, periodic
           // or not. If it is not defined as one of those, we proceed.
-          int  face_id     = cell->face_iterator_to_index(face);
-          bool is_outlet   = outlet_boundaries.contains(face->boundary_id());
-          bool is_periodic = cell->has_periodic_neighbor(face_id);
+          const int  face_id = cell->face_iterator_to_index(face);
+          const bool is_outlet =
+            outlet_boundaries.contains(face->boundary_id());
+          const bool is_periodic = cell->has_periodic_neighbor(face_id);
 
           if (!is_outlet && !is_periodic)
             {

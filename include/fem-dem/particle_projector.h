@@ -37,16 +37,14 @@ using namespace dealii;
  * @brief Calculate the area of intersection between a circular (2D) particle and a circle. \
  *                                                                                          \
  * @param[in] r_particle Radius of the particle                                             \
- *                                                                                          \
  * @param[in] r_circle Radius of the circle                                                 \
- *                                                                                          \
  * @param[in] neighbor_distance Distance between the particle and the circle                \
  */                                                                                         \
 #
 inline double
-particle_circle_intersection_2d(double r_particle,
-                                double r_circle,
-                                double neighbor_distance)
+particle_circle_intersection_2d(const double r_particle,
+                                const double r_circle,
+                                const double neighbor_distance)
 {
   return pow(r_particle, 2) * Utilities::fixed_power<-1, double>(
                                 cos((pow(neighbor_distance, 2) +
@@ -72,9 +70,9 @@ particle_circle_intersection_2d(double r_particle,
  */
 
 inline double
-particle_sphere_intersection_3d(double r_particle,
-                                double r_sphere,
-                                double neighbor_distance)
+particle_sphere_intersection_3d(const double r_particle,
+                                const double r_sphere,
+                                const double neighbor_distance)
 {
   return M_PI *
          Utilities::fixed_power<2, double>(r_sphere + r_particle -

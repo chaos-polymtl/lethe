@@ -116,7 +116,8 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
                            ->global_active_cell_index(),
                          boundaries_information});
 
-                      // Calculate offset if not yet done for this PB ID
+                      // Calculate offset if it has not yet been done for this
+                      // periodic boundary id
                       if (!offset_calculated[face_boundary_id])
                         {
                           Tensor<1, dim> offset;

@@ -28,9 +28,10 @@ read_mesh(const Parameters::Mesh   &mesh_parameters,
     ExcMessage(
       "There is a mismatch between the size of the periodic_direction and the periodic_neighbor_id maps"));
 
-  // Check if there are periodic boundaries
-  if (!bc_params.periodic_direction.empty() &&
-      !bc_params.periodic_neighbor_id.empty())
+  // Check if there are periodic boundaries, this can be done by checking either
+  // the size of the direction map or the neighbor_id map. Since they both have
+  // the same size, it does not matter.
+  if (!bc_params.periodic_direction.empty())
     match_periodic_boundaries(triangulation, bc_params);
 
   if (!restart)

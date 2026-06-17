@@ -843,7 +843,7 @@ namespace Parameters
     private:
       /// Maximum number of boundary condition subsections declared in the
       /// parameter handler.
-      unsigned int DEM_BC_number_max = 10;
+      static constexpr unsigned int max_number_of_dem_boundary_conditions = 10;
     };
 
     /**

@@ -1528,7 +1528,9 @@ namespace Parameters
                           Patterns::Integer(),
                           "Number of boundary conditions");
 
-        for (unsigned int counter = 0; counter < DEM_BC_number_max; ++counter)
+        for (unsigned int counter = 0;
+             counter < max_number_of_dem_boundary_conditions;
+             ++counter)
           { // Example: "boundary condition 0"
             prm.enter_subsection("boundary condition " +
                                  Utilities::int_to_string(counter, 1));
