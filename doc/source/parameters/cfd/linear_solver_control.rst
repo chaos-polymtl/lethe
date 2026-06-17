@@ -141,14 +141,24 @@ The preconditioners supported by each physics are summarized in the table below.
      - ``amg``
      - ``lsmg``
      - ``gcmg``
-   * - Fluid dynamics (matrix-based)
+   * - Fluid dynamics (matrix-based) 
      - ✓
      - ✓
      -
      -
-   * - Fluid dynamics (matrix-free)
+   * - Fluid dynamics (matrix-free) 
      -
      -
+     - ✓
+     - ✓
+   * - VANS (matrix-based) 
+     - ✓
+     - ✓
+     -
+     -
+   * - VANS (matrix-free) 
+     - 
+     - 
      - ✓
      - ✓
    * - Heat transfer
