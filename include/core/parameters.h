@@ -1607,9 +1607,6 @@ namespace Parameters
       adaptive
     } type;
 
-    /// Fields on which the mesh adaptation can be based
-    Variable variable;
-
     // Map containing the refinement variables
     std::map<Variable, MultipleAdaptationParameters> variables;
     // declaration for parsing variables
