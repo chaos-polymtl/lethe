@@ -142,7 +142,7 @@ private:
   /**
    * @brief Return the points on the reference 1D element for the polynomial base.
    *
-   * @param[in] degree Order of the stencil.
+   * @param[in] degree Degree of the stencil.
    */
   void
   p_base(unsigned int degree);

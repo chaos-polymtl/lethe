@@ -26,6 +26,8 @@ template <int dim>
 void
 IBStencil<dim>::p_base(const unsigned int degree)
 {
+  AssertThrow(degree > 0,
+              ExcMessage("IB stencil degree must be greater than 0."));
   using numbers::PI;
   // Define the sampling point position of the stencil on the reference 1D
   // stencil 0 to 1, 1 being the position of the DOF.

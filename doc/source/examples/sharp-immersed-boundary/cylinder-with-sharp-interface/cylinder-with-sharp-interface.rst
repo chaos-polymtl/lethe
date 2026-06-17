@@ -127,7 +127,7 @@ In this case, we want to define a circular boundary of radius 0.5 centered at (8
     
 * ``number of particles`` is set to ``1`` as we only want one particle.
 
-* ``stencil degree`` is set to ``2`` as this is the highest order that is compatible with the FEM scheme and it does not lead to Runge instability. The highest order of stencil compatible with a FEM scheme is defined by the polynomial order of the scheme time the number of dimensions: in this case, 2.
+* ``stencil degree`` is set to ``2`` as this is the highest degree that is compatible with the FEM scheme and it does not lead to Runge instability. The highest degree of stencil compatible with a FEM scheme is defined by the polynomial degree of the scheme time the number of dimensions: in this case, 2.
 
 * ``initial refinement`` is set to 0. In this case, the initial mesh is small enough compared to the particle size. It is therefore not necessary to pre-refine the mesh around the particle.
 
