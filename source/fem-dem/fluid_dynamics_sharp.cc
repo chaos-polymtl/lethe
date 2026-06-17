@@ -1411,7 +1411,7 @@ FluidDynamicsSharp<dim>::force_on_ib()
                                   // Use the results from a previously evaluated
                                   // extrapolation. This step comes with an
                                   // error due to the curvature of the surface
-                                  // in Q2 and higher order elements.
+                                  // in Q2 and higher degree elements.
                                   local_face_viscous_stress_tensor[i] =
                                     force_eval[local_face_dof_indices[i]].first;
                                   local_face_pressure_tensor[i] =
@@ -3399,7 +3399,8 @@ FluidDynamicsSharp<dim>::sharp_edge()
                           update_quadrature_points | update_JxW_values);
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
-  int degree = this->simulation_parameters.particlesParameters->stencil_degree;
+  const unsigned int degree =
+    this->simulation_parameters.particlesParameters->stencil_degree;
   double length_ratio =
     this->simulation_parameters.particlesParameters->length_ratio;
 
