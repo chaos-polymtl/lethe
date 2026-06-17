@@ -1,6 +1,13 @@
 # SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#-------------------------------------------------------------------------------
+# DESCRIPTION:
+# This test checks a 2D manufactured solution for the Tracer equations
+# when advection is disabled (diffusion only).
+# It also checks that the AMG preconditioner works adequately.
+#-------------------------------------------------------------------------------
+
 # Listing of Parameters
 #----------------------
 
@@ -162,19 +169,12 @@ subsection linear solver
     set method                                = gmres
     set relative residual                     = 1e-13
     set minimum residual                      = 1e-14
-    set preconditioner                        = ilu
-    set ilu preconditioner fill               = 0
-    set ilu preconditioner absolute tolerance = 1e-14
-    set ilu preconditioner relative tolerance = 1.00
   end
   subsection tracer
     set verbosity                             = quiet
     set method                                = gmres
     set relative residual                     = 1e-13
     set minimum residual                      = 1e-14
-    set preconditioner                        = ilu
-    set ilu preconditioner fill               = 0
-    set ilu preconditioner absolute tolerance = 1e-14
-    set ilu preconditioner relative tolerance = 1.00
+    set preconditioner                        = amg
   end
 end
