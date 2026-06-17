@@ -1734,10 +1734,7 @@ Tracer<dim>::reinit_mortar_operators()
   // Create mortar coupling evaluator
   this->mortar_coupling_evaluator =
     std::make_shared<ScalarCouplingEvaluationSIPG<dim, 1, double>>(
-      *this->get_mapping(),
-      *this->dof_handler,
-      simulation_parameters.physical_properties_manager
-        .get_kinematic_viscosity_scale());
+      *this->get_mapping(), *this->dof_handler);
 
   this->mortar_coupling_operator =
     std::make_shared<CouplingOperator<dim, double>>(
