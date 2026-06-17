@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_insertion_h
@@ -140,20 +140,6 @@ protected:
     std::vector<std::vector<double>> &particle_properties);
 
   /**
-   * @brief Carries out finding the maximum number of inserted particles based on the
-   * insertion box size. If the requested number of particles for insertion in
-   * each insertion step is larger than this maximum, it is limited to this
-   * value and a warning is printed.
-   *
-   * @param dem_parameters DEM parameters declared in the .prm file
-   * @param pcout Printing in parallel
-   */
-  void
-  calculate_insertion_domain_maximum_particle_number(
-    const DEMSolverParameters<dim> &dem_parameters,
-    const ConditionalOStream       &pcout);
-
-  /**
    * @brief Find every cell that are completely and partially inside de the
    * clearing box. For the cell completely inside the box, all the particles
    * will be deleted. For those partially inside, a fine verification is
@@ -179,14 +165,6 @@ protected:
   // Number of particles inserted at each insertion time step. This value can
   // change in the last insertion step to reach the desired number of particles
   unsigned int inserted_this_step;
-
-  // Number of insertion points in the x, y and z directions
-  std::vector<int> number_of_particles_directions;
-
-  // Minimum and maximum number of inserted particles based on the insertion box
-  // size and the direction order (it means that axis 0 is not necessarily x
-  // etc...) It depends on the order of the insertion direction.
-  std::vector<double> axis_min, axis_max;
 
   // Maximum particle diameter
   double maximum_diameter;

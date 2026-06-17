@@ -57,6 +57,12 @@ public:
   void
   solve();
 
+  void
+  update_previous_position();
+
+  void
+  clamp_displacement();
+
 private:
   /**
    * @brief Set the parameters for the DEM simulation
@@ -524,6 +530,11 @@ private:
    * with a packed bed, loaded with another prm.
    */
   bool disable_position_integration;
+
+  /**
+   * @brief Uses the packed insertion method.
+   */
+  bool is_packed_insertion_method = false;
 };
 
 #endif

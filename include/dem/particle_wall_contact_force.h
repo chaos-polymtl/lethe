@@ -69,6 +69,29 @@ public:
     const double dt,
     const std::vector<std::shared_ptr<SerialSolid<dim - 1, dim>>> &solids,
     ParticleInteractionOutcomes<PropertiesIndex> &contact_outcome) = 0;
+
+
+  /**
+   * @brief Return the number of contact that occurred in the
+   * present pseudo-time step when using the shift insertion method.
+   */
+  unsigned int
+  get_number_of_contacts() const
+  {
+    return n_contact;
+  }
+
+  /**
+   * @brief Reset the counter of number of contact for the next pseudo-time step.
+   */
+  void
+  reset_number_of_contacts()
+  {
+    n_contact = 0;
+  }
+
+protected:
+  unsigned int n_contact = 0;
 };
 
 /**
@@ -392,6 +415,11 @@ protected:
                               tangential_force,
                               tangential_torque,
                               rolling_resistance_torque);
+      }
+
+    if constexpr (contact_model == ParticleWallContactForceModel::shift)
+      {
+        shift_particle_using_normal_overlap(contact_info, normal_overlap);
       }
   }
 
@@ -1019,6 +1047,49 @@ private:
         contact_info.rolling_resistance_spring_torque.clear();
       }
     normal_force += cohesive_term * normal_vector;
+  }
+
+  /**
+   * @brief Shift particles that are in contact using their normal overlap. This
+   * contact model is used for the packed insertion method.
+   *
+   * @param[in,out] contact_info A container that contains the required
+   * information for calculation of the contact force for a particle-wall pair.
+   * @param[in] normal_overlap Contact normal overlap.
+   */
+
+  inline void
+  shift_particle_using_normal_overlap(
+    particle_wall_contact_info<dim> &contact_info,
+    const double                     normal_overlap)
+  {
+    // Contact particle-wall + constant cohesive force.
+    if (normal_overlap > 0.)
+      {
+        ++this->n_contact;
+        // i is the particle, j is the wall.
+        // there is a minus sign in front of the normal_vector to respect the
+        // convention (i -> j), the forces are thus calculated on the wall
+        const Tensor<1, 3> normal_vector = -contact_info.normal_vector;
+
+        auto particle = contact_info.particle;
+
+        Point<dim> particle_position = particle->get_location();
+        Point<dim> particle_new_position;
+
+        if constexpr (dim == 2)
+          {
+            particle_new_position =
+              particle_position -
+              1.25 * normal_overlap * tensor_nd_to_2d(normal_vector);
+          }
+        if constexpr (dim == 3)
+          {
+            particle_new_position =
+              particle_position - 1.25 * normal_overlap * normal_vector;
+          }
+        particle->set_location(particle_new_position);
+      }
   }
 
 

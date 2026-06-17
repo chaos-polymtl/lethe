@@ -555,9 +555,9 @@ namespace Parameters
       {
         prm.declare_entry("insertion method",
                           "volume",
-                          Patterns::Selection("file|list|plane|volume"),
+                          Patterns::Selection("file|list|plane|volume|packed"),
                           "Choosing insertion method. "
-                          "Choices are <file|plane|list|volume>.");
+                          "Choices are <file|plane|list|volume|packed>.");
         prm.declare_entry("inserted number of particles at each time step",
                           "0",
                           Patterns::Integer(),
@@ -670,6 +670,7 @@ namespace Parameters
           "1.",
           Patterns::Double(),
           "Maximum position offset when insertion of particles");
+
         prm.declare_entry(
           "insertion prn seed",
           "1",
@@ -683,6 +684,8 @@ namespace Parameters
                           "0.0, 0.0, 0.0",
                           Patterns::List(Patterns::Double()),
                           "Initial angular velocity (x, y, z)");
+
+        // Multi-physics
         auto initial_temperature_function_parsed =
           std::make_shared<Functions::ParsedFunction<dim>>(1);
         prm.enter_subsection("initial temperature function");
@@ -709,6 +712,8 @@ namespace Parameters
           insertion_method = InsertionMethod::list;
         else if (insertion == "volume")
           insertion_method = InsertionMethod::volume;
+        else if (insertion == "packed")
+          insertion_method = InsertionMethod::packed;
         else
           {
             throw(std::runtime_error("Invalid insertion method "));
@@ -839,7 +844,6 @@ namespace Parameters
         distance_threshold = prm.get_double("insertion distance threshold");
         insertion_maximum_offset = prm.get_double("insertion maximum offset");
         seed_for_insertion       = prm.get_integer("insertion prn seed");
-
         initial_vel = value_string_to_tensor<3>(prm.get("initial velocity"));
         initial_omega =
           value_string_to_tensor<3>(prm.get("initial angular velocity"));

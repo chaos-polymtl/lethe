@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <dem/insertion.h>
@@ -131,107 +131,6 @@ Insertion<dim, PropertiesIndex>::assign_particle_properties(
 
       particle_properties.push_back(properties_of_one_particle);
       properties_of_one_particle.clear();
-    }
-}
-
-template <int dim, typename PropertiesIndex>
-void
-Insertion<dim, PropertiesIndex>::
-  calculate_insertion_domain_maximum_particle_number(
-    const DEMSolverParameters<dim> &dem_parameters,
-    const ConditionalOStream       &pcout)
-{
-  // Getting properties as local parameters
-  const auto insertion_information = dem_parameters.insertion_info;
-
-  // Checking if the insertion directions are valid (no repetition)
-  int axis_sum = 0;
-  if constexpr (dim == 2)
-    {
-      axis_sum = insertion_information.direction_sequence[0] +
-                 insertion_information.direction_sequence[1];
-
-      AssertThrow(
-        axis_sum == 1,
-        ExcMessage("Invalid insertion directions: 2 directions are the same "));
-    }
-  if constexpr (dim == 3)
-    {
-      axis_sum = insertion_information.direction_sequence[0] +
-                 insertion_information.direction_sequence[1] +
-                 insertion_information.direction_sequence[2];
-
-      AssertThrow(
-        axis_sum == 3,
-        ExcMessage(
-          "Invalid insertion directions: at least 2 directions are the same "));
-    }
-
-
-  // This variable is used for calculation of the maximum number of particles
-  // that can fit in the chosen insertion box
-  int maximum_particle_number = 1;
-
-  number_of_particles_directions.resize(dim);
-  axis_min.resize(dim);
-  axis_max.resize(dim);
-
-  std::vector<unsigned int> axis_list = {
-    insertion_information.direction_sequence[0],
-    insertion_information.direction_sequence[1]};
-
-  if constexpr (dim == 3)
-    {
-      axis_list.push_back(insertion_information.direction_sequence[2]);
-    }
-
-  // Assigning the minimum and maximum positions of the insertion box in respect
-  // to the axis order
-  for (unsigned int axis : axis_list)
-    {
-      switch (axis)
-        {
-          case 0:
-            axis_min[0] = insertion_information.insertion_box_point_1(0);
-            axis_max[0] = insertion_information.insertion_box_point_2(0);
-            break;
-          case 1:
-            axis_min[1] = insertion_information.insertion_box_point_1(1);
-            axis_max[1] = insertion_information.insertion_box_point_2(1);
-            break;
-          case 2:
-            axis_min[2] = insertion_information.insertion_box_point_1(2);
-            axis_max[2] = insertion_information.insertion_box_point_2(2);
-            break;
-          default:
-            AssertThrow(false,
-                        ExcMessage("Insertion direction must be 0, 1 or 2"));
-        }
-
-      // Assign max number of particles according to the direction and calculate
-      // the total max number (maximum_particle_number = max_x * max_y * max_z)
-      int number_of_particles = static_cast<int>(
-        (axis_max[axis] - axis_min[axis]) /
-        (insertion_information.distance_threshold * this->maximum_diameter));
-      number_of_particles_directions[axis] = number_of_particles;
-      maximum_particle_number *= number_of_particles;
-    }
-
-  // If the inserted number of particles at this step exceeds the maximum
-  // number, a warning is printed
-  if (insertion_information.inserted_this_step > maximum_particle_number)
-    {
-      pcout << "Warning: the requested number of particles for insertion ("
-            << insertion_information.inserted_this_step
-            << ") is higher than maximum expected number of particles ("
-            << maximum_particle_number << ")" << std::endl;
-
-      // Updating the number of inserted particles at each step
-      inserted_this_step = maximum_particle_number;
-    }
-  else
-    {
-      inserted_this_step = insertion_information.inserted_this_step;
     }
 }
 
