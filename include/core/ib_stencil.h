@@ -145,7 +145,7 @@ private:
    * @param[in] degree Degree of the stencil.
    */
   void
-  p_base(unsigned int degree);
+  p_base(const unsigned int degree);
 
   /**
    * @brief Points of the reference 1D stencil.
