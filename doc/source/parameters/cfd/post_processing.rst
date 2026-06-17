@@ -218,7 +218,7 @@ Physical Properties Post-processing
 * ``calculate apparent viscosity``: controls if parameter calculation of an apparent viscosity is enabled, when using a non Newtonian flow (see section Physical properties - :ref:`rheological_models`). This is mainly used to define the Reynolds number `a posteriori`. 
     * ``apparent viscosity name``: output filename for apparent viscosity calculations.
 
-Multiphysics post-processing
+Multiphysics Post-processing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * ``calculate tracer statistics``: controls if calculation of tracer statistics is enabled. Statistics include: minimum, maximum, average and standard-deviation.

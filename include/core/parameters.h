@@ -1090,7 +1090,7 @@ namespace Parameters
     };
 
     /// Contains all isocontour bounding boxes
-    IsocontourBoundingBoxes isocontour_bounding_boxes; // TODO AA check static
+    IsocontourBoundingBoxes isocontour_bounding_boxes;
 
     /// Verbosity level of the post-processed quantities
     Verbosity verbosity;
