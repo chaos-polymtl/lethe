@@ -3924,10 +3924,11 @@ namespace Parameters
       prm.enter_subsection("extrapolation function");
       {
         prm.declare_entry(
-          "stencil order",
+          "stencil degree",
           "2",
-          Patterns::Integer(),
-          "The polynomial order used in the extrapolation function");
+          Patterns::Integer(1),
+          "The polynomial degree used in the extrapolation function");
+        prm.declare_alias("stencil degree", "stencil order", true);
         prm.declare_entry(
           "length ratio",
           "4",
@@ -4149,7 +4150,7 @@ namespace Parameters
     {
       prm.enter_subsection("extrapolation function");
       {
-        order                = prm.get_integer("stencil order");
+        stencil_degree       = prm.get_integer("stencil degree");
         length_ratio         = prm.get_double("length ratio");
         enable_extrapolation = prm.get_bool("enable extrapolation");
         prm.leave_subsection();

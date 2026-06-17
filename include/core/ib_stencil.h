@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_ib_stencil_h
@@ -22,29 +22,29 @@ class IBStencil
 public:
   /**
    * @brief Return the number of points used by the interpolation stencil (excluding the
-   *  dof itself) for a stencil of a given order.
+   *  dof itself) for a stencil of a given degree.
    *
-   * @param[in] order Stencil order.
+   * @param[in] degree Stencil degree.
    *
    * @return Number of points used by the interpolation stencil.
    */
   virtual unsigned int
-  number_of_interpolation_support_points(const unsigned int order);
+  number_of_interpolation_support_points(const unsigned int degree);
 
   /**
    * @brief Find the DOF at which we try to apply the IB by interpolation
    * and the location of the support points to do so.
    *
-   * Define the points for the IB stencil, based on the order and the particle
-   * position as well as the DOF position. Depending on the order, the output
-   * variable "point" change definition. In the case of stencil orders 1 to 4
+   * Define the points for the IB stencil, based on the degree and the particle
+   * position as well as the DOF position. Depending on the degree, the output
+   * variable "point" change definition. In the case of stencil degrees 1 to 4
    * the variable point returns the position of the DOF directly. In the case of
-   * high order stencil, it returns the position of the point that is on the IB.
-   * The variable "interpolation points" return the points used to define the
-   * cell used for the stencil definition and the locations of the points used
-   * in the stencil calculation.
+   * high degree stencil, it returns the position of the point that is on the
+   * IB. The variable "interpolation points" return the points used to define
+   * the cell used for the stencil definition and the locations of the points
+   * used in the stencil calculation.
    *
-   * @param[in] order Stencil order.
+   * @param[in] degree Stencil degree.
    *
    * @param[in] length_ratio Length ratio between the 2 side of the stencil.
    *
@@ -59,7 +59,7 @@ public:
    */
   virtual std::tuple<Point<dim>, std::vector<Point<dim>>>
   support_points_for_interpolation(
-    const unsigned int                                    order,
+    const unsigned int                                    degree,
     const double                                          length_ratio,
     IBParticle<dim>                                      &p,
     const Point<dim>                                     &dof_point,
@@ -69,7 +69,7 @@ public:
    * @brief See overloaded function.
    */
   virtual std::tuple<Point<dim>, std::vector<Point<dim>>>
-  support_points_for_interpolation(const unsigned int order,
+  support_points_for_interpolation(const unsigned int degree,
                                    const double       length_ratio,
                                    IBParticle<dim>   &p,
                                    const Point<dim>  &dof_point);
@@ -105,12 +105,12 @@ public:
    * coefficient of the DOF to the coefficient of the farthest interpolation
    * point (sorted by increasing distance).
    *
-   * @param[in] order Stencil order.
+   * @param[in] degree Stencil degree.
    *
    * @param[in] length_ratio Length ratio between the 2 side of the stencil.
    */
   virtual std::vector<double>
-  coefficients(const unsigned int order, const double length_ratio);
+  coefficients(const unsigned int degree, const double length_ratio);
 
   /**
    * @brief Return the velocity of the IB used in the RHS of the equation.
@@ -142,10 +142,10 @@ private:
   /**
    * @brief Return the points on the reference 1D element for the polynomial base.
    *
-   * @param[in] order Order of the stencil.
+   * @param[in] degree Degree of the stencil.
    */
   void
-  p_base(unsigned int order);
+  p_base(const unsigned int degree);
 
   /**
    * @brief Points of the reference 1D stencil.

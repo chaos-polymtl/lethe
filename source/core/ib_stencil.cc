@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/ib_stencil.h>
@@ -8,51 +8,54 @@
 
 template <int dim>
 unsigned int
-IBStencil<dim>::number_of_interpolation_support_points(const unsigned int order)
+IBStencil<dim>::number_of_interpolation_support_points(
+  const unsigned int degree)
 {
   // The number of points used in the stencil excluding the DOF is equal to the
-  // order.
-  unsigned int nb_points = order;
+  // degree.
+  unsigned int nb_points = degree;
 
   // In the case where the cell is used directly to find the solution at
   // the IB only one point is needed.
-  if (order > 4)
+  if (degree > 4)
     nb_points = 1;
   return nb_points;
 }
 
 template <int dim>
 void
-IBStencil<dim>::p_base(const unsigned int order)
+IBStencil<dim>::p_base(const unsigned int degree)
 {
+  AssertThrow(degree > 0,
+              ExcMessage("IB stencil degree must be greater than 0."));
   using numbers::PI;
   // Define the sampling point position of the stencil on the reference 1D
   // stencil 0 to 1, 1 being the position of the DOF.
-  reference_points.resize(order + 1);
-  for (unsigned int i = 0; i < order + 1; ++i)
+  reference_points.resize(degree + 1);
+  for (unsigned int i = 0; i < degree + 1; ++i)
     {
-      reference_points[i] = 0.5 * (1 - cos(PI * i / order));
+      reference_points[i] = 0.5 * (1 - cos(PI * i / degree));
     }
 }
 
 template <int dim>
 std::vector<double>
-IBStencil<dim>::coefficients(const unsigned int order,
+IBStencil<dim>::coefficients(const unsigned int degree,
                              const double       length_ratio)
 {
-  p_base(order);
+  p_base(degree);
   // Initialize the coefficient vector
-  std::vector<double> coef(order + 1);
+  std::vector<double> coef(degree + 1);
 
-  FullMatrix<double> vandermonde(order + 1, order + 1);
-  FullMatrix<double> stencil(order + 1, order + 1);
-  FullMatrix<double> inv_vandermonde(order + 1, order + 1);
+  FullMatrix<double> vandermonde(degree + 1, degree + 1);
+  FullMatrix<double> stencil(degree + 1, degree + 1);
+  FullMatrix<double> inv_vandermonde(degree + 1, degree + 1);
 
-  Vector<double> rhs(order + 1);
+  Vector<double> rhs(degree + 1);
   // Define the Vandermonde matrix
-  for (unsigned int i = 0; i < order + 1; ++i)
+  for (unsigned int i = 0; i < degree + 1; ++i)
     {
-      for (unsigned int j = 0; j < order + 1; ++j)
+      for (unsigned int j = 0; j < degree + 1; ++j)
         {
           vandermonde[i][j] = std::pow(reference_points[i], j);
         }
@@ -62,24 +65,24 @@ IBStencil<dim>::coefficients(const unsigned int order,
   inv_vandermonde.invert(vandermonde);
 
   // Multiply each line of the inverted matrix by (1+length_ratio)^i
-  for (unsigned int i = 0; i < order + 1; ++i)
+  for (unsigned int i = 0; i < degree + 1; ++i)
     {
-      for (unsigned int j = 0; j < order + 1; ++j)
+      for (unsigned int j = 0; j < degree + 1; ++j)
         {
           stencil[i][j] = inv_vandermonde[i][j] * rhs[i];
         }
     }
   // Sum the columns to get the coefficients.
-  for (unsigned int i = 0; i < order + 1; ++i)
+  for (unsigned int i = 0; i < degree + 1; ++i)
     {
-      for (unsigned int j = 0; j < order + 1; ++j)
+      for (unsigned int j = 0; j < degree + 1; ++j)
         {
-          coef[order - i] += stencil[j][i];
+          coef[degree - i] += stencil[j][i];
         }
     }
 
-  // Fill the coefficient vector based on the order.
-  if (order > 4)
+  // Fill the coefficient vector based on the degree.
+  if (degree > 4)
     {
       // In this case the cell is directly used to find the solution at the IB
       // position. In this case only one point is needed (the position of the
@@ -94,22 +97,22 @@ IBStencil<dim>::coefficients(const unsigned int order,
 template <int dim>
 std::tuple<Point<dim>, std::vector<Point<dim>>>
 IBStencil<dim>::support_points_for_interpolation(
-  const unsigned int                                    order,
+  const unsigned int                                    degree,
   const double                                          length_ratio,
   IBParticle<dim>                                      &p,
   const Point<dim>                                     &dof_point,
   const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
 {
-  // Create the vector of points used for the stencil based on the order of the
+  // Create the vector of points used for the stencil based on the degree of the
   // stencil. Also return the DOF position or the position of the point on the
   // IB depending on if the cell is used directly.
-  p_base(order);
+  p_base(degree);
   Point<dim> point;
   Point<dim> surface_point;
   p.closest_surface_point(dof_point, surface_point, cell_guess);
   std::vector<Point<dim>> interpolation_points;
 
-  if (order > 4)
+  if (degree > 4)
     {
       // In this case the cell is directly used to find the solution at the IB
       // position. In this case only one point is needed (the position of the
@@ -125,14 +128,14 @@ IBStencil<dim>::support_points_for_interpolation(
     }
   else
     {
-      interpolation_points.resize(order);
+      interpolation_points.resize(degree);
       Tensor<1, dim, double> vect_ib = dof_point - surface_point;
       point                          = dof_point;
-      for (unsigned int i = 1; i < order + 1; ++i)
+      for (unsigned int i = 1; i < degree + 1; ++i)
         {
           interpolation_points[i - 1] =
             dof_point +
-            vect_ib * (1 - reference_points[order - i]) / (length_ratio);
+            vect_ib * (1 - reference_points[degree - i]) / (length_ratio);
         }
     }
   return {point, interpolation_points};
@@ -140,21 +143,21 @@ IBStencil<dim>::support_points_for_interpolation(
 
 template <int dim>
 std::tuple<Point<dim>, std::vector<Point<dim>>>
-IBStencil<dim>::support_points_for_interpolation(const unsigned int order,
+IBStencil<dim>::support_points_for_interpolation(const unsigned int degree,
                                                  const double      length_ratio,
                                                  IBParticle<dim>  &p,
                                                  const Point<dim> &dof_point)
 {
-  // Create the vector of points used for the stencil based on the order of the
+  // Create the vector of points used for the stencil based on the degree of the
   // stencil. Also return the DOF position or the position of the point on the
   // IB depending on if the cell is used directly.
-  p_base(order);
+  p_base(degree);
   Point<dim> point;
   Point<dim> surface_point;
   p.closest_surface_point(dof_point, surface_point);
   std::vector<Point<dim>> interpolation_points;
 
-  if (order > 4)
+  if (degree > 4)
     {
       // In this case the cell is directly used to find the solution at the IB
       // position. In this case only one point is needed (the position of the
@@ -170,14 +173,14 @@ IBStencil<dim>::support_points_for_interpolation(const unsigned int order,
     }
   else
     {
-      interpolation_points.resize(order);
+      interpolation_points.resize(degree);
       Tensor<1, dim, double> vect_ib = dof_point - surface_point;
       point                          = dof_point;
-      for (unsigned int i = 1; i < order + 1; ++i)
+      for (unsigned int i = 1; i < degree + 1; ++i)
         {
           interpolation_points[i - 1] =
             dof_point +
-            vect_ib * (1 - reference_points[order - i]) / (length_ratio);
+            vect_ib * (1 - reference_points[degree - i]) / (length_ratio);
         }
     }
   return {point, interpolation_points};
@@ -206,7 +209,7 @@ Point<dim>
 IBStencil<dim>::point_for_cell_detection(IBParticle<dim>  &p,
                                          const Point<dim> &dof_point)
 {
-  // Create the vector of points used for the stencil based on the order of the
+  // Create the vector of points used for the stencil based on the degree of the
   // stencil. Also return the DOF position or the position of the point on the
   // IB depending on if the cell is used directly
 
