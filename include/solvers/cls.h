@@ -316,6 +316,18 @@ public:
   solve_linear_system() override;
 
   /**
+   * @brief Set up the ILU preconditioner stored in ilu_preconditioner.
+   */
+  void
+  setup_ilu();
+
+  /**
+   * @brief Set up the AMG preconditioner stored in amg_preconditioner.
+   */
+  void
+  setup_amg();
+
+  /**
    * @brief Getter methods to get the private attributes for the physic currently solved
    * NB : dof_handler and present_solution are passed to the multiphysics
    * interface at the end of the setup_dofs method
@@ -813,6 +825,12 @@ private:
   std::shared_ptr<CLSSubequationsInterface<dim>> cls_subequations_interface;
 
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
+
+  /**
+   * @brief AMG preconditioner used by the iterative linear solver of the main
+   * conservative level set system.
+   */
+  std::shared_ptr<TrilinosWrappers::PreconditionAMG> amg_preconditioner;
 
   // Lower and upper bounds of phase indicator
   const double phase_upper_bound = 1.0;
