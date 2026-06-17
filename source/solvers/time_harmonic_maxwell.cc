@@ -1836,7 +1836,7 @@ TimeHarmonicMaxwell<dim>::solve_linear_system()
                   .at(PhysicsID::electromagnetics)
                   .preconditioner ==
                 Parameters::LinearSolver::PreconditionerType::none,
-              ExcMessage())
+              ExcMessage("The time harmonic electromagnetism physics does not support the use of a preconditioner. Please use preconditioner = none"));
 
     auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
