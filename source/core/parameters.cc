@@ -3926,7 +3926,7 @@ namespace Parameters
         prm.declare_entry(
           "stencil degree",
           "2",
-          Patterns::Integer(),
+          Patterns::Integer(1),
           "The polynomial degree used in the extrapolation function");
         prm.declare_alias("stencil degree", "stencil order", true);
         prm.declare_entry(
