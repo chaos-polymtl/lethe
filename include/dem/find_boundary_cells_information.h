@@ -189,7 +189,7 @@ private:
    * @param boundary_cells_information A container that contains the information
    * of all the boundary cells with boundary faces
    * @param outlet_boundaries A set which contains the outlet boundary IDs
-   * @param global_boundary_cells_information A vector that contains the geometrical
+   * @param global_boundary_cells_information A map that contains the geometrical
    * information of all (global) boundary cells
    */
   void
