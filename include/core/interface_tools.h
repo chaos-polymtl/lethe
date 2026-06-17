@@ -1101,9 +1101,10 @@ namespace InterfaceTools
   };
 
   /**
-   * @brief Interface bounding values in the \f$x\f$ and \f$y\f$ coordinates.
-   * A boolean is also defined to indicate when the interface is present in the
-   * simulated domain.
+   * @brief Bounding values of an isocontour along each coordinate direction
+   * (\f$x\f$ and \f$y\f$ in 2D; \f$x\f$, \f$y\f$, and \f$z\f$ in 3D). A boolean
+   * flag also indicates whether the isocontour is present in the simulated
+   * domain or not.
    */
   template <int dim>
   struct IsocontourBoundingValues

@@ -2207,24 +2207,24 @@ namespace Parameters
         "variable",
         "temperature",
         Patterns::List(Patterns::Selection("temperature|phase")),
-        "Variable(s) of monitored isocontour(s)"
-        "Choices are <temperature|phase>."
+        "Variable(s) of monitored isocontour(s). "
+        "Choices are <temperature|phase>. "
         "For multiple isocontours, separate the different variables with a comma "
-        "(e.g., 'set variables = phase,temperature,temperature')");
+        "(e.g., 'set variable = phase,temperature,temperature').");
       prm.declare_entry(
         "isovalue",
         "0.0",
         Patterns::List(Patterns::Double()),
-        "Isovalue(s) of monitored isocontour(s)."
+        "Isovalue(s) of monitored isocontour(s). "
         "For multiple isocontours, separate the different isovalues with a comma "
-        "(e.g., 'set isovalue = 0.5,300,500')");
+        "(e.g., 'set isovalue = 0.5,300,500').");
       prm.declare_entry(
         "bounding box filename",
         "isocontour_bounding_box",
         Patterns::List(Patterns::FileName()),
-        "Filename(s) for outputted isocontour(s)"
+        "Filename(s) for outputted isocontour(s). "
         "For multiple isocontours, separate the different filenames with a comma "
-        "(e.g., 'set bounding box filename = interface_bounding_box,solidus_bounding_box,liquidus_bounding_box')");
+        "(e.g., 'set bounding box filename = interface_bounding_box,solidus_bounding_box,liquidus_bounding_box').");
     }
     prm.leave_subsection();
   }
@@ -2249,7 +2249,7 @@ namespace Parameters
       std::vector<std::string> filename_vec =
         Utilities::split_string_list(filename_list);
 
-      // Check that sizes are coherent with each-other
+      // Check that sizes are coherent with each other
       if (number_of_isocontour_bounding_boxes > 0)
         AssertThrow(variables_vec.size() == number_of_isocontour_bounding_boxes,
                     ListSizeIncoherentWithDeclaredNumber(
@@ -2269,7 +2269,7 @@ namespace Parameters
                                     filename_vec.size()));
 
       // Initialize per variable maps. At the moment, only the variables
-      // "temperature" and "phase " are accepted
+      // "temperature" and "phase" are accepted
       isocontour_ids_per_variable.insert(
         {Variable::temperature, std::vector<unsigned int>()});
       isocontour_ids_per_variable.insert(
@@ -2297,7 +2297,7 @@ namespace Parameters
                 }
               else
                 throw std::invalid_argument(
-                  "Error, the only valid variables for a 'isocontour bounding box' are: 'temperature' or 'phase'.");
+                  "Error, the only valid variables for an 'isocontour bounding box' are: 'temperature' or 'phase'.");
 
               // Get isovalue and output filename
               isocontour.isovalue =
@@ -3572,7 +3572,7 @@ namespace Parameters
         "Variable(s) for error estimation"
         "Choices are <velocity|pressure|phase|temperature|phase_cahn_hilliard|chemical_potential_cahn_hilliard|tracer|electric field|magnetic field|electromagnetic_fields>."
         "For multi-variables refinement, separate the different variables with a comma "
-        "(ex/ 'set variables = velocity,temperature')");
+        "(ex/ 'set variable = velocity,temperature')");
 
       prm.declare_entry(
         "fraction type",

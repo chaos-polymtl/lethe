@@ -407,17 +407,22 @@ Multiphase Post-processing
 
 Isocontour Bounding Box
 ~~~~~~~~~~~~~~~~~~~~~~~
-The ``isocontour bounding box`` subsection defines isocontours to be monitored. This is used to get the time evolution of isocontours of one or multiple fields:
+The ``isocontour bounding box`` subsection defines isocontours to be monitored. This is used to get the time evolution of the bounding boxes of isocontours of one or multiple fields:
   - In 2D: :math:`x_\mathrm{min}`, :math:`x_\mathrm{max}`, :math:`y_\mathrm{min}`, and :math:`y_\mathrm{max}`;
   - In 3D: :math:`x_\mathrm{min}`, :math:`x_\mathrm{max}`, :math:`y_\mathrm{min}`, :math:`y_\mathrm{max}`, :math:`z_\mathrm{min}`, and :math:`z_\mathrm{max}`.
 
+This feature can be used to evaluate heights, depths, or lengths when quantities of interests are known prior to running simulations. Each isocontour's bounding values in function of time is stored in a separate ``.dat`` file with named as specified with ``bounding box filename``.
+
+.. warning::
+  If, during simulation, a tracked isocontour is not detected within the simulated domain at a given simulation time, no entry will be made for that time. This means that if an empty ``.dat`` file is outputted, the tracked isocontour was not present in the domain during the simulated time.
+
 * ``number of isocontour bounding boxes``: number of monitored isocontours.
 
-* ``variable``: variable(s) of monitored isocontour(s). For multiple isocontours, the different variables must be separated with a comma (e.g., ``set variables = phase, temperature, temperature``).
+* ``variable``: variable(s) of monitored isocontour(s). For multiple isocontours, the different variables must be separated with a comma (e.g., ``set variable = phase, temperature, temperature``).
 
   .. note::
     At the moment, only isocontours on the ``temperature`` and ``phase`` (:doc:`CLS<../../../theory/multiphase/cfd/cls>` phase indicator) are implemented.
 
 * ``isovalue``: isovalue(s) of monitored isocontour(s). For multiple isocontours, the different isovalues must be separated with a comma (e.g., ``set isovalue = 0.5, 300, 500``).
 
-* ``bounding box filename``: filename(s) for outputted isocontour(s). For multiple isocontours, the different filenames must be separated with a comma (e.g., ``set isovalue = interface_bounding_box, solidus_bounding_box, liquidus_bounding_box``)
+* ``bounding box filename``: filename(s) for outputted isocontour(s). For multiple isocontours, the different filenames must be separated with a comma (e.g., ``set bounding box filename = interface_bounding_box, solidus_bounding_box, liquidus_bounding_box``)
