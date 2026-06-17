@@ -104,10 +104,10 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
   // When the finite element order > 1, overconstrained cells are impossible
   // since there is always at least a DOF inside the element that is not
   // overconstrained. We therefore only have to check when the velocity order
-// When the finite element degree > 1, overconstrained cells are impossible
-// since there is always at least a DOF inside the element that is not
-// overconstrained. We therefore only have to check when the velocity degree
-// == 1.
+  // When the finite element degree > 1, overconstrained cells are impossible
+  // since there is always at least a DOF inside the element that is not
+  // overconstrained. We therefore only have to check when the velocity degree
+  // == 1.
   const bool mapping_overconstrained_cells =
     this->simulation_parameters.fem_parameters.velocity_degree == 1;
 
@@ -1068,7 +1068,8 @@ FluidDynamicsSharp<dim>::force_on_ib()
            .density_is_constant(),
          RequiresConstantDensity("FluidDynamicsSharp<dim>::force_on_ib"));
 
-  unsigned int  degree = this->simulation_parameters.particlesParameters->stencil_degree;
+  unsigned int degree =
+    this->simulation_parameters.particlesParameters->stencil_degree;
   auto density_model =
     this->simulation_parameters.physical_properties_manager.get_density(0);
   std::map<field, double> field_values;
