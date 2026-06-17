@@ -3,6 +3,13 @@ if(CMAKE_VERSION VERSION_LESS 3.12) # To support the version range
   cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
 endif()
 
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(
+          -Wno-unknown-warning-option
+          -Wno-unused-command-line-argument
+  )
+endif()
+
 # TARGET_SUPPORTS_SHARED_LIBS is set by PROJECT, but we have to call
 # FIND_PACKAGE before that, and deal.II's configuration calls
 # ADD_LIBRARY with the SHARED keyword, so setting
@@ -166,13 +173,6 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
                 "${CMAKE_BINARY_DIR}" "${CMAKE_SOURCE_DIR}")
     endif()
   endif()
-endif()
-
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(
-          -Wno-unknown-warning-option
-          -Wno-unused-command-line-argument
-  )
 endif()
 
 ADD_SUBDIRECTORY(doc/doxygen)
