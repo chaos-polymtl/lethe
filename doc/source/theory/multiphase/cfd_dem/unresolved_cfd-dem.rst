@@ -234,7 +234,7 @@ Two types of weighting kernels centered on the quadrature points can be used in 
 
 The Particle-Sphere Intersection Kernel
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-An averaging volume sphere is constructed around each quadrature point. All particles lying in the sphere will contribute to the void fraction value at this quadrature point. Therefore, a cell will be affected by the particles lying in it and in its neighboring cells.
+A sphere is constructed around each quadrature point. All particles lying in the sphere will contribute to the void fraction value at this quadrature point. Therefore, a cell will be affected by the particles lying in it and in its neighboring cells.
 
 .. image:: images/qcm.png
    :width: 49% 
@@ -263,13 +263,12 @@ where :math:`G\left (\lVert \mathbf{x}_q - \mathbf{x}_i \rVert \right )` is the 
 
 with :math:`\sigma` being the standard deviation of the Gaussian distribution, controlling the spread of the kernel. This kernel is also normalized to ensure mass conservation over the whole domain.
 
-
-Regardless of its type, the kernel must be sufficiently wide to ensure that all particles in the domain contribute to the averaged void fraction. This can be achieved by selecting an adequate number of quadrature points together with an appropriate kernel length, :math:`R_{\rm{qcm}}` (radius of the sphere intersection kernel and standard deviation for the Gaussian kernel). However, in Lethe, the kernel length is currently constrained by the mesh resolution. Since each cell only has access to its direct neighboring cells, the weighting kernel cannot extend beyond this local neighborhood. Consequently, the kernel length must satisfy:
+Regardless of its type, the kernel must be sufficiently wide to ensure that all particles in the domain contribute to the averaged void fraction. This can be achieved by selecting an adequate number of quadrature points together with an appropriate kernel length, :math:`R_{\rm{qcm}}` (radius of the sphere intersection kernel and standard deviation for the Gaussian kernel). However, in Lethe, the kernel length is currently constrained by the mesh resolution. Since each cell only has access to its direct neighboring cells, the weighting kernel length cannot extend beyond this local neighborhood, otherwise, the averaged fields will be biased. Consequently, the kernel length must satisfy:
 
 .. math:: 
     R_{\rm{qcm}} \leq h_{\Omega}
 
-where :math:`h_{\Omega}` denotes the characteristic cell size to ensure access to the particles. In addition, for the Gaussian kernel, larger values of :math:`\sigma` would produce a filter increasingly similar to a top-hat kernel, so the smoothing properties of the Gaussian formulation would not be fully exploited. This limitation may be relaxed in future versions of Lethe.
+where :math:`h_{\Omega}` denotes the characteristic cell size to ensure access to the particles.
 
 References
 -----------
