@@ -74,9 +74,9 @@ Multiphysics
 
       multiphysics_4_2 [label="Shear Bubble Detachment", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/bubble-detachment-shear-flow/bubble-detachment-shear-flow.html"];
 
-      multiphysics_5 [label="Waveguide", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/electromagnetism.html"];
+      multiphysics_5 [label="Electromagnetism", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/electromagnetism.html"];
 
-      multiphysics_5_1 [label="EM Waves", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/waveguide/waveguide.html"];
+      multiphysics_5_1 [label="Waveguide", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/waveguide/waveguide.html"];
 
 
       multiphysics -> multiphysics_1:w;
