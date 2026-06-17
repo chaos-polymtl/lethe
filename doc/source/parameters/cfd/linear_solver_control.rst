@@ -126,7 +126,7 @@ where :math:`R` is the residual vector and :math:`V` is the volume of the entire
 .. tip::
 	Consider using ``set max krylov vectors = 200`` for complex simulations with convergence issues. 
 
-* ``preconditioner`` sets the type of preconditioning used for the linear solver. It can be either ``ilu`` for an Incomplete LU decomposition, ``amg`` for an Algebraic Multigrid, ``lsmg`` for a Local Smoothing Multigrid, or ``gcmg`` for a Global Coarsening Multigrid.
+* ``preconditioner`` sets the type of preconditioning used for the linear solver. It can be either ``ilu`` for an Incomplete LU decomposition, ``amg`` for an Algebraic Multigrid, ``lsmg`` for a Local Smoothing Multigrid,  ``gcmg`` for a Global Coarsening Multigrid or ``none`` in the rare case that no preconditioner should be used.
 
 
 
