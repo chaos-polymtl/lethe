@@ -22,8 +22,15 @@ read_mesh(const Parameters::Mesh   &mesh_parameters,
 
   attach_grid_to_triangulation(triangulation, mesh_parameters);
 
+  AssertThrow(
+    bc_params.periodic_direction.size() ==
+      bc_params.periodic_neighbor_id.size(),
+    ExcMessage(
+      "There is a mismatch between the size of the periodic_direction and the periodic_neighbor_id maps"));
+
   // Check if there are periodic boundaries
-  if (!bc_params.periodic_direction.empty())
+  if (!bc_params.periodic_direction.empty() &&
+      !bc_params.periodic_neighbor_id.empty())
     match_periodic_boundaries(triangulation, bc_params);
 
   if (!restart)

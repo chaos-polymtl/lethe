@@ -33,15 +33,16 @@
 
 using namespace dealii;
 
-/**
- * @brief Calculate the area of intersection between a circular (2D) particle and a circle.
- *
- * @param[in] r_particle Radius of the particle
- *
- * @param[in] r_circle Radius of the circle
- *
- * @param[in] neighbor_distance Distance between the particle and the circle
- */
+/**                                                                                         \
+ * @brief Calculate the area of intersection between a circular (2D) particle and a circle. \
+ *                                                                                          \
+ * @param[in] r_particle Radius of the particle                                             \
+ *                                                                                          \
+ * @param[in] r_circle Radius of the circle                                                 \
+ *                                                                                          \
+ * @param[in] neighbor_distance Distance between the particle and the circle                \
+ */                                                                                         \
+#
 inline double
 particle_circle_intersection_2d(double r_particle,
                                 double r_circle,

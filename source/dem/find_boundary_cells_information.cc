@@ -559,13 +559,12 @@ BoundaryCellsInformation<dim>::add_cells_with_boundary_lines_to_boundary_cells(
 
                                   // Check if faces are on a wall boundary
                                   // (not outlet nor periodic)
-                                  bool face_one_is_wall, face_two_is_wall;
-                                  face_one_is_wall =
+                                  const bool face_one_is_wall =
                                     (!outlet_boundaries.contains(
                                        face_one->boundary_id()) &&
                                      !cell_one->has_periodic_neighbor(
                                        face_id_one));
-                                  face_two_is_wall =
+                                  const bool face_two_is_wall =
                                     (!outlet_boundaries.contains(
                                        face_two->boundary_id()) &&
                                      !cell_two->has_periodic_neighbor(

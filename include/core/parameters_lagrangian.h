@@ -772,7 +772,7 @@ namespace Parameters
     {
     public:
       /// Number of DEM boundary conditions.
-      unsigned int DEM_BC_number;
+      unsigned int number_of_dem_boundary_conditions;
 
       /// Boundary ids designated as outlets. A boundary's DEM boundary
       /// condition type is encoded by which container holds it: outlets here,

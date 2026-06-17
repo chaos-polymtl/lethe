@@ -1546,9 +1546,12 @@ namespace Parameters
     {
       prm.enter_subsection("DEM boundary conditions");
 
-      DEM_BC_number = prm.get_integer("number of boundary conditions");
+      number_of_dem_boundary_conditions =
+        prm.get_integer("number of boundary conditions");
 
-      for (unsigned int counter = 0; counter < DEM_BC_number; ++counter)
+      for (unsigned int counter = 0;
+           counter < number_of_dem_boundary_conditions;
+           ++counter)
         {
           prm.enter_subsection("boundary condition " +
                                Utilities::int_to_string(counter, 1));

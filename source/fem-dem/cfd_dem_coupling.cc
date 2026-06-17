@@ -17,6 +17,7 @@
 #include <fem-dem/postprocessing_cfd_dem.h>
 
 #include <fstream>
+#include <ranges>
 #include <sstream>
 
 // Constructor for the class CFD-DEM class
@@ -232,8 +233,8 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
     periodic_boundaries_object.get_combined_periodic_offsets());
 
   // Set the periodic offsets of the periodic boundary pairs for other classes
-  for (auto const &[pb_id, direction] :
-       periodic_boundaries_object.get_periodic_directions())
+  for (const auto &pb_id :
+       periodic_boundaries_object.get_periodic_directions() | std::views::keys)
     {
       particle_particle_contact_force_object->set_periodic_offset(
         periodic_boundaries_object.get_periodic_offset_distance(pb_id), pb_id);

@@ -13,6 +13,7 @@
 #include <deal.II/fe/fe_values.h>
 
 #include <algorithm>
+#include <ranges>
 #include <unordered_map>
 
 using namespace dealii;
@@ -77,7 +78,7 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
 
   // Temp storage to calculate offsets only once per ID
   std::map<types::boundary_id, bool> offset_calculated;
-  for (auto const &[primary_mesh_id, direction] : directions)
+  for (const auto &primary_mesh_id : directions | std::views::keys)
     offset_calculated[primary_mesh_id] = false;
 
   // Iterating over the active cells in the triangulation
@@ -93,7 +94,7 @@ PeriodicBoundariesManipulator<dim>::map_periodic_cells(
                   const types::boundary_id face_boundary_id =
                     face->boundary_id();
 
-                  // Check if face matches any of the principal PB IDs
+                  // Check if the face matches any of the principal PB IDs
                   auto it = directions.find(face_boundary_id);
                   if (it != directions.end())
                     {
@@ -147,7 +148,7 @@ PeriodicBoundariesManipulator<dim>::check_and_move_particles(
        &particles_in_cell,
   bool &particle_has_been_moved)
 {
-  // Retrieve correct offset for this specific boundary interaction.
+  // Retrieve the correct offset for this specific boundary interaction.
   // boundaries_cells_content contains a single cell on a periodic boundary
   // and its associated periodic cell. The offset between these cells is
   // obtained from periodic_offsets to displace particles across these cells.
