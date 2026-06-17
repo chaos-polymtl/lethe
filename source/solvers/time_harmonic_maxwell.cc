@@ -1832,13 +1832,13 @@ TimeHarmonicMaxwell<dim>::solve_linear_system()
 {
   TimerOutput::Scope t(this->computing_timer, "Solve linear system");
 
-  AssertThrow(simulation_parameters.linear_solver
-                  .at(PhysicsID::electromagnetics)
-                  .preconditioner ==
-                Parameters::LinearSolver::PreconditionerType::none,
-              ExcMessage("The time harmonic electromagnetism physics does not support the use of a preconditioner. Please use preconditioner = none"));
+  AssertThrow(
+    simulation_parameters.linear_solver.at(PhysicsID::electromagnetics)
+        .preconditioner == Parameters::LinearSolver::PreconditionerType::none,
+    ExcMessage(
+      "The time harmonic electromagnetism physics does not support the use of a preconditioner. Please use preconditioner = none"));
 
-    auto mpi_communicator = this->triangulation->get_mpi_communicator();
+  auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
   // Define the linear solver tolerance
   const double absolute_residual =
