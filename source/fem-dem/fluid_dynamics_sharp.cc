@@ -4038,7 +4038,7 @@ FluidDynamicsSharp<dim>::sharp_edge()
                         {
                           // Applied equation on dof that have no equation
                           // defined for them. those DOF become Dummy dof. This
-                          // is useful for high order cells or when a dof is
+                          // is useful for high degree cells or when a dof is
                           // only element of cells that are cut.
                           unsigned int global_index_overwrite =
                             local_dof_indices[i];
