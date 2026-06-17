@@ -3226,7 +3226,7 @@ namespace Parameters
           preconditioner = PreconditionerType::lsmg;
         else if (precond == "gcmg")
           preconditioner = PreconditionerType::gcmg;
-        else if (precond == "nonw")
+        else if (precond == "none")
           preconditioner = PreconditionerType::none;
         else
           throw std::logic_error(
