@@ -1,7 +1,7 @@
 var searchData=
 [
   ['p_0',['p',['../structParameters_1_1LinearSolver.html#a6fad820fb2de28065c95f3511cf78935a83878c91171338902e0fe0fb97a8c47a',1,'Parameters::LinearSolver::p'],['../classNavierStokesPressureFunctionDefined.html#a05dd72f5bec3590703ad7d2ff6ae85a0',1,'NavierStokesPressureFunctionDefined::p'],['../classBoundaryConditions_1_1NSBoundaryFunctions.html#a731755ef1eaf9285b24894b180e5ea0c',1,'BoundaryConditions::NSBoundaryFunctions::p']]],
-  ['p_5fbase_1',['p_base',['../classIBStencil.html#aa6f749a2bfdd70a84548f5568919ada3',1,'IBStencil']]],
+  ['p_5fbase_1',['p_base',['../classIBStencil.html#a11b9369a8f2f27e5f296d9dfb2070b9e',1,'IBStencil']]],
   ['p_5fmax_2',['p_max',['../classInsertion.html#af8f15a778967281d86272c36607105e5',1,'Insertion']]],
   ['p_5fmin_3',['p_min',['../classInsertion.html#a8d3c5008dfae0fa38ef16a383bef8878',1,'Insertion']]],
   ['p_5fphase_5fchange_5fparams_4',['p_phase_change_params',['../classThermalConductivityPhaseChange.html#a802f4c8c12595b930c0b3af9f91c4461',1,'ThermalConductivityPhaseChange::p_phase_change_params'],['../classThermalExpansionPhaseChange.html#a3dd2947d9ccd7842b5425f95eb3fbf33',1,'ThermalExpansionPhaseChange::p_phase_change_params']]],
@@ -349,7 +349,7 @@ var searchData=
   ['picard_346',['picard',['../structParameters_1_1NonLinearSolver.html#aadd162b7703a436847050b2aaae3871dae24fa5f1901c2c38540e9adef2e3b0a1',1,'Parameters::NonLinearSolver']]],
   ['piecewise_5fpolynomial_347',['piecewise_polynomial',['../namespaceParameters.html#a34edd9cb3faad925234f73958172eb84a338eb4303c1c9e5f2b2eed4bce1fd873',1,'Parameters']]],
   ['pitch_348',['pitch',['../classCylindricalHelix.html#a9e915209058f5c0823b1f882caab45cd',1,'CylindricalHelix']]],
-  ['plane_349',['plane',['../classPlane.html',1,'Plane&lt; dim &gt;'],['../classPlane.html#a044673be757c5d21dd50a93f1a54f336',1,'Plane::Plane()'],['../classParameters_1_1Lagrangian_1_1InsertionInfo.html#a8935f71b97c7cce069b63a2e28949a4babb302c9b5204d593ba3657055842a5fb',1,'Parameters::Lagrangian::InsertionInfo::plane']]],
+  ['plane_349',['plane',['../classPlane.html',1,'Plane&lt; dim &gt;'],['../classParameters_1_1Lagrangian_1_1InsertionInfo.html#a8935f71b97c7cce069b63a2e28949a4babb302c9b5204d593ba3657055842a5fb',1,'Parameters::Lagrangian::InsertionInfo::plane'],['../classPlane.html#a044673be757c5d21dd50a93f1a54f336',1,'Plane::Plane()']]],
   ['plane_5fcells_5ffor_5finsertion_350',['plane_cells_for_insertion',['../classInsertionPlane.html#a56d358ecf9a2ef3faf86a85bac1fee32',1,'InsertionPlane']]],
   ['pmass_5fpreconditioner_351',['pmass_preconditioner',['../classBlockSchurPreconditioner.html#ac49fb77cb8b93c901e85dc48c76c6479',1,'BlockSchurPreconditioner']]],
   ['pmat_5fpreconditioner_352',['pmat_preconditioner',['../classBlockDiagPreconditioner.html#a8ed8f235ec2f1ac3845aa55e58af203e',1,'BlockDiagPreconditioner']]],
@@ -405,7 +405,7 @@ var searchData=
   ['potential_5fcahn_5fhilliard_5fdegree_402',['potential_cahn_hilliard_degree',['../structParameters_1_1FEM.html#aabad9abc28a568afb22fe848d77872e2',1,'Parameters::FEM']]],
   ['potential_5fsmoothing_5fcoefficient_403',['potential_smoothing_coefficient',['../structParameters_1_1CahnHilliard.html#a9a470cbe7f58b13fe0b5211d88665dea',1,'Parameters::CahnHilliard']]],
   ['power_404',['power',['../namespaceParameters.html#ae2409eaf7621323659ebf4a3ec3c77d2a62cd275989e78ee56a81f0265a87562e',1,'Parameters']]],
-  ['powerlaw_405',['powerlaw',['../classParameters_1_1Material.html#a78e253a535ca9d21466208edad15e5eaae9f7a4aafeda67a0dab579ba480c24d6',1,'Parameters::Material::powerlaw'],['../classPowerLaw.html#a4ae21d3099d9c0b8343ce62073519e20',1,'PowerLaw::PowerLaw()'],['../classPowerLaw.html',1,'PowerLaw']]],
+  ['powerlaw_405',['powerlaw',['../classPowerLaw.html#a4ae21d3099d9c0b8343ce62073519e20',1,'PowerLaw::PowerLaw()'],['../classParameters_1_1Material.html#a78e253a535ca9d21466208edad15e5eaae9f7a4aafeda67a0dab579ba480c24d6',1,'Parameters::Material::powerlaw'],['../classPowerLaw.html',1,'PowerLaw']]],
   ['powerlaw_5fparameters_406',['powerlaw_parameters',['../structParameters_1_1NonNewtonian.html#a40396ac89acdc7b56e94dec75ad11b0a',1,'Parameters::NonNewtonian']]],
   ['powerlawparameters_407',['PowerLawParameters',['../structParameters_1_1PowerLawParameters.html',1,'Parameters']]],
   ['pp_5fcontact_5fmap_408',['pp_contact_map',['../classIBParticlesDEM.html#a71310bd230b6cc15d733f660f19f0b26',1,'IBParticlesDEM']]],

@@ -245,7 +245,7 @@ This section defines each parameter for the particles and has certain requiremen
 
       subsection extrapolation function
         set length ratio  = 4
-        set stencil order = 1
+        set stencil degree = 1
       end
 
       subsection local mesh refinement

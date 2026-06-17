@@ -682,7 +682,7 @@ end
 
   subsection extrapolation function
     set length ratio  = 2
-    set stencil order = 2
+    set stencil degree = 2
   end
 
   subsection local mesh refinement
@@ -712,7 +712,7 @@ end
 </div>
 <p>In this subsection, we define most of the parameters that are related to the particle.</p>
 <ul class="simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">stencil</span> <span class="pre">order</span></code> is set to 2 since it improves the results in the force evaluation step and does not make the matrix resolution significantly harder.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">stencil</span> <span class="pre">degree</span></code> is set to 2 since it improves the results in the force evaluation step and does not make the matrix resolution significantly harder.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">refine</span> <span class="pre">mesh</span> <span class="pre">inside</span> <span class="pre">radius</span> <span class="pre">factor</span></code> is set to 0. This creates a mesh refinement inside the particle that avoids having hanging nodes in the calculation and helps ensure a small enough mesh around the particle.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">refine</span> <span class="pre">mesh</span> <span class="pre">outside</span> <span class="pre">radius</span> <span class="pre">factor</span></code> is set to 2. This creates a mesh refinement around the particle that avoids having hanging nodes in the calculation and helps ensure a small enough mesh around the particle.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> is set to 3. Here we want to have the mesh as small as possible for the first time step around each of the particles. To achieve this, we refine every element with at least one vertex in the refinement zone around the particle 3 times before the simulation starts. This ensures that all the cells in the refinement zone around the particle are as small as possible.</p></li>

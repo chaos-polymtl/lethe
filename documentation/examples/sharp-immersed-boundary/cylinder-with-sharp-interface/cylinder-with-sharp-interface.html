@@ -531,7 +531,7 @@ In this case, we want to define a circular boundary of radius 0.5 centered at (8
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection particles
   set number of particles                     = 1
   subsection extrapolation function
-    set stencil order = 2
+    set stencil degree = 2
   end
   subsection local mesh refinement
     set initial refinement                = 0
@@ -551,7 +551,7 @@ end
 </div>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">number</span> <span class="pre">of</span> <span class="pre">particles</span></code> is set to <code class="docutils literal notranslate"><span class="pre">1</span></code> as we only want one particle.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">stencil</span> <span class="pre">order</span></code> is set to <code class="docutils literal notranslate"><span class="pre">2</span></code> as this is the highest order that is compatible with the FEM scheme and it does not lead to Runge instability. The highest order of stencil compatible with a FEM scheme is defined by the polynomial order of the scheme time the number of dimensions: in this case, 2.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stencil</span> <span class="pre">degree</span></code> is set to <code class="docutils literal notranslate"><span class="pre">2</span></code> as this is the highest degree that is compatible with the FEM scheme and it does not lead to Runge instability. The highest degree of stencil compatible with a FEM scheme is defined by the polynomial degree of the scheme time the number of dimensions: in this case, 2.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> is set to 0. In this case, the initial mesh is small enough compared to the particle size. It is therefore not necessary to pre-refine the mesh around the particle.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">position</span></code> Function expression is set to <code class="docutils literal notranslate"><span class="pre">8;8</span></code> as the position of the particle is constant in time.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">velocity</span></code> Function expression is set to <code class="docutils literal notranslate"><span class="pre">0;0</span></code> as this is a steady and static case.</p></li>

@@ -440,7 +440,7 @@ var searchData=
   ['coarsegridsolvertype_437',['CoarseGridSolverType',['../structParameters_1_1LinearSolver.html#aa5b1b843871c36f9abfbd2c7b4811929',1,'Parameters::LinearSolver']]],
   ['coarsening_5fdistance_5ffactor_438',['coarsening_distance_factor',['../classParameters_1_1IBParticles.html#acbeaa5ed497705761a6dc31255ddce73',1,'Parameters::IBParticles']]],
   ['coarsening_5ffraction_439',['coarsening_fraction',['../structParameters_1_1MultipleAdaptationParameters.html#aed50600715599bfbf66506f3954a4f1d',1,'Parameters::MultipleAdaptationParameters']]],
-  ['coefficients_440',['coefficients',['../classIBStencil.html#ad705d9acd85e0a48ea58af13ea81a5be',1,'IBStencil']]],
+  ['coefficients_440',['coefficients',['../classIBStencil.html#a8b7abeaaf0bd5a6ef47de1d7ce1a87bc',1,'IBStencil']]],
   ['collision_5fevent_441',['collision_event',['../structcollision__event.html',1,'']]],
   ['collision_5fevent_5flog_442',['collision_event_log',['../classDEMSolver.html#a7bfe29d8865a5519c0b1a6e1b88d33b9',1,'DEMSolver::collision_event_log'],['../classCFDDEMSolver.html#a2bef1b809307dc817054da7b3e81140d',1,'CFDDEMSolver::collision_event_log'],['../classCFDDEMMatrixFree.html#a481d6ab2583fc46d75ada41a4baddc7c',1,'CFDDEMMatrixFree::collision_event_log'],['../classFluidDynamicsSharp.html#a9045cde9f17abe12c4dcb02d11114b8a',1,'FluidDynamicsSharp::collision_event_log']]],
   ['collision_5flog_443',['collision_log',['../structcollision__log.html',1,'']]],

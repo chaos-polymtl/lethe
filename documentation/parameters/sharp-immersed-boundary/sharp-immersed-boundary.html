@@ -457,7 +457,7 @@
 
     subsection extrapolation function
       set length ratio         = 4
-      set stencil order        = 2
+      set stencil degree       = 2
       set enable extrapolation = true
     end
 
@@ -549,18 +549,18 @@ end
 <li><p>The <code class="docutils literal notranslate"><span class="pre">assemble</span> <span class="pre">Navier-Stokes</span> <span class="pre">inside</span> <span class="pre">particles</span></code> parameter determines if the Navier-Stokes equations are solved inside the particles or not. If the Navier-Stokes equations are not solved (the parameter is false), the solver will solve a Poisson equation for each variable in the problem. This eliminates the need to define a reference value for the pressure.</p></li>
 <li><dl>
 <dt>The <code class="docutils literal notranslate"><span class="pre">extrapolation</span> <span class="pre">function</span></code> subsection contains the parameters associated with the extrapolation function used to impose the sharp immersed boundary condition.</dt><dd><ul class="simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">stencil</span> <span class="pre">order</span></code> parameter controls the order of the Lagrange polynomial used to impose the sharp interface immersed boundary condition. The order of the stencil should be higher than or equal to the order of interpolation of the underlying FEM scheme (e.g. for Q2Q2 elements use <code class="docutils literal notranslate"><span class="pre">stencil</span> <span class="pre">order=2</span></code>). We suggest using the same order as the velocity field in most cases since it improves the condition number of the matrix.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">stencil</span> <span class="pre">degree</span></code> parameter controls the degree of the Lagrange polynomial used to impose the sharp interface immersed boundary condition. The degree of the stencil should be higher than or equal to the interpolation degree of the underlying FEM scheme (e.g. for Q2Q2 elements use <code class="docutils literal notranslate"><span class="pre">stencil</span> <span class="pre">degree=2</span></code>). We suggest using the same degree as the velocity field in most cases since it improves the condition number of the matrix.</p></li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The stencil order used does not alter the order of convergence of the solution.</p>
+<p>The stencil degree used does not alter the order of convergence of the solution.</p>
 </div>
 <ul class="simple">
 <li><p>The <code class="docutils literal notranslate"><span class="pre">length</span> <span class="pre">ratio</span></code> parameter controls the length of the zone used to define the Lagrange polynomial (see <a class="reference external" href="https://www.sciencedirect.com/science/article/pii/S0045793022000780?via%3Dihub">this article</a> for more details). The length ratio should be kept as small as possible and above 1. When using a Cartesian homogeneous mesh (aspect ratio of 1), the length ratio should be 1.</p></li>
 </ul>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>A good starting value is twice the average aspect ratio of the elements in the mesh multiplied by the order of the underlying FEM scheme.</p>
+<p>A good starting value is twice the average aspect ratio of the elements in the mesh multiplied by the degree of the underlying FEM scheme.</p>
 </div>
 <ul class="simple">
 <li><p>The <code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">extrapolation</span></code> parameter controls if extrapolation is used to impose the immersed boundary condition. For debugging purposes, this parameter can be set to <code class="docutils literal notranslate"><span class="pre">false</span></code>; the particle velocity will then be imposed on velocity degrees of freedom of cells cut by the particle directly, which effectively amplifies the volume occupied by the solid.</p></li>
@@ -641,14 +641,10 @@ end
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<blockquote>
-<div><p>If <code class="docutils literal notranslate"><span class="pre">contact</span> <span class="pre">search</span> <span class="pre">radius</span> <span class="pre">factor</span></code> <span class="math notranslate nohighlight">\(\leq 1\)</span>, an error is thrown.</p>
-</div></blockquote>
-<ul class="simple">
-<li><p>The <code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">lubrication</span> <span class="pre">force</span></code> parameter enables or disables the use of lubrication forces. This parameter must be set to <code class="docutils literal notranslate"><span class="pre">false</span></code> when using a non-newtonian fluid rheology.</p></li>
-</ul>
+<p>If <code class="docutils literal notranslate"><span class="pre">contact</span> <span class="pre">search</span> <span class="pre">radius</span> <span class="pre">factor</span></code> <span class="math notranslate nohighlight">\(\leq 1\)</span>, an error is thrown.</p>
 </div>
 <ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">lubrication</span> <span class="pre">force</span></code> parameter enables or disables the use of lubrication forces. This parameter must be set to <code class="docutils literal notranslate"><span class="pre">false</span></code> when using a non-newtonian fluid rheology.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">explicit</span> <span class="pre">contact</span> <span class="pre">impulsion</span></code> parameter enables or disables the use of explicit contact impulsion evaluation in the resolution of the coupling of the particle. When it is set to true, this parameter results in the code only performing the DEM calculation once per CFD time step and using the resulting contact impulsion to evaluate all the other Newton’s iterations. This reduces the number of times the DEM calculation is made. However, since the position is still implicitly evaluated in the absence of contact, the cut cell mapping must be performed at each Newton iteration.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">explicit</span> <span class="pre">position</span> <span class="pre">integration</span></code> parameter enables or disables the use of explicit position integration in the resolution of the coupling of the particles. When it is set to true, this parameter results in the code only performing the DEM calculation once and using the resulting position and orientation to evaluate all the other Newton’s iterations. This reduces the number of times the cut cell mapping must be performed and the number of call to the DEM calculations. However, this can affect the stability of the scheme.</p></li>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">approximate</span> <span class="pre">radius</span> <span class="pre">for</span> <span class="pre">contact</span></code> parameter enables or disables the use of the approximate contact radius for contact calculation. When this parameter is true, the contact radius used in the contact force calculation is obtained through the effective contact radius. Otherwise, the curvature radius of the shape is evaluated at the contact point. In the case of a flat surface contact point, the contact radius is limited to 100 times the effective radius of the particle.</p></li>
@@ -814,14 +810,16 @@ operations
 <p class="admonition-title">Tip</p>
 <p>For a particle to be accounted for in the fluid mesh, it has to overlap at least one vertex of this fluid mesh. If the initial mesh is too coarse in regards to the particle size, the particle may not be captured if it does not intersect the outer mesh walls. To avoid this, a box refinement can be added around the particle (See Box refinement documentation).</p>
 </div>
-<p>Mesh refinement
-The mesh is refined on multiple occasions during the simulations, and it can be slightly confusing to understand the sequence of refinement. There are 3 pre-simulation refinement steps. The first is the <strong>global mesh refinement</strong>. It is set by the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> parameter in the <code class="docutils literal notranslate"><span class="pre">mesh</span></code> subsection.
+<section id="mesh-refinement">
+<h2>Mesh refinement<a class="headerlink" href="#mesh-refinement" title="Link to this heading">#</a></h2>
+<p>The mesh is refined on multiple occasions during the simulations, and it can be slightly confusing to understand the sequence of refinement. There are 3 pre-simulation refinement steps. The first is the <strong>global mesh refinement</strong>. It is set by the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> parameter in the <code class="docutils literal notranslate"><span class="pre">mesh</span></code> subsection.
 The second refinement is inside the <strong>box refinement zone</strong>, set by the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> in the <code class="docutils literal notranslate"><span class="pre">box</span> <span class="pre">refinement</span></code> subsection. Lastly, the <strong>near-particle zone</strong> is refined, defined by the <code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> parameter in the <code class="docutils literal notranslate"><span class="pre">particles</span></code> subsection.
 Therefore, the near-particle zone around each particle is refined <code class="docutils literal notranslate"><span class="pre">mesh</span></code>:<code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> + <code class="docutils literal notranslate"><span class="pre">box</span></code>:<code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> + <code class="docutils literal notranslate"><span class="pre">particle</span></code>:<code class="docutils literal notranslate"><span class="pre">initial</span> <span class="pre">refinement</span></code> times before the simulations starts.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">refinement</span> <span class="pre">level</span></code> parameter in the <code class="docutils literal notranslate"><span class="pre">adaptation</span> <span class="pre">control</span></code> subsection is smaller than the summation of all initial refinement parameters, no cell can be refined more than <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">refinement</span> <span class="pre">level</span></code>. Note that it does not mean that the refinement stops, meaning that there can be other cells that are refined to the <code class="docutils literal notranslate"><span class="pre">max</span> <span class="pre">refinement</span> <span class="pre">level</span></code>, but no cell can be refined more than this.</p>
 </div>
+</section>
 <section id="reference">
 <h2>Reference<a class="headerlink" href="#reference" title="Link to this heading">#</a></h2>
 <aside class="footnote-list brackets">
@@ -889,6 +887,7 @@ Therefore, the near-particle zone around each particle is refined <code class="d
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Sharp-Immersed-Boundary</a><ul>
+<li><a class="reference internal" href="#mesh-refinement">Mesh refinement</a></li>
 <li><a class="reference internal" href="#reference">Reference</a></li>
 </ul>
 </li>

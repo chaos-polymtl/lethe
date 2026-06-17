@@ -15,7 +15,7 @@ This subsection contains the parameters related to the sharp immersed boundary s
       
       subsection extrapolation function
         set length ratio         = 4
-        set stencil order        = 2
+        set stencil degree       = 2
         set enable extrapolation = true
       end
       
@@ -106,15 +106,15 @@ This subsection contains the parameters related to the sharp immersed boundary s
 * The ``assemble Navier-Stokes inside particles`` parameter determines if the Navier-Stokes equations are solved inside the particles or not. If the Navier-Stokes equations are not solved (the parameter is false), the solver will solve a Poisson equation for each variable in the problem. This eliminates the need to define a reference value for the pressure.
 
 * The ``extrapolation function`` subsection contains the parameters associated with the extrapolation function used to impose the sharp immersed boundary condition.
-    * The ``stencil order`` parameter controls the order of the Lagrange polynomial used to impose the sharp interface immersed boundary condition. The order of the stencil should be higher than or equal to the order of interpolation of the underlying FEM scheme (e.g. for Q2Q2 elements use ``stencil order=2``). We suggest using the same order as the velocity field in most cases since it improves the condition number of the matrix.
+    * The ``stencil degree`` parameter controls the degree of the Lagrange polynomial used to impose the sharp interface immersed boundary condition. The degree of the stencil should be higher than or equal to the interpolation degree of the underlying FEM scheme (e.g. for Q2Q2 elements use ``stencil degree=2``). We suggest using the same degree as the velocity field in most cases since it improves the condition number of the matrix.
 
     .. note::
-	    The stencil order used does not alter the order of convergence of the solution.
+	    The stencil degree used does not alter the order of convergence of the solution.
 
     * The ``length ratio`` parameter controls the length of the zone used to define the Lagrange polynomial (see `this article <https://www.sciencedirect.com/science/article/pii/S0045793022000780?via%3Dihub>`_ for more details). The length ratio should be kept as small as possible and above 1. When using a Cartesian homogeneous mesh (aspect ratio of 1), the length ratio should be 1.
 
     .. tip::
-	    A good starting value is twice the average aspect ratio of the elements in the mesh multiplied by the order of the underlying FEM scheme.
+	    A good starting value is twice the average aspect ratio of the elements in the mesh multiplied by the degree of the underlying FEM scheme.
 
     * The ``enable extrapolation`` parameter controls if extrapolation is used to impose the immersed boundary condition. For debugging purposes, this parameter can be set to ``false``; the particle velocity will then be imposed on velocity degrees of freedom of cells cut by the particle directly, which effectively amplifies the volume occupied by the solid.
 
@@ -184,7 +184,7 @@ This subsection contains the parameters related to the sharp immersed boundary s
     .. warning::
 	    If ``contact search radius factor`` :math:`\leq 1`, an error is thrown.
 	    
-	* The ``enable lubrication force`` parameter enables or disables the use of lubrication forces. This parameter must be set to ``false`` when using a non-newtonian fluid rheology.
+    * The ``enable lubrication force`` parameter enables or disables the use of lubrication forces. This parameter must be set to ``false`` when using a non-newtonian fluid rheology.
     
     * The ``explicit contact impulsion`` parameter enables or disables the use of explicit contact impulsion evaluation in the resolution of the coupling of the particle. When it is set to true, this parameter results in the code only performing the DEM calculation once per CFD time step and using the resulting contact impulsion to evaluate all the other Newton's iterations. This reduces the number of times the DEM calculation is made. However, since the position is still implicitly evaluated in the absence of contact, the cut cell mapping must be performed at each Newton iteration.
 
@@ -348,6 +348,7 @@ The following parameter and subsection are all inside the subsection ``particle 
 	For a particle to be accounted for in the fluid mesh, it has to overlap at least one vertex of this fluid mesh. If the initial mesh is too coarse in regards to the particle size, the particle may not be captured if it does not intersect the outer mesh walls. To avoid this, a box refinement can be added around the particle (See Box refinement documentation).
 
 Mesh refinement
+---------------
 The mesh is refined on multiple occasions during the simulations, and it can be slightly confusing to understand the sequence of refinement. There are 3 pre-simulation refinement steps. The first is the **global mesh refinement**. It is set by the ``initial refinement`` parameter in the ``mesh`` subsection.
 The second refinement is inside the **box refinement zone**, set by the ``initial refinement`` in the ``box refinement`` subsection. Lastly, the **near-particle zone** is refined, defined by the ``initial refinement`` parameter in the ``particles`` subsection.
 Therefore, the near-particle zone around each particle is refined ``mesh``:``initial refinement`` + ``box``:``initial refinement`` + ``particle``:``initial refinement`` times before the simulations starts.

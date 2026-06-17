@@ -116,8 +116,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a1d9292935bc9db4a0c95119da913b2d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac890e21595b4cd438e24d92193d30a4e" id="r_ac890e21595b4cd438e24d92193d30a4e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1IBParticles.html#ac890e21595b4cd438e24d92193d30a4e">assemble_navier_stokes_inside</a></td></tr>
 <tr class="separator:ac890e21595b4cd438e24d92193d30a4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad02e32af360690287cdaef5c03409df0" id="r_ad02e32af360690287cdaef5c03409df0"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1IBParticles.html#ad02e32af360690287cdaef5c03409df0">order</a></td></tr>
-<tr class="separator:ad02e32af360690287cdaef5c03409df0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab689d31bf86340e1ae817af93eabdb6c" id="r_ab689d31bf86340e1ae817af93eabdb6c"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1IBParticles.html#ab689d31bf86340e1ae817af93eabdb6c">stencil_degree</a></td></tr>
+<tr class="separator:ab689d31bf86340e1ae817af93eabdb6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac3139726ce7217e3c7b508c0e214e2a0" id="r_ac3139726ce7217e3c7b508c0e214e2a0"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1IBParticles.html#ac3139726ce7217e3c7b508c0e214e2a0">length_ratio</a></td></tr>
 <tr class="separator:ac3139726ce7217e3c7b508c0e214e2a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af51e9310fed4526ed0e81ade6c221e7d" id="r_af51e9310fed4526ed0e81ade6c221e7d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1IBParticles.html#af51e9310fed4526ed0e81ade6c221e7d">enable_extrapolation</a></td></tr>
@@ -260,7 +260,7 @@ template&lt;int dim&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l04145">4145</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l04146">4146</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
 </div>
 </div>
@@ -679,24 +679,6 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="ad02e32af360690287cdaef5c03409df0" name="ad02e32af360690287cdaef5c03409df0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad02e32af360690287cdaef5c03409df0">&#9670;&#160;</a></span>order</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int dim&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">unsigned int <a class="el" href="classParameters_1_1IBParticles.html">Parameters::IBParticles</a>&lt; dim &gt;::order</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01805">1805</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
-
-</div>
-</div>
 <a id="afdadb62290b0a1be6dba2155281d26ca" name="afdadb62290b0a1be6dba2155281d26ca"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afdadb62290b0a1be6dba2155281d26ca">&#9670;&#160;</a></span>particle_nonlinear_tolerance</h2>
 
@@ -802,6 +784,24 @@ template&lt;int dim&gt; </div>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01832">1832</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="ab689d31bf86340e1ae817af93eabdb6c" name="ab689d31bf86340e1ae817af93eabdb6c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab689d31bf86340e1ae817af93eabdb6c">&#9670;&#160;</a></span>stencil_degree</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned int <a class="el" href="classParameters_1_1IBParticles.html">Parameters::IBParticles</a>&lt; dim &gt;::stencil_degree</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01805">1805</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
