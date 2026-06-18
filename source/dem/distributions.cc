@@ -515,77 +515,83 @@ CustomDistribution::CustomDistribution(
     {
       if (interpolate_diameter_values)
         {
-          // Relative number fraction (dfn)
-          std::vector<double> dfn(number_d_values - 1, 0.0);
-          double              number_fraction_sum = 0.0;
-
-          // Calculate the number fractions for each bin
-          // We iterate through (N-1) bins.
-          for (unsigned int i = 0; i < number_d_values - 1; ++i)
+          if (function_type == ProbabilityFunctionType::PDF)
             {
-              // Boundaries of the current size bin
-              const double d_low  = diameter_values[i];
-              const double d_high = diameter_values[i + 1];
+              // Step 1: normalise input volume PDF so that ∫ fv dd = 1
+              double fv_integral = 0.0;
+              for (unsigned int i = 0; i < number_d_values - 1; ++i)
+                fv_integral += 0.5 *
+                               (d_probabilities[i] + d_probabilities[i + 1]) *
+                               (diameter_values[i + 1] - diameter_values[i]);
 
-              // The volume fraction (dfv) is the area under the PDF or the
-              // difference in CDF between consecutive diameter values.
-              // The difference between two consecutive nodes gives
-              // the volume fraction contained in this bin.
-              double this_bin_volume_fraction;
-              if (function_type == ProbabilityFunctionType::PDF)
-                this_bin_volume_fraction =
-                  0.5 * (d_probabilities[i] + d_probabilities[i + 1]) *
-                  (d_high - d_low);
-              else
-                this_bin_volume_fraction =
-                  d_probabilities[i + 1] - d_probabilities[i];
+              std::vector<double> fv(number_d_values);
+              for (unsigned int i = 0; i < number_d_values; ++i)
+                fv[i] = d_probabilities[i] / fv_integral;
 
-              // Number (N) scales with Volume (V) by N = V / (pi/6
-              // * D^3). Since D varies across the bin, we must use the
-              // average of (1/D^3) of this bin.
-              //
-              // Assumption: The volume is distributed LINEARLY across this
-              // diameter bin. Under this assumption, the 'Weight' is the
-              // Mean Value of the function 1/D^3:
-              // Weight = [1 / (d_high - d_low)] * Integral from d_low to d_high
-              // of (1/x^3) dx
-              //
-              // Solving the integral:
-              // 1. Integral of x^-3 dx  = -1/(2x^2).
-              // 2. Evaluate the integral: [1/(2*d_low^2) - 1/(2*d_high^2)]
-              // 3. Simplify the evaluated integral : (d_high^2 - d_low^2) / [2
-              // * d_low^2 * d_high^2 ]
-              // 4. Using (a^2 - b^2) = (a-b)(a+b), (d_high^2 - d_low^2) becomes
-              // (d_high - d_low)(d_high + d_low).
-              // 5. Weight = [1 / (d_high - d_low)] * Integral, thus the
-              // (d_high - d_low) term is cancelled.
-              //
-              // Final Weight Formula: (d_low + d_high) / (2 * d_low^2 *
-              // d_high^2)
-              const double weight =
-                (d_low + d_high) / (2.0 * std::pow(d_low * d_high, 2));
+              // Step 2: exact integral of fv(d)/d³ over each segment
+              // fv(d) = a_i + b_i*d  →  antiderivative: -a/(2d²) - b/d
+              std::vector<double> segment_integral(number_d_values - 1, 0.0);
+              double              total_integral = 0.0;
 
-              // Convert volume fraction to a relative number fraction
-              // (dfn). Note: This value is not yet normalized; it's a
-              // relative particle count.
-              dfn[i] = this_bin_volume_fraction * weight;
+              for (unsigned int i = 0; i < number_d_values - 1; ++i)
+                {
+                  const double d_low  = diameter_values[i];
+                  const double d_high = diameter_values[i + 1];
 
-              // Sum the relative counts. This sum will be used as the
-              // denominator to normalize the final number-based CDF so it
-              // ends at 1.0.
-              number_fraction_sum += dfn[i];
+                  const double b_i = (fv[i + 1] - fv[i]) / (d_high - d_low);
+                  const double a_i = fv[i] - b_i * d_low;
+
+                  const double F_high =
+                    -a_i / (2.0 * d_high * d_high) - b_i / d_high;
+                  const double F_low =
+                    -a_i / (2.0 * d_low * d_low) - b_i / d_low;
+
+                  segment_integral[i] = F_high - F_low;
+                  total_integral += segment_integral[i];
+                }
+
+              // Step 3: build number-based CDF at each node
+              number_based_cdf[0] = 0.0;
+              for (unsigned int i = 1; i < number_d_values; ++i)
+                number_based_cdf[i] = number_based_cdf[i - 1] +
+                                      segment_integral[i - 1] / total_integral;
+
+              number_based_cdf.back() = 1.0; // safety clamp
             }
+          else // CDF input
+            {
+              std::vector<double> segment_integral(number_d_values - 1, 0.0);
+              double              total_integral = 0.0;
 
-          // Reconstruct the CDF from the Number fractions while making sure
-          // to normalize every value.
-          number_based_cdf[0] = 0.0;
-          for (unsigned int i = 1; i < number_d_values - 1; ++i)
-            number_based_cdf[i] =
-              number_based_cdf[i - 1] + (dfn[i - 1] / number_fraction_sum);
+              for (unsigned int i = 0; i < number_d_values - 1; ++i)
+                {
+                  const double d_low  = diameter_values[i];
+                  const double d_high = diameter_values[i + 1];
 
-          number_based_cdf.back() = 1.;
+                  const double bin_vol_fraction =
+                    d_probabilities[i + 1] - d_probabilities[i];
+
+                  const double b_i = bin_vol_fraction / (d_high - d_low);
+                  const double a_i = -b_i * d_low;
+
+                  const double F_high =
+                    -a_i / (2.0 * d_high * d_high) - b_i / d_high;
+                  const double F_low =
+                    -a_i / (2.0 * d_low * d_low) - b_i / d_low;
+
+                  segment_integral[i] = F_high - F_low;
+                  total_integral += segment_integral[i];
+                }
+
+              number_based_cdf[0] = 0.0;
+              for (unsigned int i = 1; i < number_d_values; ++i)
+                number_based_cdf[i] = number_based_cdf[i - 1] +
+                                      segment_integral[i - 1] / total_integral;
+
+              number_based_cdf.back() = 1.0;
+            }
         }
-      else // No interpolation
+      else // No interpolation — unchanged
         {
           // Volume fraction of every diameter value.
           std::vector<double> volume_fraction(number_d_values, 0.);
@@ -618,10 +624,8 @@ CustomDistribution::CustomDistribution(
           // Normalized
           number_based_cdf[0] = number_based_pdf[0] / n_tot;
           for (unsigned int i = 1; i < number_d_values; ++i)
-            {
-              number_based_cdf[i] =
-                number_based_cdf[i - 1] + number_based_pdf[i] / n_tot;
-            }
+            number_based_cdf[i] =
+              number_based_cdf[i - 1] + number_based_pdf[i] / n_tot;
         }
     }
 }
