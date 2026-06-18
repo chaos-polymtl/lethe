@@ -1,8 +1,8 @@
 var searchData=
 [
   ['adaptivesparsecontacts_0',['AdaptiveSparseContacts',['../classAdaptiveSparseContacts.html#a83daf0d5fdbae5c6e8fd0cc80f9deb6b',1,'AdaptiveSparseContacts']]],
-  ['add_5fboundary_5fneighbors_5fof_5fboundary_5fcells_1',['add_boundary_neighbors_of_boundary_cells',['../classBoundaryCellsInformation.html#a2816adc6222cb6b44010f2c9bd5da4aa',1,'BoundaryCellsInformation']]],
-  ['add_5fcells_5fwith_5fboundary_5flines_5fto_5fboundary_5fcells_2',['add_cells_with_boundary_lines_to_boundary_cells',['../classBoundaryCellsInformation.html#aaf2746e96686caa199508cdfac6ead17',1,'BoundaryCellsInformation']]],
+  ['add_5fboundary_5fneighbors_5fof_5fboundary_5fcells_1',['add_boundary_neighbors_of_boundary_cells',['../classBoundaryCellsInformation.html#ac1004bd6be070324ef4c1c5f2e4ae831',1,'BoundaryCellsInformation']]],
+  ['add_5fcells_5fwith_5fboundary_5flines_5fto_5fboundary_5fcells_2',['add_cells_with_boundary_lines_to_boundary_cells',['../classBoundaryCellsInformation.html#a9390ea4fd69baf222e6f5777723f2791',1,'BoundaryCellsInformation']]],
   ['add_5fdiagonal_5fentries_3',['add_diagonal_entries',['../classCouplingOperator.html#a16207cd8be71ddd6e86ce6798c290136',1,'CouplingOperator']]],
   ['add_5fevent_4',['add_event',['../classCompletedCollisionLog.html#a27b0a3f91a6ed879601244f72f67fb8d',1,'CompletedCollisionLog']]],
   ['add_5ffluid_5fparticle_5finteraction_5',['add_fluid_particle_interaction',['../classCFDDEMMatrixFree.html#a8c8c824dde06c4b81a550cd6b35e87b4',1,'CFDDEMMatrixFree']]],

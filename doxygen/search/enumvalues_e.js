@@ -6,5 +6,5 @@ var searchData=
   ['omega_5fz_3',['omega_z',['../namespaceDEM_1_1DEMProperties.html#ad4c9c6eeafe6423a5619617d6c8a5987a6a02575c7da6a34c6717496be14309f3',1,'DEM::DEMProperties::omega_z'],['../namespaceDEM_1_1CFDDEMProperties.html#ae9734b9d29480269e4764c5092d87b2faac4df77d99fca9883e5408087425da34',1,'DEM::CFDDEMProperties::omega_z'],['../namespaceDEM_1_1DEMMPProperties.html#aca0676848b97f3864735e524aac253f8ada27e9b4cd32b4a0ea8ce0cd8b0d274a',1,'DEM::DEMMPProperties::omega_z']]],
   ['once_4',['once',['../classParameters_1_1Lagrangian_1_1ModelParameters.html#a3e6eb8f5729483f84a436e4222d86e66ae2eff6c2dafd909df8508f891b385d88',1,'Parameters::Lagrangian::ModelParameters']]],
   ['opencascade_5fshape_5',['opencascade_shape',['../classShape.html#a394819ce751267dc955abe4ad18ebdebab5ddf5c4e14b81360fe87fe24a2eb4d5',1,'Shape']]],
-  ['outlet_6',['outlet',['../structParameters_1_1Lagrangian_1_1BCDEM.html#ac65d80d2721f9155291c2622d9261555ab0ba1623558e169131cb513037504286',1,'Parameters::Lagrangian::BCDEM::outlet'],['../namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab0ba1623558e169131cb513037504286',1,'BoundaryConditions::outlet']]]
+  ['outlet_6',['outlet',['../namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ab0ba1623558e169131cb513037504286',1,'BoundaryConditions']]]
 ];

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['a_0',['a',['../classThermalConductivityLinear.html#a94e5190ba0c0fc2104533e3e2898bc37',1,'ThermalConductivityLinear::A'],['../structSDIRKTable.html#ae1417a4a022a84850f33cc4aab21e29b',1,'SDIRKTable::A'],['../classCarreau.html#a14d008c2e57031e28b6412b66aecbbd8',1,'Carreau::a'],['../structParameters_1_1CarreauParameters.html#a36393ea781a3c9d512aa324008541c30',1,'Parameters::CarreauParameters::a']]],
+  ['a_0',['a',['../classCarreau.html#a14d008c2e57031e28b6412b66aecbbd8',1,'Carreau::a'],['../structParameters_1_1CarreauParameters.html#a36393ea781a3c9d512aa324008541c30',1,'Parameters::CarreauParameters::a'],['../classThermalConductivityLinear.html#a94e5190ba0c0fc2104533e3e2898bc37',1,'ThermalConductivityLinear::A'],['../structSDIRKTable.html#ae1417a4a022a84850f33cc4aab21e29b',1,'SDIRKTable::A']]],
   ['a_5fii_1',['a_ii',['../structTimeSteppingData.html#a3bb8c78f16bcb7a94b4d9c4effd05822',1,'TimeSteppingData']]],
   ['a_5fij_2',['a_ij',['../classSDIRKStageData.html#ae03ac44622ed29f42ce5741bbd50be55',1,'SDIRKStageData']]],
   ['a_5finverse_3',['A_inverse',['../classBlockDiagPreconditioner.html#aaebbf0f342b00811c1839c90176936bc',1,'BlockDiagPreconditioner']]],
@@ -21,8 +21,8 @@ var searchData=
   ['adaptivesparsecontacts_18',['adaptivesparsecontacts',['../classAdaptiveSparseContacts.html',1,'AdaptiveSparseContacts&lt; dim, PropertiesIndex &gt;'],['../classAdaptiveSparseContacts.html#a83daf0d5fdbae5c6e8fd0cc80f9deb6b',1,'AdaptiveSparseContacts::AdaptiveSparseContacts()']]],
   ['adaptivesparsecontacts_3c_20dim_2c_20dem_3a_3acfddemproperties_3a_3apropertiesindex_20_3e_19',['AdaptiveSparseContacts&lt; dim, DEM::CFDDEMProperties::PropertiesIndex &gt;',['../classAdaptiveSparseContacts.html',1,'']]],
   ['adaptivesparsecontacts_3c_20dim_2c_20demproperties_3a_3apropertiesindex_20_3e_20',['AdaptiveSparseContacts&lt; dim, DEMProperties::PropertiesIndex &gt;',['../classAdaptiveSparseContacts.html',1,'']]],
-  ['add_5fboundary_5fneighbors_5fof_5fboundary_5fcells_21',['add_boundary_neighbors_of_boundary_cells',['../classBoundaryCellsInformation.html#a2816adc6222cb6b44010f2c9bd5da4aa',1,'BoundaryCellsInformation']]],
-  ['add_5fcells_5fwith_5fboundary_5flines_5fto_5fboundary_5fcells_22',['add_cells_with_boundary_lines_to_boundary_cells',['../classBoundaryCellsInformation.html#aaf2746e96686caa199508cdfac6ead17',1,'BoundaryCellsInformation']]],
+  ['add_5fboundary_5fneighbors_5fof_5fboundary_5fcells_21',['add_boundary_neighbors_of_boundary_cells',['../classBoundaryCellsInformation.html#ac1004bd6be070324ef4c1c5f2e4ae831',1,'BoundaryCellsInformation']]],
+  ['add_5fcells_5fwith_5fboundary_5flines_5fto_5fboundary_5fcells_22',['add_cells_with_boundary_lines_to_boundary_cells',['../classBoundaryCellsInformation.html#a9390ea4fd69baf222e6f5777723f2791',1,'BoundaryCellsInformation']]],
   ['add_5fdiagonal_5fentries_23',['add_diagonal_entries',['../classCouplingOperator.html#a16207cd8be71ddd6e86ce6798c290136',1,'CouplingOperator']]],
   ['add_5fevent_24',['add_event',['../classCompletedCollisionLog.html#a27b0a3f91a6ed879601244f72f67fb8d',1,'CompletedCollisionLog']]],
   ['add_5ffluid_5fparticle_5finteraction_25',['add_fluid_particle_interaction',['../classCFDDEMMatrixFree.html#a8c8c824dde06c4b81a550cd6b35e87b4',1,'CFDDEMMatrixFree']]],

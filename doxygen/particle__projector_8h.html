@@ -135,10 +135,10 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a295257336d7ec7de9c5303816983fe23" id="r_a295257336d7ec7de9c5303816983fe23"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__projector_8h.html#a295257336d7ec7de9c5303816983fe23">particle_circle_intersection_2d</a> (double r_particle, double r_circle, double neighbor_distance)</td></tr>
-<tr class="separator:a295257336d7ec7de9c5303816983fe23"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a54147426ca2e61a0d8fda082850714f8" id="r_a54147426ca2e61a0d8fda082850714f8"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__projector_8h.html#a54147426ca2e61a0d8fda082850714f8">particle_sphere_intersection_3d</a> (double r_particle, double r_sphere, double neighbor_distance)</td></tr>
-<tr class="separator:a54147426ca2e61a0d8fda082850714f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b7151fc1b60e8853706b14dd3306c73" id="r_a1b7151fc1b60e8853706b14dd3306c73"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__projector_8h.html#a1b7151fc1b60e8853706b14dd3306c73">particle_circle_intersection_2d</a> (const double r_particle, const double r_circle, const double neighbor_distance)</td></tr>
+<tr class="separator:a1b7151fc1b60e8853706b14dd3306c73"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac451e9e224c96596ad475079f4af5028" id="r_ac451e9e224c96596ad475079f4af5028"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="particle__projector_8h.html#ac451e9e224c96596ad475079f4af5028">particle_sphere_intersection_3d</a> (const double r_particle, const double r_sphere, const double neighbor_distance)</td></tr>
+<tr class="separator:ac451e9e224c96596ad475079f4af5028"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae027c7115ed06a31397c9c6913cf53aa" id="r_ae027c7115ed06a31397c9c6913cf53aa"><td class="memTemplParams" colspan="2">template&lt;int dim&gt; </td></tr>
 <tr class="memitem:ae027c7115ed06a31397c9c6913cf53aa"><td class="memTemplItemLeft" align="right" valign="top">double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="particle__projector_8h.html#ae027c7115ed06a31397c9c6913cf53aa">gaussian_filter_kernel</a> (const double r_particle, const double sigma, const double distance)</td></tr>
 <tr class="separator:ae027c7115ed06a31397c9c6913cf53aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -204,12 +204,12 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00112">112</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00111">111</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="a295257336d7ec7de9c5303816983fe23" name="a295257336d7ec7de9c5303816983fe23"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a295257336d7ec7de9c5303816983fe23">&#9670;&#160;</a></span>particle_circle_intersection_2d()</h2>
+<a id="a1b7151fc1b60e8853706b14dd3306c73" name="a1b7151fc1b60e8853706b14dd3306c73"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b7151fc1b60e8853706b14dd3306c73">&#9670;&#160;</a></span>particle_circle_intersection_2d()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -220,19 +220,19 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">double particle_circle_intersection_2d </td>
           <td>(</td>
-          <td class="paramtype">double&#160;</td>
+          <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>r_particle</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">double&#160;</td>
+          <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>r_circle</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">double&#160;</td>
+          <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>neighbor_distance</em>&#160;</td>
         </tr>
         <tr>
@@ -248,22 +248,22 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Calculate the area of intersection between a circular (2D) particle and a circle. </p>
-<dl class="params"><dt>Parameters</dt><dd>
+<p>Calculate the area of intersection between a circular (2D) particle and a circle. \ . </p>
+<p>\ </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">r_particle</td><td>Radius of the particle</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">r_circle</td><td>Radius of the circle</td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">neighbor_distance</td><td>Distance between the particle and the circle </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">r_particle</td><td>Radius of the particle \ </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">r_circle</td><td>Radius of the circle \ </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">neighbor_distance</td><td>Distance between the particle and the circle \ </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00046">46</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00045">45</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>
-<a id="a54147426ca2e61a0d8fda082850714f8" name="a54147426ca2e61a0d8fda082850714f8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a54147426ca2e61a0d8fda082850714f8">&#9670;&#160;</a></span>particle_sphere_intersection_3d()</h2>
+<a id="ac451e9e224c96596ad475079f4af5028" name="ac451e9e224c96596ad475079f4af5028"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac451e9e224c96596ad475079f4af5028">&#9670;&#160;</a></span>particle_sphere_intersection_3d()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -274,19 +274,19 @@ template&lt;int dim&gt; </div>
         <tr>
           <td class="memname">double particle_sphere_intersection_3d </td>
           <td>(</td>
-          <td class="paramtype">double&#160;</td>
+          <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>r_particle</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">double&#160;</td>
+          <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>r_sphere</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">double&#160;</td>
+          <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>neighbor_distance</em>&#160;</td>
         </tr>
         <tr>
@@ -312,7 +312,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00074">74</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="particle__projector_8h_source.html#l00073">73</a> of file <a class="el" href="particle__projector_8h_source.html">particle_projector.h</a>.</p>
 
 </div>
 </div>

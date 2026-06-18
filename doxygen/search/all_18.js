@@ -17,7 +17,7 @@ var searchData=
   ['weighting_5ftype_14',['weighting_type',['../classDistribution.html#a7e09273b70dd38a97eb39f621a406bf3',1,'Distribution::weighting_type'],['../classPreconditionASM.html#a8d85fcf5a96522fc5c8361b980f2d5f4',1,'PreconditionASM::weighting_type']]],
   ['weightingtype_15',['WeightingType',['../classPreconditionASM.html#aa6db2cd2ca97a487ef86465f299230cc',1,'PreconditionASM']]],
   ['weights_16',['weights',['../classRBFShape.html#a8cc4d4b1396d905f163cfa5851c27e48',1,'RBFShape::weights'],['../classPreconditionASM.html#abefaf957da70a206468f2ded86e84a7d',1,'PreconditionASM::weights']]],
-  ['wendlandc2_17',['wendlandc2',['../classRBFShape.html#a500945b0623183e0230557de96446718',1,'RBFShape::wendlandc2(const double distance)'],['../classRBFShape.html#a2060a8058a7a5a439d772319f39ec66ba526ec08dac621910633406c7dae04da4',1,'RBFShape::WENDLANDC2']]],
+  ['wendlandc2_17',['wendlandc2',['../classRBFShape.html#a2060a8058a7a5a439d772319f39ec66ba526ec08dac621910633406c7dae04da4',1,'RBFShape::WENDLANDC2'],['../classRBFShape.html#a500945b0623183e0230557de96446718',1,'RBFShape::wendlandc2(const double distance)']]],
   ['wendlandc2_5fderivative_18',['wendlandc2_derivative',['../classRBFShape.html#a721451fbe48d2aa32308c735d047b001',1,'RBFShape']]],
   ['write_19',['write',['../classBufferRW.html#ac447b3d2282d05fefa68c63e4d9414c6',1,'BufferRW::write(const T &amp;in)'],['../classBufferRW.html#a515fe252b0aed835e777229ea4c7770b',1,'BufferRW::write(const Tensor&lt; 1, dim, T &gt; &amp;in)']]],
   ['write_5falgebraic_5fmelt_5fvolume_20',['write_algebraic_melt_volume',['../classHeatTransfer.html#a0451c21cf009e8b440ac0e3f875beae2',1,'HeatTransfer']]],
