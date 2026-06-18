@@ -882,11 +882,13 @@ DEMSolver<dim, PropertiesIndex>::update_previous_position()
            ++particle_in_cell)
         {
           auto particle_properties = particle_in_cell->get_properties();
-          particle_in_cell->get_properties();
 
           Point<dim> particle_previous_position =
             particle_in_cell->get_location();
 
+          // Since we don't want to create a PropertiesIndex only for this
+          // insertion method, we use the velocity to store the previous
+          // location.
           particle_properties[PropertiesIndex::v_x] =
             particle_previous_position[0];
           particle_properties[PropertiesIndex::v_y] =
