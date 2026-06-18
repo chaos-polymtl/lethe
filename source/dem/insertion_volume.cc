@@ -186,7 +186,7 @@ InsertionVolume<dim, PropertiesIndex>::find_insertion_location(
   std::vector<int> insertion_index(dim);
   unsigned int     remainder = id;
 
-  for (unsigned int i = 0; i < dim; ++i)
+  for (int i = 0; i < dim; ++i)
     {
       const unsigned int axis = insertion_information.direction_sequence.at(i);
       const int particles_in_axis = this->number_of_particles_directions[axis];

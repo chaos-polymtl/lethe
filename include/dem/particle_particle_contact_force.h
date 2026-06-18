@@ -107,7 +107,7 @@ public:
   unsigned int
   get_number_of_contacts() const
   {
-    return n_contact;
+    return n_contacts;
   }
 
   /**
@@ -116,12 +116,12 @@ public:
   void
   reset_number_of_contacts()
   {
-    n_contact = 0;
+    n_contacts = 0;
   }
 
 protected:
   // Number of contact counter
-  unsigned int n_contact = 0;
+  unsigned int n_contacts = 0;
 
   /**
    * @brief Map storing offset distance between periodic boundaries, keyed by
@@ -1557,7 +1557,7 @@ private:
     const ArrayView<const double>       &particle_one_properties,
     const ArrayView<const double>       &particle_two_properties)
   {
-    ++this->n_contact;
+    ++this->n_contacts;
 
     // Particle iterator
     auto particle_one = contact_info.particle_one;
@@ -1580,7 +1580,7 @@ private:
             tensor_nd_to_2d(normal_unit_vector);
         particle_two_new_position =
           particle_two_position +
-          (0.501 * normal_overlap + 0.001 * diameter_one) *
+          (0.501 * normal_overlap + 0.001 * diameter_two) *
             tensor_nd_to_2d(normal_unit_vector);
       }
     if constexpr (dim == 3)

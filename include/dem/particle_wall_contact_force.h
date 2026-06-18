@@ -72,26 +72,26 @@ public:
 
 
   /**
-   * @brief Return the number of contact that occurred in the
+   * @brief Return the number of contacts that occurred in the
    * present pseudo-time step when using the shift insertion method.
    */
   unsigned int
   get_number_of_contacts() const
   {
-    return n_contact;
+    return n_contacts;
   }
 
   /**
-   * @brief Reset the counter of number of contact for the next pseudo-time step.
+   * @brief Reset the counter of number of contacts for the next pseudo-time step.
    */
   void
   reset_number_of_contacts()
   {
-    n_contact = 0;
+    n_contacts = 0;
   }
 
 protected:
-  unsigned int n_contact = 0;
+  unsigned int n_contacts = 0;
 };
 
 /**
@@ -1066,7 +1066,7 @@ private:
     // Contact particle-wall + constant cohesive force.
     if (normal_overlap > 0.)
       {
-        ++this->n_contact;
+        ++this->n_contacts;
         // i is the particle, j is the wall.
         // there is a minus sign in front of the normal_vector to respect the
         // convention (i -> j), the forces are thus calculated on the wall

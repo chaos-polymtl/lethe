@@ -6,6 +6,8 @@
 
 #include <dem/insertion.h>
 
+#include <random>
+
 using namespace dealii;
 
 template <int dim, typename PropertiesIndex>
@@ -50,7 +52,7 @@ public:
 
 
   /**
-   * @brief Serialize the volume insertion object to an output archive.
+   * @brief Serialize the packed insertion object to an output archive.
    *
    * @param ar Output archive where the attributes are stored.
    */
@@ -61,7 +63,7 @@ public:
   }
 
   /**
-   * @brief Deserialize an input archive to the plane insertion object.
+   * @brief Deserialize an input archive to the packed insertion object.
    *
    * @param ar Input archive where the attributes are stored.
    *
