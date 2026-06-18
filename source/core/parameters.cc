@@ -3714,16 +3714,37 @@ namespace Parameters
         Patterns::Double(),
         "Z component of the angular velocity vector of the frame of reference");
 
-      prm.declare_entry("Darcy type",
-                        "none",
-                        Patterns::Selection("none|phase_change"),
-                        "Darcy-like permeability term"
-                        "Choices are <none|phase_change>.");
       prm.declare_entry(
         "enable Darcy multiply by density",
         "false",
         Patterns::Bool(),
         "Enable the multiplication of the Darcy force term by the density for dimensional consistency when solving the pressure rather than the kinematic pressure in the momentum balance.");
+
+      prm.declare_entry(
+        "permeability model",
+        "none",
+        Patterns::Selection(
+          "none|darcy phase change|carman-kozeny phase change"),
+        "Permeability models for phase change modelling."
+        "Choices are <none|darcy phase change|carman-kozeny phase change>.");
+
+      prm.declare_entry("Carman-Kozeny fluid with phase change",
+                        "fluid 0",
+                        Patterns::Selection("fluid 0|fluid 1|both"),
+                        "Select which fluids have phase change"
+                        "Choices are <fluid 0|fluid 1|both>.");
+
+      prm.declare_entry(
+        "Carman-Kozeny division tolerance",
+        "1e-3",
+        Patterns::List(Patterns::Double()),
+        "This tolerance avoids a division by zero in the Carman-Kozeny source term. For multiple fluids with phase change, separate values with a comma.");
+
+      prm.declare_entry(
+        "Carman-Kozeny permeability area",
+        "1e-3",
+        Patterns::List(Patterns::Double()),
+        "This represents the permeability area of the pseudo-porous bed in the Carman-Kozeny source term. For multiple fluids with phase change, separate values with a comma.");
     }
     prm.leave_subsection();
   }
@@ -3741,22 +3762,133 @@ namespace Parameters
       else
         throw std::logic_error("Error, invalid velocity source type");
 
-      const std::string darcy = prm.get("Darcy type");
-      if (darcy == "none")
-        darcy_type = DarcySourceType::none;
-      else if (darcy == "phase_change")
-        darcy_type = DarcySourceType::phase_change;
+      const std::string permeability_model_str = prm.get("permeability model");
+      if (permeability_model_str == "none")
+        permeability_model = PermeabilityModel::none;
+      else if (permeability_model_str == "darcy phase change")
+        permeability_model = PermeabilityModel::darcy_phase_change;
+      else if (permeability_model_str == "carman-kozeny phase change")
+        permeability_model = PermeabilityModel::carman_kozeny_phase_change;
       else
-        throw std::logic_error("Error, invalid Darcy source type");
+        throw std::logic_error(
+          "Error, invalid permeability model. Options are <none|darcy phase change|carman-kozeny phase change>.");
+
+      const std::string fluid_indicator_str =
+        prm.get("Carman-Kozeny fluid with phase change");
+      if (fluid_indicator_str == "fluid 0")
+        fluid_with_phase_change = FluidIndicator::fluid0;
+      else if (fluid_indicator_str == "fluid 1")
+        fluid_with_phase_change = FluidIndicator::fluid1;
+      else if (fluid_indicator_str == "both")
+        fluid_with_phase_change = FluidIndicator::both;
+      else
+        throw std::logic_error(
+          "Error, invalid fluid with phase change. Options are <fluid 0|fluid 1|both>.");
+
+      carman_kozeny_permeability_area.resize(2);
+      carman_kozeny_tolerance.resize(2);
+      const std::string carman_kozeny_permeability_area_list =
+        prm.get("Carman-Kozeny permeability area");
+      std::vector<std::string> carman_kozeny_permeability_area_vec =
+        Utilities::split_string_list(carman_kozeny_permeability_area_list);
+
+      const std::string carman_kozeny_tolerance_list =
+        prm.get("Carman-Kozeny division tolerance");
+      std::vector<std::string> carman_kozeny_tolerance_vec =
+        Utilities::split_string_list(carman_kozeny_tolerance_list);
+
+      // Check that dimensions agree
+      AssertThrow(carman_kozeny_permeability_area_vec.size() ==
+                    carman_kozeny_tolerance_vec.size(),
+                  dealii::ExcDimensionMismatch(
+                    (carman_kozeny_permeability_area_vec.size()),
+                    (carman_kozeny_tolerance_vec.size())));
+
+      if (fluid_with_phase_change == FluidIndicator::fluid0)
+        {
+          AssertThrow(
+            carman_kozeny_permeability_area_vec.size() == 1,
+            ExcMessage(
+              "The expected size of the 'Carman-Kozeny permeability area' list of 1 is not met."));
+          AssertThrow(
+            carman_kozeny_tolerance_vec.size() == 1,
+            ExcMessage(
+              "The expected size of the 'Carman-Kozeny division tolerance' list of 1 is not met."));
+
+          carman_kozeny_permeability_area[0] =
+            Utilities::string_to_double(carman_kozeny_permeability_area_vec[0]);
+          carman_kozeny_tolerance[0] =
+            Utilities::string_to_double(carman_kozeny_tolerance_vec[0]);
+
+          // Assign default values to fluid 1
+          carman_kozeny_permeability_area[1] = 1e-3;
+          carman_kozeny_tolerance[1]         = 1e-3;
+        }
+      else if (fluid_with_phase_change == FluidIndicator::fluid1)
+        {
+          AssertThrow(
+            carman_kozeny_permeability_area_vec.size() == 1,
+            ExcMessage(
+              "The expected size of the 'Carman-Kozeny permeability area' list of 1 is not met."));
+          AssertThrow(
+            carman_kozeny_tolerance_vec.size() == 1,
+            ExcMessage(
+              "The expected size of the 'Carman-Kozeny division tolerance' list of 1 is not met."));
+
+          carman_kozeny_permeability_area[1] =
+            Utilities::string_to_double(carman_kozeny_permeability_area_vec[0]);
+          carman_kozeny_tolerance[1] =
+            Utilities::string_to_double(carman_kozeny_tolerance_vec[0]);
+
+          // Assign default values to fluid 0
+          carman_kozeny_permeability_area[0] = 1e-3;
+          carman_kozeny_tolerance[0]         = 1e-3;
+        }
+      else if (fluid_with_phase_change == FluidIndicator::both)
+        {
+          AssertThrow(
+            carman_kozeny_permeability_area_vec.size() ==
+              carman_kozeny_permeability_area.size(),
+            ExcMessage(
+              "The expected size of the 'Carman-Kozeny permeability area' list of 1 is not met."));
+          AssertThrow(
+            carman_kozeny_tolerance_vec.size() ==
+              carman_kozeny_tolerance.size(),
+            ExcMessage(
+              "The expected size of the 'Carman-Kozeny division tolerance' list of 2 is not met."));
+
+          for (unsigned int i = 0; i < carman_kozeny_permeability_area.size();
+               ++i)
+            {
+              carman_kozeny_permeability_area[i] = Utilities::string_to_double(
+                carman_kozeny_permeability_area_vec[i]);
+              carman_kozeny_tolerance[i] =
+                Utilities::string_to_double(carman_kozeny_tolerance_vec[i]);
+            }
+        }
+
+      // Check that all values are strictly positive
+      for (unsigned int i = 0; i < carman_kozeny_permeability_area.size(); ++i)
+        {
+          AssertThrow(
+            carman_kozeny_permeability_area[i] > 0,
+            ExcMessage(
+              "The chosen value of 'Carman-Kozeny permeability area' has to be strictly positive."));
+
+          AssertThrow(
+            carman_kozeny_tolerance[i] > 0,
+            ExcMessage(
+              "The 'Carman-Kozeny division tolerance' should be strictly positive."));
+        }
 
       enable_darcy_multiply_by_density =
         prm.get_bool("enable Darcy multiply by density");
 
       AssertThrow(
-        !(enable_darcy_multiply_by_density &&
-          darcy_type == DarcySourceType::none),
+        (!enable_darcy_multiply_by_density ||
+         permeability_model == PermeabilityModel::darcy_phase_change),
         ExcMessage(
-          "Inconsistency in parameters, 'enable Darcy multiply by density' is set to 'true', but 'Darcy type' is set to 'none'. To enable the multiplication of the density in the Darcy term, the 'Darcy type' should be set to 'phase_change'."));
+          "Inconsistency in parameters, 'enable Darcy multiply by density' is set to 'true', but 'permeability model' is not set to 'darcy phase change'."));
 
       omega_x = prm.get_double("omega_x");
       omega_y = prm.get_double("omega_y");

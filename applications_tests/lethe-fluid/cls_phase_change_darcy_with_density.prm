@@ -3,15 +3,16 @@
 
 #-------------------------------------------------------------------------------
 # DESCRIPTION:
-# This test checks that the Darcy penalty term with density in the solid phase
-# when simulating a two-phase flow with CLS.
+# This test checks that the Darcy source term imposes stasis adequately in the
+# solid phase for phase change simulation when simulating a two-phase flow with
+# CLS.
 # This simulates the 2D development of a 3 layers Couette flow with 2 fluids.
 # The layers are as follows:
-#  - for all y in [-0.25, -0.025[: fluid 0
-#  - for all y in [-0.025, 0.025[: fluid 1
-#  - for all y in [0.025, 0.25[: fluid 0
-# Transition between the layers is smoothen with a tanh function.
-#-------------------------------------------------------------------------------
+#  - for all y in [-0.25, -0.05[: fluid 0
+#  - for all y in [-0.05, 0.05[: fluid 1
+#  - for all y in [0.05, 0.25[: fluid 0
+# Transition between the layers is smoothened with a tanh function.
+#------------------------------------------------------------------------------
 
 # Listing of Parameters
 #----------------------
@@ -25,7 +26,7 @@ set dimension = 2
 subsection simulation control
   set method           = bdf2
   set output frequency = 0
-  set time end         = 0.3
+  set time end         = 1
   set time step        = 0.1
 end
 
@@ -35,28 +36,12 @@ end
 
 subsection initial conditions
   set type = nodal
-  subsection uvwp
-    set Function expression = 0; 0; 0;
-  end
   subsection CLS
-    set Function constants  = halfThickness=0.0003125, xInterface=0.025
+    set Function constants  = halfThickness=0.025, xInterface=0.05
     set Function expression = 0.5 - 0.5 * tanh((sqrt(y*y) - xInterface)/(2*halfThickness))
   end
-end
-
-#---------------------------------------------------
-# CLS
-#---------------------------------------------------
-
-subsection CLS
-  subsection interface reinitialization method
-    set type      = geometric interface reinitialization
-    set frequency = 1
-    subsection geometric interface reinitialization
-      set max reinitialization distance = 0.01875
-      set tanh thickness                = 0.00625
-      set transformation type           = tanh
-    end
+  subsection temperature
+    set Function expression = -2 * y + 0.5
   end
 end
 
@@ -66,17 +51,23 @@ end
 
 subsection physical properties
   set number of fluids = 2
-  subsection fluid 1
-    set density = 10
-  end
   subsection fluid 0
+    subsection phase change
+      set latent enthalpy      = 0
+      set liquidus temperature = 0.51
+      set solidus temperature  = 0.49
+      set Darcy penalty liquid = 0
+      set Darcy penalty solid  = 1e8
+    end
+  end
+  subsection fluid 1
     set density = 0.1
     subsection phase change
       set latent enthalpy      = 0
       set liquidus temperature = 0.51
       set solidus temperature  = 0.49
       set Darcy penalty liquid = 0
-      set Darcy penalty solid  = 1e5
+      set Darcy penalty solid  = 1e8
     end
   end
 end
@@ -88,8 +79,8 @@ end
 subsection analytical solution
   set enable = true
   subsection uvwp
-    set Function constants  = R=0.25, a=0.025, Ub=0.05, Ut=0, mu0=1, mu1=0.1
-    set Function expression = if(y>=0,0,if(y<=-a, Ub + ((Ut-Ub)/(2*(R-a)/mu0 + 2*a/mu1))/mu0*(y+R), Ub + ((Ut-Ub)/(2*(R-a)/mu0 + 2*a/mu1))*((R-a)/mu0 + (y+a)/mu1))) ; 0 ; 0
+    set Function constants  = B=-0.5, a=-0.05, Ub=0.1, mu0=1, mu1=10
+    set Function expression = if(y>=0, 0, if(y<=a, (Ub + (-1/mu0)*(y-B)/((a-B)*mu1-a*mu0)), (-1/mu1 * y / ((a-B)*mu1-a*mu0)))); 0; 0
   end
 end
 
@@ -98,7 +89,7 @@ end
 #---------------------------------------------------
 
 subsection velocity source
-  set Darcy type                       = phase_change
+  set permeability model               = darcy phase change
   set enable Darcy multiply by density = true
 end
 
@@ -109,8 +100,8 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
-  set grid arguments     = 8, 20 : -0.1, -0.25 : 0.1, 0.25 : true
-  set initial refinement = 2
+  set grid arguments     = 4, 40 : -0.05, -0.5 : 0.05, 0.5 : true
+  set initial refinement = 1
 end
 
 #---------------------------------------------------
@@ -125,15 +116,15 @@ subsection boundary conditions
     set periodic id        = 1
     set periodic direction = 0
   end
-  subsection bc 1
+  subsection bc 2
     set type = noslip
     set id   = 3
   end
-  subsection bc 2
+  subsection bc 1
     set id   = 2
     set type = function
     subsection u
-      set Function expression = 0.05
+      set Function expression = 0.1
     end
   end
 end
@@ -171,12 +162,10 @@ end
 subsection boundary conditions CLS
   set number = 2
   subsection bc 0
-    set id   = 0,1
-    set type = dirichlet
-    subsection dirichlet
-      set Function constants  = halfThickness=0.0003125, xInterface=0.025
-      set Function expression = 0.5 - 0.5 * tanh((sqrt(y*y) - xInterface)/(2*halfThickness))
-    end
+    set type               = periodic
+    set id                 = 0
+    set periodic id        = 1
+    set periodic direction = 0
   end
   subsection bc 1
     set id   = 2,3
@@ -204,12 +193,12 @@ subsection non-linear solver
   subsection heat transfer
     set verbosity      = quiet
     set tolerance      = 1e-8
-    set max iterations = 15
+    set max iterations = 5
   end
   subsection fluid dynamics
     set verbosity      = quiet
     set tolerance      = 1e-8
-    set max iterations = 15
+    set max iterations = 5
   end
   subsection CLS
     set verbosity      = quiet
@@ -237,7 +226,7 @@ subsection linear solver
     set max iters         = 5000
     set relative residual = 1e-6
     set minimum residual  = 1e-11
-    set preconditioner    = amg
+    set preconditioner    = ilu
   end
   subsection CLS
     set verbosity         = quiet

@@ -49,18 +49,17 @@ namespace Parameters
     extra_verbose
   };
 
-  /** @brief Class to account for different fluid indicator:
-   *  - fluid0: fluid 0 only,
-   *  - fluid1: fluid 1 only,
-   *  - both: both fluids
-   * This is used for multiphase simulations, in PostProcessing and in
-   * CLS (see parameter_multiphysics.h)
+  /**
+   * @brief Class to account for different fluid indicators.
+   * This is used for multiphase simulations in PostProcessing, in
+   * CLS (see parameter_multiphysics.h), and in VelocitySource (phase change
+   * Carman-Kozeny permeability model).
    */
   enum class FluidIndicator : std::uint8_t
   {
-    fluid0,
-    fluid1,
-    both
+    fluid0, ///< fluid 0 only
+    fluid1, ///< fluid 1 only
+    both    ///< both fluids
   };
 
   /**
@@ -1735,11 +1734,14 @@ namespace Parameters
 
   struct VelocitySource
   {
-    enum class DarcySourceType : std::int8_t
+    enum class PermeabilityModel : std::int8_t
     {
-      none,        // No Darcy source term
-      phase_change // Phase change darcy source term which applies a
-                   // penalization depending on the phase change model
+      none,               ///< No Darcy source term
+      darcy_phase_change, /**< Phase change Darcy source term which applies a
+                    linear penalization depending on the phase change model */
+      carman_kozeny_phase_change /**< Phase change Carman-Kozeny source term
+                    which applies a non-linear penalization depending on the
+                    phase change model */
     };
 
     enum class RotatingFrameType : std::int8_t
@@ -1753,10 +1755,11 @@ namespace Parameters
     double            omega_y;
     double            omega_z;
 
-    /*
-     * Type of darcy velocity source term applied to the Navier-Stokes equations
-     */
-    DarcySourceType darcy_type;
+    /// Type of permeability model applied to the Navier-Stokes equations
+    PermeabilityModel permeability_model;
+
+    /// Indicates which fluids are with liquid-solid phase change.
+    FluidIndicator fluid_with_phase_change;
 
     /**
      * Enable the multiplication of the Darcy force term
@@ -1772,6 +1775,12 @@ namespace Parameters
      * the velocity.
      */
     bool enable_darcy_multiply_by_density;
+
+    /// Permeability area of the pseudo-porous bed (solid phase).
+    std::vector<double> carman_kozeny_permeability_area;
+
+    /// Tolerance in the Carman-Kozeny source term that avoids division by zero.
+    std::vector<double> carman_kozeny_tolerance;
 
     static void
     declare_parameters(ParameterHandler &prm);

@@ -1,6 +1,21 @@
 # SPDX-FileCopyrightText: Copyright (c) 2024-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+#-------------------------------------------------------------------------------
+# DESCRIPTION:
+# This test checks that the Darcy source term imposes stasis adequately in the
+# solid phase for phase change simulation when simulating a two-phase flow with
+# CLS.
+# This simulates the 2D development of a 3 layers Couette flow with 2 fluids.
+# The layers are as follows:
+#  - for all y in [-0.25, -0.05[: fluid 0
+#  - for all y in [-0.05, 0.05[: fluid 1
+#  - for all y in [0.05, 0.25[: fluid 0
+# Transition between the layers is smoothened with a tanh function.
+# The results do not perfectly converge towards the expected analytical solution
+# due to spurious currents appearing near the interface between fluids.
+#------------------------------------------------------------------------------
+
 # Listing of Parameters
 #----------------------
 
@@ -11,20 +26,10 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = bdf1
-  set number mesh adapt = 0
-  set output frequency  = 0
-  set time end          = 10
-  set time step         = 2
-end
-
-#---------------------------------------------------
-# FEM
-#---------------------------------------------------
-
-subsection FEM
-  set velocity degree = 1
-  set pressure degree = 1
+  set method           = bdf2
+  set output frequency = 0
+  set time end         = 1
+  set time step        = 0.1
 end
 
 #---------------------------------------------------
@@ -33,11 +38,12 @@ end
 
 subsection initial conditions
   set type = nodal
-  subsection uvwp
-    set Function expression = 0; 0; 0;
-  end
   subsection CLS
-    set Function expression = if(x*x<=0.000625, 1, 0)
+    set Function constants  = halfThickness=0.025, xInterface=0.05
+    set Function expression = 0.5 - 0.5 * tanh((sqrt(y*y) - xInterface)/(2*halfThickness))
+  end
+  subsection temperature
+    set Function expression = -2 * y + 0.5
   end
 end
 
@@ -48,61 +54,22 @@ end
 subsection physical properties
   set number of fluids = 2
   subsection fluid 0
-    set thermal conductivity model = constant
-    set thermal conductivity       = 1
-    set rheological model          = phase_change
-
-    set specific heat model = phase_change
     subsection phase change
-      # Enthalpy of the phase change
-      set latent enthalpy = 0
-
-      # Temperature of the liquidus
+      set latent enthalpy      = 0
       set liquidus temperature = 0.51
-
-      # Temperature of the solidus
-      set solidus temperature = 0.49
-
-      # Specific heat of the liquid phase
-      set specific heat liquid = 1
-
-      # Specific heat of the solid phase
-      set specific heat solid = 1
-
-      # Permeability of the liquid phase
+      set solidus temperature  = 0.49
       set Darcy penalty liquid = 0
-
-      # Permeability of the solid phase
-      set Darcy penalty solid = 1e5
+      set Darcy penalty solid  = 1e8
     end
   end
   subsection fluid 1
-    set thermal conductivity model = constant
-    set thermal conductivity       = 1
-    set rheological model          = phase_change
-
-    set specific heat model = phase_change
+    set density = 0.1
     subsection phase change
-      # Enthalpy of the phase change
-      set latent enthalpy = 0
-
-      # Temperature of the liquidus
+      set latent enthalpy      = 0
       set liquidus temperature = 0.51
-
-      # Temperature of the solidus
-      set solidus temperature = 0.49
-
-      # Specific heat of the liquid phase
-      set specific heat liquid = 1
-
-      # Specific heat of the solid phase
-      set specific heat solid = 1
-
-      # Permeability of the liquid phase
+      set solidus temperature  = 0.49
       set Darcy penalty liquid = 0
-
-      # Permeability of the solid phase
-      set Darcy penalty solid = 1e5
+      set Darcy penalty solid  = 1e8
     end
   end
 end
@@ -114,8 +81,8 @@ end
 subsection analytical solution
   set enable = true
   subsection uvwp
-    set Function constants  = H=1, G=1, mu=1
-    set Function expression = if(y>=0.5,0,2*(0.5-y)) ; 0 ; 0
+    set Function constants  = B=-0.5, a=-0.05, Ub=0.1, mu0=1, mu1=10
+    set Function expression = if(y>=0, 0, if(y<=a, (Ub + (-1/mu0)*(y-B)/((a-B)*mu1-a*mu0)), (-1/mu1 * y / ((a-B)*mu1-a*mu0)))); 0; 0
   end
 end
 
@@ -124,8 +91,7 @@ end
 #---------------------------------------------------
 
 subsection velocity source
-  # Darcy-like permeability term. Choices are <none|phase_change>.
-  set Darcy type = phase_change
+  set permeability model = darcy phase change
 end
 
 #---------------------------------------------------
@@ -135,22 +101,8 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = subdivided_hyper_rectangle
-  set grid arguments     = 4, 50 : -0.05, 0 : 0.05, 1 : true
-  set initial refinement = 0
-end
-
-#---------------------------------------------------
-# Mesh Adaptation Control
-#---------------------------------------------------
-
-subsection mesh adaptation
-  set type                 = none
-  set max number elements  = 20000
-  set max refinement level = 3
-  set min refinement level = 0
-  set frequency            = 1
-  set fraction refinement  = 0.1
-  set fraction coarsening  = 0.1
+  set grid arguments     = 4, 40 : -0.05, -0.5 : 0.05, 0.5 : true
+  set initial refinement = 1
 end
 
 #---------------------------------------------------
@@ -173,13 +125,7 @@ subsection boundary conditions
     set id   = 2
     set type = function
     subsection u
-      set Function expression = 1
-    end
-    subsection v
-      set Function expression = 0
-    end
-    subsection w
-      set Function expression = 0
+      set Function expression = 0.1
     end
   end
 end
@@ -189,7 +135,7 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions heat transfer
-  set number = 4
+  set number = 3
   subsection bc 0
     set type = temperature
     set id   = 2
@@ -205,11 +151,7 @@ subsection boundary conditions heat transfer
     end
   end
   subsection bc 2
-    set id   = 0
-    set type = noflux
-  end
-  subsection bc 3
-    set id   = 1
+    set id   = 0,1
     set type = noflux
   end
 end
@@ -219,34 +161,18 @@ end
 #---------------------------------------------------
 
 subsection boundary conditions CLS
-  set number         = 4
-  set time dependent = false
+  set number = 2
   subsection bc 0
-    set id   = 0
-    set type = dirichlet
-    subsection dirichlet
-      set Function expression = 0
-    end
+    set type               = periodic
+    set id                 = 0
+    set periodic id        = 1
+    set periodic direction = 0
   end
   subsection bc 1
-    set id   = 1
+    set id   = 2,3
     set type = dirichlet
     subsection dirichlet
       set Function expression = 0
-    end
-  end
-  subsection bc 2
-    set id   = 2
-    set type = dirichlet
-    subsection dirichlet
-      set Function expression = if(x*x<=0.000625, 1, 0)
-    end
-  end
-  subsection bc 3
-    set id   = 3
-    set type = dirichlet
-    subsection dirichlet
-      set Function expression = if(x*x<=0.000625, 1, 0)
     end
   end
 end
@@ -278,7 +204,7 @@ subsection non-linear solver
   subsection CLS
     set verbosity      = quiet
     set tolerance      = 1e-8
-    set max iterations = 5
+    set max iterations = 15
   end
 end
 
@@ -288,36 +214,27 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set verbosity                             = quiet
-    set method                                = gmres
-    set max iters                             = 5000
-    set relative residual                     = 1e-6
-    set minimum residual                      = 1e-11
-    set preconditioner                        = ilu
-    set ilu preconditioner fill               = 0
-    set ilu preconditioner absolute tolerance = 1e-12
-    set ilu preconditioner relative tolerance = 1.00
+    set verbosity         = quiet
+    set method            = gmres
+    set max iters         = 5000
+    set relative residual = 1e-6
+    set minimum residual  = 1e-11
+    set preconditioner    = amg
   end
   subsection heat transfer
-    set verbosity                             = quiet
-    set method                                = gmres
-    set max iters                             = 5000
-    set relative residual                     = 1e-6
-    set minimum residual                      = 1e-11
-    set preconditioner                        = ilu
-    set ilu preconditioner fill               = 0
-    set ilu preconditioner absolute tolerance = 1e-12
-    set ilu preconditioner relative tolerance = 1.00
+    set verbosity         = quiet
+    set method            = gmres
+    set max iters         = 5000
+    set relative residual = 1e-6
+    set minimum residual  = 1e-11
+    set preconditioner    = ilu
   end
   subsection CLS
-    set verbosity                             = quiet
-    set method                                = gmres
-    set max iters                             = 5000
-    set relative residual                     = 1e-6
-    set minimum residual                      = 1e-11
-    set preconditioner                        = ilu
-    set ilu preconditioner fill               = 0
-    set ilu preconditioner absolute tolerance = 1e-12
-    set ilu preconditioner relative tolerance = 1.00
+    set verbosity         = quiet
+    set method            = gmres
+    set max iters         = 5000
+    set relative residual = 1e-6
+    set minimum residual  = 1e-11
+    set preconditioner    = ilu
   end
 end

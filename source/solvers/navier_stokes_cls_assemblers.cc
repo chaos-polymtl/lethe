@@ -488,11 +488,8 @@ PhaseChangeDarcyCLSAssembler<dim>::assemble_matrix(
   auto &strong_jacobian = copy_data.strong_jacobian;
 
   const unsigned int  number_of_fluids = phase_change_parameters_vector.size();
-  std::vector<double> liquid_fractions;
-  std::vector<double> darcy_penalties;
-  liquid_fractions.reserve(number_of_fluids);
-  darcy_penalties.reserve(number_of_fluids);
-
+  std::vector<double> liquid_fractions(number_of_fluids);
+  std::vector<double> darcy_penalties(number_of_fluids);
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
@@ -508,17 +505,17 @@ PhaseChangeDarcyCLSAssembler<dim>::assemble_matrix(
       // used to calculate the liquid fractions avoiding if conditions.
       for (unsigned int p = 0; p < number_of_fluids; p++)
         {
-          liquid_fractions.emplace_back(
-            (std::min(1.,
-                      std::max((current_temperature -
-                                phase_change_parameters_vector[p].T_solidus) /
-                                 (phase_change_parameters_vector[p].T_liquidus -
-                                  phase_change_parameters_vector[p].T_solidus),
-                               0.))));
-          darcy_penalties.emplace_back(
+          liquid_fractions[p] =
+            std::min(1.,
+                     std::max((current_temperature -
+                               phase_change_parameters_vector[p].T_solidus) /
+                                (phase_change_parameters_vector[p].T_liquidus -
+                                 phase_change_parameters_vector[p].T_solidus),
+                              0.));
+          darcy_penalties[p] =
             phase_change_parameters_vector[p].penalty_l * liquid_fractions[p] +
             (1. - liquid_fractions[p]) *
-              phase_change_parameters_vector[p].penalty_s);
+              phase_change_parameters_vector[p].penalty_s;
         }
 
       // For a CLS two-fluid system, the global Darcy permeability coefficient
@@ -547,8 +544,6 @@ PhaseChangeDarcyCLSAssembler<dim>::assemble_matrix(
               local_matrix(i, j) += darcy_penalty * phi_u_i * phi_u_j * JxW;
             }
         }
-      liquid_fractions.clear();
-      darcy_penalties.clear();
     }
 }
 
@@ -572,10 +567,8 @@ PhaseChangeDarcyCLSAssembler<dim>::assemble_rhs(
   auto &strong_residual = copy_data.strong_residual;
 
   const unsigned int  number_of_fluids = phase_change_parameters_vector.size();
-  std::vector<double> liquid_fractions;
-  std::vector<double> darcy_penalties;
-  liquid_fractions.reserve(number_of_fluids);
-  darcy_penalties.reserve(number_of_fluids);
+  std::vector<double> liquid_fractions(number_of_fluids);
+  std::vector<double> darcy_penalties(number_of_fluids);
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -593,17 +586,17 @@ PhaseChangeDarcyCLSAssembler<dim>::assemble_rhs(
       // used to calculate the liquid fractions avoiding if conditions.
       for (unsigned int p = 0; p < number_of_fluids; p++)
         {
-          liquid_fractions.emplace_back(
-            (std::min(1.,
-                      std::max((current_temperature -
-                                phase_change_parameters_vector[p].T_solidus) /
-                                 (phase_change_parameters_vector[p].T_liquidus -
-                                  phase_change_parameters_vector[p].T_solidus),
-                               0.))));
-          darcy_penalties.emplace_back(
+          liquid_fractions[p] =
+            std::min(1.,
+                     std::max((current_temperature -
+                               phase_change_parameters_vector[p].T_solidus) /
+                                (phase_change_parameters_vector[p].T_liquidus -
+                                 phase_change_parameters_vector[p].T_solidus),
+                              0.));
+          darcy_penalties[p] =
             phase_change_parameters_vector[p].penalty_l * liquid_fractions[p] +
             (1. - liquid_fractions[p]) *
-              phase_change_parameters_vector[p].penalty_s);
+              phase_change_parameters_vector[p].penalty_s;
         }
 
       // For a CLS two-fluid system, the global Darcy permeability coefficient
@@ -635,6 +628,187 @@ template class PhaseChangeDarcyCLSAssembler<3>;
 
 template <int dim>
 void
+PhaseChangeCarmanKozenyCLSAssembler<dim>::assemble_matrix(
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Loop and quadrature information
+  const auto        &JxW_vec             = scratch_data.JxW;
+  const unsigned int n_q_points          = scratch_data.n_q_points;
+  const unsigned int n_dofs              = scratch_data.n_dofs;
+  const auto        &velocities          = scratch_data.velocity_values;
+  const auto        &temperatures        = scratch_data.temperature_values;
+  const auto &dynamic_viscosity_values_0 = scratch_data.dynamic_viscosity_0;
+  const auto &dynamic_viscosity_values_1 = scratch_data.dynamic_viscosity_1;
+  const auto &filtered_phase             = scratch_data.filtered_phase_values;
+
+  auto &local_matrix    = copy_data.local_matrix;
+  auto &strong_residual = copy_data.strong_residual;
+  auto &strong_jacobian = copy_data.strong_jacobian;
+
+  const unsigned int  number_of_fluids = phase_change_parameters_vector.size();
+  std::vector<double> liquid_fraction_factors(number_of_fluids);
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      // Current temperature and dynamic viscosity values
+      double temperature         = temperatures[q];
+      double dynamic_viscosity_0 = dynamic_viscosity_values_0[q];
+      double dynamic_viscosity_1 = dynamic_viscosity_values_1[q];
+
+      // Compute the liquid fraction and compute penalty term
+      for (unsigned int p = 0; p < number_of_fluids; p++)
+        {
+          // Skip to next fluid if there is no phase change
+          if (!fluid_has_phase_change[p])
+            {
+              liquid_fraction_factors[p] = 0;
+              continue;
+            }
+
+          // Compute the liquid fraction
+          double liquid_fraction =
+            (std::min(1.,
+                      std::max((temperature -
+                                phase_change_parameters_vector[p].T_solidus) /
+                                 (phase_change_parameters_vector[p].T_liquidus -
+                                  phase_change_parameters_vector[p].T_solidus),
+                               0.)));
+
+          // Pre-compute the denominator inverse
+          double denominator_inv =
+            1 / (Utilities::fixed_power<3>(liquid_fraction) +
+                 carman_kozeny_tolerance[p]);
+
+          // Compute liquid fraction factor (1-alpha_{i_l})^2 * (alpha_{i,l}^3 +
+          // tol)^{-1}
+          liquid_fraction_factors[p] =
+            Utilities::fixed_power<2>(1 - liquid_fraction) * denominator_inv;
+        }
+
+      // For a CLS two-fluid system, the global Carman-Kozeny penalty term
+      // takes into account the phase change parameters in both fluids.
+      const double carman_kozeny_penalty =
+        (carman_kozeny_permeability_area_inv[0] * (1 - filtered_phase[q]) *
+         liquid_fraction_factors[0] * dynamic_viscosity_0) +
+        (carman_kozeny_permeability_area_inv[1] * filtered_phase[q] *
+         liquid_fraction_factors[1] * dynamic_viscosity_1);
+
+      strong_residual[q] += carman_kozeny_penalty * velocities[q];
+
+      for (unsigned int j = 0; j < n_dofs; ++j)
+        {
+          strong_jacobian[q][j] +=
+            carman_kozeny_penalty * scratch_data.phi_u[q][j];
+        }
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto &phi_u_i = scratch_data.phi_u[q][i];
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              const auto &phi_u_j = scratch_data.phi_u[q][j];
+              local_matrix(i, j) +=
+                carman_kozeny_penalty * phi_u_i * phi_u_j * JxW;
+            }
+        }
+    }
+}
+
+template <int dim>
+void
+PhaseChangeCarmanKozenyCLSAssembler<dim>::assemble_rhs(
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Loop and quadrature information
+  const auto        &JxW_vec             = scratch_data.JxW;
+  const unsigned int n_q_points          = scratch_data.n_q_points;
+  const unsigned int n_dofs              = scratch_data.n_dofs;
+  const auto        &velocities          = scratch_data.velocity_values;
+  const auto        &temperatures        = scratch_data.temperature_values;
+  const auto &dynamic_viscosity_values_0 = scratch_data.dynamic_viscosity_0;
+  const auto &dynamic_viscosity_values_1 = scratch_data.dynamic_viscosity_1;
+  const auto &filtered_phase             = scratch_data.filtered_phase_values;
+
+  auto &local_rhs       = copy_data.local_rhs;
+  auto &strong_residual = copy_data.strong_residual;
+
+  const unsigned int  number_of_fluids = phase_change_parameters_vector.size();
+  std::vector<double> liquid_fraction_factors(number_of_fluids);
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      // Current temperature and dynamic viscosity values
+      double temperature         = temperatures[q];
+      double dynamic_viscosity_0 = dynamic_viscosity_values_0[q];
+      double dynamic_viscosity_1 = dynamic_viscosity_values_1[q];
+
+      // Compute the liquid fraction and compute penalty term
+      for (unsigned int p = 0; p < number_of_fluids; p++)
+        {
+          // Skip to next fluid if there is no phase change
+          if (!fluid_has_phase_change[p])
+            {
+              liquid_fraction_factors[p] = 0;
+              continue;
+            }
+
+          // Compute the liquid fraction
+          double liquid_fraction =
+            (std::min(1.,
+                      std::max((temperature -
+                                phase_change_parameters_vector[p].T_solidus) /
+                                 (phase_change_parameters_vector[p].T_liquidus -
+                                  phase_change_parameters_vector[p].T_solidus),
+                               0.)));
+
+          // Pre-compute the denominator inverse
+          double denominator_inv =
+            1 / (Utilities::fixed_power<3>(liquid_fraction) +
+                 carman_kozeny_tolerance[p]);
+
+          // Compute liquid fraction factor (1-alpha_{i_l})^2 * (alpha_{i,l}^3 +
+          // tol)^{-1}
+          liquid_fraction_factors[p] =
+            Utilities::fixed_power<2>(1 - liquid_fraction) * denominator_inv;
+        }
+
+      // For a CLS two-fluid system, the global Carman-Kozeny penalty term
+      // takes into account the phase change parameters in both fluids.
+      const double carman_kozeny_penalty =
+        (carman_kozeny_permeability_area_inv[0] * (1 - filtered_phase[q]) *
+         liquid_fraction_factors[0] * dynamic_viscosity_0) +
+        (carman_kozeny_permeability_area_inv[1] * filtered_phase[q] *
+         liquid_fraction_factors[1] * dynamic_viscosity_1);
+
+      strong_residual[q] += carman_kozeny_penalty * velocities[q];
+
+      // Assembly of the right-hand side
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_u_i = scratch_data.phi_u[q][i];
+
+          // Laplacian on the velocity terms
+          local_rhs(i) -= carman_kozeny_penalty * velocities[q] * phi_u_i * JxW;
+        }
+    }
+}
+
+template class PhaseChangeCarmanKozenyCLSAssembler<2>;
+template class PhaseChangeCarmanKozenyCLSAssembler<3>;
+
+
+template <int dim>
+void
 GLSNavierStokesCLSAssemblerSTF<dim>::assemble_matrix(
   const NavierStokesScratchData<dim> & /*scratch_data*/,
   StabilizedMethodsTensorCopyData<dim> & /*copy_data*/)
@@ -661,7 +835,7 @@ GLSNavierStokesCLSAssemblerSTF<dim>::assemble_rhs(
       // Surface tension coefficient
       const double surface_tension_coef = scratch_data.surface_tension[q];
 
-      // Gather PIG and curvature values
+      // Gather curvature value
       const double &curvature_value = scratch_data.curvature_values[q];
 
       // Gather phase indicator gradient

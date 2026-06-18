@@ -1,9 +1,9 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024-2026 The Lethe Authors
+# SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #-------------------------------------------------------------------------------
 # DESCRIPTION:
-# This test checks that the Darcy permeabilty source term imposes stasis
+# This test checks that the Carman-Kozeny permeabilty source term imposes stasis
 # adequately in the solid phase for phase change simulation.
 # This simulates the transient development of a 2D Couette flow between parallel
 # plates.
@@ -36,8 +36,6 @@ subsection physical properties
       set latent enthalpy      = 0
       set liquidus temperature = 0.51
       set solidus temperature  = 0.49
-      set Darcy penalty liquid = 0
-      set Darcy penalty solid  = 1e5
     end
   end
 end
@@ -58,7 +56,9 @@ end
 #---------------------------------------------------
 
 subsection velocity source
-  set permeability model = darcy phase change
+  set permeability model               = carman-kozeny phase change
+  set Carman-Kozeny permeability area  = 5e-6
+  set Carman-Kozeny division tolerance = 1e-4
 end
 
 #---------------------------------------------------

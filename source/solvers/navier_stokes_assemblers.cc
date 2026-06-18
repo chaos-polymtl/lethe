@@ -1962,6 +1962,135 @@ PhaseChangeDarcyAssembly<dim>::assemble_rhs(
 template class PhaseChangeDarcyAssembly<2>;
 template class PhaseChangeDarcyAssembly<3>;
 
+template <int dim>
+void
+PhaseChangeCarmanKozenyAssembler<dim>::assemble_matrix(
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Loop and quadrature information
+  const auto        &JxW_vec             = scratch_data.JxW;
+  const unsigned int n_q_points          = scratch_data.n_q_points;
+  const unsigned int n_dofs              = scratch_data.n_dofs;
+  const auto        &velocities          = scratch_data.velocity_values;
+  const auto        &temperatures        = scratch_data.temperature_values;
+  const auto &kinematic_viscosity_values = scratch_data.kinematic_viscosity;
+
+  auto &local_matrix    = copy_data.local_matrix;
+  auto &strong_residual = copy_data.strong_residual;
+  auto &strong_jacobian = copy_data.strong_jacobian;
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      // Current temperature and kinematics viscosity values
+      double temperature         = temperatures[q];
+      double kinematic_viscosity = kinematic_viscosity_values[q];
+
+      // Compute the liquid fraction
+      const double liquid_fraction =
+        std::min(1.,
+                 std::max((temperature - solidus_temperature) /
+                            (liquidus_temperature - solidus_temperature),
+                          0.));
+
+      // Pre-compute the denominator inverse
+      const double carman_kozeny_penalty_denominator_inv =
+        1 /
+        (Utilities::fixed_power<3>(liquid_fraction) + carman_kozeny_tolerance);
+
+      // Compute penalty term
+      const double carman_kozeny_penalty =
+        kinematic_viscosity * carman_kozeny_permeability_area_inv *
+        Utilities::fixed_power<2>(1 - liquid_fraction) *
+        carman_kozeny_penalty_denominator_inv;
+
+      strong_residual[q] += carman_kozeny_penalty * velocities[q];
+
+      for (unsigned int j = 0; j < n_dofs; ++j)
+        {
+          strong_jacobian[q][j] +=
+            carman_kozeny_penalty * scratch_data.phi_u[q][j];
+        }
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto &phi_u_i = scratch_data.phi_u[q][i];
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              const auto &phi_u_j = scratch_data.phi_u[q][j];
+              local_matrix(i, j) +=
+                carman_kozeny_penalty * phi_u_i * phi_u_j * JxW;
+            }
+        }
+    }
+}
+
+template <int dim>
+void
+PhaseChangeCarmanKozenyAssembler<dim>::assemble_rhs(
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Loop and quadrature information
+  const auto        &JxW_vec             = scratch_data.JxW;
+  const unsigned int n_q_points          = scratch_data.n_q_points;
+  const unsigned int n_dofs              = scratch_data.n_dofs;
+  const auto        &velocities          = scratch_data.velocity_values;
+  const auto        &temperatures        = scratch_data.temperature_values;
+  const auto &kinematic_viscosity_values = scratch_data.kinematic_viscosity;
+
+
+  auto &local_rhs       = copy_data.local_rhs;
+  auto &strong_residual = copy_data.strong_residual;
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      // Current temperature and kinematics viscosity values
+      double temperature         = temperatures[q];
+      double kinematic_viscosity = kinematic_viscosity_values[q];
+
+      // Compute the liquid fraction
+      const double liquid_fraction =
+        std::min(1.,
+                 std::max((temperature - solidus_temperature) /
+                            (liquidus_temperature - solidus_temperature),
+                          0.));
+
+      // Pre-compute the denominator inverse
+      const double carman_kozeny_penalty_denominator_inv =
+        1 /
+        (Utilities::fixed_power<3>(liquid_fraction) + carman_kozeny_tolerance);
+
+      // Compute penalty term
+      const double carman_kozeny_penalty =
+        kinematic_viscosity * carman_kozeny_permeability_area_inv *
+        Utilities::fixed_power<2>(1 - liquid_fraction) *
+        carman_kozeny_penalty_denominator_inv;
+
+      strong_residual[q] += carman_kozeny_penalty * velocities[q];
+
+      // Assembly of the right-hand side
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_u_i = scratch_data.phi_u[q][i];
+
+          // Laplacian on the velocity terms
+          local_rhs(i) -= carman_kozeny_penalty * velocities[q] * phi_u_i * JxW;
+        }
+    }
+}
+
+template class PhaseChangeCarmanKozenyAssembler<2>;
+template class PhaseChangeCarmanKozenyAssembler<3>;
+
 
 template <int dim>
 void

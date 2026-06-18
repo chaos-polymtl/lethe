@@ -171,6 +171,176 @@ private:
   const bool enable_darcy_multiply_by_density;
 };
 
+/**
+ * @brief Assembler of the non-linear Carman-Kozeny permeability model for CLS
+ * simulations with phase change.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ */
+template <int dim>
+class PhaseChangeCarmanKozenyCLSAssembler
+  : public NavierStokesAssemblerBase<dim>
+{
+public:
+  /**
+   * @brief Assembler for the Carman-Kozeny permeability source term used for
+   * phase change modelling.
+   *
+   * \f[
+   * \boldsymbol{F}_\mathrm{Carman-Kozeny} = \frac{-\mu}{A_\mathrm{perm}}
+   * \left[ \frac{(1-\alpha_\mathrm{l})^2}{(\alpha_\mathrm{l})^3 +
+   * \delta}\right] \boldsymbol{u}
+   * \f]
+   *
+   * with \f$\mu\f$ the dynamic viscosity, \f$A_\mathrm{perm}\f$ the
+   * permeability area, \f$\alpha_\mathrm{l}\f$ the liquid fraction,
+   * \f$\delta\f$ a tolerance to avoid division by zero in the solid, and
+   * \f$\boldsymbol{u}\f$ the velocity.
+   *
+   * @param[in] fluid_with_phase_change Indicates which fluid(s) has/have phase
+   * change.
+   * @param[in] carman_kozeny_permeability_area Vector of permeability area
+   * values of the solids (pseudo-porous media).
+   * @param[in] carman_kozeny_tolerance Vector of tolerances to avoid division
+   * by zero in the solid regions.
+   * @param[in] phase_change_parameters_vector Vector of phase change parameters
+   * of all fluids.
+   */
+  PhaseChangeCarmanKozenyCLSAssembler(
+    const Parameters::FluidIndicator           &fluid_with_phase_change,
+    const std::vector<double>                  &carman_kozeny_permeability_area,
+    const std::vector<double>                  &carman_kozeny_tolerance,
+    const std::vector<Parameters::PhaseChange> &phase_change_parameters_vector)
+    : fluid_has_phase_change(indentify_fluid_with_phase_change(
+        fluid_with_phase_change,
+        phase_change_parameters_vector.size()))
+    , carman_kozeny_permeability_area_inv(
+        compute_permeability_area_inverse(carman_kozeny_permeability_area))
+    , carman_kozeny_tolerance(carman_kozeny_tolerance)
+    , phase_change_parameters_vector(phase_change_parameters_vector)
+  {}
+
+  /**
+   * @brief Assembles the matrix of:
+   * \f[
+   * \boldsymbol{F}_\mathrm{Carman-Kozeny} = \frac{-\mu}{A_\mathrm{perm}}
+   * \left[ \frac{(1-\alpha_\mathrm{l})^2}{(\alpha_\mathrm{l})^3 +
+   * \delta}\right] \boldsymbol{u} \f]
+   *
+   * with \f$\mu\f$ the dynamic viscosity, \f$A_\mathrm{perm}\f$ the
+   * permeability area, \f$\alpha_\mathrm{l}\f$ the liquid fraction,
+   * \f$\delta\f$ a tolerance to avoid division by zero in the solid, and
+   * \f$\boldsymbol{u}\f$ the velocity.
+   *
+   * @param[in] scratch_data Scratch data containing the information required
+   * for system assembly.
+   * It is important to note that the scratch data has to have been re-inited
+   * before calling for matrix assembly.
+   * @param[in,out] copy_data Destination where the local_matrix is copied to.
+   */
+  virtual void
+  assemble_matrix(const NavierStokesScratchData<dim>   &scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  /**
+   * @brief Assemble the right-hand side (rhs) of:
+   * \f[
+   * \boldsymbol{F}_\mathrm{Carman-Kozeny} = \frac{-\mu}{A_\mathrm{perm}}
+   * \left[ \frac{(1-\alpha_\mathrm{l})^2}{(\alpha_\mathrm{l})^3 +
+   * \delta}\right] \boldsymbol{u} \f]
+   *
+   * with \f$\mu\f$ the dynamic viscosity, \f$A_\mathrm{perm}\f$ the
+   * permeability area, \f$\alpha_\mathrm{l}\f$ the liquid fraction,
+   * \f$\delta\f$ a tolerance to avoid division by zero in the solid, and
+   * \f$\boldsymbol{u}\f$ the velocity.
+   *
+   * @param[in] scratch_data Scratch data containing the information required
+   * for system assembly.
+   * It is important to note that the scratch data has to have been re-inited
+   * before calling for rhs assembly.
+   * @param[in,out] copy_data Destination where the local_rhs is copied to.
+   */
+  virtual void
+  assemble_rhs(const NavierStokesScratchData<dim>   &scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+private:
+  /**
+   * @brief Compute the inverse values of the Carman-Kozeny permeability areas.
+   *
+   * @param[in] carman_kozeny_permeability_area Vector of the Carman-Kozeny
+   * permeability area values.
+   *
+   * @return Vector of inverse values of the Carman-Kozeny permeability areas.
+   */
+  static std::vector<double>
+  compute_permeability_area_inverse(
+    const std::vector<double> &carman_kozeny_permeability_area)
+  {
+    std::vector<double> carman_kozeny_permeability_area_inverse(
+      carman_kozeny_permeability_area.size());
+
+    for (unsigned int i = 0; i < carman_kozeny_permeability_area.size(); ++i)
+      carman_kozeny_permeability_area_inverse[i] =
+        1 / carman_kozeny_permeability_area[i];
+
+    return carman_kozeny_permeability_area_inverse;
+  }
+
+  /**
+   * @brief Checks which fluid(s) has/have phase change and returns a vector of
+   * boolean indicating if each fluid has phase change (@p true) or not
+   * (@p false). The indices of the vector correspond to the fluid ID.
+   *
+   * @paramp[in] fluid_with_phase_change Indicates which fluid(s) has/have phase
+   * change.
+   * @paramp[in] n_fluids Number of fluids.
+   *
+   * @return Vector of boolean indicating which fluid(s) has/have phase change.
+   */
+  static std::vector<bool>
+  indentify_fluid_with_phase_change(
+    const Parameters::FluidIndicator fluid_with_phase_change,
+    const double                     n_fluids)
+  {
+    std::vector<bool> enable_phase_change_vector(n_fluids, false);
+
+    if (fluid_with_phase_change == Parameters::FluidIndicator::fluid0)
+      enable_phase_change_vector[0] = true;
+    else if (fluid_with_phase_change == Parameters::FluidIndicator::fluid1)
+      enable_phase_change_vector[1] = true;
+    else // fluid_with_phase_change == Parameters::FluidIndicator::both
+      std::fill(enable_phase_change_vector.begin(),
+                enable_phase_change_vector.end(),
+                true);
+    return enable_phase_change_vector;
+  }
+
+  /**
+   * Vector where each bool indicates if the corresponding fluid has phase
+   * change or not.
+   */
+  const std::vector<bool> fluid_has_phase_change;
+
+  /**
+   * Vector of one over the permeability area of the pseudo-porous bed
+   * (solid phase) for each simulated fluid.
+   */
+  const std::vector<double> carman_kozeny_permeability_area_inv;
+
+  /**
+   * Vector of tolerances in the Carman-Kozeny source term that avoids division
+   * by zero in the solid phase for each simulated fluid.
+   */
+  const std::vector<double> carman_kozeny_tolerance;
+
+  /**
+   * Phase change parameters for the liquidus and solidus temperature of each
+   * fluid.
+   */
+  const std::vector<Parameters::PhaseChange> phase_change_parameters_vector;
+};
+
 
 /**
  * @brief Assembles the Surface Tension Force (STF) for the
