@@ -29,6 +29,7 @@
 #include <sys/stat.h>
 
 #include <numbers>
+#include <ranges>
 #include <sstream>
 #include <utility>
 
@@ -117,24 +118,13 @@ DEMSolver<dim, PropertiesIndex>::setup_parameters()
   // Set up the solid objects
   setup_solid_objects();
 
-  // Check if there are any periodic boundaries. If any periodic boundary is
-  // found, set the information for all periodic boundaries and break loop.
-  for (unsigned int i_bc = 0;
-       i_bc < parameters.boundary_conditions.bc_types.size();
-       ++i_bc)
-    {
-      if (parameters.boundary_conditions.bc_types[i_bc] ==
-          Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
-        {
-          periodic_boundaries_object.set_periodic_boundaries_information(
-            parameters.boundary_conditions.periodic_boundary_0,
-            parameters.boundary_conditions.periodic_direction,
-            parameters.boundary_conditions.periodic_bc_index);
-          break;
-        }
-    }
+  // Check whether periodic boundaries are present. If at least one periodic
+  // boundary is found, initialize the information for all periodic boundaries.
+  if (!parameters.boundary_conditions.periodic_direction.empty())
+    periodic_boundaries_object.set_periodic_boundaries_information(
+      parameters.boundary_conditions.periodic_direction);
 
-  // Assign gravity/acceleration
+  // Assign gravity
   g = parameters.lagrangian_physical_properties.g;
 
   // If this is a restart simulation
@@ -310,22 +300,11 @@ DEMSolver<dim, PropertiesIndex>::setup_triangulation_dependent_parameters()
     periodic_boundaries_object.get_combined_periodic_offsets());
 
   // Set the periodic offsets of the periodic boundary pairs for other classes
-  auto const &periodic_bc_index =
-    periodic_boundaries_object.get_periodic_bc_index();
-  auto const &periodic_boundaries_ids =
-    periodic_boundaries_object.get_periodic_boundaries_ids();
-
-  for (const unsigned int pbc_index : periodic_bc_index)
+  for (const auto &pb_id :
+       periodic_boundaries_object.get_periodic_directions() | std::views::keys)
     {
-      auto it = periodic_boundaries_ids.find(pbc_index);
-      if (it != periodic_boundaries_ids.end())
-        {
-          auto const &pb_id = it->second;
-
-          particle_particle_contact_force_object->set_periodic_offset(
-            periodic_boundaries_object.get_periodic_offset_distance(pb_id),
-            pb_id);
-        }
+      particle_particle_contact_force_object->set_periodic_offset(
+        periodic_boundaries_object.get_periodic_offset_distance(pb_id), pb_id);
     }
 
   // Set up the local and ghost cells (if ASC enabled)
@@ -355,22 +334,18 @@ DEMSolver<dim, PropertiesIndex>::setup_background_dofs()
       background_constraints.reinit(background_dh.locally_owned_dofs(),
                                     locally_relevant_dofs);
 
-      // Loop over the unordered_map of periodic boundary conditions.
-      for (auto const &[bc_index, id0] :
-           parameters.boundary_conditions.periodic_boundary_0)
+      // Loop over the periodic boundary conditions, keyed by the principal
+      // periodic boundary id (id0).
+      for (auto const &[id0, id1] :
+           parameters.boundary_conditions.periodic_neighbor_id)
         {
-          const types::boundary_id id1 =
-            parameters.boundary_conditions.periodic_boundary_1.at(bc_index);
           const unsigned int direction =
-            parameters.boundary_conditions.periodic_direction.at(bc_index);
+            parameters.boundary_conditions.periodic_direction.at(id0);
 
           // Default boundaries contain information for periodic boundary
           // conditions that indicate id0 and id1 are 0 as default value To
           // ensure these default values are not parsed, only make the
           // periodicity constraints if id0 and id1 are distinct
-          // TODO - Refactor the way the DEM boundary conditions are stored to
-          // get rid of the vectors storage structure and use a map directly
-          // instead.
           if (id0 != id1)
             DoFTools::make_periodicity_constraints(
               background_dh, id0, id1, direction, background_constraints);

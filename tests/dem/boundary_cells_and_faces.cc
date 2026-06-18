@@ -35,7 +35,7 @@ test()
                             true);
   int refinement_number = 2;
   triangulation.refine_global(refinement_number);
-  std::vector<unsigned int> outlet_boundaries;
+  std::set<types::boundary_id> outlet_boundaries;
 
   // Fining boundary cells information
   BoundaryCellsInformation<dim> boundary_cells_object;

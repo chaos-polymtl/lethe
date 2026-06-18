@@ -17,6 +17,7 @@
 #include <fem-dem/postprocessing_cfd_dem.h>
 
 #include <fstream>
+#include <ranges>
 #include <sstream>
 
 // Constructor for the class CFD-DEM class
@@ -124,22 +125,12 @@ CFDDEMSolver<dim>::dem_setup_parameters()
   report_rayleigh_time_ratio();
 
   // Check if there are periodic boundaries
-  for (unsigned int i_bc = 0;
-       i_bc < dem_parameters.boundary_conditions.bc_types.size();
-       ++i_bc)
+  if (!dem_parameters.boundary_conditions.periodic_direction.empty())
     {
-      if (dem_parameters.boundary_conditions.bc_types[i_bc] ==
-          Parameters::Lagrangian::BCDEM::BoundaryType::periodic)
-        {
-          dem_action_manager->set_periodic_boundaries_enabled();
+      dem_action_manager->set_periodic_boundaries_enabled();
 
-          periodic_boundaries_object.set_periodic_boundaries_information(
-            dem_parameters.boundary_conditions.periodic_boundary_0,
-            dem_parameters.boundary_conditions.periodic_direction,
-            dem_parameters.boundary_conditions.periodic_bc_index);
-
-          break;
-        }
+      periodic_boundaries_object.set_periodic_boundaries_information(
+        dem_parameters.boundary_conditions.periodic_direction);
     }
 
   insertion_object = set_insertion_type<dim, CFDDEMProperties::PropertiesIndex>(
@@ -242,21 +233,11 @@ CFDDEMSolver<dim>::initialize_dem_parameters()
     periodic_boundaries_object.get_combined_periodic_offsets());
 
   // Set the periodic offsets of the periodic boundary pairs for other classes
-  auto const &periodic_bc_index =
-    periodic_boundaries_object.get_periodic_bc_index();
-  auto const &periodic_boundaries_ids =
-    periodic_boundaries_object.get_periodic_boundaries_ids();
-
-  for (const unsigned int pbc_index : periodic_bc_index)
+  for (const auto &pb_id :
+       periodic_boundaries_object.get_periodic_directions() | std::views::keys)
     {
-      auto it = periodic_boundaries_ids.find(pbc_index);
-      if (it != periodic_boundaries_ids.end())
-        {
-          auto const &pb_id = it->second;
-          particle_particle_contact_force_object->set_periodic_offset(
-            periodic_boundaries_object.get_periodic_offset_distance(pb_id),
-            pb_id);
-        }
+      particle_particle_contact_force_object->set_periodic_offset(
+        periodic_boundaries_object.get_periodic_offset_distance(pb_id), pb_id);
     }
 
   // Find cell neighbors

@@ -26,7 +26,7 @@ void
 BoundaryCellsInformation<dim>::build(
   const parallel::distributed::Triangulation<dim>  &triangulation,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
-  const std::vector<unsigned int>                  &outlet_boundaries,
+  const std::set<types::boundary_id>               &outlet_boundaries,
   const bool                                       &check_diamond_cells,
   const bool               &expand_particle_wall_contact_search,
   const ConditionalOStream &pcout)
@@ -97,7 +97,7 @@ template <int dim>
 void
 BoundaryCellsInformation<dim>::build(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const std::vector<unsigned int>                 &outlet_boundaries,
+  const std::set<types::boundary_id>              &outlet_boundaries,
   const bool                                      &check_diamond_cells,
   const ConditionalOStream                        &pcout)
 {
@@ -129,7 +129,7 @@ template <int dim>
 void
 BoundaryCellsInformation<dim>::find_boundary_cells_information(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const std::vector<unsigned int>                 &outlet_boundaries)
+  const std::set<types::boundary_id>              &outlet_boundaries)
 {
   // Initializing output_vector and a search_vector (containing boundary_id and
   // cell) to avoid replication of a boundary face. All the found boundary faces
@@ -157,12 +157,10 @@ BoundaryCellsInformation<dim>::find_boundary_cells_information(
         {
           // We search to see if the boundary is defined as an outlet, periodic
           // or not. If it is not defined as one of those, we proceed.
-          int  face_id = cell->face_iterator_to_index(face);
-          bool is_outlet =
-            std::find(outlet_boundaries.begin(),
-                      outlet_boundaries.end(),
-                      face->boundary_id()) != outlet_boundaries.end();
-          bool is_periodic = cell->has_periodic_neighbor(face_id);
+          const int  face_id = cell->face_iterator_to_index(face);
+          const bool is_outlet =
+            outlet_boundaries.contains(face->boundary_id());
+          const bool is_periodic = cell->has_periodic_neighbor(face_id);
 
           if (!is_outlet && !is_periodic)
             {
@@ -227,7 +225,7 @@ template <int dim>
 void
 BoundaryCellsInformation<dim>::update_boundary_info_after_grid_motion(
   typename DEM::dem_data_structures<dim>::boundary_points_and_normal_vectors
-    &updated_boundary_points_and_normal_vectors)
+    &new_boundary_points_and_normal_vectors)
 {
   // If there is no grid motion, exit the function
   if (!DEMActionManager::get_action_manager()->check_grid_motion_enabled())
@@ -274,7 +272,7 @@ BoundaryCellsInformation<dim>::update_boundary_info_after_grid_motion(
                     quad_point =
                       point_nd_to_3d(fe_face_values.quadrature_point(0));
 
-                  updated_boundary_points_and_normal_vectors[cell->face_index(
+                  new_boundary_points_and_normal_vectors[cell->face_index(
                     face_id)] = std::make_pair(normal_vector, quad_point);
                 }
             }
@@ -463,7 +461,7 @@ template <int dim>
 void
 BoundaryCellsInformation<dim>::find_global_boundary_cells_with_faces(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const std::vector<unsigned int>                 &outlet_boundaries)
+  const std::set<types::boundary_id>              &outlet_boundaries)
 {
   // Iterating over the active cells in the triangulation
   for (const auto &cell : triangulation.active_cell_iterators())
@@ -473,9 +471,7 @@ BoundaryCellsInformation<dim>::find_global_boundary_cells_with_faces(
         {
           // We search to see if the boundary is defined as an outlet or
           // not. If it is not defined as an outlet we proceed.
-          if (std::find(outlet_boundaries.begin(),
-                        outlet_boundaries.end(),
-                        face->boundary_id()) == outlet_boundaries.end())
+          if (!outlet_boundaries.contains(face->boundary_id()))
             {
               // Check to see if the face is located at boundary
               if (face->at_boundary())
@@ -491,7 +487,7 @@ template <int dim>
 void
 BoundaryCellsInformation<dim>::add_cells_with_boundary_lines_to_boundary_cells(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const std::vector<unsigned int>                 &outlet_boundaries,
+  const std::set<types::boundary_id>              &outlet_boundaries,
   const bool                                      &check_diamond_cells,
   const ConditionalOStream                        &pcout)
 {
@@ -564,19 +560,14 @@ BoundaryCellsInformation<dim>::add_cells_with_boundary_lines_to_boundary_cells(
 
                                   // Check if faces are on a wall boundary
                                   // (not outlet nor periodic)
-                                  bool face_one_is_wall, face_two_is_wall;
-                                  face_one_is_wall =
-                                    (std::find(outlet_boundaries.begin(),
-                                               outlet_boundaries.end(),
-                                               face_one->boundary_id()) ==
-                                       outlet_boundaries.end() &&
+                                  const bool face_one_is_wall =
+                                    (!outlet_boundaries.contains(
+                                       face_one->boundary_id()) &&
                                      !cell_one->has_periodic_neighbor(
                                        face_id_one));
-                                  face_two_is_wall =
-                                    (std::find(outlet_boundaries.begin(),
-                                               outlet_boundaries.end(),
-                                               face_two->boundary_id()) ==
-                                       outlet_boundaries.end() &&
+                                  const bool face_two_is_wall =
+                                    (!outlet_boundaries.contains(
+                                       face_two->boundary_id()) &&
                                      !cell_two->has_periodic_neighbor(
                                        face_id_two));
 
@@ -714,7 +705,7 @@ template <int dim>
 void
 BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const std::vector<unsigned int>                 &outlet_boundaries,
+  const std::set<types::boundary_id>              &outlet_boundaries,
   std::map<int, boundary_cells_info_struct<dim>>  &boundary_cells_information,
   const std::map<int, boundary_cells_info_struct<dim>>
     &global_boundary_cells_information)
@@ -749,10 +740,7 @@ BoundaryCellsInformation<dim>::add_boundary_neighbors_of_boundary_cells(
                       unsigned int face_id =
                         neighbor->face_iterator_to_index(face);
                       bool face_is_wall =
-                        (std::find(outlet_boundaries.begin(),
-                                   outlet_boundaries.end(),
-                                   face->boundary_id()) ==
-                           outlet_boundaries.end() &&
+                        (!outlet_boundaries.contains(face->boundary_id()) &&
                          !neighbor->has_periodic_neighbor(face_id));
 
                       if (face_is_wall)

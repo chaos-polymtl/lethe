@@ -1500,7 +1500,7 @@ namespace Parameters
 
     template <int dim>
     void
-    FloatingWalls<dim>::parse_floating_wall(ParameterHandler &prm)
+    FloatingWalls<dim>::parse_floating_wall(const ParameterHandler &prm)
     {
       // Position
       Point<dim> wall_point(
@@ -1528,7 +1528,9 @@ namespace Parameters
                           Patterns::Integer(),
                           "Number of boundary conditions");
 
-        for (unsigned int counter = 0; counter < DEM_BC_number_max; ++counter)
+        for (unsigned int counter = 0;
+             counter < max_number_of_dem_boundary_conditions;
+             ++counter)
           { // Example: "boundary condition 0"
             prm.enter_subsection("boundary condition " +
                                  Utilities::int_to_string(counter, 1));
@@ -1546,22 +1548,17 @@ namespace Parameters
     {
       prm.enter_subsection("DEM boundary conditions");
 
-      DEM_BC_number = prm.get_integer("number of boundary conditions");
+      number_of_dem_boundary_conditions =
+        prm.get_integer("number of boundary conditions");
 
-      initialize_containers(boundary_translational_velocity,
-                            boundary_rotational_speed,
-                            boundary_rotational_vector,
-                            point_on_rotation_axis,
-                            outlet_boundaries,
-                            bc_types,
-                            periodic_bc_index);
-
-      for (unsigned int counter = 0; counter < DEM_BC_number; ++counter)
+      for (unsigned int counter = 0;
+           counter < number_of_dem_boundary_conditions;
+           ++counter)
         {
           prm.enter_subsection("boundary condition " +
                                Utilities::int_to_string(counter, 1));
           {
-            parse_boundary_conditions(prm, counter);
+            parse_boundary_conditions(prm);
           }
           prm.leave_subsection();
         }
@@ -1625,31 +1622,27 @@ namespace Parameters
     }
 
     void
-    BCDEM::parse_boundary_conditions(const ParameterHandler &prm,
-                                     const unsigned int      i_bc)
+    BCDEM::parse_boundary_conditions(const ParameterHandler &prm)
     {
       const unsigned int boundary_id   = prm.get_integer("boundary id");
       const std::string  boundary_type = prm.get("type");
 
       if (boundary_type == "outlet")
         {
-          this->bc_types.push_back(BoundaryType::outlet);
-          this->outlet_boundaries.push_back(boundary_id);
+          this->outlet_boundaries.insert(boundary_id);
         }
       else if (boundary_type == "translational")
         {
-          this->bc_types.push_back(BoundaryType::translational);
           Tensor<1, 3> translational_velocity;
           translational_velocity[0] = prm.get_double("speed x");
           translational_velocity[1] = prm.get_double("speed y");
           translational_velocity[2] = prm.get_double("speed z");
 
-          this->boundary_translational_velocity.at(boundary_id) =
+          this->boundary_translational_velocity[boundary_id] =
             translational_velocity;
         }
       else if (boundary_type == "rotational")
         {
-          this->bc_types.push_back(BoundaryType::rotational);
           double rotational_speed = prm.get_double("rotational speed");
 
           // Read the rotational vector from a list of doubles
@@ -1664,55 +1657,31 @@ namespace Parameters
           Tensor<1, 3> point_on_rotation_axis_tensor =
             value_string_to_tensor<3>(prm.get("point on rotational vector"));
 
-          this->boundary_rotational_speed.at(boundary_id) = rotational_speed;
-          this->boundary_rotational_vector.at(boundary_id) =
+          this->boundary_rotational_speed[boundary_id] = rotational_speed;
+          this->boundary_rotational_vector[boundary_id] =
             rotational_vector / rotational_vector.norm();
-          this->point_on_rotation_axis.at(boundary_id) =
+          this->point_on_rotation_axis[boundary_id] =
             point_on_rotation_axis_tensor;
         }
       else if (boundary_type == "fixed_wall")
         {
-          this->bc_types.push_back(BoundaryType::fixed_wall);
+          // Fixed walls are the default: they are not stored in any container.
         }
       else if (boundary_type == "periodic")
         {
-          this->bc_types.push_back(BoundaryType::periodic);
-          this->periodic_bc_index.push_back(i_bc);
-          this->periodic_boundary_0[i_bc] = prm.get_integer("periodic id 0");
-          this->periodic_boundary_1[i_bc] = prm.get_integer("periodic id 1");
-          this->periodic_direction[i_bc] =
+          // Periodic boundary conditions are keyed by the principal periodic
+          // boundary id (periodic id 0) rather than the "boundary id" field.
+          const types::boundary_id periodic_id_0 =
+            prm.get_integer("periodic id 0");
+          this->periodic_neighbor_id[periodic_id_0] =
+            prm.get_integer("periodic id 1");
+          this->periodic_direction[periodic_id_0] =
             prm.get_integer("periodic direction");
         }
       else
         {
-          throw(std::runtime_error("Invalid boundary condition type "));
+          AssertThrow(false, ExcMessage("Invalid DEM boundary condition type"));
         }
-    }
-
-    void
-    BCDEM::initialize_containers(
-      std::unordered_map<unsigned int, Tensor<1, 3>> &boundary_trans_velocity,
-      std::unordered_map<unsigned int, double>       &boundary_rot_speed,
-      std::unordered_map<unsigned int, Tensor<1, 3>> &boundary_rot_vector,
-      std::unordered_map<unsigned int, Point<3>>     &point_on_rot_axis,
-      std::vector<unsigned int>                      &outlet_boundaries_id,
-      std::vector<BoundaryType>                      &boundaries_types,
-      std::vector<unsigned int>                      &periodic_bc_ind) const
-    {
-      Tensor<1, 3> zero_tensor({0.0, 0.0, 0.0});
-
-      for (unsigned int counter = 0; counter < DEM_BC_number_max; ++counter)
-        {
-          boundary_trans_velocity.insert({counter, zero_tensor});
-          boundary_rot_speed.insert({counter, 0});
-          boundary_rot_vector.insert({counter, zero_tensor});
-          point_on_rot_axis.insert({counter, Point<3>(zero_tensor)});
-        }
-
-      // NOTE This first vector should not be initialized this big.
-      outlet_boundaries_id.reserve(DEM_BC_number);
-      boundaries_types.reserve(DEM_BC_number);
-      periodic_bc_ind.reserve(DEM_BC_number);
     }
 
     template <int dim>
