@@ -7,8 +7,6 @@
 
 #include <deal.II/grid/grid_tools.h>
 
-#include <random>
-
 using namespace DEM;
 
 template <int dim, typename PropertiesIndex>
@@ -141,8 +139,10 @@ InsertionPacked<dim, PropertiesIndex>::insert(
           last_id  = (this_mpi_process + 1) * n_particle_current_type_this_proc;
         }
 
-      // Loop and generate valid insertion points using rejection sampling
-      // Variable that will get reused.
+      // Loop and generate valid insertion points.
+      // TODO: We could check if the point is inside the triangulation before
+      // doing the push back, this way, the insertion box could be bigger than
+      // the triangulation.
       Point<dim>   insertion_location;
       unsigned int particle_counter = 0;
       for (unsigned int id = first_id; id < last_id; ++id, ++particle_counter)

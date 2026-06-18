@@ -65,7 +65,7 @@ public:
   }
 
   /**
-   * @brief Deserialize an input archive to the plane insertion object.
+   * @brief Deserialize an input archive to the volume insertion object.
    *
    * @param[in] ar Input archive where the attributes are stored.
    *
