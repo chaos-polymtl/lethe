@@ -1002,6 +1002,39 @@ point_to_angle(const Point<dim> &point,
 }
 
 /**
+ * @brief Converts point to angle (in radians) based on rotation axis
+ * @param[in] point Point in cartesian coordinates
+ * @param[in] center_of_rotation Center of rotation
+ * @param[in] rotation_axis Direction of rotation axis (0=x, 1=y, 2=z)
+ *
+ * @return Angle in the plane perpendicular to the rotation axis
+ */
+template <int dim>
+inline double
+point_to_angle(const Point<dim>  &point,
+               const Point<dim>  &center_of_rotation,
+               const unsigned int rotation_axis)
+{
+  if constexpr (dim == 3)
+    {
+      const unsigned int coord1 = (rotation_axis + 1) % 3;
+      const unsigned int coord2 = (rotation_axis + 2) % 3;
+
+      return std::fmod(std::atan2(point[coord2] - center_of_rotation[coord2],
+                                  point[coord1] - center_of_rotation[coord1]) +
+                         2 * numbers::PI,
+                       2 * numbers::PI);
+    }
+  else
+    {
+      return std::fmod(std::atan2(point[1] - center_of_rotation[1],
+                                  point[0] - center_of_rotation[0]) +
+                         2 * numbers::PI,
+                       2 * numbers::PI);
+    }
+}
+
+/**
  * @brief Converts radius to point in cartesian coordinates (in the x-y plane)
  * @param[in] radius Radial distance
  * @param[in] angle_rad Angle (in radians)
