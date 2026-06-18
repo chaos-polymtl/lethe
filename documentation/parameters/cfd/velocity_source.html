@@ -446,7 +446,7 @@
         <article role="main">
           <section id="velocity-source">
 <h1>Velocity Source<a class="headerlink" href="#velocity-source" title="Link to this heading">#</a></h1>
-<p>This subsection allows you to define velocity-dependent source terms. Two families of velocity source terms are supported. They enable the simulation of  problems in a Lagrangian reference frame for which the Coriolis and centrifugal forces must be added or of problems including porous media.</p>
+<p>This subsection allows you to define velocity-dependent source terms. Two families of velocity source terms are supported: rotating frames and permeability models. They respectively enable you to simulate problems in a Lagrangian reference frame where Coriolis and centrifugal forces must be taken into account, and problems that include solid-liquid phase-changes.</p>
 <section id="rotating-frame">
 <h2>Rotating Frame<a class="headerlink" href="#rotating-frame" title="Link to this heading">#</a></h2>
 <p>Rotating frame simulations use the following parameters:</p>
@@ -465,34 +465,140 @@ end
 <li><p>The <code class="docutils literal notranslate"><span class="pre">omega_z</span></code> parameter is a double representing the <span class="math notranslate nohighlight">\(z\)</span> component of the angular velocity of the reference frame.</p></li>
 </ul>
 </section>
-<section id="darcy-penalization">
-<h2>Darcy Penalization<a class="headerlink" href="#darcy-penalization" title="Link to this heading">#</a></h2>
-<p>A Darcy-like source term can be added to the simulation using the following parameters:</p>
+<section id="permeability-models">
+<h2>Permeability Models<a class="headerlink" href="#permeability-models" title="Link to this heading">#</a></h2>
+<p>A permeability source term can be added to the simulation using the following parameters:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection velocity source
-  set Darcy type                       = none
-  set enable Darcy multiply by density = false
+  set permeability model                    = none
+  set enable Darcy multiply by density      = false
+  set Carman-Kozeny fluid with phase change = fluid 0
+  set Carman-Kozeny permeability area       = 1e-3
+  set Carman-Kozeny division tolerance      = 1e-3
 end
 </pre></div>
 </div>
 <ul>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">Darcy</span> <span class="pre">type</span></code> parameter specifies the type of Darcy penalization term to be applied to the Navier-Stokes equations. The options are <code class="docutils literal notranslate"><span class="pre">none</span></code> or <code class="docutils literal notranslate"><span class="pre">phase_change</span></code>. The <code class="docutils literal notranslate"><span class="pre">phase_change</span></code> model uses the values of the <code class="docutils literal notranslate"><span class="pre">Darcy</span> <span class="pre">penalty</span> <span class="pre">liquid</span></code>  and <code class="docutils literal notranslate"><span class="pre">Darcy</span> <span class="pre">penalty</span> <span class="pre">solid</span></code> set-up within the <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">change</span></code> subsection of the <a class="reference internal" href="physical_properties.html"><span class="doc">Physical Properties</span></a>.</p>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">permeability</span> <span class="pre">model</span></code> parameter specifies the type of penalization term to be applied to the Navier-Stokes equations. The options are <code class="docutils literal notranslate"><span class="pre">none</span></code>, <code class="docutils literal notranslate"><span class="pre">darcy</span> <span class="pre">phase</span> <span class="pre">change</span></code>, or <code class="docutils literal notranslate"><span class="pre">carman-kozeny</span> <span class="pre">phase</span> <span class="pre">change</span></code>.</p>
 <div class="admonition caution">
 <p class="admonition-title">Caution</p>
-<p>The phase change Darcy model does not currently have a Cahn-Hilliard implementation.</p>
+<p>The phase change Darcy and Carman-Kozeny models do not currently have a Cahn-Hilliard implementation.</p>
 </div>
 </li>
+</ul>
+<section id="darcy-phase-change">
+<h3>Darcy Phase Change<a class="headerlink" href="#darcy-phase-change" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">darcy</span> <span class="pre">phase</span> <span class="pre">change</span></code> model uses the values of the <code class="docutils literal notranslate"><span class="pre">Darcy</span> <span class="pre">penalty</span> <span class="pre">liquid</span></code>  and <code class="docutils literal notranslate"><span class="pre">Darcy</span> <span class="pre">penalty</span> <span class="pre">solid</span></code> set-up within the <code class="docutils literal notranslate"><span class="pre">phase</span> <span class="pre">change</span></code> subsection of the <a class="reference internal" href="physical_properties.html"><span class="doc">Physical Properties</span></a>. The added source term corresponds to:</p>
+<blockquote>
+<div><div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\boldsymbol{F}_\mathrm{Darcy} = K \boldsymbol{u}\]</div>
+</div>
+<p>where</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(K= \alpha_\mathrm{l}K_\mathrm{l} + (1-\alpha_\mathrm{l})K_\mathrm{s} \, [\mathsf{T^{-1}}]\)</span> is the liquid fraction <span class="math notranslate nohighlight">\(\left(\alpha_\mathrm{l} \right)\)</span> weighted Darcy penalty with <span class="math notranslate nohighlight">\(K_\mathrm{l}\)</span> and <span class="math notranslate nohighlight">\(K_\mathrm{s}\)</span> respectively the Darcy penalty in the liquid and the solid phases;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\boldsymbol{u} \, [\mathsf{LT^{-1}}]\)</span> is the velocity.</p></li>
+</ul>
+</div></blockquote>
+<ul>
 <li><p>The <code class="docutils literal notranslate"><span class="pre">enable</span> <span class="pre">Darcy</span> <span class="pre">multiply</span> <span class="pre">by</span> <span class="pre">density</span></code> parameter enables the multiplication by the density within the Darcy force term (<span class="math notranslate nohighlight">\(\boldsymbol{F}_\mathrm{Darcy}\)</span>). This is for dimensional consistency when solving the pressure (<span class="math notranslate nohighlight">\(p\)</span>) rather than the kinematic pressure (<span class="math notranslate nohighlight">\(p^* = p / \rho\)</span>, with <span class="math notranslate nohighlight">\(\rho\)</span> the density of the fluid) in the momentum equation. This parameter should be used when coupling of the <a class="reference internal" href="../../theory/multiphase/cfd/cls.html"><span class="doc">CLS equation</span></a> with the <a class="reference internal" href="../../theory/multiphysics/fluid_dynamics/navier-stokes.html"><span class="doc">incompressible Navier-Stokes equations</span></a>.</p>
-<div class="math-wrapper docutils container">
+<blockquote>
+<div><div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
 \[\boldsymbol{F}_\mathrm{Darcy} = \left(\rho K\right)_\mathrm{eff} \boldsymbol{u}\]</div>
 </div>
 <p>where</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\left(\rho K\right)_\mathrm{eff} = (1-\phi)\rho_0 K_\mathrm{0} + \phi \rho_1 K_\mathrm{1}\)</span> is the effective Darcy penalization coefficient. It corresponds to the weighted product of the Darcy penalty <span class="math notranslate nohighlight">\(\left(K_i [=] T^{-1}\right)\)</span> and the density <span class="math notranslate nohighlight">\(\left(\rho_i[=] M L^{-3}\right)\)</span> by the phase indicator (<span class="math notranslate nohighlight">\(\phi\)</span>). If the <code class="docutils literal notranslate"><span class="pre">phase_change</span></code> model is enabled in a fluid, the Darcy penalty in this fluid is computed with the penalty values in the liquid (<span class="math notranslate nohighlight">\(K_{i\mathrm{,l}}\)</span>) and solid (<span class="math notranslate nohighlight">\(K_{i\mathrm{,s}}\)</span>), and the liquid fraction (<span class="math notranslate nohighlight">\(\alpha_\mathrm{l}\)</span>): <span class="math notranslate nohighlight">\(K_i = \alpha_\mathrm{l}K_{i\mathrm{,l}} + (1-\alpha_\mathrm{l})K_{i\mathrm{,s}}\)</span>, and;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\left(\rho K\right)_\mathrm{eff} = (1-\phi)\rho_0 K_\mathrm{0} + \phi \rho_1 K_\mathrm{1}\)</span> is the effective Darcy penalization coefficient. It corresponds to the weighted product of the Darcy penalty <span class="math notranslate nohighlight">\(\left(K_i \, [\mathsf{T^{-1}}]\right)\)</span> and the density <span class="math notranslate nohighlight">\(\left(\rho_i \, [\mathsf{M L^{-3}}]\right)\)</span> by the phase indicator (<span class="math notranslate nohighlight">\(\phi\)</span>). If the <code class="docutils literal notranslate"><span class="pre">phase_change</span></code> model is enabled in a fluid, the Darcy penalty in this fluid is computed with the penalty values in the liquid (<span class="math notranslate nohighlight">\(K_{i\mathrm{,l}}\)</span>) and solid (<span class="math notranslate nohighlight">\(K_{i\mathrm{,s}}\)</span>), and the liquid fraction (<span class="math notranslate nohighlight">\(\alpha_\mathrm{l}\)</span>): <span class="math notranslate nohighlight">\(K_i = \alpha_\mathrm{l}K_{i\mathrm{,l}} + (1-\alpha_\mathrm{l})K_{i\mathrm{,s}}\)</span>, and;</p></li>
 <li><p><span class="math notranslate nohighlight">\(\boldsymbol{u}\)</span> is the velocity vector.</p></li>
 </ul>
+</div></blockquote>
 </li>
 </ul>
+</section>
+<section id="carman-kozeny-phase-change">
+<h3>Carman-Kozeny Phase Change<a class="headerlink" href="#carman-kozeny-phase-change" title="Link to this heading">#</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">carman-kozeny</span> <span class="pre">phase</span> <span class="pre">change</span></code> uses the <code class="docutils literal notranslate"><span class="pre">Carman-Kozeny</span> <span class="pre">permeability</span> <span class="pre">area</span></code>, the <code class="docutils literal notranslate"><span class="pre">Carman-Kozeny</span> <span class="pre">division</span> <span class="pre">tolerance</span></code>, the <code class="docutils literal notranslate"><span class="pre">kinematic</span> <span class="pre">viscosity</span></code> specified in the the <a class="reference internal" href="physical_properties.html"><span class="doc">Physical Properties</span></a> and the liquid fraction (<span class="math notranslate nohighlight">\(\alpha_\mathrm{l}\)</span>) to compute it’s penalty. The added source term corresponds to <a class="footnote-reference brackets" href="#zenz2024" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>:</p>
+<blockquote>
+<div><div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\boldsymbol{F}_\mathrm{Carman-Kozeny} = \frac{\nu}{A_\mathrm{perm}} \left[ \frac{(1-\alpha_\mathrm{l})^2}{(\alpha_\mathrm{l})^3 + \delta}\right] \boldsymbol{u}\]</div>
+</div>
+<p>where</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\nu \, [\mathsf{L^2T^{-1}}]\)</span> is the kinematic viscosity;</p></li>
+<li><p><span class="math notranslate nohighlight">\(A_\mathrm{perm} \, [\mathsf{L^2}]\)</span> is the permeability area;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\delta\)</span> a tolerance to avoid division by zero in the solid, and;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\boldsymbol{u} \, [\mathsf{LT^{-1}}]\)</span> is the velocity.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Here, the kinematic viscosity is used instead of the dynamic viscosity alike <a class="footnote-reference brackets" href="#zenz2024" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, since in the single fluid formulation of the Navier-Stokes equations, we solve for the kinematic pressure (<span class="math notranslate nohighlight">\(p^* = p / \rho\)</span>, with <span class="math notranslate nohighlight">\(\rho\)</span> the density of the fluid) rather than the pressure (<span class="math notranslate nohighlight">\(p\)</span>).</p>
+</div>
+</div></blockquote>
+<p>The figure below gives an idea of how the different parameters influence the resulting force term. It can be seen that for different values of <span class="math notranslate nohighlight">\(\delta\)</span>, the evolution of the Caraman-Kozeny force magnitude (<span class="math notranslate nohighlight">\(\lVert \boldsymbol{F}_\mathrm{Carman-Kozeny} \rVert\)</span>) varies mostly within the range <span class="math notranslate nohighlight">\(\alpha_\mathrm{l} \in [0,0.5]\)</span>.</p>
+<div class="table-wrapper docutils container">
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><figure class="align-center" id="carman-kozeny-penalty-evolution">
+<a class="reference internal image-reference" href="../../_images/carman_kozeny_penalty_evolution.svg"><img alt="../../_images/carman_kozeny_penalty_evolution.svg" src="../../_images/carman_kozeny_penalty_evolution.svg" width="650" /></a>
+</figure>
+<p>Evolution of the Caraman-Kozeny force magnitude (<span class="math notranslate nohighlight">\(\lVert \boldsymbol{F}_\mathrm{Carman-Kozeny} \rVert\)</span>) in
+function of the liquid fraction, the permeability  area, and the tolerance parameter for <span class="math notranslate nohighlight">\(\nu = 1\)</span>,
+<span class="math notranslate nohighlight">\(\rho =1\)</span>, and <span class="math notranslate nohighlight">\(\lVert \boldsymbol{u} \rVert = 1\)</span>. The red curve highlights the iso-contour
+<span class="math notranslate nohighlight">\(\lVert \boldsymbol{F}_\mathrm{Carman-Kozeny} \rVert = 1\)</span>. The orange horizontal lines delimit the range of
+typical <span class="math notranslate nohighlight">\(A_\mathrm{perm}\)</span> that could be used, in this case <span class="math notranslate nohighlight">\([10^{-3},10^{-6}]\)</span>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>For <a class="reference internal" href="../../theory/multiphase/cfd/cls.html"><span class="doc">CLS</span></a> simulations, the source term takes the following form:</p>
+<blockquote>
+<div><div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\boldsymbol{F}_\mathrm{Carman-Kozeny} =  \left[ \sum_{i=0}^1 \frac{w_i \mu_i}{A_{i,\mathrm{perm}}}  \left[ \frac{(1-\alpha_{i,\mathrm{l}})^2}{(\alpha_{i,\mathrm{l}})^3 + \delta}\right] \right] \boldsymbol{u}\]</div>
+</div>
+<p>where</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(w_i = \begin{cases}  1-\phi \quad &amp;\mathrm{if} \quad  i = 0\\ \phi \quad &amp;\mathrm{if} \quad  i = 1\\ \end{cases}\)</span> is the phase indicator weight, and;</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mu \, [\mathsf{ML^{-1}T^{-1}}]\)</span> is the dynamic viscosity.</p></li>
+</ul>
+</div></blockquote>
+<ul>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">Carman-Kozeny</span> <span class="pre">fluid</span> <span class="pre">with</span> <span class="pre">phase</span> <span class="pre">change</span></code> specifies on which fluid(s) the permeability model should be applied on. The options are <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code>, or <code class="docutils literal notranslate"><span class="pre">both</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This only affects the <code class="docutils literal notranslate"><span class="pre">carman-kozeny</span> <span class="pre">phase</span> <span class="pre">change</span></code> permeability model. For the <code class="docutils literal notranslate"><span class="pre">darcy</span> <span class="pre">phase</span> <span class="pre">change</span></code> model, the penalization is computed according to the <code class="docutils literal notranslate"><span class="pre">Darcy</span> <span class="pre">penalty</span> <span class="pre">liquid</span></code>  and <code class="docutils literal notranslate"><span class="pre">Darcy</span> <span class="pre">penalty</span> <span class="pre">solid</span></code> as described above.</p>
+</div>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">Carman-Kozeny</span> <span class="pre">fluid</span> <span class="pre">with</span> <span class="pre">phase</span> <span class="pre">change</span></code> is set to <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code> or <code class="docutils literal notranslate"><span class="pre">both</span></code>, ensure that the <code class="docutils literal notranslate"><span class="pre">cls</span></code> physics is enabled in the <a class="reference internal" href="multiphysics.html"><span class="doc">Multiphysics</span></a> subsection.</p>
+</div>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">Carman-Kozeny</span> <span class="pre">permeability</span> <span class="pre">area</span></code> parameter corresponds to <span class="math notranslate nohighlight">\(A_\mathrm{perm}\)</span> in <span class="math notranslate nohighlight">\(\boldsymbol{F}_\mathrm{Carman-Kozeny}\)</span>. It represents the permeability area of the pseudo-porous bed (or solid phase) that is simulated. Typically the value of <span class="math notranslate nohighlight">\(A_\mathrm{perm}\)</span> is chosen in function of <span class="math notranslate nohighlight">\(\mu\)</span>, such that <span class="math notranslate nohighlight">\(\frac{\mu}{A_\mathrm{perm}} \in [10^{3}, 10^{6}]\)</span>.</p>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">Carman-Kozeny</span> <span class="pre">fluid</span> <span class="pre">with</span> <span class="pre">phase</span> <span class="pre">change</span> <span class="pre">=</span> <span class="pre">both</span></code>, two values of <code class="docutils literal notranslate"><span class="pre">Carman-Kozeny</span> <span class="pre">permeability</span> <span class="pre">area</span></code> separated by a comma must be specified. The first value corresponds to <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">0</span></code>, and the second to <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code>.</p>
+</div>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">Carman-Kozeny</span> <span class="pre">division</span> <span class="pre">tolerance</span></code> parameter avoids division by zero in <span class="math notranslate nohighlight">\(\boldsymbol{F}_\mathrm{Carman-Kozeny}\)</span> when in the solid phase (<span class="math notranslate nohighlight">\(\alpha_\mathrm{l} = 0\)</span>). Typically, <span class="math notranslate nohighlight">\(\delta \in [10^{-3},10^{-6}]\)</span>.</p>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">Carman-Kozeny</span> <span class="pre">fluid</span> <span class="pre">with</span> <span class="pre">phase</span> <span class="pre">change</span> <span class="pre">=</span> <span class="pre">both</span></code>, two values of <code class="docutils literal notranslate"><span class="pre">Carman-Kozeny</span> <span class="pre">division</span> <span class="pre">tolerance</span></code> separated by a comma must be specified. The first value corresponds to <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">0</span></code>, and the second to <code class="docutils literal notranslate"><span class="pre">fluid</span> <span class="pre">1</span></code>.</p>
+</div>
+</li>
+</ul>
+</section>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="zenz2024" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id2">2</a>)</span>
+<p>C. Zenz <em>et al.</em>, “A compressible multiphase Mass-of-Fluid model for the simulation of laser-based manufacturing processes,” <em>Computers &amp; Fluids</em>, vol. 268, p. 106109, Jan. 2024, doi: <a class="reference external" href="https://doi.org/10.1016/j.compfluid.2023.106109">10.1016/j.compfluid.2023.106109</a>.</p>
+</aside>
+</aside>
 </section>
 </section>
 
@@ -553,7 +659,12 @@ end
             <ul>
 <li><a class="reference internal" href="#">Velocity Source</a><ul>
 <li><a class="reference internal" href="#rotating-frame">Rotating Frame</a></li>
-<li><a class="reference internal" href="#darcy-penalization">Darcy Penalization</a></li>
+<li><a class="reference internal" href="#permeability-models">Permeability Models</a><ul>
+<li><a class="reference internal" href="#darcy-phase-change">Darcy Phase Change</a></li>
+<li><a class="reference internal" href="#carman-kozeny-phase-change">Carman-Kozeny Phase Change</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#references">References</a></li>
 </ul>
 </li>
 </ul>

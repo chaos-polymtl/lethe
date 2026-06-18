@@ -695,7 +695,7 @@ end
 <h2>Darcy Penalization: An Alternative Approach<a class="headerlink" href="#darcy-penalization-an-alternative-approach" title="Link to this heading">#</a></h2>
 <p>Lethe supports an alternative strategy to impose stasis (no motion) within the solidified material using a Darcy-like penalization. This penalization adds a forcing term to the momentum equation to prohibit the motion of the solid instead of increasing its viscosity. This has the advantage of leading to a better matrix conditioning, at the expense of potentially increased motion within the solid phase. To enable this forcing term, a velocity source term must be specified:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection velocity source
-set Darcy type = phase_change
+set permeability model = darcy phase change
 end
 </pre></div>
 </div>

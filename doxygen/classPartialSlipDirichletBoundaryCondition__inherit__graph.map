@@ -1,0 +1,5 @@
+<map id="PartialSlipDirichletBoundaryCondition&lt; dim &gt;" name="PartialSlipDirichletBoundaryCondition&lt; dim &gt;">
+<area shape="rect" id="Node000001" title="Class that assembles the special case of partial slip condition using the weak formulation of a Diric..." alt="" coords="8,93,212,133"/>
+<area shape="rect" id="Node000002" href="$classPhysicsAssemblerBase.html" title="Base class for assembler objects of physics and subequations." alt="" coords="5,5,215,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="113,59,113,93,107,93,107,59"/>
+</map>

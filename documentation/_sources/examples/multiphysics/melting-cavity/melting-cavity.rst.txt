@@ -306,7 +306,7 @@ Lethe supports an alternative strategy to impose stasis (no motion) within the s
 .. code-block:: text
 
   subsection velocity source
-  set Darcy type = phase_change
+  set permeability model = darcy phase change
   end
 
 Furthermore, the ``phase change`` subsection within the physical properties but also be modified to specify the Darcy penalty of the solid and liquid phase:

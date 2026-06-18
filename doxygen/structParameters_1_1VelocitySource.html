@@ -103,10 +103,11 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:af088b392f0017e6e5b4564b28a1aca99" id="r_af088b392f0017e6e5b4564b28a1aca99"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1VelocitySource.html#af088b392f0017e6e5b4564b28a1aca99">DarcySourceType</a> : std::int8_t { <a class="el" href="structParameters_1_1VelocitySource.html#af088b392f0017e6e5b4564b28a1aca99a334c4a4c42fdb79d7ebc3e73b517e6f8">none</a>
-, <a class="el" href="structParameters_1_1VelocitySource.html#af088b392f0017e6e5b4564b28a1aca99ad0b50e5bdf6e59d6f8ce448465e09069">phase_change</a>
+<tr class="memitem:a81ec83ea0a3ec8ff5cf518dd4c357536" id="r_a81ec83ea0a3ec8ff5cf518dd4c357536"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1VelocitySource.html#a81ec83ea0a3ec8ff5cf518dd4c357536">PermeabilityModel</a> : std::int8_t { <a class="el" href="structParameters_1_1VelocitySource.html#a81ec83ea0a3ec8ff5cf518dd4c357536a334c4a4c42fdb79d7ebc3e73b517e6f8">none</a>
+, <a class="el" href="structParameters_1_1VelocitySource.html#a81ec83ea0a3ec8ff5cf518dd4c357536a6832590b3de0c0cb79bcb54b868b25f3">darcy_phase_change</a>
+, <a class="el" href="structParameters_1_1VelocitySource.html#a81ec83ea0a3ec8ff5cf518dd4c357536ad5d9de83207d0a28fab48d5d19a5eaea">carman_kozeny_phase_change</a>
  }</td></tr>
-<tr class="separator:af088b392f0017e6e5b4564b28a1aca99"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a81ec83ea0a3ec8ff5cf518dd4c357536"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a87edcf555de06bd89d26e35b4c670e19" id="r_a87edcf555de06bd89d26e35b4c670e19"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1VelocitySource.html#a87edcf555de06bd89d26e35b4c670e19">RotatingFrameType</a> : std::int8_t { <a class="el" href="structParameters_1_1VelocitySource.html#a87edcf555de06bd89d26e35b4c670e19a334c4a4c42fdb79d7ebc3e73b517e6f8">none</a>
 , <a class="el" href="structParameters_1_1VelocitySource.html#a87edcf555de06bd89d26e35b4c670e19a9fa1e546d34dd62a768567052aaa9f92">srf</a>
  }</td></tr>
@@ -132,18 +133,24 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a83344f59cfb0afd497273651b1f80891"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad88ff5629eb12f5f137ff7b34e537439" id="r_ad88ff5629eb12f5f137ff7b34e537439"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1VelocitySource.html#ad88ff5629eb12f5f137ff7b34e537439">omega_z</a></td></tr>
 <tr class="separator:ad88ff5629eb12f5f137ff7b34e537439"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6d47f52bb3c7a4fb87c7fa7765564687" id="r_a6d47f52bb3c7a4fb87c7fa7765564687"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structParameters_1_1VelocitySource.html#af088b392f0017e6e5b4564b28a1aca99">DarcySourceType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1VelocitySource.html#a6d47f52bb3c7a4fb87c7fa7765564687">darcy_type</a></td></tr>
-<tr class="separator:a6d47f52bb3c7a4fb87c7fa7765564687"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a339fa4c6286b8b9d32951ac69727ede5" id="r_a339fa4c6286b8b9d32951ac69727ede5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structParameters_1_1VelocitySource.html#a81ec83ea0a3ec8ff5cf518dd4c357536">PermeabilityModel</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1VelocitySource.html#a339fa4c6286b8b9d32951ac69727ede5">permeability_model</a></td></tr>
+<tr class="separator:a339fa4c6286b8b9d32951ac69727ede5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb7349e8f448b6c8cb5f260665bf8575" id="r_adb7349e8f448b6c8cb5f260665bf8575"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2f">FluidIndicator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1VelocitySource.html#adb7349e8f448b6c8cb5f260665bf8575">fluid_with_phase_change</a></td></tr>
+<tr class="separator:adb7349e8f448b6c8cb5f260665bf8575"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acfd0c5620afc94293acd5203b9bfe04d" id="r_acfd0c5620afc94293acd5203b9bfe04d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1VelocitySource.html#acfd0c5620afc94293acd5203b9bfe04d">enable_darcy_multiply_by_density</a></td></tr>
 <tr class="separator:acfd0c5620afc94293acd5203b9bfe04d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1900feff3fb23903bd5952c18b2a379e" id="r_a1900feff3fb23903bd5952c18b2a379e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1VelocitySource.html#a1900feff3fb23903bd5952c18b2a379e">carman_kozeny_permeability_area</a></td></tr>
+<tr class="separator:a1900feff3fb23903bd5952c18b2a379e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a7ed038b11a155ecf35c588a087ec68" id="r_a6a7ed038b11a155ecf35c588a087ec68"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structParameters_1_1VelocitySource.html#a6a7ed038b11a155ecf35c588a087ec68">carman_kozeny_tolerance</a></td></tr>
+<tr class="separator:a6a7ed038b11a155ecf35c588a087ec68"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="structParameters_1_1VelocitySource.html" title="VelocitySource - Adds velocity-dependent source term to the Navier-Stokes equations with the appropri...">VelocitySource</a> - Adds velocity-dependent source term to the Navier-Stokes equations with the appropriate jacobian matrix. Currently only a change to a rotating frame is supported, but additional terms such as a Darcy force or similar could be easily added. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01736">1736</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01735">1735</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
-<a id="af088b392f0017e6e5b4564b28a1aca99" name="af088b392f0017e6e5b4564b28a1aca99"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af088b392f0017e6e5b4564b28a1aca99">&#9670;&#160;</a></span>DarcySourceType</h2>
+<a id="a81ec83ea0a3ec8ff5cf518dd4c357536" name="a81ec83ea0a3ec8ff5cf518dd4c357536"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a81ec83ea0a3ec8ff5cf518dd4c357536">&#9670;&#160;</a></span>PermeabilityModel</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -152,7 +159,7 @@ Public Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">enum class <a class="el" href="structParameters_1_1VelocitySource.html#af088b392f0017e6e5b4564b28a1aca99">Parameters::VelocitySource::DarcySourceType</a> : std::int8_t</td>
+          <td class="memname">enum class <a class="el" href="structParameters_1_1VelocitySource.html#a81ec83ea0a3ec8ff5cf518dd4c357536">Parameters::VelocitySource::PermeabilityModel</a> : std::int8_t</td>
         </tr>
       </table>
   </td>
@@ -162,11 +169,15 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="af088b392f0017e6e5b4564b28a1aca99a334c4a4c42fdb79d7ebc3e73b517e6f8" name="af088b392f0017e6e5b4564b28a1aca99a334c4a4c42fdb79d7ebc3e73b517e6f8"></a>none&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="af088b392f0017e6e5b4564b28a1aca99ad0b50e5bdf6e59d6f8ce448465e09069" name="af088b392f0017e6e5b4564b28a1aca99ad0b50e5bdf6e59d6f8ce448465e09069"></a>phase_change&#160;</td><td class="fielddoc"></td></tr>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a81ec83ea0a3ec8ff5cf518dd4c357536a334c4a4c42fdb79d7ebc3e73b517e6f8" name="a81ec83ea0a3ec8ff5cf518dd4c357536a334c4a4c42fdb79d7ebc3e73b517e6f8"></a>none&#160;</td><td class="fielddoc"><p>No Darcy source term. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a81ec83ea0a3ec8ff5cf518dd4c357536a6832590b3de0c0cb79bcb54b868b25f3" name="a81ec83ea0a3ec8ff5cf518dd4c357536a6832590b3de0c0cb79bcb54b868b25f3"></a>darcy_phase_change&#160;</td><td class="fielddoc"><p>Phase change Darcy source term which applies a linear penalization depending on the phase change model </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a81ec83ea0a3ec8ff5cf518dd4c357536ad5d9de83207d0a28fab48d5d19a5eaea" name="a81ec83ea0a3ec8ff5cf518dd4c357536ad5d9de83207d0a28fab48d5d19a5eaea"></a>carman_kozeny_phase_change&#160;</td><td class="fielddoc"><p>Phase change Carman-Kozeny source term which applies a non-linear penalization depending on the phase change model </p>
+</td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01738">1738</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01737">1737</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -194,7 +205,7 @@ Public Attributes</h2></td></tr>
 <tr><td class="fieldname"><a id="a87edcf555de06bd89d26e35b4c670e19a9fa1e546d34dd62a768567052aaa9f92" name="a87edcf555de06bd89d26e35b4c670e19a9fa1e546d34dd62a768567052aaa9f92"></a>srf&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01745">1745</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01747">1747</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -243,26 +254,46 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l03732">3732</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8cc_source.html#l03753">3753</a> of file <a class="el" href="parameters_8cc_source.html">parameters.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="parameters_8h_source.html#l01759">darcy_type</a>, <a class="el" href="parameters_8h_source.html#l01774">enable_darcy_multiply_by_density</a>, <a class="el" href="structParameters_1_1VelocitySource.html#a87edcf555de06bd89d26e35b4c670e19a334c4a4c42fdb79d7ebc3e73b517e6f8">none</a>, <a class="el" href="parameters_8h_source.html#l01752">omega_x</a>, <a class="el" href="parameters_8h_source.html#l01753">omega_y</a>, <a class="el" href="parameters_8h_source.html#l01754">omega_z</a>, <a class="el" href="structParameters_1_1VelocitySource.html#af088b392f0017e6e5b4564b28a1aca99ad0b50e5bdf6e59d6f8ce448465e09069">phase_change</a>, <a class="el" href="parameters_8h_source.html#l01751">rotating_frame_type</a>, and <a class="el" href="structParameters_1_1VelocitySource.html#a87edcf555de06bd89d26e35b4c670e19a9fa1e546d34dd62a768567052aaa9f92">srf</a>.</p>
+<p class="reference">References <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2faf6cb3e816496528d4187db53bc66567f">Parameters::both</a>, <a class="el" href="parameters_8h_source.html#l01780">carman_kozeny_permeability_area</a>, <a class="el" href="structParameters_1_1VelocitySource.html#a81ec83ea0a3ec8ff5cf518dd4c357536ad5d9de83207d0a28fab48d5d19a5eaea">carman_kozeny_phase_change</a>, <a class="el" href="parameters_8h_source.html#l01783">carman_kozeny_tolerance</a>, <a class="el" href="structParameters_1_1VelocitySource.html#a81ec83ea0a3ec8ff5cf518dd4c357536a6832590b3de0c0cb79bcb54b868b25f3">darcy_phase_change</a>, <a class="el" href="parameters_8h_source.html#l01777">enable_darcy_multiply_by_density</a>, <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e86df18a83727e4a5dc8dc2859a097c">Parameters::fluid0</a>, <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e04d9b58aa70e6fb6501fde7608fd13">Parameters::fluid1</a>, <a class="el" href="parameters_8h_source.html#l01762">fluid_with_phase_change</a>, <a class="el" href="structParameters_1_1VelocitySource.html#a87edcf555de06bd89d26e35b4c670e19a334c4a4c42fdb79d7ebc3e73b517e6f8">none</a>, <a class="el" href="parameters_8h_source.html#l01754">omega_x</a>, <a class="el" href="parameters_8h_source.html#l01755">omega_y</a>, <a class="el" href="parameters_8h_source.html#l01756">omega_z</a>, <a class="el" href="parameters_8h_source.html#l01759">permeability_model</a>, <a class="el" href="parameters_8h_source.html#l01753">rotating_frame_type</a>, and <a class="el" href="structParameters_1_1VelocitySource.html#a87edcf555de06bd89d26e35b4c670e19a9fa1e546d34dd62a768567052aaa9f92">srf</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a6d47f52bb3c7a4fb87c7fa7765564687" name="a6d47f52bb3c7a4fb87c7fa7765564687"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6d47f52bb3c7a4fb87c7fa7765564687">&#9670;&#160;</a></span>darcy_type</h2>
+<a id="a1900feff3fb23903bd5952c18b2a379e" name="a1900feff3fb23903bd5952c18b2a379e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1900feff3fb23903bd5952c18b2a379e">&#9670;&#160;</a></span>carman_kozeny_permeability_area</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structParameters_1_1VelocitySource.html#af088b392f0017e6e5b4564b28a1aca99">DarcySourceType</a> Parameters::VelocitySource::darcy_type</td>
+          <td class="memname">std::vector&lt;double&gt; Parameters::VelocitySource::carman_kozeny_permeability_area</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01759">1759</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p>Permeability area of the pseudo-porous bed (solid phase). </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01780">1780</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="a6a7ed038b11a155ecf35c588a087ec68" name="a6a7ed038b11a155ecf35c588a087ec68"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a7ed038b11a155ecf35c588a087ec68">&#9670;&#160;</a></span>carman_kozeny_tolerance</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;double&gt; Parameters::VelocitySource::carman_kozeny_tolerance</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Tolerance in the Carman-Kozeny source term that avoids division by zero. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01783">1783</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -285,7 +316,25 @@ Public Attributes</h2></td></tr>
 </p>
 <p>with \(\rho\) the density, \(K\) the Darcy penalty, and \(\vec{u}\) the velocity. </p>
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01774">1774</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01777">1777</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="adb7349e8f448b6c8cb5f260665bf8575" name="adb7349e8f448b6c8cb5f260665bf8575"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adb7349e8f448b6c8cb5f260665bf8575">&#9670;&#160;</a></span>fluid_with_phase_change</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2f">FluidIndicator</a> Parameters::VelocitySource::fluid_with_phase_change</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Indicates which fluids are with liquid-solid phase change. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01762">1762</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -301,7 +350,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01752">1752</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01754">1754</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -317,7 +366,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01753">1753</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01755">1755</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -333,7 +382,25 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01754">1754</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01756">1756</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+
+</div>
+</div>
+<a id="a339fa4c6286b8b9d32951ac69727ede5" name="a339fa4c6286b8b9d32951ac69727ede5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a339fa4c6286b8b9d32951ac69727ede5">&#9670;&#160;</a></span>permeability_model</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structParameters_1_1VelocitySource.html#a81ec83ea0a3ec8ff5cf518dd4c357536">PermeabilityModel</a> Parameters::VelocitySource::permeability_model</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Type of permeability model applied to the Navier-Stokes equations. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01759">1759</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>
@@ -349,7 +416,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01751">1751</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters_8h_source.html#l01753">1753</a> of file <a class="el" href="parameters_8h_source.html">parameters.h</a>.</p>
 
 </div>
 </div>

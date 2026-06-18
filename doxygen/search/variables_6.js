@@ -1,7 +1,7 @@
 var searchData=
 [
   ['g_0',['g',['../classDEMSolver.html#a1492afb72e77a6d9fd5c15f4ac88e0d2',1,'DEMSolver::g'],['../structParameters_1_1Lagrangian_1_1LagrangianPhysicalProperties.html#a389f64ac77ee4d9ad464a9daf07806ab',1,'Parameters::Lagrangian::LagrangianPhysicalProperties::g'],['../classCFDDEMMatrixFree.html#a192fc6203ea69c2d2f39295a972936db',1,'CFDDEMMatrixFree::g'],['../classCFDDEMSolver.html#aaadfca8bb60b6233ceccb2a316b358cb',1,'CFDDEMSolver::g']]],
-  ['gamma_1',['gamma',['../classBlockSchurPreconditioner.html#af4f1abb540d57aa7e33f076f99e1c7ac',1,'BlockSchurPreconditioner::gamma'],['../classFluidDynamicsBlock.html#a19f99172c895f6b8feceb0e28c4d55ab',1,'FluidDynamicsBlock::gamma']]],
+  ['gamma_1',['gamma',['../classBlockSchurPreconditioner.html#af4f1abb540d57aa7e33f076f99e1c7ac',1,'BlockSchurPreconditioner::gamma'],['../classBlockNavierStokesAssemblerNonNewtonianCore.html#aea61ebaee9d2348a0df7856638627a7d',1,'BlockNavierStokesAssemblerNonNewtonianCore::gamma'],['../classFluidDynamicsBlock.html#a19f99172c895f6b8feceb0e28c4d55ab',1,'FluidDynamicsBlock::gamma'],['../classBlockNavierStokesAssemblerCore.html#a36fd83083f70ebf19e540427ba8309ca',1,'BlockNavierStokesAssemblerCore::gamma']]],
   ['gas_5fparameter_5fm_2',['gas_parameter_m',['../classParticleParticleContactForce.html#a7ea86ff3c08bf0aed162c98a0dee3292',1,'ParticleParticleContactForce::gas_parameter_m'],['../classParticleWallContactForce.html#a1d8d7f3ba0f20e1eec06fc1f79d75a6c',1,'ParticleWallContactForce::gas_parameter_m']]],
   ['gas_5fthermal_5fconductivity_3',['gas_thermal_conductivity',['../classParticleWallContactForce.html#a0703e28b37bc427ee2f07f3efd6ebd93',1,'ParticleWallContactForce']]],
   ['gather_5fale_4',['gather_ale',['../classNavierStokesScratchData.html#a9ae80a345b537dc55d12a82250c70c8d',1,'NavierStokesScratchData']]],
@@ -25,7 +25,7 @@ var searchData=
   ['get_5fav_22',['get_av',['../classAverageVelocities.html#a3b95065afa2e8a04c4953b16d644ea97',1,'AverageVelocities']]],
   ['get_5frns_23',['get_rns',['../classAverageVelocities.html#a51453267a4ce6dfc785b1a801042dd66',1,'AverageVelocities']]],
   ['get_5frss_24',['get_rss',['../classAverageVelocities.html#a61b139bf6299a4ef937379a4f5daf05e',1,'AverageVelocities']]],
-  ['ggls_25',['ggls',['../classHeatTransferAssemblerBDF.html#a58d359088731157c2ce1205e7dc5aa60',1,'HeatTransferAssemblerBDF::GGLS'],['../classHeatTransfer.html#a8d07f04706e7256acf684ab6dd266d1a',1,'HeatTransfer::GGLS']]],
+  ['ggls_25',['ggls',['../classHeatTransfer.html#a8d07f04706e7256acf684ab6dd266d1a',1,'HeatTransfer::GGLS'],['../classHeatTransferAssemblerBDF.html#a58d359088731157c2ce1205e7dc5aa60',1,'HeatTransferAssemblerBDF::GGLS']]],
   ['ghost_5fadjacent_5fparticles_26',['ghost_adjacent_particles',['../classDEMContactManager.html#a062f179d445a5b65159a4c16090b24e3',1,'DEMContactManager']]],
   ['ghost_5fcontact_5fpair_5fcandidates_27',['ghost_contact_pair_candidates',['../classDEMContactManager.html#a0e9bb04cacf6f43f5ebf3828109639ab',1,'DEMContactManager']]],
   ['ghost_5fcontact_5fpair_5fperiodic_5fcandidates_28',['ghost_contact_pair_periodic_candidates',['../classDEMContactManager.html#aa1f747ef226f4d5ebb9669e9a7910673',1,'DEMContactManager']]],
@@ -55,7 +55,7 @@ var searchData=
   ['gradient_5fcache_52',['gradient_cache',['../classShape.html#a5664837a7d944d1ef2334245a6943fb1',1,'Shape']]],
   ['gradient_5fdivergence_5fphi_5fu_53',['gradient_divergence_phi_u',['../classNavierStokesScratchData.html#af509bce10d915bf714611c554d54238f',1,'NavierStokesScratchData']]],
   ['gradients_5fhere_54',['gradients_here',['../classTracerScratchData.html#ae665c064f7c2b3e9d72910f45ed8c41c',1,'TracerScratchData']]],
-  ['granular_5ftemperature_5fthreshold_55',['granular_temperature_threshold',['../classAdaptiveSparseContacts.html#a0b33863dc06a7da4611510785383db07',1,'AdaptiveSparseContacts::granular_temperature_threshold'],['../classParameters_1_1Lagrangian_1_1ModelParameters.html#a045082177fa4d568a1fb106031bc6899',1,'Parameters::Lagrangian::ModelParameters::granular_temperature_threshold']]],
+  ['granular_5ftemperature_5fthreshold_55',['granular_temperature_threshold',['../classParameters_1_1Lagrangian_1_1ModelParameters.html#a045082177fa4d568a1fb106031bc6899',1,'Parameters::Lagrangian::ModelParameters::granular_temperature_threshold'],['../classAdaptiveSparseContacts.html#a0b33863dc06a7da4611510785383db07',1,'AdaptiveSparseContacts::granular_temperature_threshold']]],
   ['gravity_56',['gravity',['../classVANSAssemblerBuoyancy.html#a9ee4307377f3a0fe339a823f3bd3092f',1,'VANSAssemblerBuoyancy']]],
   ['grid_5farguments_57',['grid_arguments',['../classFicheraOvenGrid.html#ab02fec7ee7fc129de5b3e1e31d5284c7',1,'FicheraOvenGrid::grid_arguments'],['../classGridBirminghamFluidizedBed.html#ab6aab7468a0c1c517e1ba5b7245f9131',1,'GridBirminghamFluidizedBed::grid_arguments'],['../classGridPeriodicHills.html#a04ecb23ee96f1b7c1a3e4be4145f8a55',1,'GridPeriodicHills::grid_arguments'],['../structParameters_1_1Mesh.html#aa9a2d0cb4ead32b4c3c234f3584703db',1,'Parameters::Mesh::grid_arguments']]],
   ['grid_5fmotion_58',['grid_motion',['../classDEMSolverParameters.html#a941be40f6a4b11025ed8423e01505f02',1,'DEMSolverParameters::grid_motion'],['../classGridMotionBase.html#a2b8a3132b6d947474831cc0cdacd5e0f',1,'GridMotionBase::grid_motion']]],
