@@ -662,9 +662,7 @@ compute_interface_dimensions_circular(
             }
         }
     }
-
-  std::cout << "PRE ROTATION MIN DE LA HAYE : " << pre_rotation_min
-            << std::endl;
+    
   // Min and max values over all processes
   radius_min =
     Utilities::MPI::min(radius_min, triangulation.get_mpi_communicator());
