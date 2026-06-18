@@ -21,7 +21,7 @@ Features
 Files Used In This Example
 --------------------------
 
-All files mentioned below are located in the example's folder (``examples/multiphysics/waveguide``)
+The file mentioned below is located in the example's folder (``examples/multiphysics/waveguide``).
 
 - Base case parameter file (:math:`\mathrm{f=2.45 GHz}` and :math:`\mathrm{TE}_{10}`): ``waveguide.prm``
 
@@ -51,7 +51,7 @@ The dimensions chosen here are a width :math:`a = 0.25 \, \mathrm{m}`,  a height
 Physical Problem
 ~~~~~~~~~~~~~~~~
 .. note::
-    Lethe time-harmonic solver always solve the set of equation in a dimensionless form, so that is the convention that will be used in the following mathematical descriptions. 
+    Lethe time-harmonic solver always solve the set of equations in a dimensionless form; therefore, the same convention will be used in the following mathematical descriptions. 
 
 
 This simulation computes the stationary electromagnetic field in the above waveguide filled with void. We recall that the time-harmonic Maxwell equations in their dimensionless form, as used in this example, are:
@@ -68,7 +68,7 @@ with the parameters of the problem:
 - Excitation: :math:`\mathbf{J}` the current density and :math:`\omega = \frac{L2\pi f}{c}` the angular frequency of the electromagnetic wave normalized by the speed of light in the void :math:`c` .
 
 
-When solving a time-harmonic electromagnetic problem with Lethe, there are 12 unknowns, one for each component of the dimensionless :math:`\mathbf{E}` and :math:`\mathbf{H}` fields times two for the real and imaginary parts in each of the three spatial directions. 
+When solving a time-harmonic electromagnetic problem with Lethe, there are 12 unknowns: two for each component of the dimensionless :math:`\mathbf{E}` and :math:`\mathbf{H}` fields (the real and imaginary parts in each of the three spatial directions). 
 
 
 In addition, to describe an electromagnetic wave problem, it is useful to  introduce the following dimensionless wavenumbers to ease notation in the following parts of this example :
@@ -76,7 +76,7 @@ In addition, to describe an electromagnetic wave problem, it is useful to  intro
 - Wavenumbers corresponding to a standing wave caused by the walls: :math:`k_\mathrm{x} = \frac{Lm\pi}{a} \ , \ k_\mathrm{y} = \frac{Ln\pi}{b}`
 - Wavenumber in the transverse direction of propagation: :math:`k_\mathrm{c} = \sqrt{k_\mathrm{x}^2 + k_\mathrm{y}^2}`
 - Total wavenumber: :math:`k = \omega \sqrt{\mu_{\mathrm{r}} \varepsilon_{\mathrm{eff,r}}} = \sqrt{k_\mathrm{x}^2 +k_\mathrm{y}^2 + k_\mathrm{z}^2}`
-- Wavenumber corresponding to a wave propagating along the z-axis: :math:`k_\mathrm{z} = \sqrt{\omega^2 \varepsilon_\mathrm{eff,r}\mu_\mathrm{r} - k_\mathrm{c}^2}`
+- Wavenumber corresponding to a wave propagating along the :math:`z`-axis: :math:`k_\mathrm{z} = \sqrt{\omega^2 \varepsilon_\mathrm{eff,r}\mu_\mathrm{r} - k_\mathrm{c}^2}`
 
 .. note::
     Note that if :math:`k \leq k_\mathrm{c}`, the wave does not propagate because :math:`k_\mathrm{z}^2 \leq 0`. This remark is important for the following part on the frequency and the different modes.
@@ -106,13 +106,13 @@ The :math:`\mathrm{TE}_{mn}` modes can be specified in the subsection `waveguide
     end
 
 
-To apply a transverse magnetic mode, simply modify the `mode type` with “TM”.
+To apply a transverse magnetic mode, simply modify the ``mode type`` with “TM”.
 
-The frequency of the inlet is originally set to :math:`f = \mathrm{2.45}\, \mathrm{GHz}` because it is the nominal frequency of microwave reactors in the industry. This value can be modified in the parameter file in the subsection ``time harmonic maxwell``: ``set electromagnetic frequency  = 2.45e9``
+The frequency of the inlet is originally set to :math:`f = \mathrm{2.45}\, \mathrm{GHz}` because it is the nominal frequency of microwave reactors in the industry. This value can be modified in the parameter file in the subsection ``time harmonic maxwell``: ``set electromagnetic frequency = 2.45e9``
 
 
 .. caution::
-    If :math:`\mathrm{TE}_{mn}` or the frequency is changed, the wavenumber :math:`k_\mathrm{z} = \sqrt{\omega^2 \varepsilon_{\mathrm{eff,r}}\mu_\mathrm{r} - k_\mathrm{x}^2 - k_\mathrm{y}^2 }`  at line 163, the dimensionless admittance real part :math:`Y_\mathrm{s}=\frac{1}{Z_\mathrm{s}}=\frac{k_\mathrm{z}}{\omega \mu_\mathrm{r}}` at line 147 must be changed because it depends on :math:`(m,n)` and :math:`f` through :math:`k_\mathrm{x} = \frac{m \pi}{a}`, :math:`k_\mathrm{y} = \frac{n \pi}{b}` and :math:`\omega`.
+     If :math:`\mathrm{TE}_{mn}` or :math:`f` is changed, the wavenumber :math:`k_\mathrm{z} = \sqrt{\omega^2 \varepsilon_{\mathrm{eff,r}}\mu_\mathrm{r} - k_\mathrm{x}^2 - k_\mathrm{y}^2 }`  specified in the subsection ``analytical solution``, the dimensionless admittance real part :math:`Y_\mathrm{s}=\frac{1}{Z_\mathrm{s}}=\frac{k_\mathrm{z}}{\omega \mu_\mathrm{r}}` specified within the subsection ``surface admittance real part`` must be changed because it depends on :math:`(m,n)` and :math:`f` through :math:`k_\mathrm{x} = \frac{m \pi}{a}`, :math:`k_\mathrm{y} = \frac{n \pi}{b}` and :math:`\omega`.
 
 .. warning:: 
     The simulation may not run for low frequencies or high modes. You have to adapt one of these parameters in order for :math:`k_z` to keep a real value. Indeed, the number :math:`k_z^2 = \omega^2 \varepsilon_{\mathrm{eff,r}}\mu_\mathrm{r} - k_x^2 - k_y^2` cannot be negative.
@@ -138,7 +138,7 @@ Boundary Conditions
 
 There are three types of boundary conditions in this problem, this explains why the surfaces of the waveguide are sorted in three groups. First, there is the inlet :math:`\Gamma_1`, then the outlet :math:`\Gamma_2` and finally the metal walls :math:`\Gamma_3`.
 
-- Inlet :math:`\Gamma_1`: waveguide port boundary condition at the inlet of the waveguide to excite the :math:`\mathrm{TE}_{mn}` mode at :math:`z` = 0
+- Inlet :math:`\Gamma_1`: ``waveguide port`` boundary condition at the inlet of the waveguide to excite the :math:`\mathrm{TE}_{mn}` mode at :math:`z` = 0
 - Outlet :math:`\Gamma_2`: ``impedance boundary`` condition tuned to the waveguide impedance to minimize the reflections (the waveguide is theoretically infinite). The dimensionless admittance in such conditions is:
 
   .. math::
@@ -228,7 +228,7 @@ The solution for a :math:`\mathrm{TE}_{mn}` mode, which will be used to assess c
     \end{bmatrix} e^{ik_\mathrm{z} z}
     
 
-The solution is specified in the ``Analytical Solution`` subsection of the parameter file: 
+The solution is specified in the ``analytical solution`` subsection of the parameter file: 
 
 .. code-block:: text 
 
@@ -266,19 +266,18 @@ and by changing the number ``n`` of mesh adaptations in the subsection ``simulat
         set number mesh adapt = n
     end
 
-Note that a folder is automatically created when the simulation is run. If you try a new order :math:`m`, you can change the name of the path in the ``simulation control`` subsection: ``set output path = ./degree_m/``
+If you try a new order :math:`m`, you can change the name of the path with ``set output path = ./degree_m/``.
 
-
-.. Note:: 
-    A typical computer with 12 cores and 64 Gb of RAM can compute up to 3 mesh adaptations, after that the systems becomes too heavy in memory. 
-
+.. Note::
+   - The output folder specified with ``output path`` is automatically created when the simulation is run if it does not already exist.
+   - A typical computer with 12 cores and 64 Gb of RAM can compute up to 3 mesh adaptations, after that the systems becomes too heavy in memory. 
 
 
 
 
 Degree of the FEM Solver
 ~~~~~~~~~~~~~~~~~~~~~~~~
-You can also change the degree of the polynomes used in the Finite Element Method in subsection `FEM`: 
+You can also change the degree of the polynomials used in the Finite Element Method (FEM) in subsection ``FEM``: 
 
 .. code-block:: text
 
@@ -302,7 +301,7 @@ You can also change the electromagnetic properties of the medium at the subsecti
         set number of fluids = 1
         subsection fluid 0
             set electric conductivity model = constant
-            et electric conductivity       = 0.
+            set electric conductivity       = 0.
 
             set electric permittivity model     = constant
             set electric permittivity real part = 1.
@@ -314,16 +313,16 @@ You can also change the electromagnetic properties of the medium at the subsecti
         end
     end
 
-.. Note::
-    Adding an imaginary part to the permeability and the permittivity makes the medium dissipative. 
+
+Adding an imaginary part to the permeability and the permittivity makes the medium dissipative. 
     
 Here is a comparison of the result in a dissipative medium (left) with :math:`\Im(\mu_\mathrm{r})=0.06 \ , \ \Im(\varepsilon_\mathrm{eff,r})=0.06` and a non-dissipative one (right):
 
-    .. image:: images/Dissipation.png
-        :alt: TE10V2
-        :align: center
-        :name: TE10V2
-        :width: 500
+.. image:: images/Dissipation.png
+    :alt: TE10V2
+    :align: center
+    :name: TE10V2
+    :width: 500
 
 
 
@@ -353,7 +352,7 @@ to run the simulation using ten CPU cores.
 Results and Discussion
 ----------------------
 
-The following figure shows the :math:`\Re(\mathbf{H}_\mathrm{z})` field of 4 increasing mesh adaptations with the default settings of the waveguid.prm file. As expected, with decreasing element size, we capture more and more the oscillating behavior of the solution.
+The following figure shows the :math:`\Re(\mathbf{H}_\mathrm{z})` field of 4 increasing mesh adaptations (``set number mesh adapt = 4``) with the default settings of the waveguide.prm file. As expected, with decreasing element size, we capture more and more the oscillating behavior of the solution.
 
 .. image:: images/Mesh_adaptation.png
     :alt: standing-wave-mesh
