@@ -53,26 +53,24 @@ public:
 
   /**
    * @brief Serialize the packed insertion object to an output archive.
+   * For the packing insertion, nothing needs to be stored.
    *
    * @param ar Output archive where the attributes are stored.
    */
   virtual void
   serialize(boost::archive::text_oarchive &ar) override
-  {
-    ar &particles_of_each_type_remaining &current_inserting_particle_type;
-  }
+  {}
 
   /**
    * @brief Deserialize an input archive to the packed insertion object.
+   * For the packing insertion, nothing needs to be stored.
    *
    * @param ar Input archive where the attributes are stored.
    *
    */
   virtual void
   deserialize(boost::archive::text_iarchive &ar) override
-  {
-    ar &particles_of_each_type_remaining &current_inserting_particle_type;
-  }
+  {}
 
 private:
   /**
