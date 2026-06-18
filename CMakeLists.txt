@@ -3,7 +3,6 @@ if(CMAKE_VERSION VERSION_LESS 3.12) # To support the version range
   cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
 endif()
 
-
 # TARGET_SUPPORTS_SHARED_LIBS is set by PROJECT, but we have to call
 # FIND_PACKAGE before that, and deal.II's configuration calls
 # ADD_LIBRARY with the SHARED keyword, so setting
@@ -19,7 +18,6 @@ if(DEFINED deal.II_DIR)
 endif()
 find_package(deal.II 9.7.0 QUIET REQUIRED
   HINTS "${deal.II_DIR}" "${DEAL_II_DIR}" "$ENV{DEAL_II_DIR}")
-
 deal_ii_initialize_cached_variables()
 
 deal_ii_query_git_information(LETHE)
