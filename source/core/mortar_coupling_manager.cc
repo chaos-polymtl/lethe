@@ -651,10 +651,11 @@ compute_interface_dimensions_circular(
                         {
                           const auto v = vertices[vertex_index];
 
-                          pre_rotation_min = std::min(
+                          std pre_rotation_min = std::min(
                             pre_rotation_min,
                             point_to_angle(mortar_parameters.center_of_rotation,
-                                           v));
+                                           v,
+                                           rotation_axis));
                         }
                     }
                 }
@@ -662,6 +663,8 @@ compute_interface_dimensions_circular(
         }
     }
 
+  std::cout << "PRE ROTATION MIN DE LA HAYE : " << pre_rotation_min
+            << std::endl;
   // Min and max values over all processes
   radius_min =
     Utilities::MPI::min(radius_min, triangulation.get_mpi_communicator());
