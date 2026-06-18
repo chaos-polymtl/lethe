@@ -30,7 +30,7 @@ The box refinement section allows for a specific region in the grid to be finer 
 * The ``number of refinement boxes`` corresponds to the number of refinement boxes we want to introduce.
 
   .. attention::
-    At the moment, the software only supports up to :math:`5` different boxes.
+    At the moment, the software only supports up to :math:`20` different boxes.
 
 * The ``subsection box 0`` includes information regarding the 1st refinement box.
 

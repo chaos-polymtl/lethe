@@ -1663,7 +1663,7 @@ namespace Parameters
      * @remark A maximal value has to be initialized to fill the vectors with
      * parameter declarations.
      */
-    const unsigned int max_number_of_refinement_boxes = 5;
+    const unsigned int max_number_of_refinement_boxes = 20;
 
     /**
      * Shared pointer of a vector of GMSH and deal.II meshes representing
