@@ -20,17 +20,6 @@ endif()
 find_package(deal.II 9.7.0 QUIET REQUIRED
   HINTS "${deal.II_DIR}" "${DEAL_II_DIR}" "$ENV{DEAL_II_DIR}")
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  foreach(_flag
-          "-Wno-placement-new"
-          "-Wno-literal-suffix"
-          "-Wno-nonnull-compare")
-    string(REPLACE "${_flag}" "" DEAL_II_CXX_FLAGS "${DEAL_II_CXX_FLAGS}")
-    string(REPLACE "${_flag}" "" DEAL_II_CXX_FLAGS_DEBUG "${DEAL_II_CXX_FLAGS_DEBUG}")
-    string(REPLACE "${_flag}" "" DEAL_II_CXX_FLAGS_RELEASE "${DEAL_II_CXX_FLAGS_RELEASE}")
-  endforeach()
-endif()
-
 deal_ii_initialize_cached_variables()
 
 deal_ii_query_git_information(LETHE)
