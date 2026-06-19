@@ -518,14 +518,14 @@ CustomDistribution::CustomDistribution(
           if (function_type == ProbabilityFunctionType::PDF)
             {
               // Step 1: normalise input volume PDF so that ∫ fv dd = 1
-              // We use the trapezoidal method to do the integral. 
+              // We use the trapezoidal method to do the integral.
               double fv_integral = 0.0;
               for (unsigned int i = 0; i < number_d_values - 1; ++i)
                 fv_integral += 0.5 *
                                (d_probabilities[i] + d_probabilities[i + 1]) *
                                (diameter_values[i + 1] - diameter_values[i]);
 
-              fv.resize(number_d_values); 
+              fv.resize(number_d_values);
               for (unsigned int i = 0; i < number_d_values; ++i)
                 fv[i] = d_probabilities[i] / fv_integral;
 
@@ -538,8 +538,7 @@ CustomDistribution::CustomDistribution(
                   const double d_low  = diameter_values[i];
                   const double d_high = diameter_values[i + 1];
 
-                  const double b_i =
-                    (fv[i + 1] - fv[i]) / (d_high - d_low);
+                  const double b_i = (fv[i + 1] - fv[i]) / (d_high - d_low);
                   const double a_i = fv[i] - b_i * d_low;
 
                   const double F_high =
@@ -554,9 +553,8 @@ CustomDistribution::CustomDistribution(
               // Step 3: build number-based CDF at each node
               number_based_cdf[0] = 0.0;
               for (unsigned int i = 1; i < number_d_values; ++i)
-                number_based_cdf[i] =
-                  number_based_cdf[i - 1] +
-                  segment_integral[i - 1] / total_integral;
+                number_based_cdf[i] = number_based_cdf[i - 1] +
+                                      segment_integral[i - 1] / total_integral;
 
               number_based_cdf.back() = 1.0; // safety clamp
             }
@@ -617,8 +615,7 @@ CustomDistribution::CustomDistribution(
                   const double d_low  = diameter_values[i];
                   const double d_high = diameter_values[i + 1];
 
-                  const double b_i =
-                    (fv[i + 1] - fv[i]) / (d_high - d_low);
+                  const double b_i = (fv[i + 1] - fv[i]) / (d_high - d_low);
                   const double a_i = fv[i] - b_i * d_low;
 
                   const double F_high =
@@ -632,9 +629,8 @@ CustomDistribution::CustomDistribution(
 
               number_based_cdf[0] = 0.0;
               for (unsigned int i = 1; i < number_d_values; ++i)
-                number_based_cdf[i] =
-                  number_based_cdf[i - 1] +
-                  segment_integral[i - 1] / total_integral;
+                number_based_cdf[i] = number_based_cdf[i - 1] +
+                                      segment_integral[i - 1] / total_integral;
 
               number_based_cdf.back() = 1.0;
             }
