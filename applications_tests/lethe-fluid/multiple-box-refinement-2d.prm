@@ -50,7 +50,7 @@ subsection box refinement
       set grid type              = hyper_cube
       set grid arguments         = -0.75 : 0.75 : false
       set initial rotation angle = 0.78540 # pi/4
-      set initial translation    = 1, 0
+      set initial translation    = 1, 0, 0
       set scale                  = 1.25
     end
     set additional refinement = 1

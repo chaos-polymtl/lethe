@@ -93,7 +93,7 @@ This subsection provides information of the simulation geometry and its mesh. Th
 * The ``initial translation`` parameter provides a way to move the mesh in space prior to simulating the problem. It can be useful when space-dependent functions are used, but that generating a translated mesh is inconvenient or impossible.
 
   .. attention::
-    If the mesh is defined in a 2D space, the third component of ``initial translation`` (:math:`z`-component) is ignored and the mesh translates in :math:`x` and :math:`y` only.
+    Regardless of the dimension of the problem, 3 components (:math:`x`, :math:`y`, and :math:`z`) must be specified for the ``initial translation``. If the mesh is defined in a 2D space, the third component of ``initial translation`` (:math:`z`-component) is ignored and the mesh translates in :math:`x` and :math:`y` only.
 
 * The ``initial rotation axis`` and ``initial rotation angle`` parameters provide another way to move the mesh prior to simulating the problem.
 
