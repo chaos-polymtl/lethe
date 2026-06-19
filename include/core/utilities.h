@@ -7,6 +7,7 @@
 #include <core/output_struct.h>
 
 #include <deal.II/base/conditional_ostream.h>
+#include <deal.II/base/mpi_remote_point_evaluation.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/point.h>
 #include <deal.II/base/table_handler.h>
@@ -1159,16 +1160,18 @@ struct cut_cell_comparison
  * @tparam dim Denotes the number of spatial dimensions.
  * @tparam VectorType Vector type of the solution vector.
  *
+ * @param[in] triangulation Triangulation object.
  * @param[in] mapping Mapping of the domain.
  * @param[in] dof_handler DoF handler associated to the solution field.
  * @param[in] solution_field Vector containing the scalar solution field.
- * @param[in] evaluation_points Vector of points where the scalar values are to
- * be evaluated.
+ * @param[in] evaluation_points Vector of points where the values of the
+ * solution field are to be evaluated.
  * @param[in,out] evaluated_scalar_values Vector of evaluated scalar values.
  */
 template <int dim, typename VectorType>
 void
-evaluate_values_at_points(const Mapping<dim>            &mapping,
+evaluate_values_at_points(const Triangulation<dim>      &triangulation,
+                          const Mapping<dim>            &mapping,
                           const DoFHandler<dim>         &dof_handler,
                           const VectorType              &solution_field,
                           const std::vector<Point<dim>> &evaluation_points,
@@ -1182,20 +1185,58 @@ evaluate_values_at_points(const Mapping<dim>            &mapping,
  * @tparam dim Denotes the number of spatial dimensions.
  * @tparam VectorType Vector type of the solution vector.
  *
+ * @param[in] triangulation Triangulation object.
  * @param[in] mapping Mapping of the domain.
  * @param[in] dof_handler DoF handler associated to the solution field.
  * @param[in] solution_field Vector containing the vector solution field.
- * @param[in] evaluation_points Vector of points where the vector values are to
- * be evaluated.
+ * @param[in] evaluation_points Vector of points where the values of the
+ * solution field are to be evaluated.
  * @param[in,out] evaluated_vector_values Vector of evaluated vector values.
  */
 template <int n_component, int dim, typename VectorType>
 void
 evaluate_values_at_points(
+  const Triangulation<dim>            &triangulation,
   const Mapping<dim>                  &mapping,
   const DoFHandler<dim>               &dof_handler,
   const VectorType                    &solution_field,
   const std::vector<Point<dim>>       &evaluation_points,
   std::vector<Tensor<1, dim, double>> &evaluated_vector_values);
+
+/**
+ * @brief Checks that the evaluation points are within the simulated domain and
+ * returns @p true if all points are within the domain.
+ *
+ * @tparam dim Denotes the number of spatial dimensions.
+ *
+ * @param[in] evaluation_points Vector of points where the values of the
+ * solution field are to be evaluated.
+ * @param[in] remote_point_evaluator RemotePointEvaluation object used to
+ * evaluate values.
+ *
+ * @return @p true if all points are within the simulated domain.
+ */
+template <int dim>
+inline bool
+points_are_in_domain(
+  const std::vector<Point<dim>>                         &evaluation_points,
+  const Utilities::MPI::RemotePointEvaluation<dim, dim> &remote_point_evaluator)
+{
+  if (!remote_point_evaluator.all_points_found())
+    {
+      for (unsigned int i = 0; i < evaluation_points.size(); ++i)
+        {
+          AssertThrow(remote_point_evaluator.point_found(i),
+                      ExcMessage(
+                        "The point (" +
+                        Patterns::Tools::Convert<Point<dim>>::to_string(
+                          evaluation_points[i]) +
+                        ") is not defined within the simulated domain."));
+        }
+    }
+
+  return true;
+}
+
 
 #endif

@@ -31,7 +31,8 @@ using namespace dealii;
  * fields (\f$dim \in \{2, 3\} \f$) are tested here.
  *
  * For the cosine and cosine gradient functions, since we are using linear
- * elements to approximate them, a small error is expected and observed.
+ * elements to approximate them, a small error is expected and observed except
+ * when the points correspond to a DoF.
  */
 
 /**
@@ -103,21 +104,23 @@ public:
  *
  * @tparam dim Spatial dimension of the problem.
  *
- * @param[in, out] evaluation_points Vector of evaluation points that are not
- * aligned with the mesh.
+ * @param[in, out] evaluation_points Vector of points where the values of the
+ * solution field are to be evaluated.
  */
 template <int dim>
 void
-initialize_evaluation_points(std::vector<Point<dim>> &evaluation_points)
+inline initialize_evaluation_points(std::vector<Point<dim>> &evaluation_points)
 {
   if constexpr (dim == 2)
     {
+      evaluation_points.emplace_back(Point<2>({0.5, 0.5}));
       evaluation_points.emplace_back(Point<2>({0.1, 0.1}));
       evaluation_points.emplace_back(Point<2>({0.7, 0.3}));
       evaluation_points.emplace_back(Point<2>({0.425, 0.635}));
     }
   else if constexpr (dim == 3)
     {
+      evaluation_points.emplace_back(Point<3>({0.5, 0.5, 0.5}));
       evaluation_points.emplace_back(Point<3>({0.1, 0.1, 0.1}));
       evaluation_points.emplace_back(Point<3>({0.7, 0.3, 0.4}));
       evaluation_points.emplace_back(Point<3>({0.425, 0.635, 0.815}));
@@ -129,7 +132,8 @@ initialize_evaluation_points(std::vector<Point<dim>> &evaluation_points)
  *
  * @tparam dim Spatial dimension of the problem.
  *
- * @param[in] evaluation_points Vector of evaluation points.
+ * @param[in] evaluation_points Vector of points where the values of the
+ * solution field are to be evaluated.
  * @param[in] evaluated_scalar_values Evaluated scalar values at evaluation
  * points.
  * @param[in] scalar_function Function returning a scalar field corresponding to
@@ -137,7 +141,7 @@ initialize_evaluation_points(std::vector<Point<dim>> &evaluation_points)
  */
 template <int dim>
 void
-print_results(const std::vector<Point<dim>> &evaluation_points,
+inline print_results(const std::vector<Point<dim>> &evaluation_points,
               const std::vector<double>     &evaluated_scalar_values,
               const Function<dim>           &scalar_function)
 {
@@ -166,7 +170,8 @@ print_results(const std::vector<Point<dim>> &evaluation_points,
  *
  * @tparam dim Spatial dimension of the problem.
  *
- * @param[in] evaluation_points Vector of evaluation points.
+ * @param[in] evaluation_points Vector of points where the values of the
+ * solution field are to be evaluated.
  * @param[in] evaluated_vector_values Evaluated vector values at evaluation
  * points.
  * @param[in] vector_function Function returning a vector field of dimension
@@ -174,7 +179,7 @@ print_results(const std::vector<Point<dim>> &evaluation_points,
  */
 template <int dim>
 void
-print_results(
+inline print_results(
   const std::vector<Point<dim>>             &evaluation_points,
   const std::vector<Tensor<1, dim, double>> &evaluated_vector_values,
   const Function<dim>                       &vector_function)
@@ -217,7 +222,7 @@ print_results(
  */
 template <int dim>
 void
-test(unsigned int         n_repetitions,
+test(const unsigned int   n_repetitions,
      const Function<dim> &scalar_function,
      const Function<dim> &vector_function)
 {
@@ -261,13 +266,15 @@ test(unsigned int         n_repetitions,
   std::vector<Tensor<1, dim, double>> evaluated_vector_values;
 
   // Evaluate values at evaluation points
-  evaluate_values_at_points(mapping,
+  evaluate_values_at_points(triangulation,
+                            mapping,
                             dof_handler,
                             solution_field_scalar,
                             evaluation_points,
                             evaluated_scalar_values);
 
-  evaluate_values_at_points<dim>(mapping,
+  evaluate_values_at_points<dim>(triangulation,
+                                 mapping,
                                  dof_handler_vector,
                                  solution_field_vector,
                                  evaluation_points,
@@ -295,7 +302,7 @@ main(int argc, char *argv[])
       deallog << "************************************************************"
               << std::endl;
       deallog << "Running dim == 2, cosine functions" << std::endl;
-      test<2>(48,
+      test<2>(32,
               Functions::CosineFunction<2>(1),
               Functions::CosineGradFunction<2>());
       deallog << "************************************************************"
@@ -305,7 +312,7 @@ main(int argc, char *argv[])
       deallog << "************************************************************"
               << std::endl;
       deallog << "Running dim == 3, cosine functions" << std::endl;
-      test<3>(48,
+      test<3>(32,
               Functions::CosineFunction<3>(1),
               Functions::CosineGradFunction<3>());
     }
