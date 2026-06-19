@@ -1,0 +1,120 @@
+
+DEAL::Running dim == 2, linear functions
+DEAL::Scalar field results:
+DEAL::Evaluation point: (0.100000, 0.100000)
+DEAL::  Evaluated value: 1.30000
+DEAL::  Function value:  1.30000
+DEAL::
+DEAL::Evaluation point: (0.700000, 0.300000)
+DEAL::  Evaluated value: 2.30000
+DEAL::  Function value:  2.30000
+DEAL::
+DEAL::Evaluation point: (0.425000, 0.635000)
+DEAL::  Evaluated value: 2.69500
+DEAL::  Function value:  2.69500
+DEAL::
+DEAL::
+DEAL::Vector field results:
+DEAL::Evaluation point: (0.100000, 0.100000)
+DEAL::  Evaluated value: 0.200000 0.800000
+DEAL::  Function value:  0.200000 0.800000
+DEAL::
+DEAL::Evaluation point: (0.700000, 0.300000)
+DEAL::  Evaluated value: 1.00000 4.00000
+DEAL::  Function value:  1.00000 4.00000
+DEAL::
+DEAL::Evaluation point: (0.425000, 0.635000)
+DEAL::  Evaluated value: 1.06000 4.24000
+DEAL::  Function value:  1.06000 4.24000
+DEAL::
+DEAL::
+DEAL::************************************************************
+DEAL::Running dim == 2, cosine functions
+DEAL::Scalar field results:
+DEAL::Evaluation point: (0.100000, 0.100000)
+DEAL::  Evaluated value: 0.975361
+DEAL::  Function value:  0.975528
+DEAL::
+DEAL::Evaluation point: (0.700000, 0.300000)
+DEAL::  Evaluated value: 0.404404
+DEAL::  Function value:  0.404508
+DEAL::
+DEAL::Evaluation point: (0.425000, 0.635000)
+DEAL::  Evaluated value: 0.425877
+DEAL::  Function value:  0.425989
+DEAL::
+DEAL::
+DEAL::Vector field results:
+DEAL::Evaluation point: (0.100000, 0.100000)
+DEAL::  Evaluated value: -0.242661 -0.242661
+DEAL::  Function value:  -0.242701 -0.242701
+DEAL::
+DEAL::Evaluation point: (0.700000, 0.300000)
+DEAL::  Evaluated value: -1.24672 -0.323669
+DEAL::  Function value:  -1.24704 -0.323753
+DEAL::
+DEAL::Evaluation point: (0.425000, 0.635000)
+DEAL::  Evaluated value: -0.527370 -1.03605
+DEAL::  Function value:  -0.527508 -1.03632
+DEAL::
+DEAL::
+DEAL::************************************************************
+DEAL::Running dim == 3, linear functions
+DEAL::Scalar field results:
+DEAL::Evaluation point: (0.100000, 0.100000, 0.100000)
+DEAL::  Evaluated value: 1.60000
+DEAL::  Function value:  1.60000
+DEAL::
+DEAL::Evaluation point: (0.700000, 0.300000, 0.400000)
+DEAL::  Evaluated value: 3.50000
+DEAL::  Function value:  3.50000
+DEAL::
+DEAL::Evaluation point: (0.425000, 0.635000, 0.815000)
+DEAL::  Evaluated value: 5.14000
+DEAL::  Function value:  5.14000
+DEAL::
+DEAL::
+DEAL::Vector field results:
+DEAL::Evaluation point: (0.100000, 0.100000, 0.100000)
+DEAL::  Evaluated value: 0.300000 1.20000 2.70000
+DEAL::  Function value:  0.300000 1.20000 2.70000
+DEAL::
+DEAL::Evaluation point: (0.700000, 0.300000, 0.400000)
+DEAL::  Evaluated value: 1.40000 5.60000 12.6000
+DEAL::  Function value:  1.40000 5.60000 12.6000
+DEAL::
+DEAL::Evaluation point: (0.425000, 0.635000, 0.815000)
+DEAL::  Evaluated value: 1.87500 7.50000 16.8750
+DEAL::  Function value:  1.87500 7.50000 16.8750
+DEAL::
+DEAL::
+DEAL::************************************************************
+DEAL::Running dim == 3, cosine functions
+DEAL::Scalar field results:
+DEAL::Evaluation point: (0.100000, 0.100000, 0.100000)
+DEAL::  Evaluated value: 0.963270
+DEAL::  Function value:  0.963518
+DEAL::
+DEAL::Evaluation point: (0.700000, 0.300000, 0.400000)
+DEAL::  Evaluated value: 0.327142
+DEAL::  Function value:  0.327254
+DEAL::
+DEAL::Evaluation point: (0.425000, 0.635000, 0.815000)
+DEAL::  Evaluated value: 0.122018
+DEAL::  Function value:  0.122056
+DEAL::
+DEAL::
+DEAL::Vector field results:
+DEAL::Evaluation point: (0.100000, 0.100000, 0.100000)
+DEAL::  Evaluated value: -0.239653 -0.239653 -0.239653
+DEAL::  Function value:  -0.239713 -0.239713 -0.239713
+DEAL::
+DEAL::Evaluation point: (0.700000, 0.300000, 0.400000)
+DEAL::  Evaluated value: -1.00853 -0.261832 -0.373351
+DEAL::  Function value:  -1.00888 -0.261921 -0.373479
+DEAL::
+DEAL::Evaluation point: (0.425000, 0.635000, 0.815000)
+DEAL::  Evaluated value: -0.151096 -0.296836 -0.640882
+DEAL::  Function value:  -0.151144 -0.296930 -0.641086
+DEAL::
+DEAL::
