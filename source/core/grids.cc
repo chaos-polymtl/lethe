@@ -129,7 +129,7 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
             mesh_parameters.grid_type,
             mesh_parameters.grid_arguments);
 
-          // Scale, translate, and rotate mesh
+          // Scale, rotate, and translate mesh
           apply_mesh_transformation(mesh_parameters, triangulation);
         }
 

@@ -149,7 +149,8 @@ refine_triangulation_at_boundaries(
 }
 
 /**
- * @brief Apply scaling, translation and rotation to the mesh in the listed order.
+ * @brief Apply scaling, rotation and translation to the mesh in the listed
+ * order.
  *
  * @tparam dim An integer that denotes the dimensionality of the geometry.
  * @tparam spacedim An integer that denotes the dimension of the space occupied

@@ -875,7 +875,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
                     ->refinement_boxes_meshes)[i_box]
                   .grid_arguments);
 
-              // Apply mesh transformation (Scaling, translation, then rotation)
+              // Apply mesh transformation (Scaling, rotation, then translation)
               apply_mesh_transformation(
                 (*this->simulation_parameters.mesh_box_refinement
                     ->refinement_boxes_meshes)[i_box],
@@ -922,7 +922,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh(const bool restart)
                     ->refinement_boxes_meshes)[i_box]
                   .grid_arguments);
 
-              // Apply mesh transformation (Scaling, translation, then rotation)
+              // Apply mesh transformation (Scaling, rotation, then translation)
               apply_mesh_transformation(
                 (*this->simulation_parameters.mesh_box_refinement
                     ->refinement_boxes_meshes)[i_box],
