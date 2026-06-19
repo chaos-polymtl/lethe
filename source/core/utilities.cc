@@ -3,8 +3,12 @@
 
 #include <core/revision.h>
 #include <core/utilities.h>
+#include <core/vector.h>
 
+#include <deal.II/base/mpi_remote_point_evaluation.h>
 #include <deal.II/base/revision.h>
+
+#include <deal.II/numerics/vector_tools.h>
 
 #include <boost/algorithm/string/replace.hpp>
 
@@ -867,3 +871,90 @@ delete_vtu_and_pvd_files(const std::string &output_path)
         std::filesystem::remove(filename.path());
     }
 }
+
+template <int dim, typename VectorType>
+void
+evaluate_values_at_points(const Mapping<dim>            &mapping,
+                          const DoFHandler<dim>         &dof_handler,
+                          const VectorType              &solution_field,
+                          const std::vector<Point<dim>> &evaluation_points,
+                          std::vector<double> &evaluated_scalar_values)
+{
+  // Get MPI communicator
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
+
+  // Update ghost values of the scalar solution field
+  VectorType solution_field_owned_copy(dof_handler.locally_owned_dofs(),
+                                       mpi_communicator);
+  solution_field_owned_copy = solution_field;
+  solution_field_owned_copy.update_ghost_values();
+
+  // Evaluate scalar values at points using RemotePointEvaluation
+  Utilities::MPI::RemotePointEvaluation<dim, dim> remote_point_evaluator;
+  evaluated_scalar_values =
+    VectorTools::point_values<1>(mapping,
+                                 dof_handler,
+                                 solution_field_owned_copy,
+                                 evaluation_points,
+                                 remote_point_evaluator);
+}
+
+template void
+evaluate_values_at_points<2, GlobalVectorType>(
+  const Mapping<2>            &mapping,
+  const DoFHandler<2>         &dof_handle,
+  const GlobalVectorType      &solution_field,
+  const std::vector<Point<2>> &evaluation_points,
+  std::vector<double>         &evaluated_scalar_values);
+
+template void
+evaluate_values_at_points<3, GlobalVectorType>(
+  const Mapping<3>            &mapping,
+  const DoFHandler<3>         &dof_handle,
+  const GlobalVectorType      &solution_field,
+  const std::vector<Point<3>> &evaluation_points,
+  std::vector<double>         &evaluated_scalar_values);
+
+template <int n_component, int dim, typename VectorType>
+void
+evaluate_values_at_points(
+  const Mapping<dim>                  &mapping,
+  const DoFHandler<dim>               &dof_handler,
+  const VectorType                    &solution_field,
+  const std::vector<Point<dim>>       &evaluation_points,
+  std::vector<Tensor<1, dim, double>> &evaluated_vector_values)
+{
+  // Get MPI communicator
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
+
+  // Update ghost values of the vector solution field
+  VectorType solution_field_owned_copy(dof_handler.locally_owned_dofs(),
+                                       mpi_communicator);
+  solution_field_owned_copy = solution_field;
+  solution_field_owned_copy.update_ghost_values();
+
+  // Evaluate scalar values at points using RemotePointEvaluation
+  Utilities::MPI::RemotePointEvaluation<dim, dim> remote_point_evaluator;
+  evaluated_vector_values =
+    VectorTools::point_values<n_component>(mapping,
+                                           dof_handler,
+                                           solution_field_owned_copy,
+                                           evaluation_points,
+                                           remote_point_evaluator);
+}
+
+template void
+evaluate_values_at_points<2, 2, GlobalVectorType>(
+  const Mapping<2>                  &mapping,
+  const DoFHandler<2>               &dof_handle,
+  const GlobalVectorType            &solution_field,
+  const std::vector<Point<2>>       &evaluation_points,
+  std::vector<Tensor<1, 2, double>> &evaluated_vector_values);
+
+template void
+evaluate_values_at_points<3, 3, GlobalVectorType>(
+  const Mapping<3>                  &mapping,
+  const DoFHandler<3>               &dof_handle,
+  const GlobalVectorType            &solution_field,
+  const std::vector<Point<3>>       &evaluation_points,
+  std::vector<Tensor<1, 3, double>> &evaluated_vector_values);
