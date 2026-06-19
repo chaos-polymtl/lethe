@@ -376,6 +376,17 @@ private:
    * @brief Random number generator for the diameter selection.
    */
   std::mt19937 gen;
+
+  // Normalised volume-based PDF values at each diameter node.
+  // Only populated when weighting_type == volume_based &&
+  // interpolate_diameter_values.
+  std::vector<double> fv;
+
+  // Normalisation constant for the volume-based interpolated CDF
+  // (sum of all per-segment integrals of fv(d)/d³).
+  // Only populated when weighting_type == volume_based &&
+  // interpolate_diameter_values.
+  double total_integral = 0.0;
 };
 
 /**
