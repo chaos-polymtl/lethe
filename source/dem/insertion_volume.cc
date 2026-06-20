@@ -119,8 +119,8 @@ InsertionVolume<dim, PropertiesIndex>::insert(
       // For the processes 1 : n-1
       else
         {
-          first_id = this_mpi_process * this->inserted_this_step_this_proc;
-          last_id = (this_mpi_process + 1) * this->inserted_this_step_this_proc;
+          first_id = this_mpi_process * inserted_this_step_this_proc;
+          last_id = (this_mpi_process + 1) * inserted_this_step_this_proc;
         }
 
       // Looping through the particles on each process and finding their

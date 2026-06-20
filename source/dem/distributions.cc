@@ -401,9 +401,8 @@ CustomDistribution::CustomDistribution(
 {
   // Assuming that the diameter values are in ascending order. There is a check
   // for that right after
-  // Min cutoff : The default value is -1. If the does not change the default
-  // value, the minimum cutoff is set to the smallest diameter value - a small
-  // epsilon.
+  // Min cutoff: The default value is -1. If the value did not changed the
+  // minimum cutoff is set to the smallest diameter value - a small epsilon.
   if (min_cutoff < 0.)
     this->dia_min_cutoff = diameter_values[0] - 1e-8;
   else

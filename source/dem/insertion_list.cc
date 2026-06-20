@@ -149,9 +149,7 @@ InsertionList<dim, PropertiesIndex>::insert(
 
       // Assign inserted particles properties
       this->assign_particle_properties_for_list_insertion(
-        dem_parameters,
-        n_particles_to_insert_this_proc,
-        particle_properties);
+        dem_parameters, n_particles_to_insert_this_proc, particle_properties);
 
       // Insert the particles using the points and assigned properties
       particle_handler.insert_global_particles(

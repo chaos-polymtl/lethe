@@ -191,9 +191,6 @@ protected:
   // Maximum particle diameter
   double maximum_diameter;
 
-  // The number of inserted particles at this step on this processor
-  // unsigned int inserted_this_step_this_proc;
-
   // A distribution object that carries out the attribution of diameter to every
   // particle during an insertion time step
   std::vector<std::shared_ptr<Distribution>> distributions_objects;
