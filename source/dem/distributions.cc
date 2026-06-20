@@ -710,17 +710,6 @@ CustomDistribution::particle_size_sampling(
           double sampled_diameter;
 
           if (weighting_type == DistributionWeightingType::volume_based &&
-              function_type == ProbabilityFunctionType::CDF)
-            {
-              const double inv_d_low2  = 1.0 / (d_low * d_low);
-              const double inv_d_high2 = 1.0 / (d_high * d_high);
-
-              sampled_diameter =
-                1.0 /
-                std::sqrt(inv_d_low2 - u_local * (inv_d_low2 - inv_d_high2));
-            }
-
-          if (weighting_type == DistributionWeightingType::volume_based &&
               function_type == ProbabilityFunctionType::PDF)
             {
               // The number-based CDF here was built by integrating the
@@ -730,7 +719,6 @@ CustomDistribution::particle_size_sampling(
               // bin). We must invert the true antiderivative:
               //   F(d) = -a_i/(2d²) - b_i/d
               // which leads to a quadratic in d.
-
               const double b_i =
                 (fv[index_high] - fv[index_low]) / (d_high - d_low);
               const double a_i = fv[index_low] - b_i * d_low;
@@ -753,17 +741,11 @@ CustomDistribution::particle_size_sampling(
               const double discriminant = B * B - 4.0 * A * a_i;
               const double sqrt_disc = std::sqrt(std::max(discriminant, 0.0));
 
-              double root1 = std::numeric_limits<double>::quiet_NaN();
-              double root2 = std::numeric_limits<double>::quiet_NaN();
-
               // Guard against A ≈ 0 (b_i ≈ 0, i.e. flat fv on this bin),
               // which degenerates the quadratic into a linear equation:
               // 2*b_i*d + a_i = 0  ->  d = -a_i / (2*b_i)
-              if (std::abs(A) > 1e-300)
-                {
-                  root1 = (-B + sqrt_disc) / (2.0 * A);
-                  root2 = (-B - sqrt_disc) / (2.0 * A);
-                }
+              const double root1 = (-B + sqrt_disc) / (2.0 * A);
+              const double root2 = (-B - sqrt_disc) / (2.0 * A);
 
               if (root1 >= d_low && root1 <= d_high)
                 sampled_diameter = root1;
@@ -777,6 +759,15 @@ CustomDistribution::particle_size_sampling(
                   // edge effects at bin boundaries).
                   sampled_diameter = d_low + u_local * (d_high - d_low);
                 }
+            }
+          else
+            {
+              const double inv_d_low2  = 1.0 / (d_low * d_low);
+              const double inv_d_high2 = 1.0 / (d_high * d_high);
+
+              sampled_diameter =
+                1.0 /
+                std::sqrt(inv_d_low2 - u_local * (inv_d_low2 - inv_d_high2));
             }
 
           if (sampled_diameter > this->dia_min_cutoff &&
