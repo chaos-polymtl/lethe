@@ -167,10 +167,11 @@ NormalDistribution::NormalDistribution(
 
 void
 NormalDistribution::particle_size_sampling(
-  const unsigned int &number_of_particles)
+  const unsigned int  &number_of_particles,
+  std::vector<double> &particle_sizes)
 {
-  this->particle_sizes.clear();
-  this->particle_sizes.reserve(number_of_particles);
+  particle_sizes.clear();
+  particle_sizes.reserve(number_of_particles);
 
   std::normal_distribution<> distribution{diameter_average, standard_deviation};
 
@@ -182,7 +183,7 @@ NormalDistribution::particle_size_sampling(
           temp_diameter < this->dia_max_cutoff)
         {
           n_created_diameter++;
-          this->particle_sizes.push_back(temp_diameter);
+          particle_sizes.push_back(temp_diameter);
         }
     }
 }
@@ -285,10 +286,11 @@ LogNormalDistribution::LogNormalDistribution(
 
 void
 LogNormalDistribution::particle_size_sampling(
-  const unsigned int &number_of_particles)
+  const unsigned int  &number_of_particles,
+  std::vector<double> &particle_sizes)
 {
-  this->particle_sizes.clear();
-  this->particle_sizes.reserve(number_of_particles);
+  particle_sizes.clear();
+  particle_sizes.reserve(number_of_particles);
 
   std::lognormal_distribution<> distribution{mu_ln, sigma_ln};
 
@@ -300,7 +302,7 @@ LogNormalDistribution::particle_size_sampling(
           temp_diameter < this->dia_max_cutoff)
         {
           n_created_diameter++;
-          this->particle_sizes.push_back(temp_diameter);
+          particle_sizes.push_back(temp_diameter);
         }
     }
 }
@@ -351,13 +353,14 @@ UniformDistribution::UniformDistribution(const double &d_values)
 
 void
 UniformDistribution::particle_size_sampling(
-  const unsigned int &number_of_particles)
+  const unsigned int  &number_of_particles,
+  std::vector<double> &particle_sizes)
 {
-  this->particle_sizes.clear();
-  this->particle_sizes.reserve(number_of_particles);
+  particle_sizes.clear();
+  particle_sizes.reserve(number_of_particles);
 
   for (unsigned int n = 0; n < number_of_particles; ++n)
-    this->particle_sizes.push_back(this->diameter_value);
+    particle_sizes.push_back(this->diameter_value);
 }
 
 double
@@ -625,10 +628,11 @@ CustomDistribution::CustomDistribution(
 
 void
 CustomDistribution::particle_size_sampling(
-  const unsigned int &number_of_particles)
+  const unsigned int  &number_of_particles,
+  std::vector<double> &particle_sizes)
 {
-  this->particle_sizes.clear();
-  this->particle_sizes.reserve(number_of_particles);
+  particle_sizes.clear();
+  particle_sizes.reserve(number_of_particles);
   unsigned int n_created_diameter = 0;
 
   // We sample a random number U between [0, CDF_max]
@@ -672,7 +676,7 @@ CustomDistribution::particle_size_sampling(
               sampled_diameter < this->dia_max_cutoff)
             {
               n_created_diameter++;
-              this->particle_sizes.push_back(sampled_diameter);
+              particle_sizes.push_back(sampled_diameter);
             }
         }
     }
@@ -699,7 +703,7 @@ CustomDistribution::particle_size_sampling(
               sampled_diameter < this->dia_max_cutoff)
             {
               n_created_diameter++;
-              this->particle_sizes.push_back(sampled_diameter);
+              particle_sizes.push_back(sampled_diameter);
             }
         }
     }

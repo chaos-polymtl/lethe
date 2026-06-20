@@ -11,9 +11,8 @@ DeclException2(DiameterSizeCoherence,
                << "Incoherent particle diameter lists: list x has " << arg1
                << " element(s) and list d has " << arg2 << " element(s).");
 
-/* @brief The constructor of list insertion class does not accomplish anything other
- * than check if the position list are of the coherent size and to
- * create the insertion_points member
+/* @brief The constructor checks if the position lists are of a coherent size
+ * relative to each-other and creates the insertion_points member
  */
 template <int dim, typename PropertiesIndex>
 InsertionList<dim, PropertiesIndex>::InsertionList(
@@ -27,7 +26,7 @@ InsertionList<dim, PropertiesIndex>::InsertionList(
   , remaining_particles_of_each_type(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {
-  // Initializing current inserting particle type
+  // Initializing the current inserting particle type
   current_inserting_particle_type = 0;
 
   const std::vector<double> &list_x  = dem_parameters.insertion_info.list_x;
@@ -47,7 +46,7 @@ InsertionList<dim, PropertiesIndex>::InsertionList(
   // particles
   if (list_d[0] < 0)
     {
-      double particle_average_diameter =
+      const double particle_average_diameter =
         dem_parameters.lagrangian_physical_properties.particle_average_diameter
           .at(current_inserting_particle_type);
       list_d.assign(list_x.size(), particle_average_diameter);
@@ -126,7 +125,7 @@ InsertionList<dim, PropertiesIndex>::insert(
       insertion_points_on_proc_this_step.reserve(
         n_particles_to_insert_this_proc);
 
-      // Because the list insertion is made to insert only a few particles
+      // Because the list insertion is made to insert only a few particles,
       // only processor 0 manages the insertion of these particles
       if (this_mpi_process == 0)
         {
@@ -137,7 +136,7 @@ InsertionList<dim, PropertiesIndex>::insert(
             }
         }
 
-      // Obtain global bounding boxes
+      // Get global bounding boxes
       const auto my_bounding_box =
         GridTools::compute_mesh_predicate_bounding_box(
           triangulation, IteratorFilters::LocallyOwnedCell());
@@ -152,7 +151,6 @@ InsertionList<dim, PropertiesIndex>::insert(
       this->assign_particle_properties_for_list_insertion(
         dem_parameters,
         n_particles_to_insert_this_proc,
-        current_inserting_particle_type,
         particle_properties);
 
       // Insert the particles using the points and assigned properties
@@ -161,7 +159,7 @@ InsertionList<dim, PropertiesIndex>::insert(
         global_bounding_boxes,
         particle_properties);
 
-      // Update number of particles remaining to be inserted
+      // Updated number of particles remaining to be inserted
       remaining_particles_of_each_type -= n_total_particles_to_insert;
 
 
@@ -180,7 +178,6 @@ InsertionList<dim, PropertiesIndex>::
   assign_particle_properties_for_list_insertion(
     const DEMSolverParameters<dim>   &dem_parameters,
     const unsigned int               &inserted_this_step_this_proc,
-    const unsigned int               &current_inserting_particle_type,
     std::vector<std::vector<double>> &particle_properties)
 {
   // Clearing and resizing particle_properties
@@ -196,18 +193,17 @@ InsertionList<dim, PropertiesIndex>::
        particle_counter < inserted_this_step_this_proc;
        ++particle_counter)
     {
-      double type     = current_inserting_particle_type;
-      double diameter = this->diameters[particle_counter];
-      double density =
-        physical_properties.density_particle[current_inserting_particle_type];
-      double vel_x   = this->velocities[particle_counter][0];
-      double vel_y   = this->velocities[particle_counter][1];
-      double vel_z   = this->velocities[particle_counter][2];
-      double omega_x = this->angular_velocities[particle_counter][0];
-      double omega_y = this->angular_velocities[particle_counter][1];
-      double omega_z = this->angular_velocities[particle_counter][2];
-      double mass    = density * 4. / 3. * M_PI *
-                    Utilities::fixed_power<3, double>(diameter * 0.5);
+      const double type     = current_inserting_particle_type;
+      const double diameter = this->diameters[particle_counter];
+      const double density  = physical_properties.density_particle[type];
+      const double vel_x    = this->velocities[particle_counter][0];
+      const double vel_y    = this->velocities[particle_counter][1];
+      const double vel_z    = this->velocities[particle_counter][2];
+      const double omega_x  = this->angular_velocities[particle_counter][0];
+      const double omega_y  = this->angular_velocities[particle_counter][1];
+      const double omega_z  = this->angular_velocities[particle_counter][2];
+      const double mass     = density * 4. / 3. * M_PI *
+                          Utilities::fixed_power<3, double>(diameter * 0.5);
 
       std::vector<double> properties_of_one_particle{
         type, diameter, mass, vel_x, vel_y, vel_z, omega_x, omega_y, omega_z};

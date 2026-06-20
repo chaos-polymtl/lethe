@@ -27,7 +27,7 @@ protected:
   double dia_max_cutoff;
 
 public:
-  std::vector<double> particle_sizes;
+  // std::vector<double> particle_sizes;
 
   /**
    * @brief Default destructor.
@@ -40,7 +40,8 @@ public:
    * @param number_of_particles Number of particle inserted at a given insertion time step.
    */
   virtual void
-  particle_size_sampling(const unsigned int &number_of_particles) = 0;
+  particle_size_sampling(const unsigned int  &number_of_particles,
+                         std::vector<double> &particle_sizes) = 0;
 
   /**
    * @brief Return the minimum diameter for a certain distribution.
@@ -102,7 +103,8 @@ public:
    * insertion time step.
    */
   void
-  particle_size_sampling(const unsigned int &number_of_particles) override;
+  particle_size_sampling(const unsigned int  &number_of_particles,
+                         std::vector<double> &particle_sizes) override;
 
   /**
    * @brief Find the minimum diameter a normal distribution.
@@ -181,7 +183,8 @@ public:
    * insertion time step.
    */
   void
-  particle_size_sampling(const unsigned int &number_of_particles) override;
+  particle_size_sampling(const unsigned int  &number_of_particles,
+                         std::vector<double> &particle_sizes) override;
 
   /**
    * @brief Find the minimum diameter a normal distribution.
@@ -246,7 +249,8 @@ public:
    * @param number_of_particles Number of particle inserted at a given insertion time step.
    */
   void
-  particle_size_sampling(const unsigned int &number_of_particles) override;
+  particle_size_sampling(const unsigned int  &number_of_particles,
+                         std::vector<double> &particle_sizes) override;
 
   /**
    * @brief Find the minimum diameter of the uniform distribution.
@@ -322,7 +326,8 @@ public:
    * insertion time step.
    */
   void
-  particle_size_sampling(const unsigned int &number_of_particles) override;
+  particle_size_sampling(const unsigned int  &number_of_particles,
+                         std::vector<double> &particle_sizes) override;
 
   /**
    * @brief Find the minimum diameter of the custom distribution.

@@ -78,8 +78,11 @@ Insertion<dim, PropertiesIndex>::assign_particle_properties(
   // TODO: MAYBE CHANGE THE INPUT TO PHYSICAL PROPERTIES DIRECTLY
   auto physical_properties = dem_parameters.lagrangian_physical_properties;
 
+  // Where the particle diameters will be stored.
+  std::vector<double> particle_sizes;
+
   distributions_objects[current_inserting_particle_type]
-    ->particle_size_sampling(inserted_this_step_this_proc);
+    ->particle_size_sampling(inserted_this_step_this_proc, particle_sizes);
 
   // A loop is defined over the number of particles which are going to be
   // inserted at this step
@@ -89,18 +92,15 @@ Insertion<dim, PropertiesIndex>::assign_particle_properties(
     {
       double type = current_inserting_particle_type;
       // We make sure that the diameter is positive
-      double diameter =
-        std::abs(distributions_objects[current_inserting_particle_type]
-                   ->particle_sizes[particle_counter]);
-      double density =
-        physical_properties.density_particle[current_inserting_particle_type];
-      double vel_x   = dem_parameters.insertion_info.initial_vel[0];
-      double vel_y   = dem_parameters.insertion_info.initial_vel[1];
-      double vel_z   = dem_parameters.insertion_info.initial_vel[2];
-      double omega_x = dem_parameters.insertion_info.initial_omega[0];
-      double omega_y = dem_parameters.insertion_info.initial_omega[1];
-      double omega_z = dem_parameters.insertion_info.initial_omega[2];
-      double mass    = density * 4. / 3. * M_PI *
+      double diameter = std::abs(particle_sizes[particle_counter]);
+      double density  = physical_properties.density_particle[type];
+      double vel_x    = dem_parameters.insertion_info.initial_vel[0];
+      double vel_y    = dem_parameters.insertion_info.initial_vel[1];
+      double vel_z    = dem_parameters.insertion_info.initial_vel[2];
+      double omega_x  = dem_parameters.insertion_info.initial_omega[0];
+      double omega_y  = dem_parameters.insertion_info.initial_omega[1];
+      double omega_z  = dem_parameters.insertion_info.initial_omega[2];
+      double mass     = density * 4. / 3. * M_PI *
                     Utilities::fixed_power<3, double>(diameter * 0.5);
 
       std::vector<double> properties_of_one_particle{
