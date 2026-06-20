@@ -396,8 +396,8 @@ using namespace Parameters::Lagrangian;
 inline void
 setup_distributions(const LagrangianPhysicalProperties &lpp,
                     std::vector<std::shared_ptr<Distribution>>
-                                &size_distribution_object_container,
-                    double      &maximum_particle_diameter,
+                                      &size_distribution_object_container,
+                    double            &maximum_particle_diameter,
                     const unsigned int mpi_process_id,
                     const ConditionalOStream &pcout)
 {
