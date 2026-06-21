@@ -66,28 +66,26 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - MINOR The GCMG (global-coarsening multigrid) preconditioner of the VANS matrix-free solver was building the particle-fluid force transfer twice and never building the particle-fluid drag transfer (copy-paste bug). This left the drag contribution missing on coarse multigrid levels. The correct transfer is now built for each auxiliary field. [#1991](https://github.com/chaos-polymtl/lethe/pull/1991)
 
+## [Sample] - YYYY/MM/DD
+### Added
 
+- MAJOR/MINOR/PATCH Description (#PR).
 
-[Sample] - YYYY/MM/DD
-Added
+### Changed
 
-    MAJOR/MINOR/PATCH Description (#PR).
+- MAJOR/MINOR/PATCH Description (#PR).
 
-Changed
+### Deprecated
 
-    MAJOR/MINOR/PATCH Description (#PR).
+- MAJOR/MINOR/PATCH Description (#PR).
 
-Deprecated
+### Removed
 
-    MAJOR/MINOR/PATCH Description (#PR).
+- MAJOR/MINOR/PATCH Description (#PR).
 
-Removed
+### Fixed
 
-    MAJOR/MINOR/PATCH Description (#PR).
-
-Fixed
-
-    MAJOR/MINOR/PATCH Description (#PR).
+- MAJOR/MINOR/PATCH Description (#PR).
 
 
 

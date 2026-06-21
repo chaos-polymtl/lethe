@@ -37,7 +37,7 @@ end
 subsection mesh
   set type               = dealii
   set grid type          = hyper_cube
-  set grid arguments     = -1 : 1 : true
+  set grid arguments     = -1 : 1 : false
   set initial refinement = 4
 end
 
@@ -89,8 +89,8 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set velocity order = 2
-  set pressure order = 2
+  set velocity degree = 2
+  set pressure degree = 2
 end
 
 # --------------------------------------------------
