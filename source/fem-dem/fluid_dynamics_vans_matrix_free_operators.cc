@@ -10,7 +10,7 @@ VANSOperator<dim, number>::evaluate_non_linear_term_and_calculate_tau(
 {
   // Assert that a correct stabilization method is used
   // Currently the VANS solver only supports pspg_supg
-  AssertThrow(this->stabilization ==
+  AssertThrow(this->stabilization_parameters.stabilization ==
                 Parameters::Stabilization::NavierStokesStabilization::pspg_supg,
               ExcMessage(
                 "PSPG-SUPG stabilization is the only stabilization method"

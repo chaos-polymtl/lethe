@@ -183,7 +183,8 @@ public:
    * term.
    * @param[in] properties_manager The physical properties manager (see
    physical_properties_manager.h)
-   * @param[in] stabilization Stabilization type specified in parameter file.
+   * @param[in] stabilization_parameters Stabilization parameters (type and
+   * CIP/GJP coefficients) specified in the parameter file.
    * @param[in] mg_level Level of the operator in case of MG methods.
    * @param[in] simulation_control Required to get the time stepping method.
    * @param[in] physical_properties_manager Required to have the updated values
@@ -205,7 +206,7 @@ public:
     const std::shared_ptr<Function<dim>> forcing_function,
     const std::shared_ptr<PhysicalPropertiesManager>
                                              &physical_properties_manager,
-    const StabilizationType                   stabilization,
+    const Parameters::Stabilization          &stabilization_parameters,
     const unsigned int                        mg_level,
     const std::shared_ptr<SimulationControl> &simulation_control,
     const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
@@ -227,7 +228,8 @@ public:
    * term.
    * @param[in] properties_manager The physical properties manager (see
    * physical_properties_manager.h)
-   * @param[in] stabilization Stabilization type specified in parameter file.
+   * @param[in] stabilization_parameters Stabilization parameters (type and
+   * CIP/GJP coefficients) specified in the parameter file.
    * @param[in] mg_level Level of the operator in case of MG methods.
    * @param[in] simulation_control Required to get the time stepping method.
    * @param[in] boundary_conditions Contains information regarding all
@@ -247,7 +249,7 @@ public:
     const std::shared_ptr<Function<dim>> forcing_function,
     const std::shared_ptr<PhysicalPropertiesManager>
                                              &physical_properties_manager,
-    const StabilizationType                   stabilization,
+    const Parameters::Stabilization          &stabilization_parameters,
     const unsigned int                        mg_level,
     const std::shared_ptr<SimulationControl> &simulation_control,
     const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
@@ -544,22 +546,37 @@ protected:
     const std::pair<unsigned int, unsigned int> &range) const;
 
   /**
-   * @brief Loop over all internal face batches within certain range and perform a face
-   * integral with access to global vectors, i.e., gathering and scattering
-   * values. This is only required for compilation and not needed for our CG
-   * implementation.
+   * @brief Loop over all internal face batches within a certain range and add
+   * the gradient-jump (CIP/GJP) stabilization face integral, gathering and
+   * scattering values from/to the global vectors. A no-op when CIP is disabled.
+   *
+   * @tparam assemble_residual Flag selecting the read of the source vector:
+   * read_dof_values_plain for the residual, read_dof_values for the Jacobian.
    *
    * @param[in] matrix_free Object that contains all data.
    * @param[in,out] dst Global vector where the final result is added.
    * @param[in] src Input vector with all values in all cells.
    * @param[in] range Range of the face batch.
    */
+  template <bool assemble_residual>
   void
   do_internal_face_integral_range(
     const MatrixFree<dim, number>               &matrix_free,
     VectorType                                  &dst,
     const VectorType                            &src,
     const std::pair<unsigned int, unsigned int> &range) const;
+
+  /**
+   * @brief Carry out the gradient-jump (CIP/GJP) interior-face integral on a
+   * pair of face evaluators, penalizing the jump of the normal velocity and
+   * pressure gradients across the face.
+   *
+   * @param[in,out] phi_m Face evaluator on the interior side of the face.
+   * @param[in,out] phi_p Face evaluator on the exterior side of the face.
+   */
+  void
+  do_internal_face_integral_local(FEFaceIntegrator &phi_m,
+                                  FEFaceIntegrator &phi_p) const;
 
   /**
    * @brief Interface to function in charge of computing the residual using a cell
@@ -671,10 +688,11 @@ protected:
   Tensor<1, dim, VectorizedArray<number>> beta_force;
 
   /**
-   * @brief Stabilization type needed to add or remove terms from operator.
+   * @brief Stabilization parameters (type and CIP/GJP coefficients) used to add
+   * or remove terms from the operator.
    *
    */
-  StabilizationType stabilization;
+  Parameters::Stabilization stabilization_parameters;
 
   /**
    * @brief Object storing the information regarding the time stepping method.
@@ -852,6 +870,25 @@ protected:
    *
    */
   Table<1, VectorizedArray<number>> effective_beta_face;
+
+  /**
+   * @brief Flag enabling the gradient-jump (CIP/GJP) stabilization, which adds
+   * interior-face penalty terms on the jump of the normal velocity and pressure
+   * gradients. Set when stabilization == cip.
+   */
+  bool enable_cip = false;
+
+  /**
+   * @brief Table storing, per interior-face batch and quadrature point, the
+   * precomputed velocity gradient-jump penalty gamma_u*(P+1)^-4*|u.n|*h^2.
+   */
+  Table<2, VectorizedArray<number>> face_cip_penalty_velocity;
+
+  /**
+   * @brief Table storing, per interior-face batch and quadrature point, the
+   * precomputed pressure gradient-jump penalty gamma_p*(P+1)^-4*|u.n|*h^2.
+   */
+  Table<2, VectorizedArray<number>> face_cip_penalty_pressure;
 
   /**
    * @brief Flag to turn the computation of mortar coupling terms on or off.

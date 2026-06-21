@@ -1224,7 +1224,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             quadrature_mg,
             forcing_function,
             physical_properties_manager,
-            this->simulation_parameters.stabilization.stabilization,
+            this->simulation_parameters.stabilization,
             levels[level].first,
             simulation_control,
             this->simulation_parameters.boundary_conditions,
@@ -1722,7 +1722,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             quadrature_mg,
             forcing_function,
             physical_properties_manager,
-            this->simulation_parameters.stabilization.stabilization,
+            this->simulation_parameters.stabilization,
             numbers::invalid_unsigned_int,
             simulation_control,
             this->simulation_parameters.boundary_conditions,
@@ -2693,9 +2693,12 @@ FluidDynamicsMatrixFree<dim>::FluidDynamicsMatrixFree(
         NavierStokesNonNewtonianStabilizedOperator<dim, double>>();
       AssertThrow(
         this->simulation_parameters.stabilization.stabilization ==
-          Parameters::Stabilization::NavierStokesStabilization::pspg_supg,
+            Parameters::Stabilization::NavierStokesStabilization::pspg_supg ||
+          this->simulation_parameters.stabilization.stabilization ==
+            Parameters::Stabilization::NavierStokesStabilization::cip,
         dealii::ExcMessage(
-          "Matrix free Non-Newtonian Navier-Stokes only supports SUPG/PSPG stabilization."));
+          "Matrix free Non-Newtonian Navier-Stokes only supports SUPG/PSPG "
+          "and CIP (gradient jump) stabilization."));
     }
   else
     system_operator =
@@ -2982,7 +2985,7 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
     *this->cell_quadrature,
     this->forcing_function,
     this->physical_properties_manager,
-    this->simulation_parameters.stabilization.stabilization,
+    this->simulation_parameters.stabilization,
     mg_level,
     this->simulation_control,
     this->simulation_parameters.boundary_conditions,

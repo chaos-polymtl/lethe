@@ -83,5 +83,31 @@ This is the version of the GLS stabilization if the finite element method is onl
 
    \tau_{LSIC} = \frac{|\mathrm{u}| h}{2}
 
-The non-linear problem is solved in the same fashion and the structure of the Jacobian is the same one as that of the SUPG/PSPG formulation. 
+The non-linear problem is solved in the same fashion and the structure of the Jacobian is the same one as that of the SUPG/PSPG formulation.
+
+
+-----------------------------------------------
+Continuous Interior Penalty (Gradient Jump)
+-----------------------------------------------
+
+Unlike the residual-based methods above, the Continuous Interior Penalty (CIP), or gradient-jump penalty (GJP), stabilization does not rely on the strong residual of the equations. Instead, it adds a *symmetric, weakly-consistent* penalty on the jump of the normal gradient of the solution across interior faces. The term vanishes for smooth solutions (the gradient jump tends to zero under refinement), so optimal accuracy is preserved while equal-order elements are stabilized. In Lethe this stabilization is available with the matrix-free solver (``lethe-fluid-matrix-free``) and **replaces** the SUPG/PSPG terms: the cell integral keeps only the plain Galerkin weak form and all stabilization comes from the face terms.
+
+For an interior face :math:`F` shared by the elements :math:`K^-` and :math:`K^+`, with unit normal :math:`\mathbf{n}`, the jump of the normal derivative of a field :math:`\phi` is
+
+.. math::
+
+   [\![ \partial_n \phi ]\!] = \left( \nabla \phi|_{K^-} - \nabla \phi|_{K^+} \right) \cdot \mathbf{n} .
+
+The following terms are added to the momentum and continuity weak forms, respectively:
+
+.. math::
+
+   & \sum_{F} \gamma_u (P+1)^{-4} |\mathbf{u}\cdot\mathbf{n}|\, h_F^2 \int_{F} [\![ \partial_n u_k ]\!] \, [\![ \partial_n v_k ]\!] \, \mathrm{d}s
+   \\
+   & \sum_{F} \gamma_p (P+1)^{-4} \left( |\mathbf{u}\cdot\mathbf{n}| + \frac{\nu}{h_F} \right) h_F^2 \int_{F} [\![ \partial_n p ]\!] \, [\![ \partial_n q ]\!] \, \mathrm{d}s
+
+where :math:`P` is the polynomial degree, :math:`h_F` the size of the adjacent element, :math:`\nu` the kinematic viscosity, and :math:`\gamma_u`, :math:`\gamma_p` are user coefficients of order one (default :math:`0.5`). The advecting velocity :math:`\mathbf{u}` is frozen at the current non-linear iterate, which makes the face terms linear and symmetric. The :math:`(P+1)^{-4}` scaling follows the eigenanalysis of `Moura et al. (2022) <https://doi.org/10.1016/j.cma.2021.114200>`_.
+
+The velocity penalty controls under-resolved convection and correctly vanishes in stagnant regions (:math:`|\mathbf{u}\cdot\mathbf{n}| \to 0`). The pressure penalty provides the inf-sup control needed by equal-order pairs; its viscous floor :math:`\nu/h_F` ensures the penalty does not vanish in the diffusive limit (for instance at zero velocity, where a purely convective penalty would leave the pressure block singular), recovering the generalized-Stokes continuous interior penalty of Burman and Hansbo (2006). Because the penalty acts on the gradient jump rather than the strong residual, its contribution to the Jacobian is a symmetric coupling between neighbouring elements, which requires a flux sparsity pattern in the assembled coarse/preconditioner matrices.
+
 

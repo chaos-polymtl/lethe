@@ -827,9 +827,28 @@ namespace Parameters
       prm.declare_entry(
         "stabilization",
         "pspg_supg",
-        Patterns::Selection("pspg_supg|gls|grad_div"),
+        Patterns::Selection("pspg_supg|gls|grad_div|cip"),
         "Type of stabilization used for the Navier-Stokes equations"
-        "Choices are <pspg_supg|gls|grad_div>.");
+        "Choices are <pspg_supg|gls|grad_div|cip>.");
+
+      prm.declare_entry(
+        "cip gradient jump velocity coefficient",
+        "0.5",
+        Patterns::Double(),
+        "Coefficient (gamma_u) of the velocity gradient-jump penalty used by "
+        "the 'cip' stabilization. The per-face penalty is "
+        "gamma_u*(P+1)^-4*|u.n|*h^2, applied to the jump of the normal velocity "
+        "gradient across interior faces.");
+
+      prm.declare_entry(
+        "cip gradient jump pressure coefficient",
+        "0.5",
+        Patterns::Double(),
+        "Coefficient (gamma_p) of the pressure gradient-jump penalty used by "
+        "the 'cip' stabilization. The per-face penalty is "
+        "gamma_p*(P+1)^-4*(|u.n| + nu/h)*h^2, applied to the jump of the normal "
+        "pressure gradient; the nu/h floor keeps the equal-order pressure "
+        "stabilized in the diffusive limit (e.g. at zero velocity).");
 
       prm.declare_entry(
         "heat transfer dcdd stabilization",
@@ -890,6 +909,8 @@ namespace Parameters
           stabilization = NavierStokesStabilization::gls;
         else if (op == "grad_div")
           stabilization = NavierStokesStabilization::grad_div;
+        else if (op == "cip")
+          stabilization = NavierStokesStabilization::cip;
         else
           throw(std::runtime_error("Invalid stabilization strategy"));
       }
@@ -910,6 +931,11 @@ namespace Parameters
       dcdd_diffusion_coeff   = prm.get_double("cls dcdd diffusion factor");
 
       pressure_scaling_factor = prm.get_double("pressure scaling factor");
+
+      cip_gradient_jump_velocity_coefficient =
+        prm.get_double("cip gradient jump velocity coefficient");
+      cip_gradient_jump_pressure_coefficient =
+        prm.get_double("cip gradient jump pressure coefficient");
     }
     prm.leave_subsection();
   }

@@ -816,8 +816,21 @@ namespace Parameters
     {
       pspg_supg,
       gls,
-      grad_div
+      grad_div,
+      cip
     } stabilization;
+
+    // Coefficient (gamma_u) of the velocity gradient-jump (CIP/GJP) penalty.
+    // Per-face penalty is gamma_u * (P+1)^-4 * |u.n| * h^2, applied to the jump
+    // of the normal velocity gradient across interior faces. Only used when
+    // stabilization == cip.
+    double cip_gradient_jump_velocity_coefficient;
+
+    // Coefficient (gamma_p) of the pressure gradient-jump (CIP/GJP) penalty.
+    // Per-face penalty is gamma_p * (P+1)^-4 * |u.n| * h^2, applied to the jump
+    // of the normal pressure gradient; provides pressure stabilization for the
+    // equal-order velocity-pressure pair. Only used when stabilization == cip.
+    double cip_gradient_jump_pressure_coefficient;
 
     enum class ScalarLimiters : std::int8_t
     {
