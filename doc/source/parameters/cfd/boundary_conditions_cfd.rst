@@ -34,22 +34,50 @@ or in Einstein notation:
     \nu \partial_i u_j n_j  - p n_i = \mathrm{traction\_fn}_i
 
 .. code-block:: text
-    subsection boundary conditions
-      set number                = 2
-      set fix pressure constant = true
-      subsection bc 0
-        set id   = 0, 1, 2
-        set type = noslip
+
+  subsection boundary conditions
+    set number                = 3
+    set time dependent        = false
+    set fix pressure constant = false
+    subsection bc 0
+      set id                 = 0
+      set type               = function
+
+      subsection u
+        set Function expression = -y
       end
-      subsection bc 1
-        set id   = 3
-        set type = neumann traction
-        subsection traction fn
-          set Function expression = 2x; 3y; 0.0;
-        end
+      subsection v
+        set Function expression = x
       end
+      subsection w
+        set Function expression = 0
+      end
+      subsection p
+        set Function expression = 0
+      end
+
+      # Center of rotation used for torque calculation
+      subsection center of rotation
+        set x = 0
+        set y = 0
+        set z = 0
+      end
+
+      set periodic id        = 1
+      set periodic direction = 0
+      set beta               = 1
     end
-    
+    subsection bc 1
+      set type = noslip
+    end
+    subsection bc 2
+      set type = neumann traction
+      subsection traction fn
+        set Function expression = 2x; 5xy; 3yz; 0
+      end 
+    end  
+  end
+
 * ``number`` specifies the number of boundary conditions of the problem. Hence, ``set number`` refers to the number of ``bc`` subsections, and not the number of boundary ids in the mesh. For instance, periodicity between 2 boundaries counts as 1 condition even if it requires two distinct boundary ids.
 
 .. warning::
