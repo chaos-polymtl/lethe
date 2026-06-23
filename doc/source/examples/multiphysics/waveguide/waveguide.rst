@@ -360,7 +360,7 @@ to run the simulation using ten CPU cores.
 
 .. tip::
 
-   Alternatively, the application ``lethe-fluid-matrix-free`` can be used to run the simulation (``mpirun -np 10 lethe-fluid-matrix-free waveguide.prm``). For three mesh adaptation, it takes :math:`\sim \, 6` minutes on :math:`10` processes.
+   Alternatively, the application ``lethe-fluid-matrix-free`` can be used to run the simulation (``mpirun -np 10 lethe-fluid-matrix-free waveguide.prm``). For three mesh adaptation, it takes :math:`\sim \, 6` minutes on :math:`10` processes. Indeed, using the matrix free solver does not affect the cacluation time because the time harmonic solver is not affected by the matrix free option. 
 
 ----------------------
 Results and Discussion
