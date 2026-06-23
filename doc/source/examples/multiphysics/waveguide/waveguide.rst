@@ -99,16 +99,30 @@ The :math:`\mathrm{TE}_{mn}` modes can be specified in the subsection `waveguide
 
 .. code-block:: text
 
-    subsection waveguide mode
-      set mode type    = TE
-      set mode order m = 1
-      set mode order n = 0
+    subsection time harmonic maxwell
+        set electromagnetic frequency  = 2.45e9
+        set number of waveguide inlets = 1
+
+        subsection waveguide inlet 0
+            set port boundary id = 4
+
+            set corner 0 = 0,0,0
+            set corner 1 = 0.25,0,0
+            set corner 2 = 0, 0.25, 0.
+            set corner 3 = 0.25, 0.25, 0.
+
+            subsection waveguide mode
+                set mode type    = TE
+                set mode order m = 1
+                set mode order n = 0
+            end
+        end
     end
 
 
 To apply a transverse magnetic mode, simply modify the ``mode type`` with “TM”.
 
-The frequency of the inlet is originally set to :math:`f = \mathrm{2.45}\, \mathrm{GHz}` because it is the nominal frequency of microwave reactors in the industry. This value can be modified in the parameter file in the subsection ``time harmonic maxwell``: ``set electromagnetic frequency = 2.45e9``
+The frequency of the inlet is originally set to :math:`f = \mathrm{2.45}\, \mathrm{GHz}` because it is the nominal frequency of microwave reactors in the industry. 
 
 
 .. caution::
@@ -228,7 +242,7 @@ The solution for a :math:`\mathrm{TE}_{mn}` mode, which will be used to assess c
     \end{bmatrix} e^{ik_\mathrm{z} z}
     
 
-The solution is specified in the ``analytical solution`` subsection of the parameter file: 
+The solution used for the calculation of the convergence rates is specified in the ``analytical solution`` subsection of the parameter file: 
 
 .. code-block:: text 
 
@@ -242,7 +256,7 @@ The solution is specified in the ``analytical solution`` subsection of the param
     end 
 
 .. note::
-    The parameters defined here are only used to calculate the error, they are not taken into account in the simulation.
+    The parameters defined here are only used to calculate the error, they do not affect the simulation.
 
 Mesh Adaptation
 ~~~~~~~~~~~~~~~
@@ -293,7 +307,7 @@ You can also change the degree of the polynomials used in the Finite Element Met
 Physical Properties
 ~~~~~~~~~~~~~~~~~~~
 
-You can also change the electromagnetic properties of the medium at the subsection ``phytsical properties``. Here are the default settings for air or void:
+You can also change the electromagnetic properties of the medium at the subsection ``physical properties``. Here are the default settings for the void:
 
 .. code-block:: text
     
@@ -346,7 +360,7 @@ to run the simulation using ten CPU cores.
 
 .. tip::
 
-   Alternatively, the application ``lethe-fluid-matrix-free`` can be used to run the simulation (``mpirun -np 10 lethe-fluid-matrix-free waveguide.prm``). For three mesh adaptation, it takes :math:`\sim \, 4` minutes on :math:`10` processes.
+   Alternatively, the application ``lethe-fluid-matrix-free`` can be used to run the simulation (``mpirun -np 10 lethe-fluid-matrix-free waveguide.prm``). For three mesh adaptation, it takes :math:`\sim \, 6` minutes on :math:`10` processes.
 
 ----------------------
 Results and Discussion
