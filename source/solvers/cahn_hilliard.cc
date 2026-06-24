@@ -1294,15 +1294,113 @@ CahnHilliard<dim>::set_initial_conditions()
 
 template <int dim>
 void
+CahnHilliard<dim>::setup_ilu()
+{
+  TimerOutput::Scope t(this->computing_timer, "Setup ILU");
+
+  const unsigned int ilu_fill = static_cast<unsigned int>(
+    simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
+      .ilu_precond_fill);
+  const double ilu_atol =
+    simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
+      .ilu_precond_atol;
+  const double ilu_rtol =
+    simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
+      .ilu_precond_rtol;
+  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
+    ilu_fill, ilu_atol, ilu_rtol, 0);
+
+  ilu_preconditioner = std::make_shared<TrilinosWrappers::PreconditionILU>();
+
+  ilu_preconditioner->initialize(system_matrix, preconditionerOptions);
+}
+
+template <int dim>
+void
+CahnHilliard<dim>::setup_amg()
+{
+  TimerOutput::Scope t(this->computing_timer, "Setup AMG");
+
+  // Constant modes for the coupled (phase order + chemical potential) system.
+  // The Cahn-Hilliard system is solved monolithically as a two-component
+  // FESystem.
+  std::vector<std::vector<bool>> constant_modes;
+
+  ComponentMask components(2, true);
+  constant_modes =
+    DoFTools::extract_constant_modes(*this->dof_handler, components);
+
+  // The Cahn-Hilliard operator is non-symmetric since the phase order parameter
+  // is advected by the fluid velocity
+  const bool elliptic = false;
+  // The system mixes the phase order and chemical potential degrees, so the
+  // largest of the two governs whether higher order elements are used
+  const bool higher_order_elements =
+    std::max(
+      simulation_parameters.fem_parameters.phase_cahn_hilliard_degree,
+      simulation_parameters.fem_parameters.potential_cahn_hilliard_degree) > 1;
+  const unsigned int n_cycles =
+    simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
+      .amg_n_cycles;
+  const bool w_cycle =
+    simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
+      .amg_w_cycles;
+  const double aggregation_threshold =
+    simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
+      .amg_aggregation_threshold;
+  const unsigned int smoother_sweeps =
+    simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
+      .amg_smoother_sweeps;
+  const unsigned int smoother_overlap =
+    simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
+      .amg_smoother_overlap;
+  const bool                                        output_details = false;
+  const char                                       *smoother_type  = "ILU";
+  const char                                       *coarse_type    = "ILU";
+  TrilinosWrappers::PreconditionAMG::AdditionalData preconditionerOptions(
+    elliptic,
+    higher_order_elements,
+    n_cycles,
+    w_cycle,
+    aggregation_threshold,
+    constant_modes,
+    smoother_sweeps,
+    smoother_overlap,
+    output_details,
+    smoother_type,
+    coarse_type);
+
+  Teuchos::ParameterList              parameter_ml;
+  std::unique_ptr<Epetra_MultiVector> distributed_constant_modes;
+  preconditionerOptions.set_parameters(parameter_ml,
+                                       distributed_constant_modes,
+                                       system_matrix);
+  const double ilu_fill =
+    simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
+      .amg_precond_ilu_fill;
+  const double ilu_atol =
+    simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
+      .amg_precond_ilu_atol;
+  const double ilu_rtol =
+    simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
+      .amg_precond_ilu_rtol;
+  parameter_ml.set("smoother: ifpack level-of-fill", ilu_fill);
+  parameter_ml.set("smoother: ifpack absolute threshold", ilu_atol);
+  parameter_ml.set("smoother: ifpack relative threshold", ilu_rtol);
+
+  parameter_ml.set("coarse: ifpack level-of-fill", ilu_fill);
+  parameter_ml.set("coarse: ifpack absolute threshold", ilu_atol);
+  parameter_ml.set("coarse: ifpack relative threshold", ilu_rtol);
+
+  amg_preconditioner = std::make_shared<TrilinosWrappers::PreconditionAMG>();
+  amg_preconditioner->initialize(system_matrix, parameter_ml);
+}
+
+template <int dim>
+void
 CahnHilliard<dim>::solve_linear_system()
 {
   TimerOutput::Scope t(this->computing_timer, "Solve linear system");
-
-  AssertThrow(
-    simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
-        .preconditioner == Parameters::LinearSolver::PreconditionerType::ilu,
-    ExcMessage(
-      "The Cahn-Hilliard physics only supports the <ilu> preconditioner. The <amg> preconditioner is not yet implemented for this physics."));
 
   auto mpi_communicator = triangulation->get_mpi_communicator();
 
@@ -1328,22 +1426,6 @@ CahnHilliard<dim>::solve_linear_system()
   const double non_rescaled_linear_solver_tolerance =
     linear_solver_tolerance * rescale_metric;
 
-  const unsigned int ilu_fill = static_cast<unsigned int>(
-    simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
-      .ilu_precond_fill);
-  const double ilu_atol =
-    simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
-      .ilu_precond_atol;
-  const double ilu_rtol =
-    simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
-      .ilu_precond_rtol;
-  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
-    ilu_fill, ilu_atol, ilu_rtol, 0);
-
-  TrilinosWrappers::PreconditionILU ilu_preconditioner;
-
-  ilu_preconditioner.initialize(system_matrix, preconditionerOptions);
-
   GlobalVectorType completely_distributed_solution(locally_owned_dofs,
                                                    mpi_communicator);
 
@@ -1362,11 +1444,32 @@ CahnHilliard<dim>::solve_linear_system()
 
   TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);
 
+  const auto preconditioner_type =
+    simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
+      .preconditioner;
 
-  solver.solve(system_matrix,
-               completely_distributed_solution,
-               system_rhs,
-               ilu_preconditioner);
+  if (preconditioner_type == Parameters::LinearSolver::PreconditionerType::ilu)
+    {
+      setup_ilu();
+      solver.solve(system_matrix,
+                   completely_distributed_solution,
+                   system_rhs,
+                   *ilu_preconditioner);
+    }
+  else if (preconditioner_type ==
+           Parameters::LinearSolver::PreconditionerType::amg)
+    {
+      setup_amg();
+      solver.solve(system_matrix,
+                   completely_distributed_solution,
+                   system_rhs,
+                   *amg_preconditioner);
+    }
+  else
+    AssertThrow(
+      false,
+      ExcMessage(
+        "This linear solver does not support this preconditioner. Only <ilu> and <amg> preconditioners are supported."));
 
   if (simulation_parameters.linear_solver.at(PhysicsID::cahn_hilliard)
         .verbosity != Parameters::Verbosity::quiet)

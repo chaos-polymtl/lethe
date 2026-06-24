@@ -2846,15 +2846,98 @@ ConservativeLevelSet<dim>::set_initial_conditions()
 
 template <int dim>
 void
+ConservativeLevelSet<dim>::setup_ilu()
+{
+  TimerOutput::Scope t(this->computing_timer, "Setup ILU");
+
+  const unsigned int ilu_fill =
+    simulation_parameters.linear_solver.at(PhysicsID::CLS).ilu_precond_fill;
+  const double ilu_atol =
+    simulation_parameters.linear_solver.at(PhysicsID::CLS).ilu_precond_atol;
+  const double ilu_rtol =
+    simulation_parameters.linear_solver.at(PhysicsID::CLS).ilu_precond_rtol;
+  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
+    ilu_fill, ilu_atol, ilu_rtol, 0);
+
+  ilu_preconditioner = std::make_shared<TrilinosWrappers::PreconditionILU>();
+
+  ilu_preconditioner->initialize(this->system_matrix, preconditionerOptions);
+}
+
+template <int dim>
+void
+ConservativeLevelSet<dim>::setup_amg()
+{
+  TimerOutput::Scope t(this->computing_timer, "Setup AMG");
+
+  // Constant modes for the phase indicator scalar field
+  std::vector<std::vector<bool>> constant_modes;
+
+  ComponentMask components(1, true);
+  constant_modes =
+    DoFTools::extract_constant_modes(*this->dof_handler, components);
+
+  // The conservative level set operator is non-symmetric since the phase
+  // indicator is advected by the fluid velocity
+  const bool elliptic              = false;
+  bool       higher_order_elements = false;
+  if (this->fe->degree > 1)
+    higher_order_elements = true;
+  const unsigned int n_cycles =
+    simulation_parameters.linear_solver.at(PhysicsID::CLS).amg_n_cycles;
+  const bool w_cycle =
+    simulation_parameters.linear_solver.at(PhysicsID::CLS).amg_w_cycles;
+  const double aggregation_threshold =
+    simulation_parameters.linear_solver.at(PhysicsID::CLS)
+      .amg_aggregation_threshold;
+  const unsigned int smoother_sweeps =
+    simulation_parameters.linear_solver.at(PhysicsID::CLS).amg_smoother_sweeps;
+  const unsigned int smoother_overlap =
+    simulation_parameters.linear_solver.at(PhysicsID::CLS).amg_smoother_overlap;
+  const bool                                        output_details = false;
+  const char                                       *smoother_type  = "ILU";
+  const char                                       *coarse_type    = "ILU";
+  TrilinosWrappers::PreconditionAMG::AdditionalData preconditionerOptions(
+    elliptic,
+    higher_order_elements,
+    n_cycles,
+    w_cycle,
+    aggregation_threshold,
+    constant_modes,
+    smoother_sweeps,
+    smoother_overlap,
+    output_details,
+    smoother_type,
+    coarse_type);
+
+  Teuchos::ParameterList              parameter_ml;
+  std::unique_ptr<Epetra_MultiVector> distributed_constant_modes;
+  preconditionerOptions.set_parameters(parameter_ml,
+                                       distributed_constant_modes,
+                                       this->system_matrix);
+  const double ilu_fill =
+    simulation_parameters.linear_solver.at(PhysicsID::CLS).amg_precond_ilu_fill;
+  const double ilu_atol =
+    simulation_parameters.linear_solver.at(PhysicsID::CLS).amg_precond_ilu_atol;
+  const double ilu_rtol =
+    simulation_parameters.linear_solver.at(PhysicsID::CLS).amg_precond_ilu_rtol;
+  parameter_ml.set("smoother: ifpack level-of-fill", ilu_fill);
+  parameter_ml.set("smoother: ifpack absolute threshold", ilu_atol);
+  parameter_ml.set("smoother: ifpack relative threshold", ilu_rtol);
+
+  parameter_ml.set("coarse: ifpack level-of-fill", ilu_fill);
+  parameter_ml.set("coarse: ifpack absolute threshold", ilu_atol);
+  parameter_ml.set("coarse: ifpack relative threshold", ilu_rtol);
+
+  amg_preconditioner = std::make_shared<TrilinosWrappers::PreconditionAMG>();
+  amg_preconditioner->initialize(this->system_matrix, parameter_ml);
+}
+
+template <int dim>
+void
 ConservativeLevelSet<dim>::solve_linear_system()
 {
   TimerOutput::Scope t(this->computing_timer, "Solve linear system");
-
-  AssertThrow(
-    simulation_parameters.linear_solver.at(PhysicsID::CLS).preconditioner ==
-      Parameters::LinearSolver::PreconditionerType::ilu,
-    ExcMessage(
-      "The Conservative Level Set physics only supports the <ilu> preconditioner. The <amg> preconditioner is not yet implemented for this physics."));
 
   auto mpi_communicator = this->triangulation->get_mpi_communicator();
 
@@ -2879,19 +2962,6 @@ ConservativeLevelSet<dim>::solve_linear_system()
                   << linear_solver_tolerance << std::endl;
     }
 
-  const unsigned int ilu_fill =
-    simulation_parameters.linear_solver.at(PhysicsID::CLS).ilu_precond_fill;
-  const double ilu_atol =
-    simulation_parameters.linear_solver.at(PhysicsID::CLS).ilu_precond_atol;
-  const double ilu_rtol =
-    simulation_parameters.linear_solver.at(PhysicsID::CLS).ilu_precond_rtol;
-  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
-    ilu_fill, ilu_atol, ilu_rtol, 0);
-
-  TrilinosWrappers::PreconditionILU ilu_preconditioner;
-
-  ilu_preconditioner.initialize(this->system_matrix, preconditionerOptions);
-
   GlobalVectorType completely_distributed_solution(this->locally_owned_dofs,
                                                    mpi_communicator);
 
@@ -2907,10 +2977,31 @@ ConservativeLevelSet<dim>::solve_linear_system()
 
   TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);
 
-  solver.solve(this->system_matrix,
-               completely_distributed_solution,
-               this->system_rhs,
-               ilu_preconditioner);
+  const auto preconditioner_type =
+    simulation_parameters.linear_solver.at(PhysicsID::CLS).preconditioner;
+
+  if (preconditioner_type == Parameters::LinearSolver::PreconditionerType::ilu)
+    {
+      setup_ilu();
+      solver.solve(this->system_matrix,
+                   completely_distributed_solution,
+                   this->system_rhs,
+                   *ilu_preconditioner);
+    }
+  else if (preconditioner_type ==
+           Parameters::LinearSolver::PreconditionerType::amg)
+    {
+      setup_amg();
+      solver.solve(this->system_matrix,
+                   completely_distributed_solution,
+                   this->system_rhs,
+                   *amg_preconditioner);
+    }
+  else
+    AssertThrow(
+      false,
+      ExcMessage(
+        "This linear solver does not support this preconditioner. Only <ilu> and <amg> preconditioners are supported."));
 
   if (simulation_parameters.linear_solver.at(PhysicsID::CLS).verbosity !=
       Parameters::Verbosity::quiet)

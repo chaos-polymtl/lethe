@@ -1359,32 +1359,33 @@ namespace Parameters
     /// Type of preconditioner
     enum class PreconditionerType : std::int8_t
     {
-      ilu,
-      amg,
-      lsmg,
-      gcmg
+      ilu,  /// Incomplete LU Factorization
+      amg,  /// Algebraic Multigrid
+      lsmg, /// Local-Smoothing Geometric Multigrid
+      gcmg, /// Global-Coarsening Multigrid
+      none  /// No preconditioner
     };
     PreconditionerType preconditioner;
 
-    /// ILU or ILUT fill
+    /// ILU fill
     unsigned int ilu_precond_fill;
 
-    /// ILU or ILUT absolute tolerance
+    /// ILU absolute tolerance
     double ilu_precond_atol;
 
-    /// ILU or ILUT relative tolerance
+    /// ILU relative tolerance
     double ilu_precond_rtol;
 
     /// AMG parameters either as linear solver preconditioner or as
     /// preconditioner of a coarse-grid solver for LSMG or GCMG
 
-    /// ILU or ILUT fill for smoother
+    /// ILU fill for smoother
     unsigned int amg_precond_ilu_fill;
 
-    /// ILU or ILUT absolute tolerance for smoother
+    /// ILU absolute tolerance for smoother
     double amg_precond_ilu_atol;
 
-    /// ILU or ILUT relative tolerance for smoother
+    /// ILU relative tolerance for smoother
     double amg_precond_ilu_rtol;
 
     /// AMG aggregation threshold
