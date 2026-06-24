@@ -209,7 +209,6 @@ protected:
   // For when the triangulation has changed (i.e. when load balancing)
   bool                        mark_for_update;
   boost::signals2::connection change_to_triangulation;
-
 };
 
 #endif /*lethe_insertion_h*/
