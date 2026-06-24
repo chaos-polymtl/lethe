@@ -565,12 +565,14 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
   const Tensor<1, dim, std::complex<double>> &E_inc = incident_fields.first;
   const Tensor<1, dim, std::complex<double>> &H_inc = incident_fields.second;
 
-  // We normalize the excitation by the electromagnetic scaling factor
+  // We normalize the excitation by the maximum amplitude accross all
+  // the waveguide ports to ensure that everything is normalized
+  double scaling_factor =
+    this->waveguide_ports_electric_amplitudes[boundary_id_index] /
+    *std::ranges::max_element(this->waveguide_ports_electric_amplitudes);
   const Tensor<1, dim, std::complex<double>> excitation =
-    (this->waveguide_ports_electric_amplitudes[boundary_id_index] /
-     this->electromagnetic_scaling) *
-    (cross_product_3d(normal, H_inc) +
-     map_H12(surface_admittance * E_inc, normal));
+    scaling_factor * (cross_product_3d(normal, H_inc) +
+                      map_H12(surface_admittance * E_inc, normal));
 
   return std::make_pair(excitation, surface_admittance);
 }
@@ -748,7 +750,10 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
         {
           // The power amplitude comes from the non-dimensionalization of power:
           // P = 0.5 * int(ExH*)= E_0 * H_0 * P_modal. So we can isolate the
-          // electric field amplitude E_0.
+          // electric field amplitude E_0. We don't need to multiply by the
+          // dimensionality because we assume user input in W and impedance in
+          // Ohms so the resulting units of this integral will always be
+          // Volt/length unit (of the mesh).
           this->waveguide_ports_electric_amplitudes[inlets] =
             std::sqrt(waveguide_powers[inlets] * void_impedance /
                       Utilities::MPI::sum(waveguide_modal_powers[inlets],
@@ -764,30 +769,30 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
   if (electromagnetic_parameters.electromagnetic_scaling_type ==
       Parameters::ElectromagneticScalingType::electric_field)
     {
-      // We assume that the electric field amplitude provided by the user is
-      // already scaled by the unit conversion factor, so we can directly use it
-      // as the scaling factor.
+      // We assume that the electric field amplitude provided by the user is MKS
+      // (V/m).
       this->electromagnetic_scaling =
         electromagnetic_parameters.electric_field_amplitude;
     }
   else if (electromagnetic_parameters.electromagnetic_scaling_type ==
            Parameters::ElectromagneticScalingType::magnetic_field)
     {
-      // We assume that the magnetic field amplitude provided by the user is
-      // already scaled by the unit conversion factor, but the void impedance
-      // needs to be rescaled from the dimensionality.
+      // We assume that the magnetic field amplitude provided by the user is in
+      // MKS (A/m). We convert it to the electric field for convenience to not
+      // carry multiple conversion factors when applying the scaling to the
+      // solution.
       this->electromagnetic_scaling =
-        (void_impedance *
-         electromagnetic_parameters.electric_field_dimensionality /
-         electromagnetic_parameters.magnetic_field_dimensionality) *
-        electromagnetic_parameters.magnetic_field_amplitude;
+        void_impedance * electromagnetic_parameters.magnetic_field_amplitude;
     }
   else if (electromagnetic_parameters.electromagnetic_scaling_type ==
            Parameters::ElectromagneticScalingType::power)
-    {
+    { // From the Poynting vector integration and assumptions made in the
+      // computation of the waveguide port excitation, the unit here are in V/L,
+      // with L being the length unit of the mesh. Therefore, we need to divide
+      // by the length unit to get the correct scaling factor in V/m.
       this->electromagnetic_scaling =
-        electromagnetic_parameters.electric_field_dimensionality *
-        max_port_electric_amplitude;
+        max_port_electric_amplitude /
+        this->simulation_parameters.dimensionality.length;
     }
   else if (electromagnetic_parameters.electromagnetic_scaling_type ==
            Parameters::ElectromagneticScalingType::none)
@@ -816,22 +821,22 @@ TimeHarmonicMaxwell<dim>::scale_solution_components(
   const DoFHandler<dim> &dof_handler,
   GlobalVectorType      &solution)
 {
-  const Parameters::TimeHarmonicMaxwell<dim> &time_harmonic_maxwell_parameters =
-    this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters;
-
   const auto &fe = dof_handler.get_fe();
 
-  if (time_harmonic_maxwell_parameters.electromagnetic_scaling_type ==
+  if (this->simulation_parameters.multiphysics.time_harmonic_maxwell_parameters
+        .electromagnetic_scaling_type ==
       Parameters::ElectromagneticScalingType::none)
     return;
 
   constexpr double void_impedance = 4 * numbers::PI * 29.9792458;
-  const double     electric_scale = this->electromagnetic_scaling;
-  const double     magnetic_scale =
+  // Here, everything is in MKS units, so we need to convert it to the user
+  // desired units.
+  const double electric_scale =
     this->electromagnetic_scaling *
-    time_harmonic_maxwell_parameters.magnetic_field_dimensionality /
-    (void_impedance *
-     time_harmonic_maxwell_parameters.electric_field_dimensionality);
+    this->simulation_parameters.dimensionality.electric_amplitude_scaling;
+  const double magnetic_scale =
+    this->electromagnetic_scaling / void_impedance *
+    this->simulation_parameters.dimensionality.magnetic_amplitude_scaling;
 
   const IndexSet   &locally_owned_dofs = solution.locally_owned_elements();
   std::vector<bool> dof_scaled(locally_owned_dofs.n_elements(), false);
