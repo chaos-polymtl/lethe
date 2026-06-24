@@ -136,7 +136,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -438,7 +438,7 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
@@ -446,18 +446,190 @@
         <article role="main">
           <section id="dimensionality">
 <h1>Dimensionality<a class="headerlink" href="#dimensionality" title="Link to this heading">#</a></h1>
-<p>This subsection is used to automatically rescale the physical properties of a simulation for cases in which
-the fundamental dimensions (length, time, mass, temperature) that are used are not in SI units but the physical properties (e.g. thermal conductivity) are known in SI units.</p>
+<p>This subsection enables automatic rescaling of physical properties when the simulation is not carried out in SI units. It is particularly useful when a mesh is built in non-SI units (e.g. centimetres or millimetres) but the physical properties (e.g. viscosity, thermal conductivity, permittivity) are known and tabulated in SI units. Instead of converting every property by hand, the user specifies the fundamental unit scales and Lethe rescales all properties automatically.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection dimensionality
-  set length      = 1 #meter
-  set mass        = 1 #kilogramm
-  set time        = 1 #second
-  set temperature = 1 #Kelvin
+  set length           = 1   # metre
+  set mass             = 1   # kilogram
+  set time             = 1   # second
+  set temperature      = 1   # Kelvin
+  set electric current = 1   # Ampere
 end
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">length</span></code>, <code class="docutils literal notranslate"><span class="pre">mass</span></code>, <code class="docutils literal notranslate"><span class="pre">time</span></code> and <code class="docutils literal notranslate"><span class="pre">temperature</span></code> are the fundamental dimensions that may be required. By default, it is assumed that SI units are used.
-For example, if a mesh is made in millimeters, such that a height of <span class="math notranslate nohighlight">\(0.100`m is :math:`100\)</span> in the mesh file, but the user still wishes to specify the viscosity in <span class="math notranslate nohighlight">\(m^2/s\)</span>, the user can set <code class="docutils literal notranslate"><span class="pre">length=0.001</span></code> to automatically rescale the physical properties.</p>
+<p>The default value of every parameter is <code class="docutils literal notranslate"><span class="pre">1</span></code>, which corresponds to the SI
+unit system. No rescaling is applied in that case.</p>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h2>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">length</span></code></dt><dd><p>The length unit used in the simulation, expressed in metres. If the mesh
+was built in centimetres, for example, set <code class="docutils literal notranslate"><span class="pre">length</span> <span class="pre">=</span> <span class="pre">0.01</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">mass</span></code></dt><dd><p>The mass unit used in the simulation, expressed in kilograms. For most
+simulations this can be left at its default value of <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">time</span></code></dt><dd><p>The time unit used in the simulation, expressed in seconds.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">temperature</span></code></dt><dd><p>The temperature unit used in the simulation, expressed in Kelvin.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">electric</span> <span class="pre">current</span></code></dt><dd><p>The electric current unit used in the simulation, expressed in Amperes.
+This parameter is only relevant for simulations that include
+electromagnetic physics (e.g. the time-harmonic Maxwell solver).</p>
+</dd>
+</dl>
+</section>
+<section id="how-rescaling-works">
+<h2>How rescaling works<a class="headerlink" href="#how-rescaling-works" title="Link to this heading">#</a></h2>
+<p>Each physical property has a known dimensional formula in terms of the five
+base dimensions: length <span class="math notranslate nohighlight">\(\mathsf{L}\)</span>, mass <span class="math notranslate nohighlight">\(\mathsf{M}\)</span>, time
+<span class="math notranslate nohighlight">\(\mathsf{T}\)</span>, temperature <span class="math notranslate nohighlight">\(\mathsf{\Theta}\)</span>, and electric current
+<span class="math notranslate nohighlight">\(\mathsf{I}\)</span>. When non-SI base units are chosen, a quantity expressed in
+SI must be multiplied by a <em>scaling factor</em> to obtain its value in the
+simulation unit system.</p>
+<p>If the user sets a length scale <span class="math notranslate nohighlight">\(L\)</span>, a mass scale <span class="math notranslate nohighlight">\(M\)</span>, a time
+scale <span class="math notranslate nohighlight">\(T\)</span>, a temperature scale <span class="math notranslate nohighlight">\(\Theta\)</span>, and an electric current
+scale <span class="math notranslate nohighlight">\(I\)</span> (all expressed in their respective SI units), then a property
+whose SI unit is <span class="math notranslate nohighlight">\(\mathsf{L}^{a}\,\mathsf{M}^{b}\,\mathsf{T}^{c}\,\mathsf{\Theta}^{d}\,\mathsf{I}^{e}\)</span>
+is rescaled by</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\text{scaling} = L^{a} \cdot M^{b} \cdot T^{c} \cdot \Theta^{d} \cdot I^{e}\]</div>
+</div>
+<p>and the value supplied by the user (in SI) is multiplied by this factor before
+being used in the solver.</p>
+<p>The table below lists the scaling factor applied to each property supported
+by Lethe, together with its SI unit and its dimensional formula.</p>
+<div class="table-wrapper colwidths-given docutils container" id="id1">
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">Scaling factors for supported physical properties</span><a class="headerlink" href="#id1" title="Link to this table">#</a></caption>
+<colgroup>
+<col style="width: 28.0%" />
+<col style="width: 22.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>SI unit</p></th>
+<th class="head"><p>Scaling factor</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Density</p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{kg/m}^3\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(L^3 / M\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Specific gas constant</p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{J/(kg·K)}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(T^2 \Theta / L^2\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Dynamic viscosity</p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{Pa·s}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(T / L^2\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Specific heat capacity</p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{J/(kg·K)}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(T^2 \Theta / L^2\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Thermal conductivity</p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{W/(m·K)}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(T^3 \Theta / (M \cdot L)\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Specific enthalpy</p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{J/kg}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(T^2 / (M \cdot L^2)\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Diffusivity</p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{m}^2/\text{s}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(T / L^2\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Thermal expansion coefficient</p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{K}^{-1}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\Theta\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Surface tension</p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{N/m}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(T^2 / M\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Surface tension gradient</p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{N/(m·K)}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\Theta \cdot T^2 / M\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Cahn–Hilliard mobility</p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{m}^3\text{·s/kg}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(M / (L^3 \cdot T)\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Cahn–Hilliard interface thickness</p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{m}^{-1}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(1 / L\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Electromagnetic frequency</p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{s}^{-1}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(L / c_0\)</span> (see note below)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Electric field amplitude (E)</p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{V/m}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(I \cdot T^3 / (M \cdot L)\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Magnetic field amplitude (H)</p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{A/m}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(L / I\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Vacuum permittivity <span class="math notranslate nohighlight">\(\varepsilon_0\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{F/m}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(M \cdot L^3 / (I^2 \cdot T^4)\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Vacuum permeability <span class="math notranslate nohighlight">\(\mu_0\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\text{H/m}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(T^2 \cdot I^2 / (M \cdot L)\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The electromagnetic frequency scaling uses a special formula,
+<span class="math notranslate nohighlight">\(L / c_0\)</span>, where <span class="math notranslate nohighlight">\(c_0 = 299\,792\,458\ \text{m/s}\)</span> is the
+speed of light in vacuum. The time scale does not appear in this factor because the time-harmonic Maxwell formulation is time-independent by construction.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If the user chooses to do the rescaling by hand, make sure to adjust the frequency so the dimensionless wavenumber <span class="math notranslate nohighlight">\(\kappa = \omega \sqrt{\varepsilon \mu}L\)</span> remains unchanged when changing the length scale <span class="math notranslate nohighlight">\(L\)</span>. This is necessary to preserve the physics of the problem as the electromagnetic solver always solves the system in dimensionless form and does not know about the length scale.</p>
+</div>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
+<section id="mesh-in-centimetres-properties-in-si">
+<h3>Mesh in centimetres, properties in SI<a class="headerlink" href="#mesh-in-centimetres-properties-in-si" title="Link to this heading">#</a></h3>
+<p>A mesh is built in centimetres so that a physical height of <span class="math notranslate nohighlight">\(0.10\ \text{m}\)</span>
+appears as <span class="math notranslate nohighlight">\(10\)</span> in the mesh file. All physical properties (viscosity,
+thermal conductivity, etc.) are available in SI units.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection dimensionality
+  set length = 0.01
+end
+</pre></div>
+</div>
+<p>With this setting, a kinematic viscosity of <span class="math notranslate nohighlight">\(1 \times 10^{-6}\ \text{m}^2/\text{s}\)</span>
+is automatically rescaled by <span class="math notranslate nohighlight">\(T/L^2 = 1/(0.01)^2 = 10^4\)</span>, yielding the
+equivalent value <span class="math notranslate nohighlight">\(10^{-2}\ \text{cm}^2/\text{s}\)</span> inside the solver.</p>
+</section>
+<section id="electromagnetic-simulation-in-centimetres">
+<h3>Electromagnetic simulation in centimetres<a class="headerlink" href="#electromagnetic-simulation-in-centimetres" title="Link to this heading">#</a></h3>
+<p>A time-harmonic Maxwell simulation is carried out on a centimetre-scale
+geometry. The electric field, permittivity, and permeability are all rescaled
+consistently.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>subsection dimensionality
+  set length = 0.01
+end
+</pre></div>
+</div>
+<p>The key scalings are:</p>
+<ul class="simple">
+<li><p><strong>Electric field</strong> <span class="math notranslate nohighlight">\([\text{V/m}]\)</span>: scaling <span class="math notranslate nohighlight">\(= I T^3/(M L) = 1/(0.01) = 100\)</span>.
+A field of <span class="math notranslate nohighlight">\(1\ \text{V/m}\)</span> becomes <span class="math notranslate nohighlight">\(100\)</span> in simulation units (which are not <span class="math notranslate nohighlight">\([\text{V/m}]\)</span> anymore, but rather <span class="math notranslate nohighlight">\([\text{V_{cm}/cm}]\)</span>, a custom basis for the voltage).</p></li>
+<li><p><strong>Magnetic field</strong> <span class="math notranslate nohighlight">\([\text{A/m}]\)</span>: scaling <span class="math notranslate nohighlight">\(= L/I = 0.01/1 = 0.01\)</span>.
+<span class="math notranslate nohighlight">\(H = 1\ \text{A/m}\)</span> becomes <span class="math notranslate nohighlight">\(0.01\)</span> in simulation units.</p></li>
+</ul>
+</section>
+</section>
 </section>
 
         </article>
@@ -503,8 +675,33 @@ For example, if a mesh is made in millimeters, such that a height of <span class
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Dimensionality</a><ul>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+<li><a class="reference internal" href="#how-rescaling-works">How rescaling works</a></li>
+<li><a class="reference internal" href="#examples">Examples</a><ul>
+<li><a class="reference internal" href="#mesh-in-centimetres-properties-in-si">Mesh in centimetres, properties in SI</a></li>
+<li><a class="reference internal" href="#electromagnetic-simulation-in-centimetres">Electromagnetic simulation in centimetres</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

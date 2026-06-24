@@ -586,19 +586,102 @@ end
 <p>Consider using <code class="docutils literal notranslate"><span class="pre">set</span> <span class="pre">max</span> <span class="pre">krylov</span> <span class="pre">vectors</span> <span class="pre">=</span> <span class="pre">200</span></code> for complex simulations with convergence issues.</p>
 </div>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">preconditioner</span></code> sets the type of preconditioning used for the linear solver. It can be either <code class="docutils literal notranslate"><span class="pre">ilu</span></code> for an Incomplete LU decomposition, <code class="docutils literal notranslate"><span class="pre">amg</span></code> for an Algebraic Multigrid, <code class="docutils literal notranslate"><span class="pre">lsmg</span></code> for a Local Smoothing Multigrid, or <code class="docutils literal notranslate"><span class="pre">gcmg</span></code> for a Global Coarsening Multigrid.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">preconditioner</span></code> sets the type of preconditioning used for the linear solver. It can be either <code class="docutils literal notranslate"><span class="pre">ilu</span></code> for an Incomplete LU decomposition, <code class="docutils literal notranslate"><span class="pre">amg</span></code> for an Algebraic Multigrid, <code class="docutils literal notranslate"><span class="pre">lsmg</span></code> for a Local Smoothing Multigrid,  <code class="docutils literal notranslate"><span class="pre">gcmg</span></code> for a Global Coarsening Multigrid or <code class="docutils literal notranslate"><span class="pre">none</span></code> in the rare case that no preconditioner should be used.</p></li>
 </ul>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Currently, the <code class="docutils literal notranslate"><span class="pre">lethe-fluid-sharp</span></code> solver makes it almost impossible to reach convergence with the <code class="docutils literal notranslate"><span class="pre">amg</span></code> preconditioner. Therefore, it is recommended to use <code class="docutils literal notranslate"><span class="pre">ilu</span></code> instead, even for fine meshes. In addition, the <code class="docutils literal notranslate"><span class="pre">CLS</span></code>, <code class="docutils literal notranslate"><span class="pre">heat</span> <span class="pre">transfer</span></code>, <code class="docutils literal notranslate"><span class="pre">cahn</span> <span class="pre">hilliard</span></code> and <code class="docutils literal notranslate"><span class="pre">tracer</span></code> physics only support <code class="docutils literal notranslate"><span class="pre">ilu</span></code>.</p>
-</div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Currently, the <code class="docutils literal notranslate"><span class="pre">lsmg</span></code> and <code class="docutils literal notranslate"><span class="pre">gcmg</span></code> preconditioners can only be used within the <code class="docutils literal notranslate"><span class="pre">lethe-fluid-matrix-free</span></code> application.</p>
+<p>The preconditioners supported by each physics are summarized in the table below. The <code class="docutils literal notranslate"><span class="pre">lsmg</span></code> and <code class="docutils literal notranslate"><span class="pre">gcmg</span></code> preconditioners are restricted to the matrix-free fluid dynamics solver, while the auxiliary physics support <code class="docutils literal notranslate"><span class="pre">ilu</span></code> and <code class="docutils literal notranslate"><span class="pre">amg</span></code>.</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 34.8%" />
+<col style="width: 13.0%" />
+<col style="width: 13.0%" />
+<col style="width: 13.0%" />
+<col style="width: 13.0%" />
+<col style="width: 13.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Physics</p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">ilu</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">amg</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">lsmg</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">gcmg</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">none</span></code></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Fluid dynamics (matrix-based)</p></td>
+<td><p>✓</p></td>
+<td><p>✓</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Fluid dynamics (matrix-free)</p></td>
+<td></td>
+<td></td>
+<td><p>✓</p></td>
+<td><p>✓</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>VANS (matrix-based)</p></td>
+<td><p>✓</p></td>
+<td><p>✓</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>VANS (matrix-free)</p></td>
+<td></td>
+<td></td>
+<td><p>✓</p></td>
+<td><p>✓</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Heat Transfer</p></td>
+<td><p>✓</p></td>
+<td><p>✓</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Tracer</p></td>
+<td><p>✓</p></td>
+<td><p>✓</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Conservative Level Set (CLS)</p></td>
+<td><p>✓</p></td>
+<td><p>✓</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>Cahn-Hilliard</p></td>
+<td><p>✓</p></td>
+<td><p>✓</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>Time Harmonic Electromagnetism</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>✓</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="admonition caution">
 <p class="admonition-title">Caution</p>
 <p>Be aware that the setup of the <code class="docutils literal notranslate"><span class="pre">amg</span></code> preconditioner is very expensive and does not scale linearly with the size of the matrix. As such, it is generally preferable to minimize the number of assembly of such preconditioner. This can be achieved by using the <code class="docutils literal notranslate"><span class="pre">inexact</span> <span class="pre">newton</span></code> for the nonlinear solver (see <a class="reference internal" href="non-linear_solver_control.html"><span class="doc">Non-linear Solver</span></a>).</p>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">Caution</p>
+<p>Currently, the <code class="docutils literal notranslate"><span class="pre">lethe-fluid-sharp</span></code> solver may struggle to reach convergence with the <code class="docutils literal notranslate"><span class="pre">amg</span></code> preconditioner. Therefore, it is recommended to use <code class="docutils literal notranslate"><span class="pre">ilu</span></code> instead, even for fine meshes.</p>
 </div>
 <ul class="simple">
 <li><p>There are two additional parameters that can be used in this subsection that only work for the <code class="docutils literal notranslate"><span class="pre">lethe-fluid-matrix-free</span></code> application at the moment. They allow to turn on or off the hessian terms present in the Jacobian and the residual (or right-hand side) of the Navier-Stokes problem:</p></li>

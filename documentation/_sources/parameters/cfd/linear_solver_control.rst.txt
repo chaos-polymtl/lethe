@@ -126,16 +126,82 @@ where :math:`R` is the residual vector and :math:`V` is the volume of the entire
 .. tip::
 	Consider using ``set max krylov vectors = 200`` for complex simulations with convergence issues. 
 
-* ``preconditioner`` sets the type of preconditioning used for the linear solver. It can be either ``ilu`` for an Incomplete LU decomposition, ``amg`` for an Algebraic Multigrid, ``lsmg`` for a Local Smoothing Multigrid, or ``gcmg`` for a Global Coarsening Multigrid.
+* ``preconditioner`` sets the type of preconditioning used for the linear solver. It can be either ``ilu`` for an Incomplete LU decomposition, ``amg`` for an Algebraic Multigrid, ``lsmg`` for a Local Smoothing Multigrid,  ``gcmg`` for a Global Coarsening Multigrid or ``none`` in the rare case that no preconditioner should be used.
 
-.. warning::
-    Currently, the ``lethe-fluid-sharp`` solver makes it almost impossible to reach convergence with the ``amg`` preconditioner. Therefore, it is recommended to use ``ilu`` instead, even for fine meshes. In addition, the ``CLS``, ``heat transfer``, ``cahn hilliard`` and ``tracer`` physics only support ``ilu``.
 
-.. warning::
-    Currently, the ``lsmg`` and ``gcmg`` preconditioners can only be used within the ``lethe-fluid-matrix-free`` application.
+
+The preconditioners supported by each physics are summarized in the table below. The ``lsmg`` and ``gcmg`` preconditioners are restricted to the matrix-free fluid dynamics solver, while the auxiliary physics support ``ilu`` and ``amg``.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 40 15 15 15 15 15
+
+   * - Physics
+     - ``ilu``
+     - ``amg``
+     - ``lsmg``
+     - ``gcmg``
+     - ``none``
+   * - Fluid dynamics (matrix-based) 
+     - ✓
+     - ✓
+     -
+     -
+     -
+   * - Fluid dynamics (matrix-free) 
+     -
+     -
+     - ✓
+     - ✓
+     -
+   * - VANS (matrix-based) 
+     - ✓
+     - ✓
+     -
+     -
+     -
+   * - VANS (matrix-free) 
+     - 
+     - 
+     - ✓
+     - ✓
+     -
+   * - Heat Transfer
+     - ✓
+     - ✓
+     -
+     -
+     -
+   * - Tracer
+     - ✓
+     - ✓
+     -
+     -
+     -
+   * - Conservative Level Set (CLS)
+     - ✓
+     - ✓
+     -
+     -
+     -
+   * - Cahn-Hilliard
+     - ✓
+     - ✓
+     -
+     -
+     -
+   * - Time Harmonic Electromagnetism
+     -
+     -
+     -
+     -
+     - ✓
 
 .. caution:: 
 		Be aware that the setup of the ``amg`` preconditioner is very expensive and does not scale linearly with the size of the matrix. As such, it is generally preferable to minimize the number of assembly of such preconditioner. This can be achieved by using the ``inexact newton`` for the nonlinear solver (see :doc:`non-linear_solver_control`).
+
+.. caution::
+    Currently, the ``lethe-fluid-sharp`` solver may struggle to reach convergence with the ``amg`` preconditioner. Therefore, it is recommended to use ``ilu`` instead, even for fine meshes.
 
 * There are two additional parameters that can be used in this subsection that only work for the ``lethe-fluid-matrix-free`` application at the moment. They allow to turn on or off the hessian terms present in the Jacobian and the residual (or right-hand side) of the Navier-Stokes problem:
 
