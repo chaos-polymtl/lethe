@@ -565,7 +565,7 @@ TimeHarmonicMaxwell<3>::compute_waveguide_port_excitation(
   const Tensor<1, dim, std::complex<double>> &E_inc = incident_fields.first;
   const Tensor<1, dim, std::complex<double>> &H_inc = incident_fields.second;
 
-  // We normalize the excitation by the all the maximum amplitude accross all
+  // We normalize the excitation by the maximum amplitude accross all
   // the waveguide ports to ensure that everything is normalized
   double scaling_factor =
     this->waveguide_ports_electric_amplitudes[boundary_id_index] /
@@ -786,9 +786,10 @@ TimeHarmonicMaxwell<dim>::compute_electromagnetic_scaling(
     }
   else if (electromagnetic_parameters.electromagnetic_scaling_type ==
            Parameters::ElectromagneticScalingType::power)
-    { // We want to convert the port amplitude in MKS because it is more
-      // convernient
-      // to handle than the specified user input.
+    { // From the Poynting vector integration and assumptions made in the
+      // computation of the waveguide port excitation, the unit here are in V/L,
+      // with L being the length unit of the mesh. Therefore, we need to divide
+      // by the length unit to get the correct scaling factor in V/m.
       this->electromagnetic_scaling =
         max_port_electric_amplitude /
         this->simulation_parameters.dimensionality.length;
@@ -828,7 +829,7 @@ TimeHarmonicMaxwell<dim>::scale_solution_components(
     return;
 
   constexpr double void_impedance = 4 * numbers::PI * 29.9792458;
-  // Here, everythind is in MKS units, so we need to convert it to the user
+  // Here, everything is in MKS units, so we need to convert it to the user
   // desired units.
   const double electric_scale =
     this->electromagnetic_scaling *

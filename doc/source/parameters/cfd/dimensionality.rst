@@ -2,13 +2,7 @@
 Dimensionality
 ==============
 
-This subsection enables automatic rescaling of physical properties when the
-simulation is not carried out in SI units. It is particularly useful when a
-mesh is built in non-SI units (e.g. centimetres or millimetres) but the
-physical properties (e.g. viscosity, thermal conductivity, permittivity) are
-known and tabulated in SI units. Instead of converting every property by hand,
-the user specifies the fundamental unit scales and Lethe rescales all
-properties automatically.
+This subsection enables automatic rescaling of physical properties when the simulation is not carried out in SI units. It is particularly useful when a mesh is built in non-SI units (e.g. centimetres or millimetres) but the physical properties (e.g. viscosity, thermal conductivity, permittivity) are known and tabulated in SI units. Instead of converting every property by hand, the user specifies the fundamental unit scales and Lethe rescales all properties automatically.
 
 .. code-block:: text
 
@@ -116,7 +110,7 @@ by Lethe, together with its SI unit and its dimensional formula.
      - :math:`1 / L`
    * - Electromagnetic frequency
      - :math:`\text{s}^{-1}`
-     - :math:`1. * L / c_0` (see note below)
+     - :math:`L / c_0` (see note below)
    * - Electric field amplitude (E)
      - :math:`\text{V/m}`
      - :math:`I \cdot T^3 / (M \cdot L)`
@@ -176,7 +170,7 @@ consistently.
 The key scalings are:
 
 * **Electric field** :math:`[\text{V/m}]`: scaling :math:`= I T^3/(M L) = 1/(0.01) = 100`.
-  A field of :math:`1\ \text{V/m}` becomes :math:`100` in simulation units (which are not :math:`[\text{V/m}]` anymore, but rather :math:`[\text{V_{cm}/cm}]`, a custom basis for the Voltage).
+  A field of :math:`1\ \text{V/m}` becomes :math:`100` in simulation units (which are not :math:`[\text{V/m}]` anymore, but rather :math:`[\text{V_{cm}/cm}]`, a custom basis for the voltage).
 * **Magnetic field** :math:`[\text{A/m}]`: scaling :math:`= L/I = 0.01/1 = 0.01`.
   :math:`H = 1\ \text{A/m}` becomes :math:`0.01` in simulation units.
 
