@@ -74,11 +74,9 @@ Insertion<dim, PropertiesIndex>::assign_particle_properties(
   // TODO: MAYBE CHANGE THE INPUT TO PHYSICAL PROPERTIES DIRECTLY
   auto physical_properties = dem_parameters.lagrangian_physical_properties;
 
-  // Where the particle diameters will be stored.
-  std::vector<double> particle_sizes;
-
-  distributions_objects[current_inserting_particle_type]
-    ->particle_size_sampling(inserted_this_step_this_proc, particle_sizes);
+  // Creating the particle diameter that will get inserted.
+  const std::vector<double> particle_sizes = distributions_objects[current_inserting_particle_type]
+    ->particle_size_sampling(inserted_this_step_this_proc);
 
   // A loop is defined over the number of particles which are going to be
   // inserted at this step

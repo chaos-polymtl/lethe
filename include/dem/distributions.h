@@ -38,11 +38,9 @@ public:
    *
    * @param[in] number_of_particles Number of particles inserted at a given
    * insertion time step.
-   * @param[out] particle_sizes Generated particle diameter values.
    */
-  virtual void
-  particle_size_sampling(const unsigned int  &number_of_particles,
-                         std::vector<double> &particle_sizes) = 0;
+  virtual std::vector<double>
+  particle_size_sampling(const unsigned int &number_of_particles) = 0;
 
   /**
    * @brief Return the minimum diameter for a certain distribution.
@@ -102,11 +100,9 @@ public:
    *
    * @param[in] number_of_particles Number of particles inserted at a given
    * insertion time step.
-   * @param[out] particle_sizes Generated particle diameter values.
    */
-  void
-  particle_size_sampling(const unsigned int  &number_of_particles,
-                         std::vector<double> &particle_sizes) override;
+  virtual std::vector<double>
+  particle_size_sampling(const unsigned int &number_of_particles) override;
 
   /**
    * @brief Find the minimum diameter a normal distribution.
@@ -183,11 +179,9 @@ public:
    *
    * @param[in] number_of_particles Number of particles inserted at a given
    * insertion time step.
-   * @param[out] particle_sizes Generated particle diameter values.
    */
-  void
-  particle_size_sampling(const unsigned int  &number_of_particles,
-                         std::vector<double> &particle_sizes) override;
+  virtual std::vector<double>
+  particle_size_sampling(const unsigned int &number_of_particles) override;
 
   /**
    * @brief Find the minimum diameter a normal distribution.
@@ -251,11 +245,9 @@ public:
    *
    * @param[in] number_of_particles Number of particles inserted at a given
    * insertion time step.
-   * @param[out] particle_sizes Generated particle diameter values.
    */
-  void
-  particle_size_sampling(const unsigned int  &number_of_particles,
-                         std::vector<double> &particle_sizes) override;
+  virtual std::vector<double>
+  particle_size_sampling(const unsigned int &number_of_particles) override;
 
   /**
    * @brief Find the minimum diameter of the uniform distribution.
@@ -329,11 +321,9 @@ public:
    *
    * @param[in] number_of_particles Number of particles inserted at a given
    * insertion time step.
-   * @param[out] particle_sizes Generated particle diameter values.
    */
-  void
-  particle_size_sampling(const unsigned int  &number_of_particles,
-                         std::vector<double> &particle_sizes) override;
+  virtual std::vector<double>
+  particle_size_sampling(const unsigned int &number_of_particles) override;
 
   /**
    * @brief Find the minimum diameter of the custom distribution.

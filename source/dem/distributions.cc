@@ -165,12 +165,11 @@ NormalDistribution::NormalDistribution(
                          " be smaller than the \"maximum diameter cutoff\"."));
 }
 
-void
+std::vector<double>
 NormalDistribution::particle_size_sampling(
-  const unsigned int  &number_of_particles,
-  std::vector<double> &particle_sizes)
+  const unsigned int &number_of_particles)
 {
-  particle_sizes.clear();
+  std::vector<double> particle_sizes;
   particle_sizes.reserve(number_of_particles);
 
   std::normal_distribution<> distribution{diameter_average, standard_deviation};
@@ -186,6 +185,7 @@ NormalDistribution::particle_size_sampling(
           particle_sizes.push_back(temp_diameter);
         }
     }
+  return particle_sizes;
 }
 
 double
@@ -284,12 +284,11 @@ LogNormalDistribution::LogNormalDistribution(
 }
 
 
-void
+std::vector<double>
 LogNormalDistribution::particle_size_sampling(
-  const unsigned int  &number_of_particles,
-  std::vector<double> &particle_sizes)
+  const unsigned int &number_of_particles)
 {
-  particle_sizes.clear();
+  std::vector<double> particle_sizes;
   particle_sizes.reserve(number_of_particles);
 
   std::lognormal_distribution<> distribution{mu_ln, sigma_ln};
@@ -305,6 +304,7 @@ LogNormalDistribution::particle_size_sampling(
           particle_sizes.push_back(temp_diameter);
         }
     }
+  return particle_sizes;
 }
 
 double
@@ -351,16 +351,17 @@ UniformDistribution::UniformDistribution(const double &d_values)
   , diameter_value(d_values)
 {}
 
-void
+std::vector<double>
 UniformDistribution::particle_size_sampling(
-  const unsigned int  &number_of_particles,
-  std::vector<double> &particle_sizes)
+  const unsigned int &number_of_particles)
 {
-  particle_sizes.clear();
+  std::vector<double> particle_sizes;
   particle_sizes.reserve(number_of_particles);
 
   for (unsigned int n = 0; n < number_of_particles; ++n)
     particle_sizes.push_back(this->diameter_value);
+
+  return particle_sizes;
 }
 
 double
@@ -625,12 +626,11 @@ CustomDistribution::CustomDistribution(
     }
 }
 
-void
+std::vector<double>
 CustomDistribution::particle_size_sampling(
-  const unsigned int  &number_of_particles,
-  std::vector<double> &particle_sizes)
+  const unsigned int &number_of_particles)
 {
-  particle_sizes.clear();
+  std::vector<double> particle_sizes;
   particle_sizes.reserve(number_of_particles);
   unsigned int n_created_diameter = 0;
 
@@ -706,6 +706,7 @@ CustomDistribution::particle_size_sampling(
             }
         }
     }
+  return particle_sizes;
 }
 
 double

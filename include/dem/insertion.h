@@ -210,9 +210,6 @@ protected:
   bool                        mark_for_update;
   boost::signals2::connection change_to_triangulation;
 
-private:
-  // Stores particles diameters
-  std::vector<double> particle_sizes;
 };
 
 #endif /*lethe_insertion_h*/
