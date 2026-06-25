@@ -2272,13 +2272,6 @@ namespace Parameters
                                     variables_vec.size(),
                                     filename_vec.size()));
 
-      // Initialize per variable maps. At the moment, only the variables
-      // "temperature" and "phase" are accepted
-      isocontour_ids_per_variable.insert(
-        {Variable::temperature, std::vector<unsigned int>()});
-      isocontour_ids_per_variable.insert(
-        {Variable::phase, std::vector<unsigned int>()});
-
       if (number_of_isocontour_bounding_boxes > 0)
         {
           // Build maps of isocontours
@@ -2287,29 +2280,25 @@ namespace Parameters
               // Initialize Isocontour
               Isocontour isocontour;
 
-              // Parse variables
-              if (variables_vec[i] == "temperature")
-                {
-                  isocontour.variable = Variable::temperature;
-                  isocontour_ids_per_variable[Variable::temperature]
-                    .emplace_back(i);
-                }
-              else if (variables_vec[i] == "phase")
-                {
-                  isocontour.variable = Variable::phase;
-                  isocontour_ids_per_variable[Variable::phase].emplace_back(i);
-                }
-              else
-                throw std::invalid_argument(
-                  "Error, the only valid variables for an 'isocontour bounding box' are: 'temperature' or 'phase'.");
-
               // Get isovalue and output filename
               isocontour.isovalue =
                 Utilities::string_to_double(isovalue_vec[i]);
               isocontour.output_name = filename_vec[i];
 
-              // Insert isocontour in map
-              isocontours.insert({i, isocontour});
+              // Parse variables
+              if (variables_vec[i] == "temperature")
+                {
+                  ids_and_isocontours_per_variable.insert(
+                    {Variable::temperature, std::make_pair(i, isocontour)});
+                }
+              else if (variables_vec[i] == "phase")
+                {
+                  ids_and_isocontours_per_variable.insert(
+                    {Variable::phase, std::make_pair(i, isocontour)});
+                }
+              else
+                throw std::invalid_argument(
+                  "Error, the only valid variables for an 'isocontour bounding box' are: 'temperature' or 'phase'.");
             }
         }
     }

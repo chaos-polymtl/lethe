@@ -1437,10 +1437,9 @@ template struct InterfaceTools::IsocontourBoundingValues<3>;
 template <int dim, typename VectorType>
 InterfaceTools::IsocontourBoundingValues<dim>
 InterfaceTools::compute_isocontour_bounding_values(
-  const DoFHandler<dim>    &dof_handler,
-  const FiniteElement<dim> &fe,
-  const VectorType         &solution_vector,
-  const double              isovalue)
+  const DoFHandler<dim> &dof_handler,
+  const VectorType      &solution_vector,
+  const double           isovalue)
 {
   // Get MPI communicator
   const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
@@ -1480,8 +1479,8 @@ InterfaceTools::compute_isocontour_bounding_values(
   mesh_classifier.reclassify();
 
   // Initialize FEValues
-  const hp::FECollection<dim>    fe_collection(fe);
-  const QGauss<1>                quadrature_1D(fe.degree + 1);
+  const hp::FECollection<dim>    fe_collection(dof_handler.get_fe());
+  const QGauss<1>                quadrature_1D(dof_handler.get_fe().degree + 1);
   NonMatching::RegionUpdateFlags region_update_flags;
   region_update_flags.surface = update_quadrature_points;
   NonMatching::FEValues<dim> non_matching_fe_values(
@@ -1557,43 +1556,47 @@ InterfaceTools::compute_isocontour_bounding_values(
 template InterfaceTools::IsocontourBoundingValues<2>
 InterfaceTools::compute_isocontour_bounding_values(
   const DoFHandler<2>    &dof_handler,
-  const FiniteElement<2> &fe,
   const GlobalVectorType &solution_vector,
   const double            isovalue);
 
 template InterfaceTools::IsocontourBoundingValues<3>
 InterfaceTools::compute_isocontour_bounding_values(
   const DoFHandler<3>    &dof_handler,
-  const FiniteElement<3> &fe,
   const GlobalVectorType &solution_vector,
   const double            isovalue);
 
 template <int dim, typename VectorType>
 void
 InterfaceTools::postprocess_isocontour_bounding_values(
-  const std::vector<unsigned int> &isocontour_ids,
-  const std::map<
-    unsigned int,
-    Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour>
-                              &isocontours,
+  const Variable &variable,
+  const std::multimap<
+    Variable,
+    std::pair<unsigned int,
+              Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour>>
+                              &ids_and_isocontours_per_variable,
   const DoFHandler<dim>       &dof_handler,
-  const FiniteElement<dim>    &fe,
   const VectorType            &solution_vector,
   const double                 current_time,
   const Parameters::Verbosity &verbosity,
   const ConditionalOStream    &pcout,
   std::vector<TableHandler>   &isocontour_bounding_values_tables)
 {
-  for (unsigned int i = 0; i < isocontour_ids.size(); ++i)
+  // Get iterator range that corresponds to the variable of interest
+  auto [begin, end] = ids_and_isocontours_per_variable.equal_range(variable);
+
+  // Initialize iterator for the table
+  unsigned int i = 0;
+
+  for (auto it = begin; it != end; ++it, ++i)
     {
-      // Get isocontour
+      // Get ID and isocontour
+      const unsigned int id = it->second.first;
       const Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour
-        &isocontour = isocontours.at(isocontour_ids[i]);
+        &isocontour = it->second.second;
 
       // Get isocontour bounding values
       InterfaceTools::IsocontourBoundingValues<dim> isocontour_bounding_values =
         InterfaceTools::compute_isocontour_bounding_values(dof_handler,
-                                                           fe,
                                                            solution_vector,
                                                            isocontour.isovalue);
 
@@ -1604,8 +1607,8 @@ InterfaceTools::postprocess_isocontour_bounding_values(
           // Console output
           if (verbosity == Parameters::Verbosity::verbose)
             {
-              pcout << "Isocontour " << isocontour_ids[i] << ": "
-                    << isocontour.output_name << std::endl;
+              pcout << "Isocontour " << id << ": " << isocontour.output_name
+                    << std::endl;
 
               for (unsigned int j = 0; j < bounding_coordinates_names.size();
                    ++j)
@@ -1637,13 +1640,13 @@ InterfaceTools::postprocess_isocontour_bounding_values(
 
 template void
 InterfaceTools::postprocess_isocontour_bounding_values(
-  const std::vector<unsigned int> &isocontour_ids,
-  const std::map<
-    unsigned int,
-    Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour>
-                              &isocontours,
+  const Variable &variable,
+  const std::multimap<
+    Variable,
+    std::pair<unsigned int,
+              Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour>>
+                              &ids_and_isocontours_per_variable,
   const DoFHandler<2>         &dof_handler,
-  const FiniteElement<2>      &fe,
   const GlobalVectorType      &solution_vector,
   const double                 current_time,
   const Parameters::Verbosity &verbosity,
@@ -1652,13 +1655,13 @@ InterfaceTools::postprocess_isocontour_bounding_values(
 
 template void
 InterfaceTools::postprocess_isocontour_bounding_values(
-  const std::vector<unsigned int> &isocontour_ids,
-  const std::map<
-    unsigned int,
-    Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour>
-                              &isocontours,
+  const Variable &variable,
+  const std::multimap<
+    Variable,
+    std::pair<unsigned int,
+              Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour>>
+                              &ids_and_isocontours_per_variable,
   const DoFHandler<3>         &dof_handler,
-  const FiniteElement<3>      &fe,
   const GlobalVectorType      &solution_vector,
   const double                 current_time,
   const Parameters::Verbosity &verbosity,
@@ -1668,22 +1671,32 @@ InterfaceTools::postprocess_isocontour_bounding_values(
 
 void
 InterfaceTools::write_isocontour_bounding_values_tables(
-  const MPI_Comm                  &mpi_communicator,
-  const std::string               &output_folder,
-  const std::vector<unsigned int> &isocontour_ids,
-  const std::map<
-    unsigned int,
-    Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour>
-                                  &isocontours,
+  const MPI_Comm    &mpi_communicator,
+  const std::string &output_folder,
+  const Variable    &variable,
+  const std::multimap<
+    Variable,
+    std::pair<unsigned int,
+              Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour>>
+                                  &ids_and_isocontours_per_variable,
   const std::vector<TableHandler> &isocontour_bounding_values_tables)
 {
   if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
     {
-      for (unsigned int i = 0; i < isocontour_ids.size(); ++i)
+      // Get iterator range that corresponds to the variable of interest
+      auto [begin, end] =
+        ids_and_isocontours_per_variable.equal_range(variable);
+
+      // Initialize iterator for the table(s)
+      unsigned int i = 0;
+
+      for (auto it = begin; it != end; ++it, ++i)
         {
-          std::string filename = output_folder +
-                                 isocontours.at(isocontour_ids[i]).output_name +
-                                 ".dat";
+          // Get isocontour output name
+          const std::string &isocontour_output_name =
+            it->second.second.output_name;
+          std::string filename =
+            output_folder + isocontour_output_name + ".dat";
           std::ofstream output(filename.c_str());
 
           isocontour_bounding_values_tables[i].write_text(output);

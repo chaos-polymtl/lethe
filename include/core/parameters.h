@@ -1049,13 +1049,10 @@ namespace Parameters
        * Set of parameters related to an isocontour required for identifying the
        * bounding values (\f$x_\mathrm{min}\f$, \f$x_\mathrm{max}\f$,
        * \f$y_\mathrm{min}\f$, \f$y_\mathrm{max}\f$, \f$z_\mathrm{min}\f$, and
-       * \f$z_\mathrm{max}\f$).
+       * \f$z_\mathrm{max}\f$) and writing them in an output file.
        */
       struct Isocontour
       {
-        /// Isocontour variable
-        Variable variable;
-
         /// Isocontour value
         double isovalue;
 
@@ -1066,11 +1063,10 @@ namespace Parameters
       /// Number of monitored isocontours
       unsigned int number_of_isocontour_bounding_boxes;
 
-      /// Map of isocontours with their ID
-      std::map<unsigned int, Isocontour> isocontours;
-
-      /// Map that regroups all isocontour ids of a same variable
-      std::map<Variable, std::vector<unsigned int>> isocontour_ids_per_variable;
+      /// Map that regroups all isocontours of a same variable under the same
+      /// variable key
+      std::multimap<Variable, std::pair<unsigned int, Isocontour>>
+        ids_and_isocontours_per_variable;
 
       /**
        * @brief Declare the parameters in the parameter handler.

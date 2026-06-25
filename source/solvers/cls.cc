@@ -38,8 +38,7 @@ ConservativeLevelSet<dim>::ConservativeLevelSet(
                            .reinitialization_method.sharpening.threshold)
   , phase_indicator_isocontour_bounding_values_tables(
       p_simulation_parameters.post_processing.isocontour_bounding_boxes
-        .isocontour_ids_per_variable.at(Variable::phase)
-        .size())
+        .ids_and_isocontours_per_variable.count(Variable::phase))
 {
   this->pcout << std::setprecision(simulation_control->get_log_precision())
               << std::scientific;
@@ -1814,19 +1813,16 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
     }
 
   // Phase indicator isocontour bounding boxes
-  if (!this->simulation_parameters.post_processing.isocontour_bounding_boxes
-         .isocontour_ids_per_variable.at(Variable::phase)
-         .empty())
+  if (this->simulation_parameters.post_processing.isocontour_bounding_boxes
+        .ids_and_isocontours_per_variable.contains(Variable::phase))
     {
       TimerOutput::Scope t(this->computing_timer,
                            "Compute bounding values of phase isocontours");
       InterfaceTools::postprocess_isocontour_bounding_values(
+        Variable::phase,
         this->simulation_parameters.post_processing.isocontour_bounding_boxes
-          .isocontour_ids_per_variable.at(Variable::phase),
-        this->simulation_parameters.post_processing.isocontour_bounding_boxes
-          .isocontours,
+          .ids_and_isocontours_per_variable,
         *this->dof_handler,
-        *this->fe,
         *this->present_solution,
         this->simulation_control->get_current_time(),
         this->simulation_parameters.post_processing.verbosity,
@@ -1839,10 +1835,9 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
         InterfaceTools::write_isocontour_bounding_values_tables(
           this->dof_handler->get_mpi_communicator(),
           this->simulation_parameters.simulation_control.output_folder,
+          Variable::phase,
           this->simulation_parameters.post_processing.isocontour_bounding_boxes
-            .isocontour_ids_per_variable.at(Variable::phase),
-          this->simulation_parameters.post_processing.isocontour_bounding_boxes
-            .isocontours,
+            .ids_and_isocontours_per_variable,
           this->phase_indicator_isocontour_bounding_values_tables);
     }
 
@@ -2451,25 +2446,26 @@ ConservativeLevelSet<dim>::gather_tables()
         this->simulation_parameters.post_processing.barycenter_output_name +
         suffix);
 
-  if (!this->simulation_parameters.post_processing.isocontour_bounding_boxes
-         .isocontour_ids_per_variable.at(Variable::phase)
-         .empty())
+  if (this->simulation_parameters.post_processing.isocontour_bounding_boxes
+        .ids_and_isocontours_per_variable.contains(Variable::phase))
     {
-      const std::vector<unsigned int> &isocontour_ids =
+      // Get iterator range that corresponds to the variable "temperature"
+      auto [begin, end] =
         this->simulation_parameters.post_processing.isocontour_bounding_boxes
-          .isocontour_ids_per_variable.at(Variable::phase);
+          .ids_and_isocontours_per_variable.equal_range(Variable::phase);
 
-      for (unsigned int i = 0;
-           i < this->phase_indicator_isocontour_bounding_values_tables.size();
-           ++i)
+      // Initialize iterator for the table(s)
+      unsigned int i = 0;
+
+      for (auto it = begin; it != end; ++it, ++i)
         {
+          // Get isocontour output name
+          const std::string &isocontour_output_name =
+            it->second.second.output_name;
+
           table_output_structs.emplace_back(
             this->phase_indicator_isocontour_bounding_values_tables[i],
-            prefix +
-              this->simulation_parameters.post_processing
-                .isocontour_bounding_boxes.isocontours.at(isocontour_ids[i])
-                .output_name +
-              suffix);
+            prefix + isocontour_output_name + suffix);
         }
     }
 

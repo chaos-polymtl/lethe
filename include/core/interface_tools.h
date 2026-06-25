@@ -1171,7 +1171,6 @@ namespace InterfaceTools
    *
    * @param[in] dof_handler DofHandler associated to the triangulation where
    * the isocontour lies.
-   * @param[in] fe Finite element.
    * @param[in] solution_vector Solution vector field.
    * @param[in] isovalue Isovalue corresponding to the isocontour of interest.
    *
@@ -1179,10 +1178,9 @@ namespace InterfaceTools
    */
   template <int dim, typename VectorType>
   IsocontourBoundingValues<dim>
-  compute_isocontour_bounding_values(const DoFHandler<dim>    &dof_handler,
-                                     const FiniteElement<dim> &fe,
-                                     const VectorType         &solution_vector,
-                                     const double              isovalue);
+  compute_isocontour_bounding_values(const DoFHandler<dim> &dof_handler,
+                                     const VectorType      &solution_vector,
+                                     const double           isovalue);
 
   /**
    * @brief Identifies the bounding values of requested isocontours using
@@ -1192,11 +1190,11 @@ namespace InterfaceTools
    * the problem is solved.
    * @tparam VectorType The vector type of the solution vector.
    *
-   * @param[in] isocontour_ids Ids of isocontours to be postprocessed.
-   * @param[in] isocontours Map of isocontours with their IDs.
+   * @param[in] variable Variable of the isocontour.
+   * @param[in] ids_and_isocontours_per_variable Map of isocontours with their
+   * IDs sorted with their variable as a key.
    * @param[in] dof_handler DofHandler associated to the triangulation where
    * the isocontour lies.
-   * @param[in] fe Finite element.
    * @param[in] solution_vector Solution vector field.
    * @param[in] current_time Current simulation time.
    * @param[in] verbosity Verbosity level for console output.
@@ -1208,13 +1206,13 @@ namespace InterfaceTools
   template <int dim, typename VectorType>
   void
   postprocess_isocontour_bounding_values(
-    const std::vector<unsigned int> &isocontour_ids,
-    const std::map<
-      unsigned int,
-      Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour>
-                                &isocontours,
+    const Variable &variable,
+    const std::multimap<Variable,
+                        std::pair<unsigned int,
+                                  Parameters::PostProcessing::
+                                    IsocontourBoundingBoxes::Isocontour>>
+                                &ids_and_isocontours_per_variable,
     const DoFHandler<dim>       &dof_handler,
-    const FiniteElement<dim>    &fe,
     const VectorType            &solution_vector,
     const double                 current_time,
     const Parameters::Verbosity &verbosity,
@@ -1227,20 +1225,22 @@ namespace InterfaceTools
    *
    * @param[in] mpi_communicator MPI communicator.
    * @param[in] output_folder Output folder where the output files are saved.
-   * @param[in] isocontour_ids Ids of isocontours to be postprocessed.
-   * @param[in] isocontours Map of isocontours with their IDs.
+   * @param[in] variable Variable of the isocontour.
+   * @param[in] ids_and_isocontours_per_variable Map of isocontours with their
+   * IDs sorted with their variable as a key.
    * @param[in] isocontour_bounding_values_tables Tables with isocontour
    * bounding values.
    */
   void
   write_isocontour_bounding_values_tables(
-    const MPI_Comm                  &mpi_communicator,
-    const std::string               &output_folder,
-    const std::vector<unsigned int> &isocontour_ids,
-    const std::map<
-      unsigned int,
-      Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour>
-                                    &isocontours,
+    const MPI_Comm    &mpi_communicator,
+    const std::string &output_folder,
+    const Variable    &variable,
+    const std::multimap<Variable,
+                        std::pair<unsigned int,
+                                  Parameters::PostProcessing::
+                                    IsocontourBoundingBoxes::Isocontour>>
+                                    &ids_and_isocontours_per_variable,
     const std::vector<TableHandler> &isocontour_bounding_values_tables);
 
 } // namespace InterfaceTools
