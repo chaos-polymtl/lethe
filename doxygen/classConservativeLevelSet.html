@@ -366,6 +366,8 @@ Private Attributes</h2></td></tr>
 <tr class="separator:a2876177095d829d69bebeb65e9a0192c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0ec5a57d857806afa8f884ac6d943b70" id="r_a0ec5a57d857806afa8f884ac6d943b70"><td class="memItemLeft" align="right" valign="top">TableHandler&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConservativeLevelSet.html#a0ec5a57d857806afa8f884ac6d943b70">table_barycenter</a></td></tr>
 <tr class="separator:a0ec5a57d857806afa8f884ac6d943b70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aee89e5e58a2aebd812963973349a37b2" id="r_aee89e5e58a2aebd812963973349a37b2"><td class="memItemLeft" align="right" valign="top">std::vector&lt; TableHandler &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConservativeLevelSet.html#aee89e5e58a2aebd812963973349a37b2">phase_indicator_isocontour_bounding_values_tables</a></td></tr>
+<tr class="separator:aee89e5e58a2aebd812963973349a37b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5ed78835dc54f150d94f7f23951e1597" id="r_a5ed78835dc54f150d94f7f23951e1597"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::shared_ptr&lt; <a class="el" href="cls__assemblers_8h.html#aca3dd5eea2dd53525b1aa1b1418bf2ed">CLSAssemblerBase</a>&lt; dim &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConservativeLevelSet.html#a5ed78835dc54f150d94f7f23951e1597">assemblers</a></td></tr>
 <tr class="separator:a5ed78835dc54f150d94f7f23951e1597"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a55afa5859297e43a71c970658b280064" id="r_a55afa5859297e43a71c970658b280064"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCLSAssemblerSIPG.html">CLSAssemblerSIPG</a>&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classConservativeLevelSet.html#a55afa5859297e43a71c970658b280064">inner_face_assembler</a></td></tr>
@@ -434,7 +436,7 @@ template&lt;int dim&gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00021">21</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="cls_8h_source.html#l00786">ConservativeLevelSet&lt; dim &gt;::cell_quadrature</a>, <a class="el" href="cls_8h_source.html#l00825">ConservativeLevelSet&lt; dim &gt;::cls_subequations_interface</a>, <a class="el" href="cls_8h_source.html#l00787">ConservativeLevelSet&lt; dim &gt;::face_quadrature</a>, <a class="el" href="cls_8h_source.html#l00781">ConservativeLevelSet&lt; dim &gt;::fe</a>, <a class="el" href="cls_8h_source.html#l00802">ConservativeLevelSet&lt; dim &gt;::filtered_solution</a>, <a class="el" href="namespaceParameters.html#aa2e0fb6073129a03752879571fee0f3fa65a383f3960a0cb2b8b0ace54817d575">Parameters::geometric</a>, <a class="el" href="cls_8h_source.html#l00785">ConservativeLevelSet&lt; dim &gt;::mapping</a>, <a class="el" href="bdf_8h_source.html#l00084">maximum_number_of_previous_solutions()</a>, <a class="el" href="signed__distance__transformation_8cc_source.html#l00007">SignedDistanceTransformationBase::model_cast()</a>, <a class="el" href="namespaceParameters.html#aa2e0fb6073129a03752879571fee0f3fa334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::none</a>, <a class="el" href="physics__solver_8h_source.html#l00155">PhysicsSolver&lt; VectorType &gt;::pcout</a>, <a class="el" href="cls_8h_source.html#l00796">ConservativeLevelSet&lt; dim &gt;::present_solution</a>, <a class="el" href="cls_8h_source.html#l00809">ConservativeLevelSet&lt; dim &gt;::previous_solutions</a>, <a class="el" href="cls_8h_source.html#l00814">ConservativeLevelSet&lt; dim &gt;::previous_solutions_transfer</a>, <a class="el" href="cls_8h_source.html#l00860">ConservativeLevelSet&lt; dim &gt;::signed_distance_solver</a>, <a class="el" href="cls_8h_source.html#l00864">ConservativeLevelSet&lt; dim &gt;::signed_distance_transformation</a>, <a class="el" href="cls_8h_source.html#l00779">ConservativeLevelSet&lt; dim &gt;::simulation_control</a>, <a class="el" href="cls_8h_source.html#l00775">ConservativeLevelSet&lt; dim &gt;::simulation_parameters</a>, <a class="el" href="cls_8h_source.html#l00812">ConservativeLevelSet&lt; dim &gt;::solution_transfer</a>, and <a class="el" href="cls_8h_source.html#l00778">ConservativeLevelSet&lt; dim &gt;::triangulation</a>.</p>
+<p class="reference">References <a class="el" href="cls_8h_source.html#l00786">ConservativeLevelSet&lt; dim &gt;::cell_quadrature</a>, <a class="el" href="cls_8h_source.html#l00825">ConservativeLevelSet&lt; dim &gt;::cls_subequations_interface</a>, <a class="el" href="cls_8h_source.html#l00787">ConservativeLevelSet&lt; dim &gt;::face_quadrature</a>, <a class="el" href="cls_8h_source.html#l00781">ConservativeLevelSet&lt; dim &gt;::fe</a>, <a class="el" href="cls_8h_source.html#l00802">ConservativeLevelSet&lt; dim &gt;::filtered_solution</a>, <a class="el" href="namespaceParameters.html#aa2e0fb6073129a03752879571fee0f3fa65a383f3960a0cb2b8b0ace54817d575">Parameters::geometric</a>, <a class="el" href="cls_8h_source.html#l00785">ConservativeLevelSet&lt; dim &gt;::mapping</a>, <a class="el" href="bdf_8h_source.html#l00084">maximum_number_of_previous_solutions()</a>, <a class="el" href="signed__distance__transformation_8cc_source.html#l00007">SignedDistanceTransformationBase::model_cast()</a>, <a class="el" href="namespaceParameters.html#aa2e0fb6073129a03752879571fee0f3fa334c4a4c42fdb79d7ebc3e73b517e6f8">Parameters::none</a>, <a class="el" href="physics__solver_8h_source.html#l00155">PhysicsSolver&lt; VectorType &gt;::pcout</a>, <a class="el" href="cls_8h_source.html#l00796">ConservativeLevelSet&lt; dim &gt;::present_solution</a>, <a class="el" href="cls_8h_source.html#l00809">ConservativeLevelSet&lt; dim &gt;::previous_solutions</a>, <a class="el" href="cls_8h_source.html#l00814">ConservativeLevelSet&lt; dim &gt;::previous_solutions_transfer</a>, <a class="el" href="cls_8h_source.html#l00866">ConservativeLevelSet&lt; dim &gt;::signed_distance_solver</a>, <a class="el" href="cls_8h_source.html#l00870">ConservativeLevelSet&lt; dim &gt;::signed_distance_transformation</a>, <a class="el" href="cls_8h_source.html#l00779">ConservativeLevelSet&lt; dim &gt;::simulation_control</a>, <a class="el" href="cls_8h_source.html#l00775">ConservativeLevelSet&lt; dim &gt;::simulation_parameters</a>, <a class="el" href="cls_8h_source.html#l00812">ConservativeLevelSet&lt; dim &gt;::solution_transfer</a>, and <a class="el" href="cls_8h_source.html#l00778">ConservativeLevelSet&lt; dim &gt;::triangulation</a>.</p>
 
 </div>
 </div>
@@ -513,7 +515,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l03293">3293</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l03348">3348</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="cls__filter_8cc_source.html#l00007">ConservativeLevelSetFilterBase::model_cast()</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
@@ -569,7 +571,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l03097">3097</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l03152">3152</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 </div>
 </div>
@@ -626,7 +628,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00371">371</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00374">374</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="copy__data_8h_source.html#l00112">StabilizedMethodsCopyData::cell_is_local</a>, <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, <a class="el" href="copy__data_8h_source.html#l00105">StabilizedMethodsCopyData::local_dof_indices</a>, <a class="el" href="cls__scratch__data_8h_source.html#l00154">CLSScratchData&lt; dim &gt;::reinit()</a>, <a class="el" href="cls__scratch__data_8h_source.html#l00272">CLSScratchData&lt; dim &gt;::reinit_velocity()</a>, and <a class="el" href="copy__data_8h_source.html#l00091">StabilizedMethodsCopyData::reset()</a>.</p>
 
@@ -684,7 +686,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00616">616</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00619">619</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="copy__data_8h_source.html#l00112">StabilizedMethodsCopyData::cell_is_local</a>, <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, <a class="el" href="copy__data_8h_source.html#l00105">StabilizedMethodsCopyData::local_dof_indices</a>, <a class="el" href="cls__scratch__data_8h_source.html#l00154">CLSScratchData&lt; dim &gt;::reinit()</a>, <a class="el" href="cls__scratch__data_8h_source.html#l00272">CLSScratchData&lt; dim &gt;::reinit_velocity()</a>, and <a class="el" href="copy__data_8h_source.html#l00091">StabilizedMethodsCopyData::reset()</a>.</p>
 
@@ -724,7 +726,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l03258">3258</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l03313">3313</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 </div>
 </div>
@@ -762,7 +764,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02143">2143</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02175">2175</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00781">compute_cell_measure_with_JxW()</a>.</p>
 
@@ -788,7 +790,7 @@ template&lt;int dim&gt; </div>
 <p>Call for the assembly of the right-hand side. </p>
 <dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000003">Deprecated:</a></b></dt><dd>This function is to be deprecated when the new assembly mechanism is integrated to this solver </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00173">173</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00176">176</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 </div>
 </div>
@@ -821,7 +823,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a73215f315918e22864cf04248c583045">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00224">224</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00227">227</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 </div>
 </div>
@@ -852,9 +854,9 @@ template&lt;int dim&gt; </div>
 
 <p>Assemble the matrix associated with the solver when CG elements are used. </p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00239">239</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00242">242</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="cls_8cc_source.html#l00371">ConservativeLevelSet&lt; dim &gt;::assemble_local_system_matrix()</a>, <a class="el" href="cls_8cc_source.html#l00458">ConservativeLevelSet&lt; dim &gt;::copy_local_matrix_to_global_matrix()</a>, and <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>.</p>
+<p class="reference">References <a class="el" href="cls_8cc_source.html#l00374">ConservativeLevelSet&lt; dim &gt;::assemble_local_system_matrix()</a>, <a class="el" href="cls_8cc_source.html#l00461">ConservativeLevelSet&lt; dim &gt;::copy_local_matrix_to_global_matrix()</a>, and <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>.</p>
 
 </div>
 </div>
@@ -885,7 +887,7 @@ template&lt;int dim&gt; </div>
 
 <p>Assemble the matrix associated with the solver when DG elements are used. </p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00268">268</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00271">271</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="copy__data_8h_source.html#l00148">StabilizedDGMethodsCopyData::face_data</a>, and <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>.</p>
 
@@ -920,7 +922,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a74110493860247f4ed2da56ef3050f08">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00472">472</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00475">475</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 </div>
 </div>
@@ -951,9 +953,9 @@ template&lt;int dim&gt; </div>
 
 <p>Assemble the rhs associated with the solver when CG elements are used. </p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00489">489</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00492">492</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="cls_8cc_source.html#l00616">ConservativeLevelSet&lt; dim &gt;::assemble_local_system_rhs()</a>, <a class="el" href="cls_8cc_source.html#l00703">ConservativeLevelSet&lt; dim &gt;::copy_local_rhs_to_global_rhs()</a>, and <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>.</p>
+<p class="reference">References <a class="el" href="cls_8cc_source.html#l00619">ConservativeLevelSet&lt; dim &gt;::assemble_local_system_rhs()</a>, <a class="el" href="cls_8cc_source.html#l00706">ConservativeLevelSet&lt; dim &gt;::copy_local_rhs_to_global_rhs()</a>, and <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>.</p>
 
 </div>
 </div>
@@ -984,7 +986,7 @@ template&lt;int dim&gt; </div>
 
 <p>Assemble the rhs associated with the solver when DG elements are used. </p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00517">517</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00520">520</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="copy__data_8h_source.html#l00148">StabilizedDGMethodsCopyData::face_data</a>, and <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>.</p>
 
@@ -1029,7 +1031,7 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00865">865</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00868">868</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, <a class="el" href="cls__filter_8cc_source.html#l00007">ConservativeLevelSetFilterBase::model_cast()</a>, and <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.</p>
 
@@ -1054,7 +1056,7 @@ template&lt;int dim&gt; </div>
 
 <p>Calculates the L2 error of the solution. </p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00819">819</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00822">822</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 </div>
 </div>
@@ -1103,7 +1105,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02069">2069</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02101">2101</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>.</p>
 
@@ -1156,7 +1158,7 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A tensor&lt;1,dim&gt; corresponding to the entry_string in the prm file. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l01077">1077</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l01080">1080</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e86df18a83727e4a5dc8dc2859a097c">Parameters::fluid0</a>, <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e04d9b58aa70e6fb6501fde7608fd13">Parameters::fluid1</a>, <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, <a class="el" href="physical__property__model_8h_source.html#l00051">set_field_vector()</a>, and <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fddaac1a453d0cdc1f19d9479ccfaa8b082c">velocity</a>.</p>
 
@@ -1208,7 +1210,7 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00973">973</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00976">976</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e86df18a83727e4a5dc8dc2859a097c">Parameters::fluid0</a>, <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e04d9b58aa70e6fb6501fde7608fd13">Parameters::fluid1</a>, <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, and <a class="el" href="physical__property__model_8h_source.html#l00051">set_field_vector()</a>.</p>
 
@@ -1259,7 +1261,7 @@ template&lt;int dim&gt; </div>
 <p>Reference:</p>
 <p>[1] F. Denner, F. Evrard, and B. van Wachem, “Breaching the capillary time-step constraint using a coupled VOF method with implicit surface tension,” J. Comput. Phys., vol. 459, p. 111128, Jun. 2022, doi: 10.1016/j.jcp.2022.111128 </p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l01181">1181</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l01184">1184</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00781">compute_cell_measure_with_JxW()</a>, <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, <a class="el" href="multiphysics_8h_source.html#l00028">heat_transfer</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, <a class="el" href="physical__property__model_8h_source.html#l00051">set_field_vector()</a>, and <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>.</p>
 
@@ -1312,7 +1314,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#a4fd20b9411d6ac816873465deae02530">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02349">2349</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02381">2381</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="structParameters_1_1MultipleAdaptationParameters.html#a0415d48307e584ae60c4c4fc9ee053c0aae074a5692dfb7c26aae5147e52ceb40">Parameters::MultipleAdaptationParameters::kelly</a>, and <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>.</p>
 
@@ -1355,7 +1357,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02372">2372</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02404">2404</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 </div>
 </div>
@@ -1404,7 +1406,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l03391">3391</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l03446">3446</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>.</p>
 
@@ -1455,7 +1457,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l03412">3412</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l03467">3467</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 </div>
 </div>
@@ -1487,7 +1489,7 @@ template&lt;int dim&gt; </div>
 
 <p>Copy local cell information to global matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00458">458</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00461">461</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="copy__data_8h_source.html#l00112">StabilizedMethodsCopyData::cell_is_local</a>, <a class="el" href="copy__data_8h_source.html#l00105">StabilizedMethodsCopyData::local_dof_indices</a>, and <a class="el" href="copy__data_8h_source.html#l00103">StabilizedMethodsCopyData::local_matrix</a>.</p>
 
@@ -1521,7 +1523,7 @@ template&lt;int dim&gt; </div>
 
 <p>Copy local cell rhs information to global rhs. </p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00703">703</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00706">706</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="copy__data_8h_source.html#l00112">StabilizedMethodsCopyData::cell_is_local</a>, <a class="el" href="copy__data_8h_source.html#l00105">StabilizedMethodsCopyData::local_dof_indices</a>, and <a class="el" href="copy__data_8h_source.html#l00104">StabilizedMethodsCopyData::local_rhs</a>.</p>
 
@@ -1546,7 +1548,7 @@ template&lt;int dim&gt; </div>
 
 <p>defined the non zero constraints used to solve the problem. </p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02701">2701</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02756">2756</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a0e931ce0fe014e165a0fb534be71d2ad">BoundaryConditions::cls_dirichlet</a>, and <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::periodic</a>.</p>
 
@@ -1571,7 +1573,7 @@ template&lt;int dim&gt; </div>
 
 <p>defined the zero constraints used to solve the problem. </p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02662">2662</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02717">2717</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a0e931ce0fe014e165a0fb534be71d2ad">BoundaryConditions::cls_dirichlet</a>, and <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8ae6ffdec5e14fce371eb7ae99edebbbee">BoundaryConditions::periodic</a>.</p>
 
@@ -1604,7 +1606,7 @@ template&lt;int dim&gt; </div>
 
 <p>Find the sharpening threshold to ensure mass conservation of the fluid monitored, as given in the prm (CLS, subsection monitoring), by binary search. </p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l01943">1943</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l01975">1975</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>.</p>
 
@@ -1639,7 +1641,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#aa917fdacf48dbefe7657aa7978edd53a">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l01334">1334</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l01337">1337</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00468">announce_string()</a>, <a class="el" href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa7f021a1415b86f2d013b2618fb31ae53">Parameters::Timer::end</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
 
@@ -1675,7 +1677,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classAuxiliaryPhysics.html#a4ebbb78aa057532aae3143b3a1f5647a">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00717">717</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00720">720</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba039fcc8d0c5faa96965d91e8d069958f">curvature_projection</a>, and <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba9940c4a3bfe89c505b3e4b825d8ef89b">phase_gradient_projection</a>.</p>
 
@@ -1711,7 +1713,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#a764abbac51050515970d14a13b5e8aad">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02388">2388</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02420">2420</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>.</p>
 
 </div>
 </div>
@@ -2137,7 +2141,7 @@ template&lt;int dim&gt; </div>
 
 <p>Carries out interface sharpening. It is called in the modify solution function. Launches sharpen_interface with the possibility to ensure conservation and handles output messages. </p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l01900">1900</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l01932">1932</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceParameters.html#a18e7a3c8a6fc1a1320cca7af11b021d1a8cb043b2dace9afc0680e6bae5cd316f">Parameters::adaptive</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>.</p>
 
@@ -2172,7 +2176,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classAuxiliaryPhysics.html#ace42d65b732019925cb4824e9af89f52">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l01843">1843</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l01875">1875</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba039fcc8d0c5faa96965d91e8d069958f">curvature_projection</a>, and <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba9940c4a3bfe89c505b3e4b825d8ef89b">phase_gradient_projection</a>.</p>
 
@@ -2242,7 +2246,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#a0e74925e0067b4bcf2578f18a2f15204">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l01367">1367</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l01370">1370</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 </div>
 </div>
@@ -2275,7 +2279,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#a3870a0c5dc427098c9bec1afc9a668c0">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02317">2317</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02349">2349</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 </div>
 </div>
@@ -2309,9 +2313,9 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#a5cddfe1a7224404a899d7564d908d098">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l01378">1378</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l01381">1381</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00468">announce_string()</a>, <a class="el" href="postprocessing__cfd_8cc_source.html#l01221">calculate_L2_error()</a>, <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e86df18a83727e4a5dc8dc2859a097c">Parameters::fluid0</a>, <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e04d9b58aa70e6fb6501fde7608fd13">Parameters::fluid1</a>, <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, <a class="el" href="interface__tools_8cc_source.html#l00068">InterfaceTools::integrate_volume_and_surface()</a>, <a class="el" href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa6f012ea8d7efd87146dd62db83f2ed99">Parameters::Timer::iteration</a>, <a class="el" href="utilities_8cc_source.html#l00051">make_table_scalars_tensors()</a>, <a class="el" href="utilities_8cc_source.html#l00016">make_table_scalars_vectors()</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>.</p>
+<p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00468">announce_string()</a>, <a class="el" href="postprocessing__cfd_8cc_source.html#l01221">calculate_L2_error()</a>, <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e86df18a83727e4a5dc8dc2859a097c">Parameters::fluid0</a>, <a class="el" href="namespaceParameters.html#af7808f8635a6a7dc05ee8c1487118f2fa1e04d9b58aa70e6fb6501fde7608fd13">Parameters::fluid1</a>, <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, <a class="el" href="interface__tools_8cc_source.html#l00068">InterfaceTools::integrate_volume_and_surface()</a>, <a class="el" href="structParameters_1_1Timer.html#a2102ec5281247140dbca8d4fe9c1381aa6f012ea8d7efd87146dd62db83f2ed99">Parameters::Timer::iteration</a>, <a class="el" href="utilities_8cc_source.html#l00051">make_table_scalars_tensors()</a>, <a class="el" href="utilities_8cc_source.html#l00016">make_table_scalars_vectors()</a>, <a class="el" href="multiphysics_8h.html#a2cbb04ef215561a69b48772159577fdda7ee7184c970537ea83afe7f9bae4c61f">phase</a>, <a class="el" href="interface__tools_8cc_source.html#l01570">InterfaceTools::postprocess_isocontour_bounding_values()</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>, <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a2c7aea4237e25b4f8ee3b0bf77d6fed0">Parameters::verbose</a>, and <a class="el" href="interface__tools_8cc_source.html#l01673">InterfaceTools::write_isocontour_bounding_values_tables()</a>.</p>
 
 </div>
 </div>
@@ -2344,7 +2348,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#ae80e26995eb53ee0ea0239a2390d082f">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02302">2302</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02334">2334</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 </div>
 </div>
@@ -2377,7 +2381,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#ab68fa8d211549189803ddd8ba1fcc4ff">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02447">2447</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02502">2502</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceParameters.html#a18e7a3c8a6fc1a1320cca7af11b021d1a8cb043b2dace9afc0680e6bae5cd316f">Parameters::adaptive</a>, <a class="el" href="core_2utilities_8h_source.html#l00592">deserialize_tables_vector()</a>, and <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>.</p>
 
@@ -2468,7 +2472,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reinitialize the interface between fluids using the geometric approach. </p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l03433">3433</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l03488">3488</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00468">announce_string()</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>.</p>
 
@@ -2501,7 +2505,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reinitialize the interface between fluids using the PDE-based approach. </p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l03329">3329</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l03384">3384</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba5568bf4910132c541952981e114c047d">pde_based_interface_reinitialization</a>, and <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba9940c4a3bfe89c505b3e4b825d8ef89b">phase_gradient_projection</a>.</p>
 
@@ -2536,7 +2540,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#aeecb470de43133aa878a5e9499509b31">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02742">2742</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02797">2797</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceParameters.html#a18e7a3c8a6fc1a1320cca7af11b021d1a8cb043b2dace9afc0680e6bae5cd316f">Parameters::adaptive</a>, <a class="el" href="utilities_8cc_source.html#l00365">create_output_folder()</a>, <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba039fcc8d0c5faa96965d91e8d069958f">curvature_projection</a>, <a class="el" href="utilities_8cc_source.html#l00371">delete_output_folder()</a>, <a class="el" href="namespaceParameters.html#a3afa4d0c12c6c995b8b6978a4e413c3ba142a3e0f4cf6590eb56586a5187666c0">Parameters::diffusive</a>, <a class="el" href="multiphysics_8h_source.html#l00026">fluid_dynamics</a>, <a class="el" href="namespaceParameters.html#a3afa4d0c12c6c995b8b6978a4e413c3ba65a383f3960a0cb2b8b0ace54817d575">Parameters::geometric</a>, <a class="el" href="cls__subequations_8h.html#adc294680c5240ed4f2abd7c72e1cd0dba9940c4a3bfe89c505b3e4b825d8ef89b">phase_gradient_projection</a>, <a class="el" href="physical__property__model_8h_source.html#l00043">pressure</a>, <a class="el" href="structParameters_1_1SimulationControl.html#a86daf86652a712eb783c105c953eb7f8a4f997f546b68779b58e9f6f19dc2b9e5">Parameters::SimulationControl::steady</a>, and <a class="el" href="physical__property__model_8h_source.html#l00040">temperature</a>.</p>
 
@@ -2561,7 +2565,7 @@ template&lt;int dim&gt; </div>
 
 <p>Set up the AMG preconditioner stored in amg_preconditioner. </p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02869">2869</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02924">2924</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00033">CLS</a>.</p>
 
@@ -2594,7 +2598,7 @@ template&lt;int dim&gt; </div>
 
 <p>sets up the vector of assembler functions </p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00181">181</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l00184">184</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="time__integration__utilities_8h_source.html#l00042">time_stepping_is_bdf()</a>, and <a class="el" href="time__integration__utilities_8h_source.html#l00060">time_stepping_is_sdirk()</a>.</p>
 
@@ -2629,7 +2633,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#a3d0c0d037152ce2e8552227c3dda383e">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02504">2504</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02559">2559</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00033">CLS</a>.</p>
 
@@ -2654,7 +2658,7 @@ template&lt;int dim&gt; </div>
 
 <p>Set up the ILU preconditioner stored in ilu_preconditioner. </p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02849">2849</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02904">2904</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00033">CLS</a>.</p>
 
@@ -2712,7 +2716,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02094">2094</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02126">2126</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 </div>
 </div>
@@ -2744,7 +2748,7 @@ template&lt;int dim&gt; </div>
 
 <p>Carries out the smoothing phase indicator with a projection step (to avoid a staircase interface). </p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02134">2134</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02166">2166</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 </div>
 </div>
@@ -2782,7 +2786,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l03190">3190</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l03245">3245</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00033">CLS</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919ae5cbb8171b496f26a4488b9e15a0fe52">Parameters::extra_verbose</a>.</p>
 
@@ -2817,7 +2821,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classPhysicsSolver.html#a375f91bc1e5a05dac2c71f5ae5575f84">PhysicsSolver&lt; VectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02938">2938</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02993">2993</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="structParameters_1_1LinearSolver.html#abcc346895a204b69b5fa4edabd810834a0b65af7f2357d3fa0ee8d8972d7e0646">Parameters::LinearSolver::amg</a>, <a class="el" href="multiphysics_8h_source.html#l00033">CLS</a>, <a class="el" href="structParameters_1_1LinearSolver.html#abcc346895a204b69b5fa4edabd810834a95dfbb838164998e04803c1e488b86ab">Parameters::LinearSolver::ilu</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>.</p>
 
@@ -2857,7 +2861,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02248">2248</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02280">2280</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="multiphysics_8h_source.html#l00033">CLS</a>, and <a class="el" href="namespaceParameters.html#a91f1943180a615249347b911b0ed3919a556966c7830465dc4623d62e32cec31d">Parameters::quiet</a>.</p>
 
@@ -2892,7 +2896,7 @@ template&lt;int dim&gt; </div>
 
 <p>Reimplemented from <a class="el" href="classAuxiliaryPhysics.html#aa4eb967dee8229dc43ff95182df011fe">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02640">2640</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02695">2695</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="namespaceBoundaryConditions.html#a07df76d63cde5cb5bcbea0d9c25a54b8a0e931ce0fe014e165a0fb534be71d2ad">BoundaryConditions::cls_dirichlet</a>.</p>
 
@@ -2926,7 +2930,7 @@ template&lt;int dim&gt; </div>
 
 <p>Limit the phase indicators between 0 and 1. This is necessary before interface sharpening. More information can be found in step_41 of deal.II tutorials: <a href="https://www.dealii.org/current/doxygen/deal.II/step_41.html">https://www.dealii.org/current/doxygen/deal.II/step_41.html</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l03022">3022</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l03077">3077</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 </div>
 </div>
@@ -2992,7 +2996,7 @@ template&lt;int dim&gt; </div>
 
 <p>Implements <a class="el" href="classAuxiliaryPhysics.html#aac6b380b7f28d81bef3a7d33eb13ec34">AuxiliaryPhysics&lt; dim, GlobalVectorType &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02422">2422</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8cc_source.html#l02477">2477</a> of file <a class="el" href="cls_8cc_source.html">cls.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="core_2utilities_8h_source.html#l00570">serialize_tables_vector()</a>.</p>
 
@@ -3049,7 +3053,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00850">850</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00856">856</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3361,7 +3365,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00856">856</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00862">862</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3439,7 +3443,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00853">853</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00859">859</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3756,6 +3760,34 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
+<a id="aee89e5e58a2aebd812963973349a37b2" name="aee89e5e58a2aebd812963973349a37b2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aee89e5e58a2aebd812963973349a37b2">&#9670;&#160;</a></span>phase_indicator_isocontour_bounding_values_tables</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;TableHandler&gt; <a class="el" href="classConservativeLevelSet.html">ConservativeLevelSet</a>&lt; dim &gt;::phase_indicator_isocontour_bounding_values_tables</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Vector of tables containing evolution of phase indicator isocontour bounding values. </p>
+
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00853">853</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+
+</div>
+</div>
 <a id="a26dbbf98f131a4c5f3bb1d517965693f" name="a26dbbf98f131a4c5f3bb1d517965693f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a26dbbf98f131a4c5f3bb1d517965693f">&#9670;&#160;</a></span>phase_lower_bound</h2>
 
@@ -3934,7 +3966,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00860">860</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00866">866</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
@@ -3960,7 +3992,7 @@ template&lt;int dim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00864">864</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="cls_8h_source.html#l00870">870</a> of file <a class="el" href="cls_8h_source.html">cls.h</a>.</p>
 
 </div>
 </div>
