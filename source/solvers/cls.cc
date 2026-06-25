@@ -36,6 +36,9 @@ ConservativeLevelSet<dim>::ConservativeLevelSet(
   , dof_handler(std::make_shared<DoFHandler<dim>>(*triangulation))
   , sharpening_threshold(simulation_parameters.multiphysics.cls_parameters
                            .reinitialization_method.sharpening.threshold)
+  , phase_indicator_isocontour_bounding_values_tables(
+      p_simulation_parameters.post_processing.isocontour_bounding_boxes
+        .ids_and_isocontours_per_variable.count(Variable::phase))
 {
   this->pcout << std::setprecision(simulation_control->get_log_precision())
               << std::scientific;
@@ -1809,6 +1812,35 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
         }
     }
 
+  // Phase indicator isocontour bounding boxes
+  if (this->simulation_parameters.post_processing.isocontour_bounding_boxes
+        .ids_and_isocontours_per_variable.contains(Variable::phase))
+    {
+      TimerOutput::Scope t(this->computing_timer,
+                           "Compute bounding values of phase isocontours");
+      InterfaceTools::postprocess_isocontour_bounding_values(
+        Variable::phase,
+        this->simulation_parameters.post_processing.isocontour_bounding_boxes
+          .ids_and_isocontours_per_variable,
+        *this->dof_handler,
+        *this->present_solution,
+        this->simulation_control->get_current_time(),
+        this->simulation_parameters.post_processing.verbosity,
+        this->pcout,
+        this->phase_indicator_isocontour_bounding_values_tables);
+
+      if (simulation_control->get_iteration_number() %
+            this->simulation_parameters.post_processing.output_frequency ==
+          0)
+        InterfaceTools::write_isocontour_bounding_values_tables(
+          this->dof_handler->get_mpi_communicator(),
+          this->simulation_parameters.simulation_control.output_folder,
+          Variable::phase,
+          this->simulation_parameters.post_processing.isocontour_bounding_boxes
+            .ids_and_isocontours_per_variable,
+          this->phase_indicator_isocontour_bounding_values_tables);
+    }
+
   // Compute and update current capillary time-step constraint
   if (this->simulation_parameters.simulation_control.method !=
         Parameters::SimulationControl::TimeSteppingMethod::steady &&
@@ -2413,6 +2445,29 @@ ConservativeLevelSet<dim>::gather_tables()
       prefix +
         this->simulation_parameters.post_processing.barycenter_output_name +
         suffix);
+
+  if (this->simulation_parameters.post_processing.isocontour_bounding_boxes
+        .ids_and_isocontours_per_variable.contains(Variable::phase))
+    {
+      // Get iterator range that corresponds to the variable "temperature"
+      auto [begin, end] =
+        this->simulation_parameters.post_processing.isocontour_bounding_boxes
+          .ids_and_isocontours_per_variable.equal_range(Variable::phase);
+
+      // Initialize iterator for the table(s)
+      unsigned int i = 0;
+
+      for (auto it = begin; it != end; ++it, ++i)
+        {
+          // Get isocontour output name
+          const std::string &isocontour_output_name =
+            it->second.second.output_name;
+
+          table_output_structs.emplace_back(
+            this->phase_indicator_isocontour_bounding_values_tables[i],
+            prefix + isocontour_output_name + suffix);
+        }
+    }
 
   return table_output_structs;
 }

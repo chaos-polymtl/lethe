@@ -1,31 +1,556 @@
 Running on 1 MPI rank(s)...
-   Number of active cells:       200
-   Number of degrees of freedom: 765
-   Volume of triangulation:      1.000000e-01
-   Number of thermal degrees of freedom: 255
+   Number of active cells:       320
+   Number of degrees of freedom: 1107
+   Volume of triangulation:      5.000000e-02
+   Number of thermal degrees of freedom: 369
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 6.375000e-03
+y_max: 6.375000e-03
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 6.125000e-03
+y_max: 6.125000e-03
 
 *******************************************************************************
-Transient iteration: 1        Time: 2        Time step: 2        CFL: 62.5156 
+Transient iteration: 1        Time: 0.004    Time step: 0.004    CFL: 0.559156
 *******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 4.540114e-02
+y_max: 4.541472e-02
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 4.287240e-02
+y_max: 4.288616e-02
 
 *******************************************************************************
-Transient iteration: 2        Time: 4        Time step: 2        CFL: 78.6097 
+Transient iteration: 2        Time: 0.01     Time step: 0.006    CFL: 0.280664
 *******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 9.294920e-02
+y_max: 9.295339e-02
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 8.893022e-02
+y_max: 8.893466e-02
 
 *******************************************************************************
-Transient iteration: 3        Time: 6        Time step: 2        CFL: 78.5446 
+Transient iteration: 3        Time: 0.02     Time step: 0.01     CFL: 0.422059
 *******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 1.403348e-01
+y_max: 1.403348e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 1.347005e-01
+y_max: 1.347006e-01
 
 *******************************************************************************
-Transient iteration: 4        Time: 8        Time step: 2        CFL: 78.5682 
+Transient iteration: 4        Time: 0.03     Time step: 0.01     CFL: 0.694202
 *******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 1.727235e-01
+y_max: 1.727235e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 1.655629e-01
+y_max: 1.655630e-01
 
 *******************************************************************************
-Transient iteration: 5        Time: 10       Time step: 2        CFL: 78.5687 
+Transient iteration: 5        Time: 0.04     Time step: 0.01     CFL: 0.696319
 *******************************************************************************
- time   error_velocity 
- 2.0000   8.863220e-02 
- 4.0000   9.892201e-03 
- 6.0000   5.183354e-03 
- 8.0000   5.146905e-03 
-10.0000   5.146472e-03 
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 1.969677e-01
+y_max: 1.969678e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 1.885365e-01
+y_max: 1.885366e-01
+
+*******************************************************************************
+Transient iteration: 6        Time: 0.05     Time step: 0.01     CFL: 0.698806
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.151564e-01
+y_max: 2.151565e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.059223e-01
+y_max: 2.059224e-01
+
+*******************************************************************************
+Transient iteration: 7        Time: 0.06     Time step: 0.01     CFL: 0.699879
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.283102e-01
+y_max: 2.283102e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.186305e-01
+y_max: 2.186306e-01
+
+*******************************************************************************
+Transient iteration: 8        Time: 0.07     Time step: 0.01     CFL: 0.700376
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.374037e-01
+y_max: 2.374038e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.275316e-01
+y_max: 2.275317e-01
+
+*******************************************************************************
+Transient iteration: 9        Time: 0.08     Time step: 0.01     CFL: 0.700618
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.435177e-01
+y_max: 2.435177e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.335602e-01
+y_max: 2.335602e-01
+
+*******************************************************************************
+Transient iteration: 10       Time: 0.09     Time step: 0.01     CFL: 0.700829
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.475296e-01
+y_max: 2.475296e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.375428e-01
+y_max: 2.375428e-01
+
+*******************************************************************************
+Transient iteration: 11       Time: 0.1      Time step: 0.01     CFL: 0.701005
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.501458e-01
+y_max: 2.501458e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.401553e-01
+y_max: 2.401553e-01
+
+*******************************************************************************
+Transient iteration: 12       Time: 0.11     Time step: 0.01     CFL: 0.701091
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.518495e-01
+y_max: 2.518496e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.418539e-01
+y_max: 2.418539e-01
+
+*******************************************************************************
+Transient iteration: 13       Time: 0.12     Time step: 0.01     CFL: 0.70111 
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.529551e-01
+y_max: 2.529551e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.429572e-01
+y_max: 2.429572e-01
+
+*******************************************************************************
+Transient iteration: 14       Time: 0.13     Time step: 0.01     CFL: 0.701106
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.536726e-01
+y_max: 2.536726e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.436736e-01
+y_max: 2.436736e-01
+
+*******************************************************************************
+Transient iteration: 15       Time: 0.14     Time step: 0.01     CFL: 0.7011  
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.541384e-01
+y_max: 2.541384e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.441388e-01
+y_max: 2.441388e-01
+
+*******************************************************************************
+Transient iteration: 16       Time: 0.15     Time step: 0.01     CFL: 0.701098
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.544407e-01
+y_max: 2.544407e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.444409e-01
+y_max: 2.444409e-01
+
+*******************************************************************************
+Transient iteration: 17       Time: 0.16     Time step: 0.01     CFL: 0.701097
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.546370e-01
+y_max: 2.546370e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.446371e-01
+y_max: 2.446371e-01
+
+*******************************************************************************
+Transient iteration: 18       Time: 0.17     Time step: 0.01     CFL: 0.701097
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.547644e-01
+y_max: 2.547644e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.447644e-01
+y_max: 2.447644e-01
+
+*******************************************************************************
+Transient iteration: 19       Time: 0.18     Time step: 0.01     CFL: 0.701097
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.548471e-01
+y_max: 2.548471e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.448471e-01
+y_max: 2.448471e-01
+
+*******************************************************************************
+Transient iteration: 20       Time: 0.19     Time step: 0.01     CFL: 0.701097
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.549007e-01
+y_max: 2.549007e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.449007e-01
+y_max: 2.449007e-01
+
+*******************************************************************************
+Transient iteration: 21       Time: 0.2      Time step: 0.01     CFL: 0.701097
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.549356e-01
+y_max: 2.549356e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.449356e-01
+y_max: 2.449356e-01
+
+*******************************************************************************
+Transient iteration: 22       Time: 0.21     Time step: 0.01     CFL: 0.701097
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.549582e-01
+y_max: 2.549582e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.449582e-01
+y_max: 2.449582e-01
+
+*******************************************************************************
+Transient iteration: 23       Time: 0.22     Time step: 0.01     CFL: 0.701097
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.549728e-01
+y_max: 2.549728e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.449728e-01
+y_max: 2.449728e-01
+
+*******************************************************************************
+Transient iteration: 24       Time: 0.23     Time step: 0.01     CFL: 0.701097
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.549824e-01
+y_max: 2.549824e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.449824e-01
+y_max: 2.449824e-01
+
+*******************************************************************************
+Transient iteration: 25       Time: 0.24     Time step: 0.01     CFL: 0.701097
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.549886e-01
+y_max: 2.549886e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.449886e-01
+y_max: 2.449886e-01
+
+*******************************************************************************
+Transient iteration: 26       Time: 0.25     Time step: 0.01     CFL: 0.701097
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.549926e-01
+y_max: 2.549926e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.449926e-01
+y_max: 2.449926e-01
+
+*******************************************************************************
+Transient iteration: 27       Time: 0.26     Time step: 0.01     CFL: 0.701097
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.549952e-01
+y_max: 2.549952e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.449952e-01
+y_max: 2.449952e-01
+
+*******************************************************************************
+Transient iteration: 28       Time: 0.27     Time step: 0.01     CFL: 0.701097
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.549969e-01
+y_max: 2.549969e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.449969e-01
+y_max: 2.449969e-01
+
+*******************************************************************************
+Transient iteration: 29       Time: 0.28     Time step: 0.01     CFL: 0.701097
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.549980e-01
+y_max: 2.549980e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.449980e-01
+y_max: 2.449980e-01
+
+*******************************************************************************
+Transient iteration: 30       Time: 0.29     Time step: 0.01     CFL: 0.701097
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.549987e-01
+y_max: 2.549987e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.449987e-01
+y_max: 2.449987e-01
+
+*******************************************************************************
+Transient iteration: 31       Time: 0.3      Time step: 0.01     CFL: 0.701097
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.549991e-01
+y_max: 2.549991e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.449991e-01
+y_max: 2.449991e-01
+
+*******************************************************************************
+Transient iteration: 32       Time: 0.31     Time step: 0.01     CFL: 0.701097
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.549994e-01
+y_max: 2.549994e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.449994e-01
+y_max: 2.449994e-01
+
+*******************************************************************************
+Transient iteration: 33       Time: 0.32     Time step: 0.01     CFL: 0.701097
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.549996e-01
+y_max: 2.549996e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.449996e-01
+y_max: 2.449996e-01
+
+*******************************************************************************
+Transient iteration: 34       Time: 0.33     Time step: 0.01     CFL: 0.701097
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.549998e-01
+y_max: 2.549998e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.449998e-01
+y_max: 2.449998e-01
+
+*******************************************************************************
+Transient iteration: 35       Time: 0.34     Time step: 0.01     CFL: 0.701097
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.549998e-01
+y_max: 2.549998e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.449998e-01
+y_max: 2.449998e-01
+
+*******************************************************************************
+Transient iteration: 36       Time: 0.35     Time step: 0.01     CFL: 0.701097
+*******************************************************************************
+Isocontour 0: liquidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.549999e-01
+y_max: 2.549999e-01
+Isocontour 1: solidus_isocontour
+x_min: 2.641561e-03
+x_max: 9.735844e-02
+y_min: 2.449999e-01
+y_max: 2.449999e-01
+ time  error_velocity 
+0.0040   6.215612e-02 
+0.0100   4.812525e-02 
+0.0200   4.440750e-02 
+0.0300   2.926679e-02 
+0.0400   2.027966e-02 
+0.0500   1.482039e-02 
+0.0600   1.040378e-02 
+0.0700   9.161663e-03 
+0.0800   5.986815e-03 
+0.0900   4.822816e-03 
+0.1000   4.530395e-03 
+0.1100   4.500750e-03 
+0.1200   4.523101e-03 
+0.1300   4.541579e-03 
+0.1400   4.549564e-03 
+0.1500   4.551536e-03 
+0.1600   4.551421e-03 
+0.1700   4.550978e-03 
+0.1800   4.550678e-03 
+0.1900   4.550531e-03 
+0.2000   4.550466e-03 
+0.2100   4.550436e-03 
+0.2200   4.550418e-03 
+0.2300   4.550406e-03 
+0.2400   4.550398e-03 
+0.2500   4.550392e-03 
+0.2600   4.550388e-03 
+0.2700   4.550385e-03 
+0.2800   4.550384e-03 
+0.2900   4.550383e-03 
+0.3000   4.550382e-03 
+0.3100   4.550382e-03 
+0.3200   4.550381e-03 
+0.3300   4.550381e-03 
+0.3400   4.550381e-03 
+0.3500   4.550381e-03 

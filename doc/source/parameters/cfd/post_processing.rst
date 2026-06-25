@@ -16,7 +16,7 @@ This subsection controls the post-processing other than the forces and torque on
     set calculation frequency = 1
 
     #---------------------------------------------------
-    # Fluid dynamic post-processing
+    # Fluid dynamics post-processing
     #---------------------------------------------------
     # Kinetic energy calculation
     set calculate kinetic energy = false
@@ -89,7 +89,10 @@ This subsection controls the post-processing other than the forces and torque on
     set geometric melt volume name        = melt_volume_geo
     set melting temperature               = 0
 
-    # Multiphase postprocessing
+    #---------------------------------------------------
+    # Multiphase post-processing
+    #---------------------------------------------------
+    # CLS and Cahn-Hilliard postprocessing
     set calculate barycenter        = false
     set barycenter name             = barycenter_information
     set calculate mass conservation = true
@@ -101,15 +104,24 @@ This subsection controls the post-processing other than the forces and torque on
     set calculate phase energy     = false
     set phase energy name          = phase_energy
 
-    #---------------------------------------------------
-    # Multiphase post-processing
-    #---------------------------------------------------
     # CFD-DEM postprocessing
     set calculate volume phases = false
     set phase volumes name      = phase_volumes
-    
+
+    #---------------------------------------------------
+    # Isocontour bounding box
+    #---------------------------------------------------
+    subsection isocontour bounding box
+      set number of isocontour bounding boxes = 0
+      set variable                            = temperature
+      set isovalue                            = 0.0
+      set bounding box filename               = isocontour_bounding_box
+    end
+
   end
 
+General Parameters
+~~~~~~~~~~~~~~~~~~
 * ``verbosity``: enables the display of the post-processing values in the terminal. This does not affect the printing of output files. Choices are: ``quiet`` (default, no output) or ``verbose`` (output at every iteration).
 
 * ``calculation frequency``: frequency at which the post-processed quantities are computed.
@@ -121,6 +133,9 @@ This subsection controls the post-processing other than the forces and torque on
 
   .. attention::
     The ``output frequency`` must be a multiple of the ``calculation frequency``.
+
+Fluid Dynamics Post-processing
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * ``calculate kinetic energy``: controls if calculation of kinetic energy is enabled. 
     * ``kinetic energy name``: output filename for kinetic energy calculations.
@@ -197,8 +212,14 @@ This subsection controls the post-processing other than the forces and torque on
   .. warning::
     ``output qcriterion``, ``output vorticity``, ``output velocity gradient`` are only applicable to ``lethe-fluid`` solvers.
 
+Physical Properties Post-processing
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 * ``calculate apparent viscosity``: controls if parameter calculation of an apparent viscosity is enabled, when using a non Newtonian flow (see section Physical properties - :ref:`rheological_models`). This is mainly used to define the Reynolds number `a posteriori`. 
     * ``apparent viscosity name``: output filename for apparent viscosity calculations.
+
+Multiphysics Post-processing
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * ``calculate tracer statistics``: controls if calculation of tracer statistics is enabled. Statistics include: minimum, maximum, average and standard-deviation.
     .. warning::
@@ -300,6 +321,9 @@ This subsection controls the post-processing other than the forces and torque on
   * ``geometric melt volume name``: name of the output file containing the time evolution of the geometric melt volume.
   * ``melting temperature``: temperature above which the fluid is considered melted.
 
+Multiphase Post-processing
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 * ``calculate barycenter``: calculates the barycenter of ``fluid 1`` and its velocity in CLS and Cahn-Hilliard simulations. The barycenter :math:`\mathbf{x}_b` and its velocity :math:`\mathbf{v}_b` are defined as:
 
   .. math::
@@ -381,4 +405,24 @@ This subsection controls the post-processing other than the forces and torque on
 
 * ``phase volumes name``: name of the output file containing phase energies from Cahn-Hilliard simulations. The default file name is ``phase_volumes``.
 
-        
+Isocontour Bounding Box
+~~~~~~~~~~~~~~~~~~~~~~~
+The ``isocontour bounding box`` subsection defines isocontours to be monitored. This is used to get the time evolution of the bounding boxes of isocontours of one or multiple fields:
+  - In 2D: :math:`x_\mathrm{min}`, :math:`x_\mathrm{max}`, :math:`y_\mathrm{min}`, and :math:`y_\mathrm{max}`;
+  - In 3D: :math:`x_\mathrm{min}`, :math:`x_\mathrm{max}`, :math:`y_\mathrm{min}`, :math:`y_\mathrm{max}`, :math:`z_\mathrm{min}`, and :math:`z_\mathrm{max}`.
+
+This feature can be used to evaluate heights, depths, or lengths when quantities of interests are known prior to running simulations. Each isocontour's bounding values in function of time is stored in a separate ``.dat`` file with named as specified with ``bounding box filename``.
+
+.. warning::
+  If, during simulation, a tracked isocontour is not detected within the simulated domain at a given simulation time, no entry will be made for that time. This means that if an empty ``.dat`` file is outputted, the tracked isocontour was not present in the domain during the simulated time.
+
+* ``number of isocontour bounding boxes``: number of monitored isocontours.
+
+* ``variable``: variable(s) used to define the monitored isocontour(s). Each entry corresponds to a different isocontour. When multiple isocontours are defined, the different variables must be separated by commas (e.g., ``set variable = phase, temperature, temperature``) and follow the same order as ``isovalue`` and ``bounding box filename``.
+
+  .. note::
+    At the moment, only isocontours on the ``temperature`` and ``phase`` (:doc:`CLS<../../../theory/multiphase/cfd/cls>` phase indicator) are implemented.
+
+* ``isovalue``: isovalue(s) of monitored isocontour(s). When multiple isocontours are defined, the different isovalues must be separated by commas (e.g., ``set isovalue = 0.5, 300, 500``) and follow the same order as ``variable`` and ``bounding box filename``.
+
+* ``bounding box filename``: filename(s) for outputted isocontour(s). When multiple isocontours are defined, the different filenames must be separated by commas (e.g., ``set bounding box filename = interface_bounding_box, solidus_bounding_box, liquidus_bounding_box``) and follow the same order as ``variable`` and ``isovalue``.

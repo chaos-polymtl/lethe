@@ -93,7 +93,9 @@ public:
     , thermal_conductivity_models(
         p_simulation_parameters.physical_properties_manager
           .get_thermal_conductivity_vector())
-
+    , temperature_isocontour_bounding_values_tables(
+        p_simulation_parameters.post_processing.isocontour_bounding_boxes
+          .ids_and_isocontours_per_variable.count(Variable::temperature))
   {
     this->pcout << std::setprecision(simulation_control->get_log_precision())
                 << std::scientific;
@@ -917,6 +919,12 @@ private:
    * @brief Evolution of the melt volume in the simulated domain.
    */
   TableHandler melt_volume_geo_table;
+
+  /**
+   * @brief Vector of tables containing evolution of temperature isocontour
+   * bounding values.
+   */
+  std::vector<TableHandler> temperature_isocontour_bounding_values_tables;
 };
 
 

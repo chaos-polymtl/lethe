@@ -1080,6 +1080,169 @@ namespace InterfaceTools
     LAPACKFullMatrix<double> hessian_matrix;
     LAPACKFullMatrix<double> H_x_transformation_jacobian;
   };
+
+
+  /**
+   * @brief Named indices used to access the bounding coordinates of an
+   * isocontour.
+   *
+   * This enum defines named indices for the minimum and maximum coordinates
+   * stored in IsocontourBoundingValues::bounding_values. The values are ordered
+   * by spatial direction: \f$x\f$, \f$y\f$, then \f$z\f$.
+   */
+  enum BoundingCoordinates : unsigned int
+  {
+    x_min = 0, ///< Minimum x value of the isocontour
+    x_max = 1, ///< Maximum x value of the isocontour
+    y_min = 2, ///< Minimum y value of the isocontour
+    y_max = 3, ///< Maximum y value of the isocontour
+    z_min = 4, ///< Minimum z value of the isocontour
+    z_max = 5  ///< Maximum z value of the isocontour
+  };
+
+  /**
+   * @brief Bounding values of an isocontour along each coordinate direction
+   * (\f$x\f$ and \f$y\f$ in 2D; \f$x\f$, \f$y\f$, and \f$z\f$ in 3D). A boolean
+   * flag also indicates whether the isocontour is present in the simulated
+   * domain or not.
+   */
+  template <int dim>
+  struct IsocontourBoundingValues
+  {
+    /// Vector containing the bounding values of an isocontour.
+    dealii::Vector<double> bounding_values = initialize_bounding_values();
+
+    /// Array of bounding coordinates names
+    const std::array<std::string, 2 *dim> bounding_coordinates_names =
+      initialize_bounding_coordinates_names_array();
+
+    /**
+     * Boolean that indicates that at least one cell of the domain contains the
+     * interface. This is used to indicate when to write values on the console
+     * and in the data table. If @p false, the bounding values are invalid and
+     * not added to the tables nor displayed on console.
+     */
+    bool isocontour_exists = false;
+
+    /**
+     * @brief Initializes the vector used to store the bounding values of
+     * isocontours.
+     *
+     * @return Vector of bounding values initialized with extreme values for
+     * lower and upper bounds in each coordinate direction.
+     */
+    dealii::Vector<double>
+    initialize_bounding_values()
+    {
+      dealii::Vector<double> bounding_values_vec(2 * dim);
+      for (unsigned int i = 0; i < dim; ++i)
+        {
+          bounding_values_vec[2 * i]     = std::numeric_limits<double>::max();
+          bounding_values_vec[2 * i + 1] = -std::numeric_limits<double>::max();
+        }
+      return bounding_values_vec;
+    }
+
+    /**
+     * @brief Initializes the array of coordinate boundary name strings for the
+     * isocontour bounding box.
+     *
+     * @return Array with name strings for bounding coordinates.
+     *  - In 2D: "x_min", "x_max", "y_min", "y_max"
+     *  - In 3D: "x_min", "x_max", "y_min", "y_max", "z_min", "z_max"
+     */
+    std::array<std::string, 2 * dim>
+    initialize_bounding_coordinates_names_array()
+    {
+      if constexpr (dim == 2)
+        return {{"x_min", "x_max", "y_min", "y_max"}};
+      else // dim == 3
+        return {{"x_min", "x_max", "y_min", "y_max", "z_min", "z_max"}};
+    }
+  };
+
+  /**
+   * @brief Identifies and returns bounding coordinates of a given isocontour by
+   * scanning through quadrature points on the isocontour.
+   *
+   * @tparam dim  An integer that denotes the dimension of the space in which
+   * the problem is solved.
+   * @tparam VectorType The vector type of the solution vector.
+   *
+   * @param[in] dof_handler DofHandler associated to the triangulation where
+   * the isocontour lies.
+   * @param[in] solution_vector Solution vector field.
+   * @param[in] isovalue Isovalue corresponding to the isocontour of interest.
+   *
+   * @return Struct with the bounding isocontour's bounding values.
+   */
+  template <int dim, typename VectorType>
+  IsocontourBoundingValues<dim>
+  compute_isocontour_bounding_values(const DoFHandler<dim> &dof_handler,
+                                     const VectorType      &solution_vector,
+                                     const double           isovalue);
+
+  /**
+   * @brief Identifies the bounding values of requested isocontours using
+   * InterfaceTools::compute_isocontour_bounding_values.
+   *
+   * @tparam dim  An integer that denotes the dimension of the space in which
+   * the problem is solved.
+   * @tparam VectorType The vector type of the solution vector.
+   *
+   * @param[in] variable Variable of the isocontour.
+   * @param[in] ids_and_isocontours_per_variable Map of isocontours with their
+   * IDs sorted with their variable as a key.
+   * @param[in] dof_handler DofHandler associated to the triangulation where
+   * the isocontour lies.
+   * @param[in] solution_vector Solution vector field.
+   * @param[in] current_time Current simulation time.
+   * @param[in] verbosity Verbosity level for console output.
+   * @param[in] pcout Parallel conditional output stream used to print
+   * information on console.
+   * @param[in,out] isocontour_bounding_values_tables Tables to be filled with
+   * isocontour bounding values of the current time.
+   */
+  template <int dim, typename VectorType>
+  void
+  postprocess_isocontour_bounding_values(
+    const Variable &variable,
+    const std::multimap<Variable,
+                        std::pair<unsigned int,
+                                  Parameters::PostProcessing::
+                                    IsocontourBoundingBoxes::Isocontour>>
+                                &ids_and_isocontours_per_variable,
+    const DoFHandler<dim>       &dof_handler,
+    const VectorType            &solution_vector,
+    const double                 current_time,
+    const Parameters::Verbosity &verbosity,
+    const ConditionalOStream    &pcout,
+    std::vector<TableHandler>   &isocontour_bounding_values_tables);
+
+  /**
+   * @brief Writes the bounding values tables of the specified isocontours in
+   * their respective output files.
+   *
+   * @param[in] mpi_communicator MPI communicator.
+   * @param[in] output_folder Output folder where the output files are saved.
+   * @param[in] variable Variable of the isocontour.
+   * @param[in] ids_and_isocontours_per_variable Map of isocontours with their
+   * IDs sorted with their variable as a key.
+   * @param[in] isocontour_bounding_values_tables Tables with isocontour
+   * bounding values.
+   */
+  void
+  write_isocontour_bounding_values_tables(
+    const MPI_Comm    &mpi_communicator,
+    const std::string &output_folder,
+    const Variable    &variable,
+    const std::multimap<Variable,
+                        std::pair<unsigned int,
+                                  Parameters::PostProcessing::
+                                    IsocontourBoundingBoxes::Isocontour>>
+                                    &ids_and_isocontours_per_variable,
+    const std::vector<TableHandler> &isocontour_bounding_values_tables);
+
 } // namespace InterfaceTools
 
 #endif

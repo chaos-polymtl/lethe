@@ -1430,3 +1430,276 @@ template class InterfaceTools::
 template class InterfaceTools::
   SignedDistanceSolver<3, LinearAlgebra::distributed::Vector<double>>;
 #endif
+
+template struct InterfaceTools::IsocontourBoundingValues<2>;
+template struct InterfaceTools::IsocontourBoundingValues<3>;
+
+template <int dim, typename VectorType>
+InterfaceTools::IsocontourBoundingValues<dim>
+InterfaceTools::compute_isocontour_bounding_values(
+  const DoFHandler<dim> &dof_handler,
+  const VectorType      &solution_vector,
+  const double           isovalue)
+{
+  // Get MPI communicator
+  const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
+
+  bool isocontour_exists = false;
+
+  // Initialize IsocontourBoundingValues object and reference variables for
+  // readability
+  InterfaceTools::IsocontourBoundingValues<dim> isocontour_bounding_values;
+  double                                       &x_min =
+    isocontour_bounding_values.bounding_values[BoundingCoordinates::x_min];
+  double &x_max =
+    isocontour_bounding_values.bounding_values[BoundingCoordinates::x_max];
+  double &y_min =
+    isocontour_bounding_values.bounding_values[BoundingCoordinates::y_min];
+  double &y_max =
+    isocontour_bounding_values.bounding_values[BoundingCoordinates::y_max];
+
+  // Copy values of owned DoFs
+  VectorType solution_vector_owned_copy(dof_handler.locally_owned_dofs(),
+                                        mpi_communicator);
+  solution_vector_owned_copy = solution_vector;
+
+  // Offset field to impose 0 at the isovalue
+  solution_vector_owned_copy.add(-isovalue);
+
+  // Make relevant copy
+  VectorType solution_vector_relevant_copy(
+    dof_handler.locally_owned_dofs(),
+    DoFTools::extract_locally_relevant_dofs(dof_handler),
+    mpi_communicator);
+  solution_vector_relevant_copy = solution_vector_owned_copy;
+
+  // Initialize MeshClassifier
+  NonMatching::MeshClassifier<dim> mesh_classifier(
+    dof_handler, solution_vector_relevant_copy);
+  mesh_classifier.reclassify();
+
+  // Initialize FEValues
+  const hp::FECollection<dim>    fe_collection(dof_handler.get_fe());
+  const QGauss<1>                quadrature_1D(dof_handler.get_fe().degree + 1);
+  NonMatching::RegionUpdateFlags region_update_flags;
+  region_update_flags.surface = update_quadrature_points;
+  NonMatching::FEValues<dim> non_matching_fe_values(
+    fe_collection,
+    quadrature_1D,
+    region_update_flags,
+    mesh_classifier,
+    dof_handler,
+    solution_vector_relevant_copy);
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          // Reinitialize and get surface FE values
+          non_matching_fe_values.reinit(cell);
+          const std::optional<NonMatching::FEImmersedSurfaceValues<dim>>
+            &surface_fe_values = non_matching_fe_values.get_surface_fe_values();
+
+          // If the surface does exist, approximate the bounding values with
+          // quadrature points
+          if (surface_fe_values)
+            {
+              const auto &q_points = surface_fe_values->get_quadrature_points();
+              if (q_points.size() > 0)
+                isocontour_exists = true;
+              for (const auto &p : q_points)
+                {
+                  x_min = std::min(x_min, p[0]);
+                  x_max = std::max(x_max, p[0]);
+                  y_min = std::min(y_min, p[1]);
+                  y_max = std::max(y_max, p[1]);
+                  if constexpr (dim == 3)
+                    {
+                      isocontour_bounding_values
+                        .bounding_values[BoundingCoordinates::z_min] =
+                        std::min(isocontour_bounding_values
+                                   .bounding_values[BoundingCoordinates::z_min],
+                                 p[2]);
+                      isocontour_bounding_values
+                        .bounding_values[BoundingCoordinates::z_max] =
+                        std::max(isocontour_bounding_values
+                                   .bounding_values[BoundingCoordinates::z_max],
+                                 p[2]);
+                    }
+                }
+            }
+        }
+    }
+
+  // Reduce across ranks
+  x_min = Utilities::MPI::min(x_min, mpi_communicator);
+  x_max = Utilities::MPI::max(x_max, mpi_communicator);
+  y_min = Utilities::MPI::min(y_min, mpi_communicator);
+  y_max = Utilities::MPI::max(y_max, mpi_communicator);
+  if constexpr (dim == 3)
+    {
+      isocontour_bounding_values.bounding_values[BoundingCoordinates::z_min] =
+        Utilities::MPI::min(isocontour_bounding_values
+                              .bounding_values[BoundingCoordinates::z_min],
+                            mpi_communicator);
+      isocontour_bounding_values.bounding_values[BoundingCoordinates::z_max] =
+        Utilities::MPI::max(isocontour_bounding_values
+                              .bounding_values[BoundingCoordinates::z_max],
+                            mpi_communicator);
+    }
+  isocontour_bounding_values.isocontour_exists =
+    Utilities::MPI::logical_or(isocontour_exists, mpi_communicator);
+
+  return isocontour_bounding_values;
+}
+
+template InterfaceTools::IsocontourBoundingValues<2>
+InterfaceTools::compute_isocontour_bounding_values(
+  const DoFHandler<2>    &dof_handler,
+  const GlobalVectorType &solution_vector,
+  const double            isovalue);
+
+template InterfaceTools::IsocontourBoundingValues<3>
+InterfaceTools::compute_isocontour_bounding_values(
+  const DoFHandler<3>    &dof_handler,
+  const GlobalVectorType &solution_vector,
+  const double            isovalue);
+
+template <int dim, typename VectorType>
+void
+InterfaceTools::postprocess_isocontour_bounding_values(
+  const Variable &variable,
+  const std::multimap<
+    Variable,
+    std::pair<unsigned int,
+              Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour>>
+                              &ids_and_isocontours_per_variable,
+  const DoFHandler<dim>       &dof_handler,
+  const VectorType            &solution_vector,
+  const double                 current_time,
+  const Parameters::Verbosity &verbosity,
+  const ConditionalOStream    &pcout,
+  std::vector<TableHandler>   &isocontour_bounding_values_tables)
+{
+  // Get iterator range that corresponds to the variable of interest
+  auto [begin, end] = ids_and_isocontours_per_variable.equal_range(variable);
+
+  // Initialize iterator for the table
+  unsigned int i = 0;
+
+  for (auto it = begin; it != end; ++it, ++i)
+    {
+      // Get ID and isocontour
+      const unsigned int id = it->second.first;
+      const Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour
+        &isocontour = it->second.second;
+
+      // Get isocontour bounding values
+      InterfaceTools::IsocontourBoundingValues<dim> isocontour_bounding_values =
+        InterfaceTools::compute_isocontour_bounding_values(dof_handler,
+                                                           solution_vector,
+                                                           isocontour.isovalue);
+
+      if (isocontour_bounding_values.isocontour_exists)
+        {
+          const auto &bounding_coordinates_names =
+            isocontour_bounding_values.bounding_coordinates_names;
+          // Console output
+          if (verbosity == Parameters::Verbosity::verbose)
+            {
+              pcout << "Isocontour " << id << ": " << isocontour.output_name
+                    << std::endl;
+
+              for (unsigned int j = 0; j < bounding_coordinates_names.size();
+                   ++j)
+                {
+                  pcout << bounding_coordinates_names[j] << ": "
+                        << isocontour_bounding_values.bounding_values[j]
+                        << std::endl;
+                }
+            }
+
+          // Fill table
+          const unsigned int table_precision = 6;
+          TableHandler &current_table = isocontour_bounding_values_tables[i];
+
+          current_table.add_value("time", current_time);
+          current_table.set_scientific("time", true);
+          for (unsigned int j = 0; j < bounding_coordinates_names.size(); ++j)
+            {
+              current_table.add_value(
+                bounding_coordinates_names[j],
+                isocontour_bounding_values.bounding_values[j]);
+              current_table.set_precision(bounding_coordinates_names[j],
+                                          table_precision);
+              current_table.set_scientific(bounding_coordinates_names[j], true);
+            }
+        }
+    }
+}
+
+template void
+InterfaceTools::postprocess_isocontour_bounding_values(
+  const Variable &variable,
+  const std::multimap<
+    Variable,
+    std::pair<unsigned int,
+              Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour>>
+                              &ids_and_isocontours_per_variable,
+  const DoFHandler<2>         &dof_handler,
+  const GlobalVectorType      &solution_vector,
+  const double                 current_time,
+  const Parameters::Verbosity &verbosity,
+  const ConditionalOStream    &pcout,
+  std::vector<TableHandler>   &isocontour_bounding_values_tables);
+
+template void
+InterfaceTools::postprocess_isocontour_bounding_values(
+  const Variable &variable,
+  const std::multimap<
+    Variable,
+    std::pair<unsigned int,
+              Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour>>
+                              &ids_and_isocontours_per_variable,
+  const DoFHandler<3>         &dof_handler,
+  const GlobalVectorType      &solution_vector,
+  const double                 current_time,
+  const Parameters::Verbosity &verbosity,
+  const ConditionalOStream    &pcout,
+  std::vector<TableHandler>   &isocontour_bounding_values_tables);
+
+
+void
+InterfaceTools::write_isocontour_bounding_values_tables(
+  const MPI_Comm    &mpi_communicator,
+  const std::string &output_folder,
+  const Variable    &variable,
+  const std::multimap<
+    Variable,
+    std::pair<unsigned int,
+              Parameters::PostProcessing::IsocontourBoundingBoxes::Isocontour>>
+                                  &ids_and_isocontours_per_variable,
+  const std::vector<TableHandler> &isocontour_bounding_values_tables)
+{
+  if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+    {
+      // Get iterator range that corresponds to the variable of interest
+      auto [begin, end] =
+        ids_and_isocontours_per_variable.equal_range(variable);
+
+      // Initialize iterator for the table(s)
+      unsigned int i = 0;
+
+      for (auto it = begin; it != end; ++it, ++i)
+        {
+          // Get isocontour output name
+          const std::string &isocontour_output_name =
+            it->second.second.output_name;
+          std::string filename =
+            output_folder + isocontour_output_name + ".dat";
+          std::ofstream output(filename.c_str());
+
+          isocontour_bounding_values_tables[i].write_text(output);
+        }
+    }
+}

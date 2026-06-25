@@ -1208,6 +1208,36 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
         this->write_geometric_melt_volume();
     }
 
+  // Temperature isocontour bounding boxes
+  if (this->simulation_parameters.post_processing.isocontour_bounding_boxes
+        .ids_and_isocontours_per_variable.contains(Variable::temperature))
+    {
+      TimerOutput::Scope t(
+        this->computing_timer,
+        "Compute bounding values of temperature isocontours");
+      InterfaceTools::postprocess_isocontour_bounding_values(
+        Variable::temperature,
+        this->simulation_parameters.post_processing.isocontour_bounding_boxes
+          .ids_and_isocontours_per_variable,
+        *this->dof_handler,
+        *this->present_solution,
+        this->simulation_control->get_current_time(),
+        this->simulation_parameters.post_processing.verbosity,
+        this->pcout,
+        this->temperature_isocontour_bounding_values_tables);
+
+      if (simulation_control->get_iteration_number() %
+            this->simulation_parameters.post_processing.output_frequency ==
+          0)
+        InterfaceTools::write_isocontour_bounding_values_tables(
+          this->dof_handler->get_mpi_communicator(),
+          this->simulation_parameters.simulation_control.output_folder,
+          Variable::temperature,
+          this->simulation_parameters.post_processing.isocontour_bounding_boxes
+            .ids_and_isocontours_per_variable,
+          this->temperature_isocontour_bounding_values_tables);
+    }
+
   if (this->simulation_parameters.timer.type ==
       Parameters::Timer::Type::iteration)
     {
@@ -1356,6 +1386,29 @@ HeatTransfer<dim>::gather_tables()
         this->simulation_parameters.post_processing
           .geometric_melt_volume_output_name +
         suffix);
+
+  if (this->simulation_parameters.post_processing.isocontour_bounding_boxes
+        .ids_and_isocontours_per_variable.contains(Variable::temperature))
+    {
+      // Get iterator range that corresponds to the variable "temperature"
+      auto [begin, end] =
+        this->simulation_parameters.post_processing.isocontour_bounding_boxes
+          .ids_and_isocontours_per_variable.equal_range(Variable::temperature);
+
+      // Initialize iterator for the table(s)
+      unsigned int i = 0;
+
+      for (auto it = begin; it != end; ++it, ++i)
+        {
+          // Get isocontour output name
+          const std::string &isocontour_output_name =
+            it->second.second.output_name;
+
+          table_output_structs.emplace_back(
+            this->temperature_isocontour_bounding_values_tables[i],
+            prefix + isocontour_output_name + suffix);
+        }
+    }
 
   return table_output_structs;
 }

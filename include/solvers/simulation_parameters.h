@@ -136,7 +136,7 @@ public:
                                                         cls_subequation_name);
       }
 
-    Parameters::PostProcessing::declare_parameters(prm);
+    post_processing.declare_parameters(prm);
     Parameters::DynamicFlowControl ::declare_parameters(prm);
     particlesParameters = std::make_shared<Parameters::IBParticles<dim>>();
     particlesParameters->declare_parameters(prm);
@@ -506,6 +506,20 @@ public:
       ExcMessage(
         "Inconsistency in .prm!\n"
         "The 'cls' multiphysics is disabled and the 'fluid with phase change' parameter (subsection velocity source) has not been to 'fluid 0'."));
+
+    // For isocontour bounding boxes
+    if (post_processing.isocontour_bounding_boxes
+          .ids_and_isocontours_per_variable.contains(Variable::temperature))
+      AssertThrow(
+        multiphysics.heat_transfer,
+        ExcMessage(
+          "You are attempting to monitor temperature isocontours, but 'heat transfer = false' in the 'multiphysics' subsection."));
+    if (post_processing.isocontour_bounding_boxes
+          .ids_and_isocontours_per_variable.contains(Variable::phase))
+      AssertThrow(
+        multiphysics.CLS,
+        ExcMessage(
+          "You are attempting to monitor phase indicator isocontours, but 'cls = false' in the 'multiphysics' subsection."));
   }
 
   inline bool

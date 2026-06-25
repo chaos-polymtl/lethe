@@ -846,6 +846,12 @@ private:
   // Barycenter analysis
   TableHandler table_barycenter;
 
+  /**
+   * @brief Vector of tables containing evolution of phase indicator isocontour
+   * bounding values.
+   */
+  std::vector<TableHandler> phase_indicator_isocontour_bounding_values_tables;
+
   // Assemblers for the matrix and rhs
   std::vector<std::shared_ptr<CLSAssemblerBase<dim>>> assemblers;
 
