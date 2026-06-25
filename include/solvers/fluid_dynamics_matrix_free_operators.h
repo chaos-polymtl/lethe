@@ -183,7 +183,8 @@ public:
    * term.
    * @param[in] properties_manager The physical properties manager (see
    physical_properties_manager.h)
-   * @param[in] stabilization Stabilization type specified in parameter file.
+   * @param[in] stabilization_parameters Stabilization parameters specified in
+   * the parameter file (selected method and CIP coefficients).
    * @param[in] mg_level Level of the operator in case of MG methods.
    * @param[in] simulation_control Required to get the time stepping method.
    * @param[in] physical_properties_manager Required to have the updated values
@@ -205,7 +206,7 @@ public:
     const std::shared_ptr<Function<dim>> forcing_function,
     const std::shared_ptr<PhysicalPropertiesManager>
                                              &physical_properties_manager,
-    const StabilizationType                   stabilization,
+    const Parameters::Stabilization          &stabilization_parameters,
     const unsigned int                        mg_level,
     const std::shared_ptr<SimulationControl> &simulation_control,
     const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
@@ -227,7 +228,8 @@ public:
    * term.
    * @param[in] properties_manager The physical properties manager (see
    * physical_properties_manager.h)
-   * @param[in] stabilization Stabilization type specified in parameter file.
+   * @param[in] stabilization_parameters Stabilization parameters specified in
+   * the parameter file (selected method and CIP coefficients).
    * @param[in] mg_level Level of the operator in case of MG methods.
    * @param[in] simulation_control Required to get the time stepping method.
    * @param[in] boundary_conditions Contains information regarding all
@@ -247,7 +249,7 @@ public:
     const std::shared_ptr<Function<dim>> forcing_function,
     const std::shared_ptr<PhysicalPropertiesManager>
                                              &physical_properties_manager,
-    const StabilizationType                   stabilization,
+    const Parameters::Stabilization          &stabilization_parameters,
     const unsigned int                        mg_level,
     const std::shared_ptr<SimulationControl> &simulation_control,
     const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
@@ -342,6 +344,18 @@ public:
    */
   void
   vmult(VectorType &dst, const VectorType &src) const;
+
+  /**
+   * @brief Diagnostic: check that the matrix-free vmult is independent of the MPI
+   * partitioning. It applies the operator to a deterministic,
+   * partition-independent input vector and prints the MPI-invariant scalars
+   * ||A*x|| and x.(A*x). Running on different rank counts and comparing these
+   * numbers reveals whether the operator mishandles ghosts across partition
+   * boundaries (e.g. the CIP interior-face term). Only meaningful for the double
+   * (fine) operator.
+   */
+  void
+  verify_parallel_consistency() const;
 
   /**
    * @brief Perform the transposed operator evaluation.
@@ -544,22 +558,52 @@ protected:
     const std::pair<unsigned int, unsigned int> &range) const;
 
   /**
+   * @brief Carry out the integration of the continuous interior penalty (CIP /
+   * gradient-jump) stabilization term on a pair of internal face integrators
+   * (interior and exterior sides). It penalizes the jump of the normal gradient
+   * of the velocity and of the pressure across the face. The term is symmetric,
+   * positive semi-definite and consistent (the jump vanishes for smooth exact
+   * solutions), and is only assembled when the CIP stabilization is selected.
+   *
+   * @param[in,out] phi_m FEFaceEvaluation object on the interior side.
+   * @param[in,out] phi_p FEFaceEvaluation object on the exterior side.
+   */
+  void
+  do_internal_face_integral_local(FEFaceIntegrator &phi_m,
+                                  FEFaceIntegrator &phi_p) const;
+
+  /**
    * @brief Loop over all internal face batches within certain range and perform a face
    * integral with access to global vectors, i.e., gathering and scattering
-   * values. This is only required for compilation and not needed for our CG
-   * implementation.
+   * values. For continuous Galerkin discretizations this is only used when the
+   * CIP (gradient-jump) stabilization is enabled; otherwise it is a no-op.
+   *
+   * @tparam assemble_residual Flag to assemble the residual or the Jacobian.
    *
    * @param[in] matrix_free Object that contains all data.
    * @param[in,out] dst Global vector where the final result is added.
    * @param[in] src Input vector with all values in all cells.
    * @param[in] range Range of the face batch.
    */
+  template <bool assemble_residual>
   void
   do_internal_face_integral_range(
     const MatrixFree<dim, number>               &matrix_free,
     VectorType                                  &dst,
     const VectorType                            &src,
     const std::pair<unsigned int, unsigned int> &range) const;
+
+  /**
+   * @brief Compute and store, for every interior face quadrature point, the
+   * continuous interior penalty (CIP) stabilization coefficients evaluated at
+   * the current Newton iterate (linearization point). The coefficients freeze
+   * the convective scaling so that the Jacobian remains linear in the increment,
+   * mirroring the way the cell stabilization parameter tau is frozen.
+   *
+   * @param[in] newton_step Vector holding the current Newton iterate.
+   */
+  void
+  compute_internal_face_cip_parameters(const VectorType &newton_step);
 
   /**
    * @brief Interface to function in charge of computing the residual using a cell
@@ -675,6 +719,18 @@ protected:
    *
    */
   StabilizationType stabilization;
+
+  /**
+   * @brief Dimensionless coefficient (alpha_u) scaling the CIP (gradient-jump)
+   * stabilization term acting on the velocity normal-gradient jump.
+   */
+  double cip_velocity_coefficient;
+
+  /**
+   * @brief Dimensionless coefficient (alpha_p) scaling the CIP (gradient-jump)
+   * stabilization term acting on the pressure normal-gradient jump.
+   */
+  double cip_pressure_coefficient;
 
   /**
    * @brief Object storing the information regarding the time stepping method.
@@ -793,6 +849,22 @@ protected:
    */
   Table<2, VectorizedArray<number>> face_target_pressure;
 
+
+  /**
+   * @brief Table storing, per interior face batch and quadrature point, the CIP
+   * (gradient-jump) stabilization coefficient acting on the velocity
+   * normal-gradient jump, frozen at the current Newton iterate.
+   *
+   */
+  Table<2, VectorizedArray<number>> face_cip_velocity_parameter;
+
+  /**
+   * @brief Table storing, per interior face batch and quadrature point, the CIP
+   * (gradient-jump) stabilization coefficient acting on the pressure
+   * normal-gradient jump, frozen at the current Newton iterate.
+   *
+   */
+  Table<2, VectorizedArray<number>> face_cip_pressure_parameter;
 
   /**
    * @brief Table with correct alignment for vectorization to store the values

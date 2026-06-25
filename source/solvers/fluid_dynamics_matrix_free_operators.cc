@@ -86,7 +86,7 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
   const Quadrature<dim>                            &quadrature,
   const std::shared_ptr<Function<dim>>              forcing_function,
   const std::shared_ptr<PhysicalPropertiesManager> &physical_properties_manager,
-  const StabilizationType                           stabilization,
+  const Parameters::Stabilization                  &stabilization_parameters,
   const unsigned int                                mg_level,
   const std::shared_ptr<SimulationControl>         &simulation_control,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
@@ -102,7 +102,7 @@ NavierStokesOperatorBase<dim, number>::NavierStokesOperatorBase(
                quadrature,
                forcing_function,
                physical_properties_manager,
-               stabilization,
+               stabilization_parameters,
                mg_level,
                simulation_control,
                boundary_conditions,
@@ -120,7 +120,7 @@ NavierStokesOperatorBase<dim, number>::reinit(
   const Quadrature<dim>                            &quadrature,
   const std::shared_ptr<Function<dim>>              forcing_function,
   const std::shared_ptr<PhysicalPropertiesManager> &physical_properties_manager,
-  const StabilizationType                           stabilization,
+  const Parameters::Stabilization                  &stabilization_parameters,
   const unsigned int                                mg_level,
   const std::shared_ptr<SimulationControl>         &simulation_control,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
@@ -128,6 +128,8 @@ NavierStokesOperatorBase<dim, number>::reinit(
   const bool                                          &enable_hessians_residual,
   const bool                                          &enable_mortar)
 {
+  const StabilizationType stabilization = stabilization_parameters.stabilization;
+
   this->enable_face_terms = false;
 
   this->boundary_conditions = boundary_conditions;
@@ -165,6 +167,36 @@ NavierStokesOperatorBase<dim, number>::reinit(
         }
     }
 
+  // The CIP (gradient-jump) stabilization is assembled on interior faces, so it
+  // requires face terms and the corresponding interior-face mapping update
+  // flags (gradients to evaluate the normal-gradient jumps, values to recover
+  // the frozen advection velocity, and the normal vectors).
+  if (stabilization ==
+      Parameters::Stabilization::NavierStokesStabilization::cip)
+    {
+      this->enable_face_terms = true;
+      additional_data.mapping_update_flags_inner_faces =
+        update_values | update_gradients | update_JxW_values |
+        update_normal_vectors;
+
+      // Required so that the matrix-free face data structures correctly hold all
+      // faces to locally owned cells (and the ghost elements behind them) at
+      // partition boundaries; without it the interior-face contributions are not
+      // assembled consistently in parallel.
+      additional_data.hold_all_faces_to_owned_cells = true;
+
+      // Enabling face terms makes the matrix-free loops visit the boundary
+      // faces as well (the boundary-face worker still runs even when CIP is the
+      // only reason face terms are on). We therefore make sure the boundary
+      // faces are set up too; otherwise, when no weak/outlet/pressure boundary
+      // condition has already requested them, the boundary-face data is left
+      // uninitialized and reading the boundary id throws at the first solve in
+      // release builds.
+      additional_data.mapping_update_flags_boundary_faces |=
+        update_values | update_gradients | update_quadrature_points |
+        update_JxW_values | update_normal_vectors;
+    }
+
   matrix_free.reinit(
     mapping, dof_handler, this->constraints, quadrature, additional_data);
 
@@ -177,13 +209,20 @@ NavierStokesOperatorBase<dim, number>::reinit(
   if (stabilization ==
         Parameters::Stabilization::NavierStokesStabilization::pspg_supg ||
       stabilization ==
-        Parameters::Stabilization::NavierStokesStabilization::gls)
+        Parameters::Stabilization::NavierStokesStabilization::gls ||
+      stabilization ==
+        Parameters::Stabilization::NavierStokesStabilization::cip)
     {
       this->stabilization = stabilization;
     }
   else
     throw std::runtime_error(
-      "Only SUPG/PSPG and GLS stabilization is supported at the moment.");
+      "Only SUPG/PSPG, GLS and CIP stabilization is supported at the moment.");
+
+  this->cip_velocity_coefficient =
+    stabilization_parameters.cip_velocity_coefficient;
+  this->cip_pressure_coefficient =
+    stabilization_parameters.cip_pressure_coefficient;
 
   this->simulation_control = simulation_control;
 
@@ -509,7 +548,7 @@ NavierStokesOperatorBase<dim, number>::vmult(VectorType       &dst,
   if (this->enable_face_terms)
     this->matrix_free.loop(
       &NavierStokesOperatorBase::do_cell_integral_range,
-      &NavierStokesOperatorBase::do_internal_face_integral_range,
+      &NavierStokesOperatorBase::do_internal_face_integral_range<false>,
       &NavierStokesOperatorBase::do_boundary_face_integral_range<false>,
       this,
       dst,
@@ -550,6 +589,39 @@ NavierStokesOperatorBase<dim, number>::vmult(VectorType       &dst,
 
 template <int dim, typename number>
 void
+NavierStokesOperatorBase<dim, number>::verify_parallel_consistency() const
+{
+  VectorType x, y;
+  this->initialize_dof_vector(x);
+  this->initialize_dof_vector(y);
+
+  // Deterministic, partition-independent input: x depends only on the global
+  // dof index, so the global vector is identical for any number of ranks.
+  const auto &partitioner = this->get_vector_partitioner();
+  for (unsigned int i = 0; i < partitioner->locally_owned_size(); ++i)
+    {
+      const types::global_dof_index g = partitioner->local_to_global(i);
+      x.local_element(i) =
+        std::sin(0.1 * static_cast<double>(g % 1024) + 0.5);
+    }
+
+  this->vmult(y, x);
+
+  // ||A*x|| and x.(A*x) are MPI-reduced scalars, so they are independent of the
+  // partitioning *iff* the operator handles ghosts correctly. Compare these
+  // across runs with different rank counts.
+  const double y_norm  = y.l2_norm();
+  const double y_dot_x = y * x;
+
+  this->pcout.get_stream().precision(14);
+  this->pcout << "[CIP parallel check] n_ranks = "
+              << Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD)
+              << "  ||A*x|| = " << y_norm << "  x.(A*x) = " << y_dot_x
+              << std::endl;
+}
+
+template <int dim, typename number>
+void
 NavierStokesOperatorBase<dim, number>::Tvmult(VectorType       &dst,
                                               const VectorType &src) const
 {
@@ -565,7 +637,7 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_down(
   if (this->enable_face_terms)
     this->matrix_free.loop(
       &NavierStokesOperatorBase::do_cell_integral_range,
-      &NavierStokesOperatorBase::do_internal_face_integral_range,
+      &NavierStokesOperatorBase::do_internal_face_integral_range<false>,
       &NavierStokesOperatorBase::do_boundary_face_integral_range<false>,
       this,
       dst,
@@ -612,7 +684,7 @@ NavierStokesOperatorBase<dim, number>::vmult_interface_up(
   if (this->enable_face_terms)
     this->matrix_free.loop(
       &NavierStokesOperatorBase::do_cell_integral_range,
-      &NavierStokesOperatorBase::do_internal_face_integral_range,
+      &NavierStokesOperatorBase::do_internal_face_integral_range<false>,
       &NavierStokesOperatorBase::do_boundary_face_integral_range<false>,
       this,
       dst,
@@ -673,47 +745,72 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
                        locally_relevant_dofs.size(),
                        locally_relevant_dofs);
 
+      // The CIP (gradient-jump) stabilization couples each cell with its face
+      // neighbours, which a standard cell-wise sparsity pattern does not
+      // contain. In that case we build a flux sparsity pattern instead, which
+      // includes the interior-face couplings (and handles hanging nodes, MPI
+      // and constraints). The resulting pattern is a superset of the cell-wise
+      // one, so it is always safe for the assembly of the system matrix.
+      const bool use_flux_sparsity_pattern =
+        this->stabilization ==
+        Parameters::Stabilization::NavierStokesStabilization::cip;
+
       if (mg_level != numbers::invalid_unsigned_int)
         {
-          // the following code does the same as
-          // MGTools::make_sparsity_pattern() but also
-          // considers bool_dof_mask for FE_Q_iso_Q1
-          std::vector<types::global_dof_index> dofs_on_this_cell;
+          if (use_flux_sparsity_pattern)
+            MGTools::make_flux_sparsity_pattern(
+              dof_handler, dsp, mg_level, constraints, false);
+          else
+            {
+              // the following code does the same as
+              // MGTools::make_sparsity_pattern() but also
+              // considers bool_dof_mask for FE_Q_iso_Q1
+              std::vector<types::global_dof_index> dofs_on_this_cell;
 
-          for (const auto &cell : dof_handler.cell_iterators_on_level(mg_level))
-            if (cell->is_locally_owned_on_level())
-              {
-                const unsigned int dofs_per_cell =
-                  dof_handler.get_fe().n_dofs_per_cell();
-                dofs_on_this_cell.resize(dofs_per_cell);
-                cell->get_mg_dof_indices(dofs_on_this_cell);
+              for (const auto &cell :
+                   dof_handler.cell_iterators_on_level(mg_level))
+                if (cell->is_locally_owned_on_level())
+                  {
+                    const unsigned int dofs_per_cell =
+                      dof_handler.get_fe().n_dofs_per_cell();
+                    dofs_on_this_cell.resize(dofs_per_cell);
+                    cell->get_mg_dof_indices(dofs_on_this_cell);
 
-                constraints.add_entries_local_to_global(dofs_on_this_cell,
-                                                        dsp,
-                                                        false,
-                                                        bool_dof_mask);
-              }
+                    constraints.add_entries_local_to_global(dofs_on_this_cell,
+                                                            dsp,
+                                                            false,
+                                                            bool_dof_mask);
+                  }
+            }
         }
       else
         {
-          // the following code does the same as
-          // DoFTools::make_sparsity_pattern() but also
-          // considers bool_dof_mask for FE_Q_iso_Q1
-          std::vector<types::global_dof_index> dofs_on_this_cell;
+          if (use_flux_sparsity_pattern)
+            DoFTools::make_flux_sparsity_pattern(dof_handler,
+                                                 dsp,
+                                                 constraints,
+                                                 false);
+          else
+            {
+              // the following code does the same as
+              // DoFTools::make_sparsity_pattern() but also
+              // considers bool_dof_mask for FE_Q_iso_Q1
+              std::vector<types::global_dof_index> dofs_on_this_cell;
 
-          for (const auto &cell : dof_handler.active_cell_iterators())
-            if (cell->is_locally_owned())
-              {
-                const unsigned int dofs_per_cell =
-                  cell->get_fe().n_dofs_per_cell();
-                dofs_on_this_cell.resize(dofs_per_cell);
-                cell->get_dof_indices(dofs_on_this_cell);
+              for (const auto &cell : dof_handler.active_cell_iterators())
+                if (cell->is_locally_owned())
+                  {
+                    const unsigned int dofs_per_cell =
+                      cell->get_fe().n_dofs_per_cell();
+                    dofs_on_this_cell.resize(dofs_per_cell);
+                    cell->get_dof_indices(dofs_on_this_cell);
 
-                constraints.add_entries_local_to_global(dofs_on_this_cell,
-                                                        dsp,
-                                                        false,
-                                                        bool_dof_mask);
-              }
+                    constraints.add_entries_local_to_global(dofs_on_this_cell,
+                                                            dsp,
+                                                            false,
+                                                            bool_dof_mask);
+                  }
+            }
         }
 
       // If mortar is enabled, add sparsity pattern entries
@@ -746,7 +843,16 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
   unsigned int face   = numbers::invalid_unsigned_int;
   unsigned int column = numbers::invalid_unsigned_int;
 
-  std::function<void(FEFaceIntegrator &)> boundary_function;
+  std::function<void(FEFaceIntegrator &)>                    boundary_function;
+  std::function<void(FEFaceIntegrator &, FEFaceIntegrator &)> inner_face_function;
+
+  // Assemble the CIP (gradient-jump) stabilization on interior faces into the
+  // system matrix so that the coarse-grid solver sees the same operator.
+  if (this->stabilization ==
+      Parameters::Stabilization::NavierStokesStabilization::cip)
+    inner_face_function = [&](auto &phi_m, auto &phi_p) {
+      this->do_internal_face_integral_local(phi_m, phi_p);
+    };
 
   if (enable_face_terms)
     {
@@ -794,7 +900,7 @@ NavierStokesOperatorBase<dim, number>::get_system_matrix() const
 
         column++;
       },
-      {},
+      inner_face_function,
       boundary_function);
 
   // If mortar is enabled, add system matrix entries
@@ -1160,7 +1266,82 @@ NavierStokesOperatorBase<dim, number>::
         }
     }
 
+  // 3. Precompute the CIP (gradient-jump) stabilization coefficients on
+  // interior faces if this stabilization is selected.
+  if (this->stabilization ==
+      Parameters::Stabilization::NavierStokesStabilization::cip)
+    this->compute_internal_face_cip_parameters(newton_step);
+
   this->timer.leave_subsection("operator::evaluate_non_linear_term");
+}
+
+template <int dim, typename number>
+void
+NavierStokesOperatorBase<dim, number>::compute_internal_face_cip_parameters(
+  const VectorType &newton_step)
+{
+  const unsigned int n_inner_faces = matrix_free.n_inner_face_batches();
+
+  FEFaceIntegrator phi(matrix_free, /*is_interior_face=*/true, 0);
+
+  face_cip_velocity_parameter.reinit(n_inner_faces, phi.n_q_points);
+  face_cip_pressure_parameter.reinit(n_inner_faces, phi.n_q_points);
+
+  const double kinematic_viscosity =
+    this->properties_manager->get_rheology()->get_kinematic_viscosity();
+
+  for (unsigned int face = 0; face < n_inner_faces; ++face)
+    {
+      phi.reinit(face);
+      phi.read_dof_values_plain(newton_step);
+      phi.evaluate(EvaluationFlags::values);
+
+      // Interior-side element size (h/p) of the face, evaluated lane by lane
+      // from the adjacent cell measure, using the same definition as the cell
+      // stabilization parameter.
+      VectorizedArray<number> h_face = 1.0;
+      for (unsigned int lane = 0;
+           lane < matrix_free.n_active_entries_per_face_batch(face);
+           ++lane)
+        {
+          const auto [cell_it, face_no] =
+            matrix_free.get_face_iterator(face, lane);
+          (void)face_no;
+          h_face[lane] =
+            compute_cell_diameter<dim>(cell_it->measure(), fe_degree);
+        }
+
+      for (const auto q : phi.quadrature_point_indices())
+        {
+          const auto value  = phi.get_value(q);
+          const auto normal = phi.normal_vector(q);
+
+          // Frozen advection velocity at the face quadrature point.
+          Tensor<1, dim, VectorizedArray<number>> velocity;
+          for (int d = 0; d < dim; ++d)
+            velocity[d] = value[d];
+
+          VectorizedArray<number> b_dot_n = 0.0;
+          for (int d = 0; d < dim; ++d)
+            b_dot_n += velocity[d] * normal[d];
+          b_dot_n = std::abs(b_dot_n);
+
+          const VectorizedArray<number> b_magnitude = velocity.norm();
+
+          // Velocity gradient-jump coefficient: convective scaling
+          // gamma_u = alpha_u h_F^2 |b·n|.
+          face_cip_velocity_parameter(face, q) =
+            this->cip_velocity_coefficient * h_face * h_face * b_dot_n;
+
+          // Pressure gradient-jump coefficient:
+          // gamma_p = alpha_p h_F^2 / (|b| + nu/h_F). In the convective limit it
+          // scales like h_F^2/|b|; in the Stokes limit (|b|->0) it scales like
+          // h_F^3/nu, supplying the inf-sup pressure stabilization.
+          face_cip_pressure_parameter(face, q) =
+            this->cip_pressure_coefficient * h_face * h_face /
+            (b_magnitude + kinematic_viscosity / h_face);
+        }
+    }
 }
 
 template <int dim, typename number>
@@ -1284,7 +1465,7 @@ NavierStokesOperatorBase<dim, number>::evaluate_residual(VectorType       &dst,
   if (enable_face_terms)
     this->matrix_free.loop(
       &NavierStokesOperatorBase::local_evaluate_residual,
-      &NavierStokesOperatorBase::do_internal_face_integral_range,
+      &NavierStokesOperatorBase::do_internal_face_integral_range<true>,
       &NavierStokesOperatorBase::do_boundary_face_integral_range<true>,
       this,
       dst,
@@ -1304,11 +1485,20 @@ NavierStokesOperatorBase<dim, number>::compute_inverse_diagonal(
 {
   this->timer.enter_subsection("operator::compute_inverse_diagonal");
 
-  std::function<void(FEFaceIntegrator &)> boundary_function;
+  std::function<void(FEFaceIntegrator &)>                    boundary_function;
+  std::function<void(FEFaceIntegrator &, FEFaceIntegrator &)> inner_face_function;
 
   if ((enable_face_terms))
     boundary_function = [&](auto &integrator) {
       this->do_boundary_face_integral_local<false>(integrator);
+    };
+
+  // Include the CIP (gradient-jump) interior-face contribution in the diagonal
+  // used by the smoother.
+  if (this->stabilization ==
+      Parameters::Stabilization::NavierStokesStabilization::cip)
+    inner_face_function = [&](auto &phi_m, auto &phi_p) {
+      this->do_internal_face_integral_local(phi_m, phi_p);
     };
 
   matrix_free.initialize_dof_vector(diagonal);
@@ -1317,7 +1507,7 @@ NavierStokesOperatorBase<dim, number>::compute_inverse_diagonal(
       matrix_free,
       diagonal,
       [&](auto &integrator) { this->do_cell_integral_local(integrator); },
-      {},
+      inner_face_function,
       boundary_function);
 
   // If mortar is enabled, add diagonal entries
@@ -1360,6 +1550,7 @@ NavierStokesOperatorBase<dim, number>::do_cell_integral_range(
 }
 
 template <int dim, typename number>
+template <bool assemble_residual>
 void
 NavierStokesOperatorBase<dim, number>::do_internal_face_integral_range(
   const MatrixFree<dim, number>               &matrix_free,
@@ -1367,12 +1558,88 @@ NavierStokesOperatorBase<dim, number>::do_internal_face_integral_range(
   const VectorType                            &src,
   const std::pair<unsigned int, unsigned int> &range) const
 {
-  (void)matrix_free;
-  (void)dst;
-  (void)src;
-  (void)range;
+  // The CIP (gradient-jump) stabilization is the only interior-face
+  // contribution in this continuous Galerkin operator. If it is not selected,
+  // there is nothing to do on interior faces.
+  if (this->stabilization !=
+      Parameters::Stabilization::NavierStokesStabilization::cip)
+    return;
 
-  // nothing to do
+  FEFaceIntegrator phi_m(matrix_free, /*is_interior_face=*/true, 0);
+  FEFaceIntegrator phi_p(matrix_free, /*is_interior_face=*/false, 0);
+
+  for (auto face = range.first; face < range.second; ++face)
+    {
+      phi_m.reinit(face);
+      phi_p.reinit(face);
+
+      if constexpr (assemble_residual)
+        {
+          phi_m.read_dof_values_plain(src);
+          phi_p.read_dof_values_plain(src);
+        }
+      else
+        {
+          phi_m.read_dof_values(src);
+          phi_p.read_dof_values(src);
+        }
+
+      do_internal_face_integral_local(phi_m, phi_p);
+
+      phi_m.distribute_local_to_global(dst);
+      phi_p.distribute_local_to_global(dst);
+    }
+}
+
+// Assembles the continuous interior penalty (CIP / gradient-jump)
+// stabilization on a single interior face batch, for both the Jacobian and the
+// residual. It penalizes the jump of the normal gradient of the velocity and of
+// the pressure across the face:
+//   J(u,v) = sum_F  gamma_u <[d_n u],[d_n v]> + gamma_p <[d_n p],[d_n q]>
+// where [d_n .] = grad(.)_interior·n - grad(.)_exterior·n is the jump of the
+// normal derivative, and gamma_u, gamma_p are the frozen coefficients computed
+// in compute_internal_face_cip_parameters(). In deal.II's matrix-free face
+// evaluation, the interior ("minus") and exterior ("plus") FEFaceEvaluation
+// objects share the same normal vector (the outer normal of the interior cell).
+// Therefore the jump of the normal derivative is the *difference* of the two
+// get_normal_derivative() values, and the test-function jump means the penalty
+// is submitted with opposite sign on the two sides.
+template <int dim, typename number>
+void
+NavierStokesOperatorBase<dim, number>::do_internal_face_integral_local(
+  FEFaceIntegrator &phi_m,
+  FEFaceIntegrator &phi_p) const
+{
+  phi_m.evaluate(EvaluationFlags::gradients);
+  phi_p.evaluate(EvaluationFlags::gradients);
+
+  const unsigned int face = phi_m.get_current_cell_index();
+
+  for (const auto q : phi_m.quadrature_point_indices())
+    {
+      // Jump of the normal derivative of every solution component (both sides
+      // share the same normal vector).
+      const auto normal_derivative_jump =
+        phi_m.get_normal_derivative(q) - phi_p.get_normal_derivative(q);
+
+      const VectorizedArray<number> gamma_u =
+        this->face_cip_velocity_parameter(face, q);
+      const VectorizedArray<number> gamma_p =
+        this->face_cip_pressure_parameter(face, q);
+
+      typename FEFaceIntegrator::value_type penalty;
+      for (int d = 0; d < dim; ++d)
+        penalty[d] = gamma_u * normal_derivative_jump[d];
+      penalty[dim] = gamma_p * normal_derivative_jump[dim];
+
+      // Test with [d_n v] = d_n v_m - d_n v_p: same penalty on the interior
+      // side, opposite sign on the exterior side.
+      phi_m.submit_normal_derivative(penalty, q);
+      phi_p.submit_normal_derivative(-penalty, q);
+    }
+
+  phi_m.integrate(EvaluationFlags::gradients);
+  phi_p.integrate(EvaluationFlags::gradients);
 }
 
 template <int dim, typename number>
@@ -1700,9 +1967,20 @@ NavierStokesStabilizedOperator<dim, number>::do_cell_integral_local(
         previous_time_derivatives =
           this->time_derivatives_previous_solutions(cell, q);
 
-      // Get stabilization parameter
-      const auto tau      = this->stabilization_parameter[cell][q];
-      const auto tau_lsic = this->stabilization_parameter_lsic[cell][q];
+      // Get stabilization parameter. For the CIP (gradient-jump) stabilization
+      // the residual-based terms (PSPG/SUPG/GLS/LSIC) are switched off in the
+      // cells - they all carry a factor tau or tau_lsic - so that only the plain
+      // Galerkin terms remain, with stabilization provided on the interior
+      // faces instead.
+      const bool is_cip =
+        this->stabilization ==
+        Parameters::Stabilization::NavierStokesStabilization::cip;
+      const auto tau =
+        is_cip ? VectorizedArray<number>(0.0) :
+                 this->stabilization_parameter[cell][q];
+      const auto tau_lsic =
+        is_cip ? VectorizedArray<number>(0.0) :
+                 this->stabilization_parameter_lsic[cell][q];
 
       // Weak form Jacobian
       for (int i = 0; i < dim; ++i)
@@ -1968,9 +2246,20 @@ NavierStokesStabilizedOperator<dim, number>::local_evaluate_residual(
             previous_time_derivatives =
               this->time_derivatives_previous_solutions(cell, q);
 
-          // Get stabilization parameter
-          const auto tau      = this->stabilization_parameter[cell][q];
-          const auto tau_lsic = this->stabilization_parameter_lsic[cell][q];
+          // Get stabilization parameter. For the CIP (gradient-jump)
+          // stabilization the residual-based terms (PSPG/SUPG/GLS/LSIC) are
+          // switched off in the cells - they all carry a factor tau or tau_lsic
+          // - so that only the plain Galerkin terms remain, with stabilization
+          // provided on the interior faces instead.
+          const bool is_cip =
+            this->stabilization ==
+            Parameters::Stabilization::NavierStokesStabilization::cip;
+          const auto tau =
+            is_cip ? VectorizedArray<number>(0.0) :
+                     this->stabilization_parameter[cell][q];
+          const auto tau_lsic =
+            is_cip ? VectorizedArray<number>(0.0) :
+                     this->stabilization_parameter_lsic[cell][q];
 
           // Result value/gradient we will use
           typename FECellIntegrator::value_type    value_result;

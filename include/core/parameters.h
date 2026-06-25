@@ -812,11 +812,22 @@ namespace Parameters
     // pressure and velocity have very different scales
     double pressure_scaling_factor;
 
+    // Dimensionless coefficient (alpha_u) scaling the continuous interior
+    // penalty (CIP / gradient-jump) stabilization term acting on the velocity
+    // normal-gradient jump across interior faces.
+    double cip_velocity_coefficient;
+
+    // Dimensionless coefficient (alpha_p) scaling the continuous interior
+    // penalty (CIP / gradient-jump) stabilization term acting on the pressure
+    // normal-gradient jump across interior faces.
+    double cip_pressure_coefficient;
+
     enum class NavierStokesStabilization : std::int8_t
     {
       pspg_supg,
       gls,
-      grad_div
+      grad_div,
+      cip
     } stabilization;
 
     enum class ScalarLimiters : std::int8_t

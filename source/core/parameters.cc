@@ -847,9 +847,25 @@ namespace Parameters
       prm.declare_entry(
         "stabilization",
         "pspg_supg",
-        Patterns::Selection("pspg_supg|gls|grad_div"),
+        Patterns::Selection("pspg_supg|gls|grad_div|cip"),
         "Type of stabilization used for the Navier-Stokes equations"
-        "Choices are <pspg_supg|gls|grad_div>.");
+        "Choices are <pspg_supg|gls|grad_div|cip>.");
+
+      prm.declare_entry(
+        "cip velocity coefficient",
+        "0.05",
+        Patterns::Double(),
+        "Dimensionless coefficient scaling the continuous interior penalty "
+        "(CIP / gradient-jump) stabilization term acting on the velocity "
+        "normal-gradient jump across interior faces.");
+
+      prm.declare_entry(
+        "cip pressure coefficient",
+        "0.05",
+        Patterns::Double(),
+        "Dimensionless coefficient scaling the continuous interior penalty "
+        "(CIP / gradient-jump) stabilization term acting on the pressure "
+        "normal-gradient jump across interior faces.");
 
       prm.declare_entry(
         "heat transfer dcdd stabilization",
@@ -910,6 +926,8 @@ namespace Parameters
           stabilization = NavierStokesStabilization::gls;
         else if (op == "grad_div")
           stabilization = NavierStokesStabilization::grad_div;
+        else if (op == "cip")
+          stabilization = NavierStokesStabilization::cip;
         else
           throw(std::runtime_error("Invalid stabilization strategy"));
       }
@@ -930,6 +948,9 @@ namespace Parameters
       dcdd_diffusion_coeff   = prm.get_double("cls dcdd diffusion factor");
 
       pressure_scaling_factor = prm.get_double("pressure scaling factor");
+
+      cip_velocity_coefficient = prm.get_double("cip velocity coefficient");
+      cip_pressure_coefficient = prm.get_double("cip pressure coefficient");
     }
     prm.leave_subsection();
   }

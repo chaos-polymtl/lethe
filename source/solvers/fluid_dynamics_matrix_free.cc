@@ -1224,7 +1224,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             quadrature_mg,
             forcing_function,
             physical_properties_manager,
-            this->simulation_parameters.stabilization.stabilization,
+            this->simulation_parameters.stabilization,
             levels[level].first,
             simulation_control,
             this->simulation_parameters.boundary_conditions,
@@ -1722,7 +1722,7 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
             quadrature_mg,
             forcing_function,
             physical_properties_manager,
-            this->simulation_parameters.stabilization.stabilization,
+            this->simulation_parameters.stabilization,
             numbers::invalid_unsigned_int,
             simulation_control,
             this->simulation_parameters.boundary_conditions,
@@ -2982,7 +2982,7 @@ FluidDynamicsMatrixFree<dim>::setup_dofs_fd()
     *this->cell_quadrature,
     this->forcing_function,
     this->physical_properties_manager,
-    this->simulation_parameters.stabilization.stabilization,
+    this->simulation_parameters.stabilization,
     mg_level,
     this->simulation_control,
     this->simulation_parameters.boundary_conditions,
@@ -3311,6 +3311,18 @@ FluidDynamicsMatrixFree<dim>::assemble_system_rhs()
 
   this->system_operator->evaluate_non_linear_term_and_calculate_tau(
     this->evaluation_point);
+
+  // One-time MPI consistency diagnostic for the CIP interior-face operator.
+  // Run the same case on different rank counts and compare the printed
+  // ||A*x|| / x.(A*x): if they differ, the operator mishandles ghosts.
+  static bool cip_parallel_check_done = false;
+  if (!cip_parallel_check_done &&
+      this->simulation_parameters.stabilization.stabilization ==
+        Parameters::Stabilization::NavierStokesStabilization::cip)
+    {
+      this->system_operator->verify_parallel_consistency();
+      cip_parallel_check_done = true;
+    }
 
   this->system_operator->evaluate_residual(this->system_rhs,
                                            this->evaluation_point);
