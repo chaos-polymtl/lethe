@@ -503,7 +503,7 @@ CustomDistribution::CustomDistribution(
             }
           else // No interpolation
             {
-              // d_probabilities represent the fractions of every
+              // d_probabilities representsba the fractions of every
               // diameter value over the total number. (n_d/N_tot)
               number_based_cdf[0] = d_probabilities[0];
               for (unsigned int i = 1; i < number_d_values; ++i)
@@ -597,9 +597,8 @@ CustomDistribution::CustomDistribution(
                   // Solving the integral:
                   // 1. Integral of x^-3 dx = -1/(2x^2).
                   // 2. Evaluate the integral: [1/(2*d_low^2) - 1/(2*d_high^2)]
-                  // 3. Simplify the evaluated integral: (d_high^2 - d_low^2) /
-                  // [2
-                  // * d_low^2 * d_high^2 ]
+                  // 3. Simplify the evaluated integral:
+                  // (d_high^2 - d_low^2) / [2 * d_low^2 * d_high^2 ]
                   // 4. Using (a^2 - b^2) = (a-b)(a+b), (d_high^2 - d_low^2)
                   // becomes (d_high - d_low)(d_high + d_low).
                   // 5. Weight = [1 / (d_high - d_low)] * Integral, thus the
@@ -610,7 +609,7 @@ CustomDistribution::CustomDistribution(
                   const double weight =
                     (d_low + d_high) / (2.0 * std::pow(d_low * d_high, 2));
 
-                  // Convert th volume fraction to a relative number fraction
+                  // Convert the volume fraction to a relative number fraction
                   // (dfn). Note: This value is not yet normalized; it's a
                   // relative particle count.
                   dfn[i] = this_bin_volume_fraction * weight;
@@ -712,13 +711,17 @@ CustomDistribution::particle_size_sampling(
           if (weighting_type == DistributionWeightingType::volume_based &&
               function_type == ProbabilityFunctionType::PDF)
             {
-              // The number-based CDF here was built by integrating the
-              // exact piecewise-linear volume PDF fv(d) = a_i + b_i*d
-              // divided by d³. The within-bin CDF is therefore NOT a pure
-              // 1/d² shape (that would only hold if fv were uniform per
-              // bin). We must invert the true antiderivative:
-              //   F(d) = -a_i/(2d²) - b_i/d
-              // which leads to a quadratic in d.
+              // The volume-based PDF is assumed piecewise linear:
+              //
+              //   fv(d) = a_i + b_i d
+              //
+              // The number-based CDF used for sampling was obtained by
+              // integrating fv(d)/d^3 exactly. To sample within the bin, invert
+              // the resulting antiderivative
+              //
+              //   F(d) = -a_i/(2 d^2) - b_i/d
+              //
+              // which leads to a quadratic equation in d.
               const double b_i =
                 (fv[index_high] - fv[index_low]) / (d_high - d_low);
               const double a_i = fv[index_low] - b_i * d_low;
@@ -757,6 +760,8 @@ CustomDistribution::particle_size_sampling(
                   // Triggers only in degenerate/edge cases (e.g. A ≈ 0
                   // with no valid analytic root, or floating point
                   // edge effects at bin boundaries).
+
+                  // This should never happen.
                   sampled_diameter = d_low + u_local * (d_high - d_low);
                 }
             }
@@ -770,6 +775,9 @@ CustomDistribution::particle_size_sampling(
                 std::sqrt(inv_d_low2 - u_local * (inv_d_low2 - inv_d_high2));
             }
 
+
+          // If the sampled diameter falls outside the min-max values,
+          // we resample the distribution.
           if (sampled_diameter > this->dia_min_cutoff &&
               sampled_diameter < this->dia_max_cutoff)
             {
