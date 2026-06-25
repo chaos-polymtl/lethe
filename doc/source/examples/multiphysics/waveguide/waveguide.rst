@@ -27,12 +27,9 @@ The file mentioned below is located in the example's folder (``examples/multiphy
 
 
 
-
-
 -----------------------
 Description of the Case
 -----------------------
-
 
 Geometry
 ~~~~~~~~
@@ -51,10 +48,10 @@ The dimensions chosen here are a width :math:`a = 0.25 \, \mathrm{m}`,  a height
 Physical Problem
 ~~~~~~~~~~~~~~~~
 .. note::
-    Lethe time-harmonic solver always solve the set of equations in a dimensionless form; therefore, the same convention will be used in the following mathematical descriptions. 
+    Lethe time-harmonic solver always solves the set of equations in a dimensionless form; therefore, the same convention will be used in the following mathematical descriptions. 
 
 
-This simulation computes the stationary electromagnetic field in the above waveguide filled with void. We recall that the time-harmonic Maxwell equations in their dimensionless form, as used in this example, are:
+This simulation computes the stationary electromagnetic field in the waveguide filled with void. We recall that the time-harmonic Maxwell equations in their dimensionless form, as used in this example, are:
 
 .. math::
     \begin{align*}
@@ -65,13 +62,13 @@ This simulation computes the stationary electromagnetic field in the above waveg
 with the parameters of the problem:
 
 - Dielectric characteristics of the medium : :math:`\mu_{\mathrm{r}}` the relative permeability and :math:`\varepsilon_{\mathrm{r,eff}}` the effective relative permittivity. This characteristic is noted "effective" because it takes into account the electric conductivity.   
-- Excitation: :math:`\mathbf{J}` the current density and :math:`\omega = \frac{L2\pi f}{c}` the angular frequency of the electromagnetic wave normalized by the speed of light in the void :math:`c` .
+- Excitation: :math:`\mathbf{J}` the current density and :math:`\omega = \frac{L2\pi f}{c}` the angular frequency of the electromagnetic wave normalized by the speed of light in the void :math:`c`.
 
 
-When solving a time-harmonic electromagnetic problem with Lethe, there are 12 unknowns: two for each component of the dimensionless :math:`\mathbf{E}` and :math:`\mathbf{H}` fields (the real and imaginary parts in each of the three spatial directions). 
+When solving a time-harmonic electromagnetic problem with Lethe, there are 12 unknowns: six for :math:`\mathbf{E}` and :math:`\mathbf{H}` fields (the real and imaginary parts in each of the three spatial directions). 
 
 
-In addition, to describe an electromagnetic wave problem, it is useful to  introduce the following dimensionless wavenumbers to ease notation in the following parts of this example :
+In addition, to describe an electromagnetic wave problem, it is useful to  introduce the following dimensionless wavenumbers to ease notation in the following parts of this example:
 
 - Wavenumbers corresponding to a standing wave caused by the walls: :math:`k_\mathrm{x} = \frac{Lm\pi}{a} \ , \ k_\mathrm{y} = \frac{Ln\pi}{b}`
 - Wavenumber in the transverse direction of propagation: :math:`k_\mathrm{c} = \sqrt{k_\mathrm{x}^2 + k_\mathrm{y}^2}`
@@ -95,7 +92,7 @@ The Different Transverse Modes And The Frequency Modification
 
 :math:`\mathrm{TE}_{mn}` mode refers to "Transverse electric mode". This means that regardless of the values of :math:`m` and :math:`n`, the :math:`z`-component of :math:`\mathbf{E}` is always zero. Therefore, the pair :math:`(m,n)` refers to the :math:`x`-component of the electric field being excited in the :math:`m`-th mode and the :math:`y`-component of the electric field being excited on the :math:`n`-th mode. 
 
-The :math:`\mathrm{TE}_{mn}` modes can be specified in the subsection `waveguide mode` of the parameter file. Here we used the following :
+The :math:`\mathrm{TE}_{mn}` modes can be specified in the subsection `waveguide mode` of the parameter file. Here we used the following:
 
 .. code-block:: text
 
@@ -160,7 +157,7 @@ There are three types of boundary conditions in this problem, this explains why 
     Y_\mathrm{s} = \frac{1}{Z_\mathrm{s}}=\frac{k_\mathrm{z}}{\omega \mu_\mathrm{r}} = \frac{k_\mathrm{z} c}{2\pi f \mathrm{L} \mu_\mathrm{r}} \approx 0.968987646
 
   .. caution::
-    Changes in mode will affect this value as mentioned before.
+    Changes in mode will affect the value of he dimensionless admittance.
 
 - Metal walls :math:`\Gamma_3`: ``pec`` (perfect electric conductor) boundary conditions
 
@@ -173,8 +170,6 @@ These translate into the three following equations:
     \tag{on $\Gamma_3$}\mathbf{n} \times \mathbf{E} &= 0
     \end{align*}
 
-
-    
 These boundary conditions are specified within the ``boundary conditions time harmonic maxwell`` subsection of the parameter file:
 
 .. code-block:: text
@@ -255,9 +250,6 @@ The solution used for the calculation of the convergence rates is specified in t
         end
     end 
 
-.. note::
-    The parameters defined here are only used to calculate the error, they do not affect the simulation.
-
 Mesh Adaptation
 ~~~~~~~~~~~~~~~
 
@@ -301,7 +293,7 @@ You can also change the degree of the polynomials used in the Finite Element Met
     end
 
 .. caution::
-    The time-harmonic Maxwell solver requires the degree of the test space to always be greater than the degree of the trial space. Consequently, if the trial space degree is changed, the test degree also needs to be adjusted. 
+    The time-harmonic Maxwell solver requires the degree of the test space to always be greater than the degree of the trial space. Consequently, if the trial space degree is increased, the test degree also needs to be increased. 
 
 
 Physical Properties
