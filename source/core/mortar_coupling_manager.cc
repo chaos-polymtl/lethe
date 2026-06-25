@@ -651,7 +651,7 @@ compute_interface_dimensions_circular(
                         {
                           const auto v = vertices[vertex_index];
 
-                          std pre_rotation_min = std::min(
+                          pre_rotation_min = std::min(
                             pre_rotation_min,
                             point_to_angle(mortar_parameters.center_of_rotation,
                                            v,
@@ -1085,16 +1085,14 @@ CouplingOperator<dim, Number>::CouplingOperator(
 
                 std::vector<Point<dim - 1>> quad;
 
-                for (const auto p : points_ref)
+                for (const auto &p : points_ref)
                   {
                     Point<dim - 1> temp;
-                    for (int i = 0, j = 0; i < dim; ++i)
-                      if ((face_no / 2) != static_cast<unsigned int>(i))
-                        temp[j++] = p[i];
+                    const unsigned int axis = face_no / 2;
 
-                    if ((dim == 3) && ((face_no / 2) == 1))
-                      std::swap(temp[0], temp[1]);
-
+                    for (unsigned int t = 0; t < dim - 1; ++t)
+                      temp[t] = p[(axis + 1 + t) % dim];
+                    
                     quad.emplace_back(temp);
                   }
 
