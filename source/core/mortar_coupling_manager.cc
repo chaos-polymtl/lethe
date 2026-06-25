@@ -662,7 +662,7 @@ compute_interface_dimensions_circular(
             }
         }
     }
-    
+
   // Min and max values over all processes
   radius_min =
     Utilities::MPI::min(radius_min, triangulation.get_mpi_communicator());
@@ -1087,12 +1087,12 @@ CouplingOperator<dim, Number>::CouplingOperator(
 
                 for (const auto &p : points_ref)
                   {
-                    Point<dim - 1> temp;
+                    Point<dim - 1>     temp;
                     const unsigned int axis = face_no / 2;
 
                     for (unsigned int t = 0; t < dim - 1; ++t)
                       temp[t] = p[(axis + 1 + t) % dim];
-                    
+
                     quad.emplace_back(temp);
                   }
 
