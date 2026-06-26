@@ -664,6 +664,17 @@ namespace Parameters
                           Patterns::Double(),
                           "Distance threshold");
 
+
+        // By default, every point is accepted, thus we but a default value
+        // of 1. Thus, we need to  declare the parameters manually.
+        prm.enter_subsection("insertion acceptance function");
+        {
+          prm.declare_entry("Function expression", "1", Patterns::Anything());
+          prm.declare_entry("Variable names", "x,y,z", Patterns::Anything());
+          prm.declare_entry("Constants", "", Patterns::Anything());
+        }
+        prm.leave_subsection();
+
         // Volume or plane:
         prm.declare_entry(
           "insertion maximum offset",
@@ -852,6 +863,16 @@ namespace Parameters
           initial_temperature_function = initial_temperature_function_parsed;
         }
         prm.leave_subsection();
+
+        auto insertion_acceptance_function =
+          std::make_shared<Functions::ParsedFunction<dim>>(1);
+
+        prm.enter_subsection("insertion acceptance function");
+        {
+          insertion_acceptance_function->parse_parameters(prm);
+        }
+        prm.leave_subsection();
+        insertion_acceptance_fct = insertion_acceptance_function;
       }
       prm.leave_subsection();
     }
