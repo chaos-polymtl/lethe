@@ -55,6 +55,8 @@ test(const double mu, const double sigma)
   insert_info.distance_threshold       = 2;
   insert_info.insertion_maximum_offset = 0.75;
   insert_info.seed_for_insertion       = 19;
+  insert_info.insertion_acceptance_fct =
+    std::make_shared<Functions::ConstantFunction<dim>>(1.);
 
   // Lagrangian physical properties
   lpp.particle_type_number = 1;

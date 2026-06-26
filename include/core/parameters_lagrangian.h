@@ -491,6 +491,10 @@ namespace Parameters
       /// Random seed for particle insertion.
       int seed_for_insertion;
 
+      /// Function used to accept or reject point in the insertion box when
+      /// using the volume insertion.
+      std::shared_ptr<Function<dim>> insertion_acceptance_fct;
+
       /**
        * @brief Declare the parameters in the parameter handler.
        *
