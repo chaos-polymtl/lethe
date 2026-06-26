@@ -129,7 +129,7 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
             mesh_parameters.grid_type,
             mesh_parameters.grid_arguments);
 
-          // Scale, translate, and rotate mesh
+          // Scale, rotate, and translate mesh
           apply_mesh_transformation(mesh_parameters, triangulation);
         }
 
@@ -586,34 +586,34 @@ apply_mesh_transformation(const Parameters::Mesh       &mesh_parameters,
   GridTools::scale(mesh_parameters.scale, triangulation);
   if constexpr (dim == 2 && spacedim == 2)
     {
+      // Box mesh rotation around the origin of the system coordinates
+      GridTools::rotate(mesh_parameters.rotation_angle, triangulation);
+
       // Box mesh translation
       Tensor<1, 2> translation_vector;
       translation_vector[0] = mesh_parameters.translation[0];
       translation_vector[1] = mesh_parameters.translation[1];
       GridTools::shift(translation_vector, triangulation);
-
-      // Box mesh rotation around the origin of the system coordinates
-      GridTools::rotate(mesh_parameters.rotation_angle, triangulation);
     }
   else if constexpr (dim == 2 && spacedim == 3)
     {
-      // Box mesh translation
-      GridTools::shift(mesh_parameters.translation, triangulation);
-
       // Box mesh rotation
       GridTools::rotate(mesh_parameters.rotation_axis,
                         mesh_parameters.rotation_angle,
                         triangulation);
+
+      // Box mesh translation
+      GridTools::shift(mesh_parameters.translation, triangulation);
     }
   else if constexpr (dim == 3)
     {
-      // Box mesh translation
-      GridTools::shift(mesh_parameters.translation, triangulation);
-
       // Box mesh rotation
       GridTools::rotate(mesh_parameters.rotation_axis,
                         mesh_parameters.rotation_angle,
                         triangulation);
+
+      // Box mesh translation
+      GridTools::shift(mesh_parameters.translation, triangulation);
     }
 }
 
