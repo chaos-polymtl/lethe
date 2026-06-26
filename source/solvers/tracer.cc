@@ -1397,6 +1397,10 @@ Tracer<dim>::update_boundary_conditions()
               .periodic_direction.at(id),
             nonzero_constraints);
         }
+      if (type == BoundaryConditions::BoundaryType::none)
+        {
+          /* Do nothing */
+        }
     }
   nonzero_constraints.close();
   nonzero_constraints.distribute(this->local_evaluation_point);
@@ -1434,6 +1438,10 @@ Tracer<dim>::define_zero_constraints()
               .periodic_direction.at(id),
             zero_constraints);
         }
+      if (type == BoundaryConditions::BoundaryType::none)
+        {
+          /* Do nothing */
+        }
     }
   zero_constraints.close();
 }
@@ -1470,6 +1478,10 @@ Tracer<dim>::define_non_zero_constraints()
             this->simulation_parameters.boundary_conditions_tracer
               .periodic_direction.at(id),
             nonzero_constraints);
+        }
+      if (type == BoundaryConditions::BoundaryType::none)
+        {
+          /* Do nothing */
         }
     }
   nonzero_constraints.close();
