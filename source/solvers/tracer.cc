@@ -57,7 +57,7 @@ Tracer<dim>::setup_assemblers()
       this->boundary_face_assembler =
         std::make_shared<TracerAssemblerBoundaryNitsche<dim>>(
           simulation_parameters.boundary_conditions_tracer);
-      
+
       // The mortar feature cannot be used with DG elements yet
       if (simulation_parameters.mortar_parameters.enable)
         AssertThrow(
