@@ -886,9 +886,9 @@ namespace BoundaryConditions
   {
     prm.declare_entry("type",
                       "outlet",
-                      Patterns::Selection("dirichlet|outlet|periodic"),
+                      Patterns::Selection("dirichlet|outlet|periodic|none"),
                       "Type of boundary condition for tracer"
-                      "Choices are <dirichlet|outlet|periodic>.");
+                      "Choices are <dirichlet|outlet|periodic|none>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(default_boundary_id, 2),
@@ -1018,6 +1018,10 @@ namespace BoundaryConditions
             this->periodic_neighbor_id[boundary_id] = periodic_boundary_id;
             this->periodic_direction[boundary_id] =
               prm.get_integer("periodic direction");
+          }
+        else if (op == "none")
+          {
+            this->type[boundary_id] = BoundaryType::none;
           }
         else
           {
