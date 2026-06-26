@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
+# Check mortar implementation in tracer solver for an advection-only problem.
+
 # Listing of Parameters
 #----------------------
 
