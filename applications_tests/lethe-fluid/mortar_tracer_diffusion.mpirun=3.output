@@ -1,0 +1,51 @@
+Running on 3 MPI rank(s)...
+   Number of active cells:       80
+   Number of degrees of freedom: 475
+   Volume of triangulation:      4.000000e+00
+   Number of tracer degrees of freedom: 105
+
+*****************************
+Steady iteration:        1/4
+*****************************
+L2 error velocity: 0.000000e+00
+L2 error tracer: 9.230615e-04
+
+*****************************
+Steady iteration:        2/4
+*****************************
+   Number of active cells:       320
+   Number of degrees of freedom: 1747
+   Volume of triangulation:      4.000000e+00
+   Number of tracer degrees of freedom: 369
+L2 error velocity: 0.000000e+00
+L2 error tracer: 6.250418e-05
+
+*****************************
+Steady iteration:        3/4
+*****************************
+   Number of active cells:       1280
+   Number of degrees of freedom: 6691
+   Volume of triangulation:      4.000000e+00
+   Number of tracer degrees of freedom: 1377
+L2 error velocity: 0.000000e+00
+L2 error tracer: 3.975202e-06
+
+*****************************
+Steady iteration:        4/4
+*****************************
+   Number of active cells:       5120
+   Number of degrees of freedom: 26179
+   Volume of triangulation:      4.000000e+00
+   Number of tracer degrees of freedom: 5313
+L2 error velocity: 0.000000e+00
+L2 error tracer: 2.497117e-07
+cells  error_velocity   error_pressure  
+   80 0.000000e+00   - 0.000000e+00   - 
+  320 0.000000e+00 nan 0.000000e+00 nan 
+ 1280 0.000000e+00 nan 0.000000e+00 nan 
+ 5120 0.000000e+00 nan 0.000000e+00 nan 
+cells   error_tracer    
+   80 9.230615e-04    - 
+  320 6.250418e-05 3.88 
+ 1280 3.975202e-06 3.97 
+ 5120 2.497117e-07 3.99 

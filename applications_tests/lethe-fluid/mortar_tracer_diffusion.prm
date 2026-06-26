@@ -1,0 +1,177 @@
+# SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
+
+# Listing of Parameters
+#----------------------
+
+set dimension = 2
+
+#---------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+
+subsection simulation control
+  set method            = steady
+  set number mesh adapt = 3
+  set output frequency  = 0
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+
+subsection FEM
+  set enable bubble function velocity = true
+  set velocity degree                 = 1
+  set pressure degree                 = 1
+  set tracer degree                   = 1
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+
+subsection physical properties
+  set number of fluids = 1
+  subsection fluid 0
+    set tracer diffusivity = 1
+  end
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+
+subsection mesh
+  set type               = dealii
+  set grid type          = hyper_cube_with_cylindrical_hole
+  set grid arguments     = 0.5 : 1 : 0 : 1 : false
+  set initial refinement = 1
+end
+
+#---------------------------------------------------
+# Mortar
+#---------------------------------------------------
+
+subsection mortar
+  set enable = true
+  subsection mesh
+    set type           = dealii
+    set grid type      = hyper_ball_balanced
+    set grid arguments = 0.0, 0.0 : 0.5
+  end
+  set rotor boundary id  = 2
+  set stator boundary id = 1
+  set penalty factor     = 1
+  set radius tolerance   = 1e-4
+  set verbosity          = quiet
+end
+
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
+
+subsection multiphysics
+  set tracer = true
+end
+
+#---------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+
+subsection mesh adaptation
+  set type = uniform
+end
+
+#---------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+
+subsection analytical solution
+  set enable    = true
+  set verbosity = verbose
+  subsection uvwp
+    set Function expression = 0 ; 0 ; 0
+  end
+  subsection tracer
+    set Function expression = cos(pi*x/2)*cos(pi*y/2)
+  end
+end
+
+#---------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+  set number = 2
+  subsection bc 0
+    set id   = 0
+    set type = noslip
+  end
+  subsection bc 1
+    set id   = 1, 2
+    set type = none
+  end
+end
+
+#---------------------------------------------------
+# Boundary Conditions Tracer
+#---------------------------------------------------
+
+subsection boundary conditions tracer
+  set number = 2
+  subsection bc 0
+    set id   = 0
+    set type = dirichlet
+    subsection dirichlet
+      set Function expression = 0
+    end
+  end
+  subsection bc 1
+    set id   = 1, 2
+    set type = none
+  end
+end
+
+#---------------------------------------------------
+# Source Term
+#---------------------------------------------------
+
+subsection source term
+  subsection tracer
+    set Function expression = pi*pi*cos(pi*x/2)*cos(pi*y/2)/2
+  end
+end
+
+#---------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+
+subsection non-linear solver
+  subsection tracer
+    set verbosity = quiet
+  end
+  subsection fluid dynamics
+    set verbosity      = quiet
+    set tolerance      = 1e-10
+    set max iterations = 10
+  end
+end
+
+#---------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+
+subsection linear solver
+  subsection fluid dynamics
+    set verbosity = quiet
+  end
+  subsection tracer
+    set verbosity                             = quiet
+    set method                                = gmres
+    set relative residual                     = 1e-13
+    set minimum residual                      = 1e-14
+    set preconditioner                        = ilu
+    set ilu preconditioner absolute tolerance = 1e-14
+  end
+end
