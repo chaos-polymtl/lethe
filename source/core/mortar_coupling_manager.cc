@@ -1090,7 +1090,7 @@ CouplingOperator<dim, Number>::CouplingOperator(
                     Point<dim - 1>     temp;
                     const unsigned int axis = face_no / 2;
 
-                    for (unsigned int t = 0; t < dim - 1; ++t)
+                    for (int t = 0; t < dim - 1; ++t)
                       temp[t] = p[(axis + 1 + t) % dim];
 
                     quad.emplace_back(temp);
