@@ -665,8 +665,9 @@ namespace Parameters
                           "Distance threshold");
 
 
-        // By default, every point is accepted, thus we but a default value
-        // of 1. Thus, we need to  declare the parameters manually.
+        // By default, every point is accepted, thus we need a default value
+        // of 1. We need to declare the parameters manually since the default
+        // value of a function is 0.
         prm.enter_subsection("insertion acceptance function");
         {
           prm.declare_entry("Function expression", "1", Patterns::Anything());
