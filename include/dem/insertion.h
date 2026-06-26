@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_insertion_h
@@ -122,7 +122,7 @@ protected:
    * @brief Carries out assigning the properties of inserted particles.
    *
    * @param dem_parameters DEM parameters declared in the prm file.
-   * @param inserted_this_step_this_proc Number of particles that are inserted.
+   * @param inserted_this_step_this_proc Number of particles that are inserted
    * at each insertion step on each processor. This value can change in the last
    * insertion step to reach the desired number of particles.
    * @param current_inserting_particle_type Type of inserting particles.
@@ -154,9 +154,9 @@ protected:
     const ConditionalOStream       &pcout);
 
   /**
-   * @brief Find every cell that are completely and partially inside de the
+   * @brief Find all cells that are completely and partially inside de the
    * clearing box. For the cell completely inside the box, all the particles
-   * will be deleted. For those partially inside, a fine verification is
+   * will be deleted. For those partially inside, fine verification is
    * required.
    *
    * @param triangulation Triangulation to access the cells in which the
@@ -191,9 +191,6 @@ protected:
   // Maximum particle diameter
   double maximum_diameter;
 
-  // Inserted number of particles at this step on this processor
-  unsigned int inserted_this_step_this_proc;
-
   // A distribution object that carries out the attribution of diameter to every
   // particle during an insertion time step
   std::vector<std::shared_ptr<Distribution>> distributions_objects;
@@ -212,10 +209,6 @@ protected:
   // For when the triangulation has changed (i.e. when load balancing)
   bool                        mark_for_update;
   boost::signals2::connection change_to_triangulation;
-
-private:
-  // Stores particles diameters
-  std::vector<double> particle_sizes;
 };
 
-#endif /* insertion_h */
+#endif /*lethe_insertion_h*/

@@ -27,8 +27,6 @@ protected:
   double dia_max_cutoff;
 
 public:
-  std::vector<double> particle_sizes;
-
   /**
    * @brief Default destructor.
    */
@@ -37,9 +35,11 @@ public:
   /**
    * @brief Carries out the size sampling of particles. This is the base class of
    * NormalDistribution, UniformDistribution and CustomDistribution classes.
-   * @param number_of_particles Number of particle inserted at a given insertion time step.
+   *
+   * @param[in] number_of_particles Number of particles inserted at a given
+   * insertion time step.
    */
-  virtual void
+  virtual std::vector<double>
   particle_size_sampling(const unsigned int &number_of_particles) = 0;
 
   /**
@@ -95,13 +95,13 @@ public:
                        &distribution_weighting_type);
 
   /**
-   * @brief Carries out the size sampling of each particle inserted at an insertion
-   * time step for the normal distribution.
+   * @brief Carries out the size sampling of each particle inserted at an
+   * insertion time step for the normal distribution.
    *
-   * @param[in] number_of_particles Number of particle inserted at a given
+   * @param[in] number_of_particles Number of particles inserted at a given
    * insertion time step.
    */
-  void
+  virtual std::vector<double>
   particle_size_sampling(const unsigned int &number_of_particles) override;
 
   /**
@@ -174,13 +174,13 @@ public:
                           &distribution_weighting_type);
 
   /**
-   * @brief Carries out the size sampling of each particle inserted at an insertion
-   * time step for the normal distribution.
+   * @brief Carries out the size sampling of each particle inserted at an
+   * insertion time step for the normal distribution.
    *
-   * @param[in] number_of_particles Number of particle inserted at a given
+   * @param[in] number_of_particles Number of particles inserted at a given
    * insertion time step.
    */
-  void
+  virtual std::vector<double>
   particle_size_sampling(const unsigned int &number_of_particles) override;
 
   /**
@@ -213,7 +213,7 @@ public:
 
 private:
   /**
-   * @brief Standard deviation of distribution of the normal distribution.
+   * @brief Standard deviation of the normal distribution.
    */
   const double sigma_ln;
 
@@ -232,7 +232,7 @@ class UniformDistribution : public Distribution
 {
 public:
   /**
-   * @brief The constructor store the parameters necessary to define the uniform
+   * @brief The constructor stores the parameters necessary to define the uniform
    * distribution.
    *
    * @param d_values Diameter values for each particle type.
@@ -240,12 +240,13 @@ public:
   UniformDistribution(const double &d_values);
 
   /**
-   * @brief Carries out the size sampling of every particle inserted at an insertion
-   * time step for the uniform distribution.
+   * @brief Carries out the size sampling of every particle inserted at an
+   * insertion time step for the uniform distribution.
    *
-   * @param number_of_particles Number of particle inserted at a given insertion time step.
+   * @param[in] number_of_particles Number of particles inserted at a given
+   * insertion time step.
    */
-  void
+  virtual std::vector<double>
   particle_size_sampling(const unsigned int &number_of_particles) override;
 
   /**
@@ -292,7 +293,7 @@ public:
    * distribution.
    *
    * @param[in] d_list Vector of diameter values.
-   * @param[in] d_probabilities Vector of probability values based on volume
+   * @param[in] d_probabilities Vector of probability values based on the volume
    * fraction with respect to each diameter value.
    * @param[in] prn_seed Pseudo-random number seed for the diameter generation.
    * @param[in] min_cutoff Minimum cutoff diameter.
@@ -315,13 +316,13 @@ public:
     const bool                                             interpolate);
 
   /**
-   * @brief Carries out the size sampling of each particle inserted at an insertion
-   * time step for the histogram distribution.
+   * @brief Carries out the size sampling of each particle inserted at an
+   * insertion time step for the histogram distribution.
    *
    * @param[in] number_of_particles Number of particles inserted at a given
    * insertion time step.
    */
-  void
+  virtual std::vector<double>
   particle_size_sampling(const unsigned int &number_of_particles) override;
 
   /**
@@ -354,13 +355,13 @@ public:
 
 private:
   /**
-   * Vector containing all the diameters values.
+   * Vector containing all the diameter values.
    */
   const std::vector<double> diameter_values;
 
   /**
    * @brief Vector containing cumulative probabilities associated with the
-   * diameter_values vector. The stored values are based on the number based
+   * diameter_values vector. The stored values are based on the number-based
    * CDF.
    */
   std::vector<double> number_based_cdf;
@@ -385,9 +386,9 @@ using namespace Parameters::Lagrangian;
 inline void
 setup_distributions(const LagrangianPhysicalProperties &lpp,
                     std::vector<std::shared_ptr<Distribution>>
-                                &size_distribution_object_container,
-                    double      &maximum_particle_diameter,
-                    unsigned int mpi_process_id,
+                                      &size_distribution_object_container,
+                    double            &maximum_particle_diameter,
+                    const unsigned int mpi_process_id,
                     const ConditionalOStream &pcout)
 {
   for (unsigned int particle_type = 0; particle_type < lpp.particle_type_number;

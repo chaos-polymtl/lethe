@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #include <core/utilities.h>
@@ -7,7 +7,7 @@
 
 using namespace DEM;
 
-// The constructor of volume insertion class. In the constructor, we
+// The constructor of the volume insertion class. In the constructor, we
 // investigate if the insertion box is adequately large to handle the desired
 // number of inserted particles. The number of insertion points in each
 // direction (number_of_particles_x_direction, number_of_particles_y_direction
@@ -25,13 +25,13 @@ InsertionVolume<dim, PropertiesIndex>::InsertionVolume(
   , particles_of_each_type_remaining(
       dem_parameters.lagrangian_physical_properties.number.at(0))
 {
-  // Initializing current inserting particle type
+  // Initializing the current inserting particle type
   current_inserting_particle_type = 0;
   this->inserted_this_step        = 0;
   this->maximum_diameter          = maximum_particle_diameter;
 }
 
-// The main insertion function. Insert_global_function is utilized to insert
+// The main insertion function. Insert_global_function is used to insert
 // the particles
 template <int dim, typename PropertiesIndex>
 void
@@ -49,7 +49,7 @@ InsertionVolume<dim, PropertiesIndex>::insert(
           ++current_inserting_particle_type);
     }
 
-  // Check to see if the remaining un-inserted particles are equal to zero or
+  // Check to see if the remaining uninserted particles are equal to zero or
   // not
   if (particles_of_each_type_remaining != 0)
     {
@@ -86,17 +86,17 @@ InsertionVolume<dim, PropertiesIndex>::insert(
         Utilities::MPI::all_gather(communicator, my_bounding_box);
 
       // Distributing particles between processors
-      this->inserted_this_step_this_proc = static_cast<unsigned int>(
+      unsigned int inserted_this_step_this_proc = static_cast<unsigned int>(
         floor(this->inserted_this_step / n_mpi_process));
       if (this_mpi_process == (n_mpi_process - 1))
-        this->inserted_this_step_this_proc = static_cast<unsigned int>(
+        inserted_this_step_this_proc = static_cast<unsigned int>(
           this->inserted_this_step -
           (n_mpi_process - 1) *
             floor(this->inserted_this_step / n_mpi_process));
 
-      // Call random number generator
+      // Call the random number generator
       std::vector<double> random_number_vector;
-      random_number_vector.reserve(this->inserted_this_step_this_proc);
+      random_number_vector.reserve(inserted_this_step_this_proc);
       create_random_number_container(
         random_number_vector,
         this->inserted_this_step,
@@ -105,7 +105,7 @@ InsertionVolume<dim, PropertiesIndex>::insert(
 
       Point<dim>              insertion_location;
       std::vector<Point<dim>> insertion_points_on_proc;
-      insertion_points_on_proc.reserve(this->inserted_this_step_this_proc);
+      insertion_points_on_proc.reserve(inserted_this_step_this_proc);
 
       // Find the first and the last particle id for each process
       // The number of particles on the last process is different
@@ -113,15 +113,14 @@ InsertionVolume<dim, PropertiesIndex>::insert(
       unsigned int last_id;
       if (this_mpi_process == (n_mpi_process - 1))
         {
-          first_id =
-            this->inserted_this_step - this->inserted_this_step_this_proc;
-          last_id = this->inserted_this_step;
+          first_id = this->inserted_this_step - inserted_this_step_this_proc;
+          last_id  = this->inserted_this_step;
         }
       // For the processes 1 : n-1
       else
         {
-          first_id = this_mpi_process * this->inserted_this_step_this_proc;
-          last_id = (this_mpi_process + 1) * this->inserted_this_step_this_proc;
+          first_id = this_mpi_process * inserted_this_step_this_proc;
+          last_id  = (this_mpi_process + 1) * inserted_this_step_this_proc;
         }
 
       // Looping through the particles on each process and finding their
@@ -136,6 +135,7 @@ InsertionVolume<dim, PropertiesIndex>::insert(
             random_number_vector[this->inserted_this_step - particle_counter -
                                  1],
             dem_parameters.insertion_info);
+
           insertion_points_on_proc.push_back(insertion_location);
         }
 
@@ -144,7 +144,7 @@ InsertionVolume<dim, PropertiesIndex>::insert(
       // Assigning inserted particles properties using
       // assign_particle_properties function
       this->assign_particle_properties(dem_parameters,
-                                       this->inserted_this_step_this_proc,
+                                       inserted_this_step_this_proc,
                                        current_inserting_particle_type,
                                        insertion_points_on_proc,
                                        particle_properties);

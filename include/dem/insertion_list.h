@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2021-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2021-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 #ifndef lethe_insertion_list_h
@@ -11,11 +11,11 @@ class InsertionList : public Insertion<dim, PropertiesIndex>
 {
 public:
   /**
-   * @brief Insert particles using a list specific positions. This allows the
-   * insertion of any number of particles at a well-controlled location which is
-   * especially useful from a testing perspective. The code ensures that the
+   * @brief Insert particles using a list of specific positions. This allows the
+   * insertion of a low number of particles at a well-controlled location, which
+   * is especially useful from a testing perspective. The code ensures that the
    * number of positions provided in the x,y (and possibly z) direction is
-   * coherent. If more particles than the number of positions in the list is
+   * coherent. If more particles than the number of positions in the list are
    * requested, the class will continue inserting particles at the insertion
    * frequency using the list of positions. There is no mechanism in place that
    * prevents the overlap of these new particles with previous ones.
@@ -32,14 +32,15 @@ public:
                 const DEMSolverParameters<dim> &dem_parameters);
 
   /**
-   * @brief The InsertionList class inserts particles using a list specific position.
-   * This allows the insertion of any number of particles at a well-controled
-   * location which is especially useful from a testing perspective. The code
-   * ensures that the number of positions provided in the x,y (and possibly z)
-   * direction is coherent. If more particles than the number of position in the
-   * list are requested, the class will continue inserting particles at the
-   * insertion frequency using the list of position. There is no mechanism in
-   * place that prevents the overlap of these new particles with previous ones.
+   * @brief The InsertionList class inserts particles using a list of specific
+   * position. This allows the insertion of any number of particles at a
+   * well-controlled location, which is especially useful from a testing
+   * perspective. The code ensures that the number of positions provided in the
+   * x,y (and possibly z) direction is coherent. If more particles than the
+   * number of positions in the list are requested, the class will continue
+   * inserting particles at the insertion frequency using the list of positions.
+   * There is no mechanism in place that prevents the overlap of these new
+   * particles with previous ones.
    *
    * @param particle_handler The particle handler of particles which are being
    * inserted
@@ -55,25 +56,23 @@ public:
 
 
   /**
-   * @brief Carries out assigning the properties of inserted particles specificly
-   * for the list insertion method. In this method, the initial translationnal
-   * and angular velocities, the temperature and the diameter of each particles
-   * is set.
+   * @brief Carries out assigning the properties of inserted particles
+   * specifically for the list insertion method. In this method, the initial
+   * translation and angular velocities, the temperature and the diameter of
+   * each particle are set.
    *
    * @param dem_parameters DEM parameters declared in the .prm file
    * @param inserted_this_step_this_proc Number of particles that are inserted
    * at each insertion step on each processor. This value can change in the last
    * insertion step to reach the desired number of particles
-   * @param current_inserting_particle_type Type of inserting particles
-   * @param particle_properties Properties of all inserted particles at each insertion step
+   * @param particle_properties Properties of all inserted particles at each
+   * insertion step
    */
   void
   assign_particle_properties_for_list_insertion(
     const DEMSolverParameters<dim>   &dem_parameters,
     const unsigned int               &inserted_this_step_this_proc,
-    const unsigned int               &current_inserting_particle_type,
     std::vector<std::vector<double>> &particle_properties);
-
 
 
   /**
