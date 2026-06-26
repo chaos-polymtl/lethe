@@ -87,7 +87,6 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classDistribution-members.html">List of all members</a>  </div>
@@ -106,19 +105,14 @@ Inheritance diagram for Distribution:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a7d6196cce3a1e9a296f4670fa090831c" id="r_a7d6196cce3a1e9a296f4670fa090831c"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDistribution.html#a7d6196cce3a1e9a296f4670fa090831c">~Distribution</a> ()=default</td></tr>
 <tr class="separator:a7d6196cce3a1e9a296f4670fa090831c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a25c9716767378d25a26d211cc2b00824" id="r_a25c9716767378d25a26d211cc2b00824"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDistribution.html#a25c9716767378d25a26d211cc2b00824">particle_size_sampling</a> (const unsigned int &amp;number_of_particles)=0</td></tr>
-<tr class="separator:a25c9716767378d25a26d211cc2b00824"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a28ec88c235a330dc98399ee63713c67d" id="r_a28ec88c235a330dc98399ee63713c67d"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDistribution.html#a28ec88c235a330dc98399ee63713c67d">particle_size_sampling</a> (const unsigned int &amp;number_of_particles)=0</td></tr>
+<tr class="separator:a28ec88c235a330dc98399ee63713c67d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a279e7f5a4849f5d5e1d1bf2dc571e71b" id="r_a279e7f5a4849f5d5e1d1bf2dc571e71b"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDistribution.html#a279e7f5a4849f5d5e1d1bf2dc571e71b">find_min_diameter</a> ()=0</td></tr>
 <tr class="separator:a279e7f5a4849f5d5e1d1bf2dc571e71b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af426f32ff999e52f8ec4070ce85bb5bc" id="r_af426f32ff999e52f8ec4070ce85bb5bc"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDistribution.html#af426f32ff999e52f8ec4070ce85bb5bc">find_max_diameter</a> ()=0</td></tr>
 <tr class="separator:af426f32ff999e52f8ec4070ce85bb5bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad712a3cd8733ff1565cec30bff96ac8e" id="r_ad712a3cd8733ff1565cec30bff96ac8e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDistribution.html#ad712a3cd8733ff1565cec30bff96ac8e">print_psd_declaration_string</a> (const unsigned int particle_type, const ConditionalOStream &amp;pcout)=0</td></tr>
 <tr class="separator:ad712a3cd8733ff1565cec30bff96ac8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a7117bc322467803abcc3cd6397dde672" id="r_a7117bc322467803abcc3cd6397dde672"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDistribution.html#a7117bc322467803abcc3cd6397dde672">particle_sizes</a></td></tr>
-<tr class="separator:a7117bc322467803abcc3cd6397dde672"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -254,8 +248,8 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a25c9716767378d25a26d211cc2b00824" name="a25c9716767378d25a26d211cc2b00824"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a25c9716767378d25a26d211cc2b00824">&#9670;&#160;</a></span>particle_size_sampling()</h2>
+<a id="a28ec88c235a330dc98399ee63713c67d" name="a28ec88c235a330dc98399ee63713c67d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a28ec88c235a330dc98399ee63713c67d">&#9670;&#160;</a></span>particle_size_sampling()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -264,7 +258,7 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void Distribution::particle_size_sampling </td>
+          <td class="memname">virtual std::vector&lt; double &gt; Distribution::particle_size_sampling </td>
           <td>(</td>
           <td class="paramtype">const unsigned int &amp;&#160;</td>
           <td class="paramname"><em>number_of_particles</em></td><td>)</td>
@@ -281,12 +275,12 @@ Protected Attributes</h2></td></tr>
 <p>Carries out the size sampling of particles. This is the base class of <a class="el" href="classNormalDistribution.html">NormalDistribution</a>, <a class="el" href="classUniformDistribution.html">UniformDistribution</a> and <a class="el" href="classCustomDistribution.html">CustomDistribution</a> classes. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">number_of_particles</td><td>Number of particle inserted at a given insertion time step. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">number_of_particles</td><td>Number of particles inserted at a given insertion time step. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="classNormalDistribution.html#aec7f1a0cc802577577eb596c40fe79a5">NormalDistribution</a>, <a class="el" href="classLogNormalDistribution.html#a5f7a3bf7960aaa3a8bd56479e5b6005b">LogNormalDistribution</a>, <a class="el" href="classUniformDistribution.html#a4b0326d0ef1ca24f0b892348e09b96ab">UniformDistribution</a>, and <a class="el" href="classCustomDistribution.html#a7171a95167635eb2d4eed8a48abd44d9">CustomDistribution</a>.</p>
+<p>Implemented in <a class="el" href="classNormalDistribution.html#a7f44db135b4af942484ae5374508ba1f">NormalDistribution</a>, <a class="el" href="classLogNormalDistribution.html#a940eb4d9a66fadc3dba9bc548f440cd2">LogNormalDistribution</a>, <a class="el" href="classUniformDistribution.html#a66da7517b14de83257cebe0e06265812">UniformDistribution</a>, and <a class="el" href="classCustomDistribution.html#a132d741dd9f552159a3e72fdd712de80">CustomDistribution</a>.</p>
 
 </div>
 </div>
@@ -387,22 +381,6 @@ Protected Attributes</h2></td></tr>
 <p>Minimal cutoff diameters values. </p>
 
 <p class="definition">Definition at line <a class="el" href="distributions_8h_source.html#l00022">22</a> of file <a class="el" href="distributions_8h_source.html">distributions.h</a>.</p>
-
-</div>
-</div>
-<a id="a7117bc322467803abcc3cd6397dde672" name="a7117bc322467803abcc3cd6397dde672"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7117bc322467803abcc3cd6397dde672">&#9670;&#160;</a></span>particle_sizes</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;double&gt; Distribution::particle_sizes</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="distributions_8h_source.html#l00030">30</a> of file <a class="el" href="distributions_8h_source.html">distributions.h</a>.</p>
 
 </div>
 </div>

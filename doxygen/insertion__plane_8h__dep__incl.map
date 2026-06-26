@@ -1,11 +1,9 @@
 <map id="/home/runner/work/lethe/lethe/include/dem/insertion_plane.h" name="/home/runner/work/lethe/lethe/include/dem/insertion_plane.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="435,5,639,60"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="317,5,521,60"/>
 <area shape="rect" id="Node000002" href="$set__insertion__method_8h.html" title=" " alt="" coords="220,108,403,163"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="467,68,371,110,369,106,465,63"/>
-<area shape="rect" id="Node000006" href="$insertion_8cc.html" title=" " alt="" coords="427,115,646,155"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="539,74,539,115,534,115,534,74"/>
-<area shape="rect" id="Node000007" href="$insertion__plane_8cc.html" title=" " alt="" coords="670,108,870,163"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="611,63,710,105,708,110,609,68"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="383,72,341,110,338,106,379,68"/>
+<area shape="rect" id="Node000006" href="$insertion__plane_8cc.html" title=" " alt="" coords="427,108,627,163"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="460,68,501,106,497,110,456,72"/>
 <area shape="rect" id="Node000003" href="$dem_8cc.html" title=" " alt="" coords="5,225,196,265"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="249,172,139,227,137,223,246,167"/>
 <area shape="rect" id="Node000004" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="220,218,403,273"/>

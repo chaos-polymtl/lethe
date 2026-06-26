@@ -104,8 +104,8 @@ Inheritance diagram for UniformDistribution:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a1d9ed09ab99cc4425b0588127a27a18d" id="r_a1d9ed09ab99cc4425b0588127a27a18d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUniformDistribution.html#a1d9ed09ab99cc4425b0588127a27a18d">UniformDistribution</a> (const double &amp;d_values)</td></tr>
 <tr class="separator:a1d9ed09ab99cc4425b0588127a27a18d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b0326d0ef1ca24f0b892348e09b96ab" id="r_a4b0326d0ef1ca24f0b892348e09b96ab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUniformDistribution.html#a4b0326d0ef1ca24f0b892348e09b96ab">particle_size_sampling</a> (const unsigned int &amp;number_of_particles) override</td></tr>
-<tr class="separator:a4b0326d0ef1ca24f0b892348e09b96ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66da7517b14de83257cebe0e06265812" id="r_a66da7517b14de83257cebe0e06265812"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUniformDistribution.html#a66da7517b14de83257cebe0e06265812">particle_size_sampling</a> (const unsigned int &amp;number_of_particles) override</td></tr>
+<tr class="separator:a66da7517b14de83257cebe0e06265812"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6520888190ecba8ce6b7ba6d4dec98d0" id="r_a6520888190ecba8ce6b7ba6d4dec98d0"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUniformDistribution.html#a6520888190ecba8ce6b7ba6d4dec98d0">find_min_diameter</a> () override</td></tr>
 <tr class="separator:a6520888190ecba8ce6b7ba6d4dec98d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8e28a66b33365aca51fa2065e31c7c03" id="r_a8e28a66b33365aca51fa2065e31c7c03"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classUniformDistribution.html#a8e28a66b33365aca51fa2065e31c7c03">find_max_diameter</a> () override</td></tr>
@@ -123,9 +123,6 @@ Private Attributes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pub_attribs_classDistribution"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_classDistribution')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classDistribution.html">Distribution</a></td></tr>
-<tr class="memitem:a7117bc322467803abcc3cd6397dde672 inherit pub_attribs_classDistribution" id="r_a7117bc322467803abcc3cd6397dde672"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDistribution.html#a7117bc322467803abcc3cd6397dde672">particle_sizes</a></td></tr>
-<tr class="separator:a7117bc322467803abcc3cd6397dde672 inherit pub_attribs_classDistribution"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_classDistribution"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classDistribution')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classDistribution.html">Distribution</a></td></tr>
 <tr class="memitem:a2203fc363e9c2101c5809f9abb9dd080 inherit pro_methods_classDistribution" id="r_a2203fc363e9c2101c5809f9abb9dd080"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDistribution.html#a2203fc363e9c2101c5809f9abb9dd080">Distribution</a> (const <a class="el" href="namespaceParameters_1_1Lagrangian.html#ab28c126ba6e82486f6016aeb54a29e1c">Parameters::Lagrangian::DistributionWeightingType</a> &amp;distribution_weighting_type)</td></tr>
 <tr class="separator:a2203fc363e9c2101c5809f9abb9dd080 inherit pro_methods_classDistribution"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -157,7 +154,7 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>The constructor store the parameters necessary to define the uniform distribution. </p>
+<p>The constructor stores the parameters necessary to define the uniform distribution. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">d_values</td><td>Diameter values for each particle type. </td></tr>
@@ -165,7 +162,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00346">346</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00348">348</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
 
 </div>
 </div>
@@ -198,9 +195,9 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classDistribution.html#af426f32ff999e52f8ec4070ce85bb5bc">Distribution</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00370">370</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00374">374</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="distributions_8h_source.html#l00284">diameter_value</a>.</p>
+<p class="reference">References <a class="el" href="distributions_8h_source.html#l00285">diameter_value</a>.</p>
 
 </div>
 </div>
@@ -232,14 +229,14 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classDistribution.html#a279e7f5a4849f5d5e1d1bf2dc571e71b">Distribution</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00364">364</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00368">368</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="distributions_8h_source.html#l00284">diameter_value</a>.</p>
+<p class="reference">References <a class="el" href="distributions_8h_source.html#l00285">diameter_value</a>.</p>
 
 </div>
 </div>
-<a id="a4b0326d0ef1ca24f0b892348e09b96ab" name="a4b0326d0ef1ca24f0b892348e09b96ab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4b0326d0ef1ca24f0b892348e09b96ab">&#9670;&#160;</a></span>particle_size_sampling()</h2>
+<a id="a66da7517b14de83257cebe0e06265812" name="a66da7517b14de83257cebe0e06265812"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a66da7517b14de83257cebe0e06265812">&#9670;&#160;</a></span>particle_size_sampling()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -248,7 +245,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void UniformDistribution::particle_size_sampling </td>
+          <td class="memname">std::vector&lt; double &gt; UniformDistribution::particle_size_sampling </td>
           <td>(</td>
           <td class="paramtype">const unsigned int &amp;&#160;</td>
           <td class="paramname"><em>number_of_particles</em></td><td>)</td>
@@ -265,16 +262,14 @@ Additional Inherited Members</h2></td></tr>
 <p>Carries out the size sampling of every particle inserted at an insertion time step for the uniform distribution. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">number_of_particles</td><td>Number of particle inserted at a given insertion time step. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">number_of_particles</td><td>Number of particles inserted at a given insertion time step. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classDistribution.html#a25c9716767378d25a26d211cc2b00824">Distribution</a>.</p>
+<p>Implements <a class="el" href="classDistribution.html#a28ec88c235a330dc98399ee63713c67d">Distribution</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00353">353</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
-
-<p class="reference">References <a class="el" href="distributions_8h_source.html#l00030">Distribution::particle_sizes</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00355">355</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
 
 </div>
 </div>
@@ -323,7 +318,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classDistribution.html#ad712a3cd8733ff1565cec30bff96ac8e">Distribution</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00376">376</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00380">380</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
 
 </div>
 </div>
@@ -350,7 +345,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>The diameter value of the distribution. </p>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8h_source.html#l00284">284</a> of file <a class="el" href="distributions_8h_source.html">distributions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8h_source.html#l00285">285</a> of file <a class="el" href="distributions_8h_source.html">distributions.h</a>.</p>
 
 </div>
 </div>

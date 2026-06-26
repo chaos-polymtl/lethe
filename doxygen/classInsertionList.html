@@ -106,8 +106,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a695204a1a93d0cf8d941689e26a6226d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a584654a6d8248de47952a54f108ce3cc" id="r_a584654a6d8248de47952a54f108ce3cc"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#a584654a6d8248de47952a54f108ce3cc">insert</a> (Particles::ParticleHandler&lt; dim &gt; &amp;particle_handler, const parallel::distributed::Triangulation&lt; dim &gt; &amp;triangulation, const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters) override</td></tr>
 <tr class="separator:a584654a6d8248de47952a54f108ce3cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a724779780aa6467ad26d5353f7f95e17" id="r_a724779780aa6467ad26d5353f7f95e17"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#a724779780aa6467ad26d5353f7f95e17">assign_particle_properties_for_list_insertion</a> (const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters, const unsigned int &amp;<a class="el" href="classInsertion.html#a377cf98cd6e196db680fefd500189fe2">inserted_this_step_this_proc</a>, const unsigned int &amp;<a class="el" href="classInsertionList.html#aab5ad2cefe23263e50bba916d39f04d6">current_inserting_particle_type</a>, std::vector&lt; std::vector&lt; double &gt; &gt; &amp;particle_properties)</td></tr>
-<tr class="separator:a724779780aa6467ad26d5353f7f95e17"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad9d3e8abb2c1c1f78134a47c8203252a" id="r_ad9d3e8abb2c1c1f78134a47c8203252a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#ad9d3e8abb2c1c1f78134a47c8203252a">assign_particle_properties_for_list_insertion</a> (const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters, const unsigned int &amp;inserted_this_step_this_proc, std::vector&lt; std::vector&lt; double &gt; &gt; &amp;particle_properties)</td></tr>
+<tr class="separator:ad9d3e8abb2c1c1f78134a47c8203252a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9b549e533efb74748ee46dced84ba21b" id="r_a9b549e533efb74748ee46dced84ba21b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#a9b549e533efb74748ee46dced84ba21b">serialize</a> (boost::archive::text_oarchive &amp;ar) override</td></tr>
 <tr class="separator:a9b549e533efb74748ee46dced84ba21b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a59a53b60bc3f04696b707460faa94cbf" id="r_a59a53b60bc3f04696b707460faa94cbf"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertionList.html#a59a53b60bc3f04696b707460faa94cbf">deserialize</a> (boost::archive::text_iarchive &amp;ar) override</td></tr>
@@ -140,7 +140,7 @@ Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_methods_classInsertion"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classInsertion')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classInsertion.html">Insertion&lt; dim, PropertiesIndex &gt;</a></td></tr>
 <tr class="memitem:af215e7ea8960025c4b7af35a9d74fc8a inherit pro_methods_classInsertion" id="r_af215e7ea8960025c4b7af35a9d74fc8a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#af215e7ea8960025c4b7af35a9d74fc8a">print_insertion_info</a> (const unsigned int &amp;<a class="el" href="classInsertion.html#a01163ffcd1355a03ae5c1257cec57aff">inserted_this_step</a>, const unsigned int &amp;remained_particles, const unsigned int &amp;particle_type, const ConditionalOStream &amp;pcout)</td></tr>
 <tr class="separator:af215e7ea8960025c4b7af35a9d74fc8a inherit pro_methods_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa9d42c275f7d088d8f21d32c52d8eaef inherit pro_methods_classInsertion" id="r_aa9d42c275f7d088d8f21d32c52d8eaef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#aa9d42c275f7d088d8f21d32c52d8eaef">assign_particle_properties</a> (const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters, const unsigned int &amp;<a class="el" href="classInsertion.html#a377cf98cd6e196db680fefd500189fe2">inserted_this_step_this_proc</a>, const unsigned int &amp;current_inserting_particle_type, const std::vector&lt; Point&lt; dim &gt; &gt; &amp;insertion_points, std::vector&lt; std::vector&lt; double &gt; &gt; &amp;particle_properties)</td></tr>
+<tr class="memitem:aa9d42c275f7d088d8f21d32c52d8eaef inherit pro_methods_classInsertion" id="r_aa9d42c275f7d088d8f21d32c52d8eaef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#aa9d42c275f7d088d8f21d32c52d8eaef">assign_particle_properties</a> (const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters, const unsigned int &amp;inserted_this_step_this_proc, const unsigned int &amp;current_inserting_particle_type, const std::vector&lt; Point&lt; dim &gt; &gt; &amp;insertion_points, std::vector&lt; std::vector&lt; double &gt; &gt; &amp;particle_properties)</td></tr>
 <tr class="separator:aa9d42c275f7d088d8f21d32c52d8eaef inherit pro_methods_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c08df7a62332bb7c519f35cfb111771 inherit pro_methods_classInsertion" id="r_a1c08df7a62332bb7c519f35cfb111771"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a1c08df7a62332bb7c519f35cfb111771">calculate_insertion_domain_maximum_particle_number</a> (const <a class="el" href="classDEMSolverParameters.html">DEMSolverParameters</a>&lt; dim &gt; &amp;dem_parameters, const ConditionalOStream &amp;pcout)</td></tr>
 <tr class="separator:a1c08df7a62332bb7c519f35cfb111771 inherit pro_methods_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -159,8 +159,6 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:a7ce178482c5cd1f0570ef0a69574e1ed inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a635ff01d7037aa885d071bc4cfd3f665 inherit pro_attribs_classInsertion" id="r_a635ff01d7037aa885d071bc4cfd3f665"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a635ff01d7037aa885d071bc4cfd3f665">maximum_diameter</a></td></tr>
 <tr class="separator:a635ff01d7037aa885d071bc4cfd3f665 inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a377cf98cd6e196db680fefd500189fe2 inherit pro_attribs_classInsertion" id="r_a377cf98cd6e196db680fefd500189fe2"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a377cf98cd6e196db680fefd500189fe2">inserted_this_step_this_proc</a></td></tr>
-<tr class="separator:a377cf98cd6e196db680fefd500189fe2 inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a689891aa7f13a5396895ad84fb620d61 inherit pro_attribs_classInsertion" id="r_a689891aa7f13a5396895ad84fb620d61"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classDistribution.html">Distribution</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#a689891aa7f13a5396895ad84fb620d61">distributions_objects</a></td></tr>
 <tr class="separator:a689891aa7f13a5396895ad84fb620d61 inherit pro_attribs_classInsertion"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac8975798e3cdbb513209bab64bd93dfb inherit pro_attribs_classInsertion" id="r_ac8975798e3cdbb513209bab64bd93dfb"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classInsertion.html#ac8975798e3cdbb513209bab64bd93dfb">removing_particles_in_region</a></td></tr>
@@ -217,7 +215,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Insert particles using a list specific positions. This allows the insertion of any number of particles at a well-controlled location which is especially useful from a testing perspective. The code ensures that the number of positions provided in the x,y (and possibly z) direction is coherent. If more particles than the number of positions in the list is requested, the class will continue inserting particles at the insertion frequency using the list of positions. There is no mechanism in place that prevents the overlap of these new particles with previous ones. </p>
+<p>Insert particles using a list of specific positions. This allows the insertion of a low number of particles at a well-controlled location, which is especially useful from a testing perspective. The code ensures that the number of positions provided in the x,y (and possibly z) direction is coherent. If more particles than the number of positions in the list are requested, the class will continue inserting particles at the insertion frequency using the list of positions. There is no mechanism in place that prevents the overlap of these new particles with previous ones. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">size_distribution_object_container</td><td>Contains all distribution for each particle type </td></tr>
@@ -227,15 +225,15 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="insertion__list_8cc_source.html#l00019">19</a> of file <a class="el" href="insertion__list_8cc_source.html">insertion_list.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__list_8cc_source.html#l00018">18</a> of file <a class="el" href="insertion__list_8cc_source.html">insertion_list.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="insertion__list_8h_source.html#l00111">InsertionList&lt; dim, PropertiesIndex &gt;::angular_velocities</a>, <a class="el" href="insertion__list_8h_source.html#l00105">InsertionList&lt; dim, PropertiesIndex &gt;::current_inserting_particle_type</a>, <a class="el" href="insertion__list_8h_source.html#l00112">InsertionList&lt; dim, PropertiesIndex &gt;::diameters</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00025">DEMSolverParameters&lt; dim &gt;::insertion_info</a>, <a class="el" href="insertion__list_8h_source.html#l00109">InsertionList&lt; dim, PropertiesIndex &gt;::insertion_points</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00024">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00136">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_average_diameter</a>, <a class="el" href="insertion__list_8h_source.html#l00113">InsertionList&lt; dim, PropertiesIndex &gt;::temperatures</a>, and <a class="el" href="insertion__list_8h_source.html#l00110">InsertionList&lt; dim, PropertiesIndex &gt;::velocities</a>.</p>
+<p class="reference">References <a class="el" href="insertion__list_8h_source.html#l00110">InsertionList&lt; dim, PropertiesIndex &gt;::angular_velocities</a>, <a class="el" href="insertion__list_8h_source.html#l00104">InsertionList&lt; dim, PropertiesIndex &gt;::current_inserting_particle_type</a>, <a class="el" href="insertion__list_8h_source.html#l00111">InsertionList&lt; dim, PropertiesIndex &gt;::diameters</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00025">DEMSolverParameters&lt; dim &gt;::insertion_info</a>, <a class="el" href="insertion__list_8h_source.html#l00108">InsertionList&lt; dim, PropertiesIndex &gt;::insertion_points</a>, <a class="el" href="dem__solver__parameters_8h_source.html#l00024">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00136">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_average_diameter</a>, <a class="el" href="insertion__list_8h_source.html#l00112">InsertionList&lt; dim, PropertiesIndex &gt;::temperatures</a>, and <a class="el" href="insertion__list_8h_source.html#l00109">InsertionList&lt; dim, PropertiesIndex &gt;::velocities</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a724779780aa6467ad26d5353f7f95e17" name="a724779780aa6467ad26d5353f7f95e17"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a724779780aa6467ad26d5353f7f95e17">&#9670;&#160;</a></span>assign_particle_properties_for_list_insertion()</h2>
+<a id="ad9d3e8abb2c1c1f78134a47c8203252a" name="ad9d3e8abb2c1c1f78134a47c8203252a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad9d3e8abb2c1c1f78134a47c8203252a">&#9670;&#160;</a></span>assign_particle_properties_for_list_insertion()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -257,12 +255,6 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const unsigned int &amp;&#160;</td>
-          <td class="paramname"><em>current_inserting_particle_type</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype">std::vector&lt; std::vector&lt; double &gt; &gt; &amp;&#160;</td>
           <td class="paramname"><em>particle_properties</em>&#160;</td>
         </tr>
@@ -274,18 +266,17 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Carries out assigning the properties of inserted particles specificly for the list insertion method. In this method, the initial translationnal and angular velocities, the temperature and the diameter of each particles is set. </p>
+<p>Carries out assigning the properties of inserted particles specifically for the list insertion method. In this method, the initial translation and angular velocities, the temperature and the diameter of each particle are set. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dem_parameters</td><td><a class="el" href="namespaceDEM.html" title="This namespace defines all the data containers and required operations on these containers for the DE...">DEM</a> parameters declared in the .prm file </td></tr>
     <tr><td class="paramname">inserted_this_step_this_proc</td><td>Number of particles that are inserted at each insertion step on each processor. This value can change in the last insertion step to reach the desired number of particles </td></tr>
-    <tr><td class="paramname">current_inserting_particle_type</td><td>Type of inserting particles </td></tr>
     <tr><td class="paramname">particle_properties</td><td>Properties of all inserted particles at each insertion step </td></tr>
   </table>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="insertion__list_8cc_source.html#l00179">179</a> of file <a class="el" href="insertion__list_8cc_source.html">insertion_list.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__list_8cc_source.html#l00175">175</a> of file <a class="el" href="insertion__list_8cc_source.html">insertion_list.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="dem__solver__parameters_8h_source.html#l00024">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>.</p>
 
@@ -327,9 +318,9 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Implements <a class="el" href="classInsertion.html#ae7c88428e0a6aaf1c41c5799f26a1896">Insertion&lt; dim, PropertiesIndex &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00097">97</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00096">96</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
 
-<p class="reference">References <a class="el" href="insertion__list_8h_source.html#l00105">InsertionList&lt; dim, PropertiesIndex &gt;::current_inserting_particle_type</a>, and <a class="el" href="insertion__list_8h_source.html#l00104">InsertionList&lt; dim, PropertiesIndex &gt;::remaining_particles_of_each_type</a>.</p>
+<p class="reference">References <a class="el" href="insertion__list_8h_source.html#l00104">InsertionList&lt; dim, PropertiesIndex &gt;::current_inserting_particle_type</a>, and <a class="el" href="insertion__list_8h_source.html#l00103">InsertionList&lt; dim, PropertiesIndex &gt;::remaining_particles_of_each_type</a>.</p>
 
 </div>
 </div>
@@ -375,7 +366,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>The <a class="el" href="classInsertionList.html">InsertionList</a> class inserts particles using a list specific position. This allows the insertion of any number of particles at a well-controled location which is especially useful from a testing perspective. The code ensures that the number of positions provided in the x,y (and possibly z) direction is coherent. If more particles than the number of position in the list are requested, the class will continue inserting particles at the insertion frequency using the list of position. There is no mechanism in place that prevents the overlap of these new particles with previous ones. </p>
+<p>The <a class="el" href="classInsertionList.html">InsertionList</a> class inserts particles using a list of specific position. This allows the insertion of any number of particles at a well-controlled location, which is especially useful from a testing perspective. The code ensures that the number of positions provided in the x,y (and possibly z) direction is coherent. If more particles than the number of positions in the list are requested, the class will continue inserting particles at the insertion frequency using the list of positions. There is no mechanism in place that prevents the overlap of these new particles with previous ones. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">particle_handler</td><td>The particle handler of particles which are being inserted </td></tr>
@@ -387,7 +378,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Implements <a class="el" href="classInsertion.html#acc31a2b8a42ff47cd608039dd3c6e063">Insertion&lt; dim, PropertiesIndex &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="insertion__list_8cc_source.html#l00088">88</a> of file <a class="el" href="insertion__list_8cc_source.html">insertion_list.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__list_8cc_source.html#l00087">87</a> of file <a class="el" href="insertion__list_8cc_source.html">insertion_list.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="dem__solver__parameters_8h_source.html#l00024">DEMSolverParameters&lt; dim &gt;::lagrangian_physical_properties</a>, <a class="el" href="parameters__lagrangian_8h_source.html#l00175">Parameters::Lagrangian::LagrangianPhysicalProperties::number</a>, and <a class="el" href="parameters__lagrangian_8h_source.html#l00129">Parameters::Lagrangian::LagrangianPhysicalProperties::particle_type_number</a>.</p>
 
@@ -429,9 +420,9 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
 
 <p>Implements <a class="el" href="classInsertion.html#addda914be05260ece7ad5c1f9b6e53ed">Insertion&lt; dim, PropertiesIndex &gt;</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00085">85</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00084">84</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
 
-<p class="reference">References <a class="el" href="insertion__list_8h_source.html#l00105">InsertionList&lt; dim, PropertiesIndex &gt;::current_inserting_particle_type</a>, and <a class="el" href="insertion__list_8h_source.html#l00104">InsertionList&lt; dim, PropertiesIndex &gt;::remaining_particles_of_each_type</a>.</p>
+<p class="reference">References <a class="el" href="insertion__list_8h_source.html#l00104">InsertionList&lt; dim, PropertiesIndex &gt;::current_inserting_particle_type</a>, and <a class="el" href="insertion__list_8h_source.html#l00103">InsertionList&lt; dim, PropertiesIndex &gt;::remaining_particles_of_each_type</a>.</p>
 
 </div>
 </div>
@@ -450,7 +441,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00111">111</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00110">110</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
 
 </div>
 </div>
@@ -468,7 +459,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00105">105</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00104">104</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
 
 </div>
 </div>
@@ -486,7 +477,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00112">112</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00111">111</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
 
 </div>
 </div>
@@ -504,7 +495,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00109">109</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00108">108</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
 
 </div>
 </div>
@@ -522,7 +513,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00104">104</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00103">103</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
 
 </div>
 </div>
@@ -540,7 +531,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00113">113</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00112">112</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
 
 </div>
 </div>
@@ -558,7 +549,7 @@ template&lt;int dim, typename PropertiesIndex &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00110">110</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="insertion__list_8h_source.html#l00109">109</a> of file <a class="el" href="insertion__list_8h_source.html">insertion_list.h</a>.</p>
 
 </div>
 </div>

@@ -104,8 +104,8 @@ Inheritance diagram for CustomDistribution:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a1c1a43b4f0952865d8e6ccd99f2fc065" id="r_a1c1a43b4f0952865d8e6ccd99f2fc065"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCustomDistribution.html#a1c1a43b4f0952865d8e6ccd99f2fc065">CustomDistribution</a> (const std::vector&lt; double &gt; &amp;d_list, const std::vector&lt; double &gt; &amp;d_probabilities, const unsigned int &amp;prn_seed, const double min_cutoff, const double max_cutoff, const <a class="el" href="namespaceParameters_1_1Lagrangian.html#ab28c126ba6e82486f6016aeb54a29e1c">Parameters::Lagrangian::DistributionWeightingType</a> &amp;distribution_weighting_type, const <a class="el" href="namespaceParameters_1_1Lagrangian.html#ac10ed8fb97cb27524c9f57a60c60af8e">Parameters::Lagrangian::ProbabilityFunctionType</a> &amp;function_type, const bool interpolate)</td></tr>
 <tr class="separator:a1c1a43b4f0952865d8e6ccd99f2fc065"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7171a95167635eb2d4eed8a48abd44d9" id="r_a7171a95167635eb2d4eed8a48abd44d9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCustomDistribution.html#a7171a95167635eb2d4eed8a48abd44d9">particle_size_sampling</a> (const unsigned int &amp;number_of_particles) override</td></tr>
-<tr class="separator:a7171a95167635eb2d4eed8a48abd44d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a132d741dd9f552159a3e72fdd712de80" id="r_a132d741dd9f552159a3e72fdd712de80"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCustomDistribution.html#a132d741dd9f552159a3e72fdd712de80">particle_size_sampling</a> (const unsigned int &amp;number_of_particles) override</td></tr>
+<tr class="separator:a132d741dd9f552159a3e72fdd712de80"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af351416e24dbd49e2447397a9a78781d" id="r_af351416e24dbd49e2447397a9a78781d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCustomDistribution.html#af351416e24dbd49e2447397a9a78781d">find_min_diameter</a> () override</td></tr>
 <tr class="separator:af351416e24dbd49e2447397a9a78781d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f2ccb37c2d63e03a92ab1cfc441a300" id="r_a7f2ccb37c2d63e03a92ab1cfc441a300"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCustomDistribution.html#a7f2ccb37c2d63e03a92ab1cfc441a300">find_max_diameter</a> () override</td></tr>
@@ -129,9 +129,6 @@ Private Attributes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pub_attribs_classDistribution"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_classDistribution')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classDistribution.html">Distribution</a></td></tr>
-<tr class="memitem:a7117bc322467803abcc3cd6397dde672 inherit pub_attribs_classDistribution" id="r_a7117bc322467803abcc3cd6397dde672"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDistribution.html#a7117bc322467803abcc3cd6397dde672">particle_sizes</a></td></tr>
-<tr class="separator:a7117bc322467803abcc3cd6397dde672 inherit pub_attribs_classDistribution"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_classDistribution"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classDistribution')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classDistribution.html">Distribution</a></td></tr>
 <tr class="memitem:a2203fc363e9c2101c5809f9abb9dd080 inherit pro_methods_classDistribution" id="r_a2203fc363e9c2101c5809f9abb9dd080"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDistribution.html#a2203fc363e9c2101c5809f9abb9dd080">Distribution</a> (const <a class="el" href="namespaceParameters_1_1Lagrangian.html#ab28c126ba6e82486f6016aeb54a29e1c">Parameters::Lagrangian::DistributionWeightingType</a> &amp;distribution_weighting_type)</td></tr>
 <tr class="separator:a2203fc363e9c2101c5809f9abb9dd080 inherit pro_methods_classDistribution"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -145,7 +142,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="distributions_8h_source.html#l00287">287</a> of file <a class="el" href="distributions_8h_source.html">distributions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8h_source.html#l00288">288</a> of file <a class="el" href="distributions_8h_source.html">distributions.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a1c1a43b4f0952865d8e6ccd99f2fc065" name="a1c1a43b4f0952865d8e6ccd99f2fc065"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1c1a43b4f0952865d8e6ccd99f2fc065">&#9670;&#160;</a></span>CustomDistribution()</h2>
@@ -213,7 +210,7 @@ Additional Inherited Members</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">d_list</td><td>Vector of diameter values. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">d_probabilities</td><td>Vector of probability values based on volume fraction with respect to each diameter value. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">d_probabilities</td><td>Vector of probability values based on the volume fraction with respect to each diameter value. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">prn_seed</td><td>Pseudo-random number seed for the diameter generation. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">min_cutoff</td><td>Minimum cutoff diameter. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">max_cutoff</td><td>Maximum cutoff diameter. </td></tr>
@@ -224,9 +221,9 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00384">384</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00388">388</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="distributions_8h_source.html#l00027">Distribution::dia_max_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00022">Distribution::dia_min_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00359">diameter_values</a>, <a class="el" href="distributions_8h_source.html#l00372">interpolate_diameter_values</a>, <a class="el" href="distributions_8h_source.html#l00366">number_based_cdf</a>, and <a class="el" href="distributions_8h_source.html#l00014">Distribution::weighting_type</a>.</p>
+<p class="reference">References <a class="el" href="distributions_8h_source.html#l00027">Distribution::dia_max_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00022">Distribution::dia_min_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00360">diameter_values</a>, <a class="el" href="distributions_8h_source.html#l00373">interpolate_diameter_values</a>, <a class="el" href="distributions_8h_source.html#l00367">number_based_cdf</a>, and <a class="el" href="distributions_8h_source.html#l00014">Distribution::weighting_type</a>.</p>
 
 </div>
 </div>
@@ -259,7 +256,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classDistribution.html#af426f32ff999e52f8ec4070ce85bb5bc">Distribution</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00715">715</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00719">719</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="distributions_8h_source.html#l00027">Distribution::dia_max_cutoff</a>.</p>
 
@@ -293,14 +290,14 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classDistribution.html#a279e7f5a4849f5d5e1d1bf2dc571e71b">Distribution</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00709">709</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00713">713</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="distributions_8h_source.html#l00022">Distribution::dia_min_cutoff</a>.</p>
 
 </div>
 </div>
-<a id="a7171a95167635eb2d4eed8a48abd44d9" name="a7171a95167635eb2d4eed8a48abd44d9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7171a95167635eb2d4eed8a48abd44d9">&#9670;&#160;</a></span>particle_size_sampling()</h2>
+<a id="a132d741dd9f552159a3e72fdd712de80" name="a132d741dd9f552159a3e72fdd712de80"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a132d741dd9f552159a3e72fdd712de80">&#9670;&#160;</a></span>particle_size_sampling()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -309,7 +306,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void CustomDistribution::particle_size_sampling </td>
+          <td class="memname">std::vector&lt; double &gt; CustomDistribution::particle_size_sampling </td>
           <td>(</td>
           <td class="paramtype">const unsigned int &amp;&#160;</td>
           <td class="paramname"><em>number_of_particles</em></td><td>)</td>
@@ -331,11 +328,11 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classDistribution.html#a25c9716767378d25a26d211cc2b00824">Distribution</a>.</p>
+<p>Implements <a class="el" href="classDistribution.html#a28ec88c235a330dc98399ee63713c67d">Distribution</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00627">627</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00630">630</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="distributions_8h_source.html#l00027">Distribution::dia_max_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00022">Distribution::dia_min_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00359">diameter_values</a>, <a class="el" href="distributions_8h_source.html#l00377">gen</a>, <a class="el" href="distributions_8h_source.html#l00372">interpolate_diameter_values</a>, <a class="el" href="distributions_8h_source.html#l00366">number_based_cdf</a>, and <a class="el" href="distributions_8h_source.html#l00030">Distribution::particle_sizes</a>.</p>
+<p class="reference">References <a class="el" href="distributions_8h_source.html#l00027">Distribution::dia_max_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00022">Distribution::dia_min_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00360">diameter_values</a>, <a class="el" href="distributions_8h_source.html#l00378">gen</a>, <a class="el" href="distributions_8h_source.html#l00373">interpolate_diameter_values</a>, and <a class="el" href="distributions_8h_source.html#l00367">number_based_cdf</a>.</p>
 
 </div>
 </div>
@@ -384,7 +381,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classDistribution.html#ad712a3cd8733ff1565cec30bff96ac8e">Distribution</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00721">721</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00725">725</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
 
 </div>
 </div>
@@ -408,9 +405,9 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Vector containing all the diameters values. </p>
+<p>Vector containing all the diameter values. </p>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8h_source.html#l00359">359</a> of file <a class="el" href="distributions_8h_source.html">distributions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8h_source.html#l00360">360</a> of file <a class="el" href="distributions_8h_source.html">distributions.h</a>.</p>
 
 </div>
 </div>
@@ -436,7 +433,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Random number generator for the diameter selection. </p>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8h_source.html#l00377">377</a> of file <a class="el" href="distributions_8h_source.html">distributions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8h_source.html#l00378">378</a> of file <a class="el" href="distributions_8h_source.html">distributions.h</a>.</p>
 
 </div>
 </div>
@@ -462,7 +459,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Indicates whether the diameter values are interpolated between the input values during sampling. </p>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8h_source.html#l00372">372</a> of file <a class="el" href="distributions_8h_source.html">distributions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8h_source.html#l00373">373</a> of file <a class="el" href="distributions_8h_source.html">distributions.h</a>.</p>
 
 </div>
 </div>
@@ -486,9 +483,9 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Vector containing cumulative probabilities associated with the diameter_values vector. The stored values are based on the number based CDF. </p>
+<p>Vector containing cumulative probabilities associated with the diameter_values vector. The stored values are based on the number-based CDF. </p>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8h_source.html#l00366">366</a> of file <a class="el" href="distributions_8h_source.html">distributions.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8h_source.html#l00367">367</a> of file <a class="el" href="distributions_8h_source.html">distributions.h</a>.</p>
 
 </div>
 </div>

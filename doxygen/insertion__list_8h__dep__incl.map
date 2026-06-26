@@ -1,13 +1,11 @@
 <map id="/home/runner/work/lethe/lethe/include/dem/insertion_list.h" name="/home/runner/work/lethe/lethe/include/dem/insertion_list.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="551,5,755,60"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="425,5,629,60"/>
 <area shape="rect" id="Node000002" href="$set__insertion__method_8h.html" title=" " alt="" coords="220,108,403,163"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="551,66,401,111,400,105,550,61"/>
-<area shape="rect" id="Node000006" href="$insertion_8cc.html" title=" " alt="" coords="427,115,646,155"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="614,71,560,117,557,113,610,67"/>
-<area shape="rect" id="Node000007" href="$insertion__list_8cc.html" title=" " alt="" coords="670,108,870,163"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="696,67,741,106,738,110,692,71"/>
-<area shape="rect" id="Node000008" href="$ray__tracing_8cc.html" title=" " alt="" coords="895,108,1077,163"/>
-<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="753,61,900,105,898,110,752,66"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="460,68,369,110,366,106,458,63"/>
+<area shape="rect" id="Node000006" href="$insertion__list_8cc.html" title=" " alt="" coords="427,108,627,163"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="530,74,530,108,525,108,525,74"/>
+<area shape="rect" id="Node000007" href="$ray__tracing_8cc.html" title=" " alt="" coords="652,108,835,163"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="597,63,688,106,686,110,595,68"/>
 <area shape="rect" id="Node000003" href="$dem_8cc.html" title=" " alt="" coords="5,225,196,265"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="249,172,139,227,137,223,246,167"/>
 <area shape="rect" id="Node000004" href="$cfd__dem__coupling_8cc.html" title=" " alt="" coords="220,218,403,273"/>

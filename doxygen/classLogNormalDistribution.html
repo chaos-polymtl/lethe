@@ -104,8 +104,8 @@ Inheritance diagram for LogNormalDistribution:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ac05b953df1965097e944c074d70de044" id="r_ac05b953df1965097e944c074d70de044"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogNormalDistribution.html#ac05b953df1965097e944c074d70de044">LogNormalDistribution</a> (const double &amp;d_average, const double &amp;d_standard_deviation, const unsigned int &amp;prn_seed, double min_cutoff, double max_cutoff, const <a class="el" href="namespaceParameters_1_1Lagrangian.html#ab28c126ba6e82486f6016aeb54a29e1c">Parameters::Lagrangian::DistributionWeightingType</a> &amp;distribution_weighting_type)</td></tr>
 <tr class="separator:ac05b953df1965097e944c074d70de044"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f7a3bf7960aaa3a8bd56479e5b6005b" id="r_a5f7a3bf7960aaa3a8bd56479e5b6005b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogNormalDistribution.html#a5f7a3bf7960aaa3a8bd56479e5b6005b">particle_size_sampling</a> (const unsigned int &amp;number_of_particles) override</td></tr>
-<tr class="separator:a5f7a3bf7960aaa3a8bd56479e5b6005b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a940eb4d9a66fadc3dba9bc548f440cd2" id="r_a940eb4d9a66fadc3dba9bc548f440cd2"><td class="memItemLeft" align="right" valign="top">virtual std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogNormalDistribution.html#a940eb4d9a66fadc3dba9bc548f440cd2">particle_size_sampling</a> (const unsigned int &amp;number_of_particles) override</td></tr>
+<tr class="separator:a940eb4d9a66fadc3dba9bc548f440cd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a577be6db92a240cc9618e63dbea8ef2b" id="r_a577be6db92a240cc9618e63dbea8ef2b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogNormalDistribution.html#a577be6db92a240cc9618e63dbea8ef2b">find_min_diameter</a> () override</td></tr>
 <tr class="separator:a577be6db92a240cc9618e63dbea8ef2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a85e33676ec5759e4027a02ad8567b665" id="r_a85e33676ec5759e4027a02ad8567b665"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLogNormalDistribution.html#a85e33676ec5759e4027a02ad8567b665">find_max_diameter</a> () override</td></tr>
@@ -127,9 +127,6 @@ Private Attributes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pub_attribs_classDistribution"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_classDistribution')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="classDistribution.html">Distribution</a></td></tr>
-<tr class="memitem:a7117bc322467803abcc3cd6397dde672 inherit pub_attribs_classDistribution" id="r_a7117bc322467803abcc3cd6397dde672"><td class="memItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDistribution.html#a7117bc322467803abcc3cd6397dde672">particle_sizes</a></td></tr>
-<tr class="separator:a7117bc322467803abcc3cd6397dde672 inherit pub_attribs_classDistribution"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_classDistribution"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_classDistribution')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="classDistribution.html">Distribution</a></td></tr>
 <tr class="memitem:a2203fc363e9c2101c5809f9abb9dd080 inherit pro_methods_classDistribution" id="r_a2203fc363e9c2101c5809f9abb9dd080"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDistribution.html#a2203fc363e9c2101c5809f9abb9dd080">Distribution</a> (const <a class="el" href="namespaceParameters_1_1Lagrangian.html#ab28c126ba6e82486f6016aeb54a29e1c">Parameters::Lagrangian::DistributionWeightingType</a> &amp;distribution_weighting_type)</td></tr>
 <tr class="separator:a2203fc363e9c2101c5809f9abb9dd080 inherit pro_methods_classDistribution"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -208,7 +205,7 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00230">230</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00231">231</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="distributions_8h_source.html#l00027">Distribution::dia_max_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00022">Distribution::dia_min_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00223">mu_ln</a>, <a class="el" href="distributions_8h_source.html#l00218">sigma_ln</a>, and <a class="el" href="distributions_8h_source.html#l00014">Distribution::weighting_type</a>.</p>
 
@@ -243,7 +240,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classDistribution.html#af426f32ff999e52f8ec4070ce85bb5bc">Distribution</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00315">315</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00317">317</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="distributions_8h_source.html#l00027">Distribution::dia_max_cutoff</a>.</p>
 
@@ -277,14 +274,14 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classDistribution.html#a279e7f5a4849f5d5e1d1bf2dc571e71b">Distribution</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00309">309</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00311">311</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="distributions_8h_source.html#l00022">Distribution::dia_min_cutoff</a>.</p>
 
 </div>
 </div>
-<a id="a5f7a3bf7960aaa3a8bd56479e5b6005b" name="a5f7a3bf7960aaa3a8bd56479e5b6005b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5f7a3bf7960aaa3a8bd56479e5b6005b">&#9670;&#160;</a></span>particle_size_sampling()</h2>
+<a id="a940eb4d9a66fadc3dba9bc548f440cd2" name="a940eb4d9a66fadc3dba9bc548f440cd2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a940eb4d9a66fadc3dba9bc548f440cd2">&#9670;&#160;</a></span>particle_size_sampling()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -293,7 +290,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void LogNormalDistribution::particle_size_sampling </td>
+          <td class="memname">std::vector&lt; double &gt; LogNormalDistribution::particle_size_sampling </td>
           <td>(</td>
           <td class="paramtype">const unsigned int &amp;&#160;</td>
           <td class="paramname"><em>number_of_particles</em></td><td>)</td>
@@ -310,16 +307,16 @@ Additional Inherited Members</h2></td></tr>
 <p>Carries out the size sampling of each particle inserted at an insertion time step for the normal distribution. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">number_of_particles</td><td>Number of particle inserted at a given insertion time step. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">number_of_particles</td><td>Number of particles inserted at a given insertion time step. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="classDistribution.html#a25c9716767378d25a26d211cc2b00824">Distribution</a>.</p>
+<p>Implements <a class="el" href="classDistribution.html#a28ec88c235a330dc98399ee63713c67d">Distribution</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00287">287</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00288">288</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="distributions_8h_source.html#l00027">Distribution::dia_max_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00022">Distribution::dia_min_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00228">gen</a>, <a class="el" href="distributions_8h_source.html#l00223">mu_ln</a>, <a class="el" href="distributions_8h_source.html#l00030">Distribution::particle_sizes</a>, and <a class="el" href="distributions_8h_source.html#l00218">sigma_ln</a>.</p>
+<p class="reference">References <a class="el" href="distributions_8h_source.html#l00027">Distribution::dia_max_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00022">Distribution::dia_min_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00228">gen</a>, <a class="el" href="distributions_8h_source.html#l00223">mu_ln</a>, and <a class="el" href="distributions_8h_source.html#l00218">sigma_ln</a>.</p>
 
 </div>
 </div>
@@ -368,7 +365,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classDistribution.html#ad712a3cd8733ff1565cec30bff96ac8e">Distribution</a>.</p>
 
-<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00321">321</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="distributions_8cc_source.html#l00323">323</a> of file <a class="el" href="distributions_8cc_source.html">distributions.cc</a>.</p>
 
 <p class="reference">References <a class="el" href="distributions_8h_source.html#l00027">Distribution::dia_max_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00022">Distribution::dia_min_cutoff</a>, <a class="el" href="distributions_8h_source.html#l00223">mu_ln</a>, and <a class="el" href="distributions_8h_source.html#l00218">sigma_ln</a>.</p>
 
@@ -447,7 +444,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Standard deviation of distribution of the normal distribution. </p>
+<p>Standard deviation of the normal distribution. </p>
 
 <p class="definition">Definition at line <a class="el" href="distributions_8h_source.html#l00218">218</a> of file <a class="el" href="distributions_8h_source.html">distributions.h</a>.</p>
 
