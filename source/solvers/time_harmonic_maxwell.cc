@@ -86,6 +86,8 @@ TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
       face_quadrature = std::make_shared<QGauss<dim - 1>>(fe_test->degree + 1);
     }
 
+  multiphysics->set_mapping(PhysicsID::electromagnetics, mapping);
+
   // Initialize solutions and DPG error indicator shared_ptr
   present_solution            = std::make_shared<GlobalVectorType>();
   present_solution_skeleton   = std::make_shared<GlobalVectorType>();

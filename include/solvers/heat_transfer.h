@@ -120,6 +120,8 @@ public:
         face_quadrature     = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
       }
 
+    multiphysics->set_mapping(PhysicsID::heat_transfer, temperature_mapping);
+
     // Initialize solution shared_ptr
     present_solution = std::make_shared<GlobalVectorType>();
 

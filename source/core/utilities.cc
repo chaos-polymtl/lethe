@@ -878,7 +878,8 @@ evaluate_values_at_points(const Triangulation<dim>      &triangulation,
                           const DoFHandler<dim>         &dof_handler,
                           const VectorType              &solution_field,
                           const std::vector<Point<dim>> &evaluation_points,
-                          std::vector<double> &evaluated_scalar_values)
+                          std::vector<double> &evaluated_scalar_values,
+                          const unsigned int   first_selected_component)
 {
   // Get MPI communicator
   const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
@@ -894,12 +895,14 @@ evaluate_values_at_points(const Triangulation<dim>      &triangulation,
   Utilities::MPI::RemotePointEvaluation<dim, dim> remote_point_evaluator;
   remote_point_evaluator.reinit(evaluation_points, triangulation, mapping);
   if (points_are_in_domain<dim>(evaluation_points, remote_point_evaluator))
-    evaluated_scalar_values =
-      VectorTools::point_values<1>(mapping,
-                                   dof_handler,
-                                   solution_field_owned_copy,
-                                   evaluation_points,
-                                   remote_point_evaluator);
+    evaluated_scalar_values = VectorTools::point_values<1>(
+      mapping,
+      dof_handler,
+      solution_field_owned_copy,
+      evaluation_points,
+      remote_point_evaluator,
+      VectorTools::EvaluationFlags::EvaluationFlags::avg,
+      first_selected_component);
 }
 
 template void
@@ -909,7 +912,8 @@ evaluate_values_at_points<2, GlobalVectorType>(
   const DoFHandler<2>         &dof_handle,
   const GlobalVectorType      &solution_field,
   const std::vector<Point<2>> &evaluation_points,
-  std::vector<double>         &evaluated_scalar_values);
+  std::vector<double>         &evaluated_scalar_values,
+  const unsigned int           first_selected_component);
 
 template void
 evaluate_values_at_points<3, GlobalVectorType>(
@@ -918,7 +922,8 @@ evaluate_values_at_points<3, GlobalVectorType>(
   const DoFHandler<3>         &dof_handle,
   const GlobalVectorType      &solution_field,
   const std::vector<Point<3>> &evaluation_points,
-  std::vector<double>         &evaluated_scalar_values);
+  std::vector<double>         &evaluated_scalar_values,
+  const unsigned int           first_selected_component);
 
 template <int n_component, int dim, typename VectorType>
 void
@@ -928,7 +933,8 @@ evaluate_values_at_points(
   const DoFHandler<dim>               &dof_handler,
   const VectorType                    &solution_field,
   const std::vector<Point<dim>>       &evaluation_points,
-  std::vector<Tensor<1, dim, double>> &evaluated_vector_values)
+  std::vector<Tensor<1, dim, double>> &evaluated_vector_values,
+  const unsigned int                   first_selected_component)
 {
   // Get MPI communicator
   const MPI_Comm mpi_communicator = dof_handler.get_mpi_communicator();
@@ -943,12 +949,14 @@ evaluate_values_at_points(
   Utilities::MPI::RemotePointEvaluation<dim, dim> remote_point_evaluator;
   remote_point_evaluator.reinit(evaluation_points, triangulation, mapping);
   if (points_are_in_domain<dim>(evaluation_points, remote_point_evaluator))
-    evaluated_vector_values =
-      VectorTools::point_values<n_component>(mapping,
-                                             dof_handler,
-                                             solution_field_owned_copy,
-                                             evaluation_points,
-                                             remote_point_evaluator);
+    evaluated_vector_values = VectorTools::point_values<n_component>(
+      mapping,
+      dof_handler,
+      solution_field_owned_copy,
+      evaluation_points,
+      remote_point_evaluator,
+      VectorTools::EvaluationFlags::EvaluationFlags::avg,
+      first_selected_component);
 }
 
 template void
@@ -958,7 +966,8 @@ evaluate_values_at_points<2, 2, GlobalVectorType>(
   const DoFHandler<2>               &dof_handle,
   const GlobalVectorType            &solution_field,
   const std::vector<Point<2>>       &evaluation_points,
-  std::vector<Tensor<1, 2, double>> &evaluated_vector_values);
+  std::vector<Tensor<1, 2, double>> &evaluated_vector_values,
+  const unsigned int                 first_selected_component);
 
 template void
 evaluate_values_at_points<3, 3, GlobalVectorType>(
@@ -967,4 +976,5 @@ evaluate_values_at_points<3, 3, GlobalVectorType>(
   const DoFHandler<3>               &dof_handle,
   const GlobalVectorType            &solution_field,
   const std::vector<Point<3>>       &evaluation_points,
-  std::vector<Tensor<1, 3, double>> &evaluated_vector_values);
+  std::vector<Tensor<1, 3, double>> &evaluated_vector_values,
+  const unsigned int                 first_selected_component);

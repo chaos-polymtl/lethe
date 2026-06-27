@@ -19,6 +19,7 @@
 #include <core/vector.h>
 
 #include <solvers/auxiliary_physics.h>
+#include <solvers/postprocessing_probes.h>
 
 #include <deal.II/base/exceptions.h>
 
@@ -334,6 +335,8 @@ public:
       {
         iphys.second->postprocess(first_iteration);
       }
+
+    // TODO AA here
   }
 
 
@@ -438,7 +441,6 @@ public:
   }
 
 
-
   /**
    * @brief Request a DOF handler for a given physics ID
    *
@@ -455,6 +457,24 @@ public:
                 ExcInternalError());
 
     return *physics_dof_handler[physics_id];
+  }
+
+  /**
+   * @brief Request the mapping for a given physics ID
+   *
+   * @param[in] physics_id The physics of the Mapping being requested
+   *
+   * @return Reference to the mapping of the requested physics
+   */
+  const Mapping<dim> &
+  get_mapping(const PhysicsID &physics_id)
+  {
+    AssertThrow((std::find(active_physics.begin(),
+                           active_physics.end(),
+                           physics_id) != active_physics.end()),
+                ExcInternalError());
+
+    return *physics_mapping[physics_id];
   }
 
   /**
@@ -659,6 +679,25 @@ public:
   }
 
   /**
+   * @brief Sets the shared pointer to the Mapping of the physics in the
+   * multiphysics interface.
+   *
+   * @param[in] physics_id The physics of the Mapping being requested.
+   *
+   * @param[in] mapping Shared pointer to the Mapping for which the
+   * reference is stored.
+   */
+  void
+  set_mapping(const PhysicsID physics_id, std::shared_ptr<Mapping<dim>> mapping)
+  {
+    AssertThrow((std::find(active_physics.begin(),
+                           active_physics.end(),
+                           physics_id) != active_physics.end()),
+                ExcInternalError());
+    physics_mapping[physics_id] = mapping;
+  }
+
+  /**
    * @brief Sets the shared pointer to the vector of the SolidBase object. This
    * allows the use of the solid base object in multiple physics at the same
    * time.
@@ -859,6 +898,7 @@ public:
       {
         iphys.second->write_checkpoint();
       }
+    // TODO AA add here
   };
 
   /**
@@ -876,6 +916,7 @@ public:
       {
         iphys.second->read_checkpoint();
       }
+    // TODO AA add here
   };
 
 private:
@@ -906,6 +947,9 @@ private:
 
   /// Map of physics and shared pointers to their respective DoFHandler
   std::map<PhysicsID, std::shared_ptr<DoFHandler<dim>>> physics_dof_handler;
+
+  /// Map of physics and shared pointers to their respective Mapping
+  std::map<PhysicsID, std::shared_ptr<Mapping<dim>>> physics_mapping;
 
   /// Shared pointer to the vector containing shared pointers to solid objects
   std::shared_ptr<std::vector<std::shared_ptr<SolidBase<dim, dim>>>> solids;
@@ -981,11 +1025,18 @@ private:
   std::map<PhysicsID, std::shared_ptr<GlobalBlockVectorType>>
     block_physics_solutions_m1;
 
-  // Checks the required dependencies between multiphase models and handles
-  // the corresponding assertions
+  /**
+   * @brief Checks the required dependencies between multiphase models and handles
+   * the corresponding assertions.
+   *
+   * @param[in] nsparam Simulation parameters.
+   */
   void
   inspect_multiphysics_models_dependencies(
     const SimulationParameters<dim> &nsparam);
+
+  /// Probe postprocessing object
+  PostprocessingProbes<dim> probe_postprocessor;
 };
 
 

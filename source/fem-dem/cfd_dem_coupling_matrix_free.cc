@@ -366,7 +366,7 @@ CFDDEMMatrixFree<dim>::gather_tables()
 {
   std::vector<OutputStructTableHandler> table_output_structs;
 
-  const Parameters::PostProcessing post_processing =
+  const Parameters::PostProcessing<dim> post_processing =
     this->simulation_parameters.post_processing;
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder;

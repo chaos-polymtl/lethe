@@ -169,6 +169,9 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   multiphysics = std::make_shared<MultiphysicsInterface<dim>>(
     simulation_parameters, triangulation, simulation_control, this->pcout);
 
+  multiphysics->set_mapping(PhysicsID::fluid_dynamics, mapping);
+  // TODO AA give triangulation to
+
   // If mortar is enabled, we need to change one default parameter of the
   // function that computes normal vectors. In this case, we cannot use the
   // manifold to compute them, since it leads to issues at the mortar interface.
@@ -3078,7 +3081,7 @@ std::vector<OutputStructTableHandler>
 NavierStokesBase<dim, VectorType, DofsType>::gather_tables()
 {
   std::vector<OutputStructTableHandler> table_output_structs;
-  const Parameters::PostProcessing      post_processing =
+  const Parameters::PostProcessing<dim> post_processing =
     this->simulation_parameters.post_processing;
   std::string prefix =
     this->simulation_parameters.simulation_control.output_folder;

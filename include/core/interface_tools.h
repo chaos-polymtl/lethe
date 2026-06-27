@@ -1209,8 +1209,8 @@ namespace InterfaceTools
     const Variable &variable,
     const std::multimap<Variable,
                         std::pair<unsigned int,
-                                  Parameters::PostProcessing::
-                                    IsocontourBoundingBoxes::Isocontour>>
+                                  typename Parameters::PostProcessing<
+                                    dim>::IsocontourBoundingBoxes::Isocontour>>
                                 &ids_and_isocontours_per_variable,
     const DoFHandler<dim>       &dof_handler,
     const VectorType            &solution_vector,
@@ -1231,6 +1231,7 @@ namespace InterfaceTools
    * @param[in] isocontour_bounding_values_tables Tables with isocontour
    * bounding values.
    */
+  template <int dim>
   void
   write_isocontour_bounding_values_tables(
     const MPI_Comm    &mpi_communicator,
@@ -1238,8 +1239,8 @@ namespace InterfaceTools
     const Variable    &variable,
     const std::multimap<Variable,
                         std::pair<unsigned int,
-                                  Parameters::PostProcessing::
-                                    IsocontourBoundingBoxes::Isocontour>>
+                                  typename Parameters::PostProcessing<
+                                    dim>::IsocontourBoundingBoxes::Isocontour>>
                                     &ids_and_isocontours_per_variable,
     const std::vector<TableHandler> &isocontour_bounding_values_tables);
 

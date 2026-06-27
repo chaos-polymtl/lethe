@@ -40,7 +40,7 @@ public:
   Parameters::FEM                                   fem_parameters;
   Parameters::Forces                                forces_parameters;
   std::shared_ptr<Parameters::Laser<dim>>           laser_parameters;
-  Parameters::PostProcessing                        post_processing;
+  Parameters::PostProcessing<dim>                   post_processing;
   Parameters::Restart                               restart_parameters;
   Parameters::Manifolds                             manifolds_parameters;
   BoundaryConditions::NSBoundaryConditions<dim>     boundary_conditions;

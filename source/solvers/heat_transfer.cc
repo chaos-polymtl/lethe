@@ -1229,7 +1229,7 @@ HeatTransfer<dim>::postprocess(bool first_iteration)
       if (simulation_control->get_iteration_number() %
             this->simulation_parameters.post_processing.output_frequency ==
           0)
-        InterfaceTools::write_isocontour_bounding_values_tables(
+        InterfaceTools::write_isocontour_bounding_values_tables<dim>(
           this->dof_handler->get_mpi_communicator(),
           this->simulation_parameters.simulation_control.output_folder,
           Variable::temperature,

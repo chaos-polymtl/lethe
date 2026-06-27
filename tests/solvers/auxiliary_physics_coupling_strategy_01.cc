@@ -65,6 +65,18 @@ test()
   solver_parameters.simulation_control.adapt_with_capillary_time_step_ratio =
     false;
 
+  // Initialize dummy multiphysics interface due to set_mapping in
+  // TimeHarmonicMaxwell constructor
+  ConditionalOStream         pcout(std::cout,
+                           Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) ==
+                             0);
+  MultiphysicsInterface<dim> multiphysics_interface(
+    solver_parameters,
+    tria,
+    std::make_shared<SimulationControlTransient>(
+      solver_parameters.simulation_control),
+    pcout);
+
   // -------------------------------------------------------
   // Test 1: TimeHarmonicMaxwellCouplingStrategy::none
   //         Step 1 -> true, all subsequent steps -> false
@@ -79,7 +91,7 @@ test()
         solver_parameters.simulation_control);
 
     TimeHarmonicMaxwell<dim> electromagnetics_auxiliary_physics(
-      nullptr, solver_parameters, tria, simulation_control);
+      &multiphysics_interface, solver_parameters, tria, simulation_control);
 
     deallog << "--- Test: TimeHarmonicMaxwellCouplingStrategy::none ---"
             << std::endl;
@@ -113,7 +125,7 @@ test()
         solver_parameters.simulation_control);
 
     TimeHarmonicMaxwell<dim> electromagnetics_auxiliary_physics(
-      nullptr, solver_parameters, tria, simulation_control);
+      &multiphysics_interface, solver_parameters, tria, simulation_control);
 
     deallog
       << "--- Test: TimeHarmonicMaxwellCouplingStrategy::iteration (every 3) ---"
@@ -148,7 +160,7 @@ test()
         solver_parameters.simulation_control);
 
     TimeHarmonicMaxwell<dim> electromagnetics_auxiliary_physics(
-      nullptr, solver_parameters, tria, simulation_control);
+      &multiphysics_interface, solver_parameters, tria, simulation_control);
 
     deallog
       << "--- Test: TimeHarmonicMaxwellCouplingStrategy::time (every 0.24s, dt=0.1) ---"

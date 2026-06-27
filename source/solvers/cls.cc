@@ -100,6 +100,8 @@ ConservativeLevelSet<dim>::ConservativeLevelSet(
       face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
     }
 
+  multiphysics->set_mapping(PhysicsID::CLS, mapping);
+
   // Initialize solution shared_ptr
   present_solution = std::make_shared<GlobalVectorType>();
 
@@ -1832,7 +1834,7 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
       if (simulation_control->get_iteration_number() %
             this->simulation_parameters.post_processing.output_frequency ==
           0)
-        InterfaceTools::write_isocontour_bounding_values_tables(
+        InterfaceTools::write_isocontour_bounding_values_tables<dim>(
           this->dof_handler->get_mpi_communicator(),
           this->simulation_parameters.simulation_control.output_folder,
           Variable::phase,

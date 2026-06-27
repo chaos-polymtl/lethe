@@ -103,6 +103,8 @@ public:
         face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
       }
 
+    multiphysics->set_mapping(PhysicsID::tracer, mapping);
+
     // Initialize solution shared_ptr
     present_solution = std::make_shared<GlobalVectorType>();
 
@@ -123,6 +125,7 @@ public:
           SolutionTransfer<dim, GlobalVectorType>(*this->dof_handler));
       }
   }
+
 
   /**
    * @brief Gather and return vector of output structs that are particular to some applications.
