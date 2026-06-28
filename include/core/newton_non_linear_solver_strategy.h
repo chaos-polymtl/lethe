@@ -81,9 +81,9 @@ NewtonNonLinearSolverStrategy<VectorType>::solve()
       if (!this->params.reuse_preconditioner || this->outer_iteration == 0)
         solver->setup_preconditioner();
 
-      const bool rhs_was_assembled =
+      const bool assemble_rhs_this_iteration =
         this->params.force_rhs_calculation || this->outer_iteration == 0;
-      if (rhs_was_assembled)
+      if (assemble_rhs_this_iteration)
         solver->assemble_system_rhs();
 
       if (this->outer_iteration == 0)
@@ -99,33 +99,14 @@ NewtonNonLinearSolverStrategy<VectorType>::solve()
                         << "  - Residual:  " << current_res << std::endl;
         }
 
-      {
-        const double assembled_res =
-          solver->get_system_rhs().l2_norm() / rescale_metric;
-        if (rhs_was_assembled &&
-            solver
-              ->allow_skip_linear_solve_when_residual_is_below_tolerance() &&
-            assembled_res <= this->params.tolerance)
-          {
-            // This shortcut is only valid when system_rhs was freshly
-            // assembled on this Newton iteration. Otherwise assembled_res may
-            // still reflect an older evaluation point, and skipping the solve
-            // from that stale residual would be incorrect.
-            //
-            // Solvers that opt into this path are expected to keep
-            // force_rhs_calculation enabled, or otherwise guarantee that the
-            // RHS was explicitly reassembled before reaching this check.
-            current_res         = assembled_res;
-            auto &newton_update = solver->get_newton_update();
-            newton_update       = 0;
-
-            global_res       = solver->get_current_residual() / rescale_metric;
-            present_solution = evaluation_point;
-            last_res         = current_res;
-            ++this->outer_iteration;
-            continue;
-          }
-      }
+      if (this->skip_linear_solve_if_fresh_rhs_is_already_converged(
+            assemble_rhs_this_iteration,
+            rescale_metric,
+            current_res,
+            last_res,
+            global_res,
+            this->outer_iteration))
+        continue;
 
       solver->solve_linear_system();
       double last_alpha_res = current_res;

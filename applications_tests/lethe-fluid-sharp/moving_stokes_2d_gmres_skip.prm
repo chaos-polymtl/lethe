@@ -11,11 +11,10 @@ set dimension = 2
 #---------------------------------------------------
 
 subsection simulation control
-  set method            = bdf1 # Time-stepping method
-  set time step         = 1    # Time step
-  set number mesh adapt = 2    # If steady, nb mesh adaptation
-  set time end          = 1    # End time of simulation
-  set output frequency  = 0    # Frequency of simulation output
+  set method           = bdf1 # Time-stepping method
+  set time step        = 1    # Time step
+  set time end         = 1    # End time of simulation
+  set output frequency = 0    # Frequency of simulation output
 end
 
 #---------------------------------------------------
@@ -151,12 +150,7 @@ subsection particles
 
   subsection extrapolation function
     set stencil degree = 6
-    set length ratio  = 2
-  end
-
-  subsection input file
-    set load particles from file = false
-    set particles file           = particles.input
+    set length ratio   = 2
   end
 
   subsection local mesh refinement
@@ -188,34 +182,6 @@ subsection particles
 end
 
 #---------------------------------------------------
-# Mesh Adaptation Control
-#---------------------------------------------------
-
-subsection mesh adaptation
-  # Fraction of coarsened elements
-  set fraction coarsening = 0.00
-
-  # Fraction of refined elements
-  set fraction refinement = 0
-
-  # How the fraction of refinement/coarsening are interepretedChoices are
-  # <number|fraction>.
-  set fraction type = number
-
-  # Frequency of the mesh refinement
-  set frequency = 1
-
-  # Maximum number of elements
-  set max number elements = 100000
-
-  # Type of mesh adaptation. Choices are <none|uniform|adaptive>.
-  set type = none
-
-  # Variable for kelly estimationChoices are <velocity|pressure>.
-  set variable = velocity
-end
-
-#---------------------------------------------------
 # Non-Linear Solver Control
 #---------------------------------------------------
 
@@ -242,22 +208,14 @@ end
 
 subsection linear solver
   subsection fluid dynamics
-    set method                                    = gmres
-    set max iters                                 = 1000
-    set relative residual                         = 1e-6
-    set minimum residual                          = 1e-9
-    set preconditioner                            = amg
-    set ilu preconditioner fill                   = 2
-    set ilu preconditioner absolute tolerance     = 1e-11
-    set ilu preconditioner relative tolerance     = 1
-    set amg aggregation threshold                 = 1e-20
-    set amg n cycles                              = 1
-    set amg preconditioner ilu absolute tolerance = 1e-20
-    set amg preconditioner ilu fill               = 0
-    set amg preconditioner ilu relative tolerance = 1.00
-    set amg smoother overlap                      = 1
-    set amg smoother sweeps                       = 2
-    set amg w cycles                              = false
-    set verbosity                                 = quiet
+    set method                                = gmres
+    set max iters                             = 1000
+    set relative residual                     = 1e-6
+    set minimum residual                      = 1e-9
+    set preconditioner                        = ilu
+    set ilu preconditioner fill               = 2
+    set ilu preconditioner absolute tolerance = 1e-11
+    set ilu preconditioner relative tolerance = 1
+    set verbosity                             = quiet
   end
 end
