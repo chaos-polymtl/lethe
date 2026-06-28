@@ -45,8 +45,8 @@ end
 #---------------------------------------------------
 
 subsection FEM
-  set velocity order = 1
-  set pressure order = 1
+  set velocity degree = 1
+  set pressure degree = 1
 end
 
 #---------------------------------------------------
@@ -150,7 +150,7 @@ subsection particles
   set assemble Navier-Stokes inside particles = false
 
   subsection extrapolation function
-    set stencil order = 6
+    set stencil degree = 6
     set length ratio  = 2
   end
 
