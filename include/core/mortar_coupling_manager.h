@@ -34,7 +34,7 @@ public:
    * @param[in] radius Radius at the mortar interface
    * @param[in] quadrature Quadrature for local cell operations
    * @param[in] rotation_angle Rotation angle for the inner domain
-   * @param[in] rotation_axis Direction of the rotation axis
+   * @param[in] rotation_axis_direction Direction of the rotation axis
    * @param[in] stage_heights Domain height in the direction of the rotation
    * axis at the mortar interface, which should be 0 for 2D problems
    */
@@ -43,8 +43,8 @@ public:
                     double                  radius,
                     const Quadrature<dim2> &quadrature,
                     const double            rotation_angle,
-                    const unsigned int      rotation_axis = 0,
-                    const double            stage_heights = 0.0);
+                    const unsigned int      rotation_axis_direction = 2,
+                    const double            stage_heights           = 0.0);
 
   /**
    * @brief Mortar manager base constructor used in 3D problems
@@ -56,7 +56,7 @@ public:
    * the domain length in the direction of the rotation axis
    * @param[in] quadrature Quadrature for local cell operations
    * @param[in] rotation_angle Rotation angle for the inner domain
-   * @param[in] rotation_axis Direction of the rotation axis
+   * @param[in] rotation_axis_direction Direction of the rotation axis
    * @param[in] stage_heights Vector containing the unique vertex heights at the
    * mortar interface
    */
@@ -65,7 +65,7 @@ public:
                     const std::vector<double>       &radius,
                     const Quadrature<dim2>          &quadrature,
                     const double                     rotation_angle,
-                    const unsigned int               rotation_axis,
+                    const unsigned int               rotation_axis_direction,
                     const std::vector<double> stage_heights = {0.0, 1.0});
 
   /**
@@ -222,7 +222,7 @@ protected:
   /// Rotation angle for the inner domain
   const double rotation_angle;
   /// Direction of the rotation axis
-  const unsigned int rotation_axis;
+  const unsigned int rotation_axis_direction;
   /// Stage heights at the mortar interface along the rotation axis
   /// in 3D problems. A stage is defined as a plane perpendicular to the
   /// rotation axis containing vertices of the same height.
@@ -295,7 +295,7 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
                      const Parameters::Mortar<dim> &mortar_parameters);
 
 /**
- * @brief Gets the direction of the rotation axis
+ * @brief Return the rotation axis direction for the mortar interface
  *
  * @param[in] mortar_parameters The information about the mortar method
  * control, including the rotor mesh parameters
@@ -304,7 +304,7 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
  */
 template <int dim>
 unsigned int
-get_rotation_axis(const Parameters::Mortar<dim> &mortar_parameters);
+get_rotation_axis_direction(const Parameters::Mortar<dim> &mortar_parameters);
 
 /**
  * @brief Compute the stage heights in the direction of the
@@ -355,7 +355,7 @@ public:
    * @param[in] radius Radius at the mortar interface
    * @param[in] quadrature Quadrature for local cell operations
    * @param[in] rotation_angle Rotation angle for the inner domain
-   * @param[in] rotation_axis Direction of the rotation axis
+   * @param[in] rotation_axis_direction Direction of the rotation axis
    * @param[in] stage_heights Domain height in the direction of the rotation
    * axis at the mortar interface, which should be 0 for 2D problems
    * @param[in] center_of_rotation Center of rotation of the inner domain
@@ -368,8 +368,8 @@ public:
                       double                  radius,
                       const Quadrature<dim2> &quadrature,
                       const double            rotation_angle,
-                      const unsigned int      rotation_axis      = 0,
-                      const double            stage_heights      = 0.0,
+                      const unsigned int      rotation_axis_direction = 2,
+                      const double            stage_heights           = 0.0,
                       const Point<dim>       &center_of_rotation = Point<dim>(),
                       const double            pre_rotation_angle = 0.0);
 
@@ -396,7 +396,7 @@ public:
                       std::vector<double>       radius,
                       const Quadrature<dim2>   &quadrature,
                       const double              rotation_angle,
-                      const unsigned int        rotation_axis,
+                      const unsigned int        rotation_axis_direction,
                       const std::vector<double> stage_heights = {0.0, 1.0},
                       const Point<dim> &center_of_rotation    = Point<dim>(),
                       const double      pre_rotation_angle    = 0.0);
@@ -476,17 +476,18 @@ protected:
 
 template <int dim>
 template <int dim2>
-MortarManagerBase<dim>::MortarManagerBase(unsigned int n_subdivisions,
-                                          double       radius,
-                                          const Quadrature<dim2> &quadrature_in,
-                                          const double       rotation_angle,
-                                          const unsigned int rotation_axis,
-                                          const double       stage_heights)
+MortarManagerBase<dim>::MortarManagerBase(
+  unsigned int            n_subdivisions,
+  double                  radius,
+  const Quadrature<dim2> &quadrature_in,
+  const double            rotation_angle,
+  const unsigned int      rotation_axis_direction,
+  const double            stage_heights)
   : MortarManagerBase(std::vector<unsigned int>{n_subdivisions, 1},
                       std::vector<double>{radius, 1.0},
                       quadrature_in,
                       rotation_angle,
-                      rotation_axis,
+                      rotation_axis_direction,
                       std::vector<double>{stage_heights, stage_heights + 1.0})
 {}
 
@@ -498,14 +499,14 @@ MortarManagerBase<dim>::MortarManagerBase(
   const std::vector<double>       &radius,
   const Quadrature<dim2>          &quadrature_in,
   const double                     rotation_angle,
-  const unsigned int               rotation_axis,
+  const unsigned int               rotation_axis_direction,
   const std::vector<double>        stage_heights)
   : n_subdivisions(n_subdivisions)
   , radius(radius)
   , quadrature(quadrature_in.get_tensor_basis()[0])
   , n_quadrature_points(quadrature.size())
   , rotation_angle(rotation_angle)
-  , rotation_axis(rotation_axis)
+  , rotation_axis_direction(rotation_axis_direction)
   , stage_heights(stage_heights)
 {}
 
@@ -516,7 +517,7 @@ MortarManagerCircle<dim>::MortarManagerCircle(
   double                  radius,
   const Quadrature<dim2> &quadrature,
   const double            rotation_angle,
-  const unsigned int      rotation_axis,
+  const unsigned int      rotation_axis_direction,
   const double            stage_heights,
   const Point<dim>       &center_of_rotation,
   const double            pre_rotation_angle)
@@ -524,7 +525,7 @@ MortarManagerCircle<dim>::MortarManagerCircle(
                            radius,
                            quadrature,
                            rotation_angle,
-                           rotation_axis,
+                           rotation_axis_direction,
                            stage_heights)
   , pre_rotation_angle(pre_rotation_angle)
   , center_of_rotation(center_of_rotation)
@@ -537,7 +538,7 @@ MortarManagerCircle<dim>::MortarManagerCircle(
   std::vector<double>       radius,
   const Quadrature<dim2>   &quadrature,
   const double              rotation_angle,
-  const unsigned int        rotation_axis,
+  const unsigned int        rotation_axis_direction,
   std::vector<double>       stage_heights,
   const Point<dim>         &center_of_rotation,
   const double              pre_rotation_angle)
@@ -545,7 +546,7 @@ MortarManagerCircle<dim>::MortarManagerCircle(
                            radius,
                            quadrature,
                            rotation_angle,
-                           rotation_axis,
+                           rotation_axis_direction,
                            stage_heights)
   , pre_rotation_angle(pre_rotation_angle)
   , center_of_rotation(center_of_rotation)
@@ -568,7 +569,7 @@ MortarManagerCircle<dim>::MortarManagerCircle(
                                               mortar_parameters)),
       construct_quadrature(quadrature, mortar_parameters),
       mortar_parameters.rotor_rotation_angle->value(Point<dim>()),
-      get_rotation_axis(mortar_parameters),
+      get_rotation_axis_direction(mortar_parameters),
       compute_stage_heights(dof_handler.get_triangulation(), mortar_parameters),
       mortar_parameters.center_of_rotation,
       std::get<1>(
