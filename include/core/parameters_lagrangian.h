@@ -427,7 +427,7 @@ namespace Parameters
       } insertion_method; ///< Method used to insert particles
 
       /// Number of particles inserted at each insertion step.
-      int inserted_this_step;
+      unsigned int inserted_this_step;
 
       /// Frequency of insertion (in time steps).
       int insertion_frequency;

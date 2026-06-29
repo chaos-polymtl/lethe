@@ -145,5 +145,7 @@ private:
   // Map used to transfer from the filtered to the pre-filted numbering of the
   // insertion point inside the insertion box.
   std::map<unsigned int, unsigned int> filted_id_to_box_id;
+
+  double maximum_diameter;
 };
 #endif

@@ -169,9 +169,6 @@ protected:
   // etc...) It depends on the order of the insertion direction.
   std::vector<double> axis_min, axis_max;
 
-  // Maximum particle diameter
-  double maximum_diameter;
-
   // A distribution object that carries out the attribution of diameter to every
   // particle during an insertion time step
   std::vector<std::shared_ptr<Distribution>> distributions_objects;
