@@ -988,16 +988,16 @@ delete_vtu_and_pvd_files(const std::string &output_path);
  *
  * @return Angle between point and the x-axis
  */
-template <int dim>
-inline double
-point_to_angle(const Point<dim> &point,
-               const Point<dim> &center_of_rotation = Point<dim>())
-{
-  return std::fmod(std::atan2(point[1] - center_of_rotation[1],
-                              point[0] - center_of_rotation[0]) +
-                     2 * numbers::PI,
-                   2 * numbers::PI);
-}
+// template <int dim>
+// inline double
+// point_to_angle(const Point<dim> &point,
+//                const Point<dim> &center_of_rotation = Point<dim>())
+// {
+//   return std::fmod(std::atan2(point[1] - center_of_rotation[1],
+//                               point[0] - center_of_rotation[0]) +
+//                      2 * numbers::PI,
+//                    2 * numbers::PI);
+// }
 
 /**
  * @brief Converts point to angle (in radians) based on rotation axis
@@ -1011,7 +1011,7 @@ template <int dim>
 inline double
 point_to_angle(const Point<dim>  &point,
                const Point<dim>  &center_of_rotation,
-               const unsigned int rotation_axis)
+               const unsigned int rotation_axis = 2)
 {
   if constexpr (dim == 3)
     {
@@ -1024,30 +1024,44 @@ point_to_angle(const Point<dim>  &point,
                        2 * numbers::PI);
     }
   else
-    {
-      return std::fmod(std::atan2(point[1] - center_of_rotation[1],
-                                  point[0] - center_of_rotation[0]) +
-                         2 * numbers::PI,
-                       2 * numbers::PI);
-    }
+    return std::fmod(std::atan2(point[1] - center_of_rotation[1],
+                                point[0] - center_of_rotation[0]) +
+                       2 * numbers::PI,
+                     2 * numbers::PI);
 }
 
 /**
- * @brief Converts radius to point in cartesian coordinates (in the x-y plane)
+ * @brief Converts radius to point in cartesian coordinates based on rotation axis
  * @param[in] radius Radial distance
  * @param[in] angle_rad Angle (in radians)
+ * @param[in] center_of_rotation Center of rotation
+ * @param[in] rotation_axis Direction of rotation axis (0=x, 1=y, 2=z)
  *
- * @return point Point cartesian coordinates
+ * @return point Point in cartesian coordinates
  */
 template <int dim>
 inline Point<dim>
-radius_to_point(const double radius, const double angle_rad)
+radius_to_point(const double       radius,
+                const double       angle_rad,
+                const Point<dim>  &center_of_rotation = Point<dim>(),
+                const unsigned int rotation_axis      = 2)
 {
   Point<dim> point;
 
-  point[0] = radius * std::cos(angle_rad);
-  point[1] = radius * std::sin(angle_rad);
+  if constexpr (dim == 3)
+    {
+      const unsigned int coord1 = (rotation_axis + 1) % 3;
+      const unsigned int coord2 = (rotation_axis + 2) % 3;
 
+      point[coord1] = radius * std::cos(angle_rad) + center_of_rotation[coord1];
+      point[coord2] = radius * std::sin(angle_rad) + center_of_rotation[coord2];
+      point[rotation_axis] = center_of_rotation[rotation_axis];
+    }
+  else
+    {
+      point[0] = radius * std::cos(angle_rad) + center_of_rotation[0];
+      point[1] = radius * std::sin(angle_rad) + center_of_rotation[1];
+    }
   return point;
 }
 
