@@ -393,7 +393,7 @@ InterfaceTools::reconstruct_interface(
 {
   GridTools::MarchingCubeAlgorithm<dim, VectorType> marching_cube(mapping,
                                                                   fe,
-                                                                  1,
+                                                                  100,
                                                                   1e-10);
   const unsigned int dofs_per_cell = fe.n_dofs_per_cell();
 
@@ -565,26 +565,27 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::solve()
   initialize_distance();
 
   // Identify intersected cells and compute the interface reconstruction.
-  InterfaceTools::reconstruct_interface(*mapping,
-                                        dof_handler,
-                                        *fe,
-                                        level_set,
-                                        iso_level,
-                                        interface_reconstruction_vertices,
-                                        interface_reconstruction_cells,
-                                        intersected_dofs);
+  // InterfaceTools::reconstruct_interface(*mapping,
+  //                                       dof_handler,
+  //                                       *fe,
+  //                                       level_set,
+  //                                       iso_level,
+  //                                       interface_reconstruction_vertices,
+  //                                       interface_reconstruction_cells,
+  //                                       intersected_dofs);
 
   /* Compute the distance for the DoFs of the intersected cells (the ones in
   the intersected_dofs set). They correspond to the first neighbor DoFs.*/
-  compute_first_neighbors_distance();
+  // compute_first_neighbors_distance();
+  compute_first_neighbors_distance_minimization();
 
   /* Compute signed distance from distance (only first neighbors have an
   updated value)*/
   compute_signed_distance_from_distance();
 
   // Conserve local and global volume
-  compute_cell_wise_volume_correction();
-  conserve_global_volume();
+  // compute_cell_wise_volume_correction();
+  // conserve_global_volume();
 
   /* Compute the distance for the DoFs of the rest of the mesh. They
   correspond to the second neighbors DoFs. */
@@ -694,6 +695,330 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::exchange_distance()
 }
 
 template <int dim, typename VectorType>
+bool
+InterfaceTools::SignedDistanceSolver<dim, VectorType>::
+  newton_raphson_method_for_minimization(const Point<dim>          &point,
+                                         const typename DoFHandler<dim>::active_cell_iterator &cell,
+                                         const std::vector<double> &dof_values,
+                                         Point<dim> &closest_point)
+{
+
+  FEPointEvaluation<1, dim> fe_point_evaluation(
+    *mapping, *fe, update_gradients | update_values);
+
+  std::vector<Point<dim>> unit_closest_point_vec(1);
+
+  for (unsigned int iter = 0; iter < 20; ++iter)
+  {
+    Tensor<1, dim> grad;
+    double value = 0.0;
+
+    // Point<dim> unit_closest_point = mapping->transform_real_to_unit_cell(cell, closest_point);
+
+    // unit_closest_point_vec[0] = unit_closest_point;
+
+    // fe_point_evaluation.reinit(cell, unit_closest_point_vec);
+    // fe_point_evaluation.evaluate(dof_values,
+    //                               EvaluationFlags::gradients | EvaluationFlags::values);
+
+    // Tensor<1, dim> grad = fe_point_evaluation.get_gradient(0);
+    // double value = fe_point_evaluation.get_value(0);
+
+    for (unsigned int k = 0; k < dof_values.size(); ++k)
+    {
+      const auto grad_k  = fe->shape_grad(k, closest_point);
+      grad += dof_values[k] * grad_k;
+      value += dof_values[k] * fe->shape_value(k, closest_point);
+
+    }
+
+    
+
+    Tensor<1, dim> vector_point_closest_point = point - closest_point;
+
+    Tensor<1, dim> delta_1 = -value*grad/(grad.norm()*grad.norm() + 1e-16);
+
+    double tmp = vector_point_closest_point*grad;
+    Tensor<1, dim> delta_2 = vector_point_closest_point - tmp/(grad.norm()*grad.norm() + 1e-16)*grad;
+
+    Tensor<1, dim> corr = delta_1 + delta_2;
+    Tensor<1, dim> closest_point_tmp = closest_point + corr;
+
+    double relaxation = 1.0;
+    bool check = false;
+    for (int k = 0; k < dim; ++k)
+    {
+      if (closest_point_tmp[k] > 1.0 + 1e-10 || closest_point_tmp[k] < 0.0 - 1e-10)
+      {
+        check = true;
+
+        if (corr[k] > 1e-10)
+        {
+          relaxation = std::min((1.0 - closest_point_tmp[k]) /
+                                (corr[k]),
+                              relaxation);
+        }
+        else if (corr[k] < -1e-10)
+        {
+          relaxation = std::min((0.0 - closest_point_tmp[k]) /
+                                (corr[k]),
+                              relaxation);
+        }
+      }
+    }
+    corr *= relaxation;
+    closest_point = closest_point + corr;
+
+    // if (check)
+    //   return true;
+
+
+    double criterion = corr.norm();
+    
+    if (criterion < 1e-6)
+      return true;
+  }
+
+  return false;
+
+  // std::cout << "Point = " << point <<std::endl;
+
+  // for (unsigned int newton_iter = 0; newton_iter < 20; ++newton_iter)
+  //   {
+  //     auto vector_point_closest_point =  point - closest_point;
+
+  //     grad = 0.0;
+  //     value = 0.0;
+  //     for (unsigned int k = 0; k < dof_values.size(); ++k)
+  //       {
+  //         const auto grad_k  = fe->shape_grad(k, closest_point);
+  //         grad += dof_values[k] * grad_k;
+  //         value += dof_values[k] * fe->shape_value(k, closest_point);
+  //       }
+
+  //     for (unsigned int i = 0; i < dim; ++i)
+  //     {
+  //       solution_update[i] = -value/(grad.norm()*grad.norm()+1e-16)*grad[i];
+  //     }
+  //     current_solution[dim] = vector_point_closest_point*grad/(grad.norm()*grad.norm()+1e-16);
+
+  //     // if (grad.norm() < )
+  //     // std::cout << "it = "<< newton_iter << " value = " << value << std::endl;
+
+  //     Tensor<1, dim> delta_2 = vector_point_closest_point - current_solution[dim]*grad;
+
+  //     if (delta_2.norm() > 0.1)
+  //       delta_2 *= 0.1/(delta_2.norm()+1e-16);
+
+  //     Point<dim> corr;
+  //     for (unsigned int i = 0; i < dim; ++i)
+  //     {
+  //       solution_update[i] += delta_2[i];
+  //       corr[i] = solution_update[i];
+  //     }
+
+
+
+
+  //     double relaxation = 1.0;
+  //     for (unsigned int i = 0; i < dim; ++i)
+  //       {
+
+  //         std::cout << "i = " << i << std::endl;
+  //         std::cout << "value = " << value << std::endl;
+
+  //         std::cout << "grad_i = " << grad[i] << std::endl;
+
+
+  //         double relaxation_i = 1.0;
+  //         double closest_point_i = closest_point[i] + corr[i];
+  //         std::cout << "closest_point_i = " << closest_point_i << std::endl;
+  //         std::cout << "corr[i] = " << corr[i] << std::endl;
+
+  //         bool outside = true;
+  //         unsigned int iter = 0;
+  //         while ((outside))
+  //         {
+  //           if (((closest_point_i) > -1e-10) && ((closest_point_i) < 1 + 1e-10))
+  //             outside = false;
+  //           else
+  //           {
+  //             relaxation_i *= 0.5;
+  //             closest_point_i = closest_point[i] + relaxation_i*corr[i];
+  //           }
+  //           // iter += 1;
+  //         }
+  //         relaxation = std::min(relaxation,relaxation_i);
+
+
+  //       }
+
+  //       std::cout << "relaxation = " << relaxation << std::endl;
+      
+  //     for (unsigned int i = 0; i < dim; ++i)
+  //     {
+  //       current_solution[i] += relaxation*solution_update[i];
+  //       closest_point[i] = current_solution[i];
+  //     }
+
+  //     if (relaxation*corr.norm() < 1e-12)
+  //     {
+  //       break;
+  //     }
+  //   }
+
+}
+
+template <int dim, typename VectorType>
+void
+InterfaceTools::SignedDistanceSolver<dim, VectorType>::
+  compute_first_neighbors_distance_minimization()
+{
+  NonMatching::MeshClassifier<dim> mesh_classifier(dof_handler, level_set);
+  mesh_classifier.reclassify();
+
+  const unsigned int dofs_per_cell = fe->n_dofs_per_cell();
+
+  std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
+  std::vector<double>                  cell_dof_values(dofs_per_cell);
+
+
+  std::vector<types::global_dof_index> neighbor_dof_indices(dofs_per_cell);
+  std::vector<double>                  neighbor_dof_values(dofs_per_cell);
+
+  std::map<types::global_dof_index, Point<dim>> dof_support_points =
+    DoFTools::map_dofs_to_support_points(*mapping, dof_handler);
+
+  std::vector<Point<dim>>        surface_vertices;
+  std::vector<CellData<dim - 1>> surface_cells;
+  
+  const hp::FECollection<dim> fe_collection(*fe);
+
+  const QGauss<1> quadrature_1D(fe->degree + 4);
+
+  NonMatching::RegionUpdateFlags region_update_flags;
+  region_update_flags.surface = update_quadrature_points;
+
+
+
+  NonMatching::FEValues<dim> non_matching_fe_values(
+  fe_collection,
+  quadrature_1D,
+  region_update_flags,
+  mesh_classifier,
+  dof_handler,
+  level_set);
+
+  std::map<unsigned int,
+           std::set<typename DoFHandler<dim>::active_cell_iterator>>
+    vertices_to_cell;
+  LetheGridTools::vertices_cell_mapping(this->dof_handler, vertices_to_cell);
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if ((cell->is_locally_owned()))
+        {
+          non_matching_fe_values.reinit(cell);
+
+          const NonMatching::LocationToLevelSet cell_location =
+            mesh_classifier.location_to_level_set(cell);
+
+          if (cell_location != NonMatching::LocationToLevelSet::intersected)
+            continue;
+
+          const std::optional<NonMatching::FEImmersedSurfaceValues<dim>>
+            &surface_fe_values = non_matching_fe_values.get_surface_fe_values();
+
+            
+
+          cell->get_dof_values(level_set,
+                               cell_dof_values.begin(),
+                               cell_dof_values.end());
+
+          cell->get_dof_indices(dof_indices);
+
+          const unsigned int cell_index = cell->global_active_cell_index();
+
+          auto active_neighbors =
+                LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell,
+                                                            cell);
+
+          interface_reconstruction_vertices[cell_index] = surface_vertices;
+          interface_reconstruction_cells[cell_index]    = surface_cells;
+
+          for (unsigned int i = 0; i < dofs_per_cell; ++i)
+            {
+              const Point<dim> point = dof_support_points.at(dof_indices[i]);
+
+              // for (const auto &neighbor : active_neighbors)
+              // {
+              //   const NonMatching::LocationToLevelSet neighbor_location =
+              //     mesh_classifier.location_to_level_set(neighbor);
+
+              //   if (neighbor_location != NonMatching::LocationToLevelSet::intersected)
+              //     continue;
+
+              //   neighbor->get_dof_values(level_set,
+              //                  neighbor_dof_values.begin(),
+              //                  neighbor_dof_values.end());
+
+
+              // }
+
+
+              Point<dim> closest_point = point;
+
+              const Point<dim> unit_point =
+                mapping->transform_real_to_unit_cell(cell, point);
+
+              Point<dim> unit_closest_point = mapping->transform_real_to_unit_cell(cell, closest_point);
+              
+              bool converged =newton_raphson_method_for_minimization(unit_point,
+                                                     cell,
+                                                     cell_dof_values,
+                                                     unit_closest_point);
+
+              bool outside = false;
+
+
+              for (unsigned int jj = 0; jj < dim; ++jj)
+              {
+                double closest_point_i = unit_closest_point[jj];
+  
+                  if (((closest_point_i) < 0.0 - 1e-5) || ((closest_point_i) > 1 + 1e-5))
+                    {
+                      outside = true;
+                      break;
+                    }
+              }                                       
+
+              if (outside)
+              {
+                converged = false;
+              }
+
+              if (converged)
+              {
+                closest_point =
+                  mapping->transform_unit_to_real_cell(cell, unit_closest_point);
+                  
+                Tensor<1, dim> point_closest_point_vec = point - closest_point;
+
+                distance(dof_indices[i]) = 
+                  std::min(std::abs(distance(dof_indices[i])),
+                          std::abs(point_closest_point_vec.norm()));
+
+                intersected_dofs.insert(dof_indices[i]);        
+              }
+
+            }
+        }
+    }
+
+  exchange_distance();
+}
+
+template <int dim, typename VectorType>
 void
 InterfaceTools::SignedDistanceSolver<dim, VectorType>::
   compute_first_neighbors_distance()
@@ -706,6 +1031,13 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
   // DoF coordinates
   std::map<types::global_dof_index, Point<dim>> dof_support_points =
     DoFTools::map_dofs_to_support_points(*mapping, dof_handler);
+
+  const double sphere_radius = 0.25;
+  Point<dim>   sphere_center = Point<dim>();
+  for (int n = 0; n < dim; n++)
+    {
+      sphere_center[n] = 0.5;
+    }
 
   // Loop over the intersected cells (volume cells)
   for (auto &intersected_cell : interface_reconstruction_cells)
@@ -750,6 +1082,9 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
               // (line in 2D, triangle in 3D) and the DoF
               double D = LetheGridTools::find_point_triangle_distance(
                 surface_cell_vertices, y);
+
+              // auto vector_center_2_y = y - sphere_center;
+              // double D = (vector_center_2_y.norm()) - 0.25;
 
               // Select the minimum distance
               distance(intersected_dof) =
@@ -903,17 +1238,17 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                 }
             }
         }
-      for (const auto &cell : corona_cell)
+      for (const auto &cell : dof_handler.active_cell_iterators())
         {
           if (cell->is_locally_owned())
             {
               const unsigned int cell_index = cell->global_active_cell_index();
 
               // If the cell is intersected, the distance is already computed.
-              if (interface_reconstruction_vertices.contains(cell_index))
-                {
-                  continue;
-                }
+              // if (interface_reconstruction_vertices.contains(cell_index))
+              //   {
+              //     continue;
+              //   }
 
               cell->get_dof_indices(dof_indices);
               cell->get_dof_values(distance_with_ghost,
@@ -943,7 +1278,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                         cell_dof_values[face_local_dofs[i]];
                     }
 
-                  constexpr double tol           = 1e-9;
+                  constexpr double tol           = 1e-12;
                   unsigned int     newton_it     = 0;
                   constexpr int    newton_max_it = 100;
 
@@ -1152,7 +1487,7 @@ InterfaceTools::SignedDistanceSolver<dim, VectorType>::
                      The tolerance needs to be higher than the one for the
                      Newton method because we don't want the change flag to
                      depend on the Newton method convergence.*/
-                      constexpr double distance_tol = 1e-8;
+                      constexpr double distance_tol = 1e-11;
                       if (distance(dof_indices[local_face_opposite_dof]) >
                           (approx_distance + distance_tol))
                         {

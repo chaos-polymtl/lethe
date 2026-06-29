@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 // Deal.II includes
+#include <deal.II/base/convergence_table.h>
+
 #include <deal.II/base/function_signed_distance.h>
 
 #include <deal.II/distributed/tria.h>
@@ -20,10 +22,10 @@
 
 // Lethe
 #include <core/interface_tools.h>
-#include <core/parameters.h>
-#include <core/simulation_control.h>
 
 #include <../tests/tests.h>
+
+#include <iostream>
 
 using namespace dealii;
 
@@ -31,12 +33,17 @@ template <int dim>
 void
 test()
 {
+
+
   /* This test checks the InterfaceTools::SignedDistanceSolver class from within
   an arbitrary structure that replicates the usual physical solver structure,
   denoted by the background prefix. This test performs verification of the
   signed distance computations for a sphere.
   */
   MPI_Comm mpi_communicator(MPI_COMM_WORLD);
+
+  unsigned int this_mpi_process(
+    Utilities::MPI::this_mpi_process(mpi_communicator));
 
   // Triangulation (as a shared_ptr to reproduce an arbitrary background solver
   // architecture)
@@ -55,8 +62,18 @@ test()
       p_0[n] = 0.0;
       p_1[n] = 1.0;
     }
+  // p_0[0] = 0.375;
+  // p_0[1] = 0.25;
+  // if (dim == 3)
+  //   p_0[2] = 0.25;
+
+  // p_1[0] = 0.5;
+  // p_1[1] = 0.375;
+  // if (dim == 3)
+  //   p_1[2] = 0.375;
+
   GridGenerator::hyper_rectangle(*background_triangulation, p_0, p_1);
-  background_triangulation->refine_global(3);
+  background_triangulation->refine_global(6);
 
   // Discretize the domain as in an arbitrary background solver
   std::shared_ptr<FiniteElement<dim>> background_fe =
@@ -64,9 +81,15 @@ test()
   std::shared_ptr<MappingQ<dim>> background_mapping =
     std::make_shared<MappingQ<dim>>(background_fe->degree);
 
-  DoFHandler<dim> background_dof_handler =
-    DoFHandler(*background_triangulation);
-  background_dof_handler.distribute_dofs(*background_fe);
+  ConvergenceTable error_table;
+
+  DoFHandler<dim> background_dof_handler;
+  
+  for (unsigned int n = 0; n < 1; n++)
+    {
+    background_dof_handler.reinit(*background_triangulation);
+ 
+    background_dof_handler.distribute_dofs(*background_fe);
 
   IndexSet background_locally_owned_dofs =
     background_dof_handler.locally_owned_dofs();
@@ -74,16 +97,21 @@ test()
     DoFTools::extract_locally_relevant_dofs(background_dof_handler);
 
   // Set the background level-set field of the sphere
-  GlobalVectorType background_level_set(background_locally_owned_dofs,
+  LinearAlgebra::distributed::Vector<double> background_level_set(background_locally_owned_dofs,
                                         background_locally_relevant_dofs,
                                         mpi_communicator);
 
-  const double sphere_radius = 0.25;
+  LinearAlgebra::distributed::Vector<double> tmp_background_level_set(
+                                        background_locally_owned_dofs,
+                                        mpi_communicator);
+
+  const double sphere_radius = 0.245;
   Point<dim>   sphere_center = Point<dim>();
   for (int n = 0; n < dim; n++)
     {
-      sphere_center[n] = 0.5;
+      sphere_center[n] = 0.5+0.03125/4;
     }
+
   VectorTools::interpolate(
     *background_mapping,
     background_dof_handler,
@@ -92,10 +120,11 @@ test()
 
   // Instanciate the SignedDistanceSolver as it would as a member of the
   // background solver class
-  double max_reinitialization_distance = 1.0;
-  std::shared_ptr<InterfaceTools::SignedDistanceSolver<dim, GlobalVectorType>>
+  double max_reinitialization_distance = 0.1875;
+
+  std::shared_ptr<InterfaceTools::SignedDistanceSolver<dim, LinearAlgebra::distributed::Vector<double>>>
     signed_distance_solver = std::make_shared<
-      InterfaceTools::SignedDistanceSolver<dim, GlobalVectorType>>(
+      InterfaceTools::SignedDistanceSolver<dim, LinearAlgebra::distributed::Vector<double>>>(
       background_triangulation,
       background_fe,
       max_reinitialization_distance,
@@ -104,30 +133,56 @@ test()
       Parameters::Verbosity::quiet);
 
   signed_distance_solver->setup_dofs();
+
+  for (int m =0; m < 500; m++)
+  {
+    if (this_mpi_process == 0)
+      std::cout << "m = " << m << std::endl;
+
+  // THIS FIXES A SEG FAULT
+  background_level_set.update_ghost_values();
+
   signed_distance_solver->set_level_set_from_background_mesh(
     background_dof_handler, background_level_set);
 
   // Solve the signed_distance field.
   signed_distance_solver->solve();
 
-  // Get the signed_distance field from the SignedDistanceSolver
-  auto &signed_distance = signed_distance_solver->get_signed_distance();
-
   // Interpolate the signed_distance solution from the SignedDistanceSolver
   // DoFHandler to the main solver DoFHandler.
-  GlobalVectorType background_signed_distance(background_locally_owned_dofs,
+  LinearAlgebra::distributed::Vector<double> background_signed_distance(background_locally_owned_dofs,
                                               background_locally_relevant_dofs,
                                               mpi_communicator);
 
-  TrilinosWrappers::MPI::Vector tmp_background_signed_distance(
+  LinearAlgebra::distributed::Vector<double> tmp_background_signed_distance(
     background_locally_owned_dofs, mpi_communicator);
 
   FETools::interpolate(signed_distance_solver->dof_handler,
-                       signed_distance,
+                       signed_distance_solver->get_signed_distance(),
                        background_dof_handler,
                        tmp_background_signed_distance);
 
   background_signed_distance = tmp_background_signed_distance;
+
+  DataOut<dim> data_out;
+  data_out.attach_dof_handler(background_dof_handler);
+
+  data_out.add_data_vector(background_signed_distance, "signed_distance");
+  data_out.add_data_vector(background_level_set, "level_set");
+
+
+  data_out.build_patches(background_fe->degree);
+
+  DataOutBase::VtkFlags vtk_flags;
+  vtk_flags.compression_level = DataOutBase::CompressionLevel::best_speed;
+  data_out.set_flags(vtk_flags);
+
+  const std::string output_path = "output_minimization/";
+  const std::string filename    = "output";
+
+  data_out.write_vtu_with_pvtu_record(
+    output_path, filename, m, MPI_COMM_WORLD, 3);
+  
 
   // Compute the L2 norm of the error.
   Vector<float> error_per_cell(background_triangulation->n_active_cells());
@@ -141,13 +196,54 @@ test()
     QGauss<dim>(background_fe->degree + 1),
     VectorTools::L2_norm);
 
-  const double error_L2 =
+  double error_L2 =
     VectorTools::compute_global_error(*background_triangulation,
                                       error_per_cell,
                                       VectorTools::L2_norm);
 
-  deallog << "The L2 norm of the signed distance error in " << dim
+  // auto error_per_dof = background_level_set;
+  // error_per_dof -= background_signed_distance;
+
+  // double error_L2 = std::sqrt(error_per_dof.norm_sqr()/double(background_dof_handler.n_dofs()));
+  
+  if (this_mpi_process == 0)
+    deallog << "The L2 norm of the signed distance error in " << dim
           << "D is: " << error_L2 << std::endl;
+        
+
+  // Compute and store the surface and volume errors
+      error_table.add_value("it", m);
+
+      error_table.add_value("ref. level", n + 3);
+      error_table.add_value("cells", background_triangulation->n_global_active_cells());
+      error_table.add_value("dofs", background_dof_handler.n_dofs());
+      error_table.add_value("error_d",
+                            error_L2);
+
+
+  background_level_set = tmp_background_signed_distance;
+  }
+
+  background_triangulation->refine_global(1);        
+
+}
+
+  error_table.set_precision("error_d", 3);
+  error_table.set_scientific("error_d", true);
+
+  error_table.omit_column_from_convergence_rate_evaluation("it");
+
+  error_table.omit_column_from_convergence_rate_evaluation("ref. level");
+  error_table.omit_column_from_convergence_rate_evaluation("cells");
+  error_table.omit_column_from_convergence_rate_evaluation("dofs");
+
+  error_table.evaluate_all_convergence_rates(
+    ConvergenceTable::reduction_rate_log2);
+
+  
+  if (this_mpi_process == 0)
+    error_table.write_text(std::cout);
+
 }
 
 int
@@ -157,7 +253,7 @@ main(int argc, char *argv[])
     {
       initlog();
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
-      test<2>();
+      // test<2>();
       test<3>();
     }
   catch (std::exception &exc)
