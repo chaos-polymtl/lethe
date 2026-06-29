@@ -119,8 +119,7 @@ InexactNewtonNonLinearSolverStrategy<VectorType>::solve()
             rescale_metric,
             current_res,
             last_res,
-            global_res,
-            this->outer_iteration))
+            global_res))
         continue;
 
       solver->solve_linear_system();
