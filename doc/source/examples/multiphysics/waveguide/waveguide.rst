@@ -119,8 +119,11 @@ The :math:`\mathrm{TE}_{mn}` modes can be specified in the subsection `waveguide
 
 To apply a transverse magnetic mode, simply modify the ``mode type`` with “TM”.
 
-The frequency of the inlet is originally set to :math:`f = \mathrm{2.45}\, \mathrm{GHz}` because it is the nominal frequency of microwave reactors in the industry. 
+The frequency of the inlet is originally set to :math:`f = \mathrm{2.45}\, \mathrm{GHz}` because it is the nominal frequency of microwave reactors in the industry. You can modify the ``electromagnetic frequency`` to change this value.
 
+You can also change the ``number of waveguide inlets``, the inlet is initially set to ``por boundary``.
+
+To change the geometry of the system. you can modify the position of the points ``corner 0``, ``corner 1``, ``corner 2`` and ``corner 3``.
 
 .. caution::
      If :math:`\mathrm{TE}_{mn}` or :math:`f` is changed, the wavenumber :math:`k_\mathrm{z} = \sqrt{\omega^2 \varepsilon_{\mathrm{eff,r}}\mu_\mathrm{r} - k_\mathrm{x}^2 - k_\mathrm{y}^2 }`  specified in the subsection ``analytical solution``, the dimensionless admittance real part :math:`Y_\mathrm{s}=\frac{1}{Z_\mathrm{s}}=\frac{k_\mathrm{z}}{\omega \mu_\mathrm{r}}` specified within the subsection ``surface admittance real part`` must be changed because it depends on :math:`(m,n)` and :math:`f` through :math:`k_\mathrm{x} = \frac{m \pi}{a}`, :math:`k_\mathrm{y} = \frac{n \pi}{b}` and :math:`\omega`.
