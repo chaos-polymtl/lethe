@@ -22,9 +22,9 @@ SharpIBPeriodicBoundaries<dim>::initialize(
   // sides must describe the same single periodic pair. Allowing CFD-only or
   // DEM-only periodicity would leave refinement, wrapping, particle-wall
   // contact, and cut-cell assembly operating in incompatible frames. This was
-  // an implicit assumption throughout the original periodic implementation, so
+  // already an implicit assumption throughout the periodic implementation, so
   // we enforce it explicitly here instead of trying to guess which subsystem
-  // should define the "real" periodic configuration.
+  // should define the authoritative configuration.
   const PeriodicConfiguration dem_configuration =
     parse_dem_periodic_configuration(dem_boundary_conditions);
   const PeriodicConfiguration cfd_configuration =
@@ -58,23 +58,31 @@ SharpIBPeriodicBoundaries<dim>::parse_dem_periodic_configuration(
 {
   PeriodicConfiguration parsed_configuration;
 
-  const unsigned int periodic_boundary_count =
-    std::ranges::count(dem_boundary_conditions.bc_types,
-                       Parameters::Lagrangian::BCDEM::BoundaryType::periodic);
-
   AssertThrow(
-    periodic_boundary_count <= 1,
+    dem_boundary_conditions.periodic_neighbor_id.size() <= 1 &&
+      dem_boundary_conditions.periodic_direction.size() <= 1,
     dealii::ExcMessage(
       "Sharp-IB periodic coupling currently supports exactly one DEM periodic "
       "boundary pair."));
 
-  if (periodic_boundary_count == 0)
+  if (dem_boundary_conditions.periodic_neighbor_id.empty())
     return parsed_configuration;
 
+  const auto periodic_pair =
+    dem_boundary_conditions.periodic_neighbor_id.begin();
+  const auto direction_it =
+    dem_boundary_conditions.periodic_direction.find(periodic_pair->first);
+
+  AssertThrow(
+    direction_it != dem_boundary_conditions.periodic_direction.end(),
+    dealii::ExcMessage(
+      "Sharp-IB periodic coupling requires the DEM periodic direction to be "
+      "defined for the principal periodic boundary id."));
+
   parsed_configuration.enabled    = true;
-  parsed_configuration.boundary_0 = dem_boundary_conditions.periodic_boundary_0;
-  parsed_configuration.boundary_1 = dem_boundary_conditions.periodic_boundary_1;
-  parsed_configuration.direction  = dem_boundary_conditions.periodic_direction;
+  parsed_configuration.boundary_0 = periodic_pair->first;
+  parsed_configuration.boundary_1 = periodic_pair->second;
+  parsed_configuration.direction  = direction_it->second;
 
   return parsed_configuration;
 }
