@@ -169,23 +169,14 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
 
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
         {
-          const auto x =
+          Point<dim> x =
             from_1D((id_in_plane + quadrature.point(q)[0]) * delta_0);
 
           if constexpr (dim == 3)
-            {
-              Point<3> coordinates;
-              coordinates[this->rotation_axis] =
-                stage_heights[id_out_plane] + quadrature.point(q)[1] * delta_1;
-              coordinates[(this->rotation_axis + 1) % 3] = x[0];
-              coordinates[(this->rotation_axis + 2) % 3] = x[1];
+            x[this->rotation_axis_direction] =
+              stage_heights[id_out_plane] + quadrature.point(q)[1] * delta_1;
 
-              points.emplace_back(coordinates[0],
-                                  coordinates[1],
-                                  coordinates[2]);
-            }
-          else
-            points.emplace_back(x);
+          points.emplace_back(x);
         }
 
       return points;
@@ -218,44 +209,26 @@ MortarManagerBase<dim>::get_points(const Point<dim> &face_center,
 
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
         {
-          const auto x =
+          Point<dim> x =
             from_1D(rad_0 + quadrature.point(q)[0] * (rad_1 - rad_0));
 
           if constexpr (dim == 3)
-            {
-              Point<3> coordinates;
-              coordinates[this->rotation_axis] =
-                stage_heights[id_out_plane] + quadrature.point(q)[1] * delta_1;
-              coordinates[(this->rotation_axis + 1) % 3] = x[0];
-              coordinates[(this->rotation_axis + 2) % 3] = x[1];
+            x[this->rotation_axis_direction] =
+              stage_heights[id_out_plane] + quadrature.point(q)[1] * delta_1;
 
-              points.emplace_back(coordinates[0],
-                                  coordinates[1],
-                                  coordinates[2]);
-            }
-          else
-            points.emplace_back(x);
+          points.emplace_back(x);
         }
 
       for (unsigned int q = 0; q < n_quadrature_points; ++q)
         {
-          const auto x =
+          Point<dim> x =
             from_1D(rad_1 + quadrature.point(q)[0] * (rad_2 - rad_1));
 
           if constexpr (dim == 3)
-            {
-              Point<3> coordinates;
-              coordinates[this->rotation_axis] =
-                stage_heights[id_out_plane] + quadrature.point(q)[1] * delta_1;
-              coordinates[(this->rotation_axis + 1) % 3] = x[0];
-              coordinates[(this->rotation_axis + 2) % 3] = x[1];
+            x[this->rotation_axis_direction] =
+              stage_heights[id_out_plane] + quadrature.point(q)[1] * delta_1;
 
-              points.emplace_back(coordinates[0],
-                                  coordinates[1],
-                                  coordinates[2]);
-            }
-          else
-            points.emplace_back(x);
+          points.emplace_back(x);
         }
 
       return points;
@@ -445,7 +418,7 @@ MortarManagerBase<dim>::get_config(const Point<dim> &face_center,
       auto upper_height_iterator =
         std::upper_bound(stage_heights.begin(),
                          stage_heights.end(),
-                         face_center[this->rotation_axis]);
+                         face_center[this->rotation_axis_direction]);
       // The id_out_plane of the cell can be obtained with the distance between
       // the iterator obtained and the lowest stage height iterator
       id_out_plane =
@@ -489,7 +462,8 @@ compute_number_interface_cells(const Triangulation<dim>      &triangulation,
   // Tolerance for rotor radius computation
   const double radius_tolerance = mortar_parameters.radius_tolerance;
   // Direction of the rotation axis
-  const unsigned int rotation_axis = get_rotation_axis(mortar_parameters);
+  const unsigned int rotation_axis_direction =
+    get_rotation_axis_direction(mortar_parameters);
 
   // Coordinate of the reference cell for computation of the number of
   // subdivisions in the radial direction. Used in 3D case
@@ -513,7 +487,8 @@ compute_number_interface_cells(const Triangulation<dim>      &triangulation,
                       face->boundary_id() ==
                         mortar_parameters.rotor_boundary_id)
                     coord_ref_local =
-                      std::min(coord_ref_local, cell->center()[rotation_axis]);
+                      std::min(coord_ref_local,
+                               cell->center()[rotation_axis_direction]);
                 }
             }
         }
@@ -545,7 +520,7 @@ compute_number_interface_cells(const Triangulation<dim>      &triangulation,
                         {
                           // Check if the current cell is contained in the same
                           // plane as the reference cell
-                          if (std::abs(cell->center()[rotation_axis] -
+                          if (std::abs(cell->center()[rotation_axis_direction] -
                                        coord_ref) < radius_tolerance)
                             n_subdivisions_plane_local++;
                         }
@@ -586,7 +561,8 @@ compute_interface_dimensions_circular(
   double pre_rotation_min = std::numeric_limits<double>::max();
 
   // Direction of the rotation axis
-  const unsigned int rotation_axis = get_rotation_axis(mortar_parameters);
+  const unsigned int rotation_axis_direction =
+    get_rotation_axis_direction(mortar_parameters);
   // Min and max vertex coordinates for length computation in the axial
   // direction. Used in 3D case
   double vertex_min = std::numeric_limits<double>::max();
@@ -622,10 +598,10 @@ compute_interface_dimensions_circular(
                           // point is contained within the rotation axis line
                           if constexpr (dim == 3)
                             {
-                              vertex_min =
-                                std::min(vertex_min, v[rotation_axis]);
-                              vertex_max =
-                                std::max(vertex_max, v[rotation_axis]);
+                              vertex_min = std::min(vertex_min,
+                                                    v[rotation_axis_direction]);
+                              vertex_max = std::max(vertex_max,
+                                                    v[rotation_axis_direction]);
 
                               radius_current =
                                 LetheGridTools::find_point_line_distance(
@@ -655,7 +631,7 @@ compute_interface_dimensions_circular(
                             pre_rotation_min,
                             point_to_angle(mortar_parameters.center_of_rotation,
                                            v,
-                                           rotation_axis));
+                                           rotation_axis_direction));
                         }
                     }
                 }
@@ -761,7 +737,7 @@ construct_quadrature(const Quadrature<dim>         &quadrature,
 
 template <int dim>
 unsigned int
-get_rotation_axis(const Parameters::Mortar<dim> &mortar_parameters)
+get_rotation_axis_direction(const Parameters::Mortar<dim> &mortar_parameters)
 {
   if constexpr (dim == 3)
     {
@@ -797,7 +773,8 @@ compute_stage_heights(const Triangulation<dim>      &triangulation,
   if constexpr (dim == 3)
     {
       // Direction of the rotation axis
-      const unsigned int rotation_axis = get_rotation_axis(mortar_parameters);
+      const unsigned int rotation_axis_direction =
+        get_rotation_axis_direction(mortar_parameters);
       // Container storing all vertex coordinates in the rotation axis direction
       // for the local cells at the mortar boundary
       std::vector<double> stage_heights_local;
@@ -827,7 +804,7 @@ compute_stage_heights(const Triangulation<dim>      &triangulation,
 
                       for (const auto vertex_no : face->vertex_indices())
                         stage_heights_local.push_back(
-                          face->vertex(vertex_no)[rotation_axis]);
+                          face->vertex(vertex_no)[rotation_axis_direction]);
                     }
                 }
             }
@@ -920,7 +897,10 @@ template <int dim>
 Point<dim>
 MortarManagerCircle<dim>::from_1D(const double angle_rad) const
 {
-  return radius_to_point<dim>(this->radius[0], angle_rad + pre_rotation_angle);
+  return radius_to_point<dim>(this->radius[0],
+                              angle_rad + pre_rotation_angle,
+                              this->center_of_rotation,
+                              this->rotation_axis_direction);
 }
 
 template <int dim>
@@ -928,18 +908,11 @@ double
 MortarManagerCircle<dim>::to_1D(const Point<dim> &point) const
 {
   if constexpr (dim == 3)
-    {
-      Point<3> p_proj(point[(this->rotation_axis + 1) % 3],
-                      point[(this->rotation_axis + 2) % 3],
-                      0.0);
-      Point<3> c_proj(this->center_of_rotation[(this->rotation_axis + 1) % 3],
-                      this->center_of_rotation[(this->rotation_axis + 2) % 3],
-                      0.0);
-
-      return std::fmod(point_to_angle(p_proj, c_proj) - pre_rotation_angle +
-                         2 * numbers::PI,
-                       2 * numbers::PI);
-    }
+    return std::fmod(point_to_angle(point,
+                                    this->center_of_rotation,
+                                    this->rotation_axis_direction) -
+                       pre_rotation_angle + 2 * numbers::PI,
+                     2 * numbers::PI);
   else
     return std::fmod(point_to_angle(point, this->center_of_rotation) -
                        pre_rotation_angle + 2 * numbers::PI,
@@ -1087,9 +1060,14 @@ CouplingOperator<dim, Number>::CouplingOperator(
 
                 for (const auto &p : points_ref)
                   {
-                    Point<dim - 1>     temp;
+                    Point<dim - 1> temp;
+                    // Axis perpendicular to the face current in the reference
+                    // cell
                     const unsigned int axis = face_no / 2;
 
+                    // 'temp' stores the coordinates of the quadrature point
+                    // on the face, hence the loop over the remaining 2 axes of
+                    // the reference cell
                     for (int t = 0; t < dim - 1; ++t)
                       temp[t] = p[(axis + 1 + t) % dim];
 
@@ -2201,10 +2179,10 @@ construct_quadrature(const Quadrature<3>         &quadrature,
                      const Parameters::Mortar<3> &mortar_parameters);
 
 template unsigned int
-get_rotation_axis(const Parameters::Mortar<2> &mortar_parameters);
+get_rotation_axis_direction(const Parameters::Mortar<2> &mortar_parameters);
 
 template unsigned int
-get_rotation_axis(const Parameters::Mortar<3> &mortar_parameters);
+get_rotation_axis_direction(const Parameters::Mortar<3> &mortar_parameters);
 
 template std::vector<double>
 compute_stage_heights<2>(const Triangulation<2>      &triangulation,
