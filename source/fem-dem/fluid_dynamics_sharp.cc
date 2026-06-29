@@ -3373,7 +3373,7 @@ FluidDynamicsSharp<dim>::handle_dem_particle_output_and_postprocessing()
 
 template <int dim>
 void
-FluidDynamicsSharp<dim>::sharp_edge(const bool assemble_rhs_terms)
+FluidDynamicsSharp<dim>::sharp_edge()
 {
   // This function defines an Immersed Boundary based on the sharp edge method
   // on a solid of dim=2 or dim=3
@@ -3392,25 +3392,6 @@ FluidDynamicsSharp<dim>::sharp_edge(const bool assemble_rhs_terms)
   // Define a map to all DOFs and their support points
   std::map<types::global_dof_index, Point<dim>> support_points =
     DoFTools::map_dofs_to_support_points(*this->mapping, *this->dof_handler);
-
-  // When sharp_edge() is called from RHS assembly, the standard distributed
-  // contributions have already been accumulated in add mode. Flush them before
-  // applying the Sharp-IB row overwrites so every rank sees the same baseline.
-  if (assemble_rhs_terms)
-    this->system_rhs.compress(VectorOperation::add);
-  this->system_matrix.compress(VectorOperation::add);
-
-  auto overwrite_rhs_entry =
-    [this, assemble_rhs_terms](const types::global_dof_index dof_index,
-                               const double                  value) {
-      if (!assemble_rhs_terms)
-        return;
-
-      const double                  current_value = this->system_rhs(dof_index);
-      const types::global_dof_index index         = dof_index;
-      const double                  delta         = value - current_value;
-      this->system_rhs.add(1, &index, &delta);
-    };
 
   // Initalize fe value objects in order to do calculation with it later
   QGauss<dim>        q_formula(this->number_quadrature_points);
@@ -3505,9 +3486,8 @@ FluidDynamicsSharp<dim>::sharp_edge(const bool assemble_rhs_terms)
               // cell. this is the new reference pressure inside a
               // particle
               this->system_matrix.add(inside_index, inside_index, sum_line);
-              overwrite_rhs_entry(inside_index,
-                                  -this->evaluation_point(inside_index) *
-                                    sum_line);
+              this->system_rhs(inside_index) =
+                0 - this->evaluation_point(inside_index) * sum_line;
             }
         }
     }
@@ -3627,14 +3607,13 @@ FluidDynamicsSharp<dim>::sharp_edge(const bool assemble_rhs_terms)
                                                       sum_line);
 
                               // Write the RHS
-                              overwrite_rhs_entry(
-                                local_dof_indices[i],
+                              this->system_rhs(local_dof_indices[i]) =
                                 -this->evaluation_point(local_dof_indices[i]) *
-                                    sum_line +
-                                  interpolation * sum_line +
-                                  this->zero_constraints.get_inhomogeneity(
-                                    local_dof_indices[i]) *
-                                    sum_line);
+                                  sum_line +
+                                interpolation * sum_line +
+                                this->zero_constraints.get_inhomogeneity(
+                                  local_dof_indices[i]) *
+                                  sum_line;
                             }
                           if (this->nonzero_constraints.is_constrained(
                                 local_dof_indices[i]))
@@ -3688,14 +3667,13 @@ FluidDynamicsSharp<dim>::sharp_edge(const bool assemble_rhs_terms)
                                                       sum_line);
 
                               // Write the RHS
-                              overwrite_rhs_entry(
-                                local_dof_indices[i],
+                              this->system_rhs(local_dof_indices[i]) =
                                 -this->evaluation_point(local_dof_indices[i]) *
-                                    sum_line +
-                                  interpolation * sum_line +
-                                  this->nonzero_constraints.get_inhomogeneity(
-                                    local_dof_indices[i]) *
-                                    sum_line);
+                                  sum_line +
+                                interpolation * sum_line +
+                                this->nonzero_constraints.get_inhomogeneity(
+                                  local_dof_indices[i]) *
+                                  sum_line;
                             }
                         }
 
@@ -4022,16 +4000,14 @@ FluidDynamicsSharp<dim>::sharp_edge(const bool assemble_rhs_terms)
                           const double pressure_scaling_factor =
                             this->simulation_parameters.stabilization
                               .pressure_scaling_factor;
-                          overwrite_rhs_entry(global_index_overwrite,
-                                              component_i == dim ?
-                                                (v_ib * sum_line + rhs_add) /
-                                                  pressure_scaling_factor :
-                                                v_ib * sum_line + rhs_add);
+                          this->system_rhs(global_index_overwrite) =
+                            component_i == dim ? (v_ib * sum_line + rhs_add) /
+                                                   pressure_scaling_factor :
+                                                 v_ib * sum_line + rhs_add;
 
                           if (dof_on_ib)
                             // Dof is on the immersed boundary
-                            overwrite_rhs_entry(
-                              global_index_overwrite,
+                            this->system_rhs(global_index_overwrite) =
                               component_i == dim ?
                                 (v_ib * sum_line - this->evaluation_point(
                                                      global_index_overwrite) *
@@ -4039,14 +4015,13 @@ FluidDynamicsSharp<dim>::sharp_edge(const bool assemble_rhs_terms)
                                   pressure_scaling_factor :
                                 (v_ib * sum_line - this->evaluation_point(
                                                      global_index_overwrite) *
-                                                     sum_line));
+                                                     sum_line);
 
                           if (skip_stencil && dof_on_ib == false)
                             // Impose the value of the dummy dof. This help
                             // with pressure variation when the IB is
                             // moving.
-                            overwrite_rhs_entry(
-                              global_index_overwrite,
+                            this->system_rhs(global_index_overwrite) =
                               component_i == dim ?
                                 (sum_line * v_ib - this->evaluation_point(
                                                      global_index_overwrite) *
@@ -4054,7 +4029,7 @@ FluidDynamicsSharp<dim>::sharp_edge(const bool assemble_rhs_terms)
                                   pressure_scaling_factor :
                                 sum_line * v_ib - this->evaluation_point(
                                                     global_index_overwrite) *
-                                                    sum_line);
+                                                    sum_line;
                         }
 
                       if (component_i == dim &&
@@ -4128,8 +4103,8 @@ FluidDynamicsSharp<dim>::sharp_edge(const bool assemble_rhs_terms)
                                     global_index_overwrite,
                                     global_index_overwrite,
                                     sum_line);
-                                  overwrite_rhs_entry(global_index_overwrite,
-                                                      0.0);
+                                  auto &system_rhs = this->system_rhs;
+                                  system_rhs(global_index_overwrite) = 0;
                                 }
                             }
                         }
@@ -4139,8 +4114,7 @@ FluidDynamicsSharp<dim>::sharp_edge(const bool assemble_rhs_terms)
         }
     }
 
-  if (assemble_rhs_terms)
-    this->system_rhs.compress(VectorOperation::add);
+  this->system_rhs.compress(VectorOperation::insert);
   this->system_matrix.compress(VectorOperation::add);
 }
 
