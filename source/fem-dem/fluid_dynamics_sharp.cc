@@ -109,9 +109,6 @@ FluidDynamicsSharp<dim>::generate_cut_cells_map()
   std::map<types::global_dof_index, Point<dim>> support_points =
     DoFTools::map_dofs_to_support_points(*this->mapping, *this->dof_handler);
 
-  // When the finite element order > 1, overconstrained cells are impossible
-  // since there is always at least a DOF inside the element that is not
-  // overconstrained. We therefore only have to check when the velocity order
   // When the finite element degree > 1, overconstrained cells are impossible
   // since there is always at least a DOF inside the element that is not
   // overconstrained. We therefore only have to check when the velocity degree
@@ -665,12 +662,10 @@ FluidDynamicsSharp<dim>::optimized_generate_cut_cells_map()
           unsigned int lvl_iter = 0;
 
           // Keep this level search consistent with
-          // LetheGridTools::find_cell_around_point_with_tree(). The periodic
-          // Sharp path can search from ranks that do not own cells on every
-          // global refinement level, so a rank-local n_levels() - 2 bound is
-          // unsafe and can underflow. This logic was originally present on the
-          // combined periodic-sharp-ib branch and should have been carried into
-          // the standalone periodic branch when that work was split out.
+          // LetheGridTools::find_cell_around_point_with_tree(). The search can
+          // start from ranks that do not own cells on every global refinement
+          // level, so a rank-local n_levels() - 2 bound is unsafe and can
+          // underflow.
           const unsigned int n_global_levels =
             this->dof_handler->get_triangulation().n_global_levels();
           const unsigned int max_lvl_search =
@@ -1079,7 +1074,7 @@ FluidDynamicsSharp<dim>::mesh_adapt_ib(const bool initial_refinement)
                   double refinement_radius =
                     particles[p].radius *
                     this->simulation_parameters.particlesParameters
-                      ->outside_radius;
+                      ->refinement_outside_distance_factor;
                   if (minimal_crown_refinement_enabled)
                     {
                       double factor     = 1.0 / sqrt(dim);
@@ -5626,20 +5621,14 @@ FluidDynamicsSharp<dim>::update_sharp_ib_periodic_geometry()
   const unsigned int periodic_direction =
     sharp_ib_periodic_boundaries.get_periodic_direction();
 
-  // Current Sharp-IB periodic support assumes that the validated periodic
-  // boundary pair spans the global geometric extent of the active mesh in the
-  // periodic direction. For the box-like domains currently targeted by this
-  // feature, that means the periodic faces are the global min/max planes along
-  // periodic_direction, so the wrap length can be recovered from the mesh-wide
-  // vertex extrema below.
+  // Sharp-IB currently supports one periodic pair on opposite extremal faces
+  // of a box-like domain. Under that constraint, the wrap length is the global
+  // min/max coordinate span in the periodic direction, so it can be recovered
+  // from the mesh-wide vertex extrema below.
   //
-  // This is a stronger assumption than "there exists one matching periodic
-  // pair": it would not hold for a future geometry where the periodic faces
-  // are not the coordinate extrema of the domain. We keep the current approach
-  // for now because it matches all intended Sharp periodic cases on this
-  // branch, but if support is ever extended beyond those box-like setups then
-  // these bounds should be computed directly from the configured periodic
-  // boundary ids instead of all active-cell vertices.
+  // If support is ever extended to periodic faces that are not the geometric
+  // extrema in that direction, these bounds must instead be computed directly
+  // from the configured periodic boundary ids.
   periodic_domain_lower = std::numeric_limits<double>::max();
   periodic_domain_upper = std::numeric_limits<double>::lowest();
 

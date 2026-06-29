@@ -167,6 +167,11 @@ private:
   /**
    * @brief Read the DEM periodic configuration.
    *
+   * DEM periodic boundaries are stored as a map from the principal periodic
+   * boundary id to its neighbor boundary id, together with a direction map
+   * keyed by the same principal id. Sharp currently accepts at most one such
+   * pair.
+   *
    * @param dem_boundary_conditions DEM boundary conditions.
    * @return Parsed DEM periodic configuration.
    */
