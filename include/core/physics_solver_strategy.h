@@ -79,9 +79,10 @@ protected:
    * state and skipping the solve would incorrectly reuse stale information.
    *
    * Solvers must opt into this behavior explicitly through
-   * allow_skip_linear_solve_when_residual_is_below_tolerance(). Opting in also
-   * requires force_rhs_calculation to be enabled so that every Newton
-   * iteration reaches this helper with a fresh RHS.
+   * allow_skip_linear_solve_when_residual_is_below_tolerance(). When the
+   * shortcut is actually taken, force_rhs_calculation must also be enabled so
+   * that the converged residual comes from a fresh RHS assembled at the
+   * current Newton evaluation point.
    *
    * @param[in] rhs_was_assembled_this_iteration Whether the current Newton
    * iteration assembled the RHS at the current evaluation point.
@@ -155,13 +156,6 @@ PhysicsSolverStrategy<VectorType>::
   if (!solver->allow_skip_linear_solve_when_residual_is_below_tolerance())
     return false;
 
-  AssertThrow(
-    this->params.force_rhs_calculation,
-    ExcMessage(
-      "Skipping the linear solve based on the assembled RHS residual requires "
-      "'force rhs calculation = true' so the residual is freshly assembled on "
-      "every Newton iteration."));
-
   if (!rhs_was_assembled_this_iteration)
     return false;
 
@@ -169,6 +163,13 @@ PhysicsSolverStrategy<VectorType>::
     solver->get_system_rhs().l2_norm() / rescale_metric;
   if (assembled_res > this->params.tolerance)
     return false;
+
+  AssertThrow(
+    this->params.force_rhs_calculation,
+    ExcMessage(
+      "Skipping the linear solve based on the assembled RHS residual requires "
+      "'force rhs calculation = true' so the residual is freshly assembled on "
+      "every Newton iteration."));
 
   current_res                 = assembled_res;
   solver->get_newton_update() = 0;
