@@ -121,9 +121,9 @@ To apply a transverse magnetic mode, simply modify the ``mode type`` with â€œTMâ
 
 The frequency of the inlet is originally set to :math:`f = \mathrm{2.45}\, \mathrm{GHz}` because it is the nominal frequency of microwave reactors in the industry. You can modify the ``electromagnetic frequency`` to change this value.
 
-You can also change the ``number of waveguide inlets``, the inlet is initially set to ``por boundary``.
+Here, since we are in a waveguide, we set the ``number of waveguide inlets`` to 1. This inlet must be assigned a ``port boundary id`` so that the solver knows on which boundary to apply the inlet condition (here, the boundary ID is 4).
 
-To change the geometry of the system. you can modify the position of the points ``corner 0``, ``corner 1``, ``corner 2`` and ``corner 3``.
+The solver also needs to know the corner points where the inlet boundary is applied so that it can map the ``mode type`` to the user-expected direction and determine the dimensions of the mesh for a priori computation. The positions of the points ``corner 0``, ``corner 1``, ``corner 2``, and ``corner 3`` must therefore match the coordinates of the rectangular waveguide inlet. In addition, the segment from ``corner 0`` to ``corner 1`` defines the first transverse vector (i.e., it is associated with the ``mode order m``), while the segment from ``corner 0`` to ``corner 2`` defines the second transverse vector (i.e., it is associated with the ``mode order n``).
 
 .. caution::
      If :math:`\mathrm{TE}_{mn}` or :math:`f` is changed, the wavenumber :math:`k_\mathrm{z} = \sqrt{\omega^2 \varepsilon_{\mathrm{eff,r}}\mu_\mathrm{r} - k_\mathrm{x}^2 - k_\mathrm{y}^2 }`  specified in the subsection ``analytical solution``, the dimensionless admittance real part :math:`Y_\mathrm{s}=\frac{1}{Z_\mathrm{s}}=\frac{k_\mathrm{z}}{\omega \mu_\mathrm{r}}` specified within the subsection ``surface admittance real part`` must be changed because it depends on :math:`(m,n)` and :math:`f` through :math:`k_\mathrm{x} = \frac{m \pi}{a}`, :math:`k_\mathrm{y} = \frac{n \pi}{b}` and :math:`\omega`.
