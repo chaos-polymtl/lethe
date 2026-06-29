@@ -1719,9 +1719,15 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
           // elements, skip the mortar coupling and assemble the operator as if
           // mortar was not enabled. The mortar contribution is therefore only
           // neglected on this particular level.
-          const bool enable_mortar_on_level =
-            this->simulation_parameters.mortar_parameters.enable &&
-            !(level == this->minlevel && levels[level].second == 1);
+const bool coarsest_level_uses_q1_interpolation =
+  (level == this->minlevel) &&
+  (levels[level].second == 1 ||
+   this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+     .mg_use_fe_q_iso_q1);
+
+const bool enable_mortar_on_level =
+  this->simulation_parameters.mortar_parameters.enable &&
+  !coarsest_level_uses_q1_interpolation;
 
           this->mg_operators[level]->reinit(
             *level_mapping,
