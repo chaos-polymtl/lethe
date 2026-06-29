@@ -651,7 +651,7 @@ namespace Parameters
         prm.declare_entry(
           "insertion direction sequence",
           "0,1,2",
-          Patterns::List(Patterns::Integer(), 2, 3),
+          Patterns::List(Patterns::Integer(0, 2), 2, 3),
           "Direction of particle insertion for the volume insertion method");
         prm.declare_entry(
           "insertion box points coordinates",
@@ -666,13 +666,12 @@ namespace Parameters
 
 
         // By default, every point is accepted, thus we need a default value
-        // of 1. We need to declare the parameters manually since the default
-        // value of a function is 0.
+        // bigger than 0 (we use 1 here).
+        auto insertion_acceptance_function_parsed =
+          std::make_shared<Functions::ParsedFunction<dim>>(1);
         prm.enter_subsection("insertion acceptance function");
         {
-          prm.declare_entry("Function expression", "1", Patterns::Anything());
-          prm.declare_entry("Variable names", "x,y,z", Patterns::Anything());
-          prm.declare_entry("Constants", "", Patterns::Anything());
+          insertion_acceptance_function_parsed->declare_parameters(prm, 1, "1");
         }
         prm.leave_subsection();
 
