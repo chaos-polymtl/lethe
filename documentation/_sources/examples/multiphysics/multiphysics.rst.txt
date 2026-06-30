@@ -11,6 +11,7 @@ Multiphysics
     heat-transfer
     tracer
     chns
+    electromagnetism
 
 .. graphviz:: 
 
@@ -73,11 +74,16 @@ Multiphysics
 
       multiphysics_4_2 [label="Shear Bubble Detachment", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/bubble-detachment-shear-flow/bubble-detachment-shear-flow.html"];
 
+      multiphysics_5 [label="Electromagnetism", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/electromagnetism.html"];
+
+      multiphysics_5_1 [label="Waveguide", href="https://chaos-polymtl.github.io/lethe/documentation/examples/multiphysics/waveguide/waveguide.html"];
+
 
       multiphysics -> multiphysics_1:w;
       multiphysics -> multiphysics_2:w;
       multiphysics -> multiphysics_3:w;
       multiphysics -> multiphysics_4:w;
+      multiphysics -> multiphysics_5:w;
 
       multiphysics_1 -> multiphysics_1_1:w;
       multiphysics_1 -> multiphysics_1_2:w;
@@ -103,5 +109,7 @@ Multiphysics
 
       multiphysics_4 -> multiphysics_4_1:w;
       multiphysics_4 -> multiphysics_4_2:w;
+
+      multiphysics_5 -> multiphysics_5_1:w;
     }
 
