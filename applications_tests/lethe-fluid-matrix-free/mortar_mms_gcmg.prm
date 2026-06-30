@@ -153,5 +153,7 @@ subsection linear solver
     set mg smoother iterations     = 10
     set mg smoother eig estimation = false
     set mg smoother relaxation     = 0.5
+    set mg coarsening type         = hp
+    set mg p min coarsening degree = 1
   end
 end
