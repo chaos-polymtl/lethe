@@ -1028,7 +1028,10 @@ namespace Parameters
    * implies the calculation of quantities derived from the principal
    * variables. For example, the integral kinetic energy or the integral
    * enstrophy.
+   *
+   * @tparam dim Denotes the number of spatial dimensions.
    */
+  template <int dim>
   struct PostProcessing
   {
     /**
@@ -1085,8 +1088,107 @@ namespace Parameters
       parse_parameters(ParameterHandler &prm);
     };
 
+    /** TODO AA complete this
+     * @brief Probing points parameters. This is used to monitor the evolution
+     * of variables (e.g., temperature) at specified points in the domain.
+     *
+     * @remark The points defined must be part of the domain.
+     */
+    struct ProbingPoints
+    {
+      /**
+       * @brief Set of parameters associated with probe points of a certain
+       * variable
+       */
+      struct ProbingPointsPerVariable
+      {
+        /// Identifier of the probe points
+        std::vector<unsigned int> ids;
+
+        /// Point locations where we want to evaluate values
+        std::vector<Point<dim>> points;
+
+        /// Output filename of the probing points
+        std::vector<std::string> output_names;
+      };
+
+      /// Number of probing points
+      unsigned int number_of_probing_points;
+
+      /// Maximum number of probing points
+      unsigned int max_number_of_probing_points = 20;
+
+      /// Map that regroups all probing points information of a same variable
+      /// under the same variable key
+      std::map<Variable, ProbingPointsPerVariable> probing_points_per_variable;
+
+      /**
+       * @brief Declare the parameters in the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
+      void
+      declare_parameters(ParameterHandler &prm);
+
+      /**
+       * @brief Parse the parameters from the parameter handler.
+       *
+       * @param[in,out] prm The parameter handler.
+       */
+      void
+      parse_parameters(ParameterHandler &prm);
+
+      /**
+       * @brief Add entry to probing_points_per_variable.
+       *
+       * @param[in] variable Variable of the monitored quantity.
+       * @param[in] id Identifier of the probe.
+       * @param[in] point Location of the probe.
+       * @param[in] output_name Output filename of the probe.
+       */
+      void inline add_probing_point(const Variable     &variable,
+                                    const unsigned int &id,
+                                    const Point<dim>   &point,
+                                    const std::string  &output_name)
+      {
+        probing_points_per_variable[variable].ids.emplace_back(id);
+        probing_points_per_variable[variable].points.emplace_back(point);
+        probing_points_per_variable[variable].output_names.emplace_back(
+          output_name);
+      }
+
+      // /**
+      //  * @brief Gathers probing point IDs and locations of a variable into a
+      //  * pair of vectors.
+      //  *
+      //  * @param[in] variable Variable of the monitored quantity.
+      //  *
+      //  * @return Tuple with a vector of IDs and a vector of points.
+      //  */
+      // std::tuple<std::vector<unsigned int>, std::vector<Point<dim>>>
+      // get_probe_ids_and_points_of_variable(const Variable &variable)
+      // {
+      //   std::vector<unsigned int> probe_ids;
+      //   std::vector<Point<dim>> points;
+      //
+      //   probe_ids.reserve(ids_and_probing_points_per_variable.count(variable));
+      //   points.reserve(ids_and_probing_points_per_variable.count(variable));
+      //
+      //   for (const ProbingPoint &probe:
+      //   ids_and_probing_points_per_variable.at(variable))
+      //   {
+      //     probe_ids.emplace_back(probe.id);
+      //     points.emplace_back(probe.location);
+      //   }
+      //   return {probe_ids, points};
+      // }
+    };
+
     /// Contains all isocontour bounding boxes
     IsocontourBoundingBoxes isocontour_bounding_boxes;
+
+    /// Contains all probing points
+    ProbingPoints probing_points;
 
     /// Verbosity level of the post-processed quantities
     Verbosity verbosity;

@@ -108,6 +108,8 @@ public:
     if (this->simulation_parameters.mortar_parameters.enable)
       this->mapping_cache = std::make_shared<MappingQCache<dim>>(fe->degree);
 
+    multiphysics->set_mapping(PhysicsID::tracer, mapping);
+
     // Initialize solution shared_ptr
     present_solution = std::make_shared<GlobalVectorType>();
 
@@ -128,6 +130,7 @@ public:
           SolutionTransfer<dim, GlobalVectorType>(*this->dof_handler));
       }
   }
+
 
   /**
    * @brief Gather and return vector of output structs that are particular to some applications.

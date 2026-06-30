@@ -129,6 +129,8 @@ public:
           1);
       }
 
+    multiphysics->set_mapping(PhysicsID::cahn_hilliard, mapping);
+
     // Allocate solution transfer
     solution_transfer =
       std::make_shared<SolutionTransfer<dim, GlobalVectorType>>(*dof_handler);

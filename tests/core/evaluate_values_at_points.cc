@@ -108,8 +108,8 @@ public:
  * solution field are to be evaluated.
  */
 template <int dim>
-void
-inline initialize_evaluation_points(std::vector<Point<dim>> &evaluation_points)
+void inline initialize_evaluation_points(
+  std::vector<Point<dim>> &evaluation_points)
 {
   if constexpr (dim == 2)
     {
@@ -140,10 +140,9 @@ inline initialize_evaluation_points(std::vector<Point<dim>> &evaluation_points)
  * the analytical solution.
  */
 template <int dim>
-void
-inline print_results(const std::vector<Point<dim>> &evaluation_points,
-              const std::vector<double>     &evaluated_scalar_values,
-              const Function<dim>           &scalar_function)
+void inline print_results(const std::vector<Point<dim>> &evaluation_points,
+                          const std::vector<double> &evaluated_scalar_values,
+                          const Function<dim>       &scalar_function)
 {
   for (unsigned int p = 0; p < evaluated_scalar_values.size(); ++p)
     {
@@ -178,8 +177,7 @@ inline print_results(const std::vector<Point<dim>> &evaluation_points,
  * @p dim corresponding to the analytical solution.
  */
 template <int dim>
-void
-inline print_results(
+void inline print_results(
   const std::vector<Point<dim>>             &evaluation_points,
   const std::vector<Tensor<1, dim, double>> &evaluated_vector_values,
   const Function<dim>                       &vector_function)

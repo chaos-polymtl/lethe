@@ -50,10 +50,11 @@ public:
    * @param[in] time_step The time step.
    */
   void
-  calculate_average_scalar(const GlobalVectorType &local_evaluation_point,
-                           const Parameters::PostProcessing &post_processing,
-                           const double                      current_time,
-                           const double                      time_step);
+  calculate_average_scalar(
+    const GlobalVectorType                &local_evaluation_point,
+    const Parameters::PostProcessing<dim> &post_processing,
+    const double                           current_time,
+    const double                           time_step);
 
   /**
    * @brief Calculate time-averaged scalar field using vector with no ghost

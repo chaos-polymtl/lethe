@@ -17,10 +17,10 @@ AverageScalar<dim>::AverageScalar(const DoFHandler<dim> &dof_handler)
 template <int dim>
 void
 AverageScalar<dim>::calculate_average_scalar(
-  const GlobalVectorType           &local_evaluation_point,
-  const Parameters::PostProcessing &post_processing,
-  const double                      current_time,
-  const double                      time_step)
+  const GlobalVectorType                &local_evaluation_point,
+  const Parameters::PostProcessing<dim> &post_processing,
+  const double                           current_time,
+  const double                           time_step)
 {
   const double epsilon = 1e-6;
   const double initial_time =

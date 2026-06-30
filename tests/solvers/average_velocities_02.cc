@@ -29,6 +29,7 @@
 // Tests
 #include <../tests/tests.h>
 
+template <int dim>
 void
 test()
 {
@@ -50,7 +51,7 @@ test()
   simulation_control_parameters.time_step_independent_of_end_time    = true;
   simulation_control_parameters.adapt_with_capillary_time_step_ratio = false;
 
-  Parameters::PostProcessing postprocessing_parameters;
+  Parameters::PostProcessing<dim> postprocessing_parameters;
   postprocessing_parameters.calculate_average_velocities        = true;
   postprocessing_parameters.initial_time_for_average_velocities = 0.5;
 
@@ -66,15 +67,15 @@ test()
   locally_owned_dofs[1].add_range(0, 1);
 
   // Make triangulation and dummy dof_handler to construct average velocities
-  parallel::distributed::Triangulation<3> tria(
+  parallel::distributed::Triangulation<dim> tria(
     mpi_communicator,
-    typename Triangulation<3>::MeshSmoothing(
-      Triangulation<3>::smoothing_on_refinement |
-      Triangulation<3>::smoothing_on_coarsening));
+    typename Triangulation<dim>::MeshSmoothing(
+      Triangulation<dim>::smoothing_on_refinement |
+      Triangulation<dim>::smoothing_on_coarsening));
   GridGenerator::hyper_cube(tria, -1, 1);
-  DoFHandler<3> dof_handler(tria);
+  DoFHandler<dim> dof_handler(tria);
 
-  AverageVelocities<3, GlobalBlockVectorType, std::vector<IndexSet>> average(
+  AverageVelocities<dim, GlobalBlockVectorType, std::vector<IndexSet>> average(
     dof_handler);
 
   GlobalBlockVectorType solution(locally_owned_dofs, mpi_communicator);
@@ -144,7 +145,7 @@ main(int argc, char **argv)
     {
       initlog();
       Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
-      test();
+      test<3>();
     }
   catch (std::exception &exc)
     {
