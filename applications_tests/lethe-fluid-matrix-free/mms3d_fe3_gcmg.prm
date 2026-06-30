@@ -111,6 +111,6 @@ subsection linear solver
     set mg min level               = 1
     set mg verbosity               = verbose
     set mg coarsening type         = hp
-    set mg p min coarsening degree = 1
+    set mg p min coarsening degree = 2
   end
 end
