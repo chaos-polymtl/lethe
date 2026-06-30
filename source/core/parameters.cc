@@ -853,7 +853,7 @@ namespace Parameters
 
       prm.declare_entry(
         "cip velocity coefficient",
-        "0.05",
+        "0.5",
         Patterns::Double(),
         "Dimensionless coefficient scaling the continuous interior penalty "
         "(CIP / gradient-jump) stabilization term acting on the velocity "
@@ -861,7 +861,7 @@ namespace Parameters
 
       prm.declare_entry(
         "cip pressure coefficient",
-        "0.05",
+        "0.5",
         Patterns::Double(),
         "Dimensionless coefficient scaling the continuous interior penalty "
         "(CIP / gradient-jump) stabilization term acting on the pressure "
