@@ -8,6 +8,8 @@
 
 #include <deal.II/grid/grid_generator.h>
 
+#include <deal.II/lac/sparsity_tools.h>
+
 #include <deal.II/multigrid/mg_tools.h>
 
 /**

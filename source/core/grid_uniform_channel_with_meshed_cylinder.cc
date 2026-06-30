@@ -4,6 +4,8 @@
 #include <core/grid_uniform_channel_with_meshed_cylinder.h>
 #include <core/utilities.h>
 
+#include <deal.II/grid/grid_generator.h>
+
 #include <numbers>
 #include <set>
 

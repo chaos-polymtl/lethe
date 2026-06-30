@@ -3,6 +3,15 @@
 
 #include <solvers/time_harmonic_maxwell.h>
 
+#include <deal.II/dofs/dof_renumbering.h>
+
+#include <deal.II/fe/fe_system.h>
+
+#include <deal.II/lac/sparsity_tools.h>
+#include <deal.II/lac/trilinos_solver.h>
+
+#include <deal.II/numerics/vector_tools.h>
+
 template <int dim>
 TimeHarmonicMaxwell<dim>::TimeHarmonicMaxwell(
   MultiphysicsInterface<dim>      *multiphysics_interface,

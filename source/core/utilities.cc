@@ -9,6 +9,7 @@
 #include <boost/algorithm/string/replace.hpp>
 
 #include <filesystem>
+#include <regex>
 #include <type_traits>
 
 template <typename T>

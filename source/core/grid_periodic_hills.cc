@@ -3,6 +3,9 @@
 
 #include <core/grid_periodic_hills.h>
 
+#include <deal.II/grid/grid_generator.h>
+#include <deal.II/grid/grid_tools.h>
+
 template <int dim, int spacedim>
 GridPeriodicHills<dim, spacedim>::GridPeriodicHills(
   const std::string &grid_arguments)

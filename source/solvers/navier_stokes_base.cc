@@ -29,6 +29,7 @@
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/tria_iterator.h>
 
+#include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/data_out_faces.h>
 #include <deal.II/numerics/data_out_resample.h>
 #include <deal.II/numerics/error_estimator.h>

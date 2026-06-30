@@ -3,6 +3,9 @@
 
 #include <core/grid_cylinder.h>
 
+#include <deal.II/grid/grid_generator.h>
+#include <deal.II/grid/grid_tools.h>
+
 template <int dim, int spacedim>
 GridCylinder<dim, spacedim>::GridCylinder(const std::string &grid_type,
                                           const std::string &grid_arguments)

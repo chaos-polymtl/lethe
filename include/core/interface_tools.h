@@ -20,8 +20,6 @@
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/mapping_fe.h>
 
-#include <deal.II/grid/grid_tools.h>
-
 #include <deal.II/lac/lapack_full_matrix.h>
 
 #include <deal.II/matrix_free/fe_point_evaluation.h>

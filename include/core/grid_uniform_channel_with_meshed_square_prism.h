@@ -4,11 +4,10 @@
 #ifndef lethe_grid_uniform_channel_with_meshed_square_prism_h
 #define lethe_grid_uniform_channel_with_meshed_square_prism_h
 
+#include <deal.II/base/point.h>
 #include <deal.II/base/utilities.h>
 
-#include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/grid_tools.h>
-#include <deal.II/grid/manifold_lib.h>
+#include <deal.II/grid/tria.h>
 
 #include <cmath>
 #include <sstream>

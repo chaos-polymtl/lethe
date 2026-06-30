@@ -4,6 +4,10 @@
 #include <core/grid_uniform_channel_with_meshed_square_prism.h>
 #include <core/utilities.h>
 
+#include <deal.II/grid/grid_generator.h>
+#include <deal.II/grid/grid_tools.h>
+#include <deal.II/grid/manifold_lib.h>
+
 #include <algorithm>
 #include <array>
 #include <cmath>

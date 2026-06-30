@@ -6,6 +6,8 @@
 
 #include <deal.II/dofs/dof_tools.h>
 
+#include <deal.II/grid/grid_tools.h>
+
 #include <deal.II/hp/fe_collection.h>
 #include <deal.II/hp/q_collection.h>
 
