@@ -59,13 +59,13 @@ template <typename VectorType>
 void
 InexactNewtonNonLinearSolverStrategy<VectorType>::solve()
 {
-  double       global_res;
-  double       current_res;
-  double       last_res;
-  unsigned int outer_iteration = 0;
-  last_res                     = 1e6;
-  current_res                  = 1e6;
-  global_res                   = 1e6;
+  double global_res;
+  double current_res;
+  double last_res;
+  this->outer_iteration = 0;
+  last_res              = 1e6;
+  current_res           = 1e6;
+  global_res            = 1e6;
 
   // current_res and global_res are different as one is defined based on the l2
   // norm of the residual vector (current_res) and the other (global_res) is
@@ -86,7 +86,7 @@ InexactNewtonNonLinearSolverStrategy<VectorType>::solve()
     matrix_requires_assembly = true;
 
   while ((global_res > this->params.tolerance) &&
-         outer_iteration < this->params.max_iterations)
+         this->outer_iteration < this->params.max_iterations)
     {
       evaluation_point = present_solution;
 
@@ -96,10 +96,12 @@ InexactNewtonNonLinearSolverStrategy<VectorType>::solve()
           solver->setup_preconditioner();
         }
 
-      if (this->params.force_rhs_calculation || outer_iteration == 0)
+      const bool assemble_rhs_this_iteration =
+        this->params.force_rhs_calculation || this->outer_iteration == 0;
+      if (assemble_rhs_this_iteration)
         solver->assemble_system_rhs();
 
-      if (outer_iteration == 0)
+      if (this->outer_iteration == 0)
         {
           auto &system_rhs = solver->get_system_rhs();
           current_res      = system_rhs.l2_norm() / rescale_metric;
@@ -108,9 +110,17 @@ InexactNewtonNonLinearSolverStrategy<VectorType>::solve()
 
       if (this->params.verbosity != Parameters::Verbosity::quiet)
         {
-          solver->pcout << "Newton iteration: " << outer_iteration
+          solver->pcout << "Newton iteration: " << this->outer_iteration
                         << "  - Residual:  " << current_res << std::endl;
         }
+
+      if (this->skip_linear_solve_if_fresh_rhs_is_already_converged(
+            assemble_rhs_this_iteration,
+            rescale_metric,
+            current_res,
+            last_res,
+            global_res))
+        continue;
 
       solver->solve_linear_system();
       double last_alpha_res = current_res;
@@ -183,13 +193,13 @@ InexactNewtonNonLinearSolverStrategy<VectorType>::solve()
       global_res       = solver->get_current_residual() / rescale_metric;
       present_solution = evaluation_point;
       last_res         = current_res;
-      ++outer_iteration;
+      ++this->outer_iteration;
     }
 
   // If the non-linear solver has not converged abort simulation if
   // abort_at_convergence_failure=true
   if ((global_res > this->params.tolerance) &&
-      outer_iteration >= this->params.max_iterations &&
+      this->outer_iteration >= this->params.max_iterations &&
       this->params.abort_at_convergence_failure)
     {
       throw(std::runtime_error(

@@ -6,6 +6,8 @@
 
 #include <core/parameters.h>
 
+#include <deal.II/base/exceptions.h>
+
 template <typename VectorType>
 class PhysicsSolver;
 
@@ -68,6 +70,41 @@ public:
 
 protected:
   /**
+   * @brief Skip the inner linear solve when the current Newton evaluation
+   * already produced a freshly assembled RHS whose residual is below the
+   * nonlinear tolerance.
+   *
+   * This shortcut is only valid when the RHS was assembled for the current
+   * evaluation point. Otherwise the residual may still correspond to an older
+   * state and skipping the solve would incorrectly reuse stale information.
+   *
+   * Solvers must opt into this behavior explicitly through
+   * allow_skip_linear_solve_when_residual_is_below_tolerance(). The shortcut
+   * is always safe on Newton iteration 0 because the RHS is assembled
+   * unconditionally there. On later Newton iterations, it requires
+   * force_rhs_calculation so that the converged residual comes from a fresh
+   * RHS assembled at the current Newton evaluation point.
+   *
+   * @param[in] rhs_was_assembled_this_iteration Whether the current Newton
+   * iteration assembled the RHS at the current evaluation point.
+   * @param[in] rescale_metric Residual rescaling factor used by the nonlinear
+   * solver strategy.
+   * @param[in,out] current_res Current matrix residual norm.
+   * @param[in,out] last_res Last accepted matrix residual norm.
+   * @param[in,out] global_res Current nonlinear residual reported by the
+   * physics solver.
+   * @return true if the linear solve was skipped and the Newton state was
+   * advanced consistently, false otherwise.
+   */
+  bool
+  skip_linear_solve_if_fresh_rhs_is_already_converged(
+    const bool   rhs_was_assembled_this_iteration,
+    const double rescale_metric,
+    double      &current_res,
+    double      &last_res,
+    double      &global_res);
+
+  /**
    * @brief Physics solver for which we need a non-linear solver.
    *
    */
@@ -100,5 +137,45 @@ PhysicsSolverStrategy<VectorType>::PhysicsSolverStrategy(
   PhysicsSolver<VectorType> *physics_solver)
   : physics_solver(physics_solver)
 {}
+
+template <typename VectorType>
+bool
+PhysicsSolverStrategy<VectorType>::
+  skip_linear_solve_if_fresh_rhs_is_already_converged(
+    const bool   rhs_was_assembled_this_iteration,
+    const double rescale_metric,
+    double      &current_res,
+    double      &last_res,
+    double      &global_res)
+{
+  PhysicsSolver<VectorType> *solver = this->physics_solver;
+
+  if (!solver->allow_skip_linear_solve_when_residual_is_below_tolerance())
+    return false;
+
+  if (!rhs_was_assembled_this_iteration)
+    return false;
+
+  const double assembled_res =
+    solver->get_system_rhs().l2_norm() / rescale_metric;
+  if (assembled_res > this->params.tolerance)
+    return false;
+
+  AssertThrow(
+    this->params.force_rhs_calculation || this->outer_iteration == 0,
+    ExcMessage(
+      "Skipping the linear solve based on the assembled RHS residual requires "
+      "either Newton iteration 0, where the RHS is always freshly assembled, "
+      "or 'force rhs calculation = true' on later Newton iterations."));
+
+  current_res                 = assembled_res;
+  solver->get_newton_update() = 0;
+  global_res                  = solver->get_current_residual() / rescale_metric;
+  solver->get_present_solution() = solver->get_evaluation_point();
+  last_res                       = current_res;
+  ++this->outer_iteration;
+
+  return true;
+}
 
 #endif

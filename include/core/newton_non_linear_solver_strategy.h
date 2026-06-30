@@ -81,7 +81,9 @@ NewtonNonLinearSolverStrategy<VectorType>::solve()
       if (!this->params.reuse_preconditioner || this->outer_iteration == 0)
         solver->setup_preconditioner();
 
-      if (this->params.force_rhs_calculation || this->outer_iteration == 0)
+      const bool assemble_rhs_this_iteration =
+        this->params.force_rhs_calculation || this->outer_iteration == 0;
+      if (assemble_rhs_this_iteration)
         solver->assemble_system_rhs();
 
       if (this->outer_iteration == 0)
@@ -96,6 +98,14 @@ NewtonNonLinearSolverStrategy<VectorType>::solve()
           solver->pcout << "Newton iteration: " << this->outer_iteration
                         << "  - Residual:  " << current_res << std::endl;
         }
+
+      if (this->skip_linear_solve_if_fresh_rhs_is_already_converged(
+            assemble_rhs_this_iteration,
+            rescale_metric,
+            current_res,
+            last_res,
+            global_res))
+        continue;
 
       solver->solve_linear_system();
       double last_alpha_res = current_res;

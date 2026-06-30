@@ -144,6 +144,23 @@ public:
   }
 
   /**
+   * @brief Return whether this solver may skip the inner linear solve when the
+   * freshly assembled residual is already below the nonlinear tolerance.
+   *
+   * The default behavior is conservative and keeps the linear solve enabled.
+   * Solvers whose outer nonlinear residual may remain active for reasons other
+   * than the assembled linear-system residual can override this hook.
+   *
+   * @return `true` if the solver allows skipping the linear solve once the
+   * assembled residual is already below the nonlinear tolerance.
+   */
+  virtual bool
+  allow_skip_linear_solve_when_residual_is_below_tolerance() const
+  {
+    return false;
+  }
+
+  /**
    * @brief Return the current newton iteration of this physics solver.
    */
   inline unsigned int

@@ -544,6 +544,25 @@ Return a bool that describes  if a cell contains a specific point
                        ->particle_nonlinear_tolerance;
     return std::max(this->system_rhs.l2_norm(), particle_residual * scaling);
   }
+
+  /**
+   * @brief Sharp may keep the outer nonlinear iteration active because of the
+   * particle-coupling residual even when the assembled fluid residual is
+   * already below tolerance.
+   *
+   * In that situation, the inner fluid linear solve is unnecessary and may be
+   * skipped while the outer coupled iteration continues.
+   *
+   * @return `true` because Sharp allows skipping the inner fluid linear solve
+   * once the assembled fluid residual is already below the nonlinear
+   * tolerance.
+   */
+  bool
+  allow_skip_linear_solve_when_residual_is_below_tolerance() const override
+  {
+    return true;
+  }
+
   /**
    * @brief
    *This function updates the precalculations for every immersed particle
