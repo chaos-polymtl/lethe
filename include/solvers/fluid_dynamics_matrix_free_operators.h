@@ -426,7 +426,6 @@ public:
   void
   evaluate_prescribed_neumann_traction();
 
-
   /**
    * @brief Store relevant values of the vector of the last newton step to use it
    * in the Jacobian and pre-calculate the stabilization parameter tau.

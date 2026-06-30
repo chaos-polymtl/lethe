@@ -2063,7 +2063,7 @@ NavierStokesFunctionDefined<dim>::value(const Point<dim>  &point,
 template <int dim>
 class NavierStokesTractionFunctionDefined : public Function<dim>
 {
-  Functions::ParsedFunction<dim> *traction_fn;
+  std::unique_ptr<Functions::ParsedFunction<dim>> traction_fn;
 
   /**
    * @brief Constructor that initializes the traction_fn , a pointer to
@@ -2089,9 +2089,9 @@ public:
 /**
  * @brief Calculates the value of a Function-type Navier-Stokes traction boundary condition.
  *
- * @param point A point at which the function will be evaluated.
+ * @param[in] point A point at which the function will be evaluated.
  *
- * @param component The vector component of the boundary condition (0-x, 1-y and 2-z).
+ * @param[in] component The vector component of the boundary condition (0-x, 1-y and 2-z).
  */
 
 

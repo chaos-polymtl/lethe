@@ -23,7 +23,7 @@ or in Einstein notation:
     \nu \partial_i u_j n_j  - p n_i - \beta ( u_k n_k)_{-} u_i = 0
 
 where :math:`\beta` is a constant  and :math:`(\mathbf{u}\cdot \mathbf{n})_{-}` is :math:`\min (0,\mathbf{u}\cdot \mathbf{n})`. We refer the reader to the work of `Arndt et al 2015 <https://www.mathsim.eu/~darndt/files/ENUMATH_2015.pdf>`_  for more detail.
-* ``neumann traction`` imposes Neumann boundary conditions on the Neumann part of the boundary of the domain. (:math: `\mathrm{traction\_fn}` is a vector-valued function prescribed on the Neuman boundary.)
+* ``neumann traction`` imposes Neumann boundary conditions on the boundary. (:math: `\mathrm{traction\_fn}` is a vector-valued function prescribed on the Neuman boundary.)
 
 .. math::
     \nu \nabla \mathbf{u} \cdot \mathbf{n} - p \mathcal{I} \cdot \mathbf{n} = \mathrm{traction\_fn}

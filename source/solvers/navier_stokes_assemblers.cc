@@ -2264,7 +2264,6 @@ NeumannTractionBoundaryCondition<dim>::assemble_rhs(
                                              std::vector<Tensor<1, dim>>(
                                                scratch_data.n_faces_q_points));
 
-
   auto &local_rhs = copy_data.local_rhs;
 
   // Neumann traction boundary condition, loop on faces
@@ -2273,7 +2272,9 @@ NeumannTractionBoundaryCondition<dim>::assemble_rhs(
   // where:
   //   - Γ_N is the boundary domain where the Neumann traction condition is
   //   applied
-  //   - v is the velocity test function,
+  //   - v is the velocity test function in theory (However, in lethe for the sake of using the test
+  //    function that has pressure components, we also have an extra pressure component in the
+  //    traction function but it is always zero and does not affect the result),
   //   - traction_fn is the prescribed traction on the boundary Γ_N.
 
   for (unsigned int f = 0; f < scratch_data.n_faces; ++f)

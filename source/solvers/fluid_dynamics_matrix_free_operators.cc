@@ -911,8 +911,6 @@ NavierStokesOperatorBase<dim, number>::evaluate_prescribed_neumann_traction()
     }
 }
 
-
-
 template <int dim, typename number>
 void
 NavierStokesOperatorBase<dim, number>::
