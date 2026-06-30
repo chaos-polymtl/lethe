@@ -304,8 +304,6 @@ InsertionVolume<dim, PropertiesIndex>::set_filtered_id_map(
 
       maximum_particle_number *= number_of_particles;
     }
-  maximum_particle_number =
-    std::min(maximum_particle_number, insertion_information.inserted_this_step);
   // Now, we know that the ID before the acceptance function will go from 0
   // to maximum_particle_number - 1 .
   // We count the number of insertion points that respect the acceptance
