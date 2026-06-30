@@ -488,10 +488,9 @@ private:
   // Evaporation model
   std::shared_ptr<EvaporationModel> evaporation_model;
 };
-e
 
-  /**
-   * @brief Assembles the core of the Navier-Stokes equation
+/**
+ * @brief Assembles the core of the Navier-Stokes equation
    * using a Rheological model to predict non-Newtonian behaviors
    *
    * @tparam dim An integer that denotes the number of spatial dimensions
