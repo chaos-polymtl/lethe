@@ -490,16 +490,16 @@ private:
 };
 e
 
-/**
- * @brief Assembles the core of the Navier-Stokes equation
- * using a Rheological model to predict non-Newtonian behaviors
- *
- * @tparam dim An integer that denotes the number of spatial dimensions
- *
- * @ingroup assemblers
- */
-template <int dim>
-class GLSNavierStokesCLSAssemblerNonNewtonianCore
+  /**
+   * @brief Assembles the core of the Navier-Stokes equation
+   * using a Rheological model to predict non-Newtonian behaviors
+   *
+   * @tparam dim An integer that denotes the number of spatial dimensions
+   *
+   * @ingroup assemblers
+   */
+  template <int dim>
+  class GLSNavierStokesCLSAssemblerNonNewtonianCore
   : public NavierStokesAssemblerBase<dim>
 {
 public:
