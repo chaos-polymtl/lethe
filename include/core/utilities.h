@@ -993,7 +993,7 @@ template <int dim>
 inline double
 point_to_angle(const Point<dim>  &point,
                const Point<dim>  &center_of_rotation = Point<dim>(),
-               const unsigned int rotation_axis = 2)
+               const unsigned int rotation_axis      = 2)
 {
   if constexpr (dim == 3)
     {
