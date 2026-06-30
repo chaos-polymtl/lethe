@@ -9,12 +9,8 @@
 #include <solvers/physical_properties_manager.h>
 #include <solvers/physics_scratch_data.h>
 
-#include <deal.II/dofs/dof_renumbering.h>
-
 #include <deal.II/fe/fe_interface_values.h>
 #include <deal.II/fe/fe_system.h>
-
-#include <deal.II/numerics/vector_tools.h>
 
 using namespace dealii;
 

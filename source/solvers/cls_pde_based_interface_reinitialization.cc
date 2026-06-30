@@ -6,10 +6,14 @@
 #include <solvers/cls_assemblers.h>
 #include <solvers/cls_pde_based_interface_reinitialization.h>
 
+#include <deal.II/dofs/dof_renumbering.h>
+
 #include <deal.II/lac/solver_control.h>
 #include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_solver.h>
+
+#include <deal.II/numerics/vector_tools.h>
 
 template <int dim>
 void

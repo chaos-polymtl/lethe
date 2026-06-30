@@ -20,6 +20,8 @@
 #include <deal.II/distributed/fully_distributed_tria.h>
 #include <deal.II/distributed/grid_refinement.h>
 
+#include <deal.II/dofs/dof_renumbering.h>
+
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_q_bubbles.h>
 #include <deal.II/fe/fe_simplex_p.h>
@@ -29,6 +31,7 @@
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/tria_iterator.h>
 
+#include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/data_out_faces.h>
 #include <deal.II/numerics/data_out_resample.h>
 #include <deal.II/numerics/error_estimator.h>

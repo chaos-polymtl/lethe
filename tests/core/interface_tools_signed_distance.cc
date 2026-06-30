@@ -12,6 +12,7 @@
 #include <deal.II/fe/fe_tools.h>
 #include <deal.II/fe/mapping.h>
 
+#include <deal.II/grid/cell_data.h>
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/tria.h>
 

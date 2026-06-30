@@ -3,6 +3,8 @@
 
 #include <core/fichera_oven_grid.h>
 
+#include <deal.II/grid/grid_generator.h>
+
 template <int dim, int spacedim>
 FicheraOvenGrid<dim, spacedim>::FicheraOvenGrid(
   const std::string &grid_arguments)

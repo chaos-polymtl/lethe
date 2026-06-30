@@ -10,7 +10,6 @@
 #include <solvers/cls_subequations_interface.h>
 #include <solvers/physics_subequations_solver.h>
 
-#include <deal.II/base/timer.h>
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/distributed/tria_base.h>

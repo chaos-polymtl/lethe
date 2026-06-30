@@ -3,6 +3,9 @@
 
 #include <core/grid_birmingham_fluidized_bed.h>
 
+#include <deal.II/grid/grid_generator.h>
+#include <deal.II/grid/grid_tools.h>
+
 template <int dim, int spacedim>
 GridBirminghamFluidizedBed<dim, spacedim>::GridBirminghamFluidizedBed(
   const std::string &grid_arguments)

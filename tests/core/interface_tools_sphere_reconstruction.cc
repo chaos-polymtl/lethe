@@ -9,7 +9,9 @@
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/mapping.h>
 
+#include <deal.II/grid/cell_data.h>
 #include <deal.II/grid/grid_generator.h>
+#include <deal.II/grid/grid_tools.h>
 
 #include <deal.II/numerics/vector_tools.h>
 

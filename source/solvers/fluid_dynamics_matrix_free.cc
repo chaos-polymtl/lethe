@@ -11,6 +11,7 @@
 
 #include <solvers/fluid_dynamics_matrix_free.h>
 
+#include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/grid/grid_tools.h>

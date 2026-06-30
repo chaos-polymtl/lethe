@@ -10,6 +10,7 @@
 #include <deal.II/base/exceptions.h>
 #include <deal.II/base/work_stream.h>
 
+#include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/lac/affine_constraints.h>

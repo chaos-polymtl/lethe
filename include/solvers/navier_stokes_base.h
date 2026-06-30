@@ -44,8 +44,6 @@
 
 #include <deal.II/lac/affine_constraints.h>
 
-#include <deal.II/numerics/data_out.h>
-
 using namespace dealii;
 
 

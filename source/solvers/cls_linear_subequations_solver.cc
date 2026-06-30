@@ -3,6 +3,8 @@
 
 #include <solvers/cls_linear_subequations_solver.h>
 
+#include <deal.II/dofs/dof_renumbering.h>
+
 #include <deal.II/grid/grid_tools.h>
 
 #include <deal.II/lac/solver_control.h>
