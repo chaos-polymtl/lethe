@@ -490,7 +490,15 @@ CustomDistribution::CustomDistribution(
           if (interpolate_diameter_values)
             {
               number_based_cdf[0] = 0.;
-              // Trapezoidal method to do the integral.
+              // Compute the cumulative distribution function (CDF) from the
+              // sampled PDF using the trapezoidal rule:
+              //
+              //   CDF(d_i) = ∫_{d_0}^{d_i} PDF(d) dd
+              //            ≈ Σ_{k=1}^{i}
+              //                (PDF(d_{k-1}) + PDF(d_k))/2 · (d_k - d_{k-1})
+              //
+              // The resulting cumulative values are then normalized so that
+              // CDF(d_last) = 1.
               for (unsigned int i = 1; i < number_d_values; ++i)
                 number_based_cdf[i] =
                   number_based_cdf[i - 1] +
@@ -503,7 +511,7 @@ CustomDistribution::CustomDistribution(
             }
           else // No interpolation
             {
-              // d_probabilities representsba the fractions of every
+              // d_probabilities represents the fractions of every
               // diameter value over the total number. (n_d/N_tot)
               number_based_cdf[0] = d_probabilities[0];
               for (unsigned int i = 1; i < number_d_values; ++i)
@@ -534,18 +542,38 @@ CustomDistribution::CustomDistribution(
               for (unsigned int i = 0; i < number_d_values; ++i)
                 fv[i] = d_probabilities[i] / fv_integral;
 
-              // Use the exact integral of fv(d)/d³ over each segment/bin
+              // Use the exact integral of fv(d)/d³ over each segment/bin.
+              // Between two diameter samples, the normalized volume PDF is
+              // assumed to vary linearly:
+              //
+              //   fv(d) = a_i + b_i d,   d ∈ [d_low, d_high]
+              //
+              // The corresponding number-based PDF is proportional to fv(d)/d³.
+              // Since fv(d) is linear within each interval, the integral over
+              // the bin can be evaluated analytically instead of using
+              // numerical quadrature.
               std::vector<double> segment_integral(number_d_values - 1, 0.0);
               total_integral = 0.0;
 
               for (unsigned int i = 0; i < number_d_values - 1; ++i)
                 {
+                  // Compute the coefficients of the linear interpolation
+                  // fv(d) = a_i + b_i d over the current diameter interval.
+                  // Could you add some comments to describe this part?
                   const double d_low  = diameter_values[i];
                   const double d_high = diameter_values[i + 1];
 
                   const double b_i = (fv[i + 1] - fv[i]) / (d_high - d_low);
                   const double a_i = fv[i] - b_i * d_low;
 
+                  // Antiderivative of (a_i + b_i d)/d³:
+                  //
+                  //   ∫ (a_i + b_i d)/d³ dd
+                  //     = -a_i/(2d²) - b_i/d.
+                  //
+                  // Evaluating this primitive at the interval endpoints gives
+                  // the exact contribution of the current bin to the
+                  // unnormalized number-based CDF.
                   const double F_high =
                     -a_i / (2.0 * d_high * d_high) - b_i / d_high;
                   const double F_low =
@@ -555,7 +583,8 @@ CustomDistribution::CustomDistribution(
                   total_integral += segment_integral[i];
                 }
 
-              // Build the number-based CDF at each node
+              // Build the normalized number-based CDF by accumulating the exact
+              // integral of fv(d)/d³ over each interval.
               number_based_cdf[0] = 0.0;
               for (unsigned int i = 1; i < number_d_values; ++i)
                 number_based_cdf[i] = number_based_cdf[i - 1] +
@@ -711,58 +740,73 @@ CustomDistribution::particle_size_sampling(
           if (weighting_type == DistributionWeightingType::volume_based &&
               function_type == ProbabilityFunctionType::PDF)
             {
-              // The volume-based PDF is assumed piecewise linear:
+              // The volume-based PDF is assumed to be piecewise linear:
               //
               //   fv(d) = a_i + b_i d
               //
               // The number-based CDF used for sampling was obtained by
-              // integrating fv(d)/d^3 exactly. To sample within the bin, invert
-              // the resulting antiderivative
+              // integrating fv(d)/d³ exactly. To sample within the selected
+              // bin, invert the antiderivative
               //
-              //   F(d) = -a_i/(2 d^2) - b_i/d
+              //   F(d) = -a_i/(2d²) - b_i/d,
               //
-              // which leads to a quadratic equation in d.
+              // which results in a quadratic equation for d.
               const double b_i =
                 (fv[index_high] - fv[index_low]) / (d_high - d_low);
               const double a_i = fv[index_low] - b_i * d_low;
 
-              auto antideriv = [a_i, b_i](double d) {
+              auto antideriv = [a_i, b_i](const double d) {
                 return -a_i / (2.0 * d * d) - b_i / d;
               };
 
               const double F_low = antideriv(d_low);
-
-              // Solve for d such that:
-              //   (u_global - cdf_low) * total_integral + F_low = F(d)
-              // i.e.  C = -a_i/(2d²) - b_i/d
-              // Rearranged as a quadratic: 2*C*d² + 2*b_i*d + a_i = 0
+              // Solve for d such that
+              //   (u_global - cdf_low) * total_integral + F_low = F(d),
+              // or equivalently
+              //   C = -a_i/(2d²) - b_i/d.
+              // Rearranging gives
+              //   2*C*d² + 2*b_i*d + a_i = 0.
               const double C = (u_global - cdf_low) * total_integral + F_low;
-
               const double A = 2.0 * C;
               const double B = 2.0 * b_i;
 
-              const double discriminant = B * B - 4.0 * A * a_i;
-              const double sqrt_disc = std::sqrt(std::max(discriminant, 0.0));
+              constexpr double tol = 1e-12;
 
-              // Guard against A ≈ 0 (b_i ≈ 0, i.e. flat fv on this bin),
-              // which degenerates the quadratic into a linear equation:
-              // 2*b_i*d + a_i = 0  ->  d = -a_i / (2*b_i)
-              const double root1 = (-B + sqrt_disc) / (2.0 * A);
-              const double root2 = (-B - sqrt_disc) / (2.0 * A);
+              if (std::abs(A) < tol)
+                {
+                  // Degenerate case: the quadratic reduces to the linear
+                  // equation
+                  //
+                  //   2*b_i*d + a_i = 0.
+                  AssertThrow(
+                    std::abs(B) > tol,
+                    ExcMessage(
+                      "Degenerate analytical CDF inversion encountered."));
 
-              if (root1 >= d_low && root1 <= d_high)
-                sampled_diameter = root1;
-              else if (root2 >= d_low && root2 <= d_high)
-                sampled_diameter = root2;
+                  sampled_diameter = -a_i / B;
+                  sampled_diameter =
+                    std::clamp(sampled_diameter, d_low, d_high);
+                }
               else
                 {
-                  // Fallback: linear interpolation on the CDF.
-                  // Triggers only in degenerate/edge cases (e.g. A ≈ 0
-                  // with no valid analytic root, or floating point
-                  // edge effects at bin boundaries).
+                  const double discriminant =
+                    std::max(B * B - 4.0 * A * a_i, 0.0);
+                  const double sqrt_disc = std::sqrt(discriminant);
 
-                  // This should never happen.
-                  sampled_diameter = d_low + u_local * (d_high - d_low);
+                  const double root1 = (-B + sqrt_disc) / (2.0 * A);
+                  const double root2 = (-B - sqrt_disc) / (2.0 * A);
+
+                  if (root1 >= d_low - tol && root1 <= d_high + tol)
+                    sampled_diameter = std::clamp(root1, d_low, d_high);
+                  else if (root2 >= d_low - tol && root2 <= d_high + tol)
+                    sampled_diameter = std::clamp(root2, d_low, d_high);
+                  else
+                    {
+                      AssertThrow(false,
+                                  ExcMessage(
+                                    "Failed to invert the analytical CDF "
+                                    "within the selected diameter interval."));
+                    }
                 }
             }
           else

@@ -378,7 +378,8 @@ private:
   std::mt19937 gen;
 
   /**
-   * @brief
+   * @brief Defines if the custom distribution is a probability density function
+   * (PDF) or a cumulative density function (CDF).
    */
   const Parameters::Lagrangian::ProbabilityFunctionType function_type;
 
@@ -391,7 +392,7 @@ private:
   // (sum of all per-segment integrals of fv(d)/d³).
   // Only populated when weighting_type == volume_based &&
   // interpolate_diameter_values.
-  double total_integral = 0.0;
+  double total_integral;
 };
 
 /**
