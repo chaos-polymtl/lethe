@@ -3,6 +3,13 @@ All notable changes to the Lethe project will be documented in this file.
 The changelog for the previous releases of Lethe are located in the release_notes folder.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Master] - 2026/06/30
+
+### Added
+
+- MINOR Description (#1965).
+This PR implements Neumann traction boundary condition assembler for both matrix-based and matrix-free solvers to solve for the incompressible Navier-Stokes equations. The feature has been tested with the `method of manufactured solutions - 2d problem` adapted to have Neumann boundary condition on the top edge of the domain. Finally, a test is added for both Matrix-based and Matrix-free Navier-Stokes solvers solving the adapted mms_2d_problem with the `mms_2d_fe2_neumann_traction_navierstokes.prm` to keep track of its changes in the future. [#1965](https://github.com/chaos-polymtl/lethe/pull/1965)
+
 ## [Master] - 2026/06/28
 
 ### Changed
@@ -36,9 +43,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Deprecated
 
 - MAJOR The FEM subsection parameters `velocity order`, `pressure order`, `temperature order`, `tracer order`, `cls order` (and its alias `VOF order`), `void fraction order`, `phase cahn hilliard order`, `potential cahn hilliard order`, `electromagnetics trial order`, and `electromagnetics test order` have been renamed to use `degree` instead of `order` (e.g., `velocity degree`, `pressure degree`). The parameter name `degree` is more adequate, since it refers to the degree of the underlying shape functions that are used. The old names are kept as deprecated aliases and will continue to work but will trigger a deprecation warning. All examples, application tests, and documentation have been updated to use the new names. [#1994](https://github.com/chaos-polymtl/lethe/pull/1994)
-
-
-
 
 ## [Master] - 2026/05/18
 
@@ -86,6 +90,3 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 
 - MAJOR/MINOR/PATCH Description (#PR).
-
-
-

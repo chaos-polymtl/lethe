@@ -2091,7 +2091,8 @@ public:
  *
  * @param[in] point A point at which the function will be evaluated.
  *
- * @param[in] component The vector component of the boundary condition (0-x, 1-y and 2-z).
+ * @param[in] component The vector component of the boundary condition (0-x, 1-y
+ * and 2-z).
  */
 
 
