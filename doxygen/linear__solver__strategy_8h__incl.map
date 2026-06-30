@@ -1,9 +1,11 @@
 <map id="/home/runner/work/lethe/lethe/include/core/linear_solver_strategy.h" name="/home/runner/work/lethe/lethe/include/core/linear_solver_strategy.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="556,5,739,60"/>
-<area shape="rect" id="Node000002" href="$physics__solver__strategy_8h.html" title=" " alt="" coords="572,108,723,148"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="650,60,650,94,645,94,645,60"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="649,5,832,60"/>
+<area shape="rect" id="Node000002" href="$physics__solver__strategy_8h.html" title=" " alt="" coords="665,108,816,148"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="743,60,743,94,738,94,738,60"/>
 <area shape="rect" id="Node000003" href="$parameters_8h.html" title=" " alt="" coords="577,196,718,221"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="650,148,650,182,645,182,645,148"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="720,150,674,189,670,185,716,146"/>
+<area shape="rect" id="Node000042" title=" " alt="" coords="742,196,926,221"/>
+<area shape="poly" id="edge37_Node000002_Node000042" title=" " alt="" coords="765,146,811,185,808,189,762,150"/>
 <area shape="rect" id="Node000004" href="$dimensionality_8h.html" title=" " alt="" coords="5,365,167,390"/>
 <area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="577,216,478,223,364,233,260,250,218,260,187,272,161,289,137,311,102,355,98,352,133,307,157,285,185,267,217,255,259,244,364,228,477,217,576,211"/>
 <area shape="rect" id="Node000005" title=" " alt="" coords="120,533,289,573"/>

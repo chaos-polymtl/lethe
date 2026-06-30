@@ -1,11 +1,11 @@
 <map id="/home/runner/work/lethe/lethe/include/core/kinsol_newton_non_linear_solver_strategy.h" name="/home/runner/work/lethe/lethe/include/core/kinsol_newton_non_linear_solver_strategy.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="1483,5,1681,75"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="1539,5,1737,75"/>
 <area shape="rect" id="Node000002" href="$parameters_8h.html" title=" " alt="" coords="1454,211,1595,236"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1580,75,1571,118,1558,164,1541,200,1536,198,1553,162,1566,117,1574,74"/>
-<area shape="rect" id="Node000041" href="$physics__solver__strategy_8h.html" title=" " alt="" coords="1393,123,1544,163"/>
-<area shape="poly" id="edge51_Node000001_Node000041" title=" " alt="" coords="1545,77,1502,115,1499,111,1542,73"/>
-<area shape="rect" id="Node000042" title=" " alt="" coords="1620,130,1795,155"/>
-<area shape="poly" id="edge53_Node000001_Node000042" title=" " alt="" coords="1626,73,1684,119,1681,124,1622,77"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1595,77,1572,99,1554,124,1538,161,1530,197,1525,196,1533,160,1549,121,1568,95,1591,73"/>
+<area shape="rect" id="Node000041" href="$physics__solver__strategy_8h.html" title=" " alt="" coords="1563,123,1713,163"/>
+<area shape="poly" id="edge51_Node000001_Node000041" title=" " alt="" coords="1641,75,1641,108,1635,108,1635,75"/>
+<area shape="rect" id="Node000043" title=" " alt="" coords="1737,130,1912,155"/>
+<area shape="poly" id="edge54_Node000001_Node000043" title=" " alt="" coords="1702,73,1793,121,1790,126,1699,77"/>
 <area shape="rect" id="Node000003" href="$dimensionality_8h.html" title=" " alt="" coords="5,379,167,405"/>
 <area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="1454,227,1162,229,766,237,569,245,396,255,263,269,217,277,187,286,160,303,137,325,102,369,98,366,133,321,157,299,185,282,216,272,263,264,396,250,569,239,766,232,1162,224,1454,222"/>
 <area shape="rect" id="Node000004" title=" " alt="" coords="120,548,289,588"/>
@@ -92,5 +92,7 @@
 <area shape="rect" id="Node000027" title=" " alt="" coords="2784,555,2839,581"/>
 <area shape="poly" id="edge30_Node000013_Node000027" title=" " alt="" coords="2674,490,2779,546,2776,551,2672,495"/>
 <area shape="poly" id="edge14_Node000014_Node000015" title=" " alt="" coords="2949,579,2978,623,2973,626,2945,582"/>
-<area shape="poly" id="edge52_Node000041_Node000002" title=" " alt="" coords="1484,161,1511,198,1506,201,1480,164"/>
+<area shape="poly" id="edge52_Node000041_Node000002" title=" " alt="" coords="1612,165,1554,205,1551,200,1609,161"/>
+<area shape="rect" id="Node000042" title=" " alt="" coords="1619,211,1803,236"/>
+<area shape="poly" id="edge53_Node000041_Node000042" title=" " alt="" coords="1658,161,1693,199,1689,202,1654,165"/>
 </map>

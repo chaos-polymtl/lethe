@@ -12,11 +12,11 @@
 <g id="Node000001" class="node">
 <title>Node1</title>
 <g id="a_Node000001"><a xlink:title=" ">
-<polygon fill="#999999" stroke="#666666" points="1257,-503 1108,-503 1108,-451 1257,-451 1257,-503"/>
-<text text-anchor="start" x="1116" y="-491" font-family="Helvetica,sans-Serif" font-size="10.00">/home/runner/work/lethe</text>
-<text text-anchor="start" x="1116" y="-480" font-family="Helvetica,sans-Serif" font-size="10.00">/lethe/include/core/kinsol</text>
-<text text-anchor="start" x="1116" y="-469" font-family="Helvetica,sans-Serif" font-size="10.00">_newton_non_linear_solver</text>
-<text text-anchor="middle" x="1182.5" y="-458" font-family="Helvetica,sans-Serif" font-size="10.00">_strategy.h</text>
+<polygon fill="#999999" stroke="#666666" points="1299,-503 1150,-503 1150,-451 1299,-451 1299,-503"/>
+<text text-anchor="start" x="1158" y="-491" font-family="Helvetica,sans-Serif" font-size="10.00">/home/runner/work/lethe</text>
+<text text-anchor="start" x="1158" y="-480" font-family="Helvetica,sans-Serif" font-size="10.00">/lethe/include/core/kinsol</text>
+<text text-anchor="start" x="1158" y="-469" font-family="Helvetica,sans-Serif" font-size="10.00">_newton_non_linear_solver</text>
+<text text-anchor="middle" x="1224.5" y="-458" font-family="Helvetica,sans-Serif" font-size="10.00">_strategy.h</text>
 </a>
 </g>
 </g>
@@ -33,8 +33,8 @@
 <g id="edge1_Node000001_Node000002" class="edge">
 <title>Node1&#45;&gt;Node2</title>
 <g id="a_edge1_Node000001_Node000002"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M1178.78,-450.79C1175.6,-432.24 1170.3,-406.6 1162.5,-385 1159.14,-375.7 1154.22,-365.87 1149.8,-357.83"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="1152.78,-356 1144.78,-349.06 1146.71,-359.48 1152.78,-356"/>
+<path fill="none" stroke="#63b8ff" d="M1190.7,-450.74C1179.34,-440.73 1167.53,-428.41 1159.5,-415 1149.2,-397.8 1144.11,-375.25 1141.65,-359.48"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="1145.1,-358.82 1140.3,-349.37 1138.16,-359.75 1145.1,-358.82"/>
 </a>
 </g>
 </g>
@@ -42,9 +42,9 @@
 <g id="Node000041" class="node">
 <title>Node41</title>
 <g id="a_Node000041"><a xlink:href="physics__solver__strategy_8h.html" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="1154,-415 1041,-415 1041,-385 1154,-385 1154,-415"/>
-<text text-anchor="start" x="1049" y="-403" font-family="Helvetica,sans-Serif" font-size="10.00">core/physics_solver</text>
-<text text-anchor="middle" x="1097.5" y="-392" font-family="Helvetica,sans-Serif" font-size="10.00">_strategy.h</text>
+<polygon fill="white" stroke="#666666" points="1281,-415 1168,-415 1168,-385 1281,-385 1281,-415"/>
+<text text-anchor="start" x="1176" y="-403" font-family="Helvetica,sans-Serif" font-size="10.00">core/physics_solver</text>
+<text text-anchor="middle" x="1224.5" y="-392" font-family="Helvetica,sans-Serif" font-size="10.00">_strategy.h</text>
 </a>
 </g>
 </g>
@@ -52,26 +52,26 @@
 <g id="edge51_Node000001_Node000041" class="edge">
 <title>Node1&#45;&gt;Node41</title>
 <g id="a_edge51_Node000001_Node000041"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M1153.72,-450.61C1143.23,-441.35 1131.5,-431 1121.47,-422.15"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="1123.67,-419.42 1113.85,-415.43 1119.03,-424.67 1123.67,-419.42"/>
+<path fill="none" stroke="#63b8ff" d="M1224.5,-450.61C1224.5,-442.54 1224.5,-433.64 1224.5,-425.63"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="1228,-425.43 1224.5,-415.43 1221,-425.43 1228,-425.43"/>
 </a>
 </g>
 </g>
-<!-- Node42 -->
-<g id="Node000042" class="node">
-<title>Node42</title>
-<g id="a_Node000042"><a xlink:title=" ">
-<polygon fill="#e0e0e0" stroke="#999999" points="1342,-409.5 1211,-409.5 1211,-390.5 1342,-390.5 1342,-409.5"/>
-<text text-anchor="middle" x="1276.5" y="-397.5" font-family="Helvetica,sans-Serif" font-size="10.00">deal.II/sundials/kinsol.h</text>
+<!-- Node43 -->
+<g id="Node000043" class="node">
+<title>Node43</title>
+<g id="a_Node000043"><a xlink:title=" ">
+<polygon fill="#e0e0e0" stroke="#999999" points="1430,-409.5 1299,-409.5 1299,-390.5 1430,-390.5 1430,-409.5"/>
+<text text-anchor="middle" x="1364.5" y="-397.5" font-family="Helvetica,sans-Serif" font-size="10.00">deal.II/sundials/kinsol.h</text>
 </a>
 </g>
 </g>
-<!-- Node1&#45;&gt;Node42 -->
-<g id="edge53_Node000001_Node000042" class="edge">
-<title>Node1&#45;&gt;Node42</title>
-<g id="a_edge53_Node000001_Node000042"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M1214.06,-450.82C1228.62,-439.2 1245.41,-425.81 1257.9,-415.84"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="1260.16,-418.52 1265.79,-409.54 1255.79,-413.05 1260.16,-418.52"/>
+<!-- Node1&#45;&gt;Node43 -->
+<g id="edge54_Node000001_Node000043" class="edge">
+<title>Node1&#45;&gt;Node43</title>
+<g id="a_edge54_Node000001_Node000043"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M1271.51,-450.82C1294.34,-438.59 1320.85,-424.39 1339.7,-414.28"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="1341.39,-417.35 1348.55,-409.54 1338.08,-411.18 1341.39,-417.35"/>
 </a>
 </g>
 </g>
@@ -867,8 +867,26 @@
 <g id="edge52_Node000041_Node000002" class="edge">
 <title>Node41&#45;&gt;Node2</title>
 <g id="a_edge52_Node000041_Node000002"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M1107.67,-384.84C1113.58,-376.61 1121.06,-366.18 1127.29,-357.51"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="1130.22,-359.43 1133.21,-349.27 1124.53,-355.35 1130.22,-359.43"/>
+<path fill="none" stroke="#63b8ff" d="M1203.92,-384.84C1190.83,-375.83 1173.91,-364.18 1160.7,-355.09"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="1162.46,-352.05 1152.24,-349.27 1158.49,-357.82 1162.46,-352.05"/>
+</a>
+</g>
+</g>
+<!-- Node42 -->
+<g id="Node000042" class="node">
+<title>Node42</title>
+<g id="a_Node000042"><a xlink:title=" ">
+<polygon fill="#e0e0e0" stroke="#999999" points="1348.5,-349 1210.5,-349 1210.5,-330 1348.5,-330 1348.5,-349"/>
+<text text-anchor="middle" x="1279.5" y="-337" font-family="Helvetica,sans-Serif" font-size="10.00">deal.II/base/exceptions.h</text>
+</a>
+</g>
+</g>
+<!-- Node41&#45;&gt;Node42 -->
+<g id="edge53_Node000041_Node000042" class="edge">
+<title>Node41&#45;&gt;Node42</title>
+<g id="a_edge53_Node000041_Node000042"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M1237.81,-384.84C1245.8,-376.35 1255.98,-365.52 1264.28,-356.69"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="1266.96,-358.95 1271.26,-349.27 1261.86,-354.15 1266.96,-358.95"/>
 </a>
 </g>
 </g>

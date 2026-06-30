@@ -12,11 +12,11 @@
 <g id="Node000001" class="node">
 <title>Node1</title>
 <g id="a_Node000001"><a xlink:title=" ">
-<polygon fill="#999999" stroke="#666666" points="607,-437 458,-437 458,-385 607,-385 607,-437"/>
-<text text-anchor="start" x="466" y="-425" font-family="Helvetica,sans-Serif" font-size="10.00">/home/runner/work/lethe</text>
-<text text-anchor="start" x="466" y="-414" font-family="Helvetica,sans-Serif" font-size="10.00">/lethe/include/core/inexact</text>
-<text text-anchor="start" x="466" y="-403" font-family="Helvetica,sans-Serif" font-size="10.00">_newton_non_linear_solver</text>
-<text text-anchor="middle" x="532.5" y="-392" font-family="Helvetica,sans-Serif" font-size="10.00">_strategy.h</text>
+<polygon fill="#999999" stroke="#666666" points="677,-437 528,-437 528,-385 677,-385 677,-437"/>
+<text text-anchor="start" x="536" y="-425" font-family="Helvetica,sans-Serif" font-size="10.00">/home/runner/work/lethe</text>
+<text text-anchor="start" x="536" y="-414" font-family="Helvetica,sans-Serif" font-size="10.00">/lethe/include/core/inexact</text>
+<text text-anchor="start" x="536" y="-403" font-family="Helvetica,sans-Serif" font-size="10.00">_newton_non_linear_solver</text>
+<text text-anchor="middle" x="602.5" y="-392" font-family="Helvetica,sans-Serif" font-size="10.00">_strategy.h</text>
 </a>
 </g>
 </g>
@@ -24,9 +24,9 @@
 <g id="Node000002" class="node">
 <title>Node2</title>
 <g id="a_Node000002"><a xlink:href="physics__solver__strategy_8h.html" target="_top" xlink:title=" ">
-<polygon fill="white" stroke="#666666" points="538,-349 425,-349 425,-319 538,-319 538,-349"/>
-<text text-anchor="start" x="433" y="-337" font-family="Helvetica,sans-Serif" font-size="10.00">core/physics_solver</text>
-<text text-anchor="middle" x="481.5" y="-326" font-family="Helvetica,sans-Serif" font-size="10.00">_strategy.h</text>
+<polygon fill="white" stroke="#666666" points="608,-349 495,-349 495,-319 608,-319 608,-349"/>
+<text text-anchor="start" x="503" y="-337" font-family="Helvetica,sans-Serif" font-size="10.00">core/physics_solver</text>
+<text text-anchor="middle" x="551.5" y="-326" font-family="Helvetica,sans-Serif" font-size="10.00">_strategy.h</text>
 </a>
 </g>
 </g>
@@ -34,26 +34,26 @@
 <g id="edge1_Node000001_Node000002" class="edge">
 <title>Node1&#45;&gt;Node2</title>
 <g id="a_edge1_Node000001_Node000002"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M515.23,-384.61C509.31,-375.9 502.73,-366.22 496.96,-357.74"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="499.83,-355.73 491.31,-349.43 494.04,-359.66 499.83,-355.73"/>
+<path fill="none" stroke="#63b8ff" d="M585.23,-384.61C579.31,-375.9 572.73,-366.22 566.96,-357.74"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="569.83,-355.73 561.31,-349.43 564.04,-359.66 569.83,-355.73"/>
 </a>
 </g>
 </g>
-<!-- Node42 -->
-<g id="Node000042" class="node">
-<title>Node42</title>
-<g id="a_Node000042"><a xlink:title=" ">
-<polygon fill="#e0e0e0" stroke="#999999" points="612.5,-343.5 556.5,-343.5 556.5,-324.5 612.5,-324.5 612.5,-343.5"/>
-<text text-anchor="middle" x="584.5" y="-331.5" font-family="Helvetica,sans-Serif" font-size="10.00">iomanip</text>
+<!-- Node43 -->
+<g id="Node000043" class="node">
+<title>Node43</title>
+<g id="a_Node000043"><a xlink:title=" ">
+<polygon fill="#e0e0e0" stroke="#999999" points="682.5,-343.5 626.5,-343.5 626.5,-324.5 682.5,-324.5 682.5,-343.5"/>
+<text text-anchor="middle" x="654.5" y="-331.5" font-family="Helvetica,sans-Serif" font-size="10.00">iomanip</text>
 </a>
 </g>
 </g>
-<!-- Node1&#45;&gt;Node42 -->
-<g id="edge37_Node000001_Node000042" class="edge">
-<title>Node1&#45;&gt;Node42</title>
-<g id="a_edge37_Node000001_Node000042"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M550.1,-384.61C557.52,-373.92 565.95,-361.75 572.61,-352.15"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="575.54,-354.06 578.36,-343.85 569.79,-350.08 575.54,-354.06"/>
+<!-- Node1&#45;&gt;Node43 -->
+<g id="edge38_Node000001_Node000043" class="edge">
+<title>Node1&#45;&gt;Node43</title>
+<g id="a_edge38_Node000001_Node000043"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M620.1,-384.61C627.52,-373.92 635.95,-361.75 642.61,-352.15"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="645.54,-354.06 648.36,-343.85 639.79,-350.08 645.54,-354.06"/>
 </a>
 </g>
 </g>
@@ -70,8 +70,26 @@
 <g id="edge2_Node000002_Node000003" class="edge">
 <title>Node2&#45;&gt;Node3</title>
 <g id="a_edge2_Node000002_Node000003"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M481.5,-318.84C481.5,-311.21 481.5,-301.7 481.5,-293.45"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="485,-293.27 481.5,-283.27 478,-293.27 485,-293.27"/>
+<path fill="none" stroke="#63b8ff" d="M534.55,-318.84C524.08,-310.09 510.64,-298.85 499.91,-289.88"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="501.91,-286.99 491.99,-283.27 497.42,-292.36 501.91,-286.99"/>
+</a>
+</g>
+</g>
+<!-- Node42 -->
+<g id="Node000042" class="node">
+<title>Node42</title>
+<g id="a_Node000042"><a xlink:title=" ">
+<polygon fill="#e0e0e0" stroke="#999999" points="690.5,-283 552.5,-283 552.5,-264 690.5,-264 690.5,-283"/>
+<text text-anchor="middle" x="621.5" y="-271" font-family="Helvetica,sans-Serif" font-size="10.00">deal.II/base/exceptions.h</text>
+</a>
+</g>
+</g>
+<!-- Node2&#45;&gt;Node42 -->
+<g id="edge37_Node000002_Node000042" class="edge">
+<title>Node2&#45;&gt;Node42</title>
+<g id="a_edge37_Node000002_Node000042"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M568.45,-318.84C578.92,-310.09 592.36,-298.85 603.09,-289.88"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="605.58,-292.36 611.01,-283.27 601.09,-286.99 605.58,-292.36"/>
 </a>
 </g>
 </g>

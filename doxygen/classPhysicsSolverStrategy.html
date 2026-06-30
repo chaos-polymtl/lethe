@@ -87,6 +87,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classPhysicsSolverStrategy-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">PhysicsSolverStrategy&lt; VectorType &gt; Class Template Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div></div>
@@ -113,6 +114,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a2ad1ef5da5e4c5b832823e55147697c1" id="r_a2ad1ef5da5e4c5b832823e55147697c1"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolverStrategy.html#a2ad1ef5da5e4c5b832823e55147697c1">get_current_newton_iteration</a> () const</td></tr>
 <tr class="separator:a2ad1ef5da5e4c5b832823e55147697c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:a7531a81e5d192c35126c094479614eec" id="r_a7531a81e5d192c35126c094479614eec"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolverStrategy.html#a7531a81e5d192c35126c094479614eec">skip_linear_solve_if_fresh_rhs_is_already_converged</a> (const bool rhs_was_assembled_this_iteration, const double rescale_metric, double &amp;current_res, double &amp;last_res, double &amp;global_res)</td></tr>
+<tr class="separator:a7531a81e5d192c35126c094479614eec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
 <tr class="memitem:a0b8f9e4ec6708d9be51dea2bc5ad628d" id="r_a0b8f9e4ec6708d9be51dea2bc5ad628d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classPhysicsSolver.html">PhysicsSolver</a>&lt; <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPhysicsSolverStrategy.html#a0b8f9e4ec6708d9be51dea2bc5ad628d">physics_solver</a></td></tr>
@@ -126,7 +132,7 @@ Protected Attributes</h2></td></tr>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a>&gt;<br />
 class PhysicsSolverStrategy&lt; VectorType &gt;</div><p>Base class that works as an interface for all solver strategies (either non-linear or linear) for all systems of equations. </p>
 
-<p class="definition">Definition at line <a class="el" href="physics__solver__strategy_8h_source.html#l00017">17</a> of file <a class="el" href="physics__solver__strategy_8h_source.html">physics_solver_strategy.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physics__solver__strategy_8h_source.html#l00019">19</a> of file <a class="el" href="physics__solver__strategy_8h_source.html">physics_solver_strategy.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a9635f305d7abe092eee3262561ba371a" name="a9635f305d7abe092eee3262561ba371a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9635f305d7abe092eee3262561ba371a">&#9670;&#160;</a></span>PhysicsSolverStrategy() <span class="overload">[1/2]</span></h2>
@@ -165,7 +171,7 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="physics__solver__strategy_8h_source.html#l00090">90</a> of file <a class="el" href="physics__solver__strategy_8h_source.html">physics_solver_strategy.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physics__solver__strategy_8h_source.html#l00127">127</a> of file <a class="el" href="physics__solver__strategy_8h_source.html">physics_solver_strategy.h</a>.</p>
 
 </div>
 </div>
@@ -195,7 +201,7 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="physics__solver__strategy_8h_source.html#l00099">99</a> of file <a class="el" href="physics__solver__strategy_8h_source.html">physics_solver_strategy.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physics__solver__strategy_8h_source.html#l00136">136</a> of file <a class="el" href="physics__solver__strategy_8h_source.html">physics_solver_strategy.h</a>.</p>
 
 </div>
 </div>
@@ -226,7 +232,7 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
 
 <p>Destructor. </p>
 
-<p class="definition">Definition at line <a class="el" href="physics__solver__strategy_8h_source.html#l00046">46</a> of file <a class="el" href="physics__solver__strategy_8h_source.html">physics_solver_strategy.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physics__solver__strategy_8h_source.html#l00048">48</a> of file <a class="el" href="physics__solver__strategy_8h_source.html">physics_solver_strategy.h</a>.</p>
 
 </div>
 </div>
@@ -259,9 +265,84 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
 <p>Get the current newton iteration. </p>
 <dl class="section return"><dt>Returns</dt><dd>Iteration number. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="physics__solver__strategy_8h_source.html#l00064">64</a> of file <a class="el" href="physics__solver__strategy_8h_source.html">physics_solver_strategy.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physics__solver__strategy_8h_source.html#l00066">66</a> of file <a class="el" href="physics__solver__strategy_8h_source.html">physics_solver_strategy.h</a>.</p>
 
-<p class="reference">References <a class="el" href="physics__solver__strategy_8h_source.html#l00086">PhysicsSolverStrategy&lt; VectorType &gt;::outer_iteration</a>.</p>
+<p class="reference">References <a class="el" href="physics__solver__strategy_8h_source.html#l00123">PhysicsSolverStrategy&lt; VectorType &gt;::outer_iteration</a>.</p>
+
+</div>
+</div>
+<a id="a7531a81e5d192c35126c094479614eec" name="a7531a81e5d192c35126c094479614eec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7531a81e5d192c35126c094479614eec">&#9670;&#160;</a></span>skip_linear_solve_if_fresh_rhs_is_already_converged()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="classPhysicsSolverStrategy.html">PhysicsSolverStrategy</a>&lt; <a class="el" href="time__harmonic__maxwell_8h.html#a5114f84176ad5081553f88d2b5d2525e">VectorType</a> &gt;::skip_linear_solve_if_fresh_rhs_is_already_converged </td>
+          <td>(</td>
+          <td class="paramtype">const bool&#160;</td>
+          <td class="paramname"><em>rhs_was_assembled_this_iteration</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>rescale_metric</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double &amp;&#160;</td>
+          <td class="paramname"><em>current_res</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double &amp;&#160;</td>
+          <td class="paramname"><em>last_res</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double &amp;&#160;</td>
+          <td class="paramname"><em>global_res</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Skip the inner linear solve when the current Newton evaluation already produced a freshly assembled RHS whose residual is below the nonlinear tolerance. </p>
+<p>This shortcut is only valid when the RHS was assembled for the current evaluation point. Otherwise the residual may still correspond to an older state and skipping the solve would incorrectly reuse stale information.</p>
+<p>Solvers must opt into this behavior explicitly through allow_skip_linear_solve_when_residual_is_below_tolerance(). The shortcut is always safe on Newton iteration 0 because the RHS is assembled unconditionally there. On later Newton iterations, it requires force_rhs_calculation so that the converged residual comes from a fresh RHS assembled at the current Newton evaluation point.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">rhs_was_assembled_this_iteration</td><td>Whether the current Newton iteration assembled the RHS at the current evaluation point. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rescale_metric</td><td>Residual rescaling factor used by the nonlinear solver strategy. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">current_res</td><td>Current matrix residual norm. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">last_res</td><td>Last accepted matrix residual norm. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">global_res</td><td>Current nonlinear residual reported by the physics solver. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the linear solve was skipped and the Newton state was advanced consistently, false otherwise. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="physics__solver__strategy_8h_source.html#l00143">143</a> of file <a class="el" href="physics__solver__strategy_8h_source.html">physics_solver_strategy.h</a>.</p>
+
+<p class="reference">References <a class="el" href="physics__solver_8h_source.html#l00158">PhysicsSolver&lt; VectorType &gt;::allow_skip_linear_solve_when_residual_is_below_tolerance()</a>, <a class="el" href="physics__solver_8h_source.html#l00140">PhysicsSolver&lt; VectorType &gt;::get_current_residual()</a>, <a class="el" href="classPhysicsSolver.html#afb198eb8763f9770a48edccd21073731">PhysicsSolver&lt; VectorType &gt;::get_evaluation_point()</a>, <a class="el" href="classPhysicsSolver.html#afb66d0340d77e712bca30814eef04e5d">PhysicsSolver&lt; VectorType &gt;::get_newton_update()</a>, <a class="el" href="classPhysicsSolver.html#a0a64669b4bbd93475dc816a8291a588f">PhysicsSolver&lt; VectorType &gt;::get_present_solution()</a>, and <a class="el" href="classPhysicsSolver.html#aaadb8be69e716aaa9541f4984a20508f">PhysicsSolver&lt; VectorType &gt;::get_system_rhs()</a>.</p>
 
 </div>
 </div>
@@ -321,7 +402,7 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
 
 <p>Number of current Newton iteration. </p>
 
-<p class="definition">Definition at line <a class="el" href="physics__solver__strategy_8h_source.html#l00086">86</a> of file <a class="el" href="physics__solver__strategy_8h_source.html">physics_solver_strategy.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physics__solver__strategy_8h_source.html#l00123">123</a> of file <a class="el" href="physics__solver__strategy_8h_source.html">physics_solver_strategy.h</a>.</p>
 
 </div>
 </div>
@@ -349,7 +430,7 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
 
 <p>Non linear solver parameters. </p>
 
-<p class="definition">Definition at line <a class="el" href="physics__solver__strategy_8h_source.html#l00080">80</a> of file <a class="el" href="physics__solver__strategy_8h_source.html">physics_solver_strategy.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physics__solver__strategy_8h_source.html#l00117">117</a> of file <a class="el" href="physics__solver__strategy_8h_source.html">physics_solver_strategy.h</a>.</p>
 
 </div>
 </div>
@@ -377,7 +458,7 @@ template&lt;typename <a class="el" href="time__harmonic__maxwell_8h.html#a5114f8
 
 <p>Physics solver for which we need a non-linear solver. </p>
 
-<p class="definition">Definition at line <a class="el" href="physics__solver__strategy_8h_source.html#l00074">74</a> of file <a class="el" href="physics__solver__strategy_8h_source.html">physics_solver_strategy.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="physics__solver__strategy_8h_source.html#l00111">111</a> of file <a class="el" href="physics__solver__strategy_8h_source.html">physics_solver_strategy.h</a>.</p>
 
 </div>
 </div>

@@ -1,11 +1,13 @@
 <map id="/home/runner/work/lethe/lethe/include/core/inexact_newton_non_linear_solver_strategy.h" name="/home/runner/work/lethe/lethe/include/core/inexact_newton_non_linear_solver_strategy.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="616,5,815,75"/>
-<area shape="rect" id="Node000002" href="$physics__solver__strategy_8h.html" title=" " alt="" coords="572,123,723,163"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="695,77,670,113,666,110,690,74"/>
-<area shape="rect" id="Node000042" title=" " alt="" coords="747,130,822,155"/>
-<area shape="poly" id="edge37_Node000001_Node000042" title=" " alt="" coords="741,74,771,117,767,120,737,77"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="709,5,908,75"/>
+<area shape="rect" id="Node000002" href="$physics__solver__strategy_8h.html" title=" " alt="" coords="665,123,816,163"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="788,77,763,113,759,110,783,74"/>
+<area shape="rect" id="Node000043" title=" " alt="" coords="841,130,915,155"/>
+<area shape="poly" id="edge38_Node000001_Node000043" title=" " alt="" coords="834,74,864,117,860,120,830,77"/>
 <area shape="rect" id="Node000003" href="$parameters_8h.html" title=" " alt="" coords="577,211,718,236"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="650,163,650,197,645,197,645,163"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="720,165,674,204,670,199,716,161"/>
+<area shape="rect" id="Node000042" title=" " alt="" coords="742,211,926,236"/>
+<area shape="poly" id="edge37_Node000002_Node000042" title=" " alt="" coords="765,161,811,199,808,204,762,165"/>
 <area shape="rect" id="Node000004" href="$dimensionality_8h.html" title=" " alt="" coords="5,379,167,405"/>
 <area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="577,231,478,237,364,248,260,264,218,275,187,286,161,304,137,326,102,370,98,366,133,322,157,300,185,282,217,270,259,259,364,243,477,232,576,225"/>
 <area shape="rect" id="Node000005" title=" " alt="" coords="120,548,289,588"/>

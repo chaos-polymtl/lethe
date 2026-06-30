@@ -12,10 +12,10 @@
 <g id="Node000001" class="node">
 <title>Node1</title>
 <g id="a_Node000001"><a xlink:title=" ">
-<polygon fill="#999999" stroke="#666666" points="1212.5,-426 1066.5,-426 1066.5,-385 1212.5,-385 1212.5,-426"/>
-<text text-anchor="start" x="1074.5" y="-414" font-family="Helvetica,sans-Serif" font-size="10.00">/home/runner/work/lethe</text>
-<text text-anchor="start" x="1074.5" y="-403" font-family="Helvetica,sans-Serif" font-size="10.00">/lethe/include/core/physics</text>
-<text text-anchor="middle" x="1139.5" y="-392" font-family="Helvetica,sans-Serif" font-size="10.00">_solver_strategy.h</text>
+<polygon fill="#999999" stroke="#666666" points="1282.5,-426 1136.5,-426 1136.5,-385 1282.5,-385 1282.5,-426"/>
+<text text-anchor="start" x="1144.5" y="-414" font-family="Helvetica,sans-Serif" font-size="10.00">/home/runner/work/lethe</text>
+<text text-anchor="start" x="1144.5" y="-403" font-family="Helvetica,sans-Serif" font-size="10.00">/lethe/include/core/physics</text>
+<text text-anchor="middle" x="1209.5" y="-392" font-family="Helvetica,sans-Serif" font-size="10.00">_solver_strategy.h</text>
 </a>
 </g>
 </g>
@@ -32,8 +32,26 @@
 <g id="edge1_Node000001_Node000002" class="edge">
 <title>Node1&#45;&gt;Node2</title>
 <g id="a_edge1_Node000001_Node000002"><a xlink:title=" ">
-<path fill="none" stroke="#63b8ff" d="M1139.5,-384.95C1139.5,-376.85 1139.5,-367.5 1139.5,-359.47"/>
-<polygon fill="#63b8ff" stroke="#63b8ff" points="1143,-359.26 1139.5,-349.26 1136,-359.26 1143,-359.26"/>
+<path fill="none" stroke="#63b8ff" d="M1188.12,-384.95C1178.04,-375.74 1166.18,-364.9 1156.7,-356.23"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="1158.82,-353.43 1149.08,-349.26 1154.1,-358.59 1158.82,-353.43"/>
+</a>
+</g>
+</g>
+<!-- Node41 -->
+<g id="Node000041" class="node">
+<title>Node41</title>
+<g id="a_Node000041"><a xlink:title=" ">
+<polygon fill="#e0e0e0" stroke="#999999" points="1348.5,-349 1210.5,-349 1210.5,-330 1348.5,-330 1348.5,-349"/>
+<text text-anchor="middle" x="1279.5" y="-337" font-family="Helvetica,sans-Serif" font-size="10.00">deal.II/base/exceptions.h</text>
+</a>
+</g>
+</g>
+<!-- Node1&#45;&gt;Node41 -->
+<g id="edge51_Node000001_Node000041" class="edge">
+<title>Node1&#45;&gt;Node41</title>
+<g id="a_edge51_Node000001_Node000041"><a xlink:title=" ">
+<path fill="none" stroke="#63b8ff" d="M1230.88,-384.95C1240.96,-375.74 1252.82,-364.9 1262.3,-356.23"/>
+<polygon fill="#63b8ff" stroke="#63b8ff" points="1264.9,-358.59 1269.92,-349.26 1260.18,-353.43 1264.9,-358.59"/>
 </a>
 </g>
 </g>
