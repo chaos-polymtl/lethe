@@ -261,6 +261,63 @@ namespace InterfaceTools
                                const double              iso_level);
 
   /**
+   * @brief Integrate the surface area of a given level of a level set field and the
+   * volume enclosed by it. The inside volume is computed, defined by negative
+   * values of the level-set field.
+   *
+   * @tparam dim An integer that denotes the dimension of the space in which
+   * the problem is solved.
+   * @tparam VectorType The vector type of the solution vector.
+   *
+   * @param[in] dof_handler DofHandler associated to the triangulation on which
+   * the volume is computed
+   * @param[in] fe Finite element
+   * @param[in] level_set_vector_relevant_copy Level-set vector
+   *
+   * @return Volume enclosed by specified level and its surface area.
+   * The volume is the first value and the surface the second.
+   */
+  template <int dim, typename VectorType>
+  std::pair<Point<dim> , Tensor<1,dim> >
+  integrate_barycenter(
+  const DoFHandler<dim>    &dof_handler,
+  const FiniteElement<dim> &fe,
+  const VectorType         &level_set_vector_relevant_copy,
+  const Mapping<dim>       &mapping_velocity,
+  const DoFHandler<dim>    &dof_handler_velocity,
+  const FiniteElement<dim> &fe_velocity,
+  const VectorType         &velocity_vector);
+
+    /**
+   * @brief Integrate the surface area of a given level of a level set field and the
+   * volume enclosed by it. The inside volume is computed, defined by negative
+   * values of the level-set field.
+   *
+   * @tparam dim An integer that denotes the dimension of the space in which
+   * the problem is solved.
+   * @tparam VectorType The vector type of the solution vector.
+   *
+   * @param[in] dof_handler DofHandler associated to the triangulation on which
+   * the volume is computed
+   * @param[in] fe Finite element
+   * @param[in] level_set_vector_relevant_copy Level-set vector
+   *
+   * @return Volume enclosed by specified level and its surface area.
+   * The volume is the first value and the surface the second.
+   */
+  template <int dim, typename VectorType>
+  std::pair<Point<dim> , Tensor<1,dim> >
+  integrate_barycenter(
+  const DoFHandler<dim>    &dof_handler,
+  const FiniteElement<dim> &fe,
+  const VectorType         &level_set_vector,
+  const Mapping<dim>       &mapping_velocity,
+  const DoFHandler<dim>    &dof_handler_velocity,
+  const FiniteElement<dim> &fe_velocity,
+  const VectorType         &velocity_vector,
+  const double iso_level);
+  
+  /**
    * @brief
    * Reconstruct the interface defined by a given level of a level set field
    * in the domain.

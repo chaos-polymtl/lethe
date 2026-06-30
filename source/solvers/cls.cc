@@ -1668,6 +1668,8 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
     {
       // Calculate volume and mass (this->mass_monitored)
       std::pair<Tensor<1, dim>, Tensor<1, dim>> position_and_velocity;
+      std::pair<Tensor<1, dim>, Tensor<1, dim>> position_and_velocity_geo;
+
 
       if (multiphysics->fluid_dynamics_is_block())
         {
@@ -1717,6 +1719,20 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
                 calculate_barycenter(*this->present_solution,
                                      multiphysics->get_solution(
                                        PhysicsID::fluid_dynamics));
+
+              const DoFHandler<dim> &dof_handler_fd =
+                multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+              position_and_velocity_geo = InterfaceTools::integrate_barycenter(*this->dof_handler,
+               *this->fe,
+               *this->present_solution,
+               *this->mapping,
+               dof_handler_fd,
+               dof_handler_fd.get_fe(),
+               multiphysics->get_solution(
+                              PhysicsID::fluid_dynamics),
+                0.5
+              );      
             }
         }
       if (this_mpi_process == 0)
@@ -1737,13 +1753,27 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
               if constexpr (dim == 3)
                 dependent_column_names.emplace_back("vz_cls");
 
+              dependent_column_names.emplace_back("x_cls_geo");
+              dependent_column_names.emplace_back("y_cls_geo");
+              if constexpr (dim == 3)
+                dependent_column_names.emplace_back("z_cls_geo");
+              dependent_column_names.emplace_back("vx_cls_geo");
+              dependent_column_names.emplace_back("vy_cls_geo");
+              if constexpr (dim == 3)
+                dependent_column_names.emplace_back("vz_cls_geo");
+
               std::vector<Tensor<1, dim>> position_vector{
                 position_and_velocity.first};
               std::vector<Tensor<1, dim>> velocity_vector{
                 position_and_velocity.second};
 
+              std::vector<Tensor<1, dim>> position_vector_geo{
+                position_and_velocity_geo.first};
+              std::vector<Tensor<1, dim>> velocity_vector_geo{
+                position_and_velocity_geo.second};
+
               std::vector<std::vector<Tensor<1, dim>>>
-                position_and_velocity_vectors{position_vector, velocity_vector};
+                position_and_velocity_vectors{position_vector, velocity_vector, position_vector_geo, velocity_vector_geo};
 
               std::vector<double> time = {
                 this->simulation_control->get_current_time()};
@@ -1793,7 +1823,36 @@ ConservativeLevelSet<dim>::postprocess(bool first_iteration)
                                                position_and_velocity.second[2]);
               this->table_barycenter.set_scientific("vz_cls", true);
             }
+          
+          this->table_barycenter.add_value("x_cls_geo",
+                                           position_and_velocity_geo.first[0]);
+          this->table_barycenter.set_scientific("x_cls_geo", true);
 
+          this->table_barycenter.add_value("y_cls_geo",
+                                           position_and_velocity_geo.first[1]);
+          this->table_barycenter.set_scientific("y_cls_geo", true);
+
+          if constexpr (dim == 3)
+            {
+              this->table_barycenter.add_value("z_cls_geo",
+                                               position_and_velocity_geo.first[2]);
+              this->table_barycenter.set_scientific("z_cls_geo", true);
+            }
+
+          this->table_barycenter.add_value("vx_cls_geo",
+                                           position_and_velocity_geo.second[0]);
+          this->table_barycenter.set_scientific("vx_cls_geo", true);
+
+          this->table_barycenter.add_value("vy_cls_geo",
+                                           position_and_velocity_geo.second[1]);
+          this->table_barycenter.set_scientific("vy_cls_geo", true);
+
+          if constexpr (dim == 3)
+            {
+              this->table_barycenter.add_value("vz_cls_geo",
+                                               position_and_velocity_geo.second[2]);
+              this->table_barycenter.set_scientific("vz_cls_geo", true);
+            }
 
           if (this->simulation_control->get_iteration_number() %
                 this->simulation_parameters.post_processing.output_frequency ==
