@@ -21,11 +21,7 @@
 
 #include <deal.II/base/quadrature.h>
 
-#include <deal.II/dofs/dof_renumbering.h>
-
 #include <deal.II/fe/fe_system.h>
-
-#include <deal.II/numerics/vector_tools.h>
 
 #include <deal.II/particles/particle_handler.h>
 

@@ -26,8 +26,6 @@
 
 #include <deal.II/non_matching/fe_immersed_values.h>
 
-#include <deal.II/numerics/vector_tools.h>
-
 #include <iostream>
 
 using namespace dealii;

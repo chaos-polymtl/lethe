@@ -3,6 +3,8 @@
 
 #include <solvers/cls.h>
 
+#include <deal.II/dofs/dof_renumbering.h>
+
 #include <deal.II/fe/fe_simplex_p.h>
 
 #include <deal.II/lac/solver_control.h>
@@ -12,6 +14,7 @@
 #include <deal.II/meshworker/mesh_loop.h>
 
 #include <deal.II/numerics/error_estimator.h>
+#include <deal.II/numerics/vector_tools.h>
 
 #include <sys/stat.h>
 

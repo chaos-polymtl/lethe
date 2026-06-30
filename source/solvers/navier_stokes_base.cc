@@ -20,6 +20,8 @@
 #include <deal.II/distributed/fully_distributed_tria.h>
 #include <deal.II/distributed/grid_refinement.h>
 
+#include <deal.II/dofs/dof_renumbering.h>
+
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_q_bubbles.h>
 #include <deal.II/fe/fe_simplex_p.h>
