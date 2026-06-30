@@ -7,8 +7,8 @@
 #include <deal.II/base/auto_derivative_function.h>
 #include <deal.II/base/utilities.h>
 
-#include <deal.II/grid/tria.h>
 #include <deal.II/grid/manifold_lib.h>
+#include <deal.II/grid/tria.h>
 
 #include <deal.II/lac/vector.h>
 
