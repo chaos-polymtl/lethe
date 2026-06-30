@@ -301,7 +301,7 @@ private:
   static std::vector<bool>
   indentify_fluid_with_phase_change(
     const Parameters::FluidIndicator fluid_with_phase_change,
-    const double                     n_fluids)
+    const unsigned int               n_fluids)
   {
     std::vector<bool> enable_phase_change_vector(n_fluids, false);
 

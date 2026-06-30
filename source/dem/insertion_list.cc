@@ -193,14 +193,15 @@ InsertionList<dim, PropertiesIndex>::
     {
       const double type     = current_inserting_particle_type;
       const double diameter = this->diameters[particle_counter];
-      const double density  = physical_properties.density_particle[type];
-      const double vel_x    = this->velocities[particle_counter][0];
-      const double vel_y    = this->velocities[particle_counter][1];
-      const double vel_z    = this->velocities[particle_counter][2];
-      const double omega_x  = this->angular_velocities[particle_counter][0];
-      const double omega_y  = this->angular_velocities[particle_counter][1];
-      const double omega_z  = this->angular_velocities[particle_counter][2];
-      const double mass     = density * 4. / 3. * M_PI *
+      const double density =
+        physical_properties.density_particle[current_inserting_particle_type];
+      const double vel_x   = this->velocities[particle_counter][0];
+      const double vel_y   = this->velocities[particle_counter][1];
+      const double vel_z   = this->velocities[particle_counter][2];
+      const double omega_x = this->angular_velocities[particle_counter][0];
+      const double omega_y = this->angular_velocities[particle_counter][1];
+      const double omega_z = this->angular_velocities[particle_counter][2];
+      const double mass    = density * 4. / 3. * M_PI *
                           Utilities::fixed_power<3, double>(diameter * 0.5);
 
       std::vector<double> properties_of_one_particle{
