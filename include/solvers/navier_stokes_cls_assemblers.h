@@ -292,16 +292,16 @@ private:
    * boolean indicating if each fluid has phase change (@p true) or not
    * (@p false). The indices of the vector correspond to the fluid ID.
    *
-   * @paramp[in] fluid_with_phase_change Indicates which fluid(s) has/have phase
+   * @param[in] fluid_with_phase_change Indicates which fluid(s) has/have phase
    * change.
-   * @paramp[in] n_fluids Number of fluids.
+   * @param[in] n_fluids Number of fluids.
    *
    * @return Vector of boolean indicating which fluid(s) has/have phase change.
    */
   static std::vector<bool>
   indentify_fluid_with_phase_change(
     const Parameters::FluidIndicator fluid_with_phase_change,
-    const double                     n_fluids)
+    const unsigned int               n_fluids)
   {
     std::vector<bool> enable_phase_change_vector(n_fluids, false);
 
@@ -489,7 +489,6 @@ private:
   std::shared_ptr<EvaporationModel> evaporation_model;
 };
 
-
 /**
  * @brief Assembles the core of the Navier-Stokes equation
  * using a Rheological model to predict non-Newtonian behaviors
@@ -513,7 +512,7 @@ public:
   /**
    * @brief Calculates an approximation of the gradient of the viscosity
    * @param velocity_gradient The velocity gradient tensor on the quadrature point
-     @param velocity_hessians The velocity hessian tensor on the quadrture point
+     @param velocity_hessians The velocity hessian tensor on the quadrature point
      @param non_newtonian_viscosity The viscosity at which the gradient is calculated
      @param d_gamma_dot Th difference in the shear rate magnitude to approximate the
      viscosity variation with a slight change in the shear_rate magnitude
