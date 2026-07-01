@@ -1290,6 +1290,19 @@ NavierStokesOperatorBase<dim, number>::compute_internal_face_cip_parameters(
   const double kinematic_viscosity =
     this->properties_manager->get_rheology()->get_kinematic_viscosity();
 
+  // Polynomial-order scaling of the *velocity* (advective) gradient-jump
+  // penalty. Following Moura et al. (CMAME 388:114200, 2022), the advective
+  // penalty coefficient must decay like (P+1)^{-4} with respect to the physical
+  // element size so that the interior-face penalty's spectral radius stays
+  // bounded as the polynomial order increases. Without it the Jacobian becomes
+  // increasingly ill-conditioned and the linear solver stalls at high order.
+  // Since h_face = h/p already contributes a p^{-2} factor through
+  // compute_cell_diameter(), we supply the remaining (P+1)^{-2} here, yielding
+  // an effective ~h^2 (P+1)^{-4} scaling. This is NOT applied to the pressure
+  // gradient-jump, which is an inf-sup stabilizer with its own scaling.
+  const double order_scaling =
+    1.0 / ((fe_degree + 1.0) * (fe_degree + 1.0));
+
   for (unsigned int face = 0; face < n_inner_faces; ++face)
     {
       phi.reinit(face);
@@ -1311,6 +1324,14 @@ NavierStokesOperatorBase<dim, number>::compute_internal_face_cip_parameters(
             compute_cell_diameter<dim>(cell_it->measure(), fe_degree);
         }
 
+      // Physical element size (h, without the /p of h_face) used for the
+      // pressure inf-sup penalty. Keeping the pressure block on the physical h
+      // makes its Stokes-limit scaling (~h^3/nu) independent of the polynomial
+      // order, so it is not weakened as the order increases (h_face = h/p would
+      // otherwise decay it like p^{-3}, breaking Q2/Q2 and higher).
+      const VectorizedArray<number> h_pressure =
+        h_face * static_cast<number>(fe_degree);
+
       for (const auto q : phi.quadrature_point_indices())
         {
           const auto value  = phi.get_value(q);
@@ -1329,17 +1350,23 @@ NavierStokesOperatorBase<dim, number>::compute_internal_face_cip_parameters(
           const VectorizedArray<number> b_magnitude = velocity.norm();
 
           // Velocity gradient-jump coefficient: convective scaling
-          // gamma_u = alpha_u h_F^2 |b·n|.
+          // gamma_u = alpha_u (P+1)^{-2} h_F^2 |b·n|, i.e. ~h^2 (P+1)^{-4} |b·n|
+          // once the p^{-2} of h_face is accounted for (see order_scaling).
           face_cip_velocity_parameter(face, q) =
-            this->cip_velocity_coefficient * h_face * h_face * b_dot_n;
+            this->cip_velocity_coefficient * order_scaling * h_face * h_face *
+            b_dot_n;
 
           // Pressure gradient-jump coefficient:
-          // gamma_p = alpha_p h_F^2 / (|b| + nu/h_F). In the convective limit it
-          // scales like h_F^2/|b|; in the Stokes limit (|b|->0) it scales like
-          // h_F^3/nu, supplying the inf-sup pressure stabilization.
+          // gamma_p = alpha_p h^2 / (|b| + nu/h) on the physical element size h.
+          // In the convective limit it scales like h^2/|b|; in the Stokes limit
+          // (|b|->0) it scales like h^3/nu, i.e. the Burman-Hansbo edge/CIP
+          // inf-sup stabilization of the generalized Stokes problem. This is an
+          // inf-sup (pressure) stabilizer, not an advective one, so it uses the
+          // physical h (not h/p) and carries no polynomial-order decay: the
+          // inf-sup control must not weaken as the order increases.
           face_cip_pressure_parameter(face, q) =
-            this->cip_pressure_coefficient * h_face * h_face /
-            (b_magnitude + kinematic_viscosity / h_face);
+            this->cip_pressure_coefficient * h_pressure * h_pressure /
+            (b_magnitude + kinematic_viscosity / h_pressure);
         }
     }
 }
