@@ -24,6 +24,10 @@ flagging an issue, and prefer a small number of high-signal comments over noise.
 - Prefer `const` correctness everywhere: pass large objects (deal.II `Vector`,
   `Tensor`, `Point`, matrices, `FEValues`-derived data) by `const &`, never by
   value.
+- Prefer passing the whole parameters struct (e.g. a `Parameters::*` object) by
+  `const &` rather than unpacking and threading many individual fields through a
+  signature. Flag new/changed signatures that take a long list of scalar
+  parameters already grouped in an existing struct.
 - No raw `new`/`delete`. Use `std::unique_ptr`/`std::shared_ptr` or deal.II
   smart pointers (`std::unique_ptr`, `SmartPointer`) as appropriate.
 
@@ -83,6 +87,17 @@ When in doubt, note that `contrib/utilities/checkdeps` should pass (exit 0).
   the PR description should explain the root cause. Flag bug-fix PRs with no
   regression test.
 
+## Release notes (required)
+
+- Any user-facing change must add a file under `release_notes/current/` named
+  `YYYY_MM_DD_LASTNAME.md`, following `release_notes/template.md`. Each entry
+  carries a `MAJOR`/`MINOR` tag under the appropriate heading (Added / Changed /
+  Deprecated / Removed / Fixed / Documentation). `MAJOR` covers any new feature or
+  any change to a parameter name; `MINOR` covers fixes with no impact on results.
+- Flag a PR that adds or changes a feature or an input-file parameter with no
+  matching file in `release_notes/current/`. Do **not** edit `CHANGELOG.md`
+  directly — it is assembled from these entries at release time.
+
 ## deal.II and scientific-computing correctness (high priority)
 
 These are the issues a generic reviewer misses — weight them heavily:
@@ -107,6 +122,13 @@ These are the issues a generic reviewer misses — weight them heavily:
 - **Deprecated API**: flag use of deal.II functions known to be deprecated;
   suggest the current equivalent.
 - **Floating point**: never compare floats with `==`; use a tolerance.
+- **`Assert` vs `AssertThrow`**: `Assert` is compiled out in release builds — use
+  it only for internal invariants that cannot fail in correct code. Checks on user
+  input or runtime conditions that must also fire in release builds require
+  `AssertThrow`. Flag user-input or runtime validation guarded by `Assert`.
+- **Parallel output**: user-facing prints in MPI code must go through a
+  rank-restricted stream (`pcout` / `ConditionalOStream`), not raw `std::cout`,
+  which every rank emits. Flag new `std::cout`/`std::cerr` in parallel code paths.
 
 ## Pull request conventions
 
