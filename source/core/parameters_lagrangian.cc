@@ -651,7 +651,7 @@ namespace Parameters
         prm.declare_entry(
           "insertion direction sequence",
           "0,1,2",
-          Patterns::List(Patterns::Integer(), 2, 3),
+          Patterns::List(Patterns::Integer(0, 2), 2, 3),
           "Direction of particle insertion for the volume insertion method");
         prm.declare_entry(
           "insertion box points coordinates",
@@ -663,6 +663,17 @@ namespace Parameters
                           "1.",
                           Patterns::Double(),
                           "Distance threshold");
+
+
+        // By default, every point is accepted, thus we need a default value
+        // bigger than 0 (we use 1 here).
+        auto insertion_acceptance_function_parsed =
+          std::make_shared<Functions::ParsedFunction<dim>>(1);
+        prm.enter_subsection("insertion acceptance function");
+        {
+          insertion_acceptance_function_parsed->declare_parameters(prm, 1, "1");
+        }
+        prm.leave_subsection();
 
         // Volume or plane:
         prm.declare_entry(
@@ -852,6 +863,16 @@ namespace Parameters
           initial_temperature_function = initial_temperature_function_parsed;
         }
         prm.leave_subsection();
+
+        auto insertion_acceptance_function =
+          std::make_shared<Functions::ParsedFunction<dim>>(1);
+
+        prm.enter_subsection("insertion acceptance function");
+        {
+          insertion_acceptance_function->parse_parameters(prm);
+        }
+        prm.leave_subsection();
+        insertion_acceptance_fct = insertion_acceptance_function;
       }
       prm.leave_subsection();
     }

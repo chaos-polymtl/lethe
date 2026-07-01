@@ -427,7 +427,7 @@ namespace Parameters
       } insertion_method; ///< Method used to insert particles
 
       /// Number of particles inserted at each insertion step.
-      int inserted_this_step;
+      unsigned int inserted_this_step;
 
       /// Frequency of insertion (in time steps).
       int insertion_frequency;
@@ -490,6 +490,10 @@ namespace Parameters
 
       /// Random seed for particle insertion.
       int seed_for_insertion;
+
+      /// Function used to accept or reject point in the insertion box when
+      /// using the volume insertion.
+      std::shared_ptr<Function<dim>> insertion_acceptance_fct;
 
       /**
        * @brief Declare the parameters in the parameter handler.
