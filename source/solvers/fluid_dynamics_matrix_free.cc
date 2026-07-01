@@ -1716,6 +1716,21 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
 
           this->create_level_operator(level);
 
+          // On the coarsest level, if the level is discretized with Q1
+          // elements, skip the mortar coupling and assemble the operator as if
+          // mortar was not enabled. The mortar contribution is therefore only
+          // neglected on this particular level.
+          const bool coarsest_level_uses_q1_interpolation =
+            (level == this->minlevel) &&
+            (levels[level].second == 1 ||
+             this->simulation_parameters.linear_solver
+               .at(PhysicsID::fluid_dynamics)
+               .mg_use_fe_q_iso_q1);
+
+          const bool enable_mortar_on_level =
+            this->simulation_parameters.mortar_parameters.enable &&
+            !coarsest_level_uses_q1_interpolation;
+
           this->mg_operators[level]->reinit(
             *level_mapping,
             level_dof_handler,
@@ -1731,12 +1746,12 @@ MFNavierStokesPreconditionGMGBase<dim>::reinit(
               .at(PhysicsID::fluid_dynamics)
               .mg_enable_hessians_jacobian,
             true,
-            this->simulation_parameters.mortar_parameters.enable);
+            enable_mortar_on_level);
 
           this->mg_setup_timer.leave_subsection("Set up operators");
 
           // If enabled, create mortar operators
-          if (this->simulation_parameters.mortar_parameters.enable)
+          if (enable_mortar_on_level)
             {
               this->mg_setup_timer.enter_subsection("Set up mortar operators");
 
