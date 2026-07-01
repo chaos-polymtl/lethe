@@ -117,13 +117,13 @@ private:
                           const InsertionInfo<dim> &insertion_information);
 
   /**
-   * @brief Fills the filted_id_to_box_id map.
+   * @brief Fills the filted_box_index vector.
    *
    * @param[in] insertion_information DEM insertion parameters declared in the
    * .prm
    */
   void
-  set_filtered_id_map(const InsertionInfo<dim> &insertion_information);
+  set_filtered_index(const InsertionInfo<dim> &insertion_information);
 
   unsigned int current_inserting_particle_type;
 
@@ -144,7 +144,11 @@ private:
 
   // Map used to transfer from the filtered to the pre-filted numbering of the
   // insertion point inside the insertion box.
-  std::map<unsigned int, unsigned int> filted_id_to_box_id;
+  std::vector<unsigned int> filted_box_index;
+
+  unsigned int first_index_this_proc, last_index_this_proc;
+
+  unsigned int number_of_valid_insertion_point_global;
 
   double maximum_diameter;
 };
