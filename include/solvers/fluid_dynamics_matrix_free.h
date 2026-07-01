@@ -63,6 +63,8 @@ protected:
   using SmootherPreconditionerType = PreconditionBase<MGVectorType>;
   using SmootherType =
     PreconditionRelaxation<OperatorType, SmootherPreconditionerType>;
+  using ChebyshevSmootherType =
+    PreconditionChebyshev<OperatorType, MGVectorType, SmootherPreconditionerType>;
   using PreconditionerTypeLS =
     PreconditionMG<dim, MGVectorType, LSTransferType>;
   using PreconditionerTypeGC =
@@ -219,10 +221,10 @@ protected:
   mutable MGLevelObject<std::shared_ptr<PreconditionBase<MGVectorType>>>
     mg_smoother_preconditioners;
 
-  /// Smoother object
-  std::shared_ptr<
-    MGSmootherPrecondition<OperatorType, SmootherType, MGVectorType>>
-    mg_smoother;
+  /// Smoother object. Stored through the type-erased base so that either a
+  /// relaxation-based (PreconditionRelaxation) or a Chebyshev-based
+  /// (PreconditionChebyshev) smoother can be selected at runtime.
+  std::shared_ptr<MGSmootherBase<MGVectorType>> mg_smoother;
 
   /// Collection of boundary constraints and refinement edge constrations for
   /// the different levels in the local smoothing approach.

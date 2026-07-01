@@ -1819,28 +1819,32 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
   // Create smoother, fill parameters for each level and intialize it
   this->mg_setup_timer.enter_subsection("Set up and initialize smoother");
 
-  this->mg_smoother = std::make_shared<
-    MGSmootherPrecondition<OperatorType, SmootherType, MGVectorType>>();
+  const auto &linear_solver_parameters =
+    this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics);
 
-  MGLevelObject<typename SmootherType::AdditionalData> smoother_data(
-    this->minlevel, this->maxlevel);
+  const auto smoother_preconditioner_type =
+    linear_solver_parameters.mg_smoother_preconditioner_type;
 
+  const bool use_chebyshev =
+    smoother_preconditioner_type ==
+    Parameters::LinearSolver::MultigridSmootherPreconditionerType::Chebyshev;
+
+  // Build the per-level inner preconditioner. The inverse diagonal is used both
+  // for the InverseDiagonal relaxation smoother and as the inner preconditioner
+  // of the Chebyshev smoother.
   for (unsigned int level = this->minlevel; level <= this->maxlevel; ++level)
     {
-      if (this->simulation_parameters.linear_solver
-            .at(PhysicsID::fluid_dynamics)
-            .mg_smoother_preconditioner_type ==
-          Parameters::LinearSolver::MultigridSmootherPreconditionerType::
-            InverseDiagonal)
+      if (smoother_preconditioner_type ==
+            Parameters::LinearSolver::MultigridSmootherPreconditionerType::
+              InverseDiagonal ||
+          use_chebyshev)
         {
           MGVectorType diagonal_vector;
           this->mg_operators[level]->compute_inverse_diagonal(diagonal_vector);
           mg_smoother_preconditioners[level] =
             std::make_shared<MyDiagonalMatrix<MGVectorType>>(diagonal_vector);
         }
-      else if (this->simulation_parameters.linear_solver
-                 .at(PhysicsID::fluid_dynamics)
-                 .mg_smoother_preconditioner_type ==
+      else if (smoother_preconditioner_type ==
                Parameters::LinearSolver::MultigridSmootherPreconditionerType::
                  AdditiveSchwarzMethod)
         {
@@ -1863,70 +1867,133 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
                            ->get_system_matrix_free()
                            .get_mg_level());
         }
+    }
 
-      smoother_data[level].preconditioner = mg_smoother_preconditioners[level];
+  if (use_chebyshev)
+    {
+      // Chebyshev-accelerated inverse-diagonal smoother. A single smoothing
+      // step of a degree-d polynomial is applied (the polynomial degree is the
+      // main knob). The maximum eigenvalue is estimated internally, so no
+      // manual power iteration is required.
+      auto smoother = std::make_shared<
+        MGSmootherPrecondition<OperatorType, ChebyshevSmootherType, MGVectorType>>();
 
-      smoother_data[level].n_iterations =
-        this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .mg_smoother_iterations;
+      MGLevelObject<typename ChebyshevSmootherType::AdditionalData> smoother_data(
+        this->minlevel, this->maxlevel);
 
-      if (this->simulation_parameters.linear_solver
-            .at(PhysicsID::fluid_dynamics)
-            .mg_smoother_eig_estimation)
+      for (unsigned int level = this->minlevel; level <= this->maxlevel;
+           ++level)
         {
-          // Set relaxation to zero so that eigenvalues are estimated
-          // internally
-          smoother_data[level].relaxation = 0.0;
+          smoother_data[level].preconditioner =
+            mg_smoother_preconditioners[level];
+          smoother_data[level].degree =
+            linear_solver_parameters.mg_smoother_chebyshev_degree;
           smoother_data[level].smoothing_range =
-            this->simulation_parameters.linear_solver
-              .at(PhysicsID::fluid_dynamics)
-              .eig_estimation_smoothing_range;
+            linear_solver_parameters.mg_smoother_chebyshev_smoothing_range;
           smoother_data[level].eig_cg_n_iterations =
-            this->simulation_parameters.linear_solver
-              .at(PhysicsID::fluid_dynamics)
-              .eig_estimation_cg_n_iterations;
-          smoother_data[level].eigenvalue_algorithm =
-            SmootherType::AdditionalData::EigenvalueAlgorithm::power_iteration;
+            linear_solver_parameters.mg_smoother_chebyshev_eig_cg_n_iterations;
           smoother_data[level].constraints.copy_from(
             this->mg_operators[level]
               ->get_system_matrix_free()
               .get_affine_constraints());
         }
-      else
-        smoother_data[level].relaxation =
-          this->simulation_parameters.linear_solver
-            .at(PhysicsID::fluid_dynamics)
-            .mg_smoother_relaxation;
+
+      smoother->initialize(this->mg_operators, smoother_data);
+
+      if (linear_solver_parameters.eig_estimation_verbose !=
+          Parameters::Verbosity::quiet)
+        {
+          // Print eigenvalue estimation for all levels
+          for (unsigned int level = this->minlevel; level <= this->maxlevel;
+               ++level)
+            {
+              MGVectorType vec;
+              this->mg_operators[level]->initialize_dof_vector(vec);
+              const auto evs =
+                smoother->smoothers[level].estimate_eigenvalues(vec);
+
+              this->pcout << std::endl;
+              this->pcout << "  -Eigenvalue estimation level "
+                          << level - this->minlevel << ":" << std::endl;
+              this->pcout << "    Minimum eigenvalue: "
+                          << evs.min_eigenvalue_estimate << std::endl;
+              this->pcout << "    Maximum eigenvalue: "
+                          << evs.max_eigenvalue_estimate << std::endl;
+              this->pcout << std::endl;
+            }
+        }
+
+      this->mg_smoother = smoother;
     }
-
-  mg_smoother->initialize(this->mg_operators, smoother_data);
-
-  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-        .mg_smoother_eig_estimation &&
-      this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
-          .eig_estimation_verbose != Parameters::Verbosity::quiet)
+  else
     {
-      // Print eigenvalue estimation for all levels
+      auto smoother = std::make_shared<
+        MGSmootherPrecondition<OperatorType, SmootherType, MGVectorType>>();
+
+      MGLevelObject<typename SmootherType::AdditionalData> smoother_data(
+        this->minlevel, this->maxlevel);
+
       for (unsigned int level = this->minlevel; level <= this->maxlevel;
            ++level)
         {
-          MGVectorType vec;
-          this->mg_operators[level]->initialize_dof_vector(vec);
-          const auto evs =
-            mg_smoother->smoothers[level].estimate_eigenvalues(vec);
+          smoother_data[level].preconditioner =
+            mg_smoother_preconditioners[level];
 
-          this->pcout << std::endl;
-          this->pcout << "  -Eigenvalue estimation level "
-                      << level - this->minlevel << ":" << std::endl;
-          this->pcout << "    Relaxation parameter: "
-                      << mg_smoother->smoothers[level].get_relaxation()
-                      << std::endl;
-          this->pcout << "    Minimum eigenvalue: "
-                      << evs.min_eigenvalue_estimate << std::endl;
-          this->pcout << "    Maximum eigenvalue: "
-                      << evs.max_eigenvalue_estimate << std::endl;
-          this->pcout << std::endl;
+          smoother_data[level].n_iterations =
+            linear_solver_parameters.mg_smoother_iterations;
+
+          if (linear_solver_parameters.mg_smoother_eig_estimation)
+            {
+              // Set relaxation to zero so that eigenvalues are estimated
+              // internally
+              smoother_data[level].relaxation = 0.0;
+              smoother_data[level].smoothing_range =
+                linear_solver_parameters.eig_estimation_smoothing_range;
+              smoother_data[level].eig_cg_n_iterations =
+                linear_solver_parameters.eig_estimation_cg_n_iterations;
+              smoother_data[level].eigenvalue_algorithm =
+                SmootherType::AdditionalData::EigenvalueAlgorithm::
+                  power_iteration;
+              smoother_data[level].constraints.copy_from(
+                this->mg_operators[level]
+                  ->get_system_matrix_free()
+                  .get_affine_constraints());
+            }
+          else
+            smoother_data[level].relaxation =
+              linear_solver_parameters.mg_smoother_relaxation;
         }
+
+      smoother->initialize(this->mg_operators, smoother_data);
+
+      if (linear_solver_parameters.mg_smoother_eig_estimation &&
+          linear_solver_parameters.eig_estimation_verbose !=
+            Parameters::Verbosity::quiet)
+        {
+          // Print eigenvalue estimation for all levels
+          for (unsigned int level = this->minlevel; level <= this->maxlevel;
+               ++level)
+            {
+              MGVectorType vec;
+              this->mg_operators[level]->initialize_dof_vector(vec);
+              const auto evs =
+                smoother->smoothers[level].estimate_eigenvalues(vec);
+
+              this->pcout << std::endl;
+              this->pcout << "  -Eigenvalue estimation level "
+                          << level - this->minlevel << ":" << std::endl;
+              this->pcout << "    Relaxation parameter: "
+                          << smoother->smoothers[level].get_relaxation()
+                          << std::endl;
+              this->pcout << "    Minimum eigenvalue: "
+                          << evs.min_eigenvalue_estimate << std::endl;
+              this->pcout << "    Maximum eigenvalue: "
+                          << evs.max_eigenvalue_estimate << std::endl;
+              this->pcout << std::endl;
+            }
+        }
+
+      this->mg_smoother = smoother;
     }
 
   this->mg_setup_timer.leave_subsection("Set up and initialize smoother");

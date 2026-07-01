@@ -1503,9 +1503,19 @@ namespace Parameters
     enum class MultigridSmootherPreconditionerType : std::int8_t
     {
       InverseDiagonal,
-      AdditiveSchwarzMethod
+      AdditiveSchwarzMethod,
+      Chebyshev
     };
     MultigridSmootherPreconditionerType mg_smoother_preconditioner_type;
+
+    /// Chebyshev smoother polynomial degree
+    unsigned int mg_smoother_chebyshev_degree;
+
+    /// Chebyshev smoother smoothing range (lambda_max / lambda_min)
+    double mg_smoother_chebyshev_smoothing_range;
+
+    /// Chebyshev smoother eigenvalue-estimation CG/Lanczos iterations
+    unsigned int mg_smoother_chebyshev_eig_cg_n_iterations;
 
     /// MG eigenvalue estimation for smoother relaxation parameter
     bool mg_smoother_eig_estimation;
