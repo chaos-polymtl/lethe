@@ -161,9 +161,6 @@ protected:
   void
   remove_particles_in_box(Particles::ParticleHandler<dim> &particle_handler);
 
-  // Number of insertion points in the x, y and z directions
-  std::vector<int> number_of_particles_directions;
-
   // Minimum and maximum number of inserted particles based on the insertion box
   // size and the direction order (it means that axis 0 is not necessarily x
   // etc...) It depends on the order of the insertion direction.
