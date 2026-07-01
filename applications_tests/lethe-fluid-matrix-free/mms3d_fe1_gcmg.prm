@@ -118,11 +118,10 @@ subsection linear solver
     set verbosity         = quiet
 
     #MG parameters
-    set mg verbosity               = quiet
-    set mg smoother eig estimation = false
+    set mg verbosity                    = quiet
+    set mg smoother preconditioner type = chebyshev
 
     #smoother
     set mg smoother iterations = 10
-    set mg smoother relaxation = 0.5
   end
 end

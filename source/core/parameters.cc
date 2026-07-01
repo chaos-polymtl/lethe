@@ -3215,11 +3215,30 @@ namespace Parameters
                           Patterns::Double(),
                           "mg smoother relaxation for lsmg or gcmg");
 
-        prm.declare_entry("mg smoother preconditioner type",
-                          "inverse diagonal",
-                          Patterns::Selection(
-                            "inverse diagonal|additive schwarz method"),
-                          "Preconditioner of smoother");
+        prm.declare_entry(
+          "mg smoother preconditioner type",
+          "inverse diagonal",
+          Patterns::Selection(
+            "inverse diagonal|additive schwarz method|chebyshev"),
+          "Preconditioner of smoother");
+
+        prm.declare_entry("mg smoother chebyshev degree",
+                          "3",
+                          Patterns::Integer(0),
+                          "polynomial degree of the Chebyshev smoother");
+
+        prm.declare_entry(
+          "mg smoother chebyshev smoothing range",
+          "15",
+          Patterns::Double(1.0),
+          "smoothing range (lambda_max/lambda_min) of the Chebyshev smoother");
+
+        prm.declare_entry(
+          "mg smoother chebyshev eig cg n iterations",
+          "10",
+          Patterns::Integer(1),
+          "cg/Lanczos iterations to estimate the maximum eigenvalue for the "
+          "Chebyshev smoother");
 
         prm.declare_entry("mg smoother eig estimation",
                           "true",
@@ -3409,8 +3428,18 @@ namespace Parameters
                  "additive schwarz method")
           this->mg_smoother_preconditioner_type =
             MultigridSmootherPreconditionerType::AdditiveSchwarzMethod;
+        else if (mg_smoother_preconditioner_type_str == "chebyshev")
+          this->mg_smoother_preconditioner_type =
+            MultigridSmootherPreconditionerType::Chebyshev;
         else
           AssertThrow(false, ExcNotImplemented());
+
+        mg_smoother_chebyshev_degree =
+          prm.get_integer("mg smoother chebyshev degree");
+        mg_smoother_chebyshev_smoothing_range =
+          prm.get_double("mg smoother chebyshev smoothing range");
+        mg_smoother_chebyshev_eig_cg_n_iterations =
+          prm.get_integer("mg smoother chebyshev eig cg n iterations");
 
         mg_smoother_eig_estimation = prm.get_bool("mg smoother eig estimation");
         eig_estimation_smoothing_range =

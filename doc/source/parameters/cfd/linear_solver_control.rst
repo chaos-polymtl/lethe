@@ -303,6 +303,11 @@ Different parameters for the main components of the two geometric multigrid algo
     set mg smoother eig estimation      = true #if set to true, previous parameter is not used
     set mg smoother preconditioner type = inverse diagonal
 
+    # Chebyshev smoother parameters (used when preconditioner type = chebyshev)
+    set mg smoother chebyshev degree              = 3
+    set mg smoother chebyshev smoothing range     = 15
+    set mg smoother chebyshev eig cg n iterations = 10
+
     # Eigenvalue estimation parameters
     set eig estimation smoothing range = 10
     set eig estimation cg n iterations = 10
@@ -339,7 +344,9 @@ Different parameters for the main components of the two geometric multigrid algo
 
 * The default algorithms build and use ALL the multigrid levels. There are two ways to change the number of levels, either by setting the ``mg min level`` parameter OR the ``mg level min cells`` parameter. For ``lsmg`` the coarsest mesh should cover the whole domain, i.e., no hanging nodes are allowed.
 
-* The multigrid algorithms use a relaxation scheme as smoother. There are two types of preconditioners supported for this scheme: ``inverse diagonal`` and ``additive schwarz method``. The former is cheaper than the latter one. In our experience, the first one should work fine for transient problems, while the second one is more robust in the case of challenging steady-state problems. We recommend to always use eigenvalue estimation to calculate the relaxation parameter by setting ``set mg smoother eig estimation = true``.
+* The multigrid algorithms use a relaxation scheme as smoother. There are three types of preconditioners supported: ``inverse diagonal``, ``additive schwarz method`` and ``chebyshev``. The first is cheaper than the second one. In our experience, ``inverse diagonal`` should work fine for transient problems, while ``additive schwarz method`` is more robust in the case of challenging steady-state problems. For ``inverse diagonal`` and ``additive schwarz method`` we recommend to always use eigenvalue estimation to calculate the relaxation parameter by setting ``set mg smoother eig estimation = true``.
+
+* The ``chebyshev`` option is a Chebyshev-accelerated inverse-diagonal smoother. Instead of a fixed-parameter relaxation, it applies a single step of a Chebyshev polynomial of degree ``mg smoother chebyshev degree`` built on the inverse diagonal, which improves robustness on anisotropic/boundary-layer meshes at a comparable cost per V-cycle. The maximum eigenvalue is estimated internally (``mg smoother chebyshev eig cg n iterations`` iterations), so no relaxation parameter or manual eigenvalue estimation is needed. The polynomial acts on the spectral interval ``[lambda_max / smoothing_range, lambda_max]``, with ``mg smoother chebyshev smoothing range`` typically between 5 and 20. A degree of ``0`` recovers the damped inverse-diagonal (Jacobi) smoother. If the smoother diverges, the most likely cause is an underestimated maximum eigenvalue: increase ``mg smoother chebyshev eig cg n iterations`` before changing the degree.
 
 * Different coarse grid solvers are supported: ``direct``, ``amg``, ``ilu`` and ``gmres`` preconditioned by either ``amg`` or ``ilu``. For all of them with exception of the direct solver there are several parameters that can be set in the corresponding section.
 
