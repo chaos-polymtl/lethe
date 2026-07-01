@@ -2241,6 +2241,95 @@ template class PressureBoundaryCondition<3>;
 
 template <int dim>
 void
+NeumannTractionBoundaryCondition<dim>::assemble_matrix(
+  [[maybe_unused]] const NavierStokesScratchData<dim>   &scratch_data,
+  [[maybe_unused]] StabilizedMethodsTensorCopyData<dim> &copy_data)
+{}
+
+template <int dim>
+void
+NeumannTractionBoundaryCondition<dim>::assemble_rhs(
+  const NavierStokesScratchData<dim>   &scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  if (!scratch_data.is_boundary_cell)
+    return;
+
+  std::vector<std::vector<double>> prescribed_pressure_values;
+  prescribed_pressure_values = std::vector<std::vector<double>>(
+    scratch_data.n_faces, std::vector<double>(scratch_data.n_faces_q_points));
+
+  std::vector<std::vector<Tensor<1, dim>>> traction_vec_data =
+    std::vector<std::vector<Tensor<1, dim>>>(scratch_data.n_faces,
+                                             std::vector<Tensor<1, dim>>(
+                                               scratch_data.n_faces_q_points));
+
+  auto &local_rhs = copy_data.local_rhs;
+
+  // Neumann traction boundary condition, loop on faces
+  //    ∫_Γ_N  v · traction_fn  dΓ_N
+  //
+  // where:
+  //   - Γ_N is the boundary domain where the Neumann traction condition is
+  //   applied
+  //   - v is the velocity test function in theory (However, in lethe for the
+  //   sake of using the test
+  //    function that has pressure components, we also have an extra pressure
+  //    component in the traction function but it is always zero and does not
+  //    affect the result),
+  //   - traction_fn is the prescribed traction on the boundary Γ_N.
+
+  for (unsigned int f = 0; f < scratch_data.n_faces; ++f)
+    {
+      // Check if the face is on a boundary
+      if (scratch_data.is_boundary_face[f])
+        {
+          types::boundary_id boundary_id = scratch_data.boundary_face_id[f];
+          // Check if the face is part of the boundary that as a
+          // Neumann traction BC.
+          if (this->neumann_traction_boundary_condition.type.at(boundary_id) ==
+              BoundaryConditions::BoundaryType::neumann_traction)
+            {
+              // Assemble the rhs of the BC
+              for (unsigned int q = 0; q < scratch_data.n_faces_q_points; ++q)
+                {
+                  const double JxW = scratch_data.face_JxW[f][q];
+
+
+                  traction_vec_data[f][q][0] =
+                    neumann_traction_boundary_condition.navier_stokes_functions
+                      .at(boundary_id)
+                      ->traction_fn.value(
+                        scratch_data.face_quadrature_points[f][q], 0);
+                  traction_vec_data[f][q][1] =
+                    neumann_traction_boundary_condition.navier_stokes_functions
+                      .at(boundary_id)
+                      ->traction_fn.value(
+                        scratch_data.face_quadrature_points[f][q], 1);
+                  if constexpr (dim == 3)
+                    traction_vec_data[f][q][2] =
+                      neumann_traction_boundary_condition
+                        .navier_stokes_functions.at(boundary_id)
+                        ->traction_fn.value(
+                          scratch_data.face_quadrature_points[f][q], 2);
+
+                  for (const unsigned int i :
+                       scratch_data.fe_face_values.dof_indices())
+                    {
+                      local_rhs(i) -= scratch_data.face_phi_u[f][q][i] *
+                                      (traction_vec_data[f][q]) * JxW;
+                    }
+                }
+            }
+        }
+    }
+}
+
+template class NeumannTractionBoundaryCondition<2>;
+template class NeumannTractionBoundaryCondition<3>;
+
+template <int dim>
+void
 WeakDirichletBoundaryCondition<dim>::assemble_matrix(
   const NavierStokesScratchData<dim>   &scratch_data,
   StabilizedMethodsTensorCopyData<dim> &copy_data)
