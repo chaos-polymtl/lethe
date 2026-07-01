@@ -17,6 +17,7 @@
 #include <deal.II/grid/grid_tools.h>
 
 #include <deal.II/lac/precondition.h>
+#include <deal.II/lac/solver_bicgstab.h>
 #include <deal.II/lac/solver_gmres.h>
 #include <deal.II/lac/sparse_matrix_tools.h>
 #include <deal.II/lac/vector.h>
@@ -3686,6 +3687,10 @@ FluidDynamicsMatrixFree<dim>::solve_linear_system()
     solve_system_GMRES(absolute_residual, relative_residual);
   else if (this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
+             .solver == Parameters::LinearSolver::SolverType::bicgstab)
+    solve_system_BiCGStab(absolute_residual, relative_residual);
+  else if (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
              .solver == Parameters::LinearSolver::SolverType::direct)
     solve_system_direct(absolute_residual, relative_residual);
   else
@@ -3804,6 +3809,141 @@ FluidDynamicsMatrixFree<dim>::solve_system_GMRES(const double absolute_residual,
 
       this->pcout
         << " GMRES solver failed! Continuing the Newton step as requested by the <force linear solver continuation> parameter."
+        << std::endl;
+
+      // A failed linear solve may leave the Newton update with non-finite
+      // entries (e.g. a preconditioner or operator breakdown). Continuing with
+      // such a Newton update would propagate NaNs/Infs through the whole Newton
+      // iteration. To stay defensive, we reset the Newton update to zero in
+      // that case so that this Newton step makes no progress instead of
+      // poisoning the solution. The l2_norm() call is collective and triggers
+      // the MPI reduction required for a global check across all processes.
+      if (!std::isfinite(this->newton_update.l2_norm()))
+        {
+          this->pcout
+            << " The Newton update contains non-finite values; resetting it to zero."
+            << std::endl;
+          this->newton_update = 0.0;
+        }
+    }
+
+  this->computing_timer.leave_subsection("Solve linear system");
+
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .verbosity != Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -Iterative solver took : " << solver_control.last_step()
+                  << " steps to reach a residual norm of "
+                  << solver_control.last_value() / rescale_metric << std::endl;
+    }
+
+  this->computing_timer.enter_subsection(
+    "Distribute constraints after linear solver");
+
+  zero_constraints.distribute(this->newton_update);
+
+  this->computing_timer.leave_subsection(
+    "Distribute constraints after linear solver");
+}
+
+template <int dim>
+void
+FluidDynamicsMatrixFree<dim>::solve_system_BiCGStab(
+  const double absolute_residual,
+  const double relative_residual)
+{
+  const AffineConstraints<double> &zero_constraints = this->zero_constraints;
+  const double rescale_metric   = this->get_residual_rescale_metric();
+  const double current_residual = this->system_rhs.l2_norm() / rescale_metric;
+  const double linear_solver_tolerance =
+    std::max(relative_residual * current_residual, absolute_residual);
+  if (this->simulation_parameters.linear_solver.at(PhysicsID::fluid_dynamics)
+        .verbosity != Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -Tolerance of iterative solver is : "
+                  << linear_solver_tolerance << std::endl;
+    }
+  const double non_rescaled_linear_solver_tolerance =
+    linear_solver_tolerance * rescale_metric;
+  GlobalVectorType completely_distributed_solution(this->locally_owned_dofs,
+                                                   this->mpi_communicator);
+
+  SolverControl solver_control(this->simulation_parameters.linear_solver
+                                 .at(PhysicsID::fluid_dynamics)
+                                 .max_iterations,
+                               non_rescaled_linear_solver_tolerance,
+                               true,
+                               true);
+
+  SolverBicgstab<VectorType> solver(solver_control);
+
+  this->newton_update = 0.0;
+
+  this->computing_timer.enter_subsection("Solve linear system");
+
+  // The matrix-free solver does not retry the linear solve with a higher
+  // preconditioner fill level when it fails. If the linear solver fails and the
+  // user requested to force its continuation through the <force linear solver
+  // continuation> parameter, we ignore the failure and continue the Newton step
+  // with the current Newton update. Otherwise, the exception is rethrown.
+  try
+    {
+      if ((this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::lsmg) ||
+          (this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .preconditioner ==
+           Parameters::LinearSolver::PreconditionerType::gcmg))
+        {
+          solver.solve(*(this->system_operator),
+                       this->newton_update,
+                       this->system_rhs,
+                       *(this->gmg_preconditioner));
+
+          if (this->simulation_parameters.linear_solver
+                .at(PhysicsID::fluid_dynamics)
+                .mg_verbosity != Parameters::Verbosity::quiet)
+            this->gmg_preconditioner->print_relevant_info();
+        }
+      else if (this->simulation_parameters.linear_solver
+                 .at(PhysicsID::fluid_dynamics)
+                 .preconditioner ==
+               Parameters::LinearSolver::PreconditionerType::ilu)
+        solver.solve(*(this->system_operator),
+                     this->newton_update,
+                     this->system_rhs,
+                     *(this->ilu_preconditioner));
+      else
+        AssertThrow(
+          this->simulation_parameters.linear_solver
+                .at(PhysicsID::fluid_dynamics)
+                .preconditioner ==
+              Parameters::LinearSolver::PreconditionerType::ilu ||
+            this->simulation_parameters.linear_solver
+                .at(PhysicsID::fluid_dynamics)
+                .preconditioner ==
+              Parameters::LinearSolver::PreconditionerType::lsmg ||
+            this->simulation_parameters.linear_solver
+                .at(PhysicsID::fluid_dynamics)
+                .preconditioner ==
+              Parameters::LinearSolver::PreconditionerType::gcmg,
+          ExcMessage(
+            "This linear solver does not support this preconditioner. Only <ilu|lsmg|gcmg> preconditioners are supported."));
+    }
+  catch (std::exception &e)
+    {
+      if (!this->simulation_parameters.linear_solver
+             .at(PhysicsID::fluid_dynamics)
+             .force_linear_solver_continuation)
+        {
+          this->computing_timer.leave_subsection("Solve linear system");
+          throw e;
+        }
+
+      this->pcout
+        << " BiCGStab solver failed! Continuing the Newton step as requested by the <force linear solver continuation> parameter."
         << std::endl;
 
       // A failed linear solve may leave the Newton update with non-finite
