@@ -299,7 +299,7 @@ public:
    * @param[in] min_cutoff Minimum cutoff diameter.
    * @param[in] max_cutoff Maximum cutoff diameter.
    * @param[in] distribution_weighting_type Weighting type of the distribution.
-   * @param[in] function_type Defines whether the input probability values
+   * @param[in] function_type_in Defines whether the input probability values
    * correspond to the PDF or the CDF.
    * @param[in] interpolate Indicates whether the diameter sampled values are
    * linearly interpolated between input diameter and probability values.
@@ -312,7 +312,7 @@ public:
     const double               max_cutoff,
     const Parameters::Lagrangian::DistributionWeightingType
       &distribution_weighting_type,
-    const Parameters::Lagrangian::ProbabilityFunctionType &function_type,
+    const Parameters::Lagrangian::ProbabilityFunctionType &function_type_in,
     const bool                                             interpolate);
 
   /**
@@ -376,6 +376,23 @@ private:
    * @brief Random number generator for the diameter selection.
    */
   std::mt19937 gen;
+
+  /**
+   * @brief Defines if the custom distribution is a probability density function
+   * (PDF) or a cumulative density function (CDF).
+   */
+  const Parameters::Lagrangian::ProbabilityFunctionType function_type;
+
+  // Normalized volume-based PDF values at each diameter node.
+  // Only populated when weighting_type == volume_based &&
+  // interpolate_diameter_values.
+  std::vector<double> fv;
+
+  // Normalization constant for the volume-based interpolated CDF
+  // (sum of all per-segment integrals of fv(d)/d³).
+  // Only populated when weighting_type == volume_based &&
+  // interpolate_diameter_values.
+  double total_integral;
 };
 
 /**
