@@ -4,6 +4,7 @@
 #define lethe_tracer_h
 
 #include <core/bdf.h>
+#include <core/mortar_coupling_manager.h>
 #include <core/simulation_control.h>
 #include <core/vector.h>
 
@@ -102,6 +103,10 @@ public:
         cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
         face_quadrature = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
       }
+
+    // Create and initialize mapping cache
+    if (this->simulation_parameters.mortar_parameters.enable)
+      this->mapping_cache = std::make_shared<MappingQCache<dim>>(fe->degree);
 
     // Initialize solution shared_ptr
     present_solution = std::make_shared<GlobalVectorType>();
@@ -242,6 +247,18 @@ public:
    */
   void
   setup_dofs() override;
+
+  /**
+   * @brief Define the zero constraints used to solve the problem.
+   */
+  void
+  define_zero_constraints();
+
+  /**
+   * @brief Define the non-zero constraints used to solve the problem.
+   */
+  void
+  define_non_zero_constraints();
 
   /**
    * @brief Sets-up the initial conditions associated with the physics. Generally, physics
@@ -611,7 +628,39 @@ private:
       }
   }
 
+  /**
+   * @brief Returns the mapping shared pointer. A MappingQCache is
+   * necessary for prescribed rotation in rotor-stator configurations
+   */
+  inline std::shared_ptr<Mapping<dim>>
+  get_mapping()
+  {
+    if (!this->simulation_parameters.mortar_parameters.enable)
+      return this->mapping;
+    else
+      return this->mapping_cache;
+  }
 
+  /**
+   * @brief Initialize mortar coupling manager, operator, and evaluator
+   */
+  void
+  reinit_mortar_operators();
+
+  /**
+   * @brief Rotate rotor mapping in mortar method
+   */
+  void
+  rotate_rotor_mapping();
+
+  /**
+   * @brief Update mortar configuration.
+   *
+   * When the rotor domain is rotated, the mortar cells need to be reinitialized
+   * according to the new rotor-stator interface configuration.
+   */
+  void
+  update_mortar_configuration();
 
   MultiphysicsInterface<dim> *multiphysics;
 
@@ -633,6 +682,13 @@ private:
   std::shared_ptr<Quadrature<dim>>     cell_quadrature;
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
 
+  // Mortar coupling manager and operator
+  std::shared_ptr<MortarManagerBase<dim>>        mortar_manager;
+  std::shared_ptr<CouplingOperator<dim, double>> mortar_coupling_operator;
+  std::shared_ptr<ScalarCouplingEvaluationSIPG<dim, 1, double>>
+    mortar_coupling_evaluator;
+  // Mapping cache used in rotor mesh rotation in mortar method
+  std::shared_ptr<MappingQCache<dim>> mapping_cache;
 
   ConvergenceTable error_table;
 
