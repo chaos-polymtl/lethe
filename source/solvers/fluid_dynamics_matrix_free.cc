@@ -1875,11 +1875,13 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
       // step of a degree-d polynomial is applied (the polynomial degree is the
       // main knob). The maximum eigenvalue is estimated internally, so no
       // manual power iteration is required.
-      auto smoother = std::make_shared<
-        MGSmootherPrecondition<OperatorType, ChebyshevSmootherType, MGVectorType>>();
+      auto smoother =
+        std::make_shared<MGSmootherPrecondition<OperatorType,
+                                                ChebyshevSmootherType,
+                                                MGVectorType>>();
 
-      MGLevelObject<typename ChebyshevSmootherType::AdditionalData> smoother_data(
-        this->minlevel, this->maxlevel);
+      MGLevelObject<typename ChebyshevSmootherType::AdditionalData>
+        smoother_data(this->minlevel, this->maxlevel);
 
       for (unsigned int level = this->minlevel; level <= this->maxlevel;
            ++level)
@@ -1951,9 +1953,8 @@ MFNavierStokesPreconditionGMGBase<dim>::initialize()
                 linear_solver_parameters.eig_estimation_smoothing_range;
               smoother_data[level].eig_cg_n_iterations =
                 linear_solver_parameters.eig_estimation_cg_n_iterations;
-              smoother_data[level].eigenvalue_algorithm =
-                SmootherType::AdditionalData::EigenvalueAlgorithm::
-                  power_iteration;
+              smoother_data[level].eigenvalue_algorithm = SmootherType::
+                AdditionalData::EigenvalueAlgorithm::power_iteration;
               smoother_data[level].constraints.copy_from(
                 this->mg_operators[level]
                   ->get_system_matrix_free()

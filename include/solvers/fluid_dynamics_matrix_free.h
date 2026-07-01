@@ -64,7 +64,9 @@ protected:
   using SmootherType =
     PreconditionRelaxation<OperatorType, SmootherPreconditionerType>;
   using ChebyshevSmootherType =
-    PreconditionChebyshev<OperatorType, MGVectorType, SmootherPreconditionerType>;
+    PreconditionChebyshev<OperatorType,
+                          MGVectorType,
+                          SmootherPreconditionerType>;
   using PreconditionerTypeLS =
     PreconditionMG<dim, MGVectorType, LSTransferType>;
   using PreconditionerTypeGC =
