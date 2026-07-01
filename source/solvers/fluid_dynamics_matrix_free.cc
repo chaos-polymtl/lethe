@@ -3932,14 +3932,14 @@ FluidDynamicsMatrixFree<dim>::solve_system_BiCGStab(
           ExcMessage(
             "This linear solver does not support this preconditioner. Only <ilu|lsmg|gcmg> preconditioners are supported."));
     }
-  catch (std::exception &e)
+  catch (const std::exception &)
     {
       if (!this->simulation_parameters.linear_solver
              .at(PhysicsID::fluid_dynamics)
              .force_linear_solver_continuation)
         {
           this->computing_timer.leave_subsection("Solve linear system");
-          throw e;
+          throw;
         }
 
       this->pcout
