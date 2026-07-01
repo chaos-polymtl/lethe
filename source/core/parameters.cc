@@ -3224,19 +3224,19 @@ namespace Parameters
 
         prm.declare_entry("mg smoother chebyshev degree",
                           "3",
-                          Patterns::Integer(),
+                          Patterns::Integer(0),
                           "polynomial degree of the Chebyshev smoother");
 
         prm.declare_entry(
           "mg smoother chebyshev smoothing range",
           "15",
-          Patterns::Double(),
+          Patterns::Double(1.0),
           "smoothing range (lambda_max/lambda_min) of the Chebyshev smoother");
 
         prm.declare_entry(
           "mg smoother chebyshev eig cg n iterations",
           "10",
-          Patterns::Integer(),
+          Patterns::Integer(1),
           "cg/Lanczos iterations to estimate the maximum eigenvalue for the "
           "Chebyshev smoother");
 
