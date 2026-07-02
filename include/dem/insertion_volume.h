@@ -78,21 +78,20 @@ public:
 
 private:
   /**
-   * @brief Carries out finding the maximum number of inserted particles based on the
-   * insertion box size. If the requested number of particles for insertion in
-   * each insertion step is larger than this maximum, it is limited to this
-   * value and a warning is printed.
+   * @brief Adjust the number of inserted particles for this insertion time step
+   * if the number required by the used is larger than what is allowed by the
+   * insertion box and the acceptance function.
    *
    * @param[in] insertion_information DEM insertion parameters declared in the
    * .prm
    * @param[in] pcout Printing in parallel
    * @param[in] inserted_this_step Number of particle to insert at the current
    * insertion step. This value is updated if the requested number of particles
-   * for insertion in the current  insertion step is larger than the maximum n
-   * umber of inserted particles based on the insertion box size.
+   * for insertion in the current  insertion step is larger than the maximum
+   * number of inserted particles based on the insertion box size.
    */
   void
-  calculate_insertion_domain_maximum_particle_number(
+  adjust_insertion_count_by_insertion_box_capacity(
     const InsertionInfo<dim> &insertion_information,
     const ConditionalOStream &pcout,
     unsigned int             &inserted_this_step);
@@ -117,7 +116,9 @@ private:
                           const InsertionInfo<dim> &insertion_information);
 
   /**
-   * @brief Fills the filted_box_index vector.
+   * @brief Fills the filted_box_index vector. Also finds how many insertion
+   * points are valid inside the insertion box after applying the acceptance
+   * function.
    *
    * @param[in] insertion_information DEM insertion parameters declared in the
    * .prm
@@ -127,29 +128,34 @@ private:
 
   unsigned int current_inserting_particle_type;
 
-  // Number of particles of each type that remain to be inserted in the
-  // upcoming insertion steps
+  /// Number of particles of each type that remain to be inserted in the
+  /// upcoming insertion steps
   unsigned int particles_of_each_type_remaining;
 
   // Number of insertion points in the x, y and z directions
   std::vector<int> number_of_particles_directions;
 
-  // Minimum and maximum boundaries of the insertion box in the direction order
-  // It means that axis 0 is not necessarily x, since it depends on the order
-  // of the insertion direction.
+  /// Minimum and maximum boundaries of the insertion box in the direction order
+  /// It means that axis 0 is not necessarily x, since it depends on the order
+  /// of the insertion direction.
   std::vector<double> axis_min, axis_max;
 
-  // Function used to insert particle inside our outside an arbitrary shape.
+  /// Function used to insert particle inside our outside an arbitrary shape.
   std::shared_ptr<Function<dim>> acceptance_fct;
 
-  // Map used to transfer from the filtered to the pre-filted numbering of the
-  // insertion point inside the insertion box.
+  /// Map used to transfer from the filtered to the pre-filted numbering of the
+  /// insertion point inside the insertion box.
   std::vector<unsigned int> filted_box_index;
 
+  /// The first and last index that will get inserted by this process following
+  /// the filtered numeration.
   unsigned int first_index_this_proc, last_index_this_proc;
 
+  /// The total number of valid points inside the box on all processes after
+  /// applying the acceptance function.
   unsigned int number_of_valid_insertion_point_global;
 
-  double maximum_diameter;
+  /// Maximum particle diameter based on the values defined in the parameter
+  const double maximum_diameter;
 };
 #endif

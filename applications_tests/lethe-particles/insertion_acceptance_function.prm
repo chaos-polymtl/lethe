@@ -1,8 +1,11 @@
 # SPDX-FileCopyrightText: Copyright (c) 2026 The Lethe Authors
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
-# Test description: We insert particle using the volume insertion with the an ``insertion acceptance function``.
-# This function corresponds to an cylinder with a radius of 0.08 and a height of 0.08. Particles can only be inserted at location for which the acceptance function is negative. Particles whose location leads to a positive value of the acceptance function are not inserted.
+# Test description: We insert particle using the volume insertion with the an
+# ``insertion acceptance function``. This function corresponds to a cylinder with
+# a radius of 0.025 and a height of 0.05. Particles can only be inserted at
+# location for which the acceptance function is positive. Particles whose
+# location leads to a negative value of the acceptance function are not inserted.
 
 # Listing of Parameters
 #----------------------

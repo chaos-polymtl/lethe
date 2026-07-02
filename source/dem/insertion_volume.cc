@@ -25,21 +25,20 @@ InsertionVolume<dim, PropertiesIndex>::InsertionVolume(
   , particles_of_each_type_remaining(
       dem_parameters.lagrangian_physical_properties.number.at(0))
   , acceptance_fct(dem_parameters.insertion_info.insertion_acceptance_fct)
+  , maximum_diameter(maximum_particle_diameter)
 {
   // Initializing the current inserting particle type
   current_inserting_particle_type = 0;
-  maximum_diameter                = maximum_particle_diameter;
 
   // We need to fill the vector filted_box_index.
   // To do this, we loop of every insertion point inside the box considering
   // that the acceptance_fct accepts every point.
   // For each point, we check if it respects the condition. If so, we insert
-  // the ID associated with this point inside the map.
+  // the index associated with this point inside the vector.
   set_filtered_index(dem_parameters.insertion_info);
 }
 
-// The main insertion function. Insert_global_function is used to insert
-// the particles
+
 template <int dim, typename PropertiesIndex>
 void
 InsertionVolume<dim, PropertiesIndex>::insert(
@@ -59,7 +58,7 @@ InsertionVolume<dim, PropertiesIndex>::insert(
   // Check if the remaining number of uninserted particles is equal to zero
   if (particles_of_each_type_remaining != 0)
     {
-      // Remove the particle is the feature is activated
+      // Remove the particle if the remove box region feature is activated
       if (this->removing_particles_in_region)
         {
           if (this->mark_for_update)
@@ -77,7 +76,7 @@ InsertionVolume<dim, PropertiesIndex>::insert(
 
       // Compute the number of particle to insert during this step.
       unsigned int inserted_this_step;
-      this->calculate_insertion_domain_maximum_particle_number(
+      adjust_insertion_count_by_insertion_box_capacity(
         dem_parameters.insertion_info, pcout, inserted_this_step);
 
       // Get global bounding boxes
@@ -92,7 +91,7 @@ InsertionVolume<dim, PropertiesIndex>::insert(
       random_number_vector.reserve(filted_box_index.size());
       create_random_number_container(
         random_number_vector,
-        inserted_this_step,
+        filted_box_index.size(),
         dem_parameters.insertion_info.insertion_maximum_offset,
         dem_parameters.insertion_info.seed_for_insertion);
 
@@ -104,7 +103,7 @@ InsertionVolume<dim, PropertiesIndex>::insert(
       // insertion location
       unsigned int particle_counter = 0;
       for (unsigned int global_index = first_index_this_proc;
-           global_index < last_index_this_proc &&
+           global_index <= last_index_this_proc &&
            global_index < inserted_this_step;
            ++global_index, ++particle_counter)
         {
@@ -123,7 +122,7 @@ InsertionVolume<dim, PropertiesIndex>::insert(
       // Assigning inserted particles properties using
       // assign_particle_properties function
       this->assign_particle_properties(dem_parameters,
-                                       particle_counter + 1,
+                                       particle_counter,
                                        current_inserting_particle_type,
                                        insertion_points_on_proc,
                                        particle_properties);
@@ -214,7 +213,7 @@ InsertionVolume<dim, PropertiesIndex>::set_filtered_index(
   if (insertion_information.inserted_this_step == 0)
     return;
 
-  // Checking if the insertion directions are valid (no repetition)
+  // Check if the insertion directions are valid (no repetition)
   unsigned int axis_sum = 0;
   if constexpr (dim == 2)
     {
@@ -290,14 +289,14 @@ InsertionVolume<dim, PropertiesIndex>::set_filtered_index(
     }
 
   // We split the number of points evenly on every process.
+  // The last process needs to be adjusted to match the maximum number of points
+  // in the box.
   MPI_Comm communicator     = MPI_COMM_WORLD;
   auto     this_mpi_process = Utilities::MPI::this_mpi_process(communicator);
   auto     n_mpi_process    = Utilities::MPI::n_mpi_processes(communicator);
 
   unsigned int n_points_this_proc =
     floor(maximum_number_of_points / n_mpi_process);
-  // The last process needs to be adjusted to match the maximum number of points
-  // in the box.
   if (this_mpi_process == (n_mpi_process - 1))
     n_points_this_proc =
       maximum_number_of_points -
@@ -307,14 +306,12 @@ InsertionVolume<dim, PropertiesIndex>::set_filtered_index(
   // process.
   unsigned int first_index_unfiltered;
   unsigned int last_index_unfiltered;
-  // For the last process
-  if (this_mpi_process == (n_mpi_process - 1))
+  if (this_mpi_process == (n_mpi_process - 1)) // For the last process
     {
       first_index_unfiltered = maximum_number_of_points - n_points_this_proc;
       last_index_unfiltered  = maximum_number_of_points;
     }
-  // For processes 1 to n-1
-  else
+  else // For processes 1 to n-1
     {
       first_index_unfiltered = this_mpi_process * n_points_this_proc;
       last_index_unfiltered  = (this_mpi_process + 1) * n_points_this_proc;
@@ -340,7 +337,9 @@ InsertionVolume<dim, PropertiesIndex>::set_filtered_index(
         filted_box_index.push_back(index);
     }
 
-  // Each proces needs to know what is its first and last filtered indexes.
+  // Each process needs to know what is its first and last filtered indexes.
+  // To do so, every process needs to know how many insertion point were kept
+  // valid by the previous process.
   // The numeration used for the filtered indexes follows the same principal as
   // the one used before filtering. The only difference is that we skip the
   // rejected points.
@@ -379,7 +378,7 @@ InsertionVolume<dim, PropertiesIndex>::set_filtered_index(
   last_index_this_proc =
     first_index_this_proc + n_valid_insertion_point_this_proc;
 
-  // We need this for the calculate_insertion_domain_maximum_particle_number
+  // We need this for the adjust_insertion_count_by_insertion_box_capacity
   // function
   number_of_valid_insertion_point_global =
     Utilities::MPI::broadcast(communicator,
@@ -390,7 +389,7 @@ InsertionVolume<dim, PropertiesIndex>::set_filtered_index(
 template <int dim, typename PropertiesIndex>
 void
 InsertionVolume<dim, PropertiesIndex>::
-  calculate_insertion_domain_maximum_particle_number(
+  adjust_insertion_count_by_insertion_box_capacity(
     const InsertionInfo<dim> &insertion_information,
     const ConditionalOStream &pcout,
     unsigned int             &inserted_this_step)

@@ -161,10 +161,6 @@ protected:
   void
   remove_particles_in_box(Particles::ParticleHandler<dim> &particle_handler);
 
-  // Minimum and maximum number of inserted particles based on the insertion box
-  // size and the direction order (it means that axis 0 is not necessarily x
-  // etc...) It depends on the order of the insertion direction.
-  std::vector<double> axis_min, axis_max;
 
   // A distribution object that carries out the attribution of diameter to every
   // particle during an insertion time step
