@@ -111,14 +111,35 @@ namespace DEM
       map<types::particle_index, periodic_particle_particle_contact_info<dim>>
         periodic_particle_contact_info;
 
-    // <particle id, <particle id, particle-particle info>>
+    // Value stored per "particle one" in the adjacency containers below. The
+    // iterator to particle one is shared by all its contacts, so it is stored
+    // once here instead of being duplicated in every particle-particle contact
+    // info. second_particles maps each particle two id to the contact info.
+    // (particle one iterator, <particle id, particle-particle info>)
+    struct adjacent_particle_pairs_value
+    {
+      Particles::ParticleIterator<dim> particle_one;
+      particle_contact_info            second_particles;
+    };
+
+    // Periodic counterpart of adjacent_particle_pairs_value.
+    // (particle one iterator, <particle id, periodic particle-particle info>)
+    struct periodic_adjacent_particle_pairs_value
+    {
+      Particles::ParticleIterator<dim> particle_one;
+      periodic_particle_contact_info   second_particles;
+    };
+
+    // <particle id, (particle one iterator, <particle id, particle-particle
+    // info>)>
     typedef ankerl::unordered_dense::map<types::particle_index,
-                                         particle_contact_info>
+                                         adjacent_particle_pairs_value>
       adjacent_particle_pairs;
 
-    // <particle id, <particle id, periodic particle-particle info>>
+    // <particle id, (particle one iterator, <particle id, periodic
+    // particle-particle info>)>
     typedef ankerl::unordered_dense::map<types::particle_index,
-                                         periodic_particle_contact_info>
+                                         periodic_adjacent_particle_pairs_value>
       periodic_adjacent_particle_pairs;
 
     // <cell iterator, <particle id, particle iterator>>

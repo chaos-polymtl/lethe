@@ -198,7 +198,7 @@ private:
                               std::vector<double>   &normal_forces_vector)
   {
     // No contact calculation if no adjacent particles
-    if (adjacent_particles_list.empty())
+    if (adjacent_particles_list.second_particles.empty())
       return;
 
     const double force_calculation_threshold_distance =
@@ -214,16 +214,17 @@ private:
     double       normal_relative_velocity_value;
     Tensor<1, 3> tangential_relative_velocity;
 
-    // Gather information about particle 1 and set it up.
-    auto first_contact_info      = adjacent_particles_list.begin();
-    auto particle_one            = first_contact_info->second.particle_one;
+    // Gather information about particle 1 and set it up. The iterator to
+    // particle 1 is shared by all its contacts and stored once in the adjacency
+    // value.
+    auto particle_one            = adjacent_particles_list.particle_one;
     auto particle_one_properties = particle_one->get_properties();
 
     // Fix particle one location for 2d and 3d
     Point<3> particle_one_location = this->get_location(particle_one);
 
     for (auto &&contact_info :
-         adjacent_particles_list | boost::adaptors::map_values)
+         adjacent_particles_list.second_particles | boost::adaptors::map_values)
       {
         // Getting information (location and properties) of particle 2 in
         // contact with particle 1

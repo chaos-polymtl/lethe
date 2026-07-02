@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: Copyright (c) 2020-2025 The Lethe Authors
+// SPDX-FileCopyrightText: Copyright (c) 2020-2026 The Lethe Authors
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception OR LGPL-2.1-or-later
 
 /**
@@ -117,14 +117,16 @@ test()
        adjacent_particles_iterator != local_adjacent_particles.end();
        ++adjacent_particles_iterator)
     {
-      auto information_iterator =
-        (&adjacent_particles_iterator->second)->begin();
-      while (information_iterator !=
-             (&adjacent_particles_iterator->second)->end())
+      // The iterator to particle one is shared by all its contacts and stored
+      // once in the adjacency value, alongside the second_particles map.
+      auto &particle_one = adjacent_particles_iterator->second.particle_one;
+      auto &second_particles =
+        adjacent_particles_iterator->second.second_particles;
+      auto information_iterator = second_particles.begin();
+      while (information_iterator != second_particles.end())
         {
           deallog << "The particle pair in contact are particles: "
-                  << information_iterator->second.particle_one->get_id()
-                  << " and "
+                  << particle_one->get_id() << " and "
                   << information_iterator->second.particle_two->get_id()
                   << std::endl;
           deallog << "Tangential displacement at the beginning of contact is: "

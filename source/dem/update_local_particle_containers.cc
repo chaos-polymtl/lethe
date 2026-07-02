@@ -82,9 +82,44 @@ update_contact_container_iterators(
               continue;
             }
 
+          // For particle-particle contacts, the iterator to particle one is
+          // shared by all its contacts and stored once in the adjacency value,
+          // while its map of contacts is held in second_particles. For the
+          // other contact types, adjacent_pairs_content is directly the map of
+          // objects in contact. Select the map to loop over accordingly.
+          auto &second_objects = [&]() -> auto & {
+            if constexpr (contact_type ==
+                            ContactType::local_particle_particle ||
+                          contact_type ==
+                            ContactType::ghost_particle_particle ||
+                          contact_type ==
+                            ContactType::local_periodic_particle_particle ||
+                          contact_type ==
+                            ContactType::ghost_periodic_particle_particle ||
+                          contact_type ==
+                            ContactType::ghost_local_periodic_particle_particle)
+              return adjacent_pairs_content->second_particles;
+            else
+              return *adjacent_pairs_content;
+          }();
+
+          // Update the shared iterator to particle one once for the whole list
+          if constexpr (contact_type == ContactType::local_particle_particle ||
+                        contact_type == ContactType::ghost_particle_particle ||
+                        contact_type ==
+                          ContactType::local_periodic_particle_particle ||
+                        contact_type ==
+                          ContactType::ghost_periodic_particle_particle ||
+                        contact_type ==
+                          ContactType::ghost_local_periodic_particle_particle)
+            {
+              adjacent_pairs_content->particle_one =
+                particle_one_container->second;
+            }
+
           // Loop over all the other objects of contact_type in contact
-          for (auto adjacent_map_iterator = adjacent_pairs_content->begin();
-               adjacent_map_iterator != adjacent_pairs_content->end();)
+          for (auto adjacent_map_iterator = second_objects.begin();
+               adjacent_map_iterator != second_objects.end();)
             {
               if constexpr (contact_type ==
                               ContactType::local_particle_particle ||
@@ -109,14 +144,12 @@ update_contact_container_iterators(
                   if (particle_two_container == particle_container.end())
                     {
                       adjacent_map_iterator =
-                        adjacent_pairs_content->erase(adjacent_map_iterator);
+                        second_objects.erase(adjacent_map_iterator);
                       continue;
                     }
 
-                  // Both particles are still on this process, update their
-                  // iterators
-                  adjacent_map_iterator->second.particle_one =
-                    particle_one_container->second;
+                  // Both particles are still on this process, update the
+                  // iterator to particle two
                   adjacent_map_iterator->second.particle_two =
                     particle_two_container->second;
 
