@@ -5,6 +5,7 @@
 #include <core/fichera_oven_grid.h>
 #include <core/grid_birmingham_fluidized_bed.h>
 #include <core/grid_cylinder.h>
+#include <core/grid_impinging_jet_mixer.h>
 #include <core/grid_periodic_hills.h>
 #include <core/grid_uniform_channel_with_meshed_cylinder.h>
 #include <core/grid_uniform_channel_with_meshed_square_prism.h>
@@ -192,6 +193,19 @@ attach_grid_to_triangulation(Triangulation<dim, spacedim> &triangulation,
               "Unsupported mesh type - Birmingham fluidized bed mesh with simplex is not supported"));
 
           GridBirminghamFluidizedBed<dim, spacedim> grid(
+            mesh_parameters.grid_arguments);
+          grid.make_grid(triangulation);
+
+          GridTools::scale(mesh_parameters.scale, triangulation);
+        }
+      else if (grid_type == "impinging_jet_mixer")
+        {
+          AssertThrow(
+            !mesh_parameters.simplex,
+            ExcMessage(
+              "Unsupported mesh type - impinging jet mixer mesh with simplex is not supported"));
+
+          GridImpingingJetMixer<dim, spacedim> grid(
             mesh_parameters.grid_arguments);
           grid.make_grid(triangulation);
 

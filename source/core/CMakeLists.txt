@@ -12,6 +12,7 @@ add_library(lethe-core
   grids.cc
   grid_birmingham_fluidized_bed.cc
   grid_cylinder.cc
+  grid_impinging_jet_mixer.cc
   grid_periodic_hills.cc
   ib_particle.cc
   ib_stencil.cc
@@ -64,6 +65,7 @@ add_library(lethe-core
   ../../include/core/grids.h
   ../../include/core/grid_birmingham_fluidized_bed.h
   ../../include/core/grid_cylinder.h
+  ../../include/core/grid_impinging_jet_mixer.h
   ../../include/core/grid_periodic_hills.h
   ../../include/core/ib_particle.h
   ../../include/core/ib_stencil.h
