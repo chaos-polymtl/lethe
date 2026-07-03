@@ -221,7 +221,13 @@ GridImpingingJetMixer<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
   // ---------------------------------------------------------------------
   // Height of the inlet axis actually used: set from the selected port patch
   // (the nearest wall-face-centre row to z_inlet) and reused for the manifold.
-  double inlet_axis_z = z_inlet;
+  // The first pipe fixes this height; the second pipe then targets the very
+  // same z (rather than z_inlet) so both inlets sit on the same wall-face row
+  // and face one another exactly.  This matters because z_inlet can fall
+  // exactly between two candidate rows, where an independent search on each
+  // side could otherwise tie-break to different rows.
+  double inlet_axis_z  = z_inlet;
+  bool   axis_z_locked = false;
 
   const auto grow_inlet = [&](const double direction /* +1 : +x, -1 : -x */) {
     // A chamber lateral-wall face on the requested (+x or -x) side.
@@ -238,8 +244,11 @@ GridImpingingJetMixer<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
     //     is a FACE, so no vertex maps onto the pipe axis: the tube is then a
     //     clean butterfly (square core + surrounding ring) with no gaps and no
     //     axis singularity.
-    const Point<3>              ideal(direction * R_chamber, 0.0, z_inlet);
-    double                      best = std::numeric_limits<double>::max();
+    // Target the height fixed by the first pipe once it is locked, so the
+    // second pipe lands on the same wall-face row and both inlets are coaxial.
+    const double   target_z = axis_z_locked ? inlet_axis_z : z_inlet;
+    const Point<3> ideal(direction * R_chamber, 0.0, target_z);
+    double         best = std::numeric_limits<double>::max();
     std::array<unsigned int, 4> f0{};
     Point<3>                    f0_center;
     bool                        found = false;
@@ -261,7 +270,8 @@ GridImpingingJetMixer<3, 3>::make_grid(Triangulation<3, 3> &triangulation)
         }
     if (!found)
       return std::size_t(0);
-    inlet_axis_z = f0_center[2];
+    inlet_axis_z  = f0_center[2];
+    axis_z_locked = true;
 
     const std::set<unsigned int>             f0_vertices(f0.begin(), f0.end());
     std::vector<std::array<unsigned int, 4>> port_faces;
