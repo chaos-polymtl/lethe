@@ -579,6 +579,17 @@ private:
                      const double relative_residual);
 
   /**
+   * @brief BiCGStab solver with preconditioning.
+   *
+   * @param[in] absolute_residual Used to define the linear solver tolerance.
+   *
+   * @param[in] relative_residual Used to define the linear solver tolerance.
+   */
+  void
+  solve_system_BiCGStab(const double absolute_residual,
+                        const double relative_residual);
+
+  /**
    * @brief Direct solver using TrilinosWrappers::SolverDirect
    *
    * @param[in] absolute_residual Used to define the linear solver tolerance.
