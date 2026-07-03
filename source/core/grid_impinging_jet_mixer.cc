@@ -41,16 +41,30 @@ namespace
   constexpr double z_dome_center   = z_chamber_top;
 
   // --- Discretisation parameters. -----------------------------------------
-  // chamber_axial_subdiv is chosen so that, after global refinement, the
-  // chamber wall faces are roughly square; this makes the selected inlet-port
-  // patch square, so it maps cleanly onto a circle with little wall distortion.
+  // The axial subdivisions below are chosen so that, after global refinement,
+  // every region carries axial cells close to the ~0.01 m size of the chamber
+  // wall faces (which is itself set by the circumferential resolution, so that
+  // the wall faces are square).  Keeping all regions near that single target
+  // size makes the volumetric mesh about as uniform as this topology allows,
+  // and avoids the previous strong over-refinement of the (short) cone and
+  // outlet sections.
+  //   chamber : 0.16 / (2 * 8) = 0.0100
+  //   cone    : 0.06 / (1 * 8) = 0.0075
+  //   outlet  : 0.05 / (1 * 8) = 0.0063
+  //   pipe    : 0.08 / 6       = 0.0133  (matches the ~r_inlet/3 cross-section)
   constexpr unsigned int chamber_axial_subdiv = 2;
-  constexpr unsigned int cone_axial_subdiv    = 3;
-  constexpr unsigned int outlet_axial_subdiv  = 2;
-  // A finer wall (3 global refinements) keeps the 3x3 inlet-port patch small
-  // enough that it maps onto the inlet circle with little chamber distortion.
+  constexpr unsigned int cone_axial_subdiv    = 1;
+  constexpr unsigned int outlet_axial_subdiv  = 1;
+  // global_refinements sets the circumferential/radial (and thus the wall)
+  // resolution.  It is effectively fixed at 3: it is what keeps the chamber
+  // wall a 32-faceted circle, so the 3x3 inlet-port patch stays smaller than
+  // the inlet diameter and maps onto the inlet circle with little chamber
+  // distortion.  Lowering it makes the wall coarse and blocky at the ports.
   constexpr unsigned int global_refinements = 3; // wall resolution for ports
-  constexpr unsigned int n_pipe_layers      = 3; // cells along the pipe axis
+  // Cells along each inlet pipe.  Six layers give ~0.0133 m cells, matching the
+  // in-plane pipe cell size (r_inlet mapped through the 3x3 patch) so the pipe
+  // cells stay roughly cubic instead of being stretched along the axis.
+  constexpr unsigned int n_pipe_layers = 6; // cells along the pipe axis
 
   // --- Manifold ids. ------------------------------------------------------
   constexpr types::manifold_id cylinder_z_manifold_id = 0;
