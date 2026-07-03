@@ -116,7 +116,7 @@ where :math:`R` is the residual vector and :math:`V` is the volume of the entire
 
 	meaning that the code increases the preconditioner fill (see tip on default values below) in order to converge within the number of solver iterations. If you encounter this, consider increasing the ``max iters`` or adjusting other parameters, for example increasing ``max krylov vectors``.
 
-* ``force linear solver continuation`` when set to ``true``, forces the linear solver to continue, even if the ``minimum residual`` is not reached. Only available for ``gmres`` and ``bicgstab`` solvers within the ``lethe-fluid`` application.
+* ``force linear solver continuation`` when set to ``true``, forces the linear solver to continue, even if the ``minimum residual`` is not reached. Only available for ``gmres`` and ``bicgstab`` solvers within the ``lethe-fluid`` and ``lethe-fluid-matrix-free`` applications.
 
 .. warning::
 	With this mode on, errors on the linear solver convergence are not thrown. Forcing the solver to continue can be useful for debugging purposes if a given iteration is hard to pass, but use it with caution!

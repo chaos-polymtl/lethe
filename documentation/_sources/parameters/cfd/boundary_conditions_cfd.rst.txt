@@ -22,7 +22,7 @@ or in Einstein notation:
 .. math::
     \nu \partial_i u_j n_j  - p n_i - \beta ( u_k n_k)_{-} u_i = 0
 
-where :math:`\beta` is a constant  and :math:`(\mathbf{u}\cdot \mathbf{n})_{-}` is :math:`\min (0,\mathbf{u}\cdot \mathbf{n})`. We refer the reader to the work of `Arndt et al 2015 <https://www.mathsim.eu/~darndt/files/ENUMATH_2015.pdf>`_  for more detail.
+where :math:`\beta` is a constant  and :math:`(\mathbf{u}\cdot \mathbf{n})_{-}` is :math:`\min (0,\mathbf{u}\cdot \mathbf{n})`. We refer the reader to the work of `Arndt et al 2015 <https://doi.org/10.1007/978-3-319-39929-4_10>`_  for more detail.
 
 .. code-block:: text
 
