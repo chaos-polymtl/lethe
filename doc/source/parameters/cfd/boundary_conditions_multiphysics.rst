@@ -119,7 +119,7 @@ For tracer boundary conditions, the defaults parameters are:
 * ``type``: This is the type of boundary condition being imposed:
     * ``dirichlet`` to impose specific values;
     * ``periodic`` to impose periodicity between boundaries. ``periodic id`` and ``periodic direction`` specify the id and direction of the matching periodic boundary condition. For example, if boundary id 0 (located at xmin) is matched with boundary id 1 (located at xmax), we would set ``id = 0``, ``periodic id = 1`` and ``periodic direction = 0``;
-    * ``outlet``to impose an outflow when using the tracer Discontinuous-Galerkin implementation;
+    * ``outlet`` to impose an outflow when using the tracer Discontinuous-Galerkin implementation;
     * ``none`` is a do-nothing boundary condition.
 
 CLS
