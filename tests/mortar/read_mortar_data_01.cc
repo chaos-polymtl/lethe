@@ -34,7 +34,9 @@
 
 #include <../tests/tests.h>
 
+#include <algorithm>
 #include <fstream>
+#include <vector>
 
 void
 test()
@@ -100,8 +102,26 @@ test()
           deallog << "Number of vertices : " << triangulation.n_vertices()
                   << std::endl;
 
+          // The order in which the faces are traversed by
+          // active_face_iterators() is not stable accross CI runs or
+          // sometimes machines when the virtual machines are very busy.
+          // To obtain a deterministic, order-independent output, we collect
+          // the face centers and sort them
+          // by x and then by y before printing.
+          std::vector<Point<dim>> face_centers;
           for (const auto &face : triangulation.active_face_iterators())
-            deallog << "Cell center : " << face->center() << std::endl;
+            face_centers.push_back(face->center());
+
+          std::sort(face_centers.begin(),
+                    face_centers.end(),
+                    [](const Point<dim> &a, const Point<dim> &b) {
+                      if (a[0] != b[0])
+                        return a[0] < b[0];
+                      return a[1] < b[1];
+                    });
+
+          for (const auto &center : face_centers)
+            deallog << "Cell center : " << center << std::endl;
         }
       MPI_Barrier(comm);
     }
