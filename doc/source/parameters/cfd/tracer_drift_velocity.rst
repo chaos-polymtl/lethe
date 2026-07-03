@@ -2,7 +2,7 @@
 Tracer Drift Velocity
 =====================
 
-This subsection allows you to define a tracer drift velocity. This drift velocity is an additional velocity which is added to the fluid velocity when advecting the tracer. This enables user to model, with some strong hypothesis, the dynamics of a dispersed phase (such as bubbles or particles) within a fluid flow. 
+This subsection allows you to define a tracer drift velocity. This drift velocity is an additional velocity which is added to the fluid velocity when advecting the tracer. This enables the user to model, with some strong hypothesis, the dynamics of a dispersed phase (such as bubbles or particles) within a fluid flow. 
 
 .. code-block:: text
 
