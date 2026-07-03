@@ -29,6 +29,10 @@ impact on simulation results. The content of the change file should follow the f
 
 - MAJOR/MINOR This PR fixes a bug in an existing feature. [#PR](link)
 
+### Disabled
+
+- MAJOR/MINOR This PR indicates a test that was disabled. [#PR](link)
+
 ### Documentation
 
 - MAJOR/MINOR This PR modifies the documentation including the explanation of the parameters, the theory guide or the examples. [#PR](link)
