@@ -101,7 +101,7 @@ The ``volume`` insertion method uses an insertion box where particles will be in
 
     Generally, we recommend users to use a threshold in the range of 1.3-2.0, depending on the value of offset.
 
-* ``insertion acceptance function`` subsection is used to define a function used to accept or reject insertion points in the insertion box based on their position. This parameter allows to create an insertion box of a arbitrary shape, which is useful when inserting in curved geometries, like a cylinder. A insertion point is accepted if the function returns a value greater than ``0.`` relative to its coordinate, before applying the offset defined by the ``insertion maximum offset`` parameter. By default, every point is accepted.
+* ``insertion acceptance function`` subsection is used to define a function used to accept or reject insertion points in the insertion box based on their positions. This parameter allows to create an insertion box of a arbitrary shape, which is useful when inserting in curved geometries, like a cylinder. A insertion point is accepted if the function returns a value greater than ``0.``, before applying the offset defined by the ``insertion maximum offset`` parameter. The default value of the function is ``1``  and leads to every point being accepted..
 
 * ``initial velocity`` determine the initial translational velocity (in :math:`\frac{m}{s}`) at which particles are inserted in the x, y, and z directions.
 
