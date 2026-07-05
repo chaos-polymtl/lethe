@@ -189,11 +189,10 @@ protected:
    * @param[out] tangential_relative_velocity Tangential relative velocity.
    * @param[out] normal_relative_velocity_value Normal relative contact
    * velocity.
-   * @param[out] normal_unit_vector Normal vector of the contact.
+   * @param[in] normal_unit_vector Normal unit vector of the contact, pointing
+   * from particle one to particle two.
    * @param[in] particle_one_properties Properties of particle one in contact.
    * @param[in] particle_two_properties Properties of particle two in contact.
-   * @param[in] particle_one_location Location of particle one in contact.
-   * @param[in] particle_two_location Location of particle two in contact.
    * @param[in] dt DEM time step.
    */
   inline void
@@ -201,19 +200,11 @@ protected:
     particle_particle_contact_info<dim> &contact_info,
     Tensor<1, 3>                        &tangential_relative_velocity,
     double                              &normal_relative_velocity_value,
-    Tensor<1, 3>                        &normal_unit_vector,
+    const Tensor<1, 3>                  &normal_unit_vector,
     const ArrayView<const double>       &particle_one_properties,
     const ArrayView<const double>       &particle_two_properties,
-    const Point<3>                      &particle_one_location,
-    const Point<3>                      &particle_two_location,
     const double                         dt)
   {
-    // Calculation of the contact vector from particle one to particle two
-    auto contact_vector = particle_two_location - particle_one_location;
-
-    // Calculation of the normal unit contact vector
-    normal_unit_vector = contact_vector / contact_vector.norm();
-
     // Defining velocities and angular velocities of particles one and
     // two as vectors
     Tensor<1, 3> particle_one_omega, particle_two_omega;
@@ -769,8 +760,11 @@ private:
 
     double coulomb_threshold = friction_coeff * normal_force_value;
 
-    // Check for gross sliding
-    if (tangential_force.norm() > coulomb_threshold)
+    // Check for gross sliding. The squared norm is compared to the squared
+    // threshold to avoid computing a square root when no sliding occurs. A
+    // negative threshold always causes gross sliding.
+    if (coulomb_threshold < 0. ||
+        tangential_force.norm_square() > coulomb_threshold * coulomb_threshold)
       {
         // Gross sliding occurs and the tangential displacement is recalculated
         // from the tangential force limited to Coulomb's criterion
@@ -808,7 +802,7 @@ private:
       rolling_friction_coeff,
       dt,
       normal_spring_constant,
-      normal_force.norm(),
+      std::abs(normal_force_value),
       normal_unit_vector,
       contact_info.rolling_resistance_spring_torque);
   }
@@ -884,7 +878,6 @@ private:
       sqrt(effective_radius * normal_overlap);
     const double model_parameter_sn =
       2.0 * youngs_modulus * radius_times_overlap_sqrt;
-    double model_parameter_st = 8.0 * shear_modulus * radius_times_overlap_sqrt;
 
     // Calculation of normal and tangential spring and dashpot constants
     // using particle properties
@@ -907,8 +900,11 @@ private:
     // Calculate the tangential damping constant from ratio with the normal
     // damping constant, but the equation is:
     // eta_t = -2 * sqrt(5/6) * beta * sqrt(St * me)
+    // The ratio sqrt(St/Sn) = sqrt(4 * Ge / Ye) only depends on the particle
+    // type pair and is precomputed in set_effective_properties.
     double tangential_damping_constant =
-      normal_damping_constant * sqrt(model_parameter_st / model_parameter_sn);
+      normal_damping_constant *
+      this->effective_tangential_to_normal_damping_ratio[pair_index];
 
     // Calculation of normal force
     const double normal_force_value =
@@ -926,8 +922,11 @@ private:
 
     double coulomb_threshold = friction_coeff * normal_force_value;
 
-    // Check for gross sliding
-    if (tangential_force.norm() > coulomb_threshold)
+    // Check for gross sliding. The squared norm is compared to the squared
+    // threshold to avoid computing a square root when no sliding occurs. A
+    // negative threshold always causes gross sliding.
+    if (coulomb_threshold < 0. ||
+        tangential_force.norm_square() > coulomb_threshold * coulomb_threshold)
       {
         // Gross sliding occurs and the tangential displacement is recalculated
         // from the tangential force limited to Coulomb's criterion
@@ -965,7 +964,7 @@ private:
       rolling_viscous_damping_coeff,
       dt,
       normal_spring_constant,
-      normal_force.norm(),
+      std::abs(normal_force_value),
       normal_unit_vector,
       contact_info.rolling_resistance_spring_torque);
   }
@@ -1041,7 +1040,6 @@ private:
       sqrt(effective_radius * normal_overlap);
     const double model_parameter_sn =
       2.0 * youngs_modulus * radius_times_overlap_sqrt;
-    double model_parameter_st = 8.0 * shear_modulus * radius_times_overlap_sqrt;
 
     // Calculate the normal spring constant using the following formula:
     // kn = 4/3 * Ye * sqrt(Re * delta_n)
@@ -1061,8 +1059,11 @@ private:
     // Calculate the tangential damping constant from ratio with the normal
     // damping constant, but the equation is:
     // eta_t = -2 * sqrt(5/6) * beta * sqrt(St * me)
+    // The ratio sqrt(St/Sn) = sqrt(4 * Ge / Ye) only depends on the particle
+    // type pair and is precomputed in set_effective_properties.
     double tangential_damping_constant =
-      normal_damping_constant * sqrt(model_parameter_st / model_parameter_sn);
+      normal_damping_constant *
+      this->effective_tangential_to_normal_damping_ratio[pair_index];
 
     // Calculation of normal force using spring and dashpot normal forces
     const double normal_force_value =
@@ -1080,8 +1081,11 @@ private:
 
     double coulomb_threshold = friction_coeff * normal_force_value;
 
-    // Check for gross sliding
-    if (tangential_force.norm() > coulomb_threshold)
+    // Check for gross sliding. The squared norm is compared to the squared
+    // threshold to avoid computing a square root when no sliding occurs. A
+    // negative threshold always causes gross sliding.
+    if (coulomb_threshold < 0. ||
+        tangential_force.norm_square() > coulomb_threshold * coulomb_threshold)
       {
         // Gross sliding occurs and the tangential displacement and tangential
         // force are limited to Coulomb's criterion
@@ -1106,7 +1110,7 @@ private:
       rolling_viscous_damping_coeff,
       dt,
       normal_spring_constant,
-      normal_force.norm(),
+      std::abs(normal_force_value),
       normal_unit_vector,
       contact_info.rolling_resistance_spring_torque);
   }
@@ -1209,8 +1213,11 @@ private:
 
     double coulomb_threshold = friction_coeff * normal_force_value;
 
-    // Check for gross sliding
-    if (tangential_force.norm() > coulomb_threshold)
+    // Check for gross sliding. The squared norm is compared to the squared
+    // threshold to avoid computing a square root when no sliding occurs. A
+    // negative threshold always causes gross sliding.
+    if (coulomb_threshold < 0. ||
+        tangential_force.norm_square() > coulomb_threshold * coulomb_threshold)
       {
         // Gross sliding occurs and the tangential displacement and tangential
         // force are limited to Coulomb's criterion
@@ -1235,7 +1242,7 @@ private:
       rolling_viscous_damping_coeff,
       dt,
       normal_spring_constant,
-      normal_force.norm(),
+      std::abs(normal_force_value),
       normal_unit_vector,
       contact_info.rolling_resistance_spring_torque);
   }
@@ -1310,7 +1317,6 @@ private:
       sqrt(effective_radius * normal_overlap);
     const double model_parameter_sn =
       2.0 * youngs_modulus * radius_times_overlap_sqrt;
-    double model_parameter_st = 8.0 * shear_modulus * radius_times_overlap_sqrt;
 
     // Calculation of the  contact path radius using the Ferrari analitycal
     // solution.
@@ -1339,9 +1345,12 @@ private:
     // Calculation of the tangential spring constant
     const double tangential_spring_constant =
       8.0 * radius_times_overlap_sqrt * shear_modulus;
-    // Calculation of the tangential damping constant
+    // Calculation of the tangential damping constant. The ratio
+    // sqrt(St/Sn) = sqrt(4 * Ge / Ye) only depends on the particle type pair
+    // and is precomputed in set_effective_properties.
     const double tangential_damping_constant =
-      normal_damping_constant * sqrt(model_parameter_st / model_parameter_sn);
+      normal_damping_constant *
+      this->effective_tangential_to_normal_damping_ratio[pair_index];
 
     // Calculation of the normal force coefficient (F_n_JKR) # Eq 20
     const double normal_force_coefficient =
@@ -1351,9 +1360,10 @@ private:
                 Utilities::fixed_power<3>(a));
 
     // Calculation of the final normal force vector
-    normal_force = (normal_force_coefficient +
-                    normal_damping_constant * normal_relative_velocity_value) *
-                   normal_unit_vector;
+    const double normal_force_value =
+      normal_force_coefficient +
+      normal_damping_constant * normal_relative_velocity_value;
+    normal_force = normal_force_value * normal_unit_vector;
 
     tangential_force =
       tangential_spring_constant * contact_info.tangential_displacement +
@@ -1367,7 +1377,9 @@ private:
     const double modified_coulomb_threshold =
       (normal_force_coefficient + two_pull_off_force) * friction_coeff;
 
-    if (tangential_force.norm() > modified_coulomb_threshold)
+    if (modified_coulomb_threshold < 0. ||
+        tangential_force.norm_square() >
+          modified_coulomb_threshold * modified_coulomb_threshold)
       {
         // Gross sliding occurs and the tangential displacement and tangential
         // force are limited to Coulomb's criterion
@@ -1396,7 +1408,7 @@ private:
       rolling_viscous_damping_coeff,
       dt,
       normal_spring_constant,
-      normal_force.norm(),
+      std::abs(normal_force_value),
       normal_unit_vector,
       contact_info.rolling_resistance_spring_torque);
   }
@@ -1541,6 +1553,8 @@ private:
     effective_coefficient_of_rolling_friction.resize(n_particle_types *
                                                      n_particle_types);
     model_parameter_beta.resize(n_particle_types * n_particle_types);
+    effective_tangential_to_normal_damping_ratio.resize(n_particle_types *
+                                                        n_particle_types);
     effective_surface_energy.resize(n_particle_types * n_particle_types);
     effective_hamaker_constant.resize(n_particle_types * n_particle_types);
 
@@ -1629,6 +1643,13 @@ private:
               sqrt(restitution_coefficient_particle_log *
                      restitution_coefficient_particle_log +
                    9.8696);
+
+            // Ratio of the tangential to the normal damping constant,
+            // sqrt(St/Sn) = sqrt(4 * Ge / Ye), used by the Hertz-Mindlin and
+            // JKR models.
+            this->effective_tangential_to_normal_damping_ratio[k] =
+              std::sqrt(4. * this->effective_shear_modulus[k] /
+                        this->effective_youngs_modulus[k]);
           }
       }
   }
@@ -1756,6 +1777,11 @@ private:
     // Fix particle one location for 2d and 3d
     Point<3> particle_one_location = get_location(particle_one);
 
+    // Get the threshold distance for contact force, this is useful for non-
+    // contact cohesive force models such as the DMT.
+    const double force_calculation_threshold_distance =
+      get_force_calculation_threshold_distance();
+
     for (auto &&contact_info :
          adjacent_particles_list | boost::adaptors::map_values)
       {
@@ -1784,19 +1810,31 @@ private:
               get_periodic_location(particle_two, contact_info.periodic_offset);
           }
 
+        // Calculation of the contact vector from particle one to particle
+        // two. Its norm is computed once and reused for both the normal
+        // overlap and the normal unit vector.
+        const Tensor<1, 3> contact_vector =
+          particle_two_location - particle_one_location;
+        const double distance = contact_vector.norm();
+
         // Calculation of normal overlap
         double normal_overlap =
           0.5 * (particle_one_properties[PropertiesIndex::dp] +
                  particle_two_properties[PropertiesIndex::dp]) -
-          particle_one_location.distance(particle_two_location);
-
-        // Get the threshold distance for contact force, this is useful for non-
-        // contact cohesive force models such as the DMT.
-        const double force_calculation_threshold_distance =
-          get_force_calculation_threshold_distance();
+          distance;
 
         if (normal_overlap > force_calculation_threshold_distance)
           {
+            // Calculation of the normal unit vector. It points from particle
+            // one to particle two, except for ghost-local periodic contacts
+            // where it is flipped because the contact is resolved from the
+            // point of view of particle two (the local particle).
+            if constexpr (contact_type ==
+                          ContactType::ghost_local_periodic_particle_particle)
+              normal_unit_vector = -contact_vector / distance;
+            else
+              normal_unit_vector = contact_vector / distance;
+
             // Update of contact information and calculation of contact force
             // are the same for all local-local and local-ghost contact.
             // However, they are based on particle two for ghost-local periodic
@@ -1818,8 +1856,6 @@ private:
                                                  normal_unit_vector,
                                                  particle_one_properties,
                                                  particle_two_properties,
-                                                 particle_one_location,
-                                                 particle_two_location,
                                                  dt);
 
                 // Calculation the contact force
@@ -1855,8 +1891,6 @@ private:
                                                  normal_unit_vector,
                                                  particle_two_properties,
                                                  particle_one_properties,
-                                                 particle_two_location,
-                                                 particle_one_location,
                                                  dt);
 
                 // Calculation the contact force
@@ -2049,6 +2083,7 @@ private:
   std::vector<double> effective_surface_energy;
   std::vector<double> effective_hamaker_constant;
   std::vector<double> model_parameter_beta;
+  std::vector<double> effective_tangential_to_normal_damping_ratio;
   const double        dmt_cut_off_threshold;
   const double        f_coefficient_epsd;
   std::vector<double> equivalent_surface_roughness;
