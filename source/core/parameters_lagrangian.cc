@@ -831,7 +831,7 @@ namespace Parameters
         std::vector<int> axis_order =
           convert_string_to_vector<int>(prm, "insertion direction sequence");
 
-        // We don't need to check the size of the array, size the declare_entry
+        // We don't need to check the size of the array, since the declare_entry
         // takes care of this check.
         direction_sequence.reserve(dim);
         for (unsigned int i = 0; i < dim; ++i)
@@ -854,7 +854,7 @@ namespace Parameters
             AssertThrow(
               !axis_seen[axis],
               ExcMessage(
-                "Invalid insertion directions: an axis is repeated more than once"));
+                "Invalid insertion directions: an axis is present more than once"));
 
             axis_seen[axis] = true;
           }
