@@ -83,7 +83,7 @@ var searchData=
   ['max_5fsteps_5fnumber_80',['max_steps_number',['../structParameters_1_1CLS__PDEBasedInterfaceReinitialization.html#afbeb6bd6470d644bf3c36208b2bb5b6d',1,'Parameters::CLS_PDEBasedInterfaceReinitialization']]],
   ['maxcfl_81',['maxCFL',['../structParameters_1_1SimulationControl.html#a7d9ae67c474300b1392a08bffb2978ac',1,'Parameters::SimulationControl']]],
   ['maximal_5fsupport_5fradius_82',['maximal_support_radius',['../classRBFShape.html#a9961abc1c4c4b4aa21afba54d6d5a875',1,'RBFShape']]],
-  ['maximum_5fdiameter_83',['maximum_diameter',['../classInsertion.html#a635ff01d7037aa885d071bc4cfd3f665',1,'Insertion']]],
+  ['maximum_5fdiameter_83',['maximum_diameter',['../classInsertionVolume.html#a602e43e0693c10d995a0842fc977e274',1,'InsertionVolume']]],
   ['maximum_5fnumber_5felements_84',['maximum_number_elements',['../structParameters_1_1MeshAdaptation.html#ab1f3a499a5b4992cd93ef2294031cfc3',1,'Parameters::MeshAdaptation']]],
   ['maximum_5fnumber_5fof_5fprevious_5fsolutions_85',['maximum_number_of_previous_solutions',['../bdf_8h.html#a20abc47ca7441007f8923c529000ace5',1,'bdf.h']]],
   ['maximum_5fparticle_5fdiameter_86',['maximum_particle_diameter',['../classDEMSolver.html#aaf55c53f5be9be221f6baffe4a236ad3',1,'DEMSolver::maximum_particle_diameter'],['../classCFDDEMMatrixFree.html#af22e240fb736a8df0bf0c058ec18d3df',1,'CFDDEMMatrixFree::maximum_particle_diameter'],['../classCFDDEMSolver.html#afbc6f5c2b682a4ff8f78496c942d7455',1,'CFDDEMSolver::maximum_particle_diameter']]],

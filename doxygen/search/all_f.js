@@ -114,14 +114,15 @@ var searchData=
   ['number_5fof_5fmaterial_5finteractions_111',['number_of_material_interactions',['../classPhysicalPropertiesManager.html#a82030223efefbcc753767016d920e870',1,'PhysicalPropertiesManager::number_of_material_interactions'],['../classParameters_1_1PhysicalProperties.html#ad7a79cf6cfffe27528c600fe2a395e13',1,'Parameters::PhysicalProperties::number_of_material_interactions']]],
   ['number_5fof_5fnodes_112',['number_of_nodes',['../classRBFShape.html#ada144e4de381ac994605ac52c26de4de',1,'RBFShape']]],
   ['number_5fof_5fparticles_113',['number_of_particles',['../classNavierStokesScratchData.html#a87cd5671045169b0b25e99ad568369f7',1,'NavierStokesScratchData']]],
-  ['number_5fof_5fparticles_5fdirections_114',['number_of_particles_directions',['../classInsertion.html#a321c04ed4a49e68ca025f5e81e5688b8',1,'Insertion']]],
+  ['number_5fof_5fparticles_5fdirections_114',['number_of_particles_directions',['../classInsertionVolume.html#a8297c17e4ff36a2b4697deb66a50a36f',1,'InsertionVolume']]],
   ['number_5fof_5fprevious_5fsolutions_115',['number_of_previous_solutions',['../bdf_8h.html#a79e44dc10ababc737a8659c2f5f8c18a',1,'bdf.h']]],
   ['number_5fof_5frefinement_5fboxes_116',['number_of_refinement_boxes',['../structParameters_1_1MeshBoxRefinement.html#af56f25ce3a27b97ce2f67f213fbc2550',1,'Parameters::MeshBoxRefinement']]],
   ['number_5fof_5fsolids_117',['number_of_solids',['../classPhysicalPropertiesManager.html#ae0dc865d5d8034d74cbcb2cd9b5858ee',1,'PhysicalPropertiesManager::number_of_solids'],['../classParameters_1_1PhysicalProperties.html#a990328b529fc7c39c5fac0ec038284da',1,'Parameters::PhysicalProperties::number_of_solids']]],
-  ['number_5fof_5fwaveguide_5finlets_118',['number_of_waveguide_inlets',['../structParameters_1_1TimeHarmonicMaxwell.html#a0b428ea7e482d998ec16ffe22ec86664',1,'Parameters::TimeHarmonicMaxwell']]],
-  ['number_5fquadrature_5fpoints_119',['number_quadrature_points',['../classNavierStokesBase.html#a35c9c6536d1c7c4f7dc905de1a6eb630',1,'NavierStokesBase::number_quadrature_points'],['../classParameters_1_1NitscheObject.html#a1cb903fe5e891984b340a30e9fcc7c7e',1,'Parameters::NitscheObject::number_quadrature_points']]],
-  ['number_5fsolid_5fsurfaces_120',['number_solid_surfaces',['../classParameters_1_1DEMSolidObjects.html#a4349214190d53eacc2634950703c8f39',1,'Parameters::DEMSolidObjects']]],
-  ['number_5fsolid_5fvolumes_121',['number_solid_volumes',['../classParameters_1_1DEMSolidObjects.html#a3a8a601d79a0550ba84f26c294a6d998',1,'Parameters::DEMSolidObjects']]],
-  ['number_5fsolids_122',['number_solids',['../classParameters_1_1Nitsche.html#a5f5f249a8a1abb473ae7a03257455684',1,'Parameters::Nitsche']]],
-  ['numerical_5fjacobian_123',['numerical_jacobian',['../classPhysicalPropertyModel.html#a6be82a7f56166add6af232ac511194d4',1,'PhysicalPropertyModel::numerical_jacobian()'],['../classInterfacePropertyModel.html#a1447682647905a04a66677e0692b7a0f',1,'InterfacePropertyModel::numerical_jacobian()']]]
+  ['number_5fof_5fvalid_5finsertion_5fpoint_5fglobal_118',['number_of_valid_insertion_point_global',['../classInsertionVolume.html#a5aa5293e297ccdd0f8d40cec1ad9782d',1,'InsertionVolume']]],
+  ['number_5fof_5fwaveguide_5finlets_119',['number_of_waveguide_inlets',['../structParameters_1_1TimeHarmonicMaxwell.html#a0b428ea7e482d998ec16ffe22ec86664',1,'Parameters::TimeHarmonicMaxwell']]],
+  ['number_5fquadrature_5fpoints_120',['number_quadrature_points',['../classNavierStokesBase.html#a35c9c6536d1c7c4f7dc905de1a6eb630',1,'NavierStokesBase::number_quadrature_points'],['../classParameters_1_1NitscheObject.html#a1cb903fe5e891984b340a30e9fcc7c7e',1,'Parameters::NitscheObject::number_quadrature_points']]],
+  ['number_5fsolid_5fsurfaces_121',['number_solid_surfaces',['../classParameters_1_1DEMSolidObjects.html#a4349214190d53eacc2634950703c8f39',1,'Parameters::DEMSolidObjects']]],
+  ['number_5fsolid_5fvolumes_122',['number_solid_volumes',['../classParameters_1_1DEMSolidObjects.html#a3a8a601d79a0550ba84f26c294a6d998',1,'Parameters::DEMSolidObjects']]],
+  ['number_5fsolids_123',['number_solids',['../classParameters_1_1Nitsche.html#a5f5f249a8a1abb473ae7a03257455684',1,'Parameters::Nitsche']]],
+  ['numerical_5fjacobian_124',['numerical_jacobian',['../classPhysicalPropertyModel.html#a6be82a7f56166add6af232ac511194d4',1,'PhysicalPropertyModel::numerical_jacobian()'],['../classInterfacePropertyModel.html#a1447682647905a04a66677e0692b7a0f',1,'InterfacePropertyModel::numerical_jacobian()']]]
 ];

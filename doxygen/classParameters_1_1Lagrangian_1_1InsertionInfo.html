@@ -124,8 +124,8 @@ Static Public Member Functions</h2></td></tr>
 Public Attributes</h2></td></tr>
 <tr class="memitem:ad63ab8eeffb3dd5c4cbb9cc3ffe44a59" id="r_ad63ab8eeffb3dd5c4cbb9cc3ffe44a59"><td class="memItemLeft" align="right" valign="top">enum <a class="el" href="classParameters_1_1Lagrangian_1_1InsertionInfo.html#a8935f71b97c7cce069b63a2e28949a4b">Parameters::Lagrangian::InsertionInfo::InsertionMethod</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1Lagrangian_1_1InsertionInfo.html#ad63ab8eeffb3dd5c4cbb9cc3ffe44a59">insertion_method</a></td></tr>
 <tr class="separator:ad63ab8eeffb3dd5c4cbb9cc3ffe44a59"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0e1b506eff95f1ba9dc88da300195768" id="r_a0e1b506eff95f1ba9dc88da300195768"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1Lagrangian_1_1InsertionInfo.html#a0e1b506eff95f1ba9dc88da300195768">inserted_this_step</a></td></tr>
-<tr class="separator:a0e1b506eff95f1ba9dc88da300195768"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a444c7e76cdcc35c91b27a514e9039659" id="r_a444c7e76cdcc35c91b27a514e9039659"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1Lagrangian_1_1InsertionInfo.html#a444c7e76cdcc35c91b27a514e9039659">inserted_this_step</a></td></tr>
+<tr class="separator:a444c7e76cdcc35c91b27a514e9039659"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a96e492ba6419a59d181367228a8948a4" id="r_a96e492ba6419a59d181367228a8948a4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1Lagrangian_1_1InsertionInfo.html#a96e492ba6419a59d181367228a8948a4">insertion_frequency</a></td></tr>
 <tr class="separator:a96e492ba6419a59d181367228a8948a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac536cd74a248162db8a73b1b137934cb" id="r_ac536cd74a248162db8a73b1b137934cb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1Lagrangian_1_1InsertionInfo.html#ac536cd74a248162db8a73b1b137934cb">removing_particles_in_region</a></td></tr>
@@ -180,6 +180,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a6f393f1a50d7dc16d5795a5649ea6623"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:accdc8cc16963e1a4eb442d73e6e00136" id="r_accdc8cc16963e1a4eb442d73e6e00136"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1Lagrangian_1_1InsertionInfo.html#accdc8cc16963e1a4eb442d73e6e00136">seed_for_insertion</a></td></tr>
 <tr class="separator:accdc8cc16963e1a4eb442d73e6e00136"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d6263ec08f22fb91bf26eb7d68361ac" id="r_a3d6263ec08f22fb91bf26eb7d68361ac"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; Function&lt; dim &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classParameters_1_1Lagrangian_1_1InsertionInfo.html#a3d6263ec08f22fb91bf26eb7d68361ac">insertion_acceptance_fct</a></td></tr>
+<tr class="separator:a3d6263ec08f22fb91bf26eb7d68361ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int dim&gt;<br />
@@ -297,7 +299,7 @@ template&lt;int dim&gt; </div>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8cc_source.html#l00699">699</a> of file <a class="el" href="parameters__lagrangian_8cc_source.html">parameters_lagrangian.cc</a>.</p>
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8cc_source.html#l00710">710</a> of file <a class="el" href="parameters__lagrangian_8cc_source.html">parameters_lagrangian.cc</a>.</p>
 
 </div>
 </div>
@@ -441,8 +443,8 @@ template&lt;int dim&gt; </div>
 
 </div>
 </div>
-<a id="a0e1b506eff95f1ba9dc88da300195768" name="a0e1b506eff95f1ba9dc88da300195768"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0e1b506eff95f1ba9dc88da300195768">&#9670;&#160;</a></span>inserted_this_step</h2>
+<a id="a444c7e76cdcc35c91b27a514e9039659" name="a444c7e76cdcc35c91b27a514e9039659"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a444c7e76cdcc35c91b27a514e9039659">&#9670;&#160;</a></span>inserted_this_step</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -450,7 +452,7 @@ template&lt;int dim&gt; </div>
 template&lt;int dim&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="classParameters_1_1Lagrangian_1_1InsertionInfo.html">Parameters::Lagrangian::InsertionInfo</a>&lt; dim &gt;::inserted_this_step</td>
+          <td class="memname">unsigned int <a class="el" href="classParameters_1_1Lagrangian_1_1InsertionInfo.html">Parameters::Lagrangian::InsertionInfo</a>&lt; dim &gt;::inserted_this_step</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -458,6 +460,25 @@ template&lt;int dim&gt; </div>
 <p>Number of particles inserted at each insertion step. </p>
 
 <p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00430">430</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
+
+</div>
+</div>
+<a id="a3d6263ec08f22fb91bf26eb7d68361ac" name="a3d6263ec08f22fb91bf26eb7d68361ac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3d6263ec08f22fb91bf26eb7d68361ac">&#9670;&#160;</a></span>insertion_acceptance_fct</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;Function&lt;dim&gt; &gt; <a class="el" href="classParameters_1_1Lagrangian_1_1InsertionInfo.html">Parameters::Lagrangian::InsertionInfo</a>&lt; dim &gt;::insertion_acceptance_fct</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Function used to accept or reject point in the insertion box when using the volume insertion. </p>
+
+<p class="definition">Definition at line <a class="el" href="parameters__lagrangian_8h_source.html#l00496">496</a> of file <a class="el" href="parameters__lagrangian_8h_source.html">parameters_lagrangian.h</a>.</p>
 
 </div>
 </div>
