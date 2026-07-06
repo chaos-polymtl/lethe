@@ -110,8 +110,9 @@ InsertionVolume<dim, PropertiesIndex>::insert(
           find_insertion_location(insertion_location,
                                   filted_box_index.at(particle_counter),
                                   random_number_vector.at(particle_counter),
-                                  random_number_vector.at(filted_box_index.size() -
-                                                          particle_counter - 1),
+                                  random_number_vector.at(
+                                    filted_box_index.size() - particle_counter -
+                                    1),
                                   dem_parameters.insertion_info);
 
           insertion_points_on_proc.push_back(insertion_location);
@@ -213,26 +214,6 @@ InsertionVolume<dim, PropertiesIndex>::set_filtered_index(
   if (insertion_information.inserted_this_step == 0)
     return;
 
-  // Check if the insertion directions are valid: direction_sequence must be
-  // a permutation of {0, ..., dim-1}, i.e. each axis appears exactly once.
-  std::array<bool, dim> axis_seen{}; // zero-initialized to false
-
-  for (unsigned int d = 0; d < dim; ++d)
-    {
-      const unsigned int axis = insertion_information.direction_sequence[d];
-
-      AssertThrow(axis < dim,
-                  ExcMessage(
-                    "Invalid insertion directions: axis index out of range for the volume insertion box."));
-
-      AssertThrow(
-        !axis_seen[axis],
-        ExcMessage(
-          "Invalid insertion directions: an axis is repeated more than once"));
-
-      axis_seen[axis] = true;
-    }
-  
   // This variable is used to compute the maximum number of particles
   // that can fit in the chosen insertion box before the acceptance function
   // is applied.
