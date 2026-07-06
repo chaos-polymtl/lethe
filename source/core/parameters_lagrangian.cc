@@ -834,7 +834,7 @@ namespace Parameters
         // We don't need to check the size of the array, since the declare_entry
         // takes care of this check.
         direction_sequence.reserve(dim);
-        for (unsigned int i = 0; i < dim; ++i)
+        for (int i = 0; i < dim; ++i)
           direction_sequence.push_back(axis_order.at(i));
 
         // Check if the insertion directions are valid: direction_sequence must
@@ -842,12 +842,12 @@ namespace Parameters
         // once.
         std::array<bool, dim> axis_seen{}; // zero-initialized to false
 
-        for (unsigned int d = 0; d < dim; ++d)
+        for (int d = 0; d < dim; ++d)
           {
             const unsigned int axis = direction_sequence[d];
 
             AssertThrow(
-              axis < dim,
+              axis < static_cast<unsigned int>(dim),
               ExcMessage(
                 "Invalid insertion directions: axis index out of range for the volume insertion box."));
 
