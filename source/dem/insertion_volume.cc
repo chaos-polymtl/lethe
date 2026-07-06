@@ -235,24 +235,11 @@ InsertionVolume<dim, PropertiesIndex>::set_filtered_index(
   // to the axis order.
   for (const unsigned int axis : axis_list)
     {
-      switch (axis)
-        {
-          case 0:
-            axis_min[0] = insertion_information.insertion_box_point_1(0);
-            axis_max[0] = insertion_information.insertion_box_point_2(0);
-            break;
-          case 1:
-            axis_min[1] = insertion_information.insertion_box_point_1(1);
-            axis_max[1] = insertion_information.insertion_box_point_2(1);
-            break;
-          case 2:
-            axis_min[2] = insertion_information.insertion_box_point_1(2);
-            axis_max[2] = insertion_information.insertion_box_point_2(2);
-            break;
-          default:
-            AssertThrow(false,
-                        ExcMessage("Insertion direction must be 0, 1 or 2"));
-        }
+      AssertThrow(axis < dim,
+                  ExcMessage("Insertion direction must be 0, 1 or 2"));
+
+      axis_min[axis] = insertion_information.insertion_box_point_1(axis);
+      axis_max[axis] = insertion_information.insertion_box_point_2(axis);
 
       // Assign the maximum number of insertion points according to the
       // direction and calculate the total number of points that fit in the box

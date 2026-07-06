@@ -847,7 +847,7 @@ namespace Parameters
         for (unsigned int d = 0; d < dim; ++d)
           {
             const unsigned int axis =
-              insertion_information.direction_sequence[d];
+              direction_sequence[d];
 
             AssertThrow(
               axis < dim,
