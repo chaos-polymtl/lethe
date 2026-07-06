@@ -650,21 +650,19 @@ namespace Parameters
         // Volume:
         if constexpr (dim == 2)
           {
-            prm.declare_entry(
-              "insertion direction sequence",
-              "0,1",
-              Patterns::List(Patterns::Integer(0, 1), 2, 2),
-              "Direction of particle insertion for the volume "
-              "insertion method.");
+            prm.declare_entry("insertion direction sequence",
+                              "0,1",
+                              Patterns::List(Patterns::Integer(0, 1), 2, 2),
+                              "Direction of particle insertion for the volume "
+                              "insertion method.");
           }
         else
           {
-            prm.declare_entry(
-              "insertion direction sequence",
-              "0,1,2",
-              Patterns::List(Patterns::Integer(0, 2), 3, 3),
-              "Direction of particle insertion for the volume "
-              "insertion method.");
+            prm.declare_entry("insertion direction sequence",
+                              "0,1,2",
+                              Patterns::List(Patterns::Integer(0, 2), 3, 3),
+                              "Direction of particle insertion for the volume "
+                              "insertion method.");
           }
         prm.declare_entry(
           "insertion box points coordinates",
@@ -846,8 +844,7 @@ namespace Parameters
 
         for (unsigned int d = 0; d < dim; ++d)
           {
-            const unsigned int axis =
-              direction_sequence[d];
+            const unsigned int axis = direction_sequence[d];
 
             AssertThrow(
               axis < dim,
