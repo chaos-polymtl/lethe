@@ -88,10 +88,10 @@ InsertionVolume<dim, PropertiesIndex>::insert(
 
       // Call the random number generator for the offsets
       std::vector<double> random_number_vector;
-      random_number_vector.reserve(inserted_this_step);
+      random_number_vector.reserve(filted_box_index.size());
       create_random_number_container(
         random_number_vector,
-        inserted_this_step,
+        filted_box_index.size(),
         dem_parameters.insertion_info.insertion_maximum_offset,
         dem_parameters.insertion_info.seed_for_insertion);
 
@@ -110,7 +110,7 @@ InsertionVolume<dim, PropertiesIndex>::insert(
           find_insertion_location(insertion_location,
                                   filted_box_index.at(particle_counter),
                                   random_number_vector.at(particle_counter),
-                                  random_number_vector.at(inserted_this_step -
+                                  random_number_vector.at(filted_box_index.size() -
                                                           particle_counter - 1),
                                   dem_parameters.insertion_info);
 
