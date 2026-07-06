@@ -62,10 +62,10 @@ Transient iteration: 4000     Time: 0.04     Time step: 1e-05
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 1.0000e+01 | 6.0000e+00 | 2.4000e+01 | 
-| Velocity magnitude           | 2.3217e-02 | 3.9230e-01 | 3.3787e-01 | 3.3787e+02 | 
-| Angular velocity magnitude   | 0.0000e+00 | 1.7716e+02 | 8.2079e+00 | 8.2079e+03 | 
-| Translational kinetic energy | 7.6202e-09 | 2.1757e-06 | 1.7824e-06 | 1.7824e-03 | 
-| Rotational kinetic energy    | 0.0000e+00 | 7.9867e-07 | 1.4833e-08 | 1.4833e-05 | 
+| Velocity magnitude           | 3.4805e-03 | 3.9230e-01 | 3.3790e-01 | 3.3790e+02 | 
+| Angular velocity magnitude   | 0.0000e+00 | 1.7472e+02 | 8.0961e+00 | 8.0961e+03 | 
+| Translational kinetic energy | 1.7126e-10 | 2.1757e-06 | 1.7843e-06 | 1.7843e-03 | 
+| Rotational kinetic energy    | 0.0000e+00 | 7.7684e-07 | 1.4871e-08 | 1.4871e-05 | 
 -->Repartitioning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
@@ -76,10 +76,10 @@ Transient iteration: 5000     Time: 0.05     Time step: 1e-05
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 1.3000e+01 | 7.4000e+00 | 3.7000e+01 | 
-| Velocity magnitude           | 2.8791e-02 | 4.9040e-01 | 4.0735e-01 | 4.0735e+02 | 
-| Angular velocity magnitude   | 0.0000e+00 | 2.2119e+02 | 2.1739e+01 | 2.1739e+04 | 
-| Translational kinetic energy | 1.1718e-08 | 3.3999e-06 | 2.5399e-06 | 2.5399e-03 | 
-| Rotational kinetic energy    | 0.0000e+00 | 1.2450e-06 | 5.3860e-08 | 5.3860e-05 | 
+| Velocity magnitude           | 1.8229e-02 | 4.9040e-01 | 4.0701e-01 | 4.0701e+02 | 
+| Angular velocity magnitude   | 0.0000e+00 | 2.1899e+02 | 2.1774e+01 | 2.1774e+04 | 
+| Translational kinetic energy | 4.6976e-09 | 3.3999e-06 | 2.5374e-06 | 2.5374e-03 | 
+| Rotational kinetic energy    | 0.0000e+00 | 1.2203e-06 | 5.3393e-08 | 5.3393e-05 | 
 -->Repartitioning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
@@ -90,10 +90,10 @@ Transient iteration: 6000     Time: 0.06     Time step: 1e-05
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 1.5000e+01 | 8.6667e+00 | 5.2000e+01 | 
-| Velocity magnitude           | 2.9726e-02 | 5.8850e-01 | 4.9648e-01 | 4.9648e+02 | 
-| Angular velocity magnitude   | 0.0000e+00 | 2.2276e+02 | 2.7350e+01 | 2.7350e+04 | 
-| Translational kinetic energy | 1.2492e-08 | 4.8962e-06 | 3.6751e-06 | 3.6751e-03 | 
-| Rotational kinetic energy    | 0.0000e+00 | 1.2627e-06 | 6.2617e-08 | 6.2617e-05 | 
+| Velocity magnitude           | 4.0019e-02 | 5.8850e-01 | 4.9656e-01 | 4.9656e+02 | 
+| Angular velocity magnitude   | 0.0000e+00 | 2.1696e+02 | 2.7561e+01 | 2.7561e+04 | 
+| Translational kinetic energy | 2.2641e-08 | 4.8962e-06 | 3.6744e-06 | 3.6744e-03 | 
+| Rotational kinetic energy    | 0.0000e+00 | 1.1979e-06 | 6.2974e-08 | 6.2974e-05 | 
 -->Repartitioning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
@@ -104,10 +104,10 @@ Transient iteration: 7000     Time: 0.07     Time step: 1e-05
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 1.8000e+01 | 1.0000e+01 | 7.0000e+01 | 
-| Velocity magnitude           | 2.3855e-02 | 6.8660e-01 | 5.7427e-01 | 5.7427e+02 | 
-| Angular velocity magnitude   | 0.0000e+00 | 2.6094e+02 | 3.1957e+01 | 3.1957e+04 | 
-| Translational kinetic energy | 8.0447e-09 | 6.6646e-06 | 4.9468e-06 | 4.9468e-03 | 
-| Rotational kinetic energy    | 0.0000e+00 | 1.7327e-06 | 7.3931e-08 | 7.3931e-05 | 
+| Velocity magnitude           | 5.4501e-02 | 6.8660e-01 | 5.7504e-01 | 5.7504e+02 | 
+| Angular velocity magnitude   | 0.0000e+00 | 2.3104e+02 | 3.1789e+01 | 3.1789e+04 | 
+| Translational kinetic energy | 4.1993e-08 | 6.6646e-06 | 4.9493e-06 | 4.9493e-03 | 
+| Rotational kinetic energy    | 0.0000e+00 | 1.3583e-06 | 7.1522e-08 | 7.1522e-05 | 
 -->Repartitioning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
@@ -118,10 +118,10 @@ Transient iteration: 8000     Time: 0.08     Time step: 1e-05
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 2.1000e+01 | 1.1375e+01 | 9.1000e+01 | 
-| Velocity magnitude           | 4.4251e-02 | 7.8470e-01 | 6.3094e-01 | 6.3094e+02 | 
-| Angular velocity magnitude   | 0.0000e+00 | 2.7191e+02 | 3.9506e+01 | 3.9506e+04 | 
-| Translational kinetic energy | 2.7683e-08 | 8.7051e-06 | 6.1620e-06 | 6.1620e-03 | 
-| Rotational kinetic energy    | 0.0000e+00 | 1.8814e-06 | 1.0360e-07 | 1.0360e-04 | 
+| Velocity magnitude           | 4.3863e-02 | 7.8470e-01 | 6.3237e-01 | 6.3237e+02 | 
+| Angular velocity magnitude   | 0.0000e+00 | 2.8257e+02 | 3.9761e+01 | 3.9761e+04 | 
+| Translational kinetic energy | 2.7199e-08 | 8.7051e-06 | 6.1710e-06 | 6.1710e-03 | 
+| Rotational kinetic energy    | 0.0000e+00 | 2.0318e-06 | 1.0662e-07 | 1.0662e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
@@ -132,10 +132,10 @@ Transient iteration: 9000     Time: 0.09     Time step: 1e-05
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 2.3000e+01 | 1.2667e+01 | 1.1400e+02 | 
-| Velocity magnitude           | 3.4220e-02 | 8.8280e-01 | 6.7347e-01 | 6.7347e+02 | 
-| Angular velocity magnitude   | 0.0000e+00 | 2.9721e+02 | 4.9692e+01 | 4.9692e+04 | 
-| Translational kinetic energy | 1.6555e-08 | 1.1018e-05 | 7.2860e-06 | 7.2860e-03 | 
-| Rotational kinetic energy    | 0.0000e+00 | 2.2478e-06 | 1.5432e-07 | 1.5432e-04 | 
+| Velocity magnitude           | 2.8752e-02 | 8.8280e-01 | 6.7155e-01 | 6.7155e+02 | 
+| Angular velocity magnitude   | 0.0000e+00 | 2.8899e+02 | 4.7817e+01 | 4.7817e+04 | 
+| Translational kinetic energy | 1.1687e-08 | 1.1018e-05 | 7.2573e-06 | 7.2573e-03 | 
+| Rotational kinetic energy    | 0.0000e+00 | 2.1252e-06 | 1.3975e-07 | 1.3975e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
@@ -146,10 +146,10 @@ Transient iteration: 10000    Time: 0.1      Time step: 1e-05
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 2.6000e+01 | 1.4000e+01 | 1.4000e+02 | 
-| Velocity magnitude           | 1.6124e-02 | 9.7573e-01 | 7.0089e-01 | 7.0089e+02 | 
-| Angular velocity magnitude   | 7.3467e-03 | 3.4124e+02 | 5.7629e+01 | 5.7629e+04 | 
-| Translational kinetic energy | 3.6757e-09 | 1.3459e-05 | 8.2295e-06 | 8.2295e-03 | 
-| Rotational kinetic energy    | 1.3735e-15 | 2.9632e-06 | 1.9154e-07 | 1.9154e-04 | 
+| Velocity magnitude           | 3.9724e-02 | 9.7589e-01 | 7.0025e-01 | 7.0025e+02 | 
+| Angular velocity magnitude   | 1.8146e-03 | 3.1571e+02 | 5.7267e+01 | 5.7267e+04 | 
+| Translational kinetic energy | 2.2309e-08 | 1.3464e-05 | 8.2101e-06 | 8.2101e-03 | 
+| Rotational kinetic energy    | 8.3790e-17 | 2.5363e-06 | 1.8400e-07 | 1.8400e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
@@ -160,10 +160,10 @@ Transient iteration: 11000    Time: 0.11     Time step: 1e-05
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 3.0000e+01 | 1.5455e+01 | 1.7000e+02 | 
-| Velocity magnitude           | 4.9670e-02 | 1.0725e+00 | 7.0289e-01 | 7.0289e+02 | 
-| Angular velocity magnitude   | 8.2522e-03 | 3.1332e+02 | 7.0233e+01 | 7.0233e+04 | 
-| Translational kinetic energy | 3.4879e-08 | 1.6263e-05 | 8.7181e-06 | 8.7181e-03 | 
-| Rotational kinetic energy    | 1.7329e-15 | 2.4981e-06 | 2.5211e-07 | 2.5211e-04 | 
+| Velocity magnitude           | 2.1261e-02 | 1.0765e+00 | 7.0953e-01 | 7.0953e+02 | 
+| Angular velocity magnitude   | 1.2562e-03 | 3.5765e+02 | 7.1038e+01 | 7.1038e+04 | 
+| Translational kinetic energy | 6.3902e-09 | 1.6384e-05 | 8.8198e-06 | 8.8198e-03 | 
+| Rotational kinetic energy    | 4.0159e-17 | 3.2550e-06 | 2.5973e-07 | 2.5973e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
@@ -174,10 +174,10 @@ Transient iteration: 12000    Time: 0.12     Time step: 1e-05
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 3.1000e+01 | 1.6750e+01 | 2.0100e+02 | 
-| Velocity magnitude           | 1.0481e-02 | 1.1695e+00 | 6.9186e-01 | 6.9186e+02 | 
-| Angular velocity magnitude   | 4.1405e-03 | 3.4793e+02 | 8.4262e+01 | 8.4262e+04 | 
-| Translational kinetic energy | 1.5530e-09 | 1.9336e-05 | 8.8202e-06 | 8.8202e-03 | 
-| Rotational kinetic energy    | 4.3625e-16 | 3.0805e-06 | 3.2319e-07 | 3.2319e-04 | 
+| Velocity magnitude           | 5.4917e-02 | 1.1716e+00 | 6.9813e-01 | 6.9813e+02 | 
+| Angular velocity magnitude   | 1.2562e-03 | 3.4818e+02 | 8.5145e+01 | 8.5145e+04 | 
+| Translational kinetic energy | 4.2636e-08 | 1.9404e-05 | 8.8873e-06 | 8.8873e-03 | 
+| Rotational kinetic energy    | 4.0159e-17 | 3.0849e-06 | 3.2318e-07 | 3.2318e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
@@ -188,10 +188,10 @@ Transient iteration: 13000    Time: 0.13     Time step: 1e-05
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 3.4000e+01 | 1.8077e+01 | 2.3500e+02 | 
-| Velocity magnitude           | 2.4822e-02 | 1.2680e+00 | 6.5697e-01 | 6.5697e+02 | 
-| Angular velocity magnitude   | 4.1405e-03 | 4.2006e+02 | 9.7240e+01 | 9.7240e+04 | 
-| Translational kinetic energy | 8.7105e-09 | 2.2732e-05 | 8.3128e-06 | 8.3128e-03 | 
-| Rotational kinetic energy    | 4.3625e-16 | 4.4901e-06 | 3.8037e-07 | 3.8037e-04 | 
+| Velocity magnitude           | 2.2126e-02 | 1.2672e+00 | 6.5449e-01 | 6.5449e+02 | 
+| Angular velocity magnitude   | 1.8146e-03 | 3.7691e+02 | 1.0031e+02 | 1.0031e+05 | 
+| Translational kinetic energy | 6.9208e-09 | 2.2702e-05 | 8.2895e-06 | 8.2895e-03 | 
+| Rotational kinetic energy    | 8.3790e-17 | 3.6150e-06 | 4.1378e-07 | 4.1378e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
@@ -202,10 +202,10 @@ Transient iteration: 14000    Time: 0.14     Time step: 1e-05
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 3.7000e+01 | 1.9429e+01 | 2.7200e+02 | 
-| Velocity magnitude           | 2.2426e-02 | 1.4107e+00 | 5.9297e-01 | 5.9297e+02 | 
-| Angular velocity magnitude   | 1.0434e-02 | 3.7283e+02 | 1.1586e+02 | 1.1586e+05 | 
-| Translational kinetic energy | 7.1100e-09 | 2.8134e-05 | 6.8372e-06 | 6.8372e-03 | 
-| Rotational kinetic energy    | 2.7704e-15 | 3.5372e-06 | 4.7261e-07 | 4.7261e-04 | 
+| Velocity magnitude           | 2.9536e-02 | 1.3913e+00 | 6.0289e-01 | 6.0289e+02 | 
+| Angular velocity magnitude   | 1.8146e-03 | 4.6134e+02 | 1.1761e+02 | 1.1761e+05 | 
+| Translational kinetic energy | 1.2333e-08 | 2.7367e-05 | 6.9445e-06 | 6.9445e-03 | 
+| Rotational kinetic energy    | 8.3790e-17 | 5.4159e-06 | 4.9993e-07 | 4.9993e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
@@ -216,10 +216,10 @@ Transient iteration: 15000    Time: 0.15     Time step: 1e-05
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 3.9000e+01 | 2.0733e+01 | 3.1100e+02 | 
-| Velocity magnitude           | 1.8951e-02 | 1.3946e+00 | 5.1798e-01 | 5.1798e+02 | 
-| Angular velocity magnitude   | 3.1600e-02 | 5.0197e+02 | 1.2686e+02 | 1.2686e+05 | 
-| Translational kinetic energy | 5.0771e-09 | 2.7495e-05 | 4.9063e-06 | 4.9063e-03 | 
-| Rotational kinetic energy    | 2.5410e-14 | 6.4120e-06 | 5.2782e-07 | 5.2782e-04 | 
+| Velocity magnitude           | 1.8565e-02 | 1.4008e+00 | 5.1765e-01 | 5.1765e+02 | 
+| Angular velocity magnitude   | 3.7287e-02 | 4.7887e+02 | 1.2819e+02 | 1.2819e+05 | 
+| Translational kinetic energy | 4.8726e-09 | 2.7739e-05 | 4.9587e-06 | 4.9587e-03 | 
+| Rotational kinetic energy    | 3.5380e-14 | 5.8354e-06 | 5.5062e-07 | 5.5062e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
@@ -230,10 +230,10 @@ Transient iteration: 16000    Time: 0.16     Time step: 1e-05
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 3.9000e+01 | 2.1875e+01 | 3.5000e+02 | 
-| Velocity magnitude           | 1.3538e-02 | 1.1276e+00 | 4.4518e-01 | 4.4518e+02 | 
-| Angular velocity magnitude   | 7.4349e+00 | 4.2315e+02 | 1.2990e+02 | 1.2990e+05 | 
-| Translational kinetic energy | 2.5909e-09 | 1.7975e-05 | 3.2324e-06 | 3.2324e-03 | 
-| Rotational kinetic energy    | 1.4067e-09 | 4.5564e-06 | 5.3406e-07 | 5.3406e-04 | 
+| Velocity magnitude           | 1.4015e-02 | 1.4117e+00 | 4.4439e-01 | 4.4439e+02 | 
+| Angular velocity magnitude   | 7.3823e+00 | 4.7156e+02 | 1.3083e+02 | 1.3083e+05 | 
+| Translational kinetic energy | 2.7769e-09 | 2.8175e-05 | 3.2748e-06 | 3.2748e-03 | 
+| Rotational kinetic energy    | 1.3868e-09 | 5.6587e-06 | 5.5847e-07 | 5.5847e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
@@ -244,10 +244,10 @@ Transient iteration: 17000    Time: 0.17     Time step: 1e-05
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
 | Contact list generation      | 0.0000e+00 | 3.9000e+01 | 2.2118e+01 | 3.7600e+02 | 
-| Velocity magnitude           | 1.2068e-02 | 8.7730e-01 | 4.0099e-01 | 4.0099e+02 | 
-| Angular velocity magnitude   | 4.6653e+00 | 3.2134e+02 | 1.1645e+02 | 1.1645e+05 | 
-| Translational kinetic energy | 2.0589e-09 | 1.0881e-05 | 2.6961e-06 | 2.6961e-03 | 
-| Rotational kinetic energy    | 5.5385e-10 | 2.6276e-06 | 4.3766e-07 | 4.3766e-04 | 
+| Velocity magnitude           | 8.1033e-03 | 8.7905e-01 | 4.0496e-01 | 4.0496e+02 | 
+| Angular velocity magnitude   | 4.6929e+00 | 3.5606e+02 | 1.1659e+02 | 1.1659e+05 | 
+| Translational kinetic energy | 9.2829e-10 | 1.0924e-05 | 2.7708e-06 | 2.7708e-03 | 
+| Rotational kinetic energy    | 5.6043e-10 | 3.2262e-06 | 4.5345e-07 | 4.5345e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
@@ -257,11 +257,11 @@ Minimum and maximum number of cells owned by the processors are 2040 and 4028
 Transient iteration: 18000    Time: 0.18     Time step: 1e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.9000e+01 | 2.2167e+01 | 3.9900e+02 | 
-| Velocity magnitude           | 1.7040e-02 | 8.0691e-01 | 3.8003e-01 | 3.8003e+02 | 
-| Angular velocity magnitude   | 8.3185e+00 | 3.2134e+02 | 1.1016e+02 | 1.1016e+05 | 
-| Translational kinetic energy | 4.1049e-09 | 9.2047e-06 | 2.4727e-06 | 2.4727e-03 | 
-| Rotational kinetic energy    | 1.7609e-09 | 2.6276e-06 | 4.0796e-07 | 4.0796e-04 | 
+| Contact list generation      | 0.0000e+00 | 3.9000e+01 | 2.2222e+01 | 4.0000e+02 | 
+| Velocity magnitude           | 9.3197e-03 | 8.6638e-01 | 3.8278e-01 | 3.8278e+02 | 
+| Angular velocity magnitude   | 7.4787e+00 | 3.5606e+02 | 1.0977e+02 | 1.0977e+05 | 
+| Translational kinetic energy | 1.2279e-09 | 1.0612e-05 | 2.5242e-06 | 2.5242e-03 | 
+| Rotational kinetic energy    | 1.4233e-09 | 3.2262e-06 | 4.0790e-07 | 4.0790e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
@@ -271,11 +271,11 @@ Minimum and maximum number of cells owned by the processors are 2040 and 4028
 Transient iteration: 19000    Time: 0.19     Time step: 1e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.9000e+01 | 2.2158e+01 | 4.2100e+02 | 
-| Velocity magnitude           | 5.0859e-03 | 7.5383e-01 | 3.6701e-01 | 3.6701e+02 | 
-| Angular velocity magnitude   | 4.1501e+00 | 3.3524e+02 | 1.0838e+02 | 1.0838e+05 | 
-| Translational kinetic energy | 3.6568e-10 | 8.0335e-06 | 2.3131e-06 | 2.3131e-03 | 
-| Rotational kinetic energy    | 4.3828e-10 | 2.8599e-06 | 4.0061e-07 | 4.0061e-04 | 
+| Contact list generation      | 0.0000e+00 | 3.9000e+01 | 2.2263e+01 | 4.2300e+02 | 
+| Velocity magnitude           | 6.2661e-03 | 7.8882e-01 | 3.6892e-01 | 3.6892e+02 | 
+| Angular velocity magnitude   | 4.3348e+00 | 3.5606e+02 | 1.0543e+02 | 1.0543e+05 | 
+| Translational kinetic energy | 5.5509e-10 | 8.7967e-06 | 2.3540e-06 | 2.3540e-03 | 
+| Rotational kinetic energy    | 4.7815e-10 | 3.2262e-06 | 3.8232e-07 | 3.8232e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000
@@ -285,11 +285,11 @@ Minimum and maximum number of cells owned by the processors are 2040 and 4028
 Transient iteration: 20000    Time: 0.2      Time step: 1e-05   
 *****************************************************************
 | Variable                     | Min        | Max        | Average    | Total      | 
-| Contact list generation      | 0.0000e+00 | 3.9000e+01 | 2.2100e+01 | 4.4200e+02 | 
-| Velocity magnitude           | 1.1687e-02 | 7.4316e-01 | 3.5491e-01 | 3.5491e+02 | 
-| Angular velocity magnitude   | 7.9990e+00 | 3.3524e+02 | 1.0793e+02 | 1.0793e+05 | 
-| Translational kinetic energy | 1.9308e-09 | 7.8078e-06 | 2.1666e-06 | 2.1666e-03 | 
-| Rotational kinetic energy    | 1.6282e-09 | 2.8599e-06 | 3.9380e-07 | 3.9380e-04 | 
+| Contact list generation      | 0.0000e+00 | 3.9000e+01 | 2.2250e+01 | 4.4500e+02 | 
+| Velocity magnitude           | 1.1095e-02 | 7.7648e-01 | 3.5923e-01 | 3.5923e+02 | 
+| Angular velocity magnitude   | 2.9106e+00 | 3.5606e+02 | 1.0591e+02 | 1.0591e+05 | 
+| Translational kinetic energy | 1.7403e-09 | 8.5236e-06 | 2.2178e-06 | 2.2178e-03 | 
+| Rotational kinetic energy    | 2.1558e-10 | 3.2262e-06 | 3.8675e-07 | 3.8675e-04 | 
 -->Repartitioning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 500 , 0 and 1000

@@ -648,11 +648,22 @@ namespace Parameters
                           Patterns::List(Patterns::Double()),
                           "List of initial temperatures");
         // Volume:
-        prm.declare_entry(
-          "insertion direction sequence",
-          "0,1,2",
-          Patterns::List(Patterns::Integer(0, 2), 2, 3),
-          "Direction of particle insertion for the volume insertion method");
+        if constexpr (dim == 2)
+          {
+            prm.declare_entry("insertion direction sequence",
+                              "0,1",
+                              Patterns::List(Patterns::Integer(0, 1), 2, 2),
+                              "Direction of particle insertion for the volume "
+                              "insertion method.");
+          }
+        else
+          {
+            prm.declare_entry("insertion direction sequence",
+                              "0,1,2",
+                              Patterns::List(Patterns::Integer(0, 2), 3, 3),
+                              "Direction of particle insertion for the volume "
+                              "insertion method.");
+          }
         prm.declare_entry(
           "insertion box points coordinates",
           "0. , 0. , 0. : 1. , 1. , 1.",
@@ -819,13 +830,34 @@ namespace Parameters
         // Volume:
         std::vector<int> axis_order =
           convert_string_to_vector<int>(prm, "insertion direction sequence");
-        if (axis_order.size() == 2)
-          axis_order.push_back(0.);
 
-        direction_sequence.reserve(3);
-        direction_sequence.push_back(axis_order[0]);
-        direction_sequence.push_back(axis_order[1]);
-        direction_sequence.push_back(axis_order[2]);
+        // We don't need to check the size of the array, since the declare_entry
+        // takes care of this check.
+        direction_sequence.reserve(dim);
+        for (int i = 0; i < dim; ++i)
+          direction_sequence.push_back(axis_order.at(i));
+
+        // Check if the insertion directions are valid: direction_sequence must
+        // be a permutation of {0, ..., dim-1}, i.e. each axis appears exactly
+        // once.
+        std::array<bool, dim> axis_seen{}; // zero-initialized to false
+
+        for (int d = 0; d < dim; ++d)
+          {
+            const int axis = direction_sequence[d];
+
+            AssertThrow(
+              axis < dim,
+              ExcMessage(
+                "Invalid insertion directions: axis index out of range for the volume insertion box."));
+
+            AssertThrow(
+              !axis_seen[axis],
+              ExcMessage(
+                "Invalid insertion directions: an axis is present more than once"));
+
+            axis_seen[axis] = true;
+          }
 
         const std::vector<std::string> point_coordinates_list(
           Utilities::split_string_list(

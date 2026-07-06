@@ -88,10 +88,10 @@ InsertionVolume<dim, PropertiesIndex>::insert(
 
       // Call the random number generator for the offsets
       std::vector<double> random_number_vector;
-      random_number_vector.reserve(inserted_this_step);
+      random_number_vector.reserve(filted_box_index.size());
       create_random_number_container(
         random_number_vector,
-        inserted_this_step,
+        filted_box_index.size(),
         dem_parameters.insertion_info.insertion_maximum_offset,
         dem_parameters.insertion_info.seed_for_insertion);
 
@@ -110,8 +110,9 @@ InsertionVolume<dim, PropertiesIndex>::insert(
           find_insertion_location(insertion_location,
                                   filted_box_index.at(particle_counter),
                                   random_number_vector.at(particle_counter),
-                                  random_number_vector.at(inserted_this_step -
-                                                          particle_counter - 1),
+                                  random_number_vector.at(
+                                    filted_box_index.size() - particle_counter -
+                                    1),
                                   dem_parameters.insertion_info);
 
           insertion_points_on_proc.push_back(insertion_location);
@@ -213,29 +214,6 @@ InsertionVolume<dim, PropertiesIndex>::set_filtered_index(
   if (insertion_information.inserted_this_step == 0)
     return;
 
-  // Check if the insertion directions are valid (no repetition)
-  unsigned int axis_sum = 0;
-  if constexpr (dim == 2)
-    {
-      axis_sum = insertion_information.direction_sequence[0] +
-                 insertion_information.direction_sequence[1];
-
-      AssertThrow(
-        axis_sum == 1,
-        ExcMessage("Invalid insertion directions: 2 directions are the same "));
-    }
-  if constexpr (dim == 3)
-    {
-      axis_sum = insertion_information.direction_sequence[0] +
-                 insertion_information.direction_sequence[1] +
-                 insertion_information.direction_sequence[2];
-
-      AssertThrow(
-        axis_sum == 3,
-        ExcMessage(
-          "Invalid insertion directions: at least 2 directions are the same "));
-    }
-
   // This variable is used to compute the maximum number of particles
   // that can fit in the chosen insertion box before the acceptance function
   // is applied.
@@ -255,26 +233,13 @@ InsertionVolume<dim, PropertiesIndex>::set_filtered_index(
 
   // Assigning the minimum and maximum positions of the insertion box in respect
   // to the axis order.
-  for (const unsigned int axis : axis_list)
+  for (const int axis : axis_list)
     {
-      switch (axis)
-        {
-          case 0:
-            axis_min[0] = insertion_information.insertion_box_point_1(0);
-            axis_max[0] = insertion_information.insertion_box_point_2(0);
-            break;
-          case 1:
-            axis_min[1] = insertion_information.insertion_box_point_1(1);
-            axis_max[1] = insertion_information.insertion_box_point_2(1);
-            break;
-          case 2:
-            axis_min[2] = insertion_information.insertion_box_point_1(2);
-            axis_max[2] = insertion_information.insertion_box_point_2(2);
-            break;
-          default:
-            AssertThrow(false,
-                        ExcMessage("Insertion direction must be 0, 1 or 2"));
-        }
+      AssertThrow(axis < dim,
+                  ExcMessage("Insertion direction must be 0, 1 or 2"));
+
+      axis_min[axis] = insertion_information.insertion_box_point_1(axis);
+      axis_max[axis] = insertion_information.insertion_box_point_2(axis);
 
       // Assign the maximum number of insertion points according to the
       // direction and calculate the total number of points that fit in the box
