@@ -844,10 +844,10 @@ namespace Parameters
 
         for (int d = 0; d < dim; ++d)
           {
-            const unsigned int axis = direction_sequence[d];
+            const int axis = direction_sequence[d];
 
             AssertThrow(
-              axis < static_cast<unsigned int>(dim),
+              axis < dim,
               ExcMessage(
                 "Invalid insertion directions: axis index out of range for the volume insertion box."));
 

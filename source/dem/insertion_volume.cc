@@ -233,7 +233,7 @@ InsertionVolume<dim, PropertiesIndex>::set_filtered_index(
 
   // Assigning the minimum and maximum positions of the insertion box in respect
   // to the axis order.
-  for (const unsigned int axis : axis_list)
+  for (const int axis : axis_list)
     {
       AssertThrow(axis < dim,
                   ExcMessage("Insertion direction must be 0, 1 or 2"));
