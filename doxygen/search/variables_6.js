@@ -9,7 +9,7 @@ var searchData=
   ['gather_5fcls_6',['gather_cls',['../classHeatTransferScratchData.html#a996d779c18044703746802c5ae4a37d0',1,'HeatTransferScratchData::gather_cls'],['../classNavierStokesScratchData.html#a97d8271b6351d136131b9f5c1b9b9caa',1,'NavierStokesScratchData::gather_cls']]],
   ['gather_5fcurvature_7',['gather_curvature',['../classNavierStokesScratchData.html#a6ecba60f4ef7a7c6e0c49c688464d990',1,'NavierStokesScratchData']]],
   ['gather_5fhessian_8',['gather_hessian',['../classNavierStokesScratchData.html#ad53462b1362da031efce498558afbdf9',1,'NavierStokesScratchData']]],
-  ['gather_5fmortar_9',['gather_mortar',['../classNavierStokesScratchData.html#a0bd069ab2a2e317dcfb1f506b0041a50',1,'NavierStokesScratchData']]],
+  ['gather_5fmortar_9',['gather_mortar',['../classNavierStokesScratchData.html#a0bd069ab2a2e317dcfb1f506b0041a50',1,'NavierStokesScratchData::gather_mortar'],['../classTracerScratchData.html#a1cf7bfc21ccd546fa222319437983580',1,'TracerScratchData::gather_mortar']]],
   ['gather_5fparticle_5ffield_5fproject_10',['gather_particle_field_project',['../classNavierStokesScratchData.html#a973f39b41e5a1edeecfbe2d8db3ebdbe',1,'NavierStokesScratchData']]],
   ['gather_5fparticles_5finformation_11',['gather_particles_information',['../classNavierStokesScratchData.html#a1c3df5a7c2e0bd07238e9cff84928b76',1,'NavierStokesScratchData']]],
   ['gather_5fprojected_5fphase_5findicator_5fgradient_12',['gather_projected_phase_indicator_gradient',['../classNavierStokesScratchData.html#a4fc5bfc50dc40c195c1283d40211d212',1,'NavierStokesScratchData']]],

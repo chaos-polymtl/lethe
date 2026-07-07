@@ -77,7 +77,7 @@ var searchData=
   ['rotational_5fviscous_5ftorque_74',['rotational_viscous_torque',['../structParameters_1_1CFDDEM.html#a1f2fba40324f02c1396e99ebb0561ce2',1,'Parameters::CFDDEM']]],
   ['rotor_5fangular_5fvelocity_75',['rotor_angular_velocity',['../structParameters_1_1Mortar.html#a14c1851190ff8ecabeb3b7e98f6e3a3e',1,'Parameters::Mortar']]],
   ['rotor_5fboundary_5fid_76',['rotor_boundary_id',['../structParameters_1_1Mortar.html#a50d08d147ecc318dda278724af26910a',1,'Parameters::Mortar']]],
-  ['rotor_5flinear_5fvelocity_5fvalues_77',['rotor_linear_velocity_values',['../classNavierStokesScratchData.html#adcc81802d5c41910ef956b07d740b943',1,'NavierStokesScratchData']]],
+  ['rotor_5flinear_5fvelocity_5fvalues_77',['rotor_linear_velocity_values',['../classNavierStokesScratchData.html#adcc81802d5c41910ef956b07d740b943',1,'NavierStokesScratchData::rotor_linear_velocity_values'],['../classTracerScratchData.html#ac388a5b5d693962be8060bf407544ada',1,'TracerScratchData::rotor_linear_velocity_values']]],
   ['rotor_5fmesh_78',['rotor_mesh',['../structParameters_1_1Mortar.html#ac50e0ff932d627dfe1c6c1e5ca8ef4d0',1,'Parameters::Mortar']]],
   ['rotor_5frotation_5fangle_79',['rotor_rotation_angle',['../structParameters_1_1Mortar.html#aa505cb02c5808619a3538f57da0de941',1,'Parameters::Mortar']]]
 ];
